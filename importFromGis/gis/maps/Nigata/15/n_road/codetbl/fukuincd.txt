@@ -1,0 +1,6 @@
+"width_tpcd","width_tp"
+"1","•ˆõ‚P‚RD‚O‚ˆÈã"
+"2","•ˆõ‚TD‚T‚ˆÈã`‚P‚RD‚O‚–¢–ž"
+"3","•ˆõ‚RD‚O‚ˆÈã`‚TD‚T‚–¢–ž"
+"4","•ˆõ‚RD‚O‚–¢–ž"
+"0","–¢’²¸"
