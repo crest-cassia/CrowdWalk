@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group defaultHeight="0.0" id="0" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>root</tag>
+  <Node height="0.0" id="1" x="100.0" y="100.0">
+    <link id="8"/>
+  </Node>
+  <Node height="0.0" id="2" x="340.0" y="100.0">
+    <link id="21"/>
+    <link id="23"/>
+  </Node>
+  <Node height="0.0" id="3" x="580.0" y="100.0">
+    <link id="36"/>
+    <link id="38"/>
+  </Node>
+  <Node height="0.0" id="4" x="700.0" y="100.0">
+    <link id="43"/>
+    <link id="45"/>
+  </Node>
+  <Node height="0.0" id="5" x="940.0" y="100.0">
+    <link id="58"/>
+    <link id="60"/>
+  </Node>
+  <Node height="0.0" id="6" x="1180.0" y="100.0">
+    <tag>N6</tag>
+    <tag>EXIT</tag>
+    <link id="73"/>
+  </Node>
+  <Node height="0.0" id="7" x="130.0" y="100.0">
+    <link id="8"/>
+    <link id="10"/>
+  </Node>
+  <Node height="0.0" id="9" x="160.0" y="100.0">
+    <link id="10"/>
+    <link id="12"/>
+  </Node>
+  <Node height="0.0" id="11" x="190.0" y="100.0">
+    <link id="12"/>
+    <link id="14"/>
+  </Node>
+  <Node height="0.0" id="13" x="220.0" y="100.0">
+    <link id="14"/>
+    <link id="16"/>
+  </Node>
+  <Node height="0.0" id="15" x="250.0" y="100.0">
+    <link id="16"/>
+    <link id="18"/>
+  </Node>
+  <Node height="0.0" id="17" x="280.0" y="100.0">
+    <link id="18"/>
+    <link id="20"/>
+  </Node>
+  <Node height="0.0" id="19" x="310.0" y="100.0">
+    <link id="20"/>
+    <link id="21"/>
+  </Node>
+  <Node height="0.0" id="22" x="370.0" y="100.0">
+    <link id="23"/>
+    <link id="25"/>
+  </Node>
+  <Node height="0.0" id="24" x="400.0" y="100.0">
+    <link id="25"/>
+    <link id="27"/>
+  </Node>
+  <Node height="0.0" id="26" x="430.0" y="100.0">
+    <link id="27"/>
+    <link id="29"/>
+  </Node>
+  <Node height="0.0" id="28" x="460.0" y="100.0">
+    <link id="29"/>
+    <link id="31"/>
+  </Node>
+  <Node height="0.0" id="30" x="490.0" y="100.0">
+    <link id="31"/>
+    <link id="33"/>
+  </Node>
+  <Node height="0.0" id="32" x="520.0" y="100.0">
+    <link id="33"/>
+    <link id="35"/>
+  </Node>
+  <Node height="0.0" id="34" x="550.0" y="100.0">
+    <link id="35"/>
+    <link id="36"/>
+  </Node>
+  <Node height="0.0" id="37" x="610.0" y="100.0">
+    <link id="38"/>
+    <link id="40"/>
+  </Node>
+  <Node height="0.0" id="39" x="640.0" y="100.0">
+    <link id="40"/>
+    <link id="42"/>
+  </Node>
+  <Node height="0.0" id="41" x="670.0" y="100.0">
+    <link id="42"/>
+    <link id="43"/>
+  </Node>
+  <Node height="0.0" id="44" x="730.0" y="100.0">
+    <link id="45"/>
+    <link id="47"/>
+  </Node>
+  <Node height="0.0" id="46" x="760.0" y="100.0">
+    <link id="47"/>
+    <link id="49"/>
+  </Node>
+  <Node height="0.0" id="48" x="790.0" y="100.0">
+    <link id="49"/>
+    <link id="51"/>
+  </Node>
+  <Node height="0.0" id="50" x="820.0" y="100.0">
+    <link id="51"/>
+    <link id="53"/>
+  </Node>
+  <Node height="0.0" id="52" x="850.0" y="100.0">
+    <link id="53"/>
+    <link id="55"/>
+  </Node>
+  <Node height="0.0" id="54" x="880.0" y="100.0">
+    <link id="55"/>
+    <link id="57"/>
+  </Node>
+  <Node height="0.0" id="56" x="910.0" y="100.0">
+    <link id="57"/>
+    <link id="58"/>
+  </Node>
+  <Node height="0.0" id="59" x="970.0" y="100.0">
+    <link id="60"/>
+    <link id="62"/>
+  </Node>
+  <Node height="0.0" id="61" x="1000.0" y="100.0">
+    <link id="62"/>
+    <link id="64"/>
+  </Node>
+  <Node height="0.0" id="63" x="1030.0" y="100.0">
+    <link id="64"/>
+    <link id="66"/>
+  </Node>
+  <Node height="0.0" id="65" x="1060.0" y="100.0">
+    <link id="66"/>
+    <link id="68"/>
+  </Node>
+  <Node height="0.0" id="67" x="1090.0" y="100.0">
+    <link id="68"/>
+    <link id="70"/>
+  </Node>
+  <Node height="0.0" id="69" x="1120.0" y="100.0">
+    <link id="70"/>
+    <link id="72"/>
+  </Node>
+  <Node height="0.0" id="71" x="1150.0" y="100.0">
+    <link id="72"/>
+    <link id="73"/>
+  </Node>
+  <Link id="8" from="1" to="7" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="10" from="7" to="9" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="12" from="9" to="11" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="14" from="11" to="13" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="16" from="13" to="15" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="18" from="15" to="17" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="20" from="17" to="19" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="21" from="19" to="2" length="30.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="23" from="2" to="22" length="30.0" width="4.0">
+  </Link>
+  <Link id="25" from="22" to="24" length="30.0" width="4.0">
+  </Link>
+  <Link id="27" from="24" to="26" length="30.0" width="4.0">
+  </Link>
+  <Link id="29" from="26" to="28" length="30.0" width="4.0">
+  </Link>
+  <Link id="31" from="28" to="30" length="30.0" width="4.0">
+  </Link>
+  <Link id="33" from="30" to="32" length="30.0" width="4.0">
+  </Link>
+  <Link id="35" from="32" to="34" length="30.0" width="4.0">
+  </Link>
+  <Link id="36" from="34" to="3" length="30.0" width="4.0">
+  </Link>
+  <Link id="38" from="3" to="37" length="30.0" width="2.0">
+  </Link>
+  <Link id="40" from="37" to="39" length="30.0" width="2.0">
+  </Link>
+  <Link id="42" from="39" to="41" length="30.0" width="2.0">
+  </Link>
+  <Link id="43" from="41" to="4" length="30.0" width="2.0">
+  </Link>
+  <Link id="45" from="4" to="44" length="30.0" width="4.0">
+  </Link>
+  <Link id="47" from="44" to="46" length="30.0" width="4.0">
+  </Link>
+  <Link id="49" from="46" to="48" length="30.0" width="4.0">
+  </Link>
+  <Link id="51" from="48" to="50" length="30.0" width="4.0">
+  </Link>
+  <Link id="53" from="50" to="52" length="30.0" width="4.0">
+  </Link>
+  <Link id="55" from="52" to="54" length="30.0" width="4.0">
+  </Link>
+  <Link id="57" from="54" to="56" length="30.0" width="4.0">
+  </Link>
+  <Link id="58" from="56" to="5" length="30.0" width="4.0">
+  </Link>
+  <Link id="60" from="5" to="59" length="30.0" width="4.0">
+  </Link>
+  <Link id="62" from="59" to="61" length="30.0" width="4.0">
+  </Link>
+  <Link id="64" from="61" to="63" length="30.0" width="4.0">
+  </Link>
+  <Link id="66" from="63" to="65" length="30.0" width="4.0">
+  </Link>
+  <Link id="68" from="65" to="67" length="30.0" width="4.0">
+  </Link>
+  <Link id="70" from="67" to="69" length="30.0" width="4.0">
+  </Link>
+  <Link id="72" from="69" to="71" length="30.0" width="4.0">
+  </Link>
+  <Link id="73" from="71" to="6" length="30.0" width="4.0">
+  </Link>
+</Group>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group defaultHeight="0.0" id="1942067651" imageFileName="/Users/tkokada/Documents/Programs/netmas/sample/gridBridge//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>ROOT</tag>
+  <Node height="0.0" id="1" x="0.0" y="0.0">
+    <tag>ROOT-N1</tag>
+    <tag>EXIT</tag>
+    <tag>WEST_STATION_NODES</tag>
+    <tag>WEST_STATION_N_NODES</tag>
+    <link id="461019934"/>
+    <link id="883539414"/>
+  </Node>
+  <Node height="0.0" id="2" x="20.0" y="0.0">
+    <tag>ROOT-N2</tag>
+    <link id="461019934"/>
+    <link id="1796393308"/>
+    <link id="32960449"/>
+  </Node>
+  <Node height="0.0" id="3" x="40.0" y="0.0">
+    <tag>ROOT-N3</tag>
+    <link id="1796393308"/>
+    <link id="302612529"/>
+    <link id="1334889491"/>
+  </Node>
+  <Node height="0.0" id="4" x="60.0" y="0.0">
+    <tag>ROOT-N4</tag>
+    <link id="1977568317"/>
+    <link id="1900608570"/>
+    <link id="1169858013"/>
+  </Node>
+  <Node height="0.0" id="5" x="80.0" y="0.0">
+    <tag>ROOT-N5</tag>
+    <link id="1977568317"/>
+    <link id="1942886320"/>
+    <link id="55692825"/>
+  </Node>
+  <Node height="0.0" id="6" x="100.0" y="0.0">
+    <tag>ROOT-N6</tag>
+    <link id="1942886320"/>
+    <link id="1090594395"/>
+    <link id="1756146053"/>
+  </Node>
+  <Node height="0.0" id="7" x="120.0" y="0.0">
+    <tag>ROOT-N7</tag>
+    <link id="1090594395"/>
+    <link id="1049373039"/>
+    <link id="1008537831"/>
+  </Node>
+  <Node height="0.0" id="29" x="140.0" y="0.0">
+    <tag>ROOT-N29</tag>
+    <tag>EAST_STATION_NODES</tag>
+    <tag>EAST_STATION_N_NODES</tag>
+    <link id="1008537831"/>
+    <link id="2045449211"/>
+  </Node>
+  <Node height="0.0" id="8" x="0.0" y="20.0">
+    <tag>ROOT-N8</tag>
+    <tag>WEST_STATION_NODES</tag>
+    <tag>WEST_STATION_M_NODES</tag>
+    <link id="565038473"/>
+    <link id="883539414"/>
+    <link id="788133850"/>
+  </Node>
+  <Node height="0.0" id="9" x="20.0" y="20.0">
+    <tag>ROOT-N9</tag>
+    <link id="565038473"/>
+    <link id="1231865386"/>
+    <link id="32960449"/>
+    <link id="2141793623"/>
+  </Node>
+  <Node height="0.0" id="10" x="40.0" y="20.0">
+    <tag>ROOT-N10</tag>
+    <link id="1231865386"/>
+    <link id="1515318193"/>
+    <link id="302612529"/>
+    <link id="537248703"/>
+  </Node>
+  <Node height="0.0" id="11" x="60.0" y="20.0">
+    <tag>ROOT-N11</tag>
+    <link id="1515318193"/>
+    <link id="1168920600"/>
+    <link id="1900608570"/>
+    <link id="1503310888"/>
+  </Node>
+  <Node height="0.0" id="12" x="80.0" y="20.0">
+    <tag>ROOT-N12</tag>
+    <link id="1168920600"/>
+    <link id="55692825"/>
+    <link id="1376387557"/>
+    <link id="1321017315"/>
+  </Node>
+  <Node height="0.0" id="13" x="100.0" y="20.0">
+    <tag>ROOT-N13</tag>
+    <link id="1619499603"/>
+    <link id="1756146053"/>
+    <link id="82848735"/>
+    <link id="9463651"/>
+  </Node>
+  <Node height="0.0" id="14" x="120.0" y="20.0">
+    <tag>ROOT-N14</tag>
+    <link id="1619499603"/>
+    <link id="1049373039"/>
+    <link id="1192263676"/>
+    <link id="1576851070"/>
+  </Node>
+  <Node height="0.0" id="30" x="140.0" y="20.0">
+    <tag>ROOT-N30</tag>
+    <tag>EAST_STATION_NODES</tag>
+    <tag>EAST_STATION_M_NODES</tag>
+    <link id="2045449211"/>
+    <link id="1576851070"/>
+    <link id="1448253377"/>
+  </Node>
+  <Node height="0.0" id="15" x="0.0" y="40.0">
+    <tag>ROOT-N15</tag>
+    <tag>WEST_STATION_NODES</tag>
+    <tag>WEST_STATION_M_NODES</tag>
+    <link id="1230473868"/>
+    <link id="788133850"/>
+    <link id="1214097204"/>
+  </Node>
+  <Node height="0.0" id="16" x="20.0" y="40.0">
+    <tag>ROOT-N16</tag>
+    <link id="1230473868"/>
+    <link id="289671356"/>
+    <link id="2141793623"/>
+    <link id="1669291819"/>
+  </Node>
+  <Node height="0.0" id="17" x="40.0" y="40.0">
+    <tag>ROOT-N17</tag>
+    <link id="289671356"/>
+    <link id="537248703"/>
+    <link id="1216121222"/>
+    <link id="368941684"/>
+  </Node>
+  <Node height="0.0" id="18" x="60.0" y="40.0">
+    <tag>ROOT-N18</tag>
+    <link id="1968201728"/>
+    <link id="1503310888"/>
+    <link id="1419995664"/>
+    <link id="1579457336"/>
+  </Node>
+  <Node height="0.0" id="19" x="80.0" y="40.0">
+    <tag>ROOT-N19</tag>
+    <link id="1968201728"/>
+    <link id="1879936978"/>
+    <link id="1376387557"/>
+    <link id="1912925177"/>
+  </Node>
+  <Node height="0.0" id="20" x="100.0" y="40.0">
+    <tag>ROOT-N20</tag>
+    <link id="1879936978"/>
+    <link id="2078348934"/>
+    <link id="82848735"/>
+    <link id="1290623279"/>
+  </Node>
+  <Node height="0.0" id="21" x="120.0" y="40.0">
+    <tag>ROOT-N21</tag>
+    <link id="2078348934"/>
+    <link id="1192263676"/>
+    <link id="1277959711"/>
+    <link id="1311619253"/>
+  </Node>
+  <Node height="0.0" id="31" x="140.0" y="40.0">
+    <tag>ROOT-N31</tag>
+    <tag>EAST_STATION_NODES</tag>
+    <tag>EAST_STATION_M_NODES</tag>
+    <link id="1311619253"/>
+    <link id="347275233"/>
+    <link id="1448253377"/>
+  </Node>
+  <Node height="0.0" id="22" x="0.0" y="60.0">
+    <tag>ROOT-N22</tag>
+    <tag>WEST_STATION_NODES</tag>
+    <tag>WEST_STATION_S_NODES</tag>
+    <link id="1512674572"/>
+    <link id="1214097204"/>
+  </Node>
+  <Node height="0.0" id="23" x="20.0" y="60.0">
+    <tag>ROOT-N23</tag>
+    <link id="1512674572"/>
+    <link id="1259032496"/>
+    <link id="1669291819"/>
+  </Node>
+  <Node height="0.0" id="24" x="40.0" y="60.0">
+    <tag>ROOT-N24</tag>
+    <link id="1259032496"/>
+    <link id="2085140313"/>
+    <link id="1216121222"/>
+  </Node>
+  <Node height="0.0" id="25" x="60.0" y="60.0">
+    <tag>ROOT-N25</tag>
+    <link id="2085140313"/>
+    <link id="870888708"/>
+    <link id="1419995664"/>
+  </Node>
+  <Node height="0.0" id="26" x="80.0" y="60.0">
+    <tag>ROOT-N26</tag>
+    <link id="870888708"/>
+    <link id="1912925177"/>
+    <link id="1256314383"/>
+  </Node>
+  <Node height="0.0" id="27" x="100.0" y="60.0">
+    <tag>ROOT-N27</tag>
+    <link id="1263638645"/>
+    <link id="1290623279"/>
+    <link id="551452670"/>
+  </Node>
+  <Node height="0.0" id="28" x="120.0" y="60.0">
+    <tag>ROOT-N28</tag>
+    <link id="1263638645"/>
+    <link id="1277959711"/>
+    <link id="1652617277"/>
+  </Node>
+  <Node height="0.0" id="32" x="140.0" y="60.0">
+    <tag>ROOT-N32</tag>
+    <tag>EAST_STATION_NODES</tag>
+    <tag>EAST_STATION_S_NODES</tag>
+    <link id="1652617277"/>
+    <link id="347275233"/>
+  </Node>
+  <Node height="0.0" id="33" x="50.0" y="0.0">
+    <tag>ROOT-N33</tag>
+    <tag>POINT_A</tag>
+    <link id="1334889491"/>
+    <link id="1169858013"/>
+  </Node>
+  <Node height="0.0" id="34" x="90.0" y="20.0">
+    <tag>ROOT-N34</tag>
+    <tag>POINT_B</tag>
+    <link id="1321017315"/>
+    <link id="9463651"/>
+  </Node>
+  <Node height="0.0" id="35" x="50.0" y="40.0">
+    <tag>ROOT-N35</tag>
+    <tag>POINT_C</tag>
+    <link id="1579457336"/>
+    <link id="368941684"/>
+  </Node>
+  <Node height="0.0" id="36" x="90.0" y="60.0">
+    <tag>ROOT-N36</tag>
+    <tag>POINT_D</tag>
+    <link id="1256314383"/>
+    <link id="551452670"/>
+  </Node>
+  <Link from="1" id="461019934" length="20.0" to="2" width="2.0"/>
+  <Link from="2" id="1796393308" length="20.0" to="3" width="2.0"/>
+  <Link from="4" id="1977568317" length="20.0" to="5" width="2.0">
+    <tag>ONE-WAY-NEGATIVE</tag>
+  </Link>
+  <Link from="5" id="1942886320" length="20.0" to="6" width="2.0"/>
+  <Link from="6" id="1090594395" length="20.0" to="7" width="2.0"/>
+  <Link from="8" id="565038473" length="20.0" to="9" width="2.0"/>
+  <Link from="9" id="1231865386" length="20.0" to="10" width="2.0"/>
+  <Link from="10" id="1515318193" length="20.0" to="11" width="2.0"/>
+  <Link from="11" id="1168920600" length="20.0" to="12" width="2.0">
+    <tag>ONE-WAY-POSITIVE</tag>
+  </Link>
+  <Link from="13" id="1619499603" length="20.0" to="14" width="2.0"/>
+  <Link from="15" id="1230473868" length="20.0" to="16" width="2.0"/>
+  <Link from="16" id="289671356" length="20.0" to="17" width="2.0"/>
+  <Link from="18" id="1968201728" length="20.0" to="19" width="2.0">
+    <tag>ONE-WAY-NEGATIVE</tag>
+  </Link>
+  <Link from="19" id="1879936978" length="20.0" to="20" width="2.0"/>
+  <Link from="20" id="2078348934" length="20.0" to="21" width="2.0"/>
+  <Link from="22" id="1512674572" length="20.0" to="23" width="2.0"/>
+  <Link from="23" id="1259032496" length="20.0" to="24" width="2.0"/>
+  <Link from="24" id="2085140313" length="20.0" to="25" width="2.0"/>
+  <Link from="25" id="870888708" length="20.0" to="26" width="2.0">
+    <tag>ONE-WAY-POSITIVE</tag>
+  </Link>
+  <Link from="27" id="1263638645" length="20.0" to="28" width="2.0"/>
+  <Link from="1" id="883539414" length="20.0" to="8" width="2.0">
+    <tag>WEST_STATION_LINKS</tag>
+  </Link>
+  <Link from="8" id="788133850" length="20.0" to="15" width="2.0">
+    <tag>WEST_STATION_LINKS</tag>
+  </Link>
+  <Link from="15" id="1214097204" length="20.0" to="22" width="2.0">
+    <tag>WEST_STATION_LINKS</tag>
+  </Link>
+  <Link from="2" id="32960449" length="20.0" to="9" width="2.0"/>
+  <Link from="9" id="2141793623" length="20.0" to="16" width="2.0"/>
+  <Link from="16" id="1669291819" length="20.0" to="23" width="2.0"/>
+  <Link from="3" id="302612529" length="20.0" to="10" width="2.0"/>
+  <Link from="10" id="537248703" length="20.0" to="17" width="2.0"/>
+  <Link from="17" id="1216121222" length="20.0" to="24" width="2.0"/>
+  <Link from="4" id="1900608570" length="20.0" to="11" width="2.0"/>
+  <Link from="11" id="1503310888" length="20.0" to="18" width="2.0"/>
+  <Link from="18" id="1419995664" length="20.0" to="25" width="2.0"/>
+  <Link from="5" id="55692825" length="20.0" to="12" width="2.0"/>
+  <Link from="12" id="1376387557" length="20.0" to="19" width="2.0"/>
+  <Link from="6" id="1756146053" length="20.0" to="13" width="2.0"/>
+  <Link from="19" id="1912925177" length="20.0" to="26" width="2.0"/>
+  <Link from="13" id="82848735" length="20.0" to="20" width="2.0"/>
+  <Link from="20" id="1290623279" length="20.0" to="27" width="2.0"/>
+  <Link from="7" id="1049373039" length="20.0" to="14" width="2.0"/>
+  <Link from="14" id="1192263676" length="20.0" to="21" width="2.0"/>
+  <Link from="21" id="1277959711" length="20.0" to="28" width="2.0"/>
+  <Link from="7" id="1008537831" length="20.0" to="29" width="2.0"/>
+  <Link from="29" id="2045449211" length="20.0" to="30" width="2.0">
+    <tag>EAST_STATION_LINKS</tag>
+  </Link>
+  <Link from="14" id="1576851070" length="20.0" to="30" width="2.0"/>
+  <Link from="21" id="1311619253" length="20.0" to="31" width="2.0"/>
+  <Link from="28" id="1652617277" length="20.0" to="32" width="2.0"/>
+  <Link from="32" id="347275233" length="20.0" to="31" width="2.0">
+    <tag>EAST_STATION_LINKS</tag>
+  </Link>
+  <Link from="31" id="1448253377" length="20.0" to="30" width="2.0">
+    <tag>EAST_STATION_LINKS</tag>
+  </Link>
+  <Link from="33" id="1334889491" length="10.0" to="3" width="2.0"/>
+  <Link from="4" id="1169858013" length="10.0" to="33" width="2.0"/>
+  <Link from="12" id="1321017315" length="10.0" to="34" width="2.0"/>
+  <Link from="34" id="9463651" length="10.0" to="13" width="2.0"/>
+  <Link from="18" id="1579457336" length="10.0" to="35" width="2.0"/>
+  <Link from="35" id="368941684" length="10.0" to="17" width="2.0"/>
+  <Link from="26" id="1256314383" length="10.0" to="36" width="2.0"/>
+  <Link from="36" id="551452670" length="10.0" to="27" width="2.0"/>
+</Group>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group defaultHeight="0.0" id="0" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>root</tag>
+  <Node height="0.0" id="1" x="100.0" y="100.0">
+    <link id="8"/>
+  </Node>
+  <Node height="0.0" id="2" x="340.0" y="100.0">
+    <link id="9"/>
+    <link id="11"/>
+  </Node>
+  <Node height="0.0" id="3" x="580.0" y="100.0">
+    <link id="12"/>
+    <link id="13"/>
+  </Node>
+  <Node height="0.0" id="4" x="700.0" y="100.0">
+    <link id="13"/>
+    <link id="15"/>
+  </Node>
+  <Node height="0.0" id="5" x="940.0" y="100.0">
+    <link id="16"/>
+    <link id="18"/>
+  </Node>
+  <Node height="0.0" id="6" x="1180.0" y="100.0">
+    <tag>N6</tag>
+    <tag>EXIT</tag>
+    <link id="19"/>
+  </Node>
+  <Node height="0.0" id="7" x="220.0" y="100.0">
+    <link id="8"/>
+    <link id="9"/>
+  </Node>
+  <Node height="0.0" id="10" x="460.0" y="100.0">
+    <link id="11"/>
+    <link id="12"/>
+  </Node>
+  <Node height="0.0" id="14" x="820.0" y="100.0">
+    <link id="15"/>
+    <link id="16"/>
+  </Node>
+  <Node height="0.0" id="17" x="1060.0" y="100.0">
+    <link id="18"/>
+    <link id="19"/>
+  </Node>
+  <Link id="8" from="1" to="7" length="120.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="9" from="7" to="2" length="120.0" width="4.0">
+    <tag>L1</tag>
+  </Link>
+  <Link id="11" from="2" to="10" length="120.0" width="4.0">
+  </Link>
+  <Link id="12" from="10" to="3" length="120.0" width="4.0">
+  </Link>
+  <Link id="13" from="3" to="4" length="120.0" width="2.0">
+  </Link>
+  <Link id="15" from="4" to="14" length="120.0" width="4.0">
+  </Link>
+  <Link id="16" from="14" to="5" length="120.0" width="4.0">
+  </Link>
+  <Link id="18" from="5" to="17" length="120.0" width="4.0">
+  </Link>
+  <Link id="19" from="17" to="6" length="120.0" width="4.0">
+  </Link>
+</Group>

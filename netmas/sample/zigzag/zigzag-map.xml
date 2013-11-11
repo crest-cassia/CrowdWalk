@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group GenerationSettings="sample/gen-zigzag.csv" PollutionSettings="sample/gas.csv" ResponseSettings="sample/scenario.csv" defaultHeight="0.0" id="1157057489" imageFileName="sample/zigzag//sample//sample//sample//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>ROOT</tag>
+  <Node height="0.0" id="1158011142" x="42.0" y="312.0">
+    <tag>SECOND_GOAL</tag>
+    <link id="1206493198"/>
+  </Node>
+  <Node height="0.0" id="1422565752" x="74.0" y="312.0">
+    <tag>C1</tag>
+    <link id="1206493198"/>
+    <link id="1387825605"/>
+    <link id="1906642083"/>
+  </Node>
+  <Link from="1158011142" id="1206493198" length="32.0" to="1422565752" width="1.0">
+    <tag>START_LINK</tag>
+  </Link>
+  <Node height="0.0" id="1371658030" x="97.0" y="283.0">
+    <tag>U1-2</tag>
+    <link id="1387825605"/>
+    <link id="1837390981"/>
+  </Node>
+  <Link from="1422565752" id="1387825605" length="37.013511046643494" to="1371658030" width="1.0">
+    <tag>U-1</tag>
+  </Link>
+  <Node height="0.0" id="2076722567" x="123.0" y="309.0">
+    <tag>C2</tag>
+    <link id="1837390981"/>
+    <link id="974111862"/>
+    <link id="1011821777"/>
+    <link id="867915009"/>
+  </Node>
+  <Link from="1371658030" id="1837390981" length="36.76955262170047" to="2076722567" width="1.0">
+    <tag>U-2</tag>
+  </Link>
+  <Node height="0.0" id="1328510409" x="151.0" y="279.0">
+    <link id="974111862"/>
+    <link id="806060804"/>
+  </Node>
+  <Link from="2076722567" id="974111862" length="41.036569057366385" to="1328510409" width="1.0">
+    <tag>U-3</tag>
+  </Link>
+  <Node height="0.0" id="563247236" x="176.0" y="307.0">
+    <tag>C3</tag>
+    <link id="806060804"/>
+    <link id="1726451517"/>
+    <link id="1648176734"/>
+    <link id="1220889449"/>
+  </Node>
+  <Link from="1328510409" id="806060804" length="37.53664875824692" to="563247236" width="1.0">
+    <tag>U-4</tag>
+  </Link>
+  <Node height="0.0" id="1612406616" x="209.0" y="279.0">
+    <link id="1726451517"/>
+    <link id="1918871964"/>
+  </Node>
+  <Link from="563247236" id="1726451517" length="43.278170016764804" to="1612406616" width="1.0"/>
+  <Node height="0.0" id="359591275" x="239.0" y="304.0">
+    <tag>C4</tag>
+    <link id="1918871964"/>
+    <link id="747549474"/>
+    <link id="1790836343"/>
+    <link id="2144131552"/>
+  </Node>
+  <Link from="1612406616" id="1918871964" length="39.05124837953327" to="359591275" width="1.0"/>
+  <Node height="0.0" id="657121287" x="267.0" y="276.0">
+    <link id="747549474"/>
+    <link id="194928501"/>
+  </Node>
+  <Link from="359591275" id="747549474" length="39.59797974644666" to="657121287" width="1.0"/>
+  <Node height="0.0" id="945372371" x="296.0" y="300.0">
+    <tag>C5</tag>
+    <link id="194928501"/>
+    <link id="2079050790"/>
+    <link id="294170153"/>
+    <link id="2010597647"/>
+  </Node>
+  <Link from="657121287" id="194928501" length="37.64306044943742" to="945372371" width="1.0"/>
+  <Node height="0.0" id="57702479" x="319.0" y="272.0">
+    <link id="2079050790"/>
+    <link id="2066487465"/>
+  </Node>
+  <Link from="945372371" id="2079050790" length="36.235341863986875" to="57702479" width="1.0"/>
+  <Node height="0.0" id="2059983664" x="348.0" y="300.0">
+    <tag>C6</tag>
+    <link id="2066487465"/>
+    <link id="1336081569"/>
+    <link id="2133065418"/>
+    <link id="1161176751"/>
+  </Node>
+  <Link from="57702479" id="2066487465" length="40.311288741492746" to="2059983664" width="1.0"/>
+  <Node height="0.0" id="1825510335" x="368.0" y="282.0">
+    <link id="1336081569"/>
+    <link id="1167432404"/>
+  </Node>
+  <Link from="2059983664" id="1336081569" length="26.90724809414742" to="1825510335" width="1.0"/>
+  <Node height="0.0" id="439066015" x="381.0" y="296.0">
+    <tag>C7</tag>
+    <link id="1167432404"/>
+    <link id="1571135628"/>
+    <link id="1256057985"/>
+    <link id="1364406870"/>
+  </Node>
+  <Link from="1825510335" id="1167432404" length="19.1049731745428" to="439066015" width="1.0"/>
+  <Node height="0.0" id="623516360" x="411.0" y="262.0">
+    <link id="1571135628"/>
+    <link id="1157917938"/>
+  </Node>
+  <Link from="439066015" id="1571135628" length="45.34313619501854" to="623516360" width="1.0"/>
+  <Node height="0.0" id="1631932729" x="445.0" y="295.0">
+    <tag>C8</tag>
+    <link id="1157917938"/>
+    <link id="64500867"/>
+    <link id="960144748"/>
+  </Node>
+  <Link from="623516360" id="1157917938" length="47.38143096192854" to="1631932729" width="1.0"/>
+  <Node height="0.0" id="39128870" x="412.0" y="311.0">
+    <link id="64500867"/>
+    <link id="1256057985"/>
+  </Node>
+  <Link from="1631932729" id="64500867" length="36.6742416417845" to="39128870" width="1.0"/>
+  <Link from="39128870" id="1256057985" length="34.438350715445125" to="439066015" width="1.0"/>
+  <Node height="0.0" id="1817289149" x="367.0" y="342.0">
+    <link id="1364406870"/>
+    <link id="2133065418"/>
+  </Node>
+  <Link from="439066015" id="1364406870" length="48.08326112068523" to="1817289149" width="1.0"/>
+  <Link from="1817289149" id="2133065418" length="46.09772228646444" to="2059983664" width="1.0"/>
+  <Node height="0.0" id="119211529" x="321.0" y="322.0">
+    <link id="1161176751"/>
+    <link id="294170153"/>
+  </Node>
+  <Link from="2059983664" id="1161176751" length="34.828149534535996" to="119211529" width="1.0"/>
+  <Link from="119211529" id="294170153" length="33.301651610693426" to="945372371" width="1.0"/>
+  <Node height="0.0" id="2079491786" x="269.0" y="326.0">
+    <link id="2010597647"/>
+    <link id="1790836343"/>
+  </Node>
+  <Link from="945372371" id="2010597647" length="37.48332962798263" to="2079491786" width="1.0"/>
+  <Link from="2079491786" id="1790836343" length="37.20215047547655" to="359591275" width="1.0"/>
+  <Node height="0.0" id="408512707" x="205.0" y="323.0">
+    <link id="2144131552"/>
+    <link id="1648176734"/>
+  </Node>
+  <Link from="359591275" id="2144131552" length="38.948684188300895" to="408512707" width="1.0"/>
+  <Link from="408512707" id="1648176734" length="33.12099032335839" to="563247236" width="1.0"/>
+  <Node height="0.0" id="1670443857" x="150.0" y="325.0">
+    <link id="1220889449"/>
+    <link id="1011821777"/>
+  </Node>
+  <Link from="563247236" id="1220889449" length="31.622776601683793" to="1670443857" width="1.0">
+    <tag>L-4</tag>
+  </Link>
+  <Link from="1670443857" id="1011821777" length="31.38470965295043" to="2076722567" width="1.0">
+    <tag>L-3</tag>
+  </Link>
+  <Node height="0.0" id="1917596315" x="98.0" y="331.0">
+    <tag>L1-2</tag>
+    <link id="867915009"/>
+    <link id="1906642083"/>
+  </Node>
+  <Link from="2076722567" id="867915009" length="33.301651610693426" to="1917596315" width="1.0">
+    <tag>L-2</tag>
+  </Link>
+  <Link from="1917596315" id="1906642083" length="30.610455730027933" to="1422565752" width="1.0">
+    <tag>L-1</tag>
+  </Link>
+  <Node height="0.0" id="1738563461" x="507.0" y="300.0">
+    <tag>GOAL_NODE</tag>
+    <tag>EXIT</tag>
+    <link id="960144748"/>
+  </Node>
+  <Link from="1738563461" id="960144748" length="62.20128616033595" to="1631932729" width="1.0">
+    <tag>SECOND_START</tag>
+  </Link>
+</Group>

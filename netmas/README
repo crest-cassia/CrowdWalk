@@ -1,0 +1,530 @@
+# README
+
+                           README file for CrowdWalk
+
+===============================================================================
+1. Intro
+
+
+
+===============================================================================
+2. Installation
+
+-------------------------------------------------------------------------------
+2.1. Requirements to run
+The required software to run CrowdWalk is Java and Java3D. You should install 
+java virtual machine higher than jdk1.6. Java3D libraries are placed on libs 
+directory. But the requirements every OS are different. If you are using Mac 
+OS X, run installation package place on libs/archives. Mac OS X has Java3D 
+libraries as default. These default libraries are old version, so please move 
+them from path directory.
+If you are not sure about what Java3D libraries should be used, please check 
+quickstart.sh script.
+
+2.2. Build with Gradle
+We assume that CrowdWalk users build on terminal or eclipse. We describe the 
+usage to build it on them.
+
+2.2.1. Build on terminal.
+If you build CrowdWalk on terminal, you should install groovy and gradle. 
+The build.gradle file on top directory is the build file for gradle. If you 
+install gradle, you just type as follow:
+
+    > gradle
+
+Mac OS X has some default Java3D libraries. When you run the gradle command,
+it may fail with these default old libraries. To avoid the fail, please move
+or remove the old libraries in /Library/Java/Extensions and 
+/System/Library/Java/Extensions.
+
+
+2.2.2. Build on Eclipse
+If you build CrowdWalk on Eclipse, you should install groovy and gradle to 
+be used by Eclipse. Eclipse supports to install new software with GUI. Install 
+Groovy and Gradle from the menu bar [Help] > [Install New Software].
+
+    Groovy: http://groovy.codehaus.org/Eclipse+Plugin
+    Gradle: http://www.breskeby.com/downloads/gradle/eclipse/update/
+
+Java3D libraries are placed on libs directory, so please set Build path for 
+your OS and an architecture.
+
+Followings are the installation flow with Eclipse 4.2 Juno on Mac OS X 10.8.
+
+    1.  Open an Eclipse.
+    2.  From the menu bar, select [File] > [New] > [Java Project].
+    3.  Uncheck [Use default location] checkbox. Click [Browse] button and 
+        select unarchived CrowdWalk directory.
+    4.  Click [Finish] and import the files.
+    5.  If you have not installed Groovy or Gradle, install them.
+    6.  From the menu bar, select [Help] > [Install New Software...].
+    7.  Type above Groovy url into [Work with:] text box and click [add..] 
+        button.
+    8.  Check [Groovy-Elicpse(Required)] checkbox and click [Next] button.
+    9.  Check [I accept the terms of the license agreemants] checkbox and click 
+        [Finish] button.
+    10. Do a same process for Gradle.
+
+    11. Next configure build environment. From the menu bar, select [Run] > 
+        [External Tools] > [External Tools Configurations...].
+    12. Select [Program] and create a New configuration.
+    13. In [Main] tab, set the path of Gradle to [Location:] text box.
+    14. Set the CrowdWalk top directory to [Working Directory:] text box.
+    15. Click [Apply] button and test to [Run].
+
+    16. Finally configure run environment. From the menu bar, select [Run] >
+        [Run Configurations...].
+    17. Select [Java Application] and create a New configuration.
+    18. Set a name to [Name:] text box, set the CrowdWalk project to [Project:]
+        text box, set "main" class to [Main class:] text box.
+    19. In [Arguments] tab, set the simulation properties file: 
+        "sample/4bridges/properties-4bridges-density.xml" to [Program arguments]
+        text box. Set the Java-VM argument: "-Djava.library.path=libs/macosx" 
+        to [VM arguments:] text box.
+    20. OK, apply the settings with [Apply] button and [Run]!
+
+===============================================================================
+!!! Caution: currently ant build is not supported! !!!
+===============================================================================
+2.x. create jar by using ant
+Basically, you can use NetMAS.jar and execute any programs. But if you want to 
+modify the source code and compile it, It's easy to use ant. In <conf> 
+directory, some configuration files are included. If you want to create simple 
+jar which includes all programs, at first please copy two configuration files:
+<conf/ant/build.xml, conf/ant/build.properties> into $(NETMAS) directory 
+and type in terminal as follows:
+
+  >  ant
+
+If you want to use your build file, please use -f option to specify the file.
+
+  > ant -f build.xml
+
+Then ant create $(NETMAS)/bin directory and compile all java files in 
+$(NETMAS)/src directory, and finally generate NetMAS.jar in $(NETMAS) directory.
+Additional supported ant commands are as follows:
+
+  > ant build
+  > ant compile
+  > ant jar
+  > ant javadoc
+  > ant clean
+  > ant rebuild
+  > ant run
+
+
+===============================================================================
+3. Quick start
+
+-------------------------------------------------------------------------------
+3.1. Quick start script
+Simply run the quickstart.sh script. The script requires a properties file. The
+properties files are placed on sample directory. Please check the directory and
+the settings every simulations.
+For example, you want to run four bridges scenario, type as follows:
+
+    > sh quickstart.sh sample/4bridges/properties-4bridges-density.xml
+
+3.2. Simple usage on terminal
+If you build CrowdWalk with gradle, the jar file are placed on build/libs 
+directory. So you can simply execute the program as follows:
+
+  > java -cp build/libs/netmas.jar $(PROGRAM_CLASS_NAME)
+
+If you want to execute NetworkMapEditor, please type in termial as follows:
+
+  > java -cp build/libs/netmas.jar nodagumi.ananPJ.NetworkMapEditor
+
+Of couse, you need to set the paths (JAVA_HOME, CLASSPATH, LD_LIBRARY_PATH).
+If you are not sure them, please check the quickstart.sh script.
+
+
+===============================================================================
+4. Specification
+
+-------------------------------------------------------------------------------
+4.1. Log file.
+CrowdWalk generates some log files, which describe current states of a
+simulation.
+
+4.1.1. Time series log file.
+Time series log file describes the status of agents and links of a simulation.
+Users can save the logs with editing the properties file.
+
+Entry key: time_series_log,             Value: true or false
+Entry key: time_series_log_path,        Value: a directory to save the log.
+Entry key: time_series_log_interval,    Value: interval seconds to save the log.
+
+The log files are saved every log interval in the time series directory. Each
+log file format consits of agent lines and link lines. Agent line and link line
+include the information as follows:
+
+agent:  agent,$ID,$EVACUATED,$SPEED,$DNEISTY,$POSITION
+link:   link,$ID,$POSITIVE_AGENT,$NEGATIVE_AGENT,$DENSITY
+
+    $ID:                identifier
+    $EVACUATED:         evacuated or not? with true or false.
+    $SPEED:             agent speed (meter / sec)
+    $DENSITY:           pedestrian density around the agents (number of
+                        pedestrians / meter^2)
+    $POSITION:          One dimensional position on the link (meter).
+    $POSITIVE_AGENT:    the number of agents with positive direction.
+    $NEGATIVE_AGENT:    the number of agents with negative direction.
+    $DENSITY:           pedestiran density on the link (number of pedestirians /
+                        meter^2)
+
+If you want to know more details, please check saveTimeSeriesLog method
+in EvacluationSimulator.java file.
+
+4.2. place nodes and links
+This functionality is used on NetworkMapEditor to place multiple nodes and 
+links at once. On EditorFrame (openned frame by double-click some tree icons 
+in Browser tab), if you select [Mode] > [Place nodes and links] in menu, you 
+can place a first node with double-click. After that, nodes and links are 
+placed every click. Finally final node is placed and finished with 
+double-click.
+
+4.3. Inputs.
+
+4.3.1. Properties file.
+
+4.3.2. Map file.
+
+4.3.3. Generation file.
+
+A generation file defines WHEN, WHERE agents are placed. Moreover goals and
+routes of the agents can be described. Each rule is described in one line. Then
+description rule supports randomness and repetition.
+
+- Generic description rule:
+
+$RULE_STRING,$TAG,$START_TIME[,$END_TIME,$EVERY],$DURATION,$TOTAL[,$EACH]
+,$EXIT_TAG[,$ROUTE...]
+
+    - Rule strings:
+    $RULE_STRING: defines HOW generates agents. The values are EACH, RANDOM,
+    EACHRANDOM, STAFF, RANDOMALL, TIMEEVERY, LINER_GENERATE_AGENT_RATIO.
+        $EACH:          generates agents for each tagged links.
+        $RANDOM:        generates agents randomly for the tagged links.
+        $EACHRANDOM:    generates agents randomly for each tagged links. The max
+                        number of agents on a link is limitted with $EACH.
+        $STAFF:         generates a navigation staff to navigate $EXIT_TAG
+                        through $ROUTE.
+        $RANDOMALL:     generates agents randomly for the tagged links and
+                        select route randomly too.
+        $TIMEEVERY:     from $START_TIME to $END_TIME, generates agents every
+                        $EVERY seconds.
+        $LINER_GENERATE_AGENT_RATIO:
+                        changes the $TOTAL number of agents with multiplying
+                        this value. This rule string has specific description
+                        rule. Please check examples.
+
+    - The other parameters:
+
+    $TAG:           the tag that agents are generated.
+    $START_TIME:    WHEN the agents are generated.
+    $END_TIME:      used by TIMEEVERY rule. When the agents generation is
+                    finished.
+    $EVERY:         used by TIMEEVERY rule. It defines the duration, how many
+                    seconds the agents are generated every.
+    $DURATION:      duration of generation agents. In $DURATION time, $TOTAL
+                    number of agents are generated.
+    $TOTAL:         the number of generated agents.
+    $EACH:          used by EACHRANDOM. The max number of agents generated on a
+                    link.
+    $EXIT_TAG:      the goal of generated agents.
+    $ROUTE:         routing points that generated agents pass through.
+
+- Examples.
+
+EACH,LINK1,18:00:00,60,100,GOAL1
+    Generates 100 agents from 18:00:00 to 18:01:00 on each link LINK1. The goal
+    is set to GOAL1.
+
+RANDOM,LINK1,8:00:00,10,1000,GOAL1,CHECKPOINT
+    Randomly generates 1000 agents from 8:00:00 to 8:00:10 on link LINK1. The
+    goal is set to GOAL1 through CHECKPOINT.
+
+EACHRANDOM,LINK1,9:00:00,30,100,10,GOAL1
+    Randomly genrates 100 agents from 9:00:00 to 9:00:30 on links tagged LINK1.
+    The goal is set ot GOAL1. The max number of agents generated on a link is
+    limitted 10.
+
+RANDOMALL,LINK1,8:00:00,10,1000,GOAL1,CHECKPOINT
+    Randomly generates 1000 agents from 8:00:00 to 8:00:10 on link LINK1. The
+    goal is set to GOAL1 through the one of the randomly selected CHECKPOINT
+    node.
+
+TIMEEVERY,LINK1,18:00:00,19:00:00,60,100,GOAL1
+    Generates 100 agents from 18:00:00 to 19:00:00 every 60 seconds on links
+    LINK1. The goal is set to GOAL1.
+
+LINER_GENERATE_AGENT_RATIO,5.0
+    For all of $TOTAL parameters is multiplied by 5.0.
+
+If you want to know more details, please check AgentGenerationFile.java file.
+
+
+4.3.4. Scenario file.
+4.3.5. Pollution file.
+
+
+4.4. NetmasCuiSimulator
+NetmasCuiSimulator is quite same functionalities with NetworkMapEditor, but does
+not have GUI.
+
+4.5. NetmasSimulationAnalyzer
+NetmasSimulationAnalyzer executes NetmasCuiSimulator in the loop, analyzes the 
+outputs. In the loop, we can determine what, how, and when the variables are 
+changed. These configurations are written in property file.
+
+4.5.1. Input
+Property file.
+
+4.5.2. Output
+The logs in result directory:
+- directory structure
+    +[results directory]
+        +[simulations directory] *
+            - property file
+            - summary.log
+            +[time series directory]
+                - time series log *
+            +[map directory]
+                - map file
+                - gas file
+                - gen file
+                - scenario file
+        - serialized file
+- time series (n.log)
+    - every links
+        - link density
+        - number of agent (positive, negative)
+    - every agents
+        - evacuated or not
+        - density arround agent
+        - agent velocity
+- summary (summary.log)
+    - evacuated agents
+    - average speed
+    - max of link density
+    - max of agent density
+    - average of link density
+    - evaluation value
+- serialized file.
+    To prevent fatal error or halt, simulator saves itself with serialized 
+    file. In property file, the interval which simulator saves it every how 
+    many loops can be specified.
+
+===============================================================================
+5. Snapshot
+
+-------------------------------------------------------------------------------
+5.1 abstract
+Snapshot functionality stores current all states of NetMAS. By using the 
+snapshot, user can restart the simulation on the other environment.
+
+5.x usage
+When you want to store snapshots, just set -s option and set mode.
+
+  > java -cp NetMAS.jar nodagumi.ananPJ.NetMASCUISimulator -s $MODE
+
+Then simulator stores the periodical snapshots with the mode. The mode has 
+three types of functionality such as visualization, all snapshot, all snapshot 
+without gui information.
+
+5.x snapshot format
+
+<snapshotfile>            ::= <snapshot-line>* <eof>
+<snapshot-line>           ::= <snapshot> <eol>
+<snapshot-all>            ::= <class-snapshot-sentence>*
+<class-snapshot-sentence> ::= <class-snapshot> <class-delimiter>
+<class-snapshot>          ::= <subclass-snapshot>*
+<class-delimiter>         ::= ","
+<subclass-snapshot>       ::= <class-snapshot> | <variable-snapshot>
+
+Example:
+<!xml>
+    <val="networkMap" class="NetworkMap" type="instance">
+        <val="nodesSache" class="ArrayList<MapNode>" type="reference">
+            <val="ID" class="int">1</>
+            <val="ID" class="int">2</>
+            <val="ID" class="int">3</>
+        </>
+        <val="filename" class="String">/tmp/hoge.txt</>
+    </>
+    <val="model" class="EvacuationSimulator" type="instance">
+    </>
+</>
+
+
+===============================================================================
+APPENDIX A. Git management by using commands
+
+-------------------------------------------------------------------------------
+A.1. create a new branch
+At first, check current branches on your repository.
+
+  > git branch
+  * master
+
+Now you have only one branch named master. If you want to create a new branch,
+
+  > git branch new_branch
+
+And check current branches again.
+
+  > git branch
+    master
+  * new_branch
+
+A new branch named new_branch is created.
+
+-------------------------------------------------------------------------------
+A.2. upate your modification to a branch
+At first, check current branch.
+
+  > git branch
+  * master
+    new_branch
+
+A---B---C---D master
+        |---a new_branch
+
+Now you work on master, so let's move to new_branch.
+
+  > git checkout new_branch
+  > git branch
+    master
+  * new_branch
+
+Next, commit all updates on new_branch.
+
+  > git commit -a -m "MESSAGES OF UPDATES"
+
+If you created a new file, you need to type following command.
+
+  > git add -A
+  > git commit -a -m "MESSAGES OF UPDATES"
+
+And finally, push committed updates to new_branch repository.
+
+  > git push origin new_branch
+
+A---B---C---D master
+        |---a---b new_branch
+
+
+-------------------------------------------------------------------------------
+A.3. merge master updates to your branch
+Let's assume that you are working on new_branch and you want to apply updates 
+on master. Branch tree is Following:
+
+A---B---C---D---F master
+        |---a---b new_branch
+
+  > git branch
+    master
+  * new_branch
+
+At first, move to master branch and get updates.
+
+  > git checkout master
+  > git pull origin master
+
+Now master is udpated by remote repository. Let's switch to new_branch and
+apply updates on master.
+
+  > git checkout new_branch
+  > git merge master
+
+Finally your new_branch is updated by master as follows:
+
+A---B---C---D---F master
+        |       |----
+        |           |
+        |---a---b---c new_branch
+
+If there are any CONFLICTs between master and your new_branch, you need to fix 
+them.
+
+  > vi $CONFLICT_FILE
+
+There are conflict messages in CONFLICT_FILE, such as follows:
+
+<<<<<<< HEAD:CONFLICT_FILE
+    ...
+======= 
+    ...
+>>>>>>> $HASH_KEYS:CONFLICT_FILE
+
+After applying your modifications and removing the editted comments, commit 
+the merged results.
+
+  > git commit -a -m "MESSAGES OF UPDATES"
+
+
+===============================================================================
+APPENDIX B. Git management by using eclipse
+
+********************************Caution****************************************
+egit includes many bugs... when you will use it and complain about it, you 
+should not use egit...
+*******************************************************************************
+-------------------------------------------------------------------------------
+B.1. update your modification to your branch
+
+At first, confirm your working branch. Branch name can be shown in Package 
+Explorer. If you want to change the branch,
+
+  > [right click on the project] > [Team] > [Switch To] > [new_branch]
+
+Update your modification on local,
+
+  > [right click on the project] > [Team] > [Add]
+  > [right click on the project] > [Team] > [Commit]
+
+Upload your modification on remote,
+
+  > [right click on the project] > [Team] > [Remote] > [Push]
+
+Then a new dialog is opened.
+*** This may be a bug of egit??? ***
+Next, you must select [Custome URI] and input proper settings and [Next].
+From pull down [Source ref:], [Destination ref:] and [Remote ref to delete:] 
+select new_branch.
+
+B.2. apply remote master updates on your branch
+At first, move to master branch.
+
+  > [right click on the project] > [Team] > [Switch To] > [master]
+
+Apply remote master updates on your local master.
+
+  > [right click on the project] > [Team] > [Pull]
+
+Next, move to your branch and merge local master with your local branch.
+
+  > [right click on the project] > [Team] > [Switch To] > [new_branch]
+  > [right click on the project] > [Compare With] > [Branch, Tag, or Reference]
+
+From explorer view, select Remote tracking origin/master. Then you can apply 
+or discard the updates and modifications on compared view.
+
+
+===============================================================================
+APPENDIX C. Troubleshooting.
+
+C.1. Exception: org.apache.xerces.dom.documentimpl.getxmlstandalone()Z
+    Maybe this problem occurs from unexpected xerces.jar. Please check 
+    xerces.jar in classpath or gradle cache.
+
+===============================================================================
+===============================================================================
+===============================================================================
+===============================================================================
+===============================================================================
+===============================================================================
+===============================================================================
+===============================================================================
+

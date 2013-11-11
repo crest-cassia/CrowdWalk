@@ -1,0 +1,19 @@
+# README for sample files
+
+- Abstract
+
+These sample files provide some scenarios every directories. The sample files 
+contains relative path to specify the file path. So please execute the main 
+program on top directory.
+
+
+- Directory structure
+
+    - $SCENARIO_NAME        : scenario name
+    |- gas"*".csv           : pollution gas description
+    |- gen"*".csv           : pedestrian generation description
+    |- map"*".xml           : map description
+    |- properties"*".xml    : simulation properties description
+    |- scenario"*".csv      : simulation scenario description
+    |- camera"*".csv        : view movement description
+

@@ -1,0 +1,13 @@
+Simple diamond map.
+
+- Map
+    Tags on nodes.
+        DIAMOND:    diamond nodes.
+        WEST_EXIT:  west side node.
+        EAST_EXIT:  east side node.
+        EXIT:       west side node.
+    Tags on links.
+        ROAD:       all links.
+        WEST_LINK:  west side link.
+        EAST_LINK:  east side link.
+

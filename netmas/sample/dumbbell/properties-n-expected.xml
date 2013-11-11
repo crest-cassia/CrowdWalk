@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>NetmasCuiSimulator</comment>
+    <entry key="debug">true</entry>
+    <entry key="io_handler_type">none</entry>
+    <!-- buffer|file|pipe|network|server|none -->
+    <entry key="map_file">sample/dumbbell/map-n.xml</entry>
+    <entry key="pollution_file">sample/dumbbell/gas.csv</entry>
+    <entry key="generation_file">sample/dumbbell/gen-n-expected.csv</entry>
+    <entry key="scenario_file">sample/dumbbell/scenario.csv</entry>
+    <entry key="timer_enable">true</entry>
+    <entry key="timer_file">/tmp/timer.log</entry>
+    <entry key="interval">0</entry>
+    <!--entry key="addr"></entry>
+    <entry key="port"></entry-->
+    <!--entry key="serialize_file">/tmp/serialized.xml</entry-->
+    <!--entry key="serialize_interval">60</entry-->
+    <!--entry key="deserialized_file">/tmp/serialized.xml</entry-->
+    <entry key="randseed">2525</entry>
+    <entry key="random_navigation">false</entry>
+    <!--entry key="speed_model">density</entry-->
+    <!--entry key="speed_model">lane</entry-->
+    <entry key="speed_model">expected_density</entry>
+    <entry key="expected_density_speed_model_macro_timestep">10</entry>
+    <entry key="time_series_log">true</entry>
+    <entry key="time_series_log_path">/tmp</entry>
+    <entry key="time_series_log_interval">1</entry>
+    <entry key="loop_count">1</entry>
+    <entry key="exit_count">0</entry>
+    <entry key="all_agent_speed_zero_break">false</entry>
+    <!--entry key="exit_count">1200</entry-->
+</properties>
+

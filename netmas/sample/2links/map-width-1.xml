@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group ResponseSettings="sample/2links/scenario.csv" GenerationSettings="sample/2links/gen.csv" defaultHeight="0.0" id="2054334425" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>root</tag>
+  <Node height="0.0" id="1709008992" x="0.0" y="0.0">
+    <tag>N1</tag>
+    <link id="291427770"/>
+  </Node>
+  <Node height="0.0" id="562206083" x="15.0" y="0.0">
+    <tag>N2</tag>
+    <link id="291427770"/>
+    <link id="622016119"/>
+  </Node>
+  <Node height="0.0" id="1955416023" x="30.0" y="0.0">
+    <tag>N3</tag>
+    <tag>EXIT</tag>
+    <link id="622016119"/>
+  </Node>
+  <Link from="562206083" id="291427770" length="15.0" to="1709008992" width="2.0">
+    <tag>L1</tag>
+  </Link>
+  <Link to="562206083" id="622016119" length="15.0" from="1955416023" width="2.0">
+    <tag>L2</tag>
+  </Link>
+</Group>

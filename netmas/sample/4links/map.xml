@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group defaultHeight="0.0" id="2054334425" imageFileName="/Users/tkokada/Documents/Programs/netmases/works/crowdwalk/sample/4links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>ROOT</tag>
+  <Node height="0.0" id="1" x="0.0" y="0.0">
+    <tag>N1</tag>
+    <link id="101"/>
+  </Node>
+  <Node height="0.0" id="2" x="150.0" y="0.0">
+    <tag>N2</tag>
+    <link id="101"/>
+    <link id="102"/>
+  </Node>
+  <Node height="0.0" id="3" x="150.0" y="150.0">
+    <tag>N3</tag>
+    <tag>SIGNAL</tag>
+    <link id="102"/>
+    <link id="103"/>
+  </Node>
+  <Node height="0.0" id="4" x="300.0" y="150.0">
+    <tag>N4</tag>
+    <link id="103"/>
+    <link id="104"/>
+  </Node>
+  <Node height="0.0" id="5" x="300.0" y="300.0">
+    <tag>N5</tag>
+    <tag>EXIT</tag>
+    <link id="104"/>
+  </Node>
+  <Link from="1" id="101" length="150.0" to="2" width="10.0">
+    <tag>L1</tag>
+  </Link>
+  <Link from="2" id="102" length="150.0" to="3" width="10.0">
+    <tag>L2</tag>
+  </Link>
+  <Link from="3" id="103" length="150.0" to="4" width="10.0">
+    <tag>L3</tag>
+  </Link>
+  <Link from="4" id="104" length="150.0" to="5" width="10.0">
+    <tag>L4</tag>
+  </Link>
+  <Room angle="0.0" id="1033096058" maxHeight="5.0" minHeight="-5.0" pEastX="374.5" pNorthY="253.5" pSouthY="-52.749999999999986" pWestX="39.50000000000003">
+    <tag>1</tag>
+  </Room>
+</Group>

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group GenerationSettings="sample/3links/gen.csv" PollutionSettings="sample/3links/gas.csv" ResponseSettings="sample/3links/scenario.csv" defaultHeight="0.0" id="2054334425" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="0.96" sy="0.96" tx="12.68000000000001" ty="-10.84000000000001">
+  <tag>ROOT</tag>
+  <Node height="0.0" id="1" x="0.0" y="0.0">
+    <tag>N1</tag>
+    <link id="101"/>
+  </Node>
+  <Node height="0.0" id="2" x="15.0" y="0.0">
+    <tag>N2</tag>
+    <link id="101"/>
+    <link id="102"/>
+  </Node>
+  <Node height="0.0" id="3" x="30.0" y="0.0">
+    <tag>N3</tag>
+    <link id="102"/>
+    <link id="103"/>
+  </Node>
+  <Node height="0.0" id="4" x="45.0" y="0.0">
+    <tag>N4</tag>
+    <tag>EXIT</tag>
+    <link id="103"/>
+  </Node>
+  <Link from="1" id="101" length="15.0" to="2" width="5.0">
+    <tag>L1</tag>
+  </Link>
+  <Link from="2" id="102" length="15.0" to="3" width="5.0">
+    <tag>L2</tag>
+  </Link>
+  <Link from="3" id="103" length="15.0" to="4" width="5.0">
+    <tag>L3</tag>
+  </Link>
+  <Node height="0.0" id="1699930076" x="-71.67187499999994" y="118.65625">
+    <tag>POLYGON_STRUCTURE</tag>
+    <link id="675654088"/>
+    <link id="286112052"/>
+  </Node>
+  <Node height="0.0" id="753298506" x="-18.937499999999943" y="165.53125">
+    <tag>POLYGON_STRUCTURE</tag>
+    <link id="675654088"/>
+    <link id="953204264"/>
+  </Node>
+  <Link from="1699930076" id="675654088" length="70.5562182351111" to="753298506" width="1.0">
+    <tag>POLYGON_STRUCTURE</tag>
+  </Link>
+  <Node height="0.0" id="755436959" x="86.53125" y="147.953125">
+    <tag>POLYGON_STRUCTURE</tag>
+    <link id="953204264"/>
+    <link id="1753360929"/>
+  </Node>
+  <Link from="753298506" id="953204264" length="106.92356010289834" to="755436959" width="1.0">
+    <tag>POLYGON_STRUCTURE</tag>
+  </Link>
+  <Node height="0.0" id="853896798" x="58.60000000000002" y="-36.19999999999999">
+    <tag>POLYGON_STRUCTURE</tag>
+    <link id="1753360929"/>
+    <link id="1081288365"/>
+  </Node>
+  <Link from="755436959" id="1753360929" length="91.79687499999994" to="853896798" width="1.0">
+    <tag>POLYGON_STRUCTURE</tag>
+  </Link>
+  <Node height="0.0" id="1951437512" x="-108.78124999999994" y="5.375000000000057">
+    <tag>POLYGON_STRUCTURE</tag>
+    <link id="1081288365"/>
+    <link id="524848469"/>
+  </Node>
+  <Link from="853896798" id="1081288365" length="201.80611489202323" to="1951437512" width="1.0">
+    <tag>POLYGON_STRUCTURE</tag>
+  </Link>
+  <Node height="0.0" id="1575785601" x="-141.98437499999991" y="73.73437500000006">
+    <tag>POLYGON_STRUCTURE</tag>
+    <link id="524848469"/>
+    <link id="1462401126"/>
+  </Node>
+  <Link from="1951437512" id="524848469" length="75.99639241540514" to="1575785601" width="1.0">
+    <tag>POLYGON_STRUCTURE</tag>
+  </Link>
+  <Node height="0.0" id="1731363166" x="-136.12499999999991" y="136.234375">
+    <tag>POLYGON_STRUCTURE</tag>
+    <link id="1462401126"/>
+    <link id="286112052"/>
+  </Node>
+  <Link from="1575785601" id="1462401126" length="62.77405734370384" to="1731363166" width="1.0">
+    <tag>POLYGON_STRUCTURE</tag>
+  </Link>
+  <Link from="1731363166" id="286112052" length="66.80715381440258" to="1699930076" width="1.0">
+    <tag>POLYGON_STRUCTURE</tag>
+  </Link>
+  <Group defaultHeight="0.0" id="1077061174" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>ROOMS</tag>
+  </Group>
+  <Node height="100.0" id="1244928793" x="175.0" y="94.0">
+    <link id="1085770903"/>
+    <link id="1364956870"/>
+  </Node>
+  <Node height="100.0" id="911356268" x="262.0" y="119.0">
+    <link id="1085770903"/>
+    <link id="455825509"/>
+  </Node>
+  <Link from="1244928793" id="1085770903" length="90.52071586106685" to="911356268" width="1.0">
+    <tag>HOGE_POLYGON</tag>
+  </Link>
+  <Node height="100.0" id="1468964597" x="262.0" y="192.0">
+    <link id="455825509"/>
+    <link id="183236553"/>
+  </Node>
+  <Link from="911356268" id="455825509" length="73.0" to="1468964597" width="1.0">
+    <tag>HOGE_POLYGON</tag>
+  </Link>
+  <Node height="100.0" id="445440859" x="185.0" y="193.0">
+    <link id="183236553"/>
+    <link id="966769021"/>
+  </Node>
+  <Link from="1468964597" id="183236553" length="77.00649323271382" to="445440859" width="1.0">
+    <tag>HOGE_POLYGON</tag>
+  </Link>
+  <Node height="100.0" id="1517315457" x="151.0" y="115.0">
+    <link id="966769021"/>
+    <link id="1364956870"/>
+  </Node>
+  <Link from="445440859" id="966769021" length="85.0881895447306" to="1517315457" width="1.0">
+    <tag>HOGE_POLYGON</tag>
+  </Link>
+  <Link from="1517315457" id="1364956870" length="31.89043743820395" to="1244928793" width="1.0">
+    <tag>HOGE_POLYGON</tag>
+  </Link>
+  <Group defaultHeight="0.0" id="906637491" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0"/>
+  <Group defaultHeight="0.0" id="1985267477" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>ROOMS</tag>
+  </Group>
+  <Node height="0.0" id="794661093" x="61.0" y="220.0">
+    <link id="1482535097"/>
+    <link id="68366118"/>
+  </Node>
+  <Node height="0.0" id="1340077469" x="57.0" y="314.0">
+    <link id="1482535097"/>
+    <link id="212703691"/>
+  </Node>
+  <Link from="794661093" id="1482535097" length="94.08506789071261" to="1340077469" width="1.0">
+    <tag>TRIANGLE_POLYGON</tag>
+  </Link>
+  <Node height="0.0" id="1714132013" x="136.0" y="259.0">
+    <link id="212703691"/>
+    <link id="68366118"/>
+  </Node>
+  <Link from="1340077469" id="212703691" length="96.26006440887103" to="1714132013" width="1.0">
+    <tag>TRIANGLE_POLYGON</tag>
+  </Link>
+  <Link from="1714132013" id="68366118" length="84.53401682163222" to="794661093" width="1.0">
+    <tag>TRIANGLE_POLYGON</tag>
+  </Link>
+  <Group defaultHeight="0.0" id="660799337" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>ROOMS</tag>
+  </Group>
+  <Node height="0.0" id="778672886" x="188.0" y="242.0">
+    <link id="1653330950"/>
+    <link id="1087934273"/>
+  </Node>
+  <Node height="0.0" id="1222586711" x="153.0" y="334.0">
+    <link id="1653330950"/>
+    <link id="1571993506"/>
+  </Node>
+  <Link from="778672886" id="1653330950" length="98.43271813782245" to="1222586711" width="1.0">
+    <tag>OCEAN_POLYGON1</tag>
+  </Link>
+  <Node height="0.0" id="1781223811" x="301.0" y="320.0">
+    <link id="1571993506"/>
+    <link id="386074837"/>
+  </Node>
+  <Link from="1222586711" id="1571993506" length="148.66068747318505" to="1781223811" width="1.0">
+    <tag>OCEAN_POLYGON1</tag>
+  </Link>
+  <Node height="0.0" id="1117742697" x="322.0" y="274.0">
+    <link id="386074837"/>
+    <link id="1323134101"/>
+  </Node>
+  <Link from="1781223811" id="386074837" length="50.566787519082126" to="1117742697" width="1.0">
+    <tag>OCEAN_POLYGON1</tag>
+  </Link>
+  <Node height="0.0" id="851190754" x="323.0" y="232.0">
+    <link id="1323134101"/>
+    <link id="114413747"/>
+  </Node>
+  <Link from="1117742697" id="1323134101" length="42.01190307520001" to="851190754" width="1.0">
+    <tag>OCEAN_POLYGON1</tag>
+  </Link>
+  <Node height="0.0" id="1017764546" x="221.0" y="222.0">
+    <link id="114413747"/>
+    <link id="1087934273"/>
+  </Node>
+  <Link from="851190754" id="114413747" length="102.48902380255166" to="1017764546" width="1.0">
+    <tag>OCEAN_POLYGON1</tag>
+  </Link>
+  <Link from="1017764546" id="1087934273" length="38.58756276314948" to="778672886" width="1.0">
+    <tag>OCEAN_POLYGON1</tag>
+  </Link>
+  <Node height="0.0" id="1338090693" x="26.0" y="248.0">
+    <link id="690048488"/>
+    <link id="1438203297"/>
+  </Node>
+  <Node height="0.0" id="736684422" x="119.0" y="297.0">
+    <link id="690048488"/>
+    <link id="1558918456"/>
+  </Node>
+  <Link from="1338090693" id="690048488" length="105.11898020814318" to="736684422" width="1.0">
+    <tag>OCEAN_POLYGON2</tag>
+  </Link>
+  <Node height="0.0" id="1726959394" x="67.0" y="362.0">
+    <link id="1558918456"/>
+    <link id="1516913995"/>
+  </Node>
+  <Link from="736684422" id="1558918456" length="83.24061508662703" to="1726959394" width="1.0">
+    <tag>OCEAN_POLYGON2</tag>
+  </Link>
+  <Node height="0.0" id="679401252" x="12.0" y="316.0">
+    <link id="1516913995"/>
+    <link id="1438203297"/>
+  </Node>
+  <Link from="1726959394" id="1516913995" length="71.7007670809734" to="679401252" width="1.0">
+    <tag>OCEAN_POLYGON2</tag>
+  </Link>
+  <Link from="679401252" id="1438203297" length="69.42621983083913" to="1338090693" width="1.0">
+    <tag>OCEAN_POLYGON2</tag>
+  </Link>
+  <Group defaultHeight="0.0" id="1011612208" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>ROOMS</tag>
+  </Group>
+  <Node height="-10.0" id="1006825542" x="292.0" y="195.0">
+    <link id="1934041179"/>
+    <link id="1001199526"/>
+  </Node>
+  <Node height="-10.0" id="1302495498" x="236.0" y="371.0">
+    <link id="1934041179"/>
+    <link id="1336962557"/>
+  </Node>
+  <Link from="1006825542" id="1934041179" length="184.69434208984313" to="1302495498" width="1.0">
+    <tag>FOGE_POLYGON</tag>
+  </Link>
+  <Node height="-10.0" id="748374587" x="407.0" y="416.0">
+    <link id="1336962557"/>
+    <link id="1914152059"/>
+  </Node>
+  <Link from="1302495498" id="1336962557" length="176.8219443394965" to="748374587" width="1.0">
+    <tag>FOGE_POLYGON</tag>
+  </Link>
+  <Node height="-10.0" id="1872597929" x="471.0" y="235.0">
+    <link id="1914152059"/>
+    <link id="1001199526"/>
+  </Node>
+  <Link from="748374587" id="1914152059" length="191.98176996788" to="1872597929" width="1.0">
+    <tag>FOGE_POLYGON</tag>
+  </Link>
+  <Link from="1872597929" id="1001199526" length="183.41483037093812" to="1006825542" width="1.0">
+    <tag>FOGE_POLYGON</tag>
+  </Link>
+  <Group defaultHeight="0.0" id="1569594996" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>ROOMS</tag>
+  </Group>
+  <Group defaultHeight="0.0" id="738057936" imageFileName="sample/3links//sample/3links//sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>ROOMS</tag>
+  </Group>
+  <Group defaultHeight="0.0" id="1561298971" imageFileName="sample/3links//sample/3links//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>ROOMS</tag>
+  </Group>
+</Group>

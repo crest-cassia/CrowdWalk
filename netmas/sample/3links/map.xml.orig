@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group defaultHeight="0.0" id="2054334425" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>root</tag>
+  <Node height="0.0" id="1" x="0.0" y="0.0">
+    <tag>N1</tag>
+    <link id="101"/>
+  </Node>
+  <Node height="0.0" id="2" x="15.0" y="0.0">
+    <tag>N2</tag>
+    <link id="101"/>
+    <link id="102"/>
+  </Node>
+  <Node height="0.0" id="3" x="30.0" y="0.0">
+    <tag>N3</tag>
+    <link id="102"/>
+    <link id="103"/>
+  </Node>
+  <Node height="0.0" id="4" x="45.0" y="0.0">
+    <tag>N4</tag>
+    <tag>EXIT</tag>
+    <link id="103"/>
+  </Node>
+  <Link from="1" id="101" length="15.0" to="2" width="5.0">
+    <tag>L1</tag>
+  </Link>
+  <Link to="3" id="102" length="15.0" from="2" width="5.0">
+    <tag>L2</tag>
+  </Link>
+  <Link to="4" id="103" length="15.0" from="3" width="5.0">
+    <tag>L3</tag>
+  </Link>
+</Group>
