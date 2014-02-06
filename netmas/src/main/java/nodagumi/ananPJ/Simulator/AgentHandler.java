@@ -22,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.*;
 import java.lang.ClassNotFoundException;
+//import java.lang.System;
 import java.text.*;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -100,6 +101,12 @@ public class AgentHandler implements Serializable {
     private Random random = null;
     private FusionViewerConnector fusionViewerConnector = null;
 
+    // プログラム制御用環境変数
+    public String envSwitch = "";
+    // エージェントが存在するリンクのリスト
+    private ArrayList<MapLink> effectiveLinks = null;
+    private boolean effectiveLinksEnabled = false;
+
     public AgentHandler (ArrayList<EvacuationAgent> _agents,
             String generationFile,
             String responseFile,
@@ -163,6 +170,12 @@ public class AgentHandler implements Serializable {
                     links);
         }
         fusionViewerConnector = new FusionViewerConnector();
+
+        envSwitch = System.getenv("NETMAS");
+        if (envSwitch == null)
+            envSwitch = "";
+        if (envSwitch.indexOf("effectiveLinks") != -1)
+            effectiveLinksEnabled = true;
     }
 
     public void deserialize(String generationFile, String responseFile,
@@ -182,6 +195,8 @@ public class AgentHandler implements Serializable {
         for (EvacuationAgent agent : agents) {
             agent.prepareForSimulation(model.getTimeScale());
         }
+        // 初回は全リンクを対象とする
+        effectiveLinks = (ArrayList<MapLink>)model.getLinks().clone();
     }
 
     class ScenarioEvent implements Serializable {
@@ -521,19 +536,27 @@ public class AgentHandler implements Serializable {
             }
         }
 
-        if (randomNavigation) {
-            for (EvacuationAgent agent : generated_agents_step)
-                agent.setRandomNavigation(true);
-        }
-        agents.addAll(generated_agents_step);
-        generated_agents.addAll(generated_agents_step);
-        if (isExpectedDensitySpeedModel) {
-            for (EvacuationAgent agent : generated_agents_step) {
-                ((RunningAroundPerson) agent).setExpectedDensityMacroTimeStep(
-                    expectedDensityMacroTimeStep);
-                if (agent.ID == 0) {
-                    agent.ID = manualId;
-                    manualId += 1;
+        if (! generated_agents_step.isEmpty()) {
+            if (randomNavigation) {
+                for (EvacuationAgent agent : generated_agents_step)
+                    agent.setRandomNavigation(true);
+            }
+            agents.addAll(generated_agents_step);
+            generated_agents.addAll(generated_agents_step);
+            if (effectiveLinksEnabled) {
+                for (EvacuationAgent agent : generated_agents_step) {
+                    if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
+                    effectiveLinks.add(agent.getCurrentLink());
+                }
+            }
+            if (isExpectedDensitySpeedModel) {
+                for (EvacuationAgent agent : generated_agents_step) {
+                    ((RunningAroundPerson) agent).setExpectedDensityMacroTimeStep(
+                        expectedDensityMacroTimeStep);
+                    if (agent.ID == 0) {
+                        agent.ID = manualId;
+                        manualId += 1;
+                    }
                 }
             }
         }
@@ -549,6 +572,16 @@ public class AgentHandler implements Serializable {
          */
         for (EvacuationAgent agent : generated_agents_step) {
             model.registerAgent(agent);
+        }
+
+        if (effectiveLinksEnabled) {
+            // エージェントが存在するリンクのリストを更新
+            effectiveLinks.clear();
+            for (EvacuationAgent agent : agents) {
+                if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
+                effectiveLinks.add(agent.getCurrentLink());
+            }
+            //System.err.println("effectiveLinks / modelLinks: " + effectiveLinks.size() + " / " + model.getLinks().size());
         }
     }
 
@@ -612,7 +645,7 @@ public class AgentHandler implements Serializable {
         }
         if (true) {
             synchronized (model) {
-                for (MapLink link : model.getLinks()) {
+                for (MapLink link : effectiveLinksEnabled ? effectiveLinks : model.getLinks()) {
                     for (EvacuationAgent agent : link.getLane(1.0)) {
                         agent.preUpdate(time);
                         count += 1;
@@ -715,10 +748,11 @@ public class AgentHandler implements Serializable {
         evacuatedNoLiftAgentCount = 0;
 
         for (final EvacuationAgent agent : agents) {
-            totalDamage += agent.getDamage();
-            if (agent.getDamage() > maxDamage) maxDamage = agent.getDamage();
             if (agent.isEvacuated()) {
                 evacuatedAgentCount++;
+            } else {
+                totalDamage += agent.getDamage();
+                if (agent.getDamage() > maxDamage) maxDamage = agent.getDamage();
             }
         }
     }
@@ -1128,7 +1162,7 @@ public class AgentHandler implements Serializable {
             c.gridy = y;
             c.fill = GridBagConstraints.WEST;
 
-            label_toggle_panel.add(new JLabel(event.comment), c);
+            // label_toggle_panel.add(new JLabel(event.comment), c);
             ButtonGroup bgroup = new ButtonGroup();
             toggle_scenario_button_groups.add(bgroup);
             class RadioButtonListener implements ActionListener {

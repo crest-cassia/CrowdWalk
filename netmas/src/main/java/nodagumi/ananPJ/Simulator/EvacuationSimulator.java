@@ -241,8 +241,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         synchronized (stop_simulation) {
             // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
-            pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
-                    getAgents());
+            if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
+                pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
+                        getAgents());
             Runtime.getRuntime().gc();
             agentHandler.update(getNodes(), getLinks(), getSecond());
             if (panel3d != null) {

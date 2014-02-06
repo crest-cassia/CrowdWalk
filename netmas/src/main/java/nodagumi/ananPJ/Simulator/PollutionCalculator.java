@@ -94,6 +94,8 @@ public class PollutionCalculator implements Serializable {
         }
 
         for (EvacuationAgent agent : agents) {
+            if (agent.isEvacuated())
+                continue;
             double min_distance = Double.MAX_VALUE;
             PollutedArea best_area = null;
             Vector3f point = new Vector3f((float)agent.getPos().getX(),
