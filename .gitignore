@@ -1,0 +1,10 @@
+# editor cache
+*.swp
+
+# OS cache file
+.DS_Store
+Thumbs.db
+
+# gradle
+.gradle/
+build/

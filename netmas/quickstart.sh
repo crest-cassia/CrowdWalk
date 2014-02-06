@@ -3,7 +3,8 @@
 #CP=build/libs/netmas.jar:build/libs/netmas-pathing.jar
 CP=build/libs/netmas.jar
 DYLD=libs
-JAVAOPT='-Xms1024M -Xmx1024M'
+#JAVAOPT='-Xms1024M -Xmx1024M'
+JAVAOPT='-Xms2048M -Xmx2048M -Dfile.encoding=UTF-8'
 JAVA='java'
 EXECUTABLE=main
 GISEXECUTABLE='nodagumi.ananPJ.Editor.ImportGis'
