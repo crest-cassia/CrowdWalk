@@ -49,7 +49,7 @@ public class ImportGis  {
     private JMapFrame map_frame = null;
     // tkokada
     private double DEFAULT_LATITUDE = 36.00;
-    private double DEFAULT_LONGITUDE = 139.00;
+    private double DEFAULT_LONGITUDE = 139.83333333;
     private Ruby ruby = null;
 
     protected Settings settings;

@@ -903,6 +903,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
             agent.setRandom(_random);
     }
 }
+// test(CRLF)
 //;;; Local Variables:
 //;;; mode:java
 //;;; tab-width:4
