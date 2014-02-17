@@ -61,6 +61,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     private NetworkMap networkMap = null;
     private double linerGenerateAgentRatio = 1.0;
     private Random random = null;
+    // saveTimeSeriesLog() が呼ばれた回数
+    private int logging_count = 0;
 
     public EvacuationSimulator(NetworkMap _networkMap,
             SimulationController _controller,
@@ -549,6 +551,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         System.gc ();
 
         tick_count = 0.0;
+        logging_count = 0;
 
         for (MapLink link : getLinks()) {
             link.clear();
@@ -789,8 +792,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         double totalAgentDensity = 0.0;
         double totalAgentSpeed = 0.0;
         // time series log file
-        File fileLog = new File(resultDirectory + "/timeSeries/" + count +
-                ".log");
+        //File fileLog = new File(resultDirectory + "/timeSeries/" + count + ".log");
+        // ファイル名の左側が必ず6桁になるように"0"を付加する("1.log" -> "000001.log")
+        File fileLog = new File(String.format("%s/timeSeries/%06d.log", resultDirectory, count));
         // summary log file
         File summaryLog = new File(resultDirectory + "/summary.log");
         File fileLogDirectory = fileLog.getParentFile();
@@ -837,7 +841,12 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                         linkDensity + "\n");
                 totalLinkDensity += linkDensity;
             }
+            // EXITノード毎の避難完了者数
+            for (Map.Entry<MapNode, Integer> e : agentHandler.getExitNodesMap().entrySet()) {
+                writer.write("node," + e.getKey().getTagLabel() + "," + e.getValue() + "\n");
+            }
             writer.close();
+
             writer = new PrintWriter(new BufferedWriter(
                         new OutputStreamWriter(
                             new FileOutputStream(summaryLog, true), "utf-8")),
@@ -860,9 +869,32 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             writer.write("count," + count + "," + average_agent_density + "," +
                     average_agent_speed + "," + average_link_density + "\n");
             writer.close();
+
+            // EXITノード毎の避難完了者数ログファイル
+            File evacuatedAgentsLog = new File(resultDirectory + "/evacuatedAgents.csv");
+            if (logging_count == 0) {
+                writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, false), "utf-8")), true);
+                int index = 0;
+                for (Map.Entry<MapNode, Integer> e : agentHandler.getExitNodesMap().entrySet()) {
+                    MapNode node = e.getKey();
+                    writer.write((index == 0 ? "" : ",") + node.getTagLabel());
+                    index++;
+                }
+                writer.write("\n");
+            } else {
+                writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, true), "utf-8")), true);
+            }
+            int index = 0;
+            for (Map.Entry<MapNode, Integer> e : agentHandler.getExitNodesMap().entrySet()) {
+                writer.write((index == 0 ? "" : ",") + e.getValue());
+                index++;
+            }
+            writer.write("\n");
+            writer.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        logging_count++;
 
         return true;
     }

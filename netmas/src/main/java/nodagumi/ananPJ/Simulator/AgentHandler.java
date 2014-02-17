@@ -1018,6 +1018,10 @@ public class AgentHandler implements Serializable {
         return evacuatedAgentCountByExit.get(node);
     }
 
+    public HashMap<MapNode, Integer> getExitNodesMap() {
+        return evacuatedAgentCountByExit;
+    }
+
     public int getWaiting() {
         return waitingAgentCount;
     }

@@ -8,3 +8,6 @@ Thumbs.db
 # gradle
 .gradle/
 build/
+
+# local setting data
+NetworkMapEditor.ini

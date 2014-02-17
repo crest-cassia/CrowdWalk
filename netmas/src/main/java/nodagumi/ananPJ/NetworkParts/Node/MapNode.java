@@ -451,6 +451,30 @@ public class MapNode extends OBMapPart implements Serializable {
     public double getHeight() {
         return height;
     }
+
+    /*
+     * タグ一覧を返す
+     *   EXITのみ           EXIT
+     *   EXIT + その他      その他
+     *   EXIT + その他複数  その他1|その他2|...
+     */
+    public String getTagLabel() {
+        StringBuffer buff = new StringBuffer();
+        boolean exitFound = false;
+        for (final String tag : tags) {
+            if (tag.equalsIgnoreCase("EXIT")) {
+                exitFound = true;
+                continue;
+            } else if (buff.length() > 0) {
+                buff.append("|");
+            }
+            buff.append(tag);
+        }
+        if (exitFound && buff.length() == 0) {
+            buff.append("EXIT");
+        }
+        return buff.toString();
+    }
 }
 // ;;; Local Variables:
 // ;;; mode:java
