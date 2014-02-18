@@ -263,6 +263,10 @@ str += macroTimeStep + "," + initTime + "," + loopTime + "," + tick
 writer.println(str)
 writer.close()
 
-writer = new File(args[2] + '.txt').newWriter('UTF-8')
+if (args.size() <= 2){
+    writer = new File('tick.txt').newWriter('UTF-8')
+}else{
+    writer = new File(args[2] + '.txt').newWriter('UTF-8')
+}
 writer.write(Double.toString(tick) + "\n")
 writer.close()
