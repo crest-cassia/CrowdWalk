@@ -137,7 +137,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     for (MapLink link : links) {
                         ArrayList<String> tags = link.getTags();
                         for (String tag : tags) {
-                            if (tag.contains(start_link_tag)) {
+                            // タグの比較を厳密化する
+                            // if (tag.contains(start_link_tag)) {
+                            if (tag.equals(start_link_tag)) {
                                 start_links.add(link);
                                 break;
                             }
@@ -436,7 +438,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     ArrayList<String> goalCandidates = new ArrayList<String>();
                     for (MapNode node : nodes) {
                         for (String tag : node.getTags()) {
-                            if (tag.contains(goal))
+                            // タグの比較を厳密化する
+                            // if (tag.contains(goal))
+                            if (tag.equals(goal))
                                 goalCandidates.add(tag);
                         }
                     }
@@ -474,7 +478,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     new ArrayList<String>();
                                 for (MapNode node : nodes) {
                                     for (String tag : node.getTags()) {
-                                        if (tag.contains(pr)) {
+                                        // タグの比較を厳密化する
+                                        // if (tag.contains(pr)) {
+                                        if (tag.equals(pr)) {
                                             plannedRouteCandidates.add(tag);
                                             break;
                                         }
