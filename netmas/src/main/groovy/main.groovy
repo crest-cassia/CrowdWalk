@@ -264,9 +264,11 @@ writer.println(str)
 writer.close()
 
 if (args.size() <= 2){
-    writer = new File('tick.txt').newWriter('UTF-8')
+    writer = new File('_output.json').newWriter('UTF-8')
+    writer.write("{\"tick\" : " + Double.toString(tick) + "}")
+    writer.close()
 }else{
-    writer = new File(args[2] + '.txt').newWriter('UTF-8')
+    writer = new File(args[2] + '.json').newWriter('UTF-8')
+    writer.write("{\"tick\" : " + Double.toString(tick) + "}")
+    writer.close()    
 }
-writer.write(Double.toString(tick) + "\n")
-writer.close()
