@@ -155,6 +155,10 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
+        networkMap.setPollutionFile(pPath);
+        networkMap.setGenerationFile(gPath);
+        networkMap.setResponseFile(sPath);
     }
 
     public NetmasCuiSimulator(String _propertiesPath, int randseed) {
@@ -333,6 +337,10 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
+        }
+        if (isTimeSeriesLog) {
+            // flush log file
+            model.saveGoalLog(timeSeriesLogPath, true);
         }
         if (isTimerEnabled) {
             timer.writeElapsed();
