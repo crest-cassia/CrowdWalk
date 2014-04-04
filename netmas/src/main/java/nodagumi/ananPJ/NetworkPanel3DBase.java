@@ -68,10 +68,10 @@ import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGCodec;
+// import com.sun.image.codec.jpeg.ImageFormatException;
+// import com.sun.image.codec.jpeg.JPEGImageEncoder;
+// import com.sun.image.codec.jpeg.JPEGEncodeParam;
+// import com.sun.image.codec.jpeg.JPEGCodec;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.Colors.*;
@@ -193,36 +193,41 @@ public abstract class NetworkPanel3DBase extends JPanel
                 System.err.println("image is null!");
                 return;
             }
-            /*
+//            /*
+//            try {
+//                ImageIO.write(img, "jpeg", new File(filename));
+//            } catch (IOException ioe) {
+//                ioe.printStackTrace();
+//            }
+//            */
+//            /*
+//             File file = new File(filename);
+//            try {
+//                ImageIO.write(img, "BMP", file);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }*/
+//
+//            // 上のImageIO.writeが動かないため、下記の処理を使いました 2011.5.18
+//            //(NetworkMapEditor でスクリーンキャプチャが取れない)
+//            // 下羅さん作成の下記の処理に差し替えます
+//            // また下記の記述では、jpgがスクリーンキャプチャファイルとして出力されることを意図しています
+//            // この修正に連動して、EvacuationSimulator.java のupdateEveryTick()の中の記述を
+//            // 変更しています。（bmp →jpg）
+//            try {
+//                OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename));
+//                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fileOutputStream);
+//                JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(img);
+//                encodeParam.setQuality(1.0f, false);
+//                encoder.encode(img, encodeParam);
+//                fileOutputStream.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             try {
-                ImageIO.write(img, "jpeg", new File(filename));
+                ImageIO.write(img, "png", new File(filename));
             } catch (IOException ioe) {
                 ioe.printStackTrace();
-            }
-            */
-            /*
-             File file = new File(filename);
-            try {
-                ImageIO.write(img, "BMP", file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-
-            // 上のImageIO.writeが動かないため、下記の処理を使いました 2011.5.18
-            //(NetworkMapEditor でスクリーンキャプチャが取れない)
-            // 下羅さん作成の下記の処理に差し替えます
-            // また下記の記述では、jpgがスクリーンキャプチャファイルとして出力されることを意図しています
-            // この修正に連動して、EvacuationSimulator.java のupdateEveryTick()の中の記述を
-            // 変更しています。（bmp →jpg）
-            try {
-                OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename));
-                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fileOutputStream);
-                JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(img);
-                encodeParam.setQuality(1.0f, false);
-                encoder.encode(img, encodeParam);
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             filename = null;
         }

@@ -9,5 +9,17 @@ Thumbs.db
 .gradle/
 build/
 
+# GNU GLOBAL
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
 # local setting data
 NetworkMapEditor.ini
+
+# execution result data
+tick.txt
+
+# screen shots
+netmas/screenshots/*
