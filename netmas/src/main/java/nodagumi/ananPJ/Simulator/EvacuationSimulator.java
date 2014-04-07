@@ -246,7 +246,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
                 pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
                         getAgents());
-            Runtime.getRuntime().gc();
+            // Runtime.getRuntime().gc();
             agentHandler.update(getNodes(), getLinks(), getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
@@ -287,7 +287,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             double poltime = getSecond();
             pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
                     getAgents());
-            Runtime.getRuntime().gc();
+            // Runtime.getRuntime().gc();
             agentHandler.update(getNodes(), getLinks(), getSecond());
             tick_count += 1.0;
         }
@@ -304,7 +304,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             double poltime = getSecond();
             pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
                     getAgents());
-            Runtime.getRuntime().gc();
+            // Runtime.getRuntime().gc();
             agentHandler.update(getNodes(), getLinks(), getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
@@ -549,7 +549,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     }
 
     void resetValues() {
-        System.gc ();
+        // System.gc();
 
         tick_count = 0.0;
         logging_count = 0;

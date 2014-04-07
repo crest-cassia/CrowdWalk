@@ -571,7 +571,7 @@ public class NetworkMapEditor extends SimulationLauncher
         mapPath = null;
         updateAll();
         setModified(false);
-        System.gc();
+        // System.gc();
 
         return true;
     }
