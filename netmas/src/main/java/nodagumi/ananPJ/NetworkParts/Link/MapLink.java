@@ -516,7 +516,9 @@ public class MapLink extends OBMapPart implements Serializable {
 
     public void agentEnters(EvacuationAgent agent) {
         agents.add(agent);
-        add_agent_to_lane(agent);
+        if (agent.getDirection() == 1.0 || agent.getDirection() == -1.0) {
+            add_agent_to_lane(agent);
+        }
 
         /* emergency mode? */
         if (getEmergency() 

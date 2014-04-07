@@ -71,7 +71,7 @@ public class RunningAroundPerson extends EvacuationAgent
 
     /* Values used in simulation */
     protected double speed;
-    protected double direction;
+    protected double direction = 0.0;
     protected double density;
     protected double expectedDensityMacroTimeStep = 300;
 
