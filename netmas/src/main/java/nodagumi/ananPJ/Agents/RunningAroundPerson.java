@@ -93,6 +93,13 @@ public class RunningAroundPerson extends EvacuationAgent
     protected ArrayList<String> planned_route = new ArrayList<String>();
     protected int routeIndex;
 
+    // sane_navigation_from_node の不要な呼び出し回避用
+    private boolean sane_navigation_from_node_forced = true;
+    private MapLink sane_navigation_from_node_current_link;
+    private MapLink sane_navigation_from_node_link;
+    private MapNode sane_navigation_from_node_node;
+    private MapLink sane_navigation_from_node_result;
+
     public static String getTypeName() {
         return "RunningAroundPerson";
     }
@@ -594,7 +601,9 @@ public class RunningAroundPerson extends EvacuationAgent
                 distance_to_move = position - current_link.length;
             }
 
+            sane_navigation_from_node_forced = true;
             next_link_candidate = navigate(time, current_link, next_node);
+            sane_navigation_from_node_forced = true;
 
             if (!tryToPassNode(time)) {
                 return false;
@@ -677,7 +686,9 @@ public class RunningAroundPerson extends EvacuationAgent
                 return true;
             }
             remain -= linkTime;
+            sane_navigation_from_node_forced = true;
             next_link_candidate = navigate(time, current_link, next_node);
+            sane_navigation_from_node_forced = true;
             if (!tryToPassNode(time)) {
                 return false;
             }
@@ -1742,6 +1753,21 @@ public class RunningAroundPerson extends EvacuationAgent
     //
     protected MapLink sane_navigation_from_node(double time, MapLink link,
             MapNode node) {
+        // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
+        if (
+            ! sane_navigation_from_node_forced &&
+            sane_navigation_from_node_current_link == current_link &&
+            sane_navigation_from_node_link == link && sane_navigation_from_node_node == node &&
+            emptyspeed < (direction > 0.0 ? current_link.length - position : position)
+        ) {
+            sane_navigation_from_node_forced = false;
+            return sane_navigation_from_node_result;
+        }
+        sane_navigation_from_node_forced = false;
+        sane_navigation_from_node_current_link = current_link;
+        sane_navigation_from_node_link = link;
+        sane_navigation_from_node_node = node;
+
         ArrayList<MapLink> way_candidates = node.getPathways();
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
@@ -1845,8 +1871,10 @@ public class RunningAroundPerson extends EvacuationAgent
             if (linkCandidates.size() > 0) {
                 MapLink chosedLink = linkCandidates.get(
                         random.nextInt(linkCandidates.size()));
+                sane_navigation_from_node_result = chosedLink;
                 return chosedLink;
             }
+            sane_navigation_from_node_result = null;
             return null;
         }
 
@@ -1861,6 +1889,7 @@ public class RunningAroundPerson extends EvacuationAgent
         if (way == null) {
             way = way_second;
         }
+        sane_navigation_from_node_result = way;
 
         if (way == null) {
             return null;
