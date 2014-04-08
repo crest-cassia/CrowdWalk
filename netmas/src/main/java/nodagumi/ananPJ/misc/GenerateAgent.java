@@ -112,13 +112,14 @@ public abstract class GenerateAgent implements Serializable {
             agent.setGoal(goal);
             agent.setPlannedRoute(planned_route);
 
-            place_agent(agent);
+            place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
             for (final String tag : tags) {
                 agent.addTag(tag);
             }
 
             agent.prepareForSimulation(timeScale);
+            agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
         }
     }
 
@@ -195,7 +196,7 @@ class GenerateAgentFromLink extends GenerateAgent {
     protected void place_agent(WaitRunningAroundPerson agent) {
         double position = random.nextDouble() * start_link.length;
         agent.place(start_link, position);
-        start_link.agentEnters(agent);
+        //start_link.agentEnters(agent);
     }
 
     @Override
@@ -331,7 +332,7 @@ class GenerateAgentFromNode extends GenerateAgent {
         double position = 0.0;
         if (link.getTo() == start_node) position = link.length;
         agent.place(link, position);
-        link.agentEnters(agent);
+        //link.agentEnters(agent);
     }
 
     @Override
