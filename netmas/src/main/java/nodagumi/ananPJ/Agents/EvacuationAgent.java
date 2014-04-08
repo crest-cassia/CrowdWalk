@@ -423,13 +423,26 @@ implements Comparable<EvacuationAgent>, Serializable {
     public abstract String getGoal();
     public abstract ArrayList<String> getPlannedRoute();
 
+    // current_link 上における絶対 position
+    public double absolutePosition() {
+        return getDirection() >= 0.0 ? position : current_link.length - position;
+    }
+
     public int compareTo(EvacuationAgent rhs) {
         double h1 = this.position;
         double h2 = rhs.position;
 
         // tkokada modified
         if (h1 == h2) {
-            return (int)((agentNumber - rhs.agentNumber) * getDirection());
+            //return (int)((agentNumber - rhs.agentNumber) * getDirection());
+            // m.saito modified
+            if (agentNumber == rhs.agentNumber) {
+                return 0;
+            } else if (agentNumber > rhs.agentNumber) {
+                return (int)(1 * getDirection());
+            } else {
+                return (int)(-1 * getDirection());
+            }
             //return 0;
         } else if (h1 > h2) {
             return (int)(1 * getDirection());
@@ -450,6 +463,10 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     public void setRandomNavigation(boolean _randomNavigation) {
         randomNavigation = _randomNavigation;
+    }
+
+    public int getAgentNumber() {
+        return agentNumber;
     }
 }
 // ;;; Local Variables:

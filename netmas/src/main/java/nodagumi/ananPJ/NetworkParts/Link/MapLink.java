@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -202,9 +203,33 @@ public class MapLink extends OBMapPart implements Serializable {
         }
     }
 
+    // agent の絶対 position によるソート用
+    private Comparator<EvacuationAgent> absoluteComparator = new Comparator<EvacuationAgent>() {
+        public int compare(EvacuationAgent agent1, EvacuationAgent agent2) {
+            double position1 = agent1.absolutePosition();
+            double position2 = agent2.absolutePosition();
+
+            if (position1 == position2) {
+                // position が同じなら agentNumber が小さい順にする
+                if (agent1.getAgentNumber() == agent2.getAgentNumber()) {
+                    return 0;
+                } else if (agent1.getAgentNumber() > agent2.getAgentNumber()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            } else if (position1 > position2) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    };
+
     private int total_agent_triage_level;
     public void preUpdate(double time) {
-        Collections.sort(agents);
+        //Collections.sort(agents);
+        Collections.sort(agents, absoluteComparator);
         setup_lanes();
         /* calculate the  total triage level */
         total_agent_triage_level = 0; 
@@ -534,6 +559,9 @@ public class MapLink extends OBMapPart implements Serializable {
     public void agentExits (EvacuationAgent agent) {
         assert(agents.contains(agent));
         agents.remove(agent);
+        if (! positive_lane.remove(agent)) {
+            negative_lane.remove(agent);
+        }
     }
 
     public void setFromTo(MapNode from, MapNode to) throws Exception {
