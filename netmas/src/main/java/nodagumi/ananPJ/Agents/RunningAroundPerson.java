@@ -1103,6 +1103,7 @@ public class RunningAroundPerson extends EvacuationAgent
 
         MapLink nextLink = sane_navigation_from_node(time, current_link,
                 next_node);
+        setRouteIndex(route_index_orig);
         ArrayList<EvacuationAgent> nextLinkAgents = null;
         if (nextLink != null)
             nextLinkAgents = nextLink.getAgents();

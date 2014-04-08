@@ -486,10 +486,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                         }
                                     }
                                 }
-                                int chosenIndex = random.nextInt(
-                                    plannedRouteCandidates.size());
-                                plannedRoute.add(plannedRouteCandidates.get(
-                                            chosenIndex));
+                                if (plannedRouteCandidates.isEmpty()) {
+                                    // 該当するノードタグが見つからない場合は WAIT_FOR/WAIT_UNTIL として扱う
+                                    plannedRoute.add(pr);
+                                } else {
+                                    int chosenIndex = random.nextInt(plannedRouteCandidates.size());
+                                    plannedRoute.add(plannedRouteCandidates.get(chosenIndex));
+                                }
                             }
                             this.add(new GenerateAgentFromLink(
                                         start_link,
