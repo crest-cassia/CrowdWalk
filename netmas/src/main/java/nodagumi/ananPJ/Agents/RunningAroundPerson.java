@@ -260,7 +260,7 @@ public class RunningAroundPerson extends EvacuationAgent
             speed = 0;
             setRouteIndex(0);
 
-            renavigate();
+            renavigate();   // ※何もしていない(route_index は増える可能性あり)
         }
     }
 
@@ -372,8 +372,12 @@ public class RunningAroundPerson extends EvacuationAgent
                     next_position_tmp = link.length - distance_to_move;
                 }
             } else {
-                if (next_position < 0) next_position = 0;
-                else next_position = current_link.length;
+                // WAIT_FOR, WAIT_UNTIL によるエージェントの停止は下記でおこなう
+                if (next_position < 0){
+                    next_position = 0;
+                } else {
+                    next_position = current_link.length;
+                }
 
                 break;
             }
@@ -582,8 +586,10 @@ public class RunningAroundPerson extends EvacuationAgent
             /* got out of link */
             // tkokada
             // if (next_node.hasTag(goal)) {
-            if (planned_route.size() <= getRouteIndex() &&
-                    next_node.hasTag(goal)) {
+            //if (planned_route.size() <= getRouteIndex() &&
+            //        next_node.hasTag(goal)) {
+            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && next_node.hasTag(goal)) {
+                consumePlannedRoute();
                 /* exit! */
                 setEvacuated(true, time);
                 prev_node = next_node;
@@ -674,9 +680,12 @@ public class RunningAroundPerson extends EvacuationAgent
                 }
                 break;
             }
-            if (planned_route.size() <= getRouteIndex() &&
-                    next_node.hasTag(goal) &&
-                    remain >= linkTime) {
+            //if (planned_route.size() <= getRouteIndex() &&
+            //        next_node.hasTag(goal) &&
+            //        remain >= linkTime) {
+            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) &&
+                    next_node.hasTag(goal) && remain >= linkTime) {
+                consumePlannedRoute();
                 setEvacuated(true, time);
                 prev_node = next_node;
                 next_node = null;
@@ -711,8 +720,10 @@ public class RunningAroundPerson extends EvacuationAgent
 
         // tkokada
         // if (getPrevNode().hasTag(goal)) {
-        if (planned_route.size() <= getRouteIndex() &&
-                getPrevNode().hasTag(goal)) {
+        //if (planned_route.size() <= getRouteIndex() &&
+        //        getPrevNode().hasTag(goal)) {
+        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && getPrevNode().hasTag(goal)) {
+            consumePlannedRoute();
             setEvacuated(true, time);
             return true;
         }
@@ -1708,8 +1719,10 @@ public class RunningAroundPerson extends EvacuationAgent
             update_swing_flag = true;
         }
         //if (current_link.hasTag(goal)) {
-        if (planned_route.size() <= getRouteIndex() &&
-                current_link.hasTag(goal)) {
+        //if (planned_route.size() <= getRouteIndex() &&
+        //        current_link.hasTag(goal)) {
+        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && current_link.hasTag(goal)) {
+            consumePlannedRoute();
             // tkokada: temporaly comment out
             //System.err.println("the goal should not be a link!!");
             setEvacuated(true, time);
@@ -2366,6 +2379,34 @@ public class RunningAroundPerson extends EvacuationAgent
 
     public double getTimeScale() {
         return time_scale;
+    }
+
+    // planned_route の残り経路がすべて WAIT_FOR/WAIT_UNTIL ならば true を返す
+    public boolean isRemainingRouteWAIT_() {
+        if (isPlannedRouteCompleted()) {
+            return false;
+        }
+
+        int index = routeIndex;
+        while (index < planned_route.size()) {
+            String candidate = planned_route.get(index);
+            if (candidate.startsWith("WAIT_UNTIL")) {
+                index += 3;
+            } else if (candidate.startsWith("WAIT_FOR")) {
+                index += 3;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isPlannedRouteCompleted() {
+        return routeIndex >= planned_route.size();
+    }
+
+    public void consumePlannedRoute() {
+        routeIndex = planned_route.size();
     }
 }
 // ;;; Local Variables:
