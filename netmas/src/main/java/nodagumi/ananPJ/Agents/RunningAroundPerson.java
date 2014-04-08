@@ -896,7 +896,7 @@ public class RunningAroundPerson extends EvacuationAgent
         MapLink link_to_find_agent = current_link;
         // is used to update link_to_fin_agent
         MapNode node_to_navigate = next_node;
-        double distance_to_go = emptyspeed * time_scale * SPEED_VIEW_RATIO * 10;
+        double distance_to_go = emptyspeed * time_scale;    // * SPEED_VIEW_RATIO * 10;
         int route_index_orig = getRouteIndex();
         double direction_orig = direction;
 
