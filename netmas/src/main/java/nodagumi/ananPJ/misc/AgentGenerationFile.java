@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,13 +46,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private static final String randomAllNodePrefixTag = "ROOT-N";
     private Random random = null;
     private double liner_generate_agent_ratio = 1.0;
+    private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
 
     public AgentGenerationFile(final String filename,
             ArrayList<MapNode> nodes,
             ArrayList<MapLink> links,
             boolean display,
             double linerGenerateAgentRatio,
-            Random _random) {
+            Random _random) throws Exception {
         if (filename == null || filename.isEmpty()) {
             return;
         }
@@ -84,6 +86,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
+                String orgLine = line;
                 line = line.toUpperCase();
                 String items[] = line.split(",");
 
@@ -319,6 +322,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         }
                     }
                 }
+
+                // 経路情報に未定義のタグが使用されていないかチェックする
+                ArrayList<String> routeErrors = checkPlannedRoute(nodes, links, planned_route);
+                if (! routeErrors.isEmpty()) {
+                    definitionErrors.put(orgLine, routeErrors);
+                }
+
                 if (rule_tag.equals("EACH")) {
                     for (final MapLink start_link : start_links) {
                         this.add(new GenerateAgentFromLink(start_link,
@@ -518,6 +528,16 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             System.err.println(e.getMessage());
             e.printStackTrace();
         }
+
+        // 経路情報に未定義のタグが使用されていたら例外を発生させる
+        if (! definitionErrors.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder();
+            definitionErrors.forEach((_line, messages) -> {
+                errorMessage.append("line: ").append(_line).append("\n");
+                messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
+            });
+            throw new Exception(errorMessage.toString());
+        }
     }
 
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {
@@ -529,6 +549,53 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         for (GenerateAgent ga : this) {
             ga.setRandom(_random);
         }
+    }
+
+    // 経路情報に未定義のタグが使用されていたらその内容を返す
+    public ArrayList<String> checkPlannedRoute(ArrayList<MapNode> nodes, ArrayList<MapLink> links, ArrayList<String> planned_route) {
+        ArrayList<String> linkTags = new ArrayList();
+        ArrayList<String> nodeTags = new ArrayList();
+        int index = 0;
+        while (index < planned_route.size()) {
+            String candidate = planned_route.get(index);
+            if (candidate.startsWith("WAIT_UNTIL")) {
+                linkTags.add(candidate.substring(11));
+                index += 3;
+            } else if (candidate.startsWith("WAIT_FOR")) {
+                linkTags.add(candidate.substring(9));
+                index += 3;
+            } else {
+                nodeTags.add(candidate);
+                index += 1;
+            }
+        }
+
+        ArrayList<String> result = new ArrayList();
+        for (String nodeTag : nodeTags) {
+            boolean found = false;
+            for (MapNode node : nodes) {
+                if (node.hasTag(nodeTag)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (! found) {
+                result.add("Undefined Node Tag: " + nodeTag);
+            }
+        }
+        for (String linkTag : linkTags) {
+            boolean found = false;
+            for (MapLink link : links) {
+                if (link.hasTag(linkTag)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (! found) {
+                result.add("Undefined Link Tag: " + linkTag);
+            }
+        }
+        return result;
     }
 }
 //;;; Local Variables:

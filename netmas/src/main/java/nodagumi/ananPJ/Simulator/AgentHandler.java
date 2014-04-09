@@ -141,9 +141,14 @@ public class AgentHandler implements Serializable {
             link.agentEnters(agent);
         }
 
-        generate_agent = new AgentGenerationFile(generationFile,
-                model.getNodes(), model.getLinks(), has_display,
-                linerGenerateAgentRatio, random);
+        try {
+            generate_agent = new AgentGenerationFile(generationFile,
+                    model.getNodes(), model.getLinks(), has_display,
+                    linerGenerateAgentRatio, random);
+        } catch(Exception e) {
+            System.err.printf("Illegal AgentGenerationFile: %s\n%s", generationFile, e.getMessage());
+            System.exit(1);
+        }
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
                 maxAgentCount += factory.getMaxGeneration();
