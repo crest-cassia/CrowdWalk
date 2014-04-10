@@ -1096,8 +1096,13 @@ public class AgentHandler implements Serializable {
     private transient JLabel evacuatedCount_label = new JLabel("NOT STARTED3");
     private ArrayList<ButtonGroup> toggle_scenario_button_groups = new
         ArrayList<ButtonGroup>();
-    private transient JTextArea message =
-        new JTextArea("UNMaps Version 1.9.5\n");
+    private transient JTextArea message = new JTextArea("UNMaps Version 1.9.5\n") {
+        @Override
+        public void append(String str) {
+            super.append(str);
+            message.setCaretPosition(message.getDocument().getLength());
+        }
+    };
 
     public JPanel getControlPanel() {
         return control_panel;
@@ -1234,7 +1239,10 @@ public class AgentHandler implements Serializable {
             }
             y++;
         }
-        top_panel.add(label_toggle_panel, BorderLayout.CENTER);
+        JScrollPane scroller = new JScrollPane(label_toggle_panel,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroller.setPreferredSize(new Dimension(400, 260));
+        top_panel.add(scroller, BorderLayout.CENTER);
         
         JPanel control_button_panel = new JPanel(new FlowLayout());
         ImageIcon start_icon = new ImageIcon("img/start.png");
@@ -1273,7 +1281,7 @@ public class AgentHandler implements Serializable {
         control_button_panel.add(simulation_weight_value);
 
         top_panel.add(control_button_panel, BorderLayout.SOUTH);
-        control_panel.add(top_panel, BorderLayout.NORTH);
+        control_panel.add(top_panel, BorderLayout.CENTER);
             
         /* text message */
         message.setEditable(false);
@@ -1281,9 +1289,9 @@ public class AgentHandler implements Serializable {
         JScrollPane message_scroller = new JScrollPane(message,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        message_scroller.setPreferredSize(new Dimension(300, 84));
+        message_scroller.setPreferredSize(new Dimension(300, 160));
 
-        control_panel.add(message_scroller, BorderLayout.CENTER);
+        control_panel.add(message_scroller, BorderLayout.SOUTH);
     }
     
     private void change_simulation_weight() {

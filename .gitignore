@@ -9,6 +9,9 @@ Thumbs.db
 .gradle/
 build/
 
+# ctags
+.tags
+
 # GNU GLOBAL
 GPATH
 GRTAGS
