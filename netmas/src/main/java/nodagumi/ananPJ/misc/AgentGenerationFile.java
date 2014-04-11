@@ -7,7 +7,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -532,10 +534,20 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         // 経路情報に未定義のタグが使用されていたら例外を発生させる
         if (! definitionErrors.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder();
-            definitionErrors.forEach((_line, messages) -> {
+            //definitionErrors.forEach((_line, messages) -> {
+            //    errorMessage.append("line: ").append(_line).append("\n");
+            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
+            //});
+            Iterator it = definitionErrors.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
+                String _line = entry.getKey();
+                ArrayList<String>messages = entry.getValue();
                 errorMessage.append("line: ").append(_line).append("\n");
-                messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
-            });
+                for (String message: messages) {
+                    errorMessage.append("    ").append(message).append("\n");
+                }
+            }
             throw new Exception(errorMessage.toString());
         }
     }
