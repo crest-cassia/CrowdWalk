@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -730,8 +731,9 @@ public class AgentHandler implements Serializable {
     }
 
     private void updateEvacuatedCount() {
-        String evacuatedCount_string = "Evacuated: " + evacuated_agents.size()
-            + "/" + (int) this.getMaxAgentCount();
+        String evacuatedCount_string = String.format("Walking: %d  Generated: %d  Evacuated: %d / %d", 
+            getAgents().size() - evacuated_agents.size(), getAgents().size(), evacuated_agents.size(),
+            getMaxAgentCount());
         evacuatedCount_label.setText(evacuatedCount_string);
         SimulationPanel3D.updateEvacuatedCount(evacuatedCount_string);
     }
@@ -1108,6 +1110,23 @@ public class AgentHandler implements Serializable {
         return control_panel;
     }
 
+    // GridBagLayout のパネルにラベルを追加する
+    private void addJLabel(JPanel panel, int x, int y, int width, int height, int anchor, JLabel label) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = anchor;
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        gbc.gridheight = height;
+        gbc.insets = new Insets(0, 12, 0, 12);
+        ((GridBagLayout)panel.getLayout()).setConstraints(label, gbc);
+        panel.add(label);
+    }
+
+    private void addJLabel(JPanel panel, int x, int y, int width, int height, JLabel label) {
+        addJLabel(panel, x, y, width, height, GridBagConstraints.WEST, label);
+    }
+
     private void setup_control_panel(String generationFileName,
             String responseFileName,
             String scenario_number,
@@ -1120,41 +1139,43 @@ public class AgentHandler implements Serializable {
         top_panel.setLayout(new BorderLayout());
 
         /* title & clock */
-        JPanel titlepanel = new JPanel(new GridLayout(4, 2));
-        titlepanel.add(new JLabel("Agent"));
+        JPanel titlepanel = new JPanel(new GridBagLayout());
+        addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, new JLabel("Agent"));
         if (generationFileName != null) {
             File generation_file = new File(generationFileName);
-            titlepanel.add(new JLabel(generation_file.getName()));
+            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel(generation_file.getName()));
         } else {
-            titlepanel.add(new JLabel("No generation file"));
+            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel("No generation file"));
         }
-        titlepanel.add(new JLabel("Scenario"));
 
+        addJLabel(titlepanel, 0, 1, 1, 1, GridBagConstraints.EAST, new JLabel("Scenario"));
         if (responseFileName != null) {
             File response_file = new File(responseFileName);
-            titlepanel.add(new JLabel(response_file.getName()));
+            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel(response_file.getName()));
         } else {
-            titlepanel.add(new JLabel("No response file"));
+            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel("No response file"));
         }
 
-        titlepanel.add(new JLabel("ID"));
+        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, new JLabel("ID"));
         if (scenario_number != null) {
-            titlepanel.add(new JLabel(scenario_number));
+            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel(scenario_number));
         } else {
             JLabel sl = new JLabel("(NOT DEFINED)");
             sl.setFont(new Font(null, Font.ITALIC, 9));
-            titlepanel.add(sl);
+            addJLabel(titlepanel, 1, 2, 1, 1, sl);
         }
 
         clock_label.setHorizontalAlignment(JLabel.CENTER);
         clock_label.setFont(new Font("Lucida", Font.BOLD, 18));
-        titlepanel.add(clock_label, BorderLayout.CENTER);
+        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.CENTER, clock_label);
+
         time_label.setHorizontalAlignment(JLabel.LEFT);
         time_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        titlepanel.add(time_label, BorderLayout.CENTER);
+        addJLabel(titlepanel, 1, 3, 1, 1, time_label);
+
         evacuatedCount_label.setHorizontalAlignment(JLabel.LEFT);
         evacuatedCount_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        titlepanel.add(evacuatedCount_label, BorderLayout.CENTER);
+        addJLabel(titlepanel, 0, 4, 2, 1, GridBagConstraints.CENTER, evacuatedCount_label);
         top_panel.add(titlepanel, BorderLayout.NORTH);
 
         /* scenarios */
@@ -1312,7 +1333,7 @@ public class AgentHandler implements Serializable {
         }
     }
 
-    public double getMaxAgentCount() {
+    public int getMaxAgentCount() {
         return maxAgentCount;
     }
 
