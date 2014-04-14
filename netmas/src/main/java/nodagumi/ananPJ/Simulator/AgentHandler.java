@@ -1140,42 +1140,58 @@ public class AgentHandler implements Serializable {
 
         /* title & clock */
         JPanel titlepanel = new JPanel(new GridBagLayout());
-        addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, new JLabel("Agent"));
+        addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, new JLabel("Map"));
+        if (model.getMap().getFileName() != null) {
+            File map_file = new File(model.getMap().getFileName());
+            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel(map_file.getName()));
+        } else {
+            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel("No map file"));
+        }
+
+        addJLabel(titlepanel, 0, 1, 1, 1, GridBagConstraints.EAST, new JLabel("Agent"));
         if (generationFileName != null) {
             File generation_file = new File(generationFileName);
-            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel(generation_file.getName()));
+            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel(generation_file.getName()));
         } else {
-            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel("No generation file"));
+            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel("No generation file"));
         }
 
-        addJLabel(titlepanel, 0, 1, 1, 1, GridBagConstraints.EAST, new JLabel("Scenario"));
+        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, new JLabel("Scenario"));
         if (responseFileName != null) {
             File response_file = new File(responseFileName);
-            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel(response_file.getName()));
+            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel(response_file.getName()));
         } else {
-            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel("No response file"));
+            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel("No response file"));
         }
 
-        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, new JLabel("ID"));
+        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST, new JLabel("Pollution"));
+        if (model.getMap().getPollutionFile() != null) {
+            File pollution_file = new File(model.getMap().getPollutionFile());
+            addJLabel(titlepanel, 1, 3, 1, 1, new JLabel(pollution_file.getName()));
+        } else {
+            addJLabel(titlepanel, 1, 3, 1, 1, new JLabel("No pollution file"));
+        }
+
+        addJLabel(titlepanel, 0, 4, 1, 1, GridBagConstraints.EAST, new JLabel("ID"));
         if (scenario_number != null) {
-            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel(scenario_number));
+            addJLabel(titlepanel, 1, 4, 1, 1, new JLabel(scenario_number));
         } else {
             JLabel sl = new JLabel("(NOT DEFINED)");
             sl.setFont(new Font(null, Font.ITALIC, 9));
-            addJLabel(titlepanel, 1, 2, 1, 1, sl);
+            addJLabel(titlepanel, 1, 4, 1, 1, sl);
         }
 
         clock_label.setHorizontalAlignment(JLabel.CENTER);
         clock_label.setFont(new Font("Lucida", Font.BOLD, 18));
-        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.CENTER, clock_label);
+        addJLabel(titlepanel, 0, 5, 1, 1, GridBagConstraints.CENTER, clock_label);
 
         time_label.setHorizontalAlignment(JLabel.LEFT);
         time_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        addJLabel(titlepanel, 1, 3, 1, 1, time_label);
+        addJLabel(titlepanel, 1, 5, 1, 1, time_label);
 
         evacuatedCount_label.setHorizontalAlignment(JLabel.LEFT);
         evacuatedCount_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        addJLabel(titlepanel, 0, 4, 2, 1, GridBagConstraints.CENTER, evacuatedCount_label);
+        addJLabel(titlepanel, 0, 6, 2, 1, GridBagConstraints.CENTER, evacuatedCount_label);
         top_panel.add(titlepanel, BorderLayout.NORTH);
 
         /* scenarios */
@@ -1262,7 +1278,7 @@ public class AgentHandler implements Serializable {
         }
         JScrollPane scroller = new JScrollPane(label_toggle_panel,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroller.setPreferredSize(new Dimension(400, 260));
+        scroller.setPreferredSize(new Dimension(400, 230));
         top_panel.add(scroller, BorderLayout.CENTER);
         
         JPanel control_button_panel = new JPanel(new FlowLayout());
