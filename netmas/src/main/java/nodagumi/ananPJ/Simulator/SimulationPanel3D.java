@@ -283,7 +283,7 @@ public class SimulationPanel3D extends NetworkPanel3D
         /* -- zoom */
         JPanel zoom_panel = new JPanel(new GridBagLayout());
         zoom_panel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLoweredBevelBorder(), "Zoom"));
+                BorderFactory.createLoweredBevelBorder(), "Scale"));
         /* --- vertical zoom */
         GridBagConstraints c = null;
         c = new GridBagConstraints();
@@ -292,7 +292,7 @@ public class SimulationPanel3D extends NetworkPanel3D
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.WEST;
-        zoom_panel.add(new JLabel("vertical zoom"), c);
+        zoom_panel.add(new JLabel("vertical scale"), c);
         Transform3D trans = new Transform3D();
         view_trans.getTransform(trans);
         Vector3d scale_vec = new Vector3d();
@@ -392,37 +392,33 @@ public class SimulationPanel3D extends NetworkPanel3D
         camerawork_list.setLayoutOrientation(JList.VERTICAL);
         JScrollPane camerawork_list_scroller = new JScrollPane(camerawork_list);
         camerawork_panel.add(camerawork_list_scroller, BorderLayout.CENTER);
-        
-        JPanel camerawork_replay = new JPanel(new GridBagLayout());
+
+        FlowLayout layout = new FlowLayout();
+        layout.setHgap(0);
+        layout.setVgap(0);
+        JPanel _camerawork_replay = new JPanel(layout);     // センタリングのためだけに使用
+        JPanel camerawork_replay = new JPanel();
+        camerawork_replay.setLayout(new BoxLayout(camerawork_replay, BoxLayout.Y_AXIS));
         replay_recorded_camera_position = new JCheckBox("Replay");
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        camerawork_replay.add(replay_recorded_camera_position, c);
-        
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        camerawork_replay.add(new JLabel("scale"), c);
+        camerawork_replay.add(replay_recorded_camera_position);
+
+        layout = new FlowLayout(FlowLayout.LEFT);
+        JPanel camera_control_panel = new JPanel(layout);
+        camera_control_panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        camera_control_panel.add(new JLabel("Zoom"));
         scale_on_replay_control = new JScrollBar(JScrollBar.HORIZONTAL, (int)(scale_on_replay * 10),
                 1, 0, 100);
         scale_on_replay_control.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 scale_on_replay = ((double)scale_on_replay_control.getValue()) / 10;
-                }
+            }
         });
         scale_on_replay_control.setPreferredSize(new Dimension(200, 20));
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 0;
-        c.gridwidth = 3;
-        c.gridheight = 1;
-        camerawork_replay.add(scale_on_replay_control, c);
-        camerawork_panel.add(camerawork_replay, BorderLayout.SOUTH);
+        camera_control_panel.add(scale_on_replay_control);
+        camerawork_replay.add(camera_control_panel);
+
+        _camerawork_replay.add(camerawork_replay);
+        camerawork_panel.add(_camerawork_replay, BorderLayout.SOUTH);
         view_control.add(camerawork_panel, BorderLayout.CENTER);
 
         /* -- other checkboxes */
@@ -486,7 +482,7 @@ public class SimulationPanel3D extends NetworkPanel3D
         checkbox_panel.add(density_mode_cb);
 
         // シミュレーション進捗状況のテキスト表示と表示位置の選択
-        FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
+        layout = new FlowLayout(FlowLayout.LEFT);
         layout.setHgap(0);
         layout.setVgap(2);
         JPanel show_status_panel = new JPanel(layout);
