@@ -1,8 +1,10 @@
 package nodagumi.ananPJ.Simulator;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
@@ -44,6 +46,8 @@ import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
 import javax.media.j3d.WakeupOnElapsedTime;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -52,9 +56,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
@@ -419,7 +426,9 @@ public class SimulationPanel3D extends NetworkPanel3D
         view_control.add(camerawork_panel, BorderLayout.CENTER);
 
         /* -- other checkboxes */
-        JPanel checkbox_panel = new JPanel(new GridLayout(6, 1));
+        JPanel checkbox_panel = new JPanel();
+        checkbox_panel.setBorder(new CompoundBorder(checkbox_panel.getBorder(), new EmptyBorder(0, 4, 0, 0)));
+        checkbox_panel.setLayout(new BoxLayout(checkbox_panel, BoxLayout.Y_AXIS));
         record_snapshots = new JCheckBox("Record simulation screen");
         record_snapshots.setSelected(model.getScreenshotInterval() != 0);
         record_snapshots.addActionListener(new ActionListener() {
@@ -476,16 +485,48 @@ public class SimulationPanel3D extends NetworkPanel3D
         });
         checkbox_panel.add(density_mode_cb);
 
-        /* -- hide agents and show density by color */
+        // シミュレーション進捗状況のテキスト表示と表示位置の選択
+        FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
+        layout.setHgap(0);
+        layout.setVgap(2);
+        JPanel show_status_panel = new JPanel(layout);
+        show_status_panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JCheckBox show_status_cb = new JCheckBox("Show status", show_message);
+        JRadioButton top_rb = new JRadioButton("Top", (messagePosition & TOP) == TOP);
+        JRadioButton bottom_rb = new JRadioButton("Bottom", (messagePosition & BOTTOM) == BOTTOM);
+        top_rb.setEnabled(show_message);
+        bottom_rb.setEnabled(show_message);
+        show_status_cb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                show_message = show_status_cb.isSelected();
+                top_rb.setEnabled(show_message);
+                bottom_rb.setEnabled(show_message);
+            }
+        });
+        show_status_panel.add(show_status_cb);
+        top_rb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+               messagePosition = TOP;
+            }
+        });
+        bottom_rb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+               messagePosition = BOTTOM;
+            }
+        });
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(top_rb);
+        bg.add(bottom_rb);
+        show_status_panel.add(top_rb);
+        show_status_panel.add(bottom_rb);
+        checkbox_panel.add(show_status_panel);
+
+        // AIST ロゴの表示
         show_logo_cb = new JCheckBox("Show logo");
         show_logo_cb.setSelected(false);
         show_logo_cb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                if (show_logo_cb.isSelected()) {
-                    show_logo = true;
-                } else {
-                    show_logo = false;
-                }
+                show_logo = show_logo_cb.isSelected();
             }
         });
         checkbox_panel.add(show_logo_cb);
@@ -507,11 +548,11 @@ public class SimulationPanel3D extends NetworkPanel3D
         checkbox_panel.add(show_3d_polygon_cb);
 
         JButton set_view_home_button = new JButton("Set view to original");
-        set_view_home_button.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         set_view_home_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) { setViewToHome(); }
         });
         checkbox_panel.add(set_view_home_button);
+
         view_control.add(checkbox_panel, BorderLayout.SOUTH);
     }
 
@@ -1174,7 +1215,7 @@ public class SimulationPanel3D extends NetworkPanel3D
                 time);
         String clock_string = model.getAgentHandler().getClockString(time);
         simulation_status.setText("  "+ clock_string + time_string + evacuatedCount_string);
-        canvas.message = "Time： " + clock_string;
+        canvas.message = "Time: " + clock_string + time_string + evacuatedCount_string;
     }
 
     public static void updateEvacuatedCount(String evacuatedCount){

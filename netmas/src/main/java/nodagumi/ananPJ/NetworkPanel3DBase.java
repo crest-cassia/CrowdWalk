@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Menu;
@@ -93,6 +94,8 @@ public abstract class NetworkPanel3DBase extends JPanel
      * - show logo 
      */
     private static final long serialVersionUID = 6164276270221427488L;
+    public static final int TOP = 1;
+    public static final int BOTTOM = 2;
 
     protected Map<Shape3D, OBNode> canvasobj_to_obnode = new HashMap<Shape3D, OBNode>();
 
@@ -112,6 +115,8 @@ public abstract class NetworkPanel3DBase extends JPanel
 
     static protected Color3f link_color = Colors.WHITE;
     protected boolean show_logo = false;
+    protected boolean show_message = false;
+    protected int messagePosition = TOP;
     // tkokada polygon
     protected boolean show_3d_polygon = true;
 
@@ -148,14 +153,31 @@ public abstract class NetworkPanel3DBase extends JPanel
         public void postRender() {
             super.postRender();
 
+            boolean flushRequired = false;
             J3DGraphics2D g = getGraphics2D();
-            // g.setColor(Color.WHITE);
-            g.setColor(Color.BLACK);
-            g.drawString(message, 12, 12);
             if (show_logo) {
                 int x = getWidth() - aist_logo.getWidth(null);
                 int y = getHeight() - aist_logo.getHeight(null);
                 g.drawImage(aist_logo, x, y, null);
+                flushRequired = true;
+            }
+            if (show_message) {
+                FontMetrics fm = g.getFontMetrics();
+                int width = fm.stringWidth(message);
+                int height = fm.getHeight();
+                int ascent = fm.getAscent();
+                int x = 12;     // メッセージの基準表示位置
+                int y = 12;     //          〃
+                if ((messagePosition & BOTTOM) == BOTTOM) {
+                    y += (int)getSize().getHeight() - ascent;
+                }
+                g.setColor(Colors.BACKGROUND_3D_COLOR.get());           // メッセージの背景色
+                g.fillRect(x - 4, y - ascent, width + 7, height - 1);   // メッセージの背景描画
+                g.setColor(Color.BLACK);
+                g.drawString(message, x, y);
+                flushRequired = true;
+            }
+            if (flushRequired) {
                 g.flush(true);
             }
         }
