@@ -1336,7 +1336,7 @@ public class AgentHandler implements Serializable {
         simulation_weight_value.setText("" + simulation_weight);
     }
 
-    private void update_buttons() {
+    public void update_buttons() {
         boolean is_running = model.isRunning();
         if (start_button != null) {
             start_button.setEnabled(!is_running);

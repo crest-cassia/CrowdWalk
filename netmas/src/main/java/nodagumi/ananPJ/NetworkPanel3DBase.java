@@ -293,6 +293,7 @@ public abstract class NetworkPanel3DBase extends JPanel
         setupMenu();
         setupContents();
         setupExtraContents();
+        setup_control_panel();
     }
 
     abstract protected void register_map_objects();
@@ -427,8 +428,9 @@ public abstract class NetworkPanel3DBase extends JPanel
         */
     }
 
-    protected void setupExtraContents() {
-    }
+    protected void setupExtraContents() {}
+
+    protected void setup_control_panel() {}
 
     protected TransformGroup view_trans = null;
     protected BranchGroup view_trans_parent = null;

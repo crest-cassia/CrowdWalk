@@ -654,6 +654,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     public void start() {
         if (controller != null) {
             controller.start();
+            if (panel3d != null && isRunning()) {
+                panel3d.setMenuActionStartEnabled(false);
+            }
         }
     }
 
@@ -661,6 +664,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     public void pause() {
         if (controller != null) {
             controller.pause();
+            if (panel3d != null && ! isRunning()) {
+                panel3d.setMenuActionStartEnabled(true);
+            }
         }
     }
 

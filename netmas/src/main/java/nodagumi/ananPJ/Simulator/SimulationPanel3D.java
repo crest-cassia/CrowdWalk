@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
@@ -156,6 +158,9 @@ public class SimulationPanel3D extends NetworkPanel3D
     /* control view */
     protected JPanel control_panel = null;
     CheckboxMenuItem menu_item_agent_color_speed = null;
+    protected MenuItem menu_item_step = null;
+    protected MenuItem menu_item_start = null;
+    protected MenuItem menu_item_pause = null;
 
     double vertical_zoom = 10.0;
     JScrollBar vertical_zoom_control;
@@ -189,12 +194,21 @@ public class SimulationPanel3D extends NetworkPanel3D
     JCheckBox density_mode_cb = null;
     JCheckBox show_logo_cb = null;
     JCheckBox show_3d_polygon_cb = null;
+    protected JCheckBox change_agent_color_depending_on_speed_cb = null;
 
+    // Simulation ウィンドウのメニューにメニュー項目を追加する
     @Override
     protected void setupExtraContents() {
-        /* extra menu items */
+        // View menu
+
         menu_item_agent_color_speed = new CheckboxMenuItem("Change agent color depending on speed", false);
+        menu_item_agent_color_speed.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                change_agent_color_depending_on_speed_cb.setSelected(menu_item_agent_color_speed.getState());
+            }
+        });
         menu_view.add(menu_item_agent_color_speed);
+
         menu_view.add("-");
         MenuItem item = new MenuItem("Change agent color");
         item.addActionListener(new ActionListener() {
@@ -234,17 +248,35 @@ public class SimulationPanel3D extends NetworkPanel3D
             public void actionPerformed(ActionEvent e) { show_gas = gas_display.ORANGE; }
         });
         menu_pollution_color.add(item);
-        item = new MenuItem("Start");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.start();}
-        });
-        menu_action.add(item);
 
-        item = new MenuItem("Pause");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.pause();}
+        // Action menu
+
+        menu_item_step = new MenuItem("Step");
+        menu_item_step.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { model.step(); }
         });
-        menu_action.add(item);
+        menu_action.add(menu_item_step);
+
+        menu_item_start = new MenuItem("Start");
+        menu_item_start.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setMenuActionStartEnabled(false);
+                model.start();
+                model.getAgentHandler().update_buttons();
+            }
+        });
+        menu_action.add(menu_item_start);
+
+        menu_item_pause = new MenuItem("Pause");
+        menu_item_pause.setEnabled(false);
+        menu_item_pause.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setMenuActionStartEnabled(true);
+                model.pause();
+                model.getAgentHandler().update_buttons();
+            }
+        });
+        menu_action.add(menu_item_pause);
         menu_action.add(new MenuItem("-"));
         
         item = new MenuItem("Load recorded camera");
@@ -264,10 +296,9 @@ public class SimulationPanel3D extends NetworkPanel3D
         simulation_status.setText("NOT STARTED");
         simulation_status.setHorizontalAlignment(JLabel.LEFT);
         add(simulation_status, BorderLayout.NORTH);
-
-        setup_control_panel();
     }
     
+    // Simulation ウィンドウの View パネルに GUI パーツをセットする
     protected void setup_control_panel() {
         /* -- view control */
         control_panel = new JPanel();
@@ -481,7 +512,17 @@ public class SimulationPanel3D extends NetworkPanel3D
         });
         checkbox_panel.add(density_mode_cb);
 
-        // シミュレーション進捗状況のテキスト表示と表示位置の選択
+        // 歩行速度に応じてエージェントの色を変える
+        change_agent_color_depending_on_speed_cb = new JCheckBox("Change agent color depending on speed");
+        change_agent_color_depending_on_speed_cb.setSelected(menu_item_agent_color_speed.getState());
+        change_agent_color_depending_on_speed_cb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                menu_item_agent_color_speed.setState(change_agent_color_depending_on_speed_cb.isSelected());
+            }
+        });
+        checkbox_panel.add(change_agent_color_depending_on_speed_cb);
+
+        // シミュレーションビュー上に進捗状況をテキスト表示する、及び表示位置の選択
         layout = new FlowLayout(FlowLayout.LEFT);
         layout.setHgap(0);
         layout.setVgap(2);
@@ -575,6 +616,12 @@ public class SimulationPanel3D extends NetworkPanel3D
         repaint();
     }
 
+    public void setMenuActionStartEnabled(boolean b) {
+        menu_item_step.setEnabled(b);
+        menu_item_start.setEnabled(b);
+        menu_item_pause.setEnabled(! b);
+    }
+
     static class CurrentCameraPosition
             implements Comparable<CurrentCameraPosition> {
         double time, vertical_zoom, agent_size;
@@ -593,8 +640,11 @@ public class SimulationPanel3D extends NetworkPanel3D
             matrix = _matrx;
         }
 
-        static CurrentCameraPosition fromString(String line) {
+        static CurrentCameraPosition fromString(String line) throws Exception {
             String items[] = line.split(",");
+            if (items.length != 19) {
+                throw new Exception("Camera position data error: " + line);
+            }
             
             CurrentCameraPosition ret = new CurrentCameraPosition();
             ret.time = Double.parseDouble(items[0]);
@@ -657,7 +707,6 @@ public class SimulationPanel3D extends NetworkPanel3D
         update_camerawork_list();
     }
     
-    //private void save_camera_position_list() {
     public void save_camera_position_list() {
         FileDialog fd = new FileDialog(parent, "Save camera position list", FileDialog.SAVE);
         fd.setVisible (true);
@@ -681,7 +730,6 @@ public class SimulationPanel3D extends NetworkPanel3D
         }
     }
 
-    //private void load_camera_position_list() {
     public void load_camera_position_list() {
         FileDialog fd = new FileDialog(parent, "Open camera position list",
                 FileDialog.LOAD);
@@ -690,10 +738,10 @@ public class SimulationPanel3D extends NetworkPanel3D
         if (fd.getFile() == null) return;
         String filename = fd.getDirectory() + fd.getFile();
 
-        loadCameraworkFromFile(filename);
+        setReplay(loadCameraworkFromFile(filename));
     }
 
-    public void loadCameraworkFromFile(String filename) {
+    public boolean loadCameraworkFromFile(String filename) {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filename));
@@ -706,12 +754,12 @@ public class SimulationPanel3D extends NetworkPanel3D
                 line = line.toUpperCase();
                 camera_position_list.add(CurrentCameraPosition.fromString(line));
             }
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
         update_camerawork_list();
+        return true;
     }
     
     private void update_camerawork_list() {
