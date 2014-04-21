@@ -1110,6 +1110,10 @@ public class AgentHandler implements Serializable {
         return control_panel;
     }
 
+    public JButton getStartButton() {
+        return start_button;
+    }
+
     // GridBagLayout のパネルにラベルを追加する
     private void addJLabel(JPanel panel, int x, int y, int width, int height, int anchor, JLabel label) {
         GridBagConstraints gbc = new GridBagConstraints();

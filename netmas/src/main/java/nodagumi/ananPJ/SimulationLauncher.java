@@ -62,6 +62,10 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private boolean saveFusionViewerLogOption = false;
     private boolean sendFusionViewerLogOption = false;
 
+    protected String cameraPath = null;
+    protected boolean recordSimulationScreen = false;
+    protected boolean autoSimulationStart = false;
+
     protected NetworkMap networkMap;
     public NetworkMap getMap() { return networkMap; }
     public EvacuationModelBase getModel() { return model; }
@@ -439,7 +443,9 @@ public class SimulationLauncher extends BasicSimulationLauncher
         simulation_frame = new JFrame("Simulation Preview");
 
         simulation_frame.addWindowListener(new WindowListener() {
-            public void windowOpened(WindowEvent e) {           }
+            public void windowOpened(WindowEvent e) {
+                windowOpenedOperation(panel, model);
+            }
             public void windowIconified(WindowEvent e) {            }
             public void windowDeiconified(WindowEvent e) {          }
             public void windowDeactivated(WindowEvent e) {          }
@@ -483,7 +489,9 @@ public class SimulationLauncher extends BasicSimulationLauncher
         if (_panel == null) {
             simulation_frame = new JFrame("Simulation Preview");
             simulation_frame.addWindowListener(new WindowListener() {
-                public void windowOpened(WindowEvent e) {           }
+                public void windowOpened(WindowEvent e) {
+                    windowOpenedOperation(panel, model);
+                }
                 public void windowIconified(WindowEvent e) {            }
                 public void windowDeiconified(WindowEvent e) {          }
                 public void windowDeactivated(WindowEvent e) {          }
@@ -529,6 +537,24 @@ public class SimulationLauncher extends BasicSimulationLauncher
         }
 
         return panel;
+    }
+
+    public void windowOpenedOperation(SimulationPanel3D panel, EvacuationModelBase model) {
+        boolean successful = true;
+        if (getCameraPath() != null) {
+            if (panel.loadCameraworkFromFile(getCameraPath())) {
+                panel.setReplay(true);
+            } else {
+                System.err.println("Camera file の読み込みに失敗しました: " + getCameraPath());
+                successful = false;
+            }
+        }
+        if (isRecordSimulationScreen()) {
+            panel.getRecordSnapshots().doClick();
+        }
+        if (successful && isAutoSimulationStart()) {
+            model.getAgentHandler().getStartButton().doClick();
+        }
     }
 
     @Override
@@ -675,5 +701,29 @@ public class SimulationLauncher extends BasicSimulationLauncher
     public void setDamageSpeedZeroNumberLogPath(String
             _damageSpeedZeroNumberLogPath) {
         damageSpeedZeroNumberLogPath = _damageSpeedZeroNumberLogPath;
+    }
+
+    public void setCameraPath(String path) {
+        cameraPath = path;
+    }
+
+    public String getCameraPath() {
+        return cameraPath;
+    }
+
+    public void setRecordSimulationScreen(boolean b) {
+        recordSimulationScreen = b;
+    }
+
+    public boolean isRecordSimulationScreen() {
+        return recordSimulationScreen;
+    }
+
+    public void setAutoSimulationStart(boolean b) {
+        autoSimulationStart = b;
+    }
+
+    public boolean isAutoSimulationStart() {
+        return autoSimulationStart;
     }
 }

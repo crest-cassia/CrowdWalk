@@ -157,6 +157,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     private EditorMode mode = EditorMode.EDIT_NODE;
     transient protected JFrame frame;
+    private JButton runButton = null;
 
     protected NetworkMapEditor(Random _random) {
         super(_random);
@@ -224,7 +225,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
         buttonPanel.add(new JLabel());
-        JButton runButton = new JButton("Simulate");
+        runButton = new JButton("Simulate");
         runButton.addActionListener(this);
         buttonPanel.add(runButton);
 
@@ -300,7 +301,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
         buttonPanel.add(new JLabel());
-        JButton runButton = new JButton("Simulate");
+        runButton = new JButton("Simulate");
         runButton.addActionListener(this);
         buttonPanel.add(runButton);
 
@@ -1277,6 +1278,15 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     public void windowOpened(WindowEvent arg0) {
+        if (isAutoSimulationStart()) {
+            // TODO: 設定が正しく動作したかどうかのチェックも必要
+            if (networkMap == null || mapPath == null || generationPath == null || scenarioPath == null) {
+                System.err.println("プロパティファイルの設定が足りないためシミュレーションを開始することが出来ません。");
+                return;
+            }
+            System.err.println("auto simulation start");
+            runButton.doClick();
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -1529,6 +1539,7 @@ public class NetworkMapEditor extends SimulationLauncher
         setPollutionPath(propertiesHandler.getPollutionPath());
         setGenerationPath(propertiesHandler.getGenerationPath());
         setScenarioPath(propertiesHandler.getScenarioPath());
+        setCameraPath(propertiesHandler.getCameraPath());
         setIsTimerEnabled(propertiesHandler.getIsTimerEnabled());
         setTimerFile(propertiesHandler.getTimerPath());
         setSerializeFile(propertiesHandler.getSerializePath());
@@ -1551,6 +1562,8 @@ public class NetworkMapEditor extends SimulationLauncher
                 .getExpectedDensityMacroTimeStep());
         setExpectedDensityVisualizeMicroTimeStep(propertiesHandler
                 .getExpectedDensityVisualizeMicroTimeStep());
+        setRecordSimulationScreen(propertiesHandler.isRecordSimulationScreen());
+        setAutoSimulationStart(propertiesHandler.isAutoSimulationStart());
 
         openMapWithName();
 

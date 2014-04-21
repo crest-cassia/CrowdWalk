@@ -209,6 +209,24 @@ public class NetmasPropertiesHandler implements Serializable {
         return isAllAgentSpeedZeroBreak;
     }
 
+    // Camera ファイルのフルパス(指定すると Camera - Replay も自動的に ON となる)
+    protected String cameraPath = null;
+    public String getCameraPath() {
+        return cameraPath;
+    }
+
+    // スクリーンショットを撮る
+    protected boolean recordSimulationScreen = false;
+    public boolean isRecordSimulationScreen() {
+        return recordSimulationScreen;
+    }
+
+    // マップエディタ起動後、自動的に Simulation ウィンドウを開いてシミュレーションを開始(Startボタン押下)する
+    protected boolean autoSimulationStart = false;
+    public boolean isAutoSimulationStart() {
+        return autoSimulationStart;
+    }
+
     protected boolean isDeserialized = false;
 
     public NetmasPropertiesHandler(String _propertiescenarioPath) {
@@ -244,6 +262,7 @@ public class NetmasPropertiesHandler implements Serializable {
             pollutionPath = getStringProperty(prop, "pollution_file");
             generationPath = getStringProperty(prop, "generation_file");
             scenarioPath = getProperty(prop, "scenario_file");
+            cameraPath = getProperty(prop, "camera_file");
             // timer enabled or not
             isTimerEnabled = getBooleanProperty(prop, "timer_enable");
             if (isTimerEnabled)
@@ -302,6 +321,9 @@ public class NetmasPropertiesHandler implements Serializable {
             exitCount = getIntegerProperty(prop, "exit_count");
             isAllAgentSpeedZeroBreak = getBooleanProperty(prop,
                     "all_agent_speed_zero_break");
+
+            recordSimulationScreen = getBooleanProperty(prop, "record_simulation_screen");
+            autoSimulationStart = getBooleanProperty(prop, "auto_simulation_start");
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

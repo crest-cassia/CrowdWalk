@@ -1424,6 +1424,10 @@ public class SimulationPanel3D extends NetworkPanel3D
     public BoundingSphere getBoundingSphere() {
         return bounds;
     }
+
+    public JCheckBox getRecordSnapshots() {
+        return record_snapshots;
+    }
 }
 //;;; Local Variables:
 //;;; mode:java
