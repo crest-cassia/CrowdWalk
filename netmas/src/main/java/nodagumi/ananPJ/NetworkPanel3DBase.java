@@ -114,6 +114,8 @@ public abstract class NetworkPanel3DBase extends JPanel
     protected boolean link_transparency_changed_flag = false;
 
     static protected Color3f link_color = Colors.WHITE;
+    protected String screenshotDir = "screenshots";
+    protected String screenshotImageType = "png";
     protected boolean show_logo = false;
     protected boolean show_message = false;
     protected int messagePosition = TOP;
@@ -151,6 +153,7 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         @Override
         public void postRender() {
+            //System.err.println("- postRender");
             super.postRender();
 
             boolean flushRequired = false;
@@ -184,6 +187,7 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         @Override
         public synchronized void preRender() {
+            //System.err.println("- preRender");
             //int width = 800;
             //int height = 600;
             setCanvasSize(canvas_width, canvas_height);
@@ -192,6 +196,7 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         @Override
         public  synchronized void postSwap() {
+            //System.err.println("- postSwap");
             super.postSwap();
 
             if (filename == null) return;
@@ -247,7 +252,8 @@ public abstract class NetworkPanel3DBase extends JPanel
 //                e.printStackTrace();
 //            }
             try {
-                ImageIO.write(img, "png", new File(filename));
+                ImageIO.write(img, screenshotImageType,
+                    new File(screenshotDir + "/" + filename + "." + screenshotImageType));
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -1506,5 +1512,13 @@ public abstract class NetworkPanel3DBase extends JPanel
 
     public boolean getIsInitialized() {
         return isInitialized;
+    }
+
+    public void setScreenshotDir(String dirPath) {
+        screenshotDir = dirPath;
+    }
+
+    public void setScreenshotImageType(String type) {
+        screenshotImageType = type;
     }
 }

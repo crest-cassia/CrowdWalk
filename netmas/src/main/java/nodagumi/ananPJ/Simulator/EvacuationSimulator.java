@@ -252,10 +252,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 panel3d.updateClock(getSecond());
                 if (screenshotInterval != 0) {
                     if ((((int)getTickCount()) % screenshotInterval) == 0) {
-                        String filename = String.format("screenshots/" +
-                                // "capture%06d.jpg", (int)getTickCount());
-                                "capture%06d.png", (int)getTickCount());
-                        panel3d.captureNextFrame(filename);
+                        panel3d.captureNextFrame(String.format("capture%06d", (int)getTickCount()));
                     }
                 }
                 if (outlogInterval == 0) {

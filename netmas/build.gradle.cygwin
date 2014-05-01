@@ -23,8 +23,8 @@ repositories {
 
 
 dependencies {
-    groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.0'
-    groovy group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    compile group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.0'
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
 
     compile group: 'xalan', name: 'xalan', version: '2.7.0'
 

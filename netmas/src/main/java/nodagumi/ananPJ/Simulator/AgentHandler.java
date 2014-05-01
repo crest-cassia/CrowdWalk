@@ -87,7 +87,7 @@ public class AgentHandler implements Serializable {
     private transient JButton pause_button = null;
     private transient JButton step_button = null;
 
-    private long simulation_weight = 0;
+    private int simulation_weight = 0;
     private transient JScrollBar simulation_weight_control;
     private transient JLabel simulation_weight_value;
 
@@ -1308,8 +1308,7 @@ public class AgentHandler implements Serializable {
         update_buttons();
 
         control_button_panel.add(new JLabel("weight: "));
-        simulation_weight_control = new JScrollBar(JScrollBar.HORIZONTAL, (int) simulation_weight,
-                1, 0, 1000);
+        simulation_weight_control = new JScrollBar(JScrollBar.HORIZONTAL, simulation_weight, 1, 0, 1000);
         simulation_weight_control.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) { change_simulation_weight(); }
         });
@@ -1338,6 +1337,11 @@ public class AgentHandler implements Serializable {
     private void change_simulation_weight() {
         simulation_weight = simulation_weight_control.getValue();
         simulation_weight_value.setText("" + simulation_weight);
+    }
+
+    public void setSimulationWeight(int weight) {
+        simulation_weight = weight;
+        simulation_weight_control.setValue(simulation_weight);
     }
 
     public void update_buttons() {

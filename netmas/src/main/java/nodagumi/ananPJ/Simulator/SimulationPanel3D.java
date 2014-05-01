@@ -195,13 +195,16 @@ public class SimulationPanel3D extends NetworkPanel3D
     JCheckBox show_logo_cb = null;
     JCheckBox show_3d_polygon_cb = null;
     protected JCheckBox change_agent_color_depending_on_speed_cb = null;
+    protected JCheckBox show_status_cb = null;
+    protected JRadioButton top_rb = null;
+    protected JRadioButton bottom_rb = null;
 
     // Simulation ウィンドウのメニューにメニュー項目を追加する
     @Override
     protected void setupExtraContents() {
         // View menu
 
-        menu_item_agent_color_speed = new CheckboxMenuItem("Change agent color depending on speed", false);
+        menu_item_agent_color_speed = new CheckboxMenuItem("Change agent color depending on speed", true);
         menu_item_agent_color_speed.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 change_agent_color_depending_on_speed_cb.setSelected(menu_item_agent_color_speed.getState());
@@ -488,7 +491,7 @@ public class SimulationPanel3D extends NetworkPanel3D
                     link_transparency = 1.0f;
                 } else {
                     link_transparency = 0.5f;
-                                    }
+                }
                 link_transparency_changed_flag = true;
             }
         });
@@ -528,9 +531,9 @@ public class SimulationPanel3D extends NetworkPanel3D
         layout.setVgap(2);
         JPanel show_status_panel = new JPanel(layout);
         show_status_panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JCheckBox show_status_cb = new JCheckBox("Show status", show_message);
-        JRadioButton top_rb = new JRadioButton("Top", (messagePosition & TOP) == TOP);
-        JRadioButton bottom_rb = new JRadioButton("Bottom", (messagePosition & BOTTOM) == BOTTOM);
+        show_status_cb = new JCheckBox("Show status", show_message);
+        top_rb = new JRadioButton("Top", (messagePosition & TOP) == TOP);
+        bottom_rb = new JRadioButton("Bottom", (messagePosition & BOTTOM) == BOTTOM);
         top_rb.setEnabled(show_message);
         bottom_rb.setEnabled(show_message);
         show_status_cb.addActionListener(new ActionListener() {
@@ -1425,8 +1428,57 @@ public class SimulationPanel3D extends NetworkPanel3D
         return bounds;
     }
 
+    public void setVerticalScale(double d) {
+        vertical_zoom = d;
+        vertical_zoom_control.setValue((int)(vertical_zoom * 10.0));
+    }
+
+    public void setAgentSize(double d) {
+        agent_size = d;
+    }
+
+    public void setScaleOnReplay(double d) {
+        scale_on_replay = d;
+    }
+
     public JCheckBox getRecordSnapshots() {
         return record_snapshots;
+    }
+
+    public JCheckBox getDebugMode() {
+        return debug_mode_cb;
+    }
+
+    public JCheckBox getHideNormalLink() {
+        return hide_normallink_cb;
+    }
+
+    public JCheckBox getDensityMode() {
+        return density_mode_cb;
+    }
+
+    public JCheckBox getChangeAgentColorDependingOnSpeed() {
+        return change_agent_color_depending_on_speed_cb;
+    }
+
+    public JCheckBox getShowStatus() {
+        return show_status_cb;
+    }
+
+    public JRadioButton getTop() {
+        return top_rb;
+    }
+
+    public JRadioButton getBottom() {
+        return bottom_rb;
+    }
+
+    public JCheckBox getShowLogo() {
+        return show_logo_cb;
+    }
+
+    public JCheckBox getShow3dPolygon() {
+        return show_3d_polygon_cb;
     }
 }
 //;;; Local Variables:
