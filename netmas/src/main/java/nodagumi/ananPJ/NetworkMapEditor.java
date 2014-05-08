@@ -149,6 +149,7 @@ public class NetworkMapEditor extends SimulationLauncher
     protected String showStatusPosition = "top";
     protected boolean showLogo = false;
     protected boolean show3dPolygon = true;
+    protected String agentMovementHistoryPath = null;
 
     /* copy from CUI simulator */
     private static NetmasPropertiesHandler propertiesHandler = null;
@@ -1415,6 +1416,9 @@ public class NetworkMapEditor extends SimulationLauncher
                 thread.start();
             }
         }
+        if (propertiesHandler.isDefined("agent_movement_history_file")) {
+            model.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
+        }
     }
 
     // SimulationPanel3D を生成した直後に呼び出される(simulationWindowOpenedOperation ではうまく対処できない分の処理)
@@ -1721,23 +1725,13 @@ public class NetworkMapEditor extends SimulationLauncher
                 throw new Exception("Property error - 設定値が範囲(0.0～9.9)外です: zoom:" + zoom);
             }
             cameraPath = propertiesHandler.getFilePath("camera_file", null);
-            if (cameraPath != null) {
-                File file = new File(cameraPath);
-                if (! (file.exists() && file.isFile())) {
-                    throw new Exception("Property error - 指定されたファイルが存在しないかディレクトリです: camera_file:" + cameraPath);
-                }
-            }
             recordSimulationScreen = propertiesHandler.getBoolean("record_simulation_screen", recordSimulationScreen);
             screenshotDir = propertiesHandler.getDirectoryPath("screenshot_dir", screenshotDir).replaceFirst("[/\\\\]+$", "");
-            File dir = new File(screenshotDir);
-            if (! (dir.exists() && dir.isDirectory())) {
-                throw new Exception("Property error - 指定されたディレクトリが存在しないかファイルです: screenshot_dir:" + screenshotDir);
-            }
             clearScreenshotDir = propertiesHandler.getBoolean("clear_screenshot_dir", clearScreenshotDir);
             if (clearScreenshotDir && ! propertiesHandler.isDefined("screenshot_dir")) {
                 throw new Exception("Property error - clear_screenshot_dir を有効にするためには screenshot_dir の設定が必要です。");
             }
-            if (recordSimulationScreen && ! clearScreenshotDir && dir.list(imageFileFilter).length > 0) {
+            if (recordSimulationScreen && ! clearScreenshotDir && new File(screenshotDir).list(imageFileFilter).length > 0) {
                 throw new Exception("Property error - スクリーンショットディレクトリに画像ファイルが残っています: screenshot_dir:" + screenshotDir);
             }
             screenshotImageType = propertiesHandler.getString("screenshot_image_type", screenshotImageType, IMAGE_TYPES);
@@ -1756,6 +1750,7 @@ public class NetworkMapEditor extends SimulationLauncher
             show3dPolygon = propertiesHandler.getBoolean("show_3D_polygon", show3dPolygon);
             simulationWindowOpen = propertiesHandler.getBoolean("simulation_window_open", simulationWindowOpen);
             autoSimulationStart = propertiesHandler.getBoolean("auto_simulation_start", autoSimulationStart);
+            agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
         } catch(Exception e) {
             //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
             System.err.println(e.getMessage());

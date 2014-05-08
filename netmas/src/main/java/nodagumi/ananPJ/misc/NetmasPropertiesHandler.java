@@ -422,6 +422,21 @@ public class NetmasPropertiesHandler implements Serializable {
         return value;
     }
 
+    public String getFilePath(String key, String defaultValue, boolean existing) throws Exception {
+        if (existing) {
+            return getFilePath(key, defaultValue);
+        }
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        File file = new File(value);
+        if (file.exists() && ! file.isFile()) {
+            throw new Exception("Property error - 指定されたパスがファイルではありません: " + key + ":" + value);
+        }
+        return value;
+    }
+
     public boolean getBoolean(String key, boolean defaultValue) throws Exception {
         String value = prop.getProperty(key);
         if (value == null || value.trim().isEmpty()) {

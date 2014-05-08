@@ -272,6 +272,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
         if (agentHandler.isFinished()) {
             // output_results();
+            agentHandler.closeAgentMovementHistorLogger();
             return true;
         } else {
             return false;

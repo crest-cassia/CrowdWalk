@@ -33,6 +33,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Formatter;
 import java.util.Random;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -91,8 +96,8 @@ public class AgentHandler implements Serializable {
     private transient JScrollBar simulation_weight_control;
     private transient JLabel simulation_weight_value;
 
-    private double startTime = 7 * 3600 + 30 * 60;
-    private double outbreakTime = 7 * 3600 + 40 * 60;
+    private double startTime = 0.0;
+    private double outbreakTime = 0.0;
 
     private HashMap<MapNode, Integer> evacuatedAgentCountByExit;
     private AgentGenerationFile generate_agent = null;
@@ -107,6 +112,8 @@ public class AgentHandler implements Serializable {
     // エージェントが存在するリンクのリスト
     private ArrayList<MapLink> effectiveLinks = null;
     private boolean effectiveLinksEnabled = false;
+
+    private Logger agentMovementHistoryLogger = null;
 
     public AgentHandler (ArrayList<EvacuationAgent> _agents,
             String generationFile,
@@ -712,6 +719,7 @@ public class AgentHandler implements Serializable {
                 if (has_display) {
                     updateEvacuatedCount();
                 }
+                agentMovementHistoryLogger.info(String.format("%s,%d,%s,%d,%s,%d,%s,%d", agent.getConfigLine().replaceAll(",", " "), agent.getAgentNumber(), timeToString(startTime + agent.generatedTime), (int)agent.generatedTime, timeToString(startTime + time), (int)time, timeToString(time - agent.generatedTime), (int)(time - agent.generatedTime)));
             } else {
                 ++count;
                 speedTotal += agent.getSpeed();
@@ -1041,7 +1049,6 @@ public class AgentHandler implements Serializable {
         return maxDamage;
     }
 
-    //public final ArrayList<EvacuationAgent> getAgents() {
     public final List<EvacuationAgent> getAgents() {
         return agents;
     }
@@ -1090,6 +1097,36 @@ public class AgentHandler implements Serializable {
         + finish_total / count_evacuated + ","
         + finish_max
         ;
+    }
+
+    public Logger initLogger(String name, Level level, java.util.logging.Formatter formatter, String filePath) {
+        Logger logger = Logger.getLogger(name);
+        try {
+            FileHandler handler = new FileHandler(filePath);
+            handler.setFormatter(formatter);
+            logger.addHandler(handler);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        logger.setLevel(level);
+        return logger;
+    }
+
+    public void initAgentMovementHistorLogger(String name, String filePath) {
+        agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
+            public String format(final LogRecord record) {
+                return formatMessage(record) + "\n";
+            }
+        }, filePath);
+        agentMovementHistoryLogger.setUseParentHandlers(false); // コンソールには出力しない
+        agentMovementHistoryLogger.info("GenerationFileの情報,エージェントID,発生時刻1,発生時刻2,到着時刻1,到着時刻2,移動時間1,移動時間2");
+    }
+
+    public void closeAgentMovementHistorLogger() {
+        for (Handler handler : agentMovementHistoryLogger.getHandlers()) {
+            handler.close();
+        }
     }
 
     protected transient JPanel control_panel = null;

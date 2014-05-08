@@ -341,7 +341,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 duration,
                                 total,
                                 speed_model,
-                                random));
+                                random,
+                                orgLine));
                     }
                     for (final MapNode start_node : start_nodes) {
                         this.add(new GenerateAgentFromNode(start_node,
@@ -352,7 +353,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 duration,
                                 total,
                                 speed_model,
-                                random));
+                                random,
+                                orgLine));
                     }
                 //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
@@ -379,7 +381,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_links[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
@@ -392,7 +395,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_nodes[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                 } else if (rule_tag.equals("EACHRANDOM")) {
                     int links_size = start_links.size();
@@ -427,7 +431,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_links[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
@@ -440,7 +445,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_nodes[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                 } else if (rule_tag.equals("TIMEEVERY")) {
                     int step_time = start_time;
@@ -515,7 +521,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                         duration,
                                         1,
                                         speed_model,
-                                        random));
+                                        random,
+                                        orgLine));
                         }
                         step_time += every_seconds;
                     }

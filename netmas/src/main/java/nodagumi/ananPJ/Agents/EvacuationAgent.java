@@ -33,6 +33,7 @@ import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.misc.AgentGenerationFile;
 
 public abstract class EvacuationAgent extends OBMapPart
 implements Comparable<EvacuationAgent>, Serializable {
@@ -45,6 +46,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     protected boolean waiting = false;
     public double generatedTime;
     public double finishedTime;
+    protected String configLine = "none";
 
     public int displayMode = 0;
 
@@ -467,6 +469,14 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     public int getAgentNumber() {
         return agentNumber;
+    }
+
+    public String getConfigLine() {
+        return configLine;
+    }
+
+    public void setConfigLine(String str) {
+        configLine = str;
     }
 }
 // ;;; Local Variables:
