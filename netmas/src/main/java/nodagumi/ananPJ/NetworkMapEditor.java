@@ -567,7 +567,7 @@ public class NetworkMapEditor extends SimulationLauncher
         menuBar.add(actionMenu);
 
         Menu help = new Menu("Help");
-        mi = new MenuItem("build 2011-01-14-01");
+        mi = new MenuItem("Version 1.0.44");
         mi.setEnabled(false);
         help.add(mi);
         menuBar.add(help);

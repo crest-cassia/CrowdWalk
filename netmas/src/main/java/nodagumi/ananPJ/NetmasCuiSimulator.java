@@ -52,6 +52,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     protected static String serializeFile = null;    // path to serialized file
     protected static String timerFile = null;         // path to timer log file
     protected static String deserializeFile = null;
+    protected String agentMovementHistoryPath = null;
 
     protected static ObjectOutputStream oos = null;
     protected static boolean isTimerEnabled = false;
@@ -155,6 +156,12 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        try {
+            agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
         // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
         networkMap.setPollutionFile(pPath);
         networkMap.setGenerationFile(gPath);
@@ -238,6 +245,12 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        try {
+            agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
         networkMap.setPollutionFile(pPath);
         networkMap.setGenerationFile(gPath);
         networkMap.setResponseFile(sPath);
@@ -250,7 +263,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
 
     boolean finished = false;
     public void initialize() {
-
         if (type == CommunicationType.RCV_NETWORK) {
             mapServer = new NetMASMapServer(type, isDebug, addr, port,
                     serializeFile, null);
@@ -298,6 +310,9 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     }
 
     public void start() {
+        if (agentMovementHistoryPath != null) {
+            model.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
+        }
         if (isDebug)
             System.err.println("NetmasCuiSimulator start!");
         while(!finished) {

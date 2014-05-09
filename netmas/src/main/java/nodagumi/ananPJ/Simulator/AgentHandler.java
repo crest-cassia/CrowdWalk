@@ -719,7 +719,9 @@ public class AgentHandler implements Serializable {
                 if (has_display) {
                     updateEvacuatedCount();
                 }
-                agentMovementHistoryLogger.info(String.format("%s,%d,%s,%d,%s,%d,%s,%d", agent.getConfigLine().replaceAll(",", " "), agent.getAgentNumber(), timeToString(startTime + agent.generatedTime), (int)agent.generatedTime, timeToString(startTime + time), (int)time, timeToString(time - agent.generatedTime), (int)(time - agent.generatedTime)));
+                if (agentMovementHistoryLogger != null) {
+                    agentMovementHistoryLogger.info(String.format("%s,%d,%s,%d,%s,%d,%s,%d", agent.getConfigLine().replaceAll(",", " "), agent.getAgentNumber(), timeToString(startTime + agent.generatedTime, true), (int)agent.generatedTime, timeToString(startTime + time, true), (int)time, timeToString(time - agent.generatedTime, true), (int)(time - agent.generatedTime)));
+                }
             } else {
                 ++count;
                 speedTotal += agent.getSpeed();
@@ -1067,6 +1069,17 @@ public class AgentHandler implements Serializable {
 
         return String.format("%02d:%02d:%02.0f",
                 (int)clock_time, (int)clock_min, clock_sec);
+    }
+
+    public String timeToString(double clock_time, boolean trunc) {
+        double sec = clock_time % 60;
+        int time = (int)clock_time / 60;
+        int min = time % 60;
+        time /= 60;
+        if (trunc) {
+            time %= 24;
+        }
+        return String.format("%02d:%02d:%02.0f", time, min, sec);
     }
 
     public String getStatisticsDescription() {
