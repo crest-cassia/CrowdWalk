@@ -4,6 +4,7 @@ import java.nio.channels.*
 import nodagumi.ananPJ.NetworkMapEditor
 import nodagumi.ananPJ.NetmasCuiSimulator
 import nodagumi.ananPJ.NetworkParts.Link.*
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler
 
 
 /** copy files from src to dst */
@@ -79,6 +80,11 @@ if (args.size() < 1) {
 } else if (args.size() == 1) {
     dirString = '/tmp/'
     start = System.nanoTime()
+    def properties = new NetmasPropertiesHandler(args[0])
+    def randseed = properties.getInteger("randseed", -1)
+    if (randseed != -1) {
+        rand.setSeed(randseed)
+    }
     nme = new NetworkMapEditor(rand)
     nme.setProperties(args[0])
     init = System.nanoTime()
@@ -99,6 +105,11 @@ if (args.size() < 1) {
         tick = cui.model.getSecond()
     } else {
         start = System.nanoTime()
+        def properties = new NetmasPropertiesHandler(args[0])
+        def randseed = properties.getInteger("randseed", -1)
+        if (randseed != -1) {
+            rand.setSeed(randseed)
+        }
         nme = new NetworkMapEditor(rand)
         nme.setProperties(args[0])
         init = System.nanoTime()

@@ -42,7 +42,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     protected transient Settings settings;
     private transient JFrame main_frame;
     String scenario_name = new String();
-    private Random random = null;
+    protected Random random = null;
     private boolean randomNavigation = false;
     private boolean isAllAgentSpeedZeroBreak = false;
     private NetmasTimer timer = null;

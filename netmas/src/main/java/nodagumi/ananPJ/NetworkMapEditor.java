@@ -1692,7 +1692,8 @@ public class NetworkMapEditor extends SimulationLauncher
         setTimeSeriesLogPath(propertiesHandler.getTimeSeriesLogPath());
         setTimeSeriesLogInterval(propertiesHandler.getTimeSeriesLogInterval());
         setRandseed(propertiesHandler.getRandseed());
-        random = new Random(randseed);
+        // random はコンストラクタ引数でのみセットされるべき(randseed を反映した再現性確保のため)
+        assert random != null;
         setRandomNavigation(propertiesHandler.getRandomNavigation());
         super.setRandomNavigation(randomNavigation);
         setSpeedModel(propertiesHandler.getSpeedModel());
@@ -1796,10 +1797,16 @@ public class NetworkMapEditor extends SimulationLauncher
         }
     };
 
-    private static Random random = new Random();
-    private static final NetworkMapEditor instance = new NetworkMapEditor(
-            random);
+    //private static Random random = new Random();
+    private static NetworkMapEditor instance = null;
     public static NetworkMapEditor getInstance() {
+        if (instance == null) {
+            if (randseed == 0) {
+                instance = new NetworkMapEditor(new Random());
+            } else {
+                instance = new NetworkMapEditor(new Random(randseed));
+            }
+        }
         return instance;
     }
 
@@ -1832,7 +1839,7 @@ public class NetworkMapEditor extends SimulationLauncher
         // load properties
         Properties prop = new Properties();
         if (propertiesPath == null) {
-            random = new Random(randseed);
+            //random = new Random(randseed);
         } else {
             propertiesHandler = new NetmasPropertiesHandler(propertiesPath);
 
@@ -1846,7 +1853,7 @@ public class NetworkMapEditor extends SimulationLauncher
             serializePath = propertiesHandler.getSerializePath();
             deserializePath = propertiesHandler.getDeserializePath();
             randseed = propertiesHandler.getRandseed();
-            random = new Random(randseed);
+            //random = new Random(randseed);
             randomNavigation = propertiesHandler.getRandomNavigation();
             speedModel = propertiesHandler.getSpeedModel();
             exitCount = propertiesHandler.getExitCount();

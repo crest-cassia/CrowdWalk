@@ -1137,8 +1137,10 @@ public class AgentHandler implements Serializable {
     }
 
     public void closeAgentMovementHistorLogger() {
-        for (Handler handler : agentMovementHistoryLogger.getHandlers()) {
-            handler.close();
+        if (agentMovementHistoryLogger != null) {
+            for (Handler handler : agentMovementHistoryLogger.getHandlers()) {
+                handler.close();
+            }
         }
     }
 

@@ -77,6 +77,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     public static OBNode fromDom(Element element) {
         String tag_name = element.getAttribute("AgentType");
         if (tag_name.equals(RunningAroundPerson.getAgentTypeString())) {
+            // TODO: 多分バグ(再びこのメソッドが呼ばれる)
             return RunningAroundPerson.fromDom(element);
         } else if (tag_name.equals(WaitRunningAroundPerson.getAgentTypeString())) {
             return WaitRunningAroundPerson.fromDom(element);
