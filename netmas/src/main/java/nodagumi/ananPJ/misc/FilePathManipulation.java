@@ -1,6 +1,7 @@
 package nodagumi.ananPJ.misc;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -66,6 +67,38 @@ public class FilePathManipulation implements Serializable {
 		File file = new File(path);
 		return file.getParent();
 	}
+
+    public static boolean deleteFiles(File file, boolean skip) {
+        if (file.isDirectory()) {
+            for (String filename : file.list()) {
+                File _file = new File(file, filename);
+                if (! deleteFiles(_file, false)) {
+                    System.err.println("File can not delete: " + _file.toString());
+                }
+            }
+        }
+        return skip ? true : file.delete();
+	}
+
+    public static boolean deleteFiles(String filePath, boolean skip) {
+        return deleteFiles(new File(filePath), skip);
+    }
+
+    // ※filter はディレクトリを通さないこと
+    public static void deleteFiles(File dir, FilenameFilter filter) {
+        if (dir.isDirectory()) {
+            for (String filename : dir.list(filter)) {
+                File _file = new File(dir, filename);
+                if (! _file.delete()) {
+                    System.err.println("File can not delete: " + _file.toString());
+                }
+            }
+        }
+	}
+
+    public static void deleteFiles(String dirPath, FilenameFilter filter) {
+        deleteFiles(new File(dirPath), filter);
+    }
 }
 //;;; Local Variables:
 //;;; mode:java

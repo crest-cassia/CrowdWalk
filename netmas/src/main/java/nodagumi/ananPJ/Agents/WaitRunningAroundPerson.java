@@ -71,7 +71,9 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             for (String r : this.planned_route)
                 System.err.println("\t\troute: " + r);
         }
-        buffer.append("," + this.current_link.ID);
+        // 避難が完了すると current_link は null になる
+        // buffer.append("," + this.current_link.ID);
+        buffer.append("," + (this.current_link == null ? "_LINK_NULL_" : this.current_link.ID));
         buffer.append("," + this.position);
         buffer.append("," + this.direction);
         buffer.append("," + this.speed);

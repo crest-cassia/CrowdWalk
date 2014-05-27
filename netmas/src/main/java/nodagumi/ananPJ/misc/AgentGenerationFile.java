@@ -7,6 +7,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,13 +48,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private static final String randomAllNodePrefixTag = "ROOT-N";
     private Random random = null;
     private double liner_generate_agent_ratio = 1.0;
+    private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
 
     public AgentGenerationFile(final String filename,
             ArrayList<MapNode> nodes,
             ArrayList<MapLink> links,
             boolean display,
             double linerGenerateAgentRatio,
-            Random _random) {
+            Random _random) throws Exception {
         if (filename == null || filename.isEmpty()) {
             return;
         }
@@ -84,6 +88,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
+                String orgLine = line;
                 line = line.toUpperCase();
                 String items[] = line.split(",");
 
@@ -137,7 +142,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     for (MapLink link : links) {
                         ArrayList<String> tags = link.getTags();
                         for (String tag : tags) {
-                            if (tag.contains(start_link_tag)) {
+                            // タグの比較を厳密化する
+                            // if (tag.contains(start_link_tag)) {
+                            if (tag.equals(start_link_tag)) {
                                 start_links.add(link);
                                 break;
                             }
@@ -317,6 +324,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         }
                     }
                 }
+
+                // 経路情報に未定義のタグが使用されていないかチェックする
+                ArrayList<String> routeErrors = checkPlannedRoute(nodes, links, planned_route);
+                if (! routeErrors.isEmpty()) {
+                    definitionErrors.put(orgLine, routeErrors);
+                }
+
                 if (rule_tag.equals("EACH")) {
                     for (final MapLink start_link : start_links) {
                         this.add(new GenerateAgentFromLink(start_link,
@@ -327,7 +341,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 duration,
                                 total,
                                 speed_model,
-                                random));
+                                random,
+                                orgLine));
                     }
                     for (final MapNode start_node : start_nodes) {
                         this.add(new GenerateAgentFromNode(start_node,
@@ -338,7 +353,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 duration,
                                 total,
                                 speed_model,
-                                random));
+                                random,
+                                orgLine));
                     }
                 //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
@@ -365,7 +381,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_links[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
@@ -378,7 +395,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_nodes[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                 } else if (rule_tag.equals("EACHRANDOM")) {
                     int links_size = start_links.size();
@@ -413,7 +431,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_links[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
@@ -426,7 +445,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     duration,
                                     chosen_nodes[i],
                                     speed_model,
-                                    random));
+                                    random,
+                                    orgLine));
                     }
                 } else if (rule_tag.equals("TIMEEVERY")) {
                     int step_time = start_time;
@@ -436,7 +456,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     ArrayList<String> goalCandidates = new ArrayList<String>();
                     for (MapNode node : nodes) {
                         for (String tag : node.getTags()) {
-                            if (tag.contains(goal))
+                            // タグの比較を厳密化する
+                            // if (tag.contains(goal))
+                            if (tag.equals(goal))
                                 goalCandidates.add(tag);
                         }
                     }
@@ -474,16 +496,21 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     new ArrayList<String>();
                                 for (MapNode node : nodes) {
                                     for (String tag : node.getTags()) {
-                                        if (tag.contains(pr)) {
+                                        // タグの比較を厳密化する
+                                        // if (tag.contains(pr)) {
+                                        if (tag.equals(pr)) {
                                             plannedRouteCandidates.add(tag);
                                             break;
                                         }
                                     }
                                 }
-                                int chosenIndex = random.nextInt(
-                                    plannedRouteCandidates.size());
-                                plannedRoute.add(plannedRouteCandidates.get(
-                                            chosenIndex));
+                                if (plannedRouteCandidates.isEmpty()) {
+                                    // 該当するノードタグが見つからない場合は WAIT_FOR/WAIT_UNTIL として扱う
+                                    plannedRoute.add(pr);
+                                } else {
+                                    int chosenIndex = random.nextInt(plannedRouteCandidates.size());
+                                    plannedRoute.add(plannedRouteCandidates.get(chosenIndex));
+                                }
                             }
                             this.add(new GenerateAgentFromLink(
                                         start_link,
@@ -494,7 +521,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                         duration,
                                         1,
                                         speed_model,
-                                        random));
+                                        random,
+                                        orgLine));
                         }
                         step_time += every_seconds;
                     }
@@ -509,6 +537,26 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             System.err.println(e.getMessage());
             e.printStackTrace();
         }
+
+        // 経路情報に未定義のタグが使用されていたら例外を発生させる
+        if (! definitionErrors.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder();
+            //definitionErrors.forEach((_line, messages) -> {
+            //    errorMessage.append("line: ").append(_line).append("\n");
+            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
+            //});
+            Iterator it = definitionErrors.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
+                String _line = entry.getKey();
+                ArrayList<String>messages = entry.getValue();
+                errorMessage.append("line: ").append(_line).append("\n");
+                for (String message: messages) {
+                    errorMessage.append("    ").append(message).append("\n");
+                }
+            }
+            throw new Exception(errorMessage.toString());
+        }
     }
 
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {
@@ -520,6 +568,53 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         for (GenerateAgent ga : this) {
             ga.setRandom(_random);
         }
+    }
+
+    // 経路情報に未定義のタグが使用されていたらその内容を返す
+    public ArrayList<String> checkPlannedRoute(ArrayList<MapNode> nodes, ArrayList<MapLink> links, ArrayList<String> planned_route) {
+        ArrayList<String> linkTags = new ArrayList();
+        ArrayList<String> nodeTags = new ArrayList();
+        int index = 0;
+        while (index < planned_route.size()) {
+            String candidate = planned_route.get(index);
+            if (candidate.startsWith("WAIT_UNTIL")) {
+                linkTags.add(candidate.substring(11));
+                index += 3;
+            } else if (candidate.startsWith("WAIT_FOR")) {
+                linkTags.add(candidate.substring(9));
+                index += 3;
+            } else {
+                nodeTags.add(candidate);
+                index += 1;
+            }
+        }
+
+        ArrayList<String> result = new ArrayList();
+        for (String nodeTag : nodeTags) {
+            boolean found = false;
+            for (MapNode node : nodes) {
+                if (node.hasTag(nodeTag)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (! found) {
+                result.add("Undefined Node Tag: " + nodeTag);
+            }
+        }
+        for (String linkTag : linkTags) {
+            boolean found = false;
+            for (MapLink link : links) {
+                if (link.hasTag(linkTag)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (! found) {
+                result.add("Undefined Link Tag: " + linkTag);
+            }
+        }
+        return result;
     }
 }
 //;;; Local Variables:

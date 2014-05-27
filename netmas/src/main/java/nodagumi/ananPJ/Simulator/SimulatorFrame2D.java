@@ -141,7 +141,7 @@ public class SimulatorFrame2D extends JFrame
 		add(panel);
 		System.out.println("after add(panel)");
 		
-		Runtime.getRuntime().gc();
+		// Runtime.getRuntime().gc();
 		
 		addMouseListener(this);
 	}
