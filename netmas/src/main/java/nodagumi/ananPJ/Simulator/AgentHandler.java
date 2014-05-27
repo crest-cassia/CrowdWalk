@@ -28,6 +28,7 @@ import java.text.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,7 +129,7 @@ public class AgentHandler implements Serializable {
         has_display = _has_display;
         random = _random;
 
-        evacuatedAgentCountByExit = new HashMap<MapNode, Integer>();
+        evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
 
         /* clone all agents already on board */
         agents = new ArrayList<EvacuationAgent>();
