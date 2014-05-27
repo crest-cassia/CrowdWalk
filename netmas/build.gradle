@@ -3,6 +3,7 @@
  *  generates executable jar using Gradle.
  */
 
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.apache.tools.ant.taskdefs.condition.Os
 
 defaultTasks 'clean', 'build'
@@ -23,13 +24,20 @@ repositories {
 manifest.mainAttributes("Main-Class" : "main")
 
 dependencies {
-    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.0'
-    // compile 'commons-cli:commons-cli:1.2'
-    // compile 'org.geotools:gt-shapefile:8.5'
-    // compile 'org.geotools:gt-swing:8.5'
-    compile fileTree(dir: 'libs/jar/geotools-2.7-M3', include: '*.jar')
-    compile fileTree(dir: 'libs/jar', include: '*.jar')
-    compile fileTree(dir: 'libs/jar', include: '.SM.*.jar')
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        compile group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.0'
+        compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+        compile group: 'xalan', name: 'xalan', version: '2.7.0'
+        compile fileTree(dir: 'libs/jar', include: '*.jar')
+    } else {
+        groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.0'
+        // compile 'commons-cli:commons-cli:1.2'
+        // compile 'org.geotools:gt-shapefile:8.5'
+        // compile 'org.geotools:gt-swing:8.5'
+        compile fileTree(dir: 'libs/jar/geotools-2.7-M3', include: '*.jar')
+        compile fileTree(dir: 'libs/jar', include: '*.jar')
+        compile fileTree(dir: 'libs/jar', include: '.SM.*.jar')
+    }
 
     runtime fileTree(dir: 'libs/windows/amd64', include: '*.dll')
     runtime fileTree(dir: 'libs/windows/i386', include: '*.dll')
@@ -66,7 +74,7 @@ task pathingJar(type: Jar) {
     appendix = "pathing"
     doFirst {
         manifest {
-            /* If you want to check the details, see APPENDIXC.1 in README */
+            // If you want to check the details, see APPENDIXC.1 in README
             //attributes "Class-Path": configurations.compile.files.join(" ")
             attributes "Class-Path": classpathString
             //attributes "Class-Path": relativeClasspathEntries.join(" ")
@@ -83,6 +91,22 @@ compileGroovy {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
         dependsOn(pathingJar)
         classpath = files(pathingJar.archivePath)
+    }
+}
+
+processResources {
+    doFirst {
+        def version = new File("version.txt").getText().trim()
+        def branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
+        def revision = 0
+        "git rev-list HEAD".execute().in.eachLine { revision++ }
+        def commit_hash = "git rev-parse --short HEAD".execute().text.trim()
+
+        filter(ReplaceTokens, tokens: ['version': version])
+        filter(ReplaceTokens, tokens: ['branch': branch])
+        filter(ReplaceTokens, tokens: ['revision': "" + revision])
+        filter(ReplaceTokens, tokens: ['commit_hash': commit_hash])
+        println "    version -> ${version}.${branch}.${revision}-${commit_hash}"
     }
 }
 
@@ -103,16 +127,17 @@ jar {
         exclude 'META-INF/*.RSA'
     }
     */
-    /*
-    doFirst {
-        from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
-            exclude 'META-INF/MANIFEST.MF'
-            exclude 'META-INF/*.SF'
-            exclude 'META-INF/*.DSA'
-            exclude 'META-INF/*.RSA'
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        // Cygwinでは以下がないと不完全なjarファイルが生成される
+        doFirst {
+            from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+                exclude 'META-INF/MANIFEST.MF'
+                exclude 'META-INF/*.SF'
+                exclude 'META-INF/*.DSA'
+                exclude 'META-INF/*.RSA'
+            }
         }
     }
-    */
 }
 
 task clearCache() {

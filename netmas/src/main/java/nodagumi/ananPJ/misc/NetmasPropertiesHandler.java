@@ -51,6 +51,7 @@ public class NetmasPropertiesHandler implements Serializable {
             );
 
     protected String propertiescenarioPath = null;
+    protected Properties prop = null;
 
     /**
      * Get a properties file name.
@@ -213,7 +214,7 @@ public class NetmasPropertiesHandler implements Serializable {
 
     public NetmasPropertiesHandler(String _propertiescenarioPath) {
         // load properties
-        Properties prop = new Properties();
+        prop = new Properties();
         propertiescenarioPath = _propertiescenarioPath;
         try {
             System.err.println(_propertiescenarioPath);
@@ -350,7 +351,7 @@ public class NetmasPropertiesHandler implements Serializable {
         if (stringProp == null) {
             //System.err.println("null: ");
             return false;
-        } else if (stringProp.equals("true"))
+        } else if (stringProp.toLowerCase().equals("true") || stringProp.toLowerCase().equals("on"))
             return true;
         else
             return false;
@@ -362,6 +363,117 @@ public class NetmasPropertiesHandler implements Serializable {
             return -1;
         else
             return Integer.parseInt(stringProp);
+    }
+
+    public boolean isDefined(String key) {
+        String value = prop.getProperty(key);
+        return ! (value == null || value.trim().isEmpty());
+    }
+
+    public String getString(String key, String defaultValue) {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    public String getString(String key, String defaultValue, String pattern[]) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        value = value.toLowerCase();
+        for (String str : pattern) {
+            if (str.toLowerCase().equals(value)) {
+                return value;
+            }
+        }
+        throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+    }
+
+    public String getDirectoryPath(String key, String defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        File file = new File(value);
+        if (! file.exists()) {
+            throw new Exception("Property error - 指定されたディレクトリが存在しません: " + key + ":" + value);
+        }
+        if (! file.isDirectory()) {
+            throw new Exception("Property error - 指定されたパスがディレクトリではありません: " + key + ":" + value);
+        }
+        return value;
+    }
+
+    public String getFilePath(String key, String defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        File file = new File(value);
+        if (! file.exists()) {
+            throw new Exception("Property error - 指定されたファイルが存在しません: " + key + ":" + value);
+        }
+        if (! file.isFile()) {
+            throw new Exception("Property error - 指定されたパスがファイルではありません: " + key + ":" + value);
+        }
+        return value;
+    }
+
+    public String getFilePath(String key, String defaultValue, boolean existing) throws Exception {
+        if (existing) {
+            return getFilePath(key, defaultValue);
+        }
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        File file = new File(value);
+        if (file.exists() && ! file.isFile()) {
+            throw new Exception("Property error - 指定されたパスがファイルではありません: " + key + ":" + value);
+        }
+        return value;
+    }
+
+    public boolean getBoolean(String key, boolean defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        value = value.toLowerCase();
+        if (value.equals("true") || value.equals("on")) {
+            return true;
+        } else if (value.equals("false") || value.equals("off")) {
+            return false;
+        } else {
+            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+        }
+    }
+
+    public int getInteger(String key, int defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch(NumberFormatException e) {
+            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+        }
+    }
+
+    public double getDouble(String key, double defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(value);
+        } catch(NumberFormatException e) {
+            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+        }
     }
 
     public static void main(String[] args) throws IOException {

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Menu;
@@ -68,10 +69,10 @@ import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGCodec;
+// import com.sun.image.codec.jpeg.ImageFormatException;
+// import com.sun.image.codec.jpeg.JPEGImageEncoder;
+// import com.sun.image.codec.jpeg.JPEGEncodeParam;
+// import com.sun.image.codec.jpeg.JPEGCodec;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.Colors.*;
@@ -93,6 +94,8 @@ public abstract class NetworkPanel3DBase extends JPanel
      * - show logo 
      */
     private static final long serialVersionUID = 6164276270221427488L;
+    public static final int TOP = 1;
+    public static final int BOTTOM = 2;
 
     protected Map<Shape3D, OBNode> canvasobj_to_obnode = new HashMap<Shape3D, OBNode>();
 
@@ -111,7 +114,11 @@ public abstract class NetworkPanel3DBase extends JPanel
     protected boolean link_transparency_changed_flag = false;
 
     static protected Color3f link_color = Colors.WHITE;
+    protected String screenshotDir = "screenshots";
+    protected String screenshotImageType = "png";
     protected boolean show_logo = false;
+    protected boolean show_message = false;
+    protected int messagePosition = TOP;
     // tkokada polygon
     protected boolean show_3d_polygon = true;
 
@@ -146,22 +153,41 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         @Override
         public void postRender() {
+            //System.err.println("- postRender");
             super.postRender();
 
+            boolean flushRequired = false;
             J3DGraphics2D g = getGraphics2D();
-            // g.setColor(Color.WHITE);
-            g.setColor(Color.BLACK);
-            g.drawString(message, 12, 12);
             if (show_logo) {
                 int x = getWidth() - aist_logo.getWidth(null);
                 int y = getHeight() - aist_logo.getHeight(null);
                 g.drawImage(aist_logo, x, y, null);
+                flushRequired = true;
+            }
+            if (show_message) {
+                FontMetrics fm = g.getFontMetrics();
+                int width = fm.stringWidth(message);
+                int height = fm.getHeight();
+                int ascent = fm.getAscent();
+                int x = 12;     // メッセージの基準表示位置
+                int y = 12;     //          〃
+                if ((messagePosition & BOTTOM) == BOTTOM) {
+                    y += (int)getSize().getHeight() - ascent;
+                }
+                g.setColor(Colors.BACKGROUND_3D_COLOR.get());           // メッセージの背景色
+                g.fillRect(x - 4, y - ascent, width + 7, height - 1);   // メッセージの背景描画
+                g.setColor(Color.BLACK);
+                g.drawString(message, x, y);
+                flushRequired = true;
+            }
+            if (flushRequired) {
                 g.flush(true);
             }
         }
 
         @Override
         public synchronized void preRender() {
+            //System.err.println("- preRender");
             //int width = 800;
             //int height = 600;
             setCanvasSize(canvas_width, canvas_height);
@@ -170,6 +196,7 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         @Override
         public  synchronized void postSwap() {
+            //System.err.println("- postSwap");
             super.postSwap();
 
             if (filename == null) return;
@@ -193,36 +220,42 @@ public abstract class NetworkPanel3DBase extends JPanel
                 System.err.println("image is null!");
                 return;
             }
-            /*
+//            /*
+//            try {
+//                ImageIO.write(img, "jpeg", new File(filename));
+//            } catch (IOException ioe) {
+//                ioe.printStackTrace();
+//            }
+//            */
+//            /*
+//             File file = new File(filename);
+//            try {
+//                ImageIO.write(img, "BMP", file);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }*/
+//
+//            // 上のImageIO.writeが動かないため、下記の処理を使いました 2011.5.18
+//            //(NetworkMapEditor でスクリーンキャプチャが取れない)
+//            // 下羅さん作成の下記の処理に差し替えます
+//            // また下記の記述では、jpgがスクリーンキャプチャファイルとして出力されることを意図しています
+//            // この修正に連動して、EvacuationSimulator.java のupdateEveryTick()の中の記述を
+//            // 変更しています。（bmp →jpg）
+//            try {
+//                OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename));
+//                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fileOutputStream);
+//                JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(img);
+//                encodeParam.setQuality(1.0f, false);
+//                encoder.encode(img, encodeParam);
+//                fileOutputStream.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             try {
-                ImageIO.write(img, "jpeg", new File(filename));
+                ImageIO.write(img, screenshotImageType,
+                    new File(screenshotDir + "/" + filename + "." + screenshotImageType));
             } catch (IOException ioe) {
                 ioe.printStackTrace();
-            }
-            */
-            /*
-             File file = new File(filename);
-            try {
-                ImageIO.write(img, "BMP", file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-
-            // 上のImageIO.writeが動かないため、下記の処理を使いました 2011.5.18
-            //(NetworkMapEditor でスクリーンキャプチャが取れない)
-            // 下羅さん作成の下記の処理に差し替えます
-            // また下記の記述では、jpgがスクリーンキャプチャファイルとして出力されることを意図しています
-            // この修正に連動して、EvacuationSimulator.java のupdateEveryTick()の中の記述を
-            // 変更しています。（bmp →jpg）
-            try {
-                OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename));
-                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fileOutputStream);
-                JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(img);
-                encodeParam.setQuality(1.0f, false);
-                encoder.encode(img, encodeParam);
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             filename = null;
         }
@@ -266,6 +299,7 @@ public abstract class NetworkPanel3DBase extends JPanel
         setupMenu();
         setupContents();
         setupExtraContents();
+        setup_control_panel();
     }
 
     abstract protected void register_map_objects();
@@ -400,8 +434,9 @@ public abstract class NetworkPanel3DBase extends JPanel
         */
     }
 
-    protected void setupExtraContents() {
-    }
+    protected void setupExtraContents() {}
+
+    protected void setup_control_panel() {}
 
     protected TransformGroup view_trans = null;
     protected BranchGroup view_trans_parent = null;
@@ -1477,5 +1512,13 @@ public abstract class NetworkPanel3DBase extends JPanel
 
     public boolean getIsInitialized() {
         return isInitialized;
+    }
+
+    public void setScreenshotDir(String dirPath) {
+        screenshotDir = dirPath;
+    }
+
+    public void setScreenshotImageType(String type) {
+        screenshotImageType = type;
     }
 }

@@ -61,6 +61,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     private NetworkMap networkMap = null;
     private double linerGenerateAgentRatio = 1.0;
     private Random random = null;
+    // saveTimeSeriesLog() が呼ばれた回数
+    private int logging_count = 0;
 
     public EvacuationSimulator(NetworkMap _networkMap,
             SimulationController _controller,
@@ -241,17 +243,16 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         synchronized (stop_simulation) {
             // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
-            pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
-                    getAgents());
-            Runtime.getRuntime().gc();
+            if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
+                pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
+                        getAgents());
+            // Runtime.getRuntime().gc();
             agentHandler.update(getNodes(), getLinks(), getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
                 if (screenshotInterval != 0) {
                     if ((((int)getTickCount()) % screenshotInterval) == 0) {
-                        String filename = String.format("screenshots/" +
-                                "capture%06d.jpg", (int)getTickCount());
-                        panel3d.captureNextFrame(filename);
+                        panel3d.captureNextFrame(String.format("capture%06d", (int)getTickCount()));
                     }
                 }
                 if (outlogInterval == 0) {
@@ -271,6 +272,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
         if (agentHandler.isFinished()) {
             // output_results();
+            agentHandler.closeAgentMovementHistorLogger();
             return true;
         } else {
             return false;
@@ -283,7 +285,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             double poltime = getSecond();
             pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
                     getAgents());
-            Runtime.getRuntime().gc();
+            // Runtime.getRuntime().gc();
             agentHandler.update(getNodes(), getLinks(), getSecond());
             tick_count += 1.0;
         }
@@ -300,7 +302,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             double poltime = getSecond();
             pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
                     getAgents());
-            Runtime.getRuntime().gc();
+            // Runtime.getRuntime().gc();
             agentHandler.update(getNodes(), getLinks(), getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
@@ -545,9 +547,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     }
 
     void resetValues() {
-        System.gc ();
+        // System.gc();
 
         tick_count = 0.0;
+        logging_count = 0;
 
         for (MapLink link : getLinks()) {
             link.clear();
@@ -649,6 +652,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     public void start() {
         if (controller != null) {
             controller.start();
+            if (panel3d != null && isRunning()) {
+                panel3d.setMenuActionStartEnabled(false);
+            }
         }
     }
 
@@ -656,6 +662,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     public void pause() {
         if (controller != null) {
             controller.pause();
+            if (panel3d != null && ! isRunning()) {
+                panel3d.setMenuActionStartEnabled(true);
+            }
         }
     }
 
@@ -722,32 +731,35 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     /* when agents goal */
     private HashMap<Integer, Double> goalTimes = new HashMap<Integer, Double>();
+    // EXITノード毎の避難完了者数(ログのバッファリング用)
+    private ArrayList<String> evacuatedAgents = new ArrayList<String>();
+    private ArrayList<MapNode> exitNodeList = null;
     /** Save the goal log file to result directory.
      * @param resultDirectory: path to the result directory.
      */
     public void saveGoalLog(String resultDirectory, Boolean finished) {
-        // initialize process
+        // Goal log を記憶
         for (EvacuationAgent agent: agents) {
-            if (!goalTimes.containsKey(agent.ID)) {
-                if (agent.isEvacuated()) {
-                    goalTimes.put(new Integer(agent.ID),
-                            new Double(getSecond()));
-                }
+            if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
+                goalTimes.put(new Integer(agent.ID), new Double(getSecond()));
             }
         }
-        List<Map.Entry> entries = new ArrayList<Map.Entry>(goalTimes.entrySet());
-        Collections.sort(entries, new Comparator() {
-            public int compare(Object obj1, Object obj2) {
-                Map.Entry ent1 = (Map.Entry) obj1;
-                Map.Entry ent2 = (Map.Entry) obj2;
-                double val1 = (Double) ent1.getValue();
-                double val2 = (Double) ent2.getValue();
-                if (val1 > val2)
-                    return 1;
-                else
-                    return 0;
+
+        // evacuatedAgents log を記憶
+        if (logging_count == 0) {
+            exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
+        }
+        StringBuffer buff = new StringBuffer();
+        int index = 0;
+        for (MapNode node : exitNodeList) {
+            if (index > 0) {
+                buff.append(",");
             }
-        });
+            buff.append(agentHandler.getExitNodesMap().get(node));
+            index++;
+        }
+        evacuatedAgents.add(buff.toString());
+
         if (finished) {  // finalize process
             for (EvacuationAgent agent : agents) {
                 if (!agent.isEvacuated()) {
@@ -755,6 +767,15 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                             new Double((getTickCount() + 1) * timeScale));
                 }
             }
+            List<Map.Entry> entries = new ArrayList<Map.Entry>(goalTimes.entrySet());
+            // 避難完了時刻順にソート
+            Collections.sort(entries, new Comparator<Map.Entry>() {
+                public int compare(Map.Entry ent1, Map.Entry ent2) {
+                    return (Double)ent1.getValue() > (Double)ent2.getValue() ? 1 : 0;
+                }
+            });
+
+            // Goal log を出力
             File fileLog = new File(resultDirectory + "/goalLog.log");
             File fileLogDirectory = fileLog.getParentFile();
             if (fileLogDirectory != null && !fileLogDirectory.exists())
@@ -775,7 +796,26 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
+
+            // EXITノード毎の避難完了者数ログを出力
+            File evacuatedAgentsLog = new File(resultDirectory + "/evacuatedAgents.csv");
+            try {
+                writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, false), "utf-8")), true);
+                index = 0;
+                for (MapNode node : exitNodeList) {
+                    writer.write((index == 0 ? "" : ",") + node.getTagLabel());
+                    index++;
+                }
+                writer.write("\n");
+                for (String line : evacuatedAgents) {
+                    writer.write(line + "\n");
+                }
+                writer.close();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
+        logging_count++;
     }
 
     /** Save the time series log file to result directory.
@@ -788,8 +828,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         double totalAgentDensity = 0.0;
         double totalAgentSpeed = 0.0;
         // time series log file
-        File fileLog = new File(resultDirectory + "/timeSeries/" + count +
-                ".log");
+        //File fileLog = new File(resultDirectory + "/timeSeries/" + count + ".log");
+        // ファイル名の左側が必ず6桁になるように"0"を付加する("1.log" -> "000001.log")
+        File fileLog = new File(String.format("%s/timeSeries/%06d.log", resultDirectory, count));
         // summary log file
         File summaryLog = new File(resultDirectory + "/summary.log");
         File fileLogDirectory = fileLog.getParentFile();
@@ -836,7 +877,12 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                         linkDensity + "\n");
                 totalLinkDensity += linkDensity;
             }
+            // EXITノード毎の避難完了者数
+            for (Map.Entry<MapNode, Integer> e : agentHandler.getExitNodesMap().entrySet()) {
+                writer.write("node," + e.getKey().getTagLabel() + "," + e.getValue() + "\n");
+            }
             writer.close();
+
             writer = new PrintWriter(new BufferedWriter(
                         new OutputStreamWriter(
                             new FileOutputStream(summaryLog, true), "utf-8")),
@@ -859,9 +905,32 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             writer.write("count," + count + "," + average_agent_density + "," +
                     average_agent_speed + "," + average_link_density + "\n");
             writer.close();
+
+            // EXITノード毎の避難完了者数ログファイル
+            File evacuatedAgentsLog = new File(resultDirectory + "/evacuatedAgents.csv");
+            if (logging_count == 0) {
+                writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, false), "utf-8")), true);
+                exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
+                int index = 0;
+                for (MapNode node : exitNodeList) {
+                    writer.write((index == 0 ? "" : ",") + node.getTagLabel());
+                    index++;
+                }
+                writer.write("\n");
+            } else {
+                writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, true), "utf-8")), true);
+            }
+            int index = 0;
+            for (MapNode node : exitNodeList) {
+                writer.write((index == 0 ? "" : ",") + agentHandler.getExitNodesMap().get(node));
+                index++;
+            }
+            writer.write("\n");
+            writer.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        logging_count++;
 
         return true;
     }

@@ -71,7 +71,7 @@ public class RunningAroundPerson extends EvacuationAgent
 
     /* Values used in simulation */
     protected double speed;
-    protected double direction;
+    protected double direction = 0.0;
     protected double density;
     protected double expectedDensityMacroTimeStep = 300;
 
@@ -92,6 +92,13 @@ public class RunningAroundPerson extends EvacuationAgent
     protected String goal;
     protected ArrayList<String> planned_route = new ArrayList<String>();
     protected int routeIndex;
+
+    // sane_navigation_from_node の不要な呼び出し回避用
+    private boolean sane_navigation_from_node_forced = true;
+    private MapLink sane_navigation_from_node_current_link;
+    private MapLink sane_navigation_from_node_link;
+    private MapNode sane_navigation_from_node_node;
+    private MapLink sane_navigation_from_node_result;
 
     public static String getTypeName() {
         return "RunningAroundPerson";
@@ -253,7 +260,7 @@ public class RunningAroundPerson extends EvacuationAgent
             speed = 0;
             setRouteIndex(0);
 
-            renavigate();
+            renavigate();   // ※何もしていない(route_index は増える可能性あり)
         }
     }
 
@@ -365,8 +372,12 @@ public class RunningAroundPerson extends EvacuationAgent
                     next_position_tmp = link.length - distance_to_move;
                 }
             } else {
-                if (next_position < 0) next_position = 0;
-                else next_position = current_link.length;
+                // WAIT_FOR, WAIT_UNTIL によるエージェントの停止は下記でおこなう
+                if (next_position < 0){
+                    next_position = 0;
+                } else {
+                    next_position = current_link.length;
+                }
 
                 break;
             }
@@ -575,8 +586,10 @@ public class RunningAroundPerson extends EvacuationAgent
             /* got out of link */
             // tkokada
             // if (next_node.hasTag(goal)) {
-            if (planned_route.size() <= getRouteIndex() &&
-                    next_node.hasTag(goal)) {
+            //if (planned_route.size() <= getRouteIndex() &&
+            //        next_node.hasTag(goal)) {
+            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && next_node.hasTag(goal)) {
+                consumePlannedRoute();
                 /* exit! */
                 setEvacuated(true, time);
                 prev_node = next_node;
@@ -594,7 +607,9 @@ public class RunningAroundPerson extends EvacuationAgent
                 distance_to_move = position - current_link.length;
             }
 
+            sane_navigation_from_node_forced = true;
             next_link_candidate = navigate(time, current_link, next_node);
+            sane_navigation_from_node_forced = true;
 
             if (!tryToPassNode(time)) {
                 return false;
@@ -665,9 +680,12 @@ public class RunningAroundPerson extends EvacuationAgent
                 }
                 break;
             }
-            if (planned_route.size() <= getRouteIndex() &&
-                    next_node.hasTag(goal) &&
-                    remain >= linkTime) {
+            //if (planned_route.size() <= getRouteIndex() &&
+            //        next_node.hasTag(goal) &&
+            //        remain >= linkTime) {
+            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) &&
+                    next_node.hasTag(goal) && remain >= linkTime) {
+                consumePlannedRoute();
                 setEvacuated(true, time);
                 prev_node = next_node;
                 next_node = null;
@@ -677,7 +695,9 @@ public class RunningAroundPerson extends EvacuationAgent
                 return true;
             }
             remain -= linkTime;
+            sane_navigation_from_node_forced = true;
             next_link_candidate = navigate(time, current_link, next_node);
+            sane_navigation_from_node_forced = true;
             if (!tryToPassNode(time)) {
                 return false;
             }
@@ -700,8 +720,10 @@ public class RunningAroundPerson extends EvacuationAgent
 
         // tkokada
         // if (getPrevNode().hasTag(goal)) {
-        if (planned_route.size() <= getRouteIndex() &&
-                getPrevNode().hasTag(goal)) {
+        //if (planned_route.size() <= getRouteIndex() &&
+        //        getPrevNode().hasTag(goal)) {
+        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && getPrevNode().hasTag(goal)) {
+            consumePlannedRoute();
             setEvacuated(true, time);
             return true;
         }
@@ -896,7 +918,7 @@ public class RunningAroundPerson extends EvacuationAgent
         MapLink link_to_find_agent = current_link;
         // is used to update link_to_fin_agent
         MapNode node_to_navigate = next_node;
-        double distance_to_go = emptyspeed * time_scale * SPEED_VIEW_RATIO * 10;
+        double distance_to_go = emptyspeed * time_scale;    // * SPEED_VIEW_RATIO * 10;
         int route_index_orig = getRouteIndex();
         double direction_orig = direction;
 
@@ -1103,6 +1125,7 @@ public class RunningAroundPerson extends EvacuationAgent
 
         MapLink nextLink = sane_navigation_from_node(time, current_link,
                 next_node);
+        setRouteIndex(route_index_orig);
         ArrayList<EvacuationAgent> nextLinkAgents = null;
         if (nextLink != null)
             nextLinkAgents = nextLink.getAgents();
@@ -1696,8 +1719,10 @@ public class RunningAroundPerson extends EvacuationAgent
             update_swing_flag = true;
         }
         //if (current_link.hasTag(goal)) {
-        if (planned_route.size() <= getRouteIndex() &&
-                current_link.hasTag(goal)) {
+        //if (planned_route.size() <= getRouteIndex() &&
+        //        current_link.hasTag(goal)) {
+        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && current_link.hasTag(goal)) {
+            consumePlannedRoute();
             // tkokada: temporaly comment out
             //System.err.println("the goal should not be a link!!");
             setEvacuated(true, time);
@@ -1741,6 +1766,21 @@ public class RunningAroundPerson extends EvacuationAgent
     //
     protected MapLink sane_navigation_from_node(double time, MapLink link,
             MapNode node) {
+        // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
+        if (
+            ! sane_navigation_from_node_forced &&
+            sane_navigation_from_node_current_link == current_link &&
+            sane_navigation_from_node_link == link && sane_navigation_from_node_node == node &&
+            emptyspeed < (direction > 0.0 ? current_link.length - position : position)
+        ) {
+            sane_navigation_from_node_forced = false;
+            return sane_navigation_from_node_result;
+        }
+        sane_navigation_from_node_forced = false;
+        sane_navigation_from_node_current_link = current_link;
+        sane_navigation_from_node_link = link;
+        sane_navigation_from_node_node = node;
+
         ArrayList<MapLink> way_candidates = node.getPathways();
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
@@ -1844,8 +1884,10 @@ public class RunningAroundPerson extends EvacuationAgent
             if (linkCandidates.size() > 0) {
                 MapLink chosedLink = linkCandidates.get(
                         random.nextInt(linkCandidates.size()));
+                sane_navigation_from_node_result = chosedLink;
                 return chosedLink;
             }
+            sane_navigation_from_node_result = null;
             return null;
         }
 
@@ -1860,6 +1902,7 @@ public class RunningAroundPerson extends EvacuationAgent
         if (way == null) {
             way = way_second;
         }
+        sane_navigation_from_node_result = way;
 
         if (way == null) {
             return null;
@@ -2336,6 +2379,34 @@ public class RunningAroundPerson extends EvacuationAgent
 
     public double getTimeScale() {
         return time_scale;
+    }
+
+    // planned_route の残り経路がすべて WAIT_FOR/WAIT_UNTIL ならば true を返す
+    public boolean isRemainingRouteWAIT_() {
+        if (isPlannedRouteCompleted()) {
+            return false;
+        }
+
+        int index = routeIndex;
+        while (index < planned_route.size()) {
+            String candidate = planned_route.get(index);
+            if (candidate.startsWith("WAIT_UNTIL")) {
+                index += 3;
+            } else if (candidate.startsWith("WAIT_FOR")) {
+                index += 3;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isPlannedRouteCompleted() {
+        return routeIndex >= planned_route.size();
+    }
+
+    public void consumePlannedRoute() {
+        routeIndex = planned_route.size();
     }
 }
 // ;;; Local Variables:

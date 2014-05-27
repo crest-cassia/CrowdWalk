@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,15 +23,22 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.*;
 import java.lang.ClassNotFoundException;
+//import java.lang.System;
 import java.text.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Formatter;
 import java.util.Random;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -85,12 +93,12 @@ public class AgentHandler implements Serializable {
     private transient JButton pause_button = null;
     private transient JButton step_button = null;
 
-    private long simulation_weight = 0;
+    private int simulation_weight = 0;
     private transient JScrollBar simulation_weight_control;
     private transient JLabel simulation_weight_value;
 
-    private double startTime = 7 * 3600 + 30 * 60;
-    private double outbreakTime = 7 * 3600 + 40 * 60;
+    private double startTime = 0.0;
+    private double outbreakTime = 0.0;
 
     private HashMap<MapNode, Integer> evacuatedAgentCountByExit;
     private AgentGenerationFile generate_agent = null;
@@ -99,6 +107,14 @@ public class AgentHandler implements Serializable {
     private boolean randomNavigation = false;
     private Random random = null;
     private FusionViewerConnector fusionViewerConnector = null;
+
+    // プログラム制御用環境変数
+    public String envSwitch = "";
+    // エージェントが存在するリンクのリスト
+    private ArrayList<MapLink> effectiveLinks = null;
+    private boolean effectiveLinksEnabled = false;
+
+    private Logger agentMovementHistoryLogger = null;
 
     public AgentHandler (ArrayList<EvacuationAgent> _agents,
             String generationFile,
@@ -113,7 +129,7 @@ public class AgentHandler implements Serializable {
         has_display = _has_display;
         random = _random;
 
-        evacuatedAgentCountByExit = new HashMap<MapNode, Integer>();
+        evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
 
         /* clone all agents already on board */
         agents = new ArrayList<EvacuationAgent>();
@@ -134,9 +150,14 @@ public class AgentHandler implements Serializable {
             link.agentEnters(agent);
         }
 
-        generate_agent = new AgentGenerationFile(generationFile,
-                model.getNodes(), model.getLinks(), has_display,
-                linerGenerateAgentRatio, random);
+        try {
+            generate_agent = new AgentGenerationFile(generationFile,
+                    model.getNodes(), model.getLinks(), has_display,
+                    linerGenerateAgentRatio, random);
+        } catch(Exception e) {
+            System.err.printf("Illegal AgentGenerationFile: %s\n%s", generationFile, e.getMessage());
+            System.exit(1);
+        }
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
                 maxAgentCount += factory.getMaxGeneration();
@@ -163,6 +184,12 @@ public class AgentHandler implements Serializable {
                     links);
         }
         fusionViewerConnector = new FusionViewerConnector();
+
+        envSwitch = System.getenv("NETMAS");
+        if (envSwitch == null)
+            envSwitch = "";
+        if (envSwitch.indexOf("effectiveLinks") != -1)
+            effectiveLinksEnabled = true;
     }
 
     public void deserialize(String generationFile, String responseFile,
@@ -182,6 +209,8 @@ public class AgentHandler implements Serializable {
         for (EvacuationAgent agent : agents) {
             agent.prepareForSimulation(model.getTimeScale());
         }
+        // 初回は全リンクを対象とする
+        effectiveLinks = (ArrayList<MapLink>)model.getLinks().clone();
     }
 
     class ScenarioEvent implements Serializable {
@@ -521,19 +550,27 @@ public class AgentHandler implements Serializable {
             }
         }
 
-        if (randomNavigation) {
-            for (EvacuationAgent agent : generated_agents_step)
-                agent.setRandomNavigation(true);
-        }
-        agents.addAll(generated_agents_step);
-        generated_agents.addAll(generated_agents_step);
-        if (isExpectedDensitySpeedModel) {
-            for (EvacuationAgent agent : generated_agents_step) {
-                ((RunningAroundPerson) agent).setExpectedDensityMacroTimeStep(
-                    expectedDensityMacroTimeStep);
-                if (agent.ID == 0) {
-                    agent.ID = manualId;
-                    manualId += 1;
+        if (! generated_agents_step.isEmpty()) {
+            if (randomNavigation) {
+                for (EvacuationAgent agent : generated_agents_step)
+                    agent.setRandomNavigation(true);
+            }
+            agents.addAll(generated_agents_step);
+            generated_agents.addAll(generated_agents_step);
+            if (effectiveLinksEnabled) {
+                for (EvacuationAgent agent : generated_agents_step) {
+                    if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
+                    effectiveLinks.add(agent.getCurrentLink());
+                }
+            }
+            if (isExpectedDensitySpeedModel) {
+                for (EvacuationAgent agent : generated_agents_step) {
+                    ((RunningAroundPerson) agent).setExpectedDensityMacroTimeStep(
+                        expectedDensityMacroTimeStep);
+                    if (agent.ID == 0) {
+                        agent.ID = manualId;
+                        manualId += 1;
+                    }
                 }
             }
         }
@@ -549,6 +586,16 @@ public class AgentHandler implements Serializable {
          */
         for (EvacuationAgent agent : generated_agents_step) {
             model.registerAgent(agent);
+        }
+
+        if (effectiveLinksEnabled) {
+            // エージェントが存在するリンクのリストを更新
+            effectiveLinks.clear();
+            for (EvacuationAgent agent : agents) {
+                if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
+                effectiveLinks.add(agent.getCurrentLink());
+            }
+            //System.err.println("effectiveLinks / modelLinks: " + effectiveLinks.size() + " / " + model.getLinks().size());
         }
     }
 
@@ -612,7 +659,7 @@ public class AgentHandler implements Serializable {
         }
         if (true) {
             synchronized (model) {
-                for (MapLink link : model.getLinks()) {
+                for (MapLink link : effectiveLinksEnabled ? effectiveLinks : model.getLinks()) {
                     for (EvacuationAgent agent : link.getLane(1.0)) {
                         agent.preUpdate(time);
                         count += 1;
@@ -673,6 +720,9 @@ public class AgentHandler implements Serializable {
                 if (has_display) {
                     updateEvacuatedCount();
                 }
+                if (agentMovementHistoryLogger != null) {
+                    agentMovementHistoryLogger.info(String.format("%s,%d,%s,%d,%s,%d,%s,%d", agent.getConfigLine().replaceAll(",", " "), agent.getAgentNumber(), timeToString(startTime + agent.generatedTime, true), (int)agent.generatedTime, timeToString(startTime + time, true), (int)time, timeToString(time - agent.generatedTime, true), (int)(time - agent.generatedTime)));
+                }
             } else {
                 ++count;
                 speedTotal += agent.getSpeed();
@@ -692,8 +742,9 @@ public class AgentHandler implements Serializable {
     }
 
     private void updateEvacuatedCount() {
-        String evacuatedCount_string = "Evacuated: " + evacuated_agents.size()
-            + "/" + (int) this.getMaxAgentCount();
+        String evacuatedCount_string = String.format("Walking: %d  Generated: %d  Evacuated: %d / %d", 
+            getAgents().size() - evacuated_agents.size(), getAgents().size(), evacuated_agents.size(),
+            getMaxAgentCount());
         evacuatedCount_label.setText(evacuatedCount_string);
         SimulationPanel3D.updateEvacuatedCount(evacuatedCount_string);
     }
@@ -715,10 +766,11 @@ public class AgentHandler implements Serializable {
         evacuatedNoLiftAgentCount = 0;
 
         for (final EvacuationAgent agent : agents) {
-            totalDamage += agent.getDamage();
-            if (agent.getDamage() > maxDamage) maxDamage = agent.getDamage();
             if (agent.isEvacuated()) {
                 evacuatedAgentCount++;
+            } else {
+                totalDamage += agent.getDamage();
+                if (agent.getDamage() > maxDamage) maxDamage = agent.getDamage();
             }
         }
     }
@@ -984,6 +1036,10 @@ public class AgentHandler implements Serializable {
         return evacuatedAgentCountByExit.get(node);
     }
 
+    public HashMap<MapNode, Integer> getExitNodesMap() {
+        return evacuatedAgentCountByExit;
+    }
+
     public int getWaiting() {
         return waitingAgentCount;
     }
@@ -996,7 +1052,6 @@ public class AgentHandler implements Serializable {
         return maxDamage;
     }
 
-    //public final ArrayList<EvacuationAgent> getAgents() {
     public final List<EvacuationAgent> getAgents() {
         return agents;
     }
@@ -1015,6 +1070,17 @@ public class AgentHandler implements Serializable {
 
         return String.format("%02d:%02d:%02.0f",
                 (int)clock_time, (int)clock_min, clock_sec);
+    }
+
+    public String timeToString(double clock_time, boolean trunc) {
+        double sec = clock_time % 60;
+        int time = (int)clock_time / 60;
+        int min = time % 60;
+        time /= 60;
+        if (trunc) {
+            time %= 24;
+        }
+        return String.format("%02d:%02d:%02.0f", time, min, sec);
     }
 
     public String getStatisticsDescription() {
@@ -1047,17 +1113,75 @@ public class AgentHandler implements Serializable {
         ;
     }
 
+    public Logger initLogger(String name, Level level, java.util.logging.Formatter formatter, String filePath) {
+        Logger logger = Logger.getLogger(name);
+        try {
+            FileHandler handler = new FileHandler(filePath);
+            handler.setFormatter(formatter);
+            logger.addHandler(handler);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        logger.setLevel(level);
+        return logger;
+    }
+
+    public void initAgentMovementHistorLogger(String name, String filePath) {
+        agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
+            public String format(final LogRecord record) {
+                return formatMessage(record) + "\n";
+            }
+        }, filePath);
+        agentMovementHistoryLogger.setUseParentHandlers(false); // コンソールには出力しない
+        agentMovementHistoryLogger.info("GenerationFileの情報,エージェントID,発生時刻1,発生時刻2,到着時刻1,到着時刻2,移動時間1,移動時間2");
+    }
+
+    public void closeAgentMovementHistorLogger() {
+        if (agentMovementHistoryLogger != null) {
+            for (Handler handler : agentMovementHistoryLogger.getHandlers()) {
+                handler.close();
+            }
+        }
+    }
+
     protected transient JPanel control_panel = null;
     private transient JLabel clock_label = new JLabel("NOT STARTED1");
     private transient JLabel time_label = new JLabel("NOT STARTED2");
     private transient JLabel evacuatedCount_label = new JLabel("NOT STARTED3");
     private ArrayList<ButtonGroup> toggle_scenario_button_groups = new
         ArrayList<ButtonGroup>();
-    private transient JTextArea message =
-        new JTextArea("UNMaps Version 1.9.5\n");
+    private transient JTextArea message = new JTextArea("UNMaps Version 1.9.5\n") {
+        @Override
+        public void append(String str) {
+            super.append(str);
+            message.setCaretPosition(message.getDocument().getLength());
+        }
+    };
 
     public JPanel getControlPanel() {
         return control_panel;
+    }
+
+    public JButton getStartButton() {
+        return start_button;
+    }
+
+    // GridBagLayout のパネルにラベルを追加する
+    private void addJLabel(JPanel panel, int x, int y, int width, int height, int anchor, JLabel label) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = anchor;
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        gbc.gridheight = height;
+        gbc.insets = new Insets(0, 12, 0, 12);
+        ((GridBagLayout)panel.getLayout()).setConstraints(label, gbc);
+        panel.add(label);
+    }
+
+    private void addJLabel(JPanel panel, int x, int y, int width, int height, JLabel label) {
+        addJLabel(panel, x, y, width, height, GridBagConstraints.WEST, label);
     }
 
     private void setup_control_panel(String generationFileName,
@@ -1072,41 +1196,59 @@ public class AgentHandler implements Serializable {
         top_panel.setLayout(new BorderLayout());
 
         /* title & clock */
-        JPanel titlepanel = new JPanel(new GridLayout(4, 2));
-        titlepanel.add(new JLabel("Agent"));
+        JPanel titlepanel = new JPanel(new GridBagLayout());
+        addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, new JLabel("Map"));
+        if (model.getMap().getFileName() != null) {
+            File map_file = new File(model.getMap().getFileName());
+            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel(map_file.getName()));
+        } else {
+            addJLabel(titlepanel, 1, 0, 1, 1, new JLabel("No map file"));
+        }
+
+        addJLabel(titlepanel, 0, 1, 1, 1, GridBagConstraints.EAST, new JLabel("Agent"));
         if (generationFileName != null) {
             File generation_file = new File(generationFileName);
-            titlepanel.add(new JLabel(generation_file.getName()));
+            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel(generation_file.getName()));
         } else {
-            titlepanel.add(new JLabel("No generation file"));
+            addJLabel(titlepanel, 1, 1, 1, 1, new JLabel("No generation file"));
         }
-        titlepanel.add(new JLabel("Scenario"));
 
+        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, new JLabel("Scenario"));
         if (responseFileName != null) {
             File response_file = new File(responseFileName);
-            titlepanel.add(new JLabel(response_file.getName()));
+            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel(response_file.getName()));
         } else {
-            titlepanel.add(new JLabel("No response file"));
+            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel("No response file"));
         }
 
-        titlepanel.add(new JLabel("ID"));
+        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST, new JLabel("Pollution"));
+        if (model.getMap().getPollutionFile() != null) {
+            File pollution_file = new File(model.getMap().getPollutionFile());
+            addJLabel(titlepanel, 1, 3, 1, 1, new JLabel(pollution_file.getName()));
+        } else {
+            addJLabel(titlepanel, 1, 3, 1, 1, new JLabel("No pollution file"));
+        }
+
+        addJLabel(titlepanel, 0, 4, 1, 1, GridBagConstraints.EAST, new JLabel("ID"));
         if (scenario_number != null) {
-            titlepanel.add(new JLabel(scenario_number));
+            addJLabel(titlepanel, 1, 4, 1, 1, new JLabel(scenario_number));
         } else {
             JLabel sl = new JLabel("(NOT DEFINED)");
             sl.setFont(new Font(null, Font.ITALIC, 9));
-            titlepanel.add(sl);
+            addJLabel(titlepanel, 1, 4, 1, 1, sl);
         }
 
         clock_label.setHorizontalAlignment(JLabel.CENTER);
         clock_label.setFont(new Font("Lucida", Font.BOLD, 18));
-        titlepanel.add(clock_label, BorderLayout.CENTER);
+        addJLabel(titlepanel, 0, 5, 1, 1, GridBagConstraints.CENTER, clock_label);
+
         time_label.setHorizontalAlignment(JLabel.LEFT);
         time_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        titlepanel.add(time_label, BorderLayout.CENTER);
+        addJLabel(titlepanel, 1, 5, 1, 1, time_label);
+
         evacuatedCount_label.setHorizontalAlignment(JLabel.LEFT);
         evacuatedCount_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        titlepanel.add(evacuatedCount_label, BorderLayout.CENTER);
+        addJLabel(titlepanel, 0, 6, 2, 1, GridBagConstraints.CENTER, evacuatedCount_label);
         top_panel.add(titlepanel, BorderLayout.NORTH);
 
         /* scenarios */
@@ -1128,7 +1270,7 @@ public class AgentHandler implements Serializable {
             c.gridy = y;
             c.fill = GridBagConstraints.WEST;
 
-            label_toggle_panel.add(new JLabel(event.comment), c);
+            // label_toggle_panel.add(new JLabel(event.comment), c);
             ButtonGroup bgroup = new ButtonGroup();
             toggle_scenario_button_groups.add(bgroup);
             class RadioButtonListener implements ActionListener {
@@ -1191,7 +1333,10 @@ public class AgentHandler implements Serializable {
             }
             y++;
         }
-        top_panel.add(label_toggle_panel, BorderLayout.CENTER);
+        JScrollPane scroller = new JScrollPane(label_toggle_panel,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroller.setPreferredSize(new Dimension(400, 230));
+        top_panel.add(scroller, BorderLayout.CENTER);
         
         JPanel control_button_panel = new JPanel(new FlowLayout());
         ImageIcon start_icon = new ImageIcon("img/start.png");
@@ -1216,8 +1361,7 @@ public class AgentHandler implements Serializable {
         update_buttons();
 
         control_button_panel.add(new JLabel("weight: "));
-        simulation_weight_control = new JScrollBar(JScrollBar.HORIZONTAL, (int) simulation_weight,
-                1, 0, 1000);
+        simulation_weight_control = new JScrollBar(JScrollBar.HORIZONTAL, simulation_weight, 1, 0, 1000);
         simulation_weight_control.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) { change_simulation_weight(); }
         });
@@ -1230,7 +1374,7 @@ public class AgentHandler implements Serializable {
         control_button_panel.add(simulation_weight_value);
 
         top_panel.add(control_button_panel, BorderLayout.SOUTH);
-        control_panel.add(top_panel, BorderLayout.NORTH);
+        control_panel.add(top_panel, BorderLayout.CENTER);
             
         /* text message */
         message.setEditable(false);
@@ -1238,9 +1382,9 @@ public class AgentHandler implements Serializable {
         JScrollPane message_scroller = new JScrollPane(message,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        message_scroller.setPreferredSize(new Dimension(300, 84));
+        message_scroller.setPreferredSize(new Dimension(300, 160));
 
-        control_panel.add(message_scroller, BorderLayout.CENTER);
+        control_panel.add(message_scroller, BorderLayout.SOUTH);
     }
     
     private void change_simulation_weight() {
@@ -1248,7 +1392,12 @@ public class AgentHandler implements Serializable {
         simulation_weight_value.setText("" + simulation_weight);
     }
 
-    private void update_buttons() {
+    public void setSimulationWeight(int weight) {
+        simulation_weight = weight;
+        simulation_weight_control.setValue(simulation_weight);
+    }
+
+    public void update_buttons() {
         boolean is_running = model.isRunning();
         if (start_button != null) {
             start_button.setEnabled(!is_running);
@@ -1261,7 +1410,7 @@ public class AgentHandler implements Serializable {
         }
     }
 
-    public double getMaxAgentCount() {
+    public int getMaxAgentCount() {
         return maxAgentCount;
     }
 
