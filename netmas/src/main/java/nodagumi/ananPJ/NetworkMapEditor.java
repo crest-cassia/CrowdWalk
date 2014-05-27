@@ -567,11 +567,21 @@ public class NetworkMapEditor extends SimulationLauncher
         menuBar.add(actionMenu);
 
         Menu help = new Menu("Help");
-        mi = new MenuItem("Version 1.0.44");
+        mi = new MenuItem("Version " + getVersion());
         mi.setEnabled(false);
         help.add(mi);
         menuBar.add(help);
         frame.setMenuBar(menuBar);
+    }
+
+    public String getVersion() {
+        Properties prop = new Properties();
+        try {
+            prop.load(this.getClass().getResourceAsStream("/netmas.properties"));
+            return String.format("%s.%s.%s-%s", prop.getProperty("version"), prop.getProperty("branch"), prop.getProperty("revision"), prop.getProperty("commit_hash"));
+        } catch(IOException e) {
+            return "";
+        }
     }
 
     private boolean clearAll() {
