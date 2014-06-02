@@ -53,6 +53,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     protected static String timerFile = null;         // path to timer log file
     protected static String deserializeFile = null;
     protected String agentMovementHistoryPath = null;
+    protected String individualPedestriansLogDir = null;
 
     protected static ObjectOutputStream oos = null;
     protected static boolean isTimerEnabled = false;
@@ -66,7 +67,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     protected static CommunicationType type = null;   // file or pipe or network
     protected static NetmasTimer timer = null;
     protected DaRuMaClient darumaClient = DaRuMaClient.getInstance();
-    protected static long randseed = 0;
     protected int loopCount = -1;
     protected double linerGenerateAgentRatio = 1.0;
 
@@ -80,6 +80,14 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     }
 
     public NetmasCuiSimulator(String _propertiesPath) {
+        this(_propertiesPath, false, -1);
+    }
+
+    public NetmasCuiSimulator(String _propertiesPath, int randseed) {
+        this(_propertiesPath, true, randseed);
+    }
+
+    public NetmasCuiSimulator(String _propertiesPath, boolean withSeed, int randseed) {
         super();
         // load properties
         Properties prop = new Properties();
@@ -109,7 +117,9 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         // descerialize file
         deserializeFile = propertiesHandler.getDeserializePath();
         // create random with seed
-        randseed = propertiesHandler.getRandseed();
+        if (! withSeed) {
+            randseed = (int)propertiesHandler.getRandseed();
+        }
         random = new Random(randseed);
         // random navigation
         randomNavigation = propertiesHandler.getRandomNavigation();
@@ -158,99 +168,15 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         }
         try {
             agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
+            individualPedestriansLogDir = propertiesHandler.getDirectoryPath("individual_pedestrians_log_dir", null);
+            if (individualPedestriansLogDir != null) {
+                individualPedestriansLogDir = individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
+            }
         } catch(Exception e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
         // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
-        networkMap.setPollutionFile(pPath);
-        networkMap.setGenerationFile(gPath);
-        networkMap.setResponseFile(sPath);
-    }
-
-    public NetmasCuiSimulator(String _propertiesPath, int randseed) {
-        super();
-        // load properties
-        Properties prop = new Properties();
-        propertiesHandler = new NetmasPropertiesHandler(_propertiesPath);
-        // debug mode
-        isDebug = propertiesHandler.getIsDebug();
-        // type of I/O handler
-        type = propertiesHandler.getCommunicationType();
-        // input files
-        mPath = propertiesHandler.getMapPath();
-        pPath = propertiesHandler.getPollutionPath();
-        gPath = propertiesHandler.getGenerationPath();
-        sPath = propertiesHandler.getScenarioPath();
-        // timer enabled or not
-        isTimerEnabled = propertiesHandler.getIsTimerEnabled();
-        timerFile = propertiesHandler.getTimerPath();
-        // interval during main loop
-        interval = propertiesHandler.getInterval();
-        // interval of serialize (loop count)
-        serializeInterval = propertiesHandler.getSerializeInterval();
-        // destination address if I/O handler is network mode
-        addr = propertiesHandler.getAddr();
-        // port number
-        port = propertiesHandler.getPort();
-        // scerialize file
-        serializeFile = propertiesHandler.getSerializePath();
-        // descerialize file
-        deserializeFile = propertiesHandler.getDeserializePath();
-        // create random with seed
-        //randseed = propertiesHandler.getRandseed();
-        random = new Random(randseed);
-        // random navigation
-        randomNavigation = propertiesHandler.getRandomNavigation();
-        // speed model
-        speed_model = propertiesHandler.getSpeedModel();
-        // expected density model
-        expectedDensityMacroTimeStep = propertiesHandler
-            .getExpectedDensityMacroTimeStep();
-        expectedDensityVisualizeMicroTimeStep = propertiesHandler.
-            getExpectedDensityVisualizeMicroTimeStep();
-        // time series log
-        isTimeSeriesLog = propertiesHandler.getIsTimeSeriesLog();
-        timeSeriesLogPath = propertiesHandler.getTimeSeriesLogPath();
-        timeSeriesLogInterval = propertiesHandler.
-            getTimeSeriesLogInterval();
-        // loop count
-        loopCount = propertiesHandler.getLoopCount();
-        // exit count
-        exitCount = propertiesHandler.getExitCount();
-        isAllAgentSpeedZeroBreak =
-            propertiesHandler.getIsAllAgentSpeedZeroBreak();
-        // check property options
-        if (mPath == null) {
-            System.err.println("NetmasCuiSimulator: map file is " +
-                    "required.");
-            return;
-        } else if (!((File) new File(mPath)).exists()) {
-            System.err.println("NetmasCuiSimulator: specified map file does " +
-                    "not exist.");
-            return;
-        } else if (type == CommunicationType.SND_FILE &&
-                serializeFile == null) {
-            System.err.println("NetmasCuiSimulator: file mode requires" +
-                    " path to log.");
-            return;
-        } else if (type == CommunicationType.SND_NETWORK && addr == null) {
-            System.err.println("NetmasCuiSimulator: network mode " +
-                    "requires destination address.");
-            return;
-        }
-        try {
-            networkMap = readMapWithName(mPath, random);
-            networkMap.setHasDisplay(false);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        try {
-            agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
-        } catch(Exception e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
         networkMap.setPollutionFile(pPath);
         networkMap.setGenerationFile(gPath);
         networkMap.setResponseFile(sPath);
@@ -313,6 +239,9 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         if (agentMovementHistoryPath != null) {
             model.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
         }
+        if (individualPedestriansLogDir != null) {
+            model.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
+        }
         if (isDebug)
             System.err.println("NetmasCuiSimulator start!");
         while(!finished) {
@@ -356,6 +285,9 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         if (isTimeSeriesLog) {
             // flush log file
             model.saveGoalLog(timeSeriesLogPath, true);
+        }
+        if (individualPedestriansLogDir != null) {
+            model.getAgentHandler().closeIndividualPedestriansLogger();
         }
         if (isTimerEnabled) {
             timer.writeElapsed();

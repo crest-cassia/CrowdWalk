@@ -71,6 +71,7 @@ public class RunningAroundPerson extends EvacuationAgent
 
     /* Values used in simulation */
     protected double speed;
+    protected double dv = 0.0;
     protected double direction = 0.0;
     protected double density;
     protected double expectedDensityMacroTimeStep = 300;
@@ -909,7 +910,6 @@ public class RunningAroundPerson extends EvacuationAgent
 
     private void calc_speed_lane(double time) {
 
-        double dv = 0;
         double diff = 0;    // distance between myself and front of me
         double diff_base = 0;   // distance to next node.
         int passed_agent_count = 0;
@@ -1034,7 +1034,8 @@ public class RunningAroundPerson extends EvacuationAgent
                     + dv);
         }
 
-        speed += dv * time_scale;
+        dv *= time_scale;
+        speed += dv;
 
         if (speed > emptyspeed) {
             speed = emptyspeed;
@@ -1583,6 +1584,10 @@ public class RunningAroundPerson extends EvacuationAgent
     @Override
     public double getSpeed() {
         return speed;
+    }
+
+    public double getAcceleration() {
+        return dv;
     }
 
     @Override
@@ -2407,6 +2412,10 @@ public class RunningAroundPerson extends EvacuationAgent
 
     public void consumePlannedRoute() {
         routeIndex = planned_route.size();
+    }
+
+    public String getNextCandidate() {
+        return isPlannedRouteCompleted() ? "" : planned_route.get(routeIndex);
     }
 }
 // ;;; Local Variables:

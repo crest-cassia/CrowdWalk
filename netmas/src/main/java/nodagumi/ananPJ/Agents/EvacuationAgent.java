@@ -113,6 +113,7 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     abstract public double getSpeed();
     abstract public double getDirection();
+    abstract public double getAcceleration();
     
     abstract public void prepareForSimulation(double _ts);
     abstract public void preUpdate(double time);
