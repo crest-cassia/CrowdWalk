@@ -405,7 +405,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
             if (model.getSecond() == 0)
                 isTimezero = true;
             if (isTimeSeriesLog) {
-                model.saveGoalLog(timeSeriesLogPath, false);
+                model.saveGoalLog(timeSeriesLogPath, false);    // GUIモードでは出力対象外なので無意味
                 if (((int) model.getSecond()) % timeSeriesLogInterval == 0)
                     model.saveTimeSeriesLog(timeSeriesLogPath);
             }

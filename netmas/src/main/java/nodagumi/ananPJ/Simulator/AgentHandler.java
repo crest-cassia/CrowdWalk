@@ -728,7 +728,7 @@ public class AgentHandler implements Serializable {
                     updateEvacuatedCount();
                 }
                 if (agentMovementHistoryLogger != null) {
-                    agentMovementHistoryLogger.info(String.format("%s,%d,%s,%d,%s,%d,%s,%d", agent.getConfigLine().replaceAll(",", " "), agent.getAgentNumber(), timeToString(startTime + agent.generatedTime, true), (int)agent.generatedTime, timeToString(startTime + time, true), (int)time, timeToString(time - agent.generatedTime, true), (int)(time - agent.generatedTime)));
+                    agentMovementHistoryLogger.info(String.format("%s,%d,%s,%d,%s,%d,%s,%d", agent.getConfigLine().replaceAll(",", " "), agent.ID, timeToString(startTime + agent.generatedTime, true), (int)agent.generatedTime, timeToString(startTime + time, true), (int)time, timeToString(time - agent.generatedTime, true), (int)(time - agent.generatedTime)));
                 }
             } else {
                 ++count;
@@ -755,7 +755,7 @@ public class AgentHandler implements Serializable {
         if (individualPedestriansLogger != null) {
             StringBuilder buff = new StringBuilder();
             if (agent.isEvacuated()) {
-                buff.append(agent.getAgentNumber()); buff.append(",");
+                buff.append(agent.ID); buff.append(",");
                 buff.append(0.0); buff.append(",");
                 buff.append(0.0); buff.append(",");
                 buff.append(0.0); buff.append(",");
@@ -775,7 +775,7 @@ public class AgentHandler implements Serializable {
                 buff.append(agent.getDamage()); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
             } else {
-                buff.append(agent.getAgentNumber()); buff.append(",");
+                buff.append(agent.ID); buff.append(",");
 
                 buff.append(agent.getPos().getX()); buff.append(",");
                 buff.append(agent.getPos().getY()); buff.append(",");
@@ -1241,7 +1241,7 @@ public class AgentHandler implements Serializable {
             writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
             for (EvacuationAgent agent : agents) {
                 StringBuilder buff = new StringBuilder();
-                buff.append(agent.getAgentNumber()); buff.append(",");
+                buff.append(agent.ID); buff.append(",");
                 buff.append(((RunningAroundPerson)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
                 buff.append(model.getTimeScale()); buff.append(",");

@@ -294,6 +294,16 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         return agent;
     }
 
+    public EvacuationAgent addAgent(MapPartGroup parent, EvacuationAgent agent, boolean autoID) {
+        if (autoID) {
+            return addAgent(parent, agent);
+        }
+        id_part_map.put(agent.ID, agent);
+        agentsCache.add(agent);
+        insertNodeInto(agent, parent, parent.getChildCount());
+        return agent;
+    }
+
     public PollutedArea createPollutedAreaRectangle(
             MapPartGroup parent,
             Rectangle2D bounds,

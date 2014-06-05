@@ -104,7 +104,7 @@ public abstract class GenerateAgent implements Serializable {
 
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
-            WaitRunningAroundPerson agent = new WaitRunningAroundPerson(0,
+            WaitRunningAroundPerson agent = new WaitRunningAroundPerson(model.getMap().assignUniqueAgentId(),
                     random);
             agent.generatedTime = tick;
             agent.displayMode = model.getDisplayMode();

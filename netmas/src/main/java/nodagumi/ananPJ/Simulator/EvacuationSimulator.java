@@ -232,7 +232,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         //agents.add(agent);
         //getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent);
         if (links.size() > 0) {
-            getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent);
+            getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent, false/* エージェントIDを変更しない */);
         //} else {
         //    getMap().addAgent((MapPartGroup) getMap().root, agent);
         }
