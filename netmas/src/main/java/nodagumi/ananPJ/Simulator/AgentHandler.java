@@ -13,9 +13,12 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.Insets;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.ObjectInputStream;
@@ -54,6 +57,8 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EtchedBorder;
 
+import javax.vecmath.Vector3d;
+
 import org.w3c.dom.Document;
 
 import nodagumi.ananPJ.Agents.EvacuationAgent;
@@ -61,6 +66,7 @@ import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
@@ -115,6 +121,7 @@ public class AgentHandler implements Serializable {
     private boolean effectiveLinksEnabled = false;
 
     private Logger agentMovementHistoryLogger = null;
+    private Logger individualPedestriansLogger = null;
 
     public AgentHandler (ArrayList<EvacuationAgent> _agents,
             String generationFile,
@@ -732,6 +739,7 @@ public class AgentHandler implements Serializable {
                         existNonZeroSpeedAgent = true;
                 }
             }
+            logIndividualPedestrians(time, agent);
         }
         // tkokada
         if (existNonZeroSpeedAgent)
@@ -739,6 +747,66 @@ public class AgentHandler implements Serializable {
         else
             isAllAgentSpeedZero = true;
         averageSpeed = speedTotal / count;
+    }
+
+    public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
+
+    private void logIndividualPedestrians(double time, EvacuationAgent agent) {
+        if (individualPedestriansLogger != null) {
+            StringBuilder buff = new StringBuilder();
+            if (agent.isEvacuated()) {
+                buff.append(agent.getAgentNumber()); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(-1); buff.append(",");
+                buff.append(-1); buff.append(",");
+                buff.append(agent.getPrevNode().ID); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(0); buff.append(",");
+                buff.append((int)agent.generatedTime); buff.append(",");
+                buff.append((int)time); buff.append(",");
+                buff.append(agent.getInstantaneousDamage()); buff.append(",");
+                buff.append(agent.getDamage()); buff.append(",");
+                buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
+            } else {
+                buff.append(agent.getAgentNumber()); buff.append(",");
+
+                buff.append(agent.getPos().getX()); buff.append(",");
+                buff.append(agent.getPos().getY()); buff.append(",");
+                buff.append(agent.getHeight()); buff.append(",");
+
+                Vector3d swing = agent.getSwing();
+                double height = agent.getHeight() / ((MapPartGroup)agent.getCurrentLink().getParent()).getScale();
+                buff.append(agent.getPos().getX() + swing.x); buff.append(",");
+                buff.append(agent.getPos().getY() + swing.y); buff.append(",");
+                buff.append(height + swing.z); buff.append(",");
+
+                buff.append(agent.getAcceleration()); buff.append(",");
+                buff.append(agent.getSpeed()); buff.append(",");
+
+                buff.append(agent.getCurrentLink().ID); buff.append(",");
+                buff.append(agent.getNextNode().ID); buff.append(",");
+                buff.append(agent.getPrevNode().ID); buff.append(",");
+                buff.append(agent.getDirection() >= 0.0 ? agent.getCurrentLink().length - agent.getPosition() : agent.getPosition()); buff.append(",");
+                buff.append((int)agent.getDirection()); buff.append(",");
+
+                buff.append((int)agent.generatedTime); buff.append(",");
+                buff.append((int)time); buff.append(",");
+
+                buff.append(agent.getInstantaneousDamage()); buff.append(",");
+                buff.append(agent.getDamage()); buff.append(",");
+                buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
+
+                buff.append(((RunningAroundPerson)agent).getNextCandidate());
+            }
+            individualPedestriansLogger.info(buff.toString());
+        }
     }
 
     private void updateEvacuatedCount() {
@@ -1127,6 +1195,14 @@ public class AgentHandler implements Serializable {
         return logger;
     }
 
+    public void closeLogger(Logger logger) {
+        if (logger != null) {
+            for (Handler handler : logger.getHandlers()) {
+                handler.close();
+            }
+        }
+    }
+
     public void initAgentMovementHistorLogger(String name, String filePath) {
         agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
             public String format(final LogRecord record) {
@@ -1138,10 +1214,52 @@ public class AgentHandler implements Serializable {
     }
 
     public void closeAgentMovementHistorLogger() {
-        if (agentMovementHistoryLogger != null) {
-            for (Handler handler : agentMovementHistoryLogger.getHandlers()) {
-                handler.close();
+        closeLogger(agentMovementHistoryLogger);
+    }
+
+    private String individualPedestriansLogDir = null;
+    public void initIndividualPedestriansLogger(String name, String dirPath) {
+        individualPedestriansLogDir = dirPath;
+        individualPedestriansLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
+            public String format(final LogRecord record) {
+                return formatMessage(record) + "\n";
             }
+        }, dirPath + "/log_individual_pedestrians.csv");
+        individualPedestriansLogger.setUseParentHandlers(false); // コンソールには出力しない
+        individualPedestriansLogger.info("pedestrianID,current_position_in_model_x,current_position_in_model_y,current_position_in_model_z,current_position_for_drawing_x,current_position_for_drawing_y,current_position_for_drawing_z,current_acceleration,current_velocity,current_linkID,current_nodeID_of_forward_movement,current_nodeID_of_backward_movement,current_distance_from_node_of_forward_movement,current_moving_direction,generated_time,current_traveling_period,current_exposure,amount_exposure,current_status_by_exposure,next_assigned_passage_node");
+    }
+
+    public void closeIndividualPedestriansLogger() {
+        if (individualPedestriansLogger == null) {
+            return;
+        }
+        closeLogger(individualPedestriansLogger);
+
+        // log_individual_pedestrians_intial.csv
+        try {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_intial.csv"), "utf-8"));
+            writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
+            for (EvacuationAgent agent : agents) {
+                StringBuilder buff = new StringBuilder();
+                buff.append(agent.getAgentNumber()); buff.append(",");
+                buff.append(((RunningAroundPerson)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
+                buff.append((int)agent.generatedTime); buff.append(",");
+                buff.append(model.getTimeScale()); buff.append(",");
+                buff.append(agent.getPrevNode().ID); buff.append(",");
+                int idx = 0;
+                for (String route : agent.getPlannedRoute()) {
+                    if (idx > 0) {
+                        buff.append(" ");
+                    }
+                    idx++;
+                    buff.append(route);
+                }
+                buff.append("\n");
+                writer.write(buff.toString());
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
