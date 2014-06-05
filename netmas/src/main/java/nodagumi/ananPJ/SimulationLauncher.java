@@ -42,7 +42,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     protected transient Settings settings;
     private transient JFrame main_frame;
     String scenario_name = new String();
-    private Random random = null;
+    protected Random random = null;
     private boolean randomNavigation = false;
     private boolean isAllAgentSpeedZeroBreak = false;
     private NetmasTimer timer = null;
@@ -435,11 +435,13 @@ public class SimulationLauncher extends BasicSimulationLauncher
     protected transient DumpState dump_state = null;
 
     @Override
-    public SimulationPanel3D setupFrame(EvacuationModelBase model) {
+    public SimulationPanel3D setupFrame(final EvacuationModelBase model) {
         simulation_frame = new JFrame("Simulation Preview");
 
         simulation_frame.addWindowListener(new WindowListener() {
-            public void windowOpened(WindowEvent e) {           }
+            public void windowOpened(WindowEvent e) {
+                simulationWindowOpenedOperation(panel, model);
+            }
             public void windowIconified(WindowEvent e) {            }
             public void windowDeiconified(WindowEvent e) {          }
             public void windowDeactivated(WindowEvent e) {          }
@@ -451,6 +453,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
         });
 
         panel = new SimulationPanel3D(model, simulation_frame);
+        initSimulationPanel3D(panel);
         int w = settings.get("3dpanel_width", 800);
         int h = settings.get("3dpanel_height", 600);
         panel.setCanvasSize(w, h);
@@ -476,14 +479,16 @@ public class SimulationLauncher extends BasicSimulationLauncher
     }
 
     @Override
-    public SimulationPanel3D setupFrame(EvacuationModelBase model,
+    public SimulationPanel3D setupFrame(final EvacuationModelBase model,
             SimulationPanel3D _panel) {
         if (model == null)
             return null;
         if (_panel == null) {
             simulation_frame = new JFrame("Simulation Preview");
             simulation_frame.addWindowListener(new WindowListener() {
-                public void windowOpened(WindowEvent e) {           }
+                public void windowOpened(WindowEvent e) {
+                    simulationWindowOpenedOperation(panel, model);
+                }
                 public void windowIconified(WindowEvent e) {            }
                 public void windowDeiconified(WindowEvent e) {          }
                 public void windowDeactivated(WindowEvent e) {          }
@@ -494,6 +499,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
                 public void windowClosed(WindowEvent e) {           }
             });
             panel = new SimulationPanel3D(model, simulation_frame);
+            initSimulationPanel3D(panel);
             int w = settings.get("3dpanel_width", 800);
             int h = settings.get("3dpanel_height", 600);
             panel.setCanvasSize(w, h);
@@ -529,6 +535,14 @@ public class SimulationLauncher extends BasicSimulationLauncher
         }
 
         return panel;
+    }
+
+    public void simulationWindowOpenedOperation(SimulationPanel3D panel, final EvacuationModelBase model) {
+        // NetworkMapEditor で定義する
+    }
+
+    public void initSimulationPanel3D(SimulationPanel3D panel) {
+        // NetworkMapEditor で定義する
     }
 
     @Override

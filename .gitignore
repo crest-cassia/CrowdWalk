@@ -1,0 +1,28 @@
+# editor cache
+*.swp
+
+# OS cache file
+.DS_Store
+Thumbs.db
+
+# gradle
+.gradle/
+build/
+
+# ctags
+.tags
+
+# GNU GLOBAL
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
+# local setting data
+NetworkMapEditor.ini
+
+# execution result data
+tick.txt
+
+# screen shots
+netmas/screenshots/*

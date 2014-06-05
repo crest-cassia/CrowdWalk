@@ -1,8 +1,10 @@
 package nodagumi.ananPJ.Simulator;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
@@ -14,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
@@ -44,6 +48,8 @@ import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
 import javax.media.j3d.WakeupOnElapsedTime;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -52,9 +58,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
@@ -149,6 +158,9 @@ public class SimulationPanel3D extends NetworkPanel3D
     /* control view */
     protected JPanel control_panel = null;
     CheckboxMenuItem menu_item_agent_color_speed = null;
+    protected MenuItem menu_item_step = null;
+    protected MenuItem menu_item_start = null;
+    protected MenuItem menu_item_pause = null;
 
     double vertical_zoom = 10.0;
     JScrollBar vertical_zoom_control;
@@ -182,12 +194,24 @@ public class SimulationPanel3D extends NetworkPanel3D
     JCheckBox density_mode_cb = null;
     JCheckBox show_logo_cb = null;
     JCheckBox show_3d_polygon_cb = null;
+    protected JCheckBox change_agent_color_depending_on_speed_cb = null;
+    protected JCheckBox show_status_cb = null;
+    protected JRadioButton top_rb = null;
+    protected JRadioButton bottom_rb = null;
 
+    // Simulation ウィンドウのメニューにメニュー項目を追加する
     @Override
     protected void setupExtraContents() {
-        /* extra menu items */
-        menu_item_agent_color_speed = new CheckboxMenuItem("Change agent color depending on speed", false);
+        // View menu
+
+        menu_item_agent_color_speed = new CheckboxMenuItem("Change agent color depending on speed", true);
+        menu_item_agent_color_speed.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                change_agent_color_depending_on_speed_cb.setSelected(menu_item_agent_color_speed.getState());
+            }
+        });
         menu_view.add(menu_item_agent_color_speed);
+
         menu_view.add("-");
         MenuItem item = new MenuItem("Change agent color");
         item.addActionListener(new ActionListener() {
@@ -227,17 +251,35 @@ public class SimulationPanel3D extends NetworkPanel3D
             public void actionPerformed(ActionEvent e) { show_gas = gas_display.ORANGE; }
         });
         menu_pollution_color.add(item);
-        item = new MenuItem("Start");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.start();}
-        });
-        menu_action.add(item);
 
-        item = new MenuItem("Pause");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.pause();}
+        // Action menu
+
+        menu_item_step = new MenuItem("Step");
+        menu_item_step.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { model.step(); }
         });
-        menu_action.add(item);
+        menu_action.add(menu_item_step);
+
+        menu_item_start = new MenuItem("Start");
+        menu_item_start.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setMenuActionStartEnabled(false);
+                model.start();
+                model.getAgentHandler().update_buttons();
+            }
+        });
+        menu_action.add(menu_item_start);
+
+        menu_item_pause = new MenuItem("Pause");
+        menu_item_pause.setEnabled(false);
+        menu_item_pause.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setMenuActionStartEnabled(true);
+                model.pause();
+                model.getAgentHandler().update_buttons();
+            }
+        });
+        menu_action.add(menu_item_pause);
         menu_action.add(new MenuItem("-"));
         
         item = new MenuItem("Load recorded camera");
@@ -257,10 +299,9 @@ public class SimulationPanel3D extends NetworkPanel3D
         simulation_status.setText("NOT STARTED");
         simulation_status.setHorizontalAlignment(JLabel.LEFT);
         add(simulation_status, BorderLayout.NORTH);
-
-        setup_control_panel();
     }
     
+    // Simulation ウィンドウの View パネルに GUI パーツをセットする
     protected void setup_control_panel() {
         /* -- view control */
         control_panel = new JPanel();
@@ -276,7 +317,7 @@ public class SimulationPanel3D extends NetworkPanel3D
         /* -- zoom */
         JPanel zoom_panel = new JPanel(new GridBagLayout());
         zoom_panel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLoweredBevelBorder(), "Zoom"));
+                BorderFactory.createLoweredBevelBorder(), "Scale"));
         /* --- vertical zoom */
         GridBagConstraints c = null;
         c = new GridBagConstraints();
@@ -285,7 +326,7 @@ public class SimulationPanel3D extends NetworkPanel3D
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.WEST;
-        zoom_panel.add(new JLabel("vertical zoom"), c);
+        zoom_panel.add(new JLabel("vertical scale"), c);
         Transform3D trans = new Transform3D();
         view_trans.getTransform(trans);
         Vector3d scale_vec = new Vector3d();
@@ -385,41 +426,39 @@ public class SimulationPanel3D extends NetworkPanel3D
         camerawork_list.setLayoutOrientation(JList.VERTICAL);
         JScrollPane camerawork_list_scroller = new JScrollPane(camerawork_list);
         camerawork_panel.add(camerawork_list_scroller, BorderLayout.CENTER);
-        
-        JPanel camerawork_replay = new JPanel(new GridBagLayout());
+
+        FlowLayout layout = new FlowLayout();
+        layout.setHgap(0);
+        layout.setVgap(0);
+        JPanel _camerawork_replay = new JPanel(layout);     // センタリングのためだけに使用
+        JPanel camerawork_replay = new JPanel();
+        camerawork_replay.setLayout(new BoxLayout(camerawork_replay, BoxLayout.Y_AXIS));
         replay_recorded_camera_position = new JCheckBox("Replay");
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        camerawork_replay.add(replay_recorded_camera_position, c);
-        
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        camerawork_replay.add(new JLabel("scale"), c);
+        camerawork_replay.add(replay_recorded_camera_position);
+
+        layout = new FlowLayout(FlowLayout.LEFT);
+        JPanel camera_control_panel = new JPanel(layout);
+        camera_control_panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        camera_control_panel.add(new JLabel("Zoom"));
         scale_on_replay_control = new JScrollBar(JScrollBar.HORIZONTAL, (int)(scale_on_replay * 10),
                 1, 0, 100);
         scale_on_replay_control.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 scale_on_replay = ((double)scale_on_replay_control.getValue()) / 10;
-                }
+            }
         });
         scale_on_replay_control.setPreferredSize(new Dimension(200, 20));
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 0;
-        c.gridwidth = 3;
-        c.gridheight = 1;
-        camerawork_replay.add(scale_on_replay_control, c);
-        camerawork_panel.add(camerawork_replay, BorderLayout.SOUTH);
+        camera_control_panel.add(scale_on_replay_control);
+        camerawork_replay.add(camera_control_panel);
+
+        _camerawork_replay.add(camerawork_replay);
+        camerawork_panel.add(_camerawork_replay, BorderLayout.SOUTH);
         view_control.add(camerawork_panel, BorderLayout.CENTER);
 
         /* -- other checkboxes */
-        JPanel checkbox_panel = new JPanel(new GridLayout(6, 1));
+        JPanel checkbox_panel = new JPanel();
+        checkbox_panel.setBorder(new CompoundBorder(checkbox_panel.getBorder(), new EmptyBorder(0, 4, 0, 0)));
+        checkbox_panel.setLayout(new BoxLayout(checkbox_panel, BoxLayout.Y_AXIS));
         record_snapshots = new JCheckBox("Record simulation screen");
         record_snapshots.setSelected(model.getScreenshotInterval() != 0);
         record_snapshots.addActionListener(new ActionListener() {
@@ -452,7 +491,7 @@ public class SimulationPanel3D extends NetworkPanel3D
                     link_transparency = 1.0f;
                 } else {
                     link_transparency = 0.5f;
-                                    }
+                }
                 link_transparency_changed_flag = true;
             }
         });
@@ -476,16 +515,58 @@ public class SimulationPanel3D extends NetworkPanel3D
         });
         checkbox_panel.add(density_mode_cb);
 
-        /* -- hide agents and show density by color */
+        // 歩行速度に応じてエージェントの色を変える
+        change_agent_color_depending_on_speed_cb = new JCheckBox("Change agent color depending on speed");
+        change_agent_color_depending_on_speed_cb.setSelected(menu_item_agent_color_speed.getState());
+        change_agent_color_depending_on_speed_cb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                menu_item_agent_color_speed.setState(change_agent_color_depending_on_speed_cb.isSelected());
+            }
+        });
+        checkbox_panel.add(change_agent_color_depending_on_speed_cb);
+
+        // シミュレーションビュー上に進捗状況をテキスト表示する、及び表示位置の選択
+        layout = new FlowLayout(FlowLayout.LEFT);
+        layout.setHgap(0);
+        layout.setVgap(2);
+        JPanel show_status_panel = new JPanel(layout);
+        show_status_panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        show_status_cb = new JCheckBox("Show status", show_message);
+        top_rb = new JRadioButton("Top", (messagePosition & TOP) == TOP);
+        bottom_rb = new JRadioButton("Bottom", (messagePosition & BOTTOM) == BOTTOM);
+        top_rb.setEnabled(show_message);
+        bottom_rb.setEnabled(show_message);
+        show_status_cb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                show_message = show_status_cb.isSelected();
+                top_rb.setEnabled(show_message);
+                bottom_rb.setEnabled(show_message);
+            }
+        });
+        show_status_panel.add(show_status_cb);
+        top_rb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+               messagePosition = TOP;
+            }
+        });
+        bottom_rb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+               messagePosition = BOTTOM;
+            }
+        });
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(top_rb);
+        bg.add(bottom_rb);
+        show_status_panel.add(top_rb);
+        show_status_panel.add(bottom_rb);
+        checkbox_panel.add(show_status_panel);
+
+        // AIST ロゴの表示
         show_logo_cb = new JCheckBox("Show logo");
         show_logo_cb.setSelected(false);
         show_logo_cb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                if (show_logo_cb.isSelected()) {
-                    show_logo = true;
-                } else {
-                    show_logo = false;
-                }
+                show_logo = show_logo_cb.isSelected();
             }
         });
         checkbox_panel.add(show_logo_cb);
@@ -507,11 +588,11 @@ public class SimulationPanel3D extends NetworkPanel3D
         checkbox_panel.add(show_3d_polygon_cb);
 
         JButton set_view_home_button = new JButton("Set view to original");
-        set_view_home_button.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         set_view_home_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) { setViewToHome(); }
         });
         checkbox_panel.add(set_view_home_button);
+
         view_control.add(checkbox_panel, BorderLayout.SOUTH);
     }
 
@@ -538,6 +619,12 @@ public class SimulationPanel3D extends NetworkPanel3D
         repaint();
     }
 
+    public void setMenuActionStartEnabled(boolean b) {
+        menu_item_step.setEnabled(b);
+        menu_item_start.setEnabled(b);
+        menu_item_pause.setEnabled(! b);
+    }
+
     static class CurrentCameraPosition
             implements Comparable<CurrentCameraPosition> {
         double time, vertical_zoom, agent_size;
@@ -556,8 +643,11 @@ public class SimulationPanel3D extends NetworkPanel3D
             matrix = _matrx;
         }
 
-        static CurrentCameraPosition fromString(String line) {
+        static CurrentCameraPosition fromString(String line) throws Exception {
             String items[] = line.split(",");
+            if (items.length != 19) {
+                throw new Exception("Camera position data error: " + line);
+            }
             
             CurrentCameraPosition ret = new CurrentCameraPosition();
             ret.time = Double.parseDouble(items[0]);
@@ -620,7 +710,6 @@ public class SimulationPanel3D extends NetworkPanel3D
         update_camerawork_list();
     }
     
-    //private void save_camera_position_list() {
     public void save_camera_position_list() {
         FileDialog fd = new FileDialog(parent, "Save camera position list", FileDialog.SAVE);
         fd.setVisible (true);
@@ -644,7 +733,6 @@ public class SimulationPanel3D extends NetworkPanel3D
         }
     }
 
-    //private void load_camera_position_list() {
     public void load_camera_position_list() {
         FileDialog fd = new FileDialog(parent, "Open camera position list",
                 FileDialog.LOAD);
@@ -653,10 +741,10 @@ public class SimulationPanel3D extends NetworkPanel3D
         if (fd.getFile() == null) return;
         String filename = fd.getDirectory() + fd.getFile();
 
-        loadCameraworkFromFile(filename);
+        setReplay(loadCameraworkFromFile(filename));
     }
 
-    public void loadCameraworkFromFile(String filename) {
+    public boolean loadCameraworkFromFile(String filename) {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filename));
@@ -669,12 +757,12 @@ public class SimulationPanel3D extends NetworkPanel3D
                 line = line.toUpperCase();
                 camera_position_list.add(CurrentCameraPosition.fromString(line));
             }
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
         update_camerawork_list();
+        return true;
     }
     
     private void update_camerawork_list() {
@@ -1174,7 +1262,7 @@ public class SimulationPanel3D extends NetworkPanel3D
                 time);
         String clock_string = model.getAgentHandler().getClockString(time);
         simulation_status.setText("  "+ clock_string + time_string + evacuatedCount_string);
-        canvas.message = "Time： " + clock_string;
+        canvas.message = "Time: " + clock_string + time_string + evacuatedCount_string;
     }
 
     public static void updateEvacuatedCount(String evacuatedCount){
@@ -1338,6 +1426,59 @@ public class SimulationPanel3D extends NetworkPanel3D
     }
     public BoundingSphere getBoundingSphere() {
         return bounds;
+    }
+
+    public void setVerticalScale(double d) {
+        vertical_zoom = d;
+        vertical_zoom_control.setValue((int)(vertical_zoom * 10.0));
+    }
+
+    public void setAgentSize(double d) {
+        agent_size = d;
+    }
+
+    public void setScaleOnReplay(double d) {
+        scale_on_replay = d;
+    }
+
+    public JCheckBox getRecordSnapshots() {
+        return record_snapshots;
+    }
+
+    public JCheckBox getDebugMode() {
+        return debug_mode_cb;
+    }
+
+    public JCheckBox getHideNormalLink() {
+        return hide_normallink_cb;
+    }
+
+    public JCheckBox getDensityMode() {
+        return density_mode_cb;
+    }
+
+    public JCheckBox getChangeAgentColorDependingOnSpeed() {
+        return change_agent_color_depending_on_speed_cb;
+    }
+
+    public JCheckBox getShowStatus() {
+        return show_status_cb;
+    }
+
+    public JRadioButton getTop() {
+        return top_rb;
+    }
+
+    public JRadioButton getBottom() {
+        return bottom_rb;
+    }
+
+    public JCheckBox getShowLogo() {
+        return show_logo_cb;
+    }
+
+    public JCheckBox getShow3dPolygon() {
+        return show_3d_polygon_cb;
     }
 }
 //;;; Local Variables:

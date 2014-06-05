@@ -26,7 +26,7 @@ public abstract class GenerateAgent implements Serializable {
     SpeedCalculationModel speed_model = null;
     Random random = null;
     ArrayList<String> tags = new ArrayList<String>(); 
-
+    public String configLine;
     public boolean enabled = true;
 
     public GenerateAgent(String[] conditions,
@@ -36,7 +36,8 @@ public abstract class GenerateAgent implements Serializable {
             double _duration,
             int _total,
             SpeedCalculationModel _speed_model,
-            Random _random) {
+            Random _random,
+            String _configLine) {
         goal = _goal;
         planned_route = _planned_route;
         start_time = _start_time;
@@ -44,6 +45,7 @@ public abstract class GenerateAgent implements Serializable {
         total = _total;
         speed_model = _speed_model;
         random = _random;
+        configLine = _configLine;
 
         parse_conditions(conditions);
     }
@@ -108,17 +110,19 @@ public abstract class GenerateAgent implements Serializable {
             agent.displayMode = model.getDisplayMode();
             ((RunningAroundPerson) agent).setSpeedCalculationModel(
                 speed_model);
+            agent.setConfigLine(configLine);
             agents.add(agent);
             agent.setGoal(goal);
             agent.setPlannedRoute(planned_route);
 
-            place_agent(agent);
+            place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
             for (final String tag : tags) {
                 agent.addTag(tag);
             }
 
             agent.prepareForSimulation(timeScale);
+            agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
         }
     }
 
@@ -179,9 +183,10 @@ class GenerateAgentFromLink extends GenerateAgent {
             double _duration,
             int _total,
             SpeedCalculationModel _speed_model,
-            Random _random) {
+            Random _random,
+            String _configLine) {
         super(conditions, _goal, _planned_route, _start_time, _duration,
-                _total, _speed_model, _random);
+                _total, _speed_model, _random, _configLine);
         start_link = _start_link;
     }
 
@@ -195,7 +200,7 @@ class GenerateAgentFromLink extends GenerateAgent {
     protected void place_agent(WaitRunningAroundPerson agent) {
         double position = random.nextDouble() * start_link.length;
         agent.place(start_link, position);
-        start_link.agentEnters(agent);
+        //start_link.agentEnters(agent);
     }
 
     @Override
@@ -245,9 +250,10 @@ class GenerateAgentFromNode extends GenerateAgent {
             double _duration,
             int _total,
             SpeedCalculationModel _speed_model,
-            Random _random) {
+            Random _random,
+            String _configLine) {
         super(conditions, _goal, _planned_route, _start_time, _duration,
-                _total, _speed_model, _random);
+                _total, _speed_model, _random, _configLine);
         start_node = _start_node;
         //System.err.println("GenerateAgentFromNode start_node: " + start_node.ID + " goal: " + _goal);
     }
@@ -331,7 +337,7 @@ class GenerateAgentFromNode extends GenerateAgent {
         double position = 0.0;
         if (link.getTo() == start_node) position = link.length;
         agent.place(link, position);
-        link.agentEnters(agent);
+        //link.agentEnters(agent);
     }
 
     @Override

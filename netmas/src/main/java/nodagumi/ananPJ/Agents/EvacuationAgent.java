@@ -33,6 +33,7 @@ import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.misc.AgentGenerationFile;
 
 public abstract class EvacuationAgent extends OBMapPart
 implements Comparable<EvacuationAgent>, Serializable {
@@ -45,6 +46,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     protected boolean waiting = false;
     public double generatedTime;
     public double finishedTime;
+    protected String configLine = "none";
 
     public int displayMode = 0;
 
@@ -75,6 +77,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     public static OBNode fromDom(Element element) {
         String tag_name = element.getAttribute("AgentType");
         if (tag_name.equals(RunningAroundPerson.getAgentTypeString())) {
+            // TODO: 多分バグ(再びこのメソッドが呼ばれる)
             return RunningAroundPerson.fromDom(element);
         } else if (tag_name.equals(WaitRunningAroundPerson.getAgentTypeString())) {
             return WaitRunningAroundPerson.fromDom(element);
@@ -423,13 +426,26 @@ implements Comparable<EvacuationAgent>, Serializable {
     public abstract String getGoal();
     public abstract ArrayList<String> getPlannedRoute();
 
+    // current_link 上における絶対 position
+    public double absolutePosition() {
+        return getDirection() >= 0.0 ? position : current_link.length - position;
+    }
+
     public int compareTo(EvacuationAgent rhs) {
         double h1 = this.position;
         double h2 = rhs.position;
 
         // tkokada modified
         if (h1 == h2) {
-            return (int)((agentNumber - rhs.agentNumber) * getDirection());
+            //return (int)((agentNumber - rhs.agentNumber) * getDirection());
+            // m.saito modified
+            if (agentNumber == rhs.agentNumber) {
+                return 0;
+            } else if (agentNumber > rhs.agentNumber) {
+                return (int)(1 * getDirection());
+            } else {
+                return (int)(-1 * getDirection());
+            }
             //return 0;
         } else if (h1 > h2) {
             return (int)(1 * getDirection());
@@ -450,6 +466,18 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     public void setRandomNavigation(boolean _randomNavigation) {
         randomNavigation = _randomNavigation;
+    }
+
+    public int getAgentNumber() {
+        return agentNumber;
+    }
+
+    public String getConfigLine() {
+        return configLine;
+    }
+
+    public void setConfigLine(String str) {
+        configLine = str;
     }
 }
 // ;;; Local Variables:

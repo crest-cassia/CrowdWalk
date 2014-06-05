@@ -3,7 +3,8 @@
 #CP=build/libs/netmas.jar:build/libs/netmas-pathing.jar
 CP=build/libs/netmas.jar
 DYLD=libs
-JAVAOPT='-Xms1024M -Xmx1024M'
+#JAVAOPT='-Xms1024M -Xmx1024M'
+JAVAOPT='-Dfile.encoding=UTF-8'
 JAVA='java'
 EXECUTABLE=main
 GISEXECUTABLE='nodagumi.ananPJ.Editor.ImportGis'
@@ -19,12 +20,12 @@ case "$OS" in
     *"CYGWIN"*"64"*)
         echo " > Load Windows amd64 libraries..."
         DYLD=libs/windows/amd64
-        CP=$CP;build/libs/netmas-pathing.jar
+        CP=$CP\;build/libs/netmas-pathing.jar
         ;;
     *"CYGWIN"*"i686"*)
         echo " > Load Windows i386 libraries..."
         DYLD=libs/windows/i386
-        CP=$CP;build/libs/netmas-pathing.jar
+        CP=$CP\;build/libs/netmas-pathing.jar
         ;;
     *"Linux"*"x86_64"*)
         echo " > Load linux amd64 libraries..."
