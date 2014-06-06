@@ -7,6 +7,7 @@ import java.util.*;
 import org.w3c.dom.Document;
 
 import org.apache.commons.cli.*;
+import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
@@ -218,7 +219,15 @@ public class NetmasPropertiesHandler implements Serializable {
         propertiescenarioPath = _propertiescenarioPath;
         try {
             System.err.println(_propertiescenarioPath);
-            prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
+            if (_propertiescenarioPath.toLowerCase().endsWith(".json")) {
+                JSON json = new JSON();
+                HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiescenarioPath));
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    prop.setProperty(entry.getKey(), entry.getValue().toString());
+                }
+            } else {
+                prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
+            }
             isDebug = getBooleanProperty(prop, "debug");
             String typestr = getProperty(prop, "io_handler_type");
             if (typestr == null)
