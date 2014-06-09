@@ -51,6 +51,8 @@ public class NetmasPropertiesHandler implements Serializable {
             "all_agent_speed_zero_break"
             );
 
+    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file"};
+
     protected String propertiescenarioPath = null;
     protected Properties prop = null;
 
@@ -219,14 +221,18 @@ public class NetmasPropertiesHandler implements Serializable {
         propertiescenarioPath = _propertiescenarioPath;
         try {
             System.err.println(_propertiescenarioPath);
-            if (_propertiescenarioPath.toLowerCase().endsWith(".json")) {
+            String path = _propertiescenarioPath.toLowerCase();
+            if (path.endsWith(".xml")) {
+                prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
+            } else if (path.endsWith(".json")) {
                 JSON json = new JSON();
                 HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiescenarioPath));
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     prop.setProperty(entry.getKey(), entry.getValue().toString());
                 }
             } else {
-                prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
+                System.err.println("Property file error - 拡張子が不正です: " + _propertiescenarioPath);
+                System.exit(1);
             }
             isDebug = getBooleanProperty(prop, "debug");
             String typestr = getProperty(prop, "io_handler_type");
@@ -249,6 +255,21 @@ public class NetmasPropertiesHandler implements Serializable {
                         "inputted type:" + typestr);
                 communicationType = CommunicationType.NONE;
             }
+
+            // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
+            File propertyFile = new File(_propertiescenarioPath);
+            String propertyDirPath = propertyFile.getParent().replaceAll("\\\\", "/");
+            for (String property_item : DEFINITION_FILE_ITEMS) {
+                String filePath = getString(property_item, null);
+                if (filePath != null) {
+                    File file = new File(filePath);
+                    if (file.getParent() == null) {
+                        prop.setProperty(property_item, propertyDirPath + "/" + filePath);
+                        //System.err.println(property_item + ": " + getString(property_item, ""));
+                    }
+                }
+            }
+
             // input files
             mapPath = getStringProperty(prop, "map_file");
             pollutionPath = getStringProperty(prop, "pollution_file");
@@ -314,6 +335,10 @@ public class NetmasPropertiesHandler implements Serializable {
                     "all_agent_speed_zero_break");
         } catch (IOException ioe) {
             ioe.printStackTrace();
+            System.exit(1);
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
         // check property options
         if (mapPath == null) {
