@@ -607,7 +607,11 @@ public class NetworkMapEditor extends SimulationLauncher
                 return false;
             }
         }
-        random.setSeed(properties.getRandseed());  // NetworkMap の生成時に random オブジェクトを初期化する(CUIモードとGUIモードでシミュレーション結果を一致させるため)
+        if (properties != null) {
+            // NetworkMap の生成時に random オブジェクトを初期化する
+            // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
+            random.setSeed(properties.getRandseed());
+        }
         networkMap = new NetworkMap(random); 
         mapPath = null;
         updateAll();
@@ -821,7 +825,10 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     protected void simulate() {
-        random.setSeed(properties.getRandseed());    // シミュレーション結果をCUIモードと一致させるため
+        if (properties != null) {
+            // シミュレーション結果をCUIモードと一致させるため
+            random.setSeed(properties.getRandseed());
+        }
         make_fv_rooms();
         super.simulate(isDeserialized);
     }

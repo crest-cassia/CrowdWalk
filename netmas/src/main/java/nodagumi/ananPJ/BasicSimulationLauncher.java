@@ -33,7 +33,11 @@ public abstract class BasicSimulationLauncher implements Serializable {
                     "invalid inputted DOM object.");
             return null;
         }
-        _random.setSeed(properties.getRandseed());  // NetworkMap の生成時に random オブジェクトを初期化する(CUIモードとGUIモードでシミュレーション結果を一致させるため)
+        if (properties != null) {
+            // NetworkMap の生成時に random オブジェクトを初期化する
+            // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
+            _random.setSeed(properties.getRandseed());
+        }
         // open street map
         if (toplevel.item(0).getNodeName().equals("osm")) {
             System.err.println("BasicSimulationLauncher read Open Street Map" +

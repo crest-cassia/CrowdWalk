@@ -258,13 +258,16 @@ public class NetmasPropertiesHandler implements Serializable {
 
             // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
             File propertyFile = new File(_propertiescenarioPath);
-            String propertyDirPath = propertyFile.getParent().replaceAll("\\\\", "/");
+            String propertyDirPath = propertyFile.getParent();
+            if (propertyDirPath == null) {
+                propertyDirPath = ".";
+            }
             for (String property_item : DEFINITION_FILE_ITEMS) {
                 String filePath = getString(property_item, null);
                 if (filePath != null) {
                     File file = new File(filePath);
                     if (file.getParent() == null) {
-                        prop.setProperty(property_item, propertyDirPath + "/" + filePath);
+                        prop.setProperty(property_item, propertyDirPath.replaceAll("\\\\", "/") + "/" + filePath);
                         //System.err.println(property_item + ": " + getString(property_item, ""));
                     }
                 }
