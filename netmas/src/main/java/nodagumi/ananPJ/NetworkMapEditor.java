@@ -607,6 +607,7 @@ public class NetworkMapEditor extends SimulationLauncher
                 return false;
             }
         }
+        random.setSeed(properties.getRandseed());  // NetworkMap の生成時に random オブジェクトを初期化する(CUIモードとGUIモードでシミュレーション結果を一致させるため)
         networkMap = new NetworkMap(random); 
         mapPath = null;
         updateAll();
@@ -820,6 +821,7 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     protected void simulate() {
+        random.setSeed(properties.getRandseed());    // シミュレーション結果をCUIモードと一致させるため
         make_fv_rooms();
         super.simulate(isDeserialized);
     }
@@ -1691,6 +1693,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public void setProperties(String _propertiesFile) {
         propertiesHandler = new NetmasPropertiesHandler(_propertiesFile);
+        properties = propertiesHandler;
 
         setIsDebug(propertiesHandler.getIsDebug());
         // I/O handler ?

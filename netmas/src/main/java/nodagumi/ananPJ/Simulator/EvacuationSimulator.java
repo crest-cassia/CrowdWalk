@@ -746,22 +746,22 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             }
         }
 
-        // evacuatedAgents log を記憶
-        if (logging_count == 0) {
-            exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
-        }
-        StringBuffer buff = new StringBuffer();
-        int index = 0;
-        for (MapNode node : exitNodeList) {
-            if (index > 0) {
-                buff.append(",");
+        if (! finished) {
+            // evacuatedAgents log を記憶
+            if (logging_count == 0) {
+                exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
             }
-            buff.append(agentHandler.getExitNodesMap().get(node));
-            index++;
-        }
-        evacuatedAgents.add(buff.toString());
-
-        if (finished) {  // finalize process
+            StringBuffer buff = new StringBuffer();
+            int index = 0;
+            for (MapNode node : exitNodeList) {
+                if (index > 0) {
+                    buff.append(",");
+                }
+                buff.append(agentHandler.getExitNodesMap().get(node));
+                index++;
+            }
+            evacuatedAgents.add(buff.toString());
+        } else {  // finalize process
             for (EvacuationAgent agent : agents) {
                 if (!agent.isEvacuated()) {
                     goalTimes.put(new Integer(agent.ID),
@@ -772,7 +772,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             // 避難完了時刻順にソート
             Collections.sort(entries, new Comparator<Map.Entry>() {
                 public int compare(Map.Entry ent1, Map.Entry ent2) {
-                    return (Double)ent1.getValue() > (Double)ent2.getValue() ? 1 : 0;
+                    //return (Double)ent1.getValue() > (Double)ent2.getValue() ? 1 : 0;
+                    if ((Double)ent1.getValue() == (Double)ent2.getValue()) {
+                        return 0;
+                    } else if ((Double)ent1.getValue() > (Double)ent2.getValue()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 }
             });
 
@@ -802,7 +809,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             File evacuatedAgentsLog = new File(resultDirectory + "/evacuatedAgents.csv");
             try {
                 writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, false), "utf-8")), true);
-                index = 0;
+                int index = 0;
                 for (MapNode node : exitNodeList) {
                     writer.write((index == 0 ? "" : ",") + node.getTagLabel());
                     index++;

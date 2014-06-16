@@ -1235,9 +1235,9 @@ public class AgentHandler implements Serializable {
         }
         closeLogger(individualPedestriansLogger);
 
-        // log_individual_pedestrians_intial.csv
+        // log_individual_pedestrians_initial.csv
         try {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_intial.csv"), "utf-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
             writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
             for (EvacuationAgent agent : agents) {
                 StringBuilder buff = new StringBuilder();

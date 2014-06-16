@@ -160,6 +160,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
                     "requires destination address.");
             return;
         }
+        properties = propertiesHandler;
         try {
             networkMap = readMapWithName(mPath, random);
             networkMap.setHasDisplay(false);
@@ -189,6 +190,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
 
     boolean finished = false;
     public void initialize() {
+        random.nextInt();   // randomの呼び出し回数をGUIモードに合わせるための空呼び出し
         if (type == CommunicationType.RCV_NETWORK) {
             mapServer = new NetMASMapServer(type, isDebug, addr, port,
                     serializeFile, null);
@@ -230,8 +232,9 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
                 timer.start();
         }
         // save initial state
-        if (isTimeSeriesLog)
-            model.saveGoalLog(timeSeriesLogPath, false);
+        // 不要なのでコメント化(斉藤)
+        //if (isTimeSeriesLog)
+            //model.saveGoalLog(timeSeriesLogPath, false);
             //model.saveTimeSeriesLog(timeSeriesLogPath);
     }
 
