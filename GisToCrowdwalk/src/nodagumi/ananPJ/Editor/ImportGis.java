@@ -43,7 +43,7 @@ public class ImportGis  {
      */
     private static final long serialVersionUID = 7346682140815565547L;
 
-    private static final boolean REVERSE_Y = true;
+    private static final boolean REVERSE_Y = false;
 
     private MapContext map;
     private JMapFrame map_frame = null;
@@ -171,6 +171,10 @@ public class ImportGis  {
                     JOptionPane.YES_NO_CANCEL_OPTION);
             if (make_precise == JOptionPane.CANCEL_OPTION)
                 return;
+            int crowdwalk_coordinate = JOptionPane.showConfirmDialog(map_frame,
+                "CrowdWalk Coordinate(Y) or Plane Rectangular Coordinate(N) ?", "", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (crowdwalk_coordinate == JOptionPane.CANCEL_OPTION)
+                return;
             ReferencedEnvelope ref = map.getAreaOfInterest();
             MapPartGroup group = exportNetworkMap.createGroupNode((MapPartGroup)
                     exportNetworkMap.getRoot());
@@ -239,11 +243,11 @@ public class ImportGis  {
                     if (make_precise == JOptionPane.YES_OPTION) {
                         make_nodes_precise(the_geom, feature, group, nodes,
                                 length, width, base_x, base_y, scale_x,
-                                scale_y);
+                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION);
                     } else {
                         make_nodes_simple(the_geom, feature, group, nodes,
                                 length, width, base_x, base_y, scale_x,
-                                scale_y);
+                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION);
                     }
                 }
             }
@@ -277,7 +281,7 @@ public class ImportGis  {
     private void make_nodes_precise(Object the_geom, SimpleFeature feature,
             MapPartGroup parent_group, HashMap<String, MapNode> nodes,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate) {
         if (!(the_geom instanceof MultiLineString))
             return;
         MultiLineString line = (MultiLineString) the_geom;
@@ -337,7 +341,13 @@ public class ImportGis  {
             }
             if (REVERSE_Y)
                 y *= -1.0;
-            Point2D point = new Point2D.Double(x, y);
+
+            Point2D point = null;
+            if (crowdwalk_coordinate) {
+                point = new Point2D.Double(y, -x);
+            } else {
+                point = new Point2D.Double(x, y);
+            }
 
             // 2012.11.13 tkokada reviced.
             //String point_str = point.toString();
@@ -384,7 +394,7 @@ public class ImportGis  {
     private void make_nodes_simple(Object the_geom, SimpleFeature feature,
             MapPartGroup parent_group, HashMap<String, MapNode> nodes,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate) {
         if (!(the_geom instanceof MultiLineString)) return;
 
         MultiLineString line = (MultiLineString)the_geom;
@@ -425,7 +435,13 @@ public class ImportGis  {
             }
             if (REVERSE_Y)
                 y *= -1.0;
-            Point2D point = new Point2D.Double(x, y);
+
+            Point2D point = null;
+            if (crowdwalk_coordinate) {
+                point = new Point2D.Double(y, -x);
+            } else {
+                point = new Point2D.Double(x, y);
+            }
 
             // 2012.11.13 tkokada reviced.
             //String point_str = point.toString();
