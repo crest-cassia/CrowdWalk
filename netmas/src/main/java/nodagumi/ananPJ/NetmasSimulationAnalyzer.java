@@ -190,7 +190,7 @@ public class NetmasSimulationAnalyzer implements Serializable {
             if (isTimerEnabled) {
                 timer.tick();
                 timer.writeInterval();
-                if ((counter % 100) == 0)
+                if ((counter % 60) == 0)
                     timer.writeElapsed();
             }
             counter++;

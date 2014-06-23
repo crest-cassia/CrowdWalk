@@ -150,6 +150,7 @@ public class NetworkMapEditor extends SimulationLauncher
     protected boolean showLogo = false;
     protected boolean show3dPolygon = true;
     protected String agentMovementHistoryPath = null;
+    protected String individualPedestriansLogDir = null;
 
     /* copy from CUI simulator */
     private static NetmasPropertiesHandler propertiesHandler = null;
@@ -606,6 +607,11 @@ public class NetworkMapEditor extends SimulationLauncher
                 return false;
             }
         }
+        if (properties != null) {
+            // NetworkMap の生成時に random オブジェクトを初期化する
+            // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
+            random.setSeed(properties.getRandseed());
+        }
         networkMap = new NetworkMap(random); 
         mapPath = null;
         updateAll();
@@ -819,6 +825,10 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     protected void simulate() {
+        if (properties != null) {
+            // シミュレーション結果をCUIモードと一致させるため
+            random.setSeed(properties.getRandseed());
+        }
         make_fv_rooms();
         super.simulate(isDeserialized);
     }
@@ -1429,6 +1439,9 @@ public class NetworkMapEditor extends SimulationLauncher
         if (propertiesHandler.isDefined("agent_movement_history_file")) {
             model.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
         }
+        if (propertiesHandler.isDefined("individual_pedestrians_log_dir")) {
+            model.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
+        }
     }
 
     // SimulationPanel3D を生成した直後に呼び出される(simulationWindowOpenedOperation ではうまく対処できない分の処理)
@@ -1687,6 +1700,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public void setProperties(String _propertiesFile) {
         propertiesHandler = new NetmasPropertiesHandler(_propertiesFile);
+        properties = propertiesHandler;
 
         setIsDebug(propertiesHandler.getIsDebug());
         // I/O handler ?
@@ -1762,6 +1776,10 @@ public class NetworkMapEditor extends SimulationLauncher
             simulationWindowOpen = propertiesHandler.getBoolean("simulation_window_open", simulationWindowOpen);
             autoSimulationStart = propertiesHandler.getBoolean("auto_simulation_start", autoSimulationStart);
             agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
+            individualPedestriansLogDir = propertiesHandler.getDirectoryPath("individual_pedestrians_log_dir", null);
+            if (individualPedestriansLogDir != null) {
+                individualPedestriansLogDir = individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
+            }
         } catch(Exception e) {
             //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
             System.err.println(e.getMessage());

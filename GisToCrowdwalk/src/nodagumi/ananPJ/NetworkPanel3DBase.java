@@ -65,10 +65,10 @@ import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.ImageFormatException;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.JPEGEncodeParam;
+//import com.sun.image.codec.jpeg.JPEGCodec;
 
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -207,32 +207,12 @@ public abstract class NetworkPanel3DBase extends JPanel
             }
             // tkokada debug
             System.err.println("\tScreen shot size: " + width + ", " + height);
-            /*
-             File file = new File(filename);
-            try {
-                ImageIO.write(img, "BMP", file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-            // 上のImageIO.writeが動かないため、下記の処理を使いました 2011.5.18
-            //(NetworkMapEditor でスクリーンキャプチャが取れない)
-            // 下羅さん作成の下記の処理に差し替えます
-            // また下記の記述では、jpgがスクリーンキャプチャファイルとして出力されることを意図しています
-            // この修正に連動して、EvacuationSimulator.java のupdateEveryTick()の中の記述を
-            // 変更しています。（bmp →jpg）
-            
 
             try {
-                OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename));
-                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fileOutputStream);
-                JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(img);
-                encodeParam.setQuality(1.0f, false);
-                encoder.encode(img, encodeParam);
-                fileOutputStream.close();
+                ImageIO.write(img, "jpg", new File(filename));
             } catch (IOException e) {
-                // TODO 自動生成された catch ブロック
                 e.printStackTrace();
-            }   
+            }
             filename = null;
         }
     };

@@ -26,3 +26,9 @@ tick.txt
 
 # screen shots
 netmas/screenshots/*
+
+# log files
+netmas/log/*
+
+# temporary files
+netmas/tmp/*

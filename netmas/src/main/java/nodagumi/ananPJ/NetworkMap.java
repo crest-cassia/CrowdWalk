@@ -150,6 +150,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         int id;
         do {
             id = Math.abs(random.nextInt());
+            //System.err.println("\033[1;33massign_new_id:\033[0m " + id);
             if (id < 0) { id = -id; }
         } while (id_part_map.containsKey(id));
         return id;
@@ -289,6 +290,16 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         int id = assignUniqueAgentId();
         agent.ID = id;
         id_part_map.put(id, agent);
+        agentsCache.add(agent);
+        insertNodeInto(agent, parent, parent.getChildCount());
+        return agent;
+    }
+
+    public EvacuationAgent addAgent(MapPartGroup parent, EvacuationAgent agent, boolean autoID) {
+        if (autoID) {
+            return addAgent(parent, agent);
+        }
+        id_part_map.put(agent.ID, agent);
         agentsCache.add(agent);
         insertNodeInto(agent, parent, parent.getChildCount());
         return agent;
