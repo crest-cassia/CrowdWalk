@@ -9,9 +9,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.*;
+import java.net.*;
 import java.util.*;
-
 import javax.swing.*;
+import javax.swing.event.*;
 
 import org.geotools.data.*;
 import org.geotools.data.simple.*;
@@ -42,14 +43,17 @@ public class ImportGis  {
      * Shapefile 形式の地図を読み込んでモデルを作成する． 
      */
     private static final long serialVersionUID = 7346682140815565547L;
+    private static final String VERSION = "Version 1.01 (June 23 2014)";
 
     private static final boolean REVERSE_Y = false;
+    // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）
+    public static final String REFERENCE_URL = "http://www.gsi.go.jp/LAW/heimencho.html";
 
     private MapContext map;
     private JMapFrame map_frame = null;
     // tkokada
-    private double DEFAULT_LATITUDE = 36.00;
-    private double DEFAULT_LONGITUDE = 139.83333333;
+    //private double DEFAULT_LATITUDE = 36.00;
+    //private double DEFAULT_LONGITUDE = 139.83333333;
     private Ruby ruby = null;
 
     protected Settings settings;
@@ -74,7 +78,7 @@ public class ImportGis  {
 
     private JMapFrame setupMapFrame() {
         map_frame = new JMapFrame(map);
-        map_frame.setTitle("Import GIS file");
+        map_frame.setTitle("Import GIS file - " + VERSION);
 
         //map_frame.enableLayerTable(true);
         map_frame.enableToolBar(true);
@@ -150,7 +154,7 @@ public class ImportGis  {
         private NetworkMap exportNetworkMap;
 
         public ExportNodeLinkAction(NetworkMap _exportNetworkMap) {
-            super("to NetMAS");
+            super("Convert");
             putValue(Action.SHORT_DESCRIPTION,
                     "Exports GIS map to node-link data of NetMAS");
             exportNetworkMap = _exportNetworkMap;
@@ -164,15 +168,133 @@ public class ImportGis  {
             2.5
         };
 
+        // 系番号選択ダイアログ
+        public class ChooseDialog extends JDialog implements ActionListener, WindowListener {
+            private Integer[] systemNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+
+            private JComboBox<Integer> combo = null;
+            private boolean canceled = false;
+
+            public ChooseDialog(Frame owner) {
+                super(owner);
+
+                setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                addWindowListener(this);
+
+                GridBagLayout layout = new GridBagLayout();
+                GridBagConstraints gbc = new GridBagConstraints();
+                getContentPane().setLayout(layout);
+
+                JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                JLabel label = new JLabel("Choose a Zone number ");
+                label.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+                inputPanel.add(label);
+                combo = new JComboBox<Integer>(systemNumbers);
+                combo.setSelectedIndex(8);  // デフォルト系番号は 9
+                inputPanel.add(combo);
+
+                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                JButton okButton = new JButton("Ok");
+                okButton.setActionCommand("ok");
+                okButton.addActionListener(this);
+                buttonPanel.add(okButton);
+
+                JButton cancelButton = new JButton("Cancel");
+                cancelButton.setActionCommand("cancel");
+                cancelButton.addActionListener(this);
+                buttonPanel.add(cancelButton);
+
+                JEditorPane editor = new JEditorPane("text/html", "<html><a href='" + REFERENCE_URL + "'>by 平面直角座標系(平成十四年国土交通省告示第九号)</a>");
+                editor.setOpaque(false);
+                editor.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+                editor.setEditable(false);
+                editor.addHyperlinkListener(new HyperlinkListener() {
+                    @Override
+                    public void hyperlinkUpdate(HyperlinkEvent e) {
+                        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && Desktop.isDesktopSupported()) {
+                            try {
+                                Desktop.getDesktop().browse(new URI(REFERENCE_URL));
+                            } catch(Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
+                gbc.anchor = GridBagConstraints.NORTHWEST;
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.insets = new Insets(12, 20, 0, 20);
+                layout.setConstraints(inputPanel, gbc);
+
+                gbc.anchor = GridBagConstraints.NORTHWEST;
+                gbc.gridx = 0;
+                gbc.gridy = 1;
+                gbc.insets = new Insets(0, 60, 0, 20);
+                layout.setConstraints(editor, gbc);
+
+                gbc.anchor = GridBagConstraints.SOUTHEAST;
+                gbc.gridx = 0;
+                gbc.gridy = 2;
+                gbc.insets = new Insets(12, 20, 12, 20);
+                layout.setConstraints(buttonPanel, gbc);
+
+                getContentPane().add(inputPanel);
+                getContentPane().add(buttonPanel);
+                getContentPane().add(editor);
+
+                pack();
+                setLocationRelativeTo(owner);
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("cancel")) {
+                    canceled = true;
+                }
+                setVisible(false);
+            }
+
+            public void windowActivated(WindowEvent e) {}
+
+            public void windowClosed(WindowEvent e) {}
+
+            public void windowClosing(WindowEvent e) {
+                canceled = true;
+            }
+
+            public void windowDeactivated(WindowEvent e) {}
+
+            public void windowDeiconified(WindowEvent e) {}
+
+            public void windowIconified(WindowEvent e) {}
+
+            public void windowOpened(WindowEvent e) {}
+
+            public int getNumber() {
+                return canceled ? -1 : (Integer)combo.getSelectedItem();
+            }
+        }
+
+        public int chooseSystemNumber() {
+            ChooseDialog dlg = new ChooseDialog(map_frame);
+            dlg.setModal(true);
+            dlg.setVisible(true);
+            return dlg.getNumber();
+        }
+
         @Override
         public void action(ActionEvent arg0) throws Throwable {
+            int number = chooseSystemNumber();
+            if (number == -1)
+                return;
             int make_precise = JOptionPane.showConfirmDialog(map_frame,
                     "Make precise model?", "",
                     JOptionPane.YES_NO_CANCEL_OPTION);
             if (make_precise == JOptionPane.CANCEL_OPTION)
                 return;
             int crowdwalk_coordinate = JOptionPane.showConfirmDialog(map_frame,
-                "CrowdWalk Coordinate(Y) or Plane Rectangular Coordinate(N) ?", "", JOptionPane.YES_NO_CANCEL_OPTION);
+                "CrowdWalk Coordinate(Y) or Plane Rectangular Coordinate(N) ?", "",
+                JOptionPane.YES_NO_CANCEL_OPTION);
             if (crowdwalk_coordinate == JOptionPane.CANCEL_OPTION)
                 return;
             ReferencedEnvelope ref = map.getAreaOfInterest();
@@ -243,11 +365,11 @@ public class ImportGis  {
                     if (make_precise == JOptionPane.YES_OPTION) {
                         make_nodes_precise(the_geom, feature, group, nodes,
                                 length, width, base_x, base_y, scale_x,
-                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION);
+                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION, number);
                     } else {
                         make_nodes_simple(the_geom, feature, group, nodes,
                                 length, width, base_x, base_y, scale_x,
-                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION);
+                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION, number);
                     }
                 }
             }
@@ -281,7 +403,7 @@ public class ImportGis  {
     private void make_nodes_precise(Object the_geom, SimpleFeature feature,
             MapPartGroup parent_group, HashMap<String, MapNode> nodes,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y, boolean crowdwalk_coordinate) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number) {
         if (!(the_geom instanceof MultiLineString))
             return;
         MultiLineString line = (MultiLineString) the_geom;
@@ -315,7 +437,7 @@ public class ImportGis  {
             try {
                 ruby.evalScriptlet("require 'gtoc'");
                 ruby.evalScriptlet("require 'gtoc'");
-                String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: 9, default_latitude: " + DEFAULT_LATITUDE + ", default_longitude: " + DEFAULT_LONGITUDE + ", type: \"japan\")";
+                String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: " + number + ", default_latitude: nil, default_longitude: nil, type: \"japan\")";
                 IRubyObject out = ruby.evalScriptlet(caller);
                 RubyHash h = out.convertToHash();
                 for (Object key : h.keySet()) {
@@ -394,7 +516,7 @@ public class ImportGis  {
     private void make_nodes_simple(Object the_geom, SimpleFeature feature,
             MapPartGroup parent_group, HashMap<String, MapNode> nodes,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y, boolean crowdwalk_coordinate) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number) {
         if (!(the_geom instanceof MultiLineString)) return;
 
         MultiLineString line = (MultiLineString)the_geom;
@@ -410,7 +532,7 @@ public class ImportGis  {
             try {
                 ruby.evalScriptlet("require 'gtoc'");
                 ruby.evalScriptlet("require 'gtoc'");
-                String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: 9, default_latitude: " + DEFAULT_LATITUDE + ", default_longitude: " + DEFAULT_LONGITUDE + ", type: \"japan\")";
+                String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: " + number + ", default_latitude: nil, default_longitude: nil, type: \"japan\")";
                 IRubyObject out = ruby.evalScriptlet(caller);
                 RubyHash h = out.convertToHash();
                 for (Object key : h.keySet()) {
