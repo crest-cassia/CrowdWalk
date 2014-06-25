@@ -1,6 +1,7 @@
 package nodagumi.ananPJ.Editor;
 
 import org.jruby.Ruby;
+import org.jruby.RubyArray;
 import org.jruby.RubyHash;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
@@ -43,7 +44,7 @@ public class ImportGis  {
      * Shapefile 形式の地図を読み込んでモデルを作成する． 
      */
     private static final long serialVersionUID = 7346682140815565547L;
-    private static final String VERSION = "Version 1.01 (June 23 2014)";
+    private static final String VERSION = "Version 1.02 (June 25, 2014)";
 
     private static final boolean REVERSE_Y = false;
     // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）
@@ -287,6 +288,11 @@ public class ImportGis  {
             int number = chooseSystemNumber();
             if (number == -1)
                 return;
+            int type = JOptionPane.showConfirmDialog(map_frame,
+                "World Geodetic System(Y) or Tokyo Datum(N) ?", "",
+                JOptionPane.YES_NO_CANCEL_OPTION);
+            if (type == JOptionPane.CANCEL_OPTION)
+                return;
             int make_precise = JOptionPane.showConfirmDialog(map_frame,
                     "Make precise model?", "",
                     JOptionPane.YES_NO_CANCEL_OPTION);
@@ -364,12 +370,12 @@ public class ImportGis  {
                     double width = width_array[tpcd];
                     if (make_precise == JOptionPane.YES_OPTION) {
                         make_nodes_precise(the_geom, feature, group, nodes,
-                                length, width, base_x, base_y, scale_x,
-                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION, number);
+                            length, width, base_x, base_y, scale_x, scale_y,
+                            crowdwalk_coordinate == JOptionPane.YES_OPTION, number, type == JOptionPane.YES_OPTION);
                     } else {
                         make_nodes_simple(the_geom, feature, group, nodes,
-                                length, width, base_x, base_y, scale_x,
-                                scale_y, crowdwalk_coordinate == JOptionPane.YES_OPTION, number);
+                            length, width, base_x, base_y, scale_x, scale_y,
+                            crowdwalk_coordinate == JOptionPane.YES_OPTION, number, type == JOptionPane.YES_OPTION);
                     }
                 }
             }
@@ -400,10 +406,74 @@ public class ImportGis  {
         }
     }
 
+    // 十進法度単位から度分秒に変換する(ddd.d -> dddmmss.s)
+    public double decimal2degree(double decimal) {
+        int degree = (int)decimal;
+        int minute = (int)((decimal - degree) * 60.0);
+        double second = ((decimal - degree) * 60.0 - minute) * 60.0;
+        return degree * 10000.0 + minute * 100.0 + second;
+    }
+
+    private double[] call_gtoc(Coordinate c, int number, boolean type) {
+        double[] result = new double[3];    // {x, y, m}
+        try {
+            ruby.evalScriptlet("require 'gtoc'");
+            ruby.evalScriptlet("require 'gtoc'");
+            String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: " + number + ", default_latitude: nil, default_longitude: nil, type: \"" + (type ? "world" : "japan") + "\")";
+            IRubyObject out = ruby.evalScriptlet(caller);
+            RubyHash h = out.convertToHash();
+            for (Object key : h.keySet()) {
+                // System.err.println("  key: " + key.toString() + ", value: " + h.get(key));
+                String keystring = key.toString();
+                if (keystring.equals("x")) {
+                    result[0] = (Double) (h.get(key));
+                } else if (keystring.equals("y")) {
+                    result[1] = (Double) (h.get(key));
+                } else if (keystring.equals("m")) {
+                    result[2] = (Double) (h.get(key));
+                }
+            }
+            //System.err.println(caller);
+        } catch (java.lang.NullPointerException npe) {
+            System.err.println("\tMap number or default latitude and longitude are too far from the coordinate.");
+            System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            JavaEmbedUtils.terminate(ruby);
+        }
+        return result;
+    }
+
+    // KMR-zoar 氏作成の変換スクリプトを使用する
+    // (このライブラリは世界測地系に固定されており、そのままでは日本測地系で使うことは出来ない)
+    // KMR-zoar/cblxy -> https://github.com/KMR-zoar/cblxy
+    private double[] call_blxy(Coordinate c, int number) {
+        double[] result = new double[3];    // {x, y, m}
+        try {
+            ruby.evalScriptlet("require 'cblxy'");
+            String caller = "blxy(" + decimal2degree(c.y) +", " + decimal2degree(c.x) + ", " + number + ")";
+            IRubyObject out = ruby.evalScriptlet(caller);
+            RubyArray ruby_array = out.convertToArray();
+            result[0] = (Double)ruby_array.get(0);
+            result[1] = (Double)ruby_array.get(1);
+            result[2] = 0.0;    // dummy
+            //System.err.println(caller);
+        } catch (java.lang.NullPointerException npe) {
+            System.err.println("\tMap number or default latitude and longitude are too far from the coordinate.");
+            System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            JavaEmbedUtils.terminate(ruby);
+        }
+        return result;
+    }
+
     private void make_nodes_precise(Object the_geom, SimpleFeature feature,
             MapPartGroup parent_group, HashMap<String, MapNode> nodes,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number, boolean type) {
         if (!(the_geom instanceof MultiLineString))
             return;
         MultiLineString line = (MultiLineString) the_geom;
@@ -434,33 +504,10 @@ public class ImportGis  {
             // double x = (c.x - base_x) * scale_x;
             // double y = (c.y - base_y) * scale_y;
             double x = 0.0 , y = 0.0, m = 0.0;
-            try {
-                ruby.evalScriptlet("require 'gtoc'");
-                ruby.evalScriptlet("require 'gtoc'");
-                String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: " + number + ", default_latitude: nil, default_longitude: nil, type: \"japan\")";
-                IRubyObject out = ruby.evalScriptlet(caller);
-                RubyHash h = out.convertToHash();
-                for (Object key : h.keySet()) {
-                    // System.err.println("  key: " + key.toString() + ", value: " + h.get(key));
-                    String keystring = key.toString();
-                    if (keystring.equals("x")) {
-                        x = (Double) (h.get(key));
-                    } else if (keystring.equals("y")) {
-                        y = (Double) (h.get(key));
-                    } else if (keystring.equals("m")) {
-                        m = (Double) (h.get(key));
-                    }
-                }
-                // System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
-            } catch (java.lang.NullPointerException npe) {
-                System.err.println("\tMap number or default latitude and " +
-                        "longitude are too far from the coordinate.");
-                System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                JavaEmbedUtils.terminate(ruby);
-            }
+            double[] result = type ? call_blxy(c, number) : call_gtoc(c, number, type);
+            x = result[0];
+            y = result[1];
+            //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
             if (REVERSE_Y)
                 y *= -1.0;
 
@@ -490,6 +537,7 @@ public class ImportGis  {
             } else {
                 node = networkMap.createMapNode(parent_group, point, 0.0);
                 //node.addTag(point_str);
+                //node.addTag("" + c.x + "_" + c.y);
                 nodes.put(point_str, node);
             }
 
@@ -516,7 +564,7 @@ public class ImportGis  {
     private void make_nodes_simple(Object the_geom, SimpleFeature feature,
             MapPartGroup parent_group, HashMap<String, MapNode> nodes,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number, boolean type) {
         if (!(the_geom instanceof MultiLineString)) return;
 
         MultiLineString line = (MultiLineString)the_geom;
@@ -529,32 +577,10 @@ public class ImportGis  {
             // double x = (c.x - base_x) * scale_x;
             // double y = (c.y - base_y) * scale_y;
             double x = 0.0 , y = 0.0, m = 0.0;
-            try {
-                ruby.evalScriptlet("require 'gtoc'");
-                ruby.evalScriptlet("require 'gtoc'");
-                String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: " + number + ", default_latitude: nil, default_longitude: nil, type: \"japan\")";
-                IRubyObject out = ruby.evalScriptlet(caller);
-                RubyHash h = out.convertToHash();
-                for (Object key : h.keySet()) {
-                    String keystring = key.toString();
-                    if (keystring.equals("x")) {
-                        x = (Double) (h.get(key));
-                    } else if (keystring.equals("y")) {
-                        y = (Double) (h.get(key));
-                    } else if (keystring.equals("m")) {
-                        m = (Double) (h.get(key));
-                    }
-                }
-                // System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
-            } catch (java.lang.NullPointerException npe) {
-                System.err.println("\tMap number or default latitude and " +
-                        "longitude are too far from the coordinate.");
-                System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                JavaEmbedUtils.terminate(ruby);
-            }
+            double[] result = type ? call_blxy(c, number) : call_gtoc(c, number, type);
+            x = result[0];
+            y = result[1];
+            //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
             if (REVERSE_Y)
                 y *= -1.0;
 
@@ -579,7 +605,7 @@ public class ImportGis  {
                 node = nodes.get(point_str);
             } else {
                 node = networkMap.createMapNode(parent_group, point, 0.0);
-                node.addTag(point_str);
+                //node.addTag(point_str);
                 nodes.put(point_str, node);
             }
 
