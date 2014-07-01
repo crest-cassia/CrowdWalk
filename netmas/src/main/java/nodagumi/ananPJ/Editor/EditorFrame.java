@@ -106,6 +106,7 @@ public class EditorFrame
 
     private MenuBar menuBar = null;
     private JLabel status = null;
+    private ArrayList<MapPartGroupButton> groupButtons = null;
 
     /* these values are used, only when the frame is not related with any OB group */
 
@@ -135,15 +136,17 @@ public class EditorFrame
 
     private Boolean areaSelection = false;
     private Rectangle2D selectedArea = null;
-    private Random random = null;
+    //private Random random = null;
 
     //public NetworkMapEditor editor = NetworkMapEditor.getInstance();
     public NetworkMapEditor editor = null;
 
-    public EditorFrame(MapPartGroup _ob_node, Random _random) {
+    //public EditorFrame(MapPartGroup _ob_node, Random _random) {
+    public EditorFrame(NetworkMapEditor _editor, MapPartGroup _ob_node) {
         super(_ob_node.getTagString());
-        random = _random;
-        editor = NetworkMapEditor.getInstance();
+        //random = _random;
+        //editor = NetworkMapEditor.getInstance();
+        editor = _editor;
         current_group = _ob_node;
 
         addKeyListener(this);
@@ -492,6 +495,7 @@ public class EditorFrame
         @Override
         public void actionPerformed(ActionEvent e) {
             panel.setBackgroundGroup(group);
+            panel.repaint();
         }
     }
 
@@ -506,35 +510,44 @@ public class EditorFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.setBackgroundGroup(null);
+                panel.repaint();
             }
         });
         background_group.add(gmi);
     }
-    class MapPartGroupButton
-    extends JButton
-    implements ActionListener {
+
+    class MapPartGroupButton extends JButton implements ActionListener {
         private static final long serialVersionUID = -1229787907250905245L;
         private MapPartGroup node;
         private EditorFrame frame;
-        public MapPartGroupButton(EditorFrame _frame,
-                MapPartGroup _node) {
+
+        public MapPartGroupButton(EditorFrame _frame, MapPartGroup _node) {
             super(_node.getTagString());
             frame = _frame;
             node = _node;
             addActionListener(this);
         }
+
         public void actionPerformed(ActionEvent e) {
+            for (MapPartGroupButton button : groupButtons) {
+                button.setEnabled(button != this);
+            }
             frame.current_group = node;
             frame.refreshBackground();
             frame.repaint();
         }
     }
+
     private void setupContents () {
         menuPanel = new JPanel();
 
+        groupButtons = new ArrayList<MapPartGroupButton>();
         for (MapPartGroup group : editor.getMap().getGroups()) {
             if (group.getTags().size() == 0) continue;
-            menuPanel.add(new MapPartGroupButton(this, group));
+            MapPartGroupButton button = new MapPartGroupButton(this, group);
+            button.setEnabled(group != current_group);
+            menuPanel.add(button);
+            groupButtons.add(button);
         }
 
         add(menuPanel, BorderLayout.NORTH);
@@ -2635,7 +2648,9 @@ public class EditorFrame
             break;
 
         case KeyEvent.VK_BACK_SPACE:
-            editor.getMap().undo();
+            System.err.println("undo は無効です");
+            // 正常動作が保証できないため無効にした(斉藤)
+            //editor.getMap().undo(editor);
             break;
         case KeyEvent.VK_DELETE:
             delete();
@@ -2916,9 +2931,9 @@ public class EditorFrame
         return current_group.getSymbolicLinks();
     }
 
-    public void setRandom(Random _random) {
-        random = _random;
-    }
+    //public void setRandom(Random _random) {
+    //    random = _random;
+    //}
 }
 // ;;; Local Variables:
 // ;;; mode:java

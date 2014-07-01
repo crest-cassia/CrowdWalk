@@ -64,7 +64,7 @@ public class EditorFramePanel extends JPanel implements Serializable {
     private double scale = 1.0;
     
     private Image backgroundImage = null;
-    private MapPartGroup backgroundGroup = null;
+    private MapPartGroup backgroundGroup = null;    // このグループのマップを背景に表示する(表示のみ)
     private double imageStrength = 1.0;
     
     private boolean showNodes = true;
