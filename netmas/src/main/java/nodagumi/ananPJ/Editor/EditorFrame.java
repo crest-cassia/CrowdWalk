@@ -2351,6 +2351,8 @@ public class EditorFrame
                 selectedArea = new Rectangle2D.Double(startpos.getX(), startpos.getY(), 0, 0);
             }
         } 
+        // この辺りでステータス更新を有効にするのがベストな妥協点(斉藤)
+        panel.updateStatusEnabled = true;
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -2543,7 +2545,7 @@ public class EditorFrame
 
     public void mouseMoved(MouseEvent e) {
         Point2D p = panel.revCalcPos(e.getX(), e.getY());
-        mousePoint = p;
+        mousePoint = p;     // これはCrowdWalk座標値
         switch (editor.getMode()) {
         case PLACE_NODE:
             if (placeHoverNode(p)) {
@@ -2877,15 +2879,13 @@ public class EditorFrame
     }
     
     public void setStatus(String _mode) {
-        status.setText("Height (Min : "+getMinHeight() + ", " + "Max : " + getMaxHeight() + ", " + "Default : " + getDefaultHeight() + ")"
-                + "        " +"Mode : "+ _mode);
+        status.setText(String.format("Height (Min : %s, Max : %s, Default : %s)    Mode : %s    Mouse Position : (%s, %s)    Abosolute Position : (%s, %s)", getMinHeight(), getMaxHeight(), getDefaultHeight(), _mode, panel.point_on_panel.x, panel.point_on_panel.y, mousePoint.getX(), mousePoint.getY()));
     }
     
     public void setStatus() {
-        status.setText("Height (Min : "+getMinHeight() + ", " + "Max : " + getMaxHeight() + ", " + "Default : " + getDefaultHeight() + ")"
-                + "        " +"Mode : "+ editor.getMode().toString());
+        setStatus(editor.getMode().toString());
     }
-    
+
     /* access to the object(nodes, links, agents, sub-groups)
      * that are managed under this frame */
     public ArrayList<MapNode> getChildNodes() {

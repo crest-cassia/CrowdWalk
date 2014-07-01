@@ -4,10 +4,12 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
@@ -78,6 +80,9 @@ public class EditorFramePanel extends JPanel implements Serializable {
     // show objects with scaling mode or not. scaling mode zoomes up or down 
     // objects as wheel control.
     private boolean showScaling = false;
+
+    public boolean updateStatusEnabled = false;
+    public Point point_on_panel = new Point(0, 0);
 
     Color linkColor = Color.YELLOW;
 
@@ -203,9 +208,7 @@ public class EditorFramePanel extends JPanel implements Serializable {
     /* display to theoretical value */
     /* this method is called by zoom relate function */  
     public Point2D revCalcPos(int x, int y) {
-        final Point point_on_panel =
-            SwingUtilities.convertPoint(null,
-                    x, y, this);
+        point_on_panel = SwingUtilities.convertPoint(null, x, y, this);
         
         AffineTransform trans = new AffineTransform();
         trans.translate(tx, ty);
@@ -219,18 +222,19 @@ public class EditorFramePanel extends JPanel implements Serializable {
         return trans.transform(new Point2D.Double(point_on_panel.getX(), point_on_panel.getY()), null);
     }
 
-    
     @Override
     public void paintComponent (Graphics g0) {
         super.paintComponent(g0);
         
         Graphics2D g = (Graphics2D)g0;
-        g.drawString("CurrentMouse= "+frame.mousePoint.toString(), 5, 15);
-        g.drawString("CurrentAbosolutePosition= "+this.revCalcPos((int)frame.mousePoint.getX(),(int)frame.mousePoint.getY()), 5, 35);
 
         if (setScaleMode) {
             //g.drawString("Scale Mode", 0, 20);
             frame.setStatus("SET_SCALE");
+        } else {
+            if (updateStatusEnabled) {
+                frame.setStatus();
+            }
         }
 
         g.translate(tx, ty);
