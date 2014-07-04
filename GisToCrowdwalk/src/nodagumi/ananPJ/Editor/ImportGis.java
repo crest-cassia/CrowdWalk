@@ -44,7 +44,7 @@ public class ImportGis  {
      * Shapefile 形式の地図を読み込んでモデルを作成する． 
      */
     private static final long serialVersionUID = 7346682140815565547L;
-    private static final String VERSION = "Version 1.02 (June 25, 2014)";
+    private static final String VERSION = "Version 1.03 (July 4, 2014)";
 
     private static final boolean REVERSE_Y = false;
     // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）
@@ -351,7 +351,11 @@ public class ImportGis  {
                     // 2012.11.14 tkokada reviced!
                     // lengthObject has two types: Double or Long
                     //double length = (Long)(feature.getAttribute("LK_LENGTH"));
+                    // 2種類のシェープファイル形式に対応
                     Object lengthObject = feature.getAttribute("LK_LENGTH");
+                    if (lengthObject == null) {
+                        lengthObject = feature.getAttribute("length");
+                    }
                     double length = 0.0;
                     if (lengthObject instanceof Double) {
                         length = (Double) lengthObject;
@@ -362,11 +366,16 @@ public class ImportGis  {
                     } else if (lengthObject instanceof String) {
                         length = Double.valueOf((String) lengthObject);
                     } else {
-                        //System.err.println("");
+                        System.err.println("Illegal lengthObject: " + lengthObject);
                         System.exit(1);
                     }
-                    int tpcd = Integer.parseInt(((String) (feature
-                                    .getAttribute("WIDTH_TPCD"))));
+
+                    Object rdwdcdObject = feature.getAttribute("WIDTH_TPCD");
+                    if (rdwdcdObject == null) {
+                        rdwdcdObject = feature.getAttribute("rdwdcd");
+                    }
+                    int tpcd = Integer.parseInt((String)rdwdcdObject);
+
                     double width = width_array[tpcd];
                     if (make_precise == JOptionPane.YES_OPTION) {
                         make_nodes_precise(the_geom, feature, group, nodes,
