@@ -3,6 +3,7 @@ package nodagumi.ananPJ.Editor;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -132,41 +133,32 @@ public class EditorFramePanel extends JPanel implements Serializable {
     }
 
     public void localScroll(int dx, int dy) {
-        ob_node.tx += dx;
-        ob_node.ty += dy;
+        ob_node.tx += dx / scale;
+        ob_node.ty += dy / scale;
     }
     
     public void localZoomX(int z) {
-        int cx = getWidth() / 2;
-        int cy = getHeight() / 2;
-        Point2D cp = revCalcPos(cx, cy);
-        double scaleOldX = ob_node.sx;
-        double scaleOldY = ob_node.sy;
-
         if (z > 0) {
             ob_node.sx -= 0.01;
         } else {
             ob_node.sx += 0.01;
         }
-        ob_node.tx += cp.getX() * (scaleOldX - ob_node.sx); 
-        ob_node.ty += cp.getY() * (scaleOldY - ob_node.sy); 
     }
     
     public void localZoomY(int z) {
-        int cx = getWidth() / 2;
-        int cy = getHeight() / 2;
-        Point2D cp = revCalcPos(cx, cy);
-        double scaleOldX = ob_node.sx;
-        double scaleOldY = ob_node.sy;
-
         if (z > 0) {
             ob_node.sy -= 0.01;
         } else {
             ob_node.sy += 0.01;
         }
+    }
 
-        ob_node.tx -= cp.getX() * (scaleOldX - ob_node.sx); 
-        ob_node.ty -= cp.getY() * (scaleOldY - ob_node.sy); 
+    public void setLocalZoomX(double sx) {
+        ob_node.sx = sx;
+    }
+
+    public void setLocalZoomY(double sy) {
+        ob_node.sy = sy;
     }
     
     public void localRotate(int z) {
@@ -226,6 +218,13 @@ public class EditorFramePanel extends JPanel implements Serializable {
     public void paintComponent (Graphics g0) {
         super.paintComponent(g0);
         
+        // viewArea を使って表示範囲外の無駄な描画処理を省く
+        Dimension frameSize = new Dimension();
+        frame.getSize(frameSize);
+        Point2D position = revCalcPos(0, 0);
+        Point2D size = revCalcPos(frameSize.width, frameSize.height);
+        Rectangle2D viewArea = new Rectangle2D.Double(position.getX(), position.getY(), (size.getX() - position.getX()) + 1, (size.getY() - position.getY()) + 1);
+
         Graphics2D g = (Graphics2D)g0;
 
         if (setScaleMode) {
@@ -247,16 +246,16 @@ public class EditorFramePanel extends JPanel implements Serializable {
             g.scale(ob_node.sx, ob_node.sy);
             g.rotate(ob_node.r);
 
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                    (float)imageStrength));
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)imageStrength));
             g.drawImage(backgroundImage, 0, 0,
                     (int)(backgroundImage.getWidth(null)),
                     (int)(backgroundImage.getHeight(null)),
-                    null);
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                    1.0f));
+                    this);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            //System.out.println("tx:" + tx + ", ty:" + ty + ", obnode tx:" + ob_node.tx + ", ty:" + ob_node.ty + ", sx:" + ob_node.sx + ", sy:" + ob_node.sy + ", r:" + ob_node.r + ", scale:" + scale);
+
+            g.setTransform(t);
         }
-        g.setTransform(t);
 
         /* show frame */
         if (frame.getRegion() != null){
@@ -273,15 +272,19 @@ public class EditorFramePanel extends JPanel implements Serializable {
         if (backgroundGroup != null) {
             if (showLinks) {
                 for (final MapLink link : backgroundGroup.getChildLinks()) {
-                    g.setColor(linkColor);
-                    link.draw(g, false, showLinkLabels, false, showScaling);
+                    if (viewArea.intersectsLine(link.getLine2D())) {
+                        g.setColor(Color.WHITE);
+                        link.draw(g, false, showLinkLabels, false, showScaling);
+                    }
                 }
             }
             if (showNodes) {
                 g.setStroke(new BasicStroke(1.0f));
                 if (backgroundGroup.getChildNodes() != null) {
                     for (MapNode node : backgroundGroup.getChildNodes()) {
-                        node.draw(g, false, false, false, Color.LIGHT_GRAY);
+                        if (viewArea.contains(node.getX(), node.getY())) {
+                            node.draw(g, false, false, false, Color.LIGHT_GRAY);
+                        }
                     }
                 }
             }
@@ -317,10 +320,13 @@ public class EditorFramePanel extends JPanel implements Serializable {
                 }
             }
         }
+
         if (showLinks) {
             for (final MapLink link : frame.getChildLinks()) {
-                g.setColor(linkColor);
-                link.draw(g, false, showLinkLabels, false, showScaling);
+                if (viewArea.intersectsLine(link.getLine2D())) {
+                    g.setColor(linkColor);
+                    link.draw(g, false, showLinkLabels, false, showScaling);
+                }
             }
         }
         
@@ -328,7 +334,9 @@ public class EditorFramePanel extends JPanel implements Serializable {
             g.setStroke(new BasicStroke(1.0f));
             if (frame.getChildNodes() != null) {
                 for (MapNode node : frame.getChildNodes()) {
-                    node.draw(g, false, showNodeLabels, false);
+                    if (viewArea.contains(node.getX(), node.getY())) {
+                        node.draw(g, false, showNodeLabels, false);
+                    }
                 }
             }
         }
@@ -476,6 +484,17 @@ public class EditorFramePanel extends JPanel implements Serializable {
             g.setColor(Color.BLACK);
             g.draw(tempLine);
         }       
+    }
+
+    // 背景画像を読み込み後直ちに表示する
+    @Override
+    public boolean imageUpdate(Image img, int infoflags, int x, int y, int w, int h) {
+        if ((infoflags & ALLBITS) == 0) {
+            return true;
+        } else {
+            repaint();
+            return false;
+        }
     }
 
     private void showHoverNodeInfo(Graphics2D g) {

@@ -475,6 +475,30 @@ public class MapNode extends OBMapPart implements Serializable {
         }
         return buff.toString();
     }
+
+    // p は this 座標を基準とした第何象限にあるのか
+    public int getQuadrant(Point2D p) {
+        if (p.getY() >= getY()) {
+            return p.getX() >= getX() ? 1 : 2;
+        } else {
+            return p.getX() >= getX() ? 4 : 3;
+        }
+    }
+
+    // node 座標が this 座標を基準とした quadrant 象限にあれば true を返す
+    public boolean include(MapNode node, int quadrant) {
+        switch (quadrant) {
+        case 1:
+            return node.getX() >= getX() && node.getY() >= getY();
+        case 2:
+            return node.getX() < getX() && node.getY() >= getY();
+        case 4:
+            return node.getX() >= getX() && node.getY() < getY();
+        case 3:
+            return node.getX() < getX() && node.getY() < getY();
+        }
+        return false;   // Exception の代わり
+    }
 }
 // ;;; Local Variables:
 // ;;; mode:java

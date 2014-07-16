@@ -348,6 +348,10 @@ public class NetworkMapEditor extends SimulationLauncher
         modified = b;
     }
 
+    public void _setModified(boolean b) {
+        modified = b;
+    }
+
     public void updateAll() {
         nodePanel.refresh();
         linkPanel.refresh();
@@ -1837,6 +1841,18 @@ public class NetworkMapEditor extends SimulationLauncher
         }
         return instance;
     }
+
+    public NodePanel getNodePanel() { return nodePanel; }
+
+    public LinkPanel getLinkPanel() { return linkPanel; }
+
+    public AgentPanel getAgentPanel() { return agentPanel; }
+
+    public PollutionPanel getPollutionPanel() { return pollutionPanel; }
+
+    public ScenarioPanel getScenarioPanel() { return scenarioPanel; }
+
+    public BrowserPanel getBrowserPanel() { return browserPanel; }
 
     /**
      * @param args

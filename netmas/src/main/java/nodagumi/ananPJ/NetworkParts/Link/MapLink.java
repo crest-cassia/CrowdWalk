@@ -678,7 +678,7 @@ public class MapLink extends OBMapPart implements Serializable {
 
         return p;
     }
-
+/*
     public Line2D getLine2D() {
         Point2D from = fromNode.getAbsoluteCoordinates();
         Point2D to = toNode.getAbsoluteCoordinates();
@@ -713,6 +713,11 @@ public class MapLink extends OBMapPart implements Serializable {
 
             return new Line2D.Double(x1, y1, x2, y2);
         }
+    }
+*/
+    // 上のメソッドは使われていなかったのでコメントにした(斉藤)
+    public Line2D getLine2D() {
+        return new Line2D.Double(fromNode.getX(), fromNode.getY(), toNode.getX(), toNode.getY());
     }
 
     public static class AttributePanel  extends JPanel 

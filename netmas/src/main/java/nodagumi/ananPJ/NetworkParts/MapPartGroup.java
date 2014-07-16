@@ -129,6 +129,9 @@ public class MapPartGroup extends OBNode implements Serializable {
         sx = Double.parseDouble(element.getAttribute("sx"));
         sy = Double.parseDouble(element.getAttribute("sy"));
         r = Double.parseDouble(element.getAttribute("r"));
+        if (sx != sy) {
+            System.err.println("Information: [" + element.getAttribute("tag") + " group] 背景画像の縦横比率が異なっています(sx = " + sx + ", sy = " + sy + ")");
+        }
 
         setScale(Double.parseDouble(element.getAttribute("scale")));
         setMinHeight(Double.parseDouble(element.getAttribute("minHeight")));
@@ -343,6 +346,28 @@ public class MapPartGroup extends OBNode implements Serializable {
                 OBNode orig = ((OBNodeSymbolicLink)node).getOriginal();
                 if (orig.getNodeType() == OBNode.NType.NODE) {
                     children.add((MapNode)orig);
+                }
+            }
+        }
+        return children;
+    }
+
+    // 基準座標から象限を絞って抽出する
+    public ArrayList<MapNode> getChildNodesAndSymlinks(MapNode from, int quadrant) {
+        ArrayList<MapNode> children = new ArrayList<MapNode>();
+        Enumeration<OBNode> all_children = children();
+        while (all_children.hasMoreElements()) {
+            OBNode node = all_children.nextElement();
+            if (node.getNodeType() == OBNode.NType.NODE) {
+                if (from.include((MapNode)node, quadrant)) {
+                    children.add((MapNode)node);
+                }
+            } else if (node.getNodeType() == OBNode.NType.SYMLINK) {
+                OBNode orig = ((OBNodeSymbolicLink)node).getOriginal();
+                if (orig.getNodeType() == OBNode.NType.NODE) {
+                    if (from.include((MapNode)orig, quadrant)) {
+                        children.add((MapNode)orig);
+                    }
                 }
             }
         }

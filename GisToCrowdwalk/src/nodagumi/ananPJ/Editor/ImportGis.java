@@ -42,6 +42,43 @@ import nodagumi.ananPJ.network.*;
 public class ImportGis  {
     /**
      * Shapefile 形式の地図を読み込んでモデルを作成する． 
+     * 以下の2種類のデータ形式に対応
+     *
+     * 1. ナビゲーション道路地図2004 （shape版） アルプス社
+     *
+     * 読み込みの対象ファイル：
+     * 　RNxxxxxxA.shp 道路リンク（高速・有料道路・国道）
+     * 　RNxxxxxxB.shp 主要地方道、一般県道、幅員13.0m以上の道路のリンクデータ（道路区間データ）
+     * 　RNxxxxxxC.shp 全道路のノードデータ（道路点データ）
+     *
+     * 読み込みデータ：
+     * 　ノード１番号 nd1 文字 5 あり 半角数字
+     * 　ノード２番号 nd2 文字 5 あり 半角数字
+     * 　リンク長 lk_length 整数
+     * 　道路幅員区分コード width_tpcd 文字
+     * 　　1 幅員13．0ｍ以上
+     * 　　2 幅員 5．5ｍ以上～13．0ｍ未満
+     * 　　3 幅員 3．0ｍ以上～ 5．5ｍ未満
+     * 　　4 幅員 3．0ｍ未満
+     * 　　0 未調査
+     *
+     * 2. 拡張版全国デジタル道路地図データベース （shape版） 2013 住友電気工業株式会社・住友電工システムソリューション株式会社
+     *
+     * 読み込みの対象ファイル：
+     * 　全道路リンクデータ(32)
+     *   or
+     *   全道路リンク拡張属性データ(39)
+     *
+     * 読み込みデータ：
+     *   ノード１番号リンク番号nd1 C 5
+     *   ノード２番号リンク番号nd2 C 5
+     *   リンク長(計算値) length C
+     *   道路幅員区分コードrdwdcd C 1
+     *     1 幅員 13.0m以上
+     *     2 幅員 5.5m以上~13.0m未満
+     *     3 幅員 3.0m以上～ 5.5ｍ未満
+     *     4 幅員 3.0ｍ未満
+     *     0 未調査
      */
     private static final long serialVersionUID = 7346682140815565547L;
     private static final String VERSION = "Version 1.03 (July 4, 2014)";
@@ -351,9 +388,11 @@ public class ImportGis  {
                     // 2012.11.14 tkokada reviced!
                     // lengthObject has two types: Double or Long
                     //double length = (Long)(feature.getAttribute("LK_LENGTH"));
-                    // 2種類のシェープファイル形式に対応
+
+                    // ナビゲーション道路地図2004 (shape版) アルプス社の場合
                     Object lengthObject = feature.getAttribute("LK_LENGTH");
                     if (lengthObject == null) {
+                        // 拡張版全国デジタル道路地図データベース (shape版) 2013 住友電工の場合
                         lengthObject = feature.getAttribute("length");
                     }
                     double length = 0.0;
@@ -370,8 +409,10 @@ public class ImportGis  {
                         System.exit(1);
                     }
 
+                    // ナビゲーション道路地図2004 (shape版) アルプス社の場合
                     Object rdwdcdObject = feature.getAttribute("WIDTH_TPCD");
                     if (rdwdcdObject == null) {
+                        // 拡張版全国デジタル道路地図データベース (shape版) 2013 住友電工の場合
                         rdwdcdObject = feature.getAttribute("rdwdcd");
                     }
                     int tpcd = Integer.parseInt((String)rdwdcdObject);
