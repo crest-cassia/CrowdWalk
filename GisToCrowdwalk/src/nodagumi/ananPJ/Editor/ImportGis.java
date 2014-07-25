@@ -47,25 +47,25 @@ public class ImportGis  {
      * 1. ナビゲーション道路地図2004 （shape版） アルプス社
      *
      * 読み込みの対象ファイル：
-     * 　RNxxxxxxA.shp 道路リンク（高速・有料道路・国道）
-     * 　RNxxxxxxB.shp 主要地方道、一般県道、幅員13.0m以上の道路のリンクデータ（道路区間データ）
-     * 　RNxxxxxxC.shp 全道路のノードデータ（道路点データ）
+     *   RNxxxxxxA.shp 道路リンク（高速・有料道路・国道）
+     *   RNxxxxxxB.shp 主要地方道、一般県道、幅員13.0m以上の道路のリンクデータ（道路区間データ）
+     *   RNxxxxxxC.shp 全道路のノードデータ（道路点データ）
      *
      * 読み込みデータ：
-     * 　ノード１番号 nd1 文字 5 あり 半角数字
-     * 　ノード２番号 nd2 文字 5 あり 半角数字
-     * 　リンク長 lk_length 整数
-     * 　道路幅員区分コード width_tpcd 文字
-     * 　　1 幅員13．0ｍ以上
-     * 　　2 幅員 5．5ｍ以上～13．0ｍ未満
-     * 　　3 幅員 3．0ｍ以上～ 5．5ｍ未満
-     * 　　4 幅員 3．0ｍ未満
-     * 　　0 未調査
+     *   ノード１番号 nd1 文字 5 あり 半角数字
+     *   ノード２番号 nd2 文字 5 あり 半角数字
+     *   リンク長 lk_length 整数
+     *   道路幅員区分コード width_tpcd 文字
+     *     1 幅員13．0ｍ以上
+     *     2 幅員 5．5ｍ以上～13．0ｍ未満
+     *     3 幅員 3．0ｍ以上～ 5．5ｍ未満
+     *     4 幅員 3．0ｍ未満
+     *     0 未調査
      *
      * 2. 拡張版全国デジタル道路地図データベース （shape版） 2013 住友電気工業株式会社・住友電工システムソリューション株式会社
      *
      * 読み込みの対象ファイル：
-     * 　全道路リンクデータ(32)
+     *   全道路リンクデータ(32)
      *   or
      *   全道路リンク拡張属性データ(39)
      *
@@ -81,7 +81,7 @@ public class ImportGis  {
      *     0 未調査
      */
     private static final long serialVersionUID = 7346682140815565547L;
-    private static final String VERSION = "Version 1.03 (July 4, 2014)";
+    private static final String VERSION = "Version 1.04 (July 25, 2014)";
 
     private static final boolean REVERSE_Y = false;
     // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）
@@ -154,6 +154,10 @@ public class ImportGis  {
             if (store == null) {
                 System.err.println("store  is null!!");
                 System.exit(1);
+            }
+            String fileName = source_file.getName();
+            if (!(fileName.endsWith("A.shp") || fileName.endsWith("B.shp") || fileName.endsWith("C.shp") || fileName.endsWith("_32.shp"))) {
+                System.err.println("WRNING! irregular file name: " + fileName);
             }
             SimpleFeatureSource featureSource;
             featureSource = store.getFeatureSource();
@@ -464,6 +468,14 @@ public class ImportGis  {
         return degree * 10000.0 + minute * 100.0 + second;
     }
 
+    // 日本測地系 -> 世界測地系に経緯度変換
+    public void convertJapan2World(Coordinate c) {
+        double latitude = c.y;
+        double longitude = c.x;
+        c.x = longitude - latitude * 0.000046038 - longitude * 0.000083043 + 0.010040;
+        c.y = latitude - latitude * 0.00010695 + longitude * 0.000017464 + 0.0046017;
+    }
+
     private double[] call_gtoc(Coordinate c, int number, boolean type) {
         double[] result = new double[3];    // {x, y, m}
         try {
@@ -532,6 +544,13 @@ public class ImportGis  {
 
         /* two-pass, first get ratio of each segments */
         double[] ratio = new double[points.length - 1];
+
+        if (type) {     // 世界測地系
+            // どちらのメーカーのシェイプファイルも日本測地系の経緯度が使われているためこの変換が必要
+            for (int j = 0; j < points.length; j++) {
+                convertJapan2World(points[j]);
+            }
+        }
 
         Coordinate last_c = null;
         double total_d = 0.0;
@@ -620,6 +639,13 @@ public class ImportGis  {
         MultiLineString line = (MultiLineString)the_geom;
         MapNode from = null;
         Coordinate[] points = line.getCoordinates();
+
+        if (type) {     // 世界測地系
+            // どちらのメーカーのシェイプファイルも日本測地系の経緯度が使われているためこの変換が必要
+            for (int j = 0; j < points.length; j++) {
+                convertJapan2World(points[j]);
+            }
+        }
 
         for (int j = 0; j < 2; j++) {
             if (j == 1) j = points.length - 1;
