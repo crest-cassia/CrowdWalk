@@ -5,6 +5,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
 require 'optparse'
 require 'gtoc'
+require 'cblxy'
 
 # constants
 MAX_ID = 1024 * 1024 * 1024
@@ -14,11 +15,12 @@ max_height, min_height = 5.0, -5.0
 start_tag_number = 1
 map_number = 9
 default_latitude, default_longitude = nil, nil
-map_type = "japan"
+map_type = "world"
+meshcode_type = "undefined"
 
 # default args
 debug, config, input_directory, map_file, output_map_file,
-  output_pollution_file = false, nil, nil, nil, nil
+  output_pollution_file, crowdwalk_coordinate, meshcode_tag = false, nil, nil, nil, nil, false, false
 
 # parse command line options.
 opts = OptionParser.new do |o|
@@ -65,6 +67,9 @@ else
     when "map_file" then map_file = fjson[key]
     when "output_map_file" then output_map_file = fjson[key]
     when "output_pollution_file" then output_pollution_file = fjson[key]
+    when "meshcode_type" then meshcode_type = fjson[key]
+    when "crowdwalk_coordinate" then crowdwalk_coordinate = fjson[key] == "true" ? true : false
+    when "meshcode_tag" then meshcode_tag = fjson[key] == "true" ? true : false
     else STDERR.puts "E: invalid key in config file. #{key}"
     end
     p "D: key: #{key}, value: #{fjson[key]}"
@@ -87,6 +92,16 @@ if output_map_file.nil?
 end
 if output_pollution_file.nil?
   STDERR.puts "E: invalid output pollution file!"
+  STDERR.puts "#{opts}"
+  exit
+end
+if meshcode_type == "undefined"
+  STDERR.puts "E: meshcode_type is undefined."
+  STDERR.puts "#{opts}"
+  exit
+end
+unless map_type == meshcode_type
+  STDERR.puts "E: datum mismatch!"
   STDERR.puts "#{opts}"
   exit
 end
@@ -232,6 +247,13 @@ def generate_uniq_id(ids, max_id)
   return id
 end
 
+def decimal2degree(decimal)
+  degree = decimal.to_i
+  minute = ((decimal - degree) * 60.0).to_i
+  second = ((decimal - degree) * 60.0 - minute) * 60.0
+  degree * 10000.0 + minute * 100.0 + second
+end
+
 #
 # main
 #
@@ -342,43 +364,50 @@ File.open(output_map_file, "w") do |file|
   alltagcodes.each do |tagcode|
     c = meshcode2coordinate(tagcode[:code])
     ne, sw = nil, nil
-    if !default_latitude.nil? && !default_longitude.nil?
-      sw = Geographic::gtoc(
-        #latitude: c[:latitude] + c[:height],
-        latitude: c[:latitude],
-        longitude: c[:longitude],
-        number: map_number,
-        default_latitude: default_latitude,
-        default_longitude: default_longitude,
-        type: map_type)
-      # p "D: c: #{c}, dlat: #{default_latitude}, dlon: #{default_longitude}" +
-        # ", type: #{map_type}"
+    if map_type == "world"
+        x, y = blxy(decimal2degree(c[:latitude]), decimal2degree(c[:longitude]), map_number)
+        sw = {x: x, y: y}
+        x, y = blxy(decimal2degree(c[:latitude] + c[:height]), decimal2degree(c[:longitude] + c[:width]), map_number)
+        ne = {x: x, y: y}
     else
-      sw = Geographic::gtoc(
-        #latitude: c[:latitude] + c[:height],
-        latitude: c[:latitude],
-        longitude: c[:longitude],
-        number: map_number,
-        type: map_type)
-    end
-    if sw[:x].nil? || sw[:y].nil?
-      p "E: cannot get SW coordinate, code: #{tagcode[:code]}, coordinate: " +
-        "#{c}, converted: #{sw}"
-    end
-    if !default_latitude.nil? && !default_longitude.nil?
-      ne = Geographic::gtoc(
-        latitude: c[:latitude] + c[:height],
-        longitude: c[:longitude] + c[:width],
-        number: map_number,
-        default_latitude: default_latitude,
-        default_longitude: default_longitude,
-        type: map_type)
-    else
-      ne = Geographic::gtoc(
-        latitude: c[:latitude] + c[:height],
-        longitude: c[:longitude] + c[:width],
-        number: map_number,
-        type: map_type)
+      if !default_latitude.nil? && !default_longitude.nil?
+        sw = Geographic::gtoc(
+          #latitude: c[:latitude] + c[:height],
+          latitude: c[:latitude],
+          longitude: c[:longitude],
+          number: map_number,
+          default_latitude: default_latitude,
+          default_longitude: default_longitude,
+          type: map_type)
+        # p "D: c: #{c}, dlat: #{default_latitude}, dlon: #{default_longitude}" +
+          # ", type: #{map_type}"
+      else
+        sw = Geographic::gtoc(
+          #latitude: c[:latitude] + c[:height],
+          latitude: c[:latitude],
+          longitude: c[:longitude],
+          number: map_number,
+          type: map_type)
+      end
+      if sw[:x].nil? || sw[:y].nil?
+        p "E: cannot get SW coordinate, code: #{tagcode[:code]}, coordinate: " +
+          "#{c}, converted: #{sw}"
+      end
+      if !default_latitude.nil? && !default_longitude.nil?
+        ne = Geographic::gtoc(
+          latitude: c[:latitude] + c[:height],
+          longitude: c[:longitude] + c[:width],
+          number: map_number,
+          default_latitude: default_latitude,
+          default_longitude: default_longitude,
+          type: map_type)
+      else
+        ne = Geographic::gtoc(
+          latitude: c[:latitude] + c[:height],
+          longitude: c[:longitude] + c[:width],
+          number: map_number,
+          type: map_type)
+      end
     end
     if ne[:x].nil? || ne[:y].nil?
       p "E: cannot get NE coordinate, code: #{tagcode[:code]}, coordiante: " +
@@ -387,10 +416,24 @@ File.open(output_map_file, "w") do |file|
     id = generate_uniq_id(ids, MAX_ID)
     ids << id
     #p "  c: #{c}, sw: #{sw}, ne: #{ne}"
-    file.puts \
-%(    <Room angle="0.0" id="#{id}" maxHeight="#{max_height}" minHeight="#{min_height}" pEastX="#{ne[:x]}" pNorthY="#{-1.0 * sw[:y]}" pSouthY="#{-1.0 * ne[:y]}" pWestX="#{sw[:x]}">
+    if crowdwalk_coordinate
+      south, west, north, east = -sw[:x], sw[:y], -ne[:x], ne[:y]
+    else
+      south, west, north, east = sw[:y], sw[:x], ne[:y], ne[:x]
+    end
+    file.puts <<-EOS
+    <Room angle="0.0" id="#{id}" maxHeight="#{max_height}" minHeight="#{min_height}" pWestX="#{west}" pNorthY="#{north}" pEastX="#{east}" pSouthY="#{south}">
       <tag>#{tagcode[:tag]}</tag>
-    </Room>)
+    EOS
+    if meshcode_tag
+      file.puts <<-EOS
+      <tag>#{tagcode[:code]}</tag>
+      EOS
+      # <tag>#{tagcode[:code][4, 7]}</tag>
+    end
+    file.puts <<-EOS
+    </Room>
+    EOS
   end
   file.puts tail_lines
 end

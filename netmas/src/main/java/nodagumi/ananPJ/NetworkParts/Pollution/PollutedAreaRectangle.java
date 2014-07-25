@@ -106,8 +106,16 @@ public class PollutedAreaRectangle extends PollutedArea
 
         double x1 = Double.parseDouble(element.getAttribute("pWestX"));
         double x2 = Double.parseDouble(element.getAttribute("pEastX"));
-        double y1 = Double.parseDouble(element.getAttribute("pSouthY"));
-        double y2 = Double.parseDouble(element.getAttribute("pNorthY"));
+        double y1 = Double.parseDouble(element.getAttribute("pNorthY"));
+        double y2 = Double.parseDouble(element.getAttribute("pSouthY"));
+        if (y1 > y2) {
+            System.err.println(String.format("Pollution coordinate error: pNorthY = %s > pSouthY = %s", y1, y2));
+            System.exit(1);
+        }
+        if (x1 > x2) {
+            System.err.println(String.format("Pollution coordinate error: pWestX = %s > pEastX = %s", x1, x2));
+            System.exit(1);
+        }
         bounds = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
 
         minHeight = Double.parseDouble(element.getAttribute("minHeight"));
@@ -126,8 +134,8 @@ public class PollutedAreaRectangle extends PollutedArea
         element.setAttribute("id", "" + ID);
         element.setAttribute("pWestX", "" + bounds.getMinX());
         element.setAttribute("pEastX", "" + bounds.getMaxX());
-        element.setAttribute("pSouthY", "" + bounds.getMinY());
-        element.setAttribute("pNorthY", "" + bounds.getMaxY());
+        element.setAttribute("pNorthY", "" + bounds.getMinY());
+        element.setAttribute("pSouthY", "" + bounds.getMaxY());
         element.setAttribute("minHeight", "" + minHeight);
         element.setAttribute("maxHeight", "" + maxHeight);
         element.setAttribute("angle", "" + angle);
