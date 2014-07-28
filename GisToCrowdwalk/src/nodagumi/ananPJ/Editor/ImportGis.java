@@ -81,7 +81,7 @@ public class ImportGis  {
      *     0 未調査
      */
     private static final long serialVersionUID = 7346682140815565547L;
-    private static final String VERSION = "Version 1.04 (July 25, 2014)";
+    private static final String VERSION = "Version 1.05 (July 28, 2014)";
 
     private static final boolean REVERSE_Y = false;
     // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）
@@ -461,19 +461,70 @@ public class ImportGis  {
     }
 
     // 十進法度単位から度分秒に変換する(ddd.d -> dddmmss.s)
-    public double decimal2degree(double decimal) {
+    public static double decimal2degree(double decimal) {
         int degree = (int)decimal;
         int minute = (int)((decimal - degree) * 60.0);
         double second = ((decimal - degree) * 60.0 - minute) * 60.0;
         return degree * 10000.0 + minute * 100.0 + second;
     }
 
+    // Radian
+    public static final double RAD = Math.PI / 180.0;
+
+    // 日本測地系における赤道半径、扁平率、第一離心率
+    public static final double TOKYO_DATUM_A = 6377397.155;
+    public static final double TOKYO_DATUM_F = 1.0 / 299.152813;
+    public static final double TOKYO_DATUM_E2 = TOKYO_DATUM_F * (2.0 - TOKYO_DATUM_F);
+
+    // 世界測地系における赤道半径、扁平率、第一離心率
+    public static final double WGS84_A = 6378137.0;
+    public static final double WGS84_F = 1.0 / 298.257223;
+    public static final double WGS84_E2 = WGS84_F * (2.0 - WGS84_F);
+
+    // 日本測地系から世界測地系に変換する際の並行移動量[m]
+    public static final double DX = -148.0;
+    public static final double DY = 507.0;
+    public static final double DZ = 681.0;
+
+    // 楕円体座標から直行座標へ
+    public static Coordinate llh2xyz(double b, double l, double h, double a, double e2) {
+        b *= RAD;
+        l *= RAD;
+        double rn = a / Math.sqrt(1 - e2 * Math.pow(Math.sin(b), 2.0));
+
+        double x = (rn + h) * Math.cos(b) * Math.cos(l);
+        double y = (rn + h) * Math.cos(b) * Math.sin(l);
+        double z = (rn * (1 - e2) + h) * Math.sin(b);
+
+        return new Coordinate(x, y, z);
+    }
+
+    // 直行座標から楕円体座標へ
+    public static Coordinate xyz2llh(double x, double y, double z, double a, double e2) {
+        double bda = Math.sqrt(1 - e2);
+
+        double p = Math.sqrt(x * x + y * y);
+        double t = Math.atan2(z, p * bda);
+
+        double b = Math.atan2(z + e2 * a / bda * Math.pow(Math.sin(t), 3.0), p - e2 * a * Math.pow(Math.cos(t), 3.0));
+        double l = Math.atan2(y, x);
+        double h = p / Math.cos(b) - a / Math.sqrt(1.0 - e2 * Math.pow(Math.sin(b), 2.0));
+
+        return new Coordinate(l / RAD, b / RAD, h);
+    }
+
     // 日本測地系 -> 世界測地系に経緯度変換
-    public void convertJapan2World(Coordinate c) {
-        double latitude = c.y;
-        double longitude = c.x;
-        c.x = longitude - latitude * 0.000046038 - longitude * 0.000083043 + 0.010040;
-        c.y = latitude - latitude * 0.00010695 + longitude * 0.000017464 + 0.0046017;
+    public static void convertJapan2World(Coordinate c) {
+        // double latitude = c.y;
+        // double longitude = c.x;
+        // c.x = longitude - latitude * 0.000046038 - longitude * 0.000083043 + 0.010040;
+        // c.y = latitude - latitude * 0.00010695 + longitude * 0.000017464 + 0.0046017;
+
+        if (Double.isNaN(c.z)) {
+            c.z = 0.0;
+        }
+        Coordinate rcs = llh2xyz(c.y, c.x, c.z, TOKYO_DATUM_A, TOKYO_DATUM_E2);
+        c.setCoordinate(xyz2llh(rcs.x + DX, rcs.y + DY, rcs.z + DZ, WGS84_A, WGS84_E2));
     }
 
     private double[] call_gtoc(Coordinate c, int number, boolean type) {
