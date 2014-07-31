@@ -54,4 +54,8 @@ public abstract class BasicSimulationLauncher implements Serializable {
         network_map.setFileName(file_name);
         return network_map;
     }
+
+    public NetmasPropertiesHandler getProperties() {
+        return properties;
+    }
 }

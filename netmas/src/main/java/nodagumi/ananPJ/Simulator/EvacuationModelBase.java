@@ -12,6 +12,7 @@ import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 public interface EvacuationModelBase {
     public NetworkMap getMap();
@@ -36,4 +37,5 @@ public interface EvacuationModelBase {
     public boolean isRunning();
 
     public void recalculatePaths();
+    public NetmasPropertiesHandler getProperties();
 }

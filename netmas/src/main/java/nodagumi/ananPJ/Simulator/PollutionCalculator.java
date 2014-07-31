@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -23,23 +24,23 @@ import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 
 public class PollutionCalculator implements Serializable {
     private static final long serialVersionUID = 29847234890234908L;
     static double AGENT_HEIGHT = 1.5;
 
-    String scheduleFileName = null;
-    transient BufferedReader scheduleFile = null;
-    //BufferedReader scheduleFile = null;
-
     double nextEvent = 0;
     double timeScale;
-    String nextLine;
 
     public static boolean debug = false;
 
     HashMap<Integer, PollutedArea> polluted_area_sorted;
+
+    private ArrayList<double[]> pollutionDataList = new ArrayList<double[]>();
+    private Iterator<double[]> pollutionDataIterator = null;
+    private double[] pollutionData = null;
 
     public ArrayList<PollutedArea> pollutedAreaFromNodes(ArrayList<MapNode>
             nodes) {
@@ -47,33 +48,20 @@ public class PollutionCalculator implements Serializable {
         return areas;
     }
 
-    public PollutionCalculator(String _scheduleFileName,
-            ArrayList<PollutedArea> _pollution, double _timeScale) {
-        scheduleFileName = _scheduleFileName;
+    public PollutionCalculator(String scheduleFileName,
+            ArrayList<PollutedArea> _pollution, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
             nextEvent = -1.0;
         } else {
-            try {
-                FileReader fr = new FileReader(scheduleFileName);
-                scheduleFile = new BufferedReader(fr);
-
-                nextLine = getNextLine();
-                if (nextLine == null) { // tkokada: avoid null pointer exception
-                    nextEvent = -1.0;
-                } else {
-                    String[] items = nextLine.split(",");
-
-                //System.out.println("in PollutionCalculator() items: "+items[0]+" "+items[1]+" "+items[2]);
-
-
-                nextEvent = Double.parseDouble(items[0]);
-                //System.err.println("the first update on pollution will be on " + nextEvent);
-                //System.out.println("the first update on pollution will be on " + nextEvent);
-                }
-            } catch (IOException e) {
-                System.err.print("WARNING: No pollution scenario given.");
+            readData(scheduleFileName);
+            interpolation(interpolationInterval);
+            pollutionDataIterator = pollutionDataList.iterator();
+            if (pollutionDataIterator.hasNext()) {
+                pollutionData = pollutionDataIterator.next();
+                nextEvent = pollutionData[0];
+            } else {
                 nextEvent = -1.0;
-            }       
+            }
         }
         
         setup_polluted_areas(_pollution);
@@ -81,7 +69,64 @@ public class PollutionCalculator implements Serializable {
         
         //System.out.println("timeScale "+timeScale);
     }
-    
+
+    private void readData(String fileName) {
+        pollutionDataList.clear();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line = reader.readLine();
+            while (line != null) {
+                if (! line.trim().startsWith("#")) {
+                    String[] strItems = line.split(",");
+                    double[] items = new double[strItems.length];
+                    for (int index = 0; index < items.length; index++) {
+                        items[index] = Double.parseDouble(strItems[index]);
+                    }
+                    pollutionDataList.add(items);
+                }
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    // pollution データを interval 秒区分で線形補間する
+    private void interpolation(double interval) {
+        if (interval <= 0.0 || pollutionDataList.isEmpty()) {
+            return;
+        }
+        ArrayList<double[]> interpolatedPollutionDataList = new ArrayList<double[]>();
+        double[] lastItems = null;
+        for (double[] items : pollutionDataList) {
+            if (lastItems != null) {
+                double lastEventTime = lastItems[0];
+                double eventTime = items[0];
+                if ((eventTime - lastEventTime) > interval) {
+                    // 線形補間
+                    for (double time = lastEventTime + interval; time < eventTime; time += interval) {
+                        double[] interpolatedItems = new double[items.length];
+                        interpolatedItems[0] = time;
+                        for (int index = 1; index < items.length; index++) {
+                            if (items[index] == lastItems[index]) {
+                                interpolatedItems[index] = items[index];
+                            } else {
+                                double a = (time - lastEventTime) / (eventTime - lastEventTime);    // 補間係数
+                                interpolatedItems[index] = lastItems[index] + a * (items[index] - lastItems[index]);
+                            }
+                        }
+                        interpolatedPollutionDataList.add(interpolatedItems);
+                    }
+                }
+            }
+            interpolatedPollutionDataList.add(items);
+            lastItems = items;
+        }
+        pollutionDataList.clear();
+        pollutionDataList.addAll(interpolatedPollutionDataList);
+    }
+
     public void updateNodesLinksAgents(double time,
             ArrayList<MapNode> nodes,
             ArrayList<MapLink> links,
@@ -272,8 +317,6 @@ public class PollutionCalculator implements Serializable {
     private void update_pollution() {
         if (debug) System.err.println("PC: updating pollution " + nextEvent);
         
-        String[] items = nextLine.split(",");
-    
         //System.out.println("in update_pollution() items: "+items[0]+" "+items[1]+" "+items[2]+" "+items[3]+" "+items[4]);
         
         
@@ -282,7 +325,7 @@ public class PollutionCalculator implements Serializable {
             
             //System.out.println("index "+index+"index.intValue() "+index.intValue());
                 
-            double _d = Double.parseDouble(items[index.intValue()]);
+            double _d = pollutionData[index.intValue()];
             Double d = correct_density(_d);
             
             if (debug) System.err.println("(" + index + "=" + d + ") ");
@@ -290,30 +333,14 @@ public class PollutionCalculator implements Serializable {
             area.setUserObject(d);
         }
 
-        try {
-            nextLine = getNextLine();
-            if (nextLine == null) nextEvent = -1;
-            else nextEvent = Double.parseDouble(nextLine.split(",")[0]);
-        } catch (Exception e){
-            System.err.println(e.getMessage());
-            e.printStackTrace();
+        if (pollutionDataIterator.hasNext()) {
+            pollutionData = pollutionDataIterator.next();
+            nextEvent = pollutionData[0];
+        } else {
+            nextEvent = -1.0;
         }
     }
     
-    private String getNextLine() {
-        String line = null;
-        do {
-            try {
-                line = scheduleFile.readLine();
-                if (line == null) return null;
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                e.printStackTrace();
-            }
-        } while (line.charAt(0) == '#');
-        return line;
-    }
-
     public ArrayList<PollutedArea> getPollutions() {
         return new ArrayList<PollutedArea>(polluted_area_sorted.values());
     }

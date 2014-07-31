@@ -20,12 +20,14 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
@@ -63,6 +65,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     private Random random = null;
     // saveTimeSeriesLog() が呼ばれた回数
     private int logging_count = 0;
+    private NetmasPropertiesHandler properties = null;
 
     public EvacuationSimulator(NetworkMap _networkMap,
             SimulationController _controller,
@@ -70,6 +73,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             Random _random) {
         networkMap = _networkMap;
         controller = _controller;
+        if (controller instanceof BasicSimulationLauncher) {
+            properties = ((BasicSimulationLauncher)controller).getProperties();
+        }
         nodes = networkMap.getNodes();
         links = networkMap.getLinks();
         agents = networkMap.getAgents();
@@ -99,6 +105,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             String _scenario_serial) {
         networkMap = _networkMap;
         controller = _controller;
+        if (controller instanceof BasicSimulationLauncher) {
+            properties = ((BasicSimulationLauncher)controller).getProperties();
+        }
         nodes = networkMap.getNodes();
         links = networkMap.getLinks();
         agents = networkMap.getAgents();
@@ -174,10 +183,16 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     void buildModel(boolean has_display) {
         buildMap();
-        pollutionCalculator = new PollutionCalculator(
-                pollutionFileName,
-                networkMap.getRooms(),
-                timeScale);
+        try {
+            pollutionCalculator = new PollutionCalculator(
+                    pollutionFileName,
+                    networkMap.getRooms(),
+                    timeScale,
+                    properties.getDouble("interpolation_interval", 0.0));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
         String scenario_number = null;
         Pattern numonly = Pattern.compile("^\\d*$");
         Matcher matcher = numonly.matcher(scenario_serial);
@@ -689,6 +704,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     @Override
     public int getDisplayMode() {
         return 4;
+    }
+
+    public void setProperties(NetmasPropertiesHandler _properties) {
+        properties = _properties;
+    }
+
+    public NetmasPropertiesHandler getProperties() {
+        return properties;
     }
 
     public String getScenario_serial() {

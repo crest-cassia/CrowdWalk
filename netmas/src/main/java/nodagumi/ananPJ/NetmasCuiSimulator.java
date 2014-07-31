@@ -205,6 +205,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
             model = new EvacuationSimulator(networkMap, null, scenarioSerial,
                     random);
             // this method just set 0 to model.tick_count
+            model.setProperties(properties);
             model.setup();
         }
         // model.begin set files (pol, gen, sce) to networkMap
