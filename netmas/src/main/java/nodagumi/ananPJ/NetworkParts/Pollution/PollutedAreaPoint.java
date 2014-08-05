@@ -3,6 +3,7 @@ package nodagumi.ananPJ.NetworkParts.Pollution;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 import java.io.IOException;
@@ -53,6 +54,11 @@ public class PollutedAreaPoint extends PollutedArea implements Serializable {
 	public boolean contains(Point2D point) {
 		return false;
 	}
+
+    @Override
+    public boolean intersectsLine(Line2D line) {
+        return false;
+    }
 
 	@Override
 	public void draw(Graphics2D g, boolean experiment) {

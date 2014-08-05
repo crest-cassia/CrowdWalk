@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,6 +40,7 @@ public abstract class PollutedArea extends OBNode implements Serializable {
 	
 	public abstract boolean contains(Point2D point);
 	public abstract boolean contains(Vector3f point);
+	public abstract boolean intersectsLine(Line2D line);
 	public abstract double distance(Vector3f point);
 	public abstract Shape getShape();
 	public abstract ArrayList<Point2D> getAllVertices();	// tkokada

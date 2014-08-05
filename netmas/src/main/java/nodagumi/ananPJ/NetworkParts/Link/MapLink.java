@@ -45,6 +45,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 
 
 public class MapLink extends OBMapPart implements Serializable {
@@ -80,6 +81,16 @@ public class MapLink extends OBMapPart implements Serializable {
     private boolean stop = false;
     public void setStop(boolean b) { stop = b; }
     public boolean getStop() { return stop; }
+
+    // このリンクが現在 pollution level > 0.0 な PollutedArea 内を通っているかのフラグ
+    protected boolean polluted = false;
+    public void setPolluted(boolean b) { polluted = b; }
+    public boolean isPolluted() { return polluted; }
+
+    // このリンク上にかかっている PollutedArea のリスト
+    protected ArrayList<PollutedArea> intersectedPollutionAreas = new ArrayList<PollutedArea>();
+    public void addIntersectedPollutionArea(PollutedArea area) { intersectedPollutionAreas.add(area); }
+    public ArrayList<PollutedArea> getIntersectedPollutionAreas() { return intersectedPollutionAreas; }
 
     /* some values used for drawing */
     public static final BasicStroke broad = new BasicStroke(9.0f);

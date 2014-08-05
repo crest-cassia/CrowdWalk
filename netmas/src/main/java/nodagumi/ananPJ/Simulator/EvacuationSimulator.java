@@ -190,9 +190,19 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     timeScale,
                     properties.getDouble("interpolation_interval", 0.0));
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
+
+        // リンク上にかかるPollutedAreaのリストをリンクにセットする
+        for (PollutedArea area : networkMap.getRooms()) {
+            for (MapLink link : links) {
+                if (area.intersectsLine(link.getLine2D())) {
+                    link.addIntersectedPollutionArea(area);
+                }
+            }
+        }
+
         String scenario_number = null;
         Pattern numonly = Pattern.compile("^\\d*$");
         Matcher matcher = numonly.matcher(scenario_serial);

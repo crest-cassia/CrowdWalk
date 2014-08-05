@@ -3,6 +3,7 @@ package nodagumi.ananPJ.NetworkParts.Pollution;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;   // tkokada
@@ -76,6 +77,11 @@ public class PollutedAreaRectangle extends PollutedArea
         return bounds.contains(rotatePoint(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()), point, -angle));
     }
     
+    @Override
+	public boolean intersectsLine(Line2D line) {
+        return bounds.intersectsLine(line);
+    }
+
     @Override
     public Shape getShape() {
         return bounds;

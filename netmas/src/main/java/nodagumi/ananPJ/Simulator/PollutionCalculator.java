@@ -2,6 +2,7 @@ package nodagumi.ananPJ.Simulator;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -54,7 +55,7 @@ public class PollutionCalculator implements Serializable {
             nextEvent = -1.0;
         } else {
             readData(scheduleFileName);
-            interpolation(interpolationInterval);
+            linearInterpolation(interpolationInterval);
             pollutionDataIterator = pollutionDataList.iterator();
             if (pollutionDataIterator.hasNext()) {
                 pollutionData = pollutionDataIterator.next();
@@ -87,13 +88,13 @@ public class PollutionCalculator implements Serializable {
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
     }
 
     // pollution データを interval 秒区分で線形補間する
-    private void interpolation(double interval) {
+    private void linearInterpolation(double interval) {
         if (interval <= 0.0 || pollutionDataList.isEmpty()) {
             return;
         }
@@ -136,23 +137,42 @@ public class PollutionCalculator implements Serializable {
         if (nextEvent != -1.0 && nextEvent <= time) {
             // System.out.println("  PC update next event: " + time);
             update_pollution();
+
+            // pollution対象リンクの汚染フラグを更新する(汚染度が0に戻ることも考慮する)
+            for (MapLink link : links) {
+                if (link.getIntersectedPollutionAreas().isEmpty()) {
+                    continue;
+                }
+                link.setPolluted(false);
+                for (PollutedArea area : link.getIntersectedPollutionAreas()) {
+                    if ((Double)area.getUserObject() != 0.0) {
+                        link.setPolluted(true);
+                        break;
+                    }
+                }
+            }
         }
 
         for (EvacuationAgent agent : agents) {
             if (agent.isEvacuated())
                 continue;
+            if (! agent.getCurrentLink().isPolluted()) {
+                agent.exposed(0.0);
+                continue;
+            }
+
             double min_distance = Double.MAX_VALUE;
             PollutedArea best_area = null;
             Vector3f point = new Vector3f((float)agent.getPos().getX(),
                     (float)agent.getPos().getY(),
                     (float)(agent.getHeight() + AGENT_HEIGHT));
-            for (PollutedArea area : polluted_area_sorted.values()) {
+            for (PollutedArea area : agent.getCurrentLink().getIntersectedPollutionAreas()) {
                 if (area.contains(point)) {
                     best_area = area;
                     break;
                 }
 
-                double d = area.distance(point);
+                // double d = area.distance(point);     無意味な呼び出しなのでコメント化(斉藤)
                 //System.err.println("  area : " + area + ", point: " + point +
                 //        ", d: " + d);
 
@@ -163,14 +183,14 @@ public class PollutionCalculator implements Serializable {
             }
 
             if (best_area != null) {
-                Double d = (Double)best_area.getUserObject();
-                if (debug) System.err.println(agent.agentNumber + " " + d);
+                Double pollutionLevel = (Double)best_area.getUserObject();
+                if (debug) System.err.println(agent.agentNumber + " " + pollutionLevel);
 
                 // System.err.printf("in pollution calculator agent: %04d, " + 
                         // "d: %.4f, speed: %.4f, %s\n", agent.ID, d,
                         // agent.getSpeed(), best_area.getTags());
-                if (d != null) {
-                    agent.exposed(d * timeScale);
+                if (pollutionLevel != null) {
+                    agent.exposed(pollutionLevel * timeScale);
                     best_area.setContactOfAgents(true);
                 }
             } else {
@@ -199,6 +219,11 @@ public class PollutionCalculator implements Serializable {
 
         @Override
         public boolean contains(Point2D point) {
+            return false;
+        }
+
+        @Override
+        public boolean intersectsLine(Line2D line) {
             return false;
         }
 
@@ -319,18 +344,17 @@ public class PollutionCalculator implements Serializable {
         
         //System.out.println("in update_pollution() items: "+items[0]+" "+items[1]+" "+items[2]+" "+items[3]+" "+items[4]);
         
-        
         for (Integer index : polluted_area_sorted.keySet()) {
             PollutedArea area = polluted_area_sorted.get(index);
             
             //System.out.println("index "+index+"index.intValue() "+index.intValue());
                 
             double _d = pollutionData[index.intValue()];
-            Double d = correct_density(_d);
+            Double pollutionLevel = correct_density(_d);
             
-            if (debug) System.err.println("(" + index + "=" + d + ") ");
+            if (debug) System.err.println("(" + index + "=" + pollutionLevel + ") ");
             
-            area.setUserObject(d);
+            area.setUserObject(pollutionLevel);
         }
 
         if (pollutionDataIterator.hasNext()) {

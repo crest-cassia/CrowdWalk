@@ -56,8 +56,8 @@ implements Comparable<EvacuationAgent>, Serializable {
     protected boolean randomNavigation = false;
     /** The distance of how much the agent has moved in the current pathway. */
     protected double position;
-    protected double damage;
-    protected double instantaneous_damage;
+    protected double damage = 0.0;
+    protected double instantaneous_damage = 0.0;
 
     protected Random random = null;
 
