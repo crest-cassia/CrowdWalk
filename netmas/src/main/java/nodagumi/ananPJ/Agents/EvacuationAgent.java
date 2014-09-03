@@ -34,6 +34,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
+import nodagumi.ananPJ.Simulator.Pollution;
 
 public abstract class EvacuationAgent extends OBMapPart
 implements Comparable<EvacuationAgent>, Serializable {
@@ -56,10 +57,13 @@ implements Comparable<EvacuationAgent>, Serializable {
     protected boolean randomNavigation = false;
     /** The distance of how much the agent has moved in the current pathway. */
     protected double position;
-    protected double damage = 0.0;
-    protected double instantaneous_damage = 0.0;
+    public double currentExposureAmount = 0.0;
+    public double accumulatedExposureAmount = 0.0;
 
     protected Random random = null;
+
+    protected static String pollutionType = "NonAccumulated";
+    protected Pollution pollution = null;
 
     /* constructor */
     static int agent_count = 0;
@@ -70,6 +74,8 @@ implements Comparable<EvacuationAgent>, Serializable {
         agentNumber = agent_count++;
         //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
+        // Pollution のサブクラスのインスタンスを取得
+        pollution = Pollution.getInstance(pollutionType + "Pollution");
     }
 
     abstract public EvacuationAgent copyAndInitialize();
@@ -110,8 +116,10 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     abstract public double getEmptySpeed();
     abstract public void setEmptySpeed(double s);
+    abstract public void setGoal(String _goal);
 
     abstract public double getSpeed();
+    abstract public void setSpeed(double speed);
     abstract public double getDirection();
     abstract public double getAcceleration();
     
@@ -124,10 +132,15 @@ implements Comparable<EvacuationAgent>, Serializable {
     abstract public ArrayList<MapLink> getReachableLinks(double d, double time,
             double duration);
 
-    abstract public int getTriage();
+    public int getTriage() {
+        return pollution.getTriage(this);
+    }
+
+    public boolean finished() {
+        return pollution.finished(this);
+    }
 
     abstract public void draw(Graphics2D g, boolean experiment);
-    abstract public boolean finished();
     abstract public void dumpResult(PrintStream out);
     
     public abstract String toString(); 
@@ -178,14 +191,6 @@ implements Comparable<EvacuationAgent>, Serializable {
         Vector3d v3 = new Vector3d();
         v3.cross(v1, v2);
         return v3;
-    }
-
-    public double getDamage() {
-        return damage;
-    }
-
-    public double getInstantaneousDamage() {
-        return instantaneous_damage;
     }
 
     public Point2D getPos() {
@@ -408,10 +413,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     }
     
     public void exposed(double c) {
-        if (!evacuated) {
-            instantaneous_damage = c;
-            damage += c;
-        }
+        pollution.expose(this, c);
     }
 
     public void setEvacuated(boolean evacuated, double time) {
@@ -479,6 +481,10 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     public void setConfigLine(String str) {
         configLine = str;
+    }
+
+    public static void setPollutionType(String s) {
+        pollutionType = s;
     }
 }
 // ;;; Local Variables:

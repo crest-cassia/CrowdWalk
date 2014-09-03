@@ -188,7 +188,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     pollutionFileName,
                     networkMap.getRooms(),
                     timeScale,
-                    properties.getDouble("interpolation_interval", 0.0));
+                    properties == null ? 0.0 : properties.getDouble("interpolation_interval", 0.0));
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -660,6 +660,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         return pollutionCalculator.getPollutions();
     }
 
+    public double getMaxPollutionLevel() {
+        return pollutionCalculator.getMaxPollutionLevel();
+    }
+
     @Override
     public void recalculatePaths() {
         synchronized (stop_simulation) {
@@ -985,9 +989,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         for (EvacuationAgent agent: agents) {
             if (agent.getSpeed() == 0.) {
                 // System.err.println("\tanget: " + agent.ID + ", damage: " +
-                        // agent.getInstantaneousDamage() + ", density: " +
+                        // agent.currentExposureAmount + ", density: " +
                         // ((RunningAroundPerson) agent).getDensity());
-                if (agent.getInstantaneousDamage() >= 10.) {
+                if (agent.currentExposureAmount >= 10.) {
                     dszn += 1;
                 }
             }

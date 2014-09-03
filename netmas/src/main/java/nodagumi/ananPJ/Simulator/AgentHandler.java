@@ -771,8 +771,8 @@ public class AgentHandler implements Serializable {
                 buff.append(0); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
                 buff.append((int)time); buff.append(",");
-                buff.append(agent.getInstantaneousDamage()); buff.append(",");
-                buff.append(agent.getDamage()); buff.append(",");
+                buff.append(agent.currentExposureAmount); buff.append(",");
+                buff.append(agent.accumulatedExposureAmount); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
             } else {
                 buff.append(agent.ID); buff.append(",");
@@ -799,8 +799,8 @@ public class AgentHandler implements Serializable {
                 buff.append((int)agent.generatedTime); buff.append(",");
                 buff.append((int)time); buff.append(",");
 
-                buff.append(agent.getInstantaneousDamage()); buff.append(",");
-                buff.append(agent.getDamage()); buff.append(",");
+                buff.append(agent.currentExposureAmount); buff.append(",");
+                buff.append(agent.accumulatedExposureAmount); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
 
                 buff.append(((RunningAroundPerson)agent).getNextCandidate());
@@ -837,8 +837,8 @@ public class AgentHandler implements Serializable {
             if (agent.isEvacuated()) {
                 evacuatedAgentCount++;
             } else {
-                totalDamage += agent.getDamage();
-                if (agent.getDamage() > maxDamage) maxDamage = agent.getDamage();
+                totalDamage += agent.accumulatedExposureAmount;
+                if (agent.accumulatedExposureAmount > maxDamage) maxDamage = agent.accumulatedExposureAmount;
             }
         }
     }
@@ -849,7 +849,7 @@ public class AgentHandler implements Serializable {
             if (!agent.finished()) {
                 out.printf("%d,%f,%f,%f,%f\n",
                         i,
-                        agent.getDamage(),
+                        agent.accumulatedExposureAmount,
                         agent.getPos().getX(),
                         agent.getPos().getY(),
                         agent.getHeight());

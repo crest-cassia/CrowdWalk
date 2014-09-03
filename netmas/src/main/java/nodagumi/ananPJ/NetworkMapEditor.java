@@ -1854,6 +1854,8 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public BrowserPanel getBrowserPanel() { return browserPanel; }
 
+    public static NetmasPropertiesHandler getNetmasPropertiesHandler() { return propertiesHandler; }
+
     /**
      * @param args
      */

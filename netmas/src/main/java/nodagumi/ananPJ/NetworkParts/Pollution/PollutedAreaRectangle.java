@@ -42,6 +42,9 @@ public class PollutedAreaRectangle extends PollutedArea
     private double minHeight, maxHeight;
     private double angle;   // tkokada
 
+    protected static boolean nsWarned = false;
+    protected static boolean weWarned = false;
+
     public boolean selected;
     public boolean view;
     public PollutedAreaRectangle(int _id,
@@ -115,12 +118,24 @@ public class PollutedAreaRectangle extends PollutedArea
         double y1 = Double.parseDouble(element.getAttribute("pNorthY"));
         double y2 = Double.parseDouble(element.getAttribute("pSouthY"));
         if (y1 > y2) {
-            System.err.println(String.format("Pollution coordinate error: pNorthY = %s > pSouthY = %s", y1, y2));
-            System.exit(1);
+            if (! nsWarned) {
+                System.err.println(String.format("Pollution coordinate error: pNorthY = %s > pSouthY = %s", y1, y2));
+                nsWarned = true;
+                // System.exit(1);
+            }
+            double y = y1;
+            y1 = y2;
+            y2 = y;
         }
         if (x1 > x2) {
-            System.err.println(String.format("Pollution coordinate error: pWestX = %s > pEastX = %s", x1, x2));
-            System.exit(1);
+            if (! weWarned) {
+                System.err.println(String.format("Pollution coordinate error: pWestX = %s > pEastX = %s", x1, x2));
+                weWarned = true;
+                // System.exit(1);
+            }
+            double x = x1;
+            x1 = x2;
+            x2 = x;
         }
         bounds = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
 

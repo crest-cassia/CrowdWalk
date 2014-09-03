@@ -34,6 +34,7 @@ public class PollutionCalculator implements Serializable {
 
     double nextEvent = 0;
     double timeScale;
+    private double maxPollutionLevel = 0.0;
 
     public static boolean debug = false;
 
@@ -43,18 +44,13 @@ public class PollutionCalculator implements Serializable {
     private Iterator<double[]> pollutionDataIterator = null;
     private double[] pollutionData = null;
 
-    public ArrayList<PollutedArea> pollutedAreaFromNodes(ArrayList<MapNode>
-            nodes) {
-        ArrayList <PollutedArea> areas = new ArrayList<PollutedArea>();
-        return areas;
-    }
-
     public PollutionCalculator(String scheduleFileName,
             ArrayList<PollutedArea> _pollution, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
             nextEvent = -1.0;
         } else {
             readData(scheduleFileName);
+            System.err.println("MAX Pollution Level: " + maxPollutionLevel);
             linearInterpolation(interpolationInterval);
             pollutionDataIterator = pollutionDataList.iterator();
             if (pollutionDataIterator.hasNext()) {
@@ -67,8 +63,6 @@ public class PollutionCalculator implements Serializable {
         
         setup_polluted_areas(_pollution);
         timeScale = _timeScale;
-        
-        //System.out.println("timeScale "+timeScale);
     }
 
     private void readData(String fileName) {
@@ -82,6 +76,9 @@ public class PollutionCalculator implements Serializable {
                     double[] items = new double[strItems.length];
                     for (int index = 0; index < items.length; index++) {
                         items[index] = Double.parseDouble(strItems[index]);
+                        if (index > 0 && items[index] > maxPollutionLevel) {
+                            maxPollutionLevel = items[index];
+                        }
                     }
                     pollutionDataList.add(items);
                 }
@@ -161,149 +158,26 @@ public class PollutionCalculator implements Serializable {
                 continue;
             }
 
-            double min_distance = Double.MAX_VALUE;
-            PollutedArea best_area = null;
+            Double pollutionLevel = null;
             Vector3f point = new Vector3f((float)agent.getPos().getX(),
                     (float)agent.getPos().getY(),
                     (float)(agent.getHeight() + AGENT_HEIGHT));
             for (PollutedArea area : agent.getCurrentLink().getIntersectedPollutionAreas()) {
                 if (area.contains(point)) {
-                    best_area = area;
-                    break;
-                }
-
-                // double d = area.distance(point);     無意味な呼び出しなのでコメント化(斉藤)
-                //System.err.println("  area : " + area + ", point: " + point +
-                //        ", d: " + d);
-
-                // if (d < min_distance) {
-                    // min_distance = d;
-                    // best_area = area;
-                // }
-            }
-
-            if (best_area != null) {
-                Double pollutionLevel = (Double)best_area.getUserObject();
-                if (debug) System.err.println(agent.agentNumber + " " + pollutionLevel);
-
+                    pollutionLevel = (Double)area.getUserObject();
+                    if (debug) System.err.println(agent.agentNumber + " " + pollutionLevel);
                 // System.err.printf("in pollution calculator agent: %04d, " + 
                         // "d: %.4f, speed: %.4f, %s\n", agent.ID, d,
                         // agent.getSpeed(), best_area.getTags());
-                if (pollutionLevel != null) {
                     agent.exposed(pollutionLevel * timeScale);
-                    best_area.setContactOfAgents(true);
+                    // if (pollutionLevel > 0.0)
+                    //     System.err.print(" " + pollutionLevel);
+                    area.setContactOfAgents(true);
+                    break;
                 }
-            } else {
-                agent.exposed(0.);
             }
-        }
-    }
-
-    class AreaGroups extends PollutedArea implements Serializable {
-        private static final long serialVersionUID = -2438038596474793650L;
-        private ArrayList<PollutedArea> subgroups;
-        private boolean view;
-        public AreaGroups(
-                double from_x, double from_y, double from_z,
-                double to_x, double to_y, double to_z,
-                ArrayList<PollutedArea> subgroup_candidates) {
-            super(0);
-            view = false;
-            subgroups.addAll(subgroup_candidates);
-        }
-
-        @Override
-        public boolean contains(Vector3f point) {
-            return false;
-        }
-
-        @Override
-        public boolean contains(Point2D point) {
-            return false;
-        }
-
-        @Override
-        public boolean intersectsLine(Line2D line) {
-            return false;
-        }
-
-        @Override
-        public void draw(Graphics2D g, boolean experiment) { /* do nothing */}
-        @Override
-        public TransformGroup get3DShape(Appearance app) {
-            /* do nothing */
-            return null;
-        }
-
-        @Override
-        public double getDensity() {
-            /* do nothing */
-            return 0;
-        }
-
-        public double getDensity(Point2D point, double height) {
-            
-            return 0;
-        }
-
-        @Override
-        public Shape getShape() {
-            /* do nothing */
-            return null;
-        }
-        
-        @Override   // tkokada
-        public ArrayList<Point2D> getAllVertices() {
-            return null;
-        }
-        
-        @Override // tkokada
-        public double getAngle() {
-            double d = Double.NaN;
-            return d;
-        }
-
-        @Override
-        public NType getNodeType() {
-            /* do nothing */
-            return null;
-        }
-
-        @Override
-        public boolean isLeaf() {
-            return false;
-        }
-
-        @Override
-        public double distance(Vector3f point) {
-            return 0;
-        }
-
-        @Override
-        public boolean getContactOfAgents() {
-            return view;
-        }
-
-        @Override
-        public void setContactOfAgents(boolean _view) {
-            view = _view;
-        }
-
-        private void writeObject(ObjectOutputStream stream) {
-            try {
-                stream.defaultWriteObject();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-
-        private void readObject(ObjectInputStream stream) {
-            try {
-                stream.defaultReadObject();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            } catch (ClassNotFoundException cnfe) {
-                cnfe.printStackTrace();
+            if (pollutionLevel == null) {
+                agent.exposed(0.0);
             }
         }
     }
@@ -324,19 +198,9 @@ public class PollutionCalculator implements Serializable {
 
                 polluted_area_sorted.put(index, area);
             }
+            // current density 値の初期化
+            area.setUserObject(new Double(0.0));
         }
-    }
-
-    private Double correct_density(double d) {
-        /* 2010/02/18 for HCN gas
-         *  2.28 \times 10^{-13} * d^{4.56}
-         */
-        /* reduce density */
-        //d *= 10E-2;
-
-        //d *= 10E6;/* the values are given in 10^{-6} */
-        //return Math.pow(d, 4.56) * 2.28 * 10E-13;
-        return d * 10E-4;
     }
 
     private void update_pollution() {
@@ -349,8 +213,7 @@ public class PollutionCalculator implements Serializable {
             
             //System.out.println("index "+index+"index.intValue() "+index.intValue());
                 
-            double _d = pollutionData[index.intValue()];
-            Double pollutionLevel = correct_density(_d);
+            Double pollutionLevel = pollutionData[index.intValue()];
             
             if (debug) System.err.println("(" + index + "=" + pollutionLevel + ") ");
             
@@ -368,4 +231,6 @@ public class PollutionCalculator implements Serializable {
     public ArrayList<PollutedArea> getPollutions() {
         return new ArrayList<PollutedArea>(polluted_area_sorted.values());
     }
+
+    public double getMaxPollutionLevel() { return maxPollutionLevel; }
 }

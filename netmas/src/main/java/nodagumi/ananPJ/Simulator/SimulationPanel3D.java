@@ -80,6 +80,7 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Link.Lift.LiftManager;
 import nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
@@ -87,13 +88,22 @@ public class SimulationPanel3D extends NetworkPanel3D
         implements Serializable {
     private static final long serialVersionUID = -4438166088239555983L;
     public static int MAX_AGENT_COUNT = 500000;
-    //private static final boolean show_gas = true;
-    //private enum gas_display {
-    public enum gas_display {
-        NONE, HSV, RED, BLUE , ORANGE
+
+    public static enum gas_display {
+        NONE, HSV, RED, BLUE, ORANGE;
+
+        public static String[] getNames() {
+            String[] names = new String[values().length];
+            int index = 0;
+            for (gas_display value : values()) {
+                names[index++] = value.toString();
+            }
+            return names;
+        }
     };
     
     public gas_display show_gas = gas_display.ORANGE;
+    protected double pollutionColorSaturation = 0.0;
 
     private List<EvacuationAgent> agents;
     private ArrayList<PollutedArea> pollutions;
@@ -116,6 +126,20 @@ public class SimulationPanel3D extends NetworkPanel3D
         viewTrans3D = new Transform3D();
         viewMatrix = new Matrix4d();
         camera_position_list = new ArrayList<CurrentCameraPosition>();
+        readProperties();
+    }
+
+    public void readProperties() {
+        NetmasPropertiesHandler properties = model.getProperties();
+        if (properties != null) {
+            try {
+                show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE", gas_display.getNames()).toUpperCase());
+                pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
     }
     
     public void deserialize(EvacuationModelBase _model, JFrame _parent) {
@@ -1031,8 +1055,8 @@ public class SimulationPanel3D extends NetworkPanel3D
             }
             break;
             case 1://YELLOW -> agent_color
-                app.setColoringAttributes(new ColoringAttributes(agent_color,
-                            ColoringAttributes.FASTEST));
+                app.setColoringAttributes(new ColoringAttributes(
+                            Colors.YELLOW, ColoringAttributes.FASTEST));
                 break;
             case 2://RED    -> PINK (Any damaged person ) -> Poisonus red
                 app.setColoringAttributes(new ColoringAttributes(
@@ -1040,7 +1064,7 @@ public class SimulationPanel3D extends NetworkPanel3D
                 break;
             case 3://PURPLE -> Deeply RED ( Dead )           Poisonus red
                 app.setColoringAttributes(new ColoringAttributes(
-                            Colors.PRED, ColoringAttributes.FASTEST));
+                            Colors.BLACK2, ColoringAttributes.FASTEST));
                 break;
             }
 
@@ -1167,9 +1191,15 @@ public class SimulationPanel3D extends NetworkPanel3D
         @SuppressWarnings("unchecked")
         public void processStimulus(java.util.Enumeration criteria){
 
-            float density = (float)pollution.getDensity() / MAX_DENSITY;
+            // float density = (float)pollution.getDensity() / MAX_DENSITY;
+            float density = 0.0f;
             //System.out.println("Pollution Area ID "+pollution.ID+" density "+density);
-
+            if (pollutionColorSaturation > 0.0) {
+                density = (float)pollution.getDensity() / (float)pollutionColorSaturation;
+            } else {
+                float maxPollutionLevel = (float)((EvacuationSimulator)model).getMaxPollutionLevel();
+                density = (float)pollution.getDensity() / (maxPollutionLevel / 2.0f);
+            }
             if (density > 1.0) density = 1.0f;
 
             /*

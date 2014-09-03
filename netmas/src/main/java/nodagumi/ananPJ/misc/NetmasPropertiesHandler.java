@@ -15,6 +15,8 @@ import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.Simulator.Pollution;
+import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.CommunicationHandler;
 import nodagumi.ananPJ.misc.CommunicationHandler.CommunicationType;
 import nodagumi.ananPJ.network.DaRuMaClient;
@@ -336,6 +338,15 @@ public class NetmasPropertiesHandler implements Serializable {
             exitCount = getIntegerProperty(prop, "exit_count");
             isAllAgentSpeedZeroBreak = getBooleanProperty(prop,
                     "all_agent_speed_zero_break");
+
+            // 早い内に設定ミスをユーザーに知らせるための検査
+            String pollutionType = getString("pollution_type", null);
+            if (pollutionType != null) {
+                EvacuationAgent.setPollutionType(pollutionType);
+                Pollution.getInstance(pollutionType + "Pollution");
+            }
+            getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());
+            getDouble("pollution_color_saturation", 0.0);
         } catch (IOException ioe) {
             ioe.printStackTrace();
             System.exit(1);

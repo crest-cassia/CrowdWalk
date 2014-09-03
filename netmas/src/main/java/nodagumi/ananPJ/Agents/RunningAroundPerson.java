@@ -162,7 +162,7 @@ public class RunningAroundPerson extends EvacuationAgent
         buffer.append("," + this.position);
         buffer.append("," + this.direction);
         buffer.append("," + this.speed);
-        buffer.append("," + this.damage);
+        buffer.append("," + this.accumulatedExposureAmount);
         buffer.append("," + this.goal);
         buffer.append("," + this.routeIndex);
         buffer.append("," + this.planned_route.size());
@@ -203,7 +203,7 @@ public class RunningAroundPerson extends EvacuationAgent
             agent.next_node = link.getFrom();
         }
         agent.speed = Double.parseDouble(items[10]);
-        agent.damage = Double.parseDouble(items[11]);
+        agent.accumulatedExposureAmount = Double.parseDouble(items[11]);
         agent.goal = items[12];
         agent.routeIndex = Integer.parseInt(items[13]);
         int route_size = Integer.parseInt(items[14]);
@@ -867,12 +867,6 @@ public class RunningAroundPerson extends EvacuationAgent
     protected static double STAIR_SPEED_CO = 1.0;//0.7;
     */
     
-    static enum DamageEffectModel {
-        Basic, Yoshioka, Flood
-    }
-    // public static DamageEffectModel damage_effect_model = DamageEffectModel.Basic;
-    public static DamageEffectModel damage_effect_model = DamageEffectModel.Flood;
-
     protected void calc_speed(double time) {
         switch (calculation_model) {
         case LaneModel:
@@ -894,16 +888,8 @@ public class RunningAroundPerson extends EvacuationAgent
         //debug
         // if (speed < 1.2 && speed > 0.3)
             // System.err.println("  agent: " + ID + ", speed; " + speed);
-        switch (damage_effect_model) {
-        case Basic:
-            damage_effect_basic();
-            break;
-        case Flood:
-            damage_effect_flood();
-            break;
-        default:
-            break;
-        }
+        // pollution の影響による移動速度の低下
+        pollution.effect(this);
     }
     
     static final double SPEED_VIEW_RATIO = 10.0;
@@ -1534,48 +1520,6 @@ public class RunningAroundPerson extends EvacuationAgent
                 ", position: " + position);*/
     }
 
-    /* effect of damage*/
-    private void damage_effect_basic() {
-        /* main */
-
-        //System.out.println("agentNumber "+agentNumber+" damage "+damage);
-
-        if (damage >= 1.0) speed = 0;
-        else if (damage >= 0.9) speed *= 0.10;
-        else if (damage >= 0.5) speed *= 0.40;
-    }
-
-    /* effect of flood, this damage does not increase */
-    private void damage_effect_flood() {
-        instantaneous_damage *= 1000.;
-        if (instantaneous_damage >= 10.)
-            instantaneous_damage = 10.;
-        speed *= (10. - instantaneous_damage) / 10.;
-        // System.err.println("    damage: " + instantaneous_damage + ", speed: " +
-        //        speed);
-    }
-
-    /* the state of the agent */
-    @Override
-    public int getTriage() {
-        if (damage >= 4.0) return 3;
-        else if (damage >= 2.0) return 2;
-        else if (damage >= 1.0) return 1;
-        else return 0;
-    }
-
-    @Override
-    public boolean finished() {
-        if (getTriage() >= 3) {
-            return true;
-        }
-        if (isEvacuated()) {
-            return true;
-        }
-
-        return false;
-    }
-    
     @Override
     public double getDirection() {
         return direction;
@@ -1584,6 +1528,11 @@ public class RunningAroundPerson extends EvacuationAgent
     @Override
     public double getSpeed() {
         return speed;
+    }
+
+    @Override
+    public void setSpeed(double _speed) {
+        speed = _speed;
     }
 
     public double getAcceleration() {
@@ -2186,7 +2135,7 @@ public class RunningAroundPerson extends EvacuationAgent
         out.print("" + generatedTime + ",");
         out.print("" + finishedTime + ",");/* 0.0 if not evacuated */
         out.print("" + getTriage() + ",");
-        out.print("" + damage);
+        out.print("" + accumulatedExposureAmount);
         for (final CheckPoint cp : route) {
             if (cp.node.getTags().size() != 0) {
                 out.print("," + cp.node.getTagString().replace(',', '-'));
@@ -2320,16 +2269,6 @@ public class RunningAroundPerson extends EvacuationAgent
     @Override
     public String getGoal() {
         return goal;
-    }
-
-
-    @Override
-    public void exposed(double c) {
-        super.exposed(c);
-
-        if (getTriage() != 0) { 
-            setGoal("EMERGENCY");
-        };
     }
 
     public void setEmergency() {
