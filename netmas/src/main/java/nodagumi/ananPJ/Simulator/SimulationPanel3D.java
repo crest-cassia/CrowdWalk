@@ -1198,7 +1198,9 @@ public class SimulationPanel3D extends NetworkPanel3D
                 density = (float)pollution.getDensity() / (float)pollutionColorSaturation;
             } else {
                 float maxPollutionLevel = (float)((EvacuationSimulator)model).getMaxPollutionLevel();
-                density = (float)pollution.getDensity() / (maxPollutionLevel / 2.0f);
+                if (maxPollutionLevel > 0.0) {
+                    density = (float)pollution.getDensity() / (maxPollutionLevel / 2.0f);
+                }
             }
             if (density > 1.0) density = 1.0f;
 
