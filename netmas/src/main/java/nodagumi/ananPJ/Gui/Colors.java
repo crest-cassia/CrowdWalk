@@ -46,6 +46,17 @@ public class Colors implements Serializable {
             DEFAULT_AGENT_COLOR_G,
             DEFAULT_AGENT_COLOR_B);
 
+    public static final String[] NAMES = {
+        "BLACK", "BLACK2", "GRAY", "GRAY2", "LIGHTGRAY", "RED", "GREEN", "BLUE", "DARKBLUE", "LIGHTBLUE",
+        "SLATEBLUE", "TURQUOISE", "YELLOW", "WHITE", "PINK", "LIGHTB", "APINK", "ALIGHTB", "ARED", "PURPLE",
+        "PRED", "BACKGROUND_3D_COLOR", "DEFAULT_LINK_COLOR", "DEFAULT_AGENT_COLOR"
+    };
+    public static final Color3f[] COLORS = {
+        BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE, LIGHTBLUE,
+        SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK, ALIGHTB, ARED, PURPLE,
+        PRED, BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
+    };
+
     public static Color3f speedToColor3f(double speed) {
         float f = ((float) speed) * 0.3333f;
         Color c_rgb = new Color(Color.HSBtoRGB(f, 0.8588f, 0.698f));
@@ -59,5 +70,14 @@ public class Colors implements Serializable {
         Color c_rgb = new Color(Color.HSBtoRGB(f, DEFAULT_AGENT_COLOR_G,
                     DEFAULT_AGENT_COLOR_B));
         return new Color3f(c_rgb);
+    }
+
+    public static Color3f getColor(String name) {
+        for (int index = 0; index < NAMES.length; index++) {
+            if (NAMES[index].equals(name)) {
+                return COLORS[index];
+            }
+        }
+        return null;
     }
 }

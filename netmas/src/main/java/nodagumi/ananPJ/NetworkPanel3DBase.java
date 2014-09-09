@@ -17,13 +17,16 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +72,8 @@ import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
+import net.arnx.jsonic.JSON;
+
 // import com.sun.image.codec.jpeg.ImageFormatException;
 // import com.sun.image.codec.jpeg.JPEGImageEncoder;
 // import com.sun.image.codec.jpeg.JPEGEncodeParam;
@@ -80,6 +85,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
@@ -109,7 +115,6 @@ public abstract class NetworkPanel3DBase extends JPanel
     BoundingSphere bounds = new BoundingSphere(new Point3d(), 20000.0);
 
     /* flags to control drawing */
-    CheckboxMenuItem menu_item_link_gradation = null;
     protected float link_transparency = 0.5f;
     protected boolean link_transparency_changed_flag = false;
 
@@ -261,23 +266,79 @@ public abstract class NetworkPanel3DBase extends JPanel
         }
     };
 
+    // リンクの表示スタイル(幅, 色, 透明度)をタグ別に指定するために使用するクラス
+    protected class LinkAppearance {
+        public double width = 1.0;
+        public boolean widthFixed = false;
+        public Color3f color = Colors.DEFAULT_LINK_COLOR;
+        public float transparency = 0.75f;
+        public Appearance appearance = new Appearance();
+
+        public LinkAppearance(BigDecimal _width, Boolean _widthFixed, String colorName, BigDecimal _transparency, LinkAppearance defaultValue) {
+            if (defaultValue != null) {
+                width = defaultValue.width;
+                widthFixed = defaultValue.widthFixed;
+                color = defaultValue.color;
+                transparency = defaultValue.transparency;
+            }
+            if (_width != null) {
+                width = _width.doubleValue();
+            }
+            if (_widthFixed != null) {
+                widthFixed = _widthFixed;
+            }
+            if (colorName != null) {
+                color = Colors.getColor(colorName);
+            }
+            if (_transparency != null) {
+                transparency = _transparency.floatValue();
+            }
+            appearance.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST, transparency));
+        }
+    }
+
     protected MenuBar menu_bar = null;
     protected transient CaptureCanvas3D canvas = null;
     protected JFrame parent = null;
+    protected HashMap<String, LinkAppearance> linkAppearances = new HashMap<String, LinkAppearance>();
 
     protected NetworkPanel3DBase(ArrayList<MapNode> _nodes,
             ArrayList<MapLink> _links,
-            JFrame _parent) {
+            JFrame _parent,
+            NetmasPropertiesHandler _properties) {
         nodes = _nodes;
         links = _links;
         parent = _parent;
 
-        //canvas_width = 640;
-        //canvas_height = 480;
         canvas_width = 800;
         canvas_height = 600;
+
+        try {
+            loadLinkAppearances(this.getClass().getResourceAsStream("/link_appearance.json"));
+            if (_properties != null && _properties.isDefined("link_appearance_file")) {
+                loadLinkAppearances(new FileInputStream(_properties.getFilePath("link_appearance_file", null)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
-    
+
+    protected void loadLinkAppearances(InputStream is) throws Exception {
+        Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String tag = entry.getKey();
+            Map<String, Object> items = (Map<String, Object>)entry.getValue();
+            linkAppearances.put(tag, new LinkAppearance(
+                (BigDecimal)items.get("width"),
+                (Boolean)items.get("width_fixed"),
+                (String)items.get("color"),
+                (BigDecimal)items.get("transparency"),
+                linkAppearances.get(tag)
+            ));
+        }
+    }
+
     protected void deserialize(ArrayList<MapNode> _nodes,
             ArrayList<MapLink> _links,
             JFrame _parent) {
@@ -331,9 +392,6 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         /* view menu */
         menu_view = new Menu("View");
-        menu_item_link_gradation = new CheckboxMenuItem(
-                "Toggle gradation on links", false);
-        menu_view.add(menu_item_link_gradation);
 
         Menu menu_view_link_transparency = new Menu("Link transparance");
         class ChangeLinkTransparencyActionListner implements ActionListener {
@@ -563,7 +621,6 @@ public abstract class NetworkPanel3DBase extends JPanel
                     -point_center.z));
         map_trans.setScale(new Vector3d(1.0, -1.0, 1.0));
         map_objects.setTransform(map_trans);
-        //}
     }
 
     private Vector3d point_min, point_max, point_center;
@@ -681,9 +738,9 @@ public abstract class NetworkPanel3DBase extends JPanel
         MapLink link = link_geom.link;
 
         LineArray geometory = (LineArray) link_geom.shape.getGeometry();
-        Color3f c[] = colors_for_link(link);
-        geometory.setColor(0, c[0]);
-        geometory.setColor(1, c[1]);
+        Color3f c = colors_for_link(link);
+        geometory.setColor(0, c);
+        geometory.setColor(1, c);
         if (link_transparency_changed_flag) {
             link_transparency_changed_flag = false;
             TransparencyAttributes ta = link_geom.shape.getAppearance()
@@ -698,106 +755,36 @@ public abstract class NetworkPanel3DBase extends JPanel
         }
     }
 
-    /* draw as line or as a polygon */
-    protected boolean draw_as_line(MapLink link) {
-        //if (link.hasTag("STAIR")) return false;
-        //return !link.hasTag("STRUCTURE");
-
-        if (link.hasTag("STRUCTURE")||
-                //link.hasTag("ROAD")||
-                link.hasTag("MAINROAD")||
-                link.hasTag("HIGHWAY")||
-                link.hasTag("RAILWAY")||
-                link.hasTag("FLOOR")||
-                link.hasTag("RIVER")||
-                link.hasTag("BRIDGE")||
-                link.hasTag("FRAME")||
-                link.hasTag("ONE-WAY-POSITIVE")||
-                link.hasTag("ONE-WAY-NEGATIVE")||
-                link.hasTag("INVISIBLE_STAIR")) 
-            return false;
-
-        return true;
-    }
-
-    protected Color3f[] colors_for_link(MapLink link) {
-        Color3f c[] = new Color3f[2];
-
+    protected Color3f colors_for_link(MapLink link) {
         if (link.hasTag("STRUCTURE")){//
-            c[0] = Colors.WHITE;
-            c[1] = Colors.WHITE;
+            return linkAppearances.get("STRUCTURE").color;
         } else if (link.hasTag("FLOOR")) {
-            c[0] = Colors.GRAY;
-            c[1] = Colors.GRAY;
-        }else if (link_draw_density_mode) {
-            Color3f c0 = new Color3f(link.getColorFromDensity());
-            c[0] = c0;
-            c[1] = c0;
+            return linkAppearances.get("FLOOR").color;
+        } else if (link_draw_density_mode) {
+            return new Color3f(link.getColorFromDensity());
         } else if (link.getEmergency()) {
-            c[0] = Colors.GREEN;
-            c[1] = Colors.GREEN;
+            return Colors.GREEN;
         } else if (link.getStop()) {
-            c[0] = Colors.YELLOW;
-            c[1] = Colors.YELLOW;
+            return Colors.YELLOW;
         } else if (link.hasTag("LIFT")) {
-            c[0] = Colors.YELLOW;
-            c[1] = Colors.YELLOW;
+            return Colors.YELLOW;
         } else if (link.hasTag("RED")) {
-            c[0] = Colors.RED;
-            c[1] = Colors.RED;
+            return Colors.RED;
         } else if (link.hasTag("BLUE")) {
-            c[0] = Colors.BLUE;
-            c[1] = Colors.BLUE;
+            return Colors.BLUE;
         } else if (link.hasTag("PINK")) {
-            c[0] = Colors.PINK;
-            c[1] = Colors.PINK;
+            return Colors.PINK;
         } else if (link.hasTag("LIGHTB")) {
-            c[0] = Colors.LIGHTB;
-            c[1] = Colors.LIGHTB;
-        } else if (link.hasTag("HIGHWAY")) {
-            c[0] = Colors.WHITE;
-            c[1] = Colors.WHITE;
-        } else if (link.hasTag("MAINROAD")) {
-            c[0] = Colors.GRAY;
-            c[1] = Colors.GRAY;
-        } else if (link.hasTag("RAILWAY")) {
-            //c[0] = Colors.ARED;
-            //c[1] = Colors.ARED;
-            c[0] = Colors.GRAY;
-            c[1] = Colors.GRAY;
-            //c[0] = WHITE;
-            //c[1] = WHITE;
-        } else if (link.hasTag("RIVER")) {//
-            c[0] = Colors.BLUE;
-            c[1] = Colors.BLUE;
-        } else if (link.hasTag("BRIDGE")) {//
-            c[0] = Colors.GRAY;
-            c[1] = Colors.GRAY;
-        } else if (link.hasTag("FRAME")) {
-            c[0] = Colors.YELLOW;
-            c[1] = Colors.YELLOW;
-        } else if (link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE")) {
-            c[0] = Colors.ARED;
-            c[1] = Colors.ARED;
-        } else if (link.hasTag("ONEWAY")) {
-            c[0] = Colors.ARED;
-            c[1] = Colors.ARED;
-        } else if (menu_item_link_gradation.getState()) {
-            double scale = ((MapPartGroup) link.getParent()).getScale();
-            float f1 = (float) (link.getFrom().getHeight() / scale / point_max.z);
-            float f2 = (float) (link.getTo().getHeight() / scale / point_max.z);
-            Color3f c1 = new Color3f(f1, 1.0f, 1.0f - f1);
-            Color3f c2 = new Color3f(f2, 1.0f, 1.0f - f2);
-            c[0] = c1;
-            c[1] = c2;
-        } else {
-            // c[0] = link_color;
-            // c[1] = link_color;
-            c[0] = Colors.DEFAULT_LINK_COLOR;
-            c[1] = Colors.DEFAULT_LINK_COLOR;
+            return Colors.LIGHTB;
         }
 
-        return c;
+        for (Map.Entry<String, LinkAppearance> entry : linkAppearances.entrySet()) {
+            if (link.hasTag(entry.getKey())) {
+                return entry.getValue().color;
+            }
+        }
+
+        return Colors.DEFAULT_LINK_COLOR;
     }
 
     // tkokada polygon
@@ -854,49 +841,6 @@ public abstract class NetworkPanel3DBase extends JPanel
                 .setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE
                         | Appearance.ALLOW_LINE_ATTRIBUTES_WRITE);
 
-        Appearance structure_appearance = new Appearance();
-        structure_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                        TransparencyAttributes.FASTEST, 0.02575f));
-
-        Appearance building_appearance = new Appearance();
-        building_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                        TransparencyAttributes.FASTEST, 0.245f));
-
-        Appearance floor_appearance = new Appearance();
-        floor_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                        TransparencyAttributes.FASTEST, 0.95f));
-
-        Appearance highway_appearance = new Appearance();
-        highway_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                        TransparencyAttributes.FASTEST, 0.2525f));
-
-        Appearance river_appearance = new Appearance();
-        river_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                        TransparencyAttributes.NONE, 0.4525f));
-                        //TransparencyAttributes.NONE, 0.02525f));
-
-        Appearance bridge_appearance = new Appearance();
-        bridge_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                        TransparencyAttributes.FASTEST, 0.875f));
-
-        Appearance mainroad_appearance = new Appearance();
-        mainroad_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                        TransparencyAttributes.FASTEST, 0.7525f));
-                        //TransparencyAttributes.FASTEST, 0.02525f));
-
-        Appearance oneway_appearance = new Appearance();
-        oneway_appearance
-                .setTransparencyAttributes(new TransparencyAttributes(
-                    TransparencyAttributes.FASTEST, 0.7525f));
-                    //TransparencyAttributes.FASTEST, 0.02525f));
-
         // tkokada polygon
         HashMap<String, ArrayList<MapLink>> polygons =
             new HashMap<String, ArrayList<MapLink>>();
@@ -925,7 +869,62 @@ public abstract class NetworkPanel3DBase extends JPanel
             if (containPolygon)
                 continue;
 
-            if (draw_as_line(link)) {
+            LinkAppearance linkAppearance = null;
+            for (Map.Entry<String, LinkAppearance> entry : linkAppearances.entrySet()) {
+                if (link.hasTag(entry.getKey())) {
+                    linkAppearance = entry.getValue();
+                    break;
+                }
+            }
+            if (linkAppearance != null) {
+                /* Use polygon for structural links */
+                Point3d[] vertices = new Point3d[4];
+
+                double x1 = from.getX();
+                double x2 = to.getX();
+                double y1 = from.getY();
+                double y2 = to.getY();
+
+                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
+                v1.normalize();
+                Vector3d v2 = new Vector3d(0, 0, linkAppearance.widthFixed ? linkAppearance.width : link.width * linkAppearance.width);
+                if (v2.z == 0)
+                    v2.z = 1.0;
+                Vector3d v3 = new Vector3d();
+
+                for (int i = 0; i < 2; i++) {
+                    if (i == 1)
+                        v3.cross(v1, v2);
+                    else
+                        v3.cross(v2, v1);
+
+                    final double dx = v3.x;
+                    final double dy = v3.y;
+
+                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
+                            from.getAbsoluteY() + dy, from.getHeight() / scale);
+                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
+                            from.getAbsoluteY() - dy, from.getHeight() / scale);
+                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
+                            to.getAbsoluteY() - dy, to.getHeight() / scale);
+                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
+                            to.getAbsoluteY() + dy, to.getHeight() / scale);
+
+                    QuadArray geometory = new QuadArray(vertices.length,
+                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+                    geometory.setCoordinates(0, vertices);
+
+                    for (int index = 0; index < 4; index++) {
+                        geometory.setColor(index, linkAppearance.color);
+                    }
+
+                    Shape3D shape = new Shape3D(geometory, linkAppearance.appearance);
+                    TransformGroup group = new TransformGroup();
+                    group.addChild(shape);
+
+                    structure_group.addChild(group);
+                }
+            } else {
                 /* path links (a.k.a. normal links) */
                 Point3d[] vertices = new Point3d[2];
                 vertices[0] = new Point3d(from.getAbsoluteX(),
@@ -951,422 +950,6 @@ public abstract class NetworkPanel3DBase extends JPanel
 
                 map_objects.addChild(linkgroup);
                 canvasobj_to_obnode.put(shape, link);
-            } else if (link.hasTag("FLOOR")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, link.width * 5.0);//FLOORの幅
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    //グラディエーションの設定
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    Shape3D shape = new Shape3D(geometory, floor_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                }
-            }
-            else if (link.hasTag("STRUCTURE")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, link.width * 1.0 * 5.0);//STRUCTUREの幅
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    //グラディエーションの設定
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    
-                    Shape3D shape = new Shape3D(geometory, building_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                }
-            }
-            else if (link.hasTag("HIGHWAY")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, link.width * 1.0);//HIGHWAYの幅
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    
-                    Shape3D shape = new Shape3D(geometory, highway_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                    
-                }
-            }
-            else if (link.hasTag("MAINROAD")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, link.width * 0.75);//ROADの幅
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    Shape3D shape = new Shape3D(geometory, mainroad_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                }
-            }
-            else if (link.hasTag("RAILWAY")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, link.width * 1.0);//RAILWAYの幅
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    Shape3D shape = new Shape3D(geometory, highway_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                }
-            } else if (link.hasTag("RIVER")) {    // tkokada temporal
-            } else if (link.hasTag("BRIDGE")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                //Vector3d v2 = new Vector3d(0, 0, link.width * 4.0);
-                // tkokada temporal
-                Vector3d v2 = new Vector3d(0, 0, 20.0);
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    //Shape3D shape = new Shape3D(geometory, river_appearance);
-                    // tkokada temporal
-                    Shape3D shape = new Shape3D(geometory, bridge_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                }
-            }
-            else if (link.hasTag("FRAME")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, link.width * 8.0);//RAILWAYの幅
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    Shape3D shape = new Shape3D(geometory, highway_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                }
-            } else if (link.hasTag("ONE-WAY-POSITIVE")|| link.hasTag(
-                        "ONE-WAY-NEGATIVE")) {
-                /* Use polygon for structural links */
-                Point3d[] vertices = new Point3d[4];
-
-                double x1 = from.getX();
-                double x2 = to.getX();
-                double y1 = from.getY();
-                double y2 = to.getY();
-
-                Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
-                v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, link.width *0.5);//RAILWAYの幅
-                if (v2.z == 0)
-                    v2.z = 1.0;
-                Vector3d v3 = new Vector3d();
-
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1)
-                        v3.cross(v1, v2);
-                    else
-                        v3.cross(v2, v1);
-
-                    final double dx = v3.x;
-                    final double dy = v3.y;
-
-                    vertices[0] = new Point3d(from.getAbsoluteX() + dx,
-                            from.getAbsoluteY() + dy, from.getHeight() / scale);
-                    vertices[1] = new Point3d(from.getAbsoluteX() - dx,
-                            from.getAbsoluteY() - dy, from.getHeight() / scale);
-                    vertices[2] = new Point3d(to.getAbsoluteX() - dx,
-                            to.getAbsoluteY() - dy, to.getHeight() / scale);
-                    vertices[3] = new Point3d(to.getAbsoluteX() + dx,
-                            to.getAbsoluteY() + dy, to.getHeight() / scale);
-
-                    QuadArray geometory = new QuadArray(vertices.length,
-                            GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-                    geometory.setCoordinates(0, vertices);
-
-                    Color3f c[] = colors_for_link(link);
-                    geometory.setColor(0, c[0]);
-                    geometory.setColor(1, c[1]);
-                    geometory.setColor(2, c[0]);
-                    geometory.setColor(3, c[1]);
-
-                    Shape3D shape = new Shape3D(geometory, oneway_appearance);
-                    TransformGroup group = new TransformGroup();
-                    group.addChild(shape);
-
-                    structure_group.addChild(group);
-                }
             }
         }
         // tkokada polygon

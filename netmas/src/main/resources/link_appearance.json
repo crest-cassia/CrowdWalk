@@ -1,0 +1,75 @@
+/*
+Usable color names:
+    BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE,
+    LIGHTBLUE, SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK,
+    ALIGHTB, ARED, PURPLE, PRED,
+    BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
+*/
+{
+    STRUCTURE: {
+        width: 5.0,
+        width_fixed: true,
+        color: 'WHITE',
+        transparency: 0.245
+    },
+    FLOOR: {
+        width: 5.0,
+        width_fixed: true,
+        color: 'GRAY',
+        transparency: 0.95
+    },
+    HIGHWAY: {
+        width: 1.0,
+        width_fixed: false,
+        color: 'WHITE',
+        transparency: 0.2525
+    },
+    MAINROAD: {
+        width: 0.75,
+        width_fixed: false,
+        color: 'GRAY',
+        transparency: 0.7525
+    },
+    RAILWAY: {
+        width: 1.0,
+        width_fixed: false,
+        color: 'GRAY',
+        transparency: 0.2525
+    },
+//    RIVER: {
+//        width: 20.0,
+//        width_fixed: false,
+//        color: 'BLUE',
+//        transparency: 0.4525
+//    },
+    BRIDGE: {
+        width: 20.0,
+        width_fixed: false,
+        color: 'GRAY',
+        transparency: 0.4525
+    },
+    FRAME: {
+        width: 8.0,
+        width_fixed: false,
+        color: 'YELLOW',
+        transparency: 0.2525
+    },
+    'ONE-WAY-POSITIVE': {
+        width: 0.5,
+        width_fixed: false,
+        color: 'ARED',
+        transparency: 0.7525
+    },
+    'ONE-WAY-NEGATIVE': {
+        width: 0.5,
+        width_fixed: false,
+        color: 'ARED',
+        transparency: 0.7525
+    },
+    ONEWAY: {
+        width: 0.5,
+        width_fixed: false,
+        color: 'ARED',
+        transparency: 0.7525
+    },
+}

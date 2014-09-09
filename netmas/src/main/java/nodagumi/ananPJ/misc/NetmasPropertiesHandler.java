@@ -53,7 +53,7 @@ public class NetmasPropertiesHandler implements Serializable {
             "all_agent_speed_zero_break"
             );
 
-    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file"};
+    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file"};
 
     protected String propertiescenarioPath = null;
     protected Properties prop = null;
@@ -227,7 +227,6 @@ public class NetmasPropertiesHandler implements Serializable {
             if (path.endsWith(".xml")) {
                 prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
             } else if (path.endsWith(".json")) {
-                JSON json = new JSON();
                 HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiescenarioPath));
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     prop.setProperty(entry.getKey(), entry.getValue().toString());

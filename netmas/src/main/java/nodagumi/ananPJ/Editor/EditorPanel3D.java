@@ -34,7 +34,7 @@ public class EditorPanel3D extends NetworkPanel3D implements Serializable {
     private Rectangle2D selectedArea = null;
 
     private EditorPanel3D(NetworkMapEditor editor, JFrame _parent) {
-        super(editor.getNodes(), editor.getLinks(), _parent);
+        super(editor.getNodes(), editor.getLinks(), _parent, editor.getProperties());
     }
 
     public static NetworkPanel3D createPanel(NetworkMapEditor editor,

@@ -113,7 +113,7 @@ public class SimulationPanel3D extends NetworkPanel3D
     
     protected BranchGroup agent_group = null;
     public SimulationPanel3D(EvacuationModelBase _model, JFrame _parent) {
-        super(_model.getNodes(), _model.getLinks(), _parent);
+        super(_model.getNodes(), _model.getLinks(), _parent, _model.getProperties());
         model = _model;
         networkMap = model.getMap();
         agents = model.getAgents();
@@ -1398,13 +1398,9 @@ public class SimulationPanel3D extends NetworkPanel3D
         }
     }
     @Override
-    protected Color3f[] colors_for_link(MapLink link) {
-        Color3f c[] = new Color3f[2];
+    protected Color3f colors_for_link(MapLink link) {
         if (link.hasTag("SIM_RED")) {
-            c[0] = Colors.RED;
-            c[1] = Colors.RED;
-
-            return c;
+            return Colors.RED;
         }
         return super.colors_for_link(link);
     }
