@@ -56,6 +56,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     /* tkokada: enable random navigation depending on the cost */
     protected boolean randomNavigation = false;
     /** The distance of how much the agent has moved in the current pathway. */
+    // ※順方向時のみリンク上の位置と等しい(リンク上の位置が必要な場合には absolutePosition() を使うこと)
     protected double position;
     public double currentExposureAmount = 0.0;
     public double accumulatedExposureAmount = 0.0;
@@ -121,6 +122,8 @@ implements Comparable<EvacuationAgent>, Serializable {
     abstract public double getSpeed();
     abstract public void setSpeed(double speed);
     abstract public double getDirection();
+    abstract public boolean isPositiveDirection();
+    abstract public boolean isNegativeDirection();
     abstract public double getAcceleration();
     
     abstract public void prepareForSimulation(double _ts);
@@ -431,7 +434,7 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     // current_link 上における絶対 position
     public double absolutePosition() {
-        return getDirection() >= 0.0 ? position : current_link.length - position;
+        return isPositiveDirection() ? position : current_link.length - position;
     }
 
     public int compareTo(EvacuationAgent rhs) {
