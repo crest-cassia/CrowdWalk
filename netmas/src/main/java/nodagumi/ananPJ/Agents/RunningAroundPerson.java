@@ -347,9 +347,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 /* schedule moving out */
                 on_node = true;
                 MapLink next_link = navigate(time, link, node);
-                if ((link.hasTag("ONE-WAY-POSITIVE") ||
-                            link.hasTag("ONE-WAY-NEGATIVE")) &&
-                        next_link == null) {
+                if ((link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE") || link.hasTag("ROAD-CLOSED"))
+                        && next_link == null) {
                     break;
                 } else if (link.ID == next_link.ID) {
                     break;
@@ -550,9 +549,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
             on_node = true;
             MapLink next_link = virtual_navigate(time, link, node);
-            if ((link.hasTag("ONE-WAY-POSITIVE") ||
-                        link.hasTag("ONE-WAY-NEGATIVE")) &&
-                    next_link == null) {
+            if ((link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE") || link.hasTag("ROAD-CLOSED"))
+                    && next_link == null) {
                 break;
             } else if (link.ID == next_link.ID) {
                 break;

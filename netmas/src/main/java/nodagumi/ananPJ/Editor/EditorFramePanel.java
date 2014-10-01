@@ -410,8 +410,9 @@ public class EditorFramePanel extends JPanel implements Serializable {
             g.setColor(Color.BLUE);
             //g.draw(hoverLink.getRect(g));
             g.fill(hoverLink.getRect(g, showScaling));
+            // ラベルの描画
             if (hoverLink.orig_link != null) {
-                hoverLink.orig_link.draw(g, false, true, false, showScaling);
+                hoverLink.orig_link.drawLabel(g, showScaling);
             }
         }
         

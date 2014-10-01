@@ -95,6 +95,8 @@ public class MapLink extends OBMapPart implements Serializable {
     /* some values used for drawing */
     public static final BasicStroke broad = new BasicStroke(9.0f);
     public static final BasicStroke narrow = new BasicStroke(5.0f);
+    public static final Color LINK_RED = new Color(1.0f, 0.3f, 0.3f);
+    public static final Color LIGHT_BLUE = new Color(0.4f, 0.4f, 1.0f);
 
     /* Constructors */
     public MapLink(int _id,
@@ -378,6 +380,7 @@ public class MapLink extends OBMapPart implements Serializable {
         g.setStroke(new BasicStroke(2.0f / ((float)scale)));
         boolean oneWayPositive = this.getTags().contains("ONE-WAY-POSITIVE");
         boolean oneWayNegative = this.getTags().contains("ONE-WAY-NEGATIVE");
+        boolean roadClosed = this.getTags().contains("ROAD-CLOSED");
 
 
         if (isSymbolic) {
@@ -419,14 +422,18 @@ public class MapLink extends OBMapPart implements Serializable {
             else
                 g.fill(getRect(0.0, scale, false));
         } else {
-            Color c = g.getColor();
-            g.setColor(c);
-            if (oneWayPositive)
+            if (oneWayPositive) {
+                g.setColor(Color.MAGENTA);
                 g.fill(getArrow(0.0, scale, true));
-            else if (oneWayNegative)
+            } else if (oneWayNegative) {
+                g.setColor(LIGHT_BLUE);
                 g.fill(getArrow(0.0, scale, false));
-            else
+            } else if (roadClosed) {
+                g.setColor(LINK_RED);
                 g.fill(getRect(0.0, scale, false));
+            } else {
+                g.fill(getRect(0.0, scale, false));
+            }
             g.setColor(Color.BLACK);
             if (oneWayPositive)
                 g.draw(getArrow(0.0, scale, true));
@@ -440,6 +447,12 @@ public class MapLink extends OBMapPart implements Serializable {
                      (float)calcAgentPos(0.5).getX(),
                      (float)calcAgentPos(0.5).getY());
         }
+    }
+
+    public void drawLabel(Graphics2D g, boolean showScaling) {
+        double scale = showScaling ? g.getTransform().getScaleX() : 1.0;
+        g.setStroke(new BasicStroke(2.0f / (float)scale));
+        g.drawString(getTagString(), (float)calcAgentPos(0.5).getX(), (float)calcAgentPos(0.5).getY());
     }
 
     public Color getColorFromDensity() {

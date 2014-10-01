@@ -964,7 +964,10 @@ public class EditorFrame
                             "Set One-way Negative")) {
                     editor.setOneWayLinks(false);
                 } else if (e.getActionCommand().equals(
-                            "Remove One-way")) {
+                            "Set Road Closed")) {
+                    editor.setRoadClosedLinks();
+                } else if (e.getActionCommand().equals(
+                            "Remove One-way / Road Closed")) {
                     editor.removeSelectedOneWayTag();
                 }
             }
@@ -991,14 +994,17 @@ public class EditorFrame
         mi.setEnabled(c >= 1);
         menu.add(mi);
 
-        menu.addSeparator();
         mi = new MenuItem("Set One-way Negative");
         mi.addActionListener (listner);
         mi.setEnabled(c >= 1);
         menu.add(mi);
 
-        menu.addSeparator();
-        mi = new MenuItem("Remove One-way");
+        mi = new MenuItem("Set Road Closed");
+        mi.addActionListener (listner);
+        mi.setEnabled(c >= 1);
+        menu.add(mi);
+
+        mi = new MenuItem("Remove One-way / Road Closed");
         mi.addActionListener (listner);
         mi.setEnabled(c >= 1);
         menu.add(mi);
@@ -1426,18 +1432,39 @@ public class EditorFrame
                 if (positive) {
                     if (link.getTags().contains("ONE-WAY-POSITIVE"))
                         continue;
-                    else
-                        link.addTag("ONE-WAY-POSITIVE");
+                    link.addTag("ONE-WAY-POSITIVE");
                     if (link.getTags().contains("ONE-WAY-NEGATIVE"))
                         link.removeTag("ONE-WAY-NEGATIVE");
+                    if (link.getTags().contains("ROAD-CLOSED"))
+                        link.removeTag("ROAD-CLOSED");
                 } else {
                     if (link.getTags().contains("ONE-WAY-NEGATIVE"))
                         continue;
-                    else
-                        link.addTag("ONE-WAY-NEGATIVE");
+                    link.addTag("ONE-WAY-NEGATIVE");
                     if (link.getTags().contains("ONE-WAY-POSITIVE"))
                         link.removeTag("ONE-WAY-POSITIVE");
+                    if (link.getTags().contains("ROAD-CLOSED"))
+                        link.removeTag("ROAD-CLOSED");
                 }
+            }
+        }
+        editor.getLinkPanel().refresh();
+        clearSelection();
+        repaint();
+    }
+
+    private void setRoadClosedLinks() {
+        panel.updateHoverLink(null);
+        editor._setModified(true);
+        for (MapLink link : getChildLinks()) {
+            if (link.selected) {
+                if (link.getTags().contains("ROAD-CLOSED"))
+                    continue;
+                link.addTag("ROAD-CLOSED");
+                if (link.getTags().contains("ONE-WAY-POSITIVE"))
+                    link.removeTag("ONE-WAY-POSITIVE");
+                if (link.getTags().contains("ONE-WAY-NEGATIVE"))
+                    link.removeTag("ONE-WAY-NEGATIVE");
             }
         }
         editor.getLinkPanel().refresh();
@@ -1510,6 +1537,8 @@ public class EditorFrame
                         link.removeTag("ONE-WAY-POSITIVE");
                     if (link.getTags().contains("ONE-WAY-NEGATIVE"))
                         link.removeTag("ONE-WAY-NEGATIVE");
+                    if (link.getTags().contains("ROAD-CLOSED"))
+                        link.removeTag("ROAD-CLOSED");
                 }
         }
         editor.getLinkPanel().refresh();

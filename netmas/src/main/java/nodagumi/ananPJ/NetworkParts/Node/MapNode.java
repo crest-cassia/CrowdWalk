@@ -124,6 +124,9 @@ public class MapNode extends OBMapPart implements Serializable {
                     link.getNegativeNode() == this) {
                 continue;
             }
+            if (link.getTags().contains("ROAD-CLOSED")) {
+                continue;
+            }
             availableLinks.add(link);
         }
 
@@ -141,6 +144,9 @@ public class MapNode extends OBMapPart implements Serializable {
             }
             if (link.getTags().contains("ONE-WAY-NEGATIVE") &&
                     link.getPositiveNode() == this) {
+                continue;
+            }
+            if (link.getTags().contains("ROAD-CLOSED")) {
                 continue;
             }
             availableLinks.add(link);

@@ -55,21 +55,27 @@ Usable color names:
         transparency: 0.2525
     },
     'ONE-WAY-POSITIVE': {
-        width: 0.5,
-        width_fixed: false,
-        color: 'ARED',
-        transparency: 0.7525
+        width: 3.0,
+        width_fixed: true,
+        color: 'PURPLE',
+        transparency: 0.5
     },
     'ONE-WAY-NEGATIVE': {
-        width: 0.5,
-        width_fixed: false,
-        color: 'ARED',
-        transparency: 0.7525
+        width: 3.0,
+        width_fixed: true,
+        color: 'LIGHTBLUE',
+        transparency: 0.25
     },
     ONEWAY: {
         width: 0.5,
         width_fixed: false,
         color: 'ARED',
         transparency: 0.7525
+    },
+    'ROAD-CLOSED': {
+        width: 3.0,
+        width_fixed: true,
+        color: 'RED',
+        transparency: 0.25
     },
 }
