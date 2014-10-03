@@ -1184,6 +1184,13 @@ public class AgentHandler implements Serializable {
     public Logger initLogger(String name, Level level, java.util.logging.Formatter formatter, String filePath) {
         Logger logger = Logger.getLogger(name);
         try {
+            // 「ロックファイルが残っているとログファイルに連番が振られて増え続けてしまう」不具合を回避する
+            File file = new File(filePath + ".lck");
+            if (file.exists()) {
+                System.err.println("delete lock file: " + filePath + ".lck");
+                file.delete();
+            }
+
             FileHandler handler = new FileHandler(filePath);
             handler.setFormatter(formatter);
             logger.addHandler(handler);
