@@ -1087,14 +1087,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         int inFrontOppositeDirectionAgents = 0;
 
         /* in range agents on current link is calculated in between maxRange & minRange */
-        double maxRange = 0;
-        double minRange = 0;
+        double maxRange = 0.0;
+        double minRange = 0.0;
         if (isPositiveDirection()) {
             minRange = position;
             maxRange = Math.min(position + DENSITY_RANGE, current_link.length);
         } else {
-            minRange = Math.max(absolutePosition() - DENSITY_RANGE, 0);
-            maxRange = absolutePosition();
+            minRange = Math.max(position - DENSITY_RANGE, 0.0);
+            maxRange = position;
         }
 
         /* in range agents on next link is calculated in between maxRange & minRange */
@@ -1117,11 +1117,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             if (agent == this || agent.isEvacuated()) {
                 continue;
             }
-            if (agent.absolutePosition() == absolutePosition()) {
+            if (agent.position == position) {
                 samePlaceAgents.add(agent);
             }
             // agent が (minRange..maxRange) 内に位置する
-            if (agent.absolutePosition() >= minRange && agent.absolutePosition() <= maxRange) {
+            if (agent.position >= minRange && agent.position <= maxRange) {
                 if (direction == agent.getDirection()) {
                     inRangeSameDirectionAgents += 1;
                 } else {
@@ -1129,30 +1129,32 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 }
                 // 以下、自分の隣か前を歩いている(歩いて来る) agent について(direction ごと)
                 // agent is placed in front of this agent.
-                if (isPositiveDirection() && agent.absolutePosition() >= position) {
+                if (isPositiveDirection() && agent.position >= position) {
                     if (agent.isPositiveDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
                     }
-                    if (frontAgent == null) {
-                        if (agent.absolutePosition() != position)
+                    if (agent.position != position) {
+                        if (frontAgent == null) {
                             frontAgent = agent;
-                    } else if (frontAgent.absolutePosition() > agent.absolutePosition()) {
-                        frontAgent = agent;
+                        } else if (frontAgent.position > agent.position) {
+                            frontAgent = agent;
+                        }
                     }
                 // agent is placed in front of this agent.
-                } else if (isNegativeDirection() && agent.absolutePosition() <= absolutePosition()) {
+                } else if (isNegativeDirection() && agent.position <= position) {
                     if (agent.isNegativeDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
                     }
-                    if (frontAgent == null) {
-                        if (agent.absolutePosition() != absolutePosition())
+                    if (agent.position != position) {
+                        if (frontAgent == null) {
                             frontAgent = agent;
-                    } else if (frontAgent.absolutePosition() < agent.absolutePosition()) {
-                        frontAgent = agent;
+                        } else if (frontAgent.position < agent.position) {
+                            frontAgent = agent;
+                        }
                     }
                 }
             }
@@ -1220,7 +1222,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         } else if (frontAgent != null) {
             double distance;
             if (currentLinkAgents.contains(frontAgent))
-                distance = Math.abs(frontAgent.absolutePosition() - absolutePosition());
+                distance = Math.abs(frontAgent.position - position);
             else
                 distance = getDistanceNeighborAgent(frontAgent);
             // 前を歩いている人にぶつからない(近づきすぎない)速度まで speed を落とす
@@ -1312,16 +1314,17 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         MapLink neighborLink = agent.getCurrentLink();
 
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            distance = absolutePosition() + agent.absolutePosition();
+            distance = position + agent.position;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            distance = absolutePosition() + neighborLink.length - agent.absolutePosition();
+            distance = position + neighborLink.length - agent.position;
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            distance = currentLink.length - absolutePosition() + agent.absolutePosition();
+            distance = currentLink.length - position + agent.position;
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            distance = currentLink.length - absolutePosition() + neighborLink.length - agent.absolutePosition();
+            distance = currentLink.length - position + neighborLink.length - agent.position;
         } else {
             System.err.println("\tRunningAroundPerson.getDistanceNeighborAgent inputted neighbor link is not neighbor!");
-            distance = -1.0;
+            // distance = -1.0;
+            System.exit(1);
         }
         return distance;
     }
@@ -1445,12 +1448,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         for (EvacuationAgent agent : current_link.getAgents()) {
             double tmp_distance = 0.0;
             if (isPositiveDirection()) {
-                if (agent.absolutePosition() > position) {
-                    tmp_distance = agent.absolutePosition() - position;
+                if (agent.position > position) {
+                    tmp_distance = agent.position - position;
                 }
             } else {
-                if (agent.absolutePosition() < absolutePosition()) {
-                    tmp_distance = absolutePosition() - agent.absolutePosition();
+                if (agent.position < position) {
+                    tmp_distance = position - agent.position;
                 }
             }
             if (tmp_distance > distance) {

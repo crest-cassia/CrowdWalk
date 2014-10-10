@@ -56,7 +56,6 @@ implements Comparable<EvacuationAgent>, Serializable {
     /* tkokada: enable random navigation depending on the cost */
     protected boolean randomNavigation = false;
     /** The distance of how much the agent has moved in the current pathway. */
-    // ※順方向時のみリンク上の位置と等しい(リンク上の位置が必要な場合には absolutePosition() を使うこと)
     protected double position;
     public double currentExposureAmount = 0.0;
     public double accumulatedExposureAmount = 0.0;
