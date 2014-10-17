@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -327,8 +328,8 @@ public abstract class NetworkPanel3DBase extends JPanel
     protected MenuBar menu_bar = null;
     protected transient CaptureCanvas3D canvas = null;
     protected JFrame parent = null;
-    protected HashMap<String, LinkAppearance> linkAppearances = new HashMap<String, LinkAppearance>();
-    protected HashMap<String, NodeAppearance> nodeAppearances = new HashMap<String, NodeAppearance>();
+    protected LinkedHashMap<String, LinkAppearance> linkAppearances = new LinkedHashMap<String, LinkAppearance>();
+    protected LinkedHashMap<String, NodeAppearance> nodeAppearances = new LinkedHashMap<String, NodeAppearance>();
 
     protected NetworkPanel3DBase(ArrayList<MapNode> _nodes,
             ArrayList<MapLink> _links,
@@ -342,9 +343,17 @@ public abstract class NetworkPanel3DBase extends JPanel
         canvas_height = 600;
 
         try {
+            // 再ロードしているのは、該当するタグが複数あった場合の適用ルールを設定ファイルに記述した順(上が優先)にするため
+            if (_properties != null && _properties.isDefined("link_appearance_file")) {
+                loadLinkAppearances(new FileInputStream(_properties.getFilePath("link_appearance_file", null)));
+            }
             loadLinkAppearances(getClass().getResourceAsStream("/link_appearance.json"));
             if (_properties != null && _properties.isDefined("link_appearance_file")) {
                 loadLinkAppearances(new FileInputStream(_properties.getFilePath("link_appearance_file", null)));
+            }
+
+            if (_properties != null && _properties.isDefined("node_appearance_file")) {
+                loadNodeAppearances(new FileInputStream(_properties.getFilePath("node_appearance_file", null)));
             }
             loadNodeAppearances(getClass().getResourceAsStream("/node_appearance.json"));
             if (_properties != null && _properties.isDefined("node_appearance_file")) {
