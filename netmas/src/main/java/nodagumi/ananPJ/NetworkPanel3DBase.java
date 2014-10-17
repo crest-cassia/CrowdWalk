@@ -141,7 +141,7 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         public CaptureCanvas3D(GraphicsConfiguration arg0) {
             super(arg0);
-            aist_logo = getToolkit().createImage("img/aist_logo.png");
+            aist_logo = getToolkit().createImage(getClass().getResource("/img/aist_logo.png"));
         }
 
         private String filename = null;

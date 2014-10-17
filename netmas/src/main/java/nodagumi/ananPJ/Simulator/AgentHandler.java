@@ -1464,9 +1464,9 @@ public class AgentHandler implements Serializable {
         top_panel.add(scroller, BorderLayout.CENTER);
         
         JPanel control_button_panel = new JPanel(new FlowLayout());
-        ImageIcon start_icon = new ImageIcon("img/start.png");
-        ImageIcon pause_icon = new ImageIcon("img/pause.png");
-        ImageIcon step_icon = new ImageIcon("img/step.png");
+        ImageIcon start_icon = new ImageIcon(getClass().getResource("/img/start.png"));
+        ImageIcon pause_icon = new ImageIcon(getClass().getResource("/img/pause.png"));
+        ImageIcon step_icon = new ImageIcon(getClass().getResource("/img/step.png"));
 
         start_button = new JButton(start_icon);
         start_button.addActionListener(new ActionListener() {

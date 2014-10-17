@@ -216,10 +216,10 @@ public class DnDJTree extends JTree implements DragSourceListener, DropTargetLis
         public DnDTreeCellRenderer() {
             super();
             
-            node_icon = new ImageIcon("./img/node_icon.png");
-            link_icon = new ImageIcon("./img/link_icon.png");
-            agent_icon = new ImageIcon("./img/agent_icon.png");
-            symlink_icon = new ImageIcon("./img/symlink_icon.png");
+            node_icon = new ImageIcon(getClass().getResource("/img/node_icon.png"));
+            link_icon = new ImageIcon(getClass().getResource("/img/link_icon.png"));
+            agent_icon = new ImageIcon(getClass().getResource("/img/agent_icon.png"));
+            symlink_icon = new ImageIcon(getClass().getResource("/img/symlink_icon.png"));
         }
 
         @Override
