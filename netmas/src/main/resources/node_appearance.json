@@ -1,0 +1,24 @@
+/*
+Usable color names:
+    BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE,
+    LIGHTBLUE, SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK,
+    ALIGHTB, ARED, PURPLE, PRED,
+    BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
+
+・設定の仕方
+
+    タグ名: {
+        diameter: 直径,
+        color: '色',
+        transparency: 透明度(1.0 で完全に透明)
+    },
+
+・タグ名にハイフン(-)を含む場合はシングルクォートまたはダブルクォートで囲むこと。
+*/
+{
+    EXIT: {
+        diameter: 2.0,
+        color: 'BLACK2',
+        transparency: 0.7
+    },
+}

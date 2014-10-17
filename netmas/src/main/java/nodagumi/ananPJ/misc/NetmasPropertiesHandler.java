@@ -53,7 +53,7 @@ public class NetmasPropertiesHandler implements Serializable {
             "all_agent_speed_zero_break"
             );
 
-    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file"};
+    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file", "node_appearance_file"};
 
     protected String propertiescenarioPath = null;
     protected Properties prop = null;

@@ -268,24 +268,24 @@ public abstract class NetworkPanel3DBase extends JPanel
 
     // リンクの表示スタイル(幅, 色, 透明度)をタグ別に指定するために使用するクラス
     protected class LinkAppearance {
-        public double width = 1.0;
         public boolean widthFixed = false;
+        public double widthRatio = 1.0;
         public Color3f color = Colors.DEFAULT_LINK_COLOR;
         public float transparency = 0.75f;
         public Appearance appearance = new Appearance();
 
-        public LinkAppearance(BigDecimal _width, Boolean _widthFixed, String colorName, BigDecimal _transparency, LinkAppearance defaultValue) {
+        public LinkAppearance(Boolean _widthFixed, BigDecimal _widthRatio, String colorName, BigDecimal _transparency, LinkAppearance defaultValue) {
             if (defaultValue != null) {
-                width = defaultValue.width;
                 widthFixed = defaultValue.widthFixed;
+                widthRatio = defaultValue.widthRatio;
                 color = defaultValue.color;
                 transparency = defaultValue.transparency;
             }
-            if (_width != null) {
-                width = _width.doubleValue();
-            }
             if (_widthFixed != null) {
                 widthFixed = _widthFixed;
+            }
+            if (_widthRatio != null) {
+                widthRatio = _widthRatio.doubleValue();
             }
             if (colorName != null) {
                 color = Colors.getColor(colorName);
@@ -297,10 +297,38 @@ public abstract class NetworkPanel3DBase extends JPanel
         }
     }
 
+    // ノードの表示スタイル(直径, 色, 透明度)をタグ別に指定するために使用するクラス
+    protected class NodeAppearance {
+        public double diameter = 1.5;
+        public Color3f color = Colors.BLACK2;
+        public float transparency = 0.75f;
+        public Appearance appearance = new Appearance();
+
+        public NodeAppearance(BigDecimal _diameter, String colorName, BigDecimal _transparency, NodeAppearance defaultValue) {
+            if (defaultValue != null) {
+                diameter = defaultValue.diameter;
+                color = defaultValue.color;
+                transparency = defaultValue.transparency;
+            }
+            if (_diameter != null) {
+                diameter = _diameter.doubleValue();
+            }
+            if (colorName != null) {
+                color = Colors.getColor(colorName);
+            }
+            if (_transparency != null) {
+                transparency = _transparency.floatValue();
+            }
+            appearance.setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.FASTEST));
+            appearance.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST, transparency));
+        }
+    }
+
     protected MenuBar menu_bar = null;
     protected transient CaptureCanvas3D canvas = null;
     protected JFrame parent = null;
     protected HashMap<String, LinkAppearance> linkAppearances = new HashMap<String, LinkAppearance>();
+    protected HashMap<String, NodeAppearance> nodeAppearances = new HashMap<String, NodeAppearance>();
 
     protected NetworkPanel3DBase(ArrayList<MapNode> _nodes,
             ArrayList<MapLink> _links,
@@ -314,9 +342,13 @@ public abstract class NetworkPanel3DBase extends JPanel
         canvas_height = 600;
 
         try {
-            loadLinkAppearances(this.getClass().getResourceAsStream("/link_appearance.json"));
+            loadLinkAppearances(getClass().getResourceAsStream("/link_appearance.json"));
             if (_properties != null && _properties.isDefined("link_appearance_file")) {
                 loadLinkAppearances(new FileInputStream(_properties.getFilePath("link_appearance_file", null)));
+            }
+            loadNodeAppearances(getClass().getResourceAsStream("/node_appearance.json"));
+            if (_properties != null && _properties.isDefined("node_appearance_file")) {
+                loadNodeAppearances(new FileInputStream(_properties.getFilePath("node_appearance_file", null)));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -329,12 +361,30 @@ public abstract class NetworkPanel3DBase extends JPanel
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String tag = entry.getKey();
             Map<String, Object> items = (Map<String, Object>)entry.getValue();
+            BigDecimal widthRatio = (BigDecimal)items.get("width_ratio");
+            if (widthRatio == null) {
+                widthRatio = (BigDecimal)items.get("width");
+            }
             linkAppearances.put(tag, new LinkAppearance(
-                (BigDecimal)items.get("width"),
                 (Boolean)items.get("width_fixed"),
+                widthRatio,
                 (String)items.get("color"),
                 (BigDecimal)items.get("transparency"),
                 linkAppearances.get(tag)
+            ));
+        }
+    }
+
+    protected void loadNodeAppearances(InputStream is) throws Exception {
+        Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String tag = entry.getKey();
+            Map<String, Object> items = (Map<String, Object>)entry.getValue();
+            nodeAppearances.put(tag, new NodeAppearance(
+                (BigDecimal)items.get("diameter"),
+                (String)items.get("color"),
+                (BigDecimal)items.get("transparency"),
+                nodeAppearances.get(tag)
             ));
         }
     }
@@ -611,6 +661,7 @@ public abstract class NetworkPanel3DBase extends JPanel
         map_objects_parent.addChild(map_objects);
 
         setup_links();
+        setup_nodes(map_objects);
         register_map_objects();
         Transform3D map_trans = new Transform3D();
 
@@ -634,9 +685,6 @@ public abstract class NetworkPanel3DBase extends JPanel
         point_max = new Vector3d(Double.MIN_VALUE, Double.MIN_VALUE,
                 Double.MIN_VALUE);
 
-        Pattern betweenPattern = Pattern
-                .compile(".*between\\=(\\d+\\.?\\d+?).*");
-        Pattern exitPattern = Pattern.compile(".*EXIT.*");
         int count = 0;
         for (final MapNode node : nodes) {
             ++count;
@@ -656,43 +704,6 @@ public abstract class NetworkPanel3DBase extends JPanel
             point_max.x = Math.max(point_max.x, x);
             point_max.y = Math.max(point_max.y, y);
             point_max.z = Math.max(point_max.z, z);
-
-            Transform3D trans = new Transform3D();
-            trans.setTranslation(new Vector3d(x, y, z));
-
-            TransformGroup node_group = null;
-            try {
-                node_group = new TransformGroup(trans);
-            } catch (BadTransformException e) {
-                node_group = new TransformGroup();
-                continue;
-            }
-            Appearance appearance = new Appearance();
-            Matcher betweenMatcher = betweenPattern
-                    .matcher(node.getTagString());
-            Matcher exitMatcher = exitPattern.matcher(node.getTagString());
-            if (betweenMatcher.matches()) {
-                final float between = Float.parseFloat(betweenMatcher.group(1)) * 0.7f + 0.3f;
-                appearance.setColoringAttributes(new ColoringAttributes(
-                        new Color3f(0.0f, between, between),
-                        ColoringAttributes.FASTEST));
-            }
-            if (exitMatcher.matches()) {
-                appearance.setColoringAttributes(new ColoringAttributes(
-                            //Colors.GREEN, ColoringAttributes.FASTEST));
-                            Colors.TURQUOISE, ColoringAttributes.FASTEST));
-            } else {
-                /* do not show nodes by default */
-                continue;
-            }
-            appearance.setTransparencyAttributes(new TransparencyAttributes(
-                    TransparencyAttributes.FASTEST, 0.1f));
-            if (exitMatcher.matches()) {
-                node_group.addChild(new Sphere(0.5f, appearance));
-            } else {
-                node_group.addChild(new Sphere(1, appearance));
-            }
-            objects.addChild(node_group);
         }
         point_center.x /= count;
         point_center.y /= count;
@@ -866,8 +877,10 @@ public abstract class NetworkPanel3DBase extends JPanel
                     }
                 }
             }
-            if (containPolygon)
+            if (containPolygon) {
+                // link は POLYGON 描画用のリンクなので通常のリンクとしては描画しない
                 continue;
+            }
 
             LinkAppearance linkAppearance = null;
             for (Map.Entry<String, LinkAppearance> entry : linkAppearances.entrySet()) {
@@ -887,7 +900,7 @@ public abstract class NetworkPanel3DBase extends JPanel
 
                 Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
                 v1.normalize();
-                Vector3d v2 = new Vector3d(0, 0, linkAppearance.widthFixed ? linkAppearance.width : link.width * linkAppearance.width);
+                Vector3d v2 = new Vector3d(0, 0, linkAppearance.widthFixed ? linkAppearance.widthRatio : link.width * linkAppearance.widthRatio);
                 if (v2.z == 0)
                     v2.z = 1.0;
                 Vector3d v3 = new Vector3d();
@@ -952,6 +965,7 @@ public abstract class NetworkPanel3DBase extends JPanel
                 canvasobj_to_obnode.put(shape, link);
             }
         }
+
         // tkokada polygon
         for (String tag : polygons.keySet()) {
             ArrayList<MapLink> polygonLinks = polygons.get(tag);
@@ -1023,6 +1037,33 @@ public abstract class NetworkPanel3DBase extends JPanel
         structure_group.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         structure_group.setCapability(BranchGroup.ALLOW_DETACH);
         map_objects.addChild(structure_group);
+    }
+
+    protected void setup_nodes(TransformGroup objects) {
+        for (MapNode node : nodes) {
+            NodeAppearance nodeAppearance = null;
+            for (Map.Entry<String, NodeAppearance> entry : nodeAppearances.entrySet()) {
+                if (node.hasTag(entry.getKey())) {
+                    nodeAppearance = entry.getValue();
+                    break;
+                }
+            }
+            if (nodeAppearance != null) {
+                Point2D pos = node.getAbsoluteCoordinates();
+                double x = pos.getX();
+                double y = pos.getY();
+                double z = node.getHeight() / ((MapPartGroup)node.getParent()).getScale();
+
+                Transform3D trans = new Transform3D();
+                trans.setTranslation(new Vector3d(x, y, z));
+
+                TransformGroup node_group = new TransformGroup(trans);
+                // ※API ドキュメントでは Sphere(float radius, Appearance ap) となっているが、実際には直径として扱われる
+                node_group.addChild(new Sphere((float)nodeAppearance.diameter, nodeAppearance.appearance));
+
+                objects.addChild(node_group);
+            }
+        }
     }
 
     // tkokada polygon
