@@ -255,8 +255,17 @@ public class EditorFrame
                     if (c != null) {
                         panel.setLinkColor(c);
                     }
+                    update();
+                } else if (e.getActionCommand().equals("Centering")) {
+                    panel.centering(false);
+                    panel.repaint();
+                } else if (e.getActionCommand().equals("Centering with scaling")) {
+                    panel.centering(true);
+                    panel.repaint();
+                } else if (e.getActionCommand().equals("To the origin")) {
+                    panel.setPosition(0, 0);
+                    panel.repaint();
                 }
-                update();
             }
 
             @Override
@@ -334,10 +343,23 @@ public class EditorFrame
 
             viewMenu.add(background_menu);
         }
-        mi = new MenuItem ("Set link color");
+
+        mi = new MenuItem("Set link color");
+        mi.addActionListener(vo);
+        viewMenu.add(mi);
+
+        mi = new MenuItem("Centering");
+        mi.addActionListener(vo);
+        viewMenu.add(mi);
+
+        mi = new MenuItem("Centering with scaling");
         mi.addActionListener(vo);
         viewMenu.add(mi);
         
+        mi = new MenuItem("To the origin");
+        mi.addActionListener(vo);
+        viewMenu.add(mi);
+
         viewMenu.addSeparator();
 
         showNodes = new CheckboxMenuItem("Show nodes");
@@ -2905,6 +2927,7 @@ public class EditorFrame
                 && background_read == false) {
             readBackgroundWithName();
         }
+        panel.centering(true);
     }
 
     @Override

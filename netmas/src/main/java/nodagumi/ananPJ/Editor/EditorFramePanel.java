@@ -132,6 +132,11 @@ public class EditorFramePanel extends JPanel implements Serializable {
         ty += dy;
     }
 
+    public void setPosition(int dx, int dy) {
+        tx = dx;
+        ty = dy;
+    }
+
     public void localScroll(int dx, int dy) {
         ob_node.tx += dx / scale;
         ob_node.ty += dy / scale;
@@ -166,7 +171,7 @@ public class EditorFramePanel extends JPanel implements Serializable {
         repaint();
     }
     
-    public void centering() {
+    public void centering(boolean withScaling) {
         double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
         for (MapNode node : frame.getChildNodes()) {
@@ -179,12 +184,21 @@ public class EditorFramePanel extends JPanel implements Serializable {
                 maxY = Math.max(maxY, node.getY());
             }
         }
+        if (minX == Double.MAX_VALUE) {
+            tx = 0.0;
+            ty = 0.0;
+            scale = 1.0;
+            return;
+        }
+
         final double width = maxX - minX;
         final double height = maxY - minY;
         final double scaleX = (getWidth() - 20) / width;
         final double scaleY = (getHeight() - 60) / height;
         
-        scale = Math.min(scaleX, scaleY);
+        if (withScaling) {
+            scale = Math.min(scaleX, scaleY);
+        }
         tx = -(minX + maxX) / (2) * scale + (getWidth() - 20) / 2;
         ty = -(minY + maxY) / (2) * scale + (getHeight() - 40) / 2;
     }
