@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.WindowAdapter;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
@@ -840,6 +841,78 @@ public class NetworkMapEditor extends SimulationLauncher
         // make_fv_rooms();
 
         super.simulate(isDeserialized);
+    }
+
+    // model.begin() をバックグラウンドで実行するためのモーダルダイアログ
+    private class WaitDialog extends JDialog {
+        public boolean canceled = false;
+
+        public WaitDialog(Frame owner, String title, String message, final Thread thread) {
+            super(owner, title, true);
+
+            JPanel panel = new JPanel(new FlowLayout());
+            final JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    cancelButton.setEnabled(false);
+                    canceled = true;
+                    threadCancel(thread);
+                }
+            });
+            panel.add(cancelButton);
+
+            Container c = getContentPane();
+            c.add(new JLabel(message), BorderLayout.CENTER);
+            c.add(panel, BorderLayout.PAGE_END);
+
+            setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+                public void windowOpened(WindowEvent e) {
+                    thread.start();
+                }
+
+                public void windowClosing(WindowEvent e) {
+                    if (canceled) {
+                        return;
+                    }
+                    canceled = true;
+                    cancelButton.setEnabled(false);
+                    threadCancel(thread);
+                }
+            });
+
+            setSize(300, 128);
+            setLocationRelativeTo(owner);
+        }
+
+        public void threadCancel(Thread thread) {
+            // ※ビルドの中断機能は未実装のため、現状では処理終了を待つだけ
+            try {
+                thread.join();
+            } catch(InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private WaitDialog waitDialog;
+
+    public boolean buildModel() {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                model.begin(true, false, null);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        // ここでダイアログを閉じる
+                        waitDialog.setVisible(false);
+                        waitDialog.dispose();
+                    }
+                });
+            }
+        });
+        waitDialog = new WaitDialog(frame, "Information", " Simulation model building...", thread);
+        waitDialog.setVisible(true);
+        return ! waitDialog.canceled;
     }
 
     private void calcExitPaths() {

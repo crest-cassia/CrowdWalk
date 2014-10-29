@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap;
@@ -175,8 +176,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     scenario_number,
                     links);
         }
-        if (has_display)
-            buildDisplay(_panel3d);
 
         agentHandler.prepareForSimulation();
     }
@@ -224,11 +223,11 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
     }
 
-    void buildDisplay() {
+    public void buildDisplay() {
         panel3d = controller.setupFrame(this);
     }
 
-    void buildDisplay(SimulationPanel3D _panel3d) {
+    public void buildDisplay(SimulationPanel3D _panel3d) {
         if (controller != null) {
             if (_panel3d != null) {
                 panel3d = controller.setupFrame(this, _panel3d);

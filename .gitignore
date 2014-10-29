@@ -32,3 +32,6 @@ netmas/log/*
 
 # temporary files
 netmas/tmp/*
+
+# vim plugin
+.vimsessions/
