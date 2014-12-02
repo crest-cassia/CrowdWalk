@@ -13,9 +13,9 @@ public class NonAccumulatedPollution extends Pollution {
             agent.accumulatedExposureAmount = pollutionLevel;
         }
 
-        if (getTriage(agent) != 0) { 
-            agent.setGoal("EMERGENCY");
-        }
+        // if (getTriage(agent) != 0) {
+        //     agent.setGoal("EMERGENCY");
+        // }
     }
 
     /* effect of flood, this damage does not increase */
@@ -24,16 +24,18 @@ public class NonAccumulatedPollution extends Pollution {
         if (agent.currentExposureAmount > 10.0) {
             agent.currentExposureAmount = 10.0;
         }
-        agent.setSpeed(agent.getSpeed() * (10.0 - agent.currentExposureAmount) / 10.0);
+        // 水深1.2mで歩行不可能
+        // ※スピードがマイナスになるのを避ける
+        agent.setSpeed(agent.getSpeed() * (1.2 - Math.min(agent.currentExposureAmount, 1.2)) / 1.2);
     }
 
     /* the state of the agent */
     public int getTriage(EvacuationAgent agent) {
-        if (agent.accumulatedExposureAmount >= 4.0)
+        if (agent.accumulatedExposureAmount >= 1.5)
             return 3;
-        else if (agent.accumulatedExposureAmount >= 2.0)
+        else if (agent.accumulatedExposureAmount >= 0.8)
             return 2;
-        else if (agent.accumulatedExposureAmount >= 1.0)
+        else if (agent.accumulatedExposureAmount >= 0.3)
             return 1;
         else
             return 0;

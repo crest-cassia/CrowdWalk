@@ -723,9 +723,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             setEvacuated(true, time);
             return true;
         }
-        if (current_link.getTotalTriageLevel() > 5) {
-            setEmergency();
-        }
+        // if (current_link.getTotalTriageLevel() > 5) {
+        //     setEmergency();
+        // }
 
         if (calculation_model == SpeedCalculationModel.ExpectedDensityModel)
             return move_commit(time, expectedDensityMacroTimeStep);
