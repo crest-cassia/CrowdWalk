@@ -6,6 +6,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'optparse'
 require 'gtoc'
 require 'cblxy'
+require 'geo_utils'
 
 # constants
 MAX_ID = 1024 * 1024 * 1024
@@ -97,11 +98,6 @@ if output_pollution_file.nil?
 end
 if meshcode_type == "undefined"
   STDERR.puts "E: meshcode_type is undefined."
-  STDERR.puts "#{opts}"
-  exit
-end
-unless map_type == meshcode_type
-  STDERR.puts "E: datum mismatch!"
   STDERR.puts "#{opts}"
   exit
 end
@@ -365,10 +361,19 @@ File.open(output_map_file, "w") do |file|
     c = meshcode2coordinate(tagcode[:code])
     ne, sw = nil, nil
     if map_type == "world"
+      if meshcode_type == "world"
         x, y = blxy(decimal2degree(c[:latitude]), decimal2degree(c[:longitude]), map_number)
         sw = {x: x, y: y}
         x, y = blxy(decimal2degree(c[:latitude] + c[:height]), decimal2degree(c[:longitude] + c[:width]), map_number)
         ne = {x: x, y: y}
+      else  # "japan"
+        world_x, world_y, world_z = convert_japan_to_world(c[:longitude], c[:latitude], 0.0)
+        x, y = blxy(decimal2degree(world_y), decimal2degree(world_x), map_number)
+        sw = {x: x, y: y}
+        world_x, world_y, world_z = convert_japan_to_world(c[:longitude] + c[:width], c[:latitude] + c[:height], 0.0)
+        x, y = blxy(decimal2degree(world_y), decimal2degree(world_x), map_number)
+        ne = {x: x, y: y}
+      end
     else
       if !default_latitude.nil? && !default_longitude.nil?
         sw = Geographic::gtoc(
