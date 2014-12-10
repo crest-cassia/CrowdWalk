@@ -1,0 +1,70 @@
+%%  -*- Mode: Memo -*-
+=begin
+
+= 野田用 ToDo
+
+== 解析メモ
+
+=== [2014/12/11 03:05]
+
+    * AgentClassFinder を作って、エージェントクラスを指定できるように
+      したほうがいい。エージェントのタイプを増やしやすいように。
+
+      * エージェントを作っているところ：
+        EvacuationAgent.java の fromDom() および fromString()
+
+      * java のクラスは、classpath の文字列から見つけることができる。
+        Class.forName(String className)
+
+        * className = "java.lang.String" など、完全修飾名。
+
+      * 使いやすいように、alias 機能があったほうがいい。
+
+    * 普通のエージェントは、おそらく RunningAroundPerson.java という
+      クラス。
+
+      * 道を選んでいるのは、sane_navigation(time, way_candidates)
+
+        * ここで渡される way_candidates は無駄になっている。（計算してないから
+          いいか）
+
+        * sane_navigation は、結局、sane_navigation_from_node(time
+          link, node) をよび、そこで最小コストを探している。
+
+          * この関数が異常に長すぎる。これをまず整理・分割すべき。
+
+          * 最小コストが同じ物がある場合、ランダムに選んでいる。
+            そこでの選択の仕方が、結構、かっこわるい。
+            現状では、
+
+            * 複数個見つかった時点で配列を作る。
+
+            * その配列に入れ始める。
+
+            * 最後にその配列からランダム選択。
+
+          * もうちょっとエレガントにするなら、
+
+            * 最小が更新されたら、n=1 .
+
+            * 最小と同じものが見つかったら、n = n + 1.
+              そして、(1/n) の確率で、新しく見つかったものに更新。
+
+            こうすればいい。どの選択肢も、最終的に 1/n で選ばれる。
+
+    * ReasonBuffer というクラスを作って、navigation_reason を貯めてお
+      けるようにすべきかもしれない。ReasonBuffer の実体は、単に 
+      ArrayList<Object> で、toString されると、null 以外は、" " で結合
+      するようにする。
+
+
+
+
+
+            
+
+
+
+
+          
+
