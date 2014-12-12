@@ -30,12 +30,12 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_get() {
-	System.out.println("test_get") ;
+	Itk.dbgMsg("---", "get()") ;
 	try {
 	    String name = "java.lang.String" ;
 	    Class<?> klass = ClassFinder.get(name) ;
-	    System.out.println("name=" + name) ;
-	    System.out.println("class=" + klass.toString()) ;
+	    Itk.dbgMsg("name=", name) ;
+	    Itk.dbgMsg("class=", klass.toString()) ;
 	} catch (Exception ex) {
 	    ex.printStackTrace() ;
 	}
@@ -47,13 +47,13 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_alias() {
-	System.out.println("test_alias") ;
+	Itk.dbgMsg("---","alias()") ;
 	try {
 	    ClassFinder.alias("MyString","java.lang.String") ;
 	    String name = "MyString" ;
 	    String fullname = ClassFinder.fullname(name) ;
-	    System.out.println("name=" + name) ;
-	    System.out.println("fullname=" + fullname) ;
+	    Itk.dbgMsg("name=", name) ;
+	    Itk.dbgMsg("fullname=", fullname) ;
 	} catch (Exception ex) {
 	    ex.printStackTrace() ;
 	}
@@ -65,13 +65,13 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_new() {
-	System.out.println("test_new") ;
+	Itk.dbgMsg("---", "new()") ;
 	try {
 	    ClassFinder.alias("MyString","java.lang.String") ;
 	    String name = "MyString" ;
 	    String str = (String)ClassFinder.newByName(name) ;
 	    str += "foo" ;
-	    System.out.println("str=" + str) ;
+	    Itk.dbgMsg("str=", str) ;
 	} catch (Exception ex) {
 	    ex.printStackTrace() ;
 	}
@@ -83,7 +83,7 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_json() {
-	System.out.println("test_json") ;
+	Itk.dbgMsg("---","json()") ;
 	try {
 	    ClassFinder.aliasByJson(" { " +
 				    "'MyString' : 'java.lang.String'," +
@@ -92,9 +92,9 @@ public class ClassFinder_Test extends TestCase {
 				    "}") ;
 	    String str = (String)ClassFinder.newByName("MyString") ;
 	    str += "foo" ;
-	    System.out.println("str=" + str + "\n" +
-			       "Me=" + ClassFinder.get("Me").toString() + "\n" +
-			       "You=" + ClassFinder.get("You").toString() + "\n") ;
+	    Itk.dbgMsg("str=", str) ;
+	    Itk.dbgMsg("Me=", ClassFinder.get("Me")) ;
+	    Itk.dbgMsg("You=", ClassFinder.get("You")) ;
 	} catch (Exception ex) {
 	    ex.printStackTrace() ;
 	}
