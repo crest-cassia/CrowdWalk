@@ -29,7 +29,7 @@ public class Itk_Test extends TestCase {
      */
     @Test
     public void test_dbgMsg() {
-	Itk.dbgMsg("---","dbgMsg()") ;
+	Itk.dbgMsgMethodInfo() ;
 	int x = 1 ;
 	String y = "foo bar baz" ;
 	int z[] = {1, 2, 3} ;
@@ -47,7 +47,7 @@ public class Itk_Test extends TestCase {
      */
     @Test
     public void test_randomURI() {
-	Itk.dbgMsg("---","randomURI()") ;
+	Itk.dbgMsgMethodInfo() ;
 	Itk.dbgMsg("uri=", Itk.genUriRandom()) ;
     }
 
@@ -57,8 +57,19 @@ public class Itk_Test extends TestCase {
      */
     @Test
     public void test_getCurrentTimeStr() {
-	Itk.dbgMsg("---","getCurrentTimeStr()") ;
+	Itk.dbgMsgMethodInfo() ;
 	Itk.dbgMsg("time=", Itk.getCurrentTimeStr()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * test CurrentStack
+     */
+    @Test
+    public void test_currentCall() {
+	Itk.dbgMsgMethodInfo() ;
+	Itk.dbgMsg("---","currentCall()") ;
+	Itk.dbgMsg("stack=", Itk.currentCall()) ;
     }
 
 } // class Itk_Test

@@ -30,7 +30,7 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_get() {
-	Itk.dbgMsg("---", "get()") ;
+	Itk.dbgMsgMethodInfo() ;
 	try {
 	    String name = "java.lang.String" ;
 	    Class<?> klass = ClassFinder.get(name) ;
@@ -47,7 +47,7 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_alias() {
-	Itk.dbgMsg("---","alias()") ;
+	Itk.dbgMsgMethodInfo() ;
 	try {
 	    ClassFinder.alias("MyString","java.lang.String") ;
 	    String name = "MyString" ;
@@ -65,7 +65,7 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_new() {
-	Itk.dbgMsg("---", "new()") ;
+	Itk.dbgMsgMethodInfo() ;
 	try {
 	    ClassFinder.alias("MyString","java.lang.String") ;
 	    String name = "MyString" ;
@@ -83,7 +83,7 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_json() {
-	Itk.dbgMsg("---","json()") ;
+	Itk.dbgMsgMethodInfo() ;
 	try {
 	    ClassFinder.aliasByJson(" { " +
 				    "'MyString' : 'java.lang.String'," +

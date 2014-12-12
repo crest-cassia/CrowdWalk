@@ -12,6 +12,9 @@
 
 package nodagumi.Itk;
 
+import java.lang.Thread ;
+import java.lang.StackTraceElement ;
+
 import java.util.UUID;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,6 +76,15 @@ public class Itk {
 	} catch(/*TransformerException*/ Exception ex) {
 	    ex.printStackTrace();
 	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * デバッグ用出力コマンド
+     * 現在のメソッド名を出力する。
+     */
+    static public void dbgMsgMethodInfo() {
+	dbgMsg("=====", currentMethod(1)) ;
     }
 
     //------------------------------------------------------------
@@ -198,6 +210,39 @@ public class Itk {
     static public String getCurrentTimeStr(DateFormat form) {
 	Date date = getCurrentTimeDate() ;
 	return form.format(date) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在実行中のメソッド情報
+     */
+    static public StackTraceElement currentCall() {
+	return currentCall(1) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在実行中のメソッド情報
+     */
+    static public StackTraceElement currentCall(int offset) {
+	StackTraceElement[] trace = Thread.currentThread().getStackTrace() ;
+	return trace[2 + offset] ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在実行中のメソッド名
+     */
+    static public String currentMethod() {
+	return currentMethod(1) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在実行中のメソッド名
+     */
+    static public String currentMethod(int offset) {
+	return currentCall(offset + 1).toString() ;
     }
 
 } // class Itk
