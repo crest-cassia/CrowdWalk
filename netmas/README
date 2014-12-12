@@ -20,6 +20,8 @@ libraries as default. These default libraries are old version, so please move
 them from path directory.
 If you are not sure about what Java3D libraries should be used, please check 
 quickstart.sh script.
+:::[2014.12.12 I.Noda]:::
+   Java should be newer than jdk1.7
 
 2.2. Build with Gradle
 We assume that CrowdWalk users build on terminal or eclipse. We describe the 
@@ -27,6 +29,8 @@ usage to build it on them.
 
 2.2.1. Build on terminal.
 If you build CrowdWalk on terminal, you should install groovy and gradle. 
+:::[2014.12.11 I.Noda]:::
+   gradle should be ver.1.12. Newer version does not work well.
 The build.gradle file on top directory is the build file for gradle. If you 
 install gradle, you just type as follow:
 
