@@ -1,0 +1,94 @@
+/*
+Usable color names:
+    BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE,
+    LIGHTBLUE, SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK,
+    ALIGHTB, ARED, PURPLE, PRED,
+    BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
+
+・設定の仕方
+
+    タグ名: {
+        width_fixed: true または false,
+        width_ratio: リンク幅(長さまたは倍率),
+        color: '色',
+        transparency: 透明度(1.0 で完全に透明)
+    },
+
+・width_fixed が true なら width_ratio で指定した値がそのまま表示上のリンク幅となる。
+  width_fixed が false なら width_ratio で指定した値をマップデータのリンク幅に乗算した値が表示上のリンク幅となる。
+・タグ名にハイフン(-)を含む場合はシングルクォートまたはダブルクォートで囲むこと。
+*/
+{
+    STRUCTURE: {
+        width_fixed: true,
+        width_ratio: 5.0,
+        color: 'WHITE',
+        transparency: 0.245
+    },
+    FLOOR: {
+        width_fixed: true,
+        width_ratio: 5.0,
+        color: 'GRAY',
+        transparency: 0.95
+    },
+    HIGHWAY: {
+        width_fixed: false,
+        width_ratio: 1.0,
+        color: 'WHITE',
+        transparency: 0.2525
+    },
+    MAINROAD: {
+        width_fixed: false,
+        width_ratio: 0.75,
+        color: 'GRAY',
+        transparency: 0.7525
+    },
+    RAILWAY: {
+        width_fixed: false,
+        width_ratio: 1.0,
+        color: 'GRAY',
+        transparency: 0.2525
+    },
+//    RIVER: {
+//        width_fixed: false,
+//        width_ratio: 1.0,
+//        color: 'BLUE',
+//        transparency: 0.4525
+//    },
+    BRIDGE: {
+        width_fixed: false,
+        width_ratio: 1.0,
+        color: 'GRAY',
+        transparency: 0.4525
+    },
+    FRAME: {
+        width_fixed: false,
+        width_ratio: 8.0,
+        color: 'YELLOW',
+        transparency: 0.2525
+    },
+    'ONE-WAY-POSITIVE': {
+        width_fixed: true,
+        width_ratio: 3.0,
+        color: 'PURPLE',
+        transparency: 0.5
+    },
+    'ONE-WAY-NEGATIVE': {
+        width_fixed: true,
+        width_ratio: 3.0,
+        color: 'LIGHTBLUE',
+        transparency: 0.25
+    },
+    ONEWAY: {
+        width_fixed: false,
+        width_ratio: 0.5,
+        color: 'ARED',
+        transparency: 0.7525
+    },
+    'ROAD-CLOSED': {
+        width_fixed: true,
+        width_ratio: 3.0,
+        color: 'RED',
+        transparency: 0.25
+    },
+}

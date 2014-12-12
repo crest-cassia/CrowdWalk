@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import javax.swing.JFrame;
 
@@ -32,8 +33,8 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase
      */
     private static final long serialVersionUID = -6526471479789757625L;
     protected NetworkPanel3D(ArrayList<MapNode> _nodes,
-            ArrayList<MapLink> _links, JFrame _parent) {
-        super(_nodes, _links, _parent);
+            ArrayList<MapLink> _links, JFrame _parent, NetmasPropertiesHandler _properties) {
+        super(_nodes, _links, _parent, _properties);
     }
 
     protected void deserialize(ArrayList<MapNode> _nodes,

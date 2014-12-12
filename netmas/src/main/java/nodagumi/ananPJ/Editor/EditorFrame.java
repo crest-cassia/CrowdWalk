@@ -87,6 +87,7 @@ public class EditorFrame
     //CheckboxMenuItem showSubGroups = null;
     CheckboxMenuItem showPollution = null;
     CheckboxMenuItem showScaling = null;
+    MenuItem backgroundImageScaleMenu = null;
     Menu background_group = null;
     MenuItem editNodeMode = null;
     MenuItem editLinkMode = null;
@@ -106,6 +107,7 @@ public class EditorFrame
 
     private MenuBar menuBar = null;
     private JLabel status = null;
+    private ArrayList<MapPartGroupButton> groupButtons = null;
 
     /* these values are used, only when the frame is not related with any OB group */
 
@@ -115,6 +117,7 @@ public class EditorFrame
  
     private Hover hoverNode = null;
     private MapNode selectedNode = null;
+    private MapNode currentNode = null;     // マウスボタンクリック時の選択ノード(selectedNode はコロコロ変わって使いにくいので)
     private boolean draggingNode = false;
     private Hover hoverLink = null;
     private MapNode hoverLinkFromCandidate = null;
@@ -135,15 +138,18 @@ public class EditorFrame
 
     private Boolean areaSelection = false;
     private Rectangle2D selectedArea = null;
-    private Random random = null;
+    //private Random random = null;
+    private Point2D startpos = new Point2D.Double(0.0, 0.0);
 
     //public NetworkMapEditor editor = NetworkMapEditor.getInstance();
     public NetworkMapEditor editor = null;
 
-    public EditorFrame(MapPartGroup _ob_node, Random _random) {
+    //public EditorFrame(MapPartGroup _ob_node, Random _random) {
+    public EditorFrame(NetworkMapEditor _editor, MapPartGroup _ob_node) {
         super(_ob_node.getTagString());
-        random = _random;
-        editor = NetworkMapEditor.getInstance();
+        //random = _random;
+        //editor = NetworkMapEditor.getInstance();
+        editor = _editor;
         current_group = _ob_node;
 
         addKeyListener(this);
@@ -221,6 +227,18 @@ public class EditorFrame
         });
         editMenu.add(mi);
 
+        backgroundImageScaleMenu = new MenuItem("Set Background Image Scale");
+        backgroundImageScaleMenu.setEnabled(false);
+        final EditorFrame frame = this;
+        backgroundImageScaleMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BGImageScaleDialog dialog = new BGImageScaleDialog(frame, "Set Background Image Scale", true);
+                dialog.setVisible(true);
+            }
+        });
+        editMenu.add(backgroundImageScaleMenu);
+
         menuBar.add(editMenu);
 
         class ViewOrganizer implements ActionListener, ItemListener {
@@ -237,8 +255,17 @@ public class EditorFrame
                     if (c != null) {
                         panel.setLinkColor(c);
                     }
+                    update();
+                } else if (e.getActionCommand().equals("Centering")) {
+                    panel.centering(false);
+                    panel.repaint();
+                } else if (e.getActionCommand().equals("Centering with scaling")) {
+                    panel.centering(true);
+                    panel.repaint();
+                } else if (e.getActionCommand().equals("To the origin")) {
+                    panel.setPosition(0, 0);
+                    panel.repaint();
                 }
-                update();
             }
 
             @Override
@@ -270,41 +297,69 @@ public class EditorFrame
         {
             Menu background_menu = new PopupMenu ("Background");
             MenuItem bmi = new MenuItem("100%");
-            bmi.addActionListener((new ActionListener() {
-                public void actionPerformed(ActionEvent e) {panel.setImageStrength(1.0);}
-                }));
+            bmi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    panel.setImageStrength(1.0);
+                    panel.repaint();
+                }
+            });
             background_menu.add(bmi);
 
             bmi = new MenuItem("75%");
-            bmi.addActionListener((new ActionListener() {
-                public void actionPerformed(ActionEvent e) {panel.setImageStrength(0.75);}
-                }));
+            bmi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    panel.setImageStrength(0.75);
+                    panel.repaint();
+                }
+            });
             background_menu.add(bmi);
 
             bmi = new MenuItem("50%");
-            bmi.addActionListener((new ActionListener() {
-                public void actionPerformed(ActionEvent e) {panel.setImageStrength(0.5);}
-                }));
+            bmi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    panel.setImageStrength(0.5);
+                    panel.repaint();
+                }
+            });
             background_menu.add(bmi);
 
             bmi = new MenuItem("25%");
-            bmi.addActionListener((new ActionListener() {
-                public void actionPerformed(ActionEvent e) {panel.setImageStrength(0.25);}
-                }));
+            bmi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    panel.setImageStrength(0.25);
+                    panel.repaint();
+                }
+            });
             background_menu.add(bmi);
             
             bmi = new MenuItem("0%");
-            bmi.addActionListener((new ActionListener() {
-                public void actionPerformed(ActionEvent e) {panel.setImageStrength(0.0);}
-                }));
+            bmi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    panel.setImageStrength(0.0);
+                    panel.repaint();
+                }
+            });
             background_menu.add(bmi);
 
             viewMenu.add(background_menu);
         }
-        mi = new MenuItem ("Set link color");
+
+        mi = new MenuItem("Set link color");
+        mi.addActionListener(vo);
+        viewMenu.add(mi);
+
+        mi = new MenuItem("Centering");
+        mi.addActionListener(vo);
+        viewMenu.add(mi);
+
+        mi = new MenuItem("Centering with scaling");
         mi.addActionListener(vo);
         viewMenu.add(mi);
         
+        mi = new MenuItem("To the origin");
+        mi.addActionListener(vo);
+        viewMenu.add(mi);
+
         viewMenu.addSeparator();
 
         showNodes = new CheckboxMenuItem("Show nodes");
@@ -492,6 +547,7 @@ public class EditorFrame
         @Override
         public void actionPerformed(ActionEvent e) {
             panel.setBackgroundGroup(group);
+            panel.repaint();
         }
     }
 
@@ -506,35 +562,44 @@ public class EditorFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.setBackgroundGroup(null);
+                panel.repaint();
             }
         });
         background_group.add(gmi);
     }
-    class MapPartGroupButton
-    extends JButton
-    implements ActionListener {
+
+    class MapPartGroupButton extends JButton implements ActionListener {
         private static final long serialVersionUID = -1229787907250905245L;
         private MapPartGroup node;
         private EditorFrame frame;
-        public MapPartGroupButton(EditorFrame _frame,
-                MapPartGroup _node) {
+
+        public MapPartGroupButton(EditorFrame _frame, MapPartGroup _node) {
             super(_node.getTagString());
             frame = _frame;
             node = _node;
             addActionListener(this);
         }
+
         public void actionPerformed(ActionEvent e) {
+            for (MapPartGroupButton button : groupButtons) {
+                button.setEnabled(button != this);
+            }
             frame.current_group = node;
             frame.refreshBackground();
             frame.repaint();
         }
     }
+
     private void setupContents () {
         menuPanel = new JPanel();
 
+        groupButtons = new ArrayList<MapPartGroupButton>();
         for (MapPartGroup group : editor.getMap().getGroups()) {
             if (group.getTags().size() == 0) continue;
-            menuPanel.add(new MapPartGroupButton(this, group));
+            MapPartGroupButton button = new MapPartGroupButton(this, group);
+            button.setEnabled(group != current_group);
+            menuPanel.add(button);
+            groupButtons.add(button);
         }
 
         add(menuPanel, BorderLayout.NORTH);
@@ -584,6 +649,7 @@ public class EditorFrame
         Image image = getToolkit().getImage(current_group.getImageFileName());
         panel.addBackground(image);
         background_read = true;
+        backgroundImageScaleMenu.setEnabled(true);
 
         repaint();
         return true;
@@ -625,8 +691,8 @@ public class EditorFrame
         Point2D p = panel.revCalcPos(e.getX(), e.getY());
         editor.getMap().createMapNode(current_group,
                 p, getDefaultHeight());
-        editor.setModified(true);
-        editor.updateAll();
+        editor._setModified(true);
+        editor.getNodePanel().refresh();
         clearSelection();
     }
 
@@ -660,8 +726,7 @@ public class EditorFrame
             selectedNode.selected = true;
         }
 
-        editor.updateAll();
-        repaint();
+        editor.getNodePanel().refresh();
     }
     
     private Menu make_symlink_menu() {
@@ -742,29 +807,27 @@ public class EditorFrame
         assert (hoverLinkFromCandidate != null);
         final MapNode from = hoverLinkFromCandidate;
 
-        for (int tindex = 0; tindex < getChildNodesAndSymlinks().size(); ++tindex) {
-            final MapNode to = getChildNodesAndSymlinks().get(tindex);
+        ArrayList<MapNode> childNodesAndSymlinks = current_group.getChildNodesAndSymlinks(from, from.getQuadrant(p));
+        ArrayList<MapLink> childLinks = getChildLinks();
+        for (int tindex = 0; tindex < childNodesAndSymlinks.size(); ++tindex) {
+            final MapNode to = childNodesAndSymlinks.get(tindex);
             Line2D line = new Line2D.Double (from.getLocalCoordinates(), to.getLocalCoordinates());
             if (line.ptSegDist(p) < 5.0 / panel.getDrawingScale()) {
-                /* check for existing links */
-                boolean exists = false;
-                for (final MapLink link : getChildLinks()) {
-                    if ((link.getFrom() == from && link.getTo() == to) ||
-                            (link.getTo() == from && link.getFrom() == to)) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (exists) continue;
-                
                 double lineLength = line.getP1().distance(line.getP2());
-                if (candidate == null ||
-                        lineLength < candidate.length) {
+                if (candidate == null || lineLength < candidate.length) {
+                    /* check for existing links */
+                    boolean exists = false;
+                    for (final MapLink link : childLinks) {
+                        if ((link.getFrom() == from && link.getTo() == to) ||
+                                (link.getTo() == from && link.getFrom() == to)) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (exists) continue;
+
                     editor.linkPanel.attributePanel.setLinkLength(lineLength);
-                    candidate = new Hover(from,
-                            to,
-                            editor.linkPanel.attributePanel.getLinkWidth(),
-                            lineLength);
+                    candidate = new Hover(from, to, editor.linkPanel.attributePanel.getLinkWidth(), lineLength);
                 }
             }
         }
@@ -784,9 +847,9 @@ public class EditorFrame
         Hover candidate = null;
         final MapNode from = prevNode;
         hoverLinkFromCandidate = prevNode;
-        for (int tindex = 0; tindex < getChildNodesAndSymlinks().size();
-                ++tindex) {
-            final MapNode to = getChildNodesAndSymlinks().get(tindex);
+        ArrayList<MapNode> childNodesAndSymlinks = getChildNodesAndSymlinks();
+        for (int tindex = 0; tindex < childNodesAndSymlinks.size(); ++tindex) {
+            final MapNode to = childNodesAndSymlinks.get(tindex);
             Line2D line = new Line2D.Double (from.getLocalCoordinates(),
                     to.getLocalCoordinates());
             if (line.ptSegDist(p) < 5.0 / panel.getDrawingScale()) {
@@ -837,12 +900,13 @@ public class EditorFrame
     }
 
     private void placeLink(MouseEvent e) {
+        // from node クリック時
         if (hoverLinkFromCandidate == null) {
             hoverLinkFromCandidate = selectedNode;
+        // to node を確定してリンク生成 or キャンセル
         } else {
             hoverLinkFromCandidate = null;
             if (hoverLink == null) {
-                editor.updateAll();
                 return;
             }
             for (final MapLink link : getChildLinks()) {
@@ -855,9 +919,9 @@ public class EditorFrame
             
             clearSelection();
             link.selected =true;
+            editor._setModified(true);
+            editor.getLinkPanel().refresh();
         }
-        editor.setModified(true);
-        editor.updateAll();
     }
 
     private boolean updateHoverLink(Point2D p) {
@@ -894,15 +958,14 @@ public class EditorFrame
             clearSelection();
         }
         hover_link_backup.getDummyHoverLink().selected ^= true;
-        editor.updateAll();
-        repaint();
+        editor.getLinkPanel().refresh();
     }
-    
+/*
     public void repaint() {
         super.repaint();
         panel.repaint(100);
     }
-
+*/
     private void manipulateLink(MouseEvent e) {
         class ManipulateLinkListener implements ActionListener {
             EditorFrame editor = null;
@@ -923,7 +986,10 @@ public class EditorFrame
                             "Set One-way Negative")) {
                     editor.setOneWayLinks(false);
                 } else if (e.getActionCommand().equals(
-                            "Remove One-way")) {
+                            "Set Road Closed")) {
+                    editor.setRoadClosedLinks();
+                } else if (e.getActionCommand().equals(
+                            "Remove One-way / Road Closed")) {
                     editor.removeSelectedOneWayTag();
                 }
             }
@@ -950,14 +1016,17 @@ public class EditorFrame
         mi.setEnabled(c >= 1);
         menu.add(mi);
 
-        menu.addSeparator();
         mi = new MenuItem("Set One-way Negative");
         mi.addActionListener (listner);
         mi.setEnabled(c >= 1);
         menu.add(mi);
 
-        menu.addSeparator();
-        mi = new MenuItem("Remove One-way");
+        mi = new MenuItem("Set Road Closed");
+        mi.addActionListener (listner);
+        mi.setEnabled(c >= 1);
+        menu.add(mi);
+
+        mi = new MenuItem("Remove One-way / Road Closed");
         mi.addActionListener (listner);
         mi.setEnabled(c >= 1);
         menu.add(mi);
@@ -980,28 +1049,31 @@ public class EditorFrame
     // Place Nodes and LInks mode
     //  see README 4.2. to know detail
     private void placeNodeLink(MouseEvent e) {
+        // 右クリックは次点ノード生成待ち状態の解除 or 何もしない
         if (javax.swing.SwingUtilities.isRightMouseButton(e)) {
             initialNode = null;
             prevNode = null;
-            editor.updateAll();
             clearSelection();
+            panel.repaint();
         } else if (javax.swing.SwingUtilities.isLeftMouseButton(e)) {
+            // 左ダブルクリックで始点ノードを生成 or 次点ノード生成待ち状態の解除
             if (e.getClickCount() == 2) {
                 if (initialNode == null) {  // place initian node
                     Point2D p = panel.revCalcPos(e.getX(), e.getY());
                     initialNode = editor.getMap().createMapNode(current_group,
                             p, getDefaultHeight());
                     prevNode = initialNode;
-                    editor.setModified(true);
-                    editor.updateAll();
+                    editor._setModified(true);
+                    editor.getNodePanel().refresh();
                     clearSelection();
+                    panel.repaint();
                 } else {                    // place last node and exit mode
                     initialNode = null;
                     prevNode = null;
                 }
+            // 左シングルクリック(ダブルクリックの1クリック目含む)で次点(終点)ノードとリンクを生成
             } else if (e.getClickCount() == 1) {
                 if (initialNode != null) { // place node and link from prevNode
-                    Point2D p = panel.revCalcPos(e.getX(), e.getY());
                     if (hoverLinkFromCandidate == null) {
                         if (prevNode != null)
                             hoverLinkFromCandidate = prevNode;
@@ -1010,7 +1082,7 @@ public class EditorFrame
                     } else {
                         hoverLinkFromCandidate = null;
                         if (hoverLink == null) {
-                            editor.updateAll();
+                            panel.repaint();
                             return;
                         }
                         boolean nodeExist = false;
@@ -1047,8 +1119,10 @@ public class EditorFrame
                         prevNode = node;
                         clearSelection();
                     }
-                    editor.setModified(true);
-                    editor.updateAll();
+                    editor._setModified(true);
+                    editor.getNodePanel().refresh();
+                    editor.getLinkPanel().refresh();
+                    panel.repaint();
                 }
             }
         }
@@ -1090,8 +1164,8 @@ public class EditorFrame
         }
 
         editor.getMap().addAgent(current_group, hoverAgent.copyAndInitialize());
-        editor.setModified(true);
-        editor.updateAll();
+        editor._setModified(true);
+        editor.getAgentPanel().refresh();
     }
     
     private boolean updateHoverAgent(Point2D p) {
@@ -1120,7 +1194,6 @@ public class EditorFrame
             clearSelection();
         }
         a.selected ^= true;
-        editor.updateAll();
     }
     
     private void manipulateAgent(MouseEvent e) {
@@ -1193,7 +1266,7 @@ public class EditorFrame
             return;
         }
         a.selected ^= true;
-        editor.updateAll();
+        editor.getPollutionPanel().refresh();
     }
  
     // reviced by tkokada
@@ -1229,9 +1302,10 @@ public class EditorFrame
             }
         }
         updatePollutionAreaTag();
-        editor.setModified(true);
-        editor.updateAll();
+        editor._setModified(true);
+        editor.getPollutionPanel().refresh();
         clearSelection();
+        panel.repaint();
     }
     
     private Point2D rotatePoint2D(Point2D point, Point2D origin, double _angle) {
@@ -1374,26 +1448,48 @@ public class EditorFrame
 
     private void setOneWayLinks(boolean positive) {
         panel.updateHoverLink(null);
-        editor.setModified(true);
+        editor._setModified(true);
         for (MapLink link : getChildLinks()) {
             if (link.selected) {
                 if (positive) {
                     if (link.getTags().contains("ONE-WAY-POSITIVE"))
                         continue;
-                    else
-                        link.addTag("ONE-WAY-POSITIVE");
+                    link.addTag("ONE-WAY-POSITIVE");
                     if (link.getTags().contains("ONE-WAY-NEGATIVE"))
                         link.removeTag("ONE-WAY-NEGATIVE");
+                    if (link.getTags().contains("ROAD-CLOSED"))
+                        link.removeTag("ROAD-CLOSED");
                 } else {
                     if (link.getTags().contains("ONE-WAY-NEGATIVE"))
                         continue;
-                    else
-                        link.addTag("ONE-WAY-NEGATIVE");
+                    link.addTag("ONE-WAY-NEGATIVE");
                     if (link.getTags().contains("ONE-WAY-POSITIVE"))
                         link.removeTag("ONE-WAY-POSITIVE");
+                    if (link.getTags().contains("ROAD-CLOSED"))
+                        link.removeTag("ROAD-CLOSED");
                 }
             }
         }
+        editor.getLinkPanel().refresh();
+        clearSelection();
+        repaint();
+    }
+
+    private void setRoadClosedLinks() {
+        panel.updateHoverLink(null);
+        editor._setModified(true);
+        for (MapLink link : getChildLinks()) {
+            if (link.selected) {
+                if (link.getTags().contains("ROAD-CLOSED"))
+                    continue;
+                link.addTag("ROAD-CLOSED");
+                if (link.getTags().contains("ONE-WAY-POSITIVE"))
+                    link.removeTag("ONE-WAY-POSITIVE");
+                if (link.getTags().contains("ONE-WAY-NEGATIVE"))
+                    link.removeTag("ONE-WAY-NEGATIVE");
+            }
+        }
+        editor.getLinkPanel().refresh();
         clearSelection();
         repaint();
     }
@@ -1413,7 +1509,7 @@ public class EditorFrame
 
     private void removeSelectedNodes() {
         panel.updateHoverNode(null);
-        editor.setModified(true);
+        editor._setModified(true);
         ArrayList<MapNode> nodesToRemove = new ArrayList<MapNode>();
         for (final MapNode node : getChildNodes()) {
             if (node.selected) nodesToRemove.add(node);
@@ -1432,12 +1528,13 @@ public class EditorFrame
             editor.getMap().removeOBNode(current_group, link, true);
         }
         
+        editor.getLinkPanel().refresh();
         repaint();
     }
     
     private void removeSelectedLinks() {
         panel.updateHoverLink(null);
-        editor.setModified(true);
+        editor._setModified(true);
         ArrayList<MapLink> linksToRemove = new ArrayList<MapLink>();
         for (final MapLink link : getChildLinks()) {
             if (link.selected) {
@@ -1448,26 +1545,30 @@ public class EditorFrame
         for (MapLink link : linksToRemove) {
             editor.getMap().removeOBNode(current_group, link, true);
         }
+        editor.getLinkPanel().refresh();
         clearSelection();
         repaint();
     }
     
     private void removeSelectedOneWayTag() {
         panel.updateHoverLink(null);
-        editor.setModified(true);
+        editor._setModified(true);
         for (MapLink link : getChildLinks()) {
                 if (link.selected) {
                     if (link.getTags().contains("ONE-WAY-POSITIVE"))
                         link.removeTag("ONE-WAY-POSITIVE");
                     if (link.getTags().contains("ONE-WAY-NEGATIVE"))
                         link.removeTag("ONE-WAY-NEGATIVE");
+                    if (link.getTags().contains("ROAD-CLOSED"))
+                        link.removeTag("ROAD-CLOSED");
                 }
         }
+        editor.getLinkPanel().refresh();
         repaint();
     }
 
     private void removeSelectedAgents() {
-        editor.setModified(true);
+        editor._setModified(true);
         ArrayList<EvacuationAgent> agentsToRemove = new ArrayList<EvacuationAgent>();
         for (final EvacuationAgent agent : getChildAgents()) {
             if (agent.selected) {
@@ -1477,11 +1578,12 @@ public class EditorFrame
         for (EvacuationAgent agent : agentsToRemove) {
             editor.getMap().removeOBNode(current_group, agent, true);
         }
+        editor.getAgentPanel().refresh();
         repaint();
     }
 
     private void removeSelectedPollution() {
-        editor.setModified(true);
+        editor._setModified(true);
         ArrayList<PollutedArea> areasToRemove = new ArrayList<PollutedArea>();
         for (final PollutedArea agent : getChildPollutedAreas()) {
             if (agent.selected) {
@@ -1492,6 +1594,7 @@ public class EditorFrame
             editor.getMap().removeOBNode(current_group, area, true);
         }
         updatePollutionAreaTag();
+        editor.getPollutionPanel().refresh();
         repaint();
     }
 
@@ -2096,6 +2199,50 @@ public class EditorFrame
         }
     }
 
+    class BGImageScaleDialog extends JDialog implements ActionListener {
+        private JSpinner sxSpinner;
+        private JSpinner sySpinner;
+        private JButton okButton;
+        private JButton cancelButton;
+
+        public BGImageScaleDialog(JFrame owner, String title, boolean modal) {
+            super(owner, title, modal);
+
+            Container pane = getContentPane();
+            pane.setLayout(new FlowLayout());
+
+            pane.add(new JLabel("Scale X"));
+            sxSpinner = new JSpinner(new SpinnerNumberModel(current_group.sx, -1000.0, 1000.0, 0.1));
+            pane.add(sxSpinner);
+            pane.add(new JLabel("Scale Y"));
+            sySpinner = new JSpinner(new SpinnerNumberModel(current_group.sy, -1000.0, 1000.0, 0.1));
+            pane.add(sySpinner);
+            pane.add(new JLabel());
+
+            okButton = new JButton("OK");
+            okButton.addActionListener(this);
+            pane.add(okButton);
+
+            cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(this);
+            pane.add(cancelButton);
+
+            pack();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand() == "OK") {
+                panel.setLocalZoomX((Double)sxSpinner.getValue());
+                panel.setLocalZoomY((Double)sySpinner.getValue());
+                panel.repaint();
+                dispose();
+            } else if (e.getActionCommand() == "Cancel") {
+                dispose();
+            }
+        }
+    }
+
     private void delete() {
         switch (editor.getMode()) {
         case EDIT_NODE:
@@ -2127,37 +2274,24 @@ public class EditorFrame
         else if (e.getActionCommand () == "Close") setVisible(false);       
 
         else if (e.getActionCommand() == "Align Nodes Horizontally") {
-            editor.setModified(true);
-            int count = 0, y = 0;
-            for (final MapNode node : getChildNodes()) {
-                if (node.selected) {
-                    y += node.getLocalY();
-                    count++;
+            editor._setModified(true);
+            for (MapNode node : getChildNodes()) {
+                if (node.selected && node != currentNode) {
+                    node.setAbsoluteCoordinates(new Point2D.Double(node.getLocalX(), currentNode.getLocalY()));
                 }
             }
-            
-            y /= count;
-            for (MapNode node : getChildNodes()) {
-                if (node.selected) node.setAbsoluteCoordinates(new Point2D.Double(node.getLocalX(), y) );
-            }
+            editor.getNodePanel().refresh();
             clearSelection();
             repaint();
         }
         else if (e.getActionCommand () == "Align Nodes Vertically") {
-            editor.setModified(true);
-            int count = 0, x = 0;
-            for (final MapNode node : getChildNodes()) {
-                if (node.selected) {
-                    x += node.getLocalX();
-                    count++;
+            editor._setModified(true);
+            for (MapNode node : getChildNodes()) {
+                if (node.selected && node != currentNode) {
+                    node.setAbsoluteCoordinates(new Point2D.Double(currentNode.getLocalX(), node.getLocalY()));
                 }
             }
-            
-            x /= count;
-            for (MapNode node : getChildNodes()) {
-                if (node.selected) node.setAbsoluteCoordinates(new Point2D.Double(x, node.getLocalY()));
-            }
-            
+            editor.getNodePanel().refresh();
             clearSelection();
             repaint();
         }
@@ -2254,6 +2388,7 @@ public class EditorFrame
     }
 
     public void mouseClicked(MouseEvent e) {
+        currentNode = selectedNode;
         if (e.getButton() == MouseEvent.BUTTON1) {
             switch (editor.getMode()) {
             case PLACE_NODE:
@@ -2270,7 +2405,7 @@ public class EditorFrame
                 break;
             case PLACE_NODE_LINK:
                 placeNodeLink(e);
-                break;
+                return;
             case PLACE_AGENT:
                 placeAgent(e);
                 break;
@@ -2293,7 +2428,7 @@ public class EditorFrame
                 break;
             case PLACE_NODE_LINK:
                 placeNodeLink(e);
-                break;
+                return;
             case PLACE_AGENT:
             case EDIT_AGENT:
                 manipulateAgent(e);
@@ -2347,10 +2482,12 @@ public class EditorFrame
                     editor.getMode() == EditorMode.EDIT_POLLUTION   // tkokada
                     ) {
                 areaSelection = true;
-                Point2D startpos = panel.revCalcPos(e.getX(), e.getY());
+                startpos = panel.revCalcPos(e.getX(), e.getY());
                 selectedArea = new Rectangle2D.Double(startpos.getX(), startpos.getY(), 0, 0);
             }
         } 
+        // この辺りでステータス更新を有効にするのがベストな妥協点(斉藤)
+        panel.updateStatusEnabled = true;
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -2360,15 +2497,13 @@ public class EditorFrame
             setScaleMode = false;
             panel.setScaleMode = false;
             panel.setTempLine(null);
-            panel.repaint();
-        } else if (e.getButton() == MouseEvent.BUTTON1
-                && areaSelection) {
+        } else if (e.getButton() == MouseEvent.BUTTON1 && areaSelection) {
             areaSelection = false;
             Point2D endpos = panel.revCalcPos(e.getX(), e.getY());
-            double startX = Math.min(selectedArea.getX(), endpos.getX());
-            double startY = Math.min(selectedArea.getY(), endpos.getY());
-            double width = Math.abs(selectedArea.getX() - endpos.getX());
-            double height = Math.abs(selectedArea.getY() - endpos.getY());
+            double startX = Math.min(startpos.getX(), endpos.getX());
+            double startY = Math.min(startpos.getY(), endpos.getY());
+            double width = Math.abs(startpos.getX() - endpos.getX());
+            double height = Math.abs(startpos.getY() - endpos.getY());
 
             if (width < 10 && height < 10) return;
 
@@ -2389,7 +2524,7 @@ public class EditorFrame
                         node.selected = true;
                     }
                 }
-                editor.updateAll();
+                editor.getNodePanel().refresh();
                 break;
             case EDIT_LINK:
                 for (MapLink link : getChildLinks()) {
@@ -2403,7 +2538,7 @@ public class EditorFrame
                         link.selected = true;
                     }
                 }
-                editor.updateAll();
+                editor.getLinkPanel().refresh();
                 break;
             case EDIT_AGENT:
                 for (EvacuationAgent agent : getChildAgents()) {
@@ -2411,7 +2546,7 @@ public class EditorFrame
                         agent.selected = true;
                     }
                 }
-                editor.updateAll();
+                editor.getAgentPanel().refresh();
                 break;
             case EDIT_POLLUTION:
                 for (PollutedArea area : getChildPollutedAreas()) {
@@ -2423,6 +2558,7 @@ public class EditorFrame
                         area.selected = true;
                     }
                     */
+                    // TODO: この & は問題ないのか?
                     if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0 & area.selected) {
                         area.selected = true;
                     } else {
@@ -2435,18 +2571,17 @@ public class EditorFrame
                         }
                     }
                 }
-                editor.updateAll();
+                editor.getPollutionPanel().refresh();
                 break;
             case PLACE_POLLUTION:
                 placePollutionArea();
-                editor.updateAll();
                 break;
             default:
                 break;
             }
             panel.updateSelectedArea(null);
-            repaint();
         }
+        panel.repaint();
         
         scrolling = false;
         zooming = false;
@@ -2464,11 +2599,12 @@ public class EditorFrame
             panel.localZoomY(i);
         } else if ((e.getModifiers() & MouseEvent.CTRL_MASK)
                 == MouseEvent.CTRL_MASK) {
-            panel.localZoomY(i);
+            // この機能は不要
+            // panel.localZoomY(i);
         } else {
             panel.zoom(i);
         }
-        repaint();
+        panel.repaint();
     }
 
     public void mouseDragged(MouseEvent e) {
@@ -2476,14 +2612,11 @@ public class EditorFrame
             Point2D scaleLineTo = panel.revCalcPos(e.getX(), e.getY());
             scaleLine = new Line2D.Double(scaleLineFrom, scaleLineTo);
             panel.setTempLine(scaleLine);
-            panel.repaint();
         } else if (localscrolling) {
             panel.localScroll((e.getX() - dragStartX), (e.getY() - dragStartY));
 
             dragStartX = e.getX();
             dragStartY = e.getY();
-
-            repaint ();
         } else if (localzooming) {
             int i = 0;
             int dragValue = (e.getX() - dragStartX + e.getY() - dragStartY) / 10;
@@ -2497,14 +2630,11 @@ public class EditorFrame
                 dragStartX = e.getX();
                 dragStartY = e.getY();
             }
-
-            repaint();
         } else if (scrolling) {
             panel.scroll((e.getX() - dragStartX), (e.getY() - dragStartY));
 
             dragStartX = e.getX();
             dragStartY = e.getY();
-            repaint ();
         } else if (zooming) {
             int i = 0;
             int dragValue = (e.getX() - dragStartX + e.getY() - dragStartY) / 10;
@@ -2517,51 +2647,51 @@ public class EditorFrame
                 dragStartX = e.getX();
                 dragStartY = e.getY();
             }
-
-            repaint();
         } else if (selectedNode != null && draggingNode) {
             hoverNode.setPos(panel.revCalcPos(e.getX(), e.getY()));
             selectedNode.setAbsoluteCoordinates(panel.revCalcPos(e.getX(), e.getY()));
             panel.updateHoverNode(hoverNode);
-            editor.setModified(true);
-            repaint();
+            editor._setModified(true);
+            editor.getNodePanel().refresh();
         } else if (areaSelection &&
                 ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK)
                         == MouseEvent.BUTTON1_DOWN_MASK)) {
             Point2D endpos = panel.revCalcPos(e.getX(), e.getY());
-            double startX = Math.min(selectedArea.getX(), endpos.getX());
-            double startY = Math.min(selectedArea.getY(), endpos.getY());
-            double width = Math.abs(selectedArea.getX() - endpos.getX());
-            double height = Math.abs(selectedArea.getY() - endpos.getY());
+            double startX = Math.min(startpos.getX(), endpos.getX());
+            double startY = Math.min(startpos.getY(), endpos.getY());
+            double width = Math.abs(startpos.getX() - endpos.getX());
+            double height = Math.abs(startpos.getY() - endpos.getY());
             
             selectedArea = new Rectangle2D.Double(startX, startY,
                     width, height);
             panel.updateSelectedArea(selectedArea);
-            repaint();
-        } 
+        } else {
+            return;
+        }
+        panel.repaint();
     }
 
     public void mouseMoved(MouseEvent e) {
         Point2D p = panel.revCalcPos(e.getX(), e.getY());
-        mousePoint = p;
+        mousePoint = p;     // これはCrowdWalk座標値
         switch (editor.getMode()) {
         case PLACE_NODE:
             if (placeHoverNode(p)) {
                 panel.updateHoverNode(hoverNode);
-                repaint ();
+                panel.repaint();
             }
             break;
         case PLACE_LINK:
             if (hoverLinkFromCandidate == null) {
                 if (updateHoverNode(p)) {
                     panel.updateHoverNode(hoverNode);
-                    repaint ();
+                    panel.repaint();
                 }
             } else if (placeHoverLink(p)) {
                 panel.updateHoverNode(new Hover(null,
                         hoverLinkFromCandidate.getLocalCoordinates()));
                 panel.updateHoverLink(hoverLink);
-                repaint ();
+                panel.repaint();
             }
             break;
         case PLACE_NODE_LINK:
@@ -2569,45 +2699,45 @@ public class EditorFrame
             // Else, same with PLACE_LINK
             if (placeHoverNode(p)) {
                 panel.updateHoverNode(hoverNode);
-                repaint ();
+                panel.repaint();
             }
             if (initialNode != null) {
                 if (placeHoverNodeLink(p)) {
                     panel.updateHoverNode(new Hover(null,
                             hoverLinkFromCandidate.getLocalCoordinates()));
                     panel.updateHoverLink(hoverLink);
-                    repaint ();
+                    panel.repaint();
                 }
             }
             break;
         case PLACE_AGENT:
             if (placeHoverAgent(p)) {
                 panel.updateHoverAgent(hoverAgent);
-                repaint();
+                panel.repaint();
             }
             break;
         case EDIT_NODE:
             if (updateHoverNode(p)) {
                 panel.updateHoverNode(hoverNode);
-                repaint ();
+                panel.repaint();
             }
             break;
         case EDIT_LINK:
             if (updateHoverLink(p)) {
                 panel.updateHoverLink(hoverLink);               
-                repaint ();
+                panel.repaint();
             }
             break;
         case EDIT_AGENT:
             if (updateHoverAgent(p)) {
                 panel.updateHoverAgent(hoverAgent);
-                repaint();
+                panel.repaint();
             }
             break;
         case EDIT_POLLUTION:
             if (updateHoverArea(p)) {
                 panel.updateHoverArea(hoverPollution);
-                repaint();
+                panel.repaint();
             }
             break;
         }
@@ -2633,7 +2763,9 @@ public class EditorFrame
             break;
 
         case KeyEvent.VK_BACK_SPACE:
-            editor.getMap().undo();
+            System.err.println("undo は無効です");
+            // 正常動作が保証できないため無効にした(斉藤)
+            //editor.getMap().undo(editor);
             break;
         case KeyEvent.VK_DELETE:
             delete();
@@ -2677,38 +2809,32 @@ public class EditorFrame
             /* toggle showing */
         case KeyEvent.VK_SEMICOLON:
             showNodes.setState(!showNodes.getState());
+            // TODO: この辺りにあるステータス表示は repaint() で書き換えられてしまうためこのままでは意味がない
             status.setText("Showing nodes: " + showNodes.getState());
-            repaint();
             break;
         case KeyEvent.VK_Q:
             showLinks.setState(!showLinks.getState());
             status.setText("Showing links: " + showLinks.getState());
-            repaint();
             break;
         case KeyEvent.VK_J:
             showAgents.setState(!showAgents.getState());            
             status.setText("Showing agents: " + showAgents.getState());
-            repaint();
             break;
         case KeyEvent.VK_K:
             showGroups.setState(!showGroups.getState());
             status.setText("Showing groups: " + showGroups.getState());
-            repaint();
             break;
         case KeyEvent.VK_X:
             showPollution.setState(!showPollution.getState());
             status.setText("Showing pollution: " + showPollution.getState());
-            repaint();
             break;
         case KeyEvent.VK_S:
             showScaling.setState(!showScaling.getState());
             status.setText("Scaling mode: " + showScaling.getState());
-            repaint();
             break;
         default:
             System.err.println("Unhandlesd key: " + e.getKeyCode());
         }
-        panel.repaint();
         repaint();
     }
 
@@ -2801,6 +2927,7 @@ public class EditorFrame
                 && background_read == false) {
             readBackgroundWithName();
         }
+        panel.centering(true);
     }
 
     @Override
@@ -2877,15 +3004,13 @@ public class EditorFrame
     }
     
     public void setStatus(String _mode) {
-        status.setText("Height (Min : "+getMinHeight() + ", " + "Max : " + getMaxHeight() + ", " + "Default : " + getDefaultHeight() + ")"
-                + "        " +"Mode : "+ _mode);
+        status.setText(String.format("Height (Min : %s, Max : %s, Default : %s)    Mode : %s    Mouse Position : (%s, %s)    Map Position : (%s, %s)", getMinHeight(), getMaxHeight(), getDefaultHeight(), _mode, panel.point_on_panel.x, panel.point_on_panel.y, mousePoint.getX(), mousePoint.getY()));
     }
     
     public void setStatus() {
-        status.setText("Height (Min : "+getMinHeight() + ", " + "Max : " + getMaxHeight() + ", " + "Default : " + getDefaultHeight() + ")"
-                + "        " +"Mode : "+ editor.getMode().toString());
+        setStatus(editor.getMode().toString());
     }
-    
+
     /* access to the object(nodes, links, agents, sub-groups)
      * that are managed under this frame */
     public ArrayList<MapNode> getChildNodes() {
@@ -2916,9 +3041,9 @@ public class EditorFrame
         return current_group.getSymbolicLinks();
     }
 
-    public void setRandom(Random _random) {
-        random = _random;
-    }
+    //public void setRandom(Random _random) {
+    //    random = _random;
+    //}
 }
 // ;;; Local Variables:
 // ;;; mode:java

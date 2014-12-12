@@ -53,10 +53,7 @@ import nodagumi.ananPJ.NetworkParts.Node.MapNode;
  *  0,     GREEN,  100% #Normal
  */
 
-
-
-public class RunningAroundPerson extends EvacuationAgent
-    implements Serializable {
+public class RunningAroundPerson extends EvacuationAgent implements Serializable {
     private static final long serialVersionUID = -6313717005123377059L;
 
     static final boolean DELAY_LOOP = false;
@@ -66,11 +63,12 @@ public class RunningAroundPerson extends EvacuationAgent
     protected double emptyspeed = V_0;
     protected double time_scale = 1.0;//0.5; simulation time step 
     /* the max speed of agent */
-    public static double MAX_SPEED = 1.2;
+    public static double MAX_SPEED = 0.96;
     public static double ZERO_SPEED = 0.1;
 
     /* Values used in simulation */
     protected double speed;
+    protected double dv = 0.0;
     protected double direction = 0.0;
     protected double density;
     protected double expectedDensityMacroTimeStep = 300;
@@ -86,6 +84,7 @@ public class RunningAroundPerson extends EvacuationAgent
         }
     }
 
+    // 通過したノードの履歴?
     protected ArrayList<CheckPoint> route;
 
     /* Values used for navigation */
@@ -161,7 +160,7 @@ public class RunningAroundPerson extends EvacuationAgent
         buffer.append("," + this.position);
         buffer.append("," + this.direction);
         buffer.append("," + this.speed);
-        buffer.append("," + this.damage);
+        buffer.append("," + this.accumulatedExposureAmount);
         buffer.append("," + this.goal);
         buffer.append("," + this.routeIndex);
         buffer.append("," + this.planned_route.size());
@@ -202,7 +201,7 @@ public class RunningAroundPerson extends EvacuationAgent
             agent.next_node = link.getFrom();
         }
         agent.speed = Double.parseDouble(items[10]);
-        agent.damage = Double.parseDouble(items[11]);
+        agent.accumulatedExposureAmount = Double.parseDouble(items[11]);
         agent.goal = items[12];
         agent.routeIndex = Integer.parseInt(items[13]);
         int route_size = Integer.parseInt(items[14]);
@@ -286,11 +285,11 @@ public class RunningAroundPerson extends EvacuationAgent
         int w = current_link.getLaneWidth(direction);
         int index = Collections.binarySearch(current_link.getLane(direction),
                                              this);
-        if (direction < 0.0)
+        if (isNegativeDirection())
             index = current_link.getLane(direction).size() - index;
 
         order_in_row = index;
-        if (direction > 0.0) {
+        if (isPositiveDirection()) {
             if (index >= 0) {
                 swing_width = (2.0 * ((current_link.getLane(direction).size() - index) % w)) / current_link.width - 1.0;
             }  else {
@@ -323,9 +322,8 @@ public class RunningAroundPerson extends EvacuationAgent
                 // System.err.println("tag: " + tag);
                 if (next_node.isStop(tag, time)) {
                     // System.err.println(" stop tag: " + tag + ", time: " + time + ", direction: " + direction + ", speed: " + speed + ", position: " + position + ", link len: " + current_link.length);
-                    if ((direction > 0.0 &&
-                            speed >= (current_link.length - position)) ||
-                            (direction < 0.0 && speed >= position) ||
+                    if ((isPositiveDirection() && speed >= (current_link.length - position)) ||
+                            (isNegativeDirection() && speed >= position) ||
                             (speed == 0.0)) {
                         speed = 0.;
                         next_position = position;
@@ -349,9 +347,8 @@ public class RunningAroundPerson extends EvacuationAgent
                 /* schedule moving out */
                 on_node = true;
                 MapLink next_link = navigate(time, link, node);
-                if ((link.hasTag("ONE-WAY-POSITIVE") ||
-                            link.hasTag("ONE-WAY-NEGATIVE")) &&
-                        next_link == null) {
+                if ((link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE") || link.hasTag("ROAD-CLOSED"))
+                        && next_link == null) {
                     break;
                 } else if (link.ID == next_link.ID) {
                     break;
@@ -552,9 +549,8 @@ public class RunningAroundPerson extends EvacuationAgent
             }
             on_node = true;
             MapLink next_link = virtual_navigate(time, link, node);
-            if ((link.hasTag("ONE-WAY-POSITIVE") ||
-                        link.hasTag("ONE-WAY-NEGATIVE")) &&
-                    next_link == null) {
+            if ((link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE") || link.hasTag("ROAD-CLOSED"))
+                    && next_link == null) {
                 break;
             } else if (link.ID == next_link.ID) {
                 break;
@@ -727,9 +723,9 @@ public class RunningAroundPerson extends EvacuationAgent
             setEvacuated(true, time);
             return true;
         }
-        if (current_link.getTotalTriageLevel() > 5) {
-            setEmergency();
-        }
+        // if (current_link.getTotalTriageLevel() > 5) {
+        //     setEmergency();
+        // }
 
         if (calculation_model == SpeedCalculationModel.ExpectedDensityModel)
             return move_commit(time, expectedDensityMacroTimeStep);
@@ -866,12 +862,6 @@ public class RunningAroundPerson extends EvacuationAgent
     protected static double STAIR_SPEED_CO = 1.0;//0.7;
     */
     
-    static enum DamageEffectModel {
-        Basic, Yoshioka, Flood
-    }
-    // public static DamageEffectModel damage_effect_model = DamageEffectModel.Basic;
-    public static DamageEffectModel damage_effect_model = DamageEffectModel.Flood;
-
     protected void calc_speed(double time) {
         switch (calculation_model) {
         case LaneModel:
@@ -893,23 +883,14 @@ public class RunningAroundPerson extends EvacuationAgent
         //debug
         // if (speed < 1.2 && speed > 0.3)
             // System.err.println("  agent: " + ID + ", speed; " + speed);
-        switch (damage_effect_model) {
-        case Basic:
-            damage_effect_basic();
-            break;
-        case Flood:
-            damage_effect_flood();
-            break;
-        default:
-            break;
-        }
+        // pollution の影響による移動速度の低下
+        pollution.effect(this);
     }
     
     static final double SPEED_VIEW_RATIO = 10.0;
 
     private void calc_speed_lane(double time) {
 
-        double dv = 0;
         double diff = 0;    // distance between myself and front of me
         double diff_base = 0;   // distance to next node.
         int passed_agent_count = 0;
@@ -956,7 +937,7 @@ public class RunningAroundPerson extends EvacuationAgent
                         // agent_in_front.agentNumber);
                     } else {
                         /* 先読み */
-                        if (direction > 0) {
+                        if (isPositiveDirection()) {
                             diff = agent_in_front.position;
                             // System.err.print("front " +
                             // agent_in_front.agentNumber);
@@ -978,9 +959,9 @@ public class RunningAroundPerson extends EvacuationAgent
 
             /* 距離等の変数の更新 */
             if (link_to_find_agent == current_link) {
-                if (direction > 0.0) {
+                if (isPositiveDirection()) {
                     diff_base = current_link.length - position;
-                } else { /* direction < 0.0 */
+                } else { /* isNegativeDirection() */
                     diff_base = position;
                 }
                 passed_agent_count = agents.size() - index - 1;
@@ -1034,7 +1015,8 @@ public class RunningAroundPerson extends EvacuationAgent
                     + dv);
         }
 
-        speed += dv * time_scale;
+        dv *= time_scale;
+        speed += dv;
 
         if (speed > emptyspeed) {
             speed = emptyspeed;
@@ -1066,13 +1048,13 @@ public class RunningAroundPerson extends EvacuationAgent
         //calc_next_target(next_node);
         int w = current_link.getLaneWidth(direction);
         if (order_in_row < w) {
-            if (direction > 0.0) {
+            if (isPositiveDirection()) {
                 if (((MapNode) current_link.getTo()).hasTag(goal)) {
                     speed = emptyspeed;
                     // System.err.println("head agent speed is modified, goal: " + goal);
                 }
             }
-            if (direction < 0.0) {
+            if (isNegativeDirection()) {
                 if (((MapNode) current_link.getFrom()).hasTag(goal)) {
                     speed = emptyspeed;
                     // System.err.println("head agent speed is modified. goal: " + goal);
@@ -1083,21 +1065,18 @@ public class RunningAroundPerson extends EvacuationAgent
 
     // tkokada
     private void calc_speed_density_reviced(double time) {
-
         /* minimum distance between agents */
         double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
         /* mininum distance that agent can walk with max speed */
-        double DISTANCE_MAX_SPEED = MAX_SPEED +
-            MIN_DISTANCE_BETWEEN_AGENTS;
+        double DISTANCE_MAX_SPEED = MAX_SPEED + MIN_DISTANCE_BETWEEN_AGENTS;    // 0.96 + 0.3
         /* the range to calculate the density */
-        double DENSITY_RANGE = DISTANCE_MAX_SPEED;
+        double DENSITY_RANGE = DISTANCE_MAX_SPEED * time_scale;
         /* minimum speed to break dead lock state */
         double MIN_SPEED_DEADLOCK = 0.3;
 
-        ArrayList<EvacuationAgent> currentLinkAgents =
-            current_link.getAgents();
-        ArrayList<EvacuationAgent> samePlaceAgents =
-            new ArrayList<EvacuationAgent>();
+        ArrayList<EvacuationAgent> currentLinkAgents = current_link.getAgents();
+        // 隣のリンクも含めた自分と同じ位置に存在するエージェント
+        ArrayList<EvacuationAgent> samePlaceAgents = new ArrayList<EvacuationAgent>();
 
         /* the number of agents in the range */
         int inRangeSameDirectionAgents = 0;
@@ -1107,126 +1086,108 @@ public class RunningAroundPerson extends EvacuationAgent
         int inFrontSameDirectionAgents = 0;
         int inFrontOppositeDirectionAgents = 0;
 
-        int samePlaceSameDirectionAgents = 0;
-        int samePlaceOppositeDirectionAgents = 0;
+        /* in range agents on current link is calculated in between maxRange & minRange */
+        double maxRange = 0.0;
+        double minRange = 0.0;
+        if (isPositiveDirection()) {
+            minRange = position;
+            maxRange = Math.min(position + DENSITY_RANGE, current_link.length);
+        } else {
+            minRange = Math.max(position - DENSITY_RANGE, 0.0);
+            maxRange = position;
+        }
 
-        /* in range agents on current link is calculated in between maxRange &
-         * minRange */
-        double maxRange = 0;
-        double minRange = 0;
-        /* in range agents on next link is calculated in between maxRange &
-         * minRange */
+        /* in range agents on next link is calculated in between maxRange & minRange */
         //double nextMaxRange = 0;
         //double nextMinRange = 0;
-        // temporal value to calculate
-        double distance = 0.0;
 
         int route_index_orig = getRouteIndex();
-
-        MapLink nextLink = sane_navigation_from_node(time, current_link,
-                next_node);
+        MapLink nextLink = sane_navigation_from_node(time, current_link, next_node);
         setRouteIndex(route_index_orig);
+
         ArrayList<EvacuationAgent> nextLinkAgents = null;
         if (nextLink != null)
             nextLinkAgents = nextLink.getAgents();
 
-        if (current_link.length - position < DENSITY_RANGE)
-            maxRange = current_link.length;
-        else
-            maxRange = position + DENSITY_RANGE;
-
-        if (position < DENSITY_RANGE)
-            minRange = 0;
-        else
-            minRange = position - DENSITY_RANGE;
-        // 2012.10.01 tkokada update
-        // The range to calculate the density considers only the front range.
-        // if (direction > 0.0) {
-            // minRange = position;
-        // } else {
-            // maxRange = position;
-        // }
-
+        // 自分の位置よりも前を歩いている/歩いて来る一番近い agent
         EvacuationAgent frontAgent = null;
+
+        // カレントリンク上の全エージェントについて
         for (EvacuationAgent agent : currentLinkAgents) {
             if (agent == this || agent.isEvacuated()) {
                 continue;
             }
             if (agent.position == position) {
                 samePlaceAgents.add(agent);
-                if (direction == agent.getDirection())
-                    samePlaceSameDirectionAgents += 1;
-                else
-                    samePlaceOppositeDirectionAgents += 1;
             }
+            // agent が (minRange..maxRange) 内に位置する
             if (agent.position >= minRange && agent.position <= maxRange) {
                 if (direction == agent.getDirection()) {
                     inRangeSameDirectionAgents += 1;
                 } else {
                     inRangeOppositeDirectionAgents += 1;
                 }
+                // 以下、自分の隣か前を歩いている(歩いて来る) agent について(direction ごと)
                 // agent is placed in front of this agent.
-                if (direction > 0 && agent.position >= position) {
-                    if (agent.getDirection() > 0) {
+                if (isPositiveDirection() && agent.position >= position) {
+                    if (agent.isPositiveDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
                     }
-                    if (frontAgent == null) {
-                        if (agent.position != position)
+                    if (agent.position != position) {
+                        if (frontAgent == null) {
                             frontAgent = agent;
-                    } else if (frontAgent.position > agent.position) {
-                        frontAgent = agent;
+                        } else if (frontAgent.position > agent.position) {
+                            frontAgent = agent;
+                        }
                     }
                 // agent is placed in front of this agent.
-                } else if (direction < 0 && agent.position <= position) {
-                    if (agent.getDirection() < 0) {
+                } else if (isNegativeDirection() && agent.position <= position) {
+                    if (agent.isNegativeDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
                     }
-                    if (frontAgent == null) {
-                        if (agent.position != position)
+                    if (agent.position != position) {
+                        if (frontAgent == null) {
                             frontAgent = agent;
-                    } else if (frontAgent.position < agent.position) {
-                        frontAgent = agent;
+                        } else if (frontAgent.position < agent.position) {
+                            frontAgent = agent;
+                        }
                     }
                 }
             }
         }
 
         if (nextLinkAgents != null && nextLink != null) {
+            // 次に進むリンク上に存在する全エージェントについて
             for (EvacuationAgent agent : nextLinkAgents) {
                 if (agent.isEvacuated()) {
                     continue;
                 }
-                distance = getDistanceNeighborAgent(agent);
+                double distance = getDistanceNeighborAgent(agent);
                 if (distance < 0.0)
                     continue;
-                if (distance == 0)
+                if (distance == 0.0)
                     samePlaceAgents.add(agent);
+                // agent が密度計算距離内に存在している
                 if (distance <= DENSITY_RANGE) {
                     if (isSameDirectionNeighborAgent(agent)) {
                         inRangeSameDirectionAgents += 1;
                         if (isFrontNeighborAgent(agent)) {
                             inFrontSameDirectionAgents += 1;
                         }
-                        if (distance == 0.0)
-                            samePlaceSameDirectionAgents += 1;
                     } else {
                         inRangeOppositeDirectionAgents += 1;
                         if (isFrontNeighborAgent(agent))
                             inFrontOppositeDirectionAgents += 1;
-                        if (distance == 0.0)
-                            samePlaceOppositeDirectionAgents += 1;
                     }
-                    if (isFrontNeighborAgent(agent)) {
+                    if (distance != 0.0 && isFrontNeighborAgent(agent)) {
                         if (frontAgent == null) {
-                            if (agent.position != position)
-                                frontAgent = agent;
+                            frontAgent = agent;
                         } else if (nextLinkAgents.contains(frontAgent)) {
-                            if (getDistanceNeighborAgent(frontAgent) >
-                                    distance) {
+                            if (getDistanceNeighborAgent(frontAgent) > distance) {
                                 frontAgent = agent;
                             }
                         }
@@ -1238,58 +1199,45 @@ public class RunningAroundPerson extends EvacuationAgent
          *  duplex road : v = 1.25 - 0.476 * rho
          *  duplex road : v = 1.27 * 10 ^ (-0.22 * rho)
          */
-        double density_range = maxRange - minRange;
-        if (density_range > DENSITY_RANGE) {
-            /* Temporaly, a density is calculated with only same direction
-             * agents */
-            // density = (inRangeSameDirectionAgents + 1) / (current_link.width *
-                // density_range);
-            density = (inRangeSameDirectionAgents +
-                    inRangeOppositeDirectionAgents + 1) / (current_link.width *
-                density_range);
-        } else {
-            // density = (inRangeSameDirectionAgents + 1) / (current_link.width *
-                // DENSITY_RANGE);
-            density = (inRangeSameDirectionAgents +
-                    inRangeOppositeDirectionAgents + 1) / (current_link.width *
-                DENSITY_RANGE);
-        }
+        double density_range = Math.max(maxRange - minRange, DENSITY_RANGE);
+        density = (inRangeSameDirectionAgents + inRangeOppositeDirectionAgents + 1) / (current_link.width * density_range);
         if (density <= 0.0) {
             speed = 0.0;
         } else if (inRangeOppositeDirectionAgents > 0) {
-            speed = 1.25 - 0.476 * density;
+            // 前方から歩いて来る agent が一人でもいる場合
+            speed = MAX_SPEED - 0.476 * density; //speed = 1.25 - 0.476 * density; modified by goto in 2014.09.11
         } else {
-            speed = 1.2 - 0.25 * density;
+            speed = MAX_SPEED - 0.240 * density; //speed = 1.2 - 0.25 * density;modified by goto in 2014.09.11
         }
 
         /* this agent is head of current link */
-        if (inFrontSameDirectionAgents +
-                inFrontOppositeDirectionAgents == 0) {
+        if (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents == 0) {
             speed = MAX_SPEED;
             if (frontAgent != null)
-                System.err.println("RunningAroundPerson." +
-                        "calc_speed_density_reviced in front agent but " +
-                        "front agent exist!");
+                System.err.println("RunningAroundPerson.calc_speed_density_reviced in front agent but front agent exist!");
         // 2012.10.01 tkokada update.
         // The lane number of agents are assumed as the head.
-        } else if (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents
-                <= (int) current_link.width) {
+        } else if (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents < (int)current_link.width) {
             speed = MAX_SPEED;
         } else if (frontAgent != null) {
+            double distance;
             if (currentLinkAgents.contains(frontAgent))
                 distance = Math.abs(frontAgent.position - position);
             else
                 distance = getDistanceNeighborAgent(frontAgent);
+            // 前を歩いている人にぶつからない(近づきすぎない)速度まで speed を落とす
             if (distance <= MIN_DISTANCE_BETWEEN_AGENTS) {
                 speed = 0.0;
-            } else if (distance <= DISTANCE_MAX_SPEED) {
-                if (speed > distance - MIN_DISTANCE_BETWEEN_AGENTS) {
-                    speed = distance - MIN_DISTANCE_BETWEEN_AGENTS;
+            } else if (distance <= DISTANCE_MAX_SPEED * time_scale) {
+                if (speed * time_scale > distance - MIN_DISTANCE_BETWEEN_AGENTS) {
+                    speed = (distance - MIN_DISTANCE_BETWEEN_AGENTS) / time_scale;
                 }
             }
         /* check dead lock state with duplex link */
         }
 
+        // 全員が同じ方向に並んで歩いていて、対向者もいない場合は、道幅に収まる人数まで MAX_SPEED になれる
+        // (余裕があれば自分を MAX_SPEED にする)
         if (inFrontSameDirectionAgents == samePlaceAgents.size() &&
                 inFrontOppositeDirectionAgents == 0 &&
                 inFrontSameDirectionAgents > 0) {
@@ -1309,14 +1257,14 @@ public class RunningAroundPerson extends EvacuationAgent
 
         if (speed <= 0.0) {
             speed = 0.0;
+            // ※以下は削除検討対象
             boolean existPlusSpeed = false;
             boolean enterIfStatement = false;
-            if (((inFrontSameDirectionAgents + inFrontOppositeDirectionAgents
-                   == samePlaceAgents.size()) &&
-                    (inFrontSameDirectionAgents +
-                    inFrontOppositeDirectionAgents > 0)) ||
-               (inFrontSameDirectionAgents == samePlaceAgents.size() &&
-                inFrontSameDirectionAgents > 0)) {
+            if (
+                ( (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents == samePlaceAgents.size())
+                    && (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents > 0) )
+                || (inFrontSameDirectionAgents == samePlaceAgents.size() && inFrontSameDirectionAgents > 0)
+            ) {
                 int numberLane = (int)current_link.width;
                 int counter = 0;
                 for (EvacuationAgent agent : samePlaceAgents) {
@@ -1351,12 +1299,14 @@ public class RunningAroundPerson extends EvacuationAgent
         } else if (speed >= MAX_SPEED) {
             speed = MAX_SPEED;
         }
-        /*System.err.println("calc_speed_density Speed: " + speed + ", Link: " +
-                current_link.ID + ", position: " + position);*/
+        // System.err.println("time: " + (int)time + ", Speed: " + speed + ", Link: " + current_link.ID + ", width: " + current_link.width
+        //         + ", Same: " + inFrontSameDirectionAgents + ", Opposite: " + inFrontOppositeDirectionAgents
+        //         + ", position: " + position);
     }
 
     /**
      * get distance between this agent and neighbor agent
+     * 隣のリンク上にいる agent との距離
      */
     private double getDistanceNeighborAgent(EvacuationAgent agent) {
         double distance = 0.0;
@@ -1364,19 +1314,17 @@ public class RunningAroundPerson extends EvacuationAgent
         MapLink neighborLink = agent.getCurrentLink();
 
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            distance = position + agent.getPosition();
+            distance = position + agent.position;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            distance = position + neighborLink.length - agent.getPosition();
+            distance = position + neighborLink.length - agent.position;
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            distance = currentLink.length - position + agent.getPosition();
+            distance = currentLink.length - position + agent.position;
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            distance = currentLink.length - position + neighborLink.length -
-                agent.getPosition();
+            distance = currentLink.length - position + neighborLink.length - agent.position;
         } else {
-            System.err.println("\tRunningAroundPerson." +
-                    "getDistanceNeighborAgent inputted neighbor link is " +
-                    "not neighbor!");
-            distance = -1.0;
+            System.err.println("\tRunningAroundPerson.getDistanceNeighborAgent inputted neighbor link is not neighbor!");
+            // distance = -1.0;
+            System.exit(1);
         }
         return distance;
     }
@@ -1388,56 +1336,54 @@ public class RunningAroundPerson extends EvacuationAgent
         MapLink currentLink = getCurrentLink();
         MapLink neighborLink = agent.getCurrentLink();
 
-        if (currentLink.getFrom() == neighborLink.getFrom() &&
-                currentLink.getTo() == neighborLink.getTo()) {
-            if (direction > 0 && agent.getDirection() < 0)
+        // 重複したリンク
+        if (currentLink.getFrom() == neighborLink.getFrom() && currentLink.getTo() == neighborLink.getTo()) {
+            if (isPositiveDirection() && agent.isNegativeDirection())
                 return true;
-            else if (direction < 0 && agent.getDirection() > 0)
+            else if (isNegativeDirection() && agent.isPositiveDirection())
                 return true;
             else
                 return false;
         }
-        if (currentLink.getFrom() == neighborLink.getTo() &&
-                currentLink.getTo() == neighborLink.getFrom()) {
-            if (direction > 0 && agent.getDirection() > 0)
+        // ループ状の重複したリンク
+        if (currentLink.getFrom() == neighborLink.getTo() && currentLink.getTo() == neighborLink.getFrom()) {
+            if (isPositiveDirection() && agent.isPositiveDirection())
                 return true;
-            else if (direction < 0 && agent.getDirection() < 0)
+            else if (isNegativeDirection() && agent.isNegativeDirection())
                 return true;
             else
                 return false;
         }
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            if (direction > 0 && agent.getDirection() < 0)
+            if (isPositiveDirection() && agent.isNegativeDirection())
                 return true;
-            else if (direction < 0 && agent.getDirection() > 0)
+            else if (isNegativeDirection() && agent.isPositiveDirection())
                 return true;
             else
                 return false;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            if (direction > 0 && agent.getDirection() > 0)
+            if (isPositiveDirection() && agent.isPositiveDirection())
                 return true;
-            else if (direction < 0 && agent.getDirection() < 0)
+            else if (isNegativeDirection() && agent.isNegativeDirection())
                 return true;
             else
                 return false;
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            if (direction > 0 && agent.getDirection() > 0)
+            if (isPositiveDirection() && agent.isPositiveDirection())
                 return true;
-            else if (direction < 0 && agent.getDirection() < 0)
+            else if (isNegativeDirection() && agent.isNegativeDirection())
                 return true;
             else
                 return false;
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            if (direction > 0 && agent.getDirection() < 0)
+            if (isPositiveDirection() && agent.isNegativeDirection())
                 return true;
-            else if (direction < 0 && agent.getDirection() > 0)
+            else if (isNegativeDirection() && agent.isPositiveDirection())
                 return true;
             else
                 return false;
         } else {
-            System.err.println("\tRunningAroundPerson." +
-                    "isSameDirectionNeighborAgent inputted neighbor link is " +
-                    "not neighbor!");
+            System.err.println("\tRunningAroundPerson.isSameDirectionNeighborAgent inputted neighbor link is not neighbor!");
             return false;
         }
     }
@@ -1450,16 +1396,16 @@ public class RunningAroundPerson extends EvacuationAgent
         MapLink neighborLink = agent.getCurrentLink();
 
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            if (direction < 0)
+            if (isNegativeDirection())
                 return true;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            if (direction < 0)
+            if (isNegativeDirection())
                 return true;
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            if (direction > 0)
+            if (isPositiveDirection())
                 return true;
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            if (direction > 0)
+            if (isPositiveDirection())
                 return true;
         } else {
             System.err.println("\tRunningAroundPerson." +
@@ -1471,6 +1417,7 @@ public class RunningAroundPerson extends EvacuationAgent
 
     /**
      * is a neighbor agent place in same node
+     * ※未使用メソッド
      */
     private boolean isSamePlaceNeighborAgent(EvacuationAgent agent) {
         MapLink currentLink = getCurrentLink();
@@ -1500,7 +1447,7 @@ public class RunningAroundPerson extends EvacuationAgent
         double distance = 0.0;
         for (EvacuationAgent agent : current_link.getAgents()) {
             double tmp_distance = 0.0;
-            if (direction > 0.0) {
+            if (isPositiveDirection()) {
                 if (agent.position > position) {
                     tmp_distance = agent.position - position;
                 }
@@ -1533,56 +1480,29 @@ public class RunningAroundPerson extends EvacuationAgent
                 ", position: " + position);*/
     }
 
-    /* effect of damage*/
-    private void damage_effect_basic() {
-        /* main */
-
-        //System.out.println("agentNumber "+agentNumber+" damage "+damage);
-
-        if (damage >= 1.0) speed = 0;
-        else if (damage >= 0.9) speed *= 0.10;
-        else if (damage >= 0.5) speed *= 0.40;
-    }
-
-    /* effect of flood, this damage does not increase */
-    private void damage_effect_flood() {
-        instantaneous_damage *= 1000.;
-        if (instantaneous_damage >= 10.)
-            instantaneous_damage = 10.;
-        speed *= (10. - instantaneous_damage) / 10.;
-        // System.err.println("    damage: " + instantaneous_damage + ", speed: " +
-        //        speed);
-    }
-
-    /* the state of the agent */
-    @Override
-    public int getTriage() {
-        if (damage >= 4.0) return 3;
-        else if (damage >= 2.0) return 2;
-        else if (damage >= 1.0) return 1;
-        else return 0;
-    }
-
-    @Override
-    public boolean finished() {
-        if (getTriage() >= 3) {
-            return true;
-        }
-        if (isEvacuated()) {
-            return true;
-        }
-
-        return false;
-    }
-    
     @Override
     public double getDirection() {
         return direction;
     }
 
     @Override
+    public boolean isPositiveDirection() { return direction >= 0.0; }
+
+    @Override
+    public boolean isNegativeDirection() { return ! isPositiveDirection(); }
+
+    @Override
     public double getSpeed() {
         return speed;
+    }
+
+    @Override
+    public void setSpeed(double _speed) {
+        speed = _speed;
+    }
+
+    public double getAcceleration() {
+        return dv;
     }
 
     @Override
@@ -1755,8 +1675,7 @@ public class RunningAroundPerson extends EvacuationAgent
     }
 
     String navigation_reason = null;
-    protected MapLink sane_navigation(double time,
-            final ArrayList<MapLink> way_candidates) {
+    protected MapLink sane_navigation(double time, final ArrayList<MapLink> way_candidates) {
         MapLink way = sane_navigation_from_node(time, current_link, next_node);
         return way;
     }
@@ -1764,14 +1683,13 @@ public class RunningAroundPerson extends EvacuationAgent
     // route_index
     // navigation_reason
     //
-    protected MapLink sane_navigation_from_node(double time, MapLink link,
-            MapNode node) {
+    protected MapLink sane_navigation_from_node(double time, MapLink link, MapNode node) {
         // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
         if (
             ! sane_navigation_from_node_forced &&
             sane_navigation_from_node_current_link == current_link &&
             sane_navigation_from_node_link == link && sane_navigation_from_node_node == node &&
-            emptyspeed < (direction > 0.0 ? current_link.length - position : position)
+            emptyspeed < (isPositiveDirection() ? current_link.length - position : position)
         ) {
             sane_navigation_from_node_forced = false;
             return sane_navigation_from_node_result;
@@ -1796,14 +1714,12 @@ public class RunningAroundPerson extends EvacuationAgent
         final String next_target = calc_next_target(node);
 
         if (monitor)
-            System.err.println("navigating at " + node.getTagString() + " for "
-                    + next_target);
+            System.err.println("navigating at " + node.getTagString() + " for " + next_target);
         navigation_reason = "for " + next_target + "\n";
         for (MapLink way_candidate : way_candidates) {
-            //if (way_candidate.hasTag(goal)) {
+            //if (way_candidate.hasTag(goal)) {}
             // tkokada
-            if (planned_route.size() <= getRouteIndex() &&
-                    way_candidate.hasTag(goal)) {
+            if (planned_route.size() <= getRouteIndex() && way_candidate.hasTag(goal)) {
                 /* finishing up */
                 way = way_candidate;
                 navigation_reason += " found goal " + goal;
@@ -1819,6 +1735,7 @@ public class RunningAroundPerson extends EvacuationAgent
                 continue;
             }
             boolean loop = false;
+            // ※この if 文は常に無効
             if (DELAY_LOOP) {
                 for (final CheckPoint cp : route) {
                     if (cp.node == way_candidate.getOther(node)) {
@@ -1841,6 +1758,7 @@ public class RunningAroundPerson extends EvacuationAgent
                     + "(" + cost + (loop ? " loop" : "") + ") ";
 
             if (loop) {
+                // ※このブロックは常に無効
                 if (cost < min_cost_second) {
                     min_cost_second = cost;
                     way_second = way_candidate;
@@ -1850,9 +1768,11 @@ public class RunningAroundPerson extends EvacuationAgent
                 way = way_candidate;
                 way_samecost = null;
             } else if (cost == min_cost) {
-                if (way_samecost == null) way_samecost = new ArrayList<MapLink>();
+                if (way_samecost == null)
+                    way_samecost = new ArrayList<MapLink>();
                 way_samecost.add(way_candidate);
-                if (cost < min_cost) min_cost = cost;
+                // if (cost < min_cost)
+                //     min_cost = cost;
             }
             // tkokada
             if (randomNavigation) {
@@ -1862,13 +1782,13 @@ public class RunningAroundPerson extends EvacuationAgent
 
         // tkokada
         double margin = 3.0;
+        // ※ randomNavigation は通常は使用しない
         if (randomNavigation) {
             double totalCost = 0.0;
             MapLink minCostLink = null;
             double minCost = Double.MAX_VALUE;
             for (MapLink resultLink : resultLinks.keySet()) {
-                double cost = ((Double) resultLinks.get(resultLink)).
-                    doubleValue();
+                double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
                 if (cost < minCost) {
                     minCost = cost;
                     minCostLink = resultLink;
@@ -1876,14 +1796,12 @@ public class RunningAroundPerson extends EvacuationAgent
             }
             ArrayList<MapLink> linkCandidates = new ArrayList<MapLink>();
             for (MapLink resultLink : resultLinks.keySet()) {
-                double cost = ((Double) resultLinks.get(resultLink)).
-                    doubleValue();
+                double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
                 if (cost >= min_cost && cost < min_cost + margin)
                     linkCandidates.add(resultLink);
             }
             if (linkCandidates.size() > 0) {
-                MapLink chosedLink = linkCandidates.get(
-                        random.nextInt(linkCandidates.size()));
+                MapLink chosedLink = linkCandidates.get(random.nextInt(linkCandidates.size()));
                 sane_navigation_from_node_result = chosedLink;
                 return chosedLink;
             }
@@ -2181,7 +2099,7 @@ public class RunningAroundPerson extends EvacuationAgent
         out.print("" + generatedTime + ",");
         out.print("" + finishedTime + ",");/* 0.0 if not evacuated */
         out.print("" + getTriage() + ",");
-        out.print("" + damage);
+        out.print("" + accumulatedExposureAmount);
         for (final CheckPoint cp : route) {
             if (cp.node.getTags().size() != 0) {
                 out.print("," + cp.node.getTagString().replace(',', '-'));
@@ -2317,16 +2235,6 @@ public class RunningAroundPerson extends EvacuationAgent
         return goal;
     }
 
-
-    @Override
-    public void exposed(double c) {
-        super.exposed(c);
-
-        if (getTriage() != 0) { 
-            setGoal("EMERGENCY");
-        };
-    }
-
     public void setEmergency() {
         setGoal("EMERGENCY"); 
     }
@@ -2407,6 +2315,10 @@ public class RunningAroundPerson extends EvacuationAgent
 
     public void consumePlannedRoute() {
         routeIndex = planned_route.size();
+    }
+
+    public String getNextCandidate() {
+        return isPlannedRouteCompleted() ? "" : planned_route.get(routeIndex);
     }
 }
 // ;;; Local Variables:

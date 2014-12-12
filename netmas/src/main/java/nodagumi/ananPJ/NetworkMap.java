@@ -84,7 +84,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         return undo_list.size() > 0;
 
     }
-    public void undo() {
+    public void undo(NetworkMapEditor editor) {
         if (undo_list.size() == 0) return;
         int i = undo_list.size() - 1;
         UndoInformation info = undo_list.remove(i);
@@ -93,7 +93,8 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         } else {
             insertOBNode(info.parent, info.node, false);
         }
-        NetworkMapEditor.getInstance().updateAll();
+        //NetworkMapEditor.getInstance().updateAll();
+        editor.updateAll();
     }
 
     /* constructor */
@@ -150,6 +151,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         int id;
         do {
             id = Math.abs(random.nextInt());
+            //System.err.println("\033[1;33massign_new_id:\033[0m " + id);
             if (id < 0) { id = -id; }
         } while (id_part_map.containsKey(id));
         return id;
@@ -294,6 +296,16 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         return agent;
     }
 
+    public EvacuationAgent addAgent(MapPartGroup parent, EvacuationAgent agent, boolean autoID) {
+        if (autoID) {
+            return addAgent(parent, agent);
+        }
+        id_part_map.put(agent.ID, agent);
+        agentsCache.add(agent);
+        insertNodeInto(agent, parent, parent.getChildCount());
+        return agent;
+    }
+
     public PollutedArea createPollutedAreaRectangle(
             MapPartGroup parent,
             Rectangle2D bounds,
@@ -364,8 +376,11 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         return false;
     }
 
-    public EditorFrame openEditorFrame(MapPartGroup obinode){
-        EditorFrame frame = new EditorFrame(obinode, random);
+    //public EditorFrame openEditorFrame(MapPartGroup obinode){
+    public EditorFrame openEditorFrame(NetworkMapEditor editor, MapPartGroup obinode) {
+        //EditorFrame frame = new EditorFrame(obinode, random);
+        EditorFrame frame = new EditorFrame(editor, obinode);
+
         obinode.setUserObject(frame);
 
         getFrames().add(frame);

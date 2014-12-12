@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.WindowAdapter;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
@@ -150,6 +151,7 @@ public class NetworkMapEditor extends SimulationLauncher
     protected boolean showLogo = false;
     protected boolean show3dPolygon = true;
     protected String agentMovementHistoryPath = null;
+    protected String individualPedestriansLogDir = null;
 
     /* copy from CUI simulator */
     private static NetmasPropertiesHandler propertiesHandler = null;
@@ -347,6 +349,10 @@ public class NetworkMapEditor extends SimulationLauncher
         modified = b;
     }
 
+    public void _setModified(boolean b) {
+        modified = b;
+    }
+
     public void updateAll() {
         nodePanel.refresh();
         linkPanel.refresh();
@@ -506,11 +512,11 @@ public class NetworkMapEditor extends SimulationLauncher
         mi.addActionListener((ActionListener) this);
         fileMenu.add(mi);
 
-        fileMenu.add(new MenuItem("-"));
-
-        mi = new MenuItem("Import nodes from file");
-        mi.addActionListener((ActionListener) this);
-        fileMenu.add(mi);
+        // fileMenu.add(new MenuItem("-"));
+        //
+        // mi = new MenuItem("Import nodes from file");
+        // mi.addActionListener((ActionListener) this);
+        // fileMenu.add(mi);
 
         fileMenu.add(new MenuItem("-"));
         mi = new MenuItem("Serialize to file");
@@ -605,6 +611,11 @@ public class NetworkMapEditor extends SimulationLauncher
             case 2:
                 return false;
             }
+        }
+        if (properties != null) {
+            // NetworkMap の生成時に random オブジェクトを初期化する
+            // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
+            random.setSeed(properties.getRandseed());
         }
         networkMap = new NetworkMap(random); 
         mapPath = null;
@@ -819,130 +830,89 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     protected void simulate() {
-        make_fv_rooms();
+        if (properties != null) {
+            // シミュレーション結果をCUIモードと一致させるため
+            random.setSeed(properties.getRandseed());
+            // BasicSimulationLauncher#readMapWithName() で使われる分の代わり
+            random.nextInt();
+        }
+
+        // pollution area の読み込み(旧形式のため利用不能)
+        // make_fv_rooms();
+
         super.simulate(isDeserialized);
     }
 
-    private void importFromFv() {
-        FileDialog fd = new FileDialog(frame, "Import pollution grids",
-                FileDialog.LOAD);
-        fd.setDirectory(settings.get("inputdir", ""));
-        fd.setVisible (true);
+    // model.begin() をバックグラウンドで実行するためのモーダルダイアログ
+    private class WaitDialog extends JDialog {
+        public boolean canceled = false;
 
-        if (fd.getFile() == null) return;
+        public WaitDialog(Frame owner, String title, String message, final Thread thread) {
+            super(owner, title, true);
 
-        String fv_file = fd.getDirectory() + fd.getFile();
-        openFvFile(fv_file);
-    }
+            JPanel panel = new JPanel(new FlowLayout());
+            final JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    cancelButton.setEnabled(false);
+                    canceled = true;
+                    threadCancel(thread);
+                }
+            });
+            panel.add(cancelButton);
 
-    private void openFvFile(String filename) {
-        try {
-            FileReader fr = new FileReader(filename);
-            BufferedReader br = new BufferedReader(fr);
-            String line;
+            Container c = getContentPane();
+            c.add(new JLabel(message), BorderLayout.CENTER);
+            c.add(panel, BorderLayout.PAGE_END);
 
-            /* Nodes */
-            line = br.readLine();
-            Pattern headPattern = Pattern.compile("Nodes");
-            Matcher headMatcher = headPattern.matcher(line);
-            if (!headMatcher.matches()) {
-                JOptionPane.showMessageDialog(frame,
-                        "Might not be a fv-based file.",
-                        "Import failed",
-                        JOptionPane.ERROR_MESSAGE);
-
-                return;
-            }
-
-            MapPartGroup group = networkMap.createGroupNode((MapPartGroup)
-                    networkMap.getRoot());
-            group.addTag("RoomFromFV");
-
-            Pattern timePattern = Pattern.compile("time.+");
-            Pattern nodePattern = Pattern.compile("(.+),(.+),(.+)");
-
-            Vector3d point_min = new Vector3d(Double.MAX_VALUE,
-                    Double.MAX_VALUE, Double.MAX_VALUE);
-            Vector3d point_max = new Vector3d(Double.MIN_VALUE,
-                    Double.MIN_VALUE, Double.MIN_VALUE);
-            ArrayList<Vector3d> node_points = new ArrayList<Vector3d>();
-            Map<Integer, MapPartGroup> height_group = new HashMap<Integer,
-                MapPartGroup>();
-
-            while (true) {
-                line = br.readLine();
-                if (line == null) break;
-                Matcher timeMatcher = timePattern.matcher(line);
-                if (timeMatcher.matches()) break;
-
-                Matcher nodeMatcher = nodePattern.matcher(line);
-                if (!nodeMatcher.matches()) {
-                    System.err.println("?" + line);
-                    continue;
+            setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+                public void windowOpened(WindowEvent e) {
+                    thread.start();
                 }
 
-                double x = Double.parseDouble(nodeMatcher.group(1));
-                double y = -Double.parseDouble(nodeMatcher.group(2));
-                double z = Double.parseDouble(nodeMatcher.group(3));
-
-                Integer height = (int)z;
-                if (!height_group.containsKey(height)) {
-                    MapPartGroup child_group = networkMap.createGroupNode(
-                            group);
-                    height_group.put(height, child_group);
-                    child_group.addTag(""+height);
+                public void windowClosing(WindowEvent e) {
+                    if (canceled) {
+                        return;
+                    }
+                    canceled = true;
+                    cancelButton.setEnabled(false);
+                    threadCancel(thread);
                 }
+            });
 
-                node_points.add(new Vector3d(x, y, z));
+            setSize(300, 128);
+            setLocationRelativeTo(owner);
+        }
 
-                point_min.x = Math.min(point_min.x, x);
-                point_min.y = Math.min(point_min.y, y);
-                point_min.z = Math.min(point_min.z, z);
-                point_max.x = Math.max(point_max.x, x);
-                point_max.y = Math.max(point_max.y, y);
-                point_max.z = Math.max(point_max.z, z);
+        public void threadCancel(Thread thread) {
+            // ※ビルドの中断機能は未実装のため、現状では処理終了を待つだけ
+            try {
+                thread.join();
+            } catch(InterruptedException ex) {
+                ex.printStackTrace();
             }
-            double width = Math.max(point_max.x - point_min.x,
-                    Math.max(point_max.y - point_min.y,
-                            (point_max.z - point_min.z)));
-
-            int count = 0;
-            for (Vector3d v : node_points) {
-                count += 1;
-                double x = (v.x  - point_min.x) / width * 1000;
-                double y = (v.y  - point_min.y) / width * 1000;
-                double z = (v.z  - point_min.z) / width * 1000;
-                Point2D xy = new Point2D.Double(x, y);
-                Integer height = (int)v.z;
-                MapPartGroup child_group = height_group.get(height);
-                MapNode node = networkMap.createMapNode(child_group, xy, z);
-                node.addTag("FVNODE_"+count);
-            }
-            System.err.println(point_min.z);
-            System.err.println(1/width * 1000);
-        } catch (IOException e) {
-            System.err.println(e);
-            return;
         }
     }
 
-    private void make_fv_rooms() {
-        if (isDeserialized)
-            return;
+    private WaitDialog waitDialog;
 
-        MapPartGroup group = networkMap.createGroupNode((MapPartGroup)
-                networkMap.getRoot());
-        group.addTag("ROOMS");
-        for (MapNode node : getNodes()) {
-            Matcher match = node.matchTag("FVNODE_(\\d+)");
-            if (match == null) continue;
-
-            int count = Integer.parseInt(match.group(1));
-            PollutedArea area = networkMap.createPollutedAreaPoint(group,
-                    node, count);
-            group.setScale(((MapPartGroup)node.getParent()).getScale());
-            area.addTag("" + count);
-        }
+    public boolean buildModel() {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                model.begin(true, false, null);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        // ここでダイアログを閉じる
+                        waitDialog.setVisible(false);
+                        waitDialog.dispose();
+                    }
+                });
+            }
+        });
+        waitDialog = new WaitDialog(frame, "Information", " Simulation model building...", thread);
+        waitDialog.setVisible(true);
+        return ! waitDialog.canceled;
     }
 
     private void calcExitPaths() {
@@ -1429,6 +1399,9 @@ public class NetworkMapEditor extends SimulationLauncher
         if (propertiesHandler.isDefined("agent_movement_history_file")) {
             model.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
         }
+        if (propertiesHandler.isDefined("individual_pedestrians_log_dir")) {
+            model.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
+        }
     }
 
     // SimulationPanel3D を生成した直後に呼び出される(simulationWindowOpenedOperation ではうまく対処できない分の処理)
@@ -1457,12 +1430,12 @@ public class NetworkMapEditor extends SimulationLauncher
         else if (e.getActionCommand() == "Save map") saveMap();
         else if (e.getActionCommand() == "Save map as") saveMapAs();
         //else if (e.getActionCommand() == "Merge map") mergeMap();
-        else if (e.getActionCommand() == "Import nodes from file")
-            importFromFv();
+        // else if (e.getActionCommand() == "Import nodes from file")
+        //     importFromFv();
         else if (e.getActionCommand() == "Serialize to file")
             serializeToFile();
-        else if (e.getActionCommand() == "Make rooms from FV-based nodes")
-            make_fv_rooms();
+        // else if (e.getActionCommand() == "Make rooms from FV-based nodes")
+        //     make_fv_rooms();
         else if (e.getActionCommand() == "Calculate exit paths")
             calcExitPaths();
         else if (e.getActionCommand() == "Calculate tag paths")
@@ -1687,6 +1660,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public void setProperties(String _propertiesFile) {
         propertiesHandler = new NetmasPropertiesHandler(_propertiesFile);
+        properties = propertiesHandler;
 
         setIsDebug(propertiesHandler.getIsDebug());
         // I/O handler ?
@@ -1762,6 +1736,10 @@ public class NetworkMapEditor extends SimulationLauncher
             simulationWindowOpen = propertiesHandler.getBoolean("simulation_window_open", simulationWindowOpen);
             autoSimulationStart = propertiesHandler.getBoolean("auto_simulation_start", autoSimulationStart);
             agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
+            individualPedestriansLogDir = propertiesHandler.getDirectoryPath("individual_pedestrians_log_dir", null);
+            if (individualPedestriansLogDir != null) {
+                individualPedestriansLogDir = individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
+            }
         } catch(Exception e) {
             //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
             System.err.println(e.getMessage());
@@ -1819,6 +1797,142 @@ public class NetworkMapEditor extends SimulationLauncher
         }
         return instance;
     }
+
+    public NodePanel getNodePanel() { return nodePanel; }
+
+    public LinkPanel getLinkPanel() { return linkPanel; }
+
+    public AgentPanel getAgentPanel() { return agentPanel; }
+
+    public PollutionPanel getPollutionPanel() { return pollutionPanel; }
+
+    public ScenarioPanel getScenarioPanel() { return scenarioPanel; }
+
+    public BrowserPanel getBrowserPanel() { return browserPanel; }
+
+    public static NetmasPropertiesHandler getNetmasPropertiesHandler() { return propertiesHandler; }
+
+    // private void importFromFv() {
+    //     FileDialog fd = new FileDialog(frame, "Import pollution grids",
+    //             FileDialog.LOAD);
+    //     fd.setDirectory(settings.get("inputdir", ""));
+    //     fd.setVisible (true);
+    //
+    //     if (fd.getFile() == null) return;
+    //
+    //     String fv_file = fd.getDirectory() + fd.getFile();
+    //     openFvFile(fv_file);
+    // }
+    //
+    // private void openFvFile(String filename) {
+    //     try {
+    //         FileReader fr = new FileReader(filename);
+    //         BufferedReader br = new BufferedReader(fr);
+    //         String line;
+    //
+    //         /* Nodes */
+    //         line = br.readLine();
+    //         Pattern headPattern = Pattern.compile("Nodes");
+    //         Matcher headMatcher = headPattern.matcher(line);
+    //         if (!headMatcher.matches()) {
+    //             JOptionPane.showMessageDialog(frame,
+    //                     "Might not be a fv-based file.",
+    //                     "Import failed",
+    //                     JOptionPane.ERROR_MESSAGE);
+    //
+    //             return;
+    //         }
+    //
+    //         MapPartGroup group = networkMap.createGroupNode((MapPartGroup)
+    //                 networkMap.getRoot());
+    //         group.addTag("RoomFromFV");
+    //
+    //         Pattern timePattern = Pattern.compile("time.+");
+    //         Pattern nodePattern = Pattern.compile("(.+),(.+),(.+)");
+    //
+    //         Vector3d point_min = new Vector3d(Double.MAX_VALUE,
+    //                 Double.MAX_VALUE, Double.MAX_VALUE);
+    //         Vector3d point_max = new Vector3d(Double.MIN_VALUE,
+    //                 Double.MIN_VALUE, Double.MIN_VALUE);
+    //         ArrayList<Vector3d> node_points = new ArrayList<Vector3d>();
+    //         Map<Integer, MapPartGroup> height_group = new HashMap<Integer,
+    //             MapPartGroup>();
+    //
+    //         while (true) {
+    //             line = br.readLine();
+    //             if (line == null) break;
+    //             Matcher timeMatcher = timePattern.matcher(line);
+    //             if (timeMatcher.matches()) break;
+    //
+    //             Matcher nodeMatcher = nodePattern.matcher(line);
+    //             if (!nodeMatcher.matches()) {
+    //                 System.err.println("?" + line);
+    //                 continue;
+    //             }
+    //
+    //             double x = Double.parseDouble(nodeMatcher.group(1));
+    //             double y = -Double.parseDouble(nodeMatcher.group(2));
+    //             double z = Double.parseDouble(nodeMatcher.group(3));
+    //
+    //             Integer height = (int)z;
+    //             if (!height_group.containsKey(height)) {
+    //                 MapPartGroup child_group = networkMap.createGroupNode(
+    //                         group);
+    //                 height_group.put(height, child_group);
+    //                 child_group.addTag(""+height);
+    //             }
+    //
+    //             node_points.add(new Vector3d(x, y, z));
+    //
+    //             point_min.x = Math.min(point_min.x, x);
+    //             point_min.y = Math.min(point_min.y, y);
+    //             point_min.z = Math.min(point_min.z, z);
+    //             point_max.x = Math.max(point_max.x, x);
+    //             point_max.y = Math.max(point_max.y, y);
+    //             point_max.z = Math.max(point_max.z, z);
+    //         }
+    //         double width = Math.max(point_max.x - point_min.x,
+    //                 Math.max(point_max.y - point_min.y,
+    //                         (point_max.z - point_min.z)));
+    //
+    //         int count = 0;
+    //         for (Vector3d v : node_points) {
+    //             count += 1;
+    //             double x = (v.x  - point_min.x) / width * 1000;
+    //             double y = (v.y  - point_min.y) / width * 1000;
+    //             double z = (v.z  - point_min.z) / width * 1000;
+    //             Point2D xy = new Point2D.Double(x, y);
+    //             Integer height = (int)v.z;
+    //             MapPartGroup child_group = height_group.get(height);
+    //             MapNode node = networkMap.createMapNode(child_group, xy, z);
+    //             node.addTag("FVNODE_"+count);
+    //         }
+    //         System.err.println(point_min.z);
+    //         System.err.println(1/width * 1000);
+    //     } catch (IOException e) {
+    //         System.err.println(e);
+    //         return;
+    //     }
+    // }
+    //
+    // private void make_fv_rooms() {
+    //     if (isDeserialized)
+    //         return;
+    //
+    //     MapPartGroup group = networkMap.createGroupNode((MapPartGroup)
+    //             networkMap.getRoot());
+    //     group.addTag("ROOMS");
+    //     for (MapNode node : getNodes()) {
+    //         Matcher match = node.matchTag("FVNODE_(\\d+)");
+    //         if (match == null) continue;
+    //
+    //         int count = Integer.parseInt(match.group(1));
+    //         PollutedArea area = networkMap.createPollutedAreaPoint(group,
+    //                 node, count);
+    //         group.setScale(((MapPartGroup)node.getParent()).getScale());
+    //         area.addTag("" + count);
+    //     }
+    // }
 
     /**
      * @param args

@@ -17,15 +17,18 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
@@ -63,6 +66,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     private Random random = null;
     // saveTimeSeriesLog() が呼ばれた回数
     private int logging_count = 0;
+    private NetmasPropertiesHandler properties = null;
 
     public EvacuationSimulator(NetworkMap _networkMap,
             SimulationController _controller,
@@ -70,6 +74,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             Random _random) {
         networkMap = _networkMap;
         controller = _controller;
+        if (controller instanceof BasicSimulationLauncher) {
+            properties = ((BasicSimulationLauncher)controller).getProperties();
+        }
         nodes = networkMap.getNodes();
         links = networkMap.getLinks();
         agents = networkMap.getAgents();
@@ -99,6 +106,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             String _scenario_serial) {
         networkMap = _networkMap;
         controller = _controller;
+        if (controller instanceof BasicSimulationLauncher) {
+            properties = ((BasicSimulationLauncher)controller).getProperties();
+        }
         nodes = networkMap.getNodes();
         links = networkMap.getLinks();
         agents = networkMap.getAgents();
@@ -166,18 +176,32 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     scenario_number,
                     links);
         }
-        if (has_display)
-            buildDisplay(_panel3d);
 
         agentHandler.prepareForSimulation();
     }
 
     void buildModel(boolean has_display) {
         buildMap();
-        pollutionCalculator = new PollutionCalculator(
-                pollutionFileName,
-                networkMap.getRooms(),
-                timeScale);
+        try {
+            pollutionCalculator = new PollutionCalculator(
+                    pollutionFileName,
+                    networkMap.getRooms(),
+                    timeScale,
+                    properties == null ? 0.0 : properties.getDouble("interpolation_interval", 0.0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        // リンク上にかかるPollutedAreaのリストをリンクにセットする
+        for (PollutedArea area : networkMap.getRooms()) {
+            for (MapLink link : links) {
+                if (area.intersectsLine(link.getLine2D())) {
+                    link.addIntersectedPollutionArea(area);
+                }
+            }
+        }
+
         String scenario_number = null;
         Pattern numonly = Pattern.compile("^\\d*$");
         Matcher matcher = numonly.matcher(scenario_serial);
@@ -199,11 +223,11 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
     }
 
-    void buildDisplay() {
+    public void buildDisplay() {
         panel3d = controller.setupFrame(this);
     }
 
-    void buildDisplay(SimulationPanel3D _panel3d) {
+    public void buildDisplay(SimulationPanel3D _panel3d) {
         if (controller != null) {
             if (_panel3d != null) {
                 panel3d = controller.setupFrame(this, _panel3d);
@@ -232,7 +256,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         //agents.add(agent);
         //getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent);
         if (links.size() > 0) {
-            getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent);
+            getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent, false/* エージェントIDを変更しない */);
         //} else {
         //    getMap().addAgent((MapPartGroup) getMap().root, agent);
         }
@@ -273,6 +297,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         if (agentHandler.isFinished()) {
             // output_results();
             agentHandler.closeAgentMovementHistorLogger();
+            agentHandler.closeIndividualPedestriansLogger();
             return true;
         } else {
             return false;
@@ -634,6 +659,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         return pollutionCalculator.getPollutions();
     }
 
+    public double getMaxPollutionLevel() {
+        return pollutionCalculator.getMaxPollutionLevel();
+    }
+
     @Override
     public void recalculatePaths() {
         synchronized (stop_simulation) {
@@ -688,6 +717,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     @Override
     public int getDisplayMode() {
         return 4;
+    }
+
+    public void setProperties(NetmasPropertiesHandler _properties) {
+        properties = _properties;
+    }
+
+    public NetmasPropertiesHandler getProperties() {
+        return properties;
     }
 
     public String getScenario_serial() {
@@ -745,22 +782,22 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             }
         }
 
-        // evacuatedAgents log を記憶
-        if (logging_count == 0) {
-            exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
-        }
-        StringBuffer buff = new StringBuffer();
-        int index = 0;
-        for (MapNode node : exitNodeList) {
-            if (index > 0) {
-                buff.append(",");
+        if (! finished) {
+            // evacuatedAgents log を記憶
+            if (logging_count == 0) {
+                exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
             }
-            buff.append(agentHandler.getExitNodesMap().get(node));
-            index++;
-        }
-        evacuatedAgents.add(buff.toString());
-
-        if (finished) {  // finalize process
+            StringBuffer buff = new StringBuffer();
+            int index = 0;
+            for (MapNode node : exitNodeList) {
+                if (index > 0) {
+                    buff.append(",");
+                }
+                buff.append(agentHandler.getExitNodesMap().get(node));
+                index++;
+            }
+            evacuatedAgents.add(buff.toString());
+        } else {  // finalize process
             for (EvacuationAgent agent : agents) {
                 if (!agent.isEvacuated()) {
                     goalTimes.put(new Integer(agent.ID),
@@ -771,7 +808,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             // 避難完了時刻順にソート
             Collections.sort(entries, new Comparator<Map.Entry>() {
                 public int compare(Map.Entry ent1, Map.Entry ent2) {
-                    return (Double)ent1.getValue() > (Double)ent2.getValue() ? 1 : 0;
+                    //return (Double)ent1.getValue() > (Double)ent2.getValue() ? 1 : 0;
+                    if ((Double)ent1.getValue() == (Double)ent2.getValue()) {
+                        return 0;
+                    } else if ((Double)ent1.getValue() > (Double)ent2.getValue()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 }
             });
 
@@ -801,7 +845,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             File evacuatedAgentsLog = new File(resultDirectory + "/evacuatedAgents.csv");
             try {
                 writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, false), "utf-8")), true);
-                index = 0;
+                int index = 0;
                 for (MapNode node : exitNodeList) {
                     writer.write((index == 0 ? "" : ",") + node.getTagLabel());
                     index++;
@@ -944,9 +988,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         for (EvacuationAgent agent: agents) {
             if (agent.getSpeed() == 0.) {
                 // System.err.println("\tanget: " + agent.ID + ", damage: " +
-                        // agent.getInstantaneousDamage() + ", density: " +
+                        // agent.currentExposureAmount + ", density: " +
                         // ((RunningAroundPerson) agent).getDensity());
-                if (agent.getInstantaneousDamage() >= 10.) {
+                if (agent.currentExposureAmount >= 10.) {
                     dszn += 1;
                 }
             }

@@ -1,8 +1,13 @@
 #!/bin/sh
 
+# export CROWDWALK=/path/to/CrowdWalk/netmas
+if test "$CROWDWALK" = "" ; then
+	CROWDWALK='.'
+fi
+
 #CP=build/libs/netmas.jar:build/libs/netmas-pathing.jar
-CP=build/libs/netmas.jar
-DYLD=libs
+CP=$CROWDWALK/build/libs/netmas.jar
+DYLD=$CROWDWALK/libs
 #JAVAOPT='-Xms1024M -Xmx1024M'
 JAVAOPT='-Dfile.encoding=UTF-8'
 JAVA='java'
@@ -14,28 +19,28 @@ OS=`uname -a`
 case "$OS" in
     *"Darwin"*)
         echo " > Load Mac OS X libraries..."
-        DYLD=libs/macosx
-        CP=$CP:build/libs/netmas-pathing.jar
+        DYLD=$CROWDWALK/libs/macosx
+        CP=$CP:$CROWDWALK/build/libs/netmas-pathing.jar
         ;;
     *"CYGWIN"*"64"*)
         echo " > Load Windows amd64 libraries..."
-        DYLD=libs/windows/amd64
-        CP=$CP\;build/libs/netmas-pathing.jar
+        DYLD=$CROWDWALK/libs/windows/amd64
+        CP=$CP\;$CROWDWALK/build/libs/netmas-pathing.jar
         ;;
     *"CYGWIN"*"i686"*)
         echo " > Load Windows i386 libraries..."
-        DYLD=libs/windows/i386
-        CP=$CP\;build/libs/netmas-pathing.jar
+        DYLD=$CROWDWALK/libs/windows/i386
+        CP=$CP\;$CROWDWALK/build/libs/netmas-pathing.jar
         ;;
     *"Linux"*"x86_64"*)
         echo " > Load linux amd64 libraries..."
-        DYLD=libs/linux/amd64
-        CP=$CP:build/libs/netmas-pathing.jar
+        DYLD=$CROWDWALK/libs/linux/amd64
+        CP=$CP:$CROWDWALK/build/libs/netmas-pathing.jar
         ;;
     *"Linux"*"x86_32"*)
         echo " > Load linux i386 libraries..."
-        DYLD=libs/linux/i386
-        CP=$CP:build/libs/netmas-pathing.jar
+        DYLD=$CROWDWALK/libs/linux/i386
+        CP=$CP:$CROWDWALK/build/libs/netmas-pathing.jar
         ;;
     *)
         echo " > Current OS may not be supported..."

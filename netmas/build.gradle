@@ -28,12 +28,14 @@ dependencies {
         compile group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.0'
         compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
         compile group: 'xalan', name: 'xalan', version: '2.7.0'
+        compile 'net.arnx:jsonic:1.2.7'
         compile fileTree(dir: 'libs/jar', include: '*.jar')
     } else {
         groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.0'
         // compile 'commons-cli:commons-cli:1.2'
         // compile 'org.geotools:gt-shapefile:8.5'
         // compile 'org.geotools:gt-swing:8.5'
+        compile 'net.arnx:jsonic:1.2.7'
         compile fileTree(dir: 'libs/jar/geotools-2.7-M3', include: '*.jar')
         compile fileTree(dir: 'libs/jar', include: '*.jar')
         compile fileTree(dir: 'libs/jar', include: '.SM.*.jar')
@@ -102,10 +104,12 @@ processResources {
         "git rev-list HEAD".execute().in.eachLine { revision++ }
         def commit_hash = "git rev-parse --short HEAD".execute().text.trim()
 
-        filter(ReplaceTokens, tokens: ['version': version])
-        filter(ReplaceTokens, tokens: ['branch': branch])
-        filter(ReplaceTokens, tokens: ['revision': "" + revision])
-        filter(ReplaceTokens, tokens: ['commit_hash': commit_hash])
+        filesMatching("netmas.properties") {
+            filter(ReplaceTokens, tokens: ['version': version])
+            filter(ReplaceTokens, tokens: ['branch': branch])
+            filter(ReplaceTokens, tokens: ['revision': "" + revision])
+            filter(ReplaceTokens, tokens: ['commit_hash': commit_hash])
+        }
         println "    version -> ${version}.${branch}.${revision}-${commit_hash}"
     }
 }

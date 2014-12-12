@@ -445,7 +445,8 @@ implements MouseListener, TreeSelectionListener, Serializable {
 	private EditorFrame showEditorForGroup(MapPartGroup group) {
     	EditorFrame frame;
 	    if(!group.haveEditorFrame()) {
-	    	frame = editor.getMap().openEditorFrame(group);
+	    	//frame = editor.getMap().openEditorFrame(group);
+	    	frame = editor.getMap().openEditorFrame(editor, group);
 	        editor.updateAll();
 	        refresh();
 	    } else {

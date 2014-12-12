@@ -77,7 +77,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         buffer.append("," + this.position);
         buffer.append("," + this.direction);
         buffer.append("," + this.speed);
-        buffer.append("," + this.damage);
+        buffer.append("," + this.accumulatedExposureAmount);
         buffer.append("," + this.goal);
         buffer.append("," + this.routeIndex);
         buffer.append("," + this.planned_route.size());
@@ -115,7 +115,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             agent.next_node = link.getFrom();
         }
         agent.speed = Double.parseDouble(items[8]);
-        agent.damage = Double.parseDouble(items[9]);
+        agent.accumulatedExposureAmount = Double.parseDouble(items[9]);
         agent.goal = items[10];
         agent.routeIndex = Integer.parseInt(items[11]);
         int route_size = Integer.parseInt(items[12]);

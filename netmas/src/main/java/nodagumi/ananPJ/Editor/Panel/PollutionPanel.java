@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 
 import javax.swing.JButton;
@@ -64,7 +65,11 @@ implements ActionListener, ListSelectionListener, Serializable {
 		}
 
 		public Object getValueAt(final int row, final int col) {
-			PollutedArea area = editor.getMap().getRooms().get(row);
+			ArrayList<PollutedArea> rooms = editor.getMap().getRooms();
+			if (rooms.isEmpty()) {
+				return "ERR(" + row + ", " + col + ")";
+			}
+			PollutedArea area = rooms.get(row);
 			switch(col) {
 			case 0:
 			{

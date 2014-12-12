@@ -99,7 +99,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
     /* constructor */
     public NetworkMap() {
         super(null, true);
-        random = new Random();
+        random = new Random(10);
         int id = assign_new_id();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");

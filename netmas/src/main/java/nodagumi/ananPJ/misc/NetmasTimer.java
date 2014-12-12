@@ -7,7 +7,8 @@ import java.io.Serializable;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-
+// シミュレーションの実行にかかった実時間をミリ秒精度で出力する
+// (プログラムのパフォーマンス計測に用いる)
 public class NetmasTimer implements Serializable {
 
     private int interval = 0;
@@ -65,14 +66,16 @@ public class NetmasTimer implements Serializable {
             System.out.println(getInterval());
     }
 
+    // interval分のステップ(10)進むのにかかった実時間
     public void writeInterval() {
         if (counter == 1)
-            writer.println("I," + getInterval());
+            writer.println("Interval," + getInterval());
         writer.flush();
     }
 
+    // シミュレーション開始からの実経過時間(60ステップ進むごとに出力)
     public void writeElapsed() {
-        writer.println("E," + getElapsed());
+        writer.println("Elapsed," + getElapsed());
         writer.flush();
     }
 
@@ -83,7 +86,7 @@ public class NetmasTimer implements Serializable {
         timeMillis = timeMillis % 60000;
         long seconds = timeMillis / 1000;
         long millis = timeMillis % 1000;
-        return String.format("%02d:%02d:%02d:%03d", hours, minutes, seconds,
+        return String.format("%02d:%02d:%02d.%03d", hours, minutes, seconds,
                 millis);
     }
 }
