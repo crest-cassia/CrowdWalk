@@ -12,7 +12,10 @@
 
 package nodagumi.Itk;
 
+import nodagumi.Itk.ClassFinder;
+
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 import junit.framework.TestCase;
 
@@ -20,19 +23,82 @@ import junit.framework.TestCase;
 /**
  * description of Test.
  */
-public class ClassFinderTest extends TestCase {
-    public ClassFinderTest(String name) { super(name); }
+public class ClassFinder_Test extends TestCase {
     //------------------------------------------------------------
     /**
-     * description of method initialize
-     * @param _baz about argument baz.
+     * simple get test
      */
     @Test
-    public void testFoo() {
-	System.err.println("foo bar baz") ;
-	//	fail("not implemented.");
-	assertEquals(2, 1+1) ;
+    public void test_get() {
+	System.out.println("test_get") ;
+	try {
+	    String name = "java.lang.String" ;
+	    Class<?> klass = ClassFinder.get(name) ;
+	    System.out.println("name=" + name) ;
+	    System.out.println("class=" + klass.toString()) ;
+	} catch (Exception ex) {
+	    ex.printStackTrace() ;
+	}
     }
 
-} // class ClassFinderTest
+    //------------------------------------------------------------
+    /**
+     * alias test
+     */
+    @Test
+    public void test_alias() {
+	System.out.println("test_alias") ;
+	try {
+	    ClassFinder.alias("MyString","java.lang.String") ;
+	    String name = "MyString" ;
+	    String fullname = ClassFinder.fullname(name) ;
+	    System.out.println("name=" + name) ;
+	    System.out.println("fullname=" + fullname) ;
+	} catch (Exception ex) {
+	    ex.printStackTrace() ;
+	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * new test
+     */
+    @Test
+    public void test_new() {
+	System.out.println("test_new") ;
+	try {
+	    ClassFinder.alias("MyString","java.lang.String") ;
+	    String name = "MyString" ;
+	    String str = (String)ClassFinder.newByName(name) ;
+	    str += "foo" ;
+	    System.out.println("str=" + str) ;
+	} catch (Exception ex) {
+	    ex.printStackTrace() ;
+	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * new test
+     */
+    @Test
+    public void test_json() {
+	System.out.println("test_json") ;
+	try {
+	    ClassFinder.aliasByJson(" { " +
+				    "'MyString' : 'java.lang.String'," +
+				    "'Me' : 'nodagumi.Itk.ClassFinder_Test'," +
+				    "'You' : 'nodagumi.Itk.ClassFinder'," +
+				    "}") ;
+	    String str = (String)ClassFinder.newByName("MyString") ;
+	    str += "foo" ;
+	    System.out.println("str=" + str + "\n" +
+			       "Me=" + ClassFinder.get("Me").toString() + "\n" +
+			       "You=" + ClassFinder.get("You").toString() + "\n") ;
+	} catch (Exception ex) {
+	    ex.printStackTrace() ;
+	}
+    }
+
+} // class ClassFinder_Test
 

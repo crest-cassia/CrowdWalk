@@ -10,43 +10,116 @@
  * ...
  */
 
-package nodagumi.Itk;
+
+
+package nodagumi.Itk ;
+
+import java.lang.ClassNotFoundException ; 
+import java.lang.InstantiationException ;
+import java.lang.IllegalAccessException ;
+
+import java.util.HashMap ;
+import java.util.Map ;
+
+import net.arnx.jsonic.JSON ;
+import net.arnx.jsonic.JSONException ;
 
 //======================================================================
 /**
- * description of class Foo.
+ * クラスの名前からクラスオブジェクトを探すためのツール
  */
 public class ClassFinder {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
-     * description of DefaultValues.
+     * alias を格納しておくテーブル
      */
-    final public int DefaultOne = 1 ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * description of attribute baz.
-     */
-    public int baz ;
+    static public HashMap<String, String> AliasTable =
+	new HashMap<String, String>() ;
 
     //------------------------------------------------------------
     /**
-     * description of method initialize
-     * @param _baz about argument baz.
+     * クラスオブジェクトを持ってくる。
+     * @param className クラスの名前。alias名もしくは fullpath。
      */
-    public ClassFinder(int _baz){
-	baz = _baz ;
+    static public Class<?> get(String className) 
+    	throws ClassNotFoundException
+    {
+	return Class.forName(fullname(className)) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * alias table を参照しつつ、fullname を探す。
+     * もし alias されていなければ、そのまま返す。
+     * @param shortName 探す名前
+     */
+    static public String fullname(String name)
+    {
+	String fname = AliasTable.get(name) ;
+	if(fname == null) {
+	    return name ;
+	} else {
+	    return fullname(fname) ;
+	}
     }
 
     //------------------------------------------------------------
     /**
-     * description of method foo
-     * @param bar about argument bar
-     * @return about return value
+     * クラスを見つけて、インスタンスを生成する。
+     * @param Name クラスの名前
      */
-    public int foo(int bar) {
-	baz = bar ;
-	return 1 ;
+    static public Object newByName(String name)
+	throws ClassNotFoundException, 
+	       InstantiationException, 
+	       IllegalAccessException
+    {
+	Class<?> klass = get(name) ;
+	return klass.newInstance() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * alias を登録する。
+     * @param shortName alias 名。
+     * @param fullName alias される名前。
+     */
+    static public void alias(String shortName,
+			     String fullName)
+    {
+	AliasTable.put(shortName, fullName) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * JSON で alias をまとめて定義する。
+     * @param json JSON 文字列
+     */
+    static public void aliasByJson(String json) {
+	Map<String, Object> map = (Map<String, Object>)JSON.decode(json);
+	for(Map.Entry<String, Object> entry : map.entrySet()) {
+	    alias(entry.getKey(), (String)entry.getValue()) ;
+	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * alias table を JSON に治す。
+     */
+    static public String aliasToJson()
+	throws JSONException 
+    {
+	return aliasToJson(false) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * alias table を JSON に治す。
+     * @param 
+     */
+    static public String aliasToJson(boolean pprint) 
+	throws JSONException 
+    {
+	return JSON.encode(AliasTable, pprint) ;
     }
 
 } // class ClassFinder
