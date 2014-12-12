@@ -1,7 +1,7 @@
 TOP : build
 
 PACKAGE = nodagumi.Itk
-CLASSES = ClassFinder
+CLASSES = ClassFinder Itk
 SRCFILES = $(foreach klass,$(CLASSES),$(klass).java)
 ALLTESTS = $(foreach klass,$(CLASSES),$(PACKAGE).$(klass)_Test)
 
@@ -19,8 +19,15 @@ doc ::
 build :
 	( cd $(BASEDIR) ; gradle )
 
-test ::
+#test : test_ClassFinder
+test : test_Itk
+
+test_ClassFinder ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).ClassFinder_Test
+
+test_Itk ::
+	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Itk_Test
+
 
 test_all ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(ALLTESTS)
