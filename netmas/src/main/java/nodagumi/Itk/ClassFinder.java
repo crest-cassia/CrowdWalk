@@ -10,8 +10,6 @@
  * ...
  */
 
-
-
 package nodagumi.Itk ;
 
 import java.lang.ClassNotFoundException ; 
@@ -131,7 +129,7 @@ public class ClassFinder {
     //------------------------------------------------------------
     /**
      * alias table を JSON に治す。
-     * @param 
+     * @param pprint prity print で出力する。
      */
     static public String aliasToJson(boolean pprint) 
 	throws JSONException 

@@ -102,6 +102,7 @@ public abstract class GenerateAgent implements Serializable {
         }
         /* else, no time left, must generate all remains */
 
+		/* [I.Noda] ここで Agent 生成? */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
             WaitRunningAroundPerson agent = new WaitRunningAroundPerson(model.getMap().assignUniqueAgentId(),

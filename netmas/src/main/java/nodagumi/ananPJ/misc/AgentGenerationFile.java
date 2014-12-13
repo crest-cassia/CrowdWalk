@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import net.arnx.jsonic.JSON ;
+
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
@@ -49,6 +51,21 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private Random random = null;
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
+
+	/**
+	 * enum FileFormat Version
+	 */
+	public enum FileFormat { Ver0, Ver1 }
+
+	/**
+	 * ファイルフォーマットのバージョン
+	 */
+	public FileFormat fileFormat ;
+
+	/**
+	 * mode を格納している Map
+	 */
+	public Map<String,Object> modeMap ;
 
     public AgentGenerationFile(final String filename,
             ArrayList<MapNode> nodes,
@@ -85,7 +102,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             Pattern rulepat;
             rulepat = Pattern.compile("EACH|RANDOM|EACHRANDOM|STAFF|" +
                     "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
+			int lineCount = 0 ;
             while ((line = br.readLine()) != null) {
+				if(lineCount == 0) scanModeLine(line) ;
+				lineCount++ ;
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
                 String orgLine = line;
@@ -558,6 +578,34 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             throw new Exception(errorMessage.toString());
         }
     }
+
+	/**
+	 * mode line check
+	 * [example]
+	 *   # { 'version' : '1' }
+	 * @param modeline 最初の行
+	 * @return modelineの形式であれば true を返す。
+	 */
+	public boolean scanModeLine(String modeline) {
+		if(modeline.startsWith("#")) {
+			// 先頭の '#' をカット
+			String modeString = modeline ;
+			while(modeline.startsWith("#")) modeString = modeString.substring(1) ;
+			// のこりを JSON として解釈
+			modeMap	= (Map<String, Object>)JSON.decode(modeString) ;
+			String versionString = (String)modeMap.get("version") ;
+			if(versionString != null && versionString.equals("1")) {
+				fileFormat = FileFormat.Ver1 ;
+			} else {
+				fileFormat = FileFormat.Ver0 ;
+			}
+			return true ;
+		} else {
+			fileFormat = FileFormat.Ver0 ;
+			return false ;
+		}
+	}
+
 
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {
         liner_generate_agent_ratio = _liner_generate_agent_ratio;

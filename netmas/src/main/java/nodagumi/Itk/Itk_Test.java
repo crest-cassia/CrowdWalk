@@ -16,6 +16,11 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import junit.framework.TestCase;
 
+import net.arnx.jsonic.JSON ;
+import net.arnx.jsonic.JSONException ;
+
+import java.util.Map ;
+import java.util.HashMap ;
 import nodagumi.Itk.Itk ;
 
 //======================================================================
@@ -70,6 +75,23 @@ public class Itk_Test extends TestCase {
 	Itk.dbgMsgMethodInfo() ;
 	Itk.dbgMsg("---","currentCall()") ;
 	Itk.dbgMsg("stack=", Itk.currentCall()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * test working
+     */
+    @Test
+    public void test_working() {
+	Itk.dbgMsgMethodInfo() ;
+	String json = "{ 'abc' : 123, 'xyz' : '123' }" ;
+	//String json = "[ 'abc', 123, 'xyz', '123' ]" ; // -> error
+	//String json = " " ;
+	Map<String, Object> map = (Map<String, Object>)JSON.decode(json);
+	Itk.dbgMsg("map", map) ;
+	Itk.dbgMsg("abc", map.get("abc")) ;
+	Itk.dbgMsg("xyz", map.get("xyz")) ;
+	Itk.dbgMsg("def", map.get("def")) ;
     }
 
 } // class Itk_Test

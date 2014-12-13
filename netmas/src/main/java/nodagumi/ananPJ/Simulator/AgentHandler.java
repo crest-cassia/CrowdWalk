@@ -158,6 +158,7 @@ public class AgentHandler implements Serializable {
         }
 
         try {
+	    /* [I.Noda] generation file の読み込みはここ */
             generate_agent = new AgentGenerationFile(generationFile,
                     model.getNodes(), model.getLinks(), has_display,
                     linerGenerateAgentRatio, random);
