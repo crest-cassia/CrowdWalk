@@ -11,6 +11,7 @@ import java.util.Random;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 
+import nodagumi.Itk.*;
 
 public class Staff extends RunningAroundPerson implements Serializable {
     private static final long serialVersionUID = -7925686612702722379L;
@@ -36,8 +37,15 @@ public class Staff extends RunningAroundPerson implements Serializable {
                 _generatedTime, _random);
     }
 
-    public static String getTypeName() {
-        return "Staff";
+	/**
+	 * クラス名。
+	 * ClassFinder でも参照できるようにしておく。
+	 */
+	public static String typeString =
+		ClassFinder.alias("Staff",
+						  Itk.currentClassName()) ;
+    public static String getAgentTypeString() {
+		return typeString ;
     }
 
     @Override

@@ -245,5 +245,21 @@ public class Itk {
 	return currentCall(offset + 1).toString() ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 現在位置のクラス名
+     */
+    static public String currentClassName() {
+	return currentClassName(1) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在位置のクラス名
+     */
+    static public String currentClassName(int offset) {
+	return currentCall(offset + 1).getClassName() ;
+    }
+
 } // class Itk
 

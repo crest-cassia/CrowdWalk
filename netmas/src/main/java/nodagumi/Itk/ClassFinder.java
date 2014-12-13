@@ -46,6 +46,22 @@ public class ClassFinder {
     {
 	return Class.forName(fullname(className)) ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * クラスオブジェクトを持ってくる。
+     * @param className クラスの名前。alias名もしくは fullpath。
+     */
+    static public boolean isClassName(String className) 
+    {
+	try {
+	    get(className) ;
+	    return true ;
+	} catch (ClassNotFoundException ex) {
+	    return false ;
+	}
+    }
+
     
     //------------------------------------------------------------
     /**
@@ -83,10 +99,11 @@ public class ClassFinder {
      * @param shortName alias 名。
      * @param fullName alias される名前。
      */
-    static public void alias(String shortName,
-			     String fullName)
+    static public String alias(String shortName,
+			       String fullName)
     {
 	AliasTable.put(shortName, fullName) ;
+	return shortName ;
     }
 
     //------------------------------------------------------------

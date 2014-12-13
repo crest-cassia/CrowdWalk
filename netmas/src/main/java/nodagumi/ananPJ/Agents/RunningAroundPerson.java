@@ -38,6 +38,8 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 
+import nodagumi.Itk.*;
+
 /* TODOs:
  * - make each junction a waiting queue
  * - agents change their directions in pathway
@@ -98,10 +100,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     private MapLink sane_navigation_from_node_link;
     private MapNode sane_navigation_from_node_node;
     private MapLink sane_navigation_from_node_result;
-
-    public static String getTypeName() {
-        return "RunningAroundPerson";
-    }
 
     public RunningAroundPerson(int _id, Random _random) {
         super(_id, _random);
@@ -2175,9 +2173,20 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
         
     /* for the newer, xml based format */
+	/**
+	 * クラス名。
+	 * ClassFinder でも参照できるようにしておく。
+	 */
+	public static String typeString =
+		ClassFinder.alias("RunningAroundPerson",
+						  Itk.currentClassName()) ;
     public static String getAgentTypeString() {
-        return "RunningAroundPerson";
+		return typeString ;
     }
+    public static String getTypeName() {
+		return typeString ;
+    }
+
 
     @Override
     public Element toDom(Document dom, String nodetype) {

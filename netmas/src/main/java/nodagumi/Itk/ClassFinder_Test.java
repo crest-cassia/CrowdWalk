@@ -36,6 +36,9 @@ public class ClassFinder_Test extends TestCase {
 	    Class<?> klass = ClassFinder.get(name) ;
 	    Itk.dbgMsg("name=", name) ;
 	    Itk.dbgMsg("class=", klass.toString()) ;
+
+	    Itk.dbgMsg("true=", ClassFinder.isClassName(name)) ;
+	    Itk.dbgMsg("false=", ClassFinder.isClassName("hogehoge")) ;
 	} catch (Exception ex) {
 	    ex.printStackTrace() ;
 	}

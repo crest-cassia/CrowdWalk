@@ -19,6 +19,8 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 
+import nodagumi.Itk.*;
+
 public class WaitRunningAroundPerson extends RunningAroundPerson
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
@@ -31,10 +33,6 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 
     public WaitRunningAroundPerson(int _id, Random _random) {
         super(_id, _random);
-    }
-
-    public static String getTypeName() {
-        return "WaitRunningAroundPerson";
     }
 
     @Override
@@ -301,8 +299,19 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return goal_tags;
     }
 
+	/**
+	 * クラス名。
+	 * ClassFinder でも参照できるようにしておく。
+	 */
+	public static String typeString =
+		ClassFinder.alias("WaitRunningAroundPerson",
+						  Itk.currentClassName()) ;
     public static String getAgentTypeString() {
-        return "WaitRunningAroundPerson";
+		return typeString ;
+    }
+
+    public static String getTypeName() {
+		return typeString ;
     }
 
     @Override

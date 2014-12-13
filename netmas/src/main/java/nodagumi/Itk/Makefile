@@ -24,12 +24,14 @@ JARS = $(subst $( ),:,$(foreach jar,$(JARLIST),$(JARDIR)/$(jar).jar))
 CLASSPATH = $(CLASSDIR):$(JARS)
 JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
 
+##------------------------------------------------------------
 doc ::
 	javadoc -d doc -encoding utf-8 -charset utf-8 $(SRCFILES)
 
 build :
 	( cd $(BASEDIR) ; gradle )
 
+##------------------------------------------------------------
 #test : test_ClassFinder
 test : test_Itk
 
@@ -43,6 +45,22 @@ test_Itk ::
 test_all ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(ALLTESTS)
 
+
+##------------------------------------------------------------
+SAMPLE1 = sample/simpleGrid/properties-lane.xml
+
+run : run1
+
+run0 ::
+	(cd $(BASEDIR) ; bash ./quickstart.sh)
+
+run1 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))
+
+run2 ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE1) cui)
+
+##------------------------------------------------------------
 FOO = a b c
 foo ::
 	echo $(JARS)
