@@ -84,7 +84,7 @@ public class Itk {
      * 現在のメソッド名を出力する。
      */
     static public void dbgMsgMethodInfo() {
-	dbgMsg("=====", currentMethod(1)) ;
+	dbgMsg(">>>", currentMethod(1)) ;
     }
 
     //------------------------------------------------------------
