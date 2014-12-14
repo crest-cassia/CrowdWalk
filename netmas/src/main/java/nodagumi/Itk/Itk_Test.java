@@ -32,7 +32,7 @@ public class Itk_Test extends TestCase {
     /**
      * test dbgMsg
      */
-    @Test
+    //@Test
     public void test_dbgMsg() {
 	Itk.dbgMsgMethodInfo() ;
 	int x = 1 ;
@@ -50,7 +50,7 @@ public class Itk_Test extends TestCase {
     /**
      * test random URI
      */
-    @Test
+    //@Test
     public void test_randomURI() {
 	Itk.dbgMsgMethodInfo() ;
 	Itk.dbgMsg("uri=", Itk.genUriRandom()) ;
@@ -60,7 +60,7 @@ public class Itk_Test extends TestCase {
     /**
      * test CurrentTimeStr
      */
-    @Test
+    //@Test
     public void test_getCurrentTimeStr() {
 	Itk.dbgMsgMethodInfo() ;
 	Itk.dbgMsg("time=", Itk.getCurrentTimeStr()) ;
@@ -70,7 +70,7 @@ public class Itk_Test extends TestCase {
     /**
      * test CurrentStack
      */
-    @Test
+    //@Test
     public void test_currentCall() {
 	Itk.dbgMsgMethodInfo() ;
 	Itk.dbgMsg("---","currentCall()") ;
@@ -81,8 +81,8 @@ public class Itk_Test extends TestCase {
     /**
      * test working
      */
-    @Test
-    public void test_working() {
+    //@Test
+    public void test_working00() {
 	Itk.dbgMsgMethodInfo() ;
 	String json = "{ 'abc' : 123, 'xyz' : '123' }" ;
 	//String json = "[ 'abc', 123, 'xyz', '123' ]" ; // -> error
@@ -92,6 +92,30 @@ public class Itk_Test extends TestCase {
 	Itk.dbgMsg("abc", map.get("abc")) ;
 	Itk.dbgMsg("xyz", map.get("xyz")) ;
 	Itk.dbgMsg("def", map.get("def")) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * test working
+     */
+    static class Foo00 {
+	public static String bar = "Foo00's bar" ;
+	public static String baz() { return bar ; }
+    }
+    static class Foo01 extends Foo00 {
+	public static String bar = "Foo01's bar" ;
+    }
+    static class Foo02 extends Foo01 {
+	public static String bar = "Foo02's bar" ;
+    }
+
+    @Test
+    public void test_working01() {
+	Itk.dbgMsgMethodInfo() ;
+	Itk.dbgMsg("class", Foo00.class) ;
+	Itk.dbgMsg("Foo00", Foo00.baz()) ;
+	Itk.dbgMsg("Foo01", Foo01.baz()) ;
+	Itk.dbgMsg("Foo02", Foo02.baz()) ;
     }
 
 } // class Itk_Test
