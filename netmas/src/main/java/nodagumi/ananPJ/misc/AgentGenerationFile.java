@@ -22,6 +22,8 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 
+import nodagumi.Itk.*;
+
 /** Generate agents depending on a generation file.
  * format of generation file of one line:
  * [RULE_STRING,]TAG,START_TIME,DURATION,TOTAL,EXIT_TAG[,ROUTE...]
@@ -108,6 +110,16 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 				lineCount++ ;
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
+
+				/* [I.Noda] Ver2 以降は、先頭はエージェントクラス名 */
+				String className = null;
+				if(fileFormat == FileFormat.Ver1) {
+					className = line.split(",")[0] ;
+					line = line.substring(line.indexOf(",")+1) ;
+				}
+				if(className == null) className = "WaitRunningAroundPerson" ;
+				Itk.dbgMsg("className", className) ;
+
                 String orgLine = line;
                 line = line.toUpperCase();
                 String items[] = line.split(",");
