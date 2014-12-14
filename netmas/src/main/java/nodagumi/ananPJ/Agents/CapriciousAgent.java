@@ -65,7 +65,8 @@ public class CapriciousAgent
     /**
      * 気まぐれ度合い（cost への random の度合い）の規定値
      */
-    static final public double DefaultCapriciousMargin = 10000.0 ;
+    //static final public double DefaultCapriciousMargin = 10000.0 ;
+    static final public double DefaultCapriciousMargin = 200.0 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -126,7 +127,10 @@ public class CapriciousAgent
 	MapNode other = _way.getOther(_node);
 	double cost = other.getDistance(_target);
 	cost += _way.length;
-	cost += capriciousMargin * random.nextDouble() ;
+	Itk.dbgMsg("original cost",cost) ;
+	double noise = capriciousMargin * random.nextDouble() ;
+	Itk.dbgMsg("noise",noise) ;
+	cost += noise ;
 	return cost ;
     }
 
