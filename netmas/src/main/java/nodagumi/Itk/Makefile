@@ -47,17 +47,21 @@ test_all ::
 
 
 ##------------------------------------------------------------
-SAMPLE1 = sample/simpleGrid/properties-lane.xml
+SAMPLE0 = sample/simpleGrid/properties-lane.xml
+SAMPLE1 = sample/simpleGrid/properties-lane.v2.xml
 
 run : run1
 
-run0 ::
+run_base ::
 	(cd $(BASEDIR) ; bash ./quickstart.sh)
+
+run0 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0))
 
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))
 
-run2 ::
+run1_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE1) cui)
 
 ##------------------------------------------------------------

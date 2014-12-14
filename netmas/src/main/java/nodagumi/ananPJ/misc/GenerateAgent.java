@@ -17,6 +17,8 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
 
+import nodagumi.Itk.*;
+
 
 public abstract class GenerateAgent implements Serializable {
     public String goal;
@@ -29,7 +31,13 @@ public abstract class GenerateAgent implements Serializable {
     public String configLine;
     public boolean enabled = true;
 
-    public GenerateAgent(String[] conditions,
+	/**
+	 * エージェントクラスの名前を格納。
+	 */
+	public String agentClassName = "WaitRunningAroundPerson" ;
+
+	public GenerateAgent(String _agentClassName,
+			String[] conditions,
             String _goal,
             ArrayList<String> _planned_route,
             double _start_time,
@@ -38,6 +46,11 @@ public abstract class GenerateAgent implements Serializable {
             SpeedCalculationModel _speed_model,
             Random _random,
             String _configLine) {
+		if(_agentClassName != null && _agentClassName.length() > 0) {
+			agentClassName = _agentClassName ;
+		}
+		Itk.dbgMsg("agentClassName", agentClassName) ;
+
         goal = _goal;
         planned_route = _planned_route;
         start_time = _start_time;
@@ -176,7 +189,8 @@ public abstract class GenerateAgent implements Serializable {
 class GenerateAgentFromLink extends GenerateAgent {
     MapLink start_link;
 
-    public GenerateAgentFromLink(MapLink _start_link,
+    public GenerateAgentFromLink(String _agentClassName,
+            MapLink _start_link,
             String[] conditions,
             String _goal,
             ArrayList<String> _planned_route,
@@ -186,7 +200,8 @@ class GenerateAgentFromLink extends GenerateAgent {
             SpeedCalculationModel _speed_model,
             Random _random,
             String _configLine) {
-        super(conditions, _goal, _planned_route, _start_time, _duration,
+		super(_agentClassName,
+			  conditions, _goal, _planned_route, _start_time, _duration,
                 _total, _speed_model, _random, _configLine);
         start_link = _start_link;
     }
@@ -243,7 +258,8 @@ class GenerateAgentFromLink extends GenerateAgent {
 class GenerateAgentFromNode extends GenerateAgent {
     MapNode start_node;
 
-    public GenerateAgentFromNode(MapNode _start_node,
+    public GenerateAgentFromNode(String _agentClassName,
+            MapNode _start_node,
             String[] conditions,
             String _goal,
             ArrayList<String> _planned_route,
@@ -253,7 +269,8 @@ class GenerateAgentFromNode extends GenerateAgent {
             SpeedCalculationModel _speed_model,
             Random _random,
             String _configLine) {
-        super(conditions, _goal, _planned_route, _start_time, _duration,
+		super(_agentClassName,
+			  conditions, _goal, _planned_route, _start_time, _duration,
                 _total, _speed_model, _random, _configLine);
         start_node = _start_node;
         //System.err.println("GenerateAgentFromNode start_node: " + start_node.ID + " goal: " + _goal);

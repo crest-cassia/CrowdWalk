@@ -62,7 +62,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 	/**
 	 * ファイルフォーマットのバージョン
 	 */
-	public FileFormat fileFormat ;
+	public FileFormat fileFormat = FileFormat.Ver0;
 
 	/**
 	 * mode を格納している Map
@@ -111,14 +111,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
 
-				/* [I.Noda] Ver2 以降は、先頭はエージェントクラス名 */
+				/* [I.Noda] Ver1 以降は、先頭はエージェントクラス名 */
 				String className = null;
 				if(fileFormat == FileFormat.Ver1) {
 					className = line.split(",")[0] ;
 					line = line.substring(line.indexOf(",")+1) ;
 				}
-				if(className == null) className = "WaitRunningAroundPerson" ;
-				Itk.dbgMsg("className", className) ;
 
                 String orgLine = line;
                 line = line.toUpperCase();
@@ -365,7 +363,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 if (rule_tag.equals("EACH")) {
                     for (final MapLink start_link : start_links) {
-                        this.add(new GenerateAgentFromLink(start_link,
+						this.add(new GenerateAgentFromLink(className,
+                                start_link,
                                 agent_conditions,
                                 goal,
                                 planned_route,
@@ -377,7 +376,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 orgLine));
                     }
                     for (final MapNode start_node : start_nodes) {
-                        this.add(new GenerateAgentFromNode(start_node,
+						this.add(new GenerateAgentFromNode(className,
+                                start_node,
                                 agent_conditions,
                                 goal,
                                 planned_route,
@@ -404,7 +404,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     for (int i = 0; i < start_links.size(); i++) {
                         if (chosen_links[i] > 0)
-                            this.add(new GenerateAgentFromLink(
+                            this.add(new GenerateAgentFromLink(className,
                                     start_links.get(i),
                                     agent_conditions,
                                     goal,
@@ -418,7 +418,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
-                            this.add(new GenerateAgentFromNode(
+							this.add(new GenerateAgentFromNode(className,
                                     start_nodes.get(i),
                                     agent_conditions,
                                     goal,
@@ -454,7 +454,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     for (int i = 0; i < start_links.size(); i++) {
                         if (chosen_links[i] > 0)
-                            this.add(new GenerateAgentFromLink(
+							this.add(new GenerateAgentFromLink(className,
                                     start_links.get(i),
                                     agent_conditions,
                                     goal,
@@ -468,7 +468,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
-                            this.add(new GenerateAgentFromNode(
+							this.add(new GenerateAgentFromNode(className,
                                     start_nodes.get(i),
                                     agent_conditions,
                                     goal,
@@ -544,7 +544,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     plannedRoute.add(plannedRouteCandidates.get(chosenIndex));
                                 }
                             }
-                            this.add(new GenerateAgentFromLink(
+							this.add(new GenerateAgentFromLink(className,
                                         start_link,
                                         agent_conditions,
                                         goal_node,
@@ -602,10 +602,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 		if(modeline.startsWith("#")) {
 			// 先頭の '#' をカット
 			String modeString = modeline ;
-			while(modeline.startsWith("#")) modeString = modeString.substring(1) ;
+			while(modeString.startsWith("#")) modeString = modeString.substring(1) ;
 			// のこりを JSON として解釈
 			modeMap	= (Map<String, Object>)JSON.decode(modeString) ;
-			String versionString = (String)modeMap.get("version") ;
+			String versionString = modeMap.get("version").toString() ;
 			if(versionString != null && versionString.equals("1")) {
 				fileFormat = FileFormat.Ver1 ;
 			} else {
