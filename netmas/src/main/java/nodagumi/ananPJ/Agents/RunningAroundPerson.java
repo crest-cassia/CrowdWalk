@@ -1703,24 +1703,51 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return way;
     }
 
-    // route_index
-    // navigation_reason
-    //
-    protected MapLink sane_navigation_from_node(double time, MapLink link, MapNode node) {
-        // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
-        if (
-            ! sane_navigation_from_node_forced &&
-            sane_navigation_from_node_current_link == current_link &&
-            sane_navigation_from_node_link == link && sane_navigation_from_node_node == node &&
-            emptyspeed < (isPositiveDirection() ? current_link.length - position : position)
-        ) {
-            sane_navigation_from_node_forced = false;
-            return sane_navigation_from_node_result;
-        }
-        sane_navigation_from_node_forced = false;
+	/**
+	 * 前回の呼び出し時と同じ条件かどうかのチェック
+	 */
+	private boolean isSameSituationForSaneNavigationFromNode(MapLink link, 
+															 MapNode node) {
+		boolean forced = sane_navigation_from_node_forced ;
+		sane_navigation_from_node_forced = false ;
+		return (!forced &&
+				sane_navigation_from_node_current_link == current_link &&
+				sane_navigation_from_node_link == link &&
+				sane_navigation_from_node_node == node &&
+				emptyspeed < (isPositiveDirection() ?
+							  current_link.length - position :
+							  position)) ;
+	}
+
+	/**
+	 * 上記のチェックのための状態バックアップ(before)
+	 */
+	private void backupSituationForSaneNavigationFromNodeBefore(MapLink link,
+																MapNode node) {
         sane_navigation_from_node_current_link = current_link;
         sane_navigation_from_node_link = link;
         sane_navigation_from_node_node = node;
+	}
+
+	/**
+	 * 上記のチェックのための状態バックアップ(after)
+	 */
+	private void backupSituationForSaneNavigationFromNodeAfter(MapLink result) {
+		sane_navigation_from_node_result = result ;
+	}
+
+    // route_index
+    // navigation_reason
+    //
+
+	/**
+	 * ノードにおいて、次の道を選択するルーチン
+	 */
+    protected MapLink sane_navigation_from_node(double time, MapLink link, MapNode node) {
+        // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
+		if (isSameSituationForSaneNavigationFromNode(link,node))
+			return sane_navigation_from_node_result;
+		backupSituationForSaneNavigationFromNodeBefore(link, node) ;
 
         ArrayList<MapLink> way_candidates = node.getPathways();
         double min_cost = Double.MAX_VALUE;
@@ -1742,6 +1769,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         for (MapLink way_candidate : way_candidates) {
             //if (way_candidate.hasTag(goal)) {}
             // tkokada
+			/* ゴールもしくは経由点のチェック。あるいは、同じ道を戻らない */
             if (planned_route.size() <= getRouteIndex() && way_candidate.hasTag(goal)) {
                 /* finishing up */
                 way = way_candidate;
@@ -1768,9 +1796,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 }
             }
 
-            MapNode other = way_candidate.getOther(node);
-            double cost = other.getDistance(next_target);
-            cost += way_candidate.length;
+			// 現在の way_candidate を選択した場合の next_target までのコスト計算
+			double cost = calcWayCostTo(way_candidate, node, next_target) ;
 
             if (monitor)
                 System.err.print(way_candidate.getTagString() +
@@ -1786,11 +1813,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     min_cost_second = cost;
                     way_second = way_candidate;
                 }
-            } else if (cost < min_cost) {
+			} else if (cost < min_cost) { // 最小cost置き換え
                 min_cost = cost;
                 way = way_candidate;
                 way_samecost = null;
-            } else if (cost == min_cost) {
+			} else if (cost == min_cost) { // 最小コストが同じ時の処理
                 if (way_samecost == null)
                     way_samecost = new ArrayList<MapLink>();
                 way_samecost.add(way_candidate);
@@ -1802,34 +1829,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 resultLinks.put(way_candidate, new Double(cost));
             }
         }
+		// 以上で、最小コストの探索終了。結果は、wayにある。
 
         // tkokada
-        double margin = 3.0;
         // ※ randomNavigation は通常は使用しない
         if (randomNavigation) {
-            double totalCost = 0.0;
-            MapLink minCostLink = null;
-            double minCost = Double.MAX_VALUE;
-            for (MapLink resultLink : resultLinks.keySet()) {
-                double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
-                if (cost < minCost) {
-                    minCost = cost;
-                    minCostLink = resultLink;
-                }
-            }
-            ArrayList<MapLink> linkCandidates = new ArrayList<MapLink>();
-            for (MapLink resultLink : resultLinks.keySet()) {
-                double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
-                if (cost >= min_cost && cost < min_cost + margin)
-                    linkCandidates.add(resultLink);
-            }
-            if (linkCandidates.size() > 0) {
-                MapLink chosedLink = linkCandidates.get(random.nextInt(linkCandidates.size()));
-                sane_navigation_from_node_result = chosedLink;
-                return chosedLink;
-            }
-            sane_navigation_from_node_result = null;
-            return null;
+			return saneRandomNavigation(resultLinks, way, false) ;
         }
 
         if (way_samecost != null) {
@@ -1843,7 +1848,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         if (way == null) {
             way = way_second;
         }
-        sane_navigation_from_node_result = way;
+		backupSituationForSaneNavigationFromNodeAfter(way) ;
 
         if (way == null) {
             return null;
@@ -1858,6 +1863,58 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         */
         return way;
     }
+
+	/**
+	 * ランダムナビゲーションモードで使用する経路選択
+	 */
+	private MapLink saneRandomNavigation(HashMap<MapLink, Double> resultLinks,
+										 MapLink wayBest,
+										 boolean isVirtual) {
+		double margin = 3.0 ;
+		double totalCost = 0.0;
+
+		// [I.Noda] なぜか最小コストをもう一度求めている。
+		MapLink minCostLink = null;
+		double minCost = Double.MAX_VALUE;
+		for (MapLink resultLink : resultLinks.keySet()) {
+			double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
+			if (cost < minCost) {
+				minCost = cost;
+				minCostLink = resultLink;
+			}
+		}
+
+		double min_cost = ((Double) resultLinks.get(wayBest)).doubleValue();
+
+		// 最小から margin 分余裕を持って候補を探す。
+		ArrayList<MapLink> linkCandidates = new ArrayList<MapLink>();
+		for (MapLink resultLink : resultLinks.keySet()) {
+			double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
+			if (cost >= min_cost && cost < min_cost + margin)
+				linkCandidates.add(resultLink);
+		}
+		if (linkCandidates.size() > 0) {
+			MapLink chosedLink = linkCandidates.get(random.nextInt(linkCandidates.size()));
+			if(!isVirtual) 
+				backupSituationForSaneNavigationFromNodeAfter(chosedLink) ;
+			return chosedLink;
+		}
+		if(!isVirtual)
+			backupSituationForSaneNavigationFromNodeAfter(null) ;
+		return null;
+	}
+
+	/**
+	 * あるwayを選択した場合の目的地(_target)までのコスト。
+	 * ここを変えると、経路選択の方法が変えられる。
+	 */
+	public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
+		MapNode other = _way.getOther(_node);
+		double cost = other.getDistance(_target);
+		cost += _way.length;
+		return cost ;
+	}
+		
 
     // direction
     // prev_node
@@ -2047,9 +2104,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     }
                 }
             }
-            MapNode other = way_candidate.getOther(node);
-            double cost = other.getDistance(next_target);
-            cost += way_candidate.length;
+
+			// 現在の way_candidate を選択した場合の next_target までのコスト計算
+			double cost = calcWayCostTo(way_candidate, node, next_target) ;
+
             if (loop) {
                 if (cost < min_cost_second) {
                     min_cost_second = cost;
@@ -2071,32 +2129,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
         setRouteIndex(originalRouteIndex);
 
-        double margin = 3.0;
         if (randomNavigation) {
-            double totalCost = 0.0;
-            MapLink minCostLink = null;
-            double minCost = Double.MAX_VALUE;
-            for (MapLink resultLink : resultLinks.keySet()) {
-                double cost = ((Double) resultLinks.get(resultLink)).
-                    doubleValue();
-                if (cost < minCost) {
-                    minCost = cost;
-                    minCostLink = resultLink;
-                }
-            }
-            ArrayList<MapLink> linkCandidates = new ArrayList<MapLink>();
-            for (MapLink resultLink : resultLinks.keySet()) {
-                double cost = ((Double) resultLinks.get(resultLink)).
-                    doubleValue();
-                if (cost >= min_cost && cost < min_cost + margin)
-                    linkCandidates.add(resultLink);
-            }
-            if (linkCandidates.size() > 0) {
-                MapLink chosedLink = linkCandidates.get(
-                        random.nextInt(linkCandidates.size()));
-                return chosedLink;
-            }
-            return null;
+			return saneRandomNavigation(resultLinks, way, true) ;
         }
 
         if (way_samecost != null) {

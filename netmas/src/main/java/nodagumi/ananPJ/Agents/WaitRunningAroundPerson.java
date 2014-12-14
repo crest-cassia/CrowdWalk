@@ -61,6 +61,13 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     @Override
     public EvacuationAgent copyAndInitialize() {
         WaitRunningAroundPerson r = new WaitRunningAroundPerson(0, random);
+		return copyAndInitializeBody(r) ;
+	}
+
+    /**
+     * 複製操作のメイン
+     */
+    public EvacuationAgent copyAndInitializeBody(WaitRunningAroundPerson r) {
         r.ID = ID;
         r.generatedTime = generatedTime;
         r.emptyspeed = emptyspeed;

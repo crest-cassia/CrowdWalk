@@ -12,6 +12,8 @@ import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.WaitRunningAroundPerson;
+import nodagumi.ananPJ.Agents.*;
+
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
@@ -21,6 +23,16 @@ import nodagumi.Itk.*;
 
 
 public abstract class GenerateAgent implements Serializable {
+	/**
+	 * 使えるエージェントを予めロードしておくためのダミー
+	 */
+	static private EvacuationAgent[] _dummyAgents = {
+		new RunningAroundPerson(),
+		new WaitRunningAroundPerson(),
+		new Staff(),
+		new CapriciousAgent(),
+	} ;
+
     public String goal;
     ArrayList<String> planned_route;
     double start_time, duration;
