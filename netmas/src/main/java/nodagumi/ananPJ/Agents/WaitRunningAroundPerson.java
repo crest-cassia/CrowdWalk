@@ -25,14 +25,37 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
 
+	/**
+	 * 引数なしconstractor。 ClassFinder.newByName で必要。
+	 */
+	public WaitRunningAroundPerson() {} ;
+
     public WaitRunningAroundPerson(int _id,
             double speed, double _confidence,
             double allowance, double time, Random _random) {
-        super(_id, speed, _confidence, allowance, time, _random);
+		init(_id, speed,  _confidence, allowance, time, _random) ;
+	}
+
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    @Override
+    public void init(int _id,
+            double speed, double _confidence,
+            double allowance, double time, Random _random) {
+        super.init(_id, speed, _confidence, allowance, time, _random);
     }
 
     public WaitRunningAroundPerson(int _id, Random _random) {
-        super(_id, _random);
+		init(_id, _random) ;
+	}
+
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    @Override
+    public void init(int _id, Random _random) {
+        super.init(_id, _random);
     }
 
     @Override

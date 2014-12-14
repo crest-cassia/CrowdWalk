@@ -82,9 +82,22 @@ public class TargetRoundPerson extends RunningAroundPerson
     public static String getTypeName() {
         return "TargetRoundPerson";
     }
+    
+    /**
+     * 引数なしconstractor。 ClassFinder.newByName で必要。
+     */
+    public TargetRoundPerson() {} ;
 
     public TargetRoundPerson(int _id, Random _random) {
-        super(_id, _random);
+	init(_id, _random) ;
+    }
+
+    /**
+     * 初期化。constractorから分離。
+     */
+    @Override
+    public void init(int _id, Random _random) {
+        super.init(_id, _random);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
     }
@@ -118,7 +131,21 @@ public class TargetRoundPerson extends RunningAroundPerson
             double _maxAllowedDamage,
             double _generatedTime,
             Random _random) {
-        this(_id, _random);
+	init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
+	     _random) ;
+    }
+
+    /**
+     * 初期化。constractorから分離。
+     */
+    @Override
+    public void init(int _id,
+            double _emptySpeed,
+            double _confidence,
+            double _maxAllowedDamage,
+            double _generatedTime,
+            Random _random) {
+	init(_id, _random);
 
         generatedTime = _generatedTime;
         emptyspeed = _emptySpeed;

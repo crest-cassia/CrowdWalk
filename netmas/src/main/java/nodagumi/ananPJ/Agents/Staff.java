@@ -18,9 +18,21 @@ public class Staff extends RunningAroundPerson implements Serializable {
     public static String magic = "Staff";
     protected double emptyspeed = 1.0, confidence = 1.0;
 
+	/**
+	 * 引数なしconstractor。 ClassFinder.newByName で必要。
+	 */
+	public Staff() {} ;
+
     //TODO obsolete code
     public Staff(Random _random) {
-        super(0, _random);
+		init(_random) ;
+	}
+
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    public void init(Random _random) {
+        super.init(0, _random);
     }
 
     /*public Staff(MapNode initialNode, double _emptySpeed,
@@ -33,8 +45,22 @@ public class Staff extends RunningAroundPerson implements Serializable {
             double _maxAllowedDamage,
             double _generatedTime,
             Random _random) {
-        super(_id, _emptySpeed, _confidence, _maxAllowedDamage,
+        init(_id, _emptySpeed, _confidence, _maxAllowedDamage,
                 _generatedTime, _random);
+    }
+
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    @Override
+    public void init(int _id,
+            double _emptySpeed,
+            double _confidence,
+            double _maxAllowedDamage,
+            double _generatedTime,
+            Random _random) {
+        super.init(_id, _emptySpeed, _confidence, _maxAllowedDamage,
+				   _generatedTime, _random);
     }
 
 	/**

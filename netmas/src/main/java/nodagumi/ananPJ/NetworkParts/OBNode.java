@@ -56,7 +56,19 @@ public abstract class OBNode extends DefaultMutableTreeNode
   protected ArrayList<String> tags;
   public boolean selected = false;
 
+  /**
+    * 引数なしconstractor。 ClassFinder.newByName で必要。
+	*/
+  public OBNode() { this(0) ;} ;
+
   public OBNode(int _ID){
+	  init(_ID) ;
+  }
+
+  /**
+    * 初期化。constractorから分離。
+	*/
+  public void init(int _ID){
       ID = _ID;
       tags = new ArrayList<String>();
   }

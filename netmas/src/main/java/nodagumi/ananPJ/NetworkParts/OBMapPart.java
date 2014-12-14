@@ -8,8 +8,21 @@ import java.io.Serializable;
 /* Parent of agent/node/link (leaf of OB) */
 public abstract class OBMapPart extends OBNode implements Serializable {
 
+	/**
+	 * 引数なしconstractor。 ClassFinder.newByName で必要。
+	 */
+	public OBMapPart() {} ;
+
     public OBMapPart(int _ID){
-        super(_ID);
+		init(_ID) ;
+	}
+
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    @Override
+    public void init(int _ID){
+        super.init(_ID);
         this.setAllowsChildren(false);
     }
 

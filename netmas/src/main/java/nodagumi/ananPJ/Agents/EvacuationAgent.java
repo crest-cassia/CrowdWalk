@@ -68,8 +68,20 @@ implements Comparable<EvacuationAgent>, Serializable {
     /* constructor */
     static int agent_count = 0;
     public int agentNumber;
+
+	/**
+	 * 引数なしconstractor。 ClassFinder.newByName で必要。
+	 */
+	public EvacuationAgent() {} ;
     public EvacuationAgent(int _id, Random _random) {
-        super(_id);
+		init(_id, _random) ;
+	}
+
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    public void init(int _id, Random _random) {
+        super.init(_id);
         random = _random;
         agentNumber = agent_count++;
         //swing_width = Math.random() * 2.0 - 1.0;

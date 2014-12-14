@@ -118,8 +118,21 @@ public abstract class GenerateAgent implements Serializable {
 		/* [I.Noda] ここで Agent 生成? */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
+			/*
             WaitRunningAroundPerson agent = new WaitRunningAroundPerson(model.getMap().assignUniqueAgentId(),
                     random);
+			*/
+			WaitRunningAroundPerson agent = null;
+			try {
+				agent = (WaitRunningAroundPerson)ClassFinder.newByName(agentClassName) ;
+				agent.init(model.getMap().assignUniqueAgentId(), random);
+			} catch (Exception ex ) {
+				Itk.dbgMsg("class name not found") ;
+				Itk.dbgMsg("agentClassName", agentClassName) ;
+				ex.printStackTrace();
+				System.exit(1) ;
+			}
+
             agent.generatedTime = tick;
             agent.displayMode = model.getDisplayMode();
             ((RunningAroundPerson) agent).setSpeedCalculationModel(

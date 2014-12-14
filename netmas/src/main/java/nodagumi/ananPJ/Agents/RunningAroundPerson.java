@@ -101,8 +101,20 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     private MapNode sane_navigation_from_node_node;
     private MapLink sane_navigation_from_node_result;
 
+	/**
+	 * 引数なしconstractor。 ClassFinder.newByName で必要。
+	 */
+	public RunningAroundPerson() {} ;
+	
     public RunningAroundPerson(int _id, Random _random) {
-        super(_id, _random);
+		init(_id, _random) ;
+	}
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    @Override
+    public void init(int _id, Random _random) {
+        super.init(_id, _random);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
     }
@@ -136,7 +148,20 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             double _maxAllowedDamage,
             double _generatedTime,
             Random _random) {
-        this(_id, _random);
+		init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
+			 _random) ;
+	} ;
+
+	/**
+	 * 初期化。constractorから分離。
+	 */
+    public void init(int _id,
+            double _emptySpeed,
+            double _confidence,
+            double _maxAllowedDamage,
+            double _generatedTime,
+            Random _random) {
+		init(_id, _random);
         
         generatedTime = _generatedTime;
         emptyspeed = _emptySpeed;
