@@ -127,11 +127,8 @@ public class CapriciousAgent
 	MapNode other = _way.getOther(_node);
 	double cost = other.getDistance(_target);
 	cost += _way.length;
-	Itk.dbgMsg("original cost",cost) ;
 	double noise = capriciousMargin * random.nextDouble() ;
-	Itk.dbgMsg("noise",noise) ;
-	cost += noise ;
-	return cost ;
+	return cost + noise;
     }
 
 } // class CapriciousAgent
