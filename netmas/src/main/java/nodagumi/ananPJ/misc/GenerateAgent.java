@@ -33,6 +33,7 @@ public abstract class GenerateAgent implements Serializable {
         new WaitRunningAroundPerson(),
         new Staff(),
         new CapriciousAgent(),
+        new BustleAgent(),
     } ;
 
     public String goal;
