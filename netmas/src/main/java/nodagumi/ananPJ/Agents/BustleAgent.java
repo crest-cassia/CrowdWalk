@@ -103,7 +103,7 @@ public class BustleAgent
     public void initByConf(Map<String, Object> conf) {
         super.initByConf(conf) ;
         if(config.containsKey("weight")) {
-            Itk.dbgMsg("weight", config.get("weight")) ;
+            //Itk.dbgMsg("weight", config.get("weight")) ;
             bustleWeight = new Double(config.get("weight").toString()) ;
         }
     } ;

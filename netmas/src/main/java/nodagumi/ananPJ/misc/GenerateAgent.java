@@ -67,7 +67,7 @@ public abstract class GenerateAgent implements Serializable {
             agentClassName = _agentClassName ;
             agentConf = _agentConf ;
         }
-        Itk.dbgMsg("agentClassName", agentClassName) ;
+        //Itk.dbgMsg("agentClassName", agentClassName) ;
 
         goal = _goal;
         planned_route = _planned_route;

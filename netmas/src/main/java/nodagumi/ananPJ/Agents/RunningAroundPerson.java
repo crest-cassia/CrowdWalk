@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Agents;
 
 import java.awt.Color;
@@ -101,17 +102,17 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     private MapNode sane_navigation_from_node_node;
     private MapLink sane_navigation_from_node_result;
 
-	/**
-	 * 引数なしconstractor。 ClassFinder.newByName で必要。
-	 */
-	public RunningAroundPerson() {} ;
-	
+    /**
+     * 引数なしconstractor。 ClassFinder.newByName で必要。
+     */
+    public RunningAroundPerson() {} ;
+    
     public RunningAroundPerson(int _id, Random _random) {
-		init(_id, _random) ;
-	}
-	/**
-	 * 初期化。constractorから分離。
-	 */
+        init(_id, _random) ;
+    }
+    /**
+     * 初期化。constractorから分離。
+     */
     @Override
     public void init(int _id, Random _random) {
         super.init(_id, _random);
@@ -148,20 +149,20 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             double _maxAllowedDamage,
             double _generatedTime,
             Random _random) {
-		init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
-			 _random) ;
-	} ;
+        init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
+             _random) ;
+    } ;
 
-	/**
-	 * 初期化。constractorから分離。
-	 */
+    /**
+     * 初期化。constractorから分離。
+     */
     public void init(int _id,
             double _emptySpeed,
             double _confidence,
             double _maxAllowedDamage,
             double _generatedTime,
             Random _random) {
-		init(_id, _random);
+        init(_id, _random);
         
         generatedTime = _generatedTime;
         emptyspeed = _emptySpeed;
@@ -1568,7 +1569,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         for (final CheckPoint point : route) {
             if (point.node == next_node) {
                 if (navigation_reason != null) {
-                    navigation_reason += "LOOP HERE!\n";
+					navigation_reason.add("LOOP HERE!\n");
                 }
                 if (debug_mode) {
                     String mid_goal =
@@ -1587,11 +1588,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 break;
             }
         }
-        route.add(new CheckPoint(next_node, time, navigation_reason));
+		route.add(new CheckPoint(next_node, time, navigation_reason.toString()));
         // tkokada.debug
         // System.err.println("next_node: " + next_node.getTagString() +
                 // ", time: " + time + ", navigation_reason: " +
-                // navigation_reason);
+                // navigation_reason.toString());
 
         /* agent exits the previous link */
         getCurrentLink().agentExits(this);
@@ -1697,57 +1698,64 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return goal;
     }
 
-    String navigation_reason = null;
+	/**
+	 * 推論理由を格納。
+	 * [I.Noda]
+	 * 効率のため、あまりメモリを消費しない方法に切り替え。
+	 */
+	//String navigation_reason = null;
+	ReasonTray navigation_reason = new ReasonTray() ;
+
     protected MapLink sane_navigation(double time, final ArrayList<MapLink> way_candidates) {
         MapLink way = sane_navigation_from_node(time, current_link, next_node);
         return way;
     }
 
-	/**
-	 * 前回の呼び出し時と同じ条件かどうかのチェック
-	 */
-	private boolean isSameSituationForSaneNavigationFromNode(MapLink link, 
-															 MapNode node) {
-		boolean forced = sane_navigation_from_node_forced ;
-		sane_navigation_from_node_forced = false ;
-		return (!forced &&
-				sane_navigation_from_node_current_link == current_link &&
-				sane_navigation_from_node_link == link &&
-				sane_navigation_from_node_node == node &&
-				emptyspeed < (isPositiveDirection() ?
-							  current_link.length - position :
-							  position)) ;
-	}
+    /**
+     * 前回の呼び出し時と同じ条件かどうかのチェック
+     */
+    private boolean isSameSituationForSaneNavigationFromNode(MapLink link, 
+                                                             MapNode node) {
+        boolean forced = sane_navigation_from_node_forced ;
+        sane_navigation_from_node_forced = false ;
+        return (!forced &&
+                sane_navigation_from_node_current_link == current_link &&
+                sane_navigation_from_node_link == link &&
+                sane_navigation_from_node_node == node &&
+                emptyspeed < (isPositiveDirection() ?
+                              current_link.length - position :
+                              position)) ;
+    }
 
-	/**
-	 * 上記のチェックのための状態バックアップ(before)
-	 */
-	private void backupSituationForSaneNavigationFromNodeBefore(MapLink link,
-																MapNode node) {
+    /**
+     * 上記のチェックのための状態バックアップ(before)
+     */
+    private void backupSituationForSaneNavigationFromNodeBefore(MapLink link,
+                                                                MapNode node) {
         sane_navigation_from_node_current_link = current_link;
         sane_navigation_from_node_link = link;
         sane_navigation_from_node_node = node;
-	}
+    }
 
-	/**
-	 * 上記のチェックのための状態バックアップ(after)
-	 */
-	private void backupSituationForSaneNavigationFromNodeAfter(MapLink result) {
-		sane_navigation_from_node_result = result ;
-	}
+    /**
+     * 上記のチェックのための状態バックアップ(after)
+     */
+    private void backupSituationForSaneNavigationFromNodeAfter(MapLink result) {
+        sane_navigation_from_node_result = result ;
+    }
 
     // route_index
     // navigation_reason
     //
 
-	/**
-	 * ノードにおいて、次の道を選択するルーチン
-	 */
+    /**
+     * ノードにおいて、次の道を選択するルーチン
+     */
     protected MapLink sane_navigation_from_node(double time, MapLink link, MapNode node) {
         // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
-		if (isSameSituationForSaneNavigationFromNode(link,node))
-			return sane_navigation_from_node_result;
-		backupSituationForSaneNavigationFromNodeBefore(link, node) ;
+        if (isSameSituationForSaneNavigationFromNode(link,node))
+            return sane_navigation_from_node_result;
+        backupSituationForSaneNavigationFromNodeBefore(link, node) ;
 
         ArrayList<MapLink> way_candidates = node.getPathways();
         double min_cost = Double.MAX_VALUE;
@@ -1765,21 +1773,21 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         if (monitor)
             System.err.println("navigating at " + node.getTagString() + " for " + next_target);
-        navigation_reason = "for " + next_target + "\n";
+		navigation_reason.clear().add("for").add(next_target).add("\n");
         for (MapLink way_candidate : way_candidates) {
             //if (way_candidate.hasTag(goal)) {}
             // tkokada
-			/* ゴールもしくは経由点のチェック。あるいは、同じ道を戻らない */
+            /* ゴールもしくは経由点のチェック。あるいは、同じ道を戻らない */
             if (planned_route.size() <= getRouteIndex() && way_candidate.hasTag(goal)) {
                 /* finishing up */
                 way = way_candidate;
-                navigation_reason += " found goal " + goal;
+				navigation_reason.add("found goal").add(goal);
                 break;
             } else if (way_candidate.hasTag(next_target)) {
                 /* reached mid_goal */
                 way = way_candidate;
                 setRouteIndex(getRouteIndex() + 1);
-                navigation_reason += " found mid-goal in " + way_candidate.getTagString();
+				navigation_reason.add("found mid-goal in").add(way_candidate) ;
                 break;
             } else if (way_candidate == link) {
                 // don't want to go back, ignoring
@@ -1796,16 +1804,16 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 }
             }
 
-			// 現在の way_candidate を選択した場合の next_target までのコスト計算
-			double cost = calcWayCostTo(way_candidate, node, next_target) ;
+            // 現在の way_candidate を選択した場合の next_target までのコスト計算
+            double cost = calcWayCostTo(way_candidate, node, next_target) ;
 
             if (monitor)
                 System.err.print(way_candidate.getTagString() +
                     "\t" + cost + "\t" +cost +
                     "(" + way_candidate.crowdness() + ")\t"
                     + way_candidate.spaceLeft(node, 1.0));
-            navigation_reason += way_candidate.getOther(node).getTagString()
-                    + "(" + cost + (loop ? " loop" : "") + ") ";
+			navigation_reason.add(way_candidate.getOther(node))
+				.add("(").add(cost).add((loop ? " loop" : "")).add(") ");
 
             if (loop) {
                 // ※このブロックは常に無効
@@ -1813,11 +1821,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     min_cost_second = cost;
                     way_second = way_candidate;
                 }
-			} else if (cost < min_cost) { // 最小cost置き換え
+            } else if (cost < min_cost) { // 最小cost置き換え
                 min_cost = cost;
                 way = way_candidate;
                 way_samecost = null;
-			} else if (cost == min_cost) { // 最小コストが同じ時の処理
+            } else if (cost == min_cost) { // 最小コストが同じ時の処理
                 if (way_samecost == null)
                     way_samecost = new ArrayList<MapLink>();
                 way_samecost.add(way_candidate);
@@ -1829,12 +1837,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 resultLinks.put(way_candidate, new Double(cost));
             }
         }
-		// 以上で、最小コストの探索終了。結果は、wayにある。
+        // 以上で、最小コストの探索終了。結果は、wayにある。
 
         // tkokada
         // ※ randomNavigation は通常は使用しない
         if (randomNavigation) {
-			return saneRandomNavigation(resultLinks, way, false) ;
+            return saneRandomNavigation(resultLinks, way, false) ;
         }
 
         if (way_samecost != null) {
@@ -1848,73 +1856,73 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         if (way == null) {
             way = way_second;
         }
-		backupSituationForSaneNavigationFromNodeAfter(way) ;
+        backupSituationForSaneNavigationFromNodeAfter(way) ;
 
         if (way == null) {
             return null;
         }
 
-        navigation_reason += "\n -> chose " + way.getOther(node).getTagString();
+		navigation_reason.add("\n -> chose").add(way.getOther(node)) ;
         /*
         System.err.println("sane_navigation_from_node ID: " + ID + " : " +
                 "prev: " + prev_node.ID + " next: " + next_node.ID +
                 " current: " + current_link.ID + " goal: " +
-                goal + " way: " + way.ID + " reason: " + navigation_reason);
+                goal + " way: " + way.ID + " reason: " + navigation_reason.toString());
         */
         return way;
     }
 
-	/**
-	 * ランダムナビゲーションモードで使用する経路選択
-	 */
-	private MapLink saneRandomNavigation(HashMap<MapLink, Double> resultLinks,
-										 MapLink wayBest,
-										 boolean isVirtual) {
-		double margin = 3.0 ;
-		double totalCost = 0.0;
+    /**
+     * ランダムナビゲーションモードで使用する経路選択
+     */
+    private MapLink saneRandomNavigation(HashMap<MapLink, Double> resultLinks,
+                                         MapLink wayBest,
+                                         boolean isVirtual) {
+        double margin = 3.0 ;
+        double totalCost = 0.0;
 
-		// [I.Noda] なぜか最小コストをもう一度求めている。
-		MapLink minCostLink = null;
-		double minCost = Double.MAX_VALUE;
-		for (MapLink resultLink : resultLinks.keySet()) {
-			double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
-			if (cost < minCost) {
-				minCost = cost;
-				minCostLink = resultLink;
-			}
-		}
+        // [I.Noda] なぜか最小コストをもう一度求めている。
+        MapLink minCostLink = null;
+        double minCost = Double.MAX_VALUE;
+        for (MapLink resultLink : resultLinks.keySet()) {
+            double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
+            if (cost < minCost) {
+                minCost = cost;
+                minCostLink = resultLink;
+            }
+        }
 
-		double min_cost = ((Double) resultLinks.get(wayBest)).doubleValue();
+        double min_cost = ((Double) resultLinks.get(wayBest)).doubleValue();
 
-		// 最小から margin 分余裕を持って候補を探す。
-		ArrayList<MapLink> linkCandidates = new ArrayList<MapLink>();
-		for (MapLink resultLink : resultLinks.keySet()) {
-			double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
-			if (cost >= min_cost && cost < min_cost + margin)
-				linkCandidates.add(resultLink);
-		}
-		if (linkCandidates.size() > 0) {
-			MapLink chosedLink = linkCandidates.get(random.nextInt(linkCandidates.size()));
-			if(!isVirtual) 
-				backupSituationForSaneNavigationFromNodeAfter(chosedLink) ;
-			return chosedLink;
-		}
-		if(!isVirtual)
-			backupSituationForSaneNavigationFromNodeAfter(null) ;
-		return null;
-	}
+        // 最小から margin 分余裕を持って候補を探す。
+        ArrayList<MapLink> linkCandidates = new ArrayList<MapLink>();
+        for (MapLink resultLink : resultLinks.keySet()) {
+            double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
+            if (cost >= min_cost && cost < min_cost + margin)
+                linkCandidates.add(resultLink);
+        }
+        if (linkCandidates.size() > 0) {
+            MapLink chosedLink = linkCandidates.get(random.nextInt(linkCandidates.size()));
+            if(!isVirtual) 
+                backupSituationForSaneNavigationFromNodeAfter(chosedLink) ;
+            return chosedLink;
+        }
+        if(!isVirtual)
+            backupSituationForSaneNavigationFromNodeAfter(null) ;
+        return null;
+    }
 
-	/**
-	 * あるwayを選択した場合の目的地(_target)までのコスト。
-	 * ここを変えると、経路選択の方法が変えられる。
-	 */
-	public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
-		MapNode other = _way.getOther(_node);
-		double cost = other.getDistance(_target);
-		cost += _way.length;
-		return cost ;
-	}
-		
+    /**
+     * あるwayを選択した場合の目的地(_target)までのコスト。
+     * ここを変えると、経路選択の方法が変えられる。
+     */
+    public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
+        MapNode other = _way.getOther(_node);
+        double cost = other.getDistance(_target);
+        cost += _way.length;
+        return cost ;
+    }
+        
 
     // direction
     // prev_node
@@ -2105,8 +2113,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 }
             }
 
-			// 現在の way_candidate を選択した場合の next_target までのコスト計算
-			double cost = calcWayCostTo(way_candidate, node, next_target) ;
+            // 現在の way_candidate を選択した場合の next_target までのコスト計算
+            double cost = calcWayCostTo(way_candidate, node, next_target) ;
 
             if (loop) {
                 if (cost < min_cost_second) {
@@ -2130,7 +2138,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         setRouteIndex(originalRouteIndex);
 
         if (randomNavigation) {
-			return saneRandomNavigation(resultLinks, way, true) ;
+            return saneRandomNavigation(resultLinks, way, true) ;
         }
 
         if (way_samecost != null) {
@@ -2232,18 +2240,18 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
         
     /* for the newer, xml based format */
-	/**
-	 * クラス名。
-	 * ClassFinder でも参照できるようにしておく。
-	 */
-	public static String typeString =
-		ClassFinder.alias("RunningAroundPerson",
-						  Itk.currentClassName()) ;
+    /**
+     * クラス名。
+     * ClassFinder でも参照できるようにしておく。
+     */
+    public static String typeString =
+        ClassFinder.alias("RunningAroundPerson",
+                          Itk.currentClassName()) ;
     public static String getAgentTypeString() {
-		return typeString ;
+        return typeString ;
     }
     public static String getTypeName() {
-		return typeString ;
+        return typeString ;
     }
 
 

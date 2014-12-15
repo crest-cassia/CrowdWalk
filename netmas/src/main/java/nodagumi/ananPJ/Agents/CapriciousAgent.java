@@ -125,7 +125,7 @@ public class CapriciousAgent
     public void initByConf(Map<String, Object> conf) {
         super.initByConf(conf) ;
         if(config.containsKey("margin")) {
-            Itk.dbgMsg("margin", config.get("margin")) ;
+            //Itk.dbgMsg("margin", config.get("margin")) ;
             capriciousMargin = new Double(config.get("margin").toString()) ;
         }
     } ;

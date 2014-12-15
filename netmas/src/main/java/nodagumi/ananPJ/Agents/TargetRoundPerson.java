@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Agents;
 
 import java.awt.Color;
@@ -89,7 +90,7 @@ public class TargetRoundPerson extends RunningAroundPerson
     public TargetRoundPerson() {} ;
 
     public TargetRoundPerson(int _id, Random _random) {
-	init(_id, _random) ;
+        init(_id, _random) ;
     }
 
     /**
@@ -131,8 +132,8 @@ public class TargetRoundPerson extends RunningAroundPerson
             double _maxAllowedDamage,
             double _generatedTime,
             Random _random) {
-	init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
-	     _random) ;
+        init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
+             _random) ;
     }
 
     /**
@@ -145,7 +146,7 @@ public class TargetRoundPerson extends RunningAroundPerson
             double _maxAllowedDamage,
             double _generatedTime,
             Random _random) {
-	init(_id, _random);
+        init(_id, _random);
 
         generatedTime = _generatedTime;
         emptyspeed = _emptySpeed;
@@ -380,7 +381,7 @@ public class TargetRoundPerson extends RunningAroundPerson
         for (final CheckPoint point : route) {
             if (point.node == next_node) {
                 if (navigation_reason != null) {
-                    navigation_reason += "LOOP HERE!\n";
+                    navigation_reason.add("LOOP HERE!\n");
                 }
                 if (debug_mode) {
                     String mid_goal =
@@ -399,7 +400,7 @@ public class TargetRoundPerson extends RunningAroundPerson
                 break;
             }
         }
-        route.add(new CheckPoint(next_node, time, navigation_reason));
+        route.add(new CheckPoint(next_node, time, navigation_reason.toString()));
 
         /* agent exits the previous link */
         getCurrentLink().agentExits(this);
