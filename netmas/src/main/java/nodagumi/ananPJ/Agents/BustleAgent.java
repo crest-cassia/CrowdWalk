@@ -116,7 +116,7 @@ public class BustleAgent
         MapNode other = _way.getOther(_node);
         double cost = other.getDistance(_target);
         cost += _way.length;
-	double crowdness= bustleWeight * _way.crowdness() ;
+	double crowdness= bustleWeight * _way.realCrowdness() ;
         return cost + crowdness;
     }
 

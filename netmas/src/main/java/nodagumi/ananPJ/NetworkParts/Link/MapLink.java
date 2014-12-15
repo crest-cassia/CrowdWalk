@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkParts.Link;
 
 import java.awt.BasicStroke;
@@ -280,9 +281,20 @@ public class MapLink extends OBMapPart implements Serializable {
 
         return clearance >= space_required;
     }
-    
+
+    /**
+     * 真の混雑度 [2014.12.15 I.Noda]
+     * たいがい 1.0 以下。
+     */
+    public double realCrowdness() {
+        return agents.size() / width / length;
+    }
+
+    /**
+     * 混雑度の元の定義 [2014.12.15 I.Noda]
+     */
     public double crowdness() {
-        double phi = agents.size() / width / length;
+        double phi = realCrowdness() ;
         
         if (phi < 1.0) return 1.0;
         return phi;
