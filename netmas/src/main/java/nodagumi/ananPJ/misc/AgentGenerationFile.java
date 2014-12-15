@@ -18,6 +18,8 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON ;
 
+import com.opencsv.CSVParser ;
+
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
@@ -104,6 +106,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             Pattern rulepat;
             rulepat = Pattern.compile("EACH|RANDOM|EACHRANDOM|STAFF|" +
                     "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
+
+			// 各行をCSVとして解釈するためのパーザ
+			CSVParser csvParser = new CSVParser(',','"','\\') ;
+
+			// [I.Noda] 先頭行を判定するための行カウンター
 			int lineCount = 0 ;
             while ((line = br.readLine()) != null) {
 				if(lineCount == 0) scanModeLine(line) ;
@@ -111,16 +118,26 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
 
+				String orgLine = line;
+				// [2014/12/15 I.Noda]
+				// 情報が失われるので、toUpperCase を使わない。
+				// もしcase sensitive でないようにするなら、
+				// String class の insensitive な比較メソッドを使うこと。
+				//                line = line.toUpperCase();
+
+				// [2014/12/15 I.Noda]
+				// CSV Parser を使うように変更。
+				//String items[] = line.split(",");
+				String items[] = csvParser.parseLine(line) ;
+
 				/* [I.Noda] Ver1 以降は、先頭はエージェントクラス名 */
 				String className = null;
 				if(fileFormat == FileFormat.Ver1) {
-					className = line.split(",")[0] ;
-					line = line.substring(line.indexOf(",")+1) ;
+					className = items[0] ;
+					String[] newItems = new String[items.length-1] ;
+					System.arraycopy(items, 1, newItems, 0, items.length-1) ;
+					items = newItems ;
 				}
-
-                String orgLine = line;
-                line = line.toUpperCase();
-                String items[] = line.split(",");
 
                 if (items.length < 5 && items.length != 2) {
                     System.err.println("malformed line: " + line);
@@ -358,7 +375,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 // 経路情報に未定義のタグが使用されていないかチェックする
                 ArrayList<String> routeErrors = checkPlannedRoute(nodes, links, planned_route);
                 if (! routeErrors.isEmpty()) {
-                    definitionErrors.put(orgLine, routeErrors);
+					definitionErrors.put(orgLine, routeErrors);
                 }
 
                 if (rule_tag.equals("EACH")) {
