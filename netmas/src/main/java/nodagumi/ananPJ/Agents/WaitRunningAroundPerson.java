@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Agents;
 
 import java.io.IOException;
@@ -8,6 +9,8 @@ import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,20 +28,25 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
 
-	/**
-	 * 引数なしconstractor。 ClassFinder.newByName で必要。
-	 */
-	public WaitRunningAroundPerson() {} ;
+    /**
+     * Agent の詳細設定情報を格納しているもの
+     */
+    public Map<String, Object> config ;
+
+    /**
+     * 引数なしconstractor。 ClassFinder.newByName で必要。
+     */
+    public WaitRunningAroundPerson() {} ;
 
     public WaitRunningAroundPerson(int _id,
             double speed, double _confidence,
             double allowance, double time, Random _random) {
-		init(_id, speed,  _confidence, allowance, time, _random) ;
-	}
+        init(_id, speed,  _confidence, allowance, time, _random) ;
+    }
 
-	/**
-	 * 初期化。constractorから分離。
-	 */
+    /**
+     * 初期化。constractorから分離。
+     */
     @Override
     public void init(int _id,
             double speed, double _confidence,
@@ -47,12 +55,12 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     }
 
     public WaitRunningAroundPerson(int _id, Random _random) {
-		init(_id, _random) ;
-	}
+        init(_id, _random) ;
+    }
 
-	/**
-	 * 初期化。constractorから分離。
-	 */
+    /**
+     * 初期化。constractorから分離。
+     */
     @Override
     public void init(int _id, Random _random) {
         super.init(_id, _random);
@@ -61,8 +69,20 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     @Override
     public EvacuationAgent copyAndInitialize() {
         WaitRunningAroundPerson r = new WaitRunningAroundPerson(0, random);
-		return copyAndInitializeBody(r) ;
-	}
+        return copyAndInitializeBody(r) ;
+    }
+
+    /**
+     * Conf による初期化。
+     * 継承しているクラスの設定のため。
+     */
+    public void initByConf(Map<String, Object> conf) {
+        if(conf != null) {
+            config = conf ;
+        } else {
+            config = new HashMap<String, Object>() ;
+        }
+    } ;
 
     /**
      * 複製操作のメイン
@@ -329,19 +349,19 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return goal_tags;
     }
 
-	/**
-	 * クラス名。
-	 * ClassFinder でも参照できるようにしておく。
-	 */
-	public static String typeString =
-		ClassFinder.alias("WaitRunningAroundPerson",
-						  Itk.currentClassName()) ;
+    /**
+     * クラス名。
+     * ClassFinder でも参照できるようにしておく。
+     */
+    public static String typeString =
+        ClassFinder.alias("WaitRunningAroundPerson",
+                          Itk.currentClassName()) ;
     public static String getAgentTypeString() {
-		return typeString ;
+        return typeString ;
     }
 
     public static String getTypeName() {
-		return typeString ;
+        return typeString ;
     }
 
     @Override

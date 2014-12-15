@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.misc;
 
 import java.io.PrintWriter;
@@ -7,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Map;
 
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
@@ -23,15 +25,15 @@ import nodagumi.Itk.*;
 
 
 public abstract class GenerateAgent implements Serializable {
-	/**
-	 * 使えるエージェントを予めロードしておくためのダミー
-	 */
-	static private EvacuationAgent[] _dummyAgents = {
-		new RunningAroundPerson(),
-		new WaitRunningAroundPerson(),
-		new Staff(),
-		new CapriciousAgent(),
-	} ;
+    /**
+     * 使えるエージェントを予めロードしておくためのダミー
+     */
+    static private EvacuationAgent[] _dummyAgents = {
+        new RunningAroundPerson(),
+        new WaitRunningAroundPerson(),
+        new Staff(),
+        new CapriciousAgent(),
+    } ;
 
     public String goal;
     ArrayList<String> planned_route;
@@ -43,13 +45,15 @@ public abstract class GenerateAgent implements Serializable {
     public String configLine;
     public boolean enabled = true;
 
-	/**
-	 * エージェントクラスの名前を格納。
-	 */
-	public String agentClassName = "WaitRunningAroundPerson" ;
+    /**
+     * エージェントクラスの名前を格納。
+     */
+    public String agentClassName = "WaitRunningAroundPerson" ;
+    public Map<String, Object> agentConf = null ;
 
-	public GenerateAgent(String _agentClassName,
-			String[] conditions,
+    public GenerateAgent(String _agentClassName,
+                         Map<String, Object> _agentConf,
+            String[] conditions,
             String _goal,
             ArrayList<String> _planned_route,
             double _start_time,
@@ -58,10 +62,11 @@ public abstract class GenerateAgent implements Serializable {
             SpeedCalculationModel _speed_model,
             Random _random,
             String _configLine) {
-		if(_agentClassName != null && _agentClassName.length() > 0) {
-			agentClassName = _agentClassName ;
-		}
-		Itk.dbgMsg("agentClassName", agentClassName) ;
+        if(_agentClassName != null && _agentClassName.length() > 0) {
+            agentClassName = _agentClassName ;
+            agentConf = _agentConf ;
+        }
+        Itk.dbgMsg("agentClassName", agentClassName) ;
 
         goal = _goal;
         planned_route = _planned_route;
@@ -127,23 +132,25 @@ public abstract class GenerateAgent implements Serializable {
         }
         /* else, no time left, must generate all remains */
 
-		/* [I.Noda] ここで Agent 生成? */
+        /* [I.Noda] ここで Agent 生成? */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
-			/*
+            /*
             WaitRunningAroundPerson agent = new WaitRunningAroundPerson(model.getMap().assignUniqueAgentId(),
                     random);
-			*/
-			WaitRunningAroundPerson agent = null;
-			try {
-				agent = (WaitRunningAroundPerson)ClassFinder.newByName(agentClassName) ;
-				agent.init(model.getMap().assignUniqueAgentId(), random);
-			} catch (Exception ex ) {
-				Itk.dbgMsg("class name not found") ;
-				Itk.dbgMsg("agentClassName", agentClassName) ;
-				ex.printStackTrace();
-				System.exit(1) ;
-			}
+            */
+            WaitRunningAroundPerson agent = null;
+            try {
+                agent = (WaitRunningAroundPerson)ClassFinder.newByName(agentClassName) ;
+                agent.init(model.getMap().assignUniqueAgentId(), random);
+                if(agentConf != null)
+                    agent.initByConf(agentConf) ;
+            } catch (Exception ex ) {
+                Itk.dbgMsg("class name not found") ;
+                Itk.dbgMsg("agentClassName", agentClassName) ;
+                ex.printStackTrace();
+                System.exit(1) ;
+            }
 
             agent.generatedTime = tick;
             agent.displayMode = model.getDisplayMode();
@@ -215,6 +222,7 @@ class GenerateAgentFromLink extends GenerateAgent {
     MapLink start_link;
 
     public GenerateAgentFromLink(String _agentClassName,
+                                 Map<String, Object> _agentConf,
             MapLink _start_link,
             String[] conditions,
             String _goal,
@@ -225,8 +233,9 @@ class GenerateAgentFromLink extends GenerateAgent {
             SpeedCalculationModel _speed_model,
             Random _random,
             String _configLine) {
-		super(_agentClassName,
-			  conditions, _goal, _planned_route, _start_time, _duration,
+        super(_agentClassName,
+              _agentConf,
+              conditions, _goal, _planned_route, _start_time, _duration,
                 _total, _speed_model, _random, _configLine);
         start_link = _start_link;
     }
@@ -284,6 +293,7 @@ class GenerateAgentFromNode extends GenerateAgent {
     MapNode start_node;
 
     public GenerateAgentFromNode(String _agentClassName,
+                                 Map<String, Object> _agentConf,
             MapNode _start_node,
             String[] conditions,
             String _goal,
@@ -294,8 +304,9 @@ class GenerateAgentFromNode extends GenerateAgent {
             SpeedCalculationModel _speed_model,
             Random _random,
             String _configLine) {
-		super(_agentClassName,
-			  conditions, _goal, _planned_route, _start_time, _duration,
+        super(_agentClassName,
+              _agentConf,
+              conditions, _goal, _planned_route, _start_time, _duration,
                 _total, _speed_model, _random, _configLine);
         start_node = _start_node;
         //System.err.println("GenerateAgentFromNode start_node: " + start_node.ID + " goal: " + _goal);

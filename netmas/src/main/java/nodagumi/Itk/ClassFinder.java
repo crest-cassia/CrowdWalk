@@ -1,4 +1,4 @@
-// -*- mode: java -*-
+// -*- mode: java; indent-tabs-mode: nil -*-
 /** Itk Template for Java
  * @author:: Itsuki Noda
  * @version:: 0.0 2014/12/12 I.Noda

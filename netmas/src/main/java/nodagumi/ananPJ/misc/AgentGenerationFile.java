@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.misc;
 
 import java.io.BufferedReader;
@@ -56,20 +57,20 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
 
-	/**
-	 * enum FileFormat Version
-	 */
-	public enum FileFormat { Ver0, Ver1 }
+    /**
+     * enum FileFormat Version
+     */
+    public enum FileFormat { Ver0, Ver1 }
 
-	/**
-	 * ファイルフォーマットのバージョン
-	 */
-	public FileFormat fileFormat = FileFormat.Ver0;
+    /**
+     * ファイルフォーマットのバージョン
+     */
+    public FileFormat fileFormat = FileFormat.Ver0;
 
-	/**
-	 * mode を格納している Map
-	 */
-	public Map<String,Object> modeMap ;
+    /**
+     * mode を格納している Map
+     */
+    public Map<String,Object> modeMap ;
 
     public AgentGenerationFile(final String filename,
             ArrayList<MapNode> nodes,
@@ -107,37 +108,40 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             rulepat = Pattern.compile("EACH|RANDOM|EACHRANDOM|STAFF|" +
                     "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
 
-			// 各行をCSVとして解釈するためのパーザ
-			CSVParser csvParser = new CSVParser(',','"','\\') ;
+            // 各行をCSVとして解釈するためのパーザ
+            CSVParser csvParser = new CSVParser(',','"','\\') ;
 
-			// [I.Noda] 先頭行を判定するための行カウンター
-			int lineCount = 0 ;
+            // [I.Noda] 先頭行を判定するための行カウンター
+            int lineCount = 0 ;
             while ((line = br.readLine()) != null) {
-				if(lineCount == 0) scanModeLine(line) ;
-				lineCount++ ;
+                if(lineCount == 0) scanModeLine(line) ;
+                lineCount++ ;
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
 
-				String orgLine = line;
-				// [2014/12/15 I.Noda]
-				// 情報が失われるので、toUpperCase を使わない。
-				// もしcase sensitive でないようにするなら、
-				// String class の insensitive な比較メソッドを使うこと。
-				//                line = line.toUpperCase();
+                String orgLine = line;
+                // [2014/12/15 I.Noda]
+                // 情報が失われるので、toUpperCase を使わない。
+                // もしcase sensitive でないようにするなら、
+                // String class の insensitive な比較メソッドを使うこと。
+                //                line = line.toUpperCase();
 
-				// [2014/12/15 I.Noda]
-				// CSV Parser を使うように変更。
-				//String items[] = line.split(",");
-				String items[] = csvParser.parseLine(line) ;
+                // [2014/12/15 I.Noda]
+                // CSV Parser を使うように変更。
+                //String items[] = line.split(",");
+                String items[] = csvParser.parseLine(line) ;
 
-				/* [I.Noda] Ver1 以降は、先頭はエージェントクラス名 */
-				String className = null;
-				if(fileFormat == FileFormat.Ver1) {
-					className = items[0] ;
-					String[] newItems = new String[items.length-1] ;
-					System.arraycopy(items, 1, newItems, 0, items.length-1) ;
-					items = newItems ;
-				}
+                /* [I.Noda] Ver1 以降は、先頭はエージェントクラス名 */
+                String className = null;
+                Map<String, Object> agentConf = null;
+                if(fileFormat == FileFormat.Ver1) {
+                    className = items[0] ;
+                    String confStr = items[1] ;
+                    agentConf = (Map<String, Object>)JSON.decode(confStr) ;
+                    String[] newItems = new String[items.length-2] ;
+                    System.arraycopy(items, 2, newItems, 0, items.length-2) ;
+                    items = newItems ;
+                }
 
                 if (items.length < 5 && items.length != 2) {
                     System.err.println("malformed line: " + line);
@@ -375,12 +379,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 // 経路情報に未定義のタグが使用されていないかチェックする
                 ArrayList<String> routeErrors = checkPlannedRoute(nodes, links, planned_route);
                 if (! routeErrors.isEmpty()) {
-					definitionErrors.put(orgLine, routeErrors);
+                    definitionErrors.put(orgLine, routeErrors);
                 }
 
                 if (rule_tag.equals("EACH")) {
                     for (final MapLink start_link : start_links) {
-						this.add(new GenerateAgentFromLink(className,
+                        this.add(new GenerateAgentFromLink(className, 
+                                                           agentConf,
                                 start_link,
                                 agent_conditions,
                                 goal,
@@ -393,7 +398,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 orgLine));
                     }
                     for (final MapNode start_node : start_nodes) {
-						this.add(new GenerateAgentFromNode(className,
+                        this.add(new GenerateAgentFromNode(className,
+                                                           agentConf,
                                 start_node,
                                 agent_conditions,
                                 goal,
@@ -422,6 +428,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     for (int i = 0; i < start_links.size(); i++) {
                         if (chosen_links[i] > 0)
                             this.add(new GenerateAgentFromLink(className,
+                                                               agentConf,
                                     start_links.get(i),
                                     agent_conditions,
                                     goal,
@@ -435,7 +442,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
-							this.add(new GenerateAgentFromNode(className,
+                            this.add(new GenerateAgentFromNode(className,
+                                                               agentConf,
                                     start_nodes.get(i),
                                     agent_conditions,
                                     goal,
@@ -471,7 +479,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     for (int i = 0; i < start_links.size(); i++) {
                         if (chosen_links[i] > 0)
-							this.add(new GenerateAgentFromLink(className,
+                            this.add(new GenerateAgentFromLink(className,
+                                                               agentConf,
                                     start_links.get(i),
                                     agent_conditions,
                                     goal,
@@ -485,7 +494,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     for (int i = 0; i < start_nodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
-							this.add(new GenerateAgentFromNode(className,
+                            this.add(new GenerateAgentFromNode(className,
+                                                               agentConf,
                                     start_nodes.get(i),
                                     agent_conditions,
                                     goal,
@@ -561,7 +571,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     plannedRoute.add(plannedRouteCandidates.get(chosenIndex));
                                 }
                             }
-							this.add(new GenerateAgentFromLink(className,
+                            this.add(new GenerateAgentFromLink(className,
+                                                               agentConf,
                                         start_link,
                                         agent_conditions,
                                         goal_node,
@@ -608,32 +619,32 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
-	/**
-	 * mode line check
-	 * [example]
-	 *   # { 'version' : '1' }
-	 * @param modeline 最初の行
-	 * @return modelineの形式であれば true を返す。
-	 */
-	public boolean scanModeLine(String modeline) {
-		if(modeline.startsWith("#")) {
-			// 先頭の '#' をカット
-			String modeString = modeline ;
-			while(modeString.startsWith("#")) modeString = modeString.substring(1) ;
-			// のこりを JSON として解釈
-			modeMap	= (Map<String, Object>)JSON.decode(modeString) ;
-			String versionString = modeMap.get("version").toString() ;
-			if(versionString != null && versionString.equals("1")) {
-				fileFormat = FileFormat.Ver1 ;
-			} else {
-				fileFormat = FileFormat.Ver0 ;
-			}
-			return true ;
-		} else {
-			fileFormat = FileFormat.Ver0 ;
-			return false ;
-		}
-	}
+    /**
+     * mode line check
+     * [example]
+     *   # { 'version' : '1' }
+     * @param modeline 最初の行
+     * @return modelineの形式であれば true を返す。
+     */
+    public boolean scanModeLine(String modeline) {
+        if(modeline.startsWith("#")) {
+            // 先頭の '#' をカット
+            String modeString = modeline ;
+            while(modeString.startsWith("#")) modeString = modeString.substring(1) ;
+            // のこりを JSON として解釈
+            modeMap = (Map<String, Object>)JSON.decode(modeString) ;
+            String versionString = modeMap.get("version").toString() ;
+            if(versionString != null && versionString.equals("1")) {
+                fileFormat = FileFormat.Ver1 ;
+            } else {
+                fileFormat = FileFormat.Ver0 ;
+            }
+            return true ;
+        } else {
+            fileFormat = FileFormat.Ver0 ;
+            return false ;
+        }
+    }
 
 
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {

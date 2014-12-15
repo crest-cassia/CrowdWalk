@@ -1,4 +1,4 @@
-// -*- mode: java -*-
+// -*- mode: java; indent-tabs-mode: nil -*-
 /** Itk Utility
  * @author:: Itsuki Noda
  * @version:: 0.0 2014/12/12 I.Noda
@@ -40,19 +40,19 @@ public class Itk {
      * @param object 出力するオブジェクト
      */
     static public void dbgMsg(Object object) {
-	try {
-	    if(object == null) {
-		dbgMsg("(null)") ;
-	/* XML は当面使わないので、コメントアウト
-	    } else if(object instanceof Node) {
-		dbgMsg(XMLFormatConverter.toString((Node)object)) ;
-	*/
-	    } else {
-		System.out.println(DbgTag + ":" + objectToString(object)) ;
-	    }
-	} catch(/*TransformerException*/ Exception ex) {
-	    ex.printStackTrace();
-	}
+        try {
+            if(object == null) {
+                dbgMsg("(null)") ;
+        /* XML は当面使わないので、コメントアウト
+            } else if(object instanceof Node) {
+                dbgMsg(XMLFormatConverter.toString((Node)object)) ;
+        */
+            } else {
+                System.out.println(DbgTag + ":" + objectToString(object)) ;
+            }
+        } catch(/*TransformerException*/ Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     //------------------------------------------------------------
@@ -62,20 +62,20 @@ public class Itk {
      * @param object 出力するオブジェクト
      */
     static public void dbgMsg(String label, Object object) {
-	try {
-	    if(object == null) {
-		dbgMsg(label, "(null)") ;
-	/* XML は当面使わないので、コメントアウト
-	    } else if(object instanceof Node) {
-		dbgMsg(label, XMLFormatConverter.toString((Node)object)) ;
-	*/
-	    } else {
-		System.out.println(DbgTag + "[" + label + "]:" 
-				   + objectToString(object)) ;
-	    }
-	} catch(/*TransformerException*/ Exception ex) {
-	    ex.printStackTrace();
-	}
+        try {
+            if(object == null) {
+                dbgMsg(label, "(null)") ;
+        /* XML は当面使わないので、コメントアウト
+            } else if(object instanceof Node) {
+                dbgMsg(label, XMLFormatConverter.toString((Node)object)) ;
+        */
+            } else {
+                System.out.println(DbgTag + "[" + label + "]:" 
+                                   + objectToString(object)) ;
+            }
+        } catch(/*TransformerException*/ Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     //------------------------------------------------------------
@@ -84,7 +84,7 @@ public class Itk {
      * 現在のメソッド名を出力する。
      */
     static public void dbgMsgMethodInfo() {
-	dbgMsg(">>>", currentMethod(1)) ;
+        dbgMsg(">>>", currentMethod(1)) ;
     }
 
     //------------------------------------------------------------
@@ -93,43 +93,43 @@ public class Itk {
      * @param object 配列オブジェクト
      */
     static public String objectToString(Object object) {
-	if(object.getClass().isArray()) {
-	    final String className = object.getClass().getName() ;
-	    if(className.startsWith("[Z")) {
-		return Arrays.toString((boolean[])object) ;
-	    } else if (className.startsWith("[B")) {
-		return Arrays.toString((byte[])object) ;
-	    } else if (className.startsWith("[C")) {
-		return Arrays.toString((char[])object) ;
-	    } else if (className.startsWith("[D")) {
-		return Arrays.toString((double[])object) ;
-	    } else if (className.startsWith("[F")) {
-		return Arrays.toString((float[])object) ;
-	    } else if (className.startsWith("[I")) {
-		return Arrays.toString((int[])object) ;
-	    } else if (className.startsWith("[J")) {
-		return Arrays.toString((long[])object) ;
-	    } else if (className.startsWith("[S")) {
-		return Arrays.toString((short[])object) ;
-	    } else if (className.startsWith("[[")) {
-		String ret = null;
-		for(Object innerArray : (Object[]) object) {
-		    if(ret == null) {
-			ret = "" ;
-		    } else {
-			ret += "," ;
-		    }
-		    ret += objectToString(innerArray) ;
-		}
-		ret = "[" + ret + "]" ;
-		return ret ;
-	    } else {
-		return Arrays.toString((Object[])object) ;
-	    }
-	} else {
-	    return object.toString() ;
-	}
-	//	return object.getClass().getName() ;
+        if(object.getClass().isArray()) {
+            final String className = object.getClass().getName() ;
+            if(className.startsWith("[Z")) {
+                return Arrays.toString((boolean[])object) ;
+            } else if (className.startsWith("[B")) {
+                return Arrays.toString((byte[])object) ;
+            } else if (className.startsWith("[C")) {
+                return Arrays.toString((char[])object) ;
+            } else if (className.startsWith("[D")) {
+                return Arrays.toString((double[])object) ;
+            } else if (className.startsWith("[F")) {
+                return Arrays.toString((float[])object) ;
+            } else if (className.startsWith("[I")) {
+                return Arrays.toString((int[])object) ;
+            } else if (className.startsWith("[J")) {
+                return Arrays.toString((long[])object) ;
+            } else if (className.startsWith("[S")) {
+                return Arrays.toString((short[])object) ;
+            } else if (className.startsWith("[[")) {
+                String ret = null;
+                for(Object innerArray : (Object[]) object) {
+                    if(ret == null) {
+                        ret = "" ;
+                    } else {
+                        ret += "," ;
+                    }
+                    ret += objectToString(innerArray) ;
+                }
+                ret = "[" + ret + "]" ;
+                return ret ;
+            } else {
+                return Arrays.toString((Object[])object) ;
+            }
+        } else {
+            return object.toString() ;
+        }
+        //      return object.getClass().getName() ;
     }
 
     //------------------------------------------------------------
@@ -137,8 +137,8 @@ public class Itk {
      * UUID によりランダムな URI を生成
      */
     static public String genUriRandom() {
-	UUID uuid = UUID.randomUUID() ;
-	return "uri:uuid:" + uuid.toString() ;
+        UUID uuid = UUID.randomUUID() ;
+        return "uri:uuid:" + uuid.toString() ;
     }
 
     //------------------------------------------------------------
@@ -147,8 +147,8 @@ public class Itk {
      */
     /*
     static public Calendar getCurrentTimeCalendar() {
-	String tz = "JST" ;
-	return Calendar.getInstance(TimeZone.getTimeZone(tz)) ;
+        String tz = "JST" ;
+        return Calendar.getInstance(TimeZone.getTimeZone(tz)) ;
     }
     */
 
@@ -157,7 +157,7 @@ public class Itk {
      * 現在時刻をDateで取得
      */
     static public Date getCurrentTimeDate() {
-	return new Date() ;
+        return new Date() ;
     }
 
     //------------------------------------------------------------
@@ -167,7 +167,7 @@ public class Itk {
      */
     /*
     static public Time getCurrentTime() {
-	return new Time(getCurrentTimeDate().getTime()) ;
+        return new Time(getCurrentTimeDate().getTime()) ;
     }
     */
 
@@ -176,21 +176,21 @@ public class Itk {
      * 時刻文字列のフォーマット
      */
     static public final String DefaultTimeStrFormatPattern 
-	= "yyyy-MM-dd HH:mm:ss.SSS" ;
+        = "yyyy-MM-dd HH:mm:ss.SSS" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 時刻フォーマット
      */
     static public final DateFormat DefaultTimeStrFormat 
-	= new SimpleDateFormat(DefaultTimeStrFormatPattern) ;
+        = new SimpleDateFormat(DefaultTimeStrFormatPattern) ;
 
     //------------------------------------------------------------
     /**
      * 現在時刻をStringで取得
      */
     static public String getCurrentTimeStr() {
-	return getCurrentTimeStr(DefaultTimeStrFormat) ;
+        return getCurrentTimeStr(DefaultTimeStrFormat) ;
     }
 
     //------------------------------------------------------------
@@ -199,7 +199,7 @@ public class Itk {
      * @param formatPattern 指定のフォーマット
      */
     static public String getCurrentTimeStr(String formatPattern) {
-	return getCurrentTimeStr(new SimpleDateFormat(formatPattern)) ;
+        return getCurrentTimeStr(new SimpleDateFormat(formatPattern)) ;
     }
 
     //------------------------------------------------------------
@@ -208,8 +208,8 @@ public class Itk {
      * @param form 指定のフォーマット
      */
     static public String getCurrentTimeStr(DateFormat form) {
-	Date date = getCurrentTimeDate() ;
-	return form.format(date) ;
+        Date date = getCurrentTimeDate() ;
+        return form.format(date) ;
     }
 
     //------------------------------------------------------------
@@ -217,7 +217,7 @@ public class Itk {
      * 現在実行中のメソッド情報
      */
     static public StackTraceElement currentCall() {
-	return currentCall(1) ;
+        return currentCall(1) ;
     }
 
     //------------------------------------------------------------
@@ -225,8 +225,8 @@ public class Itk {
      * 現在実行中のメソッド情報
      */
     static public StackTraceElement currentCall(int offset) {
-	StackTraceElement[] trace = Thread.currentThread().getStackTrace() ;
-	return trace[2 + offset] ;
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace() ;
+        return trace[2 + offset] ;
     }
 
     //------------------------------------------------------------
@@ -234,7 +234,7 @@ public class Itk {
      * 現在実行中のメソッド名
      */
     static public String currentMethod() {
-	return currentMethod(1) ;
+        return currentMethod(1) ;
     }
 
     //------------------------------------------------------------
@@ -242,7 +242,7 @@ public class Itk {
      * 現在実行中のメソッド名
      */
     static public String currentMethod(int offset) {
-	return currentCall(offset + 1).toString() ;
+        return currentCall(offset + 1).toString() ;
     }
 
     //------------------------------------------------------------
@@ -250,7 +250,7 @@ public class Itk {
      * 現在位置のクラス名
      */
     static public String currentClassName() {
-	return currentClassName(1) ;
+        return currentClassName(1) ;
     }
 
     //------------------------------------------------------------
@@ -258,7 +258,7 @@ public class Itk {
      * 現在位置のクラス名
      */
     static public String currentClassName(int offset) {
-	return currentCall(offset + 1).getClassName() ;
+        return currentCall(offset + 1).getClassName() ;
     }
 
 } // class Itk

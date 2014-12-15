@@ -1,4 +1,4 @@
-// -*- mode: java -*-
+// -*- mode: java; indent-tabs-mode: nil -*-
 /** Itk Template for Java
  * @author:: Itsuki Noda
  * @version:: 0.0 2014/12/12 I.Noda
@@ -30,18 +30,18 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_get() {
-	Itk.dbgMsgMethodInfo() ;
-	try {
-	    String name = "java.lang.String" ;
-	    Class<?> klass = ClassFinder.get(name) ;
-	    Itk.dbgMsg("name=", name) ;
-	    Itk.dbgMsg("class=", klass.toString()) ;
+        Itk.dbgMsgMethodInfo() ;
+        try {
+            String name = "java.lang.String" ;
+            Class<?> klass = ClassFinder.get(name) ;
+            Itk.dbgMsg("name=", name) ;
+            Itk.dbgMsg("class=", klass.toString()) ;
 
-	    Itk.dbgMsg("true=", ClassFinder.isClassName(name)) ;
-	    Itk.dbgMsg("false=", ClassFinder.isClassName("hogehoge")) ;
-	} catch (Exception ex) {
-	    ex.printStackTrace() ;
-	}
+            Itk.dbgMsg("true=", ClassFinder.isClassName(name)) ;
+            Itk.dbgMsg("false=", ClassFinder.isClassName("hogehoge")) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+        }
     }
 
     //------------------------------------------------------------
@@ -50,16 +50,16 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_alias() {
-	Itk.dbgMsgMethodInfo() ;
-	try {
-	    ClassFinder.alias("MyString","java.lang.String") ;
-	    String name = "MyString" ;
-	    String fullname = ClassFinder.fullname(name) ;
-	    Itk.dbgMsg("name=", name) ;
-	    Itk.dbgMsg("fullname=", fullname) ;
-	} catch (Exception ex) {
-	    ex.printStackTrace() ;
-	}
+        Itk.dbgMsgMethodInfo() ;
+        try {
+            ClassFinder.alias("MyString","java.lang.String") ;
+            String name = "MyString" ;
+            String fullname = ClassFinder.fullname(name) ;
+            Itk.dbgMsg("name=", name) ;
+            Itk.dbgMsg("fullname=", fullname) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+        }
     }
 
     //------------------------------------------------------------
@@ -68,16 +68,16 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_new() {
-	Itk.dbgMsgMethodInfo() ;
-	try {
-	    ClassFinder.alias("MyString","java.lang.String") ;
-	    String name = "MyString" ;
-	    String str = (String)ClassFinder.newByName(name) ;
-	    str += "foo" ;
-	    Itk.dbgMsg("str=", str) ;
-	} catch (Exception ex) {
-	    ex.printStackTrace() ;
-	}
+        Itk.dbgMsgMethodInfo() ;
+        try {
+            ClassFinder.alias("MyString","java.lang.String") ;
+            String name = "MyString" ;
+            String str = (String)ClassFinder.newByName(name) ;
+            str += "foo" ;
+            Itk.dbgMsg("str=", str) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+        }
     }
 
     //------------------------------------------------------------
@@ -86,21 +86,21 @@ public class ClassFinder_Test extends TestCase {
      */
     @Test
     public void test_json() {
-	Itk.dbgMsgMethodInfo() ;
-	try {
-	    ClassFinder.aliasByJson(" { " +
-				    "'MyString' : 'java.lang.String'," +
-				    "'Me' : 'nodagumi.Itk.ClassFinder_Test'," +
-				    "'You' : 'nodagumi.Itk.ClassFinder'," +
-				    "}") ;
-	    String str = (String)ClassFinder.newByName("MyString") ;
-	    str += "foo" ;
-	    Itk.dbgMsg("str=", str) ;
-	    Itk.dbgMsg("Me=", ClassFinder.get("Me")) ;
-	    Itk.dbgMsg("You=", ClassFinder.get("You")) ;
-	} catch (Exception ex) {
-	    ex.printStackTrace() ;
-	}
+        Itk.dbgMsgMethodInfo() ;
+        try {
+            ClassFinder.aliasByJson(" { " +
+                                    "'MyString' : 'java.lang.String'," +
+                                    "'Me' : 'nodagumi.Itk.ClassFinder_Test'," +
+                                    "'You' : 'nodagumi.Itk.ClassFinder'," +
+                                    "}") ;
+            String str = (String)ClassFinder.newByName("MyString") ;
+            str += "foo" ;
+            Itk.dbgMsg("str=", str) ;
+            Itk.dbgMsg("Me=", ClassFinder.get("Me")) ;
+            Itk.dbgMsg("You=", ClassFinder.get("You")) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+        }
     }
 
 } // class ClassFinder_Test

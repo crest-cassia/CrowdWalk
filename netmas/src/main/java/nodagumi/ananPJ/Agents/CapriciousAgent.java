@@ -1,4 +1,4 @@
-// -*- mode: java -*-
+// -*- mode: java; indent-tabs-mode: nil -*-
 /** 
  * 気まぐれな経路選択をするエージェント
  * @author:: Itsuki Noda
@@ -35,6 +35,7 @@ package nodagumi.ananPJ.Agents;
 
 import java.io.Serializable;
 import java.util.Random;
+import java.util.Map;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
@@ -55,10 +56,10 @@ public class CapriciousAgent
      * ClassFinder でも参照できるようにしておく。
      */
     public static String typeString =
-	ClassFinder.alias("CapriciousAgent",
-			  Itk.currentClassName()) ;
+        ClassFinder.alias("CapriciousAgent",
+                          Itk.currentClassName()) ;
 
-    public static String getAgentTypeString() {	return typeString ;}
+    public static String getAgentTypeString() { return typeString ;}
     public static String getTypeName() { return typeString ;}
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -85,9 +86,9 @@ public class CapriciousAgent
      * constractor。
      */
     public CapriciousAgent(int _id,
-			   double speed, double _confidence,
-			   double allowance, double time, Random _random) {
-	init(_id, speed,  _confidence, allowance, time, _random) ;
+                           double speed, double _confidence,
+                           double allowance, double time, Random _random) {
+        init(_id, speed,  _confidence, allowance, time, _random) ;
     }
 
     //------------------------------------------------------------
@@ -95,7 +96,7 @@ public class CapriciousAgent
      * constractor。
      */
     public CapriciousAgent(int _id, Random _random) {
-	init(_id, _random) ;
+        init(_id, _random) ;
     }
 
     //------------------------------------------------------------
@@ -104,8 +105,8 @@ public class CapriciousAgent
      */
     @Override
     public EvacuationAgent copyAndInitialize() {
-	CapriciousAgent r = new CapriciousAgent(0, random) ;
-	return copyAndInitializeBody(r) ;
+        CapriciousAgent r = new CapriciousAgent(0, random) ;
+        return copyAndInitializeBody(r) ;
     }
 
     //------------------------------------------------------------
@@ -113,22 +114,32 @@ public class CapriciousAgent
      * 複製操作のメイン
      */
     public EvacuationAgent copyAndInitializeBody(CapriciousAgent r) {
-	super.copyAndInitializeBody(r) ;
-	r.capriciousMargin = capriciousMargin ;
-	return r ;
+        super.copyAndInitializeBody(r) ;
+        r.capriciousMargin = capriciousMargin ;
+        return r ;
     }
 
+    /**
+     * Conf による初期化。
+     */
+    public void initByConf(Map<String, Object> conf) {
+        super.initByConf(conf) ;
+        if(config.containsKey("margin")) {
+            Itk.dbgMsg("margin", config.get("margin")) ;
+            capriciousMargin = new Double(config.get("margin").toString()) ;
+        }
+    } ;
     //------------------------------------------------------------
     /**
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
     public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
-	MapNode other = _way.getOther(_node);
-	double cost = other.getDistance(_target);
-	cost += _way.length;
-	double noise = capriciousMargin * random.nextDouble() ;
-	return cost + noise;
+        MapNode other = _way.getOther(_node);
+        double cost = other.getDistance(_target);
+        cost += _way.length;
+        double noise = capriciousMargin * random.nextDouble() ;
+        return cost + noise;
     }
 
 } // class CapriciousAgent

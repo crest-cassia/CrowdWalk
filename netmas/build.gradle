@@ -29,6 +29,8 @@ dependencies {
         compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
         compile group: 'xalan', name: 'xalan', version: '2.7.0'
         compile 'net.arnx:jsonic:1.2.7'
+	compile 'net.sf.opencsv:opencsv:2.3'
+	compile 'junit:junit:4.11'
         compile fileTree(dir: 'libs/jar', include: '*.jar')
     } else {
         groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.0'
@@ -36,6 +38,8 @@ dependencies {
         // compile 'org.geotools:gt-shapefile:8.5'
         // compile 'org.geotools:gt-swing:8.5'
         compile 'net.arnx:jsonic:1.2.7'
+	compile 'net.sf.opencsv:opencsv:2.3'
+	compile 'junit:junit:4.11'
         compile fileTree(dir: 'libs/jar/geotools-2.7-M3', include: '*.jar')
         compile fileTree(dir: 'libs/jar', include: '*.jar')
         compile fileTree(dir: 'libs/jar', include: '.SM.*.jar')
