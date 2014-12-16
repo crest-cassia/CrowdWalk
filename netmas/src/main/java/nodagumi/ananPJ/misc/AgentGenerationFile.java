@@ -279,6 +279,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     speed_model = SpeedCalculationModel.ExpectedDensityModel;
                     index += 1;
                 }
+
                 // EACHRANDOM
                 int each = 0;
                 if (rule_tag.equals("EACHRANDOM")) {
