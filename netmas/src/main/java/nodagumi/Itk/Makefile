@@ -48,7 +48,9 @@ test_all ::
 
 ##------------------------------------------------------------
 SAMPLE0 = sample/simpleGrid/properties-lane.xml
+SAMPLE0d = sample/simpleGrid/properties-density.xml
 SAMPLE1 = sample/simpleGrid/properties-lane.v2.xml
+
 
 run : run1
 
@@ -57,6 +59,9 @@ run_base ::
 
 run0 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0))
+
+run0d ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0d))
 
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))

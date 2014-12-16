@@ -18,7 +18,7 @@
     <!--entry key="serialize_interval">60</entry-->
     <!--entry key="deserialized_file">/tmp/serialized.xml</entry-->
     <entry key="randseed">2525</entry>
-    <entry key="random_navigation">true</entry>
+    <entry key="random_navigation">false</entry>
     <entry key="speed_model">density</entry>
     <!--entry key="density_density_speed_model_macro_timestep">10</entry-->
     <entry key="time_series_log">true</entry>
