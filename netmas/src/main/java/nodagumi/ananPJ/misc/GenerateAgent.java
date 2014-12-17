@@ -50,10 +50,10 @@ public abstract class GenerateAgent implements Serializable {
      * エージェントクラスの名前を格納。
      */
     public String agentClassName = "WaitRunningAroundPerson" ;
-    public Map<String, Object> agentConf = null ;
+    public String agentConf = null ; // config in json string.
 
     public GenerateAgent(String _agentClassName,
-                         Map<String, Object> _agentConf,
+                         String _agentConf,
             String[] conditions,
             String _goal,
             ArrayList<String> _planned_route,
@@ -223,7 +223,7 @@ class GenerateAgentFromLink extends GenerateAgent {
     MapLink start_link;
 
     public GenerateAgentFromLink(String _agentClassName,
-                                 Map<String, Object> _agentConf,
+                                 String _agentConf,
             MapLink _start_link,
             String[] conditions,
             String _goal,
@@ -294,7 +294,7 @@ class GenerateAgentFromNode extends GenerateAgent {
     MapNode start_node;
 
     public GenerateAgentFromNode(String _agentClassName,
-                                 Map<String, Object> _agentConf,
+                                 String _agentConf,
             MapNode _start_node,
             String[] conditions,
             String _goal,

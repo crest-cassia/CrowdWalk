@@ -133,11 +133,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 /* [I.Noda] Ver1 以降は、先頭はエージェントクラス名 */
                 String className = null;
-                Map<String, Object> agentConf = null;
+                String agentConf = null;
                 if(fileFormat == FileFormat.Ver1) {
                     className = items[0] ;
-                    String confStr = items[1] ;
-                    agentConf = (Map<String, Object>)JSON.decode(confStr) ;
+                    agentConf = items[1] ;
                     String[] newItems = new String[items.length-2] ;
                     System.arraycopy(items, 2, newItems, 0, items.length-2) ;
                     items = newItems ;

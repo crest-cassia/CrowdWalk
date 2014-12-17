@@ -17,6 +17,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import net.arnx.jsonic.JSON ;
+
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
@@ -75,6 +77,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     /**
      * Conf による初期化。
      * 継承しているクラスの設定のため。
+     * @param conf json の連想配列形式を scan した Map
      */
     public void initByConf(Map<String, Object> conf) {
         if(conf != null) {
@@ -83,6 +86,16 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             config = new HashMap<String, Object>() ;
         }
     } ;
+    /**
+     * Conf による初期化。
+     * 継承しているクラスの設定のため。
+     * @param confString json で書かれたAgentのconfigulation。
+     */
+    public void initByConf(String confString) {
+        Map<String, Object> conf =
+            (Map<String, Object>)JSON.decode(confString) ;
+        initByConf(conf) ;
+    }
 
     /**
      * 複製操作のメイン
