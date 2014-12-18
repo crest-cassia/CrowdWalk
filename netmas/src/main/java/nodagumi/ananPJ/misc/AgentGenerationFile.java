@@ -460,106 +460,22 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     orgLine));
                     }
                 } else if (rule_tag.equals("TIMEEVERY")) {
-                    int step_time = start_time;
-                    /* let's assume start & goal & planned_route candidates
-                     * are all MapLink!
-                     */
-                    ArrayList<String> goalCandidates = new ArrayList<String>();
-                    for (MapNode node : nodes) {
-                        for (String tag : node.getTags()) {
-                            // タグの比較を厳密化する
-                            // if (tag.contains(goal))
-                            if (tag.equals(goal))
-                                goalCandidates.add(tag);
-                            // [2014.12.18 I.Noda]
-                            // この上、おかしくないか？
-                            // これだと、goalCandidates には、goal と
-                            // おなじ文字列しか入らないことになる。
-                        }
-                    }
-                    while (step_time <= every_end_time) {
-                        for (int i = 0; i < total; i++) {
-                            // 2012.12.26 tkokada update
-                            // MapLink start_link = startInfo.startLinks.get(
-                                // random.nextInt(startInfo.startLinks.size()));
-                            MapLink start_link = null;
-                            while (start_link == null) {
-                                MapLink tmp_link = startInfo.startLinks.get(
-                                        random.nextInt(startInfo.startLinks.size()));
-                                boolean invalid_tag = false;
-                                for (String tag : tmp_link.getTags()) {
-                                    if (tag.contains("INVALID")) {
-                                        invalid_tag = true;
-                                        break;
-                                    }
-                                }
-                                if (!invalid_tag) {
-                                    start_link = tmp_link;
-                                }
-                            }
-                            if (goalCandidates.size() <= 0) {
-                                System.err.println("AgentGenerationFile " +
-                                        "no match goals for the tag: " +
-                                        goal);
-                            }
-                            String goal_node = goalCandidates.get(
-                                random.nextInt(goalCandidates.size()));
-                            ArrayList<String> plannedRoute =
-                                new ArrayList<String>();
-                            for (String pr : planned_route) {
-                                /* [2014.12.18 I.Noda]
-                                 * 以下のアルゴリズム、おかしくないか？
-                                 * タグの比較を厳密化することにより、
-                                 * plannedRouteCandidates には、pr と等しい
-                                 * tag しか入らない。つまり、pr と同じ文字列しか
-                                 * 格納されない。
-                                 * 単に、その pr が存在するかどうか、なら、
-                                 * 意味はある。
-                                 * しかし、pr が tag に存在した場合、
-                                 * そこからランダム(random.nextInt())に選ぶ
-                                 * 理由が全く不明。
-                                 * なぜなら、それは、pr のみだから。
-                                 * つまり、pllanedRoute には、planned_route と
-                                 * 同じ物が入るだけ。
-                                 */
-                                ArrayList<String> plannedRouteCandidates =
-                                    new ArrayList<String>();
-                                for (MapNode node : nodes) {
-                                    for (String tag : node.getTags()) {
-                                        // タグの比較を厳密化する
-                                        // if (tag.contains(pr)) {
-                                        if (tag.equals(pr)) {
-                                            plannedRouteCandidates.add(tag);
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (plannedRouteCandidates.isEmpty()) {
-                                    // 該当するノードタグが見つからない場合は WAIT_FOR/WAIT_UNTIL として扱う
-                                    plannedRoute.add(pr);
-                                } else {
-                                    int chosenIndex = random.nextInt(plannedRouteCandidates.size());
-                                    plannedRoute.add(plannedRouteCandidates.get(chosenIndex));
-                                }
-                            }
-                            this.add(new GenerateAgentFromLink(className,
-                                                               agentConf,
-                                        start_link,
-                                        startInfo.agentConditions,
-                                        goal_node,
-                                        plannedRoute,
-                                        step_time,
-                                        duration,
-                                        1,
-                                        speed_model,
-                                        random,
-                                        orgLine));
-                        }
-                        step_time += every_seconds;
-                    }
+                    processGenerationForTimeEvery(nodes, links, 
+                                                  className,
+                                                  agentConf,
+                                                  startInfo,
+                                                  goal,
+                                                  planned_route,
+                                                  start_time,
+                                                  every_end_time,
+                                                  every_seconds,
+                                                  total,
+                                                  duration,
+                                                  speed_model,
+                                                  orgLine) ;
                 } else {
                     System.err.println("AgentGenerationFile invalid rule " +
-                            "type in generation file!");
+                                       "type in generation file!");
                 }
             }
         } catch (Exception e) {
@@ -731,6 +647,126 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             startInfo.continueP = true ;
         }
         return startInfo ;
+    }
+
+    /**
+     * TIME EVERY 用解析ルーチン
+     */
+    private void processGenerationForTimeEvery(MapNodeTable nodes,
+                                               MapLinkTable links,
+                                               String className,
+                                               String agentConf,
+                                               StartInfo startInfo,
+                                               String goal,
+                                               ArrayList<String> planned_route,
+                                               int start_time,
+                                               int every_end_time,
+                                               int every_seconds,
+                                               int total,
+                                               double duration,
+                                               SpeedCalculationModel speed_model,
+                                               String orgLine) {
+        int step_time = start_time;
+        /* let's assume start & goal & planned_route candidates
+         * are all MapLink!
+         */
+        ArrayList<String> goalCandidates = new ArrayList<String>();
+        for (MapNode node : nodes) {
+            for (String tag : node.getTags()) {
+                // タグの比較を厳密化する
+                // if (tag.contains(goal))
+                if (tag.equals(goal))
+                    goalCandidates.add(tag);
+                // [2014.12.18 I.Noda]
+                // この上、おかしくないか？
+                // これだと、goalCandidates には、goal と
+                // おなじ文字列しか入らないことになる。
+            }
+        }
+        while (step_time <= every_end_time) {
+            for (int i = 0; i < total; i++) {
+                // 2012.12.26 tkokada update
+                // MapLink start_link = startInfo.startLinks.get(
+                // random.nextInt(startInfo.startLinks.size()));
+                MapLink start_link = null;
+                while (start_link == null) {
+                    MapLink tmp_link = 
+                        startInfo.startLinks.get(random.nextInt(startInfo.startLinks.size()));
+                    boolean invalid_tag = false;
+                    for (String tag : tmp_link.getTags()) {
+                        /* [2014.12.18 I.Noda]
+                         * なんじゃこりゃ？ 
+                         * こんなところに隠しコマンド
+                         */
+                        if (tag.contains("INVALID")) { 
+                            invalid_tag = true;
+                            break;
+                        }
+                    }
+                    if (!invalid_tag) {
+                        start_link = tmp_link;
+                    }
+                }
+                if (goalCandidates.size() <= 0) {
+                    System.err.println("AgentGenerationFile " +
+                                       "no match goals for the tag: " +
+                                       goal);
+                }
+                String goal_node = 
+                    goalCandidates.get(random.nextInt(goalCandidates.size()));
+                ArrayList<String> plannedRoute =
+                    new ArrayList<String>();
+                for (String pr : planned_route) {
+                    /* [2014.12.18 I.Noda]
+                     * 以下のアルゴリズム、おかしくないか？
+                     * タグの比較を厳密化することにより、
+                     * plannedRouteCandidates には、pr と等しい
+                     * tag しか入らない。つまり、pr と同じ文字列しか
+                     * 格納されない。
+                     * 単に、その pr が存在するかどうか、なら、
+                     * 意味はある。
+                     * しかし、pr が tag に存在した場合、
+                     * そこからランダム(random.nextInt())に選ぶ
+                     * 理由が全く不明。
+                     * なぜなら、それは、pr のみだから。
+                     * つまり、pllanedRoute には、planned_route と
+                     * 同じ物が入るだけ。
+                     */
+                    ArrayList<String> plannedRouteCandidates =
+                        new ArrayList<String>();
+                    for (MapNode node : nodes) {
+                        for (String tag : node.getTags()) {
+                            // タグの比較を厳密化する
+                            // if (tag.contains(pr)) {
+                            if (tag.equals(pr)) {
+                                plannedRouteCandidates.add(tag);
+                                break;
+                            }
+                        }
+                    }
+                    if (plannedRouteCandidates.isEmpty()) {
+                        // 該当するノードタグが見つからない場合は WAIT_FOR/WAIT_UNTIL として扱う
+                        plannedRoute.add(pr);
+                    } else {
+                        int chosenIndex = random.nextInt(plannedRouteCandidates.size());
+                        plannedRoute.add(plannedRouteCandidates.get(chosenIndex));
+                    }
+                }
+                this.add(new GenerateAgentFromLink(className,
+                                                   agentConf,
+                                                   start_link,
+                                                   startInfo.agentConditions,
+                                                   goal_node,
+                                                   plannedRoute,
+                                                   step_time,
+                                                   duration,
+                                                   1,
+                                                   speed_model,
+                                                   random,
+                                                   orgLine));
+            }
+            step_time += every_seconds;
+        }
     }
 
 }
