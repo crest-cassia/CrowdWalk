@@ -262,12 +262,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                     // pick up nodes which contains specified tag
                     ArrayList<String> goal_candidates =
-                        new ArrayList<String>();
-                    for (MapNode node : nodes)
-                        if (node.hasTag(goal))
-                            for (String node_tag : node.getTags())
-                                if (node_tag.contains(randomAllNodePrefixTag))
-                                    goal_candidates.add(node_tag);
+                        nodes.findPrefixedTagsOfTaggedNodes(goal,
+                                                            randomAllNodePrefixTag);
                     // and choose randomly
                     if (goal_candidates.size() > 0) {
                         goal = goal_candidates.get(random.nextInt(
@@ -307,13 +303,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     // route candidates from route tags.
                     for (int i = 0; i < route_tags.size(); i++) {
                         ArrayList<String> route_candidate =
-                            new ArrayList<String>();
-                        for (MapNode node : nodes)
-                            if (node.hasTag(route_tags.get(i)))
-                                for (String node_tag : node.getTags())
-                                    if (node_tag.contains(
-                                            randomAllNodePrefixTag))
-                                        route_candidate.add(node_tag);
+                            nodes.findPrefixedTagsOfTaggedNodes(route_tags.get(i),
+                                                                randomAllNodePrefixTag) ;
                         if (route_candidate.size() > 1)
                             planned_route.add(route_candidate.get(
                                     random.nextInt(route_candidate.size() - 1)
@@ -480,6 +471,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                             // if (tag.contains(goal))
                             if (tag.equals(goal))
                                 goalCandidates.add(tag);
+                            // [2014.12.18 I.Noda]
+                            // この上、おかしくないか？
+                            // これだと、goalCandidates には、goal と
+                            // おなじ文字列しか入らないことになる。
                         }
                     }
                     while (step_time <= every_end_time) {
@@ -512,6 +507,21 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                             ArrayList<String> plannedRoute =
                                 new ArrayList<String>();
                             for (String pr : planned_route) {
+                                /* [2014.12.18 I.Noda]
+                                 * 以下のアルゴリズム、おかしくないか？
+                                 * タグの比較を厳密化することにより、
+                                 * plannedRouteCandidates には、pr と等しい
+                                 * tag しか入らない。つまり、pr と同じ文字列しか
+                                 * 格納されない。
+                                 * 単に、その pr が存在するかどうか、なら、
+                                 * 意味はある。
+                                 * しかし、pr が tag に存在した場合、
+                                 * そこからランダム(random.nextInt())に選ぶ
+                                 * 理由が全く不明。
+                                 * なぜなら、それは、pr のみだから。
+                                 * つまり、pllanedRoute には、planned_route と
+                                 * 同じ物が入るだけ。
+                                 */
                                 ArrayList<String> plannedRouteCandidates =
                                     new ArrayList<String>();
                                 for (MapNode node : nodes) {
@@ -652,16 +662,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
         }
         for (String linkTag : linkTags) {
-            boolean found = false;
-            for (MapLink link : links) {
-                if (link.hasTag(linkTag)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (! found) {
+            if (! links.tagExistP(linkTag))
                 result.add("Undefined Link Tag: " + linkTag);
-            }
         }
         return result;
     }
@@ -697,11 +699,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
 
         /* get all links with the start_link_tag */
-        for (MapLink link : links) {
-            if (link.hasTag(start_link_tag)) {
-                startInfo.startLinks.add(link);
-            }
-        }
+        links.findTaggedLinks(start_link_tag, startInfo.startLinks) ;
 
         for (MapNode node : nodes) {
             if (node.hasTag(start_link_tag)) {
@@ -710,6 +708,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
 
         if (rule_tag.equals("TIMEEVERY")) {
+            /* [2014.12.18 I.Noda] 多分これで会っているはずなのだが。
             for (MapLink link : links) {
                 ArrayList<String> tags = link.getTags();
                 for (String tag : tags) {
@@ -721,6 +720,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                 }
             }
+            */
+            links.findTaggedLinks(start_link_tag, startInfo.startLinks) ;
             if (startInfo.startLinks.size() <= 0)
                 startInfo.continueP = true ;
         }

@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import nodagumi.ananPJ.NetworkParts.OBNodeTable ;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink ;
 
 import nodagumi.Itk.*;
@@ -25,34 +26,27 @@ import nodagumi.Itk.*;
  * MapLink のテーブル。 
  * ArrayList<MapLink> を置き換え、各種機能を提供する。
  */
-public class MapLinkTable extends ArrayList<MapLink> {
+public class MapLinkTable extends OBNodeTable<MapLink> {
     //------------------------------------------------------------
     /**
-     * Constructor with no args
+     * 指定された tag を持つリンクを取り出す。
+     * @param tag tag名
+     * @return tag 名を持つリンクを集めた MapLinkTable
      */
-    public MapLinkTable() { 
-        super() ; 
+    public MapLinkTable findTaggedLinks(String tag){
+        return findTaggedLinks(tag, new MapLinkTable()) ;
     }
 
     //------------------------------------------------------------
     /**
-     * Constructor from Collection
+     * 指定された tag を持つリンクを取り出す。
+     * @param tag tag名
+     * @param table 格納用テーブル
+     * @return tag 名を持つリンクを集めた MapLinkTable。table がそのまま返る。
      */
-    public MapLinkTable(Collection<MapLink> origin) {
-        this() ;
-        for(MapLink link : origin) {
-            add(link) ;
-        }
+    public MapLinkTable findTaggedLinks(String tag, MapLinkTable table){
+        return (MapLinkTable)super.findTaggedOBNodes(tag, table) ;
     }
-    //------------------------------------------------------------
-    /**
-     * description of method foo
-     * @param bar:: about argument bar
-     * @return about return value
-     */
-    //    public void foo(int bar) {
-    //        baz = bar ;
-    //    }
 
 } // class MapLinkTable
 

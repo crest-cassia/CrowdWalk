@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import nodagumi.ananPJ.NetworkParts.OBNodeTable ;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode ;
 
 import nodagumi.Itk.*;
@@ -25,7 +26,7 @@ import nodagumi.Itk.*;
  * MapNode のテーブル。 
  * ArrayList<MapNode> を置き換え、各種機能を提供する。
  */
-public class MapNodeTable extends ArrayList<MapNode> {
+public class MapNodeTable extends OBNodeTable<MapNode> {
     //------------------------------------------------------------
     /**
      * Constructor with no args
@@ -37,23 +38,57 @@ public class MapNodeTable extends ArrayList<MapNode> {
     //------------------------------------------------------------
     /**
      * Constructor from Collection
+     * これがなぜ必要なのかわからない。
+     * Generic 型ではコンストラクタは継承されない？
      */
     public MapNodeTable(Collection<MapNode> origin) {
-        this() ;
-        for(MapNode node : origin) {
-            add(node) ;
-        }
+        super(origin) ;
     }
 
     //------------------------------------------------------------
     /**
-     * description of method foo
-     * @param bar:: about argument bar
-     * @return about return value
+     * 指定された tag を持つノードを取り出す。
+     * @param tag tag名
+     * @return tag 名を持つノードを集めた MapNodeTable
      */
-    //    public void foo(int bar) {
-    //        baz = bar ;
-    //    }
+    public MapNodeTable findTaggedNodes(String tag){
+        return findTaggedNodes(tag, new MapNodeTable()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 指定された tag を持つノードを取り出す。
+     * @param tag tag名
+     * @param table 格納用テーブル
+     * @return tag 名を持つノードを集めた MapNodeTable。table がそのまま返る。
+     */
+    public MapNodeTable findTaggedNodes(String tag, MapNodeTable table){
+        return (MapNodeTable)super.findTaggedOBNodes(tag, table) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 指定された tag をもつノードの、指定したprefixを持つタグを集める。
+     * @param tag tag名
+     * @param tag prefix
+     * @return tag 名を持つノードを集めた MapNodeTable。table がそのまま返る。
+     */
+    public ArrayList<String> findPrefixedTagsOfTaggedNodes(String tag,
+                                                           String prefix) {
+        ArrayList<String> table = new ArrayList<String>() ;
+
+        for(MapNode node : this) {
+            if(node.hasTag(tag)) {
+                for(String nodeTag : node.getTags()) {
+                    if(nodeTag.contains(prefix)) {
+                        table.add(nodeTag) ;
+                    }
+                }
+            }
+        }
+
+        return table ;
+    }
 
 } // class MapNodeTable
 
