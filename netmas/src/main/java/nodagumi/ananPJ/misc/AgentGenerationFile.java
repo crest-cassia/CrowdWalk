@@ -103,7 +103,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             timepat = Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
             Pattern timepat2;
             timepat2 = Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
-            Pattern startpat = Pattern.compile("(.+)\\((.+)\\)");
             Pattern rulepat;
             rulepat = Pattern.compile("EACH|RANDOM|EACHRANDOM|STAFF|" +
                     "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
@@ -165,49 +164,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     continue;
                 }
                 // read start link
-                String start_link_tag = items[index];
-                String[] agent_conditions = null;
-                Matcher tag_match = startpat.matcher(start_link_tag);
-                if (tag_match.matches()) {
-                    start_link_tag = tag_match.group(1);
-                    agent_conditions = tag_match.group(2).split(";");
-                }
-
-                /* get all links with the start_link_tag */
-                ArrayList<MapLink> start_links = new ArrayList<MapLink>();
-                for (MapLink link : links) {
-                    if (link.hasTag(start_link_tag)) {
-                        start_links.add(link);
-                    }
-                }
-
-                ArrayList<MapNode> start_nodes = new ArrayList<MapNode>();
-                for (MapNode node : nodes) {
-                    if (node.hasTag(start_link_tag)) {
-                        start_nodes.add(node);
-                    }
-                }
-
-                if (rule_tag.equals("TIMEEVERY")) {
-                    for (MapLink link : links) {
-                        ArrayList<String> tags = link.getTags();
-                        for (String tag : tags) {
-                            // タグの比較を厳密化する
-                            // if (tag.contains(start_link_tag)) {
-                            if (tag.equals(start_link_tag)) {
-                                start_links.add(link);
-                                break;
-                            }
-                        }
-                    }
-                    if (start_links.size() <= 0)
-                        continue;
-                }
-                if (start_links.size() == 0 &&
-                        start_nodes.size() == 0) {
-                    System.err.println("no matching start:" + start_link_tag);
-                    continue;
-                }
+                StartInfo startInfo 
+                    = scanStartLinkTag(items[index], nodes, links, rule_tag) ;
+                if(startInfo.continueP) continue ;
                 index += 1;
 
                 // time
@@ -383,11 +342,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 if (rule_tag.equals("EACH")) {
-                    for (final MapLink start_link : start_links) {
+                    for (final MapLink start_link : startInfo.startLinks) {
                         this.add(new GenerateAgentFromLink(className, 
                                                            agentConf,
                                 start_link,
-                                agent_conditions,
+                                startInfo.agentConditions,
                                 goal,
                                 planned_route,
                                 start_time,
@@ -397,11 +356,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 random,
                                 orgLine));
                     }
-                    for (final MapNode start_node : start_nodes) {
+                    for (final MapNode start_node : startInfo.startNodes) {
                         this.add(new GenerateAgentFromNode(className,
                                                            agentConf,
                                 start_node,
-                                agent_conditions,
+                                startInfo.agentConditions,
                                 goal,
                                 planned_route,
                                 start_time,
@@ -414,10 +373,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
                         rule_tag.equals("RANDOMALL")) {
-                    int links_size = start_links.size();
-                    int size = links_size + start_nodes.size();
-                    int[] chosen_links = new int[start_links.size()];
-                    int[] chosen_nodes = new int[start_nodes.size()];
+                    int links_size = startInfo.startLinks.size();
+                    int size = links_size + startInfo.startNodes.size();
+                    int[] chosen_links = new int[startInfo.startLinks.size()];
+                    int[] chosen_nodes = new int[startInfo.startNodes.size()];
                     for (int i = 0; i < total; i++) {
                         int chosen_index = random.nextInt(size);
                         if (chosen_index + 1 > links_size)
@@ -425,12 +384,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         else
                             chosen_links[chosen_index] += 1;
                     }
-                    for (int i = 0; i < start_links.size(); i++) {
+                    for (int i = 0; i < startInfo.startLinks.size(); i++) {
                         if (chosen_links[i] > 0)
                             this.add(new GenerateAgentFromLink(className,
                                                                agentConf,
-                                    start_links.get(i),
-                                    agent_conditions,
+                                    startInfo.startLinks.get(i),
+                                    startInfo.agentConditions,
                                     goal,
                                     planned_route,
                                     start_time,
@@ -440,12 +399,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     random,
                                     orgLine));
                     }
-                    for (int i = 0; i < start_nodes.size(); i++) {
+                    for (int i = 0; i < startInfo.startNodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
                             this.add(new GenerateAgentFromNode(className,
                                                                agentConf,
-                                    start_nodes.get(i),
-                                    agent_conditions,
+                                    startInfo.startNodes.get(i),
+                                    startInfo.agentConditions,
                                     goal,
                                     planned_route,
                                     start_time,
@@ -456,10 +415,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     orgLine));
                     }
                 } else if (rule_tag.equals("EACHRANDOM")) {
-                    int links_size = start_links.size();
-                    int size = links_size + start_nodes.size();
-                    int[] chosen_links = new int[start_links.size()];
-                    int[] chosen_nodes = new int[start_nodes.size()];
+                    int links_size = startInfo.startLinks.size();
+                    int size = links_size + startInfo.startNodes.size();
+                    int[] chosen_links = new int[startInfo.startLinks.size()];
+                    int[] chosen_nodes = new int[startInfo.startNodes.size()];
                     for (int i = 0; i < total; i++) {
                         int counter = 0;
                         while (true) {
@@ -477,12 +436,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                             counter++;
                         }
                     }
-                    for (int i = 0; i < start_links.size(); i++) {
+                    for (int i = 0; i < startInfo.startLinks.size(); i++) {
                         if (chosen_links[i] > 0)
                             this.add(new GenerateAgentFromLink(className,
                                                                agentConf,
-                                    start_links.get(i),
-                                    agent_conditions,
+                                    startInfo.startLinks.get(i),
+                                    startInfo.agentConditions,
                                     goal,
                                     planned_route,
                                     start_time,
@@ -492,12 +451,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     random,
                                     orgLine));
                     }
-                    for (int i = 0; i < start_nodes.size(); i++) {
+                    for (int i = 0; i < startInfo.startNodes.size(); i++) {
                         if (chosen_nodes[i] > 0)
                             this.add(new GenerateAgentFromNode(className,
                                                                agentConf,
-                                    start_nodes.get(i),
-                                    agent_conditions,
+                                    startInfo.startNodes.get(i),
+                                    startInfo.agentConditions,
                                     goal,
                                     planned_route,
                                     start_time,
@@ -524,12 +483,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     while (step_time <= every_end_time) {
                         for (int i = 0; i < total; i++) {
                             // 2012.12.26 tkokada update
-                            // MapLink start_link = start_links.get(
-                                // random.nextInt(start_links.size()));
+                            // MapLink start_link = startInfo.startLinks.get(
+                                // random.nextInt(startInfo.startLinks.size()));
                             MapLink start_link = null;
                             while (start_link == null) {
-                                MapLink tmp_link = start_links.get(
-                                        random.nextInt(start_links.size()));
+                                MapLink tmp_link = startInfo.startLinks.get(
+                                        random.nextInt(startInfo.startLinks.size()));
                                 boolean invalid_tag = false;
                                 for (String tag : tmp_link.getTags()) {
                                     if (tag.contains("INVALID")) {
@@ -574,7 +533,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                             this.add(new GenerateAgentFromLink(className,
                                                                agentConf,
                                         start_link,
-                                        agent_conditions,
+                                        startInfo.agentConditions,
                                         goal_node,
                                         plannedRoute,
                                         step_time,
@@ -704,6 +663,74 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
         return result;
     }
+
+    /**
+     * start_link_tag に含まれている情報
+     */
+    private class StartInfo {
+        public String[] agentConditions = null ;
+        public ArrayList<MapNode> startNodes = new ArrayList<MapNode>() ;
+        public ArrayList<MapLink> startLinks = new ArrayList<MapLink>() ;
+        public boolean continueP = false ;
+    }
+
+    /**
+     * start_link_tag の解析パターン
+     */
+    static private Pattern startpat = Pattern.compile("(.+)\\((.+)\\)");
+
+    /**
+     * start_link_tag の解析
+     */
+    private StartInfo scanStartLinkTag(String start_link_tag,
+                                       ArrayList<MapNode> nodes,
+                                       ArrayList<MapLink> links,
+                                              String rule_tag) {
+        StartInfo startInfo = new StartInfo() ;
+
+        Matcher tag_match = startpat.matcher(start_link_tag);
+        if (tag_match.matches()) {
+            start_link_tag = tag_match.group(1);
+            startInfo.agentConditions = tag_match.group(2).split(";");
+        }
+
+        /* get all links with the start_link_tag */
+        for (MapLink link : links) {
+            if (link.hasTag(start_link_tag)) {
+                startInfo.startLinks.add(link);
+            }
+        }
+
+        for (MapNode node : nodes) {
+            if (node.hasTag(start_link_tag)) {
+                startInfo.startNodes.add(node);
+            }
+        }
+
+        if (rule_tag.equals("TIMEEVERY")) {
+            for (MapLink link : links) {
+                ArrayList<String> tags = link.getTags();
+                for (String tag : tags) {
+                    // タグの比較を厳密化する
+                    // if (tag.contains(start_link_tag)) {
+                    if (tag.equals(start_link_tag)) {
+                        startInfo.startLinks.add(link);
+                        break;
+                    }
+                }
+            }
+            if (startInfo.startLinks.size() <= 0)
+                startInfo.continueP = true ;
+        }
+        if (startInfo.startLinks.size() == 0 &&
+            startInfo.startNodes.size() == 0) {
+            System.err.println("no matching start:" + start_link_tag);
+            startInfo.continueP = true ;
+        }
+        return startInfo ;
+    }
+
+
 }
 //;;; Local Variables:
 //;;; mode:java
