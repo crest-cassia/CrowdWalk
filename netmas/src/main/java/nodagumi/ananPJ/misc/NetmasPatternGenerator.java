@@ -46,8 +46,8 @@ import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 
 import nodagumi.ananPJ.misc.CommunicationHandler;
@@ -127,8 +127,8 @@ public class NetmasPatternGenerator implements Serializable {
     }
 
     public boolean setOnewayBridgeTagPattern(NetworkMap map, int index) {
-        ArrayList<MapLink> links = map.getLinks();
-        ArrayList<MapLink> matchLinks = new ArrayList<MapLink>();
+        MapLinkTable links = map.getLinks();
+        MapLinkTable matchLinks = new MapLinkTable();
         for (MapLink link : links) {
             if (link.hasTag(keyTag))
                 matchLinks.add(link);
@@ -140,7 +140,7 @@ public class NetmasPatternGenerator implements Serializable {
                     "setOnewayBridgeTagPattern invalid pattern.");
             return false;
         }
-        ArrayList<MapLink> pathways = null;
+        MapLinkTable pathways = null;
         String onewayBridgeString = "";
         for (int i = 0; i < matchLinks.size(); i++) {
             String patternString;

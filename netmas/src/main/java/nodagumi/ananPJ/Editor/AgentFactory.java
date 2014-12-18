@@ -20,8 +20,8 @@ import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
 import nodagumi.ananPJ.misc.MapChecker;
 
@@ -107,8 +107,8 @@ public class AgentFactory extends JPanel implements ItemListener,
     }
 
     public boolean placeAgentsRandomly(String tag) {
-        ArrayList<MapLink> links = editor.getMap().getLinks(); 
-        ArrayList<MapNode> nodes = editor.getMap().getNodes(); 
+        MapLinkTable links = editor.getMap().getLinks(); 
+        MapNodeTable nodes = editor.getMap().getNodes(); 
 
         if (tag.equals("")) {
             System.err.println("empty tag, assuming null");
@@ -143,7 +143,7 @@ public class AgentFactory extends JPanel implements ItemListener,
         double minHeight = ret[1];
         double maxHeight = ret[2];
 
-        ArrayList<MapLink> reachableLinks = MapChecker.getReachableLinks(nodes);
+        MapLinkTable reachableLinks = MapChecker.getReachableLinks(nodes);
         if (reachableLinks.size() == 0) {
             JOptionPane.showMessageDialog(null,
                     "No links reachable from the exit.\n"
@@ -153,7 +153,7 @@ public class AgentFactory extends JPanel implements ItemListener,
             return false;
         }
     
-        ArrayList<MapLink> linksToPlace = new ArrayList<MapLink>();
+        MapLinkTable linksToPlace = new MapLinkTable();
     
         for (MapLink link : reachableLinks) {
             if (link.isBetweenHeight(minHeight, maxHeight)) {
@@ -191,8 +191,8 @@ public class AgentFactory extends JPanel implements ItemListener,
     }
 
     public boolean placeAgentsEvenly(String tag) {
-        ArrayList<MapLink> links = editor.getMap().getLinks(); 
-        ArrayList<MapNode> nodes = editor.getMap().getNodes(); 
+        MapLinkTable links = editor.getMap().getLinks(); 
+        MapNodeTable nodes = editor.getMap().getNodes(); 
         if (links.size() == 0) {
             JOptionPane.showMessageDialog(null,
                     "You do not have any links to place agents on!",
@@ -222,7 +222,7 @@ public class AgentFactory extends JPanel implements ItemListener,
         double minHeight = ret[1];
         double maxHeight = ret[2];
     
-        ArrayList<MapLink> reachableLinks = MapChecker.getReachableLinks(nodes);
+        MapLinkTable reachableLinks = MapChecker.getReachableLinks(nodes);
         if (reachableLinks.size() == 0) {
             JOptionPane.showMessageDialog(null,
                     "No links reachable from the exit.\n"
@@ -232,7 +232,7 @@ public class AgentFactory extends JPanel implements ItemListener,
             return false;
         }
     
-        ArrayList<MapLink> linksToPlace = new ArrayList<MapLink>();
+        MapLinkTable linksToPlace = new MapLinkTable();
     
         for (MapLink link : reachableLinks) {
             if (link.isBetweenHeight(minHeight, maxHeight)) {

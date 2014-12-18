@@ -31,8 +31,8 @@ import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.Simulator.Pollution;
 
@@ -143,7 +143,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     abstract public void updateViews();
 
     // tkokada
-    abstract public ArrayList<MapLink> getReachableLinks(double d, double time,
+    abstract public MapLinkTable getReachableLinks(double d, double time,
             double duration);
 
     public int getTriage() {

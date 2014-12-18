@@ -84,8 +84,8 @@ import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.Colors.*;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
@@ -108,8 +108,8 @@ public abstract class NetworkPanel3DBase extends JPanel
 
     protected SimpleUniverse universe = null;
 
-    private ArrayList<MapNode> nodes;
-    private ArrayList<MapLink> links;
+    private MapNodeTable nodes;
+    private MapLinkTable links;
 
     private boolean isInitialized = false;
 
@@ -331,8 +331,8 @@ public abstract class NetworkPanel3DBase extends JPanel
     protected LinkedHashMap<String, LinkAppearance> linkAppearances = new LinkedHashMap<String, LinkAppearance>();
     protected LinkedHashMap<String, NodeAppearance> nodeAppearances = new LinkedHashMap<String, NodeAppearance>();
 
-    protected NetworkPanel3DBase(ArrayList<MapNode> _nodes,
-            ArrayList<MapLink> _links,
+    protected NetworkPanel3DBase(MapNodeTable _nodes,
+            MapLinkTable _links,
             JFrame _parent,
             NetmasPropertiesHandler _properties) {
         nodes = _nodes;
@@ -398,8 +398,8 @@ public abstract class NetworkPanel3DBase extends JPanel
         }
     }
 
-    protected void deserialize(ArrayList<MapNode> _nodes,
-            ArrayList<MapLink> _links,
+    protected void deserialize(MapNodeTable _nodes,
+            MapLinkTable _links,
             JFrame _parent) {
         nodes = _nodes;
         links = _links;
@@ -862,8 +862,8 @@ public abstract class NetworkPanel3DBase extends JPanel
                         | Appearance.ALLOW_LINE_ATTRIBUTES_WRITE);
 
         // tkokada polygon
-        HashMap<String, ArrayList<MapLink>> polygons =
-            new HashMap<String, ArrayList<MapLink>>();
+        HashMap<String, MapLinkTable> polygons =
+            new HashMap<String, MapLinkTable>();
         for (final MapLink link : links) {
             final MapNode from = link.getFrom();
             final MapNode to = link.getTo();
@@ -875,8 +875,8 @@ public abstract class NetworkPanel3DBase extends JPanel
                 if (tag.contains("POLYGON")) {
                     containPolygon = true;
                     if (!polygons.containsKey(tag)) {
-                        ArrayList<MapLink> polygonLinks =
-                            new ArrayList<MapLink>();
+                        MapLinkTable polygonLinks =
+                            new MapLinkTable();
                         polygonLinks.add(link);
                         polygons.put(tag, polygonLinks);
                     } else {
@@ -977,11 +977,11 @@ public abstract class NetworkPanel3DBase extends JPanel
 
         // tkokada polygon
         for (String tag : polygons.keySet()) {
-            ArrayList<MapLink> polygonLinks = polygons.get(tag);
+            MapLinkTable polygonLinks = polygons.get(tag);
             MapLink currentLink = polygonLinks.get(0);
             MapNode start = currentLink.getFrom();
             MapNode next = currentLink.getTo();
-            ArrayList<MapNode> polygonNodes = new ArrayList<MapNode>();
+            MapNodeTable polygonNodes = new MapNodeTable();
             polygonNodes.add(start);
             while (next != start) {
                 polygonNodes.add(next);

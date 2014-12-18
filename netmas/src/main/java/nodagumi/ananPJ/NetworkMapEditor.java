@@ -75,8 +75,8 @@ import nodagumi.ananPJ.Editor.Panel.PollutionPanel;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.Lift;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
@@ -448,11 +448,11 @@ public class NetworkMapEditor extends SimulationLauncher
         return mode;
     }
 
-    public ArrayList<MapNode> getNodes() {
+    public MapNodeTable getNodes() {
         return networkMap.getNodes();
     }
 
-    public ArrayList<MapLink> getLinks() {
+    public MapLinkTable getLinks() {
         return networkMap.getLinks();
     }
 
@@ -1022,7 +1022,7 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     private void checkForReachability() {
-        ArrayList<MapLink> reachableLinks = MapChecker.getReachableLinks(
+        MapLinkTable reachableLinks = MapChecker.getReachableLinks(
                 getNodes());
 
         int notConnectedCount = getLinks().size() - reachableLinks.size();
@@ -1086,7 +1086,7 @@ public class NetworkMapEditor extends SimulationLauncher
             return;
         }
 
-        ArrayList<MapNode> nodeCandidatesToConnect = new ArrayList<MapNode>();
+        MapNodeTable nodeCandidatesToConnect = new MapNodeTable();
         final Point2D pos = selectedNode.getAbsoluteCoordinates();
         for (MapNode node : getNodes()) {
             if (node.getAbsoluteCoordinates().equals(pos)) {
@@ -1123,7 +1123,7 @@ public class NetworkMapEditor extends SimulationLauncher
             /* Constructor */
             public CreateLifts(Point2D pos,
                     ArrayList<MapPartGroup> toAdd,
-                    ArrayList<MapNode> toConnect) {
+                    MapNodeTable toConnect) {
                 Container container = getContentPane();
                 container.setLayout(new GridLayout(toConnect.size() +
                             toAdd.size() + 6, 1));
@@ -1201,7 +1201,7 @@ public class NetworkMapEditor extends SimulationLauncher
                 networkMap.getRoot());
         lift_group.addTag("LIFT");
         lift_group.setScale(parent.getScale());
-        ArrayList<MapNode> nodesToConnect = new ArrayList<MapNode>();
+        MapNodeTable nodesToConnect = new MapNodeTable();
         int index = 0;
         for (MapPartGroup floor : nodesToAdd) {
             boolean selected = createLifts.checkBoxes.get(index)

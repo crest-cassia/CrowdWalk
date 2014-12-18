@@ -32,12 +32,12 @@ import javax.swing.table.AbstractTableModel;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 
 public class NodePanel extends PanelWithTable implements Serializable {
 	private static final long serialVersionUID = -5011285748841425804L;
 	NetworkMapEditor editor = null;
-	ArrayList<MapNode> sortedNodes = null;
+	MapNodeTable sortedNodes = null;
 	NodesDataModel dataModel = null;
 	JTable nodeTable = null;
 	JCheckBox placeNode = null;

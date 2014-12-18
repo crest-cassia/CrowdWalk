@@ -11,8 +11,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 
 
 public class Hover implements Serializable {
@@ -110,7 +110,7 @@ public class Hover implements Serializable {
     public String getTagString() {
         return dummyHoverNode.getTagString();
     }
-    public ArrayList<MapLink> getPathways() {
+    public MapLinkTable getPathways() {
         return dummyHoverNode.getPathways();
     }
     // tkokada

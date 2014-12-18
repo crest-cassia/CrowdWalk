@@ -36,8 +36,8 @@ import org.w3c.dom.Text;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 
 import nodagumi.Itk.*;
 
@@ -511,7 +511,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
 
     /** Reachable links in a duration */
-    public ArrayList<MapLink> reachableLinks = new ArrayList<MapLink>();
+    public MapLinkTable reachableLinks = new MapLinkTable();
 
     /** directions corresponding to reachableLinks */
     public HashMap<MapLink, Double> reachableLinkDirections =
@@ -524,7 +524,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * @return reachable links in a duration
      */
     @Override
-    public ArrayList<MapLink> getReachableLinks(double d, double time,
+    public MapLinkTable getReachableLinks(double d, double time,
             double duration) {
 
         if (isEvacuated())
@@ -1611,7 +1611,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         } else {
             node_now = current_link.getFrom();
         }
-        final ArrayList<MapLink> way_candidates = node_now.getPathways();
+        final MapLinkTable way_candidates = node_now.getPathways();
         double direction_orig = direction;
         // tkokada
         calc_next_target(next_node);
@@ -1706,7 +1706,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 	//String navigation_reason = null;
 	ReasonTray navigation_reason = new ReasonTray() ;
 
-    protected MapLink sane_navigation(double time, final ArrayList<MapLink> way_candidates) {
+    protected MapLink sane_navigation(double time, final MapLinkTable way_candidates) {
         MapLink way = sane_navigation_from_node(time, current_link, next_node);
         return way;
     }
@@ -1757,7 +1757,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             return sane_navigation_from_node_result;
         backupSituationForSaneNavigationFromNodeBefore(link, node) ;
 
-        ArrayList<MapLink> way_candidates = node.getPathways();
+        MapLinkTable way_candidates = node.getPathways();
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
         MapLink way = null;
@@ -1765,7 +1765,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         boolean monitor = next_node.hasTag("MONITOR-NAVIGATION");
 
-        ArrayList<MapLink> way_samecost = null;
+        MapLinkTable way_samecost = null;
         // tkokada:  add randomness to choose next link
         HashMap<MapLink, Double> resultLinks = new HashMap<MapLink, Double>();
 
@@ -1827,7 +1827,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 way_samecost = null;
             } else if (cost == min_cost) { // 最小コストが同じ時の処理
                 if (way_samecost == null)
-                    way_samecost = new ArrayList<MapLink>();
+                    way_samecost = new MapLinkTable();
                 way_samecost.add(way_candidate);
                 // if (cost < min_cost)
                 //     min_cost = cost;
@@ -1895,7 +1895,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double min_cost = ((Double) resultLinks.get(wayBest)).doubleValue();
 
         // 最小から margin 分余裕を持って候補を探す。
-        ArrayList<MapLink> linkCandidates = new ArrayList<MapLink>();
+        MapLinkTable linkCandidates = new MapLinkTable();
         for (MapLink resultLink : resultLinks.keySet()) {
             double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
             if (cost >= min_cost && cost < min_cost + margin)
@@ -1930,7 +1930,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected MapLink navigate(double time,
             MapLink link_now,
             MapNode node_now) {
-        final ArrayList<MapLink> way_candidates = node_now.getPathways();
+        final MapLinkTable way_candidates = node_now.getPathways();
 
         /* trapped? */
         if (way_candidates.size() == 0) {
@@ -2021,7 +2021,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected MapLink virtual_navigate(double time,
             MapLink link_now,
             MapNode node_now) {
-        final ArrayList<MapLink> way_candidates = node_now.getPathways();
+        final MapLinkTable way_candidates = node_now.getPathways();
 
         /* trapped? */
         if (way_candidates.size() == 0) {
@@ -2078,13 +2078,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected MapLink virtual_sane_navigation_from_node(double time,
             MapLink link, MapNode node) {
 
-        ArrayList<MapLink> way_candidates = node.getPathways();
+        MapLinkTable way_candidates = node.getPathways();
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
         MapLink way = null;
         MapLink way_second = null;
 
-        ArrayList<MapLink> way_samecost = null;
+        MapLinkTable way_samecost = null;
         // tkokada:  add randomness to choose next link
         HashMap<MapLink, Double> resultLinks = new HashMap<MapLink, Double>();
 
@@ -2127,7 +2127,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 way_samecost = null;
             } else if (cost == min_cost) {
                 if (way_samecost == null)
-                    way_samecost = new ArrayList<MapLink>();
+                    way_samecost = new MapLinkTable();
                 way_samecost.add(way_candidate);
                 if (cost < min_cost) min_cost = cost;
             }

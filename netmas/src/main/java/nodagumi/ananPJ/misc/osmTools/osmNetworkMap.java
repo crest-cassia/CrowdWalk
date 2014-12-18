@@ -22,8 +22,8 @@ import org.xml.sax.SAXException;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.misc.osmTools.osmGroup;
 
 
@@ -106,7 +106,7 @@ public class osmNetworkMap extends NetworkMap {
                 _root.add(child);
             }
         }
-        ArrayList<MapNode> nodes = ((osmGroup) _root).getChildNodes();
+        MapNodeTable nodes = ((osmGroup) _root).getChildNodes();
         // read links
         for (int i = 0; i < elm_children.getLength(); i++) {
             if (elm_children.item(i) instanceof Element) {
@@ -265,7 +265,7 @@ public class osmNetworkMap extends NetworkMap {
             setupNetwork((OBNode)this.root);
             // converts node to Node
             NodeList list = doc.getElementsByTagName("node");
-            ArrayList<MapNode> nodes = new ArrayList<MapNode>();
+            MapNodeTable nodes = new MapNodeTable();
             for (int i = 0; i < list.getLength(); i++) {
                 Node n = list.item(i);
                 NamedNodeMap attributes = n.getAttributes();

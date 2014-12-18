@@ -19,8 +19,8 @@ import org.w3c.dom.NodeList;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Editor.EditorFrame;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 
@@ -323,8 +323,8 @@ public class MapPartGroup extends OBNode implements Serializable {
     }
     
     @SuppressWarnings("unchecked")
-    public ArrayList<MapNode> getChildNodes() {
-        ArrayList<MapNode> children = new ArrayList<MapNode>();
+    public MapNodeTable getChildNodes() {
+        MapNodeTable children = new MapNodeTable();
         Enumeration<OBNode> all_children = children();
         while (all_children.hasMoreElements()) {
             OBNode node = all_children.nextElement();
@@ -335,8 +335,8 @@ public class MapPartGroup extends OBNode implements Serializable {
         return children;
     }
     @SuppressWarnings("unchecked")
-    public ArrayList<MapNode> getChildNodesAndSymlinks() {
-        ArrayList<MapNode> children = new ArrayList<MapNode>();
+    public MapNodeTable getChildNodesAndSymlinks() {
+        MapNodeTable children = new MapNodeTable();
         Enumeration<OBNode> all_children = children();
         while (all_children.hasMoreElements()) {
             OBNode node = all_children.nextElement();
@@ -353,8 +353,8 @@ public class MapPartGroup extends OBNode implements Serializable {
     }
 
     // 基準座標から象限を絞って抽出する
-    public ArrayList<MapNode> getChildNodesAndSymlinks(MapNode from, int quadrant) {
-        ArrayList<MapNode> children = new ArrayList<MapNode>();
+    public MapNodeTable getChildNodesAndSymlinks(MapNode from, int quadrant) {
+        MapNodeTable children = new MapNodeTable();
         Enumeration<OBNode> all_children = children();
         while (all_children.hasMoreElements()) {
             OBNode node = all_children.nextElement();
@@ -375,8 +375,8 @@ public class MapPartGroup extends OBNode implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public ArrayList<MapLink> getChildLinks() {
-        ArrayList<MapLink> children = new ArrayList<MapLink>();
+    public MapLinkTable getChildLinks() {
+        MapLinkTable children = new MapLinkTable();
         Enumeration<OBNode> all_children = children();
         while (all_children.hasMoreElements()) {
             OBNode node = all_children.nextElement();

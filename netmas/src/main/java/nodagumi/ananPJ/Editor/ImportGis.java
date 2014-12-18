@@ -258,7 +258,7 @@ public class ImportGis  {
                 }
             }
             */
-            ArrayList<MapNode> mapNodes = exportNetworkMap.getNodes();
+            MapNodeTable mapNodes = exportNetworkMap.getNodes();
             System.err.println("MapNode size " + mapNodes.size());
             for (int i = 0; i < mapNodes.size(); i++) {
                 for (int j = i + 1; j < mapNodes.size(); j++) {
@@ -267,7 +267,7 @@ public class ImportGis  {
                                 " is used by two nodes!");
                 }
             }
-            ArrayList<MapLink> mapLinks = exportNetworkMap.getLinks();
+            MapLinkTable mapLinks = exportNetworkMap.getLinks();
             System.err.println("MapLink size " + mapLinks.size());
             for (int i = 0; i < mapLinks.size(); i++) {
                 for (int j = i + 1; j < mapLinks.size(); j++) {

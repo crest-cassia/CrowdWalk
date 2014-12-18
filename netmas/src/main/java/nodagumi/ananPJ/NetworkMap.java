@@ -30,8 +30,8 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
 import nodagumi.ananPJ.NetworkParts.Link.Lift;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.OBNode.NType;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint;
@@ -48,8 +48,8 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
     private static final long serialVersionUID = -4302417008763441581L;
     private HashMap<Integer, OBNode> id_part_map =
         new HashMap<Integer, OBNode>();
-    private ArrayList<MapNode> nodesCache = new ArrayList<MapNode>();
-    private ArrayList<MapLink> linksCache = new ArrayList<MapLink>();
+    private MapNodeTable nodesCache = new MapNodeTable();
+    private MapLinkTable linksCache = new MapLinkTable();
     private ArrayList<EvacuationAgent> agentsCache =
         new ArrayList<EvacuationAgent>();
     private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
@@ -399,11 +399,11 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         return new ArrayList<OBNode>(id_part_map.values());
     }
     
-    public ArrayList<MapNode> getNodes() {
+    public MapNodeTable getNodes() {
         return nodesCache;
     }
 
-    public ArrayList<MapLink> getLinks() {
+    public MapLinkTable getLinks() {
         return linksCache;
     }
 
@@ -475,7 +475,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
     }
 
     public void makeStairs() {
-        ArrayList<MapNode> selected_nodes = new ArrayList<MapNode>();
+        MapNodeTable selected_nodes = new MapNodeTable();
         for (MapNode node : getNodes()) {
             if (node.selected) selected_nodes.add(node);
         }
@@ -861,7 +861,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
         }
 
         Element nodesCacheElement = doc.createElement("nodesCache");
-        nodesCacheElement.setAttribute("class", "ArrayList<MapNode>");
+        nodesCacheElement.setAttribute("class", "MapNodeTable");
         for (MapNode node : nodesCache) {
             Element nodeElement = node.storeToDOM(doc, "node");
             nodesCacheElement.appendChild(nodeElement);

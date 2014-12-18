@@ -17,8 +17,8 @@ import nodagumi.ananPJ.Agents.WaitRunningAroundPerson;
 import nodagumi.ananPJ.Agents.*;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
 
 import nodagumi.Itk.*;
@@ -324,12 +324,12 @@ class GenerateAgentFromNode extends GenerateAgent {
     protected void place_agent(WaitRunningAroundPerson agent) {
         /*
          */
-        ArrayList<MapLink> way_candidates = start_node.getPathways(); 
+        MapLinkTable way_candidates = start_node.getPathways(); 
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
         MapLink way = null;
         MapLink way_second = null;
-        ArrayList<MapLink> way_samecost = null;
+        MapLinkTable way_samecost = null;
         final String next_target;
         ArrayList<String> plannedRoute = getPlannedRoute();
         if (plannedRoute.size() == 0)
@@ -358,7 +358,7 @@ class GenerateAgentFromNode extends GenerateAgent {
                 way_samecost = null;
             } else if (cost == min_cost) {
                 if (way_samecost == null)
-                    way_samecost = new ArrayList<MapLink>();
+                    way_samecost = new MapLinkTable();
                 way_samecost.add(way_candidate);
                 if (cost < min_cost) min_cost = cost;
             }

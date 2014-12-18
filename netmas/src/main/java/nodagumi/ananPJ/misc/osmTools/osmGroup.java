@@ -11,8 +11,8 @@ import org.w3c.dom.NamedNodeMap;
 
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 
 
 public class osmGroup extends MapPartGroup implements Serializable {
@@ -68,7 +68,7 @@ public class osmGroup extends MapPartGroup implements Serializable {
                 group.add(child);
             }
         }
-        ArrayList<MapNode> nodes = group.getChildNodes();
+        MapNodeTable nodes = group.getChildNodes();
         // read links
         for (int i = 0; i < elm_children.getLength(); i++) {
             if (elm_children.item(i) instanceof Element) {

@@ -9,13 +9,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 
 public class CalcPath implements Serializable {
     /* calculate evacuation paths
      */
-    public static class Nodes extends ArrayList<MapNode> {};
+    public static class Nodes extends MapNodeTable {};
     public static class NodeByHeight extends HashMap<Double, Nodes> {};
 
     public static class NodeLinkLen {
@@ -42,7 +42,7 @@ public class CalcPath implements Serializable {
     }
     
     
-    public static void calc(ArrayList<MapNode> nodes,
+    public static void calc(MapNodeTable nodes,
             PathChooserFactory factory) {
         /* first, partition by height */
         NodeByHeight nbh = new NodeByHeight();
@@ -84,7 +84,7 @@ public class CalcPath implements Serializable {
         });*/
     }
     
-    private static void connectFloors(ArrayList<MapNode> subgoals,
+    private static void connectFloors(MapNodeTable subgoals,
             PathChooserFactory factory,
             Comparator<MapNode> comp) {
         Collections.sort(subgoals, comp);

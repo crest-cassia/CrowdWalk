@@ -31,8 +31,8 @@ import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.navigation.NavigationHint;
@@ -518,7 +518,7 @@ public class EditorFramePanel extends JPanel implements Serializable {
         g.drawString(hoverNode.getTagString(),
                 (int)hoverNode.getX(), (int)hoverNode.getY());
 
-        ArrayList<MapLink> paths = hoverNode.getPathways();
+        MapLinkTable paths = hoverNode.getPathways();
         for (MapLink path : paths) {
             MapNode otherNode = path.getOther(hoverNode.getDummyHoverNode());
             HashMap<String, NavigationHint> hints = otherNode.getHints();

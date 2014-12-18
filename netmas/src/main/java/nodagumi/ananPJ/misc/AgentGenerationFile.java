@@ -22,7 +22,9 @@ import net.arnx.jsonic.JSON ;
 import com.opencsv.CSVParser ;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Link.MapLinkTable;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 
 import nodagumi.Itk.*;
@@ -73,8 +75,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     public Map<String,Object> modeMap ;
 
     public AgentGenerationFile(final String filename,
-            ArrayList<MapNode> nodes,
-            ArrayList<MapLink> links,
+            MapNodeTable nodes,
+            MapLinkTable links,
             boolean display,
             double linerGenerateAgentRatio,
             Random _random) throws Exception {
@@ -618,7 +620,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     }
 
     // 経路情報に未定義のタグが使用されていたらその内容を返す
-    public ArrayList<String> checkPlannedRoute(ArrayList<MapNode> nodes, ArrayList<MapLink> links, ArrayList<String> planned_route) {
+    public ArrayList<String> checkPlannedRoute(MapNodeTable nodes, MapLinkTable links, ArrayList<String> planned_route) {
         ArrayList<String> linkTags = new ArrayList();
         ArrayList<String> nodeTags = new ArrayList();
         int index = 0;
@@ -669,8 +671,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private class StartInfo {
         public String[] agentConditions = null ;
-        public ArrayList<MapNode> startNodes = new ArrayList<MapNode>() ;
-        public ArrayList<MapLink> startLinks = new ArrayList<MapLink>() ;
+        public MapNodeTable startNodes = new MapNodeTable() ;
+        public MapLinkTable startLinks = new MapLinkTable() ;
         public boolean continueP = false ;
     }
 
@@ -683,8 +685,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * start_link_tag の解析
      */
     private StartInfo scanStartLinkTag(String start_link_tag,
-                                       ArrayList<MapNode> nodes,
-                                       ArrayList<MapLink> links,
+                                       MapNodeTable nodes,
+                                       MapLinkTable links,
                                               String rule_tag) {
         StartInfo startInfo = new StartInfo() ;
 
@@ -729,7 +731,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
         return startInfo ;
     }
-
 
 }
 //;;; Local Variables:

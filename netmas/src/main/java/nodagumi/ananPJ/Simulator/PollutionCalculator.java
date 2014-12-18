@@ -23,8 +23,8 @@ import javax.vecmath.Vector3f;
 
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 
@@ -126,8 +126,8 @@ public class PollutionCalculator implements Serializable {
     }
 
     public void updateNodesLinksAgents(double time,
-            ArrayList<MapNode> nodes,
-            ArrayList<MapLink> links,
+            MapNodeTable nodes,
+            MapLinkTable links,
             List<EvacuationAgent> agents) {
         //if (debug) System.err.println("PC update: " + time + ", next: " + nextEvent);
 

@@ -25,8 +25,8 @@ import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.navigation.CalcPath;
@@ -35,14 +35,16 @@ import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
+
+
 public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     public static enum timeSeriesLogTYpe {
         All,        /* save all agents, map information */
         Goal        /* save goal times of agents */
     }
 
-    private ArrayList<MapNode> nodes = null;
-    private ArrayList<MapLink> links = null;
+    private MapNodeTable nodes = null;
+    private MapLinkTable links = null;
     private ArrayList<EvacuationAgent> agents = null;
     private String pollutionFileName = null;
 
@@ -513,7 +515,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         for (String goal : all_goal_tags) {
             int count = 0;
             for (MapNode node : nodes) {
-                ArrayList<MapLink> pathways = node.getPathways();
+                MapLinkTable pathways = node.getPathways();
                 boolean notHasAllLinks = false;
                 for (MapLink link : pathways) {
                     if (!link.hasTag("ALL_LINKS")) {
@@ -638,11 +640,11 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         resetValues();
     }
 
-    public ArrayList<MapLink> getLinks() {
+    public MapLinkTable getLinks() {
         return links;
     }
 
-    public ArrayList<MapNode> getNodes() {
+    public MapNodeTable getNodes() {
         return nodes;
     }
 
@@ -770,7 +772,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     private HashMap<Integer, Double> goalTimes = new HashMap<Integer, Double>();
     // EXITノード毎の避難完了者数(ログのバッファリング用)
     private ArrayList<String> evacuatedAgents = new ArrayList<String>();
-    private ArrayList<MapNode> exitNodeList = null;
+    private MapNodeTable exitNodeList = null;
     /** Save the goal log file to result directory.
      * @param resultDirectory: path to the result directory.
      */
@@ -785,7 +787,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         if (! finished) {
             // evacuatedAgents log を記憶
             if (logging_count == 0) {
-                exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
+                exitNodeList = new MapNodeTable(agentHandler.getExitNodesMap().keySet());
             }
             StringBuffer buff = new StringBuffer();
             int index = 0;
@@ -954,7 +956,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             File evacuatedAgentsLog = new File(resultDirectory + "/evacuatedAgents.csv");
             if (logging_count == 0) {
                 writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, false), "utf-8")), true);
-                exitNodeList = new ArrayList<MapNode>(agentHandler.getExitNodesMap().keySet());
+                exitNodeList = new MapNodeTable(agentHandler.getExitNodesMap().keySet());
                 int index = 0;
                 for (MapNode node : exitNodeList) {
                     writer.write((index == 0 ? "" : ",") + node.getTagLabel());

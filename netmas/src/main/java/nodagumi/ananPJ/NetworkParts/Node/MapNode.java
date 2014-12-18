@@ -37,6 +37,8 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.misc.Snapshot;
 
@@ -47,7 +49,7 @@ public class MapNode extends OBMapPart implements Serializable {
     private Point2D absolute_coordinates;
     private double height;
 
-    private ArrayList<MapLink> links;
+    private MapLinkTable links;
 
     /* used in simulation */
     public int displayMode = 0;
@@ -75,7 +77,7 @@ public class MapNode extends OBMapPart implements Serializable {
 
         selected = false;
         hints = new HashMap<String, NavigationHint>();
-        links = new ArrayList<MapLink>();
+        links = new MapLinkTable();
     }
 
     private void calc_local_coordinates() {
@@ -112,9 +114,9 @@ public class MapNode extends OBMapPart implements Serializable {
         return true;
     }
 
-    public ArrayList<MapLink> getPathways () {
+    public MapLinkTable getPathways () {
         /* modification to apply One-way link */
-        ArrayList<MapLink> availableLinks = new ArrayList<MapLink>();
+        MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
             if (link.getTags().contains("ONE-WAY-POSITIVE") &&
                     (link.getPositiveNode() == this)) {
@@ -134,9 +136,9 @@ public class MapNode extends OBMapPart implements Serializable {
         return availableLinks;
     }
 
-    public ArrayList<MapLink> getPathwaysReverse () {
+    public MapLinkTable getPathwaysReverse () {
         /* modification to apply One-way link */
-        ArrayList<MapLink> availableLinks = new ArrayList<MapLink>();
+        MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
             if (link.getTags().contains("ONE-WAY-POSITIVE") &&
                     (link.getNegativeNode() == this)) {
@@ -290,16 +292,16 @@ public class MapNode extends OBMapPart implements Serializable {
         return true;
     }
 
-    public static void showAttributeDialog(ArrayList<MapNode> nodes) {
+    public static void showAttributeDialog(MapNodeTable nodes) {
         /* Set attributes with a dialog */
         class AttributeSetDialog  extends JDialog {
             private static final long serialVersionUID = 3824609997449144923L;
             private boolean singleNode;
-            private ArrayList<MapNode> nodes;
+            private MapNodeTable nodes;
 
             private double height = 0.0;
 
-            public AttributeSetDialog(ArrayList<MapNode> _nodes) {
+            public AttributeSetDialog(MapNodeTable _nodes) {
                 super();
 
                 this.setModal(true);

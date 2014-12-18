@@ -46,6 +46,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 
 
@@ -832,7 +833,7 @@ public class MapLink extends OBMapPart implements Serializable {
         return new MapLink.AttributePanel();
     }
 
-    public static void showAttributeDialog(ArrayList<MapLink> links) {
+    public static void showAttributeDialog(MapLinkTable links) {
         /* Set attributes with a dialog */
         class AttributeSetDialog extends JDialog  
         implements ActionListener {
@@ -840,11 +841,11 @@ public class MapLink extends OBMapPart implements Serializable {
             private MapNode from = null;
             private MapNode to = null;
 
-            private ArrayList<MapLink> links = null;
+            private MapLinkTable links = null;
             AttributePanel attributes = null;  
             private Boolean single;
 
-            public AttributeSetDialog(ArrayList<MapLink> _links) {
+            public AttributeSetDialog(MapLinkTable _links) {
                 super();
 
                 this.setModal(true);

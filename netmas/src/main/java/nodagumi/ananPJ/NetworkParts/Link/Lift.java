@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 
 public class Lift extends MapLink implements Serializable {
 	/**
@@ -185,7 +186,7 @@ public class Lift extends MapLink implements Serializable {
 	}
 
 	public MapNode findRoot(MapNode node) {
-		final ArrayList<MapLink> links = node.getPathways();
+		final MapLinkTable links = node.getPathways();
 		for (final MapLink link : links) {
 			if (!link.hasTag("Lift")) continue;
 			if (link.getFrom() == node) continue;
@@ -195,7 +196,7 @@ public class Lift extends MapLink implements Serializable {
 	}
 
 	public MapNode findLeaf(MapNode node) {
-		final ArrayList<MapLink> links = node.getPathways();
+		final MapLinkTable links = node.getPathways();
 		for (final MapLink link : links) {
 			if (!link.hasTag("Lift")) continue;
 			if (link.getTo() == node) continue;

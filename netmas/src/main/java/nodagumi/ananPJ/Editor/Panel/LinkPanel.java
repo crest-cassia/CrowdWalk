@@ -32,13 +32,13 @@ import javax.swing.table.AbstractTableModel;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 
 public class LinkPanel extends PanelWithTable
 	implements MapLink.AttributePanel.Listener, Serializable {
 	private static final long serialVersionUID = 3544793106934363743L;
 	NetworkMapEditor editor = null;
-	ArrayList<MapLink> shownLinks = null;
+	MapLinkTable shownLinks = null;
 	LinksDataModel dataModel = null;
 	JTable linkTable = null;
 	JCheckBox placeLink = null;
@@ -52,7 +52,7 @@ public class LinkPanel extends PanelWithTable
 	private class LinksDataModel extends AbstractTableModel {
 		private static final long serialVersionUID = -3741296945009406074L;
 
-		public LinksDataModel(final ArrayList<MapLink> _links) {
+		public LinksDataModel(final MapLinkTable _links) {
 			shownLinks = _links;
 		}
 		
@@ -168,7 +168,7 @@ public class LinkPanel extends PanelWithTable
 				if (JOptionPane.showConfirmDialog(null, "Really remove links?", "Proceed",
 						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
 						== JOptionPane.NO_OPTION) return;
-				ArrayList<MapLink> linksToRemove = new ArrayList<MapLink>();
+				MapLinkTable linksToRemove = new MapLinkTable();
 				for (MapLink link : shownLinks) {
 					if (link.selected) linksToRemove.add(link);
 				}
@@ -206,7 +206,7 @@ public class LinkPanel extends PanelWithTable
 
 		if (filter_link.getSelectedObjects() != null) {
 			/* filter mode */
-			shownLinks = new ArrayList<MapLink>();
+			shownLinks = new MapLinkTable();
 			for (MapLink link : editor.getLinks()) {
 				if (null != link.matchTag(searchText.getText())) {
 					shownLinks.add(link);

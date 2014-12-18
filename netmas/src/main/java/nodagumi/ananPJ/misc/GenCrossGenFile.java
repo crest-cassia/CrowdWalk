@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 
 
 /* This class enerates a generation file for a grid map. Grid map consists of
@@ -18,8 +18,8 @@ public class GenCrossGenFile {
 
     private Random random = null;
     private String path = null;     // generation file name
-    private ArrayList<MapNode> eastNodeList = new ArrayList<MapNode>();
-    private ArrayList<MapNode> westNodeList = new ArrayList<MapNode>();
+    private MapNodeTable eastNodeList = new MapNodeTable();
+    private MapNodeTable westNodeList = new MapNodeTable();
 
     private String EAST_NODE_KEYWORD = "EAST_NODES";
     private String WEST_NODE_KEYWORD = "WEST_NODES";
@@ -27,7 +27,7 @@ public class GenCrossGenFile {
     private String EXIT_TAG_KEYWORD = "EXIT";
 
     public GenCrossGenFile(String _path, Random _random,
-            ArrayList<MapNode> _nodes) {
+            MapNodeTable _nodes) {
         path = _path;
         random = _random;
         for (MapNode node : _nodes) {

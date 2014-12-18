@@ -9,15 +9,15 @@ import java.util.List;
 
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 public interface EvacuationModelBase {
     public NetworkMap getMap();
-    public ArrayList<MapLink> getLinks();
-    public ArrayList<MapNode> getNodes();
+    public MapLinkTable getLinks();
+    public MapNodeTable getNodes();
     public List<EvacuationAgent> getAgents();
     public ArrayList<PollutedArea> getPollutions();
     public AgentHandler getAgentHandler();

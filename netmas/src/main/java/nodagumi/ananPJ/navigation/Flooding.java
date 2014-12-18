@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
@@ -36,13 +36,13 @@ public class Flooding extends Dijkstra implements Serializable {
         return frontier;
     }
 
-    private ArrayList<MapNode> nodes = null;
-    private ArrayList<MapLink> links = null;
+    private MapNodeTable nodes = null;
+    private MapLinkTable links = null;
     private ArrayList<String> goalTags = null;
     // routing table
     private ArrayList<FloodingRoutingTable> tables = null;
 
-    public Flooding(ArrayList<MapNode> _nodes, ArrayList<MapLink> _links,
+    public Flooding(MapNodeTable _nodes, MapLinkTable _links,
             ArrayList<String> _goalTags) {
         nodes = _nodes;
         links = _links;
@@ -50,7 +50,7 @@ public class Flooding extends Dijkstra implements Serializable {
     }
 
     // update flooding routing table with updated node list
-    public void update(ArrayList<MapNode> _nodes, ArrayList<MapLink> _links,
+    public void update(MapNodeTable _nodes, MapLinkTable _links,
             ArrayList<String> _goalTags) {
         if (_nodes != null)
             nodes = _nodes;
@@ -67,7 +67,7 @@ public class Flooding extends Dijkstra implements Serializable {
             tables.add(new FloodingRoutingTable(node));
 
         for (String goalTag : goalTags) {
-            ArrayList<MapNode> goalNodes = new ArrayList<MapNode>();
+            MapNodeTable goalNodes = new MapNodeTable();
             for (MapNode node : nodes)
                 if (node.hasTag(goalTag))
                     goalNodes.add(node);
@@ -75,9 +75,9 @@ public class Flooding extends Dijkstra implements Serializable {
 
             for (MapNode node : goalNodes) {
                 // nodes which the route has determined
-                ArrayList<MapNode> determinedNodes = nodes;
+                MapNodeTable determinedNodes = nodes;
                 // terminal nodes which receives flooding routing messages
-                ArrayList<MapNode> terminalNodes = new ArrayList<MapNode>();
+                MapNodeTable terminalNodes = new MapNodeTable();
                 // goal node already has the goal
                 determinedNodes.add(node);
                 // set first terminal nodes
@@ -94,7 +94,7 @@ public class Flooding extends Dijkstra implements Serializable {
                     }
                 }
                 while (terminalNodes.size() > 0) {
-                    ArrayList<MapNode> oldTerminalNodes = terminalNodes;
+                    MapNodeTable oldTerminalNodes = terminalNodes;
                     terminalNodes.clear();
                     for (MapNode terminalNode : oldTerminalNodes) {
                         for (MapLink pathWay : terminalNode.getPathways()) {

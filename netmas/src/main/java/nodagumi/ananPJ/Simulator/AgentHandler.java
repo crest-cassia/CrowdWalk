@@ -65,9 +65,9 @@ import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.network.DaRuMaClient;
@@ -117,7 +117,7 @@ public class AgentHandler implements Serializable {
     // プログラム制御用環境変数
     public String envSwitch = "";
     // エージェントが存在するリンクのリスト
-    private ArrayList<MapLink> effectiveLinks = null;
+    private MapLinkTable effectiveLinks = null;
     private boolean effectiveLinksEnabled = false;
 
     private Logger agentMovementHistoryLogger = null;
@@ -127,7 +127,7 @@ public class AgentHandler implements Serializable {
             String generationFile,
             String responseFile,
             String scenario_number,
-            ArrayList<MapLink> links,
+            MapLinkTable links,
             EvacuationModelBase _model,
             boolean _has_display,
             double linerGenerateAgentRatio,
@@ -201,7 +201,7 @@ public class AgentHandler implements Serializable {
     }
 
     public void deserialize(String generationFile, String responseFile,
-            String scenario_number, ArrayList<MapLink> links) {
+            String scenario_number, MapLinkTable links) {
         control_panel = null;
         clock_label = new JLabel("NOT STARTED");
         time_label = new JLabel("NOT STARTED!");
@@ -218,7 +218,7 @@ public class AgentHandler implements Serializable {
             agent.prepareForSimulation(model.getTimeScale());
         }
         // 初回は全リンクを対象とする
-        effectiveLinks = (ArrayList<MapLink>)model.getLinks().clone();
+        effectiveLinks = (MapLinkTable)model.getLinks().clone();
     }
 
     class ScenarioEvent implements Serializable {
@@ -275,7 +275,7 @@ public class AgentHandler implements Serializable {
          * modify links so that it affects agents */
         boolean happend = false;
         public void checkIfHappend(double clock,
-                ArrayList<MapLink> links,
+                MapLinkTable links,
                 double time) {
             if (happend || clock < getClock()) return;
             if (command == null) return;
@@ -288,7 +288,7 @@ public class AgentHandler implements Serializable {
         }
 
         public void setEnabled(boolean b,
-                ArrayList<MapLink> links) {
+                MapLinkTable links) {
             happend = true;
             if (command.length() > 3 && command.substring(0, 4).equals("SET:")) {
                 String set_tag = command.substring(4);
@@ -540,7 +540,7 @@ public class AgentHandler implements Serializable {
 
     /* need stable design to assign id */
     private int manualId = 1024;
-    public void update(ArrayList<MapNode> nodes, ArrayList<MapLink> links,
+    public void update(MapNodeTable nodes, MapLinkTable links,
             double time) {
         update_buttons();
 
@@ -887,8 +887,8 @@ public class AgentHandler implements Serializable {
         HashMap<MapLink, Double> existenceProbabilities =
             new HashMap<MapLink, Double>();
         // reachable links for each agents
-        HashMap<EvacuationAgent, ArrayList<MapLink>> agentReachableLinks =
-            new HashMap<EvacuationAgent, ArrayList<MapLink>>();
+        HashMap<EvacuationAgent, MapLinkTable> agentReachableLinks =
+            new HashMap<EvacuationAgent, MapLinkTable>();
         // simplex or duplex for each links
         //  1.0: simplex from -> to
         //  -1.0: simplex to -> from
@@ -921,7 +921,7 @@ public class AgentHandler implements Serializable {
         for (EvacuationAgent agent : agents) {
             if (agent.isEvacuated())
                 continue;
-            ArrayList<MapLink> reachableLinks = ((RunningAroundPerson) agent)
+            MapLinkTable reachableLinks = ((RunningAroundPerson) agent)
                 .getReachableLinks(V_0, time, expectedDensityMacroTimeStep);
             if (reachableLinks == null) {
                 System.err.println("AgentHandler.calcExpectedDensity " +
@@ -1006,7 +1006,7 @@ public class AgentHandler implements Serializable {
         for (EvacuationAgent agent : agents) {
             HashMap<MapLink, Double> expectedDensitySpeeds = new
                     HashMap<MapLink, Double>();
-            ArrayList<MapLink> reachableLinks = agentReachableLinks.get(agent);
+            MapLinkTable reachableLinks = agentReachableLinks.get(agent);
             if (reachableLinks == null)
                 continue;
             for (MapLink link : reachableLinks) {
@@ -1313,7 +1313,7 @@ public class AgentHandler implements Serializable {
     private void setup_control_panel(String generationFileName,
             String responseFileName,
             String scenario_number,
-            ArrayList<MapLink> links) {
+            MapLinkTable links) {
         control_panel = new JPanel();
         control_panel.setName("Control");
         control_panel.setLayout(new BorderLayout());
@@ -1402,10 +1402,10 @@ public class AgentHandler implements Serializable {
             class RadioButtonListener implements ActionListener {
                 int index;
                 ScenarioEvent event;
-                ArrayList<MapLink> links;
+                MapLinkTable links;
                 public RadioButtonListener(ScenarioEvent _event,
                         int _index,
-                        ArrayList<MapLink> _links) {
+                        MapLinkTable _links) {
                     event = _event;
                     index = _index;
                     links = _links;

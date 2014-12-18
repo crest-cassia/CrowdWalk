@@ -62,8 +62,8 @@ import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
 import nodagumi.ananPJ.NetworkParts.OBNode; // tkokada
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
 import nodagumi.ananPJ.misc.GridPollutionAreaDialog;    // tkokada
@@ -807,8 +807,8 @@ public class EditorFrame
         assert (hoverLinkFromCandidate != null);
         final MapNode from = hoverLinkFromCandidate;
 
-        ArrayList<MapNode> childNodesAndSymlinks = current_group.getChildNodesAndSymlinks(from, from.getQuadrant(p));
-        ArrayList<MapLink> childLinks = getChildLinks();
+        MapNodeTable childNodesAndSymlinks = current_group.getChildNodesAndSymlinks(from, from.getQuadrant(p));
+        MapLinkTable childLinks = getChildLinks();
         for (int tindex = 0; tindex < childNodesAndSymlinks.size(); ++tindex) {
             final MapNode to = childNodesAndSymlinks.get(tindex);
             Line2D line = new Line2D.Double (from.getLocalCoordinates(), to.getLocalCoordinates());
@@ -847,7 +847,7 @@ public class EditorFrame
         Hover candidate = null;
         final MapNode from = prevNode;
         hoverLinkFromCandidate = prevNode;
-        ArrayList<MapNode> childNodesAndSymlinks = getChildNodesAndSymlinks();
+        MapNodeTable childNodesAndSymlinks = getChildNodesAndSymlinks();
         for (int tindex = 0; tindex < childNodesAndSymlinks.size(); ++tindex) {
             final MapNode to = childNodesAndSymlinks.get(tindex);
             Line2D line = new Line2D.Double (from.getLocalCoordinates(),
@@ -1510,11 +1510,11 @@ public class EditorFrame
     private void removeSelectedNodes() {
         panel.updateHoverNode(null);
         editor._setModified(true);
-        ArrayList<MapNode> nodesToRemove = new ArrayList<MapNode>();
+        MapNodeTable nodesToRemove = new MapNodeTable();
         for (final MapNode node : getChildNodes()) {
             if (node.selected) nodesToRemove.add(node);
         }
-        ArrayList<MapLink> linksToRemove = new ArrayList<MapLink>();
+        MapLinkTable linksToRemove = new MapLinkTable();
         for (final MapLink link : getChildLinks()) {
             if (nodesToRemove.contains(link.getFrom()) ||
                     nodesToRemove.contains(link.getTo())) {
@@ -1535,7 +1535,7 @@ public class EditorFrame
     private void removeSelectedLinks() {
         panel.updateHoverLink(null);
         editor._setModified(true);
-        ArrayList<MapLink> linksToRemove = new ArrayList<MapLink>();
+        MapLinkTable linksToRemove = new MapLinkTable();
         for (final MapLink link : getChildLinks()) {
             if (link.selected) {
                 linksToRemove.add(link);
@@ -1961,7 +1961,7 @@ public class EditorFrame
         next_group.setSouth(group.getSouth());
         
         /* copy nodes */
-        ArrayList<MapNode> nodesToMove = new ArrayList<MapNode>();
+        MapNodeTable nodesToMove = new MapNodeTable();
         HashMap<MapNode, MapNode> nodeToNode = new HashMap<MapNode, MapNode>();
         for (MapNode node : group.getChildNodes()) {
             double height_diff = node.getHeight() - group.getDefaultHeight();
@@ -2022,7 +2022,7 @@ public class EditorFrame
                     "Do nothing", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        ArrayList<MapNode> nodesToMove = new ArrayList<MapNode>();
+        MapNodeTable nodesToMove = new MapNodeTable();
         HashMap<MapNode, MapNode> nodeToNode = new HashMap<MapNode, MapNode>();
         for (MapNode node : getChildNodes()) {
             if (!node.selected) continue;
@@ -3013,15 +3013,15 @@ public class EditorFrame
 
     /* access to the object(nodes, links, agents, sub-groups)
      * that are managed under this frame */
-    public ArrayList<MapNode> getChildNodes() {
+    public MapNodeTable getChildNodes() {
         return current_group.getChildNodes();
     }
 
-    public ArrayList<MapNode> getChildNodesAndSymlinks() {
+    public MapNodeTable getChildNodesAndSymlinks() {
         return current_group.getChildNodesAndSymlinks();
     }
 
-    public ArrayList<MapLink> getChildLinks() {
+    public MapLinkTable getChildLinks() {
         return current_group.getChildLinks();
     }
 

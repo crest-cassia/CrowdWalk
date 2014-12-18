@@ -19,8 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.ProgressMonitor;
 
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 
 
 
@@ -67,13 +67,13 @@ class ProgressBarDialog extends JDialog
 }
 
 public class MapChecker {
-	public static boolean checkForPiledNodes(ArrayList<MapNode> nodes) {
+	public static boolean checkForPiledNodes(MapNodeTable nodes) {
 		ProgressMonitor bar = new ProgressMonitor(null,
 	    		"Checking node collisions",
                 "", 0, nodes.size() - 1);
 
-		HashMap<Point2D, ArrayList<MapNode> > collisions =
-			new HashMap<Point2D, ArrayList<MapNode> >();
+		HashMap<Point2D, MapNodeTable > collisions =
+			new HashMap<Point2D, MapNodeTable >();
 		for (int i = 0; i < nodes.size() - 1; ++i) {
 			bar.setProgress(i);
 			for (int j = i + 1; j < nodes.size(); ++j){
@@ -82,9 +82,9 @@ public class MapChecker {
 				
 				if (lhs.getAbsoluteCoordinates().equals(rhs.getAbsoluteCoordinates())) {
 					Point2D pos = lhs.getAbsoluteCoordinates();
-					ArrayList<MapNode> nodesHere = collisions.get(pos);
+					MapNodeTable nodesHere = collisions.get(pos);
 					if (nodesHere == null) {
-						nodesHere = new ArrayList<MapNode>();
+						nodesHere = new MapNodeTable();
 						collisions.put(pos, nodesHere);
 					}
 					if (!nodesHere.contains(lhs)) nodesHere.add(lhs);
@@ -100,7 +100,7 @@ public class MapChecker {
 				+ "Resolve them?", "Collisions found", JOptionPane.YES_NO_OPTION);
 		if (i == JOptionPane.NO_OPTION) return false;
 
-		for (ArrayList<MapNode> cnodes : collisions.values()) {
+		for (MapNodeTable cnodes : collisions.values()) {
 			for (MapNode node : cnodes) {
 				node.selected = true;
 			}
@@ -109,15 +109,15 @@ public class MapChecker {
 		return false;
 	}
 	
-	public static ArrayList<MapLink> getReachableLinks(ArrayList<MapNode> nodes) {
-		final ArrayList<MapNode> exits = new ArrayList<MapNode>();
+	public static MapLinkTable getReachableLinks(MapNodeTable nodes) {
+		final MapNodeTable exits = new MapNodeTable();
     	for (final MapNode node : nodes) {
     		if (node.hasTag("Exit")) exits.add(node);
     	}
 
 		Stack<MapNode> path = new Stack<MapNode>();
 		Stack<Integer> selection = new Stack<Integer>();
-		ArrayList<MapLink> reachableLinks = new ArrayList<MapLink>();
+		MapLinkTable reachableLinks = new MapLinkTable();
 		
 		for (MapNode exit : exits) {
 			path.push(exit);
@@ -127,7 +127,7 @@ public class MapChecker {
 				MapNode node = path.peek();
 				Integer index = selection.pop();
 
-				final ArrayList<MapLink> paths  = node.getPathways();
+				final MapLinkTable paths  = node.getPathways();
 				if (index == paths.size()) {
 					path.pop();
 					continue;

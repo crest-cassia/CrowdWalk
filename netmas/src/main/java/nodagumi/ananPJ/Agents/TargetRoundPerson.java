@@ -36,8 +36,8 @@ import org.w3c.dom.Text;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 
 
 /** TargetRoundPerson has multiple targets where make a round.
@@ -419,7 +419,7 @@ public class TargetRoundPerson extends RunningAroundPerson
         } else {
             node_now = current_link.getFrom();
         }
-        final ArrayList<MapLink> way_candidates = node_now.getPathways();   
+        final MapLinkTable way_candidates = node_now.getPathways();   
         double direction_orig = direction;
         //----
         if (getPrevNode() == next_link_candidate.getFrom()) {
@@ -487,7 +487,7 @@ public class TargetRoundPerson extends RunningAroundPerson
     }
 
     @Override
-    public ArrayList<MapLink> getReachableLinks(double d, double time, double
+    public MapLinkTable getReachableLinks(double d, double time, double
             duration) {
         return null;
     }
