@@ -182,6 +182,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
           System.exit(0);
       }
       if (_tag == null || _tag.equals("")) return false;
+	  /* [2014.12.19 I.Noda] should obsolete */
       if (! _tag.equals("root") && ! _tag.equals(_tag.toUpperCase())) {
           System.err.println("小文字を含んだタグが使われています: " + _tag);
           System.exit(0);

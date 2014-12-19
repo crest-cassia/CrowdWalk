@@ -1020,6 +1020,46 @@ public class MapLink extends OBMapPart implements Serializable {
         return link;
     }
 
+    /**
+     * タグをクリア。
+     * ノードのcacheもクリア。
+     */
+    @Override
+    public void allTagsClear() {
+        super.allTagsClear() ;
+        clearCacheInNodes() ;
+    }
+
+    /**
+     * タグを追加。
+     * ノードのcacheもクリア。
+     */
+    @Override
+    public boolean addTag(String _tag) {
+        boolean result = super.addTag(_tag) ;
+        if(result) 
+            clearCacheInNodes() ;
+        return result ;
+    }
+
+    /**
+     * タグを削除。
+     * ノードのcacheもクリア。
+     */
+    @Override
+    public void removeTag(String _tag) {
+        super.removeTag(_tag) ;
+        clearCacheInNodes() ;
+    }
+
+    /**
+     * ノードのcacheをクリア。
+     */
+    private void clearCacheInNodes() {
+        if(fromNode != null) fromNode.clearCache() ;
+        if(toNode != null) toNode.clearCache() ;
+    }
+
     public String toString() {
         return getTagString();
     }

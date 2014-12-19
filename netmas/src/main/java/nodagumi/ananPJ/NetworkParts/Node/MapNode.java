@@ -106,12 +106,14 @@ public class MapNode extends OBMapPart implements Serializable {
     public boolean addLink(MapLink link) {
         if (links.contains(link)) return false;
         links.add(link);
+        clearCache() ;
         return true;
     }
 
     public boolean removeLink(MapLink link) {
         if (!links.contains(link)) return false;
         links.remove(link);
+        clearCache() ;
         return true;
     }
 
@@ -119,9 +121,31 @@ public class MapNode extends OBMapPart implements Serializable {
         return links;
     }
 
+    /**
+     * getPathways などを効率化するための cache を開放する。
+     */
+    public void clearCache() {
+        cachePathways = null ;
+        cachePathwaysReverse = null ;
+    }
+
+    /**
+     * getPathways を効率化するための cache
+     * Node とそれに繋がるリンクのタグなどが変化すれば、
+     * reset されなければならない。
+     * その際には、resetCache() を呼ぶこと。
+     */
+    private MapLinkTable cachePathways = null ;
+
+    /**
+     * 一方通行を考慮して、つながっているリンクを集める。
+     */
     public MapLinkTable getPathways () {
+        // もしすでに cache があれば、それを返す。
+		if(cachePathways != null) return cachePathways ;
+
         /* modification to apply One-way link */
-        MapLinkTable availableLinks = new MapLinkTable();
+        cachePathways = new MapLinkTable();
         for (MapLink link : links) {
             if (link.hasTag("ONE-WAY-POSITIVE") &&
                     (link.getPositiveNode() == this)) {
@@ -134,14 +158,27 @@ public class MapNode extends OBMapPart implements Serializable {
             if (link.hasTag("ROAD-CLOSED")) {
                 continue;
             }
-            availableLinks.add(link);
+            cachePathways.add(link);
         }
 
         /* original: return links */
-        return availableLinks;
+        return cachePathways;
     }
 
+    /**
+     * getPathwaysReverse を効率化するための cache
+     * Node とそれに繋がるリンクのタグなどが変化すれば、
+     * reset されなければならない。
+     * その際には、resetCache() を呼ぶこと。
+     */
+    private MapLinkTable cachePathwaysReverse = null ;
+
+    /**
+     * 一方通行を考慮して、つながっているリンクを集める。
+     */
     public MapLinkTable getPathwaysReverse () {
+		if(cachePathwaysReverse != null) return cachePathwaysReverse ;
+
         /* modification to apply One-way link */
         MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
