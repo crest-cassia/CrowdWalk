@@ -32,6 +32,7 @@ public abstract class GenerateAgent implements Serializable {
         new RunningAroundPerson(),
         new WaitRunningAroundPerson(),
         new Staff(),
+        new NaiveAgent(),
         new CapriciousAgent(),
         new BustleAgent(),
     } ;

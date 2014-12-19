@@ -39,7 +39,7 @@ import java.util.Map;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.Agents.WaitRunningAroundPerson ;
+import nodagumi.ananPJ.Agents.NaiveAgent;
 
 import nodagumi.Itk.* ;
 

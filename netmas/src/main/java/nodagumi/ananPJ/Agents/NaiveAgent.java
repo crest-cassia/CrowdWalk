@@ -1,12 +1,14 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 /** 
- * せわしないエージェント
- * 混んでいる路をできるだけ避ける。
+ * 素朴なエージェント
+ * いろんなエージェントクラスのベースにする予定のもの。
+ * WaitRunningAroundPerson がベースだが、
+ * いずれ整理する予定
  * @author:: Itsuki Noda
- * @version:: 0.0 2014/12/15 I.Noda
+ * @version:: 0.0 2014/12/19 I.Noda
  * <B>History:</B>
  * <UL>
- *   <LI> [2014/12/15]: Create This File. </LI>
+ *   <LI> [2014/12/19]: Create This File. </LI>
  * </UL>
  */
 
@@ -18,15 +20,16 @@ import java.util.Map;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.Agents.NaiveAgent ;
+import nodagumi.ananPJ.Agents.WaitRunningAroundPerson ;
 
 import nodagumi.Itk.* ;
 
 //======================================================================
 /**
- * せわしないエージェント
+ * 素朴なエージェント
+ * 各種エージェントクラスのベースにするもの。
  */
-public class BustleAgent
+public class NaiveAgent
     extends WaitRunningAroundPerson
     implements Serializable {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -35,7 +38,7 @@ public class BustleAgent
      * ClassFinder でも参照できるようにしておく。
      */
     public static String typeString =
-        ClassFinder.alias("BustleAgent",
+        ClassFinder.alias("NaiveAgent",
                           Itk.currentClassName()) ;
 
     public static String getAgentTypeString() { return typeString ;}
@@ -47,25 +50,19 @@ public class BustleAgent
      */
     static final public double DefaultBustleWeight = 100.0 ;
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * せわしない度合い（link の crowdness に乗ずる値）
-     */
-    public double bustleWeight = DefaultBustleWeight ;
-
     //------------------------------------------------------------
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
-    public BustleAgent(){}
+    public NaiveAgent(){}
 
     //------------------------------------------------------------
     /**
      * constractor。
      */
-    public BustleAgent(int _id,
-                           double speed, double _confidence,
-                           double allowance, double time, Random _random) {
+    public NaiveAgent(int _id,
+                      double speed, double _confidence,
+                      double allowance, double time, Random _random) {
         init(_id, speed,  _confidence, allowance, time, _random) ;
     }
 
@@ -73,7 +70,7 @@ public class BustleAgent
     /**
      * constractor。
      */
-    public BustleAgent(int _id, Random _random) {
+    public NaiveAgent(int _id, Random _random) {
         init(_id, _random) ;
     }
 
@@ -83,7 +80,7 @@ public class BustleAgent
      */
     @Override
     public EvacuationAgent copyAndInitialize() {
-        BustleAgent r = new BustleAgent(0, random) ;
+        NaiveAgent r = new NaiveAgent(0, random) ;
         return copyAndInitializeBody(r) ;
     }
 
@@ -91,34 +88,26 @@ public class BustleAgent
     /**
      * 複製操作のメイン
      */
-    public EvacuationAgent copyAndInitializeBody(BustleAgent r) {
-        super.copyAndInitializeBody(r) ;
-	r.bustleWeight = bustleWeight ;
-        return r ;
+    public EvacuationAgent copyAndInitializeBody(NaiveAgent r) {
+        return super.copyAndInitializeBody(r) ;
     }
 
+    //------------------------------------------------------------
     /**
      * Conf による初期化。
      */
     public void initByConf(Map<String, Object> conf) {
         super.initByConf(conf) ;
-        if(config.containsKey("weight")) {
-            //Itk.dbgMsg("weight", config.get("weight")) ;
-            bustleWeight = new Double(config.get("weight").toString()) ;
-        }
     } ;
+
     //------------------------------------------------------------
     /**
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
     public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
-        MapNode other = _way.getOther(_node);
-        double cost = other.getDistance(_target);
-        cost += _way.length;
-	double crowdness= bustleWeight * _way.realCrowdness() ;
-        return cost + crowdness;
+        return super.calcWayCostTo(_way, _node, _target) ;
     }
 
-} // class BustleAgent
+} // class NaiveAgent
 
