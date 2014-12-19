@@ -26,8 +26,7 @@ import nodagumi.Itk.* ;
 /**
  * せわしないエージェント
  */
-public class BustleAgent
-    extends WaitRunningAroundPerson
+public class BustleAgent extends NaiveAgent
     implements Serializable {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -52,6 +51,18 @@ public class BustleAgent
      * せわしない度合い（link の crowdness に乗ずる値）
      */
     public double bustleWeight = DefaultBustleWeight ;
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * 一度通った道をどれくらい避けるかの規定値
+     */
+    static final public double DefaultTrailWeight = 100.0 ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 一度通った道をどれくらい避けるか（link の trailCount に乗ずる値）
+     */
+    public double trailWeight = DefaultTrailWeight ;
 
     //------------------------------------------------------------
     /**
@@ -106,6 +117,9 @@ public class BustleAgent
             //Itk.dbgMsg("weight", config.get("weight")) ;
             bustleWeight = new Double(config.get("weight").toString()) ;
         }
+        if(config.containsKey("trail")) {
+            trailWeight = new Double(config.get("trail").toString()) ;
+        }
     } ;
     //------------------------------------------------------------
     /**
@@ -117,7 +131,8 @@ public class BustleAgent
         double cost = other.getDistance(_target);
         cost += _way.length;
 	double crowdness= bustleWeight * _way.realCrowdness() ;
-        return cost + crowdness;
+        double trailCount = trailWeight * trailCountTable.get(_node, _way) ;
+        return cost + crowdness + trailCount;
     }
 
 } // class BustleAgent

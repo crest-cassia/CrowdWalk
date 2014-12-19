@@ -47,8 +47,7 @@ import nodagumi.Itk.* ;
 /**
  * 気まぐれエージェント
  */
-public class CapriciousAgent
-    extends WaitRunningAroundPerson
+public class CapriciousAgent extends NaiveAgent
     implements Serializable {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**

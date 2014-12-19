@@ -103,8 +103,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     private MapLink sane_navigation_from_node_result;
 
     // 通過経路の履歴(一度通ったリンクを避けるためのフラグ)
-    private HashMap<MapNode, HashMap<MapLink, Boolean>> passedFlags =
-        new HashMap<MapNode, HashMap<MapLink, Boolean>>();
+    /* [2014.12.19 I.Noda] obsolete
+     * NaiveAgent に引越し
+     */
+    //private HashMap<MapNode, HashMap<MapLink, Boolean>> passedFlags =
+    //    new HashMap<MapNode, HashMap<MapLink, Boolean>>();
 
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
@@ -1590,18 +1593,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 break;
             }
         }
-		route.add(new CheckPoint(next_node, time, navigation_reason.toString()));
-        // tkokada.debug
-        // System.err.println("next_node: " + next_node.getTagString() +
-                // ", time: " + time + ", navigation_reason: " +
-                // navigation_reason.toString());
 
-        if (next_node != prev_node) {
-            HashMap<MapLink, Boolean> passedFlag = passedFlags.get(next_node);
-            if (! passedFlag.get(next_link_candidate)) {
-                passedFlag.put(next_link_candidate, Boolean.TRUE);
-            }
-        }
+        /* [2014.12.19 I.Noda] 
+         * NaiveAgent への経路記録の入り口のため,
+         * recordTrail を導入。
+         */
+        recordTrail(time) ;
 
         /* agent exits the previous link */
         getCurrentLink().agentExits(this);
@@ -1683,6 +1680,18 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
 
         return true;
+    }
+
+    /**
+     * 最終決定したルート、足跡情報の記録
+     * [2014.12.19 I.Noda] tryToPassNode() より移動
+     */
+    protected void recordTrail(double time) {
+		route.add(new CheckPoint(next_node, time, navigation_reason.toString()));
+        // tkokada.debug
+        // System.err.println("next_node: " + next_node.getTagString() +
+                // ", time: " + time + ", navigation_reason: " +
+                // navigation_reason.toString());
     }
 
     /* look up our route plan and give our next goal
@@ -1780,24 +1789,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         final String next_target = calc_next_target(node);
 
-        HashMap<MapLink, Boolean> passedFlag = passedFlags.get(node);
-        if (passedFlag == null) {
-            passedFlag = new HashMap<MapLink, Boolean>();
-            for (MapLink _link : node.getLinks()) {
-                passedFlag.put(_link, Boolean.FALSE);
-            }
-            passedFlags.put(node, passedFlag);
-        }
-
-        // way_candidates がすべて通過済みなら passedFlag は使用しない
-        boolean passedFlagEnabled = false;
-        for (MapLink way_candidate : way_candidates) {
-            if (! passedFlag.get(way_candidate)) {
-                passedFlagEnabled = true;
-                break;
-            }
-        }
-
         if (monitor)
             System.err.println("navigating at " + node.getTagString() + " for " + next_target);
 		navigation_reason.clear().add("for").add(next_target).add("\n");
@@ -1820,15 +1811,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 // don't want to go back, ignoring
                 continue;
             }
-            /* [2014.12.19 I.Noda]
-             * 個々の部分、バグになっているので、省く。
-             */
-            /*
-            if (passedFlagEnabled && passedFlag.get(way_candidate)) {
-                // 一度通ったリンクは避ける
-                continue;
-            }
-            */
 
             boolean loop = false;
             // ※この if 文は常に無効
