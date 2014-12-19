@@ -292,10 +292,18 @@ public class AgentHandler implements Serializable {
             happend = true;
             if (command.length() > 3 && command.substring(0, 4).equals("SET:")) {
                 String set_tag = command.substring(4);
-                System.err.println("set_tag" + set_tag);
+                System.err.println("set_tag: " + set_tag);
                 for (MapLink link : links) {
                     if (!link.hasTag(tag)) continue;
                     link.addTag(set_tag);
+                }
+            } else if (command.startsWith("REMOVE:")) {
+                String remove_tag = command.substring(7);
+                System.err.println("remove_tag: " + remove_tag);
+                for (MapLink link : links) {
+                    if (link.hasTag(tag)) {
+                        link.removeTag(remove_tag);
+                    }
                 }
             } else if (command.equals("BOTH")) {
                 for (MapLink link : links) {
