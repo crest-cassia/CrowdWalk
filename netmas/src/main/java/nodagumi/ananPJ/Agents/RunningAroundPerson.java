@@ -102,6 +102,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     private MapNode sane_navigation_from_node_node;
     private MapLink sane_navigation_from_node_result;
 
+    // 通過経路の履歴(一度通ったリンクを避けるためのフラグ)
+    private HashMap<MapNode, HashMap<MapLink, Boolean>> passedFlags =
+        new HashMap<MapNode, HashMap<MapLink, Boolean>>();
+
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
@@ -631,9 +635,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             next_link_candidate = navigate(time, current_link, next_node);
             sane_navigation_from_node_forced = true;
 
-            if (!tryToPassNode(time)) {
-                return false;
-            }
+            tryToPassNode(time);
 
             if (next_node == current_link.getTo()) {
                 setPosition(distance_to_move);
@@ -1594,6 +1596,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 // ", time: " + time + ", navigation_reason: " +
                 // navigation_reason.toString());
 
+        if (next_node != prev_node) {
+            HashMap<MapLink, Boolean> passedFlag = passedFlags.get(next_node);
+            if (! passedFlag.get(next_link_candidate)) {
+                passedFlag.put(next_link_candidate, Boolean.TRUE);
+            }
+        }
+
         /* agent exits the previous link */
         getCurrentLink().agentExits(this);
         setPrevNode(next_node);
@@ -1771,6 +1780,24 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         final String next_target = calc_next_target(node);
 
+        HashMap<MapLink, Boolean> passedFlag = passedFlags.get(node);
+        if (passedFlag == null) {
+            passedFlag = new HashMap<MapLink, Boolean>();
+            for (MapLink _link : node.getLinks()) {
+                passedFlag.put(_link, Boolean.FALSE);
+            }
+            passedFlags.put(node, passedFlag);
+        }
+
+        // way_candidates がすべて通過済みなら passedFlag は使用しない
+        boolean passedFlagEnabled = false;
+        for (MapLink way_candidate : way_candidates) {
+            if (! passedFlag.get(way_candidate)) {
+                passedFlagEnabled = true;
+                break;
+            }
+        }
+
         if (monitor)
             System.err.println("navigating at " + node.getTagString() + " for " + next_target);
 		navigation_reason.clear().add("for").add(next_target).add("\n");
@@ -1791,6 +1818,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 break;
             } else if (way_candidate == link) {
                 // don't want to go back, ignoring
+                continue;
+            }
+            if (passedFlagEnabled && passedFlag.get(way_candidate)) {
+                // 一度通ったリンクは避ける
                 continue;
             }
             boolean loop = false;

@@ -102,6 +102,10 @@ public class MapNode extends OBMapPart implements Serializable {
         absolute_coordinates = _absoluteCoorditanes;
     }
 
+    public ArrayList<MapLink> getLinks() {
+        return links;
+    }
+
     public boolean addLink(MapLink link) {
         if (links.contains(link)) return false;
         links.add(link);
