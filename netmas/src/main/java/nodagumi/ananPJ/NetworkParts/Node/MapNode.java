@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkParts.Node;
 
 import java.awt.BorderLayout;
@@ -122,15 +123,15 @@ public class MapNode extends OBMapPart implements Serializable {
         /* modification to apply One-way link */
         MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
-            if (link.getTags().contains("ONE-WAY-POSITIVE") &&
+            if (link.hasTag("ONE-WAY-POSITIVE") &&
                     (link.getPositiveNode() == this)) {
                 continue;
             }
-            if (link.getTags().contains("ONE-WAY-NEGATIVE") &&
+            if (link.hasTag("ONE-WAY-NEGATIVE") &&
                     link.getNegativeNode() == this) {
                 continue;
             }
-            if (link.getTags().contains("ROAD-CLOSED")) {
+            if (link.hasTag("ROAD-CLOSED")) {
                 continue;
             }
             availableLinks.add(link);
@@ -144,15 +145,15 @@ public class MapNode extends OBMapPart implements Serializable {
         /* modification to apply One-way link */
         MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
-            if (link.getTags().contains("ONE-WAY-POSITIVE") &&
+            if (link.hasTag("ONE-WAY-POSITIVE") &&
                     (link.getNegativeNode() == this)) {
                 continue;
             }
-            if (link.getTags().contains("ONE-WAY-NEGATIVE") &&
+            if (link.hasTag("ONE-WAY-NEGATIVE") &&
                     link.getPositiveNode() == this) {
                 continue;
             }
-            if (link.getTags().contains("ROAD-CLOSED")) {
+            if (link.hasTag("ROAD-CLOSED")) {
                 continue;
             }
             availableLinks.add(link);

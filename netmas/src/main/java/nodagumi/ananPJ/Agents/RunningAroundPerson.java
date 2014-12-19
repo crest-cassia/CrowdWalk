@@ -1820,10 +1820,16 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 // don't want to go back, ignoring
                 continue;
             }
+            /* [2014.12.19 I.Noda]
+             * 個々の部分、バグになっているので、省く。
+             */
+            /*
             if (passedFlagEnabled && passedFlag.get(way_candidate)) {
                 // 一度通ったリンクは避ける
                 continue;
             }
+            */
+
             boolean loop = false;
             // ※この if 文は常に無効
             if (DELAY_LOOP) {

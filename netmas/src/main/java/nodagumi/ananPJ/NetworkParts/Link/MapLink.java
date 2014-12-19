@@ -391,9 +391,9 @@ public class MapLink extends OBMapPart implements Serializable {
         if (!showScaling)
             scale = g.getTransform().getScaleX();
         g.setStroke(new BasicStroke(2.0f / ((float)scale)));
-        boolean oneWayPositive = this.getTags().contains("ONE-WAY-POSITIVE");
-        boolean oneWayNegative = this.getTags().contains("ONE-WAY-NEGATIVE");
-        boolean roadClosed = this.getTags().contains("ROAD-CLOSED");
+        boolean oneWayPositive = this.hasTag("ONE-WAY-POSITIVE");
+        boolean oneWayNegative = this.hasTag("ONE-WAY-NEGATIVE");
+        boolean roadClosed = this.hasTag("ROAD-CLOSED");
 
 
         if (isSymbolic) {
@@ -493,9 +493,9 @@ public class MapLink extends OBMapPart implements Serializable {
             //g.setStroke(new BasicStroke((float)width));
             Color c = getColorFromDensity();
             g.setColor(c);
-            if (this.getTags().contains("ONE-WAY-POSITIVE"))
+            if (this.hasTag("ONE-WAY-POSITIVE"))
                 g.draw(getArrow(0.0, scale, true));
-            else if (this.getTags().contains("ONE-WAY-NEGATIVE"))
+            else if (this.hasTag("ONE-WAY-NEGATIVE"))
                 g.draw(getArrow(0.0, scale, false));
             else
                 g.draw(getRect(0.0, scale, true));

@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkParts;
 
 import java.awt.BorderLayout;
@@ -135,13 +136,28 @@ public abstract class OBNode extends DefaultMutableTreeNode
       if (_tag == null) return false;
       if (_tag.equals("*")) return true;
 
+	  /* [2014.12.19 I.Noda] should obsolete
+	   * これは、絶対に辞めたい。
+	   */
       _tag = _tag.toUpperCase();
+
+	  /* [2014.12.19 I.Noda] 
+	   * 以下は同じ意味のはず。
+	   */
+	  if(tags.contains(_tag)) return true ;
+	  /* 古いもの
       for (final String tag : tags) {
           if (_tag.equals(tag)) {
               return true;
           }
       }
+	  */
+
+	  /* [2014.12.19 I.Noda] obsolete obsolute
+	   * これもバグの元。
+	   */
       if (_tag.equals("EMERGENCY")) { return hasTag("EXIT"); }
+
       return false;
   }
   

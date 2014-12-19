@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Editor;
 
 import java.awt.BorderLayout;
@@ -1452,20 +1453,20 @@ public class EditorFrame
         for (MapLink link : getChildLinks()) {
             if (link.selected) {
                 if (positive) {
-                    if (link.getTags().contains("ONE-WAY-POSITIVE"))
+                    if (link.hasTag("ONE-WAY-POSITIVE"))
                         continue;
                     link.addTag("ONE-WAY-POSITIVE");
-                    if (link.getTags().contains("ONE-WAY-NEGATIVE"))
+                    if (link.hasTag("ONE-WAY-NEGATIVE"))
                         link.removeTag("ONE-WAY-NEGATIVE");
-                    if (link.getTags().contains("ROAD-CLOSED"))
+                    if (link.hasTag("ROAD-CLOSED"))
                         link.removeTag("ROAD-CLOSED");
                 } else {
-                    if (link.getTags().contains("ONE-WAY-NEGATIVE"))
+                    if (link.hasTag("ONE-WAY-NEGATIVE"))
                         continue;
                     link.addTag("ONE-WAY-NEGATIVE");
-                    if (link.getTags().contains("ONE-WAY-POSITIVE"))
+                    if (link.hasTag("ONE-WAY-POSITIVE"))
                         link.removeTag("ONE-WAY-POSITIVE");
-                    if (link.getTags().contains("ROAD-CLOSED"))
+                    if (link.hasTag("ROAD-CLOSED"))
                         link.removeTag("ROAD-CLOSED");
                 }
             }
@@ -1480,12 +1481,12 @@ public class EditorFrame
         editor._setModified(true);
         for (MapLink link : getChildLinks()) {
             if (link.selected) {
-                if (link.getTags().contains("ROAD-CLOSED"))
+                if (link.hasTag("ROAD-CLOSED"))
                     continue;
                 link.addTag("ROAD-CLOSED");
-                if (link.getTags().contains("ONE-WAY-POSITIVE"))
+                if (link.hasTag("ONE-WAY-POSITIVE"))
                     link.removeTag("ONE-WAY-POSITIVE");
-                if (link.getTags().contains("ONE-WAY-NEGATIVE"))
+                if (link.hasTag("ONE-WAY-NEGATIVE"))
                     link.removeTag("ONE-WAY-NEGATIVE");
             }
         }
@@ -1555,11 +1556,11 @@ public class EditorFrame
         editor._setModified(true);
         for (MapLink link : getChildLinks()) {
                 if (link.selected) {
-                    if (link.getTags().contains("ONE-WAY-POSITIVE"))
+                    if (link.hasTag("ONE-WAY-POSITIVE"))
                         link.removeTag("ONE-WAY-POSITIVE");
-                    if (link.getTags().contains("ONE-WAY-NEGATIVE"))
+                    if (link.hasTag("ONE-WAY-NEGATIVE"))
                         link.removeTag("ONE-WAY-NEGATIVE");
-                    if (link.getTags().contains("ROAD-CLOSED"))
+                    if (link.hasTag("ROAD-CLOSED"))
                         link.removeTag("ROAD-CLOSED");
                 }
         }
