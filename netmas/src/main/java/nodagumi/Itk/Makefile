@@ -28,7 +28,14 @@ JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
 doc ::
 	javadoc -d doc -encoding utf-8 -charset utf-8 $(SRCFILES)
 
-build :
+build : build_v
+
+## quiet
+build_q :
+	( cd $(BASEDIR) ; gradle -q )
+
+## verbose
+build_v :
 	( cd $(BASEDIR) ; gradle )
 
 ##------------------------------------------------------------
