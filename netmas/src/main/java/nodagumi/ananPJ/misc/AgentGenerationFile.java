@@ -335,34 +335,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 if (rule_tag.equals("EACH")) {
-                    for (final MapLink start_link : startInfo.startLinks) {
-                        this.add(new GenerateAgentFromLink(className, 
-                                                           agentConf,
-                                start_link,
-                                startInfo.agentConditions,
-                                goal,
-                                planned_route,
-                                start_time,
-                                duration,
-                                total,
-                                speed_model,
-                                random,
-                                orgLine));
-                    }
-                    for (final MapNode start_node : startInfo.startNodes) {
-                        this.add(new GenerateAgentFromNode(className,
-                                                           agentConf,
-                                start_node,
-                                startInfo.agentConditions,
-                                goal,
-                                planned_route,
-                                start_time,
-                                duration,
-                                total,
-                                speed_model,
-                                random,
-                                orgLine));
-                    }
+                    processGenerationForEach(nodes, links, 
+                                             className,
+                                             agentConf,
+                                             startInfo,
+                                             goal,
+                                             planned_route,
+                                             start_time,
+                                             total,
+                                             duration,
+                                             speed_model,
+                                             orgLine) ;
                 //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
                         rule_tag.equals("RANDOMALL")) {
@@ -578,6 +561,51 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             startInfo.continueP = true ;
         }
         return startInfo ;
+    }
+
+    /**
+     * EACH 用生成ルーチン
+     */
+    private void processGenerationForEach(MapNodeTable nodes,
+                                          MapLinkTable links,
+                                          String className,
+                                          String agentConf,
+                                          StartInfo startInfo,
+                                          String goal,
+                                          ArrayList<String> planned_route,
+                                          int start_time,
+                                          int total,
+                                          double duration,
+                                          SpeedCalculationModel speed_model,
+                                          String orgLine) {
+        for (final MapLink start_link : startInfo.startLinks) {
+            this.add(new GenerateAgentFromLink(className,
+                                               agentConf,
+                                               start_link,
+                                               startInfo.agentConditions,
+                                               goal,
+                                               planned_route,
+                                               start_time,
+                                               duration,
+                                               total,
+                                               speed_model,
+                                               random,
+                                               orgLine));
+        }
+        for (final MapNode start_node : startInfo.startNodes) {
+            this.add(new GenerateAgentFromNode(className,
+                                               agentConf,
+                                               start_node,
+                                               startInfo.agentConditions,
+                                               goal,
+                                               planned_route,
+                                               start_time,
+                                               duration,
+                                               total,
+                                               speed_model,
+                                               random,
+                                               orgLine));
+        }
     }
 
     /**
