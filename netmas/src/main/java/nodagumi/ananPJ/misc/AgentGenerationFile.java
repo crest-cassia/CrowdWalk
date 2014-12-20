@@ -74,6 +74,91 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     public Map<String,Object> modeMap ;
 
+    /**
+     * CSVのカラムのシフトをちゃんと扱うためのクラス。
+     */
+    private class ShiftingColumns {
+        /**
+         * 現在位置
+         */
+        private int index = 0 ;
+
+        /**
+         * カラムの列
+         */
+        private String[] columnList = null ;
+
+        /**
+         * コンストラクタ
+         */
+        public ShiftingColumns(String[] _columnList) {
+            index = 0 ;
+            columnList = _columnList ;
+        }
+
+        /**
+         * shift: index をひとつずらす
+         */
+        public int shift() {
+            return shift(1) ;
+        }
+
+        /**
+         * shift: index を n ずらす
+         */
+        public int shift(int n) {
+            index += n ;
+            return index ;
+        }
+
+        /**
+         * 残りの長さ
+         */
+        public int length() {
+            return totalLength() - index ;
+        }
+
+        /**
+         * もとの長さ
+         */
+        public int totalLength() {
+            return columnList.length ;
+        }
+
+        /**
+         * 空かどうかのチェック
+         */
+        public boolean isEmpty() {
+            return length() <= 0 ;
+        }
+
+        /**
+         * 現在の先頭を見る。（取り除かない）
+         */
+        public String top() {
+            return top(0) ;
+        }
+
+        /**
+         * 現在のindexよりn番目を取り出す。
+         */
+        public String top(int n) {
+            return columnList[index + n] ;
+        }
+
+        /**
+         * 現在の先頭を見る。（取り除く）
+         */
+        public String get() {
+            String column = top() ;
+            shift() ;
+            return column ;
+        }
+    }
+
+    /**
+     * コンストラクタ兼設定解析ルーチン
+     */
     public AgentGenerationFile(final String filename,
             MapNodeTable nodes,
             MapLinkTable links,
@@ -129,51 +214,52 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // [2014/12/15 I.Noda]
                 // CSV Parser を使うように変更。
+                // さらに、ShiftingColumns を使うよにする。
                 //String items[] = line.split(",");
-                String items[] = csvParser.parseLine(line) ;
+                //String items[] = csvParser.parseLine(line) ;
+                //int index = 0;
+                ShiftingColumns columns = 
+                    new ShiftingColumns(csvParser.parseLine(line)) ;
 
                 /* [I.Noda] Ver1 以降は、先頭はエージェントクラス名 */
                 String className = null;
                 String agentConf = null;
                 if(fileFormat == FileFormat.Ver1) {
-                    className = items[0] ;
-                    agentConf = items[1] ;
-                    String[] newItems = new String[items.length-2] ;
-                    System.arraycopy(items, 2, newItems, 0, items.length-2) ;
-                    items = newItems ;
+                    className = columns.top(0) ;
+                    agentConf = columns.top(1) ;
+                    columns.shift(2) ;
                 }
 
-                if (items.length < 5 && items.length != 2) {
+                if (columns.length() < 5 && columns.length() != 2) {
                     System.err.println("malformed line: " + line);
                     continue;
                 }
 
                 // check rule strings
-                int index = 0;
-                String rule_tag = items[index];
+                String rule_tag = columns.top() ;
                 Matcher rule_match = rulepat.matcher(rule_tag);
                 if (rule_match.matches())
-                    index += 1;
+                    columns.shift() ;
                 else {
                     // if no rule tag, default tag "EACH" is applied.
                     rule_tag = "EACH";
                 }
                 if (rule_tag.equals("LINER_GENERATE_AGENT_RATIO")) {
                     double lga_ratio = 0;
-                    lga_ratio = Double.parseDouble(items[index]);
+                    lga_ratio = Double.parseDouble(columns.get()) ;
                     if (lga_ratio > 0)
                         liner_generate_agent_ratio = lga_ratio;
                     continue;
                 }
                 // read start link
                 StartInfo startInfo 
-                    = scanStartLinkTag(items[index], nodes, links, rule_tag) ;
+                    = scanStartLinkTag(columns.get(), nodes, links, rule_tag) ;
                 if(startInfo.continueP) continue ;
-                index += 1;
 
                 // time
-                Matcher m2 = timepat2.matcher(items[index]);
-                Matcher m = timepat.matcher(items[index]);
+                Matcher m2 = timepat2.matcher(columns.top()) ;
+                Matcher m = timepat.matcher(columns.top()) ;
+                columns.shift() ;
                 int start_time;
                 if (m2.matches()) {
                     start_time = 3600 * Integer.parseInt(m2.group(1)) +
@@ -184,16 +270,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     start_time = 3600 * Integer.parseInt(m.group(1)) +
                     60 * Integer.parseInt(m.group(2));
                 } else {
-                    System.err.println("no matching item:" + items[index] +
+                    System.err.println("no matching item:" + columns.top(-1) +
                     " while reading agent generation rule.");
                     continue;
                 }
-                index += 1;
+
                 int every_seconds = 0;
                 int every_end_time = 0;
                 if (rule_tag.equals("TIMEEVERY")) {
-                    Matcher timematch2 = timepat2.matcher(items[index]);
-                    Matcher timematch = timepat.matcher(items[index]);
+                    Matcher timematch2 = timepat2.matcher(columns.top());
+                    Matcher timematch = timepat.matcher(columns.top());
+                    columns.shift() ;
                     if (timematch2.matches()) {
                         every_end_time = 3600 *
                             Integer.parseInt(timematch2.group(1)) +
@@ -204,47 +291,44 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                             Integer.parseInt(timematch.group(1)) +
                             60 * Integer.parseInt(timematch.group(2));
                     } else {
-                        System.err.println("no matching item:" + items[index] +
+                        System.err.println("no matching item:" + columns.top() +
                         " while reading agent generation rule.");
                         continue;
                     }
-                    index += 1;
-                    every_seconds = Integer.parseInt(items[index]);
-                    index += 1;
+                    every_seconds = Integer.parseInt(columns.get()) ;
                 }
 
                 // duration
-                double duration = Double.parseDouble(items[index]);
-                index += 1;
+                double duration = Double.parseDouble(columns.get()) ;
+
                 // total number of generated agents
-                int total = Integer.parseInt(items[index]);
+                int total = Integer.parseInt(columns.get());
                 if (liner_generate_agent_ratio > 0) {
                     System.err.println("GenerateAgentFile total: " + total +
                             ", ratio: " + liner_generate_agent_ratio);
                     total = (int) (total * liner_generate_agent_ratio);
                     System.err.println("GenerateAgentFile total: " + total);
                 }
-                index += 1;
+
                 // speed model
-                String speedModelString = items[index];
+                String speedModelString = columns.top() ;
                 SpeedCalculationModel speed_model =
                     SpeedCalculationModel.LaneModel;
                 if (speedModelString.equals("LANE")) {
                     speed_model = SpeedCalculationModel.LaneModel;
-                    index += 1;
+                    columns.shift() ;
                 } else if (speedModelString.equals("DENSITY")) {
                     speed_model = SpeedCalculationModel.DensityModel;
-                    index += 1;
+                    columns.shift() ;
                 } else if (speedModelString.equals("EXPECTED")) {
                     speed_model = SpeedCalculationModel.ExpectedDensityModel;
-                    index += 1;
+                    columns.shift() ;
                 }
 
                 // EACHRANDOM
                 int each = 0;
                 if (rule_tag.equals("EACHRANDOM")) {
-                    each = Integer.parseInt(items[index]);
-                    index += 1;
+                    each = Integer.parseInt(columns.get()) ;
                 }
 
                 // goal list which staff navigates
@@ -253,10 +337,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 ArrayList<String> navigatedLink = new ArrayList<String>();
                 ArrayList<String> planned_route = new ArrayList<String>();
                 ArrayList<String> planned_route_key = new ArrayList<String>();
-                String goal = items[index];
+                String goal = columns.top() ;
                 if (rule_tag.equals("RANDOMALL")) {
                     if (goal == null) {
-                        System.err.println("no matching link:" + items[index] +
+                        System.err.println("no matching link:" + columns.top() +
                                 " while reading agent generation rule.");
                         continue;
                     }
@@ -271,12 +355,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                 }
                 if (rule_tag.equals("STAFF")) {
-                    for (int i = index; i < items.length; i++) {
-                        if (i + 1 < items.length) {
-                            navigationGoal.add(items[i]);
-                            navigatedLink.add(items[i + 1]);
+                    while(!columns.isEmpty()) {
+                        if (columns.length() > 1) {
+                            navigationGoal.add(columns.get()) ;
+                            navigatedLink.add(columns.get()) ;
                         }
-                        i += 1;
                     }
                     int numNavigation = navigationGoal.size();
                     if (navigationGoal.size() != navigatedLink.size())
@@ -287,17 +370,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                 } else if (rule_tag.equals("RANDOMALL")) {
                     if (goal == null) {
-                        System.err.println("no matching link:" + items[index] +
+                        System.err.println("no matching link:" + columns.top() +
                                 " while reading agent generation rule.");
                         continue;
                     }
-                    index += 1;
+                    columns.shift() ;
+
                     ArrayList<String> route_tags = new ArrayList<String>();
-                    for (int i = index; i < items.length; ++i) {
-                        if (items[i] != null &&
-                                !items[i].equals("")) {
-                            route_tags.add(items[i]);
+                    while(! columns.isEmpty()) {
+                        if (columns.top() != null &&
+                            !columns.top().equals("")) {
+                            route_tags.add(columns.top()) ;
                         }
+                        columns.shift() ;
                     }
                     // Pick up nodes which contains specified tag to select
                     // route candidates from route tags.
@@ -315,16 +400,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     // goal and route plan
                     //String goal = items[index];
                     if (goal == null) {
-                        System.err.println("no matching link:" + items[index] +
+                        System.err.println("no matching link:" + columns.top() +
                                 " while reading agent generation rule.");
                         continue;
                     }
-                    index += 1;
-                    for (int i = index; i < items.length; ++i) {
-                        if (items[i] != null &&
-                                !items[i].equals("")) {
-                            planned_route.add(items[i]);
+                    columns.shift() ;
+
+                    while(!columns.isEmpty()) {
+                        if (columns.top() != null &&
+                            !columns.top().equals("")) {
+                            planned_route.add(columns.top());
                         }
+                        columns.shift() ;
                     }
                 }
 
@@ -334,6 +421,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     definitionErrors.put(orgLine, routeErrors);
                 }
 
+                // ここから、エージェント生成が始まる。
                 if (rule_tag.equals("EACH")) {
                     processGenerationForEach(nodes, links, 
                                              className,
@@ -779,7 +867,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         startInfo.startLinks.get(random.nextInt(startInfo.startLinks.size()));
                     boolean invalid_tag = false;
                     for (String tag : tmp_link.getTags()) {
-                        /* [2014.12.18 I.Noda]
+                        /* [2014.12.18 I.Noda] should obsolete
                          * なんじゃこりゃ？ 
                          * こんなところに隠しコマンド
                          */
