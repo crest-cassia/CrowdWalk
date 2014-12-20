@@ -366,47 +366,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
                         rule_tag.equals("RANDOMALL")) {
-                    int links_size = startInfo.startLinks.size();
-                    int size = links_size + startInfo.startNodes.size();
-                    int[] chosen_links = new int[startInfo.startLinks.size()];
-                    int[] chosen_nodes = new int[startInfo.startNodes.size()];
-                    for (int i = 0; i < total; i++) {
-                        int chosen_index = random.nextInt(size);
-                        if (chosen_index + 1 > links_size)
-                            chosen_nodes[chosen_index - links_size] += 1;
-                        else
-                            chosen_links[chosen_index] += 1;
-                    }
-                    for (int i = 0; i < startInfo.startLinks.size(); i++) {
-                        if (chosen_links[i] > 0)
-                            this.add(new GenerateAgentFromLink(className,
-                                                               agentConf,
-                                    startInfo.startLinks.get(i),
-                                    startInfo.agentConditions,
-                                    goal,
-                                    planned_route,
-                                    start_time,
-                                    duration,
-                                    chosen_links[i],
-                                    speed_model,
-                                    random,
-                                    orgLine));
-                    }
-                    for (int i = 0; i < startInfo.startNodes.size(); i++) {
-                        if (chosen_nodes[i] > 0)
-                            this.add(new GenerateAgentFromNode(className,
-                                                               agentConf,
-                                    startInfo.startNodes.get(i),
-                                    startInfo.agentConditions,
-                                    goal,
-                                    planned_route,
-                                    start_time,
-                                    duration,
-                                    chosen_nodes[i],
-                                    speed_model,
-                                    random,
-                                    orgLine));
-                    }
+                    processGenerationForRandom(nodes, links, 
+                                               className,
+                                               agentConf,
+                                               startInfo,
+                                               goal,
+                                               planned_route,
+                                               start_time,
+                                               total,
+                                               duration,
+                                               speed_model,
+                                               orgLine) ;
                 } else if (rule_tag.equals("EACHRANDOM")) {
                     processGenerationForEachRandom(nodes, links, 
                                                    className,
@@ -611,7 +581,65 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     }
 
     /**
-     * EACH RANDOM 用解析ルーチン
+     * RANDOM/RANDOMALL 用生成ルーチン
+     */
+    private void processGenerationForRandom(MapNodeTable nodes,
+                                            MapLinkTable links,
+                                            String className,
+                                            String agentConf,
+                                            StartInfo startInfo,
+                                            String goal,
+                                            ArrayList<String> planned_route,
+                                            int start_time,
+                                            int total,
+                                            double duration,
+                                            SpeedCalculationModel speed_model,
+                                            String orgLine) {
+        int links_size = startInfo.startLinks.size();
+        int size = links_size + startInfo.startNodes.size();
+        int[] chosen_links = new int[startInfo.startLinks.size()];
+        int[] chosen_nodes = new int[startInfo.startNodes.size()];
+        for (int i = 0; i < total; i++) {
+            int chosen_index = random.nextInt(size);
+            if (chosen_index + 1 > links_size)
+                chosen_nodes[chosen_index - links_size] += 1;
+            else
+                chosen_links[chosen_index] += 1;
+        }
+        for (int i = 0; i < startInfo.startLinks.size(); i++) {
+            if (chosen_links[i] > 0)
+                this.add(new GenerateAgentFromLink(className,
+                                                   agentConf,
+                                                   startInfo.startLinks.get(i),
+                                                   startInfo.agentConditions,
+                                                   goal,
+                                                   planned_route,
+                                                   start_time,
+                                                   duration,
+                                                   chosen_links[i],
+                                                   speed_model,
+                                                   random,
+                                                   orgLine));
+        }
+        for (int i = 0; i < startInfo.startNodes.size(); i++) {
+            if (chosen_nodes[i] > 0)
+                this.add(new GenerateAgentFromNode(className,
+                                                   agentConf,
+                                                   startInfo.startNodes.get(i),
+                                                   startInfo.agentConditions,
+                                                   goal,
+                                                   planned_route,
+                                                   start_time,
+                                                   duration,
+                                                   chosen_nodes[i],
+                                                   speed_model,
+                                                   random,
+                                                   orgLine));
+        }
+    }
+
+    /**
+     * EACH RANDOM 用生成ルーチン
      */
     private void processGenerationForEachRandom(MapNodeTable nodes,
                                                 MapLinkTable links,
@@ -679,7 +707,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     }
 
     /**
-     * TIME EVERY 用解析ルーチン
+     * TIME EVERY 用生成ルーチン
      */
     private void processGenerationForTimeEvery(MapNodeTable nodes,
                                                MapLinkTable links,
