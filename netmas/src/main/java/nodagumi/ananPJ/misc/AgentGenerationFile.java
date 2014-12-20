@@ -408,57 +408,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     orgLine));
                     }
                 } else if (rule_tag.equals("EACHRANDOM")) {
-                    int links_size = startInfo.startLinks.size();
-                    int size = links_size + startInfo.startNodes.size();
-                    int[] chosen_links = new int[startInfo.startLinks.size()];
-                    int[] chosen_nodes = new int[startInfo.startNodes.size()];
-                    for (int i = 0; i < total; i++) {
-                        int counter = 0;
-                        while (true) {
-                            int chosen_index = random.nextInt(size);
-                            if (chosen_index + 1 > links_size &&
-                                    chosen_nodes[chosen_index - links_size] <
-                                each) {
-                                chosen_nodes[chosen_index - links_size] += 1;
-                                break;
-                            } else if (chosen_links[chosen_index] < each) {
-                                chosen_links[chosen_index] += 1;
-                                break;
-                            } else if (counter > MAX_LOOP_COUNTER)
-                                break;
-                            counter++;
-                        }
-                    }
-                    for (int i = 0; i < startInfo.startLinks.size(); i++) {
-                        if (chosen_links[i] > 0)
-                            this.add(new GenerateAgentFromLink(className,
-                                                               agentConf,
-                                    startInfo.startLinks.get(i),
-                                    startInfo.agentConditions,
-                                    goal,
-                                    planned_route,
-                                    start_time,
-                                    duration,
-                                    chosen_links[i],
-                                    speed_model,
-                                    random,
-                                    orgLine));
-                    }
-                    for (int i = 0; i < startInfo.startNodes.size(); i++) {
-                        if (chosen_nodes[i] > 0)
-                            this.add(new GenerateAgentFromNode(className,
-                                                               agentConf,
-                                    startInfo.startNodes.get(i),
-                                    startInfo.agentConditions,
-                                    goal,
-                                    planned_route,
-                                    start_time,
-                                    duration,
-                                    chosen_nodes[i],
-                                    speed_model,
-                                    random,
-                                    orgLine));
-                    }
+                    processGenerationForEachRandom(nodes, links, 
+                                                   className,
+                                                   agentConf,
+                                                   startInfo,
+                                                   goal,
+                                                   planned_route,
+                                                   each,
+                                                   start_time,
+                                                   total,
+                                                   duration,
+                                                   speed_model,
+                                                   orgLine) ;
                 } else if (rule_tag.equals("TIMEEVERY")) {
                     processGenerationForTimeEvery(nodes, links, 
                                                   className,
@@ -647,6 +608,74 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             startInfo.continueP = true ;
         }
         return startInfo ;
+    }
+
+    /**
+     * EACH RANDOM 用解析ルーチン
+     */
+    private void processGenerationForEachRandom(MapNodeTable nodes,
+                                                MapLinkTable links,
+                                                String className,
+                                                String agentConf,
+                                                StartInfo startInfo,
+                                                String goal,
+                                                ArrayList<String> planned_route,
+                                                int each,
+                                                int start_time,
+                                                int total,
+                                                double duration,
+                                                SpeedCalculationModel speed_model,
+                                                String orgLine) {
+        int links_size = startInfo.startLinks.size();
+        int size = links_size + startInfo.startNodes.size();
+        int[] chosen_links = new int[startInfo.startLinks.size()];
+        int[] chosen_nodes = new int[startInfo.startNodes.size()];
+        for (int i = 0; i < total; i++) {
+            int counter = 0;
+            while (true) {
+                int chosen_index = random.nextInt(size);
+                if (chosen_index + 1 > links_size &&
+                    chosen_nodes[chosen_index - links_size] < each) {
+                    chosen_nodes[chosen_index - links_size] += 1;
+                    break;
+                } else if (chosen_links[chosen_index] < each) {
+                    chosen_links[chosen_index] += 1;
+                    break;
+                } else if (counter > MAX_LOOP_COUNTER)
+                    break;
+                counter++;
+            }
+        }
+        for (int i = 0; i < startInfo.startLinks.size(); i++) {
+            if (chosen_links[i] > 0)
+                this.add(new GenerateAgentFromLink(className,
+                                                   agentConf,
+                                                   startInfo.startLinks.get(i),
+                                                   startInfo.agentConditions,
+                                                   goal,
+                                                   planned_route,
+                                                   start_time,
+                                                   duration,
+                                                   chosen_links[i],
+                                                   speed_model,
+                                                   random,
+                                                   orgLine));
+        }
+        for (int i = 0; i < startInfo.startNodes.size(); i++) {
+            if (chosen_nodes[i] > 0)
+                this.add(new GenerateAgentFromNode(className,
+                                                   agentConf,
+                                                   startInfo.startNodes.get(i),
+                                                   startInfo.agentConditions,
+                                                   goal,
+                                                   planned_route,
+                                                   start_time,
+                                                   duration,
+                                                   chosen_nodes[i],
+                                                   speed_model,
+                                                   random,
+                                                   orgLine));
+        }
     }
 
     /**
