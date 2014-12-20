@@ -234,6 +234,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 // check rule strings
+                /* [2014.12.20 I.Noda] should obsolete
+                 * rule_tag が指定されないことがあるのか？
+                 * これは、特に CSV の場合、致命的なバグの原因となる。
+                 */
                 String rule_tag = columns.top() ;
                 Matcher rule_match = rulepat.matcher(rule_tag);
                 if (rule_match.matches())
@@ -242,6 +246,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     // if no rule tag, default tag "EACH" is applied.
                     rule_tag = "EACH";
                 }
+
+                // LINER_GENERATE_AGENT_RATIO の場合、
+                // lga_ratio が次に来る。
+                // で、読み込んだら次の行。（エージェント生成しない）
                 if (rule_tag.equals("LINER_GENERATE_AGENT_RATIO")) {
                     double lga_ratio = 0;
                     lga_ratio = Double.parseDouble(columns.get()) ;
@@ -286,6 +294,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 // speed model
+                /* [2014.12.20 I.Noda] should obsolete
+                 * speed_model を指定しないことはあるのか？
+                 * 少なくとも CSV で指定する場合、
+                 * 混乱の原因以外の何物でもない
+                 * 一番問題なのは、speed_model に相当するタグでなければ、
+                 * columns を shift しないところ。
+                 */
                 String speedModelString = columns.top() ;
                 SpeedCalculationModel speed_model =
                     SpeedCalculationModel.LaneModel;
@@ -398,58 +413,58 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // ここから、エージェント生成が始まる。
                 if (rule_tag.equals("EACH")) {
-                    processGenerationForEach(nodes, links, 
+                    doGenerationForEach(nodes, links,
+                                        className,
+                                        agentConf,
+                                        startInfo,
+                                        goal,
+                                        planned_route,
+                                        start_time,
+                                        total,
+                                        duration,
+                                        speed_model,
+                                        orgLine) ;
+                    //} else if (rule_tag.equals("RANDOM")) {
+                } else if (rule_tag.equals("RANDOM") ||
+                           rule_tag.equals("RANDOMALL")) {
+                    doGenerationForRandom(nodes, links,
+                                          className,
+                                          agentConf,
+                                          startInfo,
+                                          goal,
+                                          planned_route,
+                                          start_time,
+                                          total,
+                                          duration,
+                                          speed_model,
+                                          orgLine) ;
+                } else if (rule_tag.equals("EACHRANDOM")) {
+                    doGenerationForEachRandom(nodes, links,
+                                              className,
+                                              agentConf,
+                                              startInfo,
+                                              goal,
+                                              planned_route,
+                                              each,
+                                              start_time,
+                                              total,
+                                              duration,
+                                              speed_model,
+                                              orgLine) ;
+                } else if (rule_tag.equals("TIMEEVERY")) {
+                    doGenerationForTimeEvery(nodes, links,
                                              className,
                                              agentConf,
                                              startInfo,
                                              goal,
                                              planned_route,
                                              start_time,
+                                             every_end_time,
+                                             every_seconds,
                                              total,
                                              duration,
                                              speed_model,
                                              orgLine) ;
-                //} else if (rule_tag.equals("RANDOM")) {
-                } else if (rule_tag.equals("RANDOM") ||
-                        rule_tag.equals("RANDOMALL")) {
-                    processGenerationForRandom(nodes, links, 
-                                               className,
-                                               agentConf,
-                                               startInfo,
-                                               goal,
-                                               planned_route,
-                                               start_time,
-                                               total,
-                                               duration,
-                                               speed_model,
-                                               orgLine) ;
-                } else if (rule_tag.equals("EACHRANDOM")) {
-                    processGenerationForEachRandom(nodes, links, 
-                                                   className,
-                                                   agentConf,
-                                                   startInfo,
-                                                   goal,
-                                                   planned_route,
-                                                   each,
-                                                   start_time,
-                                                   total,
-                                                   duration,
-                                                   speed_model,
-                                                   orgLine) ;
-                } else if (rule_tag.equals("TIMEEVERY")) {
-                    processGenerationForTimeEvery(nodes, links, 
-                                                  className,
-                                                  agentConf,
-                                                  startInfo,
-                                                  goal,
-                                                  planned_route,
-                                                  start_time,
-                                                  every_end_time,
-                                                  every_seconds,
-                                                  total,
-                                                  duration,
-                                                  speed_model,
-                                                  orgLine) ;
                 } else {
                     System.err.println("AgentGenerationFile invalid rule " +
                                        "type in generation file!");
@@ -661,18 +676,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * EACH 用生成ルーチン
      */
-    private void processGenerationForEach(MapNodeTable nodes,
-                                          MapLinkTable links,
-                                          String className,
-                                          String agentConf,
-                                          StartInfo startInfo,
-                                          String goal,
-                                          ArrayList<String> planned_route,
-                                          int start_time,
-                                          int total,
-                                          double duration,
-                                          SpeedCalculationModel speed_model,
-                                          String orgLine) {
+    private void doGenerationForEach(MapNodeTable nodes,
+                                     MapLinkTable links,
+                                     String className,
+                                     String agentConf,
+                                     StartInfo startInfo,
+                                     String goal,
+                                     ArrayList<String> planned_route,
+                                     int start_time,
+                                     int total,
+                                     double duration,
+                                     SpeedCalculationModel speed_model,
+                                     String orgLine) {
         for (final MapLink start_link : startInfo.startLinks) {
             this.add(new GenerateAgentFromLink(className,
                                                agentConf,
@@ -706,18 +721,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * RANDOM/RANDOMALL 用生成ルーチン
      */
-    private void processGenerationForRandom(MapNodeTable nodes,
-                                            MapLinkTable links,
-                                            String className,
-                                            String agentConf,
-                                            StartInfo startInfo,
-                                            String goal,
-                                            ArrayList<String> planned_route,
-                                            int start_time,
-                                            int total,
-                                            double duration,
-                                            SpeedCalculationModel speed_model,
-                                            String orgLine) {
+    private void doGenerationForRandom(MapNodeTable nodes,
+                                       MapLinkTable links,
+                                       String className,
+                                       String agentConf,
+                                       StartInfo startInfo,
+                                       String goal,
+                                       ArrayList<String> planned_route,
+                                       int start_time,
+                                       int total,
+                                       double duration,
+                                       SpeedCalculationModel speed_model,
+                                       String orgLine) {
         int links_size = startInfo.startLinks.size();
         int size = links_size + startInfo.startNodes.size();
         int[] chosen_links = new int[startInfo.startLinks.size()];
@@ -764,19 +779,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * EACH RANDOM 用生成ルーチン
      */
-    private void processGenerationForEachRandom(MapNodeTable nodes,
-                                                MapLinkTable links,
-                                                String className,
-                                                String agentConf,
-                                                StartInfo startInfo,
-                                                String goal,
-                                                ArrayList<String> planned_route,
-                                                int each,
-                                                int start_time,
-                                                int total,
-                                                double duration,
-                                                SpeedCalculationModel speed_model,
-                                                String orgLine) {
+    private void doGenerationForEachRandom(MapNodeTable nodes,
+                                           MapLinkTable links,
+                                           String className,
+                                           String agentConf,
+                                           StartInfo startInfo,
+                                           String goal,
+                                           ArrayList<String> planned_route,
+                                           int each,
+                                           int start_time,
+                                           int total,
+                                           double duration,
+                                           SpeedCalculationModel speed_model,
+                                           String orgLine) {
         int links_size = startInfo.startLinks.size();
         int size = links_size + startInfo.startNodes.size();
         int[] chosen_links = new int[startInfo.startLinks.size()];
@@ -832,20 +847,20 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * TIME EVERY 用生成ルーチン
      */
-    private void processGenerationForTimeEvery(MapNodeTable nodes,
-                                               MapLinkTable links,
-                                               String className,
-                                               String agentConf,
-                                               StartInfo startInfo,
-                                               String goal,
-                                               ArrayList<String> planned_route,
-                                               int start_time,
-                                               int every_end_time,
-                                               int every_seconds,
-                                               int total,
-                                               double duration,
-                                               SpeedCalculationModel speed_model,
-                                               String orgLine) {
+    private void doGenerationForTimeEvery(MapNodeTable nodes,
+                                          MapLinkTable links,
+                                          String className,
+                                          String agentConf,
+                                          StartInfo startInfo,
+                                          String goal,
+                                          ArrayList<String> planned_route,
+                                          int start_time,
+                                          int every_end_time,
+                                          int every_seconds,
+                                          int total,
+                                          double duration,
+                                          SpeedCalculationModel speed_model,
+                                          String orgLine) {
         int step_time = start_time;
         /* let's assume start & goal & planned_route candidates
          * are all MapLink!
@@ -870,15 +885,15 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 // random.nextInt(startInfo.startLinks.size()));
                 MapLink start_link = null;
                 while (start_link == null) {
-                    MapLink tmp_link = 
+                    MapLink tmp_link =
                         startInfo.startLinks.get(random.nextInt(startInfo.startLinks.size()));
                     boolean invalid_tag = false;
                     for (String tag : tmp_link.getTags()) {
                         /* [2014.12.18 I.Noda] should obsolete
-                         * なんじゃこりゃ？ 
+                         * なんじゃこりゃ？
                          * こんなところに隠しコマンド
                          */
-                        if (tag.contains("INVALID")) { 
+                        if (tag.contains("INVALID")) {
                             invalid_tag = true;
                             break;
                         }
@@ -892,7 +907,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                        "no match goals for the tag: " +
                                        goal);
                 }
-                String goal_node = 
+                String goal_node =
                     goalCandidates.get(random.nextInt(goalCandidates.size()));
                 ArrayList<String> plannedRoute =
                     new ArrayList<String>();
