@@ -796,35 +796,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
         }
         for (int i = 0; i < startInfo.startLinks.size(); i++) {
-            if (chosen_links[i] > 0)
-                this.add(new GenerateAgentFromLink(genConfig.agentClassName,
-                                                   genConfig.agentConfString,
-                                                   startInfo.startLinks.get(i),
-                                                   genConfig.conditions,
-                                                   genConfig.goal,
-                                                   genConfig.plannedRoute,
-                                                   genConfig.startTime,
-                                                   genConfig.duration,
-                                                   chosen_links[i],
-                                                   genConfig.speedModel,
-                                                   random,
-                                                   genConfig.originalInfo)) ;
+            if (chosen_links[i] > 0) {
+                genConfig.startPlace = startInfo.startLinks.get(i) ;
+                genConfig.total = chosen_links[i] ;
+                this.add(new GenerateAgentFromLink(genConfig, random)) ;
+            }
 
         }
         for (int i = 0; i < startInfo.startNodes.size(); i++) {
-            if (chosen_nodes[i] > 0)
-                this.add(new GenerateAgentFromNode(genConfig.agentClassName,
-                                                   genConfig.agentConfString,
-                                                   startInfo.startNodes.get(i),
-                                                   genConfig.conditions,
-                                                   genConfig.goal,
-                                                   genConfig.plannedRoute,
-                                                   genConfig.startTime,
-                                                   genConfig.duration,
-                                                   chosen_nodes[i],
-                                                   genConfig.speedModel,
-                                                   random,
-                                                   genConfig.originalInfo)) ;
+            if (chosen_nodes[i] > 0) {
+                genConfig.startPlace = startInfo.startNodes.get(i) ;
+                genConfig.total = chosen_nodes[i] ;
+                this.add(new GenerateAgentFromNode(genConfig,random)) ;
+            }
         }
     }
 
