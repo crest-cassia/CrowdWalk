@@ -37,6 +37,78 @@ public abstract class GenerateAgent implements Serializable {
         new BustleAgent(),
     } ;
 
+    /**
+     * エージェント生成用設定情報用クラス
+     * あまりに引数が多いので、整理。
+     */
+    static public class Config {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * エージェントのクラス名
+         */
+        public String agentClassName = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * エージェント設定情報 (JSON 文字列)
+         */
+        public String agentConfString = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 出発場所
+         */
+        public OBNode startPlace = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 生成条件
+         */
+        public String[] conditions = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 目的地
+         */
+        public String goal = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 経路
+         */
+        public ArrayList<String> plannedRoute ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 開始時刻
+         */
+        public double startTime = 0.0 ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 持続時間
+         */
+        public double duration = 0.0 ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 生成数
+         */
+        public int total = 0 ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * スピードモデル
+         */
+        public SpeedCalculationModel speedModel ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 設定文字列（変換前の設定情報）
+         */
+        public String originalInfo = null ;
+    }
+
     public String goal;
     ArrayList<String> planned_route;
     double start_time, duration;
@@ -50,8 +122,25 @@ public abstract class GenerateAgent implements Serializable {
     /**
      * エージェントクラスの名前を格納。
      */
-    public String agentClassName = "WaitRunningAroundPerson" ;
+    public String agentClassName = "NaiveAgent" ;
     public String agentConf = null ; // config in json string.
+
+    /**
+     *  Config によるコンストラクタ
+     */
+    public GenerateAgent(Config config, Random _random) {
+        this(config.agentClassName,
+             config.agentConfString,
+             config.conditions,
+             config.goal,
+             config.plannedRoute,
+             config.startTime,
+             config.duration,
+             config.total,
+             config.speedModel,
+             _random,
+             config.originalInfo) ;
+    }
 
     public GenerateAgent(String _agentClassName,
                          String _agentConf,
@@ -223,6 +312,15 @@ public abstract class GenerateAgent implements Serializable {
 class GenerateAgentFromLink extends GenerateAgent {
     MapLink start_link;
 
+    /**
+     * Config によるコンストラクタ
+     */
+    public GenerateAgentFromLink(Config config, Random random) {
+        super(config, random) ;
+        start_link = (MapLink)config.startPlace ;
+    }
+
+
     public GenerateAgentFromLink(String _agentClassName,
                                  String _agentConf,
             MapLink _start_link,
@@ -293,6 +391,14 @@ class GenerateAgentFromLink extends GenerateAgent {
 
 class GenerateAgentFromNode extends GenerateAgent {
     MapNode start_node;
+
+    /**
+     * Config によるコンストラクタ
+     */
+    public GenerateAgentFromNode(Config config, Random random) {
+        super(config, random) ;
+        start_node = (MapNode)config.startPlace ;
+    }
 
     public GenerateAgentFromNode(String _agentClassName,
                                  String _agentConf,
