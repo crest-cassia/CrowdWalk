@@ -338,17 +338,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                  * 一番問題なのは、speed_model に相当するタグでなければ、
                  * columns を shift しないところ。
                  */
-                String speedModelString = columns.top() ;
-                genConfig.speedModel =
-                    SpeedCalculationModel.LaneModel;
-                if (speedModelString.equals("LANE")) {
+                genConfig.speedModel = getSpeedModelByString(columns.top()) ;
+                if(genConfig.speedModel == null) {
                     genConfig.speedModel = SpeedCalculationModel.LaneModel;
-                    columns.shift() ;
-                } else if (speedModelString.equals("DENSITY")) {
-                    genConfig.speedModel = SpeedCalculationModel.DensityModel;
-                    columns.shift() ;
-                } else if (speedModelString.equals("EXPECTED")) {
-                    genConfig.speedModel = SpeedCalculationModel.ExpectedDensityModel;
+                } else {
                     columns.shift() ;
                 }
 
@@ -361,6 +354,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 // 次はおそらく使われていない。
                 //ArrayList<String> planned_route_key = new ArrayList<String>();
 
+                // goal を scan
                 genConfig.goal = columns.top() ;
 
                 //ArrayList<String> planned_route = new ArrayList<String>();
@@ -557,6 +551,20 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
+    /**
+     * speed mode を取得
+     */
+    private SpeedCalculationModel getSpeedModelByString(String modelName) {
+        if (modelName.equals("LANE")) {
+            return SpeedCalculationModel.LaneModel;
+        } else if (modelName.equals("DENSITY")) {
+            return SpeedCalculationModel.DensityModel;
+        } else if (modelName.equals("EXPECTED")) {
+            return SpeedCalculationModel.ExpectedDensityModel;
+        } else {
+            return null ;
+        }
+    }
 
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {
         liner_generate_agent_ratio = _liner_generate_agent_ratio;

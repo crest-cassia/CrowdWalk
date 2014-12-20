@@ -118,5 +118,21 @@ public class Itk_Test extends TestCase {
         Itk.dbgMsg("Foo02", Foo02.baz()) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * test enum
+     */
+    public enum Foo10 { val0, val2 }
+
+    @Test
+    public void test_enum() {
+        Foo10 foo = Foo10.val0 ;
+        Foo10 bar = null ;
+
+        Itk.dbgMsg("foo", foo) ;
+        Itk.dbgMsg("bar", bar) ;
+    }
+
+
 } // class Itk_Test
 
