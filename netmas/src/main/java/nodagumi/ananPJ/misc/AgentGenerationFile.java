@@ -15,6 +15,8 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.lang.Exception;
+
 import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON ;
@@ -186,10 +188,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
         String line = null;
         try {
-            Pattern timepat;
-            timepat = Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
-            Pattern timepat2;
-            timepat2 = Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
             Pattern rulepat;
             rulepat = Pattern.compile("EACH|RANDOM|EACHRANDOM|STAFF|" +
                     "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
@@ -257,43 +255,20 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if(startInfo.continueP) continue ;
 
                 // time
-                Matcher m2 = timepat2.matcher(columns.top()) ;
-                Matcher m = timepat.matcher(columns.top()) ;
-                columns.shift() ;
                 int start_time;
-                if (m2.matches()) {
-                    start_time = 3600 * Integer.parseInt(m2.group(1)) +
-                    60 * Integer.parseInt(m2.group(2)) +
-                     Integer.parseInt(m2.group(3)) 
-                    ;
-                } else if (m.matches()) {
-                    start_time = 3600 * Integer.parseInt(m.group(1)) +
-                    60 * Integer.parseInt(m.group(2));
-                } else {
-                    System.err.println("no matching item:" + columns.top(-1) +
-                    " while reading agent generation rule.");
-                    continue;
+                try {
+                    start_time = scanTimeString(columns.get()) ;
+                } catch(Exception ex) {
+                    continue ;
                 }
 
                 int every_seconds = 0;
                 int every_end_time = 0;
                 if (rule_tag.equals("TIMEEVERY")) {
-                    Matcher timematch2 = timepat2.matcher(columns.top());
-                    Matcher timematch = timepat.matcher(columns.top());
-                    columns.shift() ;
-                    if (timematch2.matches()) {
-                        every_end_time = 3600 *
-                            Integer.parseInt(timematch2.group(1)) +
-                            60 * Integer.parseInt(timematch2.group(2)) +
-                            Integer.parseInt(timematch2.group(3));
-                    } else if (timematch.matches()) {
-                        every_end_time = 3600 *
-                            Integer.parseInt(timematch.group(1)) +
-                            60 * Integer.parseInt(timematch.group(2));
-                    } else {
-                        System.err.println("no matching item:" + columns.top() +
-                        " while reading agent generation rule.");
-                        continue;
+                    try {
+                        every_end_time = scanTimeString(columns.get()) ;
+                    } catch(Exception ex) {
+                        continue ;
                     }
                     every_seconds = Integer.parseInt(columns.get()) ;
                 }
@@ -506,6 +481,38 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
             throw new Exception(errorMessage.toString());
         }
+    }
+
+    /**
+     * 時間・時刻表示の解析用パターン
+     */
+    private Pattern timepat = Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
+    private Pattern timepat2 = Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
+    /**
+     * 時間・時刻表示の解析
+     * もし解析できなければ、Exception を throw。
+     * @param timeStr 時間・時刻の文字列
+     * @return 時刻・時間を返す。
+     */
+    public int scanTimeString(String timeStr) throws Exception {
+        Matcher m2 = timepat2.matcher(timeStr) ;
+        Matcher m = timepat.matcher(timeStr) ;
+
+        int timeVal = 0 ;
+        if (m2.matches()) {
+            timeVal = 3600 * Integer.parseInt(m2.group(1)) +
+                60 * Integer.parseInt(m2.group(2)) +
+                Integer.parseInt(m2.group(3))
+                ;
+        } else if (m.matches()) {
+            timeVal = 3600 * Integer.parseInt(m.group(1)) +
+                60 * Integer.parseInt(m.group(2));
+        } else {
+            System.err.println("no matching item:" + timeStr +
+                               " while reading agent generation rule.");
+            throw new Exception("Illegal time format:" + timeStr) ;
+        }
+        return timeVal ;
     }
 
     /**
