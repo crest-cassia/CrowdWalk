@@ -366,23 +366,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 //ArrayList<String> planned_route = new ArrayList<String>();
                 genConfig.plannedRoute = new ArrayList<String>();
 
-                if (rule_tag.equals("RANDOMALL")) {
-                    if (genConfig.goal == null) {
-                        System.err.println("no matching link:" + columns.top() +
-                                " while reading agent generation rule.");
-                        continue;
-                    }
-                    // pick up nodes which contains specified tag
-                    ArrayList<String> goal_candidates =
-                        nodes.findPrefixedTagsOfTaggedNodes(genConfig.goal,
-                                                            randomAllNodePrefixTag);
-                    // and choose randomly
-                    if (goal_candidates.size() > 0) {
-                        genConfig.goal = goal_candidates.get(random.nextInt(
-                                    goal_candidates.size() - 1));
-                    }
-                }
-
                 if (rule_tag.equals("STAFF")) {
                     // goal list which staff navigates
                     ArrayList<String> navigationGoal = new ArrayList<String>();
@@ -408,6 +391,16 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                 " while reading agent generation rule.");
                         continue;
                     }
+                    // pick up nodes which contains specified tag
+                    ArrayList<String> goal_candidates =
+                        nodes.findPrefixedTagsOfTaggedNodes(genConfig.goal,
+                                                            randomAllNodePrefixTag);
+                    // and choose randomly
+                    if (goal_candidates.size() > 0) {
+                        genConfig.goal = goal_candidates.get(random.nextInt(
+                                    goal_candidates.size() - 1));
+                    }
+
                     columns.shift() ;
 
                     ArrayList<String> route_tags = new ArrayList<String>();
