@@ -418,7 +418,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // ここから、エージェント生成が始まる。
                 if (rule_tag.equals("EACH")) {
-                    doGenerationForEach(nodes, links,
+                    doGenerationForEach(nodes, links, genConfig,
                                         genConfig.agentClassName,
                                         genConfig.agentConfString,
                                         startInfo,
@@ -432,7 +432,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
                            rule_tag.equals("RANDOMALL")) {
-                    doGenerationForRandom(nodes, links,
+                    doGenerationForRandom(nodes, links, genConfig,
                                           genConfig.agentClassName,
                                           genConfig.agentConfString,
                                           startInfo,
@@ -444,7 +444,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                           genConfig.speedModel,
                                           genConfig.originalInfo) ;
                 } else if (rule_tag.equals("EACHRANDOM")) {
-                    doGenerationForEachRandom(nodes, links,
+                    doGenerationForEachRandom(nodes, links, genConfig,
                                               genConfig.agentClassName,
                                               genConfig.agentConfString,
                                               startInfo,
@@ -457,7 +457,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                               genConfig.speedModel,
                                               genConfig.originalInfo) ;
                 } else if (rule_tag.equals("TIMEEVERY")) {
-                    doGenerationForTimeEvery(nodes, links,
+                    doGenerationForTimeEvery(nodes, links, genConfig,
                                              genConfig.agentClassName,
                                              genConfig.agentConfString,
                                              startInfo,
@@ -683,6 +683,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForEach(MapNodeTable nodes,
                                      MapLinkTable links,
+                                     GenerateAgent.Config genConfig,
                                      String className,
                                      String agentConf,
                                      StartInfo startInfo,
@@ -728,6 +729,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForRandom(MapNodeTable nodes,
                                        MapLinkTable links,
+                                       GenerateAgent.Config genConfig,
                                        String className,
                                        String agentConf,
                                        StartInfo startInfo,
@@ -786,6 +788,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForEachRandom(MapNodeTable nodes,
                                            MapLinkTable links,
+                                           GenerateAgent.Config genConfig,
                                            String className,
                                            String agentConf,
                                            StartInfo startInfo,
@@ -854,6 +857,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForTimeEvery(MapNodeTable nodes,
                                           MapLinkTable links,
+                                          GenerateAgent.Config genConfig,
                                           String className,
                                           String agentConf,
                                           StartInfo startInfo,
@@ -866,7 +870,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                           double duration,
                                           SpeedCalculationModel speed_model,
                                           String line) {
-        GenerateAgent.Config genConfig = new GenerateAgent.Config() ;
         genConfig.agentClassName = className ;
         genConfig.agentConfString = agentConf ;
         genConfig.startPlace = null ;
