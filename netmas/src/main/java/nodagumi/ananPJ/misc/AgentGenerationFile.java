@@ -458,18 +458,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                               genConfig.originalInfo) ;
                 } else if (rule_tag.equals("TIMEEVERY")) {
                     doGenerationForTimeEvery(nodes, links, genConfig,
-                                             genConfig.agentClassName,
-                                             genConfig.agentConfString,
                                              startInfo,
-                                             genConfig.goal,
-                                             genConfig.plannedRoute,
-                                             genConfig.startTime,
                                              every_end_time,
-                                             every_seconds,
-                                             genConfig.total,
-                                             genConfig.duration,
-                                             genConfig.speedModel,
-                                             genConfig.originalInfo) ;
+                                             every_seconds) ;
                 } else {
                     System.err.println("AgentGenerationFile invalid rule " +
                                        "type in generation file!");
@@ -858,34 +849,26 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private void doGenerationForTimeEvery(MapNodeTable nodes,
                                           MapLinkTable links,
                                           GenerateAgent.Config genConfig,
-                                          String className,
-                                          String agentConf,
                                           StartInfo startInfo,
-                                          String goal,
-                                          ArrayList<String> planned_route,
-                                          double start_time,
                                           int every_end_time,
-                                          int every_seconds,
-                                          int total,
-                                          double duration,
-                                          SpeedCalculationModel speed_model,
-                                          String line) {
-        genConfig.agentClassName = className ;
-        genConfig.agentConfString = agentConf ;
-        genConfig.startPlace = null ;
-        genConfig.conditions = startInfo.agentConditions ;
+                                          int every_seconds) {
+        //genConfig.startPlace = null ;
+        // [I.Noda] ここでは、goal は特別な意味（ただし、あやしい）
+        String goal = genConfig.goal ;
         genConfig.goal = null ;
-        genConfig.plannedRoute = planned_route ;
-        genConfig.startTime = start_time ;
-        genConfig.duration = duration ;
-        genConfig.total = total ;
-        genConfig.speedModel = speed_model ;
-        genConfig.originalInfo = line ;
+        // [I.Noda] startTime も特別な意味
+        int start_time = (int)genConfig.startTime ;
+        genConfig.startTime = 0.0 ;
+        // [I.Noda] total も特別な意味
+        int total = genConfig.total ;
+        // [I.Noda] plannedRoute も特別(ただし、あやしい)
+        ArrayList<String> planned_route = genConfig.plannedRoute ;
 
-        int step_time = (int)start_time;
+        int step_time = start_time;
         /* let's assume start & goal & planned_route candidates
          * are all MapLink!
          */
+
         ArrayList<String> goalCandidates = new ArrayList<String>();
         for (MapNode node : nodes) {
             for (String tag : node.getTags()) {
