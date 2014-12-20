@@ -433,16 +433,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 } else if (rule_tag.equals("RANDOM") ||
                            rule_tag.equals("RANDOMALL")) {
                     doGenerationForRandom(nodes, links, genConfig,
-                                          genConfig.agentClassName,
-                                          genConfig.agentConfString,
                                           startInfo,
-                                          genConfig.goal,
-                                          genConfig.plannedRoute,
-                                          genConfig.startTime,
-                                          genConfig.total,
-                                          genConfig.duration,
-                                          genConfig.speedModel,
-                                          genConfig.originalInfo) ;
+                                          genConfig.total) ;
                 } else if (rule_tag.equals("EACHRANDOM")) {
                     doGenerationForEachRandom(nodes, links, genConfig,
                                               startInfo,
@@ -452,7 +444,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     doGenerationForTimeEvery(nodes, links, genConfig,
                                              startInfo,
                                              every_end_time,
-                                             every_seconds) ;
+                                             every_seconds,
+                                             genConfig.total) ;
                 } else {
                     System.err.println("AgentGenerationFile invalid rule " +
                                        "type in generation file!");
@@ -713,16 +706,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private void doGenerationForRandom(MapNodeTable nodes,
                                        MapLinkTable links,
                                        GenerateAgent.Config genConfig,
-                                       String className,
-                                       String agentConf,
                                        StartInfo startInfo,
-                                       String goal,
-                                       ArrayList<String> planned_route,
-                                       double start_time,
-                                       int total,
-                                       double duration,
-                                       SpeedCalculationModel speed_model,
-                                       String line) {
+                                       int total) {
         int links_size = startInfo.startLinks.size();
         int size = links_size + startInfo.startNodes.size();
         int[] chosen_links = new int[startInfo.startLinks.size()];
@@ -735,34 +720,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 chosen_links[chosen_index] += 1;
         }
         for (int i = 0; i < startInfo.startLinks.size(); i++) {
-            if (chosen_links[i] > 0)
-                this.add(new GenerateAgentFromLink(className,
-                                                   agentConf,
-                                                   startInfo.startLinks.get(i),
-                                                   startInfo.agentConditions,
-                                                   goal,
-                                                   planned_route,
-                                                   start_time,
-                                                   duration,
-                                                   chosen_links[i],
-                                                   speed_model,
-                                                   random,
-                                                   line));
+            if (chosen_links[i] > 0) {
+                genConfig.startPlace = startInfo.startLinks.get(i) ;
+                genConfig.total = chosen_links[i] ;
+                this.add(new GenerateAgentFromLink(genConfig, random)) ;
+            }
         }
         for (int i = 0; i < startInfo.startNodes.size(); i++) {
-            if (chosen_nodes[i] > 0)
-                this.add(new GenerateAgentFromNode(className,
-                                                   agentConf,
-                                                   startInfo.startNodes.get(i),
-                                                   startInfo.agentConditions,
-                                                   goal,
-                                                   planned_route,
-                                                   start_time,
-                                                   duration,
-                                                   chosen_nodes[i],
-                                                   speed_model,
-                                                   random,
-                                                   line));
+            if (chosen_nodes[i] > 0) {
+                genConfig.startPlace = startInfo.startNodes.get(i) ;
+                genConfig.total = chosen_nodes[i] ;
+                this.add(new GenerateAgentFromNode(genConfig, random)) ;
+            }
         }
     }
 
@@ -820,7 +789,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                           GenerateAgent.Config genConfig,
                                           StartInfo startInfo,
                                           int every_end_time,
-                                          int every_seconds) {
+                                          int every_seconds,
+                                          int total) {
         // [I.Noda] startPlace は下で指定。
         genConfig.startPlace = null ;
         // [I.Noda] ここでは、goal は特別な意味（ただし、あやしい）
@@ -829,8 +799,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         // [I.Noda] startTime も特別な意味
         int start_time = (int)genConfig.startTime ;
         genConfig.startTime = 0.0 ;
-        // [I.Noda] total も特別な意味
-        int total = genConfig.total ;
         // [I.Noda] plannedRoute も特別(ただし、あやしい)
         ArrayList<String> planned_route = genConfig.plannedRoute ;
 
