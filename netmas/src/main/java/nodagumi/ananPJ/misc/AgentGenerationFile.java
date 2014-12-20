@@ -358,14 +358,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     each = Integer.parseInt(columns.get()) ;
                 }
 
-                // goal list which staff navigates
-                ArrayList<String> navigationGoal = new ArrayList<String>();
-                // navigated link for above goal
-                ArrayList<String> navigatedLink = new ArrayList<String>();
+                // 次はおそらく使われていない。
+                //ArrayList<String> planned_route_key = new ArrayList<String>();
+
+                genConfig.goal = columns.top() ;
+
                 //ArrayList<String> planned_route = new ArrayList<String>();
                 genConfig.plannedRoute = new ArrayList<String>();
-                ArrayList<String> planned_route_key = new ArrayList<String>();
-                genConfig.goal = columns.top() ;
+
                 if (rule_tag.equals("RANDOMALL")) {
                     if (genConfig.goal == null) {
                         System.err.println("no matching link:" + columns.top() +
@@ -382,7 +382,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     goal_candidates.size() - 1));
                     }
                 }
+
                 if (rule_tag.equals("STAFF")) {
+                    // goal list which staff navigates
+                    ArrayList<String> navigationGoal = new ArrayList<String>();
+                    // navigated link for above goal
+                    ArrayList<String> navigatedLink = new ArrayList<String>();
+
                     while(!columns.isEmpty()) {
                         if (columns.length() > 1) {
                             navigationGoal.add(columns.get()) ;
@@ -845,7 +851,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                      * そこからランダム(random.nextInt())に選ぶ
                      * 理由が全く不明。
                      * なぜなら、それは、pr のみだから。
-                     * つまり、pllanedRoute には、planned_route と
+                     * つまり、plannedRoute には、planned_route と
                      * 同じ物が入るだけ。
                      */
                     ArrayList<String> plannedRouteCandidates =
