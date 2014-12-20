@@ -33,11 +33,14 @@ import nodagumi.Itk.*;
 
 /** Generate agents depending on a generation file.
  * format of generation file of one line:
- * [RULE_STRING,]TAG,START_TIME,DURATION,TOTAL,EXIT_TAG[,ROUTE...]
+ * [RULE_STRING,][AgentClass,AgentConf,]TAG,START_TIME,DURATION,TOTAL,EXIT_TAG[,ROUTE...]
  * STAFF,TAG,START_TIME,DURATION,TOTAL[,EXIT_TAG,NAVIGATED_LINK_TAG]*
+ *  (memo: [AgentClass,AgentConf,] Part is only for Ver.1 format.
  *
  * descriptions:
  *  RULE_STRING:    EACH or RANDOM or EACHRANDOM RANDOMALL
+ *  AgentClass:	    class name of agents (short name or full path name)
+ *  AgentConf:      configuration for the agents. JSON format string
  *  TAG:            agents are generated on the links or nodes with this tag.
  *  START_TIME:     starting time which agents are generated
  *  TOTAL:          total number of generated agents
@@ -51,6 +54,7 @@ import nodagumi.Itk.*;
  * example3) EACHRANDOM,LINK_TAG_3,23:44:12,10,140,1,EXIT_TAG4,STATION
  * example4) STAFF,NODE_TAG,14:00:00,1,1,EXIT_2,LINK_1,EXIT_3,LINK_2
  * example5) RANDOMALL,NODE_TAG,14:00:00,1,1,EXIT_2,LINK_1,EXIT_3,LINK_2
+ * example6) TIMEEVERY,NaiveAgent,"{}",LINK_TAG_1,18:00:00,18:00:00,60,60,100,LANE,EXIT_1,EXIT_2,EXIT_3
  */
 public class AgentGenerationFile extends ArrayList<GenerateAgent> 
     implements Serializable {
@@ -193,7 +197,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
 
             // 各行をCSVとして解釈するためのパーザ
-            CSVParser csvParser = new CSVParser(',','"','\\') ;
+            // quotation にはシングルクォート(')を用いる。
+            // これは、JSON の文字列がダブルクォートのため。
+            CSVParser csvParser = new CSVParser(',','\'','\\') ;
 
             // [I.Noda] 先頭行を判定するための行カウンター
             int lineCount = 0 ;
