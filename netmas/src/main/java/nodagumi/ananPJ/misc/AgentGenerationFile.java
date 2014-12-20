@@ -162,6 +162,23 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
+    //============================================================
+    /**
+     * 生成ルール情報格納用クラス
+     */
+    static private class GenerationConfigBase extends GenerateAgent.Config {
+        /**
+         * 生成リンクリスト
+         */
+        public MapLinkTable startLinks = new MapLinkTable() ;
+
+        /**
+         * 生成ノードリスト
+         */
+        public MapNodeTable startNodes = new MapNodeTable() ;
+    }
+
+    //------------------------------------------------------------
     /**
      * コンストラクタ兼設定解析ルーチン
      */
@@ -210,7 +227,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if (line.startsWith(",")) continue;
 
                 // 生成の設定情報を以下にまとめて保持。
-                GenerateAgent.Config genConfig = new GenerateAgent.Config() ;
+                GenerationConfigBase genConfig = new GenerationConfigBase() ;
+
                 genConfig.originalInfo = line ;
 
                 // おそらくいらないので、排除
@@ -257,13 +275,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     rule_tag = "EACH";
                 }
 
-                /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
-                if(fileFormat == FileFormat.Ver1) {
-                    genConfig.agentClassName = columns.top(0) ;
-                    genConfig.agentConfString = columns.top(1) ;
-                    columns.shift(2) ;
-                }
-
                 // LINER_GENERATE_AGENT_RATIO の場合、
                 // lga_ratio が次に来る。
                 // で、読み込んだら次の行。（エージェント生成しない）
@@ -274,12 +285,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         liner_generate_agent_ratio = lga_ratio;
                     continue;
                 }
+
+                /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
+                if(fileFormat == FileFormat.Ver1) {
+                    genConfig.agentClassName = columns.top(0) ;
+                    genConfig.agentConfString = columns.top(1) ;
+                    columns.shift(2) ;
+                }
+
                 // read start link
-                StartInfo startInfo 
-                    = scanStartLinkTag(columns.get(), nodes, links, rule_tag) ;
-                if(startInfo.continueP) continue ;
-                genConfig.conditions = startInfo.agentConditions ;
-                // startInfo の startNodes, startLinks は別で利用するのでそのまま
+                // もし start link の解析に失敗したら、次の行へ。
+                if(! scanStartLinkTag(columns.get(), nodes, links, 
+                                      rule_tag, genConfig))
+                    continue ;
 
                 // time
                 try {
@@ -433,18 +451,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // ここから、エージェント生成が始まる。
                 if (rule_tag.equals("EACH")) {
-                    doGenerationForEach(nodes, links, genConfig, startInfo) ;
+                    doGenerationForEach(nodes, links, genConfig) ;
                     //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
                            rule_tag.equals("RANDOMALL")) {
-                    doGenerationForRandom(nodes, links, genConfig, startInfo,
+                    doGenerationForRandom(nodes, links, genConfig,
                                           genConfig.total) ;
                 } else if (rule_tag.equals("EACHRANDOM")) {
-                    doGenerationForEachRandom(nodes, links, genConfig, startInfo,
+                    doGenerationForEachRandom(nodes, links, genConfig,
                                               each,
                                               genConfig.total) ;
                 } else if (rule_tag.equals("TIMEEVERY")) {
-                    doGenerationForTimeEvery(nodes, links, genConfig, startInfo,
+                    doGenerationForTimeEvery(nodes, links, genConfig,
                                              every_end_time,
                                              every_seconds,
                                              genConfig.total) ;
@@ -592,16 +610,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     }
 
     /**
-     * start_link_tag に含まれている情報
-     */
-    private class StartInfo {
-        public String[] agentConditions = null ;
-        public MapNodeTable startNodes = new MapNodeTable() ;
-        public MapLinkTable startLinks = new MapLinkTable() ;
-        public boolean continueP = false ;
-    }
-
-    /**
      * start_link_tag の解析パターン
      */
     static private Pattern startpat = Pattern.compile("(.+)\\((.+)\\)");
@@ -609,24 +617,23 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * start_link_tag の解析
      */
-    private StartInfo scanStartLinkTag(String start_link_tag,
-                                       MapNodeTable nodes,
-                                       MapLinkTable links,
-                                       String rule_tag) {
-        StartInfo startInfo = new StartInfo() ;
-
+    private boolean scanStartLinkTag(String start_link_tag,
+                                     MapNodeTable nodes,
+                                     MapLinkTable links,
+                                     String rule_tag,
+                                     GenerationConfigBase genConfig) {
         Matcher tag_match = startpat.matcher(start_link_tag);
         if (tag_match.matches()) {
             start_link_tag = tag_match.group(1);
-            startInfo.agentConditions = tag_match.group(2).split(";");
+            genConfig.conditions = tag_match.group(2).split(";");
         }
 
         /* get all links with the start_link_tag */
-        links.findTaggedLinks(start_link_tag, startInfo.startLinks) ;
+        links.findTaggedLinks(start_link_tag, genConfig.startLinks) ;
 
         for (MapNode node : nodes) {
             if (node.hasTag(start_link_tag)) {
-                startInfo.startNodes.add(node);
+                genConfig.startNodes.add(node);
             }
         }
 
@@ -638,22 +645,25 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     // タグの比較を厳密化する
                     // if (tag.contains(start_link_tag)) {
                     if (tag.equals(start_link_tag)) {
-                        startInfo.startLinks.add(link);
+                        genConfig.startLinks.add(link);
                         break;
                     }
                 }
             }
             */
-            links.findTaggedLinks(start_link_tag, startInfo.startLinks) ;
-            if (startInfo.startLinks.size() <= 0)
-                startInfo.continueP = true ;
+            links.findTaggedLinks(start_link_tag, genConfig.startLinks) ;
+            if (genConfig.startLinks.size() <= 0) {
+                System.err.println("no start links:" + start_link_tag) ;
+                return false ;
+            }
         }
-        if (startInfo.startLinks.size() == 0 &&
-            startInfo.startNodes.size() == 0) {
+        if (genConfig.startLinks.size() == 0 &&
+            genConfig.startNodes.size() == 0) {
             System.err.println("no matching start:" + start_link_tag);
-            startInfo.continueP = true ;
+            return false ;
+        } else {
+            return true ;
         }
-        return startInfo ;
     }
 
     /**
@@ -661,13 +671,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForEach(MapNodeTable nodes,
                                      MapLinkTable links,
-                                     GenerateAgent.Config genConfig,
-                                     StartInfo startInfo) {
-        for (final MapLink start_link : startInfo.startLinks) {
+                                     GenerationConfigBase genConfig) {
+        for (final MapLink start_link : genConfig.startLinks) {
             genConfig.startPlace = start_link ;
             this.add(new GenerateAgentFromLink(genConfig, random)) ;
         }
-        for (final MapNode start_node : startInfo.startNodes) {
+        for (final MapNode start_node : genConfig.startNodes) {
             genConfig.startPlace = start_node ;
             this.add(new GenerateAgentFromNode(genConfig, random)) ;
         }
@@ -678,13 +687,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForRandom(MapNodeTable nodes,
                                        MapLinkTable links,
-                                       GenerateAgent.Config genConfig,
-                                       StartInfo startInfo,
+                                       GenerationConfigBase genConfig,
                                        int total) {
-        int links_size = startInfo.startLinks.size();
-        int size = links_size + startInfo.startNodes.size();
-        int[] chosen_links = new int[startInfo.startLinks.size()];
-        int[] chosen_nodes = new int[startInfo.startNodes.size()];
+        int links_size = genConfig.startLinks.size();
+        int size = links_size + genConfig.startNodes.size();
+        int[] chosen_links = new int[genConfig.startLinks.size()];
+        int[] chosen_nodes = new int[genConfig.startNodes.size()];
         for (int i = 0; i < total; i++) {
             int chosen_index = random.nextInt(size);
             if (chosen_index + 1 > links_size)
@@ -692,16 +700,16 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             else
                 chosen_links[chosen_index] += 1;
         }
-        for (int i = 0; i < startInfo.startLinks.size(); i++) {
+        for (int i = 0; i < genConfig.startLinks.size(); i++) {
             if (chosen_links[i] > 0) {
-                genConfig.startPlace = startInfo.startLinks.get(i) ;
+                genConfig.startPlace = genConfig.startLinks.get(i) ;
                 genConfig.total = chosen_links[i] ;
                 this.add(new GenerateAgentFromLink(genConfig, random)) ;
             }
         }
-        for (int i = 0; i < startInfo.startNodes.size(); i++) {
+        for (int i = 0; i < genConfig.startNodes.size(); i++) {
             if (chosen_nodes[i] > 0) {
-                genConfig.startPlace = startInfo.startNodes.get(i) ;
+                genConfig.startPlace = genConfig.startNodes.get(i) ;
                 genConfig.total = chosen_nodes[i] ;
                 this.add(new GenerateAgentFromNode(genConfig, random)) ;
             }
@@ -713,14 +721,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForEachRandom(MapNodeTable nodes,
                                            MapLinkTable links,
-                                           GenerateAgent.Config genConfig,
-                                           StartInfo startInfo,
+                                           GenerationConfigBase genConfig,
                                            int each,
                                            int total) {
-        int links_size = startInfo.startLinks.size();
-        int size = links_size + startInfo.startNodes.size();
-        int[] chosen_links = new int[startInfo.startLinks.size()];
-        int[] chosen_nodes = new int[startInfo.startNodes.size()];
+        int links_size = genConfig.startLinks.size();
+        int size = links_size + genConfig.startNodes.size();
+        int[] chosen_links = new int[genConfig.startLinks.size()];
+        int[] chosen_nodes = new int[genConfig.startNodes.size()];
         for (int i = 0; i < total; i++) {
             int counter = 0;
             while (true) {
@@ -737,17 +744,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 counter++;
             }
         }
-        for (int i = 0; i < startInfo.startLinks.size(); i++) {
+        for (int i = 0; i < genConfig.startLinks.size(); i++) {
             if (chosen_links[i] > 0) {
-                genConfig.startPlace = startInfo.startLinks.get(i) ;
+                genConfig.startPlace = genConfig.startLinks.get(i) ;
                 genConfig.total = chosen_links[i] ;
                 this.add(new GenerateAgentFromLink(genConfig, random)) ;
             }
 
         }
-        for (int i = 0; i < startInfo.startNodes.size(); i++) {
+        for (int i = 0; i < genConfig.startNodes.size(); i++) {
             if (chosen_nodes[i] > 0) {
-                genConfig.startPlace = startInfo.startNodes.get(i) ;
+                genConfig.startPlace = genConfig.startNodes.get(i) ;
                 genConfig.total = chosen_nodes[i] ;
                 this.add(new GenerateAgentFromNode(genConfig,random)) ;
             }
@@ -759,8 +766,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForTimeEvery(MapNodeTable nodes,
                                           MapLinkTable links,
-                                          GenerateAgent.Config genConfig,
-                                          StartInfo startInfo,
+                                          GenerationConfigBase genConfig,
                                           int every_end_time,
                                           int every_seconds,
                                           int total) {
@@ -796,12 +802,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         while (step_time <= every_end_time) {
             for (int i = 0; i < total; i++) {
                 // 2012.12.26 tkokada update
-                // MapLink start_link = startInfo.startLinks.get(
-                // random.nextInt(startInfo.startLinks.size()));
+                // MapLink start_link = genConfig.startLinks.get(
+                // random.nextInt(genConfig.startLinks.size()));
                 MapLink start_link = null;
                 while (start_link == null) {
                     MapLink tmp_link =
-                        startInfo.startLinks.get(random.nextInt(startInfo.startLinks.size()));
+                        genConfig.startLinks.get(random.nextInt(genConfig.startLinks.size()));
                     boolean invalid_tag = false;
                     for (String tag : tmp_link.getTags()) {
                         /* [2014.12.18 I.Noda] should obsolete
