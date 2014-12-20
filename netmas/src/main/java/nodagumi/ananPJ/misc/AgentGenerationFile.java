@@ -418,31 +418,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // ここから、エージェント生成が始まる。
                 if (rule_tag.equals("EACH")) {
-                    doGenerationForEach(nodes, links, genConfig,
-                                        genConfig.agentClassName,
-                                        genConfig.agentConfString,
-                                        startInfo,
-                                        genConfig.goal,
-                                        genConfig.plannedRoute,
-                                        genConfig.startTime,
-                                        genConfig.total,
-                                        genConfig.duration,
-                                        genConfig.speedModel,
-                                        genConfig.originalInfo) ;
+                    doGenerationForEach(nodes, links, genConfig, startInfo) ;
                     //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
                            rule_tag.equals("RANDOMALL")) {
-                    doGenerationForRandom(nodes, links, genConfig,
-                                          startInfo,
+                    doGenerationForRandom(nodes, links, genConfig, startInfo,
                                           genConfig.total) ;
                 } else if (rule_tag.equals("EACHRANDOM")) {
-                    doGenerationForEachRandom(nodes, links, genConfig,
-                                              startInfo,
+                    doGenerationForEachRandom(nodes, links, genConfig, startInfo,
                                               each,
                                               genConfig.total) ;
                 } else if (rule_tag.equals("TIMEEVERY")) {
-                    doGenerationForTimeEvery(nodes, links, genConfig,
-                                             startInfo,
+                    doGenerationForTimeEvery(nodes, links, genConfig, startInfo,
                                              every_end_time,
                                              every_seconds,
                                              genConfig.total) ;
@@ -660,43 +647,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private void doGenerationForEach(MapNodeTable nodes,
                                      MapLinkTable links,
                                      GenerateAgent.Config genConfig,
-                                     String className,
-                                     String agentConf,
-                                     StartInfo startInfo,
-                                     String goal,
-                                     ArrayList<String> planned_route,
-                                     double start_time,
-                                     int total,
-                                     double duration,
-                                     SpeedCalculationModel speed_model,
-                                     String line) {
+                                     StartInfo startInfo) {
         for (final MapLink start_link : startInfo.startLinks) {
-            this.add(new GenerateAgentFromLink(className,
-                                               agentConf,
-                                               start_link,
-                                               startInfo.agentConditions,
-                                               goal,
-                                               planned_route,
-                                               start_time,
-                                               duration,
-                                               total,
-                                               speed_model,
-                                               random,
-                                               line));
+            genConfig.startPlace = start_link ;
+            this.add(new GenerateAgentFromLink(genConfig, random)) ;
         }
         for (final MapNode start_node : startInfo.startNodes) {
-            this.add(new GenerateAgentFromNode(className,
-                                               agentConf,
-                                               start_node,
-                                               startInfo.agentConditions,
-                                               goal,
-                                               planned_route,
-                                               start_time,
-                                               duration,
-                                               total,
-                                               speed_model,
-                                               random,
-                                               line));
+            genConfig.startPlace = start_node ;
+            this.add(new GenerateAgentFromNode(genConfig, random)) ;
         }
     }
 
