@@ -205,6 +205,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // 生成の設定情報を以下にまとめて保持。
                 GenerateAgent.Config genConfig = new GenerateAgent.Config() ;
+                genConfig.originalInfo = line ;
 
                 // おそらくいらないので、排除
                 //String orgLine = line;
@@ -223,16 +224,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 ShiftingColumns columns = 
                     new ShiftingColumns(csvParser.parseLine(line)) ;
 
-                /* [I.Noda] Ver1 以降は、先頭はエージェントクラス名 */
+                // 行の長さチェック
                 if(fileFormat == FileFormat.Ver1) {
-                    genConfig.agentClassName = columns.top(0) ;
-                    genConfig.agentConfString = columns.top(1) ;
-                    columns.shift(2) ;
-                }
-
-                if (columns.length() < 5 && columns.length() != 2) {
-                    System.err.println("malformed line: " + line);
-                    continue;
+                    if (columns.length() < 7 && columns.length() != 4) {
+                        System.err.println("malformed line: " + line);
+                        continue;
+                    }
+                } else {
+                    if (columns.length() < 5 && columns.length() != 2) {
+                        System.err.println("malformed line: " + line);
+                        continue;
+                    }
                 }
 
                 // check rule strings
@@ -247,6 +249,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 else {
                     // if no rule tag, default tag "EACH" is applied.
                     rule_tag = "EACH";
+                }
+
+                /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
+                if(fileFormat == FileFormat.Ver1) {
+                    genConfig.agentClassName = columns.top(0) ;
+                    genConfig.agentConfString = columns.top(1) ;
+                    columns.shift(2) ;
                 }
 
                 // LINER_GENERATE_AGENT_RATIO の場合、
