@@ -63,16 +63,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * enum FileFormat Version
      */
     public enum FileFormat { Ver0, Ver1 }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ファイルフォーマットのバージョン
      */
     public FileFormat fileFormat = FileFormat.Ver0;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * mode を格納している Map
      */
@@ -80,18 +83,52 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
     //============================================================
     /**
-     * 生成ルール情報格納用クラス
+     * 生成ルール情報格納用クラス(Base)
      */
     static private class GenerationConfigBase extends GenerateAgent.Config {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * 生成リンクリスト
          */
         public MapLinkTable startLinks = new MapLinkTable() ;
 
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * 生成ノードリスト
          */
         public MapNodeTable startNodes = new MapNodeTable() ;
+    }
+
+    //============================================================
+    /**
+     * 生成ルール情報格納用クラス(EachRandom 用)
+     */
+    static private class GenerationConfigForEachRandom 
+        extends GenerationConfigBase {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * ???
+         */
+        public int each = 0 ;
+    }
+
+    //============================================================
+    /**
+     * 生成ルール情報格納用クラス(TimeEvery 用)
+     */
+    static private class GenerationConfigForTimeEvery
+        extends GenerationConfigBase {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * ???
+         */
+        public int everyEndTime = 0 ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * ???
+         */
+        public int everySeconds = 0 ;
     }
 
     //------------------------------------------------------------
@@ -143,11 +180,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
 
-                // 生成の設定情報を以下にまとめて保持。
-                GenerationConfigBase genConfig = new GenerationConfigBase() ;
-
-                genConfig.originalInfo = line ;
-
                 // おそらくいらないので、排除
                 //String orgLine = line;
                 // [2014/12/15 I.Noda]
@@ -192,6 +224,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     rule_tag = "EACH";
                 }
 
+                // 生成の設定情報を以下にまとめて保持。
+                GenerationConfigBase genConfig ;
+                if(rule_tag.equals("EACHRANDOM"))
+                    genConfig = new GenerationConfigForEachRandom() ;
+                else if (rule_tag.equals("TIMEEVERY"))
+                    genConfig = new GenerationConfigForTimeEvery() ;
+                else
+                    genConfig = new GenerationConfigBase() ;
+
+                genConfig.originalInfo = line ;
+
                 // LINER_GENERATE_AGENT_RATIO の場合、
                 // lga_ratio が次に来る。
                 // で、読み込んだら次の行。（エージェント生成しない）
@@ -223,15 +266,15 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     continue ;
                 }
 
-                int every_seconds = 0;
-                int every_end_time = 0;
                 if (rule_tag.equals("TIMEEVERY")) {
                     try {
-                        every_end_time = scanTimeString(columns.get()) ;
+                        ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
+                            scanTimeString(columns.get()) ;
                     } catch(Exception ex) {
                         continue ;
                     }
-                    every_seconds = Integer.parseInt(columns.get()) ;
+                    ((GenerationConfigForTimeEvery)genConfig).everySeconds =
+                        Integer.parseInt(columns.get()) ;
                 }
 
                 // duration
@@ -263,9 +306,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 // EACHRANDOM
-                int each = 0;
                 if (rule_tag.equals("EACHRANDOM")) {
-                    each = Integer.parseInt(columns.get()) ;
+                    ((GenerationConfigForEachRandom)genConfig).each =
+                        Integer.parseInt(columns.get()) ;
                 }
 
                 // 次はおそらく使われていない。
@@ -365,17 +408,15 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     //} else if (rule_tag.equals("RANDOM")) {
                 } else if (rule_tag.equals("RANDOM") ||
                            rule_tag.equals("RANDOMALL")) {
-                    doGenerationForRandom(nodes, links, genConfig,
-                                          genConfig.total) ;
+                    doGenerationForRandom(nodes, links, genConfig) ;
                 } else if (rule_tag.equals("EACHRANDOM")) {
-                    doGenerationForEachRandom(nodes, links, genConfig,
-                                              each,
-                                              genConfig.total) ;
+                    doGenerationForEachRandom(nodes, links, 
+                                              ((GenerationConfigForEachRandom)
+                                               genConfig)) ;
                 } else if (rule_tag.equals("TIMEEVERY")) {
-                    doGenerationForTimeEvery(nodes, links, genConfig,
-                                             every_end_time,
-                                             every_seconds,
-                                             genConfig.total) ;
+                    doGenerationForTimeEvery(nodes, links,
+                                             ((GenerationConfigForTimeEvery)
+                                              genConfig)) ;
                 } else {
                     System.err.println("AgentGenerationFile invalid rule " +
                                        "type in generation file!");
@@ -611,8 +652,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForRandom(MapNodeTable nodes,
                                        MapLinkTable links,
-                                       GenerationConfigBase genConfig,
-                                       int total) {
+                                       GenerationConfigBase genConfig) {
+        int total = genConfig.total ;
+
         int links_size = genConfig.startLinks.size();
         int size = links_size + genConfig.startNodes.size();
         int[] chosen_links = new int[genConfig.startLinks.size()];
@@ -645,9 +687,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForEachRandom(MapNodeTable nodes,
                                            MapLinkTable links,
-                                           GenerationConfigBase genConfig,
-                                           int each,
-                                           int total) {
+                                           GenerationConfigForEachRandom genConfig) {
+        int each = genConfig.each ;
+        int total = genConfig.total ;
+
         int links_size = genConfig.startLinks.size();
         int size = links_size + genConfig.startNodes.size();
         int[] chosen_links = new int[genConfig.startLinks.size()];
@@ -690,10 +733,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationForTimeEvery(MapNodeTable nodes,
                                           MapLinkTable links,
-                                          GenerationConfigBase genConfig,
-                                          int every_end_time,
-                                          int every_seconds,
-                                          int total) {
+                                          GenerationConfigForTimeEvery genConfig) {
+        int every_end_time = genConfig.everyEndTime ;
+        int every_seconds = genConfig.everySeconds ;
+        int total = genConfig.total ;
+
         // [I.Noda] startPlace は下で指定。
         genConfig.startPlace = null ;
         // [I.Noda] ここでは、goal は特別な意味（ただし、あやしい）
