@@ -21,8 +21,6 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON ;
 
-import com.opencsv.CSVParser ;
-
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Link.MapLinkTable;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
@@ -80,88 +78,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     public Map<String,Object> modeMap ;
 
-    /**
-     * CSVのカラムのシフトをちゃんと扱うためのクラス。
-     */
-    private class ShiftingColumns {
-        /**
-         * 現在位置
-         */
-        private int index = 0 ;
-
-        /**
-         * カラムの列
-         */
-        private String[] columnList = null ;
-
-        /**
-         * コンストラクタ
-         */
-        public ShiftingColumns(String[] _columnList) {
-            index = 0 ;
-            columnList = _columnList ;
-        }
-
-        /**
-         * shift: index をひとつずらす
-         */
-        public int shift() {
-            return shift(1) ;
-        }
-
-        /**
-         * shift: index を n ずらす
-         */
-        public int shift(int n) {
-            index += n ;
-            return index ;
-        }
-
-        /**
-         * 残りの長さ
-         */
-        public int length() {
-            return totalLength() - index ;
-        }
-
-        /**
-         * もとの長さ
-         */
-        public int totalLength() {
-            return columnList.length ;
-        }
-
-        /**
-         * 空かどうかのチェック
-         */
-        public boolean isEmpty() {
-            return length() <= 0 ;
-        }
-
-        /**
-         * 現在の先頭を見る。（取り除かない）
-         */
-        public String top() {
-            return top(0) ;
-        }
-
-        /**
-         * 現在のindexよりn番目を取り出す。
-         */
-        public String top(int n) {
-            return columnList[index + n] ;
-        }
-
-        /**
-         * 現在の先頭を見る。（取り除く）
-         */
-        public String get() {
-            String column = top() ;
-            shift() ;
-            return column ;
-        }
-    }
-
     //============================================================
     /**
      * 生成ルール情報格納用クラス
@@ -216,7 +132,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             // 各行をCSVとして解釈するためのパーザ
             // quotation にはシングルクォート(')を用いる。
             // これは、JSON の文字列がダブルクォートのため。
-            CSVParser csvParser = new CSVParser(',','\'','\\') ;
+            //[2014.12.23 I.Noda] csvParser は、ShiftingStringList の中へ。
+            ShiftingStringList.setCsvSpecialChars(',','\'','\\') ;
 
             // [I.Noda] 先頭行を判定するための行カウンター
             int lineCount = 0 ;
@@ -245,8 +162,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 //String items[] = line.split(",");
                 //String items[] = csvParser.parseLine(line) ;
                 //int index = 0;
-                ShiftingColumns columns = 
-                    new ShiftingColumns(csvParser.parseLine(line)) ;
+                ShiftingStringList columns =
+                    ShiftingStringList.newFromCsvRow(line) ;
 
                 // 行の長さチェック
                 if(fileFormat == FileFormat.Ver1) {
