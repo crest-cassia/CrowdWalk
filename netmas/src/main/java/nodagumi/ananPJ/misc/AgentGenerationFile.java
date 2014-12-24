@@ -63,7 +63,35 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * enum for generation rule type
+     */
+    public enum Rule {
+        EACH,
+        RANDOM,
+        EACHRANDOM,
+        STAFF,
+        RANDOMALL,
+        TIMEEVERY,
+        LINER_GENERATE_AGENT_RATIO
+    }
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * Lexicon for Generation Rule
+     */
+    private Lexicon lexicon =
+        new Lexicon(new Object[][]
+            { { "EACH", Rule.EACH },
+              { "RANDOM", Rule.RANDOM },
+              { "EACHRANDOM", Rule.EACHRANDOM },
+              { "STAFF", Rule.STAFF },
+              { "RANDOMALL", Rule.RANDOMALL },
+              { "TIMEEVERY", Rule.TIMEEVERY },
+              { "LINER_GENERATE_AGENT_RATIO", Rule.LINER_GENERATE_AGENT_RATIO }
+            }) ;
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * enum FileFormat Version
      */
@@ -162,9 +190,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
         String line = null;
         try {
-            Pattern rulepat;
-            rulepat = Pattern.compile("EACH|RANDOM|EACHRANDOM|STAFF|" +
-                    "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
+            // 文字列比較は、できるだけ Lexicon を使う。
+            //Pattern rulepat;
+            //rulepat = Pattern.compile("EACH|RANDOM|EACHRANDOM|STAFF|" +
+            //        "RANDOMALL|TIMEEVERY|LINER_GENERATE_AGENT_RATIO");
 
             // 各行をCSVとして解釈するためのパーザ
             // quotation にはシングルクォート(')を用いる。
@@ -215,20 +244,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                  * rule_tag が指定されないことがあるのか？
                  * これは、特に CSV の場合、致命的なバグの原因となる。
                  */
-                String rule_tag = columns.top() ;
-                Matcher rule_match = rulepat.matcher(rule_tag);
-                if (rule_match.matches())
-                    columns.shift() ;
-                else {
+                String rule_tag_string = columns.top() ;
+                Rule rule_tag = (Rule)lexicon.lookUp(rule_tag_string) ;
+                if (rule_tag == null)
                     // if no rule tag, default tag "EACH" is applied.
-                    rule_tag = "EACH";
-                }
+                    rule_tag = Rule.EACH ;
+                else
+                    columns.shift() ;
 
                 // 生成の設定情報を以下にまとめて保持。
                 GenerationConfigBase genConfig ;
-                if(rule_tag.equals("EACHRANDOM"))
+                if(rule_tag == Rule.EACHRANDOM)
                     genConfig = new GenerationConfigForEachRandom() ;
-                else if (rule_tag.equals("TIMEEVERY"))
+                else if (rule_tag == Rule.TIMEEVERY)
                     genConfig = new GenerationConfigForTimeEvery() ;
                 else
                     genConfig = new GenerationConfigBase() ;
@@ -238,7 +266,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 // LINER_GENERATE_AGENT_RATIO の場合、
                 // lga_ratio が次に来る。
                 // で、読み込んだら次の行。（エージェント生成しない）
-                if (rule_tag.equals("LINER_GENERATE_AGENT_RATIO")) {
+                if (rule_tag == Rule.LINER_GENERATE_AGENT_RATIO) {
                     double lga_ratio = 0;
                     lga_ratio = Double.parseDouble(columns.get()) ;
                     if (lga_ratio > 0)
@@ -266,7 +294,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     continue ;
                 }
 
-                if (rule_tag.equals("TIMEEVERY")) {
+                if (rule_tag == Rule.TIMEEVERY) {
                     try {
                         ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
                             scanTimeString(columns.get()) ;
@@ -306,7 +334,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 // EACHRANDOM
-                if (rule_tag.equals("EACHRANDOM")) {
+                if (rule_tag == Rule.EACHRANDOM) {
                     ((GenerationConfigForEachRandom)genConfig).each =
                         Integer.parseInt(columns.get()) ;
                 }
@@ -320,7 +348,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 //ArrayList<String> planned_route = new ArrayList<String>();
                 genConfig.plannedRoute = new ArrayList<String>();
 
-                if (rule_tag.equals("STAFF")) {
+                if (rule_tag == Rule.STAFF) {
                     // goal list which staff navigates
                     ArrayList<String> navigationGoal = new ArrayList<String>();
                     // navigated link for above goal
@@ -339,7 +367,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     for (int i = 0; i < numNavigation; i++) {
                         genConfig.plannedRoute.add(navigatedLink.get(i));
                     }
-                } else if (rule_tag.equals("RANDOMALL")) {
+                } else if (rule_tag == Rule.RANDOMALL) {
                     if (genConfig.goal == null) {
                         System.err.println("no matching link:" + columns.top() +
                                 " while reading agent generation rule.");
@@ -403,17 +431,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 // ここから、エージェント生成が始まる。
-                if (rule_tag.equals("EACH")) {
+                if (rule_tag == Rule.EACH) {
                     doGenerationForEach(nodes, links, genConfig) ;
-                    //} else if (rule_tag.equals("RANDOM")) {
-                } else if (rule_tag.equals("RANDOM") ||
-                           rule_tag.equals("RANDOMALL")) {
+                    //} else if (rule_tag == Rule.RANDOM) {
+                } else if (rule_tag == Rule.RANDOM ||
+                           rule_tag == Rule.RANDOMALL) {
                     doGenerationForRandom(nodes, links, genConfig) ;
-                } else if (rule_tag.equals("EACHRANDOM")) {
+                } else if (rule_tag == Rule.EACHRANDOM) {
                     doGenerationForEachRandom(nodes, links, 
                                               ((GenerationConfigForEachRandom)
                                                genConfig)) ;
-                } else if (rule_tag.equals("TIMEEVERY")) {
+                } else if (rule_tag == Rule.TIMEEVERY) {
                     doGenerationForTimeEvery(nodes, links,
                                              ((GenerationConfigForTimeEvery)
                                               genConfig)) ;
@@ -585,7 +613,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private boolean scanStartLinkTag(String start_link_tag,
                                      MapNodeTable nodes,
                                      MapLinkTable links,
-                                     String rule_tag,
+                                     Rule rule_tag,
                                      GenerationConfigBase genConfig) {
         Matcher tag_match = startpat.matcher(start_link_tag);
         if (tag_match.matches()) {
@@ -602,7 +630,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
         }
 
-        if (rule_tag.equals("TIMEEVERY")) {
+        if (rule_tag == Rule.TIMEEVERY) {
             /* [2014.12.18 I.Noda] 多分これで会っているはずなのだが。
             for (MapLink link : links) {
                 ArrayList<String> tags = link.getTags();

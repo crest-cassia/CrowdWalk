@@ -11,7 +11,7 @@ $(_) +=
 
 ## defs
 PACKAGE = nodagumi.Itk
-CLASSES = ClassFinder Itk
+CLASSES = ClassFinder Itk Lexicon
 SRCFILES = $(foreach klass,$(CLASSES),$(klass).java)
 ALLTESTS = $(foreach klass,$(CLASSES),$(PACKAGE).$(klass)_Test)
 
@@ -47,6 +47,8 @@ test_ClassFinder ::
 
 test_Itk ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Itk_Test
+test_Lexicon ::
+	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Lexicon_Test
 
 
 test_all ::
