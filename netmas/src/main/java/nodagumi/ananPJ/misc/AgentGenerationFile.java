@@ -845,9 +845,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         // [I.Noda] startPlace は下で指定。
         genConfig.startPlace = null ;
-        // [I.Noda] ここでは、goal は特別な意味（ただし、あやしい）
-        String goal = genConfig.goal ;
-        genConfig.goal = null ;
         // [I.Noda] startTime も特別な意味
         int start_time = (int)genConfig.startTime ;
         genConfig.startTime = 0.0 ;
@@ -859,25 +856,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
          * are all MapLink!
          */
 
-        /* [2014.12.24 I.Noda] should obsolete
-         * 以下、goalCandidates は、goal に入っている文字列が並ぶだけで意味がない。
-         * goalCandidates は、あとで、そのリストの中からランダムに選択しているだけ。
-         * つまり、最終的な goal の値は、goal と全く同じ。
-         * goalCandidate に関する操作は全く意味がない。
-         */
-        ArrayList<String> goalCandidates = new ArrayList<String>();
-        for (MapNode node : nodes) {
-            for (String tag : node.getTags()) {
-                // タグの比較を厳密化する
-                // if (tag.contains(goal))
-                if (tag.equals(goal))
-                    goalCandidates.add(tag);
-                // [2014.12.18 I.Noda] should obsolete
-                // この上、おかしくないか？
-                // これだと、goalCandidates には、goal と
-                // おなじ文字列しか入らないことになる。
-            }
-        }
         while (step_time <= every_end_time) {
             for (int i = 0; i < total; i++) {
                 // 2012.12.26 tkokada update
@@ -902,13 +880,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         start_link = tmp_link;
                     }
                 }
-                if (goalCandidates.size() <= 0) {
-                    System.err.println("AgentGenerationFile " +
-                                       "no match goals for the tag: " +
-                                       goal);
-                }
-                String goal_node =
-                    goalCandidates.get(random.nextInt(goalCandidates.size()));
+
                 ArrayList<String> plannedRoute =
                     new ArrayList<String>();
                 for (String pr : planned_route) {
@@ -948,7 +920,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                 }
                 genConfig.startPlace = start_link ;
-                genConfig.goal = goal_node ;
                 genConfig.plannedRoute = plannedRoute ;
                 genConfig.startTime = step_time ;
                 genConfig.total = 1 ;
