@@ -58,7 +58,6 @@ import nodagumi.Itk.*;
 public class AgentGenerationFile extends ArrayList<GenerateAgent> 
     implements Serializable {
     private static final long serialVersionUID = 2334273513164226078L;
-    private static final long MAX_LOOP_COUNTER = 1000;
     private static final String randomAllNodePrefixTag = "ROOT-N";
     private Random random = null;
     private double liner_generate_agent_ratio = 1.0;
@@ -152,9 +151,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         extends GenerationConfigBase {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
-         * ???
+         * 各リンク・ノードにおける発生上限数
          */
-        public int each = 0 ;
+        public int maxFromEachPlace = 0 ;
     }
 
     //============================================================
@@ -362,7 +361,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // EACHRANDOM
                 if (rule_tag == Rule.EACHRANDOM) {
-                    ((GenerationConfigForEachRandom)genConfig).each =
+                    ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
                         Integer.parseInt(columns.get()) ;
                 }
 
@@ -636,13 +635,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             nodes.findPrefixedTagsOfTaggedNodes(genConfig.goal,
                                                 randomAllNodePrefixTag);
         // and choose randomly
-        // [2014.12.24 I.Noda]  bug!!
-        // goal_candidates.size が 1 の場合、以下、おかしい。
-        // そもそもなんで -1 が必要なのか？
-        //            if (goal_candidates.size() > 0) {
-        if (goal_candidates.size() > 1) {
+        if (goal_candidates.size() > 0) {
             genConfig.goal =
-                goal_candidates.get(random.nextInt(goal_candidates.size() - 1));
+                goal_candidates.get(random.nextInt(goal_candidates.size())) ;
         }
 
         columns.shift() ; // ゴールの次へ
@@ -662,9 +657,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             ArrayList<String> route_candidate =
                 nodes.findPrefixedTagsOfTaggedNodes(route_tags.get(i),
                                                     randomAllNodePrefixTag) ;
-            if (route_candidate.size() > 1)
-                genConfig.plannedRoute.add(route_candidate.get(random.nextInt(route_candidate.size() - 1)
-                                                               ));
+            if (route_candidate.size() > 0)
+                genConfig.plannedRoute.add(route_candidate.get(random.nextInt(route_candidate.size()))) ;
         }
         // And choose randomly. It's same with RANDOM.
 
@@ -761,28 +755,43 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private void doGenerationForEachRandom(MapNodeTable nodes,
                                            MapLinkTable links,
                                            GenerationConfigForEachRandom genConfig) {
-        int each = genConfig.each ;
+        int maxFromEachPlace = genConfig.maxFromEachPlace ;
         int total = genConfig.total ;
 
-        int links_size = genConfig.startLinks.size();
-        int size = links_size + genConfig.startNodes.size(); // linkとnodeの合計
+        int links_size = genConfig.startLinks.size() ;
+        int nodes_size = genConfig.startNodes.size() ;
+        int size = links_size + nodes_size ; // linkとnodeの合計
         int[] chosen_links = new int[genConfig.startLinks.size()];
         int[] chosen_nodes = new int[genConfig.startNodes.size()];
-        for (int i = 0; i < total; i++) {
-            int counter = 0;
-            while (true) {
-                int chosen_index = random.nextInt(size);
-                if (chosen_index + 1 > links_size) {
-                    if(chosen_nodes[chosen_index - links_size] < each) {
-                        chosen_nodes[chosen_index - links_size] += 1;
-                        break;
+
+        /* [2014.12.24 I.Noda]
+         * アルゴリズムがあまりにしょぼいので、修正。
+         */
+        if(total > 0) {
+            int population = 0 ;
+            //とりあえず、maxFromEachPlace で埋める。
+            for(int i = 0 ; i < links_size ; i++) {
+                chosen_links[i] = maxFromEachPlace ;
+                population += maxFromEachPlace ;
+            }
+            for(int i = 0 ; i < nodes_size ; i++) {
+                chosen_nodes[i] = maxFromEachPlace ;
+                population += maxFromEachPlace ;
+            }
+            //減らしていく。
+            while(population > total){
+                int chosen_index = random.nextInt(size) ;
+                if(chosen_index < links_size) {
+                    if(chosen_links[chosen_index] > 0) {
+                        chosen_links[chosen_index] -= 1 ;
+                        population -= 1 ;
                     }
-                } else if (chosen_links[chosen_index] < each) {
-                    chosen_links[chosen_index] += 1;
-                    break;
-                } else if (counter > MAX_LOOP_COUNTER)
-                    break;
-                counter++;
+                } else {
+                    if(chosen_nodes[chosen_index - links_size] > 0) {
+                        chosen_nodes[chosen_index - links_size] -= 1;
+                        population -= 1 ;
+                    }
+                }
             }
         }
         Itk.dbgMsg("chosen_nodes",chosen_nodes) ;
