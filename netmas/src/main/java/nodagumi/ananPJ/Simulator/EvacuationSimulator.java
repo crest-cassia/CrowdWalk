@@ -432,15 +432,17 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 System.err.println(result.get(node).len);
             }
             */
-            for (MapNode node : result.keySet()) {
-                NodeLinkLen nll = result.get(node);
-                node.addNavigationHint(goal_tag,
-                        new NavigationHint(nll.node, nll.link, nll.len));
-                /*
-                System.err.println("EvacuationSimulator call " +
-                        "addNavigationHint node:" + node.ID + " " + 
-                        node.getTags() + ", " + goal_tag);
-                */
+            synchronized(nodes) {
+                for (MapNode node : result.keySet()) {
+                    NodeLinkLen nll = result.get(node);
+                    node.addNavigationHint(goal_tag,
+                            new NavigationHint(nll.node, nll.link, nll.len));
+                    /*
+                    System.err.println("EvacuationSimulator call " +
+                            "addNavigationHint node:" + node.ID + " " + 
+                            node.getTags() + ", " + goal_tag);
+                    */
+                }
             }
             System.err.println("goal:" + goal_tag);
             return true;
@@ -457,13 +459,29 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
 
         ArrayList<String> no_goal_list = new ArrayList<String>();
+        HashMap<String, CalcGoalPath> workers = new HashMap<String, CalcGoalPath>();
+        HashMap<String, Thread> threads = new HashMap<String, Thread>();
 
+        // 経路探索をゴールごとに別スレッドで実行
         for (String goal_tag : all_goal_tags) {
             CalcGoalPath worker = new CalcGoalPath(goal_tag);
-            worker.run();
-            if (!worker.goalCalculated) {
-                no_goal_list.add(worker.goalTag);
+            Thread thread = new Thread(worker);
+            workers.put(goal_tag, worker);
+            threads.put(goal_tag, thread);
+            thread.start();
+        }
+        // スレッド終了を待ってno_goal_list更新
+        try {
+            for (String goal_tag : all_goal_tags) {
+                threads.get(goal_tag).join();
+                CalcGoalPath worker = workers.get(goal_tag);
+                if (!worker.goalCalculated) {
+                    no_goal_list.add(worker.goalTag);
+                }
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            System.exit(1);
         }
 
         if (no_goal_list.size() != 0) {
@@ -486,6 +504,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 System.err.println("no goal for Exit!");
                 return;
             }
+            /*
+             * EMERGENCY 機能は現在使用していないためコメント化
+             *
             validRouteKeys.add("EMERGENCY");
             Dijkstra.Result result = Dijkstra.calc(goals,
                     new PathChooser() {
@@ -507,6 +528,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 node.addNavigationHint("EMERGENCY",
                         new NavigationHint(nll.node, nll.link, nll.len));
             }
+            */
         }
         // tkokada: node check which no way to goal
         boolean hasGoal = true;
