@@ -577,30 +577,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
         }
 
-        /* [2014.12.24 I.Noda] should obsolete
-         * 以下、どうしてTIMEEVERYの場合のみ
-         * リンクを二重に登録する必要があるのか？
-         */
-        if (genConfig.ruleTag == Rule.TIMEEVERY) {
-            /* [2014.12.18 I.Noda] 多分これで会っているはずなのだが。
-            for (MapLink link : links) {
-                ArrayList<String> tags = link.getTags();
-                for (String tag : tags) {
-                    // タグの比較を厳密化する
-                    // if (tag.contains(start_link_tag)) {
-                    if (tag.equals(start_link_tag)) {
-                        genConfig.startLinks.add(link);
-                        break;
-                    }
-                }
-            }
-            */
-            links.findTaggedLinks(start_link_tag, genConfig.startLinks) ;
-            if (genConfig.startLinks.size() <= 0) {
-                System.err.println("no start links:" + start_link_tag) ;
-                return false ;
-            }
-        }
         if (genConfig.startLinks.size() == 0 &&
             genConfig.startNodes.size() == 0) {
             System.err.println("no matching start:" + start_link_tag);
@@ -848,8 +824,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         // [I.Noda] startTime も特別な意味
         int start_time = (int)genConfig.startTime ;
         genConfig.startTime = 0.0 ;
-        // [I.Noda] plannedRoute も特別(ただし、あやしい)
-        ArrayList<String> planned_route = genConfig.plannedRoute ;
 
         int step_time = start_time;
         /* let's assume start & goal & planned_route candidates
@@ -881,46 +855,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                 }
 
-                ArrayList<String> plannedRoute =
-                    new ArrayList<String>();
-                for (String pr : planned_route) {
-                    /* [2014.12.18 I.Noda] should obsolete
-                     * 以下のアルゴリズム、おかしくないか？
-                     * タグの比較を厳密化することにより、
-                     * plannedRouteCandidates には、pr と等しい
-                     * tag しか入らない。つまり、pr と同じ文字列しか
-                     * 格納されない。
-                     * 単に、その pr が存在するかどうか、なら、
-                     * 意味はある。
-                     * しかし、pr が tag に存在した場合、
-                     * そこからランダム(random.nextInt())に選ぶ
-                     * 理由が全く不明。
-                     * なぜなら、それは、pr のみだから。
-                     * つまり、plannedRoute には、planned_route と
-                     * 同じ物が入るだけ。
-                     */
-                    ArrayList<String> plannedRouteCandidates =
-                        new ArrayList<String>();
-                    for (MapNode node : nodes) {
-                        for (String tag : node.getTags()) {
-                            // タグの比較を厳密化する
-                            // if (tag.contains(pr)) {
-                            if (tag.equals(pr)) {
-                                plannedRouteCandidates.add(tag);
-                                break;
-                            }
-                        }
-                    }
-                    if (plannedRouteCandidates.isEmpty()) {
-                        // 該当するノードタグが見つからない場合は WAIT_FOR/WAIT_UNTIL として扱う
-                        plannedRoute.add(pr);
-                    } else {
-                        int chosenIndex = random.nextInt(plannedRouteCandidates.size());
-                        plannedRoute.add(plannedRouteCandidates.get(chosenIndex));
-                    }
-                }
                 genConfig.startPlace = start_link ;
-                genConfig.plannedRoute = plannedRoute ;
                 genConfig.startTime = step_time ;
                 genConfig.total = 1 ;
                 this.add(new GenerateAgentFromLink(genConfig, random)) ;
