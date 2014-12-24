@@ -80,12 +80,25 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * Lexicon for Generation Rule
      */
-    static Lexicon lexicon = new Lexicon() ;
+    static Lexicon ruleLexicon = new Lexicon() ;
     static {
         // Rule で定義された名前をそのまま文字列で Lexicon を
         // 引けるようにする。
         // 例えば、 Rule.EACH は、"EACH" で引けるようになる。
-        lexicon.registerEnum(Rule.class) ;
+        ruleLexicon.registerEnum(Rule.class) ;
+    }
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * Lexicon for SpeedCalculationModel
+     */
+    static private Lexicon speedModelLexicon = new Lexicon() ;
+    static {
+        speedModelLexicon.registerMulti(new Object[][]
+            {{"LANE", SpeedCalculationModel.LaneModel},
+             {"DENSITY", SpeedCalculationModel.DensityModel},
+             {"EXPECTED", SpeedCalculationModel.ExpectedDensityModel}
+            }) ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -111,6 +124,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 生成ルール情報格納用クラス(Base)
      */
     static private class GenerationConfigBase extends GenerateAgent.Config {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 生成ルールのタイプ
+         */
+        public Rule ruleTag ;
+
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * 生成リンクリスト
@@ -201,8 +220,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             // [I.Noda] 先頭行を判定するための行カウンター
             int lineCount = 0 ;
             while ((line = br.readLine()) != null) {
+                // モードライン読み込み
                 if(lineCount == 0) scanModeLine(line) ;
                 lineCount++ ;
+
+                //コメント行読み飛ばし
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
 
@@ -214,6 +236,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 // String class の insensitive な比較メソッドを使うこと。
                 //                line = line.toUpperCase();
 
+                // カラムに分割
                 // [2014/12/15 I.Noda]
                 // CSV Parser を使うように変更。
                 // さらに、ShiftingColumns を使うよにする。
@@ -241,24 +264,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                  * rule_tag が指定されないことがあるのか？
                  * これは、特に CSV の場合、致命的なバグの原因となる。
                  */
-                String rule_tag_string = columns.top() ;
-                Rule rule_tag = (Rule)lexicon.lookUp(rule_tag_string) ;
+                Rule rule_tag = (Rule)ruleLexicon.lookUp(columns.top()) ;
                 if (rule_tag == null)
                     // if no rule tag, default tag "EACH" is applied.
                     rule_tag = Rule.EACH ;
                 else
                     columns.shift() ;
-
-                // 生成の設定情報を以下にまとめて保持。
-                GenerationConfigBase genConfig ;
-                if(rule_tag == Rule.EACHRANDOM)
-                    genConfig = new GenerationConfigForEachRandom() ;
-                else if (rule_tag == Rule.TIMEEVERY)
-                    genConfig = new GenerationConfigForTimeEvery() ;
-                else
-                    genConfig = new GenerationConfigBase() ;
-
-                genConfig.originalInfo = line ;
 
                 // LINER_GENERATE_AGENT_RATIO の場合、
                 // lga_ratio が次に来る。
@@ -271,6 +282,23 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     continue;
                 }
 
+                // 生成条件の格納用データ
+                GenerationConfigBase genConfig ;
+                switch(rule_tag) {
+                case EACHRANDOM:
+                    genConfig = new GenerationConfigForEachRandom() ;
+                    break ;
+                case TIMEEVERY:
+                    genConfig = new GenerationConfigForTimeEvery() ;
+                    break ;
+                default:
+                    genConfig = new GenerationConfigBase() ;
+                }
+                genConfig.ruleTag = rule_tag ;
+
+                // 生成の設定情報を以下にまとめて保持。
+                genConfig.originalInfo = line ;
+
                 /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
                 if(fileFormat == FileFormat.Ver1) {
                     genConfig.agentClassName = columns.top(0) ;
@@ -280,17 +308,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // read start link
                 // もし start link の解析に失敗したら、次の行へ。
-                if(! scanStartLinkTag(columns.get(), nodes, links, 
-                                      rule_tag, genConfig))
+                if(! scanStartLinkTag(columns.get(), nodes, links, genConfig))
                     continue ;
 
-                // time
+                // 出発時刻
                 try {
                     genConfig.startTime = scanTimeString(columns.get()) ;
                 } catch(Exception ex) {
                     continue ;
                 }
 
+                // TIMEEVERYの場合は、出発時刻間隔
                 if (rule_tag == Rule.TIMEEVERY) {
                     try {
                         ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
@@ -323,7 +351,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                  * 一番問題なのは、speed_model に相当するタグでなければ、
                  * columns を shift しないところ。
                  */
-                genConfig.speedModel = getSpeedModelByString(columns.top()) ;
+                genConfig.speedModel = 
+                    (SpeedCalculationModel)speedModelLexicon.lookUp(columns.top()) ;
                 if(genConfig.speedModel == null) {
                     genConfig.speedModel = SpeedCalculationModel.LaneModel;
                 } else {
@@ -534,21 +563,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
-    /**
-     * speed mode を取得
-     */
-    private SpeedCalculationModel getSpeedModelByString(String modelName) {
-        if (modelName.equals("LANE")) {
-            return SpeedCalculationModel.LaneModel;
-        } else if (modelName.equals("DENSITY")) {
-            return SpeedCalculationModel.DensityModel;
-        } else if (modelName.equals("EXPECTED")) {
-            return SpeedCalculationModel.ExpectedDensityModel;
-        } else {
-            return null ;
-        }
-    }
-
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {
         liner_generate_agent_ratio = _liner_generate_agent_ratio;
     }
@@ -610,7 +624,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private boolean scanStartLinkTag(String start_link_tag,
                                      MapNodeTable nodes,
                                      MapLinkTable links,
-                                     Rule rule_tag,
                                      GenerationConfigBase genConfig) {
         Matcher tag_match = startpat.matcher(start_link_tag);
         if (tag_match.matches()) {
@@ -627,7 +640,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
         }
 
-        if (rule_tag == Rule.TIMEEVERY) {
+        if (genConfig.ruleTag == Rule.TIMEEVERY) {
             /* [2014.12.18 I.Noda] 多分これで会っているはずなのだが。
             for (MapLink link : links) {
                 ArrayList<String> tags = link.getTags();

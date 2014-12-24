@@ -117,7 +117,7 @@ public class MapNode extends OBMapPart implements Serializable {
         return true;
     }
 
-    public ArrayList<MapLink> getLinks() {
+    public MapLinkTable getLinks() {
         return links;
     }
 
