@@ -32,8 +32,9 @@ import nodagumi.Itk.*;
 /** Generate agents depending on a generation file.
  * format of generation file of one line:
  * [RULE_STRING,][AgentClass,AgentConf,]TAG,START_TIME,DURATION,TOTAL,EXIT_TAG[,ROUTE...]
- * STAFF,TAG,START_TIME,DURATION,TOTAL[,EXIT_TAG,NAVIGATED_LINK_TAG]*
+ * TAG,START_TIME,DURATION,TOTAL[,EXIT_TAG,NAVIGATED_LINK_TAG]*
  *  (memo: [AgentClass,AgentConf,] Part is only for Ver.1 format.
+ *  (memo: STAFF は、2014.12.24 に排除することに決定。)
  *
  * descriptions:
  *  RULE_STRING:    EACH or RANDOM or EACHRANDOM RANDOMALL
@@ -50,7 +51,7 @@ import nodagumi.Itk.*;
  * example1) EACH,LINK_TAG_1,14:00:00,10,1,EXIT_TAG_2
  * example2) RANDOM,LINK_TAG_2,09:00:00,1,10,EXIT_TAG_3
  * example3) EACHRANDOM,LINK_TAG_3,23:44:12,10,140,1,EXIT_TAG4,STATION
- * example4) STAFF,NODE_TAG,14:00:00,1,1,EXIT_2,LINK_1,EXIT_3,LINK_2
+ * *排除* example4) STAFF,NODE_TAG,14:00:00,1,1,EXIT_2,LINK_1,EXIT_3,LINK_2 
  * example5) RANDOMALL,NODE_TAG,14:00:00,1,1,EXIT_2,LINK_1,EXIT_3,LINK_2
  * example6) TIMEEVERY,NaiveAgent,"{}",LINK_TAG_1,18:00:00,18:00:00,60,60,100,LANE,EXIT_1,EXIT_2,EXIT_3
  */
@@ -71,7 +72,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         EACH,
         RANDOM,
         EACHRANDOM,
-        STAFF,
+        //STAFF,
         RANDOMALL,
         TIMEEVERY,
         LINER_GENERATE_AGENT_RATIO
@@ -553,6 +554,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     //------------------------------------------------------------
     /**
      * start_link_tag の解析
+     * start_link_tag は、
+     *    Tag | Tag(Cond;Cond;...) 
+     * という形式らしい。
      */
     private boolean scanStartLinkTag(String start_link_tag,
                                      MapNodeTable nodes,
@@ -573,6 +577,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
         }
 
+        /* [2014.12.24 I.Noda] should obsolete
+         * 以下、どうしてTIMEEVERYの場合のみ
+         * リンクを二重に登録する必要があるのか？
+         */
         if (genConfig.ruleTag == Rule.TIMEEVERY) {
             /* [2014.12.18 I.Noda] 多分これで会っているはずなのだが。
             for (MapLink link : links) {
@@ -613,48 +621,28 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         //ArrayList<String> planned_route = new ArrayList<String>();
         genConfig.plannedRoute = new ArrayList<String>();
 
-        switch(genConfig.ruleTag){
-        case STAFF:
-            return scanRestColumnsForStaff(columns, nodes, links, genConfig) ;
-        case RANDOMALL:
+        if(genConfig.ruleTag == Rule.RANDOMALL) {
             return scanRestColumnsForRandomAll(columns, nodes, links, genConfig) ;
-        default:
+        } else {
             return scanRestColumnsForOther(columns, nodes, links, genConfig) ;
         }
     }
 
     //------------------------------------------------------------
     /**
-     * STAFF 用 残りの column 解析
-     */
-    private boolean scanRestColumnsForStaff(ShiftingStringList columns,
-                                            MapNodeTable nodes,
-                                            MapLinkTable links,
-                                            GenerationConfigBase genConfig) {
-                    // goal list which staff navigates
-        ArrayList<String> navigationGoal = new ArrayList<String>();
-        // navigated link for above goal
-        ArrayList<String> navigatedLink = new ArrayList<String>();
-
-        while(!columns.isEmpty()) {
-            if (columns.length() > 1) {
-                navigationGoal.add(columns.get()) ;
-                navigatedLink.add(columns.get()) ;
-            }
-        }
-        int numNavigation = navigationGoal.size();
-        if (navigationGoal.size() != navigatedLink.size())
-            numNavigation = Math.min(navigationGoal.size(),
-                                     navigatedLink.size());
-        for (int i = 0; i < numNavigation; i++) {
-            genConfig.plannedRoute.add(navigatedLink.get(i));
-        }
-        return true ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * RANDOMALL 用 残りの column 解析
+     * RANDOMALL では、最後に並んだタグについて、
+     * 各々のタグを持つノード（複数を仮定）から、ランダムに選んでパスに加える。
+     * つまり、
+     *      TAG1,TAG2,TAG3
+     * とならんでおり、
+     * TAG1 を持つリンクが {LINK11, LINK12, LINK13}
+     * TAG2 を持つリンクが {LINK21, LINK22, LINK23}
+     * TAG3 を持つリンクが {LINK31, LINK22, LINK33}
+     * とあれば、
+     * [LINK12,LINK21,LINK33] といった経路などがランダムに生成される。
+     * ただし、生成される経路はひと通りなので、
+     * このルールで生成されたエージェントは全員同じ経路をたどる。
      */
     private boolean scanRestColumnsForRandomAll(ShiftingStringList columns,
                                                 MapNodeTable nodes,
@@ -665,6 +653,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                " while reading agent generation rule.");
             return false ;
         }
+
+        // ゴールの設定
         // pick up nodes which contains specified tag
         ArrayList<String> goal_candidates =
             nodes.findPrefixedTagsOfTaggedNodes(genConfig.goal,
@@ -676,12 +666,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         //            if (goal_candidates.size() > 0) {
         if (goal_candidates.size() > 1) {
             genConfig.goal =
-                goal_candidates.get(random.nextInt(
-                                                   goal_candidates.size() - 1));
+                goal_candidates.get(random.nextInt(goal_candidates.size() - 1));
         }
 
-        columns.shift() ;
+        columns.shift() ; // ゴールの次へ
 
+        //ルートの読み込み。
         ArrayList<String> route_tags = new ArrayList<String>();
         while(! columns.isEmpty()) {
             if (columns.top() != null &&
@@ -734,6 +724,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     //------------------------------------------------------------
     /**
      * EACH 用生成ルーチン
+     * 各々の link, node で total 個ずつのエージェントが生成。
      */
     private void doGenerationForEach(MapNodeTable nodes,
                                      MapLinkTable links,
@@ -751,6 +742,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     //------------------------------------------------------------
     /**
      * RANDOM/RANDOMALL 用生成ルーチン
+     * 指定された link, node において、
+     * 合計で total 個のエージェントが生成。
      */
     private void doGenerationForRandom(MapNodeTable nodes,
                                        MapLinkTable links,
@@ -758,7 +751,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         int total = genConfig.total ;
 
         int links_size = genConfig.startLinks.size();
-        int size = links_size + genConfig.startNodes.size();
+        int size = links_size + genConfig.startNodes.size();// linkとnodeの合計
         int[] chosen_links = new int[genConfig.startLinks.size()];
         int[] chosen_nodes = new int[genConfig.startNodes.size()];
         for (int i = 0; i < total; i++) {
@@ -787,6 +780,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     //------------------------------------------------------------
     /**
      * EACH RANDOM 用生成ルーチン
+     * RANDOM に、1箇所での生成数の上限を入れたもの。
      */
     private void doGenerationForEachRandom(MapNodeTable nodes,
                                            MapLinkTable links,
@@ -795,17 +789,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         int total = genConfig.total ;
 
         int links_size = genConfig.startLinks.size();
-        int size = links_size + genConfig.startNodes.size();
+        int size = links_size + genConfig.startNodes.size(); // linkとnodeの合計
         int[] chosen_links = new int[genConfig.startLinks.size()];
         int[] chosen_nodes = new int[genConfig.startNodes.size()];
         for (int i = 0; i < total; i++) {
             int counter = 0;
             while (true) {
                 int chosen_index = random.nextInt(size);
-                if (chosen_index + 1 > links_size &&
-                    chosen_nodes[chosen_index - links_size] < each) {
-                    chosen_nodes[chosen_index - links_size] += 1;
-                    break;
+                if (chosen_index + 1 > links_size) {
+                    if(chosen_nodes[chosen_index - links_size] < each) {
+                        chosen_nodes[chosen_index - links_size] += 1;
+                        break;
+                    }
                 } else if (chosen_links[chosen_index] < each) {
                     chosen_links[chosen_index] += 1;
                     break;
@@ -814,6 +809,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 counter++;
             }
         }
+        Itk.dbgMsg("chosen_nodes",chosen_nodes) ;
+        Itk.dbgMsg("chosen_links",chosen_links) ;
+
         for (int i = 0; i < genConfig.startLinks.size(); i++) {
             if (chosen_links[i] > 0) {
                 genConfig.startPlace = genConfig.startLinks.get(i) ;
@@ -858,6 +856,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
          * are all MapLink!
          */
 
+        /* [2014.12.24 I.Noda] should obsolete
+         * 以下、goalCandidates は、goal に入っている文字列が並ぶだけで意味がない。
+         * goalCandidates は、あとで、そのリストの中からランダムに選択しているだけ。
+         * つまり、最終的な goal の値は、goal と全く同じ。
+         * goalCandidate に関する操作は全く意味がない。
+         */
         ArrayList<String> goalCandidates = new ArrayList<String>();
         for (MapNode node : nodes) {
             for (String tag : node.getTags()) {

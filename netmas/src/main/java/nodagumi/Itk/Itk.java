@@ -29,30 +29,65 @@ import java.text.SimpleDateFormat ;
  * Itk utility
  */
 public class Itk {
+    //------------------------------------------------------------
+    /**
+     * デバッグ用出力汎用コマンド
+     * @param tag 行の先頭のタグ
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgGeneric(String tag, Object object) {
+        try {
+            if(object == null) {
+                dbgGeneric(tag, "(null)") ;
+        /* XML は当面使わないので、コメントアウト
+            } else if(object instanceof Node) {
+                dbgGeneric(tag, XMLFormatConverter.toString((Node)object)) ;
+        */
+            } else {
+                System.out.println(tag + ":" + objectToString(object)) ;
+            }
+        } catch(/*TransformerException*/ Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * デバッグ用出力汎用コマンド
+     * @param tag 行の先頭のタグ
+     * @param label 先頭に出すラベル
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgGeneric(String tag, String label, Object object) {
+        try {
+            if(object == null) {
+                dbgGeneric(tag, label, "(null)") ;
+        /* XML は当面使わないので、コメントアウト
+            } else if(object instanceof Node) {
+                dbgGeneric(tag, label, XMLFormatConverter.toString((Node)object)) ;
+        */
+            } else {
+                System.out.println(tag + "[" + label + "]:" 
+                                   + objectToString(object)) ;
+            }
+        } catch(/*TransformerException*/ Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * デバッグ出力のヘッダ
      */
-    final static public String DbgTag = "ITKDBG" ;
+    final static public String DbgMsgTag = "ITKDBG" ;
+
     //------------------------------------------------------------
     /**
      * デバッグ用出力コマンド
      * @param object 出力するオブジェクト
      */
     static public void dbgMsg(Object object) {
-        try {
-            if(object == null) {
-                dbgMsg("(null)") ;
-        /* XML は当面使わないので、コメントアウト
-            } else if(object instanceof Node) {
-                dbgMsg(XMLFormatConverter.toString((Node)object)) ;
-        */
-            } else {
-                System.out.println(DbgTag + ":" + objectToString(object)) ;
-            }
-        } catch(/*TransformerException*/ Exception ex) {
-            ex.printStackTrace();
-        }
+        dbgGeneric(DbgMsgTag, object) ;
     }
 
     //------------------------------------------------------------
@@ -62,20 +97,61 @@ public class Itk {
      * @param object 出力するオブジェクト
      */
     static public void dbgMsg(String label, Object object) {
-        try {
-            if(object == null) {
-                dbgMsg(label, "(null)") ;
-        /* XML は当面使わないので、コメントアウト
-            } else if(object instanceof Node) {
-                dbgMsg(label, XMLFormatConverter.toString((Node)object)) ;
-        */
-            } else {
-                System.out.println(DbgTag + "[" + label + "]:" 
-                                   + objectToString(object)) ;
-            }
-        } catch(/*TransformerException*/ Exception ex) {
-            ex.printStackTrace();
-        }
+        dbgGeneric(DbgMsgTag, label, object) ;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 警告出力のヘッダ
+     */
+    final static public String DbgWrnTag = "ITKWRN" ;
+
+    //------------------------------------------------------------
+    /**
+     * 警告用出力コマンド
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgWrn(Object object) {
+        dbgGeneric(DbgWrnTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgWrnTag, object) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 警告用出力コマンド
+     * @param label 先頭に出すラベル
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgWrn(String label, Object object) {
+        dbgGeneric(DbgWrnTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgWrnTag, label, object) ;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エラー出力のヘッダ
+     */
+    final static public String DbgErrTag = "ITKERR" ;
+
+    //------------------------------------------------------------
+    /**
+     * エラー用出力コマンド
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgErr(Object object) {
+        dbgGeneric(DbgErrTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgErrTag, object) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エラー用出力コマンド
+     * @param label 先頭に出すラベル
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgErr(String label, Object object) {
+        dbgGeneric(DbgErrTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgErrTag, label, object) ;
     }
 
     //------------------------------------------------------------
@@ -84,7 +160,7 @@ public class Itk {
      * 現在のメソッド名を出力する。
      */
     static public void dbgMsgMethodInfo() {
-        dbgMsg(">>>", currentMethod(1)) ;
+        dbgMsg("@@@@@", currentMethod(1)) ;
     }
 
     //------------------------------------------------------------

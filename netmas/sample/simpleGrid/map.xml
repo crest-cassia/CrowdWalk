@@ -47,6 +47,7 @@
   </Node>
   <Node height="0.0" id="29" x="140.0" y="0.0">
     <tag>ROOT-N29</tag>
+    <tag>EAST_STATION_LINKS</tag>
     <link id="1008537831"/>
     <link id="2045449211"/>
   </Node>
@@ -100,6 +101,7 @@
   </Node>
   <Node height="0.0" id="30" x="140.0" y="20.0">
     <tag>ROOT-N30</tag>
+    <tag>EAST_STATION_LINKS</tag>
     <link id="2045449211"/>
     <link id="1576851070"/>
     <link id="1448253377"/>

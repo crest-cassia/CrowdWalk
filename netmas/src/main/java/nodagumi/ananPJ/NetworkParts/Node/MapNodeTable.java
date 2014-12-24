@@ -71,7 +71,7 @@ public class MapNodeTable extends OBNodeTable<MapNode> {
      * 指定された tag をもつノードの、指定したprefixを持つタグを集める。
      * @param tag tag名
      * @param tag prefix
-     * @return tag 名を持つノードを集めた MapNodeTable。table がそのまま返る。
+     * @return tag 名を持つノードのタグを集めた MapNodeTable。
      */
     public ArrayList<String> findPrefixedTagsOfTaggedNodes(String tag,
                                                            String prefix) {

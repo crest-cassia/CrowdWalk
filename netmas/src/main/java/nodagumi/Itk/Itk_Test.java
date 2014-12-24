@@ -126,11 +126,26 @@ public class Itk_Test extends TestCase {
 
     @Test
     public void test_enum() {
+        Itk.dbgMsgMethodInfo() ;
         Foo10 foo = Foo10.val0 ;
         Foo10 bar = null ;
 
         Itk.dbgMsg("foo", foo) ;
         Itk.dbgMsg("bar", bar) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * test error and warning
+     */
+    @Test
+    public void test_ErrWrn() {
+        Itk.dbgMsgMethodInfo() ;
+
+        Itk.dbgErr("foooooo") ;
+        Itk.dbgWrn("barrrrr") ;
+        Itk.dbgErr("serious","hogehoge") ;
+        Itk.dbgWrn("normal","fugafuga") ;
     }
 
 
