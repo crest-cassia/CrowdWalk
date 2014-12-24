@@ -832,6 +832,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     //------------------------------------------------------------
     /**
      * TIME EVERY 用生成ルーチン
+     * [2014.12.24 I.Noda]
+     * GOAL の部分の処理は他と同じはずなので、
+     * 特別な処理をしないようにする。
      */
     private void doGenerationForTimeEvery(MapNodeTable nodes,
                                           MapLinkTable links,
