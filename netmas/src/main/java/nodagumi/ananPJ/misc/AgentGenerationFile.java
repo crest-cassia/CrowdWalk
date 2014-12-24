@@ -371,84 +371,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 // goal を scan
                 genConfig.goal = columns.top() ;
 
-                //ArrayList<String> planned_route = new ArrayList<String>();
-                genConfig.plannedRoute = new ArrayList<String>();
-
-                if (rule_tag == Rule.STAFF) {
-                    // goal list which staff navigates
-                    ArrayList<String> navigationGoal = new ArrayList<String>();
-                    // navigated link for above goal
-                    ArrayList<String> navigatedLink = new ArrayList<String>();
-
-                    while(!columns.isEmpty()) {
-                        if (columns.length() > 1) {
-                            navigationGoal.add(columns.get()) ;
-                            navigatedLink.add(columns.get()) ;
-                        }
-                    }
-                    int numNavigation = navigationGoal.size();
-                    if (navigationGoal.size() != navigatedLink.size())
-                        numNavigation = Math.min(navigationGoal.size(),
-                                navigatedLink.size());
-                    for (int i = 0; i < numNavigation; i++) {
-                        genConfig.plannedRoute.add(navigatedLink.get(i));
-                    }
-                } else if (rule_tag == Rule.RANDOMALL) {
-                    if (genConfig.goal == null) {
-                        System.err.println("no matching link:" + columns.top() +
-                                " while reading agent generation rule.");
-                        continue;
-                    }
-                    // pick up nodes which contains specified tag
-                    ArrayList<String> goal_candidates =
-                        nodes.findPrefixedTagsOfTaggedNodes(genConfig.goal,
-                                                            randomAllNodePrefixTag);
-                    // and choose randomly
-                    if (goal_candidates.size() > 0) {
-                        genConfig.goal = goal_candidates.get(random.nextInt(
-                                    goal_candidates.size() - 1));
-                    }
-
-                    columns.shift() ;
-
-                    ArrayList<String> route_tags = new ArrayList<String>();
-                    while(! columns.isEmpty()) {
-                        if (columns.top() != null &&
-                            !columns.top().equals("")) {
-                            route_tags.add(columns.top()) ;
-                        }
-                        columns.shift() ;
-                    }
-                    // Pick up nodes which contains specified tag to select
-                    // route candidates from route tags.
-                    for (int i = 0; i < route_tags.size(); i++) {
-                        ArrayList<String> route_candidate =
-                            nodes.findPrefixedTagsOfTaggedNodes(route_tags.get(i),
-                                                                randomAllNodePrefixTag) ;
-                        if (route_candidate.size() > 1)
-                            genConfig.plannedRoute.add(route_candidate.get(
-                                    random.nextInt(route_candidate.size() - 1)
-                                ));
-                    }
-                    // And choose randomly. It's same with RANDOM.
-                } else {
-                    // goal and route plan
-                    //String goal = items[index];
-                    if (genConfig.goal == null) {
-                        System.err.println("no matching link:" + columns.top() +
-                                " while reading agent generation rule.");
-                        continue;
-                    }
-                    columns.shift() ;
-
-                    while(!columns.isEmpty()) {
-                        if (columns.top() != null &&
-                            !columns.top().equals("")) {
-                            genConfig.plannedRoute.add(columns.top());
-                        }
-                        columns.shift() ;
-                    }
-                }
+                // ゴールより後ろの読み取り。
+                if(!scanRestColumns(columns, nodes, links, genConfig))
+                    continue ;
 
                 // 経路情報に未定義のタグが使用されていないかチェックする
                 ArrayList<String> routeErrors = checkPlannedRoute(nodes, links, genConfig.plannedRoute);
@@ -668,6 +593,99 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             return true ;
         }
     }
+
+    //------------------------------------------------------------
+    /**
+     * 残りの column の読み込み
+     */
+    private boolean scanRestColumns(ShiftingStringList columns,
+                                    MapNodeTable nodes,
+                                    MapLinkTable links,
+                                    GenerationConfigBase genConfig) {
+        //ArrayList<String> planned_route = new ArrayList<String>();
+        genConfig.plannedRoute = new ArrayList<String>();
+
+        if (genConfig.ruleTag == Rule.STAFF) {
+            // goal list which staff navigates
+            ArrayList<String> navigationGoal = new ArrayList<String>();
+            // navigated link for above goal
+            ArrayList<String> navigatedLink = new ArrayList<String>();
+
+            while(!columns.isEmpty()) {
+                if (columns.length() > 1) {
+                    navigationGoal.add(columns.get()) ;
+                    navigatedLink.add(columns.get()) ;
+                }
+            }
+            int numNavigation = navigationGoal.size();
+            if (navigationGoal.size() != navigatedLink.size())
+                numNavigation = Math.min(navigationGoal.size(),
+                                         navigatedLink.size());
+            for (int i = 0; i < numNavigation; i++) {
+                genConfig.plannedRoute.add(navigatedLink.get(i));
+            }
+        } else if (genConfig.ruleTag == Rule.RANDOMALL) {
+            if (genConfig.goal == null) {
+                System.err.println("no matching link:" + columns.top() +
+                                   " while reading agent generation rule.");
+                return false ;
+            }
+            // pick up nodes which contains specified tag
+            ArrayList<String> goal_candidates =
+                nodes.findPrefixedTagsOfTaggedNodes(genConfig.goal,
+                                                    randomAllNodePrefixTag);
+           // and choose randomly
+            // [2014.12.24 I.Noda]  bug!!
+            // goal_candidates.size が 1 の場合、以下、おかしい。
+            // そもそもなんで -1 が必要なのか？
+            //            if (goal_candidates.size() > 0) {
+            if (goal_candidates.size() > 1) {
+                genConfig.goal = 
+                    goal_candidates.get(random.nextInt(
+                                                       goal_candidates.size() - 1));
+            }
+
+            columns.shift() ;
+
+            ArrayList<String> route_tags = new ArrayList<String>();
+            while(! columns.isEmpty()) {
+                if (columns.top() != null &&
+                    !columns.top().equals("")) {
+                    route_tags.add(columns.top()) ;
+                }
+                columns.shift() ;
+            }
+            // Pick up nodes which contains specified tag to select
+            // route candidates from route tags.
+            for (int i = 0; i < route_tags.size(); i++) {
+                ArrayList<String> route_candidate =
+                    nodes.findPrefixedTagsOfTaggedNodes(route_tags.get(i),
+                                                        randomAllNodePrefixTag) ;
+                if (route_candidate.size() > 1)
+                    genConfig.plannedRoute.add(route_candidate.get(random.nextInt(route_candidate.size() - 1)
+                                                                   ));
+            }
+            // And choose randomly. It's same with RANDOM.
+        } else {
+            // goal and route plan
+            //String goal = items[index];
+            if (genConfig.goal == null) {
+                System.err.println("no matching link:" + columns.top() +
+                                   " while reading agent generation rule.");
+                return false ;
+            }
+            columns.shift() ;
+            while(!columns.isEmpty()) {
+                if (columns.top() != null &&
+                    !columns.top().equals("")) {
+                    genConfig.plannedRoute.add(columns.top());
+                }
+                columns.shift() ;
+            }
+        }
+        return true ;
+    }
+
 
     /**
      * EACH 用生成ルーチン
