@@ -1807,10 +1807,19 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 setRouteIndex(getRouteIndex() + 1);
 				navigation_reason.add("found mid-goal in").add(way_candidate) ;
                 break;
-            } else if (way_candidate == link) {
+            } 
+            /* [2014.12.24 I.Noda] should fix
+             * 以下の後戻り防止を入れると、basic-sample が動かなくなっている。
+             * 後戻り防止は最短経路がわかっている場合、あまり意味がないと
+             * 思われる。
+             * なのでここは完全に取り除く。
+             */
+            /*
+            else if (way_candidate == link) {
                 // don't want to go back, ignoring
                 continue;
             }
+            */
 
             boolean loop = false;
             // ※この if 文は常に無効

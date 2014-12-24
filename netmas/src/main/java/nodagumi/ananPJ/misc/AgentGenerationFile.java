@@ -611,9 +611,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * つまり、
      *      TAG1,TAG2,TAG3
      * とならんでおり、
-     * TAG1 を持つリンクが {LINK11, LINK12, LINK13}
-     * TAG2 を持つリンクが {LINK21, LINK22, LINK23}
-     * TAG3 を持つリンクが {LINK31, LINK22, LINK33}
+     * TAG1 かつ"ROOT-N" というタグprefixを持つリンクが {LINK11, LINK12, LINK13}
+     * TAG2 かつ"ROOT-N" というタグprefixを持つリンクが {LINK21, LINK22, LINK23}
+     * TAG3 かつ"ROOT-N" というタグprefixを持つリンクが {LINK31, LINK22, LINK33}
      * とあれば、
      * [LINK12,LINK21,LINK33] といった経路などがランダムに生成される。
      * ただし、生成される経路はひと通りなので、
@@ -645,8 +645,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         //ルートの読み込み。
         ArrayList<String> route_tags = new ArrayList<String>();
         while(! columns.isEmpty()) {
-            if (columns.top() != null &&
-                !columns.top().equals("")) {
+            if (columns.top() != null && !columns.top().equals("")) {
                 route_tags.add(columns.top()) ;
             }
             columns.shift() ;
@@ -751,6 +750,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * EACH RANDOM 用生成ルーチン
      * RANDOM に、1箇所での生成数の上限を入れたもの。
+     * 合計で total 個のエージェントが生成。
      */
     private void doGenerationForEachRandom(MapNodeTable nodes,
                                            MapLinkTable links,
@@ -765,7 +765,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         int[] chosen_nodes = new int[genConfig.startNodes.size()];
 
         /* [2014.12.24 I.Noda]
-         * アルゴリズムがあまりにしょぼいので、修正。
+         * アルゴリズムがあまりにまずいので、修正。
          */
         if(total > 0) {
             int population = 0 ;
@@ -820,6 +820,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * [2014.12.24 I.Noda]
      * GOAL の部分の処理は他と同じはずなので、
      * 特別な処理をしないようにする。
+     * 合計で (total * 生成回数) 個のエージェントが生成。
      */
     private void doGenerationForTimeEvery(MapNodeTable nodes,
                                           MapLinkTable links,

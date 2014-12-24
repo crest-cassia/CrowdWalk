@@ -189,6 +189,12 @@ public abstract class GenerateAgent implements Serializable {
 
     abstract protected void place_agent(WaitRunningAroundPerson agent);
 
+    /* [2014.12.24 I.Noda] should fixed
+     * 以下のアルゴリズム、正確に正しく total のエージェントを生成しない
+     * 可能性がある。
+     * 予め total 個の乱数時刻を発生させ、それをソートしておき、
+     * 指定した時間までの分を生成するようにすべき。
+     */
     int generated = 0;
     /* TODO must wait finish until generate &
      * must control here with scenario */
@@ -230,6 +236,10 @@ public abstract class GenerateAgent implements Serializable {
             WaitRunningAroundPerson agent = new WaitRunningAroundPerson(model.getMap().assignUniqueAgentId(),
                     random);
             */
+            /* [2014.12.24 I.Noda] should fix
+             * 以下は、WaitRunningAroundPerson の代わりに、
+             * NaiveAgent にしたい。
+             */
             WaitRunningAroundPerson agent = null;
             try {
                 agent = (WaitRunningAroundPerson)ClassFinder.newByName(agentClassName) ;
@@ -237,8 +247,8 @@ public abstract class GenerateAgent implements Serializable {
                 if(agentConf != null)
                     agent.initByConf(agentConf) ;
             } catch (Exception ex ) {
-                Itk.dbgMsg("class name not found") ;
-                Itk.dbgMsg("agentClassName", agentClassName) ;
+                Itk.dbgErr("class name not found") ;
+                Itk.dbgErr("agentClassName", agentClassName) ;
                 ex.printStackTrace();
                 System.exit(1) ;
             }
