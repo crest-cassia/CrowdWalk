@@ -47,6 +47,7 @@ test_ClassFinder ::
 
 test_Itk ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Itk_Test
+
 test_Lexicon ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Lexicon_Test
 
