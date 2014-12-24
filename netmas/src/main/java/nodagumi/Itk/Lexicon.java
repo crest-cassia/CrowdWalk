@@ -12,6 +12,7 @@
 
 package nodagumi.Itk;
 
+import java.util.Map ;
 import java.util.HashMap ;
 import java.util.ArrayList ;
 
@@ -75,8 +76,8 @@ public class Lexicon {
      * @param word 登録する文字列
      * @param meaning 登録内容
      */
-    public Object register(String word, Object meaning) {
-        return register(word, meaning, true) ;
+    public Lexicon register(String word, Object meaning) {
+        return register(word, meaning, false) ;
     }
 
     //------------------------------------------------------------
@@ -86,17 +87,22 @@ public class Lexicon {
      * @param meaning 登録内容
      * @param forceP 上書きするかどうか
      */
-    public Object register(String word, 
+    public Lexicon register(String word, 
                            Object meaning,
                            boolean forceP) {
         if((! forceP) && (table.containsKey(word))) {
+            Itk.dbgMsg("Warning:",
+                       "duplicated word entry in a lexicon:" +
+                       word + "(meaning=" + meaning.toString() + ")" +
+                       "\n\t original meaning:" + table.get(word).toString() +
+                       "\n\t !!! new registration is ignored.") ;
             return null ;
         } else {
             if(!reverseTable.containsKey(meaning))
                 reverseTable.put(meaning, new ArrayList<String>()) ;
             table.put(word, meaning) ;
             reverseTable.get(meaning).add(word) ;
-            return meaning ;
+            return this ;
         }
     }
 
@@ -106,7 +112,7 @@ public class Lexicon {
      * @param entries [[文字列, 内容],...] という配列
      */
     public Lexicon registerMulti(Object[][] entries) {
-        return registerMulti(entries, true) ;
+        return registerMulti(entries, false) ;
     }
 
     //------------------------------------------------------------
@@ -124,10 +130,76 @@ public class Lexicon {
         return this ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * register word enum
+     * @param enumClass Enum で宣言したクラス (<EnumType>.class) 
+     */
+    public Lexicon registerEnum(Class<?> enumClass) {
+        return registerEnum(enumClass, false) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * register word enum
+     * @param enumClass Enum で宣言したクラス (<EnumType>.class)
+     * @param forceP 上書きするかどうか
+     */
+    public Lexicon registerEnum(Class<?> enumClass, boolean forceP) {
+        Enum<?>[] enumList = (Enum<?>[])enumClass.getEnumConstants() ;
+        if(enumList == null) {
+            Itk.dbgMsg("Warning:",
+                       enumClass.toString() + " is not Enum class.") ;
+            return null ;
+        } else {
+            for(Enum<?> enumItem : enumList) {
+                registerEnum(enumItem, forceP) ;
+            }
+            return this ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * register word enum
+     * @param enumItem Enum データ
+     */
+    public Lexicon registerEnum(Enum<?> enumItem) {
+        return registerEnum(enumItem, false) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * register word enum
+     * @param enumItem Enum データ
+     * @param forceP 上書きするかどうか
+     */
+    public Lexicon registerEnum(Enum<?> enumItem, boolean forceP) {
+        return register(enumItem.toString(), enumItem, forceP) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 文字列化
+     */
+    public String toString() {
+        String contents = null ;
+        for(Map.Entry<String, Object> entry : table.entrySet()) {
+            if(contents == null) 
+                contents = "" ;
+            else
+                contents += "," ;
+            contents += (entry.getKey().toString() + ":" +
+                         entry.getValue().toString()) ;
+        }
+
+        return ("#" + this.getClass().getSimpleName() + "{" + contents + "}") ;
+    }
+
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * original lexicon
+     * primal lexicon
      */
     static public Lexicon primal = new Lexicon() ;
 
@@ -176,7 +248,7 @@ public class Lexicon {
      * register word multi in primal
      * @param array [[文字列, 内容],...] という配列
      */
-    public Lexicon _registerMulti(Object[][] array) {
+    static public Lexicon _registerMulti(Object[][] array) {
         return primal.registerMulti(array) ;
     }
 
@@ -186,9 +258,47 @@ public class Lexicon {
      * @param array [[文字列, 内容],...] という配列
      * @param forceP 上書きするかどうか
      */
-    public Lexicon _registerMulti(Object[][] array, boolean forceP) {
+    static public Lexicon _registerMulti(Object[][] array, boolean forceP) {
         return primal.registerMulti(array, forceP) ;
     }
 
-} // class Foo
+    //------------------------------------------------------------
+    /**
+     * register word enum in primal
+     * @param enumClass Enum で宣言したクラス (<EnumType>.class) 
+     */
+    static public Lexicon _registerEnum(Class<?> enumClass) {
+        return primal.registerEnum(enumClass) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * register word enum in primal
+     * @param enumClass Enum で宣言したクラス (<EnumType>.class)
+     * @param forceP 上書きするかどうか
+     */
+    static public Lexicon _registerEnum(Class<?> enumClass, boolean forceP) {
+        return primal.registerEnum(enumClass, forceP) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * register word enum in primal
+     * @param enumItem Enum データ
+     */
+    static public Lexicon _registerEnum(Enum<?> enumItem) {
+        return primal.registerEnum(enumItem) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * register word enum in primal
+     * @param enumItem Enum データ
+     * @param forceP 上書きするかどうか
+     */
+    static public Lexicon _registerEnum(Enum<?> enumItem, boolean forceP) {
+        return primal.registerEnum(enumItem, forceP) ;
+    }
+
+} // class Lexicon
 

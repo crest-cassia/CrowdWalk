@@ -80,16 +80,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * Lexicon for Generation Rule
      */
-    private Lexicon lexicon =
-        new Lexicon(new Object[][]
-            { { "EACH", Rule.EACH },
-              { "RANDOM", Rule.RANDOM },
-              { "EACHRANDOM", Rule.EACHRANDOM },
-              { "STAFF", Rule.STAFF },
-              { "RANDOMALL", Rule.RANDOMALL },
-              { "TIMEEVERY", Rule.TIMEEVERY },
-              { "LINER_GENERATE_AGENT_RATIO", Rule.LINER_GENERATE_AGENT_RATIO }
-            }) ;
+    static Lexicon lexicon = new Lexicon() ;
+    static {
+        // Rule で定義された名前をそのまま文字列で Lexicon を
+        // 引けるようにする。
+        // 例えば、 Rule.EACH は、"EACH" で引けるようになる。
+        lexicon.registerEnum(Rule.class) ;
+    }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**

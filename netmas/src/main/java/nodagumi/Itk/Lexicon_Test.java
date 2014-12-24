@@ -65,7 +65,22 @@ public class Lexicon_Test extends TestCase {
     /**
      */
     @Test
+    public void testEnumRegister() {
+        Itk.dbgMsgMethodInfo() ;
+
+        Lexicon lex = new Lexicon() ;
+
+        lex.registerEnum(FooEnum01.class) ;
+        Itk.dbgMsg("lex",lex) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    @Test
     public void testMultiRegister() {
+        Itk.dbgMsgMethodInfo() ;
+
         Object[][] entryList = { { "bar0", FooEnum00.Bar0 },
                              { "bar1", FooEnum00.Bar1 },
                              { "bar2", FooEnum00.Bar2 } } ;
