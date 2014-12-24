@@ -429,11 +429,16 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 時間・時刻表示の解析用パターン
      */
-    private Pattern timepat = Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
-    private Pattern timepat2 = Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
+    static private Pattern timepat = 
+        Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
+    static private Pattern timepat2 = 
+        Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
+
+    //------------------------------------------------------------
     /**
      * 時間・時刻表示の解析
      * もし解析できなければ、Exception を throw。
@@ -461,6 +466,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         return timeVal ;
     }
 
+    //------------------------------------------------------------
     /**
      * mode line check
      * [example]
@@ -538,11 +544,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         return result;
     }
 
+    //------------------------------------------------------------
     /**
      * start_link_tag の解析パターン
      */
     static private Pattern startpat = Pattern.compile("(.+)\\((.+)\\)");
 
+    //------------------------------------------------------------
     /**
      * start_link_tag の解析
      */
@@ -703,6 +711,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
+    //------------------------------------------------------------
     /**
      * RANDOM/RANDOMALL 用生成ルーチン
      */
@@ -738,6 +747,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
+    //------------------------------------------------------------
     /**
      * EACH RANDOM 用生成ルーチン
      */
@@ -784,6 +794,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
+    //------------------------------------------------------------
     /**
      * TIME EVERY 用生成ルーチン
      */
