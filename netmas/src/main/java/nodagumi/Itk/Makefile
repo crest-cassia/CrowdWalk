@@ -60,6 +60,7 @@ test_all ::
 SAMPLE0 = sample/simpleGrid/properties-lane.xml
 SAMPLE0d = sample/simpleGrid/properties-density.xml
 SAMPLE1 = sample/simpleGrid/properties-lane.v2.xml
+SAMPLE2 = sample/basic-sample/properties.xml
 
 
 run : run1
@@ -78,6 +79,9 @@ run1 ::
 
 run1_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE1) cui)
+
+run2 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2))
 
 ##------------------------------------------------------------
 FOO = a b c
