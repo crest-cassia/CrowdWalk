@@ -28,7 +28,7 @@
           <dia:boolean val="true"/>
         </dia:attribute>
         <dia:attribute name="scaling">
-          <dia:real val="0.32636770606040955"/>
+          <dia:real val="0.32636767625808716"/>
         </dia:attribute>
         <dia:attribute name="fitto">
           <dia:boolean val="true"/>
@@ -1968,7 +1968,7 @@ buffer|file|pipe|network|server|none#</dia:string>
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>#"EACH", "RANDOM", "EACHRANDOM", "STAFF", "RANDOMALL", "TIMEEVERY", "LINER_GENERATE_AGENT_RATIO" のいずれか#</dia:string>
+            <dia:string>#"EACH", "RANDOM", "EACHRANDOM", "TIMEEVERY", "LINER_GENERATE_AGENT_RATIO" のいずれか#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
