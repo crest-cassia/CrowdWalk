@@ -8,7 +8,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List ;
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
@@ -16,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.lang.Exception;
+import java.lang.Integer;
 
 import javax.swing.JOptionPane;
 
@@ -100,7 +103,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * enum FileFormat Version
      */
-    public enum FileFormat { Ver0, Ver1 }
+    public enum FileFormat { Ver0, Ver1, Ver2 }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -279,11 +282,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         case Ver1:
             scanCsvFile(br, nodes, links) ;
             break ;
-            /*
         case Ver2:
             scanJsonFile(br, nodes, links) ;
             break ;
-            */
         default:
             Itk.dbgErr("Unknown Format Version" + fileFormat.toString() +
                        "(file=" + filename + ")") ;
@@ -312,7 +313,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     return false ;
                 } else {
                     boolean scanned = scanModeLine(line) ;
-                    reader.reset() ;
+                    if(!scanned) reader.reset() ;
                     return scanned ;
                 }
             } catch (Exception ex) {
@@ -341,7 +342,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             // のこりを JSON として解釈
             modeMap = (Map<String, Object>)JSON.decode(modeString) ;
             String versionString = modeMap.get("version").toString() ;
-            if(versionString != null && versionString.equals("1")) {
+            if(versionString != null && versionString.equals("2")) {
+                fileFormat = FileFormat.Ver2 ;
+            } else if(versionString != null && versionString.equals("1")) {
                 fileFormat = FileFormat.Ver1 ;
             } else {
                 fileFormat = FileFormat.Ver0 ;
@@ -377,7 +380,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 if(genConfig == null) continue ;
 
-                Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
+                //Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
 
                 // 経路情報に未定義のタグが使用されていないかチェックする
                 checkPlannedRouteInConfig(nodes, links, genConfig, line) ;
@@ -456,18 +459,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
 
         // 生成条件の格納用データ
-        GenerationConfigBase genConfig ;
-        switch(rule_tag) {
-        case EACHRANDOM:
-            genConfig = new GenerationConfigForEachRandom() ;
-            break ;
-        case TIMEEVERY:
-            genConfig = new GenerationConfigForTimeEvery() ;
-            break ;
-        default:
-            genConfig = new GenerationConfigBase() ;
-        }
-        genConfig.ruleTag = rule_tag ;
+        GenerationConfigBase genConfig = newConfigForRuleTag(rule_tag) ;
 
         // 生成の設定情報を以下にまとめて保持。
         genConfig.originalInfo = line ;
@@ -548,6 +540,26 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         if(!scanRestColumns(columns, nodes, links, genConfig))
             return null ;
 
+        return genConfig ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * new Generation Config for rule_tag
+     */
+    private GenerationConfigBase newConfigForRuleTag(Rule rule_tag) {
+        GenerationConfigBase genConfig ;
+        switch(rule_tag) {
+        case EACHRANDOM:
+            genConfig = new GenerationConfigForEachRandom() ;
+            break ;
+        case TIMEEVERY:
+            genConfig = new GenerationConfigForTimeEvery() ;
+            break ;
+        default:
+            genConfig = new GenerationConfigBase() ;
+        }
+        genConfig.ruleTag = rule_tag ;
         return genConfig ;
     }
 
@@ -638,6 +650,116 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             columns.shift() ;
         }
         return true ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 設定解析ルーチン (JSON file) (Ver.2 file format)
+     */
+    public void scanJsonFile(BufferedReader br,
+                             MapNodeTable nodes,
+                             MapLinkTable links)
+        throws Exception
+    {
+        Object json = JSON.decode(br) ;
+        if(json instanceof List) {
+            for(Object item : (List)json) {
+                if(item instanceof Map) {
+                    GenerationConfigBase genConfig = 
+                        scanJsonFileOneItem((HashMap<String, Object>)item,
+                                            nodes, links) ;
+
+                    if(genConfig == null) continue ;
+
+                    Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
+
+                    // 経路情報に未定義のタグが使用されていないかチェックする
+                    checkPlannedRouteInConfig(nodes, links, genConfig, 
+                                              item.toString()) ;
+
+                    // ここから、エージェント生成が始まる。
+                    doGenerationByConfig(nodes, links, genConfig) ;
+                } else {
+                    Itk.dbgErr("wrong json for generation rule:",item) ;
+                    continue ;
+                }
+            }
+        } else {
+            Itk.dbgErr("wrong json for generation file:",json) ;
+            throw new Exception("wrong json for generation file:" + json) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 設定解析ルーチン (JSON one line) (Ver.2 file format)
+     */
+    public GenerationConfigBase scanJsonFileOneItem(HashMap<String, Object> json,
+                                                    MapNodeTable nodes,
+                                                    MapLinkTable links)
+    {
+        Rule ruleTag = (Rule)ruleLexicon.lookUp((String)json.get("rule")) ;
+        GenerationConfigBase genConfig = newConfigForRuleTag(ruleTag) ;
+
+        genConfig.originalInfo = JSON.encode(json) ;
+
+        HashMap<String, Object> agentType = 
+            (HashMap<String, Object>)json.get("agentType") ;
+        genConfig.agentClassName = (String)agentType.get("className") ;
+        /* [2014.12.25 I.Noda]
+         * 下はもうちょっとエレガントにしたい。
+         */
+        genConfig.agentConfString = JSON.encode(agentType.get("config")) ;
+
+        if(!scanStartLinkTag((String)json.get("startPlace"), nodes, links, 
+                             genConfig))
+            return null ;
+
+        try {
+            genConfig.startTime =
+                Itk.scanTimeStringToInt((String)json.get("startTime")) ;
+        } catch(Exception ex) {
+            return null ;
+        }
+
+        if(genConfig.ruleTag == Rule.TIMEEVERY) {
+            try {
+                ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
+                    Itk.scanTimeStringToInt(json.get("everyEndTime").toString()) ;
+            } catch(Exception ex) {
+                return null ;
+            }
+            ((GenerationConfigForTimeEvery)genConfig).everySeconds =
+                Integer.parseInt(json.get("everySeconds").toString()) ;
+        }
+
+        genConfig.duration = Double.parseDouble(json.get("duration").toString());
+
+        genConfig.total = Integer.parseInt(json.get("total").toString()) ;
+        if (liner_generate_agent_ratio > 0) {
+            Itk.dbgMsg("GenerateAgentFile total: " +
+                       genConfig.total +
+                       ", ratio: " + liner_generate_agent_ratio);
+            genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
+            Itk.dbgMsg("GenerateAgentFile total: " + genConfig.total);
+        }
+
+        genConfig.speedModel =
+            (SpeedCalculationModel)
+            speedModelLexicon.lookUp(json.get("speedModel").toString()) ;
+        if(genConfig.speedModel == null) 
+            genConfig.speedModel = SpeedCalculationModel.LaneModel;
+
+        if (genConfig.ruleTag == Rule.EACHRANDOM) {
+            ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
+                Integer.parseInt(json.get("maxFromEach").toString()) ;
+        }
+
+        genConfig.goal = (String)json.get("goal") ;
+
+        genConfig.plannedRoute = (ArrayList<String>)json.get("plannedRoute") ;
+
+        return genConfig ;
     }
 
     //------------------------------------------------------------
