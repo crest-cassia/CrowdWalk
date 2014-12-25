@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Arrays ;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import java.text.DateFormat ;
 import java.text.SimpleDateFormat ;
@@ -335,6 +337,41 @@ public class Itk {
      */
     static public String currentClassName(int offset) {
         return currentCall(offset + 1).getClassName() ;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    static private Pattern timeStringPatternShort =
+        Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
+    static private Pattern timeStringPatternLong =
+        Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
+
+    //------------------------------------------------------------
+    /**
+     * 時間・時刻表示の解析
+     * もし解析できなければ、Exception を throw。
+     * 時間の形式は、 HH:MM:SS もしくは HH:MM
+     * @param timeStr 時間・時刻の文字列
+     * @return 時刻・時間を返す。
+     */
+    static public int scanTimeStringToInt(String timeStr) throws Exception {
+        int timeVal = 0 ;
+
+        Matcher matchLong = timeStringPatternLong.matcher(timeStr) ;
+        if (matchLong.matches()) {
+            timeVal = (3600 * Integer.parseInt(matchLong.group(1)) +
+                       60 * Integer.parseInt(matchLong.group(2)) +
+                       Integer.parseInt(matchLong.group(3))) ;
+        } else {
+            Matcher matchShort = timeStringPatternShort.matcher(timeStr) ;
+            if (matchShort.matches()) {
+                timeVal = (3600 * Integer.parseInt(matchShort.group(1)) +
+                           60 * Integer.parseInt(matchShort.group(2))) ;
+            } else {
+                Itk.dbgErr("Illegal time format:" + timeStr) ;
+                throw new Exception("Illegal time format:" + timeStr) ;
+            }
+        }
+        return timeVal ;
     }
 
 } // class Itk

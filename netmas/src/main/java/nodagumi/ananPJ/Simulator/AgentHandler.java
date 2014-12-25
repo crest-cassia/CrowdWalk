@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Simulator;
 
 import java.awt.BorderLayout;
@@ -72,6 +73,8 @@ import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.network.DaRuMaClient;
 import nodagumi.ananPJ.network.FusionViewerConnector;
+
+import nodagumi.Itk.*;
 
 public class AgentHandler implements Serializable {
     private EvacuationModelBase model;
@@ -442,10 +445,6 @@ public class AgentHandler implements Serializable {
              */
 
             String line;
-            Pattern timepat;
-            timepat = Pattern.compile("(\\d?\\d):(\\d?\\d)");
-            Pattern timepat_long;
-            timepat_long = Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) continue;
                 line = line.toUpperCase();
@@ -459,52 +458,29 @@ public class AgentHandler implements Serializable {
 
                 if (parent_id == 0) {
                     event  = new ScenarioEvent(null);
-                    Matcher m = timepat.matcher(items[4]);
-                    Matcher m_long = timepat_long.matcher(items[4]);
-
-                    if (m.matches()) {
-                        double time = 3600 * Integer.parseInt(m.group(1)) +
-                        60 * Integer.parseInt(m.group(2));
-                        event.setTime(time);
-
-                        if (tag.equals("START")) startTime = time;
-                        else if (tag.equals("OUTBREAK")) outbreakTime = time;
-                    } else if (m_long.matches()) {
-                        double time = 3600 * Integer.parseInt(m_long.group(1)) +
-                        60 * Integer.parseInt(m_long.group(2)) +
-                        Integer.parseInt(m_long.group(3));
-                        event.setTime(time);
-
-                        if (tag.equals("START")) startTime = time;
-                        else if (tag.equals("OUTBREAK")) outbreakTime = time;
-                    } else {
-                        System.err.println("no matching item:" + items[4] +
-                                " while reading scenario.");
-                        System.err.println(line);
+		    try {
+			double time = (double)Itk.scanTimeStringToInt(items[4]) ;
+			event.setTime(time) ;
+			if (tag.equals("START")) startTime = time;
+			else if (tag.equals("OUTBREAK")) outbreakTime = time;
+		    } catch(Exception ex) {
+			System.err.println("no matching item:" + items[4] +
+					   " while reading scenario.");
+			System.err.println(line);
                         continue;
                     }
                 } else if (command.equals("ADD_STOP") ||
                         command.equals("REMOVE_STOP")) {
                     event  = new ScenarioEvent(events.get(parent_id));
                     double ptime = (events.get(parent_id)).getClock();
-                    Matcher m = timepat.matcher(items[4]);
-                    Matcher m_long = timepat_long.matcher(items[4]);
-                    if (m.matches()) {
-                        double time = 3600 * Integer.parseInt(m.group(1)) +
-                        60 * Integer.parseInt(m.group(2)) - ptime;
+		    try {
+			double time = (double)Itk.scanTimeStringToInt(items[4]) ;
+			time -= ptime ;
                         while (time < 0.) {
                             time += 86400.0;
                         }
                         event.addTime(time / 60.);
-                    } else if (m_long.matches()) {
-                        double time = 3600 * Integer.parseInt(m_long.group(1)) +
-                        60 * Integer.parseInt(m_long.group(2)) +
-                        Integer.parseInt(m_long.group(3)) - ptime;
-                        while (time < 0.) {
-                            time += 86400.0;
-                        }
-                        event.addTime(time / 60.);
-                    } else {
+		    } catch(Exception ex) {
                         System.err.println("no matching item:" + items[4] +
                                 " while reading scenario.");
                         System.err.println(line);

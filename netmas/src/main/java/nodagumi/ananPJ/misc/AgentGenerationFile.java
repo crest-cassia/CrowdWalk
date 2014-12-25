@@ -303,7 +303,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 // 出発時刻
                 try {
-                    genConfig.startTime = scanTimeString(columns.get()) ;
+                    genConfig.startTime = Itk.scanTimeStringToInt(columns.get()) ;
                 } catch(Exception ex) {
                     continue ;
                 }
@@ -312,7 +312,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if (rule_tag == Rule.TIMEEVERY) {
                     try {
                         ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                            scanTimeString(columns.get()) ;
+                            Itk.scanTimeStringToInt(columns.get()) ;
                     } catch(Exception ex) {
                         continue ;
                     }
@@ -420,43 +420,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
             throw new Exception(errorMessage.toString());
         }
-    }
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 時間・時刻表示の解析用パターン
-     */
-    static private Pattern timepat = 
-        Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
-    static private Pattern timepat2 = 
-        Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
-
-    //------------------------------------------------------------
-    /**
-     * 時間・時刻表示の解析
-     * もし解析できなければ、Exception を throw。
-     * @param timeStr 時間・時刻の文字列
-     * @return 時刻・時間を返す。
-     */
-    public int scanTimeString(String timeStr) throws Exception {
-        Matcher m2 = timepat2.matcher(timeStr) ;
-        Matcher m = timepat.matcher(timeStr) ;
-
-        int timeVal = 0 ;
-        if (m2.matches()) {
-            timeVal = 3600 * Integer.parseInt(m2.group(1)) +
-                60 * Integer.parseInt(m2.group(2)) +
-                Integer.parseInt(m2.group(3))
-                ;
-        } else if (m.matches()) {
-            timeVal = 3600 * Integer.parseInt(m.group(1)) +
-                60 * Integer.parseInt(m.group(2));
-        } else {
-            System.err.println("no matching item:" + timeStr +
-                               " while reading agent generation rule.");
-            throw new Exception("Illegal time format:" + timeStr) ;
-        }
-        return timeVal ;
     }
 
     //------------------------------------------------------------
