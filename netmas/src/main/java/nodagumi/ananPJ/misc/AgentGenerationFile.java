@@ -849,20 +849,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 while (start_link == null) {
                     MapLink tmp_link =
                         genConfig.startLinks.get(random.nextInt(genConfig.startLinks.size()));
-                    boolean invalid_tag = false;
-                    for (String tag : tmp_link.getTags()) {
-                        /* [2014.12.18 I.Noda] should obsolete
-                         * なんじゃこりゃ？
-                         * こんなところに隠しコマンド
-                         */
-                        if (tag.contains("INVALID")) {
-                            invalid_tag = true;
-                            break;
-                        }
-                    }
-                    if (!invalid_tag) {
-                        start_link = tmp_link;
-                    }
+                    start_link = tmp_link;
                 }
 
                 genConfig.startPlace = start_link ;
