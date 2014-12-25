@@ -159,38 +159,53 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         extends GenerationConfigBase {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
-         * ???
+         * 生成の終了時刻
          */
         public int everyEndTime = 0 ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
-         * ???
+         * 生成のインターバル
          */
         public int everySeconds = 0 ;
     }
 
     //------------------------------------------------------------
     /**
-     * コンストラクタ兼設定解析ルーチン
+     * コンストラクタ
      */
     public AgentGenerationFile(final String filename,
-            MapNodeTable nodes,
-            MapLinkTable links,
-            boolean display,
-            double linerGenerateAgentRatio,
-            Random _random) throws Exception {
+                               MapNodeTable nodes,
+                               MapLinkTable links,
+                               boolean display,
+                               double linerGenerateAgentRatio,
+                               Random _random)
+        throws Exception 
+    {
         if (filename == null || filename.isEmpty()) {
             return;
         }
-        liner_generate_agent_ratio = linerGenerateAgentRatio;
-        random = _random;
+        setLinerGenerateAgentRatio(linerGenerateAgentRatio);
+        setRandom(_random);
 
+        scanFile(filename, nodes, links, display) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 設定解析ルーチン
+     */
+    public void scanFile(final String filename,
+                         MapNodeTable nodes,
+                         MapLinkTable links,
+                         boolean display)
+        throws Exception
+    {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filename));
         } catch (IOException e) {
-            System.err.println(e);
+            Itk.dbgErr(e) ;
             if (display) {
                 JOptionPane.showMessageDialog(null,
                 e.toString(),
@@ -204,214 +219,21 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         // 呼んだ後、read pointer は先頭へ。
         tryScanModeLine(br) ;
 
-        String line = null;
-        try {
-
-            // 各行をCSVとして解釈するためのパーザ
-            // quotation にはシングルクォート(')を用いる。
-            // これは、JSON の文字列がダブルクォートのため。
-            //[2014.12.23 I.Noda] csvParser は、ShiftingStringList の中へ。
-            ShiftingStringList.setCsvSpecialChars(',','\'','\\') ;
-
-            while ((line = br.readLine()) != null) {
-                //コメント行読み飛ばし
-                if (line.startsWith("#")) continue;
-                if (line.startsWith(",")) continue;
-
-                // カラムに分割
-                // [2014/12/15 I.Noda]
-                // CSV Parser を使うように変更。
-                // さらに、ShiftingColumns を使うよにする。
-                //String items[] = line.split(",");
-                //String items[] = csvParser.parseLine(line) ;
-                //int index = 0;
-                ShiftingStringList columns =
-                    ShiftingStringList.newFromCsvRow(line) ;
-
-                // 行の長さチェック
-                if(fileFormat == FileFormat.Ver1) {
-                    if (columns.length() < 7 && columns.length() != 4) {
-                        System.err.println("malformed line: " + line);
-                        continue;
-                    }
-                } else {
-                    if (columns.length() < 5 && columns.length() != 2) {
-                        System.err.println("malformed line: " + line);
-                        continue;
-                    }
-                }
-
-                // check rule strings
-                /* [2014.12.20 I.Noda] should obsolete
-                 * rule_tag が指定されないことがあるのか？
-                 * これは、特に CSV の場合、致命的なバグの原因となる。
-                 */
-                Rule rule_tag = (Rule)ruleLexicon.lookUp(columns.top()) ;
-                if (rule_tag == null)
-                    // if no rule tag, default tag "EACH" is applied.
-                    rule_tag = Rule.EACH ;
-                else
-                    columns.shift() ;
-
-                // LINER_GENERATE_AGENT_RATIO の場合、
-                // lga_ratio が次に来る。
-                // で、読み込んだら次の行。（エージェント生成しない）
-                if (rule_tag == Rule.LINER_GENERATE_AGENT_RATIO) {
-                    double lga_ratio = 0;
-                    lga_ratio = Double.parseDouble(columns.get()) ;
-                    if (lga_ratio > 0)
-                        liner_generate_agent_ratio = lga_ratio;
-                    continue;
-                }
-
-                // 生成条件の格納用データ
-                GenerationConfigBase genConfig ;
-                switch(rule_tag) {
-                case EACHRANDOM:
-                    genConfig = new GenerationConfigForEachRandom() ;
-                    break ;
-                case TIMEEVERY:
-                    genConfig = new GenerationConfigForTimeEvery() ;
-                    break ;
-                default:
-                    genConfig = new GenerationConfigBase() ;
-                }
-                genConfig.ruleTag = rule_tag ;
-
-                // 生成の設定情報を以下にまとめて保持。
-                genConfig.originalInfo = line ;
-
-                /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
-                if(fileFormat == FileFormat.Ver1) {
-                    genConfig.agentClassName = columns.top(0) ;
-                    genConfig.agentConfString = columns.top(1) ;
-                    columns.shift(2) ;
-                }
-
-                // read start link
-                // もし start link の解析に失敗したら、次の行へ。
-                if(! scanStartLinkTag(columns.get(), nodes, links, genConfig))
-                    continue ;
-
-                // 出発時刻
-                try {
-                    genConfig.startTime = Itk.scanTimeStringToInt(columns.get()) ;
-                } catch(Exception ex) {
-                    continue ;
-                }
-
-                // TIMEEVERYの場合は、出発時刻間隔
-                if (rule_tag == Rule.TIMEEVERY) {
-                    try {
-                        ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                            Itk.scanTimeStringToInt(columns.get()) ;
-                    } catch(Exception ex) {
-                        continue ;
-                    }
-                    ((GenerationConfigForTimeEvery)genConfig).everySeconds =
-                        Integer.parseInt(columns.get()) ;
-                }
-
-                // duration
-                genConfig.duration = Double.parseDouble(columns.get()) ;
-
-                // total number of generated agents
-                genConfig.total = Integer.parseInt(columns.get());
-                if (liner_generate_agent_ratio > 0) {
-                    System.err.println("GenerateAgentFile total: " + 
-                                       genConfig.total +
-                            ", ratio: " + liner_generate_agent_ratio);
-                    genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
-                    System.err.println("GenerateAgentFile total: " + genConfig.total);
-                }
-
-                // speed model
-                /* [2014.12.20 I.Noda] should obsolete
-                 * speed_model を指定しないことはあるのか？
-                 * 少なくとも CSV で指定する場合、
-                 * 混乱の原因以外の何物でもない
-                 * 一番問題なのは、speed_model に相当するタグでなければ、
-                 * columns を shift しないところ。
-                 */
-                genConfig.speedModel = 
-                    (SpeedCalculationModel)speedModelLexicon.lookUp(columns.top()) ;
-                if(genConfig.speedModel == null) {
-                    genConfig.speedModel = SpeedCalculationModel.LaneModel;
-                } else {
-                    columns.shift() ;
-                }
-
-                // EACHRANDOM
-                if (rule_tag == Rule.EACHRANDOM) {
-                    ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
-                        Integer.parseInt(columns.get()) ;
-                }
-
-                // 次はおそらく使われていない。
-                //ArrayList<String> planned_route_key = new ArrayList<String>();
-
-                // goal を scan
-                genConfig.goal = columns.top() ;
-
-                // ゴールより後ろの読み取り。
-                if(!scanRestColumns(columns, nodes, links, genConfig))
-                    continue ;
-
-                // 経路情報に未定義のタグが使用されていないかチェックする
-                ArrayList<String> routeErrors = checkPlannedRoute(nodes, links, genConfig.plannedRoute);
-                if (! routeErrors.isEmpty()) {
-                    definitionErrors.put(line, routeErrors);
-                }
-
-                // ここから、エージェント生成が始まる。
-                switch(rule_tag) {
-                case EACH:
-                    doGenerationForEach(nodes, links, genConfig) ;
-                    break ;
-                case RANDOM:
-                    doGenerationForRandom(nodes, links, genConfig) ;
-                    break ;
-                case EACHRANDOM:
-                    doGenerationForEachRandom(nodes, links, 
-                                              ((GenerationConfigForEachRandom)
-                                               genConfig)) ;
-                    break ;
-                case TIMEEVERY:
-                    doGenerationForTimeEvery(nodes, links,
-                                             ((GenerationConfigForTimeEvery)
-                                              genConfig)) ;
-                    break ;
-                default:
-                    System.err.println("AgentGenerationFile invalid rule " +
-                                       "type in generation file!");
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error in agent generation.");
-            System.err.println(line);
-            System.err.println(e.getMessage());
-            e.printStackTrace();
+        switch(fileFormat) {
+        case Ver0:
+        case Ver1:
+            scanCsvFile(br, nodes, links) ;
+            break ;
+            /*
+        case Ver2:
+            scanJsonFile(br, nodes, links) ;
+            break ;
+            */
+        default:
+            Itk.dbgErr("Unknown Format Version" + fileFormat.toString() +
+                       "(file=" + filename + ")") ;
         }
-
-        // 経路情報に未定義のタグが使用されていたら例外を発生させる
-        if (! definitionErrors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder();
-            //definitionErrors.forEach((_line, messages) -> {
-            //    errorMessage.append("line: ").append(_line).append("\n");
-            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
-            //});
-            Iterator it = definitionErrors.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
-                String _line = entry.getKey();
-                ArrayList<String>messages = entry.getValue();
-                errorMessage.append("line: ").append(_line).append("\n");
-                for (String message: messages) {
-                    errorMessage.append("    ").append(message).append("\n");
-                }
-            }
-            throw new Exception(errorMessage.toString());
-        }
+        return ;
     }
 
     //------------------------------------------------------------
@@ -476,10 +298,264 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * 設定解析ルーチン (CSV file) (Ver.0, Ver.1 file format)
+     */
+    public void scanCsvFile(BufferedReader br,
+                            MapNodeTable nodes,
+                            MapLinkTable links)
+        throws Exception
+    {
+        String line = null;
+        try {
+
+            // 各行をCSVとして解釈するためのパーザ
+            // quotation にはシングルクォート(')を用いる。
+            // これは、JSON の文字列がダブルクォートのため。
+            //[2014.12.23 I.Noda] csvParser は、ShiftingStringList の中へ。
+            ShiftingStringList.setCsvSpecialChars(',','\'','\\') ;
+
+            while ((line = br.readLine()) != null) {
+                //一行解析
+                GenerationConfigBase genConfig =
+                    scanCsvFileOneLine(line, nodes, links) ;
+
+                if(genConfig == null) continue ;
+
+                // 経路情報に未定義のタグが使用されていないかチェックする
+                ArrayList<String> routeErrors = 
+                    checkPlannedRoute(nodes, links, genConfig.plannedRoute);
+                if (! routeErrors.isEmpty()) {
+                    definitionErrors.put(line, routeErrors);
+                }
+
+                // ここから、エージェント生成が始まる。
+                doGenerationByConfig(nodes, links, genConfig) ;
+            }
+        } catch (Exception e) {
+            System.err.println("Error in agent generation.");
+            System.err.println(line);
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        // 経路情報に未定義のタグが使用されていたら例外を発生させる
+        if (! definitionErrors.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder();
+            //definitionErrors.forEach((_line, messages) -> {
+            //    errorMessage.append("line: ").append(_line).append("\n");
+            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
+            //});
+            Iterator it = definitionErrors.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
+                String _line = entry.getKey();
+                ArrayList<String>messages = entry.getValue();
+                errorMessage.append("line: ").append(_line).append("\n");
+                for (String message: messages) {
+                    errorMessage.append("    ").append(message).append("\n");
+                }
+            }
+            throw new Exception(errorMessage.toString());
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * scan one line of CSV file
+     */
+    public GenerationConfigBase scanCsvFileOneLine(String line,
+                                                   MapNodeTable nodes,
+                                                   MapLinkTable links)
+        throws IOException
+    {
+        //コメント行読み飛ばし
+        if (line.startsWith("#")) return null ;
+        if (line.startsWith(",")) return null ;
+
+        // カラムに分割
+        // [2014/12/15 I.Noda]
+        // CSV Parser を使うように変更。
+        // さらに、ShiftingColumns を使うよにする。
+        //String items[] = line.split(",");
+        //String items[] = csvParser.parseLine(line) ;
+        //int index = 0;
+        ShiftingStringList columns =
+            ShiftingStringList.newFromCsvRow(line) ;
+
+        // 行の長さチェック
+        if(fileFormat == FileFormat.Ver1) {
+            if (columns.length() < 7 && columns.length() != 4) {
+                System.err.println("malformed line: " + line);
+                return null ;
+            }
+        } else {
+            if (columns.length() < 5 && columns.length() != 2) {
+                System.err.println("malformed line: " + line);
+                return null ;
+            }
+        }
+
+        // check rule strings
+        /* [2014.12.20 I.Noda] should obsolete
+         * rule_tag が指定されないことがあるのか？
+         * これは、特に CSV の場合、致命的なバグの原因となる。
+         */
+        Rule rule_tag = (Rule)ruleLexicon.lookUp(columns.top()) ;
+        if (rule_tag == null)
+            // if no rule tag, default tag "EACH" is applied.
+            rule_tag = Rule.EACH ;
+        else
+            columns.shift() ;
+
+        // LINER_GENERATE_AGENT_RATIO の場合、
+        // lga_ratio が次に来る。
+        // で、読み込んだら次の行。（エージェント生成しない）
+        if (rule_tag == Rule.LINER_GENERATE_AGENT_RATIO) {
+            double lga_ratio = 0;
+            lga_ratio = Double.parseDouble(columns.get()) ;
+            if (lga_ratio > 0)
+                liner_generate_agent_ratio = lga_ratio;
+            return null ;
+        }
+
+        // 生成条件の格納用データ
+        GenerationConfigBase genConfig ;
+        switch(rule_tag) {
+        case EACHRANDOM:
+            genConfig = new GenerationConfigForEachRandom() ;
+            break ;
+        case TIMEEVERY:
+            genConfig = new GenerationConfigForTimeEvery() ;
+            break ;
+        default:
+            genConfig = new GenerationConfigBase() ;
+        }
+        genConfig.ruleTag = rule_tag ;
+
+        // 生成の設定情報を以下にまとめて保持。
+        genConfig.originalInfo = line ;
+
+        /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
+        if(fileFormat == FileFormat.Ver1) {
+            genConfig.agentClassName = columns.top(0) ;
+            genConfig.agentConfString = columns.top(1) ;
+            columns.shift(2) ;
+        }
+
+        // read start link
+        // もし start link の解析に失敗したら、次の行へ。
+        if(! scanStartLinkTag(columns.get(), nodes, links, genConfig))
+            return null ;
+
+        // 出発時刻
+        try {
+            genConfig.startTime = Itk.scanTimeStringToInt(columns.get()) ;
+        } catch(Exception ex) {
+            return null ;
+        }
+
+        // TIMEEVERYの場合は、出発時刻間隔
+        if (rule_tag == Rule.TIMEEVERY) {
+            try {
+                ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
+                    Itk.scanTimeStringToInt(columns.get()) ;
+            } catch(Exception ex) {
+                return null ;
+            }
+            ((GenerationConfigForTimeEvery)genConfig).everySeconds =
+                Integer.parseInt(columns.get()) ;
+        }
+
+        // duration
+        genConfig.duration = Double.parseDouble(columns.get()) ;
+
+        // total number of generated agents
+        genConfig.total = Integer.parseInt(columns.get());
+        if (liner_generate_agent_ratio > 0) {
+            System.err.println("GenerateAgentFile total: " +
+                               genConfig.total +
+                               ", ratio: " + liner_generate_agent_ratio);
+            genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
+            System.err.println("GenerateAgentFile total: " + genConfig.total);
+        }
+
+        // speed model
+        /* [2014.12.20 I.Noda] should obsolete
+         * speed_model を指定しないことはあるのか？
+         * 少なくとも CSV で指定する場合、
+         * 混乱の原因以外の何物でもない
+         * 一番問題なのは、speed_model に相当するタグでなければ、
+         * columns を shift しないところ。
+         */
+        genConfig.speedModel =
+            (SpeedCalculationModel)speedModelLexicon.lookUp(columns.top()) ;
+        if(genConfig.speedModel == null) {
+            genConfig.speedModel = SpeedCalculationModel.LaneModel;
+        } else {
+            columns.shift() ;
+        }
+
+        // EACHRANDOM
+        if (genConfig.ruleTag == Rule.EACHRANDOM) {
+            ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
+                Integer.parseInt(columns.get()) ;
+        }
+
+        // 次はおそらく使われていない。
+        //ArrayList<String> planned_route_key = new ArrayList<String>();
+
+        // goal を scan
+        genConfig.goal = columns.top() ;
+
+        // ゴールより後ろの読み取り。
+        if(!scanRestColumns(columns, nodes, links, genConfig))
+            return null ;
+
+        return genConfig ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェント生成
+     */
+    private void doGenerationByConfig(MapNodeTable nodes,
+                                      MapLinkTable links,
+                                      GenerationConfigBase genConfig) {
+        switch(genConfig.ruleTag) {
+        case EACH:
+            doGenerationForEach(nodes, links, genConfig) ;
+            break ;
+        case RANDOM:
+            doGenerationForRandom(nodes, links, genConfig) ;
+            break ;
+        case EACHRANDOM:
+            doGenerationForEachRandom(nodes, links,
+                                      ((GenerationConfigForEachRandom)
+                                       genConfig)) ;
+            break ;
+        case TIMEEVERY:
+            doGenerationForTimeEvery(nodes, links,
+                                     ((GenerationConfigForTimeEvery)
+                                      genConfig)) ;
+            break ;
+        default:
+            Itk.dbgErr("AgentGenerationFile invalid rule " +
+                       "type in generation file!") ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {
         liner_generate_agent_ratio = _liner_generate_agent_ratio;
     }
 
+    //------------------------------------------------------------
+    /**
+     */
     public void setRandom(Random _random) {
         random = _random;
         for (GenerateAgent ga : this) {
@@ -487,7 +563,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
     }
 
-    // 経路情報に未定義のタグが使用されていたらその内容を返す
+    //------------------------------------------------------------
+    /**
+     * 経路情報に未定義のタグが使用されていたらその内容を返す
+     */
     public ArrayList<String> checkPlannedRoute(MapNodeTable nodes, MapLinkTable links, ArrayList<String> planned_route) {
         ArrayList<String> linkTags = new ArrayList();
         ArrayList<String> nodeTags = new ArrayList();
