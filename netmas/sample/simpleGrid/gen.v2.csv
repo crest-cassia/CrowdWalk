@@ -1,7 +1,33 @@
-#{ "version" : 1}
-LINER_GENERATE_AGENT_RATIO,1
-EACH,CapriciousAgent,'{ "margin" : 100.0 }',EAST_STATION_LINKS,18:00:00,60,100,LANE,WEST_STATION_N_NODES,POINT_D,W_POINT_A
-RANDOM,NaiveAgent,'{}',EAST_STATION_LINKS,18:00:00,60,100,LANE,WEST_STATION_N_NODES,POINT_D,W_POINT_A
-EACHRANDOM,NaiveAgent,'{}',EAST_STATION_LINKS,18:00:00,300,100,LANE,10,WEST_STATION_N_NODES,POINT_D,W_POINT_A
-RANDOM,BustleAgent,'{ "weight" : 100.0, "trail" : 100.0 }',EAST_STATION_LINKS,18:00:00,60,100,LANE,WEST_STATION_N_NODES,POINT_D,W_POINT_A
-TIMEEVERY,BustleAgent,'{ "weight" : 100.0, "trail" : 100.0 }',EAST_STATION_LINKS,18:00:00,18:00:00,60,60,100,LANE,WEST_STATION_N_NODES,POINT_D,W_POINT_A
+#{ "version" : 2}
+[
+ {"rule":"EACH",
+  "agentType":{"className":"CapriciousAgent","config":{"margin":100.0}},
+  "total":100,"speedModel":"LANE",
+  "startPlace":"EAST_STATION_LINKS","conditions":null,
+  "startTime":"18:00:00","duration":60.0,
+  "goal":"WEST_STATION_N_NODES","plannedRoute":["POINT_D","W_POINT_A"]},
+ {"rule":"RANDOM",
+  "agentType":{"className":"NaiveAgent","config":{}},
+  "total":100,"speedModel":"LANE",
+  "startPlace":"EAST_STATION_LINKS","conditions":null,
+  "startTime":"18:00:00","duration":60.0,
+  "goal":"WEST_STATION_N_NODES","plannedRoute":["POINT_D","W_POINT_A"]},
+ {"rule":"EACHRANDOM",
+  "agentType":{"className":"NaiveAgent","config":{}},
+  "total":100,"maxFromEach":10,"speedModel":"LANE",
+  "startPlace":"EAST_STATION_LINKS","conditions":null,
+  "startTime":"18:00:00","duration":300.0,
+  "goal":"WEST_STATION_N_NODES","plannedRoute":["POINT_D","W_POINT_A"]},
+ {"rule":"RANDOM",
+  "agentType":{"className":"BustleAgent","config":{"weight":100.0,"trail":100.0}},
+  "startPlace":"EAST_STATION_LINKS","conditions":null,
+  "total":100,"speedModel":"LANE",
+  "startTime":"18:00:00","duration":60.0,
+  "goal":"WEST_STATION_N_NODES","plannedRoute":["POINT_D","W_POINT_A"]},
+ {"rule":"TIMEEVERY",
+  "agentType":{"className":"BustleAgent","config":{"weight":100.0,"trail":100.0}},
+  "total":100,"speedModel":"LANE",
+  "startPlace":"EAST_STATION_LINKS","conditions":null,
+  "startTime":"18:00:00","duration":60.0,"everyEndTime":"18:00:00","everySeconds":60,
+  "goal":"WEST_STATION_N_NODES","plannedRoute":["POINT_D","W_POINT_A"]}
+]

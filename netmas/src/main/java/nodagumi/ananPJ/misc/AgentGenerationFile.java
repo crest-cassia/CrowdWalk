@@ -161,6 +161,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             jObject.put("rule",ruleLexicon.lookUpByMeaning(ruleTag).get(0));
             if(startLinkTag != null)
                 jObject.put("startPlace", startLinkTag) ;
+            jObject.put("speedModel", 
+                        speedModelLexicon.lookUpByMeaning(speedModel).get(0));
 
             return jObject ;
         }
@@ -551,79 +553,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
     //------------------------------------------------------------
     /**
-     * エージェント生成
-     */
-    private void doGenerationByConfig(MapNodeTable nodes,
-                                      MapLinkTable links,
-                                      GenerationConfigBase genConfig) {
-        switch(genConfig.ruleTag) {
-        case EACH:
-            doGenerationForEach(nodes, links, genConfig) ;
-            break ;
-        case RANDOM:
-            doGenerationForRandom(nodes, links, genConfig) ;
-            break ;
-        case EACHRANDOM:
-            doGenerationForEachRandom(nodes, links,
-                                      ((GenerationConfigForEachRandom)
-                                       genConfig)) ;
-            break ;
-        case TIMEEVERY:
-            doGenerationForTimeEvery(nodes, links,
-                                     ((GenerationConfigForTimeEvery)
-                                      genConfig)) ;
-            break ;
-        default:
-            Itk.dbgErr("AgentGenerationFile invalid rule " +
-                       "type in generation file!") ;
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 経路情報に未定義のタグが使用されていないかチェックする
-     */
-    private void checkPlannedRouteInConfig(MapNodeTable nodes,
-                                           MapLinkTable links,
-                                           GenerationConfigBase genConfig,
-                                           String where) {
-        ArrayList<String> routeErrors =
-            checkPlannedRoute(nodes, links, genConfig.plannedRoute);
-        if (! routeErrors.isEmpty()) {
-            definitionErrors.put(where, routeErrors);
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 経路情報に未定義のタグが使用されていたら例外を発生させる
-     * エラー情報は、checkPlannedRouteInConfig() で調べて蓄えられている。
-     */
-    private void raiseExceptionRouteDefinitionError()
-        throws Exception
-    {
-        if (! definitionErrors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder();
-            //definitionErrors.forEach((_line, messages) -> {
-            //    errorMessage.append("line: ").append(_line).append("\n");
-            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
-            //});
-            Iterator it = definitionErrors.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
-                String _line = entry.getKey();
-                ArrayList<String>messages = entry.getValue();
-                errorMessage.append("line: ").append(_line).append("\n");
-                for (String message: messages) {
-                    errorMessage.append("    ").append(message).append("\n");
-                }
-            }
-            throw new Exception(errorMessage.toString());
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
      */
     public void setLinerGenerateAgentRatio(double _liner_generate_agent_ratio) {
         liner_generate_agent_ratio = _liner_generate_agent_ratio;
@@ -637,48 +566,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         for (GenerateAgent ga : this) {
             ga.setRandom(_random);
         }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 経路情報に未定義のタグが使用されていたらその内容を返す
-     */
-    public ArrayList<String> checkPlannedRoute(MapNodeTable nodes, MapLinkTable links, ArrayList<String> planned_route) {
-        ArrayList<String> linkTags = new ArrayList();
-        ArrayList<String> nodeTags = new ArrayList();
-        int index = 0;
-        while (index < planned_route.size()) {
-            String candidate = planned_route.get(index);
-            if (candidate.startsWith("WAIT_UNTIL")) {
-                linkTags.add(candidate.substring(11));
-                index += 3;
-            } else if (candidate.startsWith("WAIT_FOR")) {
-                linkTags.add(candidate.substring(9));
-                index += 3;
-            } else {
-                nodeTags.add(candidate);
-                index += 1;
-            }
-        }
-
-        ArrayList<String> result = new ArrayList();
-        for (String nodeTag : nodeTags) {
-            boolean found = false;
-            for (MapNode node : nodes) {
-                if (node.hasTag(nodeTag)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (! found) {
-                result.add("Undefined Node Tag: " + nodeTag);
-            }
-        }
-        for (String linkTag : linkTags) {
-            if (! links.tagExistP(linkTag))
-                result.add("Undefined Link Tag: " + linkTag);
-        }
-        return result;
     }
 
     //------------------------------------------------------------
@@ -751,6 +638,121 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             columns.shift() ;
         }
         return true ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 経路情報に未定義のタグが使用されていないかチェックする
+     */
+    private void checkPlannedRouteInConfig(MapNodeTable nodes,
+                                           MapLinkTable links,
+                                           GenerationConfigBase genConfig,
+                                           String where) {
+        ArrayList<String> routeErrors =
+            checkPlannedRoute(nodes, links, genConfig.plannedRoute);
+        if (! routeErrors.isEmpty()) {
+            definitionErrors.put(where, routeErrors);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 経路情報に未定義のタグが使用されていたらその内容を返す
+     */
+    public ArrayList<String> checkPlannedRoute(MapNodeTable nodes, MapLinkTable links, ArrayList<String> planned_route) {
+        ArrayList<String> linkTags = new ArrayList();
+        ArrayList<String> nodeTags = new ArrayList();
+        int index = 0;
+        while (index < planned_route.size()) {
+            String candidate = planned_route.get(index);
+            if (candidate.startsWith("WAIT_UNTIL")) {
+                linkTags.add(candidate.substring(11));
+                index += 3;
+            } else if (candidate.startsWith("WAIT_FOR")) {
+                linkTags.add(candidate.substring(9));
+                index += 3;
+            } else {
+                nodeTags.add(candidate);
+                index += 1;
+            }
+        }
+
+        ArrayList<String> result = new ArrayList();
+        for (String nodeTag : nodeTags) {
+            boolean found = false;
+            for (MapNode node : nodes) {
+                if (node.hasTag(nodeTag)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (! found) {
+                result.add("Undefined Node Tag: " + nodeTag);
+            }
+        }
+        for (String linkTag : linkTags) {
+            if (! links.tagExistP(linkTag))
+                result.add("Undefined Link Tag: " + linkTag);
+        }
+        return result;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 経路情報に未定義のタグが使用されていたら例外を発生させる
+     * エラー情報は、checkPlannedRouteInConfig() で調べて蓄えられている。
+     */
+    private void raiseExceptionRouteDefinitionError()
+        throws Exception
+    {
+        if (! definitionErrors.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder();
+            //definitionErrors.forEach((_line, messages) -> {
+            //    errorMessage.append("line: ").append(_line).append("\n");
+            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
+            //});
+            Iterator it = definitionErrors.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
+                String _line = entry.getKey();
+                ArrayList<String>messages = entry.getValue();
+                errorMessage.append("line: ").append(_line).append("\n");
+                for (String message: messages) {
+                    errorMessage.append("    ").append(message).append("\n");
+                }
+            }
+            throw new Exception(errorMessage.toString());
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェント生成
+     */
+    private void doGenerationByConfig(MapNodeTable nodes,
+                                      MapLinkTable links,
+                                      GenerationConfigBase genConfig) {
+        switch(genConfig.ruleTag) {
+        case EACH:
+            doGenerationForEach(nodes, links, genConfig) ;
+            break ;
+        case RANDOM:
+            doGenerationForRandom(nodes, links, genConfig) ;
+            break ;
+        case EACHRANDOM:
+            doGenerationForEachRandom(nodes, links,
+                                      ((GenerationConfigForEachRandom)
+                                       genConfig)) ;
+            break ;
+        case TIMEEVERY:
+            doGenerationForTimeEvery(nodes, links,
+                                     ((GenerationConfigForTimeEvery)
+                                      genConfig)) ;
+            break ;
+        default:
+            Itk.dbgErr("AgentGenerationFile invalid rule " +
+                       "type in generation file!") ;
+        }
     }
 
     //------------------------------------------------------------
