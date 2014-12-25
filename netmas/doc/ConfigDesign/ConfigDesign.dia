@@ -28,7 +28,7 @@
           <dia:boolean val="true"/>
         </dia:attribute>
         <dia:attribute name="scaling">
-          <dia:real val="0.32636767625808716"/>
+          <dia:real val="0.32636764645576477"/>
         </dia:attribute>
         <dia:attribute name="fitto">
           <dia:boolean val="true"/>
@@ -1405,7 +1405,7 @@ buffer|file|pipe|network|server|none#</dia:string>
             <dia:string>#everyEndTime#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
-            <dia:string>#int#</dia:string>
+            <dia:string>#TimeString#</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
             <dia:string>##</dia:string>
@@ -1560,7 +1560,7 @@ buffer|file|pipe|network|server|none#</dia:string>
       <dia:attribute name="attributes">
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#each#</dia:string>
+            <dia:string>#maxFromEach#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#int#</dia:string>
@@ -3501,13 +3501,13 @@ buffer|file|pipe|network|server|none#</dia:string>
         <dia:point val="21,12"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="20.95,11.95;31.47,15.25"/>
+        <dia:rectangle val="20.95,11.95;29.87,15.25"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="21,12"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="10.42"/>
+        <dia:real val="8.8200000000000003"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="3.2000000000000002"/>
@@ -3602,7 +3602,7 @@ buffer|file|pipe|network|server|none#</dia:string>
       <dia:attribute name="attributes">
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#agentClassName#</dia:string>
+            <dia:string>#className#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#AgentClassName#</dia:string>
@@ -3625,10 +3625,10 @@ buffer|file|pipe|network|server|none#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#configString#</dia:string>
+            <dia:string>#config#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
-            <dia:string>#JSONString#</dia:string>
+            <dia:string>#JSONString #</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
             <dia:string>##</dia:string>
@@ -3763,18 +3763,18 @@ buffer|file|pipe|network|server|none#</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="31.42,13.9"/>
+        <dia:point val="29.82,13.9"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="30.67,11.2875;36.05,14.6875"/>
+        <dia:rectangle val="29.07,11.2875;36.05,14.6875"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="31.42,13.9"/>
-        <dia:point val="33.71,13.9"/>
-        <dia:point val="33.71,12.1"/>
+        <dia:point val="29.82,13.9"/>
+        <dia:point val="32.91,13.9"/>
+        <dia:point val="32.91,12.1"/>
         <dia:point val="36,12.1"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -6350,7 +6350,7 @@ ref や include を使うことを想定。#</dia:string>
         <dia:point val="-20.23,20.7"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.08,10.95;26.26,23.05"/>
+        <dia:rectangle val="-21.08,10.95;25.46,23.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -6360,8 +6360,8 @@ ref や include を使うことを想定。#</dia:string>
         <dia:point val="-20.23,23"/>
         <dia:point val="16,23"/>
         <dia:point val="16,11"/>
-        <dia:point val="26.21,11"/>
-        <dia:point val="26.21,12"/>
+        <dia:point val="25.41,11"/>
+        <dia:point val="25.41,12"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
