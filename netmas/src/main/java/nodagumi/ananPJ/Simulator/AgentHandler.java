@@ -161,7 +161,7 @@ public class AgentHandler implements Serializable {
         }
 
         try {
-	    /* [I.Noda] generation file の読み込みはここ */
+            /* [I.Noda] generation file の読み込みはここ */
             generate_agent = new AgentGenerationFile(generationFile,
                     model.getNodes(), model.getLinks(), has_display,
                     linerGenerateAgentRatio, random);
@@ -458,29 +458,29 @@ public class AgentHandler implements Serializable {
 
                 if (parent_id == 0) {
                     event  = new ScenarioEvent(null);
-		    try {
-			double time = (double)Itk.scanTimeStringToInt(items[4]) ;
-			event.setTime(time) ;
-			if (tag.equals("START")) startTime = time;
-			else if (tag.equals("OUTBREAK")) outbreakTime = time;
-		    } catch(Exception ex) {
-			System.err.println("no matching item:" + items[4] +
-					   " while reading scenario.");
-			System.err.println(line);
+                    try {
+                        double time = (double)Itk.scanTimeStringToInt(items[4]) ;
+                        event.setTime(time) ;
+                        if (tag.equals("START")) startTime = time;
+                        else if (tag.equals("OUTBREAK")) outbreakTime = time;
+                    } catch(Exception ex) {
+                        System.err.println("no matching item:" + items[4] +
+                                           " while reading scenario.");
+                        System.err.println(line);
                         continue;
                     }
                 } else if (command.equals("ADD_STOP") ||
                         command.equals("REMOVE_STOP")) {
                     event  = new ScenarioEvent(events.get(parent_id));
                     double ptime = (events.get(parent_id)).getClock();
-		    try {
-			double time = (double)Itk.scanTimeStringToInt(items[4]) ;
-			time -= ptime ;
+                    try {
+                        double time = (double)Itk.scanTimeStringToInt(items[4]) ;
+                        time -= ptime ;
                         while (time < 0.) {
                             time += 86400.0;
                         }
                         event.addTime(time / 60.);
-		    } catch(Exception ex) {
+                    } catch(Exception ex) {
                         System.err.println("no matching item:" + items[4] +
                                 " while reading scenario.");
                         System.err.println(line);
