@@ -372,19 +372,24 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
 
                 // ここから、エージェント生成が始まる。
-                if (rule_tag == Rule.EACH) {
+                switch(rule_tag) {
+                case EACH:
                     doGenerationForEach(nodes, links, genConfig) ;
-                } else if (rule_tag == Rule.RANDOM) {
+                    break ;
+                case RANDOM:
                     doGenerationForRandom(nodes, links, genConfig) ;
-                } else if (rule_tag == Rule.EACHRANDOM) {
+                    break ;
+                case EACHRANDOM:
                     doGenerationForEachRandom(nodes, links, 
                                               ((GenerationConfigForEachRandom)
                                                genConfig)) ;
-                } else if (rule_tag == Rule.TIMEEVERY) {
+                    break ;
+                case TIMEEVERY:
                     doGenerationForTimeEvery(nodes, links,
                                              ((GenerationConfigForTimeEvery)
                                               genConfig)) ;
-                } else {
+                    break ;
+                default:
                     System.err.println("AgentGenerationFile invalid rule " +
                                        "type in generation file!");
                 }
