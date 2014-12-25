@@ -199,21 +199,21 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
             return;
         }
+
+        // モードラインの読み込みを試す。
+        // 呼んだ後、read pointer は先頭へ。
+        tryScanModeLine(br) ;
+
         String line = null;
         try {
+
             // 各行をCSVとして解釈するためのパーザ
             // quotation にはシングルクォート(')を用いる。
             // これは、JSON の文字列がダブルクォートのため。
             //[2014.12.23 I.Noda] csvParser は、ShiftingStringList の中へ。
             ShiftingStringList.setCsvSpecialChars(',','\'','\\') ;
 
-            // [I.Noda] 先頭行を判定するための行カウンター
-            int lineCount = 0 ;
             while ((line = br.readLine()) != null) {
-                // モードライン読み込み
-                if(lineCount == 0) scanModeLine(line) ;
-                lineCount++ ;
-
                 //コメント行読み飛ばし
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
@@ -421,6 +421,40 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             throw new Exception(errorMessage.toString());
         }
     }
+
+    //------------------------------------------------------------
+    /**
+     * try to check mode line
+     * [example]
+     *   # { 'version' : '1' }
+     * @param modeline 最初の行
+     * @return modelineの形式であれば true を返す。
+     */
+    public boolean tryScanModeLine(BufferedReader reader) {
+        if(!reader.markSupported()) {
+            Itk.dbgWrn("This reader does not support mark():" + reader) ;
+            return false ;
+        } else {
+            try {
+                reader.mark(BufferedReadMax) ;
+                String line = reader.readLine() ;
+                if(line == null) {
+                    Itk.dbgWrn("This file is empty:" + reader) ;
+                    return false ;
+                } else {
+                    boolean scanned = scanModeLine(line) ;
+                    reader.reset() ;
+                    return scanned ;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace() ;
+                Itk.dbgErr("something wrong to set mark for:" + reader) ;
+                Itk.dbgMsg("BufferedReadMax", BufferedReadMax) ;
+                return false ;
+            }
+        }
+    }
+    static private int BufferedReadMax = 1024 ; // 最大の1行のサイズ
 
     //------------------------------------------------------------
     /**
@@ -674,8 +708,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
             }
         }
-        Itk.dbgMsg("chosen_nodes",chosen_nodes) ;
-        Itk.dbgMsg("chosen_links",chosen_links) ;
 
         for (int i = 0; i < genConfig.startLinks.size(); i++) {
             if (chosen_links[i] > 0) {
