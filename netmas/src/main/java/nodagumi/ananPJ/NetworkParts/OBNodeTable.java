@@ -15,6 +15,7 @@ package nodagumi.ananPJ.NetworkParts;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
 
@@ -86,6 +87,15 @@ public class OBNodeTable<T extends OBNode> extends ArrayList<T> {
         return table ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * テーブル内の要素をランダムに選択
+     * @param random 乱数生成器
+     * @return 選択された要素
+     */
+    public T chooseRandom(Random random) {
+        return get(random.nextInt(size())) ;
+    }
 
 } // class OBNodeTable<T>
 

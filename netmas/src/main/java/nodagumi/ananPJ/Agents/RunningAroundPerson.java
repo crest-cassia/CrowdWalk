@@ -1930,7 +1930,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 linkCandidates.add(resultLink);
         }
         if (linkCandidates.size() > 0) {
-            MapLink chosedLink = linkCandidates.get(random.nextInt(linkCandidates.size()));
+            MapLink chosedLink = linkCandidates.chooseRandom(random) ;
             if(!isVirtual) 
                 backupSituationForSaneNavigationFromNodeAfter(chosedLink) ;
             return chosedLink;

@@ -746,13 +746,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         while (step_time <= every_end_time) {
             for (int i = 0; i < total; i++) {
-                // 2012.12.26 tkokada update
-                // MapLink start_link = genConfig.startLinks.get(
-                // random.nextInt(genConfig.startLinks.size()));
                 MapLink start_link = null;
                 while (start_link == null) {
                     MapLink tmp_link =
-                        genConfig.startLinks.get(random.nextInt(genConfig.startLinks.size()));
+                        genConfig.startLinks.chooseRandom(random) ;
                     start_link = tmp_link;
                 }
 
