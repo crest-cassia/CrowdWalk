@@ -207,15 +207,11 @@ $RULE_STRING,$TAG,$START_TIME[,$END_TIME,$EVERY],$DURATION,$TOTAL[,$EACH]
 
     - Rule strings:
     $RULE_STRING: defines HOW generates agents. The values are EACH, RANDOM,
-    EACHRANDOM, STAFF, RANDOMALL, TIMEEVERY, LINER_GENERATE_AGENT_RATIO.
+    EACHRANDOM, TIMEEVERY, LINER_GENERATE_AGENT_RATIO.
         $EACH:          generates agents for each tagged links.
         $RANDOM:        generates agents randomly for the tagged links.
         $EACHRANDOM:    generates agents randomly for each tagged links. The max
                         number of agents on a link is limitted with $EACH.
-        $STAFF:         generates a navigation staff to navigate $EXIT_TAG
-                        through $ROUTE.
-        $RANDOMALL:     generates agents randomly for the tagged links and
-                        select route randomly too.
         $TIMEEVERY:     from $START_TIME to $END_TIME, generates agents every
                         $EVERY seconds.
         $LINER_GENERATE_AGENT_RATIO:
@@ -253,11 +249,6 @@ EACHRANDOM,LINK1,9:00:00,30,100,10,GOAL1
     Randomly genrates 100 agents from 9:00:00 to 9:00:30 on links tagged LINK1.
     The goal is set ot GOAL1. The max number of agents generated on a link is
     limitted 10.
-
-RANDOMALL,LINK1,8:00:00,10,1000,GOAL1,CHECKPOINT
-    Randomly generates 1000 agents from 8:00:00 to 8:00:10 on link LINK1. The
-    goal is set to GOAL1 through the one of the randomly selected CHECKPOINT
-    node.
 
 TIMEEVERY,LINK1,18:00:00,19:00:00,60,100,GOAL1
     Generates 100 agents from 18:00:00 to 19:00:00 every 60 seconds on links
