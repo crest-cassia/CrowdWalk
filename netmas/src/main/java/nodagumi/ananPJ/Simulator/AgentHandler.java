@@ -447,7 +447,6 @@ public class AgentHandler implements Serializable {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) continue;
-                line = line.toUpperCase();
                 String items[] = line.split(",");
 
                 int id = Integer.parseInt(items[0]);

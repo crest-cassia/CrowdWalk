@@ -93,7 +93,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
           if (children.item(i)  instanceof Element) {
               Element child = (Element)children.item(i);
               if (!child.getTagName().equals("tag")) continue;
-              addTag(child.getTextContent().toUpperCase());
+              addTag(child.getTextContent()) ;
           }
       }
   }
@@ -136,24 +136,9 @@ public abstract class OBNode extends DefaultMutableTreeNode
       if (_tag == null) return false;
       if (_tag.equals("*")) return true;
 
-	  /* [2014.12.19 I.Noda] should obsolete
-	   * これは、絶対に辞めたい。
-	   */
-      _tag = _tag.toUpperCase();
-
-	  /* [2014.12.19 I.Noda] 
-	   * 以下は同じ意味のはず。
-	   */
 	  if(tags.contains(_tag)) return true ;
-	  /* 古いもの
-      for (final String tag : tags) {
-          if (_tag.equals(tag)) {
-              return true;
-          }
-      }
-	  */
 
-	  /* [2014.12.19 I.Noda] obsolete obsolute
+	  /* [2014.12.19 I.Noda] obsolete
 	   * これもバグの元。
 	   */
       if (_tag.equals("EMERGENCY")) { return hasTag("EXIT"); }
@@ -182,11 +167,12 @@ public abstract class OBNode extends DefaultMutableTreeNode
           System.exit(0);
       }
       if (_tag == null || _tag.equals("")) return false;
-	  /* [2014.12.19 I.Noda] should obsolete */
+	  /* [2014.12.19 I.Noda] should obsolete 
       if (! _tag.equals("root") && ! _tag.equals(_tag.toUpperCase())) {
           System.err.println("小文字を含んだタグが使われています: " + _tag);
           System.exit(0);
       }
+      */
       if (hasTag(_tag)) {
           return false;
       }

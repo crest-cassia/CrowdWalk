@@ -102,7 +102,6 @@ public class GenerateScenario extends JPanel implements Serializable {
                 if (line.length() == 0) continue;
                 if (line.charAt(0) =='#') continue;
                 if (line.charAt(0) ==',') continue;
-                line = line.toUpperCase();
                 line.replace('"', ' ');
                 String items[] = line.split(",");
                 

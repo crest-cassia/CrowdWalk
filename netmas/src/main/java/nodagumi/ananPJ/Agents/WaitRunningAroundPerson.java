@@ -408,7 +408,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             if (children.item(i)  instanceof Element) {
                 Element child = (Element)children.item(i);
                 if (!child.getTagName().equals("route")) continue;
-                agent.planned_route.add(child.getTextContent().toUpperCase());
+                agent.planned_route.add(child.getTextContent()) ;
               }
           }
 

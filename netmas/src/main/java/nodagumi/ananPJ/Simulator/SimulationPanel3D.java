@@ -133,7 +133,7 @@ public class SimulationPanel3D extends NetworkPanel3D
         NetmasPropertiesHandler properties = model.getProperties();
         if (properties != null) {
             try {
-                show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE", gas_display.getNames()).toUpperCase());
+				show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE", gas_display.getNames())) ;
                 pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -778,7 +778,6 @@ public class SimulationPanel3D extends NetworkPanel3D
 
             while ((line = br.readLine()) != null) {
                 if (line.charAt(0) =='#') continue;
-                line = line.toUpperCase();
                 camera_position_list.add(CurrentCameraPosition.fromString(line));
             }
         } catch (Exception e) {

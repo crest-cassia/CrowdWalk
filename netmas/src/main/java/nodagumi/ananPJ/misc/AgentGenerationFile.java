@@ -218,14 +218,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if (line.startsWith("#")) continue;
                 if (line.startsWith(",")) continue;
 
-                // おそらくいらないので、排除
-                //String orgLine = line;
-                // [2014/12/15 I.Noda]
-                // 情報が失われるので、toUpperCase を使わない。
-                // もしcase sensitive でないようにするなら、
-                // String class の insensitive な比較メソッドを使うこと。
-                //                line = line.toUpperCase();
-
                 // カラムに分割
                 // [2014/12/15 I.Noda]
                 // CSV Parser を使うように変更。
