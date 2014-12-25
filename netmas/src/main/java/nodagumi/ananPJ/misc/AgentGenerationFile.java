@@ -309,7 +309,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     {
         String line = null;
         try {
-
             // 各行をCSVとして解釈するためのパーザ
             // quotation にはシングルクォート(')を用いる。
             // これは、JSON の文字列がダブルクォートのため。
@@ -324,11 +323,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if(genConfig == null) continue ;
 
                 // 経路情報に未定義のタグが使用されていないかチェックする
-                ArrayList<String> routeErrors = 
-                    checkPlannedRoute(nodes, links, genConfig.plannedRoute);
-                if (! routeErrors.isEmpty()) {
-                    definitionErrors.put(line, routeErrors);
-                }
+                checkPlannedRouteInConfig(nodes, links, genConfig, line) ;
 
                 // ここから、エージェント生成が始まる。
                 doGenerationByConfig(nodes, links, genConfig) ;
@@ -341,31 +336,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
 
         // 経路情報に未定義のタグが使用されていたら例外を発生させる
-        if (! definitionErrors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder();
-            //definitionErrors.forEach((_line, messages) -> {
-            //    errorMessage.append("line: ").append(_line).append("\n");
-            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
-            //});
-            Iterator it = definitionErrors.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
-                String _line = entry.getKey();
-                ArrayList<String>messages = entry.getValue();
-                errorMessage.append("line: ").append(_line).append("\n");
-                for (String message: messages) {
-                    errorMessage.append("    ").append(message).append("\n");
-                }
-            }
-            throw new Exception(errorMessage.toString());
-        }
+        raiseExceptionRouteDefinitionError() ;
     }
 
     //------------------------------------------------------------
     /**
      * scan one line of CSV file
      */
-    public GenerationConfigBase scanCsvFileOneLine(String line,
+    private GenerationConfigBase scanCsvFileOneLine(String line,
                                                    MapNodeTable nodes,
                                                    MapLinkTable links)
         throws IOException
@@ -543,6 +521,49 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         default:
             Itk.dbgErr("AgentGenerationFile invalid rule " +
                        "type in generation file!") ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 経路情報に未定義のタグが使用されていないかチェックする
+     */
+    private void checkPlannedRouteInConfig(MapNodeTable nodes,
+                                           MapLinkTable links,
+                                           GenerationConfigBase genConfig,
+                                           String where) {
+        ArrayList<String> routeErrors =
+            checkPlannedRoute(nodes, links, genConfig.plannedRoute);
+        if (! routeErrors.isEmpty()) {
+            definitionErrors.put(where, routeErrors);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 経路情報に未定義のタグが使用されていたら例外を発生させる
+     * エラー情報は、checkPlannedRouteInConfig() で調べて蓄えられている。
+     */
+    private void raiseExceptionRouteDefinitionError()
+        throws Exception
+    {
+        if (! definitionErrors.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder();
+            //definitionErrors.forEach((_line, messages) -> {
+            //    errorMessage.append("line: ").append(_line).append("\n");
+            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
+            //});
+            Iterator it = definitionErrors.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
+                String _line = entry.getKey();
+                ArrayList<String>messages = entry.getValue();
+                errorMessage.append("line: ").append(_line).append("\n");
+                for (String message: messages) {
+                    errorMessage.append("    ").append(message).append("\n");
+                }
+            }
+            throw new Exception(errorMessage.toString());
         }
     }
 
