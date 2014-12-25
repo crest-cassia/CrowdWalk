@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Map;
 
+import net.arnx.jsonic.JSON ;
+
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
@@ -53,6 +55,12 @@ public abstract class GenerateAgent implements Serializable {
          * エージェント設定情報 (JSON 文字列)
          */
         public String agentConfString = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * エージェント設定情報 (JSON Object)
+         */
+        public Object agentConf = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -107,6 +115,32 @@ public abstract class GenerateAgent implements Serializable {
          * 設定文字列（変換前の設定情報）
          */
         public String originalInfo = null ;
+
+        //------------------------------
+        /**
+         * JSONへの変換用
+         */
+        public Itk.JsonObject toJsonObject() {
+            Itk.JsonObject jObject = new Itk.JsonObject() ;
+            { // agentType
+                Itk.JsonObject agentType = new Itk.JsonObject() ;
+                if(agentConf == null && agentConfString != null)
+                    agentConf = JSON.decode(agentConfString) ;
+                agentType.put("className", agentClassName) ;
+                agentType.put("config", agentConf) ;
+                jObject.put("agentType", agentType) ;
+            }
+            jObject.put("startPlace",startPlace) ;
+            jObject.put("conditions",conditions);
+            jObject.put("goal",goal);
+            jObject.put("plannedRoute",plannedRoute) ;
+            jObject.put("startTime",Itk.formatSecTime((int)startTime)) ;
+            jObject.put("duration",duration) ;
+            jObject.put("total",total) ;
+            jObject.put("speedModel", speedModel) ;
+
+            return jObject ;
+        }
     }
 
     public String goal;

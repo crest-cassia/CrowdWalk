@@ -127,6 +127,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
+         * 生成リンクタグ
+         */
+        public String startLinkTag = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
          * 生成リンクリスト
          */
         public MapLinkTable startLinks = new MapLinkTable() ;
@@ -136,6 +142,28 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
          * 生成ノードリスト
          */
         public MapNodeTable startNodes = new MapNodeTable() ;
+
+        //----------------------------------------
+        /**
+         * JSON への変換
+         */
+        public String toJson(boolean pprintP){
+            return toJsonObject().toJson(pprintP) ;
+        }
+
+        //----------------------------------------
+        /**
+         * JSON Object への変換
+         */
+        public Itk.JsonObject toJsonObject(){
+            Itk.JsonObject jObject = super.toJsonObject() ;
+
+            jObject.put("rule",ruleLexicon.lookUpByMeaning(ruleTag).get(0));
+            if(startLinkTag != null)
+                jObject.put("startPlace", startLinkTag) ;
+
+            return jObject ;
+        }
     }
 
     //============================================================
@@ -149,6 +177,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
          * 各リンク・ノードにおける発生上限数
          */
         public int maxFromEachPlace = 0 ;
+
+        //----------------------------------------
+        /**
+         * JSON Object への変換
+         */
+        public Itk.JsonObject toJsonObject(){
+            Itk.JsonObject jObject = super.toJsonObject() ;
+
+            jObject.put("maxFromEach",maxFromEachPlace) ;
+
+            return jObject ;
+        }
     }
 
     //============================================================
@@ -168,6 +208,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
          * 生成のインターバル
          */
         public int everySeconds = 0 ;
+
+        //----------------------------------------
+        /**
+         * JSON Object への変換
+         */
+        public Itk.JsonObject toJsonObject(){
+            Itk.JsonObject jObject = super.toJsonObject() ;
+
+            jObject.put("everyEndTime",Itk.formatSecTime(everyEndTime)) ;
+            jObject.put("everySeconds",everySeconds) ;
+
+            return jObject ;
+        }
     }
 
     //------------------------------------------------------------
@@ -321,6 +374,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     scanCsvFileOneLine(line, nodes, links) ;
 
                 if(genConfig == null) continue ;
+
+                Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
 
                 // 経路情報に未定義のタグが使用されていないかチェックする
                 checkPlannedRouteInConfig(nodes, links, genConfig, line) ;
@@ -648,6 +703,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             start_link_tag = tag_match.group(1);
             genConfig.conditions = tag_match.group(2).split(";");
         }
+
+        genConfig.startLinkTag = start_link_tag ;
 
         /* get all links with the start_link_tag */
         links.findTaggedLinks(start_link_tag, genConfig.startLinks) ;

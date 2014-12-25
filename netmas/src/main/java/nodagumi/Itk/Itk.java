@@ -15,16 +15,21 @@ package nodagumi.Itk;
 import java.lang.Thread ;
 import java.lang.StackTraceElement ;
 
+import java.io.OutputStream ;
+
 import java.util.UUID;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Arrays ;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.text.DateFormat ;
 import java.text.SimpleDateFormat ;
+
+import net.arnx.jsonic.JSON ;
 
 //======================================================================
 /**
@@ -372,6 +377,44 @@ public class Itk {
             }
         }
         return timeVal ;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    static private String timeStringFormatLong = "%02d:%02d:%02d" ;
+
+    //------------------------------------------------------------
+    /**
+     * 時間・時刻の文字列変換
+     * @param time 秒単位の整数
+     * @return 時刻・時間の文字列
+     */
+    static public String formatSecTime(int time) {
+        int sec = time % 60 ;
+        int restMin = (time - sec) / 60 ;
+        int min = restMin % 60 ;
+        int hour = (restMin - min) / 60 ;
+        return String.format(timeStringFormatLong, hour, min, sec) ;
+    }
+
+    //============================================================
+    /**
+     * JSON handling class
+     */
+    static public class JsonObject extends HashMap<String,Object> {
+        public String toJson() { return toJson(false) ; }
+        public String toJson(boolean pprintP){ 
+            return JSON.encode(this, pprintP) ; 
+        }
+
+        public void toJson(OutputStream ostrm){ toJson(ostrm, false) ; }
+        public void toJson(OutputStream ostrm, boolean pprintP){ 
+            try {
+                JSON.encode(this, ostrm, pprintP) ;
+            } catch(Exception ex) {
+                ex.printStackTrace() ;
+                Itk.dbgErr("Exception",ex) ;
+            }
+        }
     }
 
 } // class Itk
