@@ -99,7 +99,6 @@ public class TargetRoundPerson extends RunningAroundPerson
     @Override
     public void init(int _id, Random _random) {
         super.init(_id, _random);
-        update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
     }
 
@@ -210,7 +209,6 @@ public class TargetRoundPerson extends RunningAroundPerson
 
         return move_commit(time);
     }
-    boolean update_swing_flag = true;//false;
     protected EvacuationAgent agent_in_front;
     protected static double A_0 = 0.962;//1.05;//0.5;
     protected static double A_1 = 0.869;//1.25;//0.97;//2.0;
@@ -371,7 +369,6 @@ public class TargetRoundPerson extends RunningAroundPerson
                 "\t diff "+diff+
                 "\t speed "+speed+
                 "\t order "+order_in_row+
-                "\t swing_flag "+update_swing_flag+
                 "\t direction "+direction);
         */
     }
@@ -434,7 +431,6 @@ public class TargetRoundPerson extends RunningAroundPerson
             direction = -1.0;
         }
         getCurrentLink().agentEnters(this);
-        //update_swing_flag = true;
         //2011年6月7日修正
         /*
          * この部分の修正では、歩行者がリンクの変更を伴う移動をおこなう場合に
@@ -448,30 +444,13 @@ public class TargetRoundPerson extends RunningAroundPerson
          * という二つの条件を満たした場合、swing_width の更新をおこないません。
          * この修正によって、swing_width が更新されないため、不自然な描画の発生は防がれています。
          */
-        MapNode current_link_node_to = current_link.getTo();
-        MapNode current_link_node_from = current_link.getFrom();
-        if(next_link_candidate.width == previous_link.width && way_candidates.size()== 1 && 
-                (current_link_node_to.hasTag("Exit")||current_link_node_from.hasTag("Exit") )){
-            if(direction_orig==direction){
-                update_swing_flag = false;
-                //System.err.println("tryToPassNode 1-1 ");
-            }else{
-                update_swing_flag = false;
+        /* [2014.12.26 I.Noda] update_swing_flag を使っていないので、簡単化。
+         */
+        if(next_link_candidate.width == previous_link.width &&
+           way_candidates.size()== 2){
+            if(direction_orig!=direction){
                 swing_width *= -1;
-                //System.err.println("tryToPassNode 1-2 ");
             }
-        }else if(next_link_candidate.width == previous_link.width && way_candidates.size()== 2){
-            if(direction_orig==direction){
-                update_swing_flag = false;
-                //System.err.println("tryToPassNode 2-1 ");
-            }else{
-                update_swing_flag = false;
-                swing_width *= -1;
-                //System.err.println("tryToPassNode 2-2 ");
-            }
-        }else {
-            //System.err.println("tryToPassNode 3-1 "+way_candidates.size());
-            update_swing_flag = true;
         }
         /* control the speed of agent */
         //if (currentPathway.isStair()|| getCurrentPathway().hasTag("STAIR")) {
