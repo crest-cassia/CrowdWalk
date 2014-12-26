@@ -23,6 +23,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.vecmath.Vector3d;
 
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Editor.EditorFrame;
@@ -44,12 +45,10 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 
-public class NetworkMap extends DefaultTreeModel implements Serializable {
+public class NetworkMap extends NetworkMapBase implements Serializable {
     private static final long serialVersionUID = -4302417008763441581L;
     private HashMap<Integer, OBNode> id_part_map =
         new HashMap<Integer, OBNode>();
-    private MapNodeTable nodesCache = new MapNodeTable();
-    private MapLinkTable linksCache = new MapLinkTable();
     private ArrayList<EvacuationAgent> agentsCache =
         new ArrayList<EvacuationAgent>();
     private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
@@ -99,7 +98,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
 
     /* constructor */
     public NetworkMap() {
-        super(null, true);
+		super() ;
         random = new Random();
         int id = assign_new_id();
         root = new MapPartGroup(id);
@@ -110,7 +109,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
     }
 
     public NetworkMap(Random _random) {
-        super(null, true);
+		super() ;
         random = _random;
         int id = assign_new_id();
         root = new MapPartGroup(id);
@@ -127,7 +126,7 @@ public class NetworkMap extends DefaultTreeModel implements Serializable {
 
     /* to restore from DOM */
     public NetworkMap(int id, Random _random) {
-        super(null, true);
+		super();
         random = _random;
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");

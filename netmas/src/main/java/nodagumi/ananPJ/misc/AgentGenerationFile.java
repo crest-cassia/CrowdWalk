@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON ;
 
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Link.MapLinkTable;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
@@ -233,8 +234,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * コンストラクタ
      */
     public AgentGenerationFile(final String filename,
-                               MapNodeTable nodes,
-                               MapLinkTable links,
+                               NetworkMapBase map,
                                boolean display,
                                double linerGenerateAgentRatio,
                                Random _random)
@@ -246,7 +246,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         setLinerGenerateAgentRatio(linerGenerateAgentRatio);
         setRandom(_random);
 
-        scanFile(filename, nodes, links, display) ;
+        scanFile(filename, map, display) ;
     }
 
     //------------------------------------------------------------
@@ -254,8 +254,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 設定解析ルーチン
      */
     public void scanFile(final String filename,
-                         MapNodeTable nodes,
-                         MapLinkTable links,
+                         NetworkMapBase map,
                          boolean display)
         throws Exception
     {
@@ -280,10 +279,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         switch(fileFormat) {
         case Ver0:
         case Ver1:
-            scanCsvFile(br, nodes, links) ;
+            scanCsvFile(br, map) ;
             break ;
         case Ver2:
-            scanJsonFile(br, nodes, links) ;
+            scanJsonFile(br, map) ;
             break ;
         default:
             Itk.dbgErr("Unknown Format Version" + fileFormat.toString() +
@@ -361,8 +360,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 設定解析ルーチン (CSV file) (Ver.0, Ver.1 file format)
      */
     public void scanCsvFile(BufferedReader br,
-                            MapNodeTable nodes,
-                            MapLinkTable links)
+                            NetworkMapBase map)
         throws Exception
     {
         String line = null;
@@ -376,17 +374,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             while ((line = br.readLine()) != null) {
                 //一行解析
                 GenerationConfigBase genConfig =
-                    scanCsvFileOneLine(line, nodes, links) ;
+                    scanCsvFileOneLine(line, map) ;
 
                 if(genConfig == null) continue ;
 
                 //Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
 
                 // 経路情報に未定義のタグが使用されていないかチェックする
-                checkPlannedRouteInConfig(nodes, links, genConfig, line) ;
+                checkPlannedRouteInConfig(map, genConfig, line) ;
 
                 // ここから、エージェント生成が始まる。
-                doGenerationByConfig(nodes, links, genConfig) ;
+                doGenerationByConfig(map, genConfig) ;
             }
         } catch (Exception e) {
             System.err.println("Error in agent generation.");
@@ -404,8 +402,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * scan one line of CSV file
      */
     private GenerationConfigBase scanCsvFileOneLine(String line,
-                                                   MapNodeTable nodes,
-                                                   MapLinkTable links)
+                                                    NetworkMapBase map)
         throws IOException
     {
         //コメント行読み飛ばし
@@ -473,7 +470,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         // read start link
         // もし start link の解析に失敗したら、次の行へ。
-        if(! scanStartLinkTag(columns.get(), nodes, links, genConfig))
+        if(! scanStartLinkTag(columns.get(), map, genConfig))
             return null ;
 
         // 出発時刻
@@ -537,7 +534,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         genConfig.goal = columns.top() ;
 
         // ゴールより後ろの読み取り。
-        if(!scanRestColumns(columns, nodes, links, genConfig))
+        if(!scanRestColumns(columns, map, genConfig))
             return null ;
 
         return genConfig ;
@@ -594,8 +591,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * という形式らしい。
      */
     private boolean scanStartLinkTag(String start_link_tag,
-                                     MapNodeTable nodes,
-                                     MapLinkTable links,
+                                     NetworkMapBase map,
                                      GenerationConfigBase genConfig) {
         Matcher tag_match = startpat.matcher(start_link_tag);
         if (tag_match.matches()) {
@@ -606,9 +602,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         genConfig.startLinkTag = start_link_tag ;
 
         /* get all links with the start_link_tag */
-        links.findTaggedLinks(start_link_tag, genConfig.startLinks) ;
+        map.getLinks().findTaggedLinks(start_link_tag, genConfig.startLinks) ;
 
-        for (MapNode node : nodes) {
+        for (MapNode node : map.getNodes()) {
             if (node.hasTag(start_link_tag)) {
                 genConfig.startNodes.add(node);
             }
@@ -628,8 +624,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 残りの column の読み込み
      */
     private boolean scanRestColumns(ShiftingStringList columns,
-                                    MapNodeTable nodes,
-                                    MapLinkTable links,
+                                    NetworkMapBase map,
                                     GenerationConfigBase genConfig) {
         //ArrayList<String> planned_route = new ArrayList<String>();
         genConfig.plannedRoute = new ArrayList<String>();
@@ -657,8 +652,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 設定解析ルーチン (JSON file) (Ver.2 file format)
      */
     public void scanJsonFile(BufferedReader br,
-                             MapNodeTable nodes,
-                             MapLinkTable links)
+                             NetworkMapBase map)
         throws Exception
     {
         Object json = JSON.decode(br) ;
@@ -667,18 +661,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 if(item instanceof Map) {
                     GenerationConfigBase genConfig = 
                         scanJsonFileOneItem((HashMap<String, Object>)item,
-                                            nodes, links) ;
+                                            map) ;
 
                     if(genConfig == null) continue ;
 
                     Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
 
                     // 経路情報に未定義のタグが使用されていないかチェックする
-                    checkPlannedRouteInConfig(nodes, links, genConfig, 
-                                              item.toString()) ;
+                    checkPlannedRouteInConfig(map, genConfig, item.toString()) ;
 
                     // ここから、エージェント生成が始まる。
-                    doGenerationByConfig(nodes, links, genConfig) ;
+                    doGenerationByConfig(map, genConfig) ;
                 } else {
                     Itk.dbgErr("wrong json for generation rule:",item) ;
                     continue ;
@@ -695,8 +688,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 設定解析ルーチン (JSON one line) (Ver.2 file format)
      */
     public GenerationConfigBase scanJsonFileOneItem(HashMap<String, Object> json,
-                                                    MapNodeTable nodes,
-                                                    MapLinkTable links)
+                                                    NetworkMapBase map)
     {
         Rule ruleTag = 
             (Rule)ruleLexicon.lookUp(Itk.JsonObject.pickString(json,"rule")) ;
@@ -714,7 +706,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         genConfig.agentConfString = JSON.encode(agentType.get("config")) ;
 
         if(!scanStartLinkTag(Itk.JsonObject.pickString(json,"startPlace"), 
-                             nodes, links, genConfig))
+                             map, genConfig))
             return null ;
 
         try {
@@ -771,12 +763,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * 経路情報に未定義のタグが使用されていないかチェックする
      */
-    private void checkPlannedRouteInConfig(MapNodeTable nodes,
-                                           MapLinkTable links,
+    private void checkPlannedRouteInConfig(NetworkMapBase map,
                                            GenerationConfigBase genConfig,
                                            String where) {
         ArrayList<String> routeErrors =
-            checkPlannedRoute(nodes, links, genConfig.plannedRoute);
+            checkPlannedRoute(map, genConfig.plannedRoute);
         if (! routeErrors.isEmpty()) {
             definitionErrors.put(where, routeErrors);
         }
@@ -786,7 +777,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * 経路情報に未定義のタグが使用されていたらその内容を返す
      */
-    public ArrayList<String> checkPlannedRoute(MapNodeTable nodes, MapLinkTable links, ArrayList<String> planned_route) {
+    public ArrayList<String> checkPlannedRoute(NetworkMapBase map,
+                                               ArrayList<String> planned_route) {
         ArrayList<String> linkTags = new ArrayList();
         ArrayList<String> nodeTags = new ArrayList();
         int index = 0;
@@ -807,7 +799,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         ArrayList<String> result = new ArrayList();
         for (String nodeTag : nodeTags) {
             boolean found = false;
-            for (MapNode node : nodes) {
+            for (MapNode node : map.getNodes()) {
                 if (node.hasTag(nodeTag)) {
                     found = true;
                     break;
@@ -818,7 +810,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             }
         }
         for (String linkTag : linkTags) {
-            if (! links.tagExistP(linkTag))
+            if (! map.getLinks().tagExistP(linkTag))
                 result.add("Undefined Link Tag: " + linkTag);
         }
         return result;
@@ -856,23 +848,22 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * エージェント生成
      */
-    private void doGenerationByConfig(MapNodeTable nodes,
-                                      MapLinkTable links,
+    private void doGenerationByConfig(NetworkMapBase map,
                                       GenerationConfigBase genConfig) {
         switch(genConfig.ruleTag) {
         case EACH:
-            doGenerationForEach(nodes, links, genConfig) ;
+            doGenerationForEach(map, genConfig) ;
             break ;
         case RANDOM:
-            doGenerationForRandom(nodes, links, genConfig) ;
+            doGenerationForRandom(map, genConfig) ;
             break ;
         case EACHRANDOM:
-            doGenerationForEachRandom(nodes, links,
+            doGenerationForEachRandom(map,
                                       ((GenerationConfigForEachRandom)
                                        genConfig)) ;
             break ;
         case TIMEEVERY:
-            doGenerationForTimeEvery(nodes, links,
+            doGenerationForTimeEvery(map,
                                      ((GenerationConfigForTimeEvery)
                                       genConfig)) ;
             break ;
@@ -887,8 +878,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * EACH 用生成ルーチン
      * 各々の link, node で total 個ずつのエージェントが生成。
      */
-    private void doGenerationForEach(MapNodeTable nodes,
-                                     MapLinkTable links,
+    private void doGenerationForEach(NetworkMapBase map,
                                      GenerationConfigBase genConfig) {
         for (final MapLink start_link : genConfig.startLinks) {
             genConfig.startPlace = start_link ;
@@ -906,8 +896,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 指定された link, node において、
      * 合計で total 個のエージェントが生成。
      */
-    private void doGenerationForRandom(MapNodeTable nodes,
-                                       MapLinkTable links,
+    private void doGenerationForRandom(NetworkMapBase map,
                                        GenerationConfigBase genConfig) {
         int total = genConfig.total ;
 
@@ -944,8 +933,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * RANDOM に、1箇所での生成数の上限を入れたもの。
      * 合計で total 個のエージェントが生成。
      */
-    private void doGenerationForEachRandom(MapNodeTable nodes,
-                                           MapLinkTable links,
+    private void doGenerationForEachRandom(NetworkMapBase map,
                                            GenerationConfigForEachRandom genConfig) {
         int maxFromEachPlace = genConfig.maxFromEachPlace ;
         int total = genConfig.total ;
@@ -1012,8 +1000,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 特別な処理をしないようにする。
      * 合計で (total * 生成回数) 個のエージェントが生成。
      */
-    private void doGenerationForTimeEvery(MapNodeTable nodes,
-                                          MapLinkTable links,
+    private void doGenerationForTimeEvery(NetworkMapBase map,
                                           GenerationConfigForTimeEvery genConfig) {
         int every_end_time = genConfig.everyEndTime ;
         int every_seconds = genConfig.everySeconds ;
