@@ -510,18 +510,11 @@ public class MapNode extends OBMapPart implements Serializable {
      */
     public String getTagLabel() {
         StringBuffer buff = new StringBuffer();
-        boolean exitFound = false;
         for (final String tag : tags) {
-            if (tag.equalsIgnoreCase("EXIT")) {
-                exitFound = true;
-                continue;
-            } else if (buff.length() > 0) {
+            if (buff.length() > 0) {
                 buff.append("|");
             }
             buff.append(tag);
-        }
-        if (exitFound && buff.length() == 0) {
-            buff.append("EXIT");
         }
         return buff.toString();
     }
