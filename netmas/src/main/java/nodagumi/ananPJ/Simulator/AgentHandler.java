@@ -149,12 +149,6 @@ public class AgentHandler implements Serializable {
         generated_agents = new ArrayList<EvacuationAgent>();
         evacuated_agents = new ArrayList<EvacuationAgent>();
 
-        for (MapNode node : model.getNodes()) {
-            if (node.hasTag("Exit")) {
-                evacuatedAgentCountByExit.put(node, 0);
-            }
-        }
-
         for (EvacuationAgent agent : agents) {
             MapLink link = agent.getCurrentLink(); 
             link.agentEnters(agent);
