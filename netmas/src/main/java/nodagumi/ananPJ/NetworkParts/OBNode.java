@@ -134,14 +134,13 @@ public abstract class OBNode extends DefaultMutableTreeNode
   /* tag related methods */
   public boolean hasTag (String _tag) {
       if (_tag == null) return false;
-      if (_tag.equals("*")) return true;
 
 	  if(tags.contains(_tag)) return true ;
 
 	  /* [2014.12.19 I.Noda] obsolete
 	   * これもバグの元。
 	   */
-      if (_tag.equals("EMERGENCY")) { return hasTag("EXIT"); }
+      //if (_tag.equals("EMERGENCY")) { return hasTag("EXIT"); }
 
       return false;
   }
@@ -162,10 +161,6 @@ public abstract class OBNode extends DefaultMutableTreeNode
   }
 
   public boolean addTag(String _tag) {
-      if (_tag.contains(" ")) {
-          Thread.dumpStack();
-          System.exit(0);
-      }
       if (_tag == null || _tag.equals("")) return false;
 	  /* [2014.12.19 I.Noda] should obsolete 
       if (! _tag.equals("root") && ! _tag.equals(_tag.toUpperCase())) {
