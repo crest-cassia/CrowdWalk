@@ -12,8 +12,10 @@ $(_) +=
 ## defs
 PACKAGE = nodagumi.Itk
 CLASSES = ClassFinder Itk Lexicon
-SRCFILES = $(foreach klass,$(CLASSES),$(klass).java)
-ALLTESTS = $(foreach klass,$(CLASSES),$(PACKAGE).$(klass)_Test)
+SRCFILES = $(addsuffix .java,$(CLASSES))
+##SRCFILES = $(foreach klass,$(CLASSES),$(klass).java)
+ALLTESTSSRC = $(shell ls *_Test.java)
+ALLTESTS = $(foreach klass,$(ALLTESTSSRC),$(PACKAGE).$(basename $(klass)))
 
 BASEDIR = ../../../../..
 JARDIR = $(BASEDIR)/libs/jar
@@ -91,6 +93,4 @@ run2 ::
 ##------------------------------------------------------------
 FOO = a b c
 foo ::
-	echo $(JARS)
-	echo $(subst $( ),:,$(FOO))
-	echo "$( )"
+	echo $(ALLTESTS)
