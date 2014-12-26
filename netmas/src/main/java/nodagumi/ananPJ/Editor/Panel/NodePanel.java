@@ -63,8 +63,12 @@ public class NodePanel extends PanelWithTable implements Serializable {
 			switch(col) {
 			case 0:
 				return sortedNodes.get(row).getTagString();
-			case 1:
-				return sortedNodes.get(row).hasTag("Exit");
+			case 1: // Exit フラグ欄。
+				/* [2014.12.26 I.Noda] should obsolete
+				 * "Exit" というタグは特別扱いしなくしたので、
+				 * 必ず false
+				 */
+				return false ;
 			case 2:
 			{
 				MapNode node = sortedNodes.get(row);

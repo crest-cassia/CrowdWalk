@@ -1648,16 +1648,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         MapNode current_link_node_to = current_link.getTo();
         MapNode current_link_node_from = current_link.getFrom();
         if (next_link_candidate.width == previous_link.width &&
-                way_candidates.size()== 1 &&
-                (current_link_node_to.hasTag("Exit") ||
-                 current_link_node_from.hasTag("Exit"))) {
-            if (direction_orig==direction) {
-                update_swing_flag = false;
-            } else {
-                update_swing_flag = false;
-                swing_width *= -1;
-            }
-        } else if (next_link_candidate.width == previous_link.width &&
                 way_candidates.size() == 2) {
             if (direction_orig == direction) {
                 update_swing_flag = false;
