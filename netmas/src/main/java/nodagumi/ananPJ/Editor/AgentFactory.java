@@ -106,7 +106,11 @@ public class AgentFactory extends JPanel implements ItemListener,
         }   
     }
 
-    public boolean placeAgentsRandomly(String tag) {
+	public boolean placeAgentsRandomly(String tag, String targetTag) {
+		/* [2014.12.26 I.Noda]
+		 * "Exit" タグの意味付けを排除することになったので、
+		 * tagetTag を指定するようにした。
+		 */
         MapLinkTable links = editor.getMap().getLinks(); 
         MapNodeTable nodes = editor.getMap().getNodes(); 
 
@@ -143,7 +147,8 @@ public class AgentFactory extends JPanel implements ItemListener,
         double minHeight = ret[1];
         double maxHeight = ret[2];
 
-        MapLinkTable reachableLinks = MapChecker.getReachableLinks(nodes);
+		MapLinkTable reachableLinks = MapChecker.getReachableLinks(nodes,
+																   targetTag);
         if (reachableLinks.size() == 0) {
             JOptionPane.showMessageDialog(null,
                     "No links reachable from the exit.\n"
@@ -190,7 +195,7 @@ public class AgentFactory extends JPanel implements ItemListener,
         return true;
     }
 
-    public boolean placeAgentsEvenly(String tag) {
+	public boolean placeAgentsEvenly(String tag, String targetTag) {
         MapLinkTable links = editor.getMap().getLinks(); 
         MapNodeTable nodes = editor.getMap().getNodes(); 
         if (links.size() == 0) {
@@ -222,7 +227,8 @@ public class AgentFactory extends JPanel implements ItemListener,
         double minHeight = ret[1];
         double maxHeight = ret[2];
     
-        MapLinkTable reachableLinks = MapChecker.getReachableLinks(nodes);
+		MapLinkTable reachableLinks = MapChecker.getReachableLinks(nodes,
+																   targetTag);
         if (reachableLinks.size() == 0) {
             JOptionPane.showMessageDialog(null,
                     "No links reachable from the exit.\n"

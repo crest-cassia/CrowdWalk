@@ -46,6 +46,8 @@ import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 
+import nodagumi.Itk.Itk;
+
 public class AgentPanel extends JPanel
     implements ListSelectionListener, Serializable {
     private static final long serialVersionUID = 8975068495519079933L;
@@ -179,14 +181,26 @@ public class AgentPanel extends JPanel
         generateRandom.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                editor.placeAgentsRandomly(agent_place_tag.getText());
+				/* [2014.12.26 I.Noda]
+				 * "Exit" タグの特別扱いがなくなり、ターゲットタグを
+				 * 指定する必要があるが、方法がないので、機能ＯＦＦ。
+				 */
+				//editor.placeAgentsRandomly(agent_place_tag.getText());
+				Itk.dbgErr("!!! placeAgentsRandomly() needs target now !!!") ;
             } 
         });
         generate_manip_panel.add(generateRandom);
         JButton generateEven = new JButton("Generate Evenly");
         generateEven.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) { editor.placeAgentsEvenly(agent_place_tag.getText()); } 
+            public void actionPerformed(ActionEvent e) { 
+				/* [2014.12.26 I.Noda]
+				 * "Exit" タグの特別扱いがなくなり、ターゲットタグを
+				 * 指定する必要があるが、方法がないので、機能ＯＦＦ。
+				 */
+				//editor.placeAgentsEvenly(agent_place_tag.getText());
+				Itk.dbgErr("!!! placeAgentsEvenly() needs target now !!!") ;
+			}
         });
         generate_manip_panel.add(generateEven);
         generate_agent_panel.add(generate_manip_panel, BorderLayout.NORTH);

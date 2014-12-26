@@ -109,10 +109,14 @@ public class MapChecker {
 		return false;
 	}
 	
-	public static MapLinkTable getReachableLinks(MapNodeTable nodes) {
+	/* [2014.12.26]
+	 * ターゲットタグを指定するようにした。
+	 */
+	public static MapLinkTable getReachableLinks(MapNodeTable nodes,
+												 String targetTag) {
 		final MapNodeTable exits = new MapNodeTable();
     	for (final MapNode node : nodes) {
-    		if (node.hasTag("Exit")) exits.add(node);
+    		if (node.hasTag(targetTag)) exits.add(node);
     	}
 
 		Stack<MapNode> path = new Stack<MapNode>();

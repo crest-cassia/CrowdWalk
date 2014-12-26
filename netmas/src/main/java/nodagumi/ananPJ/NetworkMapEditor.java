@@ -93,6 +93,8 @@ import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooserFactory;
 import nodagumi.ananPJ.network.DaRuMaClient;
 
+import nodagumi.Itk.Itk;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -1021,9 +1023,12 @@ public class NetworkMapEditor extends SimulationLauncher
         MapChecker.checkForPiledNodes(getNodes());
     }
 
-    private void checkForReachability() {
-        MapLinkTable reachableLinks = MapChecker.getReachableLinks(
-                getNodes());
+	/* [2014.12.26 I.Noda]
+	 * "Exit" の代わりにターゲットを指定するようにした。
+	 */
+    private void checkForReachability(String targetTag) {
+        MapLinkTable reachableLinks = 
+			MapChecker.getReachableLinks(getNodes(),targetTag) ;
 
         int notConnectedCount = getLinks().size() - reachableLinks.size();
         if (notConnectedCount > 0) {
@@ -1049,14 +1054,14 @@ public class NetworkMapEditor extends SimulationLauncher
         }
     }
 
-    public void placeAgentsRandomly(String tag) {
-        if (!agentPanel.agentFactory.placeAgentsRandomly(tag)) return;
+	public void placeAgentsRandomly(String tag, String targetTag) {
+		if (!agentPanel.agentFactory.placeAgentsRandomly(tag,targetTag)) return;
         setModified(true);
         agentPanel.refresh();
     }
 
-    public void placeAgentsEvenly(String tag) {
-        if (!agentPanel.agentFactory.placeAgentsEvenly(tag)) return;
+	public void placeAgentsEvenly(String tag, String targetTag) {
+		if (!agentPanel.agentFactory.placeAgentsEvenly(tag, targetTag)) return;
         setModified(true);
         agentPanel.refresh();
     }
@@ -1440,14 +1445,23 @@ public class NetworkMapEditor extends SimulationLauncher
             calcExitPaths();
         else if (e.getActionCommand() == "Calculate tag paths")
             calcTagPaths();
-        else if (e.getActionCommand() == "Check for node in same position")
-            checkForPiledNodes();
-        else if (e.getActionCommand() == "Check reachability")
-            checkForReachability();
-        else if (e.getActionCommand() == "Place agents randomly (no tags)")
-            placeAgentsRandomly(null);
-        else if (e.getActionCommand() == "Place agents evenly (no tags)")
-            placeAgentsRandomly(null);
+		else if (e.getActionCommand() == "Check for node in same position")
+			checkForPiledNodes();
+		else if (e.getActionCommand() == "Check reachability")
+			/* [2014.12.26 I.Noda]
+			 * ターゲットタグが必要だが、現状、指定しようがないので、
+			 * コメントアウト
+			 */
+			//checkForReachability(targetTag);
+			Itk.dbgErr("!!! checkForReachability() needs target now !!!") ;
+		else if (e.getActionCommand() == "Place agents randomly (no tags)")
+			/* [2014.12.26 I.Noda] 同上 */
+		    //placeAgentsRandomly(null,targetTag);
+			Itk.dbgErr("!!! placeAgentsRandomly() needs target now !!!") ;
+		else if (e.getActionCommand() == "Place agents evenly (no tags)")
+			/* [2014.12.26 I.Noda] 同上 */
+			//placeAgentsEvenly(null,targetTag);
+			Itk.dbgErr("!!! placeAgentsEvenly() needs target now !!!") ;
         else if (e.getActionCommand() == "Simulate") simulate();
         else if (e.getActionCommand() == "Dump(test)")
             networkMap.testDumpNodes();
