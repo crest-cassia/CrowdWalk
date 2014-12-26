@@ -14,6 +14,7 @@ package nodagumi.Itk;
 
 import java.lang.Thread ;
 import java.lang.StackTraceElement ;
+import java.lang.StringBuffer;
 
 import java.io.OutputStream ;
 
@@ -43,17 +44,24 @@ public class Itk {
      * @param tag 行の先頭のタグ
      * @param object 出力するオブジェクト
      */
-    static public void dbgGeneric(String tag, Object object) {
+    static public void dbgGeneric(String tag, Object... objects) {
         try {
-            if(object == null) {
-                dbgGeneric(tag, "(null)") ;
-        /* XML は当面使わないので、コメントアウト
-            } else if(object instanceof Node) {
-                dbgGeneric(tag, XMLFormatConverter.toString((Node)object)) ;
-        */
-            } else {
-                System.out.println(tag + ":" + objectToString(object)) ;
+            StringBuffer buffer = new StringBuffer() ;
+            buffer.append(tag).append(":") ;
+            for(Object obj : objects) {
+                if(obj == null) {
+                    buffer.append("(null)") ;
+                } 
+                /* XML は当面使わないので、コメントアウト
+                else if(object instanceof Node) {
+                    dbgGeneric(tag, XMLFormatConverter.toString((Node)object)) ;
+                }
+                */
+                else {
+                    buffer.append(objectToString(obj)) ;
+                }
             }
+            System.out.println(buffer.toString()) ;
         } catch(/*TransformerException*/ Exception ex) {
             ex.printStackTrace();
         }
@@ -66,21 +74,8 @@ public class Itk {
      * @param label 先頭に出すラベル
      * @param object 出力するオブジェクト
      */
-    static public void dbgGeneric(String tag, String label, Object object) {
-        try {
-            if(object == null) {
-                dbgGeneric(tag, label, "(null)") ;
-        /* XML は当面使わないので、コメントアウト
-            } else if(object instanceof Node) {
-                dbgGeneric(tag, label, XMLFormatConverter.toString((Node)object)) ;
-        */
-            } else {
-                System.out.println(tag + "[" + label + "]:" 
-                                   + objectToString(object)) ;
-            }
-        } catch(/*TransformerException*/ Exception ex) {
-            ex.printStackTrace();
-        }
+    static public void dbgGeneric(String tag, String label, Object... objects) {
+        dbgGeneric(tag + "[" + label + "]", objects) ;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -113,6 +108,7 @@ public class Itk {
      * 警告出力のヘッダ
      */
     final static public String DbgWrnTag = "ITKWRN" ;
+    final static public String DbgWrnTail = "?????" ;
 
     //------------------------------------------------------------
     /**
@@ -120,7 +116,7 @@ public class Itk {
      * @param object 出力するオブジェクト
      */
     static public void dbgWrn(Object object) {
-        dbgGeneric(DbgWrnTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgWrnTag, "@" + currentMethod(1),DbgWrnTail) ;
         dbgGeneric(DbgWrnTag, object) ;
     }
 
@@ -131,7 +127,7 @@ public class Itk {
      * @param object 出力するオブジェクト
      */
     static public void dbgWrn(String label, Object object) {
-        dbgGeneric(DbgWrnTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgWrnTag, "@" + currentMethod(1),DbgWrnTail) ;
         dbgGeneric(DbgWrnTag, label, object) ;
     }
 
@@ -140,6 +136,7 @@ public class Itk {
      * エラー出力のヘッダ
      */
     final static public String DbgErrTag = "ITKERR" ;
+    final static public String DbgErrTail = "!!!!!" ;
 
     //------------------------------------------------------------
     /**
@@ -147,7 +144,7 @@ public class Itk {
      * @param object 出力するオブジェクト
      */
     static public void dbgErr(Object object) {
-        dbgGeneric(DbgErrTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgErrTag, "@" + currentMethod(1),DbgErrTail) ;
         dbgGeneric(DbgErrTag, object) ;
     }
 
@@ -158,7 +155,7 @@ public class Itk {
      * @param object 出力するオブジェクト
      */
     static public void dbgErr(String label, Object object) {
-        dbgGeneric(DbgErrTag, " @ " + currentMethod(1)) ;
+        dbgGeneric(DbgErrTag, "@" + currentMethod(1),DbgErrTail) ;
         dbgGeneric(DbgErrTag, label, object) ;
     }
 
