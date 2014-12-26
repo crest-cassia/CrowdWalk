@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Arrays ;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -401,12 +402,30 @@ public class Itk {
      * JSON handling class
      */
     static public class JsonObject extends HashMap<String,Object> {
+        //------------------------------
+        /**
+         * JSON 文字列への変換 （1行）
+         */
         public String toJson() { return toJson(false) ; }
+
+        //------------------------------
+        /**
+         * JSON 文字列への変換 （prity print 可能）
+         */
         public String toJson(boolean pprintP){ 
             return JSON.encode(this, pprintP) ; 
         }
 
+        //------------------------------
+        /**
+         * JSON 文字列の出力 （1行）
+         */
         public void toJson(OutputStream ostrm){ toJson(ostrm, false) ; }
+
+        //------------------------------
+        /**
+         * JSON 文字列の出力 （prity print 可能）
+         */
         public void toJson(OutputStream ostrm, boolean pprintP){ 
             try {
                 JSON.encode(this, ostrm, pprintP) ;
@@ -414,6 +433,71 @@ public class Itk {
                 ex.printStackTrace() ;
                 Itk.dbgErr("Exception",ex) ;
             }
+        }
+
+        //------------------------------
+        /**
+         * 文字列の取り出し
+         */
+        static public String pickString(Map<String,Object> object, String key){
+            return convertString(object.get(key)) ;
+        }
+
+        //------------------------------
+        /**
+         * intへの変換
+         */
+        static public int pickInt(Map<String,Object> object, String key){
+            return convertInt(object.get(key)) ;
+        }
+
+        //------------------------------
+        /**
+         * doubleへの変換
+         */
+        static public double pickDouble(Map<String,Object> object, String key){
+            return convertDouble(object.get(key)) ;
+        }
+
+        //------------------------------
+        /**
+         * Json Object (Map<String,Object>) への変換
+         */
+        static public Map<String,Object> pickObject(Map<String,Object> object,
+                                                    String key){
+            return convertObject(object.get(key)) ;
+        }
+
+        //------------------------------
+        /**
+         * 文字列への変換
+         */
+        static public String convertString(Object object){
+            return object.toString() ;
+        }
+
+        //------------------------------
+        /**
+         * intへの変換
+         */
+        static public int convertInt(Object object){
+            return Integer.parseInt(object.toString()) ;
+        }
+
+        //------------------------------
+        /**
+         * doubleへの変換
+         */
+        static public double convertDouble(Object object){
+            return Double.parseDouble(object.toString()) ;
+        }
+
+        //------------------------------
+        /**
+         * Json Object (Map<String,Object>) への変換
+         */
+        static public Map<String,Object> convertObject(Object object){
+            return (Map<String,Object>)object ;
         }
     }
 

@@ -698,26 +698,29 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                                     MapNodeTable nodes,
                                                     MapLinkTable links)
     {
-        Rule ruleTag = (Rule)ruleLexicon.lookUp((String)json.get("rule")) ;
+        Rule ruleTag = 
+            (Rule)ruleLexicon.lookUp(Itk.JsonObject.pickString(json,"rule")) ;
         GenerationConfigBase genConfig = newConfigForRuleTag(ruleTag) ;
 
         genConfig.originalInfo = JSON.encode(json) ;
 
-        HashMap<String, Object> agentType = 
-            (HashMap<String, Object>)json.get("agentType") ;
-        genConfig.agentClassName = (String)agentType.get("className") ;
+        Map<String, Object> agentType =
+            Itk.JsonObject.pickObject(json,"agentType") ;
+        genConfig.agentClassName = Itk.JsonObject.pickString(agentType,
+                                                             "className") ;
         /* [2014.12.25 I.Noda]
          * 下はもうちょっとエレガントにしたい。
          */
         genConfig.agentConfString = JSON.encode(agentType.get("config")) ;
 
-        if(!scanStartLinkTag((String)json.get("startPlace"), nodes, links, 
-                             genConfig))
+        if(!scanStartLinkTag(Itk.JsonObject.pickString(json,"startPlace"), 
+                             nodes, links, genConfig))
             return null ;
 
         try {
             genConfig.startTime =
-                Itk.scanTimeStringToInt((String)json.get("startTime")) ;
+                Itk.scanTimeStringToInt(Itk.JsonObject.pickString(json,
+                                                                  "startTime")) ;
         } catch(Exception ex) {
             return null ;
         }
@@ -725,17 +728,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         if(genConfig.ruleTag == Rule.TIMEEVERY) {
             try {
                 ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                    Itk.scanTimeStringToInt(json.get("everyEndTime").toString()) ;
+                    Itk.scanTimeStringToInt(Itk.JsonObject.pickString(json,
+                                                                      "everyEndTime")) ;
             } catch(Exception ex) {
                 return null ;
             }
             ((GenerationConfigForTimeEvery)genConfig).everySeconds =
-                Integer.parseInt(json.get("everySeconds").toString()) ;
+                Itk.JsonObject.pickInt(json,"everySeconds") ;
         }
 
-        genConfig.duration = Double.parseDouble(json.get("duration").toString());
+        genConfig.duration = Itk.JsonObject.pickDouble(json,"duration") ;
 
-        genConfig.total = Integer.parseInt(json.get("total").toString()) ;
+        genConfig.total = Itk.JsonObject.pickInt(json,"total") ;
         if (liner_generate_agent_ratio > 0) {
             Itk.dbgMsg("GenerateAgentFile total: " +
                        genConfig.total +
@@ -746,16 +750,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         genConfig.speedModel =
             (SpeedCalculationModel)
-            speedModelLexicon.lookUp(json.get("speedModel").toString()) ;
+            speedModelLexicon.lookUp(Itk.JsonObject.pickString(json,
+                                                               "speedModel")) ;
         if(genConfig.speedModel == null) 
             genConfig.speedModel = SpeedCalculationModel.LaneModel;
 
         if (genConfig.ruleTag == Rule.EACHRANDOM) {
             ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
-                Integer.parseInt(json.get("maxFromEach").toString()) ;
+                Itk.JsonObject.pickInt(json,"maxFromEach") ;
         }
 
-        genConfig.goal = (String)json.get("goal") ;
+        genConfig.goal = Itk.JsonObject.pickString(json,"goal") ;
 
         genConfig.plannedRoute = (ArrayList<String>)json.get("plannedRoute") ;
 

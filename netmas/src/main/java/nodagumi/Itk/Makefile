@@ -66,7 +66,7 @@ SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml
 SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml
 
 
-run : run1
+run : run2
 
 run_base ::
 	(cd $(BASEDIR) ; bash ./quickstart.sh)
