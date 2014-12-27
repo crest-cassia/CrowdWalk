@@ -80,8 +80,9 @@ run0 ::
 run0d ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0d))
 
+run_wait :: run0b
 run0b ::
-	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2))
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0b))
 
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))

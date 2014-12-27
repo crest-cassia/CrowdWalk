@@ -1,4 +1,4 @@
-/*
+/* aaa
 Usable color names:
     BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE,
     LIGHTBLUE, SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK,
@@ -17,6 +17,7 @@ Usable color names:
 ・width_fixed が true なら width_ratio で指定した値がそのまま表示上のリンク幅となる。
   width_fixed が false なら width_ratio で指定した値をマップデータのリンク幅に乗算した値が表示上のリンク幅となる。
 ・タグ名にハイフン(-)を含む場合はシングルクォートまたはダブルクォートで囲むこと。
+・最後の要素の後にカンマ(,)をつけてはならない。
 */
 {
     STRUCTURE: {
@@ -90,5 +91,5 @@ Usable color names:
         width_ratio: 3.0,
         color: 'RED',
         transparency: 0.25
-    },
+    }
 }

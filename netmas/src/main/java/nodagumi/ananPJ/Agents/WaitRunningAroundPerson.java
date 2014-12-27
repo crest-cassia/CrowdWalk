@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -227,6 +229,85 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     private double wait_time = NOT_WAITING;
     private double wait_time_start = NOT_WAITING;
 
+    //============================================================
+    //============================================================
+    /**
+     * WAIT directive 解釈
+     */
+    static public class WaitDirective {
+        //==============================
+        //::::::::::::::::::::::::::::::
+        /**
+         * enum for WAIT directive
+         */
+        static public enum Type {
+            WAIT_FOR,
+            WAIT_UNTIL
+        }
+        //::::::::::::::::::::::::::::::
+        /**
+         * Lexicon for WAIT directive
+         */
+        static public Lexicon waitLexicon = new Lexicon() ;
+        static {
+            // Rule で定義された名前をそのまま文字列で Lexicon を
+            // 引けるようにする。
+            // 例えば、 WaitDirective.WAIT_FOR は、"WAIT_FOR" で引けるようになる。
+            waitLexicon.registerEnum(Type.class) ;
+        }
+
+        //==============================
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * route 中の WAIT 命令の解釈パターン
+         */
+        static public Pattern waitDirectivePatternFull =
+            Pattern.compile("(\\w+)\\((\\w+),(\\w+),(\\w+)\\)") ;
+        static public Pattern waitDirectivePatternHead =
+            Pattern.compile("(\\w+)\\((\\w+)") ;
+        static public Pattern waitDirectivePatternTail =
+            Pattern.compile("(\\w+)\\)") ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * route 中の WAIT 命令の解釈パターン
+         */
+        public Type type ;
+        public String head ;
+        public String target ; // arg1
+        public String how ;    // arg2
+        public String untilStr ; // arg3
+
+        //------------------------------
+        public WaitDirective(Type _type, String _head, String _target, 
+                             String _how, String _untilStr) {
+            type = _type ;
+            head = _head ;
+            target = _target ;
+            how = _how ;
+            untilStr = _untilStr ;
+        }
+
+        //==============================
+        //------------------------------
+        static public WaitDirective scanDirective(String directive) {
+            Matcher matchFull = waitDirectivePatternFull.matcher(directive) ;
+            if(! matchFull.matches()) {
+                return null ;
+            }
+
+            String head = matchFull.group(1) ;
+            Type waitType = (Type)waitLexicon.lookUp(head) ;
+            if(waitType == null) {
+                return null ;
+            }
+
+            return new WaitDirective(waitType, head, matchFull.group(2),
+                                     matchFull.group(3), matchFull.group(4)) ;
+        }
+    }
+
+    //------------------------------------------------------------
     @Override
     public void preUpdate(double time) {
         waiting = false;
@@ -236,65 +317,87 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             return;
         }
 
-        if (planned_route.get(getRouteIndex()).length() > 10 &&
-                planned_route.get(getRouteIndex()).substring(0, 10).equals("WAIT_UNTIL")) {
-            String target = planned_route.get(getRouteIndex()).substring(11);
-            String until = planned_route.get(getRouteIndex() + 2);
-            until = until.substring(0, until.length() - 1);
+        /* [2014.12.27 I.Noda] 
+         * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
+         * (in "AgentGenerationFile.java")
+         */
+        // WAIT directive かどうかのチェック。
+        try {
+            String tag = planned_route.get(getRouteIndex()) ;
 
-            if (current_link.hasTag(target)) {
-                String how = planned_route.get(getRouteIndex() + 1);
-                
-                if (current_link.hasTag(until)) {
-                    setRouteIndex(getRouteIndex() + 3);
-                } else if (how.equals("SCATTER")) {
-                    waiting = true;
-                    scatter(time);
-                    return;
-                } else if (how.equals("PACK")) {
-                    waiting = true;
-                    pack(time);
-                    return;
-                } else {
-                    System.err.println("WARNING: how to move not stated!");
-                }
-                super.preUpdate(time);
+            WaitDirective directive = WaitDirective.scanDirective(tag) ;
+            if(directive == null) {
+                super.preUpdate(time) ;
+                return ;
             }
-        } else if (planned_route.get(getRouteIndex()).length() > 8 &&
-                planned_route.get(getRouteIndex()).substring(0, 8).equals("WAIT_FOR")) {
-            String target = planned_route.get(getRouteIndex()).substring(9);
 
-            if (current_link.hasTag(target)) {
-                if (wait_time == NOT_WAITING) {
-                    String until_str = planned_route.get(getRouteIndex() + 2);
-                    until_str = until_str.substring(0, until_str.length() - 1);
-                    wait_time = Double.parseDouble(until_str);
-                    wait_time_start = time;
+            String head = directive.head ;
+            WaitDirective.Type waitType = directive.type ;
+
+            String target = directive.target ;
+            String how = directive.how ;
+            String arg2 = directive.untilStr ;
+
+            switch(waitType) {
+            case WAIT_UNTIL:
+                String until = arg2 ;
+
+                if (current_link.hasTag(target)) {
+                    if (current_link.hasTag(until)) {
+                        setRouteIndex(getRouteIndex() + 1);
+                    } else if (how.equals("SCATTER")) {
+                        waiting = true;
+                        scatter(time);
+                        return;
+                    } else if (how.equals("PACK")) {
+                        waiting = true;
+                        pack(time);
+                        return;
+                    } else {
+                        System.err.println("WARNING: how to move not stated!");
+                    }
+                    /* [2014.12.27 I.Noda]
+                     * これは無駄ではないか？下でも呼んでいる。
+                     */
+                    super.preUpdate(time);
                 }
-                String how = planned_route.get(getRouteIndex() + 1);
-                
-                if (time - wait_time_start > wait_time) {
+                break ;
+
+            case WAIT_FOR:
+                String until_str = arg2 ;
+
+                if (current_link.hasTag(target)) {
+                    if (wait_time == NOT_WAITING) {
+                        wait_time = Double.parseDouble(until_str);
+                        wait_time_start = time;
+                    }
+
+                    if (time - wait_time_start > wait_time) {
+                        wait_time = NOT_WAITING;
+                        setRouteIndex(getRouteIndex() + 1);
+                    } else if (how.equals("SCATTER")) {
+                        waiting = true;
+                        scatter(time);
+                        return;
+                    } else if (how.equals("PACK")) {
+                        waiting = true;
+                        pack(time);
+                        return;
+                    } else {
+                        System.err.println("WARNING: how to move not stated!");
+                    }
+                } else if (wait_time != NOT_WAITING) {
+                    System.err.println("WARNING: agent " + agentNumber
+                                       + "pushed out from " + target);
                     wait_time = NOT_WAITING;
-                    setRouteIndex(getRouteIndex() + 3);
-                } else if (how.equals("SCATTER")) {
-                    waiting = true;
-                    scatter(time);
-                    return;
-                } else if (how.equals("PACK")) {
-                    waiting = true;
-                    pack(time);
-                    return;
-                } else {
-                    System.err.println("WARNING: how to move not stated!");
+                    setRouteIndex(getRouteIndex() + 1);
                 }
-            } else if (wait_time != NOT_WAITING) {
-                System.err.println("WARNING: agent " + agentNumber
-                        + "pushed out from " + target);
-                wait_time = NOT_WAITING;
-                setRouteIndex(getRouteIndex() + 3);
+                break ;
             }
+            super.preUpdate(time);
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
         }
-        super.preUpdate(time);
     }
     
     @Override

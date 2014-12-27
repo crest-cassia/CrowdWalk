@@ -88,6 +88,8 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
+import nodagumi.Itk.*;
+
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public abstract class NetworkPanel3DBase extends JPanel 
@@ -366,7 +368,10 @@ public abstract class NetworkPanel3DBase extends JPanel
     }
 
     protected void loadLinkAppearances(InputStream is) throws Exception {
-        Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
+	/* [2014.12.27] I.Noda. to adapt new version os JSONIC. */
+	//Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
+	JSON json = new JSON(JSON.Mode.TRADITIONAL);
+	Map<String, Object> map = (Map<String, Object>)json.parse(is);
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String tag = entry.getKey();
             Map<String, Object> items = (Map<String, Object>)entry.getValue();
@@ -385,7 +390,10 @@ public abstract class NetworkPanel3DBase extends JPanel
     }
 
     protected void loadNodeAppearances(InputStream is) throws Exception {
-        Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
+	/* [2014.12.27] I.Noda. to adapt new version os JSONIC. */
+	//Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
+	JSON json = new JSON(JSON.Mode.TRADITIONAL);
+	Map<String, Object> map = (Map<String, Object>)json.parse(is);
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String tag = entry.getKey();
             Map<String, Object> items = (Map<String, Object>)entry.getValue();

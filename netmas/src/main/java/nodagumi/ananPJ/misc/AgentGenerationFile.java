@@ -30,6 +30,7 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLinkTable;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
+import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
 
 import nodagumi.Itk.*;
 
@@ -64,11 +65,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
 
+    //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * enum for generation rule type
      */
-    public enum Rule {
+    static public enum Rule {
         EACH,
         RANDOM,
         EACHRANDOM,
@@ -638,13 +640,69 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
         columns.shift() ;
         while(!columns.isEmpty()) {
-            if (columns.top() != null &&
-                !columns.top().equals("")) {
-                genConfig.plannedRoute.add(columns.top());
+            String tag = columns.get() ;
+            if (tag != null &&
+                !tag.equals("")) {
+                tag = tryScanWaitDirective(tag, columns) ;
+                genConfig.plannedRoute.add(tag) ;
             }
-            columns.shift() ;
         }
         return true ;
+    }
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /*
+     * route 中の WAIT 命令の解釈パターン
+     */
+    static private Pattern waitDirectivePatternFull =
+        WaitDirective.waitDirectivePatternFull ;
+    static private Pattern waitDirectivePatternHead =
+        WaitDirective.waitDirectivePatternHead ;
+    static private Pattern waitDirectivePatternTail =
+        WaitDirective.waitDirectivePatternTail ;
+
+    //------------------------------------------------------------
+    /**
+     * WAIT directive の解釈
+     */
+    private String tryScanWaitDirective(String head,
+                                        ShiftingStringList columns) {
+        try {
+            Matcher matchFull = 
+                waitDirectivePatternFull.matcher(head) ;
+            if(matchFull.matches()) {
+                // 引数込みですでにheadに含まれているので、特にすべきことなし。
+                return head ;
+            }
+            Matcher matchHead =
+                waitDirectivePatternHead.matcher(head) ;
+            if(matchHead.matches()) {
+                // CSV 解釈で、かんまで引数が分断されている場合。
+                String fullForm = 
+                    head + "," + columns.top(0) + "," + columns.top(1) ;
+                Matcher matchFull2 = 
+                    waitDirectivePatternFull.matcher(fullForm) ;
+                if(matchFull2.matches()) {
+                    String directive = matchFull2.group(1) ;
+                    WaitDirective.Type wait =
+                        (WaitDirective.Type)
+                        WaitDirective.waitLexicon.lookUp(directive) ;
+                    if(wait != null) {
+                        //正しい 3引数 wait directive は、まとめたものを返す。
+                        columns.shift(2) ;
+                        return fullForm ;
+                    }
+                }
+                // ここで head に match しているとするならおかしい。
+                Itk.dbgWrn("strange tag form in planned route:" + head) ;
+            }
+            // それ以外の場合は、もとの head を返す。
+            return head ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            return head ;
+        }
     }
 
     //------------------------------------------------------------
@@ -665,7 +723,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                     if(genConfig == null) continue ;
 
-                    Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
+                    //Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
 
                     // 経路情報に未定義のタグが使用されていないかチェックする
                     checkPlannedRouteInConfig(map, genConfig, item.toString()) ;
@@ -784,16 +842,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         int index = 0;
         while (index < planned_route.size()) {
             String candidate = planned_route.get(index);
-            if (candidate.startsWith("WAIT_UNTIL")) {
-                linkTags.add(candidate.substring(11));
-                index += 3;
-            } else if (candidate.startsWith("WAIT_FOR")) {
-                linkTags.add(candidate.substring(9));
-                index += 3;
+
+            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            if(directive != null) {
+                linkTags.add(directive.target) ;
             } else {
                 nodeTags.add(candidate);
-                index += 1;
             }
+            index += 1 ;
         }
 
         ArrayList<String> result = new ArrayList();

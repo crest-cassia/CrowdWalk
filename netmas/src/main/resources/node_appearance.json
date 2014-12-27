@@ -14,11 +14,12 @@ Usable color names:
     },
 
 ・タグ名にハイフン(-)を含む場合はシングルクォートまたはダブルクォートで囲むこと。
+・最後の要素の後にカンマ(,)をつけてはならない。
 */
 {
     EXIT: {
         diameter: 2.0,
         color: 'BLACK2',
         transparency: 0.7
-    },
+    }
 }

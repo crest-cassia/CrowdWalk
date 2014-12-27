@@ -7,7 +7,7 @@
     <!-- buffer|file|pipe|network|server|none -->
     <entry key="map_file">sample/simpleGrid/map.xml</entry>
     <entry key="pollution_file">sample/simpleGrid/gas.csv</entry>
-    <entry key="generation_file">sample/simpleGrid/gen.v2.csv</entry>
+    <entry key="generation_file">sample/simpleGrid/gen.v2.json</entry>
     <entry key="scenario_file">sample/simpleGrid/scenario.csv</entry>
     <entry key="timer_enable">true</entry>
     <entry key="timer_file">/tmp/timer.log</entry>
