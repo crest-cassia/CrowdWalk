@@ -1,4 +1,4 @@
-TOP : build
+TOP : build_q
 
 ## common tricks
 ## 文字列中の comma を操作したい場合、$(,) と参照できる。
@@ -21,7 +21,7 @@ BASEDIR = ../../../../..
 JARDIR = $(BASEDIR)/libs/jar
 CLASSDIR = $(BASEDIR)/build/classes/main
 #CLASSDIR = $(BASEDIR)/build/libs/netmas.jar
-JARLIST = junit-4.12 hamcrest-core-1.3 jsonic-1.2.11
+JARLIST = junit-4.12 hamcrest-core-1.3 jsonic-1.3.7
 JARS = $(subst $( ),:,$(foreach jar,$(JARLIST),$(JARDIR)/$(jar).jar))
 CLASSPATH = $(CLASSDIR):$(JARS)
 JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
@@ -52,6 +52,9 @@ test_Itk ::
 
 test_Lexicon ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Lexicon_Test
+
+test_Term ::
+	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Term_Test
 
 
 test_all ::

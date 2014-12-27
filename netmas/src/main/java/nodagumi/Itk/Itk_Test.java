@@ -14,7 +14,7 @@ package nodagumi.Itk;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import junit.framework.TestCase;
+//import junit.framework.TestCase;
 
 import net.arnx.jsonic.JSON ;
 import net.arnx.jsonic.JSONException ;
@@ -27,7 +27,39 @@ import nodagumi.Itk.Itk ;
 /**
  * Itk Test
  */
-public class Itk_Test extends TestCase {
+public class Itk_Test {
+    //------------------------------------------------------------
+    /**
+     * test dbgVal
+     */
+    @Test
+    public void test_dbgVal() {
+        int x = 1 ;
+        Itk.dbgVal("x",x) ;
+        double y = 2.3 ;
+        Itk.dbgVal("y", y) ;
+        String s = "abc" ;
+        Itk.dbgVal("s",s) ;
+        int[] v = {1, 2, 3} ;
+        Itk.dbgVal("v",v) ;
+        Object n = null ;
+        Itk.dbgVal("n",n) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * test JSON
+     */
+    //@Test
+    public void test_Json() {
+        Itk.dbgMsgMethodInfo() ;
+
+        Object[] str = {"ab\"c", 1.2, 3} ;
+        Itk.dbgMsg("str",str) ;
+        Itk.dbgMsg("str(JSON)",JSON.encode(str)) ;
+
+    }
+
     //------------------------------------------------------------
     /**
      * test dbgMsg
@@ -109,7 +141,7 @@ public class Itk_Test extends TestCase {
         public static String bar = "Foo02's bar" ;
     }
 
-    @Test
+    //@Test
     public void test_working01() {
         Itk.dbgMsgMethodInfo() ;
         Itk.dbgMsg("class", Foo00.class) ;
@@ -124,7 +156,7 @@ public class Itk_Test extends TestCase {
      */
     public enum Foo10 { val0, val2 }
 
-    @Test
+    //@Test
     public void test_enum() {
         Itk.dbgMsgMethodInfo() ;
         Foo10 foo = Foo10.val0 ;
@@ -138,7 +170,7 @@ public class Itk_Test extends TestCase {
     /**
      * test error and warning
      */
-    @Test
+    //@Test
     public void test_ErrWrn() {
         Itk.dbgMsgMethodInfo() ;
 

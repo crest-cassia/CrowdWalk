@@ -15,15 +15,14 @@ package nodagumi.Itk;
 import nodagumi.Itk.ClassFinder;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
-import junit.framework.TestCase;
+//import junit.framework.TestCase;
 
 //======================================================================
 /**
  * description of Test.
  */
-public class ClassFinder_Test extends TestCase {
+public class ClassFinder_Test {
     //------------------------------------------------------------
     /**
      * simple get test

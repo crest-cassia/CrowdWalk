@@ -105,6 +105,37 @@ public class Itk {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * デバッグ出力値チェックのヘッダ
+     */
+    final static public String DbgValTag = "ITKVAL" ;
+
+    //------------------------------------------------------------
+    /**
+     * デバッグ用出力コマンド
+     * @param label 先頭に出すラベル
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgVal(Object object) {
+        String className = object.getClass().getSimpleName() ;
+
+        dbgGeneric(DbgValTag, (Object)"(", className, ")", object) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * デバッグ用出力コマンド
+     * @param label 先頭に出すラベル
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgVal(String label, Object object) {
+        String className = (object == null ? "Null" : 
+                            object.getClass().getSimpleName()) ;
+
+        dbgGeneric(DbgValTag, label, "(", className, ")", object) ;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 警告出力のヘッダ
      */
     final static public String DbgWrnTag = "ITKWRN" ;
