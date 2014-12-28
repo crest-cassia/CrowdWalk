@@ -17,6 +17,9 @@ import org.junit.Test;
 //import junit.framework.TestCase;
 
 import java.util.HashMap ;
+import java.util.ArrayList ;
+import java.util.List ;
+import java.util.Arrays ;
 
 import nodagumi.Itk.*;
 
@@ -44,6 +47,27 @@ public class Term_Test {
         Itk.dbgVal("term0[y]",term0.getArg("y")) ;
         Itk.dbgVal("term0.head",term0.getHead()) ;
         
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    @Test
+    public void test_array() {
+        Itk.dbgMsgMethodInfo() ;
+
+        List<String> array0 = Arrays.asList("foo","bar","baz") ;
+        Itk.dbgVal("array0",array0) ;
+        Term term0 = new Term(array0) ;
+        Itk.dbgVal("term0",term0) ;
+        Itk.dbgVal("term0(JSON)",term0.toJson()) ;
+
+        String str1 = "['a',1,2.3,{'':'foo','bar':[],'baz':{}}]" ;
+        str1 = str1.replaceAll("'","\"") ;
+        Itk.dbgVal("str1",str1) ;
+        Term term1 = Term.newByJson(str1) ;
+        Itk.dbgVal("term1",term1) ;
+        Itk.dbgVal("term1(JSON)",term1.toJson()) ;
     }
 
     //------------------------------------------------------------
@@ -87,6 +111,9 @@ public class Term_Test {
         Term term5 = new Term("foo") ;
         term5.setArg("bar","aho") ;
         term5.setArg("baz",2.34) ;
+        Itk.dbgVal("term5", term5) ;
+        Itk.dbgVal("term5(JSON)", term5.toJson()) ;
+
 
         Itk.dbgMsg("term0==null",term0.equals(null)) ;
         Itk.dbgMsg("term0==100",term0.equals(100)) ;
