@@ -16,6 +16,7 @@ import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.WaitRunningAroundPerson;
+import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
 import nodagumi.ananPJ.Agents.*;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -313,16 +314,14 @@ public abstract class GenerateAgent implements Serializable {
         int next_check_point_index = 0;
         while (planned_route.size() > next_check_point_index) {
             String candidate = planned_route.get(next_check_point_index);
-            if (candidate.length() > 10 &&
-                    candidate.substring(0, 10).equals("WAIT_UNTIL")) {
-                final String tag = candidate.substring(11);
-                goal_tags.add(tag);
-                next_check_point_index += 3;
-            } else if (candidate.length() > 8 &&
-                    candidate.substring(0, 8).equals("WAIT_FOR")) {
-                final String tag = candidate.substring(9);
-                goal_tags.add(tag);
-                next_check_point_index += 3;
+            /* [2014.12.27 I.Noda]
+             * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
+             * (in "AgentGenerationFile.java")
+             */
+            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            if (directive != null) {
+                goal_tags.add(directive.target) ;
+                next_check_point_index += 1;
             } else {
                 goal_tags.add(candidate);
                 next_check_point_index += 1;

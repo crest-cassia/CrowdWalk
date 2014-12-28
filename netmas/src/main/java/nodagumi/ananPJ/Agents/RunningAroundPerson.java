@@ -38,6 +38,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
 
 import nodagumi.Itk.*;
 
@@ -2392,13 +2393,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         int index = routeIndex;
         while (index < planned_route.size()) {
             String candidate = planned_route.get(index);
-            if (candidate.startsWith("WAIT_UNTIL")) {
-                index += 3;
-            } else if (candidate.startsWith("WAIT_FOR")) {
-                index += 3;
-            } else {
-                return false;
+            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            if(directive == null) {
+                return false ;
             }
+            index += 1 ;
         }
         return true;
     }

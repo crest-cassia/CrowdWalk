@@ -417,15 +417,21 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         int next_check_point_index = getRouteIndex();
         while (planned_route.size() > next_check_point_index) {
             String candidate = planned_route.get(next_check_point_index);
-            if (candidate.length() > 10 &&
-                    candidate.substring(0, 10).equals("WAIT_UNTIL")) {
+            /* [2014.12.27 I.Noda]
+             * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
+             * (in "AgentGenerationFile.java")
+             */
+            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            if (directive != null) {
                 setRouteIndex(next_check_point_index);
-                next_check_point_index += 3;
-            } else if (candidate.length() > 8 &&
-                    candidate.substring(0, 8).equals("WAIT_FOR")) {
-                setRouteIndex(next_check_point_index);
-                next_check_point_index += 3;
+                next_check_point_index++ ;
             } else if (node.hasTag(candidate)) {
+                /* [2014.12.29 I.Noda] question
+                 * ここのアルゴリズム、正しいのか？
+                 * WAIT の場合は、そのWAITが書かれているところを
+                 * setRouteIndex している。
+                 * そうでなければ、今みている次を setRouteIndex している。
+                 */
                 next_check_point_index++;
                 setRouteIndex(next_check_point_index);
             } else if (node.getHint(candidate) != null) {
@@ -447,16 +453,14 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         while (planned_route.size() > next_check_point_index) {
             String candidate = planned_route.get(next_check_point_index);
 
-            if (candidate.length() > 10 &&
-                    candidate.substring(0, 10).equals("WAIT_UNTIL")) {
-                final String tag = candidate.substring(11);
-                goal_tags.add(tag);
-                next_check_point_index += 3;
-            } else if (candidate.length() > 8 &&
-                    candidate.substring(0, 8).equals("WAIT_FOR")) {
-                final String tag = candidate.substring(9);
-                goal_tags.add(tag);
-                next_check_point_index += 3;
+            /* [2014.12.27 I.Noda]
+             * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
+             * (in "AgentGenerationFile.java")
+             */
+            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            if(directive != null) {
+                goal_tags.add(directive.target) ;
+                next_check_point_index += 1;
             } else {
                 goal_tags.add(candidate);
                 ++next_check_point_index;
