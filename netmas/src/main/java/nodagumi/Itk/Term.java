@@ -704,6 +704,14 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * 実効的なbodyのない Term (= Atom) か？
+     */
+    public boolean isObject() {
+        return hasBody() ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 実効的なbody を持つか？
      */
     public boolean hasBody() {
