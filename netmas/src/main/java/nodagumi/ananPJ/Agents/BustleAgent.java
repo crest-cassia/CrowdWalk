@@ -111,15 +111,15 @@ public class BustleAgent extends NaiveAgent
     /**
      * Conf による初期化。
      */
-    public void initByConf(Map<String, Object> conf) {
+    public void initByConf(Term conf) {
         super.initByConf(conf) ;
 
-        if(config.containsKey("weight")) {
+        if(config.hasArg("weight")) {
             //Itk.dbgMsg("weight", config.get("weight")) ;
-            bustleWeight = new Double(config.get("weight").toString()) ;
+            bustleWeight = config.getArgDouble("weight") ;
         }
-        if(config.containsKey("trail")) {
-            trailWeight = new Double(config.get("trail").toString()) ;
+        if(config.hasArg("trail")) {
+            trailWeight = config.getArgDouble("trail") ;
         }
     } ;
     //------------------------------------------------------------

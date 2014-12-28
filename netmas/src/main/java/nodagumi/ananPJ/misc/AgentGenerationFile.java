@@ -154,21 +154,21 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
          * JSON への変換
          */
         public String toJson(boolean pprintP){
-            return toJsonObject().toJson(pprintP) ;
+            return toTerm().toJson(pprintP) ;
         }
 
         //----------------------------------------
         /**
          * JSON Object への変換
          */
-        public Itk.JsonObject toJsonObject(){
-            Itk.JsonObject jObject = super.toJsonObject() ;
+        public Term toTerm(){
+            Term jObject = super.toTerm() ;
 
-            jObject.put("rule",ruleLexicon.lookUpByMeaning(ruleTag).get(0));
+            jObject.setArg("rule",ruleLexicon.lookUpByMeaning(ruleTag).get(0));
             if(startLinkTag != null)
-                jObject.put("startPlace", startLinkTag) ;
-            jObject.put("speedModel", 
-                        speedModelLexicon.lookUpByMeaning(speedModel).get(0));
+                jObject.setArg("startPlace", startLinkTag) ;
+            jObject.setArg("speedModel", 
+                           speedModelLexicon.lookUpByMeaning(speedModel).get(0));
 
             return jObject ;
         }
@@ -190,10 +190,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         /**
          * JSON Object への変換
          */
-        public Itk.JsonObject toJsonObject(){
-            Itk.JsonObject jObject = super.toJsonObject() ;
+        public Term toTerm(){
+            Term jObject = super.toTerm() ;
 
-            jObject.put("maxFromEach",maxFromEachPlace) ;
+            jObject.setArg("maxFromEach",maxFromEachPlace) ;
 
             return jObject ;
         }
@@ -221,11 +221,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         /**
          * JSON Object への変換
          */
-        public Itk.JsonObject toJsonObject(){
-            Itk.JsonObject jObject = super.toJsonObject() ;
+        public Term toTerm(){
+            Term jObject = super.toTerm() ;
 
-            jObject.put("everyEndTime",Itk.formatSecTime(everyEndTime)) ;
-            jObject.put("everySeconds",everySeconds) ;
+            jObject.setArg("everyEndTime",Itk.formatSecTime(everyEndTime)) ;
+            jObject.setArg("everySeconds",everySeconds) ;
 
             return jObject ;
         }
@@ -466,7 +466,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
         if(fileFormat == FileFormat.Ver1) {
             genConfig.agentClassName = columns.top(0) ;
-            genConfig.agentConfString = columns.top(1) ;
+            genConfig.agentConf = Term.newByJson(columns.top(1)) ;
             columns.shift(2) ;
         }
 
@@ -766,10 +766,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         Term agentType = json.getArgTerm("agentType") ;
         genConfig.agentClassName = agentType.getArgString("className") ;
-        /* [2014.12.25 I.Noda]
-         * 下はもうちょっとエレガントにしたい。
-         */
-        genConfig.agentConfString = agentType.getArgTerm("config").toJson() ;
+
+        genConfig.agentConf = agentType.getArgTerm("config") ;
 
         if(!scanStartLinkTag(json.getArgString("startPlace"), map, genConfig))
             return null ;

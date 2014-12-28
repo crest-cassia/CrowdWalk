@@ -178,7 +178,7 @@ public class NaiveAgent
     /**
      * Conf による初期化。
      */
-    public void initByConf(Map<String, Object> conf) {
+    public void initByConf(Term conf) {
         super.initByConf(conf) ;
     } ;
 

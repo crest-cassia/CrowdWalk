@@ -36,7 +36,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     /**
      * Agent の詳細設定情報を格納しているもの
      */
-    public Map<String, Object> config ;
+    public Term config ;
 
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
@@ -82,21 +82,20 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * 継承しているクラスの設定のため。
      * @param conf json の連想配列形式を scan した Map
      */
-    public void initByConf(Map<String, Object> conf) {
+    public void initByConf(Term conf) {
         if(conf != null) {
             config = conf ;
         } else {
-            config = new HashMap<String, Object>() ;
+            config = new Term() ;
         }
     } ;
     /**
-     * Conf による初期化。
+     * Conf による初期化。(obsolete)
      * 継承しているクラスの設定のため。
      * @param confString json で書かれたAgentのconfigulation。
      */
-    public void initByConf(String confString) {
-        Map<String, Object> conf =
-            (Map<String, Object>)JSON.decode(confString) ;
+    public void _initByConf(String confString) {
+        Term conf = Term.newByJson(confString) ;
         initByConf(conf) ;
     }
 

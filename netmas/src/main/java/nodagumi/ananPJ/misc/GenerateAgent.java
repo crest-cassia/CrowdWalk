@@ -54,15 +54,15 @@ public abstract class GenerateAgent implements Serializable {
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
-         * エージェント設定情報 (JSON 文字列)
+         * エージェント設定情報 (JSON 文字列) (obsolete)
          */
-        public String agentConfString = null ;
+        //public String agentConfString = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * エージェント設定情報 (JSON Object)
          */
-        public Object agentConf = null ;
+        public Term agentConf = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -122,24 +122,26 @@ public abstract class GenerateAgent implements Serializable {
         /**
          * JSONへの変換用
          */
-        public Itk.JsonObject toJsonObject() {
-            Itk.JsonObject jObject = new Itk.JsonObject() ;
+        public Term toTerm() {
+            Term jObject = new Term() ;
             { // agentType
-                Itk.JsonObject agentType = new Itk.JsonObject() ;
+                Term agentType = new Term() ;
+                /* [2014.12.28 I.Noda] obsolete
                 if(agentConf == null && agentConfString != null)
                     agentConf = JSON.decode(agentConfString) ;
-                agentType.put("className", agentClassName) ;
-                agentType.put("config", agentConf) ;
-                jObject.put("agentType", agentType) ;
+                */
+                agentType.setArg("className", agentClassName) ;
+                agentType.setArg("config", agentConf) ;
+                jObject.setArg("agentType", agentType) ;
             }
-            jObject.put("startPlace",startPlace) ;
-            jObject.put("conditions",conditions);
-            jObject.put("goal",goal);
-            jObject.put("plannedRoute",plannedRoute) ;
-            jObject.put("startTime",Itk.formatSecTime((int)startTime)) ;
-            jObject.put("duration",duration) ;
-            jObject.put("total",total) ;
-            jObject.put("speedModel", speedModel) ;
+            jObject.setArg("startPlace",startPlace) ;
+            jObject.setArg("conditions",conditions);
+            jObject.setArg("goal",goal);
+            jObject.setArg("plannedRoute",plannedRoute) ;
+            jObject.setArg("startTime",Itk.formatSecTime((int)startTime)) ;
+            jObject.setArg("duration",duration) ;
+            jObject.setArg("total",total) ;
+            jObject.setArg("speedModel", speedModel) ;
 
             return jObject ;
         }
@@ -159,14 +161,14 @@ public abstract class GenerateAgent implements Serializable {
      * エージェントクラスの名前を格納。
      */
     public String agentClassName = "NaiveAgent" ;
-    public String agentConf = null ; // config in json string.
+    public Term agentConf = null ; // config in json Term
 
     /**
      *  Config によるコンストラクタ
      */
     public GenerateAgent(Config config, Random _random) {
         this(config.agentClassName,
-             config.agentConfString,
+             config.agentConf,
              config.conditions,
              config.goal,
              config.plannedRoute,
@@ -179,7 +181,7 @@ public abstract class GenerateAgent implements Serializable {
     }
 
     public GenerateAgent(String _agentClassName,
-                         String _agentConf,
+                         Term _agentConf,
             String[] conditions,
             Term _goal,
             List<Term> _planned_route,
@@ -369,7 +371,7 @@ class GenerateAgentFromLink extends GenerateAgent {
 
 
     public GenerateAgentFromLink(String _agentClassName,
-                                 String _agentConf,
+                                 Term _agentConf,
             MapLink _start_link,
             String[] conditions,
             Term _goal,
@@ -448,7 +450,7 @@ class GenerateAgentFromNode extends GenerateAgent {
     }
 
     public GenerateAgentFromNode(String _agentClassName,
-                                 String _agentConf,
+                                 Term _agentConf,
             MapNode _start_node,
             String[] conditions,
             Term _goal,

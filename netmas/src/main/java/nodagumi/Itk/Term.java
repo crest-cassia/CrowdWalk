@@ -325,6 +325,18 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg チェック
+     */
+    public boolean hasArg(String slot) {
+        if(isNullBody()) {
+            return false ;
+        } else {
+            return body.containsKey(slot) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * arg 取得
      */
     public Object getArg(String slot) {

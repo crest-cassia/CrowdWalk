@@ -121,11 +121,11 @@ public class CapriciousAgent extends NaiveAgent
     /**
      * Conf による初期化。
      */
-    public void initByConf(Map<String, Object> conf) {
+    public void initByConf(Term conf) {
         super.initByConf(conf) ;
-        if(config.containsKey("margin")) {
+        if(config.hasArg("margin")) {
             //Itk.dbgMsg("margin", config.get("margin")) ;
-            capriciousMargin = new Double(config.get("margin").toString()) ;
+            capriciousMargin = config.getArgDouble("margin") ;
         }
     } ;
     //------------------------------------------------------------
