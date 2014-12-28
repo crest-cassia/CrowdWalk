@@ -222,6 +222,10 @@ public class MapNode extends OBMapPart implements Serializable {
         hints.clear();
     }
     
+    public NavigationHint getHint(Term key) {
+        return getHint(key.getString()) ;
+    }
+
     public NavigationHint getHint(final String key) {
         NavigationHint hint = hints.get(key);
         /* [2014.12.26 I.Noda] 

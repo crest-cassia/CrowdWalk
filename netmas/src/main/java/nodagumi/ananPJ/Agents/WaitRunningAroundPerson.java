@@ -447,7 +447,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
                  */
                 next_check_point_index++;
                 routePlan.setIndex(next_check_point_index);
-            } else if (node.getHint(candidate.getString()) != null) {
+            } else if (node.getHint(candidate) != null) {
                 return candidate;
             } else {
                 System.err.println("no mid-goal set for " + candidate);

@@ -1704,7 +1704,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         while (!routePlan.isEmpty()) {
             Term candidate = routePlan.top() ;
-            if (node.getHint(candidate.getString()) != null) {
+            if (node.getHint(candidate) != null) {
                 return candidate;
             }
             System.err.println("no mid-goal set for " + candidate);
