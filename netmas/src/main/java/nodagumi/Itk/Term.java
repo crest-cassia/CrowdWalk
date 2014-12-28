@@ -107,9 +107,16 @@ public class Term {
     //------------------------------------------------------------
     /**
      * コンストラクタ（headのみ）
+     * うまく行かない場合があるので、タイプにより分類。
      */
     public Term(Object _head) {
-        setHead(_head) ;
+        if(_head instanceof List) {
+            setArray((List<Object>)_head) ;
+        } else if (_head instanceof HashMap) {
+            setBody((HashMap<String,Object>)_head) ;
+        } else {
+            setHead(_head) ;
+        }
     } ;
 
     //------------------------------------------------------------

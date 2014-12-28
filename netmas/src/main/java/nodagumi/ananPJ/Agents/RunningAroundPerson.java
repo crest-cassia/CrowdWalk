@@ -93,8 +93,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected ArrayList<CheckPoint> route;
 
     /* Values used for navigation */
-    protected String goal;
+    protected Term goal;
     protected RoutePlan routePlan = new RoutePlan();
+    public RoutePlan getRoutePlan() { return routePlan ; } ;
 
     // sane_navigation_from_node の不要な呼び出し回避用
     private boolean sane_navigation_from_node_forced = true;
@@ -196,8 +197,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         buffer.append("," + this.goal);
         buffer.append("," + this.routePlan.getIndex());
         buffer.append("," + this.routePlan.totalLength()) ;
-        for (String r : this.routePlan.getRoute()) {
-            buffer.append("," + r);
+        for (Term r : this.routePlan.getRoute()) {
+            buffer.append("," + r.toString());
         }
         buffer.append("," + this.tags.size());
         for (String tag : this.tags) {
@@ -234,11 +235,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
         agent.speed = Double.parseDouble(items[10]);
         agent.accumulatedExposureAmount = Double.parseDouble(items[11]);
-        agent.goal = items[12];
+        agent.goal = new Term(items[12]);
         agent.routePlan.setIndex(Integer.parseInt(items[13]));
         int route_size = Integer.parseInt(items[14]);
         for (int i = 0; i < route_size; i++) {
-            agent.routePlan.add(items[15 + i]);
+            agent.routePlan.add(new Term(items[15 + i]));
         }
         int tags_base = route_size + 15;
         int tags_size = Integer.parseInt(items[tags_base]);
@@ -277,8 +278,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         if (!isEvacuated()) {
             MapNode fromNode = current_link.getFrom();
             MapNode toNode = current_link.getTo();
-            if ((fromNode.getDistance(calc_next_target(fromNode)) + position)
-                    >= (toNode.getDistance(calc_next_target(toNode)) +
+            if ((fromNode.getDistance(calc_next_target(fromNode).getString())
+                 + position)
+                >= (toNode.getDistance(calc_next_target(toNode).getString()) +
                             current_link.length - position)) {
                 prev_node = current_link.getFrom();
                 next_node = current_link.getTo();
@@ -616,7 +618,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             // if (next_node.hasTag(goal)) {
             //if (planned_route.size() <= getRouteIndex() &&
             //        next_node.hasTag(goal)) {
-            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && next_node.hasTag(goal)) {
+            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && next_node.hasTag(goal.getString())) {
                 consumePlannedRoute();
                 /* exit! */
                 setEvacuated(true, time);
@@ -710,7 +712,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             //        next_node.hasTag(goal) &&
             //        remain >= linkTime) {
             if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) &&
-                    next_node.hasTag(goal) && remain >= linkTime) {
+                next_node.hasTag(goal.getString()) && remain >= linkTime) {
                 consumePlannedRoute();
                 setEvacuated(true, time);
                 prev_node = next_node;
@@ -748,7 +750,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         // if (getPrevNode().hasTag(goal)) {
         //if (planned_route.size() <= getRouteIndex() &&
         //        getPrevNode().hasTag(goal)) {
-        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && getPrevNode().hasTag(goal)) {
+        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && getPrevNode().hasTag(goal.getString())) {
             consumePlannedRoute();
             setEvacuated(true, time);
             return true;
@@ -1079,13 +1081,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         int w = current_link.getLaneWidth(direction);
         if (order_in_row < w) {
             if (isPositiveDirection()) {
-                if (((MapNode) current_link.getTo()).hasTag(goal)) {
+                if (((MapNode) current_link.getTo()).hasTag(goal.getString())) {
                     speed = emptyspeed;
                     // System.err.println("head agent speed is modified, goal: " + goal);
                 }
             }
             if (isNegativeDirection()) {
-                if (((MapNode) current_link.getFrom()).hasTag(goal)) {
+                if (((MapNode) current_link.getFrom()).hasTag(goal.getString())) {
                     speed = emptyspeed;
                     // System.err.println("head agent speed is modified. goal: " + goal);
                 }
@@ -1554,17 +1556,17 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         //return maxAllowedDamage;
     }
 
-    public void setGoal(String _goal) {
+    public void setGoal(Term _goal) {
         //TODO might want to clear path
         goal = _goal;
     }
 
-    public void setPlannedRoute(ArrayList<String> _planned_route) {
+    public void setPlannedRoute(ArrayList<Term> _planned_route) {
         routePlan.setRoute(_planned_route) ;
     }
 
     @Override
-    public ArrayList<String> getPlannedRoute() {
+    public ArrayList<Term> getPlannedRoute() {
         return routePlan.getRoute() ;
     }
 
@@ -1578,7 +1580,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 					navigation_reason.add("LOOP HERE!\n");
                 }
                 if (debug_mode) {
-                    String mid_goal =
+                    Term mid_goal =
                         (!routePlan.isEmpty() ?
                          routePlan.top() : goal);
                     System.err.println("agent going to the same room "
@@ -1659,10 +1661,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         } else {
             update_swing_flag = true;
         }
-        //if (current_link.hasTag(goal)) {
+        //if (current_link.hasTag(goal.getString())) {
         //if (planned_route.size() <= getRouteIndex() &&
-        //        current_link.hasTag(goal)) {
-        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && current_link.hasTag(goal)) {
+        //        current_link.hasTag(goal.getString())) {
+        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) && current_link.hasTag(goal.getString())) {
             consumePlannedRoute();
             // tkokada: temporaly comment out
             //System.err.println("the goal should not be a link!!");
@@ -1687,17 +1689,17 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     /* look up our route plan and give our next goal
      */
-    protected String calc_next_target(MapNode node) {
+    protected Term calc_next_target(MapNode node) {
         if (on_node &&
             !routePlan.isEmpty() &&
-            next_node.hasTag(routePlan.top())) {
+            next_node.hasTag(routePlan.top().getString())) {
             /* reached mid-goal */
             routePlan.shift() ;
         }
 
         while (!routePlan.isEmpty()) {
-            String candidate = routePlan.top() ;
-            if (node.getHint(candidate) != null) {
+            Term candidate = routePlan.top() ;
+            if (node.getHint(candidate.getString()) != null) {
                 return candidate;
             }
             System.err.println("no mid-goal set for " + candidate);
@@ -1778,21 +1780,21 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         // tkokada:  add randomness to choose next link
         HashMap<MapLink, Double> resultLinks = new HashMap<MapLink, Double>();
 
-        final String next_target = calc_next_target(node);
+        final Term next_target = calc_next_target(node);
 
         if (monitor)
             System.err.println("navigating at " + node.getTagString() + " for " + next_target);
 		navigation_reason.clear().add("for").add(next_target).add("\n");
         for (MapLink way_candidate : way_candidates) {
-            //if (way_candidate.hasTag(goal)) {}
+            //if (way_candidate.hasTag(goal.getString())) {}
             // tkokada
             /* ゴールもしくは経由点のチェック。あるいは、同じ道を戻らない */
-            if (routePlan.isEmpty() && way_candidate.hasTag(goal)) {
+            if (routePlan.isEmpty() && way_candidate.hasTag(goal.getString())) {
                 /* finishing up */
                 way = way_candidate;
 				navigation_reason.add("found goal").add(goal);
                 break;
-            } else if (way_candidate.hasTag(next_target)) {
+            } else if (way_candidate.hasTag(next_target.getString())) {
                 /* reached mid_goal */
                 way = way_candidate;
                 routePlan.shift() ;
@@ -1824,7 +1826,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost = calcWayCostTo(way_candidate, node, next_target) ;
+            double cost = calcWayCostTo(way_candidate, node, next_target.getString()) ;
 
             if (monitor)
                 System.err.print(way_candidate.getTagString() +
@@ -2011,19 +2013,19 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     public void renavigate() {
         if (goal != null){
-            final String next_target = calc_next_target(next_node);
+            final Term next_target = calc_next_target(next_node);
             /*
             System.out.println("RunningAroundPerson.renavigate planned_route" +
                     ": " + planned_route + "next_target: " + next_target +
                     "next_node: " + next_node.ID);
             */
-            double nextDistance = next_node.getDistance(next_target)
+            double nextDistance = next_node.getDistance(next_target.getString())
             + (current_link.length - position);
-            double prevDistance = prev_node.getDistance(next_target)
+            double prevDistance = prev_node.getDistance(next_target.getString())
             + position;
             /*
-            double nextDistance = next_node.getDistanceNullAvoid(next_target);
-            double prevDistance = prev_node.getDistanceNullAvoid(next_target);
+            double nextDistance = next_node.getDistanceNullAvoid(next_target.getString());
+            double prevDistance = prev_node.getDistanceNullAvoid(next_target.getString());
             if (nextDistance >= 0.0)
                 nextDistance += (current_link.length - position);
             if (prevDistance >= 0.0)
@@ -2107,14 +2109,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         // tkokada:  add randomness to choose next link
         HashMap<MapLink, Double> resultLinks = new HashMap<MapLink, Double>();
 
-        final String next_target = calc_next_target(node);
+        final Term next_target = calc_next_target(node);
 
         int originalRouteIndex = getRouteIndex();
         for (MapLink way_candidate : way_candidates) {
-            if (routePlan.isEmpty() && way_candidate.hasTag(goal)) {
+            if (routePlan.isEmpty() && way_candidate.hasTag(goal.getString())) {
                 way = way_candidate;
                 break;
-            } else if (way_candidate.hasTag(next_target)) {
+            } else if (way_candidate.hasTag(next_target.getString())) {
                 way = way_candidate;
                 routePlan.shift() ;
                 break;
@@ -2132,7 +2134,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost = calcWayCostTo(way_candidate, node, next_target) ;
+            double cost = calcWayCostTo(way_candidate, node, next_target.getString()) ;
 
             if (loop) {
                 if (cost < min_cost_second) {
@@ -2246,7 +2248,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 agent.emptyspeed = ((Double)(speed.getValue())).doubleValue();
                 agent.speed = agent.emptyspeed;
                 final String goalString = (String)navigationMode.getSelectedItem();
-                agent.setGoal(goalString);
+                agent.setGoal(new Term(goalString));
             }
         };
         return new ParamSettingPanel(network_map, this); 
@@ -2287,9 +2289,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         element.setAttribute("Position", "" + position);
         element.setAttribute("Goal", "" + getGoal());
 
-        for (String via : routePlan.getRoute()) {
+        for (Term via : routePlan.getRoute()) {
               Element tnode = dom.createElement("route");
-              Text via_tag_text = dom.createTextNode(via);
+              Text via_tag_text = dom.createTextNode(via.getString());
               tnode.appendChild(via_tag_text);
               element.appendChild(tnode);
         }
@@ -2302,13 +2304,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         agent.getAttributesFromDom(element);
         agent.generatedTime = Double.parseDouble(element.getAttribute("GeneratedTime"));
         agent.emptyspeed = Double.parseDouble(element.getAttribute("EmptySpeed"));
-        agent.setGoal(element.getAttribute("Goal"));
+        agent.setGoal(new Term(element.getAttribute("Goal")));
         NodeList children = element.getChildNodes();
         for (int i = 0; i < children.getLength(); ++i) {
             if (children.item(i)  instanceof Element) {
                 Element child = (Element)children.item(i);
                 if (!child.getTagName().equals("route")) continue;
-                agent.routePlan.add(child.getTextContent()) ;
+                agent.routePlan.add(new Term(child.getTextContent())) ;
               }
           }
 
@@ -2325,12 +2327,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
 
     @Override
-    public String getGoal() {
+    public Term getGoal() {
         return goal;
     }
 
+    static private Term emergencyTerm = new Term("EMERGENCY"); 
+
     public void setEmergency() {
-        setGoal("EMERGENCY"); 
+        setGoal(emergencyTerm) ;
     }
 
     public boolean isPassedNode() {
@@ -2338,7 +2342,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
 
     public boolean isEmergency() {
-        return goal.equals("EMERGENCY"); 
+        return goal.equals(emergencyTerm) ;
     }
 
     public void setRouteIndex(int routeIndex) {
@@ -2391,8 +2395,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         int delta = 0 ;
         while (delta < routePlan.length()) {
-            String candidate = routePlan.top(delta);
-            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            Term candidate = routePlan.top(delta);
+            WaitDirective directive = 
+                WaitDirective.scanDirective(candidate.getString()) ;
             if(directive == null) {
                 return false ;
             }
@@ -2409,8 +2414,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         routePlan.setIndex(routePlan.totalLength()) ;
     }
 
-    public String getNextCandidate() {
-        return isPlannedRouteCompleted() ? "" : routePlan.top() ;
+    public String getNextCandidateString() {
+        return isPlannedRouteCompleted() ? "" : routePlan.top().getString() ;
     }
 }
 // ;;; Local Variables:

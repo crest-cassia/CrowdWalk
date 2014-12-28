@@ -46,7 +46,7 @@ import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 
-import nodagumi.Itk.Itk;
+import nodagumi.Itk.*;
 
 public class AgentPanel extends JPanel
     implements ListSelectionListener, Serializable {
@@ -96,7 +96,7 @@ public class AgentPanel extends JPanel
                 if (agent instanceof RunningAroundPerson) {
                     RunningAroundPerson rp = (RunningAroundPerson)agent;
                     StringBuffer route_string = new StringBuffer(); 
-                    for (final String via : rp.getPlannedRoute()) {
+                    for (Term via : rp.getPlannedRoute()) {
                         route_string.append("," + via);
                     }
                     return route_string.toString();

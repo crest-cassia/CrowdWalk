@@ -782,7 +782,7 @@ public class AgentHandler implements Serializable {
                 buff.append(agent.accumulatedExposureAmount); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
 
-                buff.append(((RunningAroundPerson)agent).getNextCandidate());
+                buff.append(((RunningAroundPerson)agent).getNextCandidateString());
             }
             individualPedestriansLogger.info(buff.toString());
         }
@@ -1048,14 +1048,14 @@ public class AgentHandler implements Serializable {
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
         for (EvacuationAgent agent : agents) {
-            String goal_tag = agent.getGoal();
+            Term goal_tag = agent.getGoal();
             if (goal_tag != null &&
-                    !all_goal_tags.contains(goal_tag)) {
-                all_goal_tags.add(goal_tag);
+                !all_goal_tags.contains(goal_tag.getString())) {
+                all_goal_tags.add(goal_tag.getString());
             }
-            for (String mid_goal : agent.getPlannedRoute()) {
-                if (!all_goal_tags.contains(mid_goal)) {
-                    all_goal_tags.add(mid_goal);
+            for (Term mid_goal : agent.getPlannedRoute()) {
+                if (!all_goal_tags.contains(mid_goal.getString())) {
+                    all_goal_tags.add(mid_goal.getString());
                 }
             }
         }
@@ -1233,7 +1233,7 @@ public class AgentHandler implements Serializable {
                 buff.append(model.getTimeScale()); buff.append(",");
                 buff.append(agent.getPrevNode().ID); buff.append(",");
                 int idx = 0;
-                for (String route : agent.getPlannedRoute()) {
+                for (Term route : agent.getPlannedRoute()) {
                     if (idx > 0) {
                         buff.append(" ");
                     }
@@ -1556,7 +1556,7 @@ public class AgentHandler implements Serializable {
                     agent.agentNumber + "," +
                     agent.getClass().getSimpleName());
             if (agent instanceof RunningAroundPerson) {
-                for (String route : ((RunningAroundPerson)agent).getPlannedRoute()) {
+                for (Term route : ((RunningAroundPerson)agent).getPlannedRoute()) {
                     pw.print("," + route);
                 }
             }

@@ -12,12 +12,14 @@
 
 package nodagumi.ananPJ.misc ;
 
-import nodagumi.Itk.Itk;
 import java.util.ArrayList;
+
+import nodagumi.Itk.Itk;
+import nodagumi.Itk.Term;
 
 //======================================================================
 /**
- * String 配列を、先頭から順番に使っていく時のためのクラス。
+ * Route の プランを、先頭から順番に使っていく時のためのクラス。
  */
 public class RoutePlan {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -30,15 +32,15 @@ public class RoutePlan {
     /**
      * タグの列
      */
-    private ArrayList<String> route = null ;
+    private ArrayList<Term> route = null ;
 
     //------------------------------------------------------------
     /**
      * コンストラクタ
      */
     public RoutePlan() {
-	route = new ArrayList<String>() ;
-	index = 0 ;
+        route = new ArrayList<Term>() ;
+        index = 0 ;
     } ;
 
     //------------------------------------------------------------
@@ -46,25 +48,25 @@ public class RoutePlan {
      * コンストラクタ
      */
     public RoutePlan(RoutePlan origin) {
-	route = origin.getRoute() ;
-	index = origin.getIndex() ;
+        route = origin.getRoute() ;
+        index = origin.getIndex() ;
     } ;
 
     //------------------------------------------------------------
     /**
      * route を取得
      */
-    public ArrayList<String> getRoute() {
-	return route ;
+    public ArrayList<Term> getRoute() {
+        return route ;
     }
 
     //------------------------------------------------------------
     /**
      * route をセット
      */
-    public RoutePlan setRoute(ArrayList<String> _route) {
-	route = _route ;
-	return this ;
+    public RoutePlan setRoute(ArrayList<Term> _route) {
+        route = _route ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -72,7 +74,7 @@ public class RoutePlan {
      * index を取得
      */
     public int getIndex() {
-	return index ;
+        return index ;
     }
 
     //------------------------------------------------------------
@@ -80,8 +82,8 @@ public class RoutePlan {
      * index をセット
      */
     public RoutePlan setIndex(int _index) {
-	index = _index ;
-	return this ;
+        index = _index ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -114,7 +116,7 @@ public class RoutePlan {
      * もとの長さ
      */
     public int totalLength() {
-	return route.size() ;
+        return route.size() ;
     }
 
     //------------------------------------------------------------
@@ -129,7 +131,7 @@ public class RoutePlan {
     /**
      * 現在の先頭を見る。（取り除かない）
      */
-    public String top() {
+    public Term top() {
         return top(0) ;
     }
 
@@ -137,27 +139,27 @@ public class RoutePlan {
     /**
      * 現在のindexよりn番目を取り出す。
      */
-    public String top(int n) {
-	return route.get(index + n) ;
+    public Term top(int n) {
+        return route.get(index + n) ;
     }
 
     //------------------------------------------------------------
     /**
      * 現在の先頭を見る。（取り除く）
      */
-    public String get() {
-        String string = top() ;
+    public Term get() {
+        Term string = top() ;
         shift() ;
         return string ;
     }
 
     //------------------------------------------------------------
     /**
-     * 現在の先頭を見る。（取り除く）
+     * プランの追加
      */
-    public RoutePlan add(String tag) {
-	route.add(tag) ;
-	return this ;
+    public RoutePlan add(Term tag) {
+        route.add(tag) ;
+        return this ;
     }
 
 } // class RoutePlan.java

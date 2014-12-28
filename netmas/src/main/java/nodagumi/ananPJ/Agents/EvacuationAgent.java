@@ -36,6 +36,8 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.Simulator.Pollution;
 
+import nodagumi.Itk.* ;
+
 public abstract class EvacuationAgent extends OBMapPart
 implements Comparable<EvacuationAgent>, Serializable {
     private static final long serialVersionUID = 2580480798262915926L;
@@ -128,7 +130,7 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     abstract public double getEmptySpeed();
     abstract public void setEmptySpeed(double s);
-    abstract public void setGoal(String _goal);
+    abstract public void setGoal(Term _goal);
 
     abstract public double getSpeed();
     abstract public void setSpeed(double speed);
@@ -294,7 +296,7 @@ implements Comparable<EvacuationAgent>, Serializable {
                     for (EvacuationAgent agent : agents) {
                         if (agent instanceof RunningAroundPerson) {
                             RunningAroundPerson rp = (RunningAroundPerson)agent;
-                            if (rp.selected) rp.setGoal(goalString);
+							if (rp.selected) rp.setGoal(new Term(goalString));
                         } 
                     }
                     this.dispose();
@@ -376,9 +378,10 @@ implements Comparable<EvacuationAgent>, Serializable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("OK")) {
-                    ArrayList<String> planned_route = new ArrayList<String>();
+                    ArrayList<Term> planned_route = new ArrayList<Term>();
                     for (int i = 0; i < routes.length; i++) {
-                        planned_route.add((String)routes[i].getSelectedItem());
+						Term tag = new Term((String)routes[i].getSelectedItem());
+						planned_route.add(tag) ;
                     }
                     for (EvacuationAgent agent : agents) {
                         if (agent instanceof RunningAroundPerson) {
@@ -440,8 +443,8 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     public abstract void setEmergency();
     public abstract boolean isEmergency();
-    public abstract String getGoal();
-    public abstract ArrayList<String> getPlannedRoute();
+    public abstract Term getGoal();
+    public abstract ArrayList<Term> getPlannedRoute();
 
     // current_link 上における絶対 position
     public double absolutePosition() {

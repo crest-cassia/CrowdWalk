@@ -2,6 +2,7 @@ package nodagumi.ananPJ.Simulator.pollution;
 
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Simulator.Pollution;
+import nodagumi.Itk.*;
 
 // 蓄積型(ガス等)
 public class AccumulatedPollution extends Pollution {
@@ -21,6 +22,8 @@ public class AccumulatedPollution extends Pollution {
 
     public AccumulatedPollution() {}
 
+    static private Term emergencyTerm = new Term("EMERGENCY");
+
     public void expose(EvacuationAgent agent, double pollutionLevel) {
         if (! agent.isEvacuated()) {
             agent.currentExposureAmount = pollutionLevel;
@@ -28,7 +31,7 @@ public class AccumulatedPollution extends Pollution {
         }
 
         if (getTriage(agent) != 0) { 
-            agent.setGoal("EMERGENCY");
+	    agent.setGoal(emergencyTerm) ;
         }
     }
 

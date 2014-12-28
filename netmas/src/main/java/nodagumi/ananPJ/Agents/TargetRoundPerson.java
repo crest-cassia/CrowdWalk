@@ -39,6 +39,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 
+import nodagumi.Itk.*;
 
 /** TargetRoundPerson has multiple targets where make a round.
  */
@@ -76,8 +77,8 @@ public class TargetRoundPerson extends RunningAroundPerson
     protected ArrayList<CheckPoint> route;
 
     /* Values used for navigation */
-    protected String goal;
-    protected ArrayList<String> planned_route = new ArrayList<String>();
+    protected Term goal;
+    protected ArrayList<Term> planned_route = new ArrayList<Term>();
     protected int routeIndex;
     
     public static String getTypeName() {
@@ -162,7 +163,7 @@ public class TargetRoundPerson extends RunningAroundPerson
         while (position < 0.0 ||
                 position > current_link.length) {
             /* got out of link */
-            if (next_node.hasTag(goal)) {
+            if (next_node.hasTag(goal.getString())) {
                 /* exit! */
                 setEvacuated(true, time);
                 prev_node = next_node;
@@ -199,7 +200,7 @@ public class TargetRoundPerson extends RunningAroundPerson
             return false;
         }
 
-        if (getPrevNode().hasTag(goal)) {
+        if (getPrevNode().hasTag(goal.getString())) {
             setEvacuated(true, time);
             return true;
         }
@@ -381,18 +382,18 @@ public class TargetRoundPerson extends RunningAroundPerson
                     navigation_reason.add("LOOP HERE!\n");
                 }
                 if (debug_mode) {
-                    String mid_goal =
-                        (getPlannedRoute().size() < getRouteIndex()) ?
-                        getPlannedRoute().get(getRouteIndex()) : goal;
-                            System.err.println("agent going to the same " +
-                                    "room " + next_node.getTagString() +
-                                    "(" + next_node.getHeight() + ") on " +
-                                    time + " when going for " + mid_goal);
-                            for (final CheckPoint passed_points : route) {
-                                System.err.print(passed_points.node + "(" +
-                                        passed_points.time + ") ");
-                            }
-                            System.err.println();
+                    Term mid_goal =
+                        (!routePlan.isEmpty() ?
+                         routePlan.top() : goal);
+                    System.err.println("agent going to the same " +
+                                       "room " + next_node.getTagString() +
+                                       "(" + next_node.getHeight() + ") on " +
+                                       time + " when going for " + mid_goal);
+                    for (final CheckPoint passed_points : route) {
+                        System.err.print(passed_points.node + "(" +
+                                         passed_points.time + ") ");
+                    }
+                    System.err.println();
                 }
                 break;
             }
@@ -456,7 +457,7 @@ public class TargetRoundPerson extends RunningAroundPerson
         //if (currentPathway.isStair()|| getCurrentPathway().hasTag("STAIR")) {
         //  speed *= STAIR_SPEED_CO;
         //}
-        if (current_link.hasTag(goal)) {
+        if (current_link.hasTag(goal.getString())) {
             System.err.println("the goal should not be a link!!");
             setEvacuated(true, time);
             current_link.agentExits(this);

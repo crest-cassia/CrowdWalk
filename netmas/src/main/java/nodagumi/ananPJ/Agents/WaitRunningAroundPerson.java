@@ -132,7 +132,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             System.err.println("WaitRunningAroundPerson.toString link null.");
             System.err.println("\tgoal: " + this.goal);
             System.err.println("\tplanned route size: " + this.routePlan.totalLength());
-            for (String r : this.routePlan.getRoute())
+            for (Term r : this.routePlan.getRoute())
                 System.err.println("\t\troute: " + r);
         }
         // 避難が完了すると current_link は null になる
@@ -145,7 +145,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         buffer.append("," + this.goal);
         buffer.append("," + this.routePlan.getIndex()) ;
         buffer.append("," + this.routePlan.totalLength()) ;
-        for (String r : this.routePlan.getRoute()) {
+        for (Term r : this.routePlan.getRoute()) {
             buffer.append("," + r);
         }
         buffer.append("," + this.tags.size());
@@ -180,11 +180,11 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         }
         agent.speed = Double.parseDouble(items[8]);
         agent.accumulatedExposureAmount = Double.parseDouble(items[9]);
-        agent.goal = items[10];
+        agent.goal = new Term(items[10]);
         agent.routePlan.setIndex(Integer.parseInt(items[11]));
         int route_size = Integer.parseInt(items[12]);
         for (int i = 0; i < route_size; i++) {
-            agent.routePlan.add(items[13 + i]);
+            agent.routePlan.add(new Term(items[13 + i]));
         }
         int tags_base = route_size + 13;
         int tags_size = Integer.parseInt(items[tags_base]);
@@ -324,9 +324,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
          */
         // WAIT directive かどうかのチェック。
         try {
-            String tag = routePlan.top() ;
+            Term tag = routePlan.top() ;
 
-            WaitDirective directive = WaitDirective.scanDirective(tag) ;
+            WaitDirective directive = 
+                WaitDirective.scanDirective(tag.getString()) ;
             if(directive == null) {
                 super.preUpdate(time) ;
                 return ;
@@ -409,24 +410,25 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     /* look up our route plan and give our next goal  
      */
     @Override
-    protected String calc_next_target(MapNode node) {
+    protected Term calc_next_target(MapNode node) {
         if (on_node &&
             !routePlan.isEmpty() &&
-            node.hasTag(routePlan.top())) {
+            node.hasTag(routePlan.top().getString())) {
             routePlan.shift() ;
         }
         int next_check_point_index = routePlan.getIndex() ;
         while (next_check_point_index < routePlan.totalLength()) {
-            String candidate = routePlan.getRoute().get(next_check_point_index) ;
+            Term candidate = routePlan.getRoute().get(next_check_point_index) ;
             /* [2014.12.27 I.Noda]
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
-            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            WaitDirective directive = 
+                WaitDirective.scanDirective(candidate.getString()) ;
             if (directive != null) {
                 routePlan.setIndex(next_check_point_index);
                 next_check_point_index++ ;
-            } else if (node.hasTag(candidate)) {
+            } else if (node.hasTag(candidate.getString())) {
                 /* [2014.12.29 I.Noda] question
                  * ここのアルゴリズム、正しいのか？
                  * WAIT の場合は、そのWAITが書かれているところを
@@ -435,7 +437,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
                  */
                 next_check_point_index++;
                 routePlan.setIndex(next_check_point_index);
-            } else if (node.getHint(candidate) != null) {
+            } else if (node.getHint(candidate.getString()) != null) {
                 return candidate;
             } else {
                 System.err.println("no mid-goal set for " + candidate);
@@ -447,19 +449,20 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return goal;
     }
 
-    public ArrayList<String> getPlannedRoute() {
-        ArrayList<String> goal_tags = new ArrayList<String>();
+    public ArrayList<Term> getPlannedRoute() {
+        ArrayList<Term> goal_tags = new ArrayList<Term>();
 
         int delta = 0;
         while (delta < routePlan.length()) {
-            String candidate = routePlan.top(delta) ;
+            Term candidate = routePlan.top(delta) ;
             /* [2014.12.27 I.Noda]
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
-            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            WaitDirective directive =
+                WaitDirective.scanDirective(candidate.getString()) ;
             if(directive != null) {
-                goal_tags.add(directive.target) ;
+                goal_tags.add(new Term(directive.target)) ;
             } else {
                 goal_tags.add(candidate);
             }
@@ -488,9 +491,9 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         Element element = super.toDom(dom, getNodeTypeString());
         element.setAttribute("AgentType", WaitRunningAroundPerson.getAgentTypeString());
 
-        for (String via : routePlan.getRoute()) {
+        for (Term via : routePlan.getRoute()) {
               Element tnode = dom.createElement("route");
-              Text via_tag_text = dom.createTextNode(via);
+              Text via_tag_text = dom.createTextNode(via.getString());
               tnode.appendChild(via_tag_text);
               element.appendChild(tnode);
         }
@@ -508,13 +511,13 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         agent.getAttributesFromDom(element);
         agent.generatedTime = Double.parseDouble(element.getAttribute("GeneratedTime"));
         agent.emptyspeed = Double.parseDouble(element.getAttribute("EmptySpeed"));
-        agent.setGoal(element.getAttribute("Goal"));
+        agent.setGoal(new Term(element.getAttribute("Goal")));
         NodeList children = element.getChildNodes();
         for (int i = 0; i < children.getLength(); ++i) {
             if (children.item(i)  instanceof Element) {
                 Element child = (Element)children.item(i);
                 if (!child.getTagName().equals("route")) continue;
-                agent.routePlan.add(child.getTextContent()) ;
+                agent.routePlan.add(new Term(child.getTextContent())) ;
               }
           }
 
