@@ -25,6 +25,7 @@ import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.misc.RoutePlan;
 
 import nodagumi.Itk.*;
 
@@ -113,8 +114,8 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         r.direction = direction;
         r.speed = speed;
         r.goal = goal;
-        r.planned_route = planned_route;
-        r.setRouteIndex(0);
+        r.routePlan = new RoutePlan(routePlan) ;
+        r.routePlan.setIndex(0) ;
 
         return r;
     }
@@ -130,8 +131,8 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         if (this.current_link == null) {
             System.err.println("WaitRunningAroundPerson.toString link null.");
             System.err.println("\tgoal: " + this.goal);
-            System.err.println("\tplanned route size: " + this.planned_route.size());
-            for (String r : this.planned_route)
+            System.err.println("\tplanned route size: " + this.routePlan.totalLength());
+            for (String r : this.routePlan.getRoute())
                 System.err.println("\t\troute: " + r);
         }
         // 避難が完了すると current_link は null になる
@@ -142,9 +143,9 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         buffer.append("," + this.speed);
         buffer.append("," + this.accumulatedExposureAmount);
         buffer.append("," + this.goal);
-        buffer.append("," + this.routeIndex);
-        buffer.append("," + this.planned_route.size());
-        for (String r : this.planned_route) {
+        buffer.append("," + this.routePlan.getIndex()) ;
+        buffer.append("," + this.routePlan.totalLength()) ;
+        for (String r : this.routePlan.getRoute()) {
             buffer.append("," + r);
         }
         buffer.append("," + this.tags.size());
@@ -180,10 +181,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         agent.speed = Double.parseDouble(items[8]);
         agent.accumulatedExposureAmount = Double.parseDouble(items[9]);
         agent.goal = items[10];
-        agent.routeIndex = Integer.parseInt(items[11]);
+        agent.routePlan.setIndex(Integer.parseInt(items[11]));
         int route_size = Integer.parseInt(items[12]);
         for (int i = 0; i < route_size; i++) {
-            agent.planned_route.add(items[13 + i]);
+            agent.routePlan.add(items[13 + i]);
         }
         int tags_base = route_size + 13;
         int tags_size = Integer.parseInt(items[tags_base]);
@@ -312,7 +313,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     public void preUpdate(double time) {
         waiting = false;
         if (time <= generatedTime ||
-                getRouteIndex() >= planned_route.size()) {
+            routePlan.isEmpty()) {
             super.preUpdate(time);
             return;
         }
@@ -323,7 +324,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
          */
         // WAIT directive かどうかのチェック。
         try {
-            String tag = planned_route.get(getRouteIndex()) ;
+            String tag = routePlan.top() ;
 
             WaitDirective directive = WaitDirective.scanDirective(tag) ;
             if(directive == null) {
@@ -344,7 +345,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 
                 if (current_link.hasTag(target)) {
                     if (current_link.hasTag(until)) {
-                        setRouteIndex(getRouteIndex() + 1);
+                        routePlan.shift() ;
                     } else if (how.equals("SCATTER")) {
                         waiting = true;
                         scatter(time);
@@ -374,7 +375,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 
                     if (time - wait_time_start > wait_time) {
                         wait_time = NOT_WAITING;
-                        setRouteIndex(getRouteIndex() + 1);
+                        routePlan.shift() ;
                     } else if (how.equals("SCATTER")) {
                         waiting = true;
                         scatter(time);
@@ -390,7 +391,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
                     System.err.println("WARNING: agent " + agentNumber
                                        + "pushed out from " + target);
                     wait_time = NOT_WAITING;
-                    setRouteIndex(getRouteIndex() + 1);
+                    routePlan.shift() ;
                 }
                 break ;
             }
@@ -410,20 +411,20 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     @Override
     protected String calc_next_target(MapNode node) {
         if (on_node &&
-                planned_route.size() > getRouteIndex() &&
-                node.hasTag(planned_route.get(getRouteIndex()))) {
-            setRouteIndex(getRouteIndex() + 1);
+            !routePlan.isEmpty() &&
+            node.hasTag(routePlan.top())) {
+            routePlan.shift() ;
         }
-        int next_check_point_index = getRouteIndex();
-        while (planned_route.size() > next_check_point_index) {
-            String candidate = planned_route.get(next_check_point_index);
+        int next_check_point_index = routePlan.getIndex() ;
+        while (next_check_point_index < routePlan.totalLength()) {
+            String candidate = routePlan.getRoute().get(next_check_point_index) ;
             /* [2014.12.27 I.Noda]
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
             WaitDirective directive = WaitDirective.scanDirective(candidate) ;
             if (directive != null) {
-                setRouteIndex(next_check_point_index);
+                routePlan.setIndex(next_check_point_index);
                 next_check_point_index++ ;
             } else if (node.hasTag(candidate)) {
                 /* [2014.12.29 I.Noda] question
@@ -433,13 +434,13 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
                  * そうでなければ、今みている次を setRouteIndex している。
                  */
                 next_check_point_index++;
-                setRouteIndex(next_check_point_index);
+                routePlan.setIndex(next_check_point_index);
             } else if (node.getHint(candidate) != null) {
                 return candidate;
             } else {
                 System.err.println("no mid-goal set for " + candidate);
                 next_check_point_index++;
-                setRouteIndex(next_check_point_index);
+                routePlan.setIndex(next_check_point_index);
             }
         }
 
@@ -449,10 +450,9 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     public ArrayList<String> getPlannedRoute() {
         ArrayList<String> goal_tags = new ArrayList<String>();
 
-        int next_check_point_index = 0;
-        while (planned_route.size() > next_check_point_index) {
-            String candidate = planned_route.get(next_check_point_index);
-
+        int delta = 0;
+        while (delta < routePlan.length()) {
+            String candidate = routePlan.top(delta) ;
             /* [2014.12.27 I.Noda]
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
@@ -460,11 +460,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             WaitDirective directive = WaitDirective.scanDirective(candidate) ;
             if(directive != null) {
                 goal_tags.add(directive.target) ;
-                next_check_point_index += 1;
             } else {
                 goal_tags.add(candidate);
-                ++next_check_point_index;
             }
+            delta++ ;
         }
         return goal_tags;
     }
@@ -489,7 +488,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         Element element = super.toDom(dom, getNodeTypeString());
         element.setAttribute("AgentType", WaitRunningAroundPerson.getAgentTypeString());
 
-        for (String via : planned_route) {
+        for (String via : routePlan.getRoute()) {
               Element tnode = dom.createElement("route");
               Text via_tag_text = dom.createTextNode(via);
               tnode.appendChild(via_tag_text);
@@ -515,7 +514,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             if (children.item(i)  instanceof Element) {
                 Element child = (Element)children.item(i);
                 if (!child.getTagName().equals("route")) continue;
-                agent.planned_route.add(child.getTextContent()) ;
+                agent.routePlan.add(child.getTextContent()) ;
               }
           }
 
