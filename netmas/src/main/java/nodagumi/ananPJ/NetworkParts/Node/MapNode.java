@@ -43,6 +43,8 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.misc.Snapshot;
 
+import nodagumi.Itk.*;
+
 public class MapNode extends OBMapPart implements Serializable {
     private static final long serialVersionUID = -7438706484453707443L;
 
@@ -247,7 +249,8 @@ public class MapNode extends OBMapPart implements Serializable {
         return hint.way;
     }
 
-    public double getDistance(String key) {
+    public double getDistance(Term target){
+        String key = target.getString() ;
         NavigationHint hint = getHint(key);
         if (hint == null) {
             System.err.println(key + " not found for id="
@@ -264,7 +267,8 @@ public class MapNode extends OBMapPart implements Serializable {
 
     // tkokada:
     // to avoid nullpo when agent is placed on invalid link
-    public double getDistanceNullAvoid(String key) {
+    public double getDistanceNullAvoid(Term target) {
+        String key = target.getString() ;
         NavigationHint hint = getHint(key);
         if (hint == null)
             return -1.0;

@@ -280,9 +280,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         if (!isEvacuated()) {
             MapNode fromNode = current_link.getFrom();
             MapNode toNode = current_link.getTo();
-            if ((fromNode.getDistance(calc_next_target(fromNode).getString())
+            if ((fromNode.getDistance(calc_next_target(fromNode))
                  + position)
-                >= (toNode.getDistance(calc_next_target(toNode).getString()) +
+                >= (toNode.getDistance(calc_next_target(toNode)) +
                             current_link.length - position)) {
                 prev_node = current_link.getFrom();
                 next_node = current_link.getTo();
@@ -1941,7 +1941,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
         MapNode other = _way.getOther(_node);
-        double cost = other.getDistance(_target.getString());
+        double cost = other.getDistance(_target) ;
         cost += _way.length;
         return cost ;
     }
@@ -2021,13 +2021,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     ": " + planned_route + "next_target: " + next_target +
                     "next_node: " + next_node.ID);
             */
-            double nextDistance = next_node.getDistance(next_target.getString())
-            + (current_link.length - position);
-            double prevDistance = prev_node.getDistance(next_target.getString())
-            + position;
+            double nextDistance = next_node.getDistance(next_target)
+                + (current_link.length - position);
+            double prevDistance = prev_node.getDistance(next_target)
+                + position;
             /*
-            double nextDistance = next_node.getDistanceNullAvoid(next_target.getString());
-            double prevDistance = prev_node.getDistanceNullAvoid(next_target.getString());
+            double nextDistance = next_node.getDistanceNullAvoid(next_target) ;
+            double prevDistance = prev_node.getDistanceNullAvoid(next_target) ;
             if (nextDistance >= 0.0)
                 nextDistance += (current_link.length - position);
             if (prevDistance >= 0.0)

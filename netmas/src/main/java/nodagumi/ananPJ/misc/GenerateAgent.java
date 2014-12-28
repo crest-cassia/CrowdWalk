@@ -503,7 +503,7 @@ class GenerateAgentFromNode extends GenerateAgent {
             }
 
             MapNode other = way_candidate.getOther(start_node);
-            double cost = other.getDistance(next_target.getString());
+            double cost = other.getDistance(next_target) ;
             cost += way_candidate.length;
 
             if (cost < min_cost) {
