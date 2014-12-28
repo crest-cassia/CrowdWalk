@@ -135,7 +135,10 @@ public abstract class OBNode extends DefaultMutableTreeNode
 
   /* tag related methods */
   public boolean hasTag (Term _tag) {
-      return hasTag(_tag.getString()) ;
+      if(_tag.isAtom())
+          return hasTag(_tag.getString()) ;
+      else
+          return false ;
   }
 
   public boolean hasTag (String _tag) {

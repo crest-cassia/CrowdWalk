@@ -13,7 +13,7 @@
 package nodagumi.Itk;
 
 import java.lang.StringBuffer;
-
+import java.lang.Thread;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -258,6 +258,14 @@ public class Term {
      */
     public Object getHead() {
         return head ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * head 取得
+     */
+    public String getHeadString() {
+        return (String)getHead() ;
     }
 
     //------------------------------------------------------------
@@ -728,6 +736,7 @@ public class Term {
         } else if (isNull()) {
             return null ;
         } else {
+            Thread.dumpStack() ;
             Itk.dbgErr("can not convert to String:" + this.toString()) ;
             Itk.dbgMsg("use null.") ;
             return null ;

@@ -258,6 +258,11 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         }
 
         //==============================
+        //------------------------------
+        static public Type isWaitDirectiveTerm(Term term) {
+            return (Type)waitLexicon.lookUp(term.getHeadString()) ;
+        }
+        //==============================
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * route 中の WAIT 命令の解釈パターン
@@ -294,8 +299,32 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             return new Term(target) ;
         }
 
+        //------------------------------
+        public Term toTerm() {
+            Term term = new Term(head) ;
+            term.setArg("target", new Term(target)) ;
+            term.setArg("how", new Term(how)) ;
+            switch(type) {
+            case WAIT_UNTIL:
+                term.setArg("until", new Term(untilStr)) ;
+                break ;
+            case WAIT_FOR:
+                term.setArg("until", new Term(Double.parseDouble(untilStr))) ;
+                break ;
+            }
+
+            return term ;
+        }
+
         //==============================
         //------------------------------
+        /**
+         * atom String 状態の wait directive を解析する。
+         *   _directive_ ::= _head_(_target_,_how_,_until_)
+         *   _head_      ::= "WAIT_UNTIL" | "WAIT_FOR"
+         *   _how_       ::= ???
+         *   _until_     ::= _eventTag_ | _duration_
+         */
         static public WaitDirective scanDirective(Term directive) {
             return scanDirective(directive.getString()) ;
         }
@@ -313,8 +342,11 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
                 return null ;
             }
 
-            return new WaitDirective(waitType, head, matchFull.group(2),
-                                     matchFull.group(3), matchFull.group(4)) ;
+            WaitDirective _directive = 
+                new WaitDirective(waitType, head, matchFull.group(2),
+                                  matchFull.group(3), matchFull.group(4)) ;
+
+            return _directive ;
         }
     }
 
@@ -331,28 +363,28 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         /* [2014.12.27 I.Noda] 
          * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
          * (in "AgentGenerationFile.java")
+         * [2014.12.28 I.Noda]
+         * directive は構造化された Term になっているはず。
          */
         // WAIT directive かどうかのチェック。
         try {
             Term tag = routePlan.top() ;
 
-            WaitDirective directive = 
-                WaitDirective.scanDirective(tag);
-            if(directive == null) {
+            WaitDirective.Type waitType =
+                WaitDirective.isWaitDirectiveTerm(tag) ;
+
+            if(waitType == null) {
                 super.preUpdate(time) ;
                 return ;
             }
 
-            String head = directive.head ;
-            WaitDirective.Type waitType = directive.type ;
-
-            Term target = directive.targetTerm() ;
-            String how = directive.how ;
-            String arg2 = directive.untilStr ;
+            Term target = tag.getArgTerm("target") ;
+            String how = tag.getArgString("how") ;
+            Term arg2 = tag.getArgTerm("until") ;
 
             switch(waitType) {
             case WAIT_UNTIL:
-                String until = arg2 ;
+                String until = arg2.getString() ;
 
                 if (current_link.hasTag(target)) {
                     if (current_link.hasTag(until)) {
@@ -376,11 +408,11 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
                 break ;
 
             case WAIT_FOR:
-                String until_str = arg2 ;
+                double untilVal = arg2.getDouble() ;
 
                 if (current_link.hasTag(target)) {
                     if (wait_time == NOT_WAITING) {
-                        wait_time = Double.parseDouble(until_str);
+                        wait_time = untilVal ;
                         wait_time_start = time;
                     }
 
@@ -433,9 +465,9 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
-            WaitDirective directive = 
-                WaitDirective.scanDirective(candidate) ;
-            if (directive != null) {
+            WaitDirective.Type waitType = 
+                WaitDirective.isWaitDirectiveTerm(candidate) ;
+            if (waitType != null) {
                 routePlan.setIndex(next_check_point_index);
                 next_check_point_index++ ;
             } else if (node.hasTag(candidate)){
@@ -469,10 +501,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
-            WaitDirective directive =
-                WaitDirective.scanDirective(candidate) ;
-            if(directive != null) {
-                goal_tags.add(new Term(directive.target)) ;
+            WaitDirective.Type type = 
+                WaitDirective.isWaitDirectiveTerm(candidate) ;
+            if(type != null) {
+                goal_tags.add(candidate.getArgTerm("target")) ;
             } else {
                 goal_tags.add(candidate);
             }

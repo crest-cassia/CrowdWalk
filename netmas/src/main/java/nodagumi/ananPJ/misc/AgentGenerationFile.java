@@ -643,8 +643,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             String tag = columns.get() ;
             if (tag != null &&
                 !tag.equals("")) {
-                tag = tryScanWaitDirective(tag, columns) ;
-                genConfig.plannedRoute.add(new Term(tag)) ;
+                Term tagTerm = 
+                    tryScanWaitDirectiveAndMakeTerm(tag, columns) ;
+                genConfig.plannedRoute.add(tagTerm) ;
             }
         }
         return true ;
@@ -666,19 +667,26 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * WAIT directive の解釈
      */
-    private String tryScanWaitDirective(String head,
-                                        ShiftingStringList columns) {
+    private Term tryScanWaitDirectiveAndMakeTerm(String head,
+                                                 ShiftingStringList columns) {
         try {
             Matcher matchFull = 
                 waitDirectivePatternFull.matcher(head) ;
             if(matchFull.matches()) {
-                // 引数込みですでにheadに含まれているので、特にすべきことなし。
-                return head ;
+                // 引数込みですでにheadに含まれている。
+                // directive 用の Term に変換する。
+                WaitDirective directive =
+                    WaitDirective.scanDirective(head) ;
+                if(directive != null) {
+                    return directive.toTerm() ;
+                } else {
+                    return new Term(head) ;
+                }
             }
             Matcher matchHead =
                 waitDirectivePatternHead.matcher(head) ;
             if(matchHead.matches()) {
-                // CSV 解釈で、かんまで引数が分断されている場合。
+                // CSV 解釈で、カンマで引数が分断されている場合。
                 String fullForm = 
                     head + "," + columns.top(0) + "," + columns.top(1) ;
                 Matcher matchFull2 = 
@@ -691,17 +699,19 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     if(wait != null) {
                         //正しい 3引数 wait directive は、まとめたものを返す。
                         columns.shift(2) ;
-                        return fullForm ;
+                        // 再帰呼び出し
+                        return tryScanWaitDirectiveAndMakeTerm(fullForm,
+                                                               columns) ;
                     }
                 }
                 // ここで head に match しているとするならおかしい。
                 Itk.dbgWrn("strange tag form in planned route:" + head) ;
             }
-            // それ以外の場合は、もとの head を返す。
-            return head ;
+            // それ以外の場合は、もとの head をTerm化して返す。
+            return new Term(head) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            return head ;
+            return new Term(head) ;
         }
     }
 
@@ -840,9 +850,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         while (index < planned_route.size()) {
             Term candidate = planned_route.get(index);
 
-            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
-            if(directive != null) {
-                linkTags.add(directive.targetTerm()) ;
+            WaitDirective.Type type =
+                WaitDirective.isWaitDirectiveTerm(candidate) ;
+            if(type != null) {
+                linkTags.add(candidate.getArgTerm("target")) ;
             } else {
                 nodeTags.add(candidate);
             }

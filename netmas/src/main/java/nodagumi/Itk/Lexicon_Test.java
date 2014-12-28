@@ -25,6 +25,58 @@ import nodagumi.Itk.Lexicon;
  */
 public class Lexicon_Test {
     //------------------------------------------------------------
+    /**
+     */
+    @Test
+    public void testNullLookUp() {
+        Itk.dbgMsgMethodInfo() ;
+
+        Lexicon lex = new Lexicon() ;
+
+        lex.registerEnum(FooEnum01.class) ;
+        Itk.dbgVal("lex",lex) ;
+        Itk.dbgVal("lookUp(Baz0)", lex.lookUp("Baz0")) ;
+        Itk.dbgVal("lookUp(Bar0)", lex.lookUp("Bar0")) ;
+        Itk.dbgVal("lookUp(null)", lex.lookUp(null)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    //@Test
+    public void testMultiRegister() {
+        Itk.dbgMsgMethodInfo() ;
+
+        Object[][] entryList = { { "bar0", FooEnum00.Bar0 },
+                             { "bar1", FooEnum00.Bar1 },
+                             { "bar2", FooEnum00.Bar2 } } ;
+        Itk.dbgMsg("entryList", entryList) ;
+
+        Lexicon lex = new Lexicon(new Object[][] 
+            { { "bar0", FooEnum00.Bar0 },
+              { "bar1", FooEnum00.Bar1 },
+              { "bar2", FooEnum00.Bar2 } } ) ;
+
+        Itk.dbgMsg("bar0", lex.lookUp("bar0")) ;
+        Itk.dbgMsg("bar1", lex.lookUp("bar1")) ;
+        Itk.dbgMsg("bar2", lex.lookUp("bar2")) ;
+        Itk.dbgMsg("bar2b", lex.lookUp("bar2b")) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    //@Test
+    public void testEnumRegister() {
+        Itk.dbgMsgMethodInfo() ;
+
+        Lexicon lex = new Lexicon() ;
+
+        lex.registerEnum(FooEnum01.class) ;
+        Itk.dbgMsg("lex",lex) ;
+    }
+
+    //------------------------------------------------------------
     enum FooEnum00 { Bar0, Bar1, Bar2 }
     enum FooEnum01 { Baz0, Baz1, Baz2 }
     /**
@@ -58,42 +110,6 @@ public class Lexicon_Test {
         Itk.dbgMsg("r:Bar0", lex.lookUpByMeaning(FooEnum00.Bar0)) ;
         Itk.dbgMsg("r:Bar1", lex.lookUpByMeaning(FooEnum00.Bar1)) ;
         Itk.dbgMsg("r:Bar2", lex.lookUpByMeaning(FooEnum00.Bar2)) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     */
-    //@Test
-    public void testEnumRegister() {
-        Itk.dbgMsgMethodInfo() ;
-
-        Lexicon lex = new Lexicon() ;
-
-        lex.registerEnum(FooEnum01.class) ;
-        Itk.dbgMsg("lex",lex) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     */
-    @Test
-    public void testMultiRegister() {
-        Itk.dbgMsgMethodInfo() ;
-
-        Object[][] entryList = { { "bar0", FooEnum00.Bar0 },
-                             { "bar1", FooEnum00.Bar1 },
-                             { "bar2", FooEnum00.Bar2 } } ;
-        Itk.dbgMsg("entryList", entryList) ;
-
-        Lexicon lex = new Lexicon(new Object[][] 
-            { { "bar0", FooEnum00.Bar0 },
-              { "bar1", FooEnum00.Bar1 },
-              { "bar2", FooEnum00.Bar2 } } ) ;
-
-        Itk.dbgMsg("bar0", lex.lookUp("bar0")) ;
-        Itk.dbgMsg("bar1", lex.lookUp("bar1")) ;
-        Itk.dbgMsg("bar2", lex.lookUp("bar2")) ;
-        Itk.dbgMsg("bar2b", lex.lookUp("bar2b")) ;
     }
 
 } // class ClassFinderTest

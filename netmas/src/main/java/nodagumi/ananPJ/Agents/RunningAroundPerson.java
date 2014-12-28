@@ -2399,9 +2399,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         int delta = 0 ;
         while (delta < routePlan.length()) {
             Term candidate = routePlan.top(delta);
-            WaitDirective directive = 
-                WaitDirective.scanDirective(candidate.getString()) ;
-            if(directive == null) {
+            WaitDirective.Type type = 
+                WaitDirective.isWaitDirectiveTerm(candidate) ;
+            if(type == null) {
                 return false ;
             }
             delta += 1 ;

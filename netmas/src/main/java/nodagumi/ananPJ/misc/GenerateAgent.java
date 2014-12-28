@@ -321,10 +321,10 @@ public abstract class GenerateAgent implements Serializable {
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
-            WaitDirective directive = 
-                WaitDirective.scanDirective(candidate) ;
-            if (directive != null) {
-                goal_tags.add(directive.targetTerm()) ;
+            WaitDirective.Type type =
+                WaitDirective.isWaitDirectiveTerm(candidate) ;
+            if (type != null) {
+                goal_tags.add(candidate.getArgTerm("target")) ;
                 next_check_point_index += 1;
             } else {
                 goal_tags.add(candidate);
