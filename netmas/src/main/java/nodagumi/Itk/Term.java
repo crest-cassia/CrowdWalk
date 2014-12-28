@@ -385,10 +385,12 @@ public class Term {
         if(val instanceof Term) {
             return ((Term)val).getInt() ;
         } else if(val == null) {
+            Thread.dumpStack() ;
             Itk.dbgErr("can not convert null to int.") ;
             Itk.dbgMsg("use zero") ;
             return 0 ;
         } else {
+            Thread.dumpStack() ;
             Itk.dbgErr("can not convert to int:" + this.toString()) ;
             Itk.dbgMsg("use zero") ;
             return 0 ;
@@ -407,10 +409,12 @@ public class Term {
         if(val instanceof Term) {
             return ((Term)val).getDouble() ;
         } else if(val == null) {
+            Thread.dumpStack() ;
             Itk.dbgErr("can not convert null to double.") ;
             Itk.dbgMsg("use zero") ;
             return 0.0 ;
         } else {
+            Thread.dumpStack() ;
             Itk.dbgErr("can not convert to double:" + this.toString()) ;
             Itk.dbgMsg("use zero") ;
             return 0.0 ;
@@ -755,6 +759,7 @@ public class Term {
                 return ((BigDecimal)head).intValue() ;
             }
         }
+        Thread.dumpStack() ;
         Itk.dbgErr("can not convert to int:" + this.toString()) ;
         Itk.dbgMsg("use 0.") ;
         return 0 ;
@@ -772,6 +777,7 @@ public class Term {
                 return ((BigDecimal)head).doubleValue() ;
             }
         }
+        Thread.dumpStack() ;
         Itk.dbgErr("can not convert to double:" + this.toString()) ;
         Itk.dbgMsg("use 0.0") ;
         return 0.0 ;
