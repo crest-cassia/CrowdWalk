@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ClassNotFoundException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -444,7 +445,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     public abstract void setEmergency();
     public abstract boolean isEmergency();
     public abstract Term getGoal();
-    public abstract ArrayList<Term> getPlannedRoute();
+    public abstract List<Term> getPlannedRoute();
 
     // current_link 上における絶対 position
     public double absolutePosition() {

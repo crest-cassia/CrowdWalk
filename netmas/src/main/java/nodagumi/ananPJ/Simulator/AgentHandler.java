@@ -1061,14 +1061,14 @@ public class AgentHandler implements Serializable {
         }
 
         for (GenerateAgent factory : generate_agent) {
-            String goal_tag = factory.goal;
+            Term goal_tag = factory.goal;
             if (goal_tag != null &&
-                    !all_goal_tags.contains(goal_tag)) {
-                all_goal_tags.add(goal_tag);
+                !all_goal_tags.contains(goal_tag.getString())) {
+                all_goal_tags.add(goal_tag.getString());
             }
-            for (String mid_goal : factory.getPlannedRoute()) {
-                if (!all_goal_tags.contains(mid_goal)) {
-                    all_goal_tags.add(mid_goal);
+            for (Term mid_goal : factory.getPlannedRoute()) {
+                if (!all_goal_tags.contains(mid_goal.getString())) {
+                    all_goal_tags.add(mid_goal.getString());
                 }
             }
         }

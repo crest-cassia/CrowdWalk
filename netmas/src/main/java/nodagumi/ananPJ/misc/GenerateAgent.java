@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Map;
@@ -79,13 +80,13 @@ public abstract class GenerateAgent implements Serializable {
         /**
          * 目的地
          */
-        public String goal = null ;
+        public Term goal = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * 経路
          */
-        public ArrayList<String> plannedRoute ;
+        public List<Term> plannedRoute ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -144,13 +145,13 @@ public abstract class GenerateAgent implements Serializable {
         }
     }
 
-    public String goal;
-    ArrayList<String> planned_route;
+    public Term goal;
+    List<Term> planned_route;
     double start_time, duration;
     int total;
     SpeedCalculationModel speed_model = null;
     Random random = null;
-    ArrayList<String> tags = new ArrayList<String>(); 
+    List<String> tags = new ArrayList<String>(); 
     public String configLine;
     public boolean enabled = true;
 
@@ -180,8 +181,8 @@ public abstract class GenerateAgent implements Serializable {
     public GenerateAgent(String _agentClassName,
                          String _agentConf,
             String[] conditions,
-            String _goal,
-            ArrayList<String> _planned_route,
+            Term _goal,
+            List<Term> _planned_route,
             double _start_time,
             double _duration,
             int _total,
@@ -237,7 +238,7 @@ public abstract class GenerateAgent implements Serializable {
             double timeScale,
             double tick,
             EvacuationModelBase model,
-            ArrayList<EvacuationAgent> agents) {
+            List<EvacuationAgent> agents) {
         if (!enabled) return;
 
         if (finished(time)) {
@@ -295,8 +296,9 @@ public abstract class GenerateAgent implements Serializable {
             agent.setConfigLine(configLine);
             agents.add(agent);
             agent.setGoal(new Term(goal));
-            Term planned_route_in_Term = new Term(planned_route.clone()) ;
-            agent.setPlannedRoute((ArrayList)planned_route_in_Term.getArray());
+            Term planned_route_in_Term = 
+                new Term(new ArrayList<Term>(planned_route)) ;
+            agent.setPlannedRoute((List)planned_route_in_Term.getArray());
 
             place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
@@ -309,19 +311,20 @@ public abstract class GenerateAgent implements Serializable {
         }
     }
 
-    public ArrayList<String> getPlannedRoute() {
-        ArrayList<String> goal_tags = new ArrayList<String>();
+    public ArrayList<Term> getPlannedRoute() {
+        ArrayList<Term> goal_tags = new ArrayList<Term>();
 
         int next_check_point_index = 0;
         while (planned_route.size() > next_check_point_index) {
-            String candidate = planned_route.get(next_check_point_index);
+            Term candidate = planned_route.get(next_check_point_index);
             /* [2014.12.27 I.Noda]
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
-            WaitDirective directive = WaitDirective.scanDirective(candidate) ;
+            WaitDirective directive = 
+                WaitDirective.scanDirective(candidate) ;
             if (directive != null) {
-                goal_tags.add(directive.target) ;
+                goal_tags.add(directive.targetTerm()) ;
                 next_check_point_index += 1;
             } else {
                 goal_tags.add(candidate);
@@ -369,8 +372,8 @@ class GenerateAgentFromLink extends GenerateAgent {
                                  String _agentConf,
             MapLink _start_link,
             String[] conditions,
-            String _goal,
-            ArrayList<String> _planned_route,
+            Term _goal,
+            List<Term> _planned_route,
             double _start_time,
             double _duration,
             int _total,
@@ -421,7 +424,7 @@ class GenerateAgentFromLink extends GenerateAgent {
 
         pw.print("," + goal);
         pw.print("," + planned_route.size());
-        for (String checkpoint : planned_route) {
+        for (Term checkpoint : planned_route) {
             pw.print("," + checkpoint);
         }
         pw.print("," + tags.size());
@@ -448,8 +451,8 @@ class GenerateAgentFromNode extends GenerateAgent {
                                  String _agentConf,
             MapNode _start_node,
             String[] conditions,
-            String _goal,
-            ArrayList<String> _planned_route,
+            Term _goal,
+            List<Term> _planned_route,
             double _start_time,
             double _duration,
             int _total,
@@ -481,26 +484,26 @@ class GenerateAgentFromNode extends GenerateAgent {
         MapLink way = null;
         MapLink way_second = null;
         MapLinkTable way_samecost = null;
-        final String next_target;
-        ArrayList<String> plannedRoute = getPlannedRoute();
+        final Term next_target;
+        List<Term> plannedRoute = getPlannedRoute();
         if (plannedRoute.size() == 0)
             next_target = goal;
         else
             next_target = getPlannedRoute().get(0);
 
         for (MapLink way_candidate : way_candidates) {
-            if (way_candidate.hasTag(goal)) {
+            if (way_candidate.hasTag(goal.getString())) {
                 /* finishing up */
                 way = way_candidate;
                 break;
-            } else if (way_candidate.hasTag(next_target)) {
+            } else if (way_candidate.hasTag(next_target.getString())) {
                 /* reached mid_goal */
                 way = way_candidate;
                 break;
             }
 
             MapNode other = way_candidate.getOther(start_node);
-            double cost = other.getDistance(next_target);
+            double cost = other.getDistance(next_target.getString());
             cost += way_candidate.length;
 
             if (cost < min_cost) {
@@ -570,7 +573,7 @@ class GenerateAgentFromNode extends GenerateAgent {
 
         pw.print("," + goal);
         pw.print("," + planned_route.size());
-        for (String checkpoint : planned_route) {
+        for (Term checkpoint : planned_route) {
             pw.print("," + checkpoint);
         }
         pw.print("," + tags.size());

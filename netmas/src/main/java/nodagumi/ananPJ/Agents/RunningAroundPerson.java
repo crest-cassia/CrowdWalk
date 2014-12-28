@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ClassNotFoundException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
 import nodagumi.ananPJ.misc.RoutePlan ;
+import nodagumi.ananPJ.misc.SpecialTerm;
 
 import nodagumi.Itk.*;
 
@@ -1561,12 +1563,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         goal = _goal;
     }
 
-    public void setPlannedRoute(ArrayList<Term> _planned_route) {
+    public void setPlannedRoute(List<Term> _planned_route) {
         routePlan.setRoute(_planned_route) ;
     }
 
     @Override
-    public ArrayList<Term> getPlannedRoute() {
+    public List<Term> getPlannedRoute() {
         return routePlan.getRoute() ;
     }
 
@@ -1826,7 +1828,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost = calcWayCostTo(way_candidate, node, next_target.getString()) ;
+            double cost = calcWayCostTo(way_candidate, node, next_target) ;
 
             if (monitor)
                 System.err.print(way_candidate.getTagString() +
@@ -1937,9 +1939,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * ここを変えると、経路選択の方法が変えられる。
      */
-    public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
         MapNode other = _way.getOther(_node);
-        double cost = other.getDistance(_target);
+        double cost = other.getDistance(_target.getString());
         cost += _way.length;
         return cost ;
     }
@@ -2134,7 +2136,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost = calcWayCostTo(way_candidate, node, next_target.getString()) ;
+            double cost = calcWayCostTo(way_candidate, node, next_target) ;
 
             if (loop) {
                 if (cost < min_cost_second) {
@@ -2331,10 +2333,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return goal;
     }
 
-    static private Term emergencyTerm = new Term("EMERGENCY"); 
-
     public void setEmergency() {
-        setGoal(emergencyTerm) ;
+        setGoal(SpecialTerm.Emergency) ;
     }
 
     public boolean isPassedNode() {
@@ -2342,7 +2342,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
 
     public boolean isEmergency() {
-        return goal.equals(emergencyTerm) ;
+        return goal.equals(SpecialTerm.Emergency) ;
     }
 
     public void setRouteIndex(int routeIndex) {

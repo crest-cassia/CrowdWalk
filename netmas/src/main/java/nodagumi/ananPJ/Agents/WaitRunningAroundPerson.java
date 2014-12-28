@@ -289,6 +289,16 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             untilStr = _untilStr ;
         }
 
+        //------------------------------
+        public Term targetTerm() {
+            return new Term(target) ;
+        }
+
+        //==============================
+        //------------------------------
+        static public WaitDirective scanDirective(Term directive) {
+            return scanDirective(directive.getString()) ;
+        }
         //==============================
         //------------------------------
         static public WaitDirective scanDirective(String directive) {
@@ -327,7 +337,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             Term tag = routePlan.top() ;
 
             WaitDirective directive = 
-                WaitDirective.scanDirective(tag.getString()) ;
+                WaitDirective.scanDirective(tag);
             if(directive == null) {
                 super.preUpdate(time) ;
                 return ;
@@ -424,7 +434,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
              * (in "AgentGenerationFile.java")
              */
             WaitDirective directive = 
-                WaitDirective.scanDirective(candidate.getString()) ;
+                WaitDirective.scanDirective(candidate) ;
             if (directive != null) {
                 routePlan.setIndex(next_check_point_index);
                 next_check_point_index++ ;
@@ -460,7 +470,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
              * (in "AgentGenerationFile.java")
              */
             WaitDirective directive =
-                WaitDirective.scanDirective(candidate.getString()) ;
+                WaitDirective.scanDirective(candidate) ;
             if(directive != null) {
                 goal_tags.add(new Term(directive.target)) ;
             } else {

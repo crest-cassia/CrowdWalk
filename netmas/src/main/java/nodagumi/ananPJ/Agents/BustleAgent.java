@@ -113,6 +113,7 @@ public class BustleAgent extends NaiveAgent
      */
     public void initByConf(Map<String, Object> conf) {
         super.initByConf(conf) ;
+
         if(config.containsKey("weight")) {
             //Itk.dbgMsg("weight", config.get("weight")) ;
             bustleWeight = new Double(config.get("weight").toString()) ;
@@ -126,9 +127,9 @@ public class BustleAgent extends NaiveAgent
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
-    public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
         MapNode other = _way.getOther(_node);
-        double cost = other.getDistance(_target);
+        double cost = other.getDistance(_target.getString());
         cost += _way.length;
 	double crowdness= bustleWeight * _way.realCrowdness() ;
         double trailCount = trailWeight * trailCountTable.get(_node, _way) ;

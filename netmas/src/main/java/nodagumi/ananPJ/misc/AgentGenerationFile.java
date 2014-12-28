@@ -533,7 +533,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         //ArrayList<String> planned_route_key = new ArrayList<String>();
 
         // goal を scan
-        genConfig.goal = columns.top() ;
+        genConfig.goal = new Term(columns.top()) ;
 
         // ゴールより後ろの読み取り。
         if(!scanRestColumns(columns, map, genConfig))
@@ -629,11 +629,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                     NetworkMapBase map,
                                     GenerationConfigBase genConfig) {
         //ArrayList<String> planned_route = new ArrayList<String>();
-        genConfig.plannedRoute = new ArrayList<String>();
+        genConfig.plannedRoute = new ArrayList<Term>();
 
         // goal and route plan
         //String goal = items[index];
-        if (genConfig.goal == null) {
+        if (genConfig.goal.isNull()) {
             System.err.println("no matching link:" + columns.top() +
                                " while reading agent generation rule.");
             return false ;
@@ -644,7 +644,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             if (tag != null &&
                 !tag.equals("")) {
                 tag = tryScanWaitDirective(tag, columns) ;
-                genConfig.plannedRoute.add(tag) ;
+                genConfig.plannedRoute.add(new Term(tag)) ;
             }
         }
         return true ;
@@ -791,9 +791,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         genConfig.total = Itk.JsonObject.pickInt(json,"total") ;
         if (liner_generate_agent_ratio > 0) {
+            /*
             Itk.dbgMsg("GenerateAgentFile total: " +
                        genConfig.total +
                        ", ratio: " + liner_generate_agent_ratio);
+            */
             genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
             Itk.dbgMsg("GenerateAgentFile total: " + genConfig.total);
         }
@@ -810,9 +812,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 Itk.JsonObject.pickInt(json,"maxFromEach") ;
         }
 
-        genConfig.goal = Itk.JsonObject.pickString(json,"goal") ;
+        genConfig.goal = new Term(Itk.JsonObject.pickString(json,"goal")) ;
 
-        genConfig.plannedRoute = (ArrayList<String>)json.get("plannedRoute") ;
+        genConfig.plannedRoute = 
+            (new Term((ArrayList<String>)json.get("plannedRoute"))).
+            <Term>getTypedArray() ;
 
         return genConfig ;
     }
@@ -836,16 +840,16 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * 経路情報に未定義のタグが使用されていたらその内容を返す
      */
     public ArrayList<String> checkPlannedRoute(NetworkMapBase map,
-                                               ArrayList<String> planned_route) {
-        ArrayList<String> linkTags = new ArrayList();
-        ArrayList<String> nodeTags = new ArrayList();
+                                               List<Term> planned_route) {
+        ArrayList<Term> linkTags = new ArrayList();
+        ArrayList<Term> nodeTags = new ArrayList();
         int index = 0;
         while (index < planned_route.size()) {
-            String candidate = planned_route.get(index);
+            Term candidate = planned_route.get(index);
 
             WaitDirective directive = WaitDirective.scanDirective(candidate) ;
             if(directive != null) {
-                linkTags.add(directive.target) ;
+                linkTags.add(directive.targetTerm()) ;
             } else {
                 nodeTags.add(candidate);
             }
@@ -853,10 +857,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         }
 
         ArrayList<String> result = new ArrayList();
-        for (String nodeTag : nodeTags) {
+        for (Term nodeTag : nodeTags) {
             boolean found = false;
             for (MapNode node : map.getNodes()) {
-                if (node.hasTag(nodeTag)) {
+                if (node.hasTag(nodeTag.getString())) {
                     found = true;
                     break;
                 }
@@ -865,8 +869,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 result.add("Undefined Node Tag: " + nodeTag);
             }
         }
-        for (String linkTag : linkTags) {
-            if (! map.getLinks().tagExistP(linkTag))
+        for (Term linkTag : linkTags) {
+            if (! map.getLinks().tagExistP(linkTag.getString()))
                 result.add("Undefined Link Tag: " + linkTag);
         }
         return result;

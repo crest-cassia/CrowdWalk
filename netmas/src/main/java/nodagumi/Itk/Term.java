@@ -469,6 +469,18 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * 型指定の array 取得 (copy が生じる)
+     */
+    public <T> List<T> getTypedArray() {
+        List<T> ret = new ArrayList<T>() ;
+        for(Object element  : array) {
+            ret.add((T)element) ;
+        }
+        return ret ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * array nth 取得
      */
     public Object getNth(int index) {

@@ -48,6 +48,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.misc.SpecialTerm;
 
 import nodagumi.Itk.*;
 
@@ -69,7 +70,6 @@ public class MapLink extends OBMapPart implements Serializable {
     private boolean nodes_are_set = false;
 
     /* for simulation*/
-    private static Term emergencyTerm = new Term("EMERGENCY") ;
     private boolean emergency = false;
     public void setEmergency(boolean b) { 
         emergency = b;
@@ -77,7 +77,7 @@ public class MapLink extends OBMapPart implements Serializable {
 
         for (EvacuationAgent agent : getAgents()) {
             RunningAroundPerson rp = (RunningAroundPerson)agent;
-            rp.setGoal(emergencyTerm);
+            rp.setGoal(SpecialTerm.Emergency);
             rp.renavigate();
         }
     }
@@ -589,8 +589,8 @@ public class MapLink extends OBMapPart implements Serializable {
         if (getEmergency() 
                 && agent instanceof RunningAroundPerson) {
             RunningAroundPerson rp = (RunningAroundPerson) agent;
-            if (!rp.getGoal().equals(emergencyTerm)) {
-                rp.setGoal(emergencyTerm);
+            if (!rp.getGoal().equals(SpecialTerm.Emergency)) {
+                rp.setGoal(SpecialTerm.Emergency) ;
                 rp.renavigate();
             }
         }

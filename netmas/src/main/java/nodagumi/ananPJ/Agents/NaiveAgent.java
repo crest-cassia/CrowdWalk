@@ -187,7 +187,7 @@ public class NaiveAgent
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
-    public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
         return super.calcWayCostTo(_way, _node, _target) ;
     }
 

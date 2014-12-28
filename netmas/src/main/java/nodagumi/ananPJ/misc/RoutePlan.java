@@ -13,6 +13,7 @@
 package nodagumi.ananPJ.misc ;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nodagumi.Itk.Itk;
 import nodagumi.Itk.Term;
@@ -32,7 +33,7 @@ public class RoutePlan {
     /**
      * タグの列
      */
-    private ArrayList<Term> route = null ;
+    private List<Term> route = null ;
 
     //------------------------------------------------------------
     /**
@@ -56,7 +57,7 @@ public class RoutePlan {
     /**
      * route を取得
      */
-    public ArrayList<Term> getRoute() {
+    public List<Term> getRoute() {
         return route ;
     }
 
@@ -64,7 +65,7 @@ public class RoutePlan {
     /**
      * route をセット
      */
-    public RoutePlan setRoute(ArrayList<Term> _route) {
+    public RoutePlan setRoute(List<Term> _route) {
         route = _route ;
         return this ;
     }

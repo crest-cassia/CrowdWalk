@@ -133,9 +133,9 @@ public class CapriciousAgent extends NaiveAgent
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
-    public double calcWayCostTo(MapLink _way, MapNode _node, String _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
         MapNode other = _way.getOther(_node);
-        double cost = other.getDistance(_target);
+        double cost = other.getDistance(_target.getString());
         cost += _way.length;
         double noise = capriciousMargin * random.nextDouble() ;
         return cost + noise;
