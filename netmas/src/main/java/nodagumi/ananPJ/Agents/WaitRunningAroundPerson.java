@@ -346,7 +346,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             String head = directive.head ;
             WaitDirective.Type waitType = directive.type ;
 
-            String target = directive.target ;
+            Term target = directive.targetTerm() ;
             String how = directive.how ;
             String arg2 = directive.untilStr ;
 
@@ -423,7 +423,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     protected Term calc_next_target(MapNode node) {
         if (on_node &&
             !routePlan.isEmpty() &&
-            node.hasTag(routePlan.top().getString())) {
+            node.hasTag(routePlan.top())){
             routePlan.shift() ;
         }
         int next_check_point_index = routePlan.getIndex() ;
@@ -438,7 +438,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             if (directive != null) {
                 routePlan.setIndex(next_check_point_index);
                 next_check_point_index++ ;
-            } else if (node.hasTag(candidate.getString())) {
+            } else if (node.hasTag(candidate)){
                 /* [2014.12.29 I.Noda] question
                  * ここのアルゴリズム、正しいのか？
                  * WAIT の場合は、そのWAITが書かれているところを

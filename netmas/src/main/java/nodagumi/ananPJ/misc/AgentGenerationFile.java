@@ -860,7 +860,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         for (Term nodeTag : nodeTags) {
             boolean found = false;
             for (MapNode node : map.getNodes()) {
-                if (node.hasTag(nodeTag.getString())) {
+                if (node.hasTag(nodeTag)){
                     found = true;
                     break;
                 }

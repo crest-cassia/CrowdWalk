@@ -492,11 +492,11 @@ class GenerateAgentFromNode extends GenerateAgent {
             next_target = getPlannedRoute().get(0);
 
         for (MapLink way_candidate : way_candidates) {
-            if (way_candidate.hasTag(goal.getString())) {
+            if (way_candidate.hasTag(goal)){
                 /* finishing up */
                 way = way_candidate;
                 break;
-            } else if (way_candidate.hasTag(next_target.getString())) {
+            } else if (way_candidate.hasTag(next_target)){
                 /* reached mid_goal */
                 way = way_candidate;
                 break;

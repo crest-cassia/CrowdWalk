@@ -40,6 +40,8 @@ import nodagumi.ananPJ.misc.osmTools.osmGroup;
 import nodagumi.ananPJ.misc.osmTools.osmLink;
 import nodagumi.ananPJ.misc.osmTools.osmNode;
 
+import nodagumi.Itk.*;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -132,6 +134,10 @@ public abstract class OBNode extends DefaultMutableTreeNode
   
 
   /* tag related methods */
+  public boolean hasTag (Term _tag) {
+      return hasTag(_tag.getString()) ;
+  }
+
   public boolean hasTag (String _tag) {
       if (_tag == null) return false;
 

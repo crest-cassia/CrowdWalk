@@ -163,7 +163,7 @@ public class TargetRoundPerson extends RunningAroundPerson
         while (position < 0.0 ||
                 position > current_link.length) {
             /* got out of link */
-            if (next_node.hasTag(goal.getString())) {
+            if (next_node.hasTag(goal)){
                 /* exit! */
                 setEvacuated(true, time);
                 prev_node = next_node;
@@ -200,7 +200,7 @@ public class TargetRoundPerson extends RunningAroundPerson
             return false;
         }
 
-        if (getPrevNode().hasTag(goal.getString())) {
+        if (getPrevNode().hasTag(goal)){
             setEvacuated(true, time);
             return true;
         }
@@ -457,7 +457,7 @@ public class TargetRoundPerson extends RunningAroundPerson
         //if (currentPathway.isStair()|| getCurrentPathway().hasTag("STAIR")) {
         //  speed *= STAIR_SPEED_CO;
         //}
-        if (current_link.hasTag(goal.getString())) {
+        if (current_link.hasTag(goal)){
             System.err.println("the goal should not be a link!!");
             setEvacuated(true, time);
             current_link.agentExits(this);
