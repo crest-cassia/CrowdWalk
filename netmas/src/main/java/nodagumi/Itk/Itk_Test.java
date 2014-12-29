@@ -32,7 +32,7 @@ public class Itk_Test {
     /**
      * test dbgVal
      */
-    @Test
+    //@Test
     public void test_dbgVal() {
         int x = 1 ;
         Itk.dbgVal("x",x) ;

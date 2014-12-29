@@ -12,7 +12,11 @@
 
 package nodagumi.Itk;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
 import nodagumi.Itk.ClassFinder;
+import nodagumi.Itk.Term;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -27,7 +31,56 @@ public class ClassFinder_Test {
     /**
      * simple get test
      */
+    static public class Foo10a {
+        public Foo10a(){}
+        public Foo10a(int i) { Itk.dbgMsg("new",i) ;}
+        public void bar0() {
+            Itk.dbgMsg("Foo10a","bar0()") ;
+        }
+    }
+
     @Test
+    public void test_newInstance() {
+        Itk.dbgMsgMethodInfo() ;
+
+        try {
+            Foo10a foo = new Foo10a() ;
+            //String foo = "aaa" ;
+            //Term foo = new Term("foo's foo") ;
+            Itk.dbgVal("foo",foo) ;
+
+            Class<?> klass = foo.getClass() ;
+            Itk.dbgVal("klass",klass) ;
+
+            Constructor<?> constructor = 
+                klass.getConstructor(Object.class) ;
+            Itk.dbgVal("constructor",constructor) ;
+
+
+            Object obj = klass.newInstance() ;
+            Itk.dbgVal("obj",obj) ;
+
+            Object obj2 = constructor.newInstance(3.14) ;
+            Itk.dbgVal("obj2",obj2) ;
+
+            Class<?> klass2 = Itk.class ;
+            Itk.dbgVal("klass2",klass2) ;
+
+            Method method2 = klass2.getMethod("dbgMsg",Object.class) ;
+            Itk.dbgVal("method2",method2) ;
+
+            method2.invoke(null,"test") ;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * simple get test
+     */
+    //@Test
     public void test_get() {
         Itk.dbgMsgMethodInfo() ;
         try {
@@ -47,7 +100,7 @@ public class ClassFinder_Test {
     /**
      * alias test
      */
-    @Test
+    //@Test
     public void test_alias() {
         Itk.dbgMsgMethodInfo() ;
         try {
@@ -65,7 +118,7 @@ public class ClassFinder_Test {
     /**
      * new test
      */
-    @Test
+    //@Test
     public void test_new() {
         Itk.dbgMsgMethodInfo() ;
         try {
@@ -83,7 +136,7 @@ public class ClassFinder_Test {
     /**
      * new test
      */
-    @Test
+    //@Test
     public void test_json() {
         Itk.dbgMsgMethodInfo() ;
         try {
