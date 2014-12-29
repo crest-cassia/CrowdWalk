@@ -341,16 +341,33 @@ public abstract class GenerateAgent implements Serializable {
      * 扱い可能な directive かのチェック
      */
     public boolean isKnownDirectiveInAgentClass(Term directive) {
+        return isKnownDirectiveInAgentClass(agentClassName, directive) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * agentClassName で指定されたエージェントクラスで
+     * 扱い可能な directive かのチェック
+     */
+    static public boolean isKnownDirectiveInAgentClass(String className,
+                                                       Term directive) {
         try {
-            Class<?> klass = ClassFinder.get(agentClassName) ;
+            return
+                (boolean)
+                ClassFinder
+                .callMethodForClass(className, "isKnownDirective", false,
+                                    directive) ;
+            /*
+            Class<?> klass = ClassFinder.get(className) ;
             Object agent = getDummyAgent(klass) ;
             Method method = klass.getMethod("isKnownDirective",Term.class) ;
             return (boolean)method.invoke(agent,directive) ;
+            */
         } catch(Exception ex) {
             ex.printStackTrace() ;
             Itk.dbgErr("can not check the directive") ;
-            Itk.dbgMsg("directive",directive) ;
-            Itk.dbgMsg("agentCkass", agentClassName) ;
+            Itk.dbgMsg("directive", directive) ;
+            Itk.dbgMsg("agentClass", className) ;
             return false ;
         }
     }
@@ -361,8 +378,28 @@ public abstract class GenerateAgent implements Serializable {
      * directive の中の経由場所tagの取り出し
      */
     public int pushPlaceTagInDirectiveByAgentClass(Term directive,
-                                                       ArrayList<Term> goalList) {
+                                                   ArrayList<Term> goalList) {
+        return pushPlaceTagInDirectiveByAgentClass(agentClassName,
+                                                   directive,
+                                                   goalList) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * agentClassName で指定されたエージェントクラスで
+     * directive の中の経由場所tagの取り出し
+     */
+    static public int pushPlaceTagInDirectiveByAgentClass(String className,
+                                                          Term directive,
+                                                          ArrayList<Term> goalList)
+    {
         try {
+            return
+                (int)
+                ClassFinder
+                .callMethodForClass(className, "pushPlaceTagInDirective", false,
+                                    directive, goalList) ;
+            /*
             Class<?> klass = ClassFinder.get(agentClassName) ;
             Object agent = getDummyAgent(klass) ;
             Method method =
@@ -370,11 +407,12 @@ public abstract class GenerateAgent implements Serializable {
                                 Term.class,
                                 ArrayList.class) ;
             return (int)method.invoke(agent,directive,goalList) ;
+            */
         } catch (Exception ex) {
             ex.printStackTrace() ;
             Itk.dbgErr("can not pushPlaceTag.") ;
-            Itk.dbgMsg("directive",directive) ;
-            Itk.dbgMsg("agentClass",agentClassName) ;
+            Itk.dbgMsg("directive", directive) ;
+            Itk.dbgMsg("agentClass", className) ;
             return 0 ;
         }
     }

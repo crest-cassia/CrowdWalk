@@ -29,17 +29,35 @@ import org.junit.Test;
 public class ClassFinder_Test {
     //------------------------------------------------------------
     /**
-     * simple get test
+     * newInstance 
+     */
+    @Test
+    public void test_methodCall() {
+        Itk.dbgMsgMethodInfo() ;
+
+        ClassFinder.registerClassDummy(Foo10a.class) ;
+        ClassFinder.registerAlias("Foo10a",Foo10a.class) ;
+        Itk.dbgVal("Foo10a",ClassFinder.getClassDummy(Foo10a.class)) ;
+
+        try {
+            ClassFinder.callMethodForClass("Foo10a","bar0",false,"100") ;
+        } catch (Exception ex){
+            ex.printStackTrace() ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * newInstance 
      */
     static public class Foo10a {
         public Foo10a(){}
         public Foo10a(int i) { Itk.dbgMsg("new",i) ;}
-        public void bar0() {
-            Itk.dbgMsg("Foo10a","bar0()") ;
-        }
+        public void bar0() { Itk.dbgMsg("Foo10a","bar0()") ; }
+        public void bar0(String s) { Itk.dbgMsg("Foo10a","bar0() " + s) ; }
     }
 
-    @Test
+    //@Test
     public void test_newInstance() {
         Itk.dbgMsgMethodInfo() ;
 
