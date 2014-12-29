@@ -2404,12 +2404,22 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         int delta = 0 ;
         while (delta < routePlan.length()) {
             Term candidate = routePlan.top(delta);
-            if(candidate.isAtom()) {
+            if(!isDirectiveTerm(candidate)) {
                 return false ;
             }
             delta += 1 ;
         }
         return true;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ある Term が Directive かどうかのチェック
+     * ここでは、単純に Atom でないかどうかをチェックしている。
+     * 今後の拡張で、継承先で変更できるものとする。
+     */
+    public boolean isDirectiveTerm(Term term) {
+        return !term.isAtom() ;
     }
 
     public boolean isPlannedRouteCompleted() {
