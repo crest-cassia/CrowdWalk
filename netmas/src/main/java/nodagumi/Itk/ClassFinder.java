@@ -32,7 +32,7 @@ public class ClassFinder {
      * alias を格納しておくテーブル
      */
     static public HashMap<String, String> AliasTable =
-	new HashMap<String, String>() ;
+        new HashMap<String, String>() ;
 
     //------------------------------------------------------------
     /**
@@ -40,9 +40,9 @@ public class ClassFinder {
      * @param className クラスの名前。alias名もしくは fullpath。
      */
     static public Class<?> get(String className) 
-    	throws ClassNotFoundException
+        throws ClassNotFoundException
     {
-	return Class.forName(fullname(className)) ;
+        return Class.forName(fullname(className)) ;
     }
 
     //------------------------------------------------------------
@@ -52,15 +52,14 @@ public class ClassFinder {
      */
     static public boolean isClassName(String className) 
     {
-	try {
-	    get(className) ;
-	    return true ;
-	} catch (ClassNotFoundException ex) {
-	    return false ;
-	}
+        try {
+            get(className) ;
+            return true ;
+        } catch (ClassNotFoundException ex) {
+            return false ;
+        }
     }
 
-    
     //------------------------------------------------------------
     /**
      * alias table を参照しつつ、fullname を探す。
@@ -69,12 +68,12 @@ public class ClassFinder {
      */
     static public String fullname(String name)
     {
-	String fname = AliasTable.get(name) ;
-	if(fname == null) {
-	    return name ;
-	} else {
-	    return fullname(fname) ;
-	}
+        String fname = AliasTable.get(name) ;
+        if(fname == null) {
+            return name ;
+        } else {
+            return fullname(fname) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -83,12 +82,12 @@ public class ClassFinder {
      * @param Name クラスの名前
      */
     static public Object newByName(String name)
-	throws ClassNotFoundException, 
-	       InstantiationException, 
-	       IllegalAccessException
+        throws ClassNotFoundException, 
+               InstantiationException, 
+               IllegalAccessException
     {
-	Class<?> klass = get(name) ;
-	return klass.newInstance() ;
+        Class<?> klass = get(name) ;
+        return klass.newInstance() ;
     }
 
     //------------------------------------------------------------
@@ -98,10 +97,10 @@ public class ClassFinder {
      * @param fullName alias される名前。
      */
     static public String alias(String shortName,
-			       String fullName)
+                               String fullName)
     {
-	AliasTable.put(shortName, fullName) ;
-	return shortName ;
+        AliasTable.put(shortName, fullName) ;
+        return shortName ;
     }
 
     //------------------------------------------------------------
@@ -110,10 +109,10 @@ public class ClassFinder {
      * @param json JSON 文字列
      */
     static public void aliasByJson(String json) {
-	Map<String, Object> map = (Map<String, Object>)JSON.decode(json);
-	for(Map.Entry<String, Object> entry : map.entrySet()) {
-	    alias(entry.getKey(), (String)entry.getValue()) ;
-	}
+        Map<String, Object> map = (Map<String, Object>)JSON.decode(json);
+        for(Map.Entry<String, Object> entry : map.entrySet()) {
+            alias(entry.getKey(), (String)entry.getValue()) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -121,9 +120,9 @@ public class ClassFinder {
      * alias table を JSON に治す。
      */
     static public String aliasToJson()
-	throws JSONException 
+        throws JSONException 
     {
-	return aliasToJson(false) ;
+        return aliasToJson(false) ;
     }
 
     //------------------------------------------------------------
@@ -132,9 +131,9 @@ public class ClassFinder {
      * @param pprint prity print で出力する。
      */
     static public String aliasToJson(boolean pprint) 
-	throws JSONException 
+        throws JSONException 
     {
-	return JSON.encode(AliasTable, pprint) ;
+        return JSON.encode(AliasTable, pprint) ;
     }
 
 } // class ClassFinder
