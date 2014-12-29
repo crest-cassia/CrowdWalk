@@ -179,10 +179,17 @@ public abstract class GenerateAgent implements Serializable {
     public String configLine;
     public boolean enabled = true;
 
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * エージェントクラスの規定値
+     */
+    static public String DefaultAgentClassName = "NaiveAgent" ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェントクラスの名前を格納。
      */
-    public String agentClassName = "NaiveAgent" ;
+    public String agentClassName = DefaultAgentClassName ;
     public Term agentConf = null ; // config in json Term
 
     /**

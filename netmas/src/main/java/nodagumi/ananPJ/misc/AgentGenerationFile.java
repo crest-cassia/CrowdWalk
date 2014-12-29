@@ -31,7 +31,7 @@ import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
-
+import nodagumi.ananPJ.misc.GenerateAgent ;
 import nodagumi.Itk.*;
 
 /** Generate agents depending on a generation file.
@@ -380,8 +380,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                 if(genConfig == null) continue ;
 
-                //Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
-
                 // 経路情報に未定義のタグが使用されていないかチェックする
                 checkPlannedRouteInConfig(map, genConfig, line) ;
 
@@ -468,6 +466,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             genConfig.agentClassName = columns.top(0) ;
             genConfig.agentConf = Term.newByJson(columns.top(1)) ;
             columns.shift(2) ;
+        } else {
+            /* [2014.12.29 I.Noda]
+             * agentClassName を埋めておかないと、directive の処理が出来ない。
+             * なので、GenerateAgent に指定する規定値を埋める。
+             */
+            genConfig.agentClassName = GenerateAgent.DefaultAgentClassName ;
         }
 
         // read start link
@@ -644,7 +648,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             if (tag != null &&
                 !tag.equals("")) {
                 Term tagTerm = 
-                    tryScanWaitDirectiveAndMakeTerm(tag, columns) ;
+                    tryScanDirectiveAndMakeTerm(tag, columns) ;
                 genConfig.plannedRoute.add(tagTerm) ;
             }
         }
@@ -654,9 +658,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     //------------------------------------------------------------
     /**
      * WAIT directive の解釈
+     * [2014.12.29 I.Noda]
+     * ここだけからはどうしても、WAIT_* 系の処理を、
+     * WaitRunningAroundAgent に局所化出来ない。
+     * CSV である限り、括弧"()"の位置とか、
+     * 一般的に扱う処理方法が見当たらない。
      */
-    private Term tryScanWaitDirectiveAndMakeTerm(String head,
-                                                 ShiftingStringList columns) {
+    private Term tryScanDirectiveAndMakeTerm(String head,
+                                             ShiftingStringList columns) {
         try {
             Matcher matchFull = 
                 WaitDirective.FullPattern.matcher(head) ;
@@ -688,8 +697,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         //正しい 3引数 wait directive は、まとめたものを返す。
                         columns.shift(2) ;
                         // 再帰呼び出し
-                        return tryScanWaitDirectiveAndMakeTerm(fullForm,
-                                                               columns) ;
+                        return tryScanDirectiveAndMakeTerm(fullForm,
+                                                           columns) ;
                     }
                 }
                 // ここで head に match しているとするならおかしい。
@@ -819,7 +828,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                            GenerationConfigBase genConfig,
                                            String where) {
         ArrayList<String> routeErrors =
-            checkPlannedRoute(map, genConfig.plannedRoute);
+            checkPlannedRoute(genConfig.agentClassName,
+                              map, genConfig.plannedRoute);
         if (! routeErrors.isEmpty()) {
             definitionErrors.put(where, routeErrors);
         }
@@ -829,7 +839,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * 経路情報に未定義のタグが使用されていたらその内容を返す
      */
-    public ArrayList<String> checkPlannedRoute(NetworkMapBase map,
+    public ArrayList<String> checkPlannedRoute(String agentClassName,
+                                               NetworkMapBase map,
                                                List<Term> planned_route) {
         ArrayList<Term> linkTags = new ArrayList();
         ArrayList<Term> nodeTags = new ArrayList();
@@ -837,10 +848,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         while (index < planned_route.size()) {
             Term candidate = planned_route.get(index);
 
-            WaitDirective.Type type =
-                WaitDirective.isWaitDirectiveTerm(candidate) ;
-            if(type != null) {
-                linkTags.add(candidate.getArgTerm("target")) ;
+            if(GenerateAgent
+               .isKnownDirectiveInAgentClass(agentClassName, candidate)) {
+                GenerateAgent
+                    .pushPlaceTagInDirectiveByAgentClass(agentClassName,
+                                                         candidate,
+                                                         linkTags) ;
             } else {
                 nodeTags.add(candidate);
             }
