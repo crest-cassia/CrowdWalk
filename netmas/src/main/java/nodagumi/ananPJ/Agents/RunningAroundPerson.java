@@ -620,7 +620,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             // if (next_node.hasTag(goal)) {
             //if (planned_route.size() <= getRouteIndex() &&
             //        next_node.hasTag(goal)) {
-            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) &&
+            if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 next_node.hasTag(goal)){
                 consumePlannedRoute();
                 /* exit! */
@@ -714,7 +714,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             //if (planned_route.size() <= getRouteIndex() &&
             //        next_node.hasTag(goal) &&
             //        remain >= linkTime) {
-            if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) &&
+            if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 next_node.hasTag(goal) && remain >= linkTime) {
                 consumePlannedRoute();
                 setEvacuated(true, time);
@@ -753,7 +753,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         // if (getPrevNode().hasTag(goal)) {
         //if (planned_route.size() <= getRouteIndex() &&
         //        getPrevNode().hasTag(goal)) {
-        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) &&
+        if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
             getPrevNode().hasTag(goal)){
             consumePlannedRoute();
             setEvacuated(true, time);
@@ -1668,7 +1668,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         //if (current_link.hasTag(goal)) {
         //if (planned_route.size() <= getRouteIndex() &&
         //        current_link.hasTag(goal)) {
-        if ((isPlannedRouteCompleted() || isRemainingRouteWAIT_()) &&
+        if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
             current_link.hasTag(goal)){
             consumePlannedRoute();
             // tkokada: temporaly comment out
@@ -2390,8 +2390,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return time_scale;
     }
 
+    /* [2014.12.29 I.Noda]
+     * 今後の拡張性のため、Route 上にある Atom 以外の Term はすべて
+     * Directive とみなす。（つまり、Atom (String) のみを経由地点の tag
+     * と扱うことにする。
+     */
     // planned_route の残り経路がすべて WAIT_FOR/WAIT_UNTIL ならば true を返す
-    public boolean isRemainingRouteWAIT_() {
+    public boolean isRestAllRouteDirective() {
         if (isPlannedRouteCompleted()) {
             return false;
         }
@@ -2399,9 +2404,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         int delta = 0 ;
         while (delta < routePlan.length()) {
             Term candidate = routePlan.top(delta);
-            WaitDirective.Type type = 
-                WaitDirective.isWaitDirectiveTerm(candidate) ;
-            if(type == null) {
+            if(candidate.isAtom()) {
                 return false ;
             }
             delta += 1 ;
