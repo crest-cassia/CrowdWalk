@@ -193,6 +193,26 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return agent;
     }
 
+    //----------------------------------------------------------------------
+    /**
+     * WAITING の処理
+     * @return もしここで preUpdate から return するなら true。
+     */
+    protected boolean doWait(Term how, double time) {
+        if (how.equals("SCATTER")) {
+            waiting = true;
+            scatter(time);
+            return true;
+        } else if (how.equals("PACK")) {
+            waiting = true;
+            pack(time);
+            return true;
+        } else {
+            System.err.println("WARNING: how to move not stated!");
+            return false ;
+        }
+    }
+
 
     protected boolean scatter(double time) {
         final ArrayList<EvacuationAgent> agents = current_link.getAgents();
@@ -229,220 +249,93 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     private double wait_time = NOT_WAITING;
     private double wait_time_start = NOT_WAITING;
 
-    //============================================================
-    //============================================================
-    /**
-     * WAIT directive 解釈
-     */
-    static public class WaitDirective {
-        //==============================
-        //::::::::::::::::::::::::::::::
-        /**
-         * enum for WAIT directive
-         */
-        static public enum Type {
-            WAIT_FOR,
-            WAIT_UNTIL
-        }
-        //::::::::::::::::::::::::::::::
-        /**
-         * Lexicon for WAIT directive
-         */
-        static public Lexicon waitLexicon = new Lexicon() ;
-        static {
-            // Rule で定義された名前をそのまま文字列で Lexicon を
-            // 引けるようにする。
-            // 例えば、 WaitDirective.WAIT_FOR は、"WAIT_FOR" で引けるようになる。
-            waitLexicon.registerEnum(Type.class) ;
-        }
-
-        //==============================
-        //------------------------------
-        static public Type isWaitDirectiveTerm(Term term) {
-            return (Type)waitLexicon.lookUp(term.getHeadString()) ;
-        }
-        //==============================
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * route 中の WAIT 命令の解釈パターン
-         */
-        static public Pattern FullPattern =
-            Pattern.compile("(\\w+)\\((\\w+),(\\w+),(\\w+)\\)") ;
-        static public Pattern HeadPattern =
-            Pattern.compile("(\\w+)\\((\\w+)") ;
-        static public Pattern TailPattern =
-            Pattern.compile("(\\w+)\\)") ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * route 中の WAIT 命令の解釈パターン
-         */
-        public Type type ;
-        public String head ;
-        public String target ; // arg1
-        public String how ;    // arg2
-        public String untilStr ; // arg3
-
-        //------------------------------
-        public WaitDirective(Type _type, String _head, String _target, 
-                             String _how, String _untilStr) {
-            type = _type ;
-            head = _head ;
-            target = _target ;
-            how = _how ;
-            untilStr = _untilStr ;
-        }
-
-        //------------------------------
-        public Term targetTerm() {
-            return new Term(target) ;
-        }
-
-        //------------------------------
-        public Term toTerm() {
-            Term term = new Term(head) ;
-            term.setArg("target", new Term(target)) ;
-            term.setArg("how", new Term(how)) ;
-            switch(type) {
-            case WAIT_UNTIL:
-                term.setArg("until", new Term(untilStr)) ;
-                break ;
-            case WAIT_FOR:
-                term.setArg("until", new Term(Double.parseDouble(untilStr))) ;
-                break ;
-            }
-
-            return term ;
-        }
-
-        //==============================
-        //------------------------------
-        /**
-         * atom String 状態の wait directive を解析する。
-         *   _directive_ ::= _head_(_target_,_how_,_until_)
-         *   _head_      ::= "WAIT_UNTIL" | "WAIT_FOR"
-         *   _how_       ::= ???
-         *   _until_     ::= _eventTag_ | _duration_
-         */
-        static public WaitDirective scanDirective(Term directive) {
-            return scanDirective(directive.getString()) ;
-        }
-        //==============================
-        //------------------------------
-        static public WaitDirective scanDirective(String directive) {
-            Matcher matchFull = FullPattern.matcher(directive) ;
-            if(! matchFull.matches()) {
-                return null ;
-            }
-
-            String head = matchFull.group(1) ;
-            Type waitType = (Type)waitLexicon.lookUp(head) ;
-            if(waitType == null) {
-                return null ;
-            }
-
-            WaitDirective _directive = 
-                new WaitDirective(waitType, head, matchFull.group(2),
-                                  matchFull.group(3), matchFull.group(4)) ;
-
-            return _directive ;
-        }
-    }
-
     //------------------------------------------------------------
     @Override
     public void preUpdate(double time) {
         waiting = false;
-        if (time <= generatedTime ||
-            routePlan.isEmpty()) {
+        //生成前かroutePlanがすでに空なら super へ。
+        if (time <= generatedTime || routePlan.isEmpty()) {
             super.preUpdate(time);
             return;
         }
 
-        /* [2014.12.27 I.Noda] 
-         * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
-         * (in "AgentGenerationFile.java")
-         * [2014.12.28 I.Noda]
-         * directive は構造化された Term になっているはず。
-         */
         // WAIT directive かどうかのチェック。
-        try {
-            Term tag = routePlan.top() ;
-
-            WaitDirective.Type waitType =
-                WaitDirective.isWaitDirectiveTerm(tag) ;
-
-            if(waitType == null) {
-                super.preUpdate(time) ;
-                return ;
-            }
-
+        Term tag = routePlan.top() ;
+        WaitDirective.Type waitType = WaitDirective.isDirective(tag) ;
+        if(waitType != null) {
             Term target = tag.getArgTerm("target") ;
-            String how = tag.getArgString("how") ;
-            Term arg2 = tag.getArgTerm("until") ;
+            Term how = tag.getArgTerm("how") ;
+            Term until = tag.getArgTerm("until") ;
 
-            switch(waitType) {
-            case WAIT_UNTIL:
-                String until = arg2.getString() ;
-
-                if (current_link.hasTag(target)) {
-                    if (current_link.hasTag(until)) {
-                        routePlan.shift() ;
-                    } else if (how.equals("SCATTER")) {
-                        waiting = true;
-                        scatter(time);
-                        return;
-                    } else if (how.equals("PACK")) {
-                        waiting = true;
-                        pack(time);
-                        return;
-                    } else {
-                        System.err.println("WARNING: how to move not stated!");
-                    }
-                    /* [2014.12.27 I.Noda]
-                     * これは無駄ではないか？下でも呼んでいる。
-                     */
-                    super.preUpdate(time);
+            try {
+                switch(waitType) {
+                case WAIT_UNTIL:
+                    if(doWaitUntil(target, how, until, time)) return ;
+                    break ;
+                case WAIT_FOR:
+                    if(doWaitFor(target, how, until, time)) return ;
+                    break ;
                 }
-                break ;
-
-            case WAIT_FOR:
-                double untilVal = arg2.getDouble() ;
-
-                if (current_link.hasTag(target)) {
-                    if (wait_time == NOT_WAITING) {
-                        wait_time = untilVal ;
-                        wait_time_start = time;
-                    }
-
-                    if (time - wait_time_start > wait_time) {
-                        wait_time = NOT_WAITING;
-                        routePlan.shift() ;
-                    } else if (how.equals("SCATTER")) {
-                        waiting = true;
-                        scatter(time);
-                        return;
-                    } else if (how.equals("PACK")) {
-                        waiting = true;
-                        pack(time);
-                        return;
-                    } else {
-                        System.err.println("WARNING: how to move not stated!");
-                    }
-                } else if (wait_time != NOT_WAITING) {
-                    System.err.println("WARNING: agent " + agentNumber
-                                       + "pushed out from " + target);
-                    wait_time = NOT_WAITING;
-                    routePlan.shift() ;
-                }
-                break ;
+            } catch (Exception ex) {
+                ex.printStackTrace() ;
             }
-            super.preUpdate(time);
-        } catch (Exception ex) {
-            ex.printStackTrace() ;
+        }
+        super.preUpdate(time);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * WAIT_UNTIL の場合の preUpdate 処理
+     * @return 処理が終わればすぐに return すべきかどうか。
+     *         (super のpreUpdateがいらないかどうか)
+     */
+    protected boolean doWaitUntil(Term target, Term how, Term until, double time) {
+        if (current_link.hasTag(target)) {
+            // until は、待っているリンクで生じるイベント
+            // until イベントが生じていたら、WAIT解除
+            if (current_link.hasTag(until.getString())) {
+                routePlan.shift() ;
+                return false ;
+            } else {
+                return doWait(how, time) ;
+            }
+        } else {
+            return false ;
         }
     }
-    
+
+    //------------------------------------------------------------
+    /**
+     * WAIT_FOR の場合の preUpdate 処理
+     * @return 処理が終わればすぐに return すべきかどうか。
+     *         (super のpreUpdateがいらないかどうか)
+     */
+    protected boolean doWaitFor(Term target, Term how, Term until, double time) {
+        // until は待つ時間(?)
+        if (current_link.hasTag(target)) {
+            // 待ち始めた時刻と待ち時間を記録(初回のみ)
+            if (wait_time == NOT_WAITING) {
+                wait_time = until.getDouble() ;
+                wait_time_start = time;
+            }
+
+            // wait_time (untilに記録) 時間過ぎたらWAIT解除
+            if (time - wait_time_start > wait_time) {
+                wait_time = NOT_WAITING;
+                routePlan.shift() ;
+            } else {
+                boolean returnP = doWait(how, time) ;
+                if(returnP) return true;
+            }
+        } else if (wait_time != NOT_WAITING) {
+            System.err.println("WARNING: agent " + agentNumber
+                               + "pushed out from " + target);
+            wait_time = NOT_WAITING;
+            routePlan.shift() ;
+        }
+        return false ;
+    }
+
     @Override
     public boolean update(double time) {
         return super.update(time);
@@ -464,8 +357,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
-            WaitDirective.Type waitType = 
-                WaitDirective.isWaitDirectiveTerm(candidate) ;
+            WaitDirective.Type waitType = WaitDirective.isDirective(candidate) ;
             if (waitType != null) {
                 routePlan.setIndex(next_check_point_index);
                 next_check_point_index++ ;
@@ -501,7 +393,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
              * (in "AgentGenerationFile.java")
              */
             WaitDirective.Type type = 
-                WaitDirective.isWaitDirectiveTerm(candidate) ;
+                WaitDirective.isDirective(candidate) ;
             if(type != null) {
                 goal_tags.add(candidate.getArgTerm("target")) ;
             } else {
@@ -580,7 +472,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 	 */
 	public boolean isKnownDirective(Term term) {
         WaitDirective.Type type =
-            WaitDirective.isWaitDirectiveTerm(term) ;
+            WaitDirective.isDirective(term) ;
         if(type != null)
             return true ;
         else
@@ -595,7 +487,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 	public int pushPlaceTagInDirective(Term directive,
                                        ArrayList<Term> goalList) {
         WaitDirective.Type type =
-            WaitDirective.isWaitDirectiveTerm(directive) ;
+            WaitDirective.isDirective(directive) ;
         if(type != null) {
             Term _goal = directive.getArgTerm("target") ;
             if(_goal != null) {
@@ -610,6 +502,127 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             return super.pushPlaceTagInDirective(directive, goalList) ;
         }
 	}
+
+    //============================================================
+    //============================================================
+    //============================================================
+    /**
+     * WAIT directive 解釈
+     */
+    static public class WaitDirective {
+        //==============================
+        //::::::::::::::::::::::::::::::
+        /**
+         * enum for WAIT directive
+         */
+        static public enum Type {
+            WAIT_FOR,
+            WAIT_UNTIL
+        }
+        //::::::::::::::::::::::::::::::
+        /**
+         * Lexicon for WAIT directive
+         */
+        static public Lexicon lexicon = new Lexicon() ;
+        static {
+            // Rule で定義された名前をそのまま文字列で Lexicon を
+            // 引けるようにする。
+            // 例えば、 WaitDirective.WAIT_FOR は、"WAIT_FOR" で引けるようになる。
+            lexicon.registerEnum(Type.class) ;
+        }
+
+        //==============================
+        //------------------------------
+        static public Type isDirective(Term term) {
+            return (Type)lexicon.lookUp(term.getHeadString()) ;
+        }
+        //==============================
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * route 中の WAIT 命令の解釈パターン
+         */
+        static public Pattern FullPattern =
+            Pattern.compile("(\\w+)\\((\\w+),(\\w+),(\\w+)\\)") ;
+        static public Pattern HeadPattern =
+            Pattern.compile("(\\w+)\\((\\w+)") ;
+        static public Pattern TailPattern =
+            Pattern.compile("(\\w+)\\)") ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * route 中の WAIT 命令の解釈パターン
+         */
+        public Type type ;
+        public String head ;
+        public String target ; // arg1
+        public String how ;    // arg2
+        public String untilStr ; // arg3
+
+        //------------------------------
+        public WaitDirective(Type _type, String _head, String _target, 
+                             String _how, String _untilStr) {
+            type = _type ;
+            head = _head ;
+            target = _target ;
+            how = _how ;
+            untilStr = _untilStr ;
+        }
+
+        //------------------------------
+        public Term targetTerm() {
+            return new Term(target) ;
+        }
+
+        //------------------------------
+        public Term toTerm() {
+            Term term = new Term(head) ;
+            term.setArg("target", new Term(target)) ;
+            term.setArg("how", new Term(how)) ;
+            switch(type) {
+            case WAIT_UNTIL:
+                term.setArg("until", new Term(untilStr)) ;
+                break ;
+            case WAIT_FOR:
+                term.setArg("until", new Term(Double.parseDouble(untilStr))) ;
+                break ;
+            }
+
+            return term ;
+        }
+
+        //==============================
+        //------------------------------
+        /**
+         * atom String 状態の wait directive を解析する。
+         *   _directive_ ::= _head_(_target_,_how_,_until_)
+         *   _head_      ::= "WAIT_UNTIL" | "WAIT_FOR"
+         *   _how_       ::= ???
+         *   _until_     ::= _eventTag_ | _duration_
+         */
+        static public WaitDirective scanDirective(Term directive) {
+            return scanDirective(directive.getString()) ;
+        }
+        //==============================
+        //------------------------------
+        static public WaitDirective scanDirective(String directive) {
+            Matcher matchFull = FullPattern.matcher(directive) ;
+            if(! matchFull.matches()) {
+                return null ;
+            }
+
+            String head = matchFull.group(1) ;
+            Type waitType = (Type)lexicon.lookUp(head) ;
+            if(waitType == null) {
+                return null ;
+            }
+
+            WaitDirective _directive = 
+                new WaitDirective(waitType, head, matchFull.group(2),
+                                  matchFull.group(3), matchFull.group(4)) ;
+
+            return _directive ;
+        }
+    }
 
 }
 //;;; Local Variables:

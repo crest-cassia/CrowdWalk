@@ -692,7 +692,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     String directive = matchFull2.group(1) ;
                     WaitDirective.Type wait =
                         (WaitDirective.Type)
-                        WaitDirective.waitLexicon.lookUp(directive) ;
+                        WaitDirective.lexicon.lookUp(directive) ;
                     if(wait != null) {
                         //正しい 3引数 wait directive は、まとめたものを返す。
                         columns.shift(2) ;

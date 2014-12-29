@@ -300,8 +300,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     MapLink next_link_candidate = null;
     boolean on_node = false;
-    @Override
 
+    @Override
     public void preUpdate(double time) {
         next_link_candidate = null;
 
