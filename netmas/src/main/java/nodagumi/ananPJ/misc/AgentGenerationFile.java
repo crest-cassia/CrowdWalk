@@ -769,8 +769,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         if(genConfig.ruleTag == Rule.TIMEEVERY) {
             try {
+                String endTimeStr = json.getArgString("everyEndTime") ;
                 ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                    json.getArgInt("everyEndTime") ;
+                    Itk.scanTimeStringToInt(endTimeStr) ;
             } catch(Exception ex) {
                 return null ;
             }

@@ -34,6 +34,37 @@ public class ClassFinder {
     static public HashMap<String, String> AliasTable =
         new HashMap<String, String>() ;
 
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * dummy instance を格納しておくテーブル
+     * instance method を呼ぶためのもの。
+     * ゼロ引数で Constructor を呼べるものに限る。
+     */
+    static public HashMap<Class<?>, Object> DummyTable =
+        new HashMap<Class<?>, Object>() ;
+
+    //------------------------------------------------------------
+    /**
+     * class と dummy instance の登録
+     */
+    static public void registerClassDummy(Class<?> klass) {
+        try {
+            Object object = klass.newInstance() ;
+            DummyTable.put(klass, object) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("can not register the class:" + klass) ;
+        }
+    } ;
+
+    //------------------------------------------------------------
+    /**
+     * class の dummy instance の取得
+     */
+    static public Object getClassDummy(Class<?> klass) {
+        return DummyTable.get(klass) ;
+    }
+
     //------------------------------------------------------------
     /**
      * クラスオブジェクトを持ってくる。

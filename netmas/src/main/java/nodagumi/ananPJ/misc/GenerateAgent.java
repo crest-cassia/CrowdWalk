@@ -32,35 +32,21 @@ import nodagumi.Itk.*;
 
 public abstract class GenerateAgent implements Serializable {
     //============================================================
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    /**
-     * 使えるエージェントを予めロードしておくためのダミー
-     */
-    static private HashMap<Class<?>, Object> DummyAgentTable =
-        new HashMap<Class<?>, Object>() ;
-
-    //============================================================
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //------------------------------------------------------------
     /**
      * 使用出来るエージェントタイプの登録
      */
     static public void registerAgentClass(Class<?> agentClass) {
-        try {
-            Object agent = agentClass.newInstance() ;
-            DummyAgentTable.put(agentClass, agent) ;
-        } catch (Exception ex) {
-            ex.printStackTrace() ;
-            Itk.dbgErr("can not register the class:" + agentClass) ;
-        }
-    } ;
+        ClassFinder.registerClassDummy(agentClass) ;
+    }
 
     //============================================================
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //------------------------------------------------------------
     /**
      * エージェントクラスのダミーエージェントの取得
      */
     static public Object getDummyAgent(Class<?> agentClass) {
-        return DummyAgentTable.get(agentClass) ;
+        return ClassFinder.getClassDummy(agentClass) ;
     }
 
     //============================================================
