@@ -573,6 +573,44 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 
         return agent;
     }
+
+	//------------------------------------------------------------
+	/**
+	 * 知っている directive かどうかのチェック
+	 */
+	public boolean isKnownDirective(Term term) {
+        WaitDirective.Type type =
+            WaitDirective.isWaitDirectiveTerm(term) ;
+        if(type != null)
+            return true ;
+        else
+            return super.isKnownDirective(term) ;
+    }
+
+	//------------------------------------------------------------
+	/**
+	 * directive の中から経由地点tagを取り出し
+	 * @return pushした数
+	 */
+	public int pushPlaceTagInDirective(Term directive,
+                                       ArrayList<Term> goalList) {
+        WaitDirective.Type type =
+            WaitDirective.isWaitDirectiveTerm(directive) ;
+        if(type != null) {
+            Term _goal = directive.getArgTerm("target") ;
+            if(_goal != null) {
+                goalList.add(_goal) ;
+                return 1 ;
+            } else {
+                Itk.dbgErr("target arg is missing in the directive:") ;
+                Itk.dbgMsg("directive",directive) ;
+                return 0 ;
+            }
+        } else {
+            return super.pushPlaceTagInDirective(directive, goalList) ;
+        }
+	}
+
 }
 //;;; Local Variables:
 //;;; mode:java

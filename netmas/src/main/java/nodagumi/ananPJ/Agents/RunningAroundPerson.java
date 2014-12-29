@@ -39,7 +39,6 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.SpecialTerm;
 

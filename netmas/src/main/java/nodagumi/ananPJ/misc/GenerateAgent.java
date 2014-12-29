@@ -1,6 +1,8 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.misc;
 
+import java.lang.reflect.Method;
+
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Map;
 
@@ -17,7 +20,6 @@ import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.WaitRunningAroundPerson;
-import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
 import nodagumi.ananPJ.Agents.*;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -29,17 +31,51 @@ import nodagumi.Itk.*;
 
 
 public abstract class GenerateAgent implements Serializable {
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * 使えるエージェントを予めロードしておくためのダミー
      */
-    static private EvacuationAgent[] _dummyAgents = {
-        new RunningAroundPerson(),
-        new WaitRunningAroundPerson(),
-        new Staff(),
-        new NaiveAgent(),
-        new CapriciousAgent(),
-        new BustleAgent(),
+    static private HashMap<Class<?>, Object> DummyAgentTable =
+        new HashMap<Class<?>, Object>() ;
+
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * 使用出来るエージェントタイプの登録
+     */
+    static public void registerAgentClass(Class<?> agentClass) {
+        try {
+            Object agent = agentClass.newInstance() ;
+            DummyAgentTable.put(agentClass, agent) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("can not register the class:" + agentClass) ;
+        }
     } ;
+
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * エージェントクラスのダミーエージェントの取得
+     */
+    static public Object getDummyAgent(Class<?> agentClass) {
+        return DummyAgentTable.get(agentClass) ;
+    }
+
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * デフォルトのエージェント登録
+     */
+    static {
+        registerAgentClass(RunningAroundPerson.class) ;
+        registerAgentClass(WaitRunningAroundPerson.class) ;
+        registerAgentClass(Staff.class) ;
+        registerAgentClass(NaiveAgent.class) ;
+        registerAgentClass(CapriciousAgent.class) ;
+        registerAgentClass(BustleAgent.class) ;
+    }
 
     /**
      * エージェント生成用設定情報用クラス
@@ -313,25 +349,63 @@ public abstract class GenerateAgent implements Serializable {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * agentClassName で指定されたエージェントクラスで
+     * 扱い可能な directive かのチェック
+     */
+    public boolean isKnownDirectiveInAgentClass(Term directive) {
+        try {
+            Class<?> klass = ClassFinder.get(agentClassName) ;
+            Object agent = getDummyAgent(klass) ;
+            Method method = klass.getMethod("isKnownDirective",Term.class) ;
+            return (boolean)method.invoke(agent,directive) ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("can not check the directive") ;
+            Itk.dbgMsg("directive",directive) ;
+            Itk.dbgMsg("agentCkass", agentClassName) ;
+            return false ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * agentClassName で指定されたエージェントクラスで
+     * directive の中の経由場所tagの取り出し
+     */
+    public int pushPlaceTagInDirectiveByAgentClass(Term directive,
+                                                       ArrayList<Term> goalList) {
+        try {
+            Class<?> klass = ClassFinder.get(agentClassName) ;
+            Object agent = getDummyAgent(klass) ;
+            Method method =
+                klass.getMethod("pushPlaceTagInDirective",
+                                Term.class,
+                                ArrayList.class) ;
+            return (int)method.invoke(agent,directive,goalList) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("can not pushPlaceTag.") ;
+            Itk.dbgMsg("directive",directive) ;
+            Itk.dbgMsg("agentClass",agentClassName) ;
+            return 0 ;
+        }
+    }
+
     public ArrayList<Term> getPlannedRoute() {
         ArrayList<Term> goal_tags = new ArrayList<Term>();
 
         int next_check_point_index = 0;
         while (planned_route.size() > next_check_point_index) {
             Term candidate = planned_route.get(next_check_point_index);
-            /* [2014.12.27 I.Noda]
-             * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
-             * (in "AgentGenerationFile.java")
-             */
-            WaitDirective.Type type =
-                WaitDirective.isWaitDirectiveTerm(candidate) ;
-            if (type != null) {
-                goal_tags.add(candidate.getArgTerm("target")) ;
-                next_check_point_index += 1;
+
+            if(isKnownDirectiveInAgentClass(candidate)) {
+                pushPlaceTagInDirectiveByAgentClass(candidate, goal_tags) ;
             } else {
                 goal_tags.add(candidate);
-                next_check_point_index += 1;
             }
+            next_check_point_index += 1;
         }
         return goal_tags;
     }

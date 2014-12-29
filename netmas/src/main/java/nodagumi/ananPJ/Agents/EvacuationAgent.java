@@ -504,6 +504,28 @@ implements Comparable<EvacuationAgent>, Serializable {
     public static void setPollutionType(String s) {
         pollutionType = s;
     }
+
+	//------------------------------------------------------------
+    /* [2014.12.29 I.Noda]
+     * directive を増やす場合は、継承するクラスで以下２つを再定義していく。
+     */
+	/**
+	 * 知っている directive かどうかのチェック
+	 */
+	public boolean isKnownDirective(Term term) {
+		return false ;
+	}
+
+	//------------------------------------------------------------
+	/**
+	 * 知っている directive かどうかのチェック
+	 * @return pushした数
+	 */
+	public int pushPlaceTagInDirective(Term directive,
+									   ArrayList<Term> goalList) {
+		return 0 ;
+	}
+
 }
 // ;;; Local Variables:
 // ;;; mode:java
