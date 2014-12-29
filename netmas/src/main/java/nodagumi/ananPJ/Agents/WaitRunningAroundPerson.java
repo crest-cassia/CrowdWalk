@@ -266,11 +266,11 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         /**
          * route 中の WAIT 命令の解釈パターン
          */
-        static public Pattern waitDirectivePatternFull =
+        static public Pattern FullPattern =
             Pattern.compile("(\\w+)\\((\\w+),(\\w+),(\\w+)\\)") ;
-        static public Pattern waitDirectivePatternHead =
+        static public Pattern HeadPattern =
             Pattern.compile("(\\w+)\\((\\w+)") ;
-        static public Pattern waitDirectivePatternTail =
+        static public Pattern TailPattern =
             Pattern.compile("(\\w+)\\)") ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -330,7 +330,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         //==============================
         //------------------------------
         static public WaitDirective scanDirective(String directive) {
-            Matcher matchFull = waitDirectivePatternFull.matcher(directive) ;
+            Matcher matchFull = FullPattern.matcher(directive) ;
             if(! matchFull.matches()) {
                 return null ;
             }

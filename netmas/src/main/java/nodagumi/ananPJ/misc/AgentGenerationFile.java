@@ -651,18 +651,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         return true ;
     }
 
-    //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /*
-     * route 中の WAIT 命令の解釈パターン
-     */
-    static private Pattern waitDirectivePatternFull =
-        WaitDirective.waitDirectivePatternFull ;
-    static private Pattern waitDirectivePatternHead =
-        WaitDirective.waitDirectivePatternHead ;
-    static private Pattern waitDirectivePatternTail =
-        WaitDirective.waitDirectivePatternTail ;
-
     //------------------------------------------------------------
     /**
      * WAIT directive の解釈
@@ -671,7 +659,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                                  ShiftingStringList columns) {
         try {
             Matcher matchFull = 
-                waitDirectivePatternFull.matcher(head) ;
+                WaitDirective.FullPattern.matcher(head) ;
             if(matchFull.matches()) {
                 // 引数込みですでにheadに含まれている。
                 // directive 用の Term に変換する。
@@ -684,13 +672,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
             }
             Matcher matchHead =
-                waitDirectivePatternHead.matcher(head) ;
+                WaitDirective.HeadPattern.matcher(head) ;
             if(matchHead.matches()) {
                 // CSV 解釈で、カンマで引数が分断されている場合。
                 String fullForm = 
                     head + "," + columns.top(0) + "," + columns.top(1) ;
                 Matcher matchFull2 = 
-                    waitDirectivePatternFull.matcher(fullForm) ;
+                    WaitDirective.FullPattern.matcher(fullForm) ;
                 if(matchFull2.matches()) {
                     String directive = matchFull2.group(1) ;
                     WaitDirective.Type wait =
