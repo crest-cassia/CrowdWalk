@@ -35,6 +35,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
+import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.Simulator.Pollution;
 
 import nodagumi.Itk.* ;
@@ -436,28 +437,39 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     abstract public JPanel paramSettingPanel(NetworkMap networkMap);
 
+	//============================================================
+	//------------------------------------------------------------
+	/**
+	 * 知っているエージェントクラスの名前のリストを返す。
+	 * Editor のパネルで使用。
+	 * しかし、本来であれば、このクラスのメッソドではなく、
+	 * GenerateAgentあたりのクラスとして用意すべき。
+	 */
     public static String[] getAgentTypes() {
-        String ret[] = {"NOT SELECTED",
-                RunningAroundPerson.getTypeName(),
-                WaitRunningAroundPerson.getTypeName(),
-                Staff.getTypeName()};
-        return ret;
-    }
-    
-    public static EvacuationAgent createEmptyAgent(String type,
-            Random _random) {
+		return GenerateAgent.getKnownAgentClassNameList() ;
+	}
+		
+	//============================================================
+	//------------------------------------------------------------
+	/**
+	 * クラス名によるエージェントの作成。
+	 * [2014.12.30 I.Noda]
+	 * これまで決め打ちであったものを、GenerateAgent で登録されたものが
+	 * 自動で対応されるようにしてある。
+	 */
+    public static EvacuationAgent createEmptyAgent(String type, Random _random) {
         if (type.equals("NOT SELECTED")) {
             return null;
-        } else if (type.equals(WaitRunningAroundPerson.getTypeName())) {
-            return new WaitRunningAroundPerson(0, _random);
-        } else if (type.equals(RunningAroundPerson.getTypeName())) {
-            return new RunningAroundPerson(0, _random);
-        } else if (type.equals(Staff.getTypeName())) {
-            return new Staff(_random);
-        }else {
-            return null;
-        }
-    }
+		} else {
+			EvacuationAgent agent = GenerateAgent.newAgentByName(type) ;
+			if(agent != null) {
+				agent.init(0, _random) ;
+				return agent ;
+			} else {
+				return null ;
+			}
+		}
+	}
     
     public final static String getNodeTypeString() {
         return "Agent";

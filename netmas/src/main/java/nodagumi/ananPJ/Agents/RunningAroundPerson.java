@@ -335,7 +335,20 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * リンク上の次の位置。
+     * 0 以下あるいはリンク長より大きい場合、次のリンクに移っていることになる。
+     */
     private double next_position = 0.0;
+
+    //------------------------------------------------------------
+    /**
+     * 次の位置を計算。(expected 以外用)
+     * @param d : speed に相当する大きさ。単位時間に進める長さ。
+     * @param time : 時間ステップ。1.0 が1秒。
+     * @param will_move_out : 次のリンクに進むかどうか。WaitDirective 用。
+     */
     protected boolean move_set(double d, double time, boolean will_move_out) {
         // 2013.02.21 tkokada ScenarioEvent STOP_TIMES
         if (current_link.isStopTimesEnabled()) {
@@ -380,8 +393,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 MapLink next_link = navigate(time, link, node);
                 if ((link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE") || link.hasTag("ROAD-CLOSED"))
                         && next_link == null) {
+                    // 現在の道が一方通行か閉鎖で、先の道路が見つからなかったらアウト
                     break;
                 } else if (link.ID == next_link.ID) {
+                    // 現在の道と同じ道が見つかってしまったら（後戻り？）アウト
                     break;
                 }
                 next_link.registerEnter(this, link);
@@ -1818,17 +1833,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
             */
 
-            boolean loop = false;
-            // ※この if 文は常に無効
-            if (DELAY_LOOP) {
-                for (final CheckPoint cp : route) {
-                    if (cp.node == way_candidate.getOther(node)) {
-                        loop = true;
-                        break;
-                    }
-                }
-            }
-
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
             double cost = calcWayCostTo(way_candidate, node, next_target) ;
 
@@ -1838,15 +1842,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     "(" + way_candidate.crowdness() + ")\t"
                     + way_candidate.spaceLeft(node, 1.0));
 			navigation_reason.add(way_candidate.getOther(node))
-				.add("(").add(cost).add((loop ? " loop" : "")).add(") ");
+				.add("(").add(cost).add(") ");
 
-            if (loop) {
-                // ※このブロックは常に無効
-                if (cost < min_cost_second) {
-                    min_cost_second = cost;
-                    way_second = way_candidate;
-                }
-            } else if (cost < min_cost) { // 最小cost置き換え
+            if (cost < min_cost) { // 最小cost置き換え
                 min_cost = cost;
                 way = way_candidate;
                 way_samecost = null;
@@ -1983,28 +1981,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             return target;
         }
 
-        /* try follow others */
-        double weight_total = 0.0; 
-        for (final MapLink link : way_candidates) {
-            double w = link.getConfidence(this);
-            if (w < 0.0) w = 0.0;
-            weight_total += w;
-        }
-
-        if (weight_total != 0.0) {
-            //double choice = Math.random() *  weight_total;
-            double choice = random.nextDouble() *  weight_total;
-            for (MapLink link : way_candidates) {
-                double w = link.getConfidence(this);
-                if (w < 0.0) w = 0.0;
-                choice -= w;
-                if (choice < 0.0) {
-                    //System.err.println("choose with weight");
-                    return link;
-                }
-            }
-        }
-
         /* choose randomly */
         int i = 0;
         if (way_candidates.size() > 1) {
@@ -2071,26 +2047,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             return target;
         }
 
-        /* try follow others */
-        double weight_total = 0.0;
-        for (final MapLink link : way_candidates) {
-            double w = link.getConfidence(this);
-            if (w < 0.0) w = 0.0;
-            weight_total += w;
-        }
-
-        if (weight_total != 0.0) {
-            double choice = random.nextDouble() *  weight_total;
-            for (MapLink link : way_candidates) {
-                double w = link.getConfidence(this);
-                if (w < 0.0) w = 0.0;
-                choice -= w;
-                if (choice < 0.0) {
-                    return link;
-                }
-            }
-        }
-
         /* choose randomly */
         int i = 0;
         if (way_candidates.size() > 1) {
@@ -2127,25 +2083,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             } else if (way_candidate == link) {
                 continue;
             }
-            boolean loop = false;
-            if (DELAY_LOOP) {
-                for (final CheckPoint cp : route) {
-                    if (cp.node == way_candidate.getOther(node)) {
-                        loop = true;
-                        break;
-                    }
-                }
-            }
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
             double cost = calcWayCostTo(way_candidate, node, next_target) ;
 
-            if (loop) {
-                if (cost < min_cost_second) {
-                    min_cost_second = cost;
-                    way_second = way_candidate;
-                }
-            } else if (cost < min_cost) {
+            if (cost < min_cost) {
                 min_cost = cost;
                 way = way_candidate;
                 way_samecost = null;

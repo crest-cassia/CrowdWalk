@@ -64,7 +64,6 @@ public class MapLink extends OBMapPart implements Serializable {
 
     /* place holder for values used in simulation */
     protected ArrayList<EvacuationAgent> agents;
-    private double confidence[];
     public int displayMode = 0;
     protected double timeScale = 1.0;
     private boolean nodes_are_set = false;
@@ -111,9 +110,6 @@ public class MapLink extends OBMapPart implements Serializable {
         agents = new ArrayList<EvacuationAgent>();
         length = _length;
         width = _width;
-        confidence = new double[2];
-        confidence[0] = 0.0;
-        confidence[1] = 0.0;
 
         selected = false;
     }
@@ -365,14 +361,6 @@ public class MapLink extends OBMapPart implements Serializable {
             */
         }
         return lane_width ;
-    }
-
-    public double getConfidence(EvacuationAgent agent) {
-        if (agent.getPrevNode() == fromNode) {
-            return confidence[0] - confidence[1];
-        } else {
-            return confidence[1] - confidence[0];
-        }
     }
 
     public void draw(Graphics2D g,

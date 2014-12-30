@@ -67,6 +67,24 @@ public abstract class GenerateAgent implements Serializable {
     //============================================================
     //------------------------------------------------------------
     /**
+     * エージェントクラスのインスタンス生成（ゼロ引数で）
+     */
+    static public EvacuationAgent newAgentByName(String agentClassName) {
+        try {
+            EvacuationAgent agent =
+                (EvacuationAgent)ClassFinder.newByName(agentClassName) ;
+            return agent ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("can not find the class") ;
+            Itk.dbgMsg("agentClassName", agentClassName) ;
+            return null ;
+        }
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
      * エージェントクラスのダミーエージェントの取得
      */
     static public Object getDummyAgent(Class<?> agentClass) {
@@ -81,7 +99,6 @@ public abstract class GenerateAgent implements Serializable {
     static public String[] getKnownAgentClassNameList() {
         return ClassFinder.AliasTable.keySet().toArray(new String[0]) ;
     }
-
 
     /**
      * エージェント生成用設定情報用クラス
@@ -329,7 +346,7 @@ public abstract class GenerateAgent implements Serializable {
              */
             WaitRunningAroundPerson agent = null;
             try {
-                agent = (WaitRunningAroundPerson)ClassFinder.newByName(agentClassName) ;
+                agent = (WaitRunningAroundPerson)newAgentByName(agentClassName) ;
                 agent.init(model.getMap().assignUniqueAgentId(), random);
                 if(agentConf != null)
                     agent.initByConf(agentConf) ;
