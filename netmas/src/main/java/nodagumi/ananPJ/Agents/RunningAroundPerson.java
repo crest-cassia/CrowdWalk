@@ -2268,22 +2268,16 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * クラス名。
      * ClassFinder でも参照できるようにしておく。
      */
-    public static String typeString =
-        ClassFinder.alias("RunningAroundPerson",
-                          Itk.currentClassName()) ;
-    public static String getAgentTypeString() {
-        return typeString ;
-    }
+    public static String typeString = "RunningAroundPerson" ;
     public static String getTypeName() {
         return typeString ;
     }
-
 
     @Override
     public Element toDom(Document dom, String nodetype) {
         Element element = super.toDom(dom, getNodeTypeString());
         element.setAttribute("id", "" + ID);
-        element.setAttribute("AgentType", RunningAroundPerson.getAgentTypeString());
+        element.setAttribute("AgentType", RunningAroundPerson.getTypeName());
 
         element.setAttribute("GeneratedTime", "" + generatedTime);
         element.setAttribute("EmptySpeed", "" + emptyspeed);

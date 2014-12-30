@@ -68,7 +68,11 @@ implements Comparable<EvacuationAgent>, Serializable {
     protected static String pollutionType = "NonAccumulated";
     protected Pollution pollution = null;
 
-    /* constructor */
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * agentNumber は、agent の中での通しナンバー。
+	 * agent_count は、生成したエージェントの総数。
+	 */
     static int agent_count = 0;
     public int agentNumber;
 
@@ -126,10 +130,10 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     public static OBNode fromDom(Element element) {
         String tag_name = element.getAttribute("AgentType");
-        if (tag_name.equals(RunningAroundPerson.getAgentTypeString())) {
+        if (tag_name.equals(RunningAroundPerson.getTypeName())) {
             // TODO: 多分バグ(再びこのメソッドが呼ばれる)
             return RunningAroundPerson.fromDom(element);
-        } else if (tag_name.equals(WaitRunningAroundPerson.getAgentTypeString())) {
+        } else if (tag_name.equals(WaitRunningAroundPerson.getTypeName())) {
             return WaitRunningAroundPerson.fromDom(element);
         } else {
             //TODO must implement other types of agents

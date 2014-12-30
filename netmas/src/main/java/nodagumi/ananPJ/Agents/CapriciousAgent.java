@@ -13,10 +13,8 @@
  *   <LI> 以下の package と import をすべていれる。 </LI>
  *   <LI> class 定義で WaitRunningAroundPerson を extends </LI>
  *   <LI> class 定義で Serializable を implements </LI>
- *   <LI> typeString を static で定義。これにクラス名(short name)をいれる
- *        その際、ClassFinder.alias() を使う。これをすれば、short name で
- *        クラス名を指定できるようになる。</LI>
- *   <LI> getAgentTypeString() と getTypeName() も定義しておく </LI>
+ *   <LI> typeString を static で定義。これにクラス名(short name)をいれる。
+ *   <LI> getTypeName() も定義しておく </LI>
  *   <LI> コンストラクタは、引数なし、2引数、6引数のものを定義しておく <LI>
  *   <LI> copyAndInitializeBody() も定義しておく。</LI> 
  *   <LI> calcWayCostTo() を定義する。
@@ -54,11 +52,7 @@ public class CapriciousAgent extends NaiveAgent
      * クラス名。
      * ClassFinder でも参照できるようにしておく。
      */
-    public static String typeString =
-        ClassFinder.alias("CapriciousAgent",
-                          Itk.currentClassName()) ;
-
-    public static String getAgentTypeString() { return typeString ;}
+    public static String typeString = "CapriciousAgent" ;
     public static String getTypeName() { return typeString ;}
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

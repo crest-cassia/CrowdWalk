@@ -33,11 +33,7 @@ public class BustleAgent extends NaiveAgent
      * クラス名。
      * ClassFinder でも参照できるようにしておく。
      */
-    public static String typeString =
-        ClassFinder.alias("BustleAgent",
-                          Itk.currentClassName()) ;
-
-    public static String getAgentTypeString() { return typeString ;}
+    public static String typeString = "BustleAgent" ;
     public static String getTypeName() { return typeString ;}
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

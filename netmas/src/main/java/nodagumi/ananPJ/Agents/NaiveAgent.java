@@ -38,11 +38,7 @@ public class NaiveAgent
      * クラス名。
      * ClassFinder でも参照できるようにしておく。
      */
-    public static String typeString =
-        ClassFinder.alias("NaiveAgent",
-                          Itk.currentClassName()) ;
-
-    public static String getAgentTypeString() { return typeString ;}
+    public static String typeString = "NaiveAgent" ;
     public static String getTypeName() { return typeString ;}
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

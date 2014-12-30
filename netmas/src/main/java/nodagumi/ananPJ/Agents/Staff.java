@@ -67,10 +67,8 @@ public class Staff extends RunningAroundPerson implements Serializable {
 	 * クラス名。
 	 * ClassFinder でも参照できるようにしておく。
 	 */
-	public static String typeString =
-		ClassFinder.alias("Staff",
-						  Itk.currentClassName()) ;
-    public static String getAgentTypeString() {
+	public static String typeString = "Staff" ;
+    public static String getTypeName() {
 		return typeString ;
     }
 

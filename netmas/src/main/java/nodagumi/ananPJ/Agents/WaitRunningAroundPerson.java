@@ -401,13 +401,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * クラス名。
      * ClassFinder でも参照できるようにしておく。
      */
-    public static String typeString =
-        ClassFinder.alias("WaitRunningAroundPerson",
-                          Itk.currentClassName()) ;
-    public static String getAgentTypeString() {
-        return typeString ;
-    }
-
+    public static String typeString = "WaitRunningAroundPerson" ;
     public static String getTypeName() {
         return typeString ;
     }
@@ -415,7 +409,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     @Override
     public Element toDom(Document dom, String nodetype) {
         Element element = super.toDom(dom, getNodeTypeString());
-        element.setAttribute("AgentType", WaitRunningAroundPerson.getAgentTypeString());
+        element.setAttribute("AgentType", WaitRunningAroundPerson.getTypeName());
 
         for (Term via : routePlan.getRoute()) {
               Element tnode = dom.createElement("route");

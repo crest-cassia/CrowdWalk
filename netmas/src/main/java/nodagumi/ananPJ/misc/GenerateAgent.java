@@ -32,24 +32,6 @@ import nodagumi.Itk.*;
 
 public abstract class GenerateAgent implements Serializable {
     //============================================================
-    //------------------------------------------------------------
-    /**
-     * 使用出来るエージェントタイプの登録
-     */
-    static public void registerAgentClass(Class<?> agentClass) {
-        ClassFinder.registerClassDummy(agentClass) ;
-    }
-
-    //============================================================
-    //------------------------------------------------------------
-    /**
-     * エージェントクラスのダミーエージェントの取得
-     */
-    static public Object getDummyAgent(Class<?> agentClass) {
-        return ClassFinder.getClassDummy(agentClass) ;
-    }
-
-    //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * デフォルトのエージェント登録
@@ -62,6 +44,44 @@ public abstract class GenerateAgent implements Serializable {
         registerAgentClass(CapriciousAgent.class) ;
         registerAgentClass(BustleAgent.class) ;
     }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * 使用出来るエージェントタイプの登録
+     */
+    static public void registerAgentClass(Class<?> agentClass) {
+        try {
+            ClassFinder.registerClassDummy(agentClass) ;
+            String aliasName =
+                (String)
+                ClassFinder.callMethodForClass(agentClass, "getTypeName", true) ;
+            ClassFinder.alias(aliasName, agentClass) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("cannot process registerAgentClass()") ;
+            Itk.dbgMsg("agentClass",agentClass) ;
+        }
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * エージェントクラスのダミーエージェントの取得
+     */
+    static public Object getDummyAgent(Class<?> agentClass) {
+        return ClassFinder.getClassDummy(agentClass) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * 使用可能なエージェントクラスのリスト
+     */
+    static public String[] getKnownAgentClassNameList() {
+        return ClassFinder.AliasTable.keySet().toArray(new String[0]) ;
+    }
+
 
     /**
      * エージェント生成用設定情報用クラス
