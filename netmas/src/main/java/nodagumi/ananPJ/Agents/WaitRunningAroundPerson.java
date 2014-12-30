@@ -71,12 +71,6 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         super.init(_id, _random);
     }
 
-    @Override
-    public EvacuationAgent copyAndInitialize() {
-        WaitRunningAroundPerson r = new WaitRunningAroundPerson(0, random);
-        return copyAndInitializeBody(r) ;
-    }
-
     /**
      * Conf による初期化。
      * 継承しているクラスの設定のため。
@@ -102,19 +96,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     /**
      * 複製操作のメイン
      */
-    public EvacuationAgent copyAndInitializeBody(WaitRunningAroundPerson r) {
-        r.ID = ID;
-        r.generatedTime = generatedTime;
-        r.emptyspeed = emptyspeed;
-        r.prev_node = prev_node;
-        r.next_node = next_node;
-        r.current_link = current_link;
-        r.position = position;
-        r.direction = direction;
-        r.speed = speed;
-        r.goal = goal;
-        r.routePlan = new RoutePlan(routePlan) ;
-        r.routePlan.setIndex(0) ;
+    @Override
+    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+        WaitRunningAroundPerson r = (WaitRunningAroundPerson)_r ;
+        super.copyAndInitializeBody(r) ;
 
         return r;
     }
@@ -287,7 +272,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     /**
      * WAIT_UNTIL の場合の preUpdate 処理
      * @return 処理が終わればすぐに return すべきかどうか。
-     *         (super のpreUpdateがいらないかどうか)
+     *         (true なら super のpreUpdateを呼ばない)
      */
     protected boolean doWaitUntil(Term target, Term how, Term until, double time) {
         if (current_link.hasTag(target)) {
@@ -341,7 +326,15 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return super.update(time);
     }
 
-    /* look up our route plan and give our next goal  
+    /* look up our route plan and give our next goal
+     * [2014.12.30 I.Noda] analysis
+     * 次に来る、hint に記載されている route target を取り出す。
+     * 今、top の target が現在のノードのタグにある場合、
+     * route は１つ進める。(ここまでは RunningAroundPerson の機能)
+     * ただし、WaitDirective の場合は、routePlan のポインタは
+     * WaitDirective に留め、返すタグは、hint に存在する次の
+     * 通常のタグ。(山下さんの説明)
+     * ただし、下記のアルゴリズムにはおそらくバグがある。
      */
     @Override
     protected Term calc_next_target(MapNode node) {

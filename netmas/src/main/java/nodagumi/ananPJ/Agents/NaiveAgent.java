@@ -158,19 +158,11 @@ public class NaiveAgent
 
     //------------------------------------------------------------
     /**
-     * 複製
-     */
-    @Override
-    public EvacuationAgent copyAndInitialize() {
-        NaiveAgent r = new NaiveAgent(0, random) ;
-        return copyAndInitializeBody(r) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 複製操作のメイン
      */
-    public EvacuationAgent copyAndInitializeBody(NaiveAgent r) {
+    @Override
+    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+        NaiveAgent r = (NaiveAgent)_r ;
         return super.copyAndInitializeBody(r) ;
     }
 

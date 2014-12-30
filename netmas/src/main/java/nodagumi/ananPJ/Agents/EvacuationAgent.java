@@ -93,7 +93,36 @@ implements Comparable<EvacuationAgent>, Serializable {
         pollution = Pollution.getInstance(pollutionType + "Pollution");
     }
 
-    abstract public EvacuationAgent copyAndInitialize();
+	public EvacuationAgent copyAndInitialize() {
+		try {
+			EvacuationAgent r = (EvacuationAgent)this.getClass().newInstance() ;
+			return copyAndInitializeBody(r) ;
+		} catch(Exception ex) {
+			ex.printStackTrace() ;
+			Itk.dbgErr("can not make a new instance from an agent.") ;
+			Itk.dbgMsg("agent", this) ;
+			return null ;
+		}
+	}
+
+	/**
+	 * 与えられたエージェントインスタンスに内容をコピーし、初期化。
+	 */
+	public EvacuationAgent copyAndInitializeBody(EvacuationAgent r) {
+        r.ID = ID;
+        r.generatedTime = generatedTime;
+        r.prev_node = prev_node;
+        r.next_node = next_node;
+        r.current_link = current_link;
+        r.position = position;
+        r.random = random;
+        for (String tag : tags) {
+            r.addTag(tag);
+        }
+
+		return r ;
+	}
+		
 
     public static OBNode fromDom(Element element) {
         String tag_name = element.getAttribute("AgentType");

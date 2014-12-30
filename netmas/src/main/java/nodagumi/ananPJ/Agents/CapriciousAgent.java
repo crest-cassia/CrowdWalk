@@ -18,7 +18,7 @@
  *        クラス名を指定できるようになる。</LI>
  *   <LI> getAgentTypeString() と getTypeName() も定義しておく </LI>
  *   <LI> コンストラクタは、引数なし、2引数、6引数のものを定義しておく <LI>
- *   <LI> copyAndInitialize()、 copyAndInitializeBody() も定義しておく。</LI> 
+ *   <LI> copyAndInitializeBody() も定義しておく。</LI> 
  *   <LI> calcWayCostTo() を定義する。
  *        ここを工夫すると、経路選択をいろいろいじれる</LI>
  *   <LI> misc/GenerateAgent.java の、GenerateAgent._dummyAgents に、
@@ -100,19 +100,11 @@ public class CapriciousAgent extends NaiveAgent
 
     //------------------------------------------------------------
     /**
-     * 複製
-     */
-    @Override
-    public EvacuationAgent copyAndInitialize() {
-        CapriciousAgent r = new CapriciousAgent(0, random) ;
-        return copyAndInitializeBody(r) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 複製操作のメイン
      */
-    public EvacuationAgent copyAndInitializeBody(CapriciousAgent r) {
+    @Override
+    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+        CapriciousAgent r = (CapriciousAgent)_r ;
         super.copyAndInitializeBody(r) ;
         r.capriciousMargin = capriciousMargin ;
         return r ;

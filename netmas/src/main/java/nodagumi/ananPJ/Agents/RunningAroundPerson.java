@@ -130,25 +130,21 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         route = new ArrayList<CheckPoint>();
     }
 
+	/**
+	 * 与えられたエージェントインスタンスに内容をコピーし、初期化。
+     * 差分プログラミングにする。
+
+	 */
     @Override
-    public EvacuationAgent copyAndInitialize() {
-        RunningAroundPerson r = new RunningAroundPerson(0, random);
-        r.ID = ID;
-        r.generatedTime = generatedTime;
+    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+        RunningAroundPerson r = (RunningAroundPerson)_r ;
+        super.copyAndInitializeBody(r) ;
         r.emptyspeed = emptyspeed;
-        r.prev_node = prev_node;
-        r.next_node = next_node;
-        r.current_link = current_link;
-        r.position = position;
         r.direction = direction;
         r.speed = 0;
         r.goal = goal;
         r.routePlan = new RoutePlan(routePlan) ;
         r.routePlan.setIndex(0) ;
-        r.random = super.random;
-        for (String tag : tags) {
-            r.addTag(tag);
-        }
 
         return r;
     }
@@ -1692,6 +1688,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
 
     /* look up our route plan and give our next goal
+     * [2014.12.30 I.Noda] analysis
+     * 次に来る、hint に記載されている route target を取り出す。
+     * 今、top の target が現在のノードのタグにある場合、
+     * route は１つ進める。
      */
     protected Term calc_next_target(MapNode node) {
         if (on_node &&
