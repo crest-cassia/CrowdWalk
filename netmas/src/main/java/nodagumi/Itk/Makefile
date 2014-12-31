@@ -62,12 +62,14 @@ test_all ::
 
 
 ##------------------------------------------------------------
-SAMPLE0 = sample/simpleGrid/properties-lane.xml
-SAMPLE0d = sample/simpleGrid/properties-density.xml
-SAMPLE0w = sample/basic-sample/properties.xml
-SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml
-SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml
-SAMPLE2w = sample/basic-sample/properties.v2.xml
+SAMPLE0 = sample/simpleGrid/properties-lane.xml		#simple
+SAMPLE0d = sample/simpleGrid/properties-density.xml	#density model
+SAMPLE0w = sample/basic-sample/properties.xml		#wait
+SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
+SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
+SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
+SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
+SAMPLE2w = sample/basic-sample/properties.v2.xml	#wait, version2
 
 
 run : run2
@@ -84,6 +86,12 @@ run0d ::
 run_wait :: run0w
 run0w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0w))
+
+run0s2 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s2))
+
+run0s4 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s4))
 
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))
