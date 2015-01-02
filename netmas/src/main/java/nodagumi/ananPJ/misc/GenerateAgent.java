@@ -34,6 +34,12 @@ public abstract class GenerateAgent implements Serializable {
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
+     * エージェントの短縮名の登録
+     */
+    static public ClassFinder classFinder = new ClassFinder() ;
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
      * デフォルトのエージェント登録
      */
     static {
@@ -52,11 +58,11 @@ public abstract class GenerateAgent implements Serializable {
      */
     static public void registerAgentClass(Class<?> agentClass) {
         try {
-            ClassFinder.registerClassDummy(agentClass) ;
+            classFinder.registerClassDummy(agentClass) ;
             String aliasName =
                 (String)
-                ClassFinder.callMethodForClass(agentClass, "getTypeName", true) ;
-            ClassFinder.alias(aliasName, agentClass) ;
+                classFinder.callMethodForClass(agentClass, "getTypeName", true) ;
+            classFinder.alias(aliasName, agentClass) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
             Itk.dbgErr("cannot process registerAgentClass()") ;
@@ -72,7 +78,7 @@ public abstract class GenerateAgent implements Serializable {
     static public EvacuationAgent newAgentByName(String agentClassName) {
         try {
             EvacuationAgent agent =
-                (EvacuationAgent)ClassFinder.newByName(agentClassName) ;
+                (EvacuationAgent)classFinder.newByName(agentClassName) ;
             return agent ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
@@ -88,7 +94,7 @@ public abstract class GenerateAgent implements Serializable {
      * エージェントクラスのダミーエージェントの取得
      */
     static public Object getDummyAgent(Class<?> agentClass) {
-        return ClassFinder.getClassDummy(agentClass) ;
+        return classFinder.getClassDummy(agentClass) ;
     }
 
     //============================================================
@@ -97,7 +103,7 @@ public abstract class GenerateAgent implements Serializable {
      * 使用可能なエージェントクラスのリスト
      */
     static public String[] getKnownAgentClassNameList() {
-        return ClassFinder.AliasTable.keySet().toArray(new String[0]) ;
+        return classFinder.aliasTable.keySet().toArray(new String[0]) ;
     }
 
     /**
@@ -398,11 +404,11 @@ public abstract class GenerateAgent implements Serializable {
         try {
             return
                 (boolean)
-                ClassFinder
+                classFinder
                 .callMethodForClass(className, "isKnownDirective", false,
                                     directive) ;
             /*
-            Class<?> klass = ClassFinder.get(className) ;
+            Class<?> klass = classFinder.get(className) ;
             Object agent = getDummyAgent(klass) ;
             Method method = klass.getMethod("isKnownDirective",Term.class) ;
             return (boolean)method.invoke(agent,directive) ;
@@ -440,11 +446,11 @@ public abstract class GenerateAgent implements Serializable {
         try {
             return
                 (int)
-                ClassFinder
+                classFinder
                 .callMethodForClass(className, "pushPlaceTagInDirective", false,
                                     directive, goalList) ;
             /*
-            Class<?> klass = ClassFinder.get(agentClassName) ;
+            Class<?> klass = classFinder.get(agentClassName) ;
             Object agent = getDummyAgent(klass) ;
             Method method =
                 klass.getMethod("pushPlaceTagInDirective",

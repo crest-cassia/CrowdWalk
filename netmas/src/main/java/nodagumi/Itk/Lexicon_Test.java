@@ -112,5 +112,5 @@ public class Lexicon_Test {
         Itk.dbgMsg("r:Bar2", lex.lookUpByMeaning(FooEnum00.Bar2)) ;
     }
 
-} // class ClassFinderTest
+} // class LexiconTest
 

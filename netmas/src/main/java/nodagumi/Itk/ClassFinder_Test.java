@@ -35,12 +35,12 @@ public class ClassFinder_Test {
     public void test_methodCall() {
         Itk.dbgMsgMethodInfo() ;
 
-        ClassFinder.registerClassDummy(Foo10a.class) ;
-        ClassFinder.registerAlias("Foo10a",Foo10a.class) ;
-        Itk.dbgVal("Foo10a",ClassFinder.getClassDummy(Foo10a.class)) ;
+        ClassFinder.primal.registerClassDummy(Foo10a.class) ;
+        ClassFinder.primal.registerAlias("Foo10a",Foo10a.class) ;
+        Itk.dbgVal("Foo10a",ClassFinder.primal.getClassDummy(Foo10a.class)) ;
 
         try {
-            ClassFinder.callMethodForClass("Foo10a","bar0",false,"100") ;
+            ClassFinder.primal.callMethodForClass("Foo10a","bar0",false,"100") ;
         } catch (Exception ex){
             ex.printStackTrace() ;
         }
@@ -52,7 +52,8 @@ public class ClassFinder_Test {
      */
     static public class Foo10a {
         public Foo10a(){}
-        public Foo10a(int i) { Itk.dbgMsg("new",i) ;}
+        public Foo10a(int i) { Itk.dbgMsg("new(int)",i) ;}
+        public Foo10a(Object obj){ Itk.dbgMsg("new(Object)", obj);}
         public void bar0() { Itk.dbgMsg("Foo10a","bar0()") ; }
         public void bar0(String s) { Itk.dbgMsg("Foo10a","bar0() " + s) ; }
     }
@@ -103,12 +104,12 @@ public class ClassFinder_Test {
         Itk.dbgMsgMethodInfo() ;
         try {
             String name = "java.lang.String" ;
-            Class<?> klass = ClassFinder.get(name) ;
+            Class<?> klass = ClassFinder.primal.get(name) ;
             Itk.dbgMsg("name=", name) ;
             Itk.dbgMsg("class=", klass.toString()) ;
 
-            Itk.dbgMsg("true=", ClassFinder.isClassName(name)) ;
-            Itk.dbgMsg("false=", ClassFinder.isClassName("hogehoge")) ;
+            Itk.dbgMsg("true=", ClassFinder.primal.isClassName(name)) ;
+            Itk.dbgMsg("false=", ClassFinder.primal.isClassName("hogehoge")) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
         }
@@ -122,9 +123,9 @@ public class ClassFinder_Test {
     public void test_alias() {
         Itk.dbgMsgMethodInfo() ;
         try {
-            ClassFinder.alias("MyString","java.lang.String") ;
+            ClassFinder.primal.alias("MyString","java.lang.String") ;
             String name = "MyString" ;
-            String fullname = ClassFinder.fullname(name) ;
+            String fullname = ClassFinder.primal.fullname(name) ;
             Itk.dbgMsg("name=", name) ;
             Itk.dbgMsg("fullname=", fullname) ;
         } catch (Exception ex) {
@@ -140,9 +141,9 @@ public class ClassFinder_Test {
     public void test_new() {
         Itk.dbgMsgMethodInfo() ;
         try {
-            ClassFinder.alias("MyString","java.lang.String") ;
+            ClassFinder.primal.alias("MyString","java.lang.String") ;
             String name = "MyString" ;
-            String str = (String)ClassFinder.newByName(name) ;
+            String str = (String)ClassFinder.primal.newByName(name) ;
             str += "foo" ;
             Itk.dbgMsg("str=", str) ;
         } catch (Exception ex) {
@@ -158,16 +159,16 @@ public class ClassFinder_Test {
     public void test_json() {
         Itk.dbgMsgMethodInfo() ;
         try {
-            ClassFinder.aliasByJson(" { " +
-                                    "'MyString' : 'java.lang.String'," +
-                                    "'Me' : 'nodagumi.Itk.ClassFinder_Test'," +
-                                    "'You' : 'nodagumi.Itk.ClassFinder'," +
-                                    "}") ;
-            String str = (String)ClassFinder.newByName("MyString") ;
+            ClassFinder.primal.aliasByJson(" { " +
+                                           "'MyString' : 'java.lang.String'," +
+                                           "'Me' : 'nodagumi.Itk.ClassFinder_Test'," +
+                                           "'You' : 'nodagumi.Itk.ClassFinder'" +
+                                           "}") ;
+            String str = (String)ClassFinder.primal.newByName("MyString") ;
             str += "foo" ;
             Itk.dbgMsg("str=", str) ;
-            Itk.dbgMsg("Me=", ClassFinder.get("Me")) ;
-            Itk.dbgMsg("You=", ClassFinder.get("You")) ;
+            Itk.dbgMsg("Me=", ClassFinder.primal.get("Me")) ;
+            Itk.dbgMsg("You=", ClassFinder.primal.get("You")) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
         }

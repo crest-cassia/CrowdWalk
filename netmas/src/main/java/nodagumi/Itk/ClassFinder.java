@@ -30,11 +30,15 @@ import net.arnx.jsonic.JSONException ;
  * クラスの名前からクラスオブジェクトを探すためのツール
  */
 public class ClassFinder {
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    static public ClassFinder primal = new ClassFinder() ;
+
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * alias を格納しておくテーブル
      */
-    static public HashMap<String, String> AliasTable =
+    public HashMap<String, String> aliasTable =
         new HashMap<String, String>() ;
 
     //------------------------------------------------------------
@@ -42,7 +46,7 @@ public class ClassFinder {
      * クラスオブジェクトを持ってくる。
      * @param className クラスの名前。alias名もしくは fullpath。
      */
-    static public Class<?> get(String className) 
+    public Class<?> get(String className)
         throws ClassNotFoundException
     {
         return Class.forName(fullname(className)) ;
@@ -53,7 +57,7 @@ public class ClassFinder {
      * クラスオブジェクトを持ってくる。
      * @param className クラスの名前。alias名もしくは fullpath。
      */
-    static public boolean isClassName(String className) 
+    public boolean isClassName(String className) 
     {
         try {
             get(className) ;
@@ -69,9 +73,9 @@ public class ClassFinder {
      * もし alias されていなければ、そのまま返す。
      * @param shortName 探す名前
      */
-    static public String fullname(String name)
+    public String fullname(String name)
     {
-        String fname = AliasTable.get(name) ;
+        String fname = aliasTable.get(name) ;
         if(fname == null) {
             return name ;
         } else {
@@ -84,7 +88,7 @@ public class ClassFinder {
      * クラスを見つけて、インスタンスを生成する。
      * @param Name クラスの名前
      */
-    static public Object newByName(String name)
+    public Object newByName(String name)
         throws ClassNotFoundException, 
                InstantiationException, 
                IllegalAccessException
@@ -99,7 +103,7 @@ public class ClassFinder {
      * @param shortName alias 名。
      * @param fullName alias される名前。
      */
-    static public String alias(String shortName,
+    public String alias(String shortName,
                                String fullName) {
         return registerAlias(shortName, fullName) ;
     }
@@ -110,9 +114,9 @@ public class ClassFinder {
      * @param shortName alias 名。
      * @param fullName alias される名前。
      */
-    static public String registerAlias(String shortName,
+    public String registerAlias(String shortName,
                                        String fullName) {
-        AliasTable.put(shortName, fullName) ;
+        aliasTable.put(shortName, fullName) ;
         return shortName ;
     }
 
@@ -122,7 +126,7 @@ public class ClassFinder {
      * @param shortName alias 名。
      * @param klass クラスオブジェクト
      */
-    static public String alias(String shortName,
+    public String alias(String shortName,
                                Class<?> klass) {
         return registerAlias(shortName, klass) ;
     }
@@ -133,7 +137,7 @@ public class ClassFinder {
      * @param shortName alias 名。
      * @param klass クラスオブジェクト
      */
-    static public String registerAlias(String shortName,
+    public String registerAlias(String shortName,
                                        Class<?> klass) {
         return registerAlias(shortName, klass.getName()) ;
     }
@@ -143,7 +147,7 @@ public class ClassFinder {
      * JSON で alias をまとめて定義する。
      * @param json JSON 文字列
      */
-    static public void aliasByJson(String json) {
+    public void aliasByJson(String json) {
         Map<String, Object> map = (Map<String, Object>)JSON.decode(json);
         for(Map.Entry<String, Object> entry : map.entrySet()) {
             alias(entry.getKey(), (String)entry.getValue()) ;
@@ -154,7 +158,7 @@ public class ClassFinder {
     /**
      * alias table を JSON に治す。
      */
-    static public String aliasToJson()
+    public String aliasToJson()
         throws JSONException 
     {
         return aliasToJson(false) ;
@@ -165,10 +169,10 @@ public class ClassFinder {
      * alias table を JSON に治す。
      * @param pprint prity print で出力する。
      */
-    static public String aliasToJson(boolean pprint) 
+    public String aliasToJson(boolean pprint) 
         throws JSONException 
     {
-        return JSON.encode(AliasTable, pprint) ;
+        return JSON.encode(aliasTable, pprint) ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -184,7 +188,15 @@ public class ClassFinder {
     /**
      * class と dummy instance の登録
      */
-    static public void registerClassDummy(Class<?> klass) {
+    public void registerClassDummy(Class<?> klass) {
+        _registerClassDummy(klass) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * class と dummy instance の登録 (static 版)
+     */
+    static public void _registerClassDummy(Class<?> klass) {
         try {
             Object object = klass.newInstance() ;
             DummyTable.put(klass, object) ;
@@ -192,13 +204,21 @@ public class ClassFinder {
             ex.printStackTrace() ;
             Itk.dbgErr("can not register the class:" + klass) ;
         }
-    } ;
+    }
 
     //------------------------------------------------------------
     /**
      * class の dummy instance の取得
      */
     static public Object getClassDummy(Class<?> klass) {
+        return _getClassDummy(klass) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * class の dummy instance の取得 (static 版)
+     */
+    static public Object _getClassDummy(Class<?> klass) {
         return DummyTable.get(klass) ;
     }
 
@@ -214,10 +234,10 @@ public class ClassFinder {
      * @param staticP static メソッドかどうか。
      * @param args 引数。
      */
-    static public Object callMethodForClass(String className,
-                                            String methodName,
-                                            boolean staticP,
-                                            Object... args) 
+    public Object callMethodForClass(String className,
+                                     String methodName,
+                                     boolean staticP,
+                                     Object... args)
         throws ClassNotFoundException,
                NoSuchMethodException,
                IllegalAccessException,
@@ -238,10 +258,33 @@ public class ClassFinder {
      * @param staticP static メソッドかどうか。
      * @param args 引数。
      */
-    static public Object callMethodForClass(Class<?> klass,
+    public Object callMethodForClass(Class<?> klass,
                                             String methodName,
                                             boolean staticP,
                                             Object... args)
+        throws NoSuchMethodException,
+               IllegalAccessException,
+               InvocationTargetException
+    {
+        return _callMethodForClass(klass, methodName, staticP, args) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * クラス名、メソッド名を指定して、dummy object で instance method
+     * を呼び出す。（static 版）
+     * (注意)
+     * 現状では、引数が primitive type だとうまく行かない。
+     * (クラス名が boxing でわからなくなる)
+     * @param klass クラス。
+     * @param methodName メソッド名。
+     * @param staticP static メソッドかどうか。
+     * @param args 引数。
+     */
+    static public Object _callMethodForClass(Class<?> klass,
+                                             String methodName,
+                                             boolean staticP,
+                                             Object... args)
         throws NoSuchMethodException,
                IllegalAccessException,
                InvocationTargetException
