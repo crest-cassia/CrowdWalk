@@ -266,25 +266,7 @@ public class MapLink extends OBMapPart implements Serializable {
 
         Collections.sort(agents, absoluteComparator);
         setup_lanes();
-        /*
-        {
-            Itk.dbgVal("********************link",this) ;
-            for(EvacuationAgent agent : agents) {
-                Itk.dbgVal("agent.ID",agent.ID) ;
-                Itk.dbgVal("agent.absolutePosition",agent.absolutePosition()) ;
-            }
-            Itk.dbgMsg("positiveLane") ;
-            for(EvacuationAgent agent : positive_lane) {
-                Itk.dbgVal("agent.ID",agent.ID) ;
-                Itk.dbgVal("agent.absolutePosition",agent.absolutePosition()) ;
-            }
-            Itk.dbgMsg("negativeLane") ;
-            for(EvacuationAgent agent : negative_lane) {
-                Itk.dbgVal("agent.ID",agent.ID) ;
-                Itk.dbgVal("agent.absolutePosition",agent.absolutePosition()) ;
-            }
-        }
-        */
+
         /* calculate the  total triage level */
         total_agent_triage_level = 0; 
         for (EvacuationAgent agent : agents) {
@@ -364,6 +346,10 @@ public class MapLink extends OBMapPart implements Serializable {
                 negative_lane.add(agent);
             }
         }
+        /* [2015.01.03 I.Noda]
+         * 以下の sort は、agents がすでに sort されているので無駄なはず。
+         * なので排除。
+         */
         //Collections.sort(positive_lane);
         //Collections.sort(negative_lane);
     }
