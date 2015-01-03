@@ -497,14 +497,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             } else {
                 speedTimeDirection.add(new Double(routeLink.length /
                             linkSpeed));
-                if (routeLink.isForwardDirectionFrom(node)) {
-                    speedTimeDirection.add(new Double(-1.0));
-                } else if (routeLink.isForwardDirectionTo(node)) {
-                    speedTimeDirection.add(new Double(1.0));
-                } else {
-                    System.err.println("\tmove_set current_link invalid!");
-                    break;
-                }
+                speedTimeDirection.add(new Double(routeLink.directionValueTo(node, 1.0))) ;
             }
             on_node = true;
             MapLink next_link = virtual_navigate(time, link, node);
@@ -560,10 +553,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             return null;
         }
         reachableLinks.add(current_link);
-        if (current_link.isForwardDirectionFrom(next_node))
-            reachableLinkDirections.put(current_link, new Double(-1.0));
-        else
-            reachableLinkDirections.put(current_link, new Double(1.0));
+        reachableLinkDirections.put(current_link,
+                                    new Double(current_link
+                                               .directionValueTo(next_node,
+                                                                 1.0))) ;
 
         double distance_to_move = d * duration;
         MapLink link = current_link;
@@ -607,12 +600,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             node = next_link.getOther(node);
             link = next_link;
             reachableLinks.add(link);
-            if (link.isForwardDirectionFrom(node))
-                reachableLinkDirections.put(link, new Double(-1.0));
-            else
-                reachableLinkDirections.put(link, new Double(1.0));
-            // System.err.println("\t\tnext_link: " + next_link + " link: " +
-            //         link + " node: " + node);
+            reachableLinkDirections.put(link, 
+                                        new Double(link.directionValueTo(node,
+                                                                         1.0))) ;
         }
         setRouteIndex(route_index_orig);
 
@@ -656,11 +646,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
             tryToPassNode(time);
 
-            if (current_link.isForwardDirectionTo(next_node)) {
-                setPosition(distance_to_move);
-            } else {
-                setPosition(current_link.length - distance_to_move);
-            }
+            setPosition(current_link
+                        .calcAbstractPositionByDirectionTo(next_node,
+                                                           distance_to_move)) ;
         }
         return false;
     }
@@ -742,11 +730,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             if (!tryToPassNode(time)) {
                 return false;
             }
-            if (current_link.isForwardDirectionTo(next_node)) {
-                setPosition(0);
-            } else {
-                setPosition(current_link.length);
-            }
+            setPosition(current_link
+                        .calcAbstractPositionByDirectionTo(next_node, 0.0)) ;
         }
 
         return false;
@@ -1025,12 +1010,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             node_to_navigate = link_to_find_agent.getOther(node_to_navigate);
 
             /* direction の update */
-            if (link_to_find_agent.isForwardDirectionTo(node_to_navigate)) {
-                direction = 1.0;
-            } else {
-                direction = -1.0;
-            }
-
+            direction = 
+                link_to_find_agent.directionValueTo(node_to_navigate, 1.0) ;
             index = -1;/* 次からは最後尾な気分で */
         }
         setRouteIndex(route_index_orig);
@@ -1594,20 +1575,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             if (point.node == next_node) {
                 if (navigation_reason != null) {
 					navigation_reason.add("LOOP HERE!\n");
-                }
-                if (debug_mode) {
-                    Term mid_goal =
-                        (!routePlan.isEmpty() ?
-                         routePlan.top() : goal);
-                    System.err.println("agent going to the same room "
-                                       + next_node.getTagString()
-                                       + "(" + next_node.getHeight() + ") on " +
-                                       time + " when going for " + mid_goal);
-                    for (final CheckPoint passed_points : route) {
-                        System.err.print(passed_points.node + "("
-                                         + passed_points.time + ") ");
-                    }
-                    System.err.println();
                 }
                 break;
             }

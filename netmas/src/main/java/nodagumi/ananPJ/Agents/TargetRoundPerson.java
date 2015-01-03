@@ -184,11 +184,9 @@ public class TargetRoundPerson extends RunningAroundPerson
             if (!tryToPassNode(time)) {
                 return false;
             }
-            if (next_node == current_link.getTo()) {
-                setPosition(distance_to_move);
-            } else {
-                setPosition(current_link.length - distance_to_move);
-            }
+            setPosition(current_link
+                        .calcAbstractPositionByDirectionTo(next_node,
+                                                           distance_to_move)) ;
         }
         return false;
     }
@@ -310,7 +308,7 @@ public class TargetRoundPerson extends RunningAroundPerson
             node_to_navigate = link_to_find_agent.getOther(node_to_navigate);
 
             /* direction の update */
-            if (node_to_navigate == link_to_find_agent.getTo()) {
+            if (link_to_find_agent.isForwardDirectionTo(node_to_navigate)) {
                 direction = 1.0;
             } else {
                 direction = -1.0;
@@ -411,16 +409,16 @@ public class TargetRoundPerson extends RunningAroundPerson
 
         
         //2011年6月7日追加
-        MapNode node_now;
-        if (getPrevNode() == next_link_candidate.getFrom()) {
-            node_now = current_link.getTo();
+        MapNode nodeToward;
+        if (next_link_candidate.isForwardDirectionFrom(getPrevNode())) {
+            nodeToward = current_link.getTo();
         } else {
-            node_now = current_link.getFrom();
+            nodeToward = current_link.getFrom();
         }
-        final MapLinkTable way_candidates = node_now.getPathways();   
+        final MapLinkTable way_candidates = nodeToward.getPathways();   
         double direction_orig = direction;
         //----
-        if (getPrevNode() == next_link_candidate.getFrom()) {
+        if (next_link_candidate.isForwardDirectionFrom(getPrevNode())) {
             next_node = current_link.getTo();
             //setPosition(Math.random() / 100);
             setPosition(random.nextDouble() / 100);

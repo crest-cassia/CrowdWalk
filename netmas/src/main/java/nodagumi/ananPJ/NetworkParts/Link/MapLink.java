@@ -547,12 +547,6 @@ public class MapLink extends OBMapPart implements Serializable {
                 int index = getLane(-1.0).size() - 1 - (int) width;
                 if (index > 0) {
                     clearance = length - getLane(-1.0).get(index).getPosition();
-                    if (hasTag("TRAFFIC_JAM")) {
-                        System.err.println(length + "\t"
-                                + index + "\t" 
-                                + getLane(-1.0).get(index).getPosition() + "\t"
-                                + clearance);
-                    }
                 }
             }
 
@@ -1081,12 +1075,87 @@ public class MapLink extends OBMapPart implements Serializable {
 
     //------------------------------------------------------------
     /**
-     * リンクが指定されたノードから見て正方向かどうかのチェック
+     * リンクが指定されたノードの方を見て正方向かどうかのチェック
      * @param destinationNode エージェントが向かう方のノード
      * @return destinationNode が toNode と同じなら true
      */
     public boolean isForwardDirectionTo(MapNode destinationNode) {
         return destinationNode == getTo() ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードから見た時の direction の値
+     * @param originNode エージェントが入る側のノード
+     * @return 順方向なら 1.0。逆なら -1.0。
+     */
+    public double directionValueFrom(MapNode originNode) {
+        return directionValueFrom(originNode, 1.0) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードから見た時の direction の値
+     * @param originNode エージェントが入る側のノード
+     * @param baseValue direction の元になる値
+     * @return 順方向なら baseValue。逆なら -baseValue。
+     */
+    public double directionValueFrom(MapNode originNode,
+                                     double baseValue) {
+        return (isForwardDirectionFrom(originNode) ?
+                baseValue :
+                -baseValue) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードの方を見て正方向かどうかのチェック
+     * @param destinationNode エージェントが向かう方のノード
+     * @return 順方向なら 1.0。逆なら -1.0。
+     */
+    public double directionValueTo(MapNode destinationNode) {
+        return directionValueTo(destinationNode, 1.0) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードの方を見て正方向かどうかのチェック
+     * @param destinationNode エージェントが向かう方のノード
+     * @param baseValue direction の元になる値
+     * @return 順方向なら baseValue。逆なら -baseValue。
+     */
+    public double directionValueTo(MapNode destinationNode,
+                                   double baseValue) {
+        return (isForwardDirectionTo(destinationNode) ?
+                baseValue :
+                -baseValue) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードから見た時の direction の値
+     * @param originNode エージェントが入る側のノード
+     * @param relativePos エージェント進行方向から見た位置
+     * @return 順方向なら relativePos。逆なら length-relativePos。
+     */
+    public double calcAbstractPositionByDirectionFrom(MapNode originNode,
+                                                      double relativePos) {
+        return (isForwardDirectionFrom(originNode) ?
+                relativePos :
+                length - relativePos) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードの方を見て正方向かどうかのチェック
+     * @param destinationNode エージェントが向かう方のノード
+     * @param relativePos エージェント進行方向から見た位置
+     * @return 順方向なら relativePos。逆なら length-relativePos。
+     */
+    public double calcAbstractPositionByDirectionTo(MapNode destinationNode,
+                                                    double relativePos) {
+        return (isForwardDirectionTo(destinationNode) ?
+                relativePos :
+                length - relativePos) ;
+    }
+
 
 }
