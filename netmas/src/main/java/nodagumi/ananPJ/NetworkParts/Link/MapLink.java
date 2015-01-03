@@ -267,7 +267,7 @@ public class MapLink extends OBMapPart implements Serializable {
         double clearance = length;
         int w = (int)width;
         if (w == 0) w = 1;
-        if (node == getFrom()) {
+        if (isForwardDirectionFrom(node)) {
             int index = w;
             if (index < getLane(1.0).size()) {
                 clearance = getLane(1.0).get(index).getPosition();
@@ -537,7 +537,7 @@ public class MapLink extends OBMapPart implements Serializable {
         /* Crowdness */
         if (agents.size() > 0) {
             double clearance = length;
-            if (node == getFrom()) {
+            if (isForwardDirectionFrom(node)) {
                 int index = (int) width;
                 if (index < getLane(1.0).size()) {
                     clearance = getLane(1.0).get(index).getPosition();
@@ -611,9 +611,23 @@ public class MapLink extends OBMapPart implements Serializable {
     }
 
     public Boolean equals(MapLink rhs){
-        if (fromNode == rhs.fromNode && toNode == rhs.toNode) return true;
-        if (toNode == rhs.fromNode && fromNode == rhs.toNode) return true;
-        return false;
+        return hasSameEndsForward(rhs) || hasSameEndsBackward(rhs) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 同じ終端ノードを持っているか (forward)
+     */
+    public boolean hasSameEndsForward(MapLink otherLink) {
+        return (fromNode == otherLink.fromNode && toNode == otherLink.toNode) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 同じ終端ノードを持っているか (backward)
+     */
+    public boolean hasSameEndsBackward(MapLink otherLink) {
+        return (toNode == otherLink.fromNode && fromNode == otherLink.toNode) ;
     }
 
     public void clear() {
@@ -1054,4 +1068,25 @@ public class MapLink extends OBMapPart implements Serializable {
     public String toString() {
         return getTagString();
     }
+
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードから見て正方向かどうかのチェック
+     * @param originNode エージェントが入る側のノード
+     * @return originNode が fromNode と同じなら true
+     */
+    public boolean isForwardDirectionFrom(MapNode originNode) {
+        return originNode == getFrom() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードから見て正方向かどうかのチェック
+     * @param destinationNode エージェントが向かう方のノード
+     * @return destinationNode が toNode と同じなら true
+     */
+    public boolean isForwardDirectionTo(MapNode destinationNode) {
+        return destinationNode == getTo() ;
+    }
+
 }
