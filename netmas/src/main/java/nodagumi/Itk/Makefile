@@ -101,6 +101,8 @@ run1_cui ::
 
 run2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2))
+run2_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2) cui)
 run2w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2w))
 

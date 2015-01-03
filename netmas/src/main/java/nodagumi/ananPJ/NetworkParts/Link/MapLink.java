@@ -262,9 +262,29 @@ public class MapLink extends OBMapPart implements Serializable {
 
     private int total_agent_triage_level;
     public void preUpdate(double time) {
-        //Collections.sort(agents);
+        if(agents.isEmpty()) return ;
+
         Collections.sort(agents, absoluteComparator);
         setup_lanes();
+        /*
+        {
+            Itk.dbgVal("********************link",this) ;
+            for(EvacuationAgent agent : agents) {
+                Itk.dbgVal("agent.ID",agent.ID) ;
+                Itk.dbgVal("agent.absolutePosition",agent.absolutePosition()) ;
+            }
+            Itk.dbgMsg("positiveLane") ;
+            for(EvacuationAgent agent : positive_lane) {
+                Itk.dbgVal("agent.ID",agent.ID) ;
+                Itk.dbgVal("agent.absolutePosition",agent.absolutePosition()) ;
+            }
+            Itk.dbgMsg("negativeLane") ;
+            for(EvacuationAgent agent : negative_lane) {
+                Itk.dbgVal("agent.ID",agent.ID) ;
+                Itk.dbgVal("agent.absolutePosition",agent.absolutePosition()) ;
+            }
+        }
+        */
         /* calculate the  total triage level */
         total_agent_triage_level = 0; 
         for (EvacuationAgent agent : agents) {
@@ -330,10 +350,13 @@ public class MapLink extends OBMapPart implements Serializable {
         return true;
     }
 
-    private ArrayList<EvacuationAgent> positive_lane, negative_lane;
+    private ArrayList<EvacuationAgent> positive_lane =
+        new ArrayList<EvacuationAgent>() ;
+    private ArrayList<EvacuationAgent> negative_lane =
+        new ArrayList<EvacuationAgent>() ;
     public void setup_lanes() {
-        positive_lane = new ArrayList<EvacuationAgent>();
-        negative_lane = new ArrayList<EvacuationAgent>();
+        positive_lane.clear() ;
+        negative_lane.clear() ;
         for (EvacuationAgent agent : agents) {
             if (agent.getDirection() > 0.0) {
                 positive_lane.add(agent);
@@ -341,8 +364,8 @@ public class MapLink extends OBMapPart implements Serializable {
                 negative_lane.add(agent);
             }
         }
-        Collections.sort(positive_lane);
-        Collections.sort(negative_lane);
+        //Collections.sort(positive_lane);
+        //Collections.sort(negative_lane);
     }
 
     private void add_agent_to_lane(EvacuationAgent agent) {

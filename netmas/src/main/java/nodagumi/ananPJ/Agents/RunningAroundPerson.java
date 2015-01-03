@@ -133,7 +133,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 	/**
 	 * 与えられたエージェントインスタンスに内容をコピーし、初期化。
      * 差分プログラミングにする。
-
 	 */
     @Override
     public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
