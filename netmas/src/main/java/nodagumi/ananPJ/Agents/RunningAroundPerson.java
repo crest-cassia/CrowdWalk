@@ -1735,6 +1735,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     // navigation_reason
     //
 
+
+    // working for sane_navigation_from_node().
+    private HashMap<MapLink, Double> resultLinks =
+        new HashMap<MapLink, Double>();
     /**
      * ノードにおいて、次の道を選択するルーチン
      */
@@ -1754,7 +1758,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         MapLinkTable way_samecost = null;
         // tkokada:  add randomness to choose next link
-        HashMap<MapLink, Double> resultLinks = new HashMap<MapLink, Double>();
+        resultLinks.clear() ;
 
         final Term next_target = calc_next_target(node);
 

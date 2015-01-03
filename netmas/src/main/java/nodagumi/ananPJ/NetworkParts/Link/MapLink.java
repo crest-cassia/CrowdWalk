@@ -238,10 +238,10 @@ public class MapLink extends OBMapPart implements Serializable {
     }
 
     // agent の絶対 position によるソート用
-    private Comparator<EvacuationAgent> absoluteComparator = new Comparator<EvacuationAgent>() {
+    private Comparator<EvacuationAgent> advancingComparator = new Comparator<EvacuationAgent>() {
         public int compare(EvacuationAgent agent1, EvacuationAgent agent2) {
-            double position1 = agent1.absolutePosition();
-            double position2 = agent2.absolutePosition();
+            double position1 = agent1.advancingPosition();
+            double position2 = agent2.advancingPosition();
 
             if (position1 == position2) {
                 // position が同じなら agentNumber が小さい順にする
@@ -264,7 +264,7 @@ public class MapLink extends OBMapPart implements Serializable {
     public void preUpdate(double time) {
         if(agents.isEmpty()) return ;
 
-        Collections.sort(agents, absoluteComparator);
+        Collections.sort(agents, advancingComparator);
         setup_lanes();
 
         /* calculate the  total triage level */

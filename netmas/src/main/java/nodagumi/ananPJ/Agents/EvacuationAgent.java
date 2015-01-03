@@ -492,8 +492,8 @@ implements Comparable<EvacuationAgent>, Serializable {
     public abstract Term getGoal();
     public abstract List<Term> getPlannedRoute();
 
-    // current_link 上における絶対 position
-    public double absolutePosition() {
+    // current_link 上における相対(エージェント進行方向中心) position
+    public double advancingPosition() {
         return isPositiveDirection() ? position : current_link.length - position;
     }
 
