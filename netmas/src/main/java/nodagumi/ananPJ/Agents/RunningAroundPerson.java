@@ -1588,6 +1588,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     // change: navigation_reason, route, prev_node, previous_link,
     // current_link, position, evacuated, link.agentExists
     protected boolean tryToPassNode(double time) {
+        // [2015.01.02 I.Noda] ループの検出（検出だけでなにもしない）
+        // 過去の route と同じかどうかのチェック。
         for (final CheckPoint point : route) {
             if (point.node == next_node) {
                 if (navigation_reason != null) {
@@ -1662,8 +1664,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
          * という二つの条件を満たした場合、swing_width の更新をおこないません。
          * この修正によって、swing_width が更新されないため、不自然な描画の発生は防がれています。
          */
-        MapNode current_link_node_to = current_link.getTo();
-        MapNode current_link_node_from = current_link.getFrom();
         if (next_link_candidate.width == previous_link.width &&
                 way_candidates.size() == 2) {
             if (direction_orig == direction) {
