@@ -391,8 +391,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 /* schedule moving out */
                 on_node = true;
                 MapLink next_link = navigate(time, link, node);
-                if ((link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE") || link.hasTag("ROAD-CLOSED"))
-                        && next_link == null) {
+                if ((link.isOneWayPositive() ||
+                     link.isOneWayNegative() ||
+                     link.isRoadClosed())
+                    && next_link == null) {
                     // 現在の道が一方通行か閉鎖で、先の道路が見つからなかったらアウト
                     break;
                 } else if (link.ID == next_link.ID) {
@@ -501,19 +503,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
             on_node = true;
             MapLink next_link = virtual_navigate(time, link, node);
-            //next_link.registerEnter(this, link);
-            // if ((link.hasTag("ONE-WAY-POSITIVE") ||
-                        // link.hasTag("ONE-WAY-NEGATIVE")) &&
-                    // next_link == null) {
-                // System.err.println("\t\t\toneway null!");
-                // break;
-            // } else if (link.ID == next_link.ID) {
-                // System.err.println("\t\t\tlink & next is same!");
-                // break;
-            // } else if (next_link == null) {
-                // System.err.println("\t\t\tnext is null!");
-                // break;
-            // }
             on_node = false;
             node = next_link.getOther(node);
             link = next_link;
@@ -588,8 +577,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
             on_node = true;
             MapLink next_link = virtual_navigate(time, link, node);
-            if ((link.hasTag("ONE-WAY-POSITIVE") || link.hasTag("ONE-WAY-NEGATIVE") || link.hasTag("ROAD-CLOSED"))
-                    && next_link == null) {
+            if ((link.isOneWayPositive() ||
+                 link.isOneWayNegative() ||
+                 link.isRoadClosed())
+                && next_link == null) {
                 break;
             } else if (link.ID == next_link.ID) {
                 break;

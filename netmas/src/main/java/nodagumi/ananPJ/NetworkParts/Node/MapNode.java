@@ -149,15 +149,15 @@ public class MapNode extends OBMapPart implements Serializable {
         /* modification to apply One-way link */
         cachePathways = new MapLinkTable();
         for (MapLink link : links) {
-            if (link.hasTag("ONE-WAY-POSITIVE") &&
+            if (link.isOneWayPositive() &&
                     (link.getPositiveNode() == this)) {
                 continue;
             }
-            if (link.hasTag("ONE-WAY-NEGATIVE") &&
+            if (link.isOneWayNegative() &&
                     link.getNegativeNode() == this) {
                 continue;
             }
-            if (link.hasTag("ROAD-CLOSED")) {
+            if (link.isRoadClosed()) {
                 continue;
             }
             cachePathways.add(link);
@@ -184,15 +184,15 @@ public class MapNode extends OBMapPart implements Serializable {
         /* modification to apply One-way link */
         MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
-            if (link.hasTag("ONE-WAY-POSITIVE") &&
+            if (link.isOneWayPositive() &&
                     (link.getNegativeNode() == this)) {
                 continue;
             }
-            if (link.hasTag("ONE-WAY-NEGATIVE") &&
+            if (link.isOneWayNegative() &&
                     link.getPositiveNode() == this) {
                 continue;
             }
-            if (link.hasTag("ROAD-CLOSED")) {
+            if (link.isRoadClosed()) {
                 continue;
             }
             availableLinks.add(link);

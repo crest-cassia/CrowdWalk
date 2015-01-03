@@ -1453,21 +1453,13 @@ public class EditorFrame
         for (MapLink link : getChildLinks()) {
             if (link.selected) {
                 if (positive) {
-                    if (link.hasTag("ONE-WAY-POSITIVE"))
-                        continue;
-                    link.addTag("ONE-WAY-POSITIVE");
-                    if (link.hasTag("ONE-WAY-NEGATIVE"))
-                        link.removeTag("ONE-WAY-NEGATIVE");
-                    if (link.hasTag("ROAD-CLOSED"))
-                        link.removeTag("ROAD-CLOSED");
+                    link.setOneWayPositive() ;
+                    link.setOneWayNegative(false) ;
+                    link.setRoadClosed(false) ;
                 } else {
-                    if (link.hasTag("ONE-WAY-NEGATIVE"))
-                        continue;
-                    link.addTag("ONE-WAY-NEGATIVE");
-                    if (link.hasTag("ONE-WAY-POSITIVE"))
-                        link.removeTag("ONE-WAY-POSITIVE");
-                    if (link.hasTag("ROAD-CLOSED"))
-                        link.removeTag("ROAD-CLOSED");
+                    link.setOneWayNegative() ;
+                    link.setOneWayPositive(false) ;
+                    link.setRoadClosed(false) ;
                 }
             }
         }
@@ -1481,13 +1473,9 @@ public class EditorFrame
         editor._setModified(true);
         for (MapLink link : getChildLinks()) {
             if (link.selected) {
-                if (link.hasTag("ROAD-CLOSED"))
-                    continue;
-                link.addTag("ROAD-CLOSED");
-                if (link.hasTag("ONE-WAY-POSITIVE"))
-                    link.removeTag("ONE-WAY-POSITIVE");
-                if (link.hasTag("ONE-WAY-NEGATIVE"))
-                    link.removeTag("ONE-WAY-NEGATIVE");
+                link.setRoadClosed() ;
+                link.setOneWayPositive(false) ;
+                link.setOneWayNegative(false) ;
             }
         }
         editor.getLinkPanel().refresh();
@@ -1556,12 +1544,9 @@ public class EditorFrame
         editor._setModified(true);
         for (MapLink link : getChildLinks()) {
                 if (link.selected) {
-                    if (link.hasTag("ONE-WAY-POSITIVE"))
-                        link.removeTag("ONE-WAY-POSITIVE");
-                    if (link.hasTag("ONE-WAY-NEGATIVE"))
-                        link.removeTag("ONE-WAY-NEGATIVE");
-                    if (link.hasTag("ROAD-CLOSED"))
-                        link.removeTag("ROAD-CLOSED");
+                    link.setOneWayPositive(false) ;
+                    link.setOneWayNegative(false) ;
+                    link.setRoadClosed(false) ;
                 }
         }
         editor.getLinkPanel().refresh();

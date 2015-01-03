@@ -56,6 +56,26 @@ import nodagumi.Itk.*;
 public class MapLink extends OBMapPart implements Serializable {
     private static final long serialVersionUID = 4960899670982905174L;
 
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * Special Tags
+     */
+    static public final String Tag_OneWayPositive = "ONE-WAY-POSITIVE" ;
+    static public final String Tag_OneWayNegative = "ONE-WAY-NEGATIVE" ;
+    static public final String Tag_RoadClosed = "ROAD-CLOSED" ;
+    static public enum SpecialTagId { OneWayPositive,
+                                      OneWayNegative,
+                                      RoadClosed } ;
+    static public Lexicon tagLexicon = new Lexicon() ;
+    static {
+        tagLexicon.register(Tag_OneWayPositive, SpecialTagId.OneWayPositive) ;
+        tagLexicon.register(Tag_OneWayNegative, SpecialTagId.OneWayNegative) ;
+        tagLexicon.register(Tag_RoadClosed, SpecialTagId.RoadClosed) ;
+    } ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
     public double length;
     public double width;
     protected MapNode fromNode, toNode;
@@ -382,9 +402,9 @@ public class MapLink extends OBMapPart implements Serializable {
         if (!showScaling)
             scale = g.getTransform().getScaleX();
         g.setStroke(new BasicStroke(2.0f / ((float)scale)));
-        boolean oneWayPositive = this.hasTag("ONE-WAY-POSITIVE");
-        boolean oneWayNegative = this.hasTag("ONE-WAY-NEGATIVE");
-        boolean roadClosed = this.hasTag("ROAD-CLOSED");
+        boolean oneWayPositive = this.isOneWayPositive() ;
+        boolean oneWayNegative = this.isOneWayNegative() ;
+        boolean roadClosed = this.isRoadClosed() ;
 
 
         if (isSymbolic) {
@@ -484,9 +504,9 @@ public class MapLink extends OBMapPart implements Serializable {
             //g.setStroke(new BasicStroke((float)width));
             Color c = getColorFromDensity();
             g.setColor(c);
-            if (this.hasTag("ONE-WAY-POSITIVE"))
+            if (this.isOneWayPositive())
                 g.draw(getArrow(0.0, scale, true));
-            else if (this.hasTag("ONE-WAY-NEGATIVE"))
+            else if (this.isOneWayNegative())
                 g.draw(getArrow(0.0, scale, false));
             else
                 g.draw(getRect(0.0, scale, true));
@@ -1157,5 +1177,107 @@ public class MapLink extends OBMapPart implements Serializable {
                 length - relativePos) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * OneWay (positive) のチェック
+     * @return OneWayPositive なら true
+     */
+    public boolean isOneWayPositive() {
+        return hasTag(Tag_OneWayPositive) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * OneWay (positive) にする。
+     * @return 変化があったなら true
+     */
+    public boolean setOneWayPositive() {
+        return setOneWayPositive(true) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * OneWay (positive) にする。
+     * @param flag もし false なら OneWay 解除。
+     * @return 変化があったなら true
+     */
+    public boolean setOneWayPositive(boolean flag) {
+        return setSpecialTag(Tag_OneWayPositive, flag) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * OneWay (negative) のチェック
+     * @return OneWayNegative なら true
+     */
+    public boolean isOneWayNegative() {
+        return hasTag(Tag_OneWayNegative) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * OneWay (negative) にする。
+     * @return 変化があったなら true
+     */
+    public boolean setOneWayNegative() {
+        return setOneWayNegative(true) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * OneWay (negative) にする。
+     * @return 変化があったなら true
+     */
+    public boolean setOneWayNegative(boolean flag) {
+        return setSpecialTag(Tag_OneWayNegative, flag) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * RoadClosed のチェック
+     * @return RoadClosed なら true
+     */
+    public boolean isRoadClosed() {
+        return hasTag(Tag_RoadClosed) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * RoadClosed にする。
+     * @return 変化があったなら true
+     */
+    public boolean setRoadClosed() {
+        return setRoadClosed(true) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * RoadClosed にする。
+     * @return 変化があったなら true
+     */
+    public boolean setRoadClosed(boolean flag) {
+        return setSpecialTag(Tag_RoadClosed, flag) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * Special Tag の set/reset
+     * @param specialTag 指定するタグ
+     * @param flag set/reset を指定。
+     * @return 変化があったなら true
+     */
+    public boolean setSpecialTag(String specialTag, boolean flag) {
+        if(hasTag(specialTag)) {
+            if(flag) {
+                return false ;
+            } else {
+                removeTag(specialTag) ;
+                return true ;
+            }
+        } else {
+            if(flag) {
+                addTag(specialTag) ;
+                return true ;
+            } else {
+                return false ;
+            }
+        }
+    }
 
 }
