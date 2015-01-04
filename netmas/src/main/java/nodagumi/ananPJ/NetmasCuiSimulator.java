@@ -36,8 +36,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     protected static boolean isTimeSeriesLog = false;
     protected static String timeSeriesLogPath = null;
     protected static int timeSeriesLogInterval = -1;
-    // enable random navigation on RunningAroundPerson
-    protected static boolean randomNavigation = false;
     protected static SpeedCalculationModel speed_model = null;
     protected static int expectedDensityMacroTimeStep = 300;
     protected static boolean expectedDensityVisualizeMicroTimeStep = true;
@@ -121,8 +119,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
             randseed = (int)propertiesHandler.getRandseed();
         }
         random = new Random(randseed);
-        // random navigation
-        randomNavigation = propertiesHandler.getRandomNavigation();
         // speed model
         speed_model = propertiesHandler.getSpeedModel();
         // expected density model
@@ -210,7 +206,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         // model.begin set files (pol, gen, sce) to networkMap
         model.setLinerGenerateAgentRatio(linerGenerateAgentRatio);
         model.begin(false, isDeserialized, null);
-        model.setRandomNavigation(randomNavigation);
         model.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
         if (speed_model == SpeedCalculationModel.ExpectedDensityModel) {
             ((AgentHandler) model.getAgentHandler())

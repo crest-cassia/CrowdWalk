@@ -113,7 +113,6 @@ public class NetworkMapEditor extends SimulationLauncher
     private static String pollutionPath = null; // path to pollution file
     private static String generationPath = null; // path to generation file
     private static String scenarioPath = null; // path to scenario file
-    private static boolean randomNavigation = false;
     private static SpeedCalculationModel speedModel = null;
     private static int exitCount = 0;
     private static long randseed = 0;
@@ -194,7 +193,6 @@ public class NetworkMapEditor extends SimulationLauncher
     protected NetworkMapEditor(Random _random) {
         super(_random);
         random = _random;
-        super.setRandomNavigation(randomNavigation);
 
         frame = new JFrame("Network Map Editor");
         frame.setLayout(new BorderLayout());
@@ -1572,14 +1570,6 @@ public class NetworkMapEditor extends SimulationLauncher
         return random;
     }
 
-    public void setRandomNavigation(boolean _randomNavigation) {
-        randomNavigation = _randomNavigation;
-    }
-
-    public boolean getRandomNavigation() {
-        return randomNavigation;
-    }
-
     public void setSpeedModel(SpeedCalculationModel _speedModel) {
         speedModel = _speedModel;
     }
@@ -1692,8 +1682,6 @@ public class NetworkMapEditor extends SimulationLauncher
         setRandseed(propertiesHandler.getRandseed());
         // random はコンストラクタ引数でのみセットされるべき(randseed を反映した再現性確保のため)
         assert random != null;
-        setRandomNavigation(propertiesHandler.getRandomNavigation());
-        super.setRandomNavigation(randomNavigation);
         setSpeedModel(propertiesHandler.getSpeedModel());
         int tmpExitCount = propertiesHandler.getExitCount();
         if (tmpExitCount <= 0)
@@ -1992,7 +1980,6 @@ public class NetworkMapEditor extends SimulationLauncher
             deserializePath = propertiesHandler.getDeserializePath();
             randseed = propertiesHandler.getRandseed();
             //random = new Random(randseed);
-            randomNavigation = propertiesHandler.getRandomNavigation();
             speedModel = propertiesHandler.getSpeedModel();
             exitCount = propertiesHandler.getExitCount();
             if (exitCount <= 0)

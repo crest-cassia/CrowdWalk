@@ -62,9 +62,6 @@ public class TargetRoundPerson extends RunningAroundPerson
 
     protected int order_in_row;
 
-    /* tkokada: enable random navigation depending on the cost */
-    protected boolean randomNavigation = false;
-
     class CheckPoint implements Serializable {
         public MapNode node;
         public double time;

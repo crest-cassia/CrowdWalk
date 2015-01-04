@@ -43,7 +43,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private transient JFrame main_frame;
     String scenario_name = new String();
     protected Random random = null;
-    private boolean randomNavigation = false;
     private boolean isAllAgentSpeedZeroBreak = false;
     private NetmasTimer timer = null;
     private boolean isTimerEnabled = false;
@@ -120,7 +119,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
             model.setup();
             buildModel();
             model.buildDisplay();
-            model.setRandomNavigation(randomNavigation);
             model.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
             if (speedModel == SpeedCalculationModel.ExpectedDensityModel) {
@@ -354,14 +352,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     @Override
     public void notifyViewChange(SimulationPanel3D panel) {
         /* do nothing */
-    }
-
-    public boolean getRandomNavigation() {
-        return randomNavigation;
-    }
-
-    public void setRandomNavigation(boolean _navigation) {
-        randomNavigation = _navigation;
     }
 
     public boolean getIsAllAgentSpeedZeroBreak() {

@@ -761,15 +761,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             agentHandler.setRandom(_random);
     }
 
-    public void setRandomNavigation(boolean _randomNavigation) {
-        if (agentHandler != null) {
-            agentHandler.setRandomNavigation(_randomNavigation);
-        } else {
-            System.err.println("EvacuationSimulator.setRandomNavigation " +
-                    "agentHandler is null object.");
-        }
-    }
-
     public void saveSimpleGoalLog(String dict, boolean createfile) {
         File fileLog = new File(dict + "/goalLog.log");
         if (createfile) {

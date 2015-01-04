@@ -42,7 +42,7 @@ public class NetmasPropertiesHandler implements Serializable {
             "serialize_interval",
             "deserialized_file",
             "randseed",
-            "random_navigation",
+	    //"random_navigation",
             "speed_model",
             "expected_density_speed_model_macro_timestep",
             "time_series_log",
@@ -152,12 +152,6 @@ public class NetmasPropertiesHandler implements Serializable {
     protected long randseed = 0;
     public long getRandseed() {
         return randseed;
-    }
-
-    // enable random navigation on RunningAroundPerson
-    protected boolean randomNavigation = false;
-    public boolean getRandomNavigation() {
-        return randomNavigation;
     }
 
     protected static SpeedCalculationModel speedModel = null;
@@ -301,8 +295,6 @@ public class NetmasPropertiesHandler implements Serializable {
             deserializePath = getStringProperty(prop, "deserialized_file");
             // create random with seed
             randseed = getIntegerProperty(prop, "randseed");
-            // random navigation
-            randomNavigation = getBooleanProperty(prop, "random_navigation");
             // speed model
             String speedModelString = getStringProperty(prop, "speed_model");
             if (speedModelString.equals("density")) {

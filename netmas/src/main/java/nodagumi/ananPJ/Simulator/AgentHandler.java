@@ -113,7 +113,6 @@ public class AgentHandler implements Serializable {
     private AgentGenerationFile generate_agent = null;
 
     boolean has_display;
-    private boolean randomNavigation = false;
     private Random random = null;
     private FusionViewerConnector fusionViewerConnector = null;
 
@@ -537,10 +536,6 @@ public class AgentHandler implements Serializable {
         }
 
         if (! generated_agents_step.isEmpty()) {
-            if (randomNavigation) {
-                for (EvacuationAgent agent : generated_agents_step)
-                    agent.setRandomNavigation(true);
-            }
             agents.addAll(generated_agents_step);
             generated_agents.addAll(generated_agents_step);
             if (effectiveLinksEnabled) {
@@ -1587,20 +1582,6 @@ public class AgentHandler implements Serializable {
     public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
     {
         this.isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
-    }
-
-    public void setRandomNavigation(boolean _randomNavigation) {
-        for (EvacuationAgent agent : agents) {
-            agent.setRandomNavigation(_randomNavigation);
-        }
-        for (EvacuationAgent agent : generated_agents) {
-            agent.setRandomNavigation(_randomNavigation);
-        }
-        randomNavigation = _randomNavigation;
-    }
-
-    public boolean getRandomNavigation() {
-        return randomNavigation;
     }
 
     protected boolean isExpectedDensitySpeedModel = false;

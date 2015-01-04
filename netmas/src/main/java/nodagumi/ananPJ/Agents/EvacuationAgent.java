@@ -57,8 +57,6 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     protected double swing_width;
 
-    /* tkokada: enable random navigation depending on the cost */
-    protected boolean randomNavigation = false;
     /** The distance of how much the agent has moved in the current pathway. */
     protected double position;
     public double currentExposureAmount = 0.0;
@@ -512,14 +510,6 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     public void setRandom(Random _random) {
         random = _random;
-    }
-
-    public boolean getRandomNavigation() {
-        return randomNavigation;
-    }
-
-    public void setRandomNavigation(boolean _randomNavigation) {
-        randomNavigation = _randomNavigation;
     }
 
     public int getAgentNumber() {

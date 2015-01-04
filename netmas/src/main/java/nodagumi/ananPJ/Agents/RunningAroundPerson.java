@@ -1735,10 +1735,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     // navigation_reason
     //
 
-
-    // working for sane_navigation_from_node().
-    private HashMap<MapLink, Double> resultLinks =
-        new HashMap<MapLink, Double>();
     /**
      * ノードにおいて、次の道を選択するルーチン
      */
@@ -1757,8 +1753,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         boolean monitor = next_node.hasTag("MONITOR-NAVIGATION");
 
         MapLinkTable way_samecost = null;
-        // tkokada:  add randomness to choose next link
-        resultLinks.clear() ;
 
         final Term next_target = calc_next_target(node);
 
@@ -1816,17 +1810,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 // if (cost < min_cost)
                 //     min_cost = cost;
             }
-            // tkokada
-            if (randomNavigation) {
-                resultLinks.put(way_candidate, new Double(cost));
-            }
-        }
-        // 以上で、最小コストの探索終了。結果は、wayにある。
-
-        // tkokada
-        // ※ randomNavigation は通常は使用しない
-        if (randomNavigation) {
-            return saneRandomNavigation(resultLinks, way, false) ;
         }
 
         if (way_samecost != null) {
@@ -1854,46 +1837,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 goal + " way: " + way.ID + " reason: " + navigation_reason.toString());
         */
         return way;
-    }
-
-    /**
-     * ランダムナビゲーションモードで使用する経路選択
-     */
-    private MapLink saneRandomNavigation(HashMap<MapLink, Double> resultLinks,
-                                         MapLink wayBest,
-                                         boolean isVirtual) {
-        double margin = 3.0 ;
-        double totalCost = 0.0;
-
-        // [I.Noda] なぜか最小コストをもう一度求めている。
-        MapLink minCostLink = null;
-        double minCost = Double.MAX_VALUE;
-        for (MapLink resultLink : resultLinks.keySet()) {
-            double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
-            if (cost < minCost) {
-                minCost = cost;
-                minCostLink = resultLink;
-            }
-        }
-
-        double min_cost = ((Double) resultLinks.get(wayBest)).doubleValue();
-
-        // 最小から margin 分余裕を持って候補を探す。
-        MapLinkTable linkCandidates = new MapLinkTable();
-        for (MapLink resultLink : resultLinks.keySet()) {
-            double cost = ((Double) resultLinks.get(resultLink)).doubleValue();
-            if (cost >= min_cost && cost < min_cost + margin)
-                linkCandidates.add(resultLink);
-        }
-        if (linkCandidates.size() > 0) {
-            MapLink chosedLink = linkCandidates.chooseRandom(random) ;
-            if(!isVirtual) 
-                backupSituationForSaneNavigationFromNodeAfter(chosedLink) ;
-            return chosedLink;
-        }
-        if(!isVirtual)
-            backupSituationForSaneNavigationFromNodeAfter(null) ;
-        return null;
     }
 
     /**
@@ -2031,8 +1974,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         MapLink way_second = null;
 
         MapLinkTable way_samecost = null;
-        // tkokada:  add randomness to choose next link
-        HashMap<MapLink, Double> resultLinks = new HashMap<MapLink, Double>();
 
         final Term next_target = calc_next_target(node);
 
@@ -2062,15 +2003,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 way_samecost.add(way_candidate);
                 if (cost < min_cost) min_cost = cost;
             }
-            if (randomNavigation) {
-                resultLinks.put(way_candidate, new Double(cost));
-            }
         }
         setRouteIndex(originalRouteIndex);
-
-        if (randomNavigation) {
-            return saneRandomNavigation(resultLinks, way, true) ;
-        }
 
         if (way_samecost != null) {
             int i = (int)(random.nextDouble() * way_samecost.size());
