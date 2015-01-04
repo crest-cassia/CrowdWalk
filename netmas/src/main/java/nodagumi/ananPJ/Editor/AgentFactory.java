@@ -24,6 +24,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
 import nodagumi.ananPJ.misc.MapChecker;
+import nodagumi.ananPJ.misc.GenerateAgent;
 
 public class AgentFactory extends JPanel implements ItemListener,
        Serializable {
@@ -47,7 +48,13 @@ public class AgentFactory extends JPanel implements ItemListener,
         setLayout(new BorderLayout());
 
         /* List of Agent types */
-        agentTypeList = new JComboBox(EvacuationAgent.getAgentTypes());
+		/* [2015.01.04 I.Noda]
+		 * 以下の、Agent生成機能は、今後使われない。
+		 * なので、機能しなくて良い
+		 * 山下さんに確認済み。
+		 */
+        agentTypeList =
+			new JComboBox(GenerateAgent.getKnownAgentClassNameList()) ;
         agentTypeList.setEditable(false);
         agentTypeList.addItemListener(this);
         /*

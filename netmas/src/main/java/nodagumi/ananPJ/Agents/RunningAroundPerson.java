@@ -1930,10 +1930,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
 
         /* if not in navigation mode, go back to path */
+        /* [2015.01.04 I.Noda]
+         * Agent の goal が失われることはないはずなので、
+         * エラーで落ちるようにしておく。
+         */
         if (goal == null) {
-            turnAround();
-            //System.err.println("turn around");
-            return link_now;
+            Itk.dbgErr("An agent lost its goal.") ;
+            Itk.dbgMsg("agent.ID", this.ID) ;
+            System.exit(1) ;
         }
 
         MapLink target = sane_navigation(time, way_candidates);
