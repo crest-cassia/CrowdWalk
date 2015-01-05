@@ -1228,9 +1228,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
          */
         recordTrail(time) ;
 
+        MapNode passingNode = next_node ;
+
         /* agent exits the previous link */
         getCurrentLink().agentExits(this);
-        setPrevNode(next_node);
+        setPrevNode(passingNode) ;
 
         //2011年6月7日追加
         MapLink previous_link = current_link;
@@ -1239,17 +1241,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         setCurrentLink(next_link_candidate);
 
         // 2011年6月7日追加
-        MapNode nodeToward;
-        if (next_link_candidate.isForwardDirectionFrom(getPrevNode())) {
-            nodeToward = current_link.getTo();
-        } else {
-            nodeToward = current_link.getFrom();
-        }
-        final MapLinkTable way_candidates = nodeToward.getPathways();
+
         double direction_orig = direction;
         // tkokada
-        calc_next_target(next_node);
-        if (next_link_candidate.isForwardDirectionFrom(getPrevNode())) {
+        calc_next_target(passingNode) ;
+        if (next_link_candidate.isForwardDirectionFrom(passingNode)) {
             next_node = current_link.getTo();
             setPosition(random.nextDouble() / 100);
             direction = 1.0;
@@ -1274,7 +1270,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
          * この修正によって、swing_width が更新されないため、不自然な描画の発生は防がれています。
          */
         if (next_link_candidate.width == previous_link.width &&
-                way_candidates.size() == 2) {
+            passingNode.getPathways().size() == 2) {
             if (direction_orig == direction) {
                 update_swing_flag = false;
             } else {
