@@ -21,9 +21,7 @@
     <entry key="random_navigation">false</entry>
     <!--entry key="speed_model">density</entry-->
     <!--entry key="speed_model">lane</entry-->
-    <entry key="speed_model">expected_density</entry>
-    <entry key="expected_density_speed_model_macro_timestep">60</entry>
-    <entry key="expected_density_speed_model_visualize_micro_timestep">true</entry>
+    <entry key="speed_model">density</entry>
     <entry key="run_detail_time_step">false</entry>
     <entry key="time_series_log">true</entry>
     <entry key="time_series_log_path">/tmp</entry>

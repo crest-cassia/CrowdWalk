@@ -461,9 +461,4 @@ public class TargetRoundPerson extends RunningAroundPerson
         return true;
     }
 
-    @Override
-    public MapLinkTable getReachableLinks(double d, double time, double
-            duration) {
-        return null;
-    }
 }

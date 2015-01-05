@@ -544,16 +544,6 @@ public class AgentHandler implements Serializable {
                     effectiveLinks.add(agent.getCurrentLink());
                 }
             }
-            if (isExpectedDensitySpeedModel) {
-                for (EvacuationAgent agent : generated_agents_step) {
-                    ((RunningAroundPerson) agent).setExpectedDensityMacroTimeStep(
-                        expectedDensityMacroTimeStep);
-                    if (agent.ID == 0) {
-                        agent.ID = manualId;
-                        manualId += 1;
-                    }
-                }
-            }
         }
         preprocessLinks(time);
         preprocessAgents(time);
@@ -635,9 +625,6 @@ public class AgentHandler implements Serializable {
     private void preprocessAgents(double time) {
         int count = 0;
 
-        if (isExpectedDensitySpeedModel) {
-            calcExpectedDensity(time);
-        }
         if (true) {
             synchronized (model) {
                 for (MapLink link : effectiveLinksEnabled ? effectiveLinks : model.getLinks()) {
@@ -849,177 +836,6 @@ public class AgentHandler implements Serializable {
     }
     public void waitConnectionFusionViewer() {
         fusionViewerConnector.waitConnection();
-    }
-
-    // tkokada
-    /** Calculate existence probability for expected density speed model.
-     * @param time current time
-     */
-    private void calcExpectedDensity(double time) {
-        // existence probabilities for each links
-        HashMap<MapLink, Double> existenceProbabilities =
-            new HashMap<MapLink, Double>();
-        // reachable links for each agents
-        HashMap<EvacuationAgent, MapLinkTable> agentReachableLinks =
-            new HashMap<EvacuationAgent, MapLinkTable>();
-        // simplex or duplex for each links
-        //  1.0: simplex from -> to
-        //  -1.0: simplex to -> from
-        //  0.0: duplex
-        HashMap<MapLink, Double> linkDirections =
-            new HashMap<MapLink, Double>();
-
-        /** An algorithm of expected density speed model.
-         *
-         * v: speed(m/sec)
-         * rho: expected density(person/m^2)
-         *
-         * duplex raod:
-         *   v = V_0 - 0.25 * rho
-         *   if v < THRESHOLD_1 then v = V_MIN1
-         * simplex road:
-         *   v = V_0 - 0.476 * rho
-         *   if v < THRESHOLD_2 then v = V_MIN2
-         */
-        // free speed
-        double V_0 = RunningAroundPerson.MAX_SPEED;
-        // minimum speed of simplex
-        double V_MIN_1 = RunningAroundPerson.ZERO_SPEED;
-        // minimum speed of duplex
-        double V_MIN_2 = RunningAroundPerson.ZERO_SPEED;
-        // minimum speed threshold of simplex
-        double THRESHOLD_1 = RunningAroundPerson.ZERO_SPEED;
-        // minimum speed threshold of duplex
-        double THRESHOLD_2 = RunningAroundPerson.ZERO_SPEED;
-        for (EvacuationAgent agent : agents) {
-            if (agent.isEvacuated())
-                continue;
-            MapLinkTable reachableLinks = ((RunningAroundPerson) agent)
-                .getReachableLinks(V_0, time, expectedDensityMacroTimeStep);
-            if (reachableLinks == null) {
-                System.err.println("AgentHandler.calcExpectedDensity " +
-                        "reachableLinks are null!");
-                continue;
-            // } else {
-                // System.err.println("calcExpectedDensity agent: " +
-                // agent.ID + " reachable links: " +
-                // reachableLinks.toString());
-            }
-            agentReachableLinks.put(agent, reachableLinks);
-            // calc weight of reachable links. closer the link is, greater the 
-            // weight is.
-            double totalWeightLength = 0;
-            for (int i = 0; i < reachableLinks.size(); i++) {
-                MapLink link = reachableLinks.get(i);
-                totalWeightLength += link.length * (reachableLinks.size() - i
-                        + 1);
-            }
-            for (int i = 0; i < reachableLinks.size(); i++) {
-                MapLink link = reachableLinks.get(i);
-                double existenceProbability = link.length *
-                    (reachableLinks.size() - i + 1) / totalWeightLength;
-
-                if (existenceProbabilities.containsKey(link)) {
-                    double currentExistenceProbability =
-                        existenceProbabilities.get(link);
-                    existenceProbabilities.put(link,
-                        currentExistenceProbability + existenceProbability);
-                } else {
-                    existenceProbabilities.put(link, existenceProbability);
-                }
-                if (((RunningAroundPerson) agent).reachableLinkDirections
-                        .containsKey(link)) {
-                    double direction = ((RunningAroundPerson) agent)
-                        .reachableLinkDirections.get(link)
-                        .doubleValue();
-                    if (linkDirections.containsKey(link)) {
-                        double storedDirection = linkDirections.get(link)
-                            .doubleValue();
-                        if (storedDirection == 0.0) { // already duplex
-                            continue;
-                        } else if (storedDirection != direction) { // be duplex
-                            linkDirections.put(link, new Double(0.0));
-                        }
-                    } else {
-                        linkDirections.put(link, new Double(direction));
-                    }
-                } else {
-                    System.err.println("AgentHandler.calcExpectedDensity " +
-                            "getReachableLinks failed, reachable link " +
-                            "directions could not be calculated correctly.");
-                    for (MapLink directionLink : linkDirections.keySet())
-                        System.err.println("\tlink: " + directionLink +
-                                " direction: " + linkDirections
-                                .get(directionLink));
-                }
-            }
-        }
-        // calc velocity for each link
-        HashMap<MapLink, Double> velocities = new HashMap<MapLink, Double>();
-        for (MapLink link : existenceProbabilities.keySet()) {
-            double direction = 1.0; // default simplex
-            if (linkDirections.containsKey(link)) {
-                direction = linkDirections.get(link).doubleValue();
-            }
-            double velocity = 0.0;
-            if (direction == 0.0) { // duplex
-                velocity = V_0 - 0.238 * existenceProbabilities.get(link) /
-                    link.length / link.width;
-                if (velocity < THRESHOLD_2)
-                    velocity = V_MIN_2;
-            } else {    // simplex
-                velocity = V_0 - 0.125 * existenceProbabilities.get(link) /
-                    link.length / link.width;
-                if (velocity < THRESHOLD_1)
-                    velocity = V_MIN_1;
-            }
-            velocities.put(link, velocity);
-        }
-        // set existence probability
-        for (EvacuationAgent agent : agents) {
-            HashMap<MapLink, Double> expectedDensitySpeeds = new
-                    HashMap<MapLink, Double>();
-            MapLinkTable reachableLinks = agentReachableLinks.get(agent);
-            if (reachableLinks == null)
-                continue;
-            for (MapLink link : reachableLinks) {
-                if (velocities.containsKey(link)) {
-                    double speed = ((Double) velocities.get(link))
-                        .doubleValue();
-                    if (speed == 0.0)
-                        speed = V_MIN_1;
-                    if (speed >= V_0)
-                        speed = V_0;
-                    // Improve the speed depending on the front agent.
-                    if (agent.getCurrentLink() == link) {
-                        double distance_to_front =
-                            ((RunningAroundPerson) agent).calcDistanceToFront();
-                        if (distance_to_front == 0.0) {
-                            speed = V_0;
-                        } else {
-                            double tmp_speed = V_0 * (V_0 *
-                                    model.getTimeScale() - distance_to_front) /
-                                (V_0 * model.getTimeScale());
-                            if (tmp_speed > speed) {
-                                speed = tmp_speed;
-                            }
-                        }
-                    }
-                    //expectedDensitySpeeds.put(link,
-                    //        ((Double) velocities.get(link)).doubleValue());
-                    expectedDensitySpeeds.put(link, speed);
-                }
-                else
-                    System.err.println("AgentHandler.calcExpectedDensity " +
-                            "velocities don't contain match velocity for " +
-                            "link: " + link);
-            }
-            // ((RunningAroundPerson) agent).reachableLinks = reachableLinks;
-            ((RunningAroundPerson) agent).expectedDensitySpeeds =
-                expectedDensitySpeeds;
-            // System.err.println("calcExpectedDensity : " +
-            // expectedDensitySpeeds.toString());
-        }
     }
 
     /* Accessors
@@ -1582,44 +1398,6 @@ public class AgentHandler implements Serializable {
     public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
     {
         this.isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
-    }
-
-    protected boolean isExpectedDensitySpeedModel = false;
-    public void setIsExpectedDensitySpeedModel(boolean
-            _isExpectedDensitySpeedModel) {
-        isExpectedDensitySpeedModel = _isExpectedDensitySpeedModel;
-    }
-
-    public boolean getIsExpectedDensitySpeedModel() {
-        return isExpectedDensitySpeedModel;
-    }
-
-    protected int nextExpectedDensityMacroTime = 0;
-
-    protected int expectedDensityMacroTimeStep = 300;
-    public void setExpectedDensityMacroTimeStep(int
-            _expectedDensityMacroTimeStep) {
-        expectedDensityMacroTimeStep = _expectedDensityMacroTimeStep;
-        // if (generate_agent != null) {
-            // for (GenerateAgent factory : generate_agent) {
-                // factory.setDuration((double) expectedDensityMacroTimeStep);
-            // }
-        // }
-    }
-
-    public int getExpectedDensityMacroTimeStep() {
-        return expectedDensityMacroTimeStep;
-    }
-
-    protected boolean isExpectedDensityVisualizeMicroTimeStep = false;
-    public void setIsExpectedDensityVisualizeMicroTimeStep(boolean
-            _isExpectedDensityVisualizeMicroTimeStep) {
-        isExpectedDensityVisualizeMicroTimeStep =
-            _isExpectedDensityVisualizeMicroTimeStep;
-    }
-
-    public boolean getIsExpectedDensityVisualizeMicroTimeStep() {
-        return isExpectedDensityVisualizeMicroTimeStep;
     }
 
     public void setLinerGenerateAgentRatio(double _ratio) {

@@ -37,8 +37,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     protected static String timeSeriesLogPath = null;
     protected static int timeSeriesLogInterval = -1;
     protected static SpeedCalculationModel speed_model = null;
-    protected static int expectedDensityMacroTimeStep = 300;
-    protected static boolean expectedDensityVisualizeMicroTimeStep = true;
     // End condition of simulation
     protected static int exitCount = 0;
 
@@ -121,11 +119,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         random = new Random(randseed);
         // speed model
         speed_model = propertiesHandler.getSpeedModel();
-        // expected density model
-        expectedDensityMacroTimeStep = propertiesHandler
-            .getExpectedDensityMacroTimeStep();
-        expectedDensityVisualizeMicroTimeStep = propertiesHandler.
-            getExpectedDensityVisualizeMicroTimeStep();
         // time series log
         isTimeSeriesLog = propertiesHandler.getIsTimeSeriesLog();
         timeSeriesLogPath = propertiesHandler.getTimeSeriesLogPath();
@@ -207,17 +200,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         model.setLinerGenerateAgentRatio(linerGenerateAgentRatio);
         model.begin(false, isDeserialized, null);
         model.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
-        if (speed_model == SpeedCalculationModel.ExpectedDensityModel) {
-            ((AgentHandler) model.getAgentHandler())
-                .setIsExpectedDensitySpeedModel(true);
-            ((AgentHandler) model.getAgentHandler())
-                .setExpectedDensityMacroTimeStep(
-                expectedDensityMacroTimeStep);
-            ((AgentHandler) model.getAgentHandler())
-                .setIsExpectedDensityVisualizeMicroTimeStep(
-                        expectedDensityVisualizeMicroTimeStep);
-            model.setTimeScale(expectedDensityMacroTimeStep);
-        }
 
         if (!isDeserialized) {
             if (isTimerEnabled)

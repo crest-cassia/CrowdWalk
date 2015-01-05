@@ -123,8 +123,6 @@ public class NetworkMapEditor extends SimulationLauncher
     private static String serializePath = null;    // path to serialized file
     private static String deserializePath = null;
     private static boolean isAllAgentSpeedZeroBreak = false;
-    private int expectedDensityMacroTimeStep = 300;
-    private boolean expectedDensityVisualizeMicroTimeStep = true;
     protected static boolean isTimeSeriesLog = false;
     protected static String timeSeriesLogPath = null;
     protected static int timeSeriesLogInterval = -1;
@@ -1595,25 +1593,6 @@ public class NetworkMapEditor extends SimulationLauncher
         return isAllAgentSpeedZeroBreak;
     }
 
-    public void setExpectedDensityMacroTimeStep(int
-            _expectedDensityMacroTimeStep) {
-        expectedDensityMacroTimeStep = _expectedDensityMacroTimeStep;
-    }
-
-    public int getExpectedDensityMacroTimeStep() {
-        return expectedDensityMacroTimeStep;
-    }
-
-    public void setExpectedDensityVisualizeMicroTimeStep(boolean
-            _expectedDensityVisualizeMicroTimeStep) {
-        expectedDensityVisualizeMicroTimeStep =
-            _expectedDensityVisualizeMicroTimeStep;
-    }
-
-    public boolean getExpectedDensityVisualizeMicroTimeStep() {
-        return expectedDensityVisualizeMicroTimeStep;
-    }
-
     /**
      * Set isTimeSeriesLog.
      * @param isTimeSeriesLog the value to set.
@@ -1689,11 +1668,6 @@ public class NetworkMapEditor extends SimulationLauncher
         setExitCount(tmpExitCount);
         setIsAllAgentSpeedZeroBreak(propertiesHandler
                 .getIsAllAgentSpeedZeroBreak());
-        setExpectedDensityMacroTimeStep(propertiesHandler
-                .getExpectedDensityMacroTimeStep());
-        setExpectedDensityVisualizeMicroTimeStep(propertiesHandler
-                .getExpectedDensityVisualizeMicroTimeStep());
-
         try {
             weight = propertiesHandler.getInteger("weight", weight);
             if (weight < 0 || weight > 999) {
@@ -1764,14 +1738,6 @@ public class NetworkMapEditor extends SimulationLauncher
             super.setIsDamageSpeedZeroNumberLog(true);
             super.setDamageSpeedZeroNumberLogPath(propertiesHandler
                     .getDamageSpeedZeroPath());
-        }
-        if (speedModel == SpeedCalculationModel.ExpectedDensityModel) {
-            super.setIsExpectedDensitySpeedModel(true);
-            super.setSpeedModel(speedModel);
-            super.setExpectedDensityMacroTimeStep(
-                    expectedDensityMacroTimeStep);
-            super.setExpectedDensityVisualizeMicroTimeStep(
-                            expectedDensityVisualizeMicroTimeStep);
         }
     }
 

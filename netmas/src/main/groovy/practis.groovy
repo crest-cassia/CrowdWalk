@@ -124,14 +124,11 @@ if (args.size() < 1) {
     cui.initialize()
     init = System.nanoTime()
     def timestep = Integer.parseInt(args[2])
-    cui.model.getAgentHandler().setExpectedDensityMacroTimeStep(timestep)
     cui.model.setTimeScale(timestep)
     cui.timeSeriesLogPath = '/tmp/' + args[2]
     cui.model.saveTimeSeriesLog('/tmp/' + args[2])
-    cui.expectedDensityMacroTimeStep = timestep
     cui.start()
     finish = System.nanoTime()
-    macroTimeStep += cui.expectedDensityMacroTimeStep
     tick = cui.model.getSecond()
 } else if (args.size() == 2) {
     if (args[0] == 'cui') {
@@ -142,7 +139,6 @@ if (args.size() < 1) {
         init = System.nanoTime()
         cui.start()
         finish = System.nanoTime()
-        macroTimeStep += cui.expectedDensityMacroTimeStep
         tick = cui.model.getSecond()
     } else {
         start = System.nanoTime()
@@ -166,14 +162,11 @@ if (args.size() < 1) {
     cui.initialize()
     init = System.nanoTime()
     def timestep = Integer.parseInt(args[2])
-    cui.model.getAgentHandler().setExpectedDensityMacroTimeStep(timestep)
     cui.model.setTimeScale(timestep)
     cui.timeSeriesLogPath = '/tmp/' + args[2]
     cui.model.saveTimeSeriesLog('/tmp/' + args[2])
-    cui.expectedDensityMacroTimeStep = timestep
     cui.start()
     finish = System.nanoTime()
-    macroTimeStep += cui.expectedDensityMacroTimeStep
     tick = cui.model.getSecond()
 }
 

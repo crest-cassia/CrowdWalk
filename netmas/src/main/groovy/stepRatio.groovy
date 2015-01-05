@@ -63,7 +63,6 @@ if (args.size() < 1) {
         init = System.nanoTime()
         cui.start()
         finish = System.nanoTime()
-        macroTimeStep += cui.expectedDensityMacroTimeStep
         tick = cui.model.getSecond()
     } else {
         start = System.nanoTime()
@@ -88,14 +87,11 @@ if (args.size() < 1) {
     cui.initialize()
     init = System.nanoTime()
     def timestep = Integer.parseInt(args[2])
-    cui.model.getAgentHandler().setExpectedDensityMacroTimeStep(timestep)
     cui.model.setTimeScale(timestep)
     cui.timeSeriesLogPath = dirString
     cui.model.saveTimeSeriesLog(dirString)
-    cui.expectedDensityMacroTimeStep = timestep
     cui.start()
     finish = System.nanoTime()
-    macroTimeStep += cui.expectedDensityMacroTimeStep
     tick = cui.model.getSecond()
 } else if (args.size() == 4) {
     // rm, mkdir
@@ -121,7 +117,6 @@ if (args.size() < 1) {
     cui.start()
     cui.model.saveGoalLog(dirString, true);
     finish = System.nanoTime()
-    macroTimeStep += cui.expectedDensityMacroTimeStep
     tick = cui.model.getSecond()
 } else if (args.size() == 5) {
     // rm, mkdir
@@ -143,15 +138,12 @@ if (args.size() < 1) {
     cui.initialize()
     init = System.nanoTime()
     // cui.model.getAgentHandler().setLinerGenerateAgentRatio(ratio)
-    cui.model.getAgentHandler().setExpectedDensityMacroTimeStep(timestep)
     cui.model.setTimeScale(timestep)
     cui.timeSeriesLogPath = dirString
     cui.model.saveTimeSeriesLog(dirString)
-    cui.expectedDensityMacroTimeStep = timestep
     cui.start()
     cui.model.saveGoalLog(dirString, true);
     finish = System.nanoTime()
-    macroTimeStep += cui.expectedDensityMacroTimeStep
     tick = cui.model.getSecond()
 }
 

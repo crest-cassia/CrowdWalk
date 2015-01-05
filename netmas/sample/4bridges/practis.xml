@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
-  <Properties>sample/4bridges/properties-4bridges-expected.xml</Properties>
+  <Properties>sample/4bridges/properties-4bridges-density.xml</Properties>
   <Variables>
     <Variable>
       <name>randseed</name>
@@ -17,21 +17,6 @@
       <start>1</start>
       <end>10</end>
       <step>1</step>
-    </Variable>
-    <Variable>
-      <name>expected_density_speed_model_macro_timestep</name>
-      <type>int</type>
-      <change>list</change>
-      <list>
-        <value>180</value>
-        <value>120</value>
-        <value>60</value>
-        <value>30</value>
-        <value>10</value>
-        <value>5</value>
-        <value>2</value>
-        <value>1</value>
-      </list>
     </Variable>
   </Variables>
 </root>

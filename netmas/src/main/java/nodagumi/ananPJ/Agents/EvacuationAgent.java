@@ -177,10 +177,6 @@ implements Comparable<EvacuationAgent>, Serializable {
     abstract public boolean update(double time);
     abstract public void updateViews();
 
-    // tkokada
-    abstract public MapLinkTable getReachableLinks(double d, double time,
-            double duration);
-
     public int getTriage() {
         return pollution.getTriage(this);
     }

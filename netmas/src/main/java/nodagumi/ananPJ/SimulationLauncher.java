@@ -54,9 +54,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private String damageSpeedZeroNumberLogPath = null;
 
     private SpeedCalculationModel speedModel = null;
-    private boolean isExpectedDensitySpeedModel = false;
-    private int expectedDensityMacroTimeStep = 300;
-    private boolean expectedDensityVisualizeMicroTimeStep = true;
     private String fusionViewerLogPath = "log";
     private boolean saveFusionViewerLogOption = false;
     private boolean sendFusionViewerLogOption = false;
@@ -120,22 +117,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
             buildModel();
             model.buildDisplay();
             model.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
-
-            if (speedModel == SpeedCalculationModel.ExpectedDensityModel) {
-                ((AgentHandler) model.getAgentHandler())
-                    .setIsExpectedDensitySpeedModel(true);
-                ((AgentHandler) model.getAgentHandler())
-                    .setExpectedDensityMacroTimeStep(
-                    expectedDensityMacroTimeStep);
-                ((AgentHandler) model.getAgentHandler())
-                    .setIsExpectedDensityVisualizeMicroTimeStep(
-                            expectedDensityVisualizeMicroTimeStep);
-                model.setTimeScale(expectedDensityMacroTimeStep);
-            } else {
-                System.err.println("S Launcher speedmodel: " + speedModel +
-                        ", timestep: " + expectedDensityMacroTimeStep +
-                        ", vis?: " + expectedDensityVisualizeMicroTimeStep);
-            }
         }
         if (isTimerEnabled) {
             timer = new NetmasTimer(10, timerPath);
@@ -367,34 +348,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
         random = _random;
         networkMap.setRandom(_random);
         model.setRandom(_random);
-    }
-
-    public void setIsExpectedDensitySpeedModel(boolean
-            _isExpectedDensitySpeedModel) {
-        isExpectedDensitySpeedModel = _isExpectedDensitySpeedModel;
-    }
-
-    public boolean getIsExpectedDensitySpeedModel() {
-        return isExpectedDensitySpeedModel;
-    }
-
-    public void setExpectedDensityMacroTimeStep(int
-            _expectedDensityMacroTimeStep) {
-        expectedDensityMacroTimeStep = _expectedDensityMacroTimeStep;
-    }
-
-    public int getExpectedDensityMacroTimeStep() {
-        return expectedDensityMacroTimeStep;
-    }
-
-    public void setExpectedDensityVisualizeMicroTimeStep(boolean
-            _expectedDensityVisualizeMicroTimeStep) {
-        expectedDensityVisualizeMicroTimeStep =
-            _expectedDensityVisualizeMicroTimeStep;
-    }
-
-    public boolean getExpectedDensityVisualizeMicroTimeStep() {
-        return expectedDensityVisualizeMicroTimeStep;
     }
 
     public void setSpeedModel(SpeedCalculationModel _speedModel) {

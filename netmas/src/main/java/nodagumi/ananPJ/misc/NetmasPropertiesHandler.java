@@ -42,9 +42,7 @@ public class NetmasPropertiesHandler implements Serializable {
             "serialize_interval",
             "deserialized_file",
             "randseed",
-	    //"random_navigation",
             "speed_model",
-            "expected_density_speed_model_macro_timestep",
             "time_series_log",
             "time_series_log_path",
             "time_series_log_interval",
@@ -157,16 +155,6 @@ public class NetmasPropertiesHandler implements Serializable {
     protected static SpeedCalculationModel speedModel = null;
     public SpeedCalculationModel getSpeedModel() {
         return speedModel;
-    }
-
-    protected static int expectedDensityMacroTimeStep = 300;
-    public int getExpectedDensityMacroTimeStep() {
-        return expectedDensityMacroTimeStep;
-    }
-
-    protected static boolean expectedDensityVisualizeMicroTimeStep = false;
-    public boolean getExpectedDensityVisualizeMicroTimeStep() {
-        return expectedDensityVisualizeMicroTimeStep;
     }
 
     // whether call NetworkMap.saveTimeSeriesLog in loop
@@ -299,11 +287,6 @@ public class NetmasPropertiesHandler implements Serializable {
             String speedModelString = getStringProperty(prop, "speed_model");
             if (speedModelString.equals("density")) {
                 speedModel = SpeedCalculationModel.DensityModel;
-            } else if (speedModelString.equals("expected_density")) {
-                speedModel = SpeedCalculationModel.ExpectedDensityModel;
-                // macro time step of expected density speed model
-                expectedDensityMacroTimeStep = getIntegerProperty(prop,
-                        "expected_density_speed_model_macro_timestep");
             } else {
                 speedModel = SpeedCalculationModel.LaneModel;
                 System.err.println("NetmasCuiSimulator speed model: lane");

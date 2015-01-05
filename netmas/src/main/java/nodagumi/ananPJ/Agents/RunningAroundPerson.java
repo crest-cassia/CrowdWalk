@@ -77,7 +77,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected double dv = 0.0;
     protected double direction = 0.0;
     protected double density;
-    protected double expectedDensityMacroTimeStep = 300;
 
     protected int order_in_row;
 
@@ -301,10 +300,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         next_link_candidate = null;
 
         calc_speed(time);
-        if (calculation_model == SpeedCalculationModel.ExpectedDensityModel)
-            move_set(time, expectedDensityMacroTimeStep);
-        else
-            move_set(speed * direction, time, true);
+        move_set(speed * direction, time, true);
     }
 
     private void set_swing() {
@@ -343,7 +339,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     //------------------------------------------------------------
     /**
-     * 次の位置を計算。(expected 以外用)
+     * 次の位置を計算。
      * @param d : speed に相当する大きさ。単位時間に進める長さ。
      * @param time : 時間ステップ。1.0 が1秒。
      * @param will_move_out : 次のリンクに進むかどうか。WaitDirective 用。
@@ -430,174 +426,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return false;
     }
 
-    HashMap<MapLink, ArrayList<Double>> expectedDensityTimes = new
-        HashMap<MapLink,ArrayList<Double>>(); /** ArrayList[0]: speed(m/sec),
-                                                [1]: time(sec),
-                                                [2]: direction(sec) */
-    /** move_set for expected density model
-     * @param d speed
-     * @param time current time
-     * @param duration macro time step
-     */
-    boolean move_set(double time, double duration) {
-        // tkokada *** should be modified ***
-        // If the agent is placed the link with ROUND_SPEED_ZERO tag, the speed
-        // becomes zero every 60 seconds.
-        /*if (current_link.hasTag("ROUND_SPEED_ZERO"))
-            if (((int) ((int) time / 60) % 2) == 0) {
-                speed = 0;
-                next_position = position;
-                return true;
-            }
-        */
-        MapLink link = current_link;
-        MapNode node = next_node;
-        int route_index_orig = getRouteIndex();
-
-        expectedDensityTimes.clear();
-        for (MapLink routeLink : reachableLinks) {
-            if (link != routeLink) {
-                // System.err.println("\tlink: " + link.toString() + " not " +
-                        // "match routeLink: " + routeLink.toString());
-                // System.err.println("\t" + reachableLinks.toString());
-                System.err.println("\tlink: " + link.ID + " not " +
-                        "match routeLink: " + routeLink.ID + " current: " +
-                        current_link.ID);
-                System.err.print("\t");
-                for (MapLink linkk : reachableLinks)
-                    System.err.print(linkk.ID + " ");
-                System.err.println();
-                continue;
-            } else {
-                // System.err.println("\tlink: " + link.toString() +
-                // " match " + routeLink.toString());
-                // System.err.println("\t\tlink: " + link.ID + " " +
-                        // "match routeLink: " + routeLink.ID + " current: " +
-                        // current_link.ID);
-                // System.err.print("\t\t");
-                // for (MapLink linkk : reachableLinks)
-                    // System.err.print(linkk.ID + " ");
-                // System.err.println();
-            }
-            ArrayList<Double> speedTimeDirection = new ArrayList<Double>();
-            double linkSpeed = ((Double) expectedDensitySpeeds.get(routeLink))
-                .doubleValue();
-            speedTimeDirection.add(new Double(linkSpeed));
-            if (routeLink == current_link) {
-                if (current_link.isForwardDirectionFrom(next_node)) {
-                    speedTimeDirection.add(new Double(position / linkSpeed));
-                    speedTimeDirection.add(new Double(-1.0));
-                } else if (current_link.isForwardDirectionTo(next_node)){
-                    speedTimeDirection.add(new Double(
-                                (routeLink.length - position) / linkSpeed));
-                    speedTimeDirection.add(new Double(1.0));
-                } else {
-                    System.err.println("\tmove_set current_link invalid");
-                    break;
-                }
-            } else {
-                speedTimeDirection.add(new Double(routeLink.length /
-                            linkSpeed));
-                speedTimeDirection.add(new Double(routeLink.directionValueTo(node, 1.0))) ;
-            }
-            on_node = true;
-            MapLink next_link = virtual_navigate(time, link, node);
-            on_node = false;
-            node = next_link.getOther(node);
-            link = next_link;
-            expectedDensityTimes.put(routeLink, speedTimeDirection);
-        }
-        setRouteIndex(route_index_orig);
-
-        return false;
-    }
-
-
     /** Reachable links in a duration */
     public MapLinkTable reachableLinks = new MapLinkTable();
 
     /** directions corresponding to reachableLinks */
     public HashMap<MapLink, Double> reachableLinkDirections =
         new HashMap<MapLink, Double>();
-
-    /** Calculate reachable links in specified duration time with the speed
-     * @param d free speed
-     * @param time current time
-     * @param duration simulation step
-     * @return reachable links in a duration
-     */
-    @Override
-    public MapLinkTable getReachableLinks(double d, double time,
-            double duration) {
-
-        if (isEvacuated())
-            return null;
-
-        reachableLinks.clear();
-        reachableLinkDirections.clear();
-        if (current_link == null) {
-            System.err.println("RunningAroundPerson.getReachableLinks " +
-                    "current_link null!");
-            return null;
-        }
-        reachableLinks.add(current_link);
-        reachableLinkDirections.put(current_link,
-                                    new Double(current_link
-                                               .directionValueTo(next_node,
-                                                                 1.0))) ;
-
-        double distance_to_move = d * duration;
-        MapLink link = current_link;
-        MapNode node = next_node;
-        // store values to undo
-        int route_index_orig = getRouteIndex();
-        double direction_orig = direction;
-        MapNode prev_node_orig = prev_node;
-        MapNode next_node_orig = next_node;
-        MapLink current_link_orig = current_link;
-
-        while (distance_to_move > 0) {
-            // System.err.println("\t\tdistance_to_move: " + distance_to_move);
-            // System.err.println("\t\tlink: " + link + " node: " + node);
-            if (link == current_link) {
-                if (link.isForwardDirectionFrom(node)) {
-                    if (position >= distance_to_move)
-                        break;
-                    distance_to_move -= position;
-                } else {
-                    if (link.length - position >= distance_to_move)
-                        break;
-                    distance_to_move -= link.length - position;
-                }
-            } else {
-                if (link.length >= distance_to_move)
-                    break;
-                distance_to_move -= link.length;
-            }
-            on_node = true;
-            MapLink next_link = virtual_navigate(time, link, node);
-            if ((link.isOneWayPositive() ||
-                 link.isOneWayNegative() ||
-                 link.isRoadClosed())
-                && next_link == null) {
-                break;
-            } else if (link.ID == next_link.ID) {
-                break;
-            } else if (next_link == null) {
-                break;
-            }
-            on_node = false;
-            node = next_link.getOther(node);
-            link = next_link;
-            reachableLinks.add(link);
-            reachableLinkDirections.put(link, 
-                                        new Double(link.directionValueTo(node,
-                                                                         1.0))) ;
-        }
-        setRouteIndex(route_index_orig);
-
-        return reachableLinks;
-    }
 
     private boolean passed_node = true;
     protected boolean move_commit(double time) {
@@ -643,91 +477,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return false;
     }
 
-    /** move_commit for expected density speed model */
-    protected boolean move_commit(double time, double duration) {
-        boolean isDebug = false;
-
-        if (isDebug) {
-            System.err.println("RunningAroundPerson.move_commit " +
-                    "start current link: " + current_link + " position: " +
-                    position + " reachable links: " + reachableLinks);
-        }
-        // check goal
-        // if (planned_route.size() <= getRouteIndex() &&
-                // next_node.hasTag(goal)) {
-            // if ((position == 0 && current_link.getFrom().hasTag(goal)) ||
-                    // (position == current_link.length &&
-                     // current_link.getTo().hasTag(goal))) {
-                // setEvacuated(true, time);
-                // prev_node = next_node;
-                // next_node = null;
-                // current_link.agentExits(this);
-                // current_link = null;
-
-                // return true;
-            // }
-        // }
-        double remain = duration;
-        for (MapLink link : reachableLinks) {
-            ArrayList<Double> speedTimeDirection = expectedDensityTimes
-                .get(link);
-            if (speedTimeDirection == null) {
-                System.err.println("\tspeedTimeDirection link: " + link +
-                        " cannot find in " +
-                        expectedDensityTimes);
-            }
-            if (isDebug) {
-                System.err.println("\tspeedTimeDirection link: " +
-                        link + " can find: " + speedTimeDirection);
-            }
-            double linkSpeed = ((Double) speedTimeDirection.get(0))
-                .doubleValue();
-            double linkTime = ((Double) speedTimeDirection.get(1))
-                .doubleValue();
-            double linkDirection = ((Double) speedTimeDirection.get(2))
-                .doubleValue();
-            if (remain < linkTime) {
-                if (linkDirection > 0) {
-                    setPosition(linkSpeed * remain + position);
-                } else {
-                    setPosition(position - linkSpeed * remain);
-                }
-                if (isDebug) {
-                    System.err.println("\tRunningAroundPerson.move_commit " +
-                            "reach next position link: " + link +
-                            " position: " + position + " remain: " + remain);
-                }
-                break;
-            }
-            //if (planned_route.size() <= getRouteIndex() &&
-            //        next_node.hasTag(goal) &&
-            //        remain >= linkTime) {
-            if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
-                next_node.hasTag(goal) && remain >= linkTime) {
-                consumePlannedRoute();
-                setEvacuated(true, time);
-                prev_node = next_node;
-                next_node = null;
-                current_link.agentExits(this);
-                current_link = null;
-
-                return true;
-            }
-            remain -= linkTime;
-            sane_navigation_from_node_forced = true;
-            next_link_candidate = navigate(time, current_link, next_node);
-            sane_navigation_from_node_forced = true;
-            if (!tryToPassNode(time)) {
-                return false;
-            }
-            setPosition(current_link
-                        .calcAbstractPositionByDirectionTo(next_node, 0.0)) ;
-        }
-
-        return false;
-    }
-
-
     @Override
     public boolean update(double time) {
         if (time < generatedTime) {
@@ -748,10 +497,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         //     setEmergency();
         // }
 
-        if (calculation_model == SpeedCalculationModel.ExpectedDensityModel)
-            return move_commit(time, expectedDensityMacroTimeStep);
-        else
-            return move_commit(time);
+        return move_commit(time);
     }
 
     boolean update_swing_flag = true;//false;
@@ -809,8 +555,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
          *  duplex road : v = 1.27 * 10 ^ (-0.22 * rho)
          *  duplex road : v = 1.25 - 0.476 * rho
          */
-        DensityModel,
-        ExpectedDensityModel
+        DensityModel
     }
     private SpeedCalculationModel calculation_model =
         SpeedCalculationModel.LaneModel;
@@ -893,10 +638,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             //calc_speed_density(time);
             calc_speed_density_reviced(time);
             //System.err.println("Density");
-            break;
-        case ExpectedDensityModel:
-            calc_speed_expected_density(time);
-            //System.err.println("Expected");
             break;
         default:
             break;
@@ -1480,23 +1221,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return distance;
     }
 
-    public HashMap<MapLink, Double> expectedDensitySpeeds = new
-        HashMap<MapLink, Double>();
-    private void calc_speed_expected_density(double time) {
-        /* get expected density link speed */
-        // System.err.println("CALC_SPEED_EXPECTED_DENSITY");
-        if (expectedDensitySpeeds.size() == 0) {
-            speed = ZERO_SPEED;
-            System.err.println("RunningAroundPerson." +
-                    "calc_speed_expected_density cannot find match speed!");
-        } else {
-            speed = ((Double) expectedDensitySpeeds.get(current_link))
-                .doubleValue();
-        }
-        /*System.err.println("expected Speed: " + speed + ", Link: " + current_link.ID +
-                ", position: " + position);*/
-    }
-
     @Override
     public double getDirection() {
         return direction;
@@ -1925,105 +1649,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
     }
 
-    // virtual methods
-    //  these methods don't change any local variables.
-    protected MapLink virtual_navigate(double time,
-            MapLink link_now,
-            MapNode node_now) {
-        final MapLinkTable way_candidates = node_now.getPathways();
-
-        /* trapped? */
-        if (way_candidates.size() == 0) {
-            System.err.println("Warning: Agent trapped!");
-            return null;
-        }
-
-        /* only one way to choose */
-        if (way_candidates.size() == 1) {
-            return way_candidates.get(0);
-        }
-
-        /* if not in navigation mode, go back to path */
-        if (goal == null) {
-            // turnAround();
-            return link_now;
-        }
-
-        MapLink target = virtual_sane_navigation_from_node(time, link_now,
-                node_now);
-        if (target != null) {
-            return target;
-        }
-
-        /* choose randomly */
-        int i = 0;
-        if (way_candidates.size() > 1) {
-            i = (int)(random.nextDouble() * (way_candidates.size() - 1));
-        }
-        return way_candidates.get(i);
-    }
-
-    /** pre-navigation, actually does not change any values. */
-    protected MapLink virtual_sane_navigation_from_node(double time,
-            MapLink link, MapNode node) {
-
-        MapLinkTable way_candidates = node.getPathways();
-        double min_cost = Double.MAX_VALUE;
-        double min_cost_second = Double.MAX_VALUE;
-        MapLink way = null;
-        MapLink way_second = null;
-
-        MapLinkTable way_samecost = null;
-
-        final Term next_target = calc_next_target(node);
-
-        int originalRouteIndex = getRouteIndex();
-        for (MapLink way_candidate : way_candidates) {
-            if (routePlan.isEmpty() && way_candidate.hasTag(goal)) {
-                way = way_candidate;
-                break;
-            } else if (way_candidate.hasTag(next_target)) {
-                way = way_candidate;
-                routePlan.shift() ;
-                break;
-            } else if (way_candidate == link) {
-                continue;
-            }
-
-            // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost = calcWayCostTo(way_candidate, node, next_target) ;
-
-            if (cost < min_cost) {
-                min_cost = cost;
-                way = way_candidate;
-                way_samecost = null;
-            } else if (cost == min_cost) {
-                if (way_samecost == null)
-                    way_samecost = new MapLinkTable();
-                way_samecost.add(way_candidate);
-                if (cost < min_cost) min_cost = cost;
-            }
-        }
-        setRouteIndex(originalRouteIndex);
-
-        if (way_samecost != null) {
-            int i = (int)(random.nextDouble() * way_samecost.size());
-            if (i != way_samecost.size()) {
-                way = way_samecost.get(i);
-            }
-        }
-
-        if (way == null) {
-            way = way_second;
-        }
-
-        if (way == null) {
-            return null;
-        }
-
-        return way;
-    }
-
     @Override
     public void dumpResult(PrintStream out) {
         out.print("" + generatedTime + ",");
@@ -2204,16 +1829,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     public void setDensity(double _density) {
         density = _density;
-    }
-
-    public void setExpectedDensityMacroTimeStep(int
-            _expectedDensityMacroTimeStep) {
-        expectedDensityMacroTimeStep = _expectedDensityMacroTimeStep;
-        setTimeScale(expectedDensityMacroTimeStep);
-    }
-
-    public double getExpectedDensityMacroTimeStep() {
-        return expectedDensityMacroTimeStep;
     }
 
     public void setTimeScale(double _time_scale) {
