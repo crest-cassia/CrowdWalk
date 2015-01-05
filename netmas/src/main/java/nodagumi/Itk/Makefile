@@ -70,6 +70,7 @@ SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
 SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
 SAMPLE2w = sample/basic-sample/properties.v2.xml	#wait, version2
+SAMPLE2i = sample/simpleGrid/properties-itk.v2.xml	#itk, version2
 
 
 run : run2
@@ -105,6 +106,8 @@ run2_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2) cui)
 run2w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2w))
+run2i ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2i))
 
 
 ##------------------------------------------------------------

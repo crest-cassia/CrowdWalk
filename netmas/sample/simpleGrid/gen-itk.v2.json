@@ -1,0 +1,9 @@
+#{ "version" : 2}
+[
+ {"rule":"EACH",
+  "agentType":{"className":"NaiveAgent","config":{}},
+  "total":100,"speedModel":"LANE",
+  "startPlace":"link-22-23","conditions":null,
+  "startTime":"18:00:00","duration":60.0,
+  "goal":"ROOT-N32","plannedRoute":["link-6-7","link-2-3"]}
+]
