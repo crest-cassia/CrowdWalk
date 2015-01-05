@@ -32,7 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
@@ -109,8 +108,6 @@ public abstract class OBNode extends DefaultMutableTreeNode
           return MapNode.fromDom(element);
       } else if (tagName.equals(MapLink.getNodeTypeString())) {
           return MapLink.fromDom(element);
-      } else if (tagName.equals(EvacuationAgent.getNodeTypeString())) {
-          return EvacuationAgent.fromDom(element);
       } else if (tagName.equals(PollutedAreaRectangle.getNodeTypeString())) {
           return PollutedAreaRectangle.fromDom(element);
       } else if (tagName.equals(OBNodeSymbolicLink.getNodeTypeString())) {

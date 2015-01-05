@@ -171,78 +171,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         generatedTime = _generatedTime;
         emptyspeed = _emptySpeed;
     }
-    
-    @Override
-    public String toString() {
-        StringBuffer buffer = new StringBuffer("run");
-
-        buffer.append("," + this.ID);
-        buffer.append("," + this.agentNumber);
-        buffer.append("," + this.emptyspeed);
-        buffer.append("," + this.time_scale);
-
-        buffer.append("," + this.generatedTime);
-        buffer.append("," + this.finishedTime);
-
-        buffer.append("," + this.current_link.ID);
-        buffer.append("," + this.position);
-        buffer.append("," + this.direction);
-        buffer.append("," + this.speed);
-        buffer.append("," + this.accumulatedExposureAmount);
-        buffer.append("," + this.goal);
-        buffer.append("," + this.routePlan.getIndex());
-        buffer.append("," + this.routePlan.totalLength()) ;
-        for (Term r : this.routePlan.getRoute()) {
-            buffer.append("," + r.toString());
-        }
-        buffer.append("," + this.tags.size());
-        for (String tag : this.tags) {
-            buffer.append("," + tag);
-        }
-        
-        return buffer.toString();
-    }
-
-    static public EvacuationAgent fromString(String str, NetworkMap map,
-            Random _random) {
-        String[] items = str.split(",");
-        if (!items[0].equals("run")) { return null; }
-
-        RunningAroundPerson agent = new RunningAroundPerson(
-                Integer.parseInt(items[1]), _random);
-        agent.agentNumber = Integer.parseInt(items[2]);
-        agent.emptyspeed = Double.parseDouble(items[3]);
-        agent.time_scale = Double.parseDouble(items[4]);
-
-        agent.generatedTime = Double.parseDouble(items[5]);
-        agent.finishedTime = Double.parseDouble(items[6]);
-
-        MapLink link = (MapLink)map.getObject(Integer.parseInt(items[7]));
-        agent.current_link = link;
-        agent.position = Double.parseDouble(items[9]);
-        agent.direction = Double.parseDouble(items[9]);
-        if (agent.direction > 0.0) {
-            agent.prev_node = link.getFrom();
-            agent.next_node = link.getTo();
-        } else {
-            agent.prev_node = link.getTo();
-            agent.next_node = link.getFrom();
-        }
-        agent.speed = Double.parseDouble(items[10]);
-        agent.accumulatedExposureAmount = Double.parseDouble(items[11]);
-        agent.goal = new Term(items[12]);
-        agent.routePlan.setIndex(Integer.parseInt(items[13]));
-        int route_size = Integer.parseInt(items[14]);
-        for (int i = 0; i < route_size; i++) {
-            agent.routePlan.add(new Term(items[15 + i]));
-        }
-        int tags_base = route_size + 15;
-        int tags_size = Integer.parseInt(items[tags_base]);
-        for (int i = 0; i < tags_size; i++) {
-            agent.addTag(items[tags_base + i + 1]);
-        }
-        return agent;
-    }
 
     private void turnAround() {
         direction = -direction;
@@ -1737,57 +1665,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     public static String typeString = "RunningAroundPerson" ;
     public static String getTypeName() {
         return typeString ;
-    }
-
-    @Override
-    public Element toDom(Document dom, String nodetype) {
-        Element element = super.toDom(dom, getNodeTypeString());
-        element.setAttribute("id", "" + ID);
-        element.setAttribute("AgentType", RunningAroundPerson.getTypeName());
-
-        element.setAttribute("GeneratedTime", "" + generatedTime);
-        element.setAttribute("EmptySpeed", "" + emptyspeed);
-        element.setAttribute("CurrentPathway", "" + current_link.ID);
-        element.setAttribute("PrevRoom", "" + prev_node.ID);
-        element.setAttribute("NextRoom", "" + next_node.ID);
-        element.setAttribute("Position", "" + position);
-        element.setAttribute("Goal", "" + getGoal());
-
-        for (Term via : routePlan.getRoute()) {
-              Element tnode = dom.createElement("route");
-              Text via_tag_text = dom.createTextNode(via.getString());
-              tnode.appendChild(via_tag_text);
-              element.appendChild(tnode);
-        }
-        return element;
-    }
-    
-    public static OBNode fromDom(Element element, Random _random) {
-        int id = Integer.parseInt(element.getAttribute("id"));
-        RunningAroundPerson agent = new RunningAroundPerson(id, _random);
-        agent.getAttributesFromDom(element);
-        agent.generatedTime = Double.parseDouble(element.getAttribute("GeneratedTime"));
-        agent.emptyspeed = Double.parseDouble(element.getAttribute("EmptySpeed"));
-        agent.setGoal(new Term(element.getAttribute("Goal")));
-        NodeList children = element.getChildNodes();
-        for (int i = 0; i < children.getLength(); ++i) {
-            if (children.item(i)  instanceof Element) {
-                Element child = (Element)children.item(i);
-                if (!child.getTagName().equals("route")) continue;
-                agent.routePlan.add(new Term(child.getTextContent())) ;
-              }
-          }
-
-        agent.position = Double.parseDouble(element.getAttribute("Position"));
-
-        /* used in NetworkMap.setupNetwork */
-        String location[] = new String[3];
-        location[0] = element.getAttribute("CurrentPathway");
-        location[1] = element.getAttribute("PrevRoom");
-        location[2] = element.getAttribute("NextRoom");
-        agent.setUserObject(location);
-
-        return agent;
     }
 
     @Override

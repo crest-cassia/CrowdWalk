@@ -125,32 +125,11 @@ implements Comparable<EvacuationAgent>, Serializable {
 
 		return r ;
 	}
-		
 
     public static OBNode fromDom(Element element) {
-        String tag_name = element.getAttribute("AgentType");
-        if (tag_name.equals(RunningAroundPerson.getTypeName())) {
-            // TODO: 多分バグ(再びこのメソッドが呼ばれる)
-            return RunningAroundPerson.fromDom(element);
-        } else if (tag_name.equals(WaitRunningAroundPerson.getTypeName())) {
-            return WaitRunningAroundPerson.fromDom(element);
-        } else {
-            //TODO must implement other types of agents
-            return null;
-        }
-    }
-
-    public static EvacuationAgent fromString(String str) {
-        EvacuationAgent agent = null;
-        agent = RunningAroundPerson.fromString(str);
-        if (agent != null) { return agent; }
-        agent = WaitRunningAroundPerson.fromString(str);
-        if (agent != null) { return agent; }
-        agent = Staff.fromString(str);
-        if (agent != null) { return agent; }
-
-        return null;
-    }
+		Itk.dbgErr("fromDom() is not supported.") ;
+		return null ;
+	}
 
     public void place(MapLink link, double _position) {
         prev_node = link.getFrom();
@@ -188,7 +167,14 @@ implements Comparable<EvacuationAgent>, Serializable {
     abstract public void draw(Graphics2D g, boolean experiment);
     abstract public void dumpResult(PrintStream out);
     
-    public abstract String toString(); 
+	public String toString() {
+		StringBuffer buffer = new StringBuffer() ;
+		buffer.append(this.getClass().getSimpleName()) ;
+		buffer.append("[") ;
+		buffer.append("id:").append(ID) ;
+		buffer.append("]") ;
+		return buffer.toString() ;
+	};
 
     public MapNode getNextNode() {
         return next_node;
