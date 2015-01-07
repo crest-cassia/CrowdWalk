@@ -77,6 +77,36 @@ import nodagumi.ananPJ.network.FusionViewerConnector;
 import nodagumi.Itk.*;
 
 public class AgentHandler implements Serializable {
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * agent の queue を処理する際に、先頭・末尾のどちらから処理するか
+     * を示すフラグ。
+     * MapLink の中でのソートでは、エージェントの進んだ距離に対して、
+     * 昇順になるようになっている。
+     * つまり、進んでいないエージェント（列の末尾にいるエージェント）が
+     * queue (agents という変数)の先頭に来る。
+     * このフラグは、update, preupdate において、
+     * この queue を前から処理するか、後ろから処理するかを指定する。
+     * true の場合、後ろから（つまり agent の列として先頭から）処理する。
+     * 本来、これはかならず true であるべきだが、
+     * 2014年12月までの実装での状態を残すため、
+     * フラグで切り替えられるようにしておく。
+     */
+    // static private boolean usingFrontFirstOrderQueue = false ;
+    static private boolean isUsingFrontFirstOrderQueue = true ;
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * switching queue order
+     * @param flag : if true, use front_first order.
+     *               else, use rear_first order.
+     */
+    static public void useFrontFirstOrderQueue(boolean flag) {
+        isUsingFrontFirstOrderQueue = flag ;
+    }
+
     private EvacuationModelBase model;
     private List<EvacuationAgent> agents;
     private ArrayList<EvacuationAgent> generated_agents;
@@ -628,9 +658,18 @@ public class AgentHandler implements Serializable {
         if (true) {
             synchronized (model) {
                 for (MapLink link : effectiveLinksEnabled ? effectiveLinks : model.getLinks()) {
-                    for (EvacuationAgent agent : link.getLane(1.0)) {
-                        agent.preUpdate(time);
-                        count += 1;
+                    if(isUsingFrontFirstOrderQueue) {
+                        ArrayList<EvacuationAgent> pos_agents = link.getLane(1.0);
+                        for (int i = pos_agents.size() - 1 ; i >= 0 ; --i) {
+                            EvacuationAgent agent = pos_agents.get(i);
+                            agent.preUpdate(time);
+                            count += 1;
+                        }
+                    } else { // [2015.01.07 I.Noda] おそらくこの順序は間違っている。
+                        for (EvacuationAgent agent : link.getLane(1.0)) {
+                            agent.preUpdate(time);
+                            count += 1;
+                        }
                     }
                     ArrayList<EvacuationAgent> neg_agents = link.getLane(-1.0);
                     for (int i = neg_agents.size() - 1; i >= 0; --i) {

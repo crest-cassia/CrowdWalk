@@ -20,6 +20,9 @@ import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.CommunicationHandler;
 import nodagumi.ananPJ.misc.CommunicationHandler.CommunicationType;
 import nodagumi.ananPJ.network.DaRuMaClient;
+import nodagumi.ananPJ.Simulator.AgentHandler;
+
+import nodagumi.Itk.*;
 
 
 public class NetmasPropertiesHandler implements Serializable {
@@ -48,7 +51,9 @@ public class NetmasPropertiesHandler implements Serializable {
             "time_series_log_interval",
             "loop_count",
             "exit_count",
-            "all_agent_speed_zero_break"
+	    "all_agent_speed_zero_break",
+	    /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
+	    "queue_order" // "front_first" or "rear_first"
             );
 
     public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file", "node_appearance_file"};
@@ -321,6 +326,21 @@ public class NetmasPropertiesHandler implements Serializable {
             }
             getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);
+
+	    /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
+	    String queueOrderStr = getProperty(prop, "queue_order") ;
+	    if(queueOrderStr != null) {
+		if(queueOrderStr.equals("front_first")) {
+		    AgentHandler.useFrontFirstOrderQueue(true) ;
+		    Itk.dbgMsg("use front_first order to sort agent queue.") ;
+		} else if (queueOrderStr.equals("rear_first")) {
+		    AgentHandler.useFrontFirstOrderQueue(false) ;
+		    Itk.dbgMsg("use rear_first order to sort agent queue.") ;
+		} else {
+		    Itk.dbgErr("unknown queue_order:" + queueOrderStr) ;
+		    Itk.dbgMsg("use default order (rear_first)") ;
+		}
+	    }
         } catch (IOException ioe) {
             ioe.printStackTrace();
             System.exit(1);

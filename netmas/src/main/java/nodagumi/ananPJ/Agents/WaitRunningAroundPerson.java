@@ -127,11 +127,34 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 
     protected boolean scatter(double time) {
         final ArrayList<EvacuationAgent> agents = current_link.getAgents();
-        int index = Collections.binarySearch(agents, this);
+        /* [2015.01.07 I.Noda] bug!!!
+         * 以下の binarySearch, 本来なら Comparator を指定しないといけない
+         * はずだが、指定していない。
+         * これまでなぜうまく行っていたのかはかなり疑問。
+         */
+        int index = Collections.binarySearch(agents, this,
+                                             MapLink.advancingComparator);
+        /* [2015.01.07 I.Noda] bug!!!
+         * 本来、index が負になる（agents に存在しない）ことは
+         * 生じないはずだが、sort_order を front_first にすると、なぜか起きる。
+         * [解決] 上記の Comparator を指定することで、問題解消。
+         * これまで、なぜ動いていたのかは不明。
+         */
+        if(index < 0) {
+            Itk.dbgWrn("the agent can not found in the agent queue") ;
+            Itk.dbgVal("agent", this) ;
+            Itk.dbgVal("queue", agents) ;
+            index = 0 ;
+        }
 
+        /* [2015.01.07 I.Noda] bug!!!
+         * ここでは、なぜか、エージェントの進行方向を無視して計算している。
+         * しかし、本来、無視してはいけないはず。
+         */
         double front_space = current_link.length - position;
         double rear_space = position;
         int width = (int)current_link.width;
+
         int rear_agent_i = index - width;
         if (rear_agent_i > 0) {
             rear_space = position - agents.get(rear_agent_i).position;
@@ -140,7 +163,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         if (front_agent_i < agents.size()) {
             front_space = agents.get(front_agent_i).position - position;
         }
-        
+
         calc_speed(time);
         double d = (front_space - rear_space) * 0.3; 
         if (Math.abs(d) > Math.abs(speed)) {

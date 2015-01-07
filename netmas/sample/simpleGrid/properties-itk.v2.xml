@@ -3,6 +3,8 @@
 <properties>
     <comment>NetmasCuiSimulator</comment>
     <entry key="debug">true</entry>
+    <!-- <entry key="queue_order">front_first</entry> -->
+    <!-- <entry key="queue_order">rear_first</entry> -->
     <entry key="io_handler_type">none</entry>
     <!-- buffer|file|pipe|network|server|none -->
     <entry key="map_file">sample/simpleGrid/map-itk.xml</entry>

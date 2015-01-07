@@ -594,8 +594,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double direction_orig = direction;
 
         // N-th of this agents in current lane
-        int index = Collections.binarySearch(current_link.getLane(direction),
-                this);
+        int index = 
+            Collections.binarySearch(current_link.getLane(direction),
+                                     this,
+                                     MapLink.advancingComparator) ;
 
         //System.err.println("step = "+time);
 
@@ -641,7 +643,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     }
                     break;
                 }
-                /* 繰り返すのは (index > agents.size) の場合
+                /* 繰り返すのは (index_front > agents.size) の場合
                  *  つまり，仮想レーン内には誰もいない状態 
                  */
 

@@ -53,6 +53,9 @@ import nodagumi.ananPJ.misc.Snapshot;
 
 import nodagumi.ananPJ.network.DaRuMaClient;
 
+import nodagumi.ananPJ.NetworkParts.Link.*;
+
+import nodagumi.Itk.*;
 
 public class NetmasPlayer extends SimulationLauncher
         implements Serializable {
