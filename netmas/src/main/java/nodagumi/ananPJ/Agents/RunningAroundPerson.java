@@ -142,7 +142,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         r.speed = 0;
         r.goal = goal;
         r.routePlan = new RoutePlan(routePlan) ;
-        r.routePlan.setIndex(0) ;
+        r.routePlan.resetIndex() ;
 
         return r;
     }
@@ -181,29 +181,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     
     @Override
     public void prepareForSimulation(double _timeScale) {
-        // tkokada
-        /*
-        boolean deserialized = true;
-        System.err.println("RunningAroundPerson.prepareForSimulation " +
-                ID + " evacuated: " + isEvacuated() + "current_link: " +
-                current_link);
-        if (!deserialized) {
-            prev_node = current_link.getFrom();
-            next_node = current_link.getTo();
-            speed = 0;
-            direction = 1.0;
-            setRouteIndex(0);
-
-            renavigate();
-        } else {
-        */
         /* tkokada: modified to apply deserialize method */
         if (!isEvacuated()) {
             MapNode fromNode = current_link.getFrom();
             MapNode toNode = current_link.getTo();
-            if ((fromNode.getDistance(calc_next_target(fromNode))
+            if ((fromNode.getDistance(calcNextTarget(fromNode))
                  + position)
-                >= (toNode.getDistance(calc_next_target(toNode)) +
+                >= (toNode.getDistance(calcNextTarget(toNode)) +
                             current_link.length - position)) {
                 prev_node = current_link.getFrom();
                 next_node = current_link.getTo();
@@ -214,7 +198,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 direction = -1.0;
             }
             speed = 0;
-            routePlan.setIndex(0) ;
+            routePlan.resetIndex() ;
 
             renavigate();   // ※何もしていない(route_index は増える可能性あり)
         }
@@ -306,7 +290,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double next_position_tmp = next_position;
         MapLink link = current_link;
         MapNode node = next_node;
-        int route_index_orig = getRouteIndex();
+        RoutePlan routePlanBackup = routePlan.duplicate() ;
 
         while (next_position_tmp < 0 ||
                 next_position_tmp > link.length) {
@@ -350,7 +334,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 break;
             }
         }
-        setRouteIndex(route_index_orig);
+        routePlan.copyFrom(routePlanBackup) ;
         return false;
     }
 
@@ -590,7 +574,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         // is used to update link_to_fin_agent
         MapNode node_to_navigate = next_node;
         double distance_to_go = emptyspeed * time_scale;    // * SPEED_VIEW_RATIO * 10;
-        int route_index_orig = getRouteIndex();
+        RoutePlan routePlanBackup = routePlan.duplicate() ;
         double direction_orig = direction;
 
         // N-th of this agents in current lane
@@ -675,7 +659,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 link_to_find_agent.directionValueTo(node_to_navigate, 1.0) ;
             index = -1;/* 次からは最後尾な気分で */
         }
-        setRouteIndex(route_index_orig);
+        routePlan.copyFrom(routePlanBackup) ;
         direction = direction_orig;
 
         /* calculation of speed, based on diff */
@@ -720,20 +704,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             if (time % 60 < 30)
                 speed = 0;
         }
-        // tkokada
-        /*
-        System.err.println(
-                " link "+current_link.getTags()+
-                "\t position "+position+
-                "\t diff "+diff+
-                "\t speed "+speed+
-                "\t order "+order_in_row+
-                "\t swing_flag "+update_swing_flag+
-                //"\t next_target " +  calc_next_target(next_node) +
-                "\t next_target " + goal +
-                "\t direction "+direction);
-        //*/
-        //calc_next_target(next_node);
+
         int w = current_link.getLaneWidth(direction);
         if (order_in_row < w) {
             if (isPositiveDirection()) {
@@ -789,9 +760,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         //double nextMaxRange = 0;
         //double nextMinRange = 0;
 
-        int route_index_orig = getRouteIndex();
+        RoutePlan routePlanBackup = routePlan.duplicate() ;
         MapLink nextLink = sane_navigation_from_node(time, current_link, next_node);
-        setRouteIndex(route_index_orig);
+        routePlan.copyFrom(routePlanBackup) ;
 
         ArrayList<EvacuationAgent> nextLinkAgents = null;
         if (nextLink != null)
@@ -1246,7 +1217,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         double direction_orig = direction;
         // tkokada
-        calc_next_target(passingNode) ;
+        calcNextTarget(passingNode) ;
         if (next_link_candidate.isForwardDirectionFrom(passingNode)) {
             next_node = current_link.getTo();
             setPosition(random.nextDouble() / 100);
@@ -1309,27 +1280,40 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 // navigation_reason.toString());
     }
 
-    /* look up our route plan and give our next goal
+    //------------------------------------------------------------
+    /**
+     * エージェントの routePlan で、次のターゲットを得る。
+     */
+    protected Term calcNextTarget(MapNode node) {
+        return calcNextTarget(node, routePlan) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 指定された RoutePlan で、次のターゲットを得る。
+     * @param node : このノードにおけるターゲットを探す。
+     * @param workingPlan : 指定された RoutePlan。shiftする可能性がある。
+     * @return : workingPlan の index 以降の次のターゲット、もしくは goal。
      * [2014.12.30 I.Noda] analysis
      * 次に来る、hint に記載されている route target を取り出す。
      * 今、top の target が現在のノードのタグにある場合、
      * route は１つ進める。
      */
-    protected Term calc_next_target(MapNode node) {
+    protected Term calcNextTarget(MapNode node, RoutePlan workingPlan) {
         if (on_node &&
-            !routePlan.isEmpty() &&
-            next_node.hasTag(routePlan.top())){
+            !workingPlan.isEmpty() &&
+            next_node.hasTag(workingPlan.top())){
             /* reached mid-goal */
-            routePlan.shift() ;
+            workingPlan.shift() ;
         }
 
-        while (!routePlan.isEmpty()) {
-            Term candidate = routePlan.top() ;
+        while (!workingPlan.isEmpty()) {
+            Term candidate = workingPlan.top() ;
             if (node.getHint(candidate) != null) {
                 return candidate;
             }
-            System.err.println("no mid-goal set for " + candidate);
-            routePlan.shift() ;
+            Itk.dbgWrn("no mid-goal set for " + candidate);
+            workingPlan.shift() ;
         }
 
         return goal;
@@ -1404,7 +1388,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         MapLinkTable way_samecost = null;
 
-        final Term next_target = calc_next_target(node);
+        final Term next_target = calcNextTarget(node);
 
         if (monitor)
             System.err.println("navigating at " + node.getTagString() + " for " + next_target);
@@ -1551,7 +1535,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     public void renavigate() {
         if (goal != null){
-            final Term next_target = calc_next_target(next_node);
+            final Term next_target = calcNextTarget(next_node);
             /*
             System.out.println("RunningAroundPerson.renavigate planned_route" +
                     ": " + planned_route + "next_target: " + next_target +
@@ -1682,14 +1666,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return goal.equals(SpecialTerm.Emergency) ;
     }
 
-    public void setRouteIndex(int routeIndex) {
-        this.routePlan.setIndex(routeIndex);
-    }
-
-    public int getRouteIndex() {
-        return routePlan.getIndex() ;
-    }
-
     public SpeedCalculationModel getSpeedCalculationModel() {
         return calculation_model;
     }
@@ -1751,7 +1727,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
 
     public void consumePlannedRoute() {
-        routePlan.setIndex(routePlan.totalLength()) ;
+        routePlan.makeCompleted() ;
     }
 
     public String getNextCandidateString() {

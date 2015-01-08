@@ -286,7 +286,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * ただし、下記のアルゴリズムにはおそらくバグがある。
      */
     @Override
-    protected Term calc_next_target(MapNode node) {
+    protected Term calcNextTarget(MapNode node) {
         if (on_node &&
             !routePlan.isEmpty() &&
             node.hasTag(routePlan.top())){

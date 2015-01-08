@@ -49,8 +49,7 @@ public class RoutePlan {
      * コンストラクタ
      */
     public RoutePlan(RoutePlan origin) {
-        route = origin.getRoute() ;
-        index = origin.getIndex() ;
+        copyFrom(origin);
     } ;
 
     //------------------------------------------------------------
@@ -84,6 +83,24 @@ public class RoutePlan {
      */
     public RoutePlan setIndex(int _index) {
         index = _index ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * index をリセッt
+     */
+    public RoutePlan resetIndex() {
+        setIndex(0) ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * index を最後に持っていく
+     */
+    public RoutePlan makeCompleted() {
+        setIndex(totalLength()) ;
         return this ;
     }
 
@@ -160,6 +177,24 @@ public class RoutePlan {
      */
     public RoutePlan add(Term tag) {
         route.add(tag) ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * プランの追加
+     */
+    public RoutePlan duplicate() {
+        return new RoutePlan(this) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * プランの追加
+     */
+    public RoutePlan copyFrom(RoutePlan origin) {
+        route = origin.getRoute() ;
+        index = origin.getIndex() ;
         return this ;
     }
 

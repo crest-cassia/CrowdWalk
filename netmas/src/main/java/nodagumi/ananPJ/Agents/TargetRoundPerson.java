@@ -38,6 +38,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.misc.RoutePlan;
 
 import nodagumi.Itk.*;
 
@@ -51,33 +52,6 @@ public class TargetRoundPerson extends RunningAroundPerson
     static final boolean DELAY_LOOP = false;
     static final boolean debug_mode = false;
 
-    /* Initial values */
-    protected double emptyspeed = V_0;
-    protected double time_scale = 1.0;//0.5;//1.0;//0.5; simulation time step 
-
-    /* Values used in simulation */
-    protected double speed;
-    protected double direction;
-    protected double density;
-
-    protected int order_in_row;
-
-    class CheckPoint implements Serializable {
-        public MapNode node;
-        public double time;
-        public String reason;
-        public CheckPoint(MapNode _node, double _time, String _reason) {
-            node = _node; time = _time; reason = _reason;
-        }
-    }
-
-    protected ArrayList<CheckPoint> route;
-
-    /* Values used for navigation */
-    protected Term goal;
-    protected ArrayList<Term> planned_route = new ArrayList<Term>();
-    protected int routeIndex;
-    
     public static String getTypeName() {
         return "TargetRoundPerson";
     }
@@ -113,8 +87,8 @@ public class TargetRoundPerson extends RunningAroundPerson
         r.direction = direction;
         r.speed = 0;
         r.goal = goal;
-        r.planned_route = planned_route;
-        r.setRouteIndex(0);
+        r.routePlan = routePlan ;
+        r.routePlan.resetIndex() ;
         r.random = super.random;
         for (String tag : tags) {
             r.addTag(tag);
@@ -226,7 +200,7 @@ public class TargetRoundPerson extends RunningAroundPerson
         MapNode node_to_navigate = next_node; 
         double distance_to_go = emptyspeed * time_scale * SPEED_VIEW_RATIO * 10;
 
-        int route_index_orig = getRouteIndex();
+        RoutePlan routePlanBackup = routePlan.duplicate() ;
         double direction_orig = direction;
 
         // N-th of this agents in current lane
@@ -313,7 +287,7 @@ public class TargetRoundPerson extends RunningAroundPerson
             
             index = -1;/* 次からは最後尾な気分で */
         }
-        setRouteIndex(route_index_orig);
+        routePlan.copyFrom(routePlanBackup) ;
         direction = direction_orig;
 
         /* calculation of speed, based on diff */
