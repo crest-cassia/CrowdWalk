@@ -74,26 +74,13 @@ public class TargetRoundPerson extends RunningAroundPerson
         route = new ArrayList<CheckPoint>();
     }
 
+    /**
+     * 複製操作のメイン
+     */
     @Override
-    public EvacuationAgent copyAndInitialize() {
-        TargetRoundPerson r = new TargetRoundPerson(0, random);
-        r.ID = ID;
-        r.generatedTime = generatedTime;
-        r.emptyspeed = emptyspeed;
-        r.prev_node = prev_node;
-        r.next_node = next_node;
-        r.current_link = current_link;
-        r.position = position;
-        r.direction = direction;
-        r.speed = 0;
-        r.goal = goal;
-        r.routePlan = routePlan ;
-        r.routePlan.resetIndex() ;
-        r.random = super.random;
-        for (String tag : tags) {
-            r.addTag(tag);
-        }
-
+    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+        TargetRoundPerson r = (TargetRoundPerson)_r ;
+        super.copyAndInitializeBody(r) ;
         return r;
     }
 
@@ -107,28 +94,6 @@ public class TargetRoundPerson extends RunningAroundPerson
              _random) ;
     }
 
-    /**
-     * 初期化。constractorから分離。
-     */
-    @Override
-    public void init(int _id,
-            double _emptySpeed,
-            double _confidence,
-            double _maxAllowedDamage,
-            double _generatedTime,
-            Random _random) {
-        init(_id, _random);
-
-        generatedTime = _generatedTime;
-        emptyspeed = _emptySpeed;
-    }
-
-    MapLink next_link_candidate = null;
-    boolean on_node = false;
-
-    private double next_position = 0.0;
-
-    private boolean passed_node = true;
     protected boolean move_commit(double time) {
         setPosition(next_position);
         while (position < 0.0 ||
@@ -179,7 +144,7 @@ public class TargetRoundPerson extends RunningAroundPerson
 
         return move_commit(time);
     }
-    protected EvacuationAgent agent_in_front;
+
     protected static double A_0 = 0.962;//1.05;//0.5;
     protected static double A_1 = 0.869;//1.25;//0.97;//2.0;
     protected static double A_2 = 4.682;//0.81;//1.5;
@@ -205,7 +170,7 @@ public class TargetRoundPerson extends RunningAroundPerson
 
         // N-th of this agents in current lane
         int index = Collections.binarySearch(current_link.getLane(direction),
-                this);
+                                             this) ;
 
         //System.err.println("step = "+time);
 
@@ -367,7 +332,7 @@ public class TargetRoundPerson extends RunningAroundPerson
                 break;
             }
         }
-        route.add(new CheckPoint(next_node, time, navigation_reason.toString()));
+        recordTrail(time) ;
 
         /* agent exits the previous link */
         getCurrentLink().agentExits(this);

@@ -465,9 +465,13 @@ implements Comparable<EvacuationAgent>, Serializable {
         return isPositiveDirection() ? position : current_link.length - position;
     }
 
-    public int compareTo(EvacuationAgent rhs) {
-        double h1 = this.position;
-        double h2 = rhs.position;
+	//------------------------------------------------------------
+	/**
+	 * sort, binarySearch 用比較関数(古くて間違っている)
+	 */
+    public int compareTo_orig(EvacuationAgent rhs) {
+		double h1 = this.position ;
+		double h2 = rhs.position ;
 
         // tkokada modified
         if (h1 == h2) {
@@ -487,6 +491,35 @@ implements Comparable<EvacuationAgent>, Serializable {
         } else {
             return (int)(-1 * getDirection());
             //return -1;
+        }
+    }
+
+	//------------------------------------------------------------
+	/**
+	 * sort, binarySearch 用比較関数
+	 * エージェントのリンク上の進み具合で比較。
+	 * 逆向きなどはちゃんと方向を直して扱う。
+	 */
+    public int compareTo(EvacuationAgent rhs) {
+		double h1 = this.advancingPosition() ;
+		double h2 = rhs.advancingPosition() ;
+
+        // tkokada modified
+        if (h1 == h2) {
+            //return (int)((agentNumber - rhs.agentNumber) * getDirection());
+            // m.saito modified
+            if (agentNumber == rhs.agentNumber) {
+                return 0;
+            } else if (agentNumber > rhs.agentNumber) {
+                return (int)(1 * getDirection());
+            } else {
+                return (int)(-1 * getDirection());
+            }
+            //return 0;
+        } else if (h1 > h2) {
+			return 1;
+        } else {
+			return -1;
         }
     }
 

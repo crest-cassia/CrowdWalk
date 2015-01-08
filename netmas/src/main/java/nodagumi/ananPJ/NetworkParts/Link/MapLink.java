@@ -237,78 +237,11 @@ public class MapLink extends OBMapPart implements Serializable {
         }
     }
 
-    //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * agent の絶対 position によるソート用 (rear_first)
-     */
-    static private Comparator<EvacuationAgent> advancingComparator_RearFirst =
-        new Comparator<EvacuationAgent>() {
-        public int compare(EvacuationAgent agent1, EvacuationAgent agent2) {
-            double position1 = agent1.advancingPosition();
-            double position2 = agent2.advancingPosition();
-
-            if (position1 == position2) {
-                // position が同じなら agentNumber が小さい順にする
-                if (agent1.getAgentNumber() == agent2.getAgentNumber()) {
-                    return 0;
-                } else if (agent1.getAgentNumber() > agent2.getAgentNumber()) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            } else if (position1 > position2) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    };
-
-    //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * agent の絶対 position によるソート用 (front_first)
-     * （改変がややこしいので、これは使わないことにする。）
-     */
-    static private Comparator<EvacuationAgent> advancingComparator_FrontFirst =
-        new Comparator<EvacuationAgent>() {
-        public int compare(EvacuationAgent agent1, EvacuationAgent agent2) {
-            double position1 = agent1.advancingPosition();
-            double position2 = agent2.advancingPosition();
-
-            if (position1 == position2) {
-                // position が同じなら agentNumber が小さい順にする
-                if (agent1.getAgentNumber() == agent2.getAgentNumber()) {
-                    return 0;
-                } else if (agent1.getAgentNumber() > agent2.getAgentNumber()) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            } else if (position1 > position2) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-    };
-
-    //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * agent の絶対 position によるソート用
-     */
-    static public Comparator<EvacuationAgent> advancingComparator
-        = advancingComparator_RearFirst ;
-
-
-
     private int total_agent_triage_level;
     public void preUpdate(double time) {
         if(agents.isEmpty()) return ;
 
-        Collections.sort(agents, advancingComparator);
+        Collections.sort(agents) ;
         setup_lanes();
 
         /* calculate the  total triage level */

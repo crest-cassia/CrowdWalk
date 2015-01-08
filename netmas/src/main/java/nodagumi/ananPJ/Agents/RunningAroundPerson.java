@@ -247,7 +247,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * リンク上の次の位置。
      * 0 以下あるいはリンク長より大きい場合、次のリンクに移っていることになる。
      */
-    private double next_position = 0.0;
+    protected double next_position = 0.0;
 
     //------------------------------------------------------------
     /**
@@ -580,8 +580,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         // N-th of this agents in current lane
         int index = 
             Collections.binarySearch(current_link.getLane(direction),
-                                     this,
-                                     MapLink.advancingComparator) ;
+                                     this) ;
 
         //System.err.println("step = "+time);
 

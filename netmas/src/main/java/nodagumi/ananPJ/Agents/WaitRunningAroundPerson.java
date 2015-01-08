@@ -127,13 +127,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 
     protected boolean scatter(double time) {
         final ArrayList<EvacuationAgent> agents = current_link.getAgents();
-        /* [2015.01.07 I.Noda] bug!!!
-         * 以下の binarySearch, 本来なら Comparator を指定しないといけない
-         * はずだが、指定していない。
-         * これまでなぜうまく行っていたのかはかなり疑問。
-         */
-        int index = Collections.binarySearch(agents, this,
-                                             MapLink.advancingComparator);
+        int index = Collections.binarySearch(agents, this) ;
         /* [2015.01.07 I.Noda] bug!!!
          * 本来、index が負になる（agents に存在しない）ことは
          * 生じないはずだが、sort_order を front_first にすると、なぜか起きる。
