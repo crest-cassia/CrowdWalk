@@ -62,24 +62,44 @@ import nodagumi.Itk.*;
 public class RunningAroundPerson extends EvacuationAgent implements Serializable {
     private static final long serialVersionUID = -6313717005123377059L;
 
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * クラス名。
+     * ClassFinder でも参照できるようにしておく。
+     */
+    public static String typeString = "RunningAroundPerson" ;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * DELAY_LOOP : ???
+	 * debug_mode : ???
+	 */
     static final boolean DELAY_LOOP = false;
     static final boolean debug_mode = false;
 
-    /* Initial values */
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+     * 速度計さん関係
+	 * emptyspeed : ??? Initial values 
+	 * time_scale : シミュレーションステップ
+     * MAX_SPEED : 自由速度
+     * ZERO_SPEED : ???
+     * density : 人口密度らしい
+     * order_in_row : lane の中での順番。
+     *                set_swing でセットされ、calc_speed_lane で参照。
+     *                ***** 間違いの元になりそう。 *****
+	 */
     protected double emptyspeed = V_0;
     protected double time_scale = 1.0;//0.5; simulation time step 
-    /* the max speed of agent */
     public static double MAX_SPEED = 0.96;
     public static double ZERO_SPEED = 0.1;
-
-    /* Values used in simulation */
-    protected double speed;
-    protected double dv = 0.0;
-    protected double direction = 0.0;
     protected double density;
-
     protected int order_in_row;
 
+    //============================================================
+    /**
+     * 経由点の通過情報
+     */
     class CheckPoint implements Serializable {
         public MapNode node;
         public double time;
@@ -89,36 +109,183 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
     }
 
-    // 通過したノードの履歴?
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 経由点の通過情報
+     */
     protected ArrayList<CheckPoint> route;
 
-    /* Values used for navigation */
-    protected Term goal;
-    protected RoutePlan routePlan = new RoutePlan();
-    public RoutePlan getRoutePlan() { return routePlan ; } ;
-
-    // sane_navigation_from_node の不要な呼び出し回避用
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * sane_navigation_from_node の不要な呼び出し回避用
+     */
     private boolean sane_navigation_from_node_forced = true;
     private MapLink sane_navigation_from_node_current_link;
     private MapLink sane_navigation_from_node_link;
     private MapNode sane_navigation_from_node_node;
     private MapLink sane_navigation_from_node_result;
 
-    // 通過経路の履歴(一度通ったリンクを避けるためのフラグ)
-    /* [2014.12.19 I.Noda] obsolete
-     * NaiveAgent に引越し
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * next_link_candidate : 次に移るリンクの候補
+     *       preUpdate()でリセット、
+     *       move_commit()でnavigation()の結果をセット、
+     *       tryToPassNode()でsetCurrentLink()される。
+     * on_node : 現在、ノード通過中かどうか？
+     *       move_set()の navigate() を呼び出す前後でon-off。
+     *       calcNextTarget() で参照。routePlanをshiftするかどうか判断。
      */
-    //private HashMap<MapNode, HashMap<MapLink, Boolean>> passedFlags =
-    //    new HashMap<MapNode, HashMap<MapLink, Boolean>>();
+    MapLink next_link_candidate = null;
+    boolean on_node = false;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * リンク上の次の位置。
+     * 0 以下あるいはリンク長より大きい場合、次のリンクに移っていることになる。
+     * move_set() でセット。
+     * move_commit() のなかで、setPosition() される。
+     */
+    protected double next_position = 0.0;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * swing を更新するかどうか（表示用？）
+     */
+    boolean update_swing_flag = true;//false;
+
+    //============================================================
+    /**
+     * 速度モデル
+     */
+    public static enum SpeedCalculationModel {
+        LaneModel,
+        /* DensityModel:
+         * calc speed with density (number of persion / m^2).
+         *  v: m/sec, rho: number of person / m^2
+         *  sinplex road: v = 1.2 - 0.25 * rho
+         *  duplex road : v = 1.27 * 10 ^ (-0.22 * rho)
+         *  duplex road : v = 1.25 - 0.476 * rho
+         */
+        DensityModel
+    }
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 速度モデル
+     */
+    private SpeedCalculationModel calculation_model =
+        SpeedCalculationModel.LaneModel;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 速度計算の定数
+     */
+    protected static double A_0 = 0.962;//1.05;//0.5;
+    protected static double A_1 = 0.869;//1.25;//0.97;//2.0;
+    protected static double A_2 = 4.682;//0.81;//1.5;
+    protected static double V_0 = 1.02265769054586;
+    
+    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
+    protected static double STAIR_SPEED_CO = 0.6;//0.7;
+
+/*
+    protected static double A_0 = 0.5*0.962;//1.05;//0.5;
+    protected static double A_1 = 1.5*0.869;//1.25;//0.97;//2.0;
+    protected static double A_2 = 4.682;//0.81;//1.5;
+    protected static double V_0 = 1.24504634565416;
+    
+    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
+    protected static double STAIR_SPEED_CO = 0.6;//0.7;
+*/
+    
+    
+/* 2010/9/16 23:53 noda
+ *    * 速度誤差最適化 (expF)
+ *
+ *     * 9900 回目の学習結果
+ *
+ *       * c0 = 0.962331091566513
+ *         c1 = 0.869327852313837
+ *         c2 = 4.68258910604962
+ *         vStar = 1.02265769054586
+ *         rStar = 0.522488010351651
+ *
+ *     * 傾向：渋滞の状況はなんとなく再現している。ただし、戻りがある。
+ *       最高速度 (vStar) は低くなり勝ち。
+ *
+ *   * 位置誤差最適化 (expG)
+ *
+ *     * 9900 回目の学習結果
+ *
+ *       * c0 = 1.97989178714465
+ *         c1 = 1.12202742329362
+ *         c2 = 0.95466478370757
+ *         vStar = 1.24504634565416
+ *         rStar = 0.805446866507348
+ */
+    
+    /*
+    protected static double A_0 = 1.97989178714465;
+    protected static double A_1 = 1.12202742329362;
+    protected static double A_2 = 0.95466478370757;
+    
+    protected static double V_0 = 1.24504634565416;
+    protected static double PERSONAL_SPACE = 0.805446866507348;
+    */
+    
+    /*
+     protected static double A_0 = 0.962331091566513;
+     
+    protected static double A_1 = 0.869327852313837;
+    protected static double A_2 = 4.68258910604962;
+    
+    protected static double V_0 = 1.02265769054586;
+    protected static double PERSONAL_SPACE = 0.522488010351651;
+    
+    protected static double STAIR_SPEED_CO = 1.0;//0.7;
+    */
+    
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * 推論理由を格納。
+	 * [I.Noda]
+	 * 効率のため、あまりメモリを消費しない方法に切り替え。
+	 */
+	ReasonTray navigation_reason = new ReasonTray() ;
+
+	//############################################################
+	/**
+	 * 初期化関連
+	 */
+    //------------------------------------------------------------
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
     public RunningAroundPerson() {} ;
     
+    //------------------------------------------------------------
+    /**
+     * 引数なしconstractor。 ClassFinder.newByName で必要。
+     */
     public RunningAroundPerson(int _id, Random _random) {
         init(_id, _random) ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * constractor
+     */
+    public RunningAroundPerson(int _id,
+            double _emptySpeed,
+            double _confidence,
+            double _maxAllowedDamage,
+            double _generatedTime,
+            Random _random) {
+        init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
+             _random) ;
+    } ;
+
+    //------------------------------------------------------------
     /**
      * 初期化。constractorから分離。
      */
@@ -129,6 +296,23 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         route = new ArrayList<CheckPoint>();
     }
 
+    //------------------------------------------------------------
+    /**
+     * 初期化。constractorから分離。
+     */
+    public void init(int _id,
+            double _emptySpeed,
+            double _confidence,
+            double _maxAllowedDamage,
+            double _generatedTime,
+            Random _random) {
+        init(_id, _random);
+        
+        generatedTime = _generatedTime;
+        emptyspeed = _emptySpeed;
+    }
+
+    //------------------------------------------------------------
 	/**
 	 * 与えられたエージェントインスタンスに内容をコピーし、初期化。
      * 差分プログラミングにする。
@@ -147,38 +331,115 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return r;
     }
 
-    public RunningAroundPerson(int _id,
-            double _emptySpeed,
-            double _confidence,
-            double _maxAllowedDamage,
-            double _generatedTime,
-            Random _random) {
-        init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
-             _random) ;
-    } ;
-
+    //------------------------------------------------------------
     /**
-     * 初期化。constractorから分離。
+     *
      */
-    public void init(int _id,
-            double _emptySpeed,
-            double _confidence,
-            double _maxAllowedDamage,
-            double _generatedTime,
-            Random _random) {
-        init(_id, _random);
+    @Override
+    public NType getNodeType() {
+        return NType.AGENT;
+    }
         
-        generatedTime = _generatedTime;
-        emptyspeed = _emptySpeed;
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public static String getTypeName() {
+        return typeString ;
     }
 
-    private void turnAround() {
-        direction = -direction;
-        MapNode tmp = prev_node;
-        prev_node = next_node;
-        next_node = tmp;
+	//############################################################
+	/**
+	 * 変数アクセス関連
+	 */
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public void setEmergency() {
+        setGoal(SpecialTerm.Emergency) ;
     }
-    
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public boolean isEmergency() {
+        return goal.equals(SpecialTerm.Emergency) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public SpeedCalculationModel getSpeedCalculationModel() {
+        return calculation_model;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public void setSpeedCalculationModel(SpeedCalculationModel _model) {
+        calculation_model = _model;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public double getDensity() {
+        return density;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public void setDensity(double _density) {
+        density = _density;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public void setTimeScale(double _time_scale) {
+        time_scale = _time_scale;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public double getTimeScale() {
+        return time_scale;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public double getEmptySpeed() {
+        return emptyspeed;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public void setEmptySpeed(double s) {
+        emptyspeed = s;
+    }
+
+	//############################################################
+	/**
+	 * シミュレーションステップ
+	 */
+    //------------------------------------------------------------
+    /**
+     * prepareForSimulation
+     */
     @Override
     public void prepareForSimulation(double _timeScale) {
         /* tkokada: modified to apply deserialize method */
@@ -204,9 +465,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
     }
 
-    MapLink next_link_candidate = null;
-    boolean on_node = false;
-
+    //------------------------------------------------------------
+    /**
+     * preUpdate
+     */
     @Override
     public void preUpdate(double time) {
         next_link_candidate = null;
@@ -215,6 +477,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         move_set(speed * direction, time, true);
     }
 
+    //------------------------------------------------------------
+    /**
+     * set_swing
+     */
     private void set_swing() {
         /* agent drawing */
         //TODO should no call here, as lane should be set up properly
@@ -241,13 +507,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
         }
     }
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * リンク上の次の位置。
-     * 0 以下あるいはリンク長より大きい場合、次のリンクに移っていることになる。
-     */
-    protected double next_position = 0.0;
 
     //------------------------------------------------------------
     /**
@@ -338,14 +597,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return false;
     }
 
-    /** Reachable links in a duration */
-    public MapLinkTable reachableLinks = new MapLinkTable();
-
-    /** directions corresponding to reachableLinks */
-    public HashMap<MapLink, Double> reachableLinkDirections =
-        new HashMap<MapLink, Double>();
-
-    private boolean passed_node = true;
+    //------------------------------------------------------------
+    /**
+     * move_commit
+     */
     protected boolean move_commit(double time) {
         setPosition(next_position);
 
@@ -389,6 +644,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return false;
     }
 
+    //------------------------------------------------------------
+    /**
+     * update
+     */
     @Override
     public boolean update(double time) {
         if (time < generatedTime) {
@@ -412,7 +671,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return move_commit(time);
     }
 
-    boolean update_swing_flag = true;//false;
+    //------------------------------------------------------------
+    /**
+     * 
+     */
     @Override
     public void updateViews() {
         if (update_swing_flag) {
@@ -421,125 +683,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
     }
 
-    private Ellipse2D getCircle(double cx, double cy, double r) {
-        return new Ellipse2D.Double(cx -r, cy -r, r * 2, r * 2);
-    }
-
-    @Override
-    public void draw(Graphics2D g, 
-            boolean experiment) {
-        if (experiment && ((displayMode & 2) != 2)) return;
-        if (current_link == null) return;
-
-        Point2D p = getPos();
-        final double minHight = ((MapPartGroup)current_link.getParent()).getMinHeight();
-        final double maxHight = ((MapPartGroup)current_link.getParent()).getMaxHeight();
-        float r = (float)((getHeight() - minHight) / (maxHight - minHight));
-        if (r < 0) r = 0;
-        if (r > 1) r = 1;
-        g.setColor(new Color(r, r, r));
-        double cx = p.getX();
-        double cy = p.getY();
-        
-        Vector3d vec = getSwing();
-        cx += vec.x;
-        cy += vec.y;
-        
-        g.fill(getCircle(cx, cy, 20));
-
-        if (selected) {
-            g.setColor(Color.YELLOW);
-            g.fill(getCircle(cx, cy, 10));
-        }  else {
-            g.setColor(Color.GRAY);
-            g.fill(getCircle(cx, cy, 10));
-        }
-    }
-
-    protected EvacuationAgent agent_in_front;
-
-    public static enum SpeedCalculationModel {
-        LaneModel,
-        /* DensityModel:
-         * calc speed with density (number of persion / m^2).
-         *  v: m/sec, rho: number of person / m^2
-         *  sinplex road: v = 1.2 - 0.25 * rho
-         *  duplex road : v = 1.27 * 10 ^ (-0.22 * rho)
-         *  duplex road : v = 1.25 - 0.476 * rho
-         */
-        DensityModel
-    }
-    private SpeedCalculationModel calculation_model =
-        SpeedCalculationModel.LaneModel;
-    //private SpeedCalculationModel calculation_model =
-    //SpeedCalculationModel.DensityModel;
-
-
-    protected static double A_0 = 0.962;//1.05;//0.5;
-    protected static double A_1 = 0.869;//1.25;//0.97;//2.0;
-    protected static double A_2 = 4.682;//0.81;//1.5;
-    protected static double V_0 = 1.02265769054586;
-    
-    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
-    protected static double STAIR_SPEED_CO = 0.6;//0.7;
-
-/*
-    protected static double A_0 = 0.5*0.962;//1.05;//0.5;
-    protected static double A_1 = 1.5*0.869;//1.25;//0.97;//2.0;
-    protected static double A_2 = 4.682;//0.81;//1.5;
-    protected static double V_0 = 1.24504634565416;
-    
-    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
-    protected static double STAIR_SPEED_CO = 0.6;//0.7;
-*/
-    
-    
-/* 2010/9/16 23:53 noda
- *    * 速度誤差最適化 (expF)
- *
- *     * 9900 回目の学習結果
- *
- *       * c0 = 0.962331091566513
- *         c1 = 0.869327852313837
- *         c2 = 4.68258910604962
- *         vStar = 1.02265769054586
- *         rStar = 0.522488010351651
- *
- *     * 傾向：渋滞の状況はなんとなく再現している。ただし、戻りがある。
- *       最高速度 (vStar) は低くなり勝ち。
- *
- *   * 位置誤差最適化 (expG)
- *
- *     * 9900 回目の学習結果
- *
- *       * c0 = 1.97989178714465
- *         c1 = 1.12202742329362
- *         c2 = 0.95466478370757
- *         vStar = 1.24504634565416
- *         rStar = 0.805446866507348
- */
-    
-    /*
-    protected static double A_0 = 1.97989178714465;
-    protected static double A_1 = 1.12202742329362;
-    protected static double A_2 = 0.95466478370757;
-    
-    protected static double V_0 = 1.24504634565416;
-    protected static double PERSONAL_SPACE = 0.805446866507348;
-    */
-    
-    /*
-     protected static double A_0 = 0.962331091566513;
-     
-    protected static double A_1 = 0.869327852313837;
-    protected static double A_2 = 4.68258910604962;
-    
-    protected static double V_0 = 1.02265769054586;
-    protected static double PERSONAL_SPACE = 0.522488010351651;
-    
-    protected static double STAIR_SPEED_CO = 1.0;//0.7;
-    */
-    
+	//############################################################
+	/**
+	 * 速度計算関連
+	 */
+    //------------------------------------------------------------
+    /**
+     * 速度計算
+     */
     protected void calc_speed(double time) {
         switch (calculation_model) {
         case LaneModel:
@@ -561,8 +712,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         pollution.effect(this);
     }
     
-    static final double SPEED_VIEW_RATIO = 10.0;
-
+    //------------------------------------------------------------
+    /**
+     * lane による速度計算
+     */
     private void calc_speed_lane(double time) {
 
         double diff = 0;    // distance between myself and front of me
@@ -573,7 +726,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         MapLink link_to_find_agent = current_link;
         // is used to update link_to_fin_agent
         MapNode node_to_navigate = next_node;
-        double distance_to_go = emptyspeed * time_scale;    // * SPEED_VIEW_RATIO * 10;
+        double distance_to_go = emptyspeed * time_scale; 
         RoutePlan routePlanBackup = routePlan.duplicate() ;
         double direction_orig = direction;
 
@@ -603,7 +756,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     break;
                 } else if (index_front < agents.size() && index_front >= 0) {
                     /* 今いる仮想レーン上にエージェントがいる */
-                    agent_in_front = agents.get(index_front);
+                    EvacuationAgent agent_in_front = agents.get(index_front);
 
                     if (current_link == link_to_find_agent) {
                         /* 最初のリンクの場合 */
@@ -721,7 +874,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
     }
 
-    // tkokada
+    //------------------------------------------------------------
+    /**
+     * density による速度計算(改良版？）
+     * tkokada
+     */
     private void calc_speed_density_reviced(double time) {
         /* minimum distance between agents */
         double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
@@ -962,6 +1119,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         //         + ", position: " + position);
     }
 
+    //------------------------------------------------------------
     /**
      * get distance between this agent and neighbor agent
      * 隣のリンク上にいる agent との距離
@@ -987,6 +1145,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return distance;
     }
 
+    //------------------------------------------------------------
     /**
      * is a neighbor agent same direction with this agent
      */
@@ -1046,6 +1205,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
     }
 
+    //------------------------------------------------------------
     /**
      * is a neighbor agent place in front of this agent
      */
@@ -1073,6 +1233,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return false;
     }
 
+    //------------------------------------------------------------
     /**
      * is a neighbor agent place in same node
      * ※未使用メソッド
@@ -1098,7 +1259,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return false;
     }
 
-    /** Calculate a distance between myself and the front agent in current link.
+    //------------------------------------------------------------
+    /**
+     * Calculate a distance between myself and the front agent in current link.
      * @return the distance
      */
     public double calcDistanceToFront() {
@@ -1121,67 +1284,16 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return distance;
     }
 
-    @Override
-    public double getDirection() {
-        return direction;
-    }
-
-    @Override
-    public boolean isForwardDirection() { return direction >= 0.0; }
-
-    @Override
-    public boolean isBackwardDirection() { return ! isForwardDirection(); }
-
-    @Override
-    public double getSpeed() {
-        return speed;
-    }
-
-    @Override
-    public void setSpeed(double _speed) {
-        speed = _speed;
-    }
-
-    public double getAcceleration() {
-        return dv;
-    }
-
-    @Override
-    public double getEmptySpeed() {
-        return emptyspeed;
-    }
-
-    @Override
-    public void setEmptySpeed(double s) {
-        emptyspeed = s;
-    }
-
-    public void setMaxAllowedDamage(double maxAllowedDamage) {
-        //this.maxAllowedDamage = maxAllowedDamage;
-    }
-
-    public double getMaxAllowedDamage() {
-        return 0.0;
-        //return maxAllowedDamage;
-    }
-
-    public void setGoal(Term _goal) {
-        //TODO might want to clear path
-        goal = _goal;
-    }
-
-    public void setPlannedRoute(List<Term> _planned_route) {
-        routePlan.setRoute(_planned_route) ;
-    }
-
-    @Override
-    public List<Term> getPlannedRoute() {
-        return routePlan.getRoute() ;
-    }
-
-    /* try to pass a node, and enter next link */
-    // change: navigation_reason, route, prev_node, previous_link,
-    // current_link, position, evacuated, link.agentExists
+	//############################################################
+	/**
+	 * 移動計画及び移動
+	 */
+    //------------------------------------------------------------
+    /**
+     * try to pass a node, and enter next link 
+     * change: navigation_reason, route, prev_node, previous_link,
+     * current_link, position, evacuated, link.agentExists
+     */
     protected boolean tryToPassNode(double time) {
         // [2015.01.02 I.Noda] ループの検出（検出だけでなにもしない）
         // 過去の route と同じかどうかのチェック。
@@ -1267,6 +1379,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return true;
     }
 
+    //------------------------------------------------------------
     /**
      * 最終決定したルート、足跡情報の記録
      * [2014.12.19 I.Noda] tryToPassNode() より移動
@@ -1279,95 +1392,99 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 // navigation_reason.toString());
     }
 
-    //------------------------------------------------------------
-    /**
-     * エージェントの routePlan で、次のターゲットを得る。
-     */
-    protected Term calcNextTarget(MapNode node) {
-        return calcNextTarget(node, routePlan) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 指定された RoutePlan で、次のターゲットを得る。
-     * @param node : このノードにおけるターゲットを探す。
-     * @param workingPlan : 指定された RoutePlan。shiftする可能性がある。
-     * @return : workingPlan の index 以降の次のターゲット、もしくは goal。
-     * [2014.12.30 I.Noda] analysis
-     * 次に来る、hint に記載されている route target を取り出す。
-     * 今、top の target が現在のノードのタグにある場合、
-     * route は１つ進める。
-     */
-    protected Term calcNextTarget(MapNode node, RoutePlan workingPlan) {
-        if (on_node &&
-            !workingPlan.isEmpty() &&
-            next_node.hasTag(workingPlan.top())){
-            /* reached mid-goal */
-            workingPlan.shift() ;
-        }
-
-        while (!workingPlan.isEmpty()) {
-            Term candidate = workingPlan.top() ;
-            if (node.getHint(candidate) != null) {
-                return candidate;
-            }
-            Itk.dbgWrn("no mid-goal set for " + candidate);
-            workingPlan.shift() ;
-        }
-
-        return goal;
-    }
-
+	//############################################################
 	/**
-	 * 推論理由を格納。
-	 * [I.Noda]
-	 * 効率のため、あまりメモリを消費しない方法に切り替え。
+	 * 経路計画
 	 */
-	//String navigation_reason = null;
-	ReasonTray navigation_reason = new ReasonTray() ;
+    //------------------------------------------------------------
+    /**
+     * ノード上で、次の道を探す。
+     */
+    protected MapLink navigate(double time,
+            MapLink link_now,
+            MapNode node_now) {
+        final MapLinkTable way_candidates = node_now.getPathways();
 
+        /* trapped? */
+        if (way_candidates.size() == 0) {
+            System.err.println("Warning: Agent trapped!");
+            //System.err.println("returned candidates size is 0");
+            return null;
+        }
+
+        /* only one way to choose */
+        if (way_candidates.size() == 1) {
+            //System.err.println("returned candidates size is 1");
+            return way_candidates.get(0);
+        }
+
+        /* if not in navigation mode, go back to path */
+        /* [2015.01.04 I.Noda]
+         * Agent の goal が失われることはないはずなので、
+         * エラーで落ちるようにしておく。
+         */
+        if (goal == null) {
+            Itk.dbgErr("An agent lost its goal.") ;
+            Itk.dbgMsg("agent.ID", this.ID) ;
+            System.exit(1) ;
+        }
+
+        MapLink target = sane_navigation(time, way_candidates);
+        if (target != null) {
+            //System.err.println("target null");
+            return target;
+        }
+
+        /* choose randomly */
+        int i = 0;
+        if (way_candidates.size() > 1) {
+            //i = (int)(Math.random() * (way_candidates.size() - 1));
+            i = (int)(random.nextDouble() * (way_candidates.size() - 1));
+        }
+        //System.err.println("choose randomly");
+        return way_candidates.get(i);
+    }
+
+    //------------------------------------------------------------
+    /**
+     *
+     */
+    public void renavigate() {
+        if (goal != null){
+            final Term next_target = calcNextTarget(next_node);
+            /*
+            System.out.println("RunningAroundPerson.renavigate planned_route" +
+                    ": " + planned_route + "next_target: " + next_target +
+                    "next_node: " + next_node.ID);
+            */
+            double nextDistance = next_node.getDistance(next_target)
+                + (current_link.length - position);
+            double prevDistance = prev_node.getDistance(next_target)
+                + position;
+            /*
+            double nextDistance = next_node.getDistanceNullAvoid(next_target) ;
+            double prevDistance = prev_node.getDistanceNullAvoid(next_target) ;
+            if (nextDistance >= 0.0)
+                nextDistance += (current_link.length - position);
+            if (prevDistance >= 0.0)
+                prevDistance += position;
+            if (prevDistance < nextDistance) {
+                turnAround();
+            }
+            */
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 
+     */
     protected MapLink sane_navigation(double time, final MapLinkTable way_candidates) {
         MapLink way = sane_navigation_from_node(time, current_link, next_node);
         return way;
     }
 
-    /**
-     * 前回の呼び出し時と同じ条件かどうかのチェック
-     */
-    private boolean isSameSituationForSaneNavigationFromNode(MapLink link, 
-                                                             MapNode node) {
-        boolean forced = sane_navigation_from_node_forced ;
-        sane_navigation_from_node_forced = false ;
-        return (!forced &&
-                sane_navigation_from_node_current_link == current_link &&
-                sane_navigation_from_node_link == link &&
-                sane_navigation_from_node_node == node &&
-                emptyspeed < (isForwardDirection() ?
-                              current_link.length - position :
-                              position)) ;
-    }
-
-    /**
-     * 上記のチェックのための状態バックアップ(before)
-     */
-    private void backupSituationForSaneNavigationFromNodeBefore(MapLink link,
-                                                                MapNode node) {
-        sane_navigation_from_node_current_link = current_link;
-        sane_navigation_from_node_link = link;
-        sane_navigation_from_node_node = node;
-    }
-
-    /**
-     * 上記のチェックのための状態バックアップ(after)
-     */
-    private void backupSituationForSaneNavigationFromNodeAfter(MapLink result) {
-        sane_navigation_from_node_result = result ;
-    }
-
-    // route_index
-    // navigation_reason
-    //
-
+    //------------------------------------------------------------
     /**
      * ノードにおいて、次の道を選択するルーチン
      */
@@ -1472,6 +1589,82 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return way;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 前回の呼び出し時と同じ条件かどうかのチェック
+     */
+    private boolean isSameSituationForSaneNavigationFromNode(MapLink link, 
+                                                             MapNode node) {
+        boolean forced = sane_navigation_from_node_forced ;
+        sane_navigation_from_node_forced = false ;
+        return (!forced &&
+                sane_navigation_from_node_current_link == current_link &&
+                sane_navigation_from_node_link == link &&
+                sane_navigation_from_node_node == node &&
+                emptyspeed < (isForwardDirection() ?
+                              current_link.length - position :
+                              position)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 上記のチェックのための状態バックアップ(before)
+     */
+    private void backupSituationForSaneNavigationFromNodeBefore(MapLink link,
+                                                                MapNode node) {
+        sane_navigation_from_node_current_link = current_link;
+        sane_navigation_from_node_link = link;
+        sane_navigation_from_node_node = node;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 上記のチェックのための状態バックアップ(after)
+     */
+    private void backupSituationForSaneNavigationFromNodeAfter(MapLink result) {
+        sane_navigation_from_node_result = result ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントの routePlan で、次のターゲットを得る。
+     */
+    protected Term calcNextTarget(MapNode node) {
+        return calcNextTarget(node, routePlan) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 指定された RoutePlan で、次のターゲットを得る。
+     * @param node : このノードにおけるターゲットを探す。
+     * @param workingPlan : 指定された RoutePlan。shiftする可能性がある。
+     * @return : workingPlan の index 以降の次のターゲット、もしくは goal。
+     * [2014.12.30 I.Noda] analysis
+     * 次に来る、hint に記載されている route target を取り出す。
+     * 今、top の target が現在のノードのタグにある場合、
+     * route は１つ進める。
+     */
+    protected Term calcNextTarget(MapNode node, RoutePlan workingPlan) {
+        if (on_node &&
+            !workingPlan.isEmpty() &&
+            next_node.hasTag(workingPlan.top())){
+            /* reached mid-goal */
+            workingPlan.shift() ;
+        }
+
+        while (!workingPlan.isEmpty()) {
+            Term candidate = workingPlan.top() ;
+            if (node.getHint(candidate) != null) {
+                return candidate;
+            }
+            Itk.dbgWrn("no mid-goal set for " + candidate);
+            workingPlan.shift() ;
+        }
+
+        return goal;
+    }
+
+    //------------------------------------------------------------
     /**
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * ここを変えると、経路選択の方法が変えられる。
@@ -1484,80 +1677,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
         
 
-    // direction
-    // prev_node
-    // next_node
-    protected MapLink navigate(double time,
-            MapLink link_now,
-            MapNode node_now) {
-        final MapLinkTable way_candidates = node_now.getPathways();
-
-        /* trapped? */
-        if (way_candidates.size() == 0) {
-            System.err.println("Warning: Agent trapped!");
-            //System.err.println("returned candidates size is 0");
-            return null;
-        }
-
-        /* only one way to choose */
-        if (way_candidates.size() == 1) {
-            //System.err.println("returned candidates size is 1");
-            return way_candidates.get(0);
-        }
-
-        /* if not in navigation mode, go back to path */
-        /* [2015.01.04 I.Noda]
-         * Agent の goal が失われることはないはずなので、
-         * エラーで落ちるようにしておく。
-         */
-        if (goal == null) {
-            Itk.dbgErr("An agent lost its goal.") ;
-            Itk.dbgMsg("agent.ID", this.ID) ;
-            System.exit(1) ;
-        }
-
-        MapLink target = sane_navigation(time, way_candidates);
-        if (target != null) {
-            //System.err.println("target null");
-            return target;
-        }
-
-        /* choose randomly */
-        int i = 0;
-        if (way_candidates.size() > 1) {
-            //i = (int)(Math.random() * (way_candidates.size() - 1));
-            i = (int)(random.nextDouble() * (way_candidates.size() - 1));
-        }
-        //System.err.println("choose randomly");
-        return way_candidates.get(i);
-    }
-
-    public void renavigate() {
-        if (goal != null){
-            final Term next_target = calcNextTarget(next_node);
-            /*
-            System.out.println("RunningAroundPerson.renavigate planned_route" +
-                    ": " + planned_route + "next_target: " + next_target +
-                    "next_node: " + next_node.ID);
-            */
-            double nextDistance = next_node.getDistance(next_target)
-                + (current_link.length - position);
-            double prevDistance = prev_node.getDistance(next_target)
-                + position;
-            /*
-            double nextDistance = next_node.getDistanceNullAvoid(next_target) ;
-            double prevDistance = prev_node.getDistanceNullAvoid(next_target) ;
-            if (nextDistance >= 0.0)
-                nextDistance += (current_link.length - position);
-            if (prevDistance >= 0.0)
-                prevDistance += position;
-            if (prevDistance < nextDistance) {
-                turnAround();
-            }
-            */
-        }
-    }
-
+	//############################################################
+	/**
+	 * 入出力
+	 */
+    //------------------------------------------------------------
+    /**
+     *
+     */
     @Override
     public void dumpResult(PrintStream out) {
         out.print("" + generatedTime + ",");
@@ -1573,6 +1700,53 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         out.println();
     }
     
+    //------------------------------------------------------------
+    /**
+     * 
+     */
+    private Ellipse2D getCircle(double cx, double cy, double r) {
+        return new Ellipse2D.Double(cx -r, cy -r, r * 2, r * 2);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 
+     */
+    @Override
+    public void draw(Graphics2D g, 
+            boolean experiment) {
+        if (experiment && ((displayMode & 2) != 2)) return;
+        if (current_link == null) return;
+
+        Point2D p = getPos();
+        final double minHight = ((MapPartGroup)current_link.getParent()).getMinHeight();
+        final double maxHight = ((MapPartGroup)current_link.getParent()).getMaxHeight();
+        float r = (float)((getHeight() - minHight) / (maxHight - minHight));
+        if (r < 0) r = 0;
+        if (r > 1) r = 1;
+        g.setColor(new Color(r, r, r));
+        double cx = p.getX();
+        double cy = p.getY();
+        
+        Vector3d vec = getSwing();
+        cx += vec.x;
+        cy += vec.y;
+        
+        g.fill(getCircle(cx, cy, 20));
+
+        if (selected) {
+            g.setColor(Color.YELLOW);
+            g.fill(getCircle(cx, cy, 10));
+        }  else {
+            g.setColor(Color.GRAY);
+            g.fill(getCircle(cx, cy, 10));
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * (for editor)
+     */
     @Override
     public JPanel paramSettingPanel(NetworkMap network_map)  {
         class ParamSettingPanel extends JPanel
@@ -1633,105 +1807,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         return new ParamSettingPanel(network_map, this); 
     }
     
-    @Override
-    public NType getNodeType() {
-        return NType.AGENT;
-    }
-        
-    /* for the newer, xml based format */
-    /**
-     * クラス名。
-     * ClassFinder でも参照できるようにしておく。
-     */
-    public static String typeString = "RunningAroundPerson" ;
-    public static String getTypeName() {
-        return typeString ;
-    }
-
-    @Override
-    public Term getGoal() {
-        return goal;
-    }
-
-    public void setEmergency() {
-        setGoal(SpecialTerm.Emergency) ;
-    }
-
-    public boolean isPassedNode() {
-        return passed_node;
-    }
-
-    public boolean isEmergency() {
-        return goal.equals(SpecialTerm.Emergency) ;
-    }
-
-    public SpeedCalculationModel getSpeedCalculationModel() {
-        return calculation_model;
-    }
-
-    public void setSpeedCalculationModel(SpeedCalculationModel _model) {
-        calculation_model = _model;
-    }
-
-    public double getDensity() {
-        return density;
-    }
-
-    public void setDensity(double _density) {
-        density = _density;
-    }
-
-    public void setTimeScale(double _time_scale) {
-        time_scale = _time_scale;
-    }
-
-    public double getTimeScale() {
-        return time_scale;
-    }
-
-    /* [2014.12.29 I.Noda]
-     * 今後の拡張性のため、Route 上にある Atom 以外の Term はすべて
-     * Directive とみなす。（つまり、Atom (String) のみを経由地点の tag
-     * と扱うことにする。
-     */
-    // planned_route の残り経路がすべて WAIT_FOR/WAIT_UNTIL ならば true を返す
-    public boolean isRestAllRouteDirective() {
-        if (isPlannedRouteCompleted()) {
-            return false;
-        }
-
-        int delta = 0 ;
-        while (delta < routePlan.length()) {
-            Term candidate = routePlan.top(delta);
-            if(!isDirectiveTerm(candidate)) {
-                return false ;
-            }
-            delta += 1 ;
-        }
-        return true;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ある Term が Directive かどうかのチェック
-     * ここでは、単純に Atom でないかどうかをチェックしている。
-     * 今後の拡張で、継承先で変更できるものとする。
-     */
-    public boolean isDirectiveTerm(Term term) {
-        return !term.isAtom() ;
-    }
-
-    public boolean isPlannedRouteCompleted() {
-        return routePlan.isEmpty() ;
-    }
-
-    public void consumePlannedRoute() {
-        routePlan.makeCompleted() ;
-    }
-
-    public String getNextCandidateString() {
-        return isPlannedRouteCompleted() ? "" : routePlan.top().getString() ;
-    }
 }
 // ;;; Local Variables:
 // ;;; mode:java

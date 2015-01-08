@@ -33,6 +33,8 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
 
+    protected boolean waiting = false;
+
     /**
      * Agent の詳細設定情報を格納しているもの
      */

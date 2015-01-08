@@ -1018,7 +1018,12 @@ public class SimulationPanel3D extends NetworkPanel3D
             case 0://GREEN
             {
                 if (menu_item_agent_color_speed.getState()) {
-                    if (!((RunningAroundPerson)agent).isPassedNode()){
+					//if (!((RunningAroundPerson)agent).isPassedNode()){
+					/* [2015.01.08 I.Noda]
+					 * isPassedNode は常に true しか返さない。
+					 * また、このメソッドはもとから削除した。
+					 * よって、パスする。*/
+					if (false) {
                         app.setColoringAttributes(new ColoringAttributes(
                                     Colors.YELLOW, ColoringAttributes.FASTEST));
                     } else if (agent.getCurrentLink() != null &&

@@ -193,7 +193,7 @@ public class TargetRoundPerson extends RunningAroundPerson
                     break;
                 } else if (index_front < agents.size() && index_front >= 0) {
                     /* 今いる仮想レーン上にエージェントがいる */
-                    agent_in_front = agents.get(index_front);
+                    EvacuationAgent agent_in_front = agents.get(index_front);
 
                     if (current_link == link_to_find_agent) {
                         /* 最初のリンクの場合 */
