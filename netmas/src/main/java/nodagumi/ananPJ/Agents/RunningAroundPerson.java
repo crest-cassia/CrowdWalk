@@ -223,11 +223,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         int w = current_link.getLaneWidth(direction);
         int index = Collections.binarySearch(current_link.getLane(direction),
                                              this);
-        if (isNegativeDirection())
+        if (isBackwardDirection())
             index = current_link.getLane(direction).size() - index;
 
         order_in_row = index;
-        if (isPositiveDirection()) {
+        if (isForwardDirection()) {
             if (index >= 0) {
                 swing_width = (2.0 * ((current_link.getLane(direction).size() - index) % w)) / current_link.width - 1.0;
             }  else {
@@ -273,8 +273,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 // System.err.println("tag: " + tag);
                 if (next_node.isStop(tag, time)) {
                     // System.err.println(" stop tag: " + tag + ", time: " + time + ", direction: " + direction + ", speed: " + speed + ", position: " + position + ", link len: " + current_link.length);
-                    if ((isPositiveDirection() && speed >= (current_link.length - position)) ||
-                            (isNegativeDirection() && speed >= position) ||
+                    if ((isForwardDirection() && speed >= (current_link.length - position)) ||
+                            (isBackwardDirection() && speed >= position) ||
                             (speed == 0.0)) {
                         speed = 0.;
                         next_position = position;
@@ -612,7 +612,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                         // agent_in_front.agentNumber);
                     } else {
                         /* 先読み */
-                        if (isPositiveDirection()) {
+                        if (isForwardDirection()) {
                             diff = agent_in_front.position;
                             // System.err.print("front " +
                             // agent_in_front.agentNumber);
@@ -634,9 +634,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
             /* 距離等の変数の更新 */
             if (link_to_find_agent == current_link) {
-                if (isPositiveDirection()) {
+                if (isForwardDirection()) {
                     diff_base = current_link.length - position;
-                } else { /* isNegativeDirection() */
+                } else { /* isBackwardDirection() */
                     diff_base = position;
                 }
                 passed_agent_count = agents.size() - index - 1;
@@ -706,13 +706,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         int w = current_link.getLaneWidth(direction);
         if (order_in_row < w) {
-            if (isPositiveDirection()) {
+            if (isForwardDirection()) {
                 if (((MapNode) current_link.getTo()).hasTag(goal)){
                     speed = emptyspeed;
                     // System.err.println("head agent speed is modified, goal: " + goal);
                 }
             }
-            if (isNegativeDirection()) {
+            if (isBackwardDirection()) {
                 if (((MapNode) current_link.getFrom()).hasTag(goal)){
                     speed = emptyspeed;
                     // System.err.println("head agent speed is modified. goal: " + goal);
@@ -747,7 +747,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         /* in range agents on current link is calculated in between maxRange & minRange */
         double maxRange = 0.0;
         double minRange = 0.0;
-        if (isPositiveDirection()) {
+        if (isForwardDirection()) {
             minRange = position;
             maxRange = Math.min(position + DENSITY_RANGE, current_link.length);
         } else {
@@ -787,8 +787,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 }
                 // 以下、自分の隣か前を歩いている(歩いて来る) agent について(direction ごと)
                 // agent is placed in front of this agent.
-                if (isPositiveDirection() && agent.position >= position) {
-                    if (agent.isPositiveDirection()) {
+                if (isForwardDirection() && agent.position >= position) {
+                    if (agent.isForwardDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
@@ -801,8 +801,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                         }
                     }
                 // agent is placed in front of this agent.
-                } else if (isNegativeDirection() && agent.position <= position) {
-                    if (agent.isNegativeDirection()) {
+                } else if (isBackwardDirection() && agent.position <= position) {
+                    if (agent.isBackwardDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
@@ -996,47 +996,47 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
         // 重複したリンク
         if (currentLink.getFrom() == neighborLink.getFrom() && currentLink.getTo() == neighborLink.getTo()) {
-            if (isPositiveDirection() && agent.isNegativeDirection())
+            if (isForwardDirection() && agent.isBackwardDirection())
                 return true;
-            else if (isNegativeDirection() && agent.isPositiveDirection())
+            else if (isBackwardDirection() && agent.isForwardDirection())
                 return true;
             else
                 return false;
         }
         // ループ状の重複したリンク
         if (currentLink.getFrom() == neighborLink.getTo() && currentLink.getTo() == neighborLink.getFrom()) {
-            if (isPositiveDirection() && agent.isPositiveDirection())
+            if (isForwardDirection() && agent.isForwardDirection())
                 return true;
-            else if (isNegativeDirection() && agent.isNegativeDirection())
+            else if (isBackwardDirection() && agent.isBackwardDirection())
                 return true;
             else
                 return false;
         }
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            if (isPositiveDirection() && agent.isNegativeDirection())
+            if (isForwardDirection() && agent.isBackwardDirection())
                 return true;
-            else if (isNegativeDirection() && agent.isPositiveDirection())
+            else if (isBackwardDirection() && agent.isForwardDirection())
                 return true;
             else
                 return false;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            if (isPositiveDirection() && agent.isPositiveDirection())
+            if (isForwardDirection() && agent.isForwardDirection())
                 return true;
-            else if (isNegativeDirection() && agent.isNegativeDirection())
+            else if (isBackwardDirection() && agent.isBackwardDirection())
                 return true;
             else
                 return false;
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            if (isPositiveDirection() && agent.isPositiveDirection())
+            if (isForwardDirection() && agent.isForwardDirection())
                 return true;
-            else if (isNegativeDirection() && agent.isNegativeDirection())
+            else if (isBackwardDirection() && agent.isBackwardDirection())
                 return true;
             else
                 return false;
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            if (isPositiveDirection() && agent.isNegativeDirection())
+            if (isForwardDirection() && agent.isBackwardDirection())
                 return true;
-            else if (isNegativeDirection() && agent.isPositiveDirection())
+            else if (isBackwardDirection() && agent.isForwardDirection())
                 return true;
             else
                 return false;
@@ -1054,16 +1054,16 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         MapLink neighborLink = agent.getCurrentLink();
 
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            if (isNegativeDirection())
+            if (isBackwardDirection())
                 return true;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            if (isNegativeDirection())
+            if (isBackwardDirection())
                 return true;
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            if (isPositiveDirection())
+            if (isForwardDirection())
                 return true;
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            if (isPositiveDirection())
+            if (isForwardDirection())
                 return true;
         } else {
             System.err.println("\tRunningAroundPerson." +
@@ -1105,7 +1105,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double distance = 0.0;
         for (EvacuationAgent agent : current_link.getAgents()) {
             double tmp_distance = 0.0;
-            if (isPositiveDirection()) {
+            if (isForwardDirection()) {
                 if (agent.position > position) {
                     tmp_distance = agent.position - position;
                 }
@@ -1127,10 +1127,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     }
 
     @Override
-    public boolean isPositiveDirection() { return direction >= 0.0; }
+    public boolean isForwardDirection() { return direction >= 0.0; }
 
     @Override
-    public boolean isNegativeDirection() { return ! isPositiveDirection(); }
+    public boolean isBackwardDirection() { return ! isForwardDirection(); }
 
     @Override
     public double getSpeed() {
@@ -1342,7 +1342,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 sane_navigation_from_node_current_link == current_link &&
                 sane_navigation_from_node_link == link &&
                 sane_navigation_from_node_node == node &&
-                emptyspeed < (isPositiveDirection() ?
+                emptyspeed < (isForwardDirection() ?
                               current_link.length - position :
                               position)) ;
     }

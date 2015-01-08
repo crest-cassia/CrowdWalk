@@ -147,8 +147,20 @@ implements Comparable<EvacuationAgent>, Serializable {
     abstract public double getSpeed();
     abstract public void setSpeed(double speed);
     abstract public double getDirection();
-    abstract public boolean isPositiveDirection();
-    abstract public boolean isNegativeDirection();
+
+	//------------------------------------------------------------
+	/**
+	 * 現在のリンクに対して前向き（リンクの fromNode から toNode）
+	 * に向かっているか？
+	 */
+    abstract public boolean isForwardDirection();
+	//------------------------------------------------------------
+	/**
+	 * 現在のリンクに対して逆向き（リンクの toNode から fromNode）
+	 * に向かっているか？
+	 */
+    abstract public boolean isBackwardDirection();
+
     abstract public double getAcceleration();
     
     abstract public void prepareForSimulation(double _ts);
@@ -462,7 +474,7 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     // current_link 上における相対(エージェント進行方向中心) position
     public double advancingPosition() {
-        return isPositiveDirection() ? position : current_link.length - position;
+        return isForwardDirection() ? position : current_link.length - position;
     }
 
 	//------------------------------------------------------------
