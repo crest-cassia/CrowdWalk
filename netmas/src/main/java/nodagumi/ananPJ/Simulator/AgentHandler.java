@@ -658,18 +658,15 @@ public class AgentHandler implements Serializable {
         if (true) {
             synchronized (model) {
                 for (MapLink link : effectiveLinksEnabled ? effectiveLinks : model.getLinks()) {
-                    if(isUsingFrontFirstOrderQueue) {
-                        ArrayList<EvacuationAgent> pos_agents = link.getLane(1.0);
-                        for (int i = pos_agents.size() - 1 ; i >= 0 ; --i) {
-                            EvacuationAgent agent = pos_agents.get(i);
-                            agent.preUpdate(time);
-                            count += 1;
-                        }
-                    } else { // [2015.01.07 I.Noda] おそらくこの順序は間違っている。
-                        for (EvacuationAgent agent : link.getLane(1.0)) {
-                            agent.preUpdate(time);
-                            count += 1;
-                        }
+                    ArrayList<EvacuationAgent> pos_agents = link.getLane(1.0);
+                    for(int i = 0 ; i < pos_agents.size() ; i++) {
+                        EvacuationAgent agent =
+                            (isUsingFrontFirstOrderQueue ?
+                             pos_agents.get(pos_agents.size() - i - 1) :
+                             pos_agents.get(i)) ;
+
+                        agent.preUpdate(time);
+                        count += 1;
                     }
                     ArrayList<EvacuationAgent> neg_agents = link.getLane(-1.0);
                     for (int i = neg_agents.size() - 1; i >= 0; --i) {
@@ -710,7 +707,18 @@ public class AgentHandler implements Serializable {
 
         // tkokada
         boolean existNonZeroSpeedAgent = false;
-        for (EvacuationAgent agent : agents) {
+        /* [2015.01.08 I.Noda]
+         * agents の queue は、現状で逆順に並んでいるので、
+         * 念の為、逆順に処理をすることにする。
+         * 過去の順番での処理にも switch できるように、
+         * isUsingFrontFirstOrderQueue を参照する。
+         */
+        for(int k = 0 ; k < agents.size() ; k++) {
+            EvacuationAgent agent =
+                (isUsingFrontFirstOrderQueue ?
+                 agents.get(agents.size() - k - 1) :
+                 agents.get(k)) ;
+
             if (agent.isEvacuated())
                 continue;
 
