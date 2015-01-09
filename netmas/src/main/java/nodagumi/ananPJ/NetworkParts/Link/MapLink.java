@@ -309,58 +309,58 @@ public class MapLink extends OBMapPart implements Serializable {
         return true;
     }
 
-    private ArrayList<EvacuationAgent> positive_lane =
+    private ArrayList<EvacuationAgent> forwardLane =
         new ArrayList<EvacuationAgent>() ;
-    private ArrayList<EvacuationAgent> negative_lane =
+    private ArrayList<EvacuationAgent> negativeLane =
         new ArrayList<EvacuationAgent>() ;
     public void setup_lanes() {
-        positive_lane.clear() ;
-        negative_lane.clear() ;
+        forwardLane.clear() ;
+        negativeLane.clear() ;
         for (EvacuationAgent agent : agents) {
-            if (agent.getDirection() > 0.0) {
-                positive_lane.add(agent);
+            if (agent.isForwardDirection()) {
+                forwardLane.add(agent);
             } else {
-                negative_lane.add(agent);
+                negativeLane.add(agent);
             }
         }
         /* [2015.01.03 I.Noda]
          * 以下の sort は、agents がすでに sort されているので無駄なはず。
          * なので排除。
          */
-        //Collections.sort(positive_lane);
-        //Collections.sort(negative_lane);
+        //Collections.sort(forwardLane);
+        //Collections.sort(negativeLane);
     }
 
     private void add_agent_to_lane(EvacuationAgent agent) {
-        if (agent.getDirection() > 0.0) {
-            positive_lane.add(agent);
-            Collections.sort(positive_lane);    
+        if (agent.isForwardDirection()) {
+            forwardLane.add(agent);
+            Collections.sort(forwardLane);    
         } else {
-            negative_lane.add(agent);
-            Collections.sort(negative_lane);
+            negativeLane.add(agent);
+            Collections.sort(negativeLane);
         }
     }
 
 
     public ArrayList<EvacuationAgent> getLane(double speed) {
-        if (speed > 0) return positive_lane;
-        else return negative_lane;
+        if (speed > 0) return forwardLane;
+        else return negativeLane;
     }
 
     public int getLaneWidth(double speed) {
         int d;
-        if (speed > 0) d = positive_lane.size();
-        else d = negative_lane.size();
+        if (speed > 0) d = forwardLane.size();
+        else d = negativeLane.size();
 
-        int lane_width = (int)(d * width / (positive_lane.size() +
-                    negative_lane.size()));
+        int lane_width = (int)(d * width / (forwardLane.size() +
+                    negativeLane.size()));
         if (lane_width == 0) {
             lane_width = 1;
             /*
             System.err.print("WARNING: lane width 0 on " + getTagString());
             System.err.println(" (" + width + "*" + d + " / ("
-                    + positive_lane.size() + " + "
-                    + negative_lane.size() + ")");
+                    + forwardLane.size() + " + "
+                    + negativeLane.size() + ")");
             if (width < 2.0) {
                 System.err.println("ERROR: path width " + width);
             }
@@ -569,7 +569,7 @@ public class MapLink extends OBMapPart implements Serializable {
 
     public void agentEnters(EvacuationAgent agent) {
         agents.add(agent);
-        if (agent.getDirection() == 1.0 || agent.getDirection() == -1.0) {
+        if (agent.isForwardDirection() || agent.isBackwardDirection()) {
             add_agent_to_lane(agent);
         }
 
@@ -587,8 +587,8 @@ public class MapLink extends OBMapPart implements Serializable {
     public void agentExits (EvacuationAgent agent) {
         assert(agents.contains(agent));
         agents.remove(agent);
-        if (! positive_lane.remove(agent)) {
-            negative_lane.remove(agent);
+        if (! forwardLane.remove(agent)) {
+            negativeLane.remove(agent);
         }
     }
 
