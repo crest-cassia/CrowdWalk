@@ -569,9 +569,13 @@ public class MapLink extends OBMapPart implements Serializable {
 
     public void agentEnters(EvacuationAgent agent) {
         agents.add(agent);
+        /* [2015.01.09 I.Noda]
+         * 以下の処理はおそらく無駄。
+         * しかもいちいち sort しているので、計算時間の無駄のはず。
         if (agent.isForwardDirection() || agent.isBackwardDirection()) {
             add_agent_to_lane(agent);
         }
+        */
 
         /* emergency mode? */
         if (getEmergency() 

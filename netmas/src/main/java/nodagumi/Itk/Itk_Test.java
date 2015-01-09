@@ -21,6 +21,7 @@ import net.arnx.jsonic.JSONException ;
 
 import java.util.Map ;
 import java.util.HashMap ;
+import java.util.ArrayList;
 import nodagumi.Itk.Itk ;
 
 //======================================================================
@@ -28,6 +29,30 @@ import nodagumi.Itk.Itk ;
  * Itk Test
  */
 public class Itk_Test {
+    //------------------------------------------------------------
+    /**
+     * test Array
+     */
+    @Test
+    public void test_Array() {
+        ArrayList<Integer> a2 = new ArrayList<Integer>() ;
+        for(int i = 0 ; i < 10 ; i++) { a2.add(i) ; }
+        for(int i = 0 ; i < a2.size() ; i++) {
+            Integer k = a2.get(a2.size() - i - 1) ;
+            if(k == 3) { a2.remove(k) ; }
+            Itk.dbgVal("k",k) ;
+            Itk.dbgVal("a2", a2) ;
+        }
+
+        ArrayList<Integer> a1 = new ArrayList<Integer>() ;
+        for(int i = 0 ; i < 10 ; i++) { a1.add(i) ; }
+        for(Integer k : a1) {
+            if(k == 3) { a1.remove(k) ; }
+            Itk.dbgVal("k",k) ;
+            Itk.dbgVal("a1", a1) ;
+        }
+    }
+
     //------------------------------------------------------------
     /**
      * test dbgVal
