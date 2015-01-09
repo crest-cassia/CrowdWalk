@@ -317,7 +317,7 @@ public class AgentHandler implements Serializable {
         public void setEnabled(boolean b,
                 MapLinkTable links) {
             happend = true;
-            if (command.length() > 3 && command.substring(0, 4).equals("SET:")) {
+            if (command.startsWith("SET:")) {
                 String set_tag = command.substring(4);
                 System.err.println("set_tag: " + set_tag);
                 for (MapLink link : links) {

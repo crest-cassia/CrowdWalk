@@ -564,26 +564,20 @@ implements Comparable<EvacuationAgent>, Serializable {
 	 * 逆向きなどはちゃんと方向を直して扱う。
 	 */
     public int compareTo(EvacuationAgent rhs) {
+		if(agentNumber == rhs.agentNumber) return 0 ;
+
 		double h1 = this.advancingPosition() ;
 		double h2 = rhs.advancingPosition() ;
 
-        // tkokada modified
-        if (h1 == h2) {
-            //return (int)((agentNumber - rhs.agentNumber) * getDirection());
-            // m.saito modified
-            if (agentNumber == rhs.agentNumber) {
-                return 0;
-            } else if (agentNumber > rhs.agentNumber) {
-                return (int)(1 * getDirection());
-            } else {
-                return (int)(-1 * getDirection());
-            }
-            //return 0;
-        } else if (h1 > h2) {
+		if(h1 > h2) {
+			return 1 ;
+		} else if(h1 < h2) {
+			return -1 ;
+		} else if(agentNumber > rhs.agentNumber) {
 			return 1;
-        } else {
+		} else {
 			return -1;
-        }
+		}
     }
 
 	//############################################################

@@ -188,9 +188,7 @@ public class NaiveAgent
     protected void recordTrail(double time) {
         super.recordTrail(time) ;
 
-        if (next_node != prev_node) {
-            trailCountTable.add(next_node, next_link_candidate, trailCountStep) ;
-        }
+        trailCountTable.add(next_node, next_link_candidate, trailCountStep) ;
     }
 
 } // class NaiveAgent
