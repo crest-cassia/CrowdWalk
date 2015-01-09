@@ -282,23 +282,25 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * ただし、下記のアルゴリズムにはおそらくバグがある。
      */
     @Override
-    protected Term calcNextTarget(MapNode node) {
+    protected Term calcNextTarget(MapNode node, 
+                                  RoutePlan workingRoutePlan,
+                                  boolean on_node) {
         if (on_node &&
-            !routePlan.isEmpty() &&
-            node.hasTag(routePlan.top())){
-            routePlan.shift() ;
+            !workingRoutePlan.isEmpty() &&
+            node.hasTag(workingRoutePlan.top())){
+            workingRoutePlan.shift() ;
         }
-        int next_check_point_index = routePlan.getIndex() ;
-        while (next_check_point_index < routePlan.totalLength()) {
-            Term candidate = routePlan.getRoute().get(next_check_point_index) ;
+        RoutePlan advancedRoutePlan = workingRoutePlan.duplicate() ;
+        while (!advancedRoutePlan.isEmpty()) {
+            Term candidate = advancedRoutePlan.top() ;
             /* [2014.12.27 I.Noda]
              * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
              * (in "AgentGenerationFile.java")
              */
             WaitDirective.Type waitType = WaitDirective.isDirective(candidate) ;
             if (waitType != null) {
-                routePlan.setIndex(next_check_point_index);
-                next_check_point_index++ ;
+                workingRoutePlan.copyFrom(advancedRoutePlan) ;
+                advancedRoutePlan.shift() ;
             } else if (node.hasTag(candidate)){
                 /* [2014.12.29 I.Noda] question
                  * ここのアルゴリズム、正しいのか？
@@ -306,14 +308,14 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
                  * setRouteIndex している。
                  * そうでなければ、今みている次を setRouteIndex している。
                  */
-                next_check_point_index++;
-                routePlan.setIndex(next_check_point_index);
+                advancedRoutePlan.shift() ;
+                workingRoutePlan.copyFrom(advancedRoutePlan) ;
             } else if (node.getHint(candidate) != null) {
                 return candidate;
             } else {
                 System.err.println("no mid-goal set for " + candidate);
-                next_check_point_index++;
-                routePlan.setIndex(next_check_point_index);
+                advancedRoutePlan.shift() ;
+                workingRoutePlan.copyFrom(advancedRoutePlan) ;
             }
         }
 
