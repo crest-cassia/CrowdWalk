@@ -21,6 +21,10 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    ivy
+}
+
 dependencies {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         compile localGroovy()   // Gradleに同梱されているGroovyを使う
@@ -31,7 +35,12 @@ dependencies {
         compile 'junit:junit:4.12'
         compile fileTree(dir: 'libs/jar', include: '*.jar')
     } else {
-        compile localGroovy()   // Gradleに同梱されているGroovyを使う
+        // Linux/MacOS の場合は、gradle-1.12 を使うこと。
+	// また、groovy は別途、2.0.0 以上をインストールしておくこと。
+	groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.0'
+        //compile localGroovy()   // Gradleに同梱されているGroovyを使う
+	//ivy "org.apache.ivy:ivy:2.3.0"
+	//compile 'org.codehaus.groovy:groovy-all:2.0.0'
         compile 'commons-cli:commons-cli:1.2'
         // compile 'org.geotools:gt-shapefile:8.5'
         // compile 'org.geotools:gt-swing:8.5'
