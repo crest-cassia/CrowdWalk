@@ -42,6 +42,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.misc.Snapshot;
+import nodagumi.ananPJ.Agents.EvacuationAgent;
 
 import nodagumi.Itk.*;
 
@@ -556,6 +557,27 @@ public class MapNode extends OBMapPart implements Serializable {
         }
         return false;   // Exception の代わり
     }
+
+    //------------------------------------------------------------
+    /**
+     * 交通規制処理
+     * @param agent: 規制を加えるエージェント。この単位時間にノードにたどり着く。
+     * @param time: 現在時刻
+     * @return 規制が適用されたら true
+     */
+    public boolean applyRestrictionToAgent(EvacuationAgent agent,
+                                              double time) {
+        boolean applied = false ;
+        /* 分担制御 */
+        if(isStopTimesEnabled() && isStoppedTime(time)) {
+            agent.setSpeed(0) ;
+            applied = true ;
+        }
+
+        return applied ;
+    }
+
+
 }
 // ;;; Local Variables:
 // ;;; mode:java

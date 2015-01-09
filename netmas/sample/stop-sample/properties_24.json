@@ -1,6 +1,6 @@
 {
     comment: 'NetmasCuiSimulator',
-    debug: true,
+    debug: false,
     io_handler_type: 'none',
 
     map_file: '2014_1222.MOJI_width10.0_02.test_link.xml',
@@ -19,7 +19,7 @@
     timer_enable: false,
     timer_file: 'log/timer.log',
 
-    time_series_log: true,
+    time_series_log: false,
     time_series_log_path: 'log',
     time_series_log_interval: 1,
 
@@ -30,8 +30,8 @@
     //individual_pedestrians_log_dir: 'log',
 
     record_simulation_screen: false,
-    screenshot_dir: '/tmp/a',
-    clear_screenshot_dir: true,
+    screenshot_dir: '/tmp',
+    clear_screenshot_dir: false,
     //screenshot_image_type: 'png',
 
 //  weight: 0,

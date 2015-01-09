@@ -510,31 +510,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * @param will_move_out : 次のリンクに進むかどうか。WaitDirective 用。
      */
     protected boolean move_set(double d, double time, boolean will_move_out) {
-        // 2013.02.21 tkokada ScenarioEvent STOP_TIMES
-        if (current_link.isStopTimesEnabled()) {
-            for (String tag : current_link.getTags()) {
-                if (current_link.isStop(tag, time)) {
-                    speed = 0;
-                    next_position = position;
-                    return true;
-                }
-            }
-        }
-        if (next_node.isStopTimesEnabled()) {
-            for (String tag : next_node.getTags()) {
-                if (next_node.isStop(tag, time)) {
-                    if ((isForwardDirection() && 
-                         speed >= (current_link.length - position)) ||
-                            (isBackwardDirection() && speed >= position) ||
-                            (speed == 0.0)) {
-                        speed = 0.;
-                        next_position = position;
-                        return true;
-                    }
-                }
-            }
-        }
-
         double distance_to_move = d * time_scale;
 
         next_position = position + distance_to_move;
@@ -692,6 +667,20 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         default:
             break;
         }
+
+        /* [2015.01.09 I.Noda]
+         * リンクの交通規制など (STOP や渋谷の SIGNAL)
+         */
+        current_link.applyRestrictionToAgent(this, time) ;
+
+        /* [2015.01.09 I.Noda]
+         * ノードの交通規制など (STOP)
+         */
+        if ((isForwardDirection() && speed >= (current_link.length - position)) ||
+            (isBackwardDirection() && speed >= position)) {
+            next_node.applyRestrictionToAgent(this, time) ;
+        }
+
         pollution.effect(this);
     }
     
@@ -813,15 +802,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             speed = emptyspeed;
         } else if (speed < 0) {
             speed = 0;
-        }
-
-        //******************
-        //** 渋谷駅周辺の帰宅困難者再現用の信号
-        //** かなり無茶な変更なので、すぐに撤去のこと
-
-        if (getCurrentLink().hasTag("SIGNAL_WAITING")) {
-            if (time % 60 < 30)
-                speed = 0;
         }
 
         int w = current_link.getLaneWidth(direction);

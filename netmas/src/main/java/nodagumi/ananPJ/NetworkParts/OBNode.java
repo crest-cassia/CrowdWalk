@@ -379,10 +379,25 @@ public abstract class OBNode extends DefaultMutableTreeNode
     // 2013.02.21 tkokada add for ScenarioEvent STOP_TIMES
     private ArrayList<StopTime> stopTimes = new ArrayList<StopTime>();
 
+    //------------------------------------------------------------
+    /**
+     * 分断制御用交通規制のチェック
+     */
     public boolean isStopTimesEnabled() {
         if (stopTimes.size() > 0)
             return true;
         return false;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 分断制御用交通規制タグのチェック
+     */
+    public boolean isStoppedTime(double time) {
+        for(String tag: getTags()) {
+            if(isStop(tag, time)) return true ;
+        }
+        return false ;
     }
 
     public void addStopTime(String tag, double offset, double moving,

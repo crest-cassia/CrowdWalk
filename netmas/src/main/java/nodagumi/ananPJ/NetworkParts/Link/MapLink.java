@@ -1270,4 +1270,33 @@ public class MapLink extends OBMapPart implements Serializable {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * 交通規制処理
+     * @param agent: 規制を加えるエージェント。リンク上にいる。
+     * @param time: 現在時刻
+     * @return 規制が適用されたら true
+     */
+    public boolean applyRestrictionToAgent(EvacuationAgent agent,
+                                              double time) {
+        boolean applied = false ;
+        /* 分担制御 */
+        if(isStopTimesEnabled() && isStoppedTime(time)) {
+            agent.setSpeed(0) ;
+            applied = true ;
+        }
+
+        /* [2015.01.09 I.Noda] move from RunningAroundPerson.
+         * (元コメント)
+         * 渋谷駅周辺の帰宅困難者再現用の信号
+         * かなり無茶な変更なので、すぐに撤去のこと
+         */
+        if (hasTag("SIGNAL_WAITING") && (time % 60 < 30)) {
+            agent.setSpeed(0) ;
+            applied = true ;
+        }
+
+        return applied ;
+    }
+
 }
