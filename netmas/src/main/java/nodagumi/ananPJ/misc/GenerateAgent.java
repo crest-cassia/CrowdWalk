@@ -45,7 +45,6 @@ public abstract class GenerateAgent implements Serializable {
     static {
         registerAgentClass(RunningAroundPerson.class) ;
         registerAgentClass(WaitRunningAroundPerson.class) ;
-        registerAgentClass(Staff.class) ;
         registerAgentClass(NaiveAgent.class) ;
         registerAgentClass(CapriciousAgent.class) ;
         registerAgentClass(BustleAgent.class) ;
