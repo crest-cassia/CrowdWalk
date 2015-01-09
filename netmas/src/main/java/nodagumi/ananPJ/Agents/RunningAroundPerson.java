@@ -567,7 +567,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     // 現在の道と同じ道が見つかってしまったら（後戻り？）アウト
                     break;
                 }
-                next_link.registerEnter(this, link);
+                /* [2015.01.09 I.Noda]
+                 * ここでregisterEnterすると、エージェントの二重登録が生じる。
+                 * なので、後に回す。
+                 * ただし、リンクごとの流入制限を実装する上では、
+                 * ここで何らかのアクションが必要。
+                 */
+                //next_link.registerEnter(this, link);
                 on_node = false;
                 if (next_position_tmp < 0.0) {
                     distance_to_move = -next_position_tmp;
@@ -592,6 +598,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
                 break;
             }
+        }
+        /* [2015.01.09 I.Noda]
+         * 上記の registerEnter から移動。
+         * ただし、current_link を渡すことが正しいかどうかは不明
+         */
+        if(link != current_link) {
+            link.registerEnter(this, current_link);
         }
         routePlan.copyFrom(routePlanBackup) ;
         return false;
