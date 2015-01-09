@@ -21,10 +21,6 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    ivy
-}
-
 dependencies {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         compile localGroovy()   // Gradleに同梱されているGroovyを使う
