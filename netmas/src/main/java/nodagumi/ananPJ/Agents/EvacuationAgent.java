@@ -38,6 +38,7 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.misc.RoutePlan ;
+import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.Simulator.Pollution;
 
 import nodagumi.Itk.* ;
@@ -83,11 +84,15 @@ implements Comparable<EvacuationAgent>, Serializable {
      *          なので、逆向きの場合(fromNodeに向かっている場合)は、
      *          position は徐々に減っていく。
      */
+    /*
     protected MapLink current_link;
     protected MapNode prev_node;
     protected MapNode next_node;
     protected double direction = 0.0;
     protected double position;
+    */
+    protected Place currentPlace = new Place() ;
+    protected Place lastPlace = new Place() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -181,10 +186,12 @@ implements Comparable<EvacuationAgent>, Serializable {
     public EvacuationAgent copyAndInitializeBody(EvacuationAgent r) {
         r.ID = ID;
         r.generatedTime = generatedTime;
-        r.prev_node = prev_node;
-        r.next_node = next_node;
-        r.current_link = current_link;
-        r.position = position;
+        r.currentPlace = currentPlace.duplicate() ;
+        r.speed = 0;
+        r.goal = goal;
+        r.routePlan = routePlan.duplicate() ;
+        r.routePlan.resetIndex() ;
+        
         r.random = random;
         for (String tag : tags) {
             r.addTag(tag);
@@ -285,97 +292,117 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     //------------------------------------------------------------
     /**
-     * 現在いるリンクをセット
-     */
-    protected void setCurrentLink(MapLink currentPathway) {
-        this.current_link = currentPathway;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 現在いるリンク
+     * 現在のリンクを取得
      */
     public MapLink getCurrentLink() {
-        return current_link;
+        return currentPlace.getLink() ;
     }
 
     //------------------------------------------------------------
     /**
-     * 現在目指しているノード
-     */
-    public MapNode getNextNode() {
-        return next_node;
-    }
-    
-    //------------------------------------------------------------
-    /**
-     * 通り過ぎたノードをセット
-     */
-    public void setPrevNode(MapNode node) {
-        this.prev_node = node;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 通り過ぎたノード
+     * 直前ノードを取得
      */
     public MapNode getPrevNode() {
-        return prev_node;
+        return currentPlace.getEnteringNode() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 次のノードを取得
+     */
+    public MapNode getNextNode() {
+        return currentPlace.getHeadingNode() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ゴール後の最後のノードを取得
+     */
+    public MapNode getLastNode() {
+        return currentPlace.getLastNode() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンク上の進んだ距離
+     */
+    public double getAdvancingDistance() {
+        return currentPlace.getAdvancingDistance() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンク上の残りの距離
+     */
+    public double getRemainingDistance() {
+        return currentPlace.getRemainingDistance() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在のリンク上の絶対位置（リンクから見た位置）を得る
+     */
+    public double getPositionOnLink() {
+        return currentPlace.getPositionOnLink() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 最後のリンク上の絶対位置（リンクから見た位置）を得る
+     */
+    public double getLastPositionOnLink() {
+        return lastPlace.getPositionOnLink() ;
     }
 
     //------------------------------------------------------------
     /**
      * 現在のリンクに対する向きを取得
      */
-    public double getDirection() { return direction; }
+    public double getDirection() {
+        return currentPlace.getDirectionValue() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在のリンクに対する向きを取得
+     */
+    public double getLastDirection() {
+        return lastPlace.getDirectionValue() ;
+    }
 
     //------------------------------------------------------------
     /**
      * 現在のリンクに対して前向き（リンクの fromNode から toNode）
      * に向かっているか？
      */
-    public boolean isForwardDirection() { return direction > 0.0; }
+    public boolean isForwardDirection() {
+        return currentPlace.isForwardDirection() ;
+    }
 
     //------------------------------------------------------------
     /**
      * 現在のリンクに対して逆向き（リンクの toNode から fromNode）
      * に向かっているか？
      */
-    public boolean isBackwardDirection() { return direction < 0.0; }
-
-    //------------------------------------------------------------
-    /**
-     * リンク上の位置をセット
-     */
-    public void setPosition(double position) {
-        this.position = position;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * リンク上の位置
-     */
-    public double getPosition() {
-        return position;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * current_link 上における相対(エージェント進行方向中心) position
-     */
-    public double advancingPosition() {
-        return isForwardDirection() ? position : current_link.length - position;
+    public boolean isBackwardDirection() {
+        return currentPlace.isBackwardDirection() ;
     }
 
     //------------------------------------------------------------
     /**
      * エージェントをリンクに配置
      */
-    public void place(MapLink link, double _position) {
-        prev_node = link.getFrom();
-        next_node = link.getTo();
-        setCurrentLink(link);
-        position = _position;
+    public void place(MapLink link, MapNode enteringNode, 
+                      double advancingDistance) {
+        currentPlace.set(link, enteringNode, true, advancingDistance) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントをリンクにランダムに配置
+     */
+    public void placeAtRandomPosition(MapLink link) {
+        currentPlace.setAtRandomPosition(link, random) ;
     }
 
     //------------------------------------------------------------
@@ -383,10 +410,7 @@ implements Comparable<EvacuationAgent>, Serializable {
      * 向き変更
      */
     protected void turnAround() {
-        direction = -direction;
-        MapNode tmp = prev_node;
-        prev_node = next_node;
-        next_node = tmp;
+        currentPlace.turnAround() ;
     }
     
     //------------------------------------------------------------
@@ -497,6 +521,23 @@ implements Comparable<EvacuationAgent>, Serializable {
         return isPlannedRouteCompleted() ? "" : routePlan.top().getString() ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * evacuation の完了
+     * @param time : 時刻
+     * @param onNode : true なら currentPlace.getHeadingNode() 上
+     *                 false なら currentPlace.getLink() 上
+     */
+    protected void finalizeEvacuation(double time, boolean onNode) {
+        consumePlannedRoute() ;
+        setEvacuated(true, time) ;
+        if(currentPlace.isWalking()) {
+            lastPlace.set(currentPlace) ;
+            currentPlace.getLink().agentExits(this) ;
+            currentPlace.quitLastLink() ;
+        }
+    }
+
     //############################################################
     /**
      * シミュレーションサイクル
@@ -534,8 +575,8 @@ implements Comparable<EvacuationAgent>, Serializable {
      * sort, binarySearch 用比較関数(古くて間違っている)
      */
     public int compareTo_orig(EvacuationAgent rhs) {
-        double h1 = this.position ;
-        double h2 = rhs.position ;
+        double h1 = this.currentPlace.getPositionOnLink() ;
+        double h2 = rhs.currentPlace.getPositionOnLink() ;
 
         // tkokada modified
         if (h1 == h2) {
@@ -567,8 +608,8 @@ implements Comparable<EvacuationAgent>, Serializable {
     public int compareTo(EvacuationAgent rhs) {
         if(agentNumber == rhs.agentNumber) return 0 ;
 
-        double h1 = this.advancingPosition() ;
-        double h2 = rhs.advancingPosition() ;
+        double h1 = this.currentPlace.getAdvancingDistance() ;
+        double h2 = rhs.currentPlace.getAdvancingDistance() ;
 
         if(h1 > h2) {
             return 1 ;
@@ -690,16 +731,17 @@ implements Comparable<EvacuationAgent>, Serializable {
      * リンク上の表示上の横ずれ幅計算
      */
     public Vector3d getSwing() {
-        if (null == current_link) {
+        MapLink currentLink = currentPlace.getLink() ;
+        if (null == currentLink) {
             return new Vector3d(0, 0, 0);
         }
 
-        double scale = ((MapPartGroup)(current_link.getParent())).getScale();
-        double fwidth = current_link.width / 2 / scale;
-        double x1 = current_link.getFrom().getX();
-        double x2 = current_link.getTo().getX();
-        double y1 = current_link.getFrom().getY();
-        double y2 = current_link.getTo().getY();
+        double scale = ((MapPartGroup)(currentLink.getParent())).getScale();
+        double fwidth = currentLink.width / 2 / scale;
+        double x1 = currentLink.getFrom().getX();
+        double x2 = currentLink.getTo().getX();
+        double y1 = currentLink.getFrom().getY();
+        double y2 = currentLink.getTo().getY();
 
         Vector3d v1 = new Vector3d(x2 - x1, y2-y1, 0);
         v1.normalize();
@@ -714,13 +756,7 @@ implements Comparable<EvacuationAgent>, Serializable {
      * 表示上の位置計算
      */
     public Point2D getPos() {
-        if (getCurrentLink() != null) {
-            return getCurrentLink().calcAgentPos(position);
-        } else if (prev_node != null){
-            return prev_node.getAbsoluteCoordinates();
-        } else {
-            return null;
-        }
+        return currentPlace.getPosForDisplay() ;
     }
 
     //------------------------------------------------------------
@@ -728,11 +764,7 @@ implements Comparable<EvacuationAgent>, Serializable {
      * 高さ？
      */
     public double getHeight() {
-        if (getCurrentLink() != null) {
-            return getCurrentLink().calcAgentHeight(position);
-        } else {
-            return Double.NaN;
-        }
+        return currentPlace.getHeightForDisplay() ;
     }
     
     //------------------------------------------------------------

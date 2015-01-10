@@ -693,14 +693,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     
     @SuppressWarnings("unchecked")
     private void setupOthers(OBNode ob_node) {
-        if (OBNode.NType.AGENT == ob_node.getNodeType()) {
-            id_part_map.put(ob_node.ID, ob_node);
-            EvacuationAgent agent = (EvacuationAgent) ob_node;
-            agentsCache.add(agent);
-            String[] location = (String[])agent.getUserObject();
-            MapLink link = (MapLink)id_part_map.get(Integer.parseInt(location[0]));
-            agent.place(link, agent.getPosition());
-        } else if (OBNode.NType.GROUP == ob_node.getNodeType()) {
+		if (OBNode.NType.GROUP == ob_node.getNodeType()) {
             id_part_map.put(ob_node.ID, ob_node);
             for (Enumeration<OBNode> e = ob_node.children(); e.hasMoreElements();) {
                 OBNode child = e.nextElement();

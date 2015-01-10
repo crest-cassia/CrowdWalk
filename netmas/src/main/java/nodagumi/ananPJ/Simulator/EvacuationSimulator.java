@@ -919,8 +919,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 // agent log format:
                 // agent,ID,evacuated,speed,density,position
                 writer.write("agent," + rap.ID + "," + rap.isEvacuated() +
-                        "," + rap.getSpeed() + "," + rap.getDensity() + "," +
-                        rap.getPosition() + "\n");
+			     "," + rap.getSpeed() +
+			     "," + rap.getDensity() + // density is obsolete
+			     "," + rap.getLastPositionOnLink() + "\n");
                 totalAgentDensity += rap.getDensity();
                 totalAgentSpeed += rap.getSpeed();
             }

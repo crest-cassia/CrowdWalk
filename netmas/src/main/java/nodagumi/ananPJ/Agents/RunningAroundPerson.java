@@ -40,6 +40,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.RoutePlan ;
+import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.misc.SpecialTerm;
 
 import nodagumi.Itk.*;
@@ -69,8 +70,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     public static String typeString = "RunningAroundPerson" ;
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 速度計さん関係
 	 * emptyspeed : ??? Initial values 
 	 * time_scale : シミュレーションステップ
@@ -85,8 +86,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected double time_scale = 1.0;//0.5; simulation time step 
     public static double MAX_SPEED = 0.96;
     public static double ZERO_SPEED = 0.1;
-    protected double density;
-    protected int order_in_row;
+    //protected double density;
+    //protected int order_in_row;
 
     //============================================================
     /**
@@ -123,11 +124,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      *       preUpdate()でリセット、
      *       move_commit()でnavigation()の結果をセット、
      *       tryToPassNode()でsetCurrentLink()される。
-     * on_node : 現在、ノード通過中かどうか？
-     *       move_set()の navigate() を呼び出す前後でon-off。
-     *       calcNextTarget() で参照。routePlanをshiftするかどうか判断。
      */
-    MapLink next_link_candidate = null;
+    //MapLink next_link_candidate = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -136,7 +134,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * move_set() でセット。
      * move_commit() のなかで、setPosition() される。
      */
-    protected double next_position = 0.0;
+    //protected double next_position = 0.0;
+    protected Place nextPlace = new Place();
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -312,11 +311,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         RunningAroundPerson r = (RunningAroundPerson)_r ;
         super.copyAndInitializeBody(r) ;
         r.emptyspeed = emptyspeed;
-        r.direction = direction;
-        r.speed = 0;
-        r.goal = goal;
-        r.routePlan = new RoutePlan(routePlan) ;
-        r.routePlan.resetIndex() ;
 
         return r;
     }
@@ -342,6 +336,16 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 	/**
 	 * 変数アクセス関連
 	 */
+    //------------------------------------------------------------
+    /**
+     * [2015.01.10 I.Noda]
+     * (should be obsolete)
+     */
+    public double getDensity() {
+        //Itk.dbgWrn("getDensity() is obsolete.") ;
+        return 0.0 ;
+    }
+
     //------------------------------------------------------------
     /**
      *
@@ -372,22 +376,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     public void setSpeedCalculationModel(SpeedCalculationModel _model) {
         calculation_model = _model;
-    }
-
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public double getDensity() {
-        return density;
-    }
-
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public void setDensity(double _density) {
-        density = _density;
     }
 
     //------------------------------------------------------------
@@ -434,23 +422,33 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     public void prepareForSimulation(double _timeScale) {
         /* tkokada: modified to apply deserialize method */
         if (!isEvacuated()) {
-            MapNode fromNode = current_link.getFrom();
-            MapNode toNode = current_link.getTo();
-            if ((fromNode.getDistance(calcNextTarget(fromNode, 
-                                                     routePlan.duplicate(), 
+            MapNode fromNode = currentPlace.getFromNode();
+            MapNode toNode = currentPlace.getToNode();
+            /* [2015.01.10 I.Noda]
+             * 現状では、方向が決まっていないので、
+             * advancingDistance を positionOnLink として扱う
+             */
+            double positionOnLink = currentPlace.getAdvancingDistance() ;
+            double linkLength = currentPlace.getLinkLength() ;
+            double distViaFromNode =
+                (fromNode.getDistance(calcNextTarget(fromNode,
+                                                     routePlan.duplicate(),
                                                      false))
-                 + position)
-                >= (toNode.getDistance(calcNextTarget(toNode, 
-                                                      routePlan.duplicate(), 
-                                                      false)) +
-                            current_link.length - position)) {
-                prev_node = current_link.getFrom();
-                next_node = current_link.getTo();
-                direction = 1.0;
+                 + positionOnLink) ;
+            double distViaToNode =
+                (toNode.getDistance(calcNextTarget(toNode,
+                                                    routePlan.duplicate(),
+                                                   false))
+                 + linkLength - positionOnLink) ;
+
+            if (distViaFromNode >= distViaToNode) {
+                currentPlace.set(currentPlace.getLink(),
+                                 fromNode, true,
+                                 positionOnLink) ;
             } else {
-                prev_node = current_link.getTo();
-                next_node = current_link.getFrom();
-                direction = -1.0;
+                currentPlace.set(currentPlace.getLink(),
+                                 toNode, true,
+                                 linkLength - positionOnLink) ;
             }
             speed = 0;
             routePlan.resetIndex() ;
@@ -465,10 +463,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     @Override
     public void preUpdate(double time) {
-        next_link_candidate = null;
+        //next_link_candidate = null;
 
         calc_speed(time);
-        move_set(speed * direction, time, true);
+        move_set(speed, time, true);
     }
 
     //------------------------------------------------------------
@@ -478,24 +476,23 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     private void set_swing() {
         /* agent drawing */
         //TODO should no call here, as lane should be set up properly
-        current_link.setup_lanes();
+        MapLink currentLink = currentPlace.getLink() ;
+        currentLink.setup_lanes();
 
-        int w = current_link.getLaneWidth(direction);
-        int index = Collections.binarySearch(current_link.getLane(direction),
-                                             this);
+        int w = currentPlace.getLaneWidth() ;
+        int index = currentPlace.getIndexInLane(this) ;
         if (isBackwardDirection())
-            index = current_link.getLane(direction).size() - index;
+            index = currentPlace.getLane().size() - index;
 
-        order_in_row = index;
         if (isForwardDirection()) {
             if (index >= 0) {
-                swing_width = (2.0 * ((current_link.getLane(direction).size() - index) % w)) / current_link.width - 1.0;
+                swing_width = (2.0 * ((currentPlace.getLane().size() - index) % w)) / currentLink.width - 1.0;
             }  else {
                 swing_width = 0.0;
             }
         } else {
             if (index >= 0) {
-                swing_width = 1.0 - (2.0 * (index % w)) / current_link.width;
+                swing_width = 1.0 - (2.0 * (index % w)) / currentLink.width;
             }  else {
                 swing_width = 0.0;
             }
@@ -504,65 +501,66 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     //------------------------------------------------------------
     /**
-     * 次の位置を計算。
+     * 次の位置を計算。(obsolete) [2015.01.10 I.Noda]
+     * [2015.01.10 I.Noda]
+     * ここでの navigate などの処理は、単に流入制限の計算に使うためだけにある。
+     * しかも其の計算やその後の実装には、いろいろ不備がある。
+     * なので、このメソッドは obsolete にしておく。
      * @param d : speed に相当する大きさ。単位時間に進める長さ。
+     *     [2015.01.10 I.Noda] direction はかかっていないものとする。
+     * @param time : 時間ステップ。1.0 が1秒。
+     * @param will_move_out : 次のリンクに進むかどうか。WaitDirective 用。
+     */
+    protected boolean move_set_obsolete(double d, double time, boolean will_move_out) {
+        nextPlace.set(currentPlace) ;
+        nextPlace.makeAdvance(d * time_scale) ;
+
+        RoutePlan workingRoutePlan = routePlan.duplicate() ;
+        while (!nextPlace.isOnLink()) {
+            if (will_move_out) {
+                /* schedule moving out */
+                MapLink next_link = navigate(time, nextPlace,
+                                             workingRoutePlan, true);
+                if (nextPlace.isRestrictedLink() && next_link == null) {
+                    // 現在の道が一方通行か閉鎖で、
+                    // 先の道路が見つからなかったらアウト
+                    /* [2015.01.10 I.Noda] bug
+                     * おそらく単純に終わるのはおかしい */
+                    break;
+                }
+                if(nextPlace.getLink() != next_link) {
+                    /* [2015.01.10 I.Noda]
+                     * 以下は、リンク流入制限の計算のためだけに用いられる。
+                     * なので、エージェントが多重にregisterEnterしても大丈夫。
+                     */
+                    next_link.registerEnter(this,
+                                            nextPlace.getLink()) ;
+                }
+                nextPlace.transitTo(next_link) ;
+            } else {
+                // WAIT_FOR, WAIT_UNTIL によるエージェントの停止は下記でおこなう
+                /* [2015.01.10 I.Noda]
+                 * 本来なら、headingNode 上なので、リンクを抜けているはずだが、
+                 * 特例として、とどまることにする。
+                 */
+                nextPlace.setAdvancingDistance(nextPlace.getLinkLength()) ;
+                break;
+            }
+        }
+        return false;
+    }
+    //------------------------------------------------------------
+    /**
+     * 次の位置を計算。(new) [2015.01.10 I.Noda]
+     * @param d : speed に相当する大きさ。単位時間に進める長さ。
+     *     [2015.01.10 I.Noda] direction はかかっていないものとする。
      * @param time : 時間ステップ。1.0 が1秒。
      * @param will_move_out : 次のリンクに進むかどうか。WaitDirective 用。
      */
     protected boolean move_set(double d, double time, boolean will_move_out) {
-        double distance_to_move = d * time_scale;
-
-        next_position = position + distance_to_move;
-        double next_position_tmp = next_position;
-        MapLink link = current_link;
-        MapNode node = next_node;
-        RoutePlan workingRoutePlan = routePlan.duplicate() ;
-
-        while (next_position_tmp < 0 ||
-                next_position_tmp > link.length) {
-            if (will_move_out) {
-                /* schedule moving out */
-                MapLink next_link = navigate(time, link, node, 
-                                             workingRoutePlan, true);
-                if ((link.isOneWayPositive() ||
-                     link.isOneWayNegative() ||
-                     link.isRoadClosed())
-                    && next_link == null) {
-                    // 現在の道が一方通行か閉鎖で、先の道路が見つからなかったらアウト
-                    break;
-                }
-                if (next_position_tmp < 0.0) {
-                    distance_to_move = -next_position_tmp;
-                } else {
-                    distance_to_move = next_position_tmp - link.length;
-                }
-                node = next_link.getOther(node);
-                link = next_link;
-
-                if (link.isForwardDirectionTo(node)) {
-                    next_position_tmp = distance_to_move;
-                } else {
-                    next_position_tmp = link.length - distance_to_move;
-                }
-            } else {
-                // WAIT_FOR, WAIT_UNTIL によるエージェントの停止は下記でおこなう
-                if (next_position < 0){
-                    next_position = 0;
-                } else {
-                    next_position = current_link.length;
-                }
-
-                break;
-            }
-        }
-        /* [2015.01.09 I.Noda]
-         * 上記の registerEnter から移動。
-         * ただし、current_link を渡すことが正しいかどうかは不明
-         */
-        if(link != current_link) {
-            link.registerEnter(this, current_link);
-        }
-        return false;
+        nextPlace.set(currentPlace) ;
+        nextPlace.makeAdvance(d * time_scale) ;
+        return false ;
     }
 
     //------------------------------------------------------------
@@ -570,40 +568,20 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * move_commit
      */
     protected boolean move_commit(double time) {
-        setPosition(next_position);
-
-        while (position < 0.0 ||
-                position > current_link.length) {
+        currentPlace.set(nextPlace) ;
+        while (!currentPlace.isOnLink()) {
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
-                next_node.hasTag(goal)){
-                consumePlannedRoute();
+                currentPlace.getHeadingNode().hasTag(goal)){
                 /* exit! */
-                setEvacuated(true, time);
-                prev_node = next_node;
-                next_node = null;
-                current_link.agentExits(this);
-                current_link = null;
+                finalizeEvacuation(time, true) ;
 
                 return true;
             }
-            double distance_to_move;
-
-            if (position < 0.0) {
-                distance_to_move = -position;
-            } else {
-                distance_to_move = position - current_link.length;
-            }
-
             sane_navigation_from_node_forced = true;
-            next_link_candidate = navigate(time, current_link, next_node,
-                                           routePlan, false);
+            MapLink nextLink = navigate(time, currentPlace, routePlan, true) ;
             sane_navigation_from_node_forced = true;
 
-            tryToPassNode(time);
-
-            setPosition(current_link
-                        .calcAbstractPositionByDirectionTo(next_node,
-                                                           distance_to_move)) ;
+            tryToPassNode(time, routePlan, nextLink) ;
         }
         return false;
     }
@@ -614,25 +592,21 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     @Override
     public boolean update(double time) {
+        /* [2015.01.10 I.Noda] 生成前なら処理しない */
         if (time < generatedTime) {
             return false;
         }
 
-        // tkokada
-        // if (getPrevNode().hasTag(goal)) {
-        //if (planned_route.size() <= getRouteIndex() &&
-        //        getPrevNode().hasTag(goal)) {
         if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
             getPrevNode().hasTag(goal)){
-            consumePlannedRoute();
-            setEvacuated(true, time);
+            finalizeEvacuation(time, true) ;
             return true;
         }
-        // if (current_link.getTotalTriageLevel() > 5) {
-        //     setEmergency();
-        // }
 
-        return move_commit(time);
+        boolean ret = move_commit(time);
+        if(currentPlace.isWalking()) lastPlace.set(currentPlace) ;
+
+        return ret ;
     }
 
     //------------------------------------------------------------
@@ -671,152 +645,113 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         /* [2015.01.09 I.Noda]
          * リンクの交通規制など (STOP や渋谷の SIGNAL)
          */
-        current_link.applyRestrictionToAgent(this, time) ;
+        currentPlace.getLink().applyRestrictionToAgent(this, time) ;
 
         /* [2015.01.09 I.Noda]
          * ノードの交通規制など (STOP)
          */
-        if ((isForwardDirection() && speed >= (current_link.length - position)) ||
-            (isBackwardDirection() && speed >= position)) {
-            next_node.applyRestrictionToAgent(this, time) ;
+        if (!currentPlace.isOnLinkWithAdvance(speed)) {
+            currentPlace.getHeadingNode().applyRestrictionToAgent(this, time) ;
         }
 
         pollution.effect(this);
     }
-    
+
+    //------------------------------------------------------------
+    /**
+     * 前方にいるエージェントまでの距離計算
+     */
+    private double calcDistanceToPredecessor(double time) {
+        //前方のエージェントまでの距離の作業変数
+        double distToPredecessor = -currentPlace.getAdvancingDistance();
+        /* [2015.01.10 I.Noda]
+         * 余裕を持って探索するため、長めにとってみる。
+         */
+        double maxDistance = (PERSONAL_SPACE + emptyspeed) * (time_scale + 1.0) ;
+
+        //前方のエージェントを探している場所
+        Place workingPlace = currentPlace.duplicate() ;
+        workingPlace.makeAdvance(maxDistance) ;
+
+        //???
+        //MapNode node_to_navigate = currentPlace.getHeadingNode() ;
+        // 現在のリンク中での相対位置
+        int indexInLane = workingPlace.getIndexInLane(this) ;
+        //作業用の routePlan
+        RoutePlan workingRoutePlan = routePlan.duplicate() ;
+
+        while (workingPlace.getAdvancingDistance() > 0) {
+            ArrayList<EvacuationAgent> agents = workingPlace.getLane() ;
+            int currentWidth = workingPlace.getLaneWidth() ;
+            int predecessorIndex = indexInLane + currentWidth ;
+            if(agents.size() > 0 && predecessorIndex < agents.size()) {
+                // 現在のworkingPlace に前の人がいる場合
+                // indexが負の場合は、最後尾の人が直前の人
+                if(predecessorIndex < 0) predecessorIndex = 0 ;
+                distToPredecessor +=
+                    agents.get(predecessorIndex).currentPlace.getAdvancingDistance() ;
+                break ;
+            } else {
+                //次以降のリンクに前の人がいる場合
+                distToPredecessor += workingPlace.getLinkLength() ;
+                indexInLane -= agents.size() ;
+                MapLink nextLink =
+                    sane_navigation_from_node(time, workingPlace,
+                                              workingRoutePlan, true) ;
+                workingPlace.transitTo(nextLink) ;
+            }
+        }
+        //最大を超えていれば、それで頭打ち
+        if(distToPredecessor > maxDistance) {
+            distToPredecessor = maxDistance ;
+        }
+
+        return distToPredecessor ;
+    }
+
     //------------------------------------------------------------
     /**
      * lane による速度計算
      */
     private void calc_speed_lane(double time) {
+        double distToPredecessor = calcDistanceToPredecessor(time) ;
 
-        double diff = 0;    // distance between myself and front of me
-        double diff_base = 0;   // distance to next node.
-        int passed_agent_count = 0;
-
-        // possible link that fron agent is placed.
-        MapLink link_to_find_agent = current_link;
-        // is used to update link_to_fin_agent
-        MapNode node_to_navigate = next_node;
-        double distance_to_go = emptyspeed * time_scale; 
-        RoutePlan workingRoutePlan = routePlan.duplicate() ;
-        double direction_orig = direction;
-
-        // N-th of this agents in current lane
-        int index = 
-            Collections.binarySearch(current_link.getLane(direction),
-                                     this) ;
-
-        while (diff == 0 && (distance_to_go > 0)) {
-            ArrayList<EvacuationAgent> agents = link_to_find_agent.
-                getLane(direction);
-
-            if (agents.size() >= 1) {
-                /* 今まで通過してきたリンク上にいた人を計算 */
-                /* ??? */
-                int w = link_to_find_agent.getLaneWidth(direction);
-                int index_front = index;
-                index_front += w - passed_agent_count;
-
-                if (index_front < 0) {
-                    /* リンクの幅が狭くなって，仮想レーン数が今まで通過してきた
-                     * エージェント数よりも小さい
-                     * この場合には，diff は diff_base */
-                    diff = diff_base;
-                    break;
-                } else if (index_front < agents.size() && index_front >= 0) {
-                    /* 今いる仮想レーン上にエージェントがいる */
-                    EvacuationAgent agent_in_front = agents.get(index_front);
-
-                    if (current_link == link_to_find_agent) {
-                        /* 最初のリンクの場合 */
-                        diff = Math.abs(agent_in_front.position - position);
-                    } else {
-                        /* 先読み */
-                        if (isForwardDirection()) {
-                            diff = agent_in_front.position;
-                        } else {
-                            diff = link_to_find_agent.length -
-                                agent_in_front.position;
-                        }
-                        diff += diff_base;
-                    }
-                    break;
-                }
-                /* 繰り返すのは (index_front > agents.size) の場合
-                 *  つまり，仮想レーン内には誰もいない状態 
-                 */
-
-            } // if agents.size >= 1
-
-            /* 距離等の変数の更新 */
-            if (link_to_find_agent == current_link) {
-                if (isForwardDirection()) {
-                    diff_base = current_link.length - position;
-                } else { /* isBackwardDirection() */
-                    diff_base = position;
-                }
-                passed_agent_count = agents.size() - index - 1;
-                distance_to_go -= diff_base;
-            } else {
-                distance_to_go -= link_to_find_agent.length;
-                diff_base += link_to_find_agent.length;
-                passed_agent_count += agents.size();
-            }
-
-            /* update next link */
-            link_to_find_agent = 
-                sane_navigation_from_node(time, 
-                                          link_to_find_agent, node_to_navigate,
-                                          workingRoutePlan, false) ;
-            if (link_to_find_agent == null) break;
-            node_to_navigate = link_to_find_agent.getOther(node_to_navigate);
-
-            /* direction の update */
-            direction = 
-                link_to_find_agent.directionValueTo(node_to_navigate, 1.0) ;
-            index = -1;/* 次からは最後尾な気分で */
-        }
-        direction = direction_orig;
-
-        /* calculation of speed, based on diff */
+        /* base speed */
         double base_speed = emptyspeed;
-        if (current_link.isStair() || getCurrentLink().hasTag("STAIR")) {
+
+        /* 階段における処理 */
+        /* [2015.01.10 I.Noda] todo
+         * ここはちゃんと外部パラメータ化すべき。
+         */
+        if (currentPlace.getLink().isStair() ||
+            currentPlace.getLink().hasTag("STAIR")) {
             base_speed *= STAIR_SPEED_CO;
         }
 
+        //自由速度に向けた加速
         dv = A_0 * (base_speed - speed);
 
-        if (diff != 0) {
+        //personal spaceによる減速
+        dv -= A_1 * Math.exp(A_2 * (PERSONAL_SPACE - distToPredecessor));
 
-            //dv -= A_1 * Math.exp((PERSONAL_SPACE - diff)*A_2);
-
-            dv -= A_1 * Math.exp(A_2 * (PERSONAL_SPACE - diff));
-
-        }
-
+        //時間積分
         dv *= time_scale;
         speed += dv;
 
+        //速度幅制限
         if (speed > emptyspeed) {
-            speed = emptyspeed;
+            speed = emptyspeed ;
         } else if (speed < 0) {
             speed = 0;
         }
 
-        int w = current_link.getLaneWidth(direction);
-        if (order_in_row < w) {
-            if (isForwardDirection()) {
-                if (((MapNode) current_link.getTo()).hasTag(goal)){
-                    speed = emptyspeed;
-                }
-            }
-            if (isBackwardDirection()) {
-                if (((MapNode) current_link.getFrom()).hasTag(goal)){
-                    speed = emptyspeed;
-                }
-            }
+        //出口直前の場合で最前列の場合は、最大速にしておく。
+        int w = currentPlace.getLaneWidth() ;
+        int indexInLane = currentPlace.getIndexInLane(this) ;
+        if (indexInLane < w && currentPlace.getHeadingNode().hasTag(goal)) {
+            speed = emptyspeed;
         }
+
     }
 
     //------------------------------------------------------------
@@ -835,7 +770,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         /* minimum speed to break dead lock state */
         double MIN_SPEED_DEADLOCK = 0.3;
 
-        ArrayList<EvacuationAgent> currentLinkAgents = current_link.getAgents();
+        ArrayList<EvacuationAgent> currentLinkAgents
+            = currentPlace.getLink().getAgents();
         // 隣のリンクも含めた自分と同じ位置に存在するエージェント
         ArrayList<EvacuationAgent> samePlaceAgents =
             new ArrayList<EvacuationAgent>();
@@ -853,22 +789,19 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double maxRange = 0.0;
         double minRange = 0.0;
         if (isForwardDirection()) {
-            minRange = position;
-            maxRange = Math.min(position + DENSITY_RANGE, current_link.length);
+            minRange = currentPlace.getPositionOnLink() ;
+            maxRange = Math.min(currentPlace.getPositionOnLink() + DENSITY_RANGE,
+                                currentPlace.getLinkLength()) ;
         } else {
-            minRange = Math.max(position - DENSITY_RANGE, 0.0);
-            maxRange = position;
+            minRange = Math.max(currentPlace.getPositionOnLink() - DENSITY_RANGE,
+                                0.0);
+            maxRange = currentPlace.getPositionOnLink();
         }
 
-        /* in range agents on next link is calculated 
-         * in between maxRange & minRange */
-        //double nextMaxRange = 0;
-        //double nextMinRange = 0;
-
         RoutePlan workingRoutePlan = routePlan.duplicate() ;
-        MapLink nextLink = 
-            sane_navigation_from_node(time, current_link, next_node,
-                                      workingRoutePlan, false) ;
+        MapLink nextLink =
+            sane_navigation_from_node(time, currentPlace,
+                                      workingRoutePlan, true) ;
 
         ArrayList<EvacuationAgent> nextLinkAgents = null;
         if (nextLink != null)
@@ -882,42 +815,52 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             if (agent == this || agent.isEvacuated()) {
                 continue;
             }
-            if (agent.position == position) {
+            if (agent.currentPlace.getPositionOnLink()
+                == currentPlace.getPositionOnLink()) {
                 samePlaceAgents.add(agent);
             }
             // agent が (minRange..maxRange) 内に位置する
-            if (agent.position >= minRange && agent.position <= maxRange) {
-                if (direction == agent.getDirection()) {
+            if (agent.currentPlace.getPositionOnLink() >= minRange &&
+                agent.currentPlace.getPositionOnLink() <= maxRange) {
+                if (getDirection() == agent.getDirection()) {
                     inRangeSameDirectionAgents += 1;
                 } else {
                     inRangeOppositeDirectionAgents += 1;
                 }
                 // 以下、自分の隣か前を歩いている(歩いて来る) agent について(direction ごと)
                 // agent is placed in front of this agent.
-                if (isForwardDirection() && agent.position >= position) {
+                if (isForwardDirection() &&
+                    agent.currentPlace.getPositionOnLink()
+                    >= currentPlace.getPositionOnLink()) {
                     if (agent.isForwardDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
                     }
-                    if (agent.position != position) {
+                    if (agent.currentPlace.getPositionOnLink()
+                        != currentPlace.getPositionOnLink()) {
                         if (frontAgent == null) {
                             frontAgent = agent;
-                        } else if (frontAgent.position > agent.position) {
+                        } else if (frontAgent.currentPlace.getPositionOnLink()
+                                   > agent.currentPlace.getPositionOnLink()) {
                             frontAgent = agent;
                         }
                     }
                 // agent is placed in front of this agent.
-                } else if (isBackwardDirection() && agent.position <= position) {
+                } else if (isBackwardDirection() &&
+                           agent.currentPlace.getPositionOnLink()
+                           <= currentPlace.getPositionOnLink()) {
                     if (agent.isBackwardDirection()) {
                         inFrontSameDirectionAgents += 1;
                     } else {
                         inFrontOppositeDirectionAgents += 1;
                     }
-                    if (agent.position != position) {
+                    if (agent.currentPlace.getPositionOnLink()
+                        != currentPlace.getPositionOnLink()) {
                         if (frontAgent == null) {
                             frontAgent = agent;
-                        } else if (frontAgent.position < agent.position) {
+                        } else if (frontAgent.currentPlace.getPositionOnLink()
+                                   < agent.currentPlace.getPositionOnLink()) {
                             frontAgent = agent;
                         }
                     }
@@ -961,7 +904,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
         }
         double density_range = Math.max(maxRange - minRange, DENSITY_RANGE);
-        density = (inRangeSameDirectionAgents + inRangeOppositeDirectionAgents + 1) / (current_link.width * density_range);
+        double density = (inRangeSameDirectionAgents + inRangeOppositeDirectionAgents + 1) / (currentPlace.getLinkWidth() * density_range);
         if (density <= 0.0) {
             speed = 0.0;
         } else if (inRangeOppositeDirectionAgents > 0) {
@@ -978,12 +921,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 System.err.println("RunningAroundPerson.calc_speed_density_reviced in front agent but front agent exist!");
         // 2012.10.01 tkokada update.
         // The lane number of agents are assumed as the head.
-        } else if (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents < (int)current_link.width) {
+        } else if (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents
+                   < (int)currentPlace.getLinkWidth()) {
             speed = MAX_SPEED;
         } else if (frontAgent != null) {
             double distance;
             if (currentLinkAgents.contains(frontAgent))
-                distance = Math.abs(frontAgent.position - position);
+                distance = Math.abs(frontAgent.currentPlace.getPositionOnLink()
+                                    - currentPlace.getPositionOnLink());
             else
                 distance = getDistanceNeighborAgent(frontAgent);
             // 前を歩いている人にぶつからない(近づきすぎない)速度まで speed を落とす
@@ -1002,7 +947,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         if (inFrontSameDirectionAgents == samePlaceAgents.size() &&
                 inFrontOppositeDirectionAgents == 0 &&
                 inFrontSameDirectionAgents > 0) {
-            int numberLane = (int)current_link.width;
+            int numberLane = (int)currentPlace.getLinkWidth() ;
             int counter = 0;
             for (EvacuationAgent agent : samePlaceAgents) {
                 if (agent.getSpeed() >= MAX_SPEED)
@@ -1026,7 +971,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     && (inFrontSameDirectionAgents + inFrontOppositeDirectionAgents > 0) )
                 || (inFrontSameDirectionAgents == samePlaceAgents.size() && inFrontSameDirectionAgents > 0)
             ) {
-                int numberLane = (int)current_link.width;
+                int numberLane = (int)currentPlace.getLinkWidth() ;
                 int counter = 0;
                 for (EvacuationAgent agent : samePlaceAgents) {
                     if (agent.getSpeed() >= MAX_SPEED * 0.8)
@@ -1035,18 +980,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 if (counter < numberLane) {
                     speed = MAX_SPEED * 0.8;
                 }
-                /*
-                for (EvacuationAgent agent : samePlaceAgents) {
-                    if (agent.getSpeed() > 0.0) {
-                        existPlusSpeed = true;
-                        break;
-                    }
-                }
-                if (!existPlusSpeed) {
-                    //speed = MIN_SPEED_DEADLOCK;
-                    speed = MAX_SPEED * 0.8;
-                }
-                */
                 enterIfStatement = true;
             }
             if (inFrontSameDirectionAgents == 0) {
@@ -1069,17 +1002,29 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     private double getDistanceNeighborAgent(EvacuationAgent agent) {
         double distance = 0.0;
-        MapLink currentLink = getCurrentLink();
-        MapLink neighborLink = agent.getCurrentLink();
+        MapLink currentLink = currentPlace.getLink() ;
+        MapLink neighborLink = agent.currentPlace.getLink() ;
 
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            distance = position + agent.position;
+            distance
+                = currentPlace.getPositionOnLink()
+                + agent.currentPlace.getPositionOnLink() ;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            distance = position + neighborLink.length - agent.position;
+            distance
+                = currentPlace.getPositionOnLink()
+                + neighborLink.length
+                - agent.currentPlace.getPositionOnLink();
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            distance = currentLink.length - position + agent.position;
+            distance
+                = currentLink.length
+                - currentPlace.getPositionOnLink()
+                + agent.currentPlace.getPositionOnLink();
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            distance = currentLink.length - position + neighborLink.length - agent.position;
+            distance
+                = currentLink.length
+                - currentPlace.getPositionOnLink()
+                + neighborLink.length
+                - agent.currentPlace.getPositionOnLink();
         } else {
             System.err.println("\tRunningAroundPerson.getDistanceNeighborAgent inputted neighbor link is not neighbor!");
             // distance = -1.0;
@@ -1093,8 +1038,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * is a neighbor agent same direction with this agent
      */
     private boolean isSameDirectionNeighborAgent(EvacuationAgent agent) {
-        MapLink currentLink = getCurrentLink();
-        MapLink neighborLink = agent.getCurrentLink();
+        MapLink currentLink = currentPlace.getLink();
+        MapLink neighborLink = agent.currentPlace.getLink();
 
         // 重複したリンク
         if (currentLink.getFrom() == neighborLink.getFrom() && currentLink.getTo() == neighborLink.getTo()) {
@@ -1153,8 +1098,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * is a neighbor agent place in front of this agent
      */
     private boolean isFrontNeighborAgent(EvacuationAgent agent) {
-        MapLink currentLink = getCurrentLink();
-        MapLink neighborLink = agent.getCurrentLink();
+        MapLink currentLink = currentPlace.getLink() ;
+        MapLink neighborLink = agent.currentPlace.getLink() ;
 
         if (currentLink.getFrom() == neighborLink.getFrom()) {
             if (isBackwardDirection())
@@ -1182,21 +1127,24 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * ※未使用メソッド
      */
     private boolean isSamePlaceNeighborAgent(EvacuationAgent agent) {
-        MapLink currentLink = getCurrentLink();
-        MapLink neighborLink = agent.getCurrentLink();
+        MapLink currentLink = currentPlace.getLink();
+        MapLink neighborLink = agent.currentPlace.getLink();
 
         if (currentLink.getFrom() == neighborLink.getFrom()) {
-            if (position == 0.0 && agent.getPosition() == 0.0)
+            if (currentPlace.getPositionOnLink() == 0.0 &&
+                agent.currentPlace.getPositionOnLink() == 0.0)
                 return true;
         } else if (currentLink.getFrom() == neighborLink.getTo()) {
-            if (position == 0.0 && agent.getPosition() == neighborLink.length)
+            if (currentPlace.getPositionOnLink() == 0.0 &&
+                agent.currentPlace.getPositionOnLink() == neighborLink.length)
                 return true;
         } else if (currentLink.getTo() == neighborLink.getFrom()) {
-            if (position == currentLink.length && agent.getPosition() == 0.0)
+            if (currentPlace.getPositionOnLink() == currentLink.length && 
+                agent.currentPlace.getPositionOnLink() == 0.0)
                 return true;
         } else if (currentLink.getTo() == neighborLink.getTo()) {
-            if (position == currentLink.length &&
-                    agent.getPosition() == neighborLink.length)
+            if (currentPlace.getPositionOnLink() == currentLink.length &&
+                agent.currentPlace.getPositionOnLink() == neighborLink.length)
                 return true;
         }
         return false;
@@ -1209,15 +1157,21 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     public double calcDistanceToFront() {
         double distance = 0.0;
-        for (EvacuationAgent agent : current_link.getAgents()) {
+        for (EvacuationAgent agent : currentPlace.getLink().getAgents()) {
             double tmp_distance = 0.0;
             if (isForwardDirection()) {
-                if (agent.position > position) {
-                    tmp_distance = agent.position - position;
+                if (agent.currentPlace.getPositionOnLink()
+                    > currentPlace.getPositionOnLink()) {
+                    tmp_distance
+                        = agent.currentPlace.getPositionOnLink()
+                        - currentPlace.getPositionOnLink();
                 }
             } else {
-                if (agent.position < position) {
-                    tmp_distance = position - agent.position;
+                if (agent.currentPlace.getPositionOnLink()
+                    < currentPlace.getPositionOnLink()) {
+                    tmp_distance
+                        = currentPlace.getPositionOnLink()
+                        - agent.currentPlace.getPositionOnLink();
                 }
             }
             if (tmp_distance > distance) {
@@ -1237,51 +1191,27 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * change: navigation_reason, route, prev_node, previous_link,
      * current_link, position, evacuated, link.agentExists
      */
-    protected boolean tryToPassNode(double time) {
-        // [2015.01.02 I.Noda] ループの検出（検出だけでなにもしない）
-        // 過去の route と同じかどうかのチェック。
-        for (final CheckPoint point : route) {
-            if (point.node == next_node) {
-                if (navigation_reason != null) {
-					navigation_reason.add("LOOP HERE!\n");
-                }
-                break;
-            }
-        }
-
+    protected boolean tryToPassNode(double time,
+                                    RoutePlan workingRoutePlan,
+                                    MapLink nextLink) {
         /* [2014.12.19 I.Noda] 
          * NaiveAgent への経路記録の入り口のため,
          * recordTrail を導入。
          */
-        recordTrail(time) ;
+        recordTrail(time, currentPlace, nextLink) ;
 
-        MapNode passingNode = next_node ;
+        MapNode passingNode = currentPlace.getHeadingNode();
+        MapLink previousLink = currentPlace.getLink() ;
+        double direction_orig = currentPlace.getDirectionValue() ;
 
         /* agent exits the previous link */
-        getCurrentLink().agentExits(this);
-        setPrevNode(passingNode) ;
+        currentPlace.getLink().agentExits(this);
 
-        //2011年6月7日追加
-        MapLink previous_link = current_link;
+        /* transit to new link */
+        currentPlace.transitTo(nextLink) ;
+        calcNextTarget(passingNode, workingRoutePlan, false) ;
 
-        /* agent enters the next link */
-        setCurrentLink(next_link_candidate);
-
-        // 2011年6月7日追加
-
-        double direction_orig = direction;
-        // tkokada
-        calcNextTarget(passingNode, routePlan, false) ;
-        if (next_link_candidate.isForwardDirectionFrom(passingNode)) {
-            next_node = current_link.getTo();
-            setPosition(random.nextDouble() / 100);
-            direction = 1.0;
-        } else {
-            next_node = current_link.getFrom();
-            setPosition(current_link.length - random.nextDouble() / 100);
-            direction = -1.0;
-        }
-        getCurrentLink().agentEnters(this);
+        currentPlace.getLink().agentEnters(this);
         //update_swing_flag = true;
         //2011年6月7日修正
         /*
@@ -1296,22 +1226,17 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
          * という二つの条件を満たした場合、swing_width の更新をおこないません。
          * この修正によって、swing_width が更新されないため、不自然な描画の発生は防がれています。
          */
-        if (next_link_candidate.width == previous_link.width &&
+        if (currentPlace.getLink().width == previousLink.width &&
             passingNode.getPathways().size() == 2) {
-            if (direction_orig == direction) {
-                update_swing_flag = false;
-            } else {
-                update_swing_flag = false;
-                swing_width *= -1;
-            }
+            if (direction_orig != getDirection()) { swing_width *= -1; }
+            update_swing_flag = false;
         } else {
             update_swing_flag = true;
         }
         if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
-            current_link.hasTag(goal)){
-            consumePlannedRoute();
-            setEvacuated(true, time);
-            current_link.agentExits(this);
+            currentPlace.getLink().hasTag(goal)){
+            finalizeEvacuation(time, true) ;
+            /* [2015.01.10 I.Noda] bug? ここは、move_commit と同じ事すべきか？ */
         }
 
         return true;
@@ -1322,8 +1247,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * 最終決定したルート、足跡情報の記録
      * [2014.12.19 I.Noda] tryToPassNode() より移動
      */
-    protected void recordTrail(double time) {
-		route.add(new CheckPoint(next_node, time, navigation_reason.toString()));
+    protected void recordTrail(double time, Place passingPlace,
+                               MapLink nextLink) {
+        route.add(new CheckPoint(passingPlace.getHeadingNode(),
+                                 time, navigation_reason.toString()));
     }
 
 	//############################################################
@@ -1335,11 +1262,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * ノード上で、次の道を探す。
      */
     protected MapLink navigate(double time,
-                               MapLink link_now,
-                               MapNode node_now,
+                               Place passingPlace,
                                RoutePlan workingRoutePlan,
                                boolean on_node) {
-        final MapLinkTable way_candidates = node_now.getPathways();
+        final MapLinkTable way_candidates
+            = passingPlace.getHeadingNode().getPathways();
 
         /* trapped? */
         if (way_candidates.size() == 0) {
@@ -1363,7 +1290,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             System.exit(1) ;
         }
 
-        MapLink target = sane_navigation(time, workingRoutePlan, on_node) ;
+        MapLink target =
+            sane_navigation_from_node(time, passingPlace,
+                                      workingRoutePlan, on_node) ;
         if (target != null) {
             return target;
         }
@@ -1389,50 +1318,44 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     public void renavigate(RoutePlan workingRoutePlan) {
         if (goal != null){
-            calcNextTarget(next_node, workingRoutePlan, false);
+            calcNextTarget(currentPlace.getHeadingNode(),
+                           workingRoutePlan, false);
         }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 
-     */
-    protected MapLink sane_navigation(double time,
-                                      RoutePlan workingRoutePlan,
-                                      boolean on_node) {
-        MapLink way = 
-            sane_navigation_from_node(time, current_link, next_node,
-                                      workingRoutePlan, on_node) ;
-        return way;
     }
 
     //------------------------------------------------------------
     /**
      * ノードにおいて、次の道を選択するルーチン
      */
-    protected MapLink sane_navigation_from_node(double time, 
-                                                MapLink link, MapNode node,
+    protected MapLink sane_navigation_from_node(double time,
+                                                Place passingPlace,
                                                 RoutePlan workingRoutePlan,
                                                 boolean on_node) {
         // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
-        if (isSameSituationForSaneNavigationFromNode(link,node))
+        if (isSameSituationForSaneNavigationFromNode(passingPlace))
             return sane_navigation_from_node_result;
-        backupSituationForSaneNavigationFromNodeBefore(link, node) ;
+        backupSituationForSaneNavigationFromNodeBefore(passingPlace);
 
-        MapLinkTable way_candidates = node.getPathways();
+        MapLinkTable way_candidates =
+            passingPlace.getHeadingNode().getPathways();
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
         MapLink way = null;
         MapLink way_second = null;
 
-        boolean monitor = next_node.hasTag("MONITOR-NAVIGATION");
+        boolean monitor =
+            currentPlace.getHeadingNode().hasTag("MONITOR-NAVIGATION");
 
         MapLinkTable way_samecost = null;
 
-        final Term next_target = calcNextTarget(node, workingRoutePlan, on_node) ;
+        final Term next_target =
+            calcNextTarget(passingPlace.getHeadingNode(),
+                           workingRoutePlan, on_node) ;
 
         if (monitor)
-            System.err.println("navigating at " + node.getTagString() + " for " + next_target);
+            System.err.println("navigating at " +
+                               passingPlace.getHeadingNode().getTagString() +
+                               " for " + next_target);
 		navigation_reason.clear().add("for").add(next_target).add("\n");
         for (MapLink way_candidate : way_candidates) {
             // tkokada
@@ -1451,15 +1374,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             } 
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost = calcWayCostTo(way_candidate, node, next_target) ;
-
-            if (monitor)
-                System.err.print(way_candidate.getTagString() +
-                    "\t" + cost + "\t" +cost +
-                    "(" + way_candidate.crowdness() + ")\t"
-                    + way_candidate.spaceLeft(node, 1.0));
-			navigation_reason.add(way_candidate.getOther(node))
-				.add("(").add(cost).add(") ");
+            double cost = calcWayCostTo(way_candidate,
+                                        passingPlace.getHeadingNode(),
+                                        next_target) ;
 
             if (cost < min_cost) { // 最小cost置き換え
                 min_cost = cost;
@@ -1472,12 +1389,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             }
         }
 
-        if (way_samecost != null) {
+        if (way_samecost != null && way_samecost.size()>0) {
             //int i = (int)(Math.random() * way_samecost.size());
-            int i = (int)(random.nextDouble() * way_samecost.size());
-            if (i != way_samecost.size()) {
-                way = way_samecost.get(i);
-            }
+            way = way_samecost.get(random.nextInt(way_samecost.size())) ;
         }
 
         if (way == null) {
@@ -1489,7 +1403,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             return null;
         }
 
-		navigation_reason.add("\n -> chose").add(way.getOther(node)) ;
+		navigation_reason.add("\n -> chose")
+            .add(way.getOther(passingPlace.getHeadingNode())) ;
         return way;
     }
 
@@ -1497,28 +1412,24 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     /**
      * 前回の呼び出し時と同じ条件かどうかのチェック
      */
-    private boolean isSameSituationForSaneNavigationFromNode(MapLink link, 
-                                                             MapNode node) {
+    private boolean isSameSituationForSaneNavigationFromNode(Place passingPlace) {
         boolean forced = sane_navigation_from_node_forced ;
         sane_navigation_from_node_forced = false ;
         return (!forced &&
-                sane_navigation_from_node_current_link == current_link &&
-                sane_navigation_from_node_link == link &&
-                sane_navigation_from_node_node == node &&
-                emptyspeed < (isForwardDirection() ?
-                              current_link.length - position :
-                              position)) ;
+                sane_navigation_from_node_current_link == currentPlace.getLink() &&
+                sane_navigation_from_node_link == passingPlace.getLink() &&
+                sane_navigation_from_node_node == passingPlace.getHeadingNode() &&
+                emptyspeed < currentPlace.getRemainingDistance()) ;
     }
 
     //------------------------------------------------------------
     /**
      * 上記のチェックのための状態バックアップ(before)
      */
-    private void backupSituationForSaneNavigationFromNodeBefore(MapLink link,
-                                                                MapNode node) {
-        sane_navigation_from_node_current_link = current_link;
-        sane_navigation_from_node_link = link;
-        sane_navigation_from_node_node = node;
+    private void backupSituationForSaneNavigationFromNodeBefore(Place passingPlace) {
+        sane_navigation_from_node_current_link = currentPlace.getLink() ;
+        sane_navigation_from_node_link = passingPlace.getLink();
+        sane_navigation_from_node_node = passingPlace.getHeadingNode() ;
     }
 
     //------------------------------------------------------------
@@ -1540,7 +1451,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * 今、top の target が現在のノードのタグにある場合、
      * route は１つ進める。
      */
-    protected Term calcNextTarget(MapNode node, RoutePlan workingRoutePlan,
+    protected Term calcNextTarget(MapNode node, 
+                                  RoutePlan workingRoutePlan,
                                   boolean on_node) {
         if (on_node &&
             !workingRoutePlan.isEmpty() &&
@@ -1613,11 +1525,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     public void draw(Graphics2D g, 
             boolean experiment) {
         if (experiment && ((displayMode & 2) != 2)) return;
-        if (current_link == null) return;
+        if (currentPlace.getLink() == null) return;
 
         Point2D p = getPos();
-        final double minHight = ((MapPartGroup)current_link.getParent()).getMinHeight();
-        final double maxHight = ((MapPartGroup)current_link.getParent()).getMaxHeight();
+        final double minHight =
+            ((MapPartGroup)currentPlace.getLink().getParent()).getMinHeight();
+        final double maxHight =
+            ((MapPartGroup)currentPlace.getLink().getParent()).getMaxHeight();
         float r = (float)((getHeight() - minHight) / (maxHight - minHight));
         if (r < 0) r = 0;
         if (r > 1) r = 1;

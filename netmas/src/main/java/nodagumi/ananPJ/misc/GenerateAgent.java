@@ -544,8 +544,7 @@ class GenerateAgentFromLink extends GenerateAgent {
 
     @Override
     protected void place_agent(WaitRunningAroundPerson agent) {
-        double position = random.nextDouble() * start_link.length;
-        agent.place(start_link, position);
+        agent.placeAtRandomPosition(start_link) ;
         //start_link.agentEnters(agent);
     }
 
@@ -692,9 +691,7 @@ class GenerateAgentFromNode extends GenerateAgent {
         }
         //MapLink link = start_node.getPathways().get(0);
         link.setup_lanes();
-        double position = 0.0;
-        if (link.getTo() == start_node) position = link.length;
-        agent.place(link, position);
+        agent.place(link, start_node, 0.0) ;
         //link.agentEnters(agent);
     }
 

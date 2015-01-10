@@ -999,7 +999,7 @@ public class SimulationPanel3D extends NetworkPanel3D
                 return;
             }
 
-            MapLink current_pathway = (MapLink)agent.getCurrentLink();
+			MapLink current_pathway = (MapLink)agent.getCurrentLink();
             MapPartGroup group = (MapPartGroup)current_pathway.getParent();
             if (group == null) {
                 /* the link the agent is on was removed */
@@ -1445,7 +1445,7 @@ public class SimulationPanel3D extends NetworkPanel3D
     public void printAgents() {
         for (EvacuationAgent ea : agents) {
             System.err.println("SimulationPanel3D.printAgents agent id: " +
-                    ea.ID + "position: " + ea.getPosition() + " pos: " + 
+                    ea.ID + "position: " + ea.getPositionOnLink() + " pos: " + 
                     ea.getPos());
         }
     }

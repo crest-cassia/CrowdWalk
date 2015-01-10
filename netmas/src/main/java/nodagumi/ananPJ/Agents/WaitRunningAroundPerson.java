@@ -128,7 +128,8 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 
 
     protected boolean scatter(double time) {
-        final ArrayList<EvacuationAgent> agents = current_link.getAgents();
+        final ArrayList<EvacuationAgent> agents =
+            currentPlace.getLink().getAgents();
         int index = Collections.binarySearch(agents, this) ;
         /* [2015.01.07 I.Noda] bug!!!
          * 本来、index が負になる（agents に存在しない）ことは
@@ -147,23 +148,24 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
          * ここでは、なぜか、エージェントの進行方向を無視して計算している。
          * しかし、本来、無視してはいけないはず。
          */
-        double front_space = current_link.length - position;
-        double rear_space = position;
-        int width = (int)current_link.width;
+        double front_space =
+            currentPlace.getLinkLength() - currentPlace.getPositionOnLink();
+        double rear_space = currentPlace.getPositionOnLink();
+        int width = (int)currentPlace.getLinkWidth();
 
         int rear_agent_i = index - width;
         if (rear_agent_i > 0) {
-            rear_space = position - agents.get(rear_agent_i).position;
+            rear_space = getPositionOnLink() - agents.get(rear_agent_i).getPositionOnLink() ;
         }
         int front_agent_i = index + width;
         if (front_agent_i < agents.size()) {
-            front_space = agents.get(front_agent_i).position - position;
+            front_space = agents.get(front_agent_i).getPositionOnLink() - getPositionOnLink();
         }
 
         calc_speed(time);
         double d = (front_space - rear_space) * 0.3; 
         if (Math.abs(d) > Math.abs(speed)) {
-            d = Math.signum(d) * Math.abs(speed);
+            d = Math.signum(d) * Math.abs(speed) * getDirection() ;
         }
         return move_set(d, time, false);
     }
@@ -171,8 +173,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     protected boolean pack(double time) {
         calc_speed(time);
 
-        double d = speed * direction;
-        return move_set(d, time, false);
+        return move_set(speed, time, false);
     }
 
     static final double NOT_WAITING = -100.0;
@@ -220,10 +221,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      *         (true なら super のpreUpdateを呼ばない)
      */
     protected boolean doWaitUntil(Term target, Term how, Term until, double time) {
-        if (current_link.hasTag(target)) {
+        if (currentPlace.getLink().hasTag(target)) {
             // until は、待っているリンクで生じるイベント
             // until イベントが生じていたら、WAIT解除
-            if (current_link.hasTag(until.getString())) {
+            if (currentPlace.getLink().hasTag(until.getString())) {
                 routePlan.shift() ;
                 return false ;
             } else {
@@ -242,7 +243,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      */
     protected boolean doWaitFor(Term target, Term how, Term until, double time) {
         // until は待つ時間(?)
-        if (current_link.hasTag(target)) {
+        if (currentPlace.getLink().hasTag(target)) {
             // 待ち始めた時刻と待ち時間を記録(初回のみ)
             if (wait_time == NOT_WAITING) {
                 wait_time = until.getDouble() ;

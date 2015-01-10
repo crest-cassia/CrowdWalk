@@ -13,8 +13,15 @@
 
 package nodagumi.ananPJ.misc ;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
+import java.awt.geom.Point2D;
+
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.Agents.EvacuationAgent;
 
 import nodagumi.Itk.*;
 
@@ -137,12 +144,61 @@ public class Place {
 
     //------------------------------------------------------------
     /**
+     * リンクをセットし、その上にランダムに配置
+     * @param _link : エージェントのいるリンク
+     */
+    public Place setAtRandomPosition(MapLink _link, Random _random) {
+        setLink(_link) ;
+        setEnteringNode(null) ;
+        setAdvancingDistance(_random.nextDouble() * getLinkLength()) ;
+
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * コピー生成
      */
     public Place duplicate() {
         Place newPlace = new Place() ;
         newPlace.set(this) ;
+
         return newPlace ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 空かどうか？
+     * リンクもノードも埋まっていない。
+     */
+    public boolean isEmpty() {
+        return (link == null && enteringNode == null) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 行動開始前かどうか？
+     * リンクのみ埋まっている。
+     */
+    public boolean isBeforeStart() {
+        return (link != null && enteringNode == null) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 行動中かどうか?
+     */
+    public boolean isWalking() {
+        return (link != null && enteringNode != null) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 避難完了かどうか？
+     * ノードのみ埋まっている。
+     */
+    public boolean isEvacuated() {
+        return (link == null && enteringNode != null) ;
     }
 
     //############################################################
@@ -166,15 +222,31 @@ public class Place {
 
     //------------------------------------------------------------
     /**
-     * 進入ノード
+     * リンク幅
+     */
+    public double getLinkWidth() { return getLink().width ; } ;
+
+    //------------------------------------------------------------
+    /**
+     * 進入ノード取得
      */
     public MapNode getEnteringNode() { return enteringNode ; } ;
 
     //------------------------------------------------------------
     /**
-     * 進入ノード
+     * 進入ノードセット
      */
     public Place setEnteringNode(MapNode _node) {
+        return setEnteringNodeSafely(_node) ;
+        //return setEnteringNodeDirectly(_node) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 進入ノード
+     * 念の為、リンクに含まれるかチェックしている。
+     */
+    public Place setEnteringNodeSafely(MapNode _node) {
         if(_node != null && !isEitherNode(_node)) {
             Itk.dumpStackTrace() ;
             Itk.dbgWrn("Specified node is not in the link. Instead using null.") ;
@@ -183,6 +255,17 @@ public class Place {
         } else {
             enteringNode = _node ;
         }
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 進入ノード
+     * リンクとの整合チェックはしない。
+     */
+    public Place setEnteringNodeDirectly(MapNode _node) {
+        enteringNode = _node ;
+
         return this ;
     }
 
@@ -203,6 +286,14 @@ public class Place {
      * 進行距離
      */
     public double getAdvancingDistance() { return advancingDistance ; } ;
+
+    //------------------------------------------------------------
+    /**
+     * 残りの距離
+     */
+    public double getRemainingDistance() { 
+        return getLinkLength() - getAdvancingDistance() ;
+    } ;
 
     //------------------------------------------------------------
     /**
@@ -261,6 +352,7 @@ public class Place {
     /**
      * 方向チェック
      */
+
     //------------------------------------------------------------
     /**
      * リンクの from-to と進行方向が同じか？
@@ -275,6 +367,14 @@ public class Place {
      */
     public boolean isBackwardDirection() {
         return getEnteringNode() == getToNode() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンク方向が未定か
+     */
+    public boolean isNoneDirection() {
+        return getEnteringNode() == null ;
     }
 
     //------------------------------------------------------------
@@ -306,9 +406,13 @@ public class Place {
     //------------------------------------------------------------
     /**
      * リンク視点の位置
+     * 方向が定まっていないとき(noneDirection)は、
+     * advancingDistance を絶対位置とする。
      */
-    public double positionOnLink() {
-        if(isForwardDirection()) {
+    public double getPositionOnLink() {
+        if(isNoneDirection()) {
+            return getAdvancingDistance() ;
+        } else if(isForwardDirection()) {
             return getAdvancingDistance() ;
         } else if(isBackwardDirection()) {
             return getLinkLength() - getAdvancingDistance() ;
@@ -333,6 +437,18 @@ public class Place {
         return getLink().getTo() ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 制約付きリンクかどうかの判定
+     * OneWay もしくはroad closed かどうかのチェック。
+     */
+    public boolean isRestrictedLink() {
+        MapLink _link = getLink() ;
+        return (_link.isOneWayPositive() ||
+                _link.isOneWayNegative() ||
+                _link.isRoadClosed()) ;
+    }
+
     //############################################################
     /**
      * 位置操作
@@ -348,49 +464,38 @@ public class Place {
 
     //------------------------------------------------------------
     /**
-     * 位置チェック。
-     * リンク上にあるか。両端を含む。
-     * @return リンク上であれば true。
+     * 反転
      */
-    public boolean isOnLink() {
-        return isOnLink(true) ;
+    public Place turnAround() {
+        MapNode newEnteringNode = getHeadingNode() ;
+        double distance = getLinkLength() - getAdvancingDistance() ;
+
+        setEnteringNode(newEnteringNode) ;
+        setAdvancingDistance(distance) ;
+        return this ;
     }
 
     //------------------------------------------------------------
     /**
      * 位置チェック。
-     * リンク上にあるか。両端を含むかはフラグで判別。
-     * @param includeEdge : 両端を含むかどうか。true/false。
+     * リンク上にあるか。
      * @return リンク上であれば true。
      */
-    public boolean isOnLink(boolean includeEdge) {
-        return isOnLinkWithAdvance(0.0, includeEdge) ;
+    public boolean isOnLink() {
+        return isOnLinkWithAdvance(0.0) ;
     }
 
     //------------------------------------------------------------
     /**
      * ある程度進んだ地点の位置チェック。
+     * 起点(enteringNode)上は、リンク上とする。
+     * 終点(headingNode)上は、リンク外とする。
      * @param advance : 現地点からの相対進行距離
      * @return リンク上であれば true。
      */
     public boolean isOnLinkWithAdvance(double advance) {
-        return isOnLinkWithAdvance(advance, true) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ある程度進んだ地点の位置チェック。
-     * @param advance : 現地点からの相対進行距離
-     * @param includeEdge : 両端を含むかどうか。true/false。
-     * @return リンク上であれば true。
-     */
-    public boolean isOnLinkWithAdvance(double advance, boolean includeEdge) {
         double distance = getAdvancingDistance() + advance ;
-        if(includeEdge) {
-            return distance >= 0.0 && distance <= getLinkLength() ;
-        } else {
-            return distance > 0.0 && distance < getLinkLength() ;
-        }
+        return distance >= 0.0 && distance < getLinkLength() ;
     }
 
     //############################################################
@@ -418,6 +523,98 @@ public class Place {
      */
     public Place newPlaceTransitTo(MapLink nextLink) {
         return duplicate().transitTo(nextLink) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 最後のリンクを抜ける
+     * link には null が入る。
+     * 最後に通りすぎたノードは、enteringNode に残る。
+     * @return 変更された Place
+     */
+    public Place quitLastLink() {
+        enteringNode = getHeadingNode() ;
+        link = null ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 最後のノード
+     * link が null が入っているときだけ意味がある。
+     * @return 最後のノード
+     */
+    public MapNode getLastNode() {
+        return getEnteringNode() ;
+    }
+
+    //############################################################
+    /**
+     * レーン操作
+     */
+    //------------------------------------------------------------
+    /**
+     * レーン取得
+     */
+    public ArrayList<EvacuationAgent> getLane() {
+        return getLink().getLane(getDirectionValue()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * レーン幅取得
+     */
+    public int getLaneWidth() {
+        return getLink().getLaneWidth(getDirectionValue()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * レーン幅取得
+     */
+    public int getIndexInLane(EvacuationAgent agent) {
+        return Collections.binarySearch(getLane(), agent) ;
+    }
+
+    //############################################################
+    /**
+     * 表示関係
+     */
+    //------------------------------------------------------------
+    /**
+     * 表示上の位置計算
+     */
+    public Point2D getPosForDisplay() {
+        if (getLink() != null) {
+            return getLink().calcAgentPos(getPositionOnLink());
+        } else if (getLastNode() != null){
+            return getLastNode().getAbsoluteCoordinates();
+        } else {
+            return null;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 表示上の高さ計算
+     */
+    public double getHeightForDisplay() {
+        if (getLink() != null) {
+            return getLink().calcAgentHeight(getPositionOnLink());
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 文字列化
+     */
+    public String toString() {
+        return ("Place[link:" + getLink() +
+                ",enter:" + getEnteringNode() +
+                ",dist:" + getAdvancingDistance() +
+                "]") ;
     }
 
 } // class Foo

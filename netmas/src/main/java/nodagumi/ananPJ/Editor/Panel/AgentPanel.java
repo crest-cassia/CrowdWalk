@@ -87,9 +87,9 @@ public class AgentPanel extends JPanel
                 return agent.getClass();
             case 2:
             {
-                MapLink link = agent.getCurrentLink();
+				MapLink link = agent.getCurrentLink() ;
                 if (link == null) return "";
-                return link.getTagString() + " " + agent.getPosition();
+                return link.getTagString() + " " + agent.getPositionOnLink();
             }
             case 3:
             {

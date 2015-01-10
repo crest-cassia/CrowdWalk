@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.Map;
 import java.util.HashMap;
 
+import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.Agents.WaitRunningAroundPerson ;
@@ -185,10 +186,12 @@ public class NaiveAgent
      * [2014.12.19 I.Noda] tryToPassNode() より移動
      */
     @Override
-    protected void recordTrail(double time) {
-        super.recordTrail(time) ;
+    protected void recordTrail(double time, Place passingPlace, 
+                               MapLink nextLink) {
+        super.recordTrail(time, passingPlace, nextLink) ;
 
-        trailCountTable.add(next_node, next_link_candidate, trailCountStep) ;
+        trailCountTable.add(passingPlace.getHeadingNode(),
+                            nextLink, trailCountStep) ;
     }
 
 } // class NaiveAgent

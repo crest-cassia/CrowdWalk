@@ -725,7 +725,7 @@ public class AgentHandler implements Serializable {
             agent.update(time);
 
             if (agent.isEvacuated()) {
-                final MapNode exit = agent.getPrevNode();
+                final MapNode exit = agent.getLastNode() ;
                 Integer i = evacuatedAgentCountByExit.get(exit);
                 if (i == null)
                     i = new Integer(0);
@@ -774,7 +774,7 @@ public class AgentHandler implements Serializable {
                 buff.append(0.0); buff.append(",");
                 buff.append(-1); buff.append(",");
                 buff.append(-1); buff.append(",");
-                buff.append(agent.getPrevNode().ID); buff.append(",");
+                buff.append(agent.getLastNode().ID); buff.append(",");
                 buff.append(0.0); buff.append(",");
                 buff.append(0); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
@@ -801,7 +801,7 @@ public class AgentHandler implements Serializable {
                 buff.append(agent.getCurrentLink().ID); buff.append(",");
                 buff.append(agent.getNextNode().ID); buff.append(",");
                 buff.append(agent.getPrevNode().ID); buff.append(",");
-                buff.append(agent.getDirection() >= 0.0 ? agent.getCurrentLink().length - agent.getPosition() : agent.getPosition()); buff.append(",");
+                buff.append(agent.getRemainingDistance()); buff.append(",");
                 buff.append((int)agent.getDirection()); buff.append(",");
 
                 buff.append((int)agent.generatedTime); buff.append(",");
@@ -1089,7 +1089,7 @@ public class AgentHandler implements Serializable {
                 buff.append(((RunningAroundPerson)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
                 buff.append(model.getTimeScale()); buff.append(",");
-                buff.append(agent.getPrevNode().ID); buff.append(",");
+                buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {
                     if (idx > 0) {
@@ -1391,7 +1391,7 @@ public class AgentHandler implements Serializable {
                 pw.print("evacuated," + 
                         agent.agentNumber + "," +
                         agent.finishedTime + "," +
-                        agent.getPrevNode().getTagString()
+                        agent.getLastNode().getTagString()
                 );
             } else {
                 pw.print(agent.toString());

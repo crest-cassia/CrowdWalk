@@ -78,7 +78,7 @@ public class AgentFactory extends JPanel implements ItemListener,
     public EvacuationAgent moveAgent(MapLink link, double position) {
         /* make agent according to the current agent template */
         if (agentCandidate != null) {
-            agentCandidate.place(link, position);
+			agentCandidate.place(link, null, position);
         }
         return agentCandidate;
     }

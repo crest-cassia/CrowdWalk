@@ -260,27 +260,6 @@ public class MapLink extends OBMapPart implements Serializable {
         return total_agent_triage_level;
     }
 
-    public boolean spaceLeft(MapNode node, double space_required) {
-        if (agents.size() == 0) return true;
-
-        double clearance = length;
-        int w = (int)width;
-        if (w == 0) w = 1;
-        if (isForwardDirectionFrom(node)) {
-            int index = w;
-            if (index < getLane(1.0).size()) {
-                clearance = getLane(1.0).get(index).getPosition();
-            }
-        } else {
-            int index = getLane(-1.0).size() - w;
-            if (index > 0) {
-                clearance = length - getLane(-1.0).get(index).getPosition();
-            }
-        }
-
-        return clearance >= space_required;
-    }
-
     /**
      * 真の混雑度 [2014.12.15 I.Noda]
      * たいがい 1.0 以下。
@@ -518,53 +497,6 @@ public class MapLink extends OBMapPart implements Serializable {
     public double calcAgentHeight(double position) {
         return fromNode.getHeight() + (toNode.getHeight() - fromNode
                 .getHeight()) * position / length;
-    }
-
-    public boolean agentCanEnter(EvacuationAgent agent,
-            MapNode node) {
-        /* Confluence */
-        final MapLink lastPath = agent.getCurrentLink();
-        if (lastPath == null) {
-            System.err.println("ERROR: no path? " + agent.isEvacuated());
-        }
-        Double capacityLeft = fromLinksCapacity.get(lastPath);
-        if (capacityLeft == null) {
-            System.err.println("ERROR: path not registered?");
-            for (MapLink link : fromLinksCapacity.keySet()) {
-                System.err.println(link.getTagString());
-            }
-        }
-        //System.err.print(getTagString() + " " + capacityLeft);
-        if (capacityLeft <= 1.0) {
-            //System.err.print(" over capacity (ignoring)");
-            return false;
-        }
-
-        /* Crowdness */
-        if (agents.size() > 0) {
-            double clearance = length;
-            if (isForwardDirectionFrom(node)) {
-                int index = (int) width;
-                if (index < getLane(1.0).size()) {
-                    clearance = getLane(1.0).get(index).getPosition();
-                }
-            } else {
-                //node is "to"
-                int index = getLane(-1.0).size() - 1 - (int) width;
-                if (index > 0) {
-                    clearance = length - getLane(-1.0).get(index).getPosition();
-                }
-            }
-
-            if (clearance < 0.20) {
-                return false;
-            }
-        }
-
-        /* Success */
-        capacityLeft -= 1.0;
-        fromLinksCapacity.put(agent.getCurrentLink(), capacityLeft);
-        return true;
     }
 
     public void agentEnters(EvacuationAgent agent) {

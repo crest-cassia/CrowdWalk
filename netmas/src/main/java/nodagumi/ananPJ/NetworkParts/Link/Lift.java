@@ -222,23 +222,6 @@ public class Lift extends MapLink implements Serializable {
 	private boolean agentWating = false;
 
 	@Override
-	public boolean agentCanEnter(EvacuationAgent agent,
-			MapNode node) {
-		if (agent.getCurrentLink().hasTag("Lift") ||
-				(shaft.state == Shaft.State.TOP
-				&& shaft.targetFloor == this 
-				&& agents.size() < width)) {
-			//System.err.println("adding " + label);
-			agents.add(agent);
-			agentWating = false;
-			return true;
-		}
-
-		agentWating = true;
-		return false;
-    }
-	
-	@Override
 	public void draw(Graphics2D g,
 			boolean in_simulation,
 			boolean show_label,
