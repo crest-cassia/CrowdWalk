@@ -31,9 +31,17 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
-     * test Array
+     * test dump call stack
      */
     @Test
+    public void test_DumpStackTrace() {
+        Itk.dumpStackTrace() ;
+    }
+    //------------------------------------------------------------
+    /**
+     * test Array
+     */
+    //@Test
     public void test_Array() {
         ArrayList<Integer> a2 = new ArrayList<Integer>() ;
         for(int i = 0 ; i < 10 ; i++) { a2.add(i) ; }

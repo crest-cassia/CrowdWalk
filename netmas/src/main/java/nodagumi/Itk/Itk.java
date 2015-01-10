@@ -324,6 +324,31 @@ public class Itk {
         return form.format(date) ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * StackTrace出力のヘッダ
+     */
+    final static public String StackTraceTag = "ITK\t" ;
+
+    //------------------------------------------------------------
+    /**
+     * 現在実行中のメソッド情報
+     */
+    static public void dumpStackTrace() {
+        dumpStackTrace(1) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在実行中のメソッド情報
+     */
+    static public void dumpStackTrace(int offset) {
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace() ;
+        for(int i = 2 + offset ; i < trace.length ; i++) {
+            dbgGeneric(StackTraceTag, trace[i]) ;
+        }
+    }
+
     //------------------------------------------------------------
     /**
      * 現在実行中のメソッド情報

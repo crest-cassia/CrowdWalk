@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Agents;
 
 import java.awt.BorderLayout;
@@ -45,108 +46,108 @@ public abstract class EvacuationAgent extends OBMapPart
 implements Comparable<EvacuationAgent>, Serializable {
     private static final long serialVersionUID = 2580480798262915926L;
 
-	//============================================================
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * agent_count は生成したエージェントの総数。
-	 * agentNumber は、agent の中での通しナンバー。
-	 */
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * agent_count は生成したエージェントの総数。
+     * agentNumber は、agent の中での通しナンバー。
+     */
     static int agent_count = 0;
     public int agentNumber;
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * generatedTime: 生成された時刻
-	 * finishedTime: ゴールに到達した時刻
-	 * evacuated: ゴールに到達したかどうかのフラグ
-	 */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * generatedTime: 生成された時刻
+     * finishedTime: ゴールに到達した時刻
+     * evacuated: ゴールに到達したかどうかのフラグ
+     */
     public double generatedTime;
     public double finishedTime;
     private boolean evacuated = false;
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * goal: 目的地
-	 * routePlan: 目的地までの経路
-	 */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * goal: 目的地
+     * routePlan: 目的地までの経路
+     */
     protected Term goal;
     protected RoutePlan routePlan = new RoutePlan();
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * current_link: 現在いるリンク
-	 * prev_node: 直前に通りすぎたノード
-	 * next_node: 今向かっているノード
-	 * direction: current_link 上での順・逆方向。+1.0 / -1.0
-	 * position:現在のリンク上の、fromNodeからの位置を示す。
-	 *          なので、逆向きの場合(fromNodeに向かっている場合)は、
-	 *          position は徐々に減っていく。
-	 */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * current_link: 現在いるリンク
+     * prev_node: 直前に通りすぎたノード
+     * next_node: 今向かっているノード
+     * direction: current_link 上での順・逆方向。+1.0 / -1.0
+     * position:現在のリンク上の、fromNodeからの位置を示す。
+     *          なので、逆向きの場合(fromNodeに向かっている場合)は、
+     *          position は徐々に減っていく。
+     */
     protected MapLink current_link;
     protected MapNode prev_node;
     protected MapNode next_node;
     protected double direction = 0.0;
     protected double position;
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * speed: エージェントが単位時間に進む距離
-	 * dv: 加速度
-	 */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * speed: エージェントが単位時間に進む距離
+     * dv: 加速度
+     */
     protected double speed;
     protected double dv = 0.0;
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * currentExposuerAmount: 現在の暴露量
-	 * accumulatedExposuerAmount: 暴露量の累積
-	 * pollutionType: 累積するかどうか？
-	 * pollution: ???
-	 */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * currentExposuerAmount: 現在の暴露量
+     * accumulatedExposuerAmount: 暴露量の累積
+     * pollutionType: 累積するかどうか？
+     * pollution: ???
+     */
     public double currentExposureAmount = 0.0;
     public double accumulatedExposureAmount = 0.0;
     protected static String pollutionType = "NonAccumulated";
     protected Pollution pollution = null;
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * 表示・設定関係
-	 */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 表示・設定関係
+     */
     public int displayMode = 0;
     protected double swing_width;
     protected String configLine = "none";
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	/**
-	 * 乱数生成器
-	 */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 乱数生成器
+     */
     protected Random random = null;
 
-	//############################################################
-	/**
-	 * 初期化関係
-	 */
-	//------------------------------------------------------------
-	/**
-	 * constractors
-	 * 引数なしconstractorはClassFinder.newByName で必要。
-	 */
-	public EvacuationAgent() {} ;
+    //############################################################
+    /**
+     * 初期化関係
+     */
+    //------------------------------------------------------------
+    /**
+     * constractors
+     * 引数なしconstractorはClassFinder.newByName で必要。
+     */
+    public EvacuationAgent() {} ;
     public EvacuationAgent(int _id, Random _random) {
-		init(_id, _random) ;
-	}
+        init(_id, _random) ;
+    }
 
-	//------------------------------------------------------------
-	/**
-	 * エージェントのクラス短縮名を取得。
-	 * EvacuationAgent は abstract なので、null
-	 */
+    //------------------------------------------------------------
+    /**
+     * エージェントのクラス短縮名を取得。
+     * EvacuationAgent は abstract なので、null
+     */
     public static String getTypeName() { return null; };
 
-	//------------------------------------------------------------
-	/**
-	 * 初期化。constractorから分離。
-	 */
+    //------------------------------------------------------------
+    /**
+     * 初期化。constractorから分離。
+     */
     public void init(int _id, Random _random) {
         super.init(_id);
         random = _random;
@@ -157,27 +158,27 @@ implements Comparable<EvacuationAgent>, Serializable {
         pollution = Pollution.getInstance(pollutionType + "Pollution");
     }
 
-	//------------------------------------------------------------
-	/**
-	 * エージェント複製
-	 */
-	public EvacuationAgent copyAndInitialize() {
-		try {
-			EvacuationAgent r = (EvacuationAgent)this.getClass().newInstance() ;
-			return copyAndInitializeBody(r) ;
-		} catch(Exception ex) {
-			ex.printStackTrace() ;
-			Itk.dbgErr("can not make a new instance from an agent.") ;
-			Itk.dbgMsg("agent", this) ;
-			return null ;
-		}
-	}
+    //------------------------------------------------------------
+    /**
+     * エージェント複製
+     */
+    public EvacuationAgent copyAndInitialize() {
+        try {
+            EvacuationAgent r = (EvacuationAgent)this.getClass().newInstance() ;
+            return copyAndInitializeBody(r) ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("can not make a new instance from an agent.") ;
+            Itk.dbgMsg("agent", this) ;
+            return null ;
+        }
+    }
 
-	//------------------------------------------------------------
-	/**
-	 * 与えられたエージェントインスタンスに内容をコピーし、初期化。
-	 */
-	public EvacuationAgent copyAndInitializeBody(EvacuationAgent r) {
+    //------------------------------------------------------------
+    /**
+     * 与えられたエージェントインスタンスに内容をコピーし、初期化。
+     */
+    public EvacuationAgent copyAndInitializeBody(EvacuationAgent r) {
         r.ID = ID;
         r.generatedTime = generatedTime;
         r.prev_node = prev_node;
@@ -189,187 +190,187 @@ implements Comparable<EvacuationAgent>, Serializable {
             r.addTag(tag);
         }
 
-		return r ;
-	}
+        return r ;
+    }
 
-	//============================================================
-	//------------------------------------------------------------
-	/**
-	 * クラス名によるエージェントの作成。
-	 * [2014.12.30 I.Noda]
-	 * これまで決め打ちであったものを、GenerateAgent で登録されたものが
-	 * 自動で対応されるようにしてある。
-	 */
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * クラス名によるエージェントの作成。
+     * [2014.12.30 I.Noda]
+     * これまで決め打ちであったものを、GenerateAgent で登録されたものが
+     * 自動で対応されるようにしてある。
+     */
     public static EvacuationAgent createEmptyAgent(String type, Random _random) {
         if (type.equals("NOT SELECTED")) {
             return null;
-		} else {
-			EvacuationAgent agent = GenerateAgent.newAgentByName(type) ;
-			if(agent != null) {
-				agent.init(0, _random) ;
-				return agent ;
-			} else {
-				return null ;
-			}
-		}
-	}
+        } else {
+            EvacuationAgent agent = GenerateAgent.newAgentByName(type) ;
+            if(agent != null) {
+                agent.init(0, _random) ;
+                return agent ;
+            } else {
+                return null ;
+            }
+        }
+    }
 
-	//############################################################
-	/**
-	 * インスタンス変数へのアクセス
-	 */
-	//------------------------------------------------------------
-	/**
-	 * エージェント id
-	 */
+    //############################################################
+    /**
+     * インスタンス変数へのアクセス
+     */
+    //------------------------------------------------------------
+    /**
+     * エージェント id
+     */
     public int getAgentNumber() {
         return agentNumber;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 避難完了をセット
-	 */
+    //------------------------------------------------------------
+    /**
+     * 避難完了をセット
+     */
     public void setEvacuated(boolean evacuated, double time) {
         this.evacuated = evacuated;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 避難完了かどうかチェック
-	 */
+    //------------------------------------------------------------
+    /**
+     * 避難完了かどうかチェック
+     */
     public boolean isEvacuated() {
         return evacuated;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * ゴールをセット
-	 */
+    //------------------------------------------------------------
+    /**
+     * ゴールをセット
+     */
     public void setGoal(Term _goal) {
         goal = _goal;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * ゴールを取得
-	 */
+    //------------------------------------------------------------
+    /**
+     * ゴールを取得
+     */
     public Term getGoal() {
         return goal;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 経路を取得
-	 */
+    //------------------------------------------------------------
+    /**
+     * 経路を取得
+     */
     public RoutePlan getRoutePlan() {
-		return routePlan ;
-	} ;
+        return routePlan ;
+    } ;
 
-	//------------------------------------------------------------
-	/**
-	 * 全経路をセット
-	 */
+    //------------------------------------------------------------
+    /**
+     * 全経路をセット
+     */
     public void setPlannedRoute(List<Term> _planned_route) {
         routePlan.setRoute(_planned_route) ;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 全経路を取得
-	 */
+    //------------------------------------------------------------
+    /**
+     * 全経路を取得
+     */
     public List<Term> getPlannedRoute() {
         return routePlan.getRoute() ;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 現在いるリンクをセット
-	 */
+    //------------------------------------------------------------
+    /**
+     * 現在いるリンクをセット
+     */
     protected void setCurrentLink(MapLink currentPathway) {
         this.current_link = currentPathway;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 現在いるリンク
-	 */
+    //------------------------------------------------------------
+    /**
+     * 現在いるリンク
+     */
     public MapLink getCurrentLink() {
         return current_link;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 現在目指しているノード
-	 */
+    //------------------------------------------------------------
+    /**
+     * 現在目指しているノード
+     */
     public MapNode getNextNode() {
         return next_node;
     }
     
-	//------------------------------------------------------------
-	/**
-	 * 通り過ぎたノードをセット
-	 */
+    //------------------------------------------------------------
+    /**
+     * 通り過ぎたノードをセット
+     */
     public void setPrevNode(MapNode node) {
         this.prev_node = node;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 通り過ぎたノード
-	 */
+    //------------------------------------------------------------
+    /**
+     * 通り過ぎたノード
+     */
     public MapNode getPrevNode() {
         return prev_node;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 現在のリンクに対する向きを取得
-	 */
+    //------------------------------------------------------------
+    /**
+     * 現在のリンクに対する向きを取得
+     */
     public double getDirection() { return direction; }
 
-	//------------------------------------------------------------
-	/**
-	 * 現在のリンクに対して前向き（リンクの fromNode から toNode）
-	 * に向かっているか？
-	 */
+    //------------------------------------------------------------
+    /**
+     * 現在のリンクに対して前向き（リンクの fromNode から toNode）
+     * に向かっているか？
+     */
     public boolean isForwardDirection() { return direction > 0.0; }
 
-	//------------------------------------------------------------
-	/**
-	 * 現在のリンクに対して逆向き（リンクの toNode から fromNode）
-	 * に向かっているか？
-	 */
-	public boolean isBackwardDirection() { return direction < 0.0; }
+    //------------------------------------------------------------
+    /**
+     * 現在のリンクに対して逆向き（リンクの toNode から fromNode）
+     * に向かっているか？
+     */
+    public boolean isBackwardDirection() { return direction < 0.0; }
 
-	//------------------------------------------------------------
-	/**
-	 * リンク上の位置をセット
-	 */
+    //------------------------------------------------------------
+    /**
+     * リンク上の位置をセット
+     */
     public void setPosition(double position) {
         this.position = position;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * リンク上の位置
-	 */
+    //------------------------------------------------------------
+    /**
+     * リンク上の位置
+     */
     public double getPosition() {
         return position;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * current_link 上における相対(エージェント進行方向中心) position
-	 */
+    //------------------------------------------------------------
+    /**
+     * current_link 上における相対(エージェント進行方向中心) position
+     */
     public double advancingPosition() {
         return isForwardDirection() ? position : current_link.length - position;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * エージェントをリンクに配置
-	 */
+    //------------------------------------------------------------
+    /**
+     * エージェントをリンクに配置
+     */
     public void place(MapLink link, double _position) {
         prev_node = link.getFrom();
         next_node = link.getTo();
@@ -388,89 +389,89 @@ implements Comparable<EvacuationAgent>, Serializable {
         next_node = tmp;
     }
     
-	//------------------------------------------------------------
-	/**
-	 * 速度を取得
-	 */
+    //------------------------------------------------------------
+    /**
+     * 速度を取得
+     */
     public double getSpeed() {
         return speed;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 速度をセット
-	 */
+    //------------------------------------------------------------
+    /**
+     * 速度をセット
+     */
     public void setSpeed(double _speed) {
         speed = _speed;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 加速度を取得
-	 */
+    //------------------------------------------------------------
+    /**
+     * 加速度を取得
+     */
     public double getAcceleration() {
         return dv;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * ???
-	 */
+    //------------------------------------------------------------
+    /**
+     * ???
+     */
     public static void setPollutionType(String s) {
         pollutionType = s;
     }
-	//------------------------------------------------------------
-	/**
-	 * ???
-	 */
+    //------------------------------------------------------------
+    /**
+     * ???
+     */
     public int getTriage() {
         return pollution.getTriage(this);
     }
 
-	//------------------------------------------------------------
-	/**
-	 * ???
-	 */
+    //------------------------------------------------------------
+    /**
+     * ???
+     */
     public boolean finished() {
         return pollution.finished(this);
     }
 
-	//------------------------------------------------------------
-	/**
-	 * ???
-	 */
+    //------------------------------------------------------------
+    /**
+     * ???
+     */
     public void exposed(double c) {
         pollution.expose(this, c);
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 設定用
-	 */
+    //------------------------------------------------------------
+    /**
+     * 設定用
+     */
     public String getConfigLine() {
         return configLine;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 設定用
-	 */
+    //------------------------------------------------------------
+    /**
+     * 設定用
+     */
     public void setConfigLine(String str) {
         configLine = str;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 乱数生成器
-	 */
+    //------------------------------------------------------------
+    /**
+     * 乱数生成器
+     */
     public void setRandom(Random _random) {
         random = _random;
     }
 
-	//############################################################
-	/**
-	 * 経路計画関連
-	 */
+    //############################################################
+    /**
+     * 経路計画関連
+     */
 
     //------------------------------------------------------------
     /**
@@ -496,45 +497,45 @@ implements Comparable<EvacuationAgent>, Serializable {
         return isPlannedRouteCompleted() ? "" : routePlan.top().getString() ;
     }
 
-	//############################################################
-	/**
-	 * シミュレーションサイクル
-	 */
-	//------------------------------------------------------------
-	/**
-	 * シミュレーション開始前に呼ばれる。
-	 */
+    //############################################################
+    /**
+     * シミュレーションサイクル
+     */
+    //------------------------------------------------------------
+    /**
+     * シミュレーション開始前に呼ばれる。
+     */
     abstract public void prepareForSimulation(double _ts);
 
-	//------------------------------------------------------------
-	/**
-	 * シミュレーション各サイクルの前半に呼ばれる。
-	 */
+    //------------------------------------------------------------
+    /**
+     * シミュレーション各サイクルの前半に呼ばれる。
+     */
     abstract public void preUpdate(double time);
 
-	//------------------------------------------------------------
-	/**
-	 * シミュレーション各サイクルの後半に呼ばれる。
-	 */
+    //------------------------------------------------------------
+    /**
+     * シミュレーション各サイクルの後半に呼ばれる。
+     */
     abstract public boolean update(double time);
 
-	//------------------------------------------------------------
-	/**
-	 * 表示用
-	 */
+    //------------------------------------------------------------
+    /**
+     * 表示用
+     */
     abstract public void updateViews();
 
-	//############################################################
-	/**
-	 * エージェントのソート関係
-	 */
-	//------------------------------------------------------------
-	/**
-	 * sort, binarySearch 用比較関数(古くて間違っている)
-	 */
+    //############################################################
+    /**
+     * エージェントのソート関係
+     */
+    //------------------------------------------------------------
+    /**
+     * sort, binarySearch 用比較関数(古くて間違っている)
+     */
     public int compareTo_orig(EvacuationAgent rhs) {
-		double h1 = this.position ;
-		double h2 = rhs.position ;
+        double h1 = this.position ;
+        double h2 = rhs.position ;
 
         // tkokada modified
         if (h1 == h2) {
@@ -557,63 +558,63 @@ implements Comparable<EvacuationAgent>, Serializable {
         }
     }
 
-	//------------------------------------------------------------
-	/**
-	 * sort, binarySearch 用比較関数
-	 * エージェントのリンク上の進み具合で比較。
-	 * 逆向きなどはちゃんと方向を直して扱う。
-	 */
+    //------------------------------------------------------------
+    /**
+     * sort, binarySearch 用比較関数
+     * エージェントのリンク上の進み具合で比較。
+     * 逆向きなどはちゃんと方向を直して扱う。
+     */
     public int compareTo(EvacuationAgent rhs) {
-		if(agentNumber == rhs.agentNumber) return 0 ;
+        if(agentNumber == rhs.agentNumber) return 0 ;
 
-		double h1 = this.advancingPosition() ;
-		double h2 = rhs.advancingPosition() ;
+        double h1 = this.advancingPosition() ;
+        double h2 = rhs.advancingPosition() ;
 
-		if(h1 > h2) {
-			return 1 ;
-		} else if(h1 < h2) {
-			return -1 ;
-		} else if(agentNumber > rhs.agentNumber) {
-			return 1;
-		} else {
-			return -1;
-		}
+        if(h1 > h2) {
+            return 1 ;
+        } else if(h1 < h2) {
+            return -1 ;
+        } else if(agentNumber > rhs.agentNumber) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
-	//############################################################
-	/**
-	 * directive 関係
-	 */
+    //############################################################
+    /**
+     * directive 関係
+     */
     //------------------------------------------------------------
     /**
      * ある Term が Directive かどうかのチェック
      * 単純に Atom でないかどうかをチェック。
-	 * 実際の知りするかどうかは、isKnownDirective で定義。
+     * 実際の知りするかどうかは、isKnownDirective で定義。
      */
     public boolean isDirectiveTerm(Term term) {
         return !term.isAtom() ;
     }
 
-	//------------------------------------------------------------
+    //------------------------------------------------------------
     /* [2014.12.29 I.Noda]
      * directive を増やす場合は、継承するクラスで以下２つを再定義していく。
      */
-	/**
-	 * 知っている directive かどうかのチェック
-	 */
-	public boolean isKnownDirective(Term term) {
-		return false ;
-	}
+    /**
+     * 知っている directive かどうかのチェック
+     */
+    public boolean isKnownDirective(Term term) {
+        return false ;
+    }
 
-	//------------------------------------------------------------
-	/**
-	 * 知っている directive かどうかのチェック
-	 * @return pushした数
-	 */
-	public int pushPlaceTagInDirective(Term directive,
-									   ArrayList<Term> goalList) {
-		return 0 ;
-	}
+    //------------------------------------------------------------
+    /**
+     * 知っている directive かどうかのチェック
+     * @return pushした数
+     */
+    public int pushPlaceTagInDirective(Term directive,
+                                       ArrayList<Term> goalList) {
+        return 0 ;
+    }
 
     //------------------------------------------------------------
     /* [2014.12.29 I.Noda]
@@ -638,56 +639,56 @@ implements Comparable<EvacuationAgent>, Serializable {
         return true;
     }
 
-	//############################################################
-	/**
-	 * 入出力関係
-	 */
-	//------------------------------------------------------------
-	/**
-	 * 表示用
-	 */
+    //############################################################
+    /**
+     * 入出力関係
+     */
+    //------------------------------------------------------------
+    /**
+     * 表示用
+     */
     abstract public void draw(Graphics2D g, boolean experiment);
 
-	//------------------------------------------------------------
-	/**
-	 * Agent については、fromDom はサポートしない
-	 */
+    //------------------------------------------------------------
+    /**
+     * Agent については、fromDom はサポートしない
+     */
     public static OBNode fromDom(Element element) {
-		Itk.dbgErr("fromDom() is not supported.") ;
-		return null ;
-	}
+        Itk.dbgErr("fromDom() is not supported.") ;
+        return null ;
+    }
 
-	//------------------------------------------------------------
-	/**
-	 * おそらく、OBNode 汎用のルーチン。
-	 */
+    //------------------------------------------------------------
+    /**
+     * おそらく、OBNode 汎用のルーチン。
+     */
     public final static String getNodeTypeString() {
         return "Agent";
     }
     
-	//------------------------------------------------------------
-	/**
-	 * 現状をダンプ
-	 */
+    //------------------------------------------------------------
+    /**
+     * 現状をダンプ
+     */
     abstract public void dumpResult(PrintStream out);
     
-	//------------------------------------------------------------
-	/**
-	 * 文字列化
-	 */
-	public String toString() {
-		StringBuffer buffer = new StringBuffer() ;
-		buffer.append(this.getClass().getSimpleName()) ;
-		buffer.append("[") ;
-		buffer.append("id:").append(ID) ;
-		buffer.append("]") ;
-		return buffer.toString() ;
-	};
+    //------------------------------------------------------------
+    /**
+     * 文字列化
+     */
+    public String toString() {
+        StringBuffer buffer = new StringBuffer() ;
+        buffer.append(this.getClass().getSimpleName()) ;
+        buffer.append("[") ;
+        buffer.append("id:").append(ID) ;
+        buffer.append("]") ;
+        return buffer.toString() ;
+    };
 
-	//------------------------------------------------------------
-	/**
-	 * リンク上の表示上の横ずれ幅計算
-	 */
+    //------------------------------------------------------------
+    /**
+     * リンク上の表示上の横ずれ幅計算
+     */
     public Vector3d getSwing() {
         if (null == current_link) {
             return new Vector3d(0, 0, 0);
@@ -708,10 +709,10 @@ implements Comparable<EvacuationAgent>, Serializable {
         return v3;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 表示上の位置計算
-	 */
+    //------------------------------------------------------------
+    /**
+     * 表示上の位置計算
+     */
     public Point2D getPos() {
         if (getCurrentLink() != null) {
             return getCurrentLink().calcAgentPos(position);
@@ -722,10 +723,10 @@ implements Comparable<EvacuationAgent>, Serializable {
         }
     }
 
-	//------------------------------------------------------------
-	/**
-	 * 高さ？
-	 */
+    //------------------------------------------------------------
+    /**
+     * 高さ？
+     */
     public double getHeight() {
         if (getCurrentLink() != null) {
             return getCurrentLink().calcAgentHeight(position);
@@ -734,10 +735,10 @@ implements Comparable<EvacuationAgent>, Serializable {
         }
     }
     
-	//------------------------------------------------------------
-	/**
-	 * Setting the agent's attributes
-	 */
+    //------------------------------------------------------------
+    /**
+     * Setting the agent's attributes
+     */
     public static void showAttributeDialog(NetworkMap networkMap,
             ArrayList<EvacuationAgent> agents) {
         /* Set attributes with a dialog */
@@ -805,7 +806,7 @@ implements Comparable<EvacuationAgent>, Serializable {
                     for (EvacuationAgent agent : agents) {
                         if (agent instanceof RunningAroundPerson) {
                             RunningAroundPerson rp = (RunningAroundPerson)agent;
-							if (rp.selected) rp.setGoal(new Term(goalString));
+                            if (rp.selected) rp.setGoal(new Term(goalString));
                         } 
                     }
                     this.dispose();
@@ -819,10 +820,10 @@ implements Comparable<EvacuationAgent>, Serializable {
         dialog.setVisible(true);
     }
 
-	//------------------------------------------------------------
-	/**
-	 * ルート表示(for editor)
-	 */
+    //------------------------------------------------------------
+    /**
+     * ルート表示(for editor)
+     */
     public static void showRouteDialog(NetworkMap networkMap,
             ArrayList<EvacuationAgent> agents) {
         /* Set attributes with a dialog */
@@ -893,8 +894,8 @@ implements Comparable<EvacuationAgent>, Serializable {
                 if (e.getActionCommand().equals("OK")) {
                     ArrayList<Term> planned_route = new ArrayList<Term>();
                     for (int i = 0; i < routes.length; i++) {
-						Term tag = new Term((String)routes[i].getSelectedItem());
-						planned_route.add(tag) ;
+                        Term tag = new Term((String)routes[i].getSelectedItem());
+                        planned_route.add(tag) ;
                     }
                     for (EvacuationAgent agent : agents) {
                         if (agent instanceof RunningAroundPerson) {
@@ -913,10 +914,10 @@ implements Comparable<EvacuationAgent>, Serializable {
         dialog.setVisible(true);
     }
 
-	//------------------------------------------------------------
-	/**
-	 * ???
-	 */
+    //------------------------------------------------------------
+    /**
+     * ???
+     */
     abstract public JPanel paramSettingPanel(NetworkMap networkMap);
 
 }
