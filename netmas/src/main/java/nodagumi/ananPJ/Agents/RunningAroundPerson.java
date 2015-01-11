@@ -416,70 +416,73 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 	 */
     //------------------------------------------------------------
     /**
-     * prepareForSimulation
+     * シミュレーション準備
      */
     @Override
     public void prepareForSimulation(double _timeScale) {
         /* tkokada: modified to apply deserialize method */
         if (!isEvacuated()) {
             if(currentPlace.isBeforeStartFromLink()) { // リンクが初期位置
-                MapNode fromNode = currentPlace.getFromNode();
-                MapNode toNode = currentPlace.getToNode();
-                /* [2015.01.10 I.Noda]
-                 * 現状では、方向が決まっていないので、
-                 * advancingDistance を positionOnLink として扱う
-                 */
-                double positionOnLink = currentPlace.getAdvancingDistance() ;
-                double linkLength = currentPlace.getLinkLength() ;
-
-                routePlan.resetIndex() ;
-                double distViaFromNode =
-                    (fromNode.getDistance(calcNextTarget(fromNode,
-                                                         routePlan,
-                                                         false))
-                     + positionOnLink) ;
-                routePlan.resetIndex() ;
-                double distViaToNode =
-                    (toNode.getDistance(calcNextTarget(toNode,
-                                                       routePlan,
-                                                       false))
-                     + linkLength - positionOnLink) ;
-
-                if (distViaFromNode >= distViaToNode) {
-                    currentPlace.set(currentPlace.getLink(),
-                                     fromNode, true,
-                                     positionOnLink) ;
-                } else {
-                    currentPlace.set(currentPlace.getLink(),
-                                     toNode, true,
-                                     linkLength - positionOnLink) ;
-                }
+                prepareForSimulation_FromLink() ;
             } else if (currentPlace.isBeforeStartFromNode()) { // ノードが初期位置
-                MapNode startNode = currentPlace.getEnteringNode() ;
-                Term firstTarget = calcNextTarget(startNode, routePlan, true) ;
-                double bestDist = Double.MAX_VALUE ;
-                MapLink bestLink = null ;
-                for(MapLink link : startNode.getLinks()) {
-                    double dist = calcWayCostTo(link, startNode, firstTarget) ;
-                    if(dist < bestDist) {
-                        bestLink = link ;
-                        bestDist = dist ;
-                    }
-                }
-                if(bestLink == null) {
-                    Itk.dbgErr("start node has no way to the first target") ;
-                    Itk.dbgMsg("startNode", startNode.toShortInfo()) ;
-                    Itk.dbgMsg("firstTarget", firstTarget) ;
-                    setEvacuated(true,0) ;
-                }
-                currentPlace.set(bestLink, startNode, true, 0.0) ;
+                prepareForSimulation_FromNode() ;
             }
             speed = 0;
-            routePlan.resetIndex() ;
 
-            renavigate(routePlan); 
+            renavigate(routePlan);
         }
     }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション準備 (from Link)
+     */
+    public void prepareForSimulation_FromLink() {
+        // 仮に、forwardDirection と仮定。
+        MapNode fromNode = currentPlace.getFromNode();
+        currentPlace.setEnteringNode(fromNode) ;
+        double costOfForwardDirection =
+            calcCostFromPlaceTo(currentPlace, routePlan) ;
+
+        // backwardDirection に変更。
+        currentPlace.turnAround() ;
+        double costOfBackwardDirection =
+            calcCostFromPlaceTo(currentPlace, routePlan) ;
+
+        //もし forward の方が低コストなら、再度 turnAround
+        if(costOfForwardDirection < costOfBackwardDirection) {
+            currentPlace.turnAround() ;
+        } else {
+            // do nothing
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション準備 (from Node)
+     */
+    public void prepareForSimulation_FromNode() {
+        currentPlace.setAdvancingDistance(0.0) ;
+        MapNode startNode = currentPlace.getEnteringNode() ;
+        double bestDist = Double.MAX_VALUE ;
+        MapLink bestLink = null ;
+        for(MapLink link : startNode.getLinks()) {
+            currentPlace.setLink(link) ;
+            double dist = calcCostFromPlaceTo(currentPlace, routePlan) ;
+            if(dist < bestDist) {
+                bestLink = link ;
+                bestDist = dist ;
+            }
+        }
+        if(bestLink == null) { // もし見つからない場合
+            Itk.dbgErr("currentPlace has no way for routePlan.") ;
+            Itk.dbgMsg("currentPlace", currentPlace) ;
+            Itk.dbgMsg("routePlan", routePlan) ;
+            setEvacuated(true,0) ;
+        }
+        currentPlace.setLink(bestLink) ;
+    }
+
 
     //------------------------------------------------------------
     /**
@@ -1508,7 +1511,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     //------------------------------------------------------------
     /**
-     * あるwayを選択した場合の目的地(_target)までのコスト。
+     * ある _node においてあるwayを選択した場合の目的地(_target)までのコスト。
      * ここを変えると、経路選択の方法が変えられる。
      */
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
@@ -1517,7 +1520,25 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         cost += _way.length;
         return cost ;
     }
-        
+
+    //------------------------------------------------------------
+    /**
+     * あるplaceから現在のroutePlanの次の目的地までのコスト。
+     * @param workingPlace : 現在地を示す Place
+     * @param workingRoutePlan : 現在の経路計画。保存される。
+     * @return コスト
+     */
+    public double calcCostFromPlaceTo(Place _place,
+                                      final RoutePlan _routePlan) {
+        RoutePlan workingRoutePlan = _routePlan.duplicate() ;
+        Term target = calcNextTarget(_place.getHeadingNode(),
+                                     workingRoutePlan,false) ;
+        double costFromEnteringNode =
+            calcWayCostTo(_place.getLink(), _place.getEnteringNode(), target) ;
+        double costFromPlace =
+            costFromEnteringNode - _place.getAdvancingDistance() ;
+        return costFromPlace ;
+    }
 
 	//############################################################
 	/**
