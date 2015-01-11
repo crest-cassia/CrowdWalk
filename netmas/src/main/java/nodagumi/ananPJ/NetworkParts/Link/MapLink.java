@@ -1007,6 +1007,21 @@ public class MapLink extends OBMapPart implements Serializable {
 
     //------------------------------------------------------------
     /**
+     * リンクの情報を短く示す文字列。
+     * @return 文字列
+     */
+    public String toShortInfo() {
+        return ("Link[" + ID
+                + ",tag:" + getTags()
+                + ",from:" + (fromNode == null ?
+                              "(null)" : String.valueOf(fromNode.ID))
+                + ",to:" + (toNode == null ?
+                            "(null)" : String.valueOf(toNode.ID))
+                + "]" ) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * リンクが指定されたノードから見て正方向かどうかのチェック
      * @param originNode エージェントが入る側のノード
      * @return originNode が fromNode と同じなら true

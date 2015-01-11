@@ -559,7 +559,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     protected boolean move_set(double d, double time, boolean will_move_out) {
         nextPlace.set(currentPlace) ;
-        nextPlace.makeAdvance(d * time_scale) ;
+        double distToMove = d * time_scale ;
+        nextPlace.makeAdvance(d * time_scale, !will_move_out) ;
         return false ;
     }
 

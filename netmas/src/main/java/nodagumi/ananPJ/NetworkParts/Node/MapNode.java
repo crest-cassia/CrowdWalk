@@ -505,6 +505,17 @@ public class MapNode extends OBMapPart implements Serializable {
         return getTagString();
     }
 
+    //------------------------------------------------------------
+    /**
+     * ノードの情報を短く示す文字列。
+     * @return 文字列
+     */
+    public String toShortInfo() {
+        return ("Node[" + ID
+                + ",tag:" + getTags()
+                + "]" ) ;
+    }
+
     @Override
     public String getHintString() {
         //return "" + getAbsoluteX() + ", " + getAbsoluteY() + ", " + getHeight();

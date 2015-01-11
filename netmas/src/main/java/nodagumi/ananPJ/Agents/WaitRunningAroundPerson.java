@@ -184,31 +184,30 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     @Override
     public void preUpdate(double time) {
         waiting = false;
-        //生成前かroutePlanがすでに空なら super へ。
         if (time <= generatedTime || routePlan.isEmpty()) {
-            super.preUpdate(time);
-            return;
-        }
+            //生成前かroutePlanがすでに空なら
+            // do nothing
+        } else {
+            // WAIT directive かどうかのチェック。
+            Term tag = routePlan.top() ;
+            WaitDirective.Type waitType = WaitDirective.isDirective(tag) ;
+            if(waitType != null) {
+                Term target = tag.getArgTerm("target") ;
+                Term how = tag.getArgTerm("how") ;
+                Term until = tag.getArgTerm("until") ;
 
-        // WAIT directive かどうかのチェック。
-        Term tag = routePlan.top() ;
-        WaitDirective.Type waitType = WaitDirective.isDirective(tag) ;
-        if(waitType != null) {
-            Term target = tag.getArgTerm("target") ;
-            Term how = tag.getArgTerm("how") ;
-            Term until = tag.getArgTerm("until") ;
-
-            try {
-                switch(waitType) {
-                case WAIT_UNTIL:
-                    if(doWaitUntil(target, how, until, time)) return ;
-                    break ;
-                case WAIT_FOR:
-                    if(doWaitFor(target, how, until, time)) return ;
-                    break ;
+                try {
+                    switch(waitType) {
+                    case WAIT_UNTIL:
+                        if(doWaitUntil(target, how, until, time)) return ;
+                        break ;
+                    case WAIT_FOR:
+                        if(doWaitFor(target, how, until, time)) return ;
+                        break ;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace() ;
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace() ;
             }
         }
         super.preUpdate(time);

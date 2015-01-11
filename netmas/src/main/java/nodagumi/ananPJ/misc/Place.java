@@ -38,6 +38,12 @@ public class Place {
     final static public double DirectionValue_Backward = -1.0 ;
     final static public double DirectionValue_None = 0.0 ;
 
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * リンクを抜け出る直前を計算するための係数
+     */
+    final static public double AlmostOne = (1.0 - 1.0e-13) ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェントが存在するリンク
@@ -455,10 +461,32 @@ public class Place {
      */
     //------------------------------------------------------------
     /**
-     * 前進
+     * 前進(単純)
+     * @param distance : 進める距離
+     * @return Placeそのものを返す。
      */
     public Place makeAdvance(double distance) {
         setAdvancingDistance(getAdvancingDistance() + distance) ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 前進（制約付き）
+     * @param distance : 進める距離
+     * @param limitOnLink : リンク上にとどまるかどうかのチェック
+     * @return Placeそのものを返す。
+     */
+    public Place makeAdvance(double distance, boolean limitOnLink) {
+        makeAdvance(distance) ;
+        if(limitOnLink) {
+            if(isBeforeLink()) {
+                setAdvancingDistance(0.0) ;
+            }
+            if(isBeyondLink()) {
+                setAdvancingDistance(getLinkLength() * AlmostOne) ;
+            }
+        }
         return this ;
     }
 
@@ -497,6 +525,53 @@ public class Place {
         double distance = getAdvancingDistance() + advance ;
         return distance >= 0.0 && distance < getLinkLength() ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * 位置チェック。
+     * リンクの手前かどうか？
+     * @return 手間であれば true。
+     */
+    public boolean isBeforeLink() {
+        return isBeforeLinkWithAdvance(0.0) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ある程度進んだ地点の位置チェック。
+     * リンクの手前かどうか？
+     * 起点(enteringNode)上は、リンク上とする。
+     * @param advance : 現地点からの相対進行距離
+     * @return 手前であれば true。
+     */
+    public boolean isBeforeLinkWithAdvance(double advance) {
+        double distance = getAdvancingDistance() + advance ;
+        return distance < 0.0 ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 位置チェック。
+     * リンクを通り過ぎているか？
+     * @return 通りすぎていれば true。
+     */
+    public boolean isBeyondLink() {
+        return isBeyondLinkWithAdvance(0.0) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ある程度進んだ地点の位置チェック。
+     * 終点より向こう側か？
+     * 終点(headingNode)上は、リンク外とする。
+     * @param advance : 現地点からの相対進行距離
+     * @return 通りすぎていれば true。
+     */
+    public boolean isBeyondLinkWithAdvance(double advance) {
+        double distance = getAdvancingDistance() + advance ;
+        return distance >= getLinkLength() ;
+    }
+
 
     //############################################################
     /**
@@ -611,8 +686,8 @@ public class Place {
      * 文字列化
      */
     public String toString() {
-        return ("Place[link:" + getLink() +
-                ",enter:" + getEnteringNode() +
+        return ("Place[on:" + getLink().toShortInfo() +
+                ",enter:" + getEnteringNode().toShortInfo() +
                 ",dist:" + getAdvancingDistance() +
                 "]") ;
     }
