@@ -387,6 +387,31 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg 取得 (boolean)
+     */
+    public boolean getArgBoolean(String slot) {
+        return convertValueToBoolean(getArg(slot)) ;
+    }
+
+    private boolean convertValueToBoolean(Object val) {
+        if(val instanceof Term) {
+            return Boolean.valueOf(((Term)val).getString()) ;
+        } else if(val instanceof Boolean) {
+            return (Boolean)val ;
+        } else if(val instanceof String) {
+            return Boolean.valueOf((String)val) ;
+        } else if(val == null) {
+            return false ;
+        } else {
+            Thread.dumpStack() ;
+            Itk.dbgErr("can not convert to boolean:" + this.toString()) ;
+            Itk.dbgMsg("use false") ;
+            return false ;
+        } 
+    }
+
+    //------------------------------------------------------------
+    /**
      * arg 取得 (int)
      */
     public int getArgInt(String slot) {

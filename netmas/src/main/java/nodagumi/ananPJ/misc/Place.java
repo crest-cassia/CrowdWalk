@@ -125,11 +125,25 @@ public class Place {
      */
     public Place set(MapLink _link, MapNode _node, boolean _entering,
                      double _advancingDistance) {
+        return set(_link, _node, _entering, _advancingDistance, true) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 各値をセット
+     * @param _link : エージェントのいるリンク
+     * @param _node : どちらかのノード
+     * @param _entering : _node が入った側かどうか？
+     * @param _advancingDistance : 進行距離
+     * @param safely : advancingNode の設定で、整合性チェックするかどうか
+     */
+    public Place set(MapLink _link, MapNode _node, boolean _entering,
+                     double _advancingDistance, boolean safely) {
         link = _link ;
         if(_entering) {
-            setEnteringNode(_node) ;
+            setEnteringNode(_node, safely) ;
         } else {
-            setEnteringNode(link.getOther(_node)) ;
+            setEnteringNode(link.getOther(_node), safely) ;
         }
 
         advancingDistance = _advancingDistance ;
@@ -156,7 +170,8 @@ public class Place {
     public Place setAtRandomPosition(MapLink _link, Random _random) {
         setLink(_link) ;
         setEnteringNode(null) ;
-        setAdvancingDistance(_random.nextDouble() * getLinkLength()) ;
+        double dist = _random.nextDouble() * getLinkLength() ;
+        setAdvancingDistance(dist) ;
 
         return this ;
     }
@@ -186,8 +201,17 @@ public class Place {
      * 行動開始前かどうか？
      * リンクのみ埋まっている。
      */
-    public boolean isBeforeStart() {
+    public boolean isBeforeStartFromLink() {
         return (link != null && enteringNode == null) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 行動開始前かどうか？
+     * ノードのみ埋まっている。
+     */
+    public boolean isBeforeStartFromNode() {
+        return (link == null && enteringNode != null) ;
     }
 
     //------------------------------------------------------------
@@ -202,6 +226,7 @@ public class Place {
     /**
      * 避難完了かどうか？
      * ノードのみ埋まっている。
+     * 初期配置で、ノードに配置された時もこれと同じ状態とする。
      */
     public boolean isEvacuated() {
         return (link == null && enteringNode != null) ;
@@ -243,8 +268,19 @@ public class Place {
      * 進入ノードセット
      */
     public Place setEnteringNode(MapNode _node) {
-        return setEnteringNodeSafely(_node) ;
-        //return setEnteringNodeDirectly(_node) ;
+        return setEnteringNode(_node, true) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 進入ノードセット
+     */
+    public Place setEnteringNode(MapNode _node, boolean safely) {
+        if(safely) {
+            return setEnteringNodeSafely(_node) ;
+        } else {
+            return setEnteringNodeDirectly(_node) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -253,13 +289,13 @@ public class Place {
      * 念の為、リンクに含まれるかチェックしている。
      */
     public Place setEnteringNodeSafely(MapNode _node) {
-        if(_node != null && !isEitherNode(_node)) {
+        if(getLink() != null && _node != null && !isEitherNode(_node)) {
             Itk.dumpStackTrace() ;
             Itk.dbgWrn("Specified node is not in the link. Instead using null.") ;
             Itk.dbgMsg("node", _node) ;
             Itk.dbgMsg("link", getLink()) ;
         } else {
-            enteringNode = _node ;
+            setEnteringNodeDirectly(_node) ;
         }
         return this ;
     }

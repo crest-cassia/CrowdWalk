@@ -609,11 +609,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         /* get all links with the start_link_tag */
         map.getLinks().findTaggedLinks(start_link_tag, genConfig.startLinks) ;
 
-        for (MapNode node : map.getNodes()) {
-            if (node.hasTag(start_link_tag)) {
-                genConfig.startNodes.add(node);
-            }
-        }
+        /* get all nodes with the start_link_tag */
+        map.getNodes().findTaggedNodes(start_link_tag, genConfig.startNodes) ;
 
         if (genConfig.startLinks.size() == 0 &&
             genConfig.startNodes.size() == 0) {
@@ -754,6 +751,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     public GenerationConfigBase scanJsonFileOneItem(Term json,
                                                     NetworkMapBase map)
     {
+        // ignore が true なら、項目を無視する。
+        if(json.getArgBoolean("ignore")) { return null ; }
+
         Rule ruleTag = 
             (Rule)ruleLexicon.lookUp(json.getArgString("rule")) ;
         GenerationConfigBase genConfig = newConfigForRuleTag(ruleTag) ;

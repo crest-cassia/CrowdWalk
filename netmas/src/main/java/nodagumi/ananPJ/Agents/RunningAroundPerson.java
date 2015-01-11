@@ -72,7 +72,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 速度計さん関係
+     * 速度計算関係
 	 * emptyspeed : ??? Initial values 
 	 * time_scale : シミュレーションステップ
      * MAX_SPEED : 自由速度
@@ -422,33 +422,57 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     public void prepareForSimulation(double _timeScale) {
         /* tkokada: modified to apply deserialize method */
         if (!isEvacuated()) {
-            MapNode fromNode = currentPlace.getFromNode();
-            MapNode toNode = currentPlace.getToNode();
-            /* [2015.01.10 I.Noda]
-             * 現状では、方向が決まっていないので、
-             * advancingDistance を positionOnLink として扱う
-             */
-            double positionOnLink = currentPlace.getAdvancingDistance() ;
-            double linkLength = currentPlace.getLinkLength() ;
-            double distViaFromNode =
-                (fromNode.getDistance(calcNextTarget(fromNode,
-                                                     routePlan.duplicate(),
-                                                     false))
-                 + positionOnLink) ;
-            double distViaToNode =
-                (toNode.getDistance(calcNextTarget(toNode,
-                                                    routePlan.duplicate(),
-                                                   false))
-                 + linkLength - positionOnLink) ;
+            if(currentPlace.isBeforeStartFromLink()) { // リンクが初期位置
+                MapNode fromNode = currentPlace.getFromNode();
+                MapNode toNode = currentPlace.getToNode();
+                /* [2015.01.10 I.Noda]
+                 * 現状では、方向が決まっていないので、
+                 * advancingDistance を positionOnLink として扱う
+                 */
+                double positionOnLink = currentPlace.getAdvancingDistance() ;
+                double linkLength = currentPlace.getLinkLength() ;
 
-            if (distViaFromNode >= distViaToNode) {
-                currentPlace.set(currentPlace.getLink(),
-                                 fromNode, true,
-                                 positionOnLink) ;
-            } else {
-                currentPlace.set(currentPlace.getLink(),
-                                 toNode, true,
-                                 linkLength - positionOnLink) ;
+                routePlan.resetIndex() ;
+                double distViaFromNode =
+                    (fromNode.getDistance(calcNextTarget(fromNode,
+                                                         routePlan,
+                                                         false))
+                     + positionOnLink) ;
+                routePlan.resetIndex() ;
+                double distViaToNode =
+                    (toNode.getDistance(calcNextTarget(toNode,
+                                                       routePlan,
+                                                       false))
+                     + linkLength - positionOnLink) ;
+
+                if (distViaFromNode >= distViaToNode) {
+                    currentPlace.set(currentPlace.getLink(),
+                                     fromNode, true,
+                                     positionOnLink) ;
+                } else {
+                    currentPlace.set(currentPlace.getLink(),
+                                     toNode, true,
+                                     linkLength - positionOnLink) ;
+                }
+            } else if (currentPlace.isBeforeStartFromNode()) { // ノードが初期位置
+                MapNode startNode = currentPlace.getEnteringNode() ;
+                Term firstTarget = calcNextTarget(startNode, routePlan, true) ;
+                double bestDist = Double.MAX_VALUE ;
+                MapLink bestLink = null ;
+                for(MapLink link : startNode.getLinks()) {
+                    double dist = calcWayCostTo(link, startNode, firstTarget) ;
+                    if(dist < bestDist) {
+                        bestLink = link ;
+                        bestDist = dist ;
+                    }
+                }
+                if(bestLink == null) {
+                    Itk.dbgErr("start node has no way to the first target") ;
+                    Itk.dbgMsg("startNode", startNode.toShortInfo()) ;
+                    Itk.dbgMsg("firstTarget", firstTarget) ;
+                    setEvacuated(true,0) ;
+                }
+                currentPlace.set(bestLink, startNode, true, 0.0) ;
             }
             speed = 0;
             routePlan.resetIndex() ;
@@ -1455,23 +1479,31 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected Term calcNextTarget(MapNode node, 
                                   RoutePlan workingRoutePlan,
                                   boolean on_node) {
-        if (on_node &&
-            !workingRoutePlan.isEmpty() &&
+        if (on_node && !workingRoutePlan.isEmpty() &&
             node.hasTag(workingRoutePlan.top())){
-            /* reached mid-goal */
+            /* [2015.01.10 I.Noda] memo
+             * on_node で、そのノードが subgoal なら、
+             * routePlan をシフトして再度探索。
+             * 2つ以上 subgoal を消化する場合を考え、再帰呼び出し。
+             */
             workingRoutePlan.shift() ;
-        }
-
-        while (!workingRoutePlan.isEmpty()) {
-            Term candidate = workingRoutePlan.top() ;
-            if (node.getHint(candidate) != null) {
-                return candidate;
+            return calcNextTarget(node, workingRoutePlan, on_node) ;
+        } else {
+            /* [2015.01.10 I.Noda] memo
+             * routePlan のトップが、現在のノードの hint に入っているかどうか
+             * 確認する。
+             * 疑問：routePlan に directive が入っていても大丈夫か？
+             */
+            while (!workingRoutePlan.isEmpty()) {
+                Term candidate = workingRoutePlan.top() ;
+                if (node.getHint(candidate) != null) {
+                    return candidate;
+                }
+                Itk.dbgWrn("no sub-goal hint for " + candidate);
+                workingRoutePlan.shift() ;
             }
-            Itk.dbgWrn("no mid-goal set for " + candidate);
-            workingRoutePlan.shift() ;
+            return goal ;
         }
-
-        return goal;
     }
 
     //------------------------------------------------------------

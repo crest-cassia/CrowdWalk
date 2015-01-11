@@ -622,8 +622,23 @@ class GenerateAgentFromNode extends GenerateAgent {
     }
      */
 
+    //------------------------------------------------------------
+    /**
+     * エージェントを初期位置に置く。
+     */
     @Override
     protected void place_agent(WaitRunningAroundPerson agent) {
+        agent.place(null, start_node, 0.0) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * エージェントを初期位置に置く。 (obsolete)
+     * [2015.01.10 I.Noda]
+     * おそらく、RunningAroundPerson あたりから取ってきた、古いコード。
+     * 効率悪く、意味不明の操作が多い。
+     * 上記の適宜に置き換え
+     */
+    protected void place_agent_obsolete(WaitRunningAroundPerson agent) {
         /*
          */
         MapLinkTable way_candidates = start_node.getPathways(); 
