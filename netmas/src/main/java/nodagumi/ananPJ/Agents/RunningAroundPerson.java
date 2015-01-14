@@ -478,7 +478,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             Itk.dbgErr("currentPlace has no way for routePlan.") ;
             Itk.dbgMsg("currentPlace", currentPlace) ;
             Itk.dbgMsg("routePlan", routePlan) ;
-            setEvacuated(true,0) ;
+            finalizeEvacuation(0, false) ;
         }
         currentPlace.setLink(bestLink) ;
     }
