@@ -135,7 +135,7 @@ public class Place {
      * @param _node : どちらかのノード
      * @param _entering : _node が入った側かどうか？
      * @param _advancingDistance : 進行距離
-     * @param safely : advancingNode の設定で、整合性チェックするかどうか
+     * @param safely : enteringNode の設定で、整合性チェックするかどうか
      */
     public Place set(MapLink _link, MapNode _node, boolean _entering,
                      double _advancingDistance, boolean safely) {

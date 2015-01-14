@@ -597,19 +597,32 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     protected boolean move_commit(double time) {
         currentPlace.set(nextPlace) ;
-        while (!currentPlace.isOnLink()) {
+        while (!isEvacuated() && !currentPlace.isOnLink()) {
+
+            /* [2015.01.14 I.Noda]
+             * もし、リンクを通り過ぎていて、そのリンクの終点が goal なら
+             * 避難完了
+             */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getHeadingNode().hasTag(goal)){
-                /* exit! */
                 finalizeEvacuation(time, true) ;
 
                 return true;
             }
+
             sane_navigation_from_node_forced = true;
             MapLink nextLink = navigate(time, currentPlace, routePlan, true) ;
             sane_navigation_from_node_forced = true;
 
             tryToPassNode(time, routePlan, nextLink) ;
+
+            /* [2015.01.14 I.Noda]
+             * もし、渡った先のリンクがゴールなら、避難完了
+             */
+            if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
+                currentPlace.getLink().hasTag(goal)){
+                finalizeEvacuation(time, true) ;
+            }
         }
         return false;
     }
@@ -1260,11 +1273,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             update_swing_flag = false;
         } else {
             update_swing_flag = true;
-        }
-        if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
-            currentPlace.getLink().hasTag(goal)){
-            finalizeEvacuation(time, true) ;
-            /* [2015.01.10 I.Noda] bug? ここは、move_commit と同じ事すべきか？ */
         }
 
         return true;
