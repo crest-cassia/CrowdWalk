@@ -597,7 +597,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     protected boolean move_commit(double time) {
         currentPlace.set(nextPlace) ;
-        while (!isEvacuated() && !currentPlace.isOnLink()) {
+        while (!currentPlace.isOnLink()) {
 
             /* [2015.01.14 I.Noda]
              * もし、リンクを通り過ぎていて、そのリンクの終点が goal なら
@@ -622,6 +622,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getLink().hasTag(goal)){
                 finalizeEvacuation(time, true) ;
+
+                return true ;
             }
         }
         return false;
