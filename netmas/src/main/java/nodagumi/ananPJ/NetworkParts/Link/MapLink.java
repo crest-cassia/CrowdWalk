@@ -172,71 +172,6 @@ public class MapLink extends OBMapPart implements Serializable {
         return (fromNode.getHeight() + toNode.getHeight()) / 2.0;
     }
 
-    class QueingAgent {
-        public EvacuationAgent agent;
-        public MapLink fromLink;
-
-        public QueingAgent(EvacuationAgent _agent,
-                MapLink _from_link) {
-            agent = _agent;
-            fromLink = _from_link;
-        }
-    }
-    private ArrayList<QueingAgent> enteringQue =
-        new ArrayList<QueingAgent>();
-    private HashMap<MapLink, Double> fromLinksCapacity =
-        new HashMap<MapLink, Double>();
-
-    /* calculation of agent passing doors */
-    public void registerEnter(EvacuationAgent agent,
-            MapLink from_link) {
-        enteringQue.add(new QueingAgent(agent, from_link));
-    }
-
-    private void update_from_links_capacity() {
-        /* See if agents can enter the link */
-        if (enteringQue.size() == 0) {
-            return;
-        }
-
-        /* first, count number of agents from each from-link */
-        HashMap<MapLink, Integer> fromLinks =
-            new HashMap<MapLink, Integer>();
-        for (QueingAgent agent : enteringQue) {
-            MapLink from = agent.fromLink;
-            if (!fromLinks.containsKey(from)) {
-                fromLinks.put(from, 1);
-            } else {
-                int from_count = fromLinks.get(from) + 1;
-                if (from_count > from.width) from_count = (int)from.width;
-                fromLinks.put(from, from_count);
-            }
-        }
-
-        if (fromLinks.size() == 0) {
-            return;
-        }
-
-        /* then the calculation:
-         */
-        int total = 0;
-        for (MapLink from : fromLinks.keySet()) {
-            total += fromLinks.get(from);
-        }
-
-        double all_exit_capacity = MAX_INPUT * width * timeScale;
-        for (MapLink from : fromLinks.keySet()) {
-            double  capacity_for_link = all_exit_capacity * 
-                fromLinks.get(from) / total;
-            if (!fromLinksCapacity.containsKey(from)) {
-                fromLinksCapacity.put(from, capacity_for_link); 
-            } else {
-                fromLinksCapacity.put(from,
-                        fromLinksCapacity.get(from) + capacity_for_link);
-            }
-        }
-    }
-
     private int total_agent_triage_level;
     public void preUpdate(double time) {
         if(agents.isEmpty()) return ;
@@ -252,8 +187,6 @@ public class MapLink extends OBMapPart implements Serializable {
     }
 
     public void update(double time) {
-        update_from_links_capacity();
-        enteringQue.clear();
     }
 
     public int getTotalTriageLevel() {

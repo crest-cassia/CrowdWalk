@@ -555,14 +555,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                      * おそらく単純に終わるのはおかしい */
                     break;
                 }
-                if(nextPlace.getLink() != next_link) {
-                    /* [2015.01.10 I.Noda]
-                     * 以下は、リンク流入制限の計算のためだけに用いられる。
-                     * なので、エージェントが多重にregisterEnterしても大丈夫。
-                     */
-                    next_link.registerEnter(this,
-                                            nextPlace.getLink()) ;
-                }
                 nextPlace.transitTo(next_link) ;
             } else {
                 // WAIT_FOR, WAIT_UNTIL によるエージェントの停止は下記でおこなう
@@ -1381,19 +1373,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         MapLink way = null;
         MapLink way_second = null;
 
-        boolean monitor =
-            currentPlace.getHeadingNode().hasTag("MONITOR-NAVIGATION");
-
         MapLinkTable way_samecost = null;
 
         final Term next_target =
             calcNextTarget(passingPlace.getHeadingNode(),
                            workingRoutePlan, on_node) ;
 
-        if (monitor)
-            System.err.println("navigating at " +
-                               passingPlace.getHeadingNode().getTagString() +
-                               " for " + next_target);
 		navigation_reason.clear().add("for").add(next_target).add("\n");
         for (MapLink way_candidate : way_candidates) {
             // tkokada
