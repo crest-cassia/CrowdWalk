@@ -649,12 +649,55 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     //------------------------------------------------------------
     /**
-     * 知っている directive かどうかのチェック
+     * Directive のなかの代表的目的地の取得
+     * @param directive : 調べる directive。通常の place tag の場合もある。
+     *    もし directive が isKnownDirective() なら、なにか返すべき。
+     * @return もし directive なら代表的目的地。そうでないなら null
+     */
+    public Term getPrimalTargetPlaceInDirective(Term directive) {
+        return null ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Directive のなかの代表的目的地の取得
+     * @param directive : 調べる directive。通常の place tag の場合もある。
+     *    もし directive が isKnownDirective() なら、なにか返すべき。
+     * @return もし directive なら代表的目的地。そうでないなら null
+     */
+    public Term nakedTargetFromRoutePlan(RoutePlan workingRoutePlan) {
+        Term subgoal = workingRoutePlan.top() ;
+        if(isKnownDirective(subgoal)) {
+            Term nakedSubgoal = getPrimalTargetPlaceInDirective(subgoal) ;
+            if(nakedSubgoal != null) {
+                return nakedSubgoal ;
+            } else {
+                return subgoal ;
+            }
+        } else {
+            return subgoal ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * directive に含まれる目的地タグの抽出
      * @return pushした数
      */
     public int pushPlaceTagInDirective(Term directive,
                                        ArrayList<Term> goalList) {
-        return 0 ;
+        int count = 0 ;
+        if(isKnownDirective(directive)) {
+            Term subgoal = getPrimalTargetPlaceInDirective(directive) ;
+            if(subgoal != null) {
+                goalList.add(subgoal) ;
+                count++ ;
+            } else {
+                Itk.dbgWrn("A directive includes no subgoal.") ;
+                Itk.dbgMsg("directive", directive) ;
+            }
+        }
+        return count ;
     }
 
     //------------------------------------------------------------

@@ -271,57 +271,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return super.update(time);
     }
 
-    /* look up our route plan and give our next goal
-     * [2014.12.30 I.Noda] analysis
-     * 次に来る、hint に記載されている route target を取り出す。
-     * 今、top の target が現在のノードのタグにある場合、
-     * route は１つ進める。(ここまでは RunningAroundPerson の機能)
-     * ただし、WaitDirective の場合は、routePlan のポインタは
-     * WaitDirective に留め、返すタグは、hint に存在する次の
-     * 通常のタグ。(山下さんの説明)
-     * ただし、下記のアルゴリズムにはおそらくバグがある。
-     */
     @Override
-    protected Term calcNextTarget(MapNode node, 
-                                  RoutePlan workingRoutePlan,
-                                  boolean on_node) {
-        if (on_node &&
-            !workingRoutePlan.isEmpty() &&
-            node.hasTag(workingRoutePlan.top())){
-            workingRoutePlan.shift() ;
-        }
-        RoutePlan advancedRoutePlan = workingRoutePlan.duplicate() ;
-        while (!advancedRoutePlan.isEmpty()) {
-            Term candidate = advancedRoutePlan.top() ;
-            /* [2014.12.27 I.Noda]
-             * 読み込み時点で、directive はすでに1つのタグに集約されているはず。
-             * (in "AgentGenerationFile.java")
-             */
-            WaitDirective.Type waitType = WaitDirective.isDirective(candidate) ;
-            if (waitType != null) {
-                workingRoutePlan.copyFrom(advancedRoutePlan) ;
-                advancedRoutePlan.shift() ;
-            } else if (node.hasTag(candidate)){
-                /* [2014.12.29 I.Noda] question
-                 * ここのアルゴリズム、正しいのか？
-                 * WAIT の場合は、そのWAITが書かれているところを
-                 * setRouteIndex している。
-                 * そうでなければ、今みている次を setRouteIndex している。
-                 */
-                advancedRoutePlan.shift() ;
-                workingRoutePlan.copyFrom(advancedRoutePlan) ;
-            } else if (node.getHint(candidate) != null) {
-                return candidate;
-            } else {
-                System.err.println("no mid-goal set for " + candidate);
-                advancedRoutePlan.shift() ;
-                workingRoutePlan.copyFrom(advancedRoutePlan) ;
-            }
-        }
-
-        return goal;
-    }
-
     public ArrayList<Term> getPlannedRoute() {
         ArrayList<Term> goal_tags = new ArrayList<Term>();
 
@@ -357,7 +307,8 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
 	/**
 	 * 知っている directive かどうかのチェック
 	 */
-	public boolean isKnownDirective(Term term) {
+    @Override
+    public boolean isKnownDirective(Term term) {
         WaitDirective.Type type =
             WaitDirective.isDirective(term) ;
         if(type != null)
@@ -366,29 +317,23 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             return super.isKnownDirective(term) ;
     }
 
-	//------------------------------------------------------------
-	/**
-	 * directive の中から経由地点tagを取り出し
-	 * @return pushした数
-	 */
-	public int pushPlaceTagInDirective(Term directive,
-                                       ArrayList<Term> goalList) {
+    //------------------------------------------------------------
+    /**
+     * Directive のなかの代表的目的地の取得
+     * @param directive : 調べる directive。通常の place tag の場合もある。
+     *    もし directive が isKnownDirective() なら、なにか返すべき。
+     * @return もし directive なら代表的目的地。そうでないなら null
+     */
+    @Override
+    public Term getPrimalTargetPlaceInDirective(Term directive) {
         WaitDirective.Type type =
             WaitDirective.isDirective(directive) ;
         if(type != null) {
-            Term _goal = directive.getArgTerm("target") ;
-            if(_goal != null) {
-                goalList.add(_goal) ;
-                return 1 ;
-            } else {
-                Itk.dbgErr("target arg is missing in the directive:") ;
-                Itk.dbgMsg("directive",directive) ;
-                return 0 ;
-            }
+            return directive.getArgTerm("target") ;
         } else {
-            return super.pushPlaceTagInDirective(directive, goalList) ;
+            return null ;
         }
-	}
+    }
 
     //============================================================
     //============================================================

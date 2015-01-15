@@ -683,9 +683,10 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         currentPlace.getLink().applyRestrictionToAgent(this, time) ;
 
         /* [2015.01.09 I.Noda]
+         * リンクを踏破しているなら、headingNode での規制
          * ノードの交通規制など (STOP)
          */
-        if (!currentPlace.isOnLinkWithAdvance(speed)) {
+        if (!currentPlace.isBeyondLinkWithAdvance(speed)) {
             currentPlace.getHeadingNode().applyRestrictionToAgent(this, time) ;
         }
 
@@ -1391,8 +1392,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             } else if (way_candidate.hasTag(next_target)) {
                 /* reached mid_goal */
                 way = way_candidate;
-                workingRoutePlan.shift() ;
 				navigation_reason.add("found mid-goal in").add(way_candidate) ;
+                if(!isKnownDirective(workingRoutePlan.top())) {
+                    // directive でない場合のみ shiftする。
+                    // そうでなければ、directive の操作待ち。
+                    workingRoutePlan.shift() ;
+                }
                 break;
             } 
 
@@ -1493,12 +1498,15 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
              * 疑問：routePlan に directive が入っていても大丈夫か？
              */
             while (!workingRoutePlan.isEmpty()) {
-                Term candidate = workingRoutePlan.top() ;
-                if (node.getHint(candidate) != null) {
-                    return candidate;
+                Term subgoal = nakedTargetFromRoutePlan(workingRoutePlan) ;
+                if (node.hasTag(subgoal)) {
+                    workingRoutePlan.shift() ;
+                } else if (node.getHint(subgoal) != null) {
+                    return subgoal;
+                } else {
+                    Itk.dbgWrn("no sub-goal hint for " + subgoal);
+                    workingRoutePlan.shift() ;
                 }
-                Itk.dbgWrn("no sub-goal hint for " + candidate);
-                workingRoutePlan.shift() ;
             }
             return goal ;
         }
