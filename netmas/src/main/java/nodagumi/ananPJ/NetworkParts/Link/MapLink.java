@@ -64,15 +64,29 @@ public class MapLink extends OBMapPart implements Serializable {
     static public final String Tag_OneWayPositive = "ONE-WAY-POSITIVE" ;
     static public final String Tag_OneWayNegative = "ONE-WAY-NEGATIVE" ;
     static public final String Tag_RoadClosed = "ROAD-CLOSED" ;
+    static public final String Tag_Stair = "STAIR" ;
     static public enum SpecialTagId { OneWayPositive,
                                       OneWayNegative,
-                                      RoadClosed } ;
+                                      RoadClosed,
+                                      Stair
+    } ;
     static public Lexicon tagLexicon = new Lexicon() ;
     static {
-        tagLexicon.register(Tag_OneWayPositive, SpecialTagId.OneWayPositive) ;
-        tagLexicon.register(Tag_OneWayNegative, SpecialTagId.OneWayNegative) ;
-        tagLexicon.register(Tag_RoadClosed, SpecialTagId.RoadClosed) ;
+        tagLexicon.registerMulti(new Object[][]
+            {{Tag_OneWayPositive, SpecialTagId.OneWayPositive},
+             {Tag_OneWayNegative, SpecialTagId.OneWayNegative},
+             {Tag_RoadClosed, SpecialTagId.RoadClosed},
+             {Tag_Stair, SpecialTagId.Stair}
+            }) ;
     } ;
+
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * 速度決定用パラメータ
+     * STAIR_SPEED_CO: 階段における減速率
+     */
+    protected static double STAIR_SPEED_CO = 0.6;//0.7;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1158,9 +1172,9 @@ public class MapLink extends OBMapPart implements Serializable {
      * @return 規制が適用されたら true
      */
     public boolean applyRestrictionToAgent(EvacuationAgent agent,
-                                              double time) {
+                                           double time) {
         boolean applied = false ;
-        /* 分担制御 */
+        /* 分断制御 */
         if(isStopTimesEnabled() && isStoppedTime(time)) {
             agent.setSpeed(0) ;
             applied = true ;
@@ -1177,6 +1191,27 @@ public class MapLink extends OBMapPart implements Serializable {
         }
 
         return applied ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * そのリンクにおける自由速度
+     * @param baseSpeed: 元になるスピード
+     * @param agent: 対象となるエージェント。リンク上にいる。
+     * @param time: 現在時刻
+     * @return 速度
+     */
+    public double calcEmptySpeedForAgent(double baseSpeed,
+                                         EvacuationAgent agent,
+                                         double time) {
+        /* 階段における処理 */
+        /* [2015.01.10 I.Noda] todo
+         * ここはちゃんと外部パラメータ化すべき。
+         */
+        if (isStair() || hasTag("STAIR")) {
+            baseSpeed *= STAIR_SPEED_CO;
+        }
+        return baseSpeed ;
     }
 
 }

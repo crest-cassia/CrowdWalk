@@ -155,6 +155,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     public static enum SpeedCalculationModel {
         LaneModel,
+        StraitModel,
         DensityModel
     }
 
@@ -175,7 +176,24 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected static double V_0 = 1.02265769054586;
     
     protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
-    protected static double STAIR_SPEED_CO = 0.6;//0.7;
+
+    /* 同方向/逆方向のレーンでの単位距離
+     * 0.7 だとほとんど進まなくなる。
+     * 1.0 あたりか？
+     */
+    protected static double WidthUnit_SameLane = 1.0 ; //0.7;
+    protected static double WidthUnit_OtherLane = 1.0 ; //0.7;
+
+    /* [2015.01.17 I.Noda]
+     *以下は、density model で使われる。
+     */
+    /* minimum distance between agents */
+    protected static final double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
+    /* mininum distance that agent can walk with max speed */
+    protected static final double DISTANCE_MAX_SPEED =
+        MAX_SPEED + MIN_DISTANCE_BETWEEN_AGENTS;    // 0.96 + 0.3
+    /* minimum speed to break dead lock state */
+    protected static final double MIN_SPEED_DEADLOCK = 0.3;
 
 /*
     protected static double A_0 = 0.5*0.962;//1.05;//0.5;
@@ -667,13 +685,18 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected void calc_speed(double time) {
         switch (calculation_model) {
         case LaneModel:
-            calc_speed_lane(time);
+            calc_speed_lane_generic(time,calculation_model) ;
+            break;
+        case StraitModel:
+            calc_speed_lane_generic(time,calculation_model);
             break;
         case DensityModel:
             //calc_speed_density(time);
             calc_speed_density_reviced(time);
             break;
         default:
+            Itk.dbgErr("Unknown Speed Model") ;
+            Itk.dbgMsg("calculation_model",calculation_model) ;
             break;
         }
 
@@ -747,47 +770,183 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
 
     //------------------------------------------------------------
     /**
-     * lane による速度計算
+     * lane および strait による速度計算
      */
-    private void calc_speed_lane(double time) {
-        double distToPredecessor = calcDistanceToPredecessor(time) ;
-
+    private void calc_speed_lane_generic(double time,
+                                         SpeedCalculationModel model) {
         /* base speed */
-        double base_speed = emptyspeed;
-
-        /* 階段における処理 */
-        /* [2015.01.10 I.Noda] todo
-         * ここはちゃんと外部パラメータ化すべき。
-         */
-        if (currentPlace.getLink().isStair() ||
-            currentPlace.getLink().hasTag("STAIR")) {
-            base_speed *= STAIR_SPEED_CO;
-        }
-
+        double baseSpeed =
+            currentPlace.getLink().calcEmptySpeedForAgent(emptyspeed,
+                                                          this, time) ;
         //自由速度に向けた加速
-        dv = A_0 * (base_speed - speed);
-
-        //personal spaceによる減速
-        dv -= A_1 * Math.exp(A_2 * (PERSONAL_SPACE - distToPredecessor));
+        dv = A_0 * (baseSpeed - speed) ;
+        //social force による減速
+        switch (model) {
+        case LaneModel:
+            double distToPredecessor = calcDistanceToPredecessor(time) ;
+            dv += calcSocialForce(distToPredecessor) ;
+            break;
+        case StraitModel:
+            dv += accumulateSocialForces(time) ;
+            break;
+        default:
+            Itk.dbgErr("Unknown Speed Model") ;
+            Itk.dbgMsg("calculation_model",model) ;
+            break;
+        }
 
         //時間積分
         dv *= time_scale;
         speed += dv;
 
         //速度幅制限
-        if (speed > emptyspeed) {
-            speed = emptyspeed ;
+        if (speed > baseSpeed) {
+            speed = baseSpeed ;
         } else if (speed < 0) {
             speed = 0;
         }
 
         //出口直前の場合で最前列の場合は、最大速にしておく。
         int w = currentPlace.getLaneWidth() ;
-        int indexInLane = currentPlace.getIndexInLane(this) ;
+        int indexInLane = currentPlace.getIndexFromHeadingInLane(this) ;
         if (indexInLane < w && currentPlace.getHeadingNode().hasTag(goal)) {
-            speed = emptyspeed;
+            speed = baseSpeed;
+        }
+    }
+
+
+    //------------------------------------------------------------
+    /**
+     * 前方エージェントからの social force を集める
+     * social force は、進行方向に沿った要素のみを扱う。
+     * 横方向距離は、距離計算の際に用いる。
+     * 横方向距離の計算は以下の通り。
+     *  順方向：エージェントから数えて n 番目のエージェントは、
+     *          ((w - (n % w)) % w) * u 横にいるとする。
+     *          つまり、w(レーン幅) = 3 の時、
+     *          1,2,3,4,5 番目のエージェントの横ずれ幅は、
+     *          2u, 1u, 0, 2u, 1u となる。
+     *  逆方向：エージェントから数えて n 番目のエージェントは、
+     *          ((w - (n % w)) % w + 1) * u 横にいるとする。
+     *          つまり、w(レーン幅) = 3 の時、
+     *          1,2,3,4,5 番目のエージェントの横ずれ幅は、
+     *          3u, 2u, 1u, 3u, 2u となる。
+     * @param time : 時刻
+     * @return 力
+     */
+    private double accumulateSocialForces(double time) {
+        //求める力
+        double totalForce = 0.0 ;
+
+        //探す範囲
+        double maxDistance = (PERSONAL_SPACE + emptyspeed) * (time_scale + 1.0) ;
+
+        //作業用の場所と経路計画
+        Place workingPlace = currentPlace.duplicate() ;
+        RoutePlan workingRoutePlan = routePlan.duplicate() ;
+
+        //当該エージェントの位置（注目しているリンクからの相対位置）
+        double relativePos = workingPlace.getAdvancingDistance() ;
+
+        //探索範囲終端まで場所を進めておく
+        workingPlace.makeAdvance(maxDistance) ;
+
+        //当該エージェントからのカウント
+        int count = 0 ; //(順方向)
+        int countOther = 0 ; //(逆方向)
+
+        //探索開始
+        while(workingPlace.getAdvancingDistance() > 0) {
+            //順方向探索
+            ArrayList<EvacuationAgent> sameLane = workingPlace.getLane() ;
+            int laneWidth = workingPlace.getLaneWidth() ;
+            for(EvacuationAgent agent : sameLane) {
+                double agentPos = agent.getAdvancingDistance() ;
+                if(agent == this) {
+                    continue ;
+                } else if(agentPos > workingPlace.getAdvancingDistance()) {
+                    // 探索範囲外
+                    break ; // for からの脱出
+                } else if(agentPos <= relativePos) {
+                    // 当該エージェントの後方なので無視
+                    continue ; // 次の for へ
+                } else {
+                    count++ ;
+                    double dx = agentPos - relativePos ;
+                    double dy =
+                        (WidthUnit_SameLane *
+                         ((laneWidth - (count % laneWidth)) % laneWidth)) ;
+                    double force = calcSocialForceToHeading(dx,dy) ;
+                    totalForce += force ;
+                }
+            }
+            //逆方向探索
+            ArrayList<EvacuationAgent> otherLane = workingPlace.getOtherLane() ;
+            int laneWidthOther = workingPlace.getOtherLaneWidth() ;
+            double linkLength = workingPlace.getLinkLength() ;
+            double insensitivePos = 0.0 ;
+            for(int i = 0 ; i < otherLane.size() ; i++) {
+                EvacuationAgent agent = otherLane.get(otherLane.size() - i - 1);
+                double agentPos = linkLength - agent.getAdvancingDistance() ;
+                if(agentPos > workingPlace.getAdvancingDistance()) {
+                    // 探索範囲外
+                    break ; // for からの脱出
+                } else if(agentPos <= relativePos) {
+                    // 当該エージェントの後方なので無視
+                    continue  ; // 次の for へ
+                } else if(agentPos <= insensitivePos) {
+                    // 直前のエージェントに近すぎる。（超過密状態用）
+                    continue ; // 次の for へ
+                } else {
+                    countOther++ ;
+                    double dx = agentPos - relativePos ;
+                    double dy =
+                        WidthUnit_OtherLane *
+                        (((laneWidthOther - (countOther % laneWidthOther))
+                          % laneWidthOther) + 1) ;
+                    double force = calcSocialForceToHeading(dx,dy) ;
+                    totalForce += force ;
+                    if(countOther % laneWidthOther == 0) {
+                        insensitivePos = agentPos + MIN_DISTANCE_BETWEEN_AGENTS ;
+                    }
+                }
+            }
+            //次のリンクへ進む
+            relativePos -= workingPlace.getLinkLength() ;
+            MapLink nextLink =
+                sane_navigation_from_node(time, workingPlace,
+                                          workingRoutePlan, true) ;
+            workingPlace.transitTo(nextLink) ;
         }
 
+        return totalForce ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * social force
+     * @param dist : 他のエージェントまでの距離
+     * @return 力
+     */
+    protected static double calcSocialForce(double dist) {
+        return - A_1  * Math.exp(A_2 * (PERSONAL_SPACE - dist)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * social force のうち、進行方向に沿った力のみを計算する。
+     * @param dx : 進行方向に沿った距離
+     * @param dy : 横方向の距離
+     * @return x 方向の力
+     */
+    protected static double calcSocialForceToHeading(double dx, double dy) {
+        double dist = Math.sqrt(dx * dx + dy * dy) ;
+        double force = calcSocialForce(dist) ;
+        if(dist == 0.0) {
+            return force ;
+        } else {
+            return force * (dx / dist) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -796,15 +955,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * tkokada
      */
     private void calc_speed_density_reviced(double time) {
-        /* minimum distance between agents */
-        double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
-        /* mininum distance that agent can walk with max speed */
-        double DISTANCE_MAX_SPEED =
-            MAX_SPEED + MIN_DISTANCE_BETWEEN_AGENTS;    // 0.96 + 0.3
         /* the range to calculate the density */
         double DENSITY_RANGE = DISTANCE_MAX_SPEED * time_scale;
-        /* minimum speed to break dead lock state */
-        double MIN_SPEED_DEADLOCK = 0.3;
 
         ArrayList<EvacuationAgent> currentLinkAgents
             = currentPlace.getLink().getAgents();

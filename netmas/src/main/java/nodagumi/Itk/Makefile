@@ -71,8 +71,12 @@ SAMPLE0sm = sample/stop-sample/properties_24.json	#stop (門司港)
 SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
 SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
+SAMPLE2d = sample/simpleGrid/properties-density.v2.xml	#simple, version2
+SAMPLE2s = sample/simpleGrid/properties-strait.v2.xml	#simple, version2
 SAMPLE2w = sample/basic-sample/properties.v2.xml	#wait, version2
 SAMPLE2i = sample/simpleGrid/properties-itk.v2.xml	#itk, version2
+SAMPLE2id = sample/simpleGrid/properties-itk-density.v2.xml	#itk, version2
+SAMPLE2is = sample/simpleGrid/properties-itk-strait.v2.xml	#itk, version2
 
 run : run2
 
@@ -89,7 +93,7 @@ run_wait :: run0w
 run0w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0w))
 
-run0s2 ::
+run0s2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s2))
 
 run0s4 ::
@@ -109,10 +113,18 @@ run2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2))
 run2_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2) cui)
+run2d ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2d))
+run2s ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2s))
 run2w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2w))
 run2i ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2i))
+run2id ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2id))
+run2is ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2is))
 
 
 ##------------------------------------------------------------

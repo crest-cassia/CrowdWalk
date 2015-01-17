@@ -673,6 +673,14 @@ public class Place {
 
     //------------------------------------------------------------
     /**
+     * 対向レーン取得
+     */
+    public ArrayList<EvacuationAgent> getOtherLane() {
+        return getLink().getLane(-getDirectionValue()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * レーン幅取得
      */
     public int getLaneWidth() {
@@ -681,10 +689,28 @@ public class Place {
 
     //------------------------------------------------------------
     /**
-     * レーン幅取得
+     * レーン幅取得(対向レーン)
+     */
+    public int getOtherLaneWidth() {
+        return getLink().getLaneWidth(-getDirectionValue()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * レーンの中での順序
+     * 進んでいないほど index が小さいとする。
      */
     public int getIndexInLane(EvacuationAgent agent) {
         return Collections.binarySearch(getLane(), agent) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * レーンの中での順序
+     * 進んでいるほど index が小さいとする。
+     */
+    public int getIndexFromHeadingInLane(EvacuationAgent agent) {
+        return getLane().size() - getIndexInLane(agent) - 1 ;
     }
 
     //############################################################

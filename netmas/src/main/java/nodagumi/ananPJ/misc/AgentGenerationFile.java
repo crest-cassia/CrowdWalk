@@ -97,6 +97,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     static {
         speedModelLexicon.registerMulti(new Object[][]
             {{"LANE", SpeedCalculationModel.LaneModel},
+             {"STRAIT",SpeedCalculationModel.StraitModel},
              {"DENSITY", SpeedCalculationModel.DensityModel}
             }) ;
     }
@@ -802,7 +803,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         genConfig.speedModel =
             (SpeedCalculationModel)
-            speedModelLexicon.lookUp(json.getArgString("speedMode")) ;
+            speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
         if(genConfig.speedModel == null)
             genConfig.speedModel = SpeedCalculationModel.LaneModel;
 
