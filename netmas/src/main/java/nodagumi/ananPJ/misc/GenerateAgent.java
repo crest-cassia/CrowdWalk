@@ -369,8 +369,10 @@ public abstract class GenerateAgent implements Serializable {
             agent.setConfigLine(configLine);
             agents.add(agent);
             agent.setGoal(new Term(goal));
-            Term planned_route_in_Term = 
-                new Term(new ArrayList<Term>(planned_route)) ;
+            Term planned_route_in_Term =
+                (planned_route == null ?
+                 Term.newArrayTerm() :
+                 new Term(new ArrayList<Term>(planned_route))) ;
             agent.setPlannedRoute((List)planned_route_in_Term.getArray());
 
             place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない

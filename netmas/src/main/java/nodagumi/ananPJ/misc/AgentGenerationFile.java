@@ -814,8 +814,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         genConfig.goal = json.getArgTerm("goal") ;
 
+        Term plannedRouteTerm = json.getArgTerm("plannedRoute") ;
         genConfig.plannedRoute =
-            json.getArgTerm("plannedRoute").<Term>getTypedArray() ;
+            (plannedRouteTerm == null ?
+             new ArrayList<Term>() :
+             plannedRouteTerm.<Term>getTypedArray()) ;
 
         return genConfig ;
     }

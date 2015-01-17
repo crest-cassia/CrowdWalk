@@ -51,8 +51,9 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
                     file = new AgentGenerationFile(_file.getPath(),
 												   editor.getMap(),
 												   true, 1.0, random);
-                } catch(Exception e) {
-                    System.err.printf("Illegal AgentGenerationFile: %s\n%s", _file.getPath(), e.getMessage());
+                } catch(Exception ex) {
+					ex.printStackTrace();
+                    System.err.printf("Illegal AgentGenerationFile: %s\n%s", _file.getPath(), ex.getMessage());
                     System.exit(1);
                 }
             } else {

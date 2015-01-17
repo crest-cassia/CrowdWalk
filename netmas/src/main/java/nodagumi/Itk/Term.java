@@ -144,6 +144,17 @@ public class Term {
         setArray(_array) ;
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * new Array Term
+     */
+    static public Term newArrayTerm() {
+        Term term = new Term() ;
+        term.allocArray() ;
+        return term ;
+    }
+
     //------------------------------------------------------------
     /**
      * 全クリア

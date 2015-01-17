@@ -189,8 +189,9 @@ public class AgentHandler implements Serializable {
                                                      model.getMap(), has_display,
                                                      linerGenerateAgentRatio, 
                                                      random);
-        } catch(Exception e) {
-            System.err.printf("Illegal AgentGenerationFile: %s\n%s", generationFile, e.getMessage());
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            System.err.printf("Illegal AgentGenerationFile: %s\n%s", generationFile, ex.getMessage());
             System.exit(1);
         }
         if (generate_agent != null) {

@@ -181,8 +181,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * 0.7 だとほとんど進まなくなる。
      * 1.0 あたりか？
      */
-    protected static double WidthUnit_SameLane = 1.0 ; //0.7;
-    protected static double WidthUnit_OtherLane = 1.0 ; //0.7;
+    protected static double WidthUnit_SameLane = 0.9 ; //0.7;
+    protected static double WidthUnit_OtherLane = 0.9 ; //0.7;
 
     /* [2015.01.17 I.Noda]
      *以下は、density model で使われる。

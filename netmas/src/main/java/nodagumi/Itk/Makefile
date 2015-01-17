@@ -69,6 +69,7 @@ SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
 SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
 SAMPLE0sm = sample/stop-sample/properties_24.json	#stop (門司港)
 SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
+SAMPLE0sg2s = sample/simpleGrid2/properties-strait.xml	#kawaguchi's sample
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
 SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
 SAMPLE2d = sample/simpleGrid/properties-density.v2.xml	#simple, version2
@@ -93,7 +94,7 @@ run_wait :: run0w
 run0w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0w))
 
-run0s2 ::
+run0s2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s2))
 
 run0s4 ::
@@ -102,6 +103,8 @@ run0sm ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sm))
 run0sg2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2))
+run0sg2s ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2s))
 
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))
@@ -115,8 +118,12 @@ run2_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2) cui)
 run2d ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2d))
+run2d_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2d) cui)
 run2s ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2s))
+run2s_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2s) cui)
 run2w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2w))
 run2i ::
