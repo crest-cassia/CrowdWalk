@@ -22,6 +22,7 @@ import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3f;
 
 import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -126,8 +127,7 @@ public class PollutionCalculator implements Serializable {
     }
 
     public void updateNodesLinksAgents(double time,
-            MapNodeTable nodes,
-            MapLinkTable links,
+            NetworkMapBase map,
             List<EvacuationAgent> agents) {
         //if (debug) System.err.println("PC update: " + time + ", next: " + nextEvent);
 
@@ -136,7 +136,7 @@ public class PollutionCalculator implements Serializable {
             update_pollution();
 
             // pollution対象リンクの汚染フラグを更新する(汚染度が0に戻ることも考慮する)
-            for (MapLink link : links) {
+	    for (MapLink link : map.getLinks()) {
                 if (link.getIntersectedPollutionAreas().isEmpty()) {
                     continue;
                 }

@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
@@ -43,8 +44,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         Goal        /* save goal times of agents */
     }
 
-    private MapNodeTable nodes = null;
-    private MapLinkTable links = null;
+    //private MapNodeTable nodes = null;
+    //private MapLinkTable links = null;
+    private NetworkMapBase map = null ;
     private ArrayList<EvacuationAgent> agents = null;
     private String pollutionFileName = null;
 
@@ -79,8 +81,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         if (controller instanceof BasicSimulationLauncher) {
             properties = ((BasicSimulationLauncher)controller).getProperties();
         }
-        nodes = networkMap.getNodes();
-        links = networkMap.getLinks();
+	map = networkMap ;
         agents = networkMap.getAgents();
         pollutionFileName = networkMap.getPollutionFile();
         scenario_serial = _scenario_serial;
@@ -88,10 +89,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         //bug check
         //System.err.println("EvacuationSimulator check invalid links");
         int counter = 0;
-        for (MapLink link : links) {
-            if (!nodes.contains(link.getFrom()))
+        for (MapLink link : map.getLinks()) {
+	    if (!map.getNodes().contains(link.getFrom()))
                 counter += 1;
-            else if (!nodes.contains(link.getTo()))
+	    else if (!map.getNodes().contains(link.getTo()))
                 counter += 1;
         }
         if (counter > 0)
@@ -111,8 +112,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         if (controller instanceof BasicSimulationLauncher) {
             properties = ((BasicSimulationLauncher)controller).getProperties();
         }
-        nodes = networkMap.getNodes();
-        links = networkMap.getLinks();
+	map = networkMap ;
         agents = networkMap.getAgents();
         pollutionFileName = networkMap.getPollutionFile();
         scenario_serial = _scenario_serial;
@@ -152,7 +152,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     networkMap.getGenerationFile(),
                     networkMap.getResponseFile(),
                     scenario_number,
-                    links);
+                    map);
         }
         if (has_display)
             buildDisplay();
@@ -176,7 +176,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     networkMap.getGenerationFile(),
                     networkMap.getResponseFile(),
                     scenario_number,
-                    links);
+                    map);
         }
 
         agentHandler.prepareForSimulation();
@@ -197,7 +197,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
         // リンク上にかかるPollutedAreaのリストをリンクにセットする
         for (PollutedArea area : networkMap.getRooms()) {
-            for (MapLink link : links) {
+	    for (MapLink link : getLinks()) {
                 if (area.intersectsLine(link.getLine2D())) {
                     link.addIntersectedPollutionArea(area);
                 }
@@ -214,7 +214,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 networkMap.getGenerationFile(),
                 networkMap.getResponseFile(),
                 scenario_number,
-                links,
+                map,
                 this,
                 has_display,
                 linerGenerateAgentRatio,
@@ -256,9 +256,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             panel3d.registerAgentOnline(agent);
         }
         //agents.add(agent);
-        //getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent);
-        if (links.size() > 0) {
-            getMap().addAgent((MapPartGroup) links.get(0).getParent(), agent, false/* エージェントIDを変更しない */);
+        //getMap().addAgent((MapPartGroup) getLinks().get(0).getParent(), agent);
+	if (map.getLinks().size() > 0) {
+	    getMap().addAgent((MapPartGroup) map.getLinks().get(0).getParent(), agent, false/* エージェントIDを変更しない */);
         //} else {
         //    getMap().addAgent((MapPartGroup) getMap().root, agent);
         }
@@ -270,10 +270,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
             if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
-                pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
+		pollutionCalculator.updateNodesLinksAgents(poltime, map,
                         getAgents());
             // Runtime.getRuntime().gc();
-            agentHandler.update(getNodes(), getLinks(), getSecond());
+            agentHandler.update(map, getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
                 if (screenshotInterval != 0) {
@@ -310,10 +310,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         synchronized (stop_simulation) {
             // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
-            pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
+	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
                     getAgents());
             // Runtime.getRuntime().gc();
-            agentHandler.update(getNodes(), getLinks(), getSecond());
+            agentHandler.update(map, getSecond());
             tick_count += 1.0;
         }
         if (agentHandler.isFinished()) {
@@ -327,10 +327,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         synchronized (stop_simulation) {
             // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
-            pollutionCalculator.updateNodesLinksAgents(poltime, nodes, links,
+	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
                     getAgents());
             // Runtime.getRuntime().gc();
-            agentHandler.update(getNodes(), getLinks(), getSecond());
+            agentHandler.update(map, getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
                 for (EvacuationAgent ea : getAgents())
@@ -388,10 +388,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
         private boolean calc_goal_path(String goal_tag) {
             CalcPath.Nodes goals = new CalcPath.Nodes();
-            for (MapNode node : nodes) {
+	    for (MapNode node : map.getNodes()) {
                 if (node.hasTag(goal_tag)) goals.add(node);
             }
-            for (MapLink link : links) {
+	    for (MapLink link : map.getLinks()) {
                 if (link.hasTag(goal_tag)) {
                     goals.add(link.getFrom());
                     goals.add(link.getTo());
@@ -432,7 +432,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 System.err.println(result.get(node).len);
             }
             */
-            synchronized(nodes) {
+	    synchronized(map.getNodes()) {
                 for (MapNode node : result.keySet()) {
                     NodeLinkLen nll = result.get(node);
                     node.addNavigationHint(goal_tag,
@@ -496,7 +496,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         /* emergency evacuation */
         {
             CalcPath.Nodes goals = new CalcPath.Nodes();
-            for (MapNode node : nodes) {
+	    for (MapNode node : map.getNodes()) {
                 if (node.hasTag("EXIT")) goals.add(node);
             }
             if (goals.size() == 0) {
@@ -536,7 +536,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         int totalValidNodes = 0;
         for (String goal : all_goal_tags) {
             int count = 0;
-            for (MapNode node : nodes) {
+	    for (MapNode node : map.getNodes()) {
                 MapLinkTable pathways = node.getPathways();
                 boolean notHasAllLinks = false;
                 for (MapLink link : pathways) {
@@ -577,7 +577,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         /*
         int count = 0;
         int totalcount= 0;
-        for (MapNode node : nodes) {
+        for (MapNode node : getNodes()) {
             if (!((String) ((MapPartGroup) node.getParent()).toString())
                     .contains("ALL_LINKS"))
                 continue;
@@ -663,11 +663,11 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     }
 
     public MapLinkTable getLinks() {
-        return links;
+	return map.getLinks();
     }
 
     public MapNodeTable getNodes() {
-        return nodes;
+	return map.getNodes();
     }
 
     //public ArrayList<EvacuationAgent> getAgents() {
@@ -925,7 +925,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 totalAgentDensity += rap.getDensity();
                 totalAgentSpeed += rap.getSpeed();
             }
-            for (MapLink link : links) {
+	    for (MapLink link : getLinks()) {
                 // link log format:
                 // link,ID,positive_agents,negative_agents,density
                 double linkDensity = (link.getLane(1.0).size() +
@@ -958,10 +958,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 average_agent_density = totalAgentDensity / agents.size();
                 average_agent_speed = totalAgentSpeed / agents.size();
             }
-            if (links.size() == 0)
+	    if (getLinks().size() == 0)
                 average_link_density = 0.0;
             else
-                average_link_density = totalLinkDensity / links.size();
+		average_link_density = totalLinkDensity / getLinks().size();
             writer.write("count," + count + "," + average_agent_density + "," +
                     average_agent_speed + "," + average_link_density + "\n");
             writer.close();

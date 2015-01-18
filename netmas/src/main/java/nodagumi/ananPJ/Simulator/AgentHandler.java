@@ -65,6 +65,7 @@ import org.w3c.dom.Document;
 import nodagumi.ananPJ.Agents.EvacuationAgent;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
@@ -159,7 +160,7 @@ public class AgentHandler implements Serializable {
             String generationFile,
             String responseFile,
             String scenario_number,
-            MapLinkTable links,
+            NetworkMapBase map,
             EvacuationModelBase _model,
             boolean _has_display,
             double linerGenerateAgentRatio,
@@ -217,7 +218,7 @@ public class AgentHandler implements Serializable {
             setup_control_panel(generationFile,
                     responseFile,
                     scenario_number,
-                    links);
+                    map);
         }
         fusionViewerConnector = new FusionViewerConnector();
 
@@ -229,7 +230,7 @@ public class AgentHandler implements Serializable {
     }
 
     public void deserialize(String generationFile, String responseFile,
-            String scenario_number, MapLinkTable links) {
+            String scenario_number, NetworkMapBase map) {
         control_panel = null;
         clock_label = new JLabel("NOT STARTED");
         time_label = new JLabel("NOT STARTED!");
@@ -238,7 +239,7 @@ public class AgentHandler implements Serializable {
         setup_control_panel(generationFile,
                 responseFile,
                 scenario_number,
-                links);
+                map);
     }
 
     public void prepareForSimulation() {
@@ -303,7 +304,7 @@ public class AgentHandler implements Serializable {
          * modify links so that it affects agents */
         boolean happend = false;
         public void checkIfHappend(double clock,
-                MapLinkTable links,
+                NetworkMapBase map,
                 double time) {
             if (happend || clock < getClock()) return;
             if (command == null) return;
@@ -312,40 +313,40 @@ public class AgentHandler implements Serializable {
             System.err.println(clock + "\t" + command + "\t" + tag);
             message.append(timeToString(clock) + ":" + comment + "\n");
 
-            setEnabled(true, links);
+            setEnabled(true, map);
         }
 
         public void setEnabled(boolean b,
-                MapLinkTable links) {
+                NetworkMapBase map) {
             happend = true;
             if (command.startsWith("SET:")) {
                 String set_tag = command.substring(4);
                 System.err.println("set_tag: " + set_tag);
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     if (!link.hasTag(tag)) continue;
                     link.addTag(set_tag);
                 }
             } else if (command.startsWith("REMOVE:")) {
                 String remove_tag = command.substring(7);
                 System.err.println("remove_tag: " + remove_tag);
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     if (link.hasTag(tag)) {
                         link.removeTag(remove_tag);
                     }
                 }
             } else if (command.equals("BOTH")) {
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     if (!link.hasTag(tag)) continue;
                     link.setEmergency(b);
                     link.setStop(b);
                 }
             } else if (command.equals("EVACUATE")) {
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     if (!link.hasTag(tag)) continue;
                     link.setEmergency(b);
                 }
             } else if (command.equals("STOP")) {
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     if (!link.hasTag(tag)) continue;
                     link.setStop(b);
                 }
@@ -358,7 +359,7 @@ public class AgentHandler implements Serializable {
                     return;
                 double moving = Double.valueOf(splited[0]);
                 double stopping = Double.valueOf(splited[1]);
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     if (link.hasTag(tag)) {
                         link.addStopTime(tag, 
                                 time_difference.get(index),
@@ -377,12 +378,12 @@ public class AgentHandler implements Serializable {
                 }
             } else if (command.equals("ADD_STOP")) {
                 // System.err.println("  add stop tag: " + tag + ", time d: " + time_difference.get(index));
-                // OBNode p = (OBNode)((javax.swing.tree.DefaultMutableTreeNode) links.get(0)).getParent();
+                // OBNode p = (OBNode)((javax.swing.tree.DefaultMutableTreeNode) map.getLinks().get(0)).getParent();
                 // while (p != null) {
                     // System.err.println(" OBNode id: " + p.ID + ", tags: " + p.getTags());
                     // p = (OBNode)((javax.swing.tree.DefaultMutableTreeNode) p).getParent();
                 // }
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     // System.err.println("from tags: " + ((MapNode) link.getFrom()).getTags());
                     // System.err.println("to   tags: " + ((MapNode) link.getTo()).getTags());
                     if (link.hasTag(tag)) {
@@ -402,7 +403,7 @@ public class AgentHandler implements Serializable {
                 }
             } else if (command.equals("REMOVE_STOP")) {
                 // System.err.println("  remove stop tag: " + tag);
-                for (MapLink link : links) {
+                for (MapLink link : map.getLinks()) {
                     if (link.hasTag(tag)) {
                         link.removeStopTime(tag);
                     }
@@ -548,14 +549,13 @@ public class AgentHandler implements Serializable {
 
     /* need stable design to assign id */
     private int manualId = 1024;
-    public void update(MapNodeTable nodes, MapLinkTable links,
-            double time) {
+    public void update(NetworkMapBase map, double time) {
         update_buttons();
 
         ArrayList<EvacuationAgent> generated_agents_step = new
             ArrayList<EvacuationAgent>();
         for (ScenarioEvent event : events.values()) {
-            event.checkIfHappend(time + startTime, links, time);
+            event.checkIfHappend(time + startTime, map, time);
         }
 
         if (generate_agent != null) {
@@ -1150,7 +1150,7 @@ public class AgentHandler implements Serializable {
     private void setup_control_panel(String generationFileName,
             String responseFileName,
             String scenario_number,
-            MapLinkTable links) {
+            NetworkMapBase map) {
         control_panel = new JPanel();
         control_panel.setName("Control");
         control_panel.setLayout(new BorderLayout());
@@ -1239,19 +1239,19 @@ public class AgentHandler implements Serializable {
             class RadioButtonListener implements ActionListener {
                 int index;
                 ScenarioEvent event;
-                MapLinkTable links;
+                NetworkMapBase map ;
                 public RadioButtonListener(ScenarioEvent _event,
                         int _index,
-                        MapLinkTable _links) {
+                        NetworkMapBase _map) {
                     event = _event;
                     index = _index;
-                    links = _links;
+                    map = _map;
                 }
                 public void actionPerformed(ActionEvent e) {
                     if (index == -2) {
-                        event.setEnabled(true, links);
+                        event.setEnabled(true, map);
                     } else if (index == -1) {
-                        event.setEnabled(false, links);
+                        event.setEnabled(false, map);
                     } else {
                         event.setIndex(index);
                     }
@@ -1268,14 +1268,14 @@ public class AgentHandler implements Serializable {
             } else {
                 JRadioButton radio_button;
                 radio_button = new JRadioButton("enabled");
-                radio_button.addActionListener(new RadioButtonListener(event, -2, links));
+                radio_button.addActionListener(new RadioButtonListener(event, -2, map));
                 bgroup.add(radio_button);
                 c = new GridBagConstraints();
                 c.gridx = 1;
                 c.gridy = y;
                 label_toggle_panel.add(radio_button, c);
                 radio_button = new JRadioButton("disabled | auto:");
-                radio_button.addActionListener(new RadioButtonListener(event, -1, links));
+                radio_button.addActionListener(new RadioButtonListener(event, -1, map));
                 bgroup.add(radio_button);
                 c = new GridBagConstraints();
                 c.gridx = 2;
@@ -1284,7 +1284,7 @@ public class AgentHandler implements Serializable {
                 
                 for (int i = 0; i < event.getMaxIndex(); ++i) {
                     radio_button = new JRadioButton(timeToString(event.getTimeIndex(i)));
-                    radio_button.addActionListener(new RadioButtonListener(event, i, links));
+                    radio_button.addActionListener(new RadioButtonListener(event, i, map));
                     bgroup.add(radio_button);
                     c = new GridBagConstraints();
                     c.gridx = i + 3;

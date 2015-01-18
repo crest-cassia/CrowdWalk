@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
@@ -36,26 +37,26 @@ public class Flooding extends Dijkstra implements Serializable {
         return frontier;
     }
 
-    private MapNodeTable nodes = null;
-    private MapLinkTable links = null;
+    
+    //private MapNodeTable nodes = null;
+    //private MapLinkTable links = null;
+    private NetworkMapBase map = null ;
+
     private ArrayList<String> goalTags = null;
     // routing table
     private ArrayList<FloodingRoutingTable> tables = null;
 
-    public Flooding(MapNodeTable _nodes, MapLinkTable _links,
+    public Flooding(NetworkMapBase _map,
             ArrayList<String> _goalTags) {
-        nodes = _nodes;
-        links = _links;
+	map = _map ;
         goalTags = _goalTags;
     }
 
     // update flooding routing table with updated node list
-    public void update(MapNodeTable _nodes, MapLinkTable _links,
+    public void update(NetworkMapBase _map,
             ArrayList<String> _goalTags) {
-        if (_nodes != null)
-            nodes = _nodes;
-        if (_links != null)
-            links = _links;
+        if (_map != null)
+	    map = _map;
         if (_goalTags != null)
             goalTags = _goalTags;
 
@@ -63,19 +64,19 @@ public class Flooding extends Dijkstra implements Serializable {
             tables.clear();
 
         // create routing table for all map nodes
-        for (MapNode node : nodes)
+	for (MapNode node : map.getNodes())
             tables.add(new FloodingRoutingTable(node));
 
         for (String goalTag : goalTags) {
             MapNodeTable goalNodes = new MapNodeTable();
-            for (MapNode node : nodes)
+	    for (MapNode node : map.getNodes())
                 if (node.hasTag(goalTag))
                     goalNodes.add(node);
 
 
             for (MapNode node : goalNodes) {
                 // nodes which the route has determined
-                MapNodeTable determinedNodes = nodes;
+		MapNodeTable determinedNodes = map.getNodes();
                 // terminal nodes which receives flooding routing messages
                 MapNodeTable terminalNodes = new MapNodeTable();
                 // goal node already has the goal
