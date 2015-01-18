@@ -1229,13 +1229,14 @@ public class NetworkMapEditor extends SimulationLauncher
             ++index;
         }
 
-        Collections.sort(nodesToConnect, new Comparator<MapNode>() {
-            @Override
-            public int compare(MapNode lhs, MapNode rhs) {
-                return (int)((lhs.getHeight() - rhs.getHeight())*10);
-            }
-
-        });
+        synchronized(nodesToConnect){
+            Collections.sort(nodesToConnect, new Comparator<MapNode>() {
+                    @Override
+                        public int compare(MapNode lhs, MapNode rhs) {
+                        return (int)((lhs.getHeight() - rhs.getHeight())*10);
+                    }
+                });
+        }
 
         final double length = (Double)(createLifts.length.getValue()); 
         final double width = (Double)(createLifts.width.getValue());
