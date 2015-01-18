@@ -1086,17 +1086,22 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         while (step_time <= every_end_time) {
             for (int i = 0; i < total; i++) {
-                MapLink start_link = null;
-                while (start_link == null) {
-                    MapLink tmp_link =
-                        genConfig.startLinks.chooseRandom(random) ;
-                    start_link = tmp_link;
-                }
-
-                genConfig.startPlace = start_link ;
                 genConfig.startTime = step_time ;
                 genConfig.total = 1 ;
-                this.add(new GenerateAgentFromLink(genConfig, random)) ;
+                if(genConfig.startLinks.size() > 0) {
+                    MapLink start_link = 
+                        genConfig.startLinks.chooseRandom(random) ;
+                    genConfig.startPlace = start_link ;
+                    this.add(new GenerateAgentFromLink(genConfig, random)) ;
+                } else if (genConfig.startNodes.size() > 0) {
+                    MapNode start_node = 
+                        genConfig.startNodes.chooseRandom(random) ;
+                    genConfig.startPlace = start_node ;
+                    this.add(new GenerateAgentFromNode(genConfig, random)) ;
+                } else {
+                    Itk.dbgErr("no starting place for generation.") ;
+                    Itk.dbgMsg("config",genConfig) ;
+                }
             }
             step_time += every_seconds;
         }

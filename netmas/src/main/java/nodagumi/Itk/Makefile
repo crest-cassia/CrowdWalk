@@ -68,6 +68,7 @@ SAMPLE0w = sample/basic-sample/properties.xml		#wait
 SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
 SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
 SAMPLE0sm = sample/stop-sample/properties_24.json	#stop (門司港)
+SAMPLE0sms = sample/stop-sample/properties_24-strait.json #stop (門司港)
 SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
 SAMPLE0sg2s = sample/simpleGrid2/properties-strait.xml	#kawaguchi's sample
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
@@ -101,6 +102,8 @@ run0s4 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s4))
 run0sm ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sm))
+run0sms ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sms))
 run0sg2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2))
 run0sg2s ::

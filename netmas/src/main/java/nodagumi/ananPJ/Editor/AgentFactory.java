@@ -187,8 +187,7 @@ public class AgentFactory extends JPanel implements ItemListener,
     
         for (int i = 0; i < numAgents; ++i) {
             //int lId = (int)(Math.random() * linksToPlace.size());
-            int lId = (int)(random.nextDouble() * linksToPlace.size());
-            if (lId == linksToPlace.size()) lId = linksToPlace.size() - 1;
+			int lId = random.nextInt(linksToPlace.size()) ;
             MapLink link = linksToPlace.get(lId);
             //double position = Math.random() * link.length;
             double position = random.nextDouble() * link.length;
