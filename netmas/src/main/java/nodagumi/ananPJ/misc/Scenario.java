@@ -222,7 +222,7 @@ public class Scenario {
         /**
          * 付加・削除の識別
          */
-        public boolean isOn = true ;
+        public boolean onoff = true ;
     }
 
 } // class Foo

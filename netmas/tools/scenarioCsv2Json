@@ -1,0 +1,269 @@
+#! /usr/bin/env ruby
+## -*- mode: ruby; indent-tabs-mode: nil 
+## = Scenario File Converter
+## Author:: Itsuki Noda
+## Version:: 0.0 2015/01/21 I.Noda
+##
+## === History
+## * [2015/01/21]: Create This File.
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'ostruct' ;
+require 'csv' ;
+require 'json' ;
+require 'pp' ;
+
+#------------------------------------------------------------------------
+#++
+$conf =
+  OpenStruct.new({
+                   :infile => nil,
+                   :outfile => nil,
+                   :useStdout => false,
+                 }) ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]* <scenario.csv> <scenario.json>
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+
+  op.on("-u","--use-stdout", sep + "output result stdout instead of to file.") {
+    $conf.useStdout = true ;
+  }
+
+  op.on_tail("-h", "--help",sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+
+#--------------------------------
+# ファイル名解析
+if(ARGV.empty?) then
+  $conf.infile = nil ;
+  $conf.outfile = nil ;
+  $conf.useStdout = true ;
+else
+  $conf.infile =ARGV.shift ;
+  if(ARGV.empty?) then
+    if($conf.useStdout) then
+      $conf.outfile = nil ;
+    else
+      $conf.outfile = (File.dirname($conf.infile) + "/" +
+                       File.basename($conf.infile,".csv") + ".json") ;
+    end
+  else
+    $conf.outfile = ARGV.shift ;
+  end
+end
+
+#--------------------------------
+# 余剰の引数がある。
+if(!ARGV.empty?) then
+  puts("Wrong command line:") ;
+  puts(op) ;
+  exit(1) ;
+end
+
+#--======================================================================
+#++
+## シナリオフォーマット変換
+class ScenarioConv
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## description of DefaultValues.
+  SlotOrderTable = {
+    :initiate =>	[:id, :type, :parentId, :atTime,
+                         :comment],
+    :finish =>		[:id, :type, :parentId, :atTime, :later,
+                         :comment],
+    :outbreak =>	[:id, :type, :parentId, :atTime, :later,
+                         :comment],
+    :setTag =>		[:id, :type, :parentId, :atTime, :later,
+                         :placeTag, :noticeTag, :onoff,
+                         :comment],
+    :addTag =>		[:id, :type, :parentId, :atTime, :later,
+                         :placeTag, :noticeTag,
+                         :comment],
+    :removeTag =>	[:id, :type, :parentId, :atTime, :later,
+                         :placeTag, :noticeTag,
+                         :comment],
+    :openGate =>	[:id, :type, :parentId, :atTime, :later,
+                         :placeTag, :referenceTag,
+                         :comment],
+    :closeGate =>	[:id, :type, :parentId, :atTime, :later,
+                         :placeTag, :referenceTag,
+                         :comment],
+    :periodicGate =>	[:id, :type, :parentId, :atTime, :later,
+                         :placeTag, :referenceTag,
+                         :openInterval, :closeInterval,
+                         :comment],
+    :alert =>		[:id, :type, :parentId, :atTime, :later,
+                         :placeTag,
+                         :comment],
+    :shutOff =>		[:id, :type, :parentId, :atTime, :later,
+                         :placeTag,
+                         :comment],
+  } ;
+  ## description of DefaultOptsions.
+  DefaultConf = { :bar => :baz } ;
+
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## イベントのリスト
+  attr :eventList, true ;
+
+  #--------------------------------------------------------------
+  #++
+  ## 初期化
+  ## _baz_:: about argument baz.
+  def initialize(conf)
+    @eventList = [] ;
+    @conf = conf ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## CSV ファイルの読み込み
+  ## _csvFile_:: CSV ファイル名
+  def scanCsvFile(csvFile = @conf[:infile])
+    if(csvFile.nil?) then
+      CSV.parse($stdin) do |row|
+        scanCsvRow(row) ;
+      end
+    else
+      CSV.foreach(csvFile) do |row|
+        scanCsvRow(row) ;
+      end
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## CSV の一行データの解析
+  ## _row_:: CSV 一行
+  def scanCsvRow(row)
+    event = {} ;
+    event[:id] = row[0];
+    event[:parentId] = (row[1] == "0" ? nil : row[1]);
+    tag = row[2] ;
+    command = row[3] ;
+    if(event[:parentId]) then
+      event[:later] = row[4].to_f ;
+    else
+      event[:atTime] = row[4] ;
+    end
+    restArgs = [] ;
+    comments = [] ;
+    (5...row.size).each{|index|
+      col = row[index] ;
+      if(col) then
+        if(col =~ /^\#/) then
+          comments.push(col) ;
+        else
+          restArgs.push(col) ;
+        end
+      end
+    }
+
+    if(tag == "START") then
+      event[:type] = :initiate ;
+    elsif(tag == "OUTBREAK") then
+      event[:type] = :outbreak ;
+    elsif(command =~ /^SET\:/) then
+      notice = command.split(':')[1..-1].join(':') ;
+      event[:type] = :addTag ;
+      event[:placeTag] = tag ;
+      event[:noticeTag] = notice ;
+    elsif(command =~ /^REMOVE\:/) then
+      notice = command.split(':')[1..-1].join(':') ;
+      event[:type] = :removeTag ;
+      event[:placeTag] = tag ;
+      event[:noticeTag] = notice ;
+    elsif(command == "BOTH") then
+      event[:type] = :both ;
+      event[:placeTag] = tag ;
+    elsif(command == "EVACUATE") then
+      event[:type] = :alert ;
+      event[:placeTag] = tag ;
+    elsif(command == "STOP") then
+      event[:type] = :shutOff ;
+      event[:placeTag] = tag ;
+    elsif(command == "RESPONSE") then
+      event[:type] = :finish ;
+    elsif(command == "STOP_TIMES") then
+      event[:type] = :periodicGate ;
+      event[:placeTag] = tag ;
+      event[:referenceTag] = tag ;
+      (closeIntStr, openIntStr) = comments[0][1..-1].split('-') ;
+      event[:openInterval] = openIntStr.to_f ;
+      event[:closeInterval] = closeIntStr.to_f ;
+    elsif(command == "ADD_STOP") then
+      event[:type] = :closeGate ;
+      event[:placeTag] = tag ;
+      event[:referenceTag] = tag ;
+      event.delete(:later) ;
+      event[:atTime] = row[4]
+    elsif(command == "REMOVE_STOP") then
+      event[:type] = :openGate ;
+      event[:placeTag] = tag ;
+      event[:referenceTag] = tag ;
+      event.delete(:later) ;
+      event[:atTime] = row[4]
+    else
+      p [:warning, :unknownType, row] ;
+      exit(1) ;
+    end
+    @eventList.push(event) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## JSON の生成
+  def to_json()
+    # JSON.pretty_generate(@eventList) ;
+    ret = "[" ;
+    indent1 = "  " ;
+    indent2 = indent1 * 2 ;
+    count = 0 ;
+    @eventList.each{|event|
+      ret += "," if(count > 0) ;
+      count += 1 ;
+      ret += "\n" + indent1 + "{ " ;
+      c = 0 ;
+      type = event[:type] ;
+      SlotOrderTable[type].each{|slot|
+        next if event[slot].nil? ;
+        ret += ",\n" + indent2 if(c > 0);
+        c += 1 ;
+        ret += (({slot => event[slot]}.to_json)[1...-1]) ;
+      }
+      #ret += "\n" + indent1 ;
+      ret += "}" ;
+    }
+    ret += "\n" + "]" ;
+    return ret ;
+  end
+
+end # class Foo
+
+########################################################################
+########################################################################
+########################################################################
+
+sConv = ScenarioConv.new($conf) ;
+sConv.scanCsvFile() ;
+puts sConv.to_json() ;
