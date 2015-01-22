@@ -701,7 +701,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         }
 
         /* [2015.01.09 I.Noda]
-         * リンクの交通規制など (STOP や渋谷の SIGNAL)
+         * リンクの交通規制など (Gate)
          */
         currentPlace.getLink().applyRestrictionToAgent(this, time) ;
 
