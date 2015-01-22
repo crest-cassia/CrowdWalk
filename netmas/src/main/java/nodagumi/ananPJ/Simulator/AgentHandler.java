@@ -355,29 +355,26 @@ public class AgentHandler implements Serializable {
             } else if (command.equals("ADD_STOP")) {
                 for (MapLink link : map.getLinks()) {
                     if (link.hasTag(tag)) {
-                        link.addStopTime(tag, time_difference.get(index), -1,
-                                         2);
+                        link.closeGate(tag) ;
                     }
                     if (((MapNode) link.getFrom()).hasTag(tag)) {
-                        ((MapNode) link.getFrom()).addStopTime(tag,
-                            time_difference.get(index), -1, 2);
+                        ((MapNode) link.getFrom()).closeGate(tag) ;
                     }
                     if (((MapNode) link.getTo()).hasTag(tag)) {
-                        ((MapNode) link.getTo()).addStopTime(tag,
-                            time_difference.get(index), -1, 2);
+                        ((MapNode) link.getTo()).closeGate(tag) ;
                     }
                 }
             } else if (command.equals("REMOVE_STOP")) {
                 // System.err.println("  remove stop tag: " + tag);
                 for (MapLink link : map.getLinks()) {
                     if (link.hasTag(tag)) {
-                        link.removeStopTime(tag);
+                        link.openGate(tag) ;
                     }
                     if (((MapNode) link.getFrom()).hasTag(tag)) {
-                        ((MapNode) link.getFrom()).removeStopTime(tag);
+                        ((MapNode) link.getFrom()).openGate(tag) ;
                     }
                     if (((MapNode) link.getTo()).hasTag(tag)) {
-                        ((MapNode) link.getTo()).removeStopTime(tag);
+                        ((MapNode) link.getTo()).openGate(tag) ;
                     }
                 }
             }

@@ -19,6 +19,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +39,7 @@ import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
 import nodagumi.ananPJ.misc.osmTools.osmGroup;
 import nodagumi.ananPJ.misc.osmTools.osmLink;
 import nodagumi.ananPJ.misc.osmTools.osmNode;
+import nodagumi.ananPJ.Agents.EvacuationAgent;
 
 import nodagumi.Itk.*;
 
@@ -376,71 +378,149 @@ public abstract class OBNode extends DefaultMutableTreeNode
         return element;
     }
 
-    // 2013.02.21 tkokada add for ScenarioEvent STOP_TIMES
-    private ArrayList<StopTime> stopTimes = new ArrayList<StopTime>();
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ゲート（分断制御用交通規制）テーブル。
+     * 各ノード・リンクのゲートは、タグにより参照できる。
+     * 単一のタグには単一のゲートのみ割り振ることができる。
+     */
+    private HashMap<String, GateBase> gateTable =
+        new HashMap<String, GateBase>() ;
 
     //------------------------------------------------------------
     /**
-     * 分断制御用交通規制のチェック
+     * ゲート（分断制御用交通規制）のチェック
      */
-    public boolean isStopTimesEnabled() {
-        if (stopTimes.size() > 0)
-            return true;
-        return false;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 分断制御用交通規制タグのチェック
-     */
-    public boolean isStoppedTime(double time) {
-        for(String tag: getTags()) {
-            if(isStop(tag, time)) return true ;
+    public boolean isGateClosed(EvacuationAgent agent, double time) {
+        for(String gateTag: gateTable.keySet()) {
+            GateBase gate = gateTable.get(gateTag) ;
+            if(gate.isClosed(agent, time)) return true ;
         }
         return false ;
     }
 
-    public void addStopTime(String tag, double offset, double moving,
-            double stopping) {
-        StopTime st = new StopTime(tag, offset, moving, stopping);
-        stopTimes.add(st);
-    }
-
-    public void removeStopTime(String tag) {
-        Iterator<StopTime> iter = stopTimes.iterator();
-        while (iter.hasNext()) {
-            if (iter.next().tag.equals(tag)) {
-                iter.remove();
-            }
+    //------------------------------------------------------------
+    /**
+     * ゲート操作
+     */
+    public GateBase switchGate(String gateTag, boolean closed) {
+        GateBase gate = gateTable.get(gateTag) ;
+        if(gate == null) {
+            gate = new GateBase(gateTag, closed) ;
+            gateTable.put(gateTag, gate) ;
+        } else {
+            gate.switchGate(closed) ;
         }
+        return gate ;
     }
 
-    public boolean isStop(String tag, double time) {
-        for (StopTime st : stopTimes) {
-            if (st.tag.equals(tag)) {
-                if (st.isStop(time))
-                    return true;
-            }
-        }
-        return false;
+    //------------------------------------------------------------
+    /**
+     * ゲート閉鎖
+     */
+    public GateBase closeGate(String tag) {
+        return switchGate(tag, true) ;
     }
 
-    class StopTime {
+    //------------------------------------------------------------
+    /**
+     * ゲート開放
+     */
+    public GateBase openGate(String tag) {
+        return switchGate(tag, false) ;
+    }
+
+    //============================================================
+    /**
+     * 通行規制制御用クラス
+     */
+    class GateBase {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * OBNode内でこのゲートを参照するためのタグ
+         */
         public String tag;
-        public double offset, moving, stopping;
 
-        public StopTime(String tag, double offset, double moving,
-                double stopping) {
-            this.tag = tag;
-            this.offset = offset;
-            this.moving = moving;
-            this.stopping = stopping;
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 現在閉じている（通行止め）かどうか？
+         */
+        public boolean closed ;
+
+        //----------------------------------------
+        /**
+         * コンストラクタ
+         */
+        public GateBase(String _tag, boolean _closed) {
+            tag = _tag ;
+            closed = _closed ;
         }
 
-        public boolean isStop(double time) {
-            // System.err.println("time - this.offset: " + (time - this.offset) + ", moving: " +  this.moving + ", stopping: " + this.stopping);
-            return ((time - this.offset) % (this.moving + this.stopping)) > moving;
+        //----------------------------------------
+        /**
+         * 閉じているかどうか？
+         * 拡張のために、時刻とエージェントを受け取る。
+         * @param time : シミュレーション時刻
+         * @param agent: 対象となるエージェント
+         * @return デフォルトでは、単にこのゲートが閉じているかどうか
+         */
+        public boolean isClosed(EvacuationAgent agent, double time) {
+            return isClosed() ;
         }
+
+        //----------------------------------------
+        /**
+         * 閉じているかどうか？
+         * 拡張のために、時刻とエージェントを受け取る。
+         * @param time : シミュレーション時刻
+         * @param agent: 対象となるエージェント
+         * @return デフォルトでは、単にこのゲートが閉じているかどうか
+         */
+        public boolean isOpened(EvacuationAgent agent, double time) {
+            return !isClosed(agent, time) ;
+        }
+
+        //----------------------------------------
+        /**
+         * 閉じているかどうか？
+         */
+        public boolean isClosed() {
+            return closed ;
+        }
+
+        //----------------------------------------
+        /**
+         * 開いているかどうか？
+         */
+        public boolean isOpened() {
+            return !isClosed() ;
+        }
+
+        //----------------------------------------
+        /**
+         * ゲートの開閉
+         */
+        public GateBase switchGate(boolean _closed) {
+            closed = _closed ;
+            return this ;
+        }
+
+        //----------------------------------------
+        /**
+         * ゲートを閉じる
+         */
+        public GateBase close() {
+            return switchGate(true) ;
+        }
+
+        //----------------------------------------
+        /**
+         * ゲートを開ける
+         */
+        public GateBase open() {
+            return switchGate(false) ;
+        }
+
     }
 }
 //;;; Local Variables:

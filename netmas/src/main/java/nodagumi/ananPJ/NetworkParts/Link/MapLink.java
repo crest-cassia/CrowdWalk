@@ -1175,7 +1175,7 @@ public class MapLink extends OBMapPart implements Serializable {
                                            double time) {
         boolean applied = false ;
         /* 分断制御 */
-        if(isStopTimesEnabled() && isStoppedTime(time)) {
+        if(isGateClosed(agent, time)) {
             agent.setSpeed(0) ;
             applied = true ;
         }

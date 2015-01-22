@@ -580,7 +580,7 @@ public class MapNode extends OBMapPart implements Serializable {
                                               double time) {
         boolean applied = false ;
         /* 分担制御 */
-        if(isStopTimesEnabled() && isStoppedTime(time)) {
+        if(isGateClosed(agent, time)) {
             agent.setSpeed(0) ;
             applied = true ;
         }
