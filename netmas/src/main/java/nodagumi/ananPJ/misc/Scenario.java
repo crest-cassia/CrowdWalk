@@ -28,10 +28,9 @@ public class Scenario {
     static public enum EventType {
         Initiate, Outbreak, Finish,
         SetTag, AddTag, RemoveTag,
-        OpenGate, CloseGate, PeriodicGate,
+        OpenGate, CloseGate,
         ShutOff,
         Alert,
-        Both,
         None
     }
 
@@ -47,12 +46,10 @@ public class Scenario {
         eventLexicon.register("RESPONSE", EventType.Finish) ;
         eventLexicon.register("SET", EventType.AddTag) ;
         eventLexicon.register("REMOVE", EventType.RemoveTag) ;
-        eventLexicon.register("STOP_TIMES", EventType.PeriodicGate) ;
         eventLexicon.register("ADD_STOP", EventType.CloseGate) ;
         eventLexicon.register("REMOVE_STOP", EventType.OpenGate) ;
         eventLexicon.register("STOP", EventType.ShutOff) ;
         eventLexicon.register("EVACUATE", EventType.Alert) ;
-        eventLexicon.register("BOTH", EventType.Both) ;
     }
 
     //============================================================
@@ -67,15 +64,6 @@ public class Scenario {
          * null でも良いが、他から参照できない。
          */
         public String id = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * parent ID。
-         * そのイベントが従属する親イベント。
-         * 主な機能として、発生時刻を、親イベントからの相対時刻で指定できる。
-         * 指定されなければ、独立イベント。
-         */
-        public String parentId = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -94,12 +82,6 @@ public class Scenario {
          * イベント発生時刻
          */
         public double atTime = Double.MAX_VALUE ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 親イベントからの相対時刻
-         */
-        public double later = 0 ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**

@@ -352,40 +352,8 @@ public class AgentHandler implements Serializable {
                 }
             } else if (command.equals("RESPONSE")) {
                 rescueArrived = b;
-            } else if (command.equals("STOP_TIMES")) {
-                String splited[] = comment.substring(1, comment.length())
-                    .split("-");
-                if (splited.length != 2)
-                    return;
-                double moving = Double.valueOf(splited[0]);
-                double stopping = Double.valueOf(splited[1]);
-                for (MapLink link : map.getLinks()) {
-                    if (link.hasTag(tag)) {
-                        link.addStopTime(tag, 
-                                time_difference.get(index),
-                                moving, stopping);
-                    }
-                    if (((MapNode) link.getFrom()).hasTag(tag)) {
-                        ((MapNode) link.getFrom()).addStopTime(tag,
-                            time_difference.get(index),
-                            moving, stopping);
-                    }
-                    if (((MapNode) link.getTo()).hasTag(tag)) {
-                        ((MapNode) link.getTo()).addStopTime(tag,
-                            time_difference.get(index),
-                            moving, stopping);
-                    }
-                }
             } else if (command.equals("ADD_STOP")) {
-                // System.err.println("  add stop tag: " + tag + ", time d: " + time_difference.get(index));
-                // OBNode p = (OBNode)((javax.swing.tree.DefaultMutableTreeNode) map.getLinks().get(0)).getParent();
-                // while (p != null) {
-                    // System.err.println(" OBNode id: " + p.ID + ", tags: " + p.getTags());
-                    // p = (OBNode)((javax.swing.tree.DefaultMutableTreeNode) p).getParent();
-                // }
                 for (MapLink link : map.getLinks()) {
-                    // System.err.println("from tags: " + ((MapNode) link.getFrom()).getTags());
-                    // System.err.println("to   tags: " + ((MapNode) link.getTo()).getTags());
                     if (link.hasTag(tag)) {
                         link.addStopTime(tag, time_difference.get(index), -1,
                                          2);
@@ -393,12 +361,10 @@ public class AgentHandler implements Serializable {
                     if (((MapNode) link.getFrom()).hasTag(tag)) {
                         ((MapNode) link.getFrom()).addStopTime(tag,
                             time_difference.get(index), -1, 2);
-                        // System.err.println("    tag is added to From for link " + link.ID);
                     }
                     if (((MapNode) link.getTo()).hasTag(tag)) {
                         ((MapNode) link.getTo()).addStopTime(tag,
                             time_difference.get(index), -1, 2);
-                        // System.err.println("    tag is added to To for link " + link.ID);
                     }
                 }
             } else if (command.equals("REMOVE_STOP")) {
@@ -458,11 +424,6 @@ public class AgentHandler implements Serializable {
              * 2,0,OUTBREAK,,7:40,,#テロ災害発生,
              * 3,2,DETECT,,5,10,#散布から検知までの所要時間,
              *
-             * 2013.02.21 tkokada newly added command
-             * #ID,parent,tag,STOP_TIMES,TIME,LTIME,,#NONSTOPSECONDS-STOPSECONDS
-             * 4,3,TRAIN_EXIT,STOP_TIMES,0,,,#10-50
-             *   This scenario defines a tag to stop agents in STOPSECONDS. But
-             *   after STOPSECONDS, agetns can walk during NONSTOPSECONDS.
              * 2013.05.07 tkokada added a new command
              * #ID,parent,tag,ADD_STOP,TIME,,#comment
              * #ID,parent,tag,REMOVE_STOP,TIME,,#comment
