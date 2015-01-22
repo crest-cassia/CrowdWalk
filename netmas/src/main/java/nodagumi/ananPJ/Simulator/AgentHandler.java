@@ -202,18 +202,6 @@ public class AgentHandler implements Serializable {
         }
         parseResponseFile(responseFile);
 
-        if (scenario_number != null) {
-            for (Integer id : events.keySet()) {
-                if (id > scenario_number.length() - 1) {
-                    System.err.println("no index for " + id);
-                    continue;
-                }
-                if (events.get(id).time_difference == null) continue;
-                int i = Integer.parseInt("" + scenario_number.charAt(id));
-                events.get(id).setIndex(i);
-            }
-        }
-
         if (has_display) {
             setup_control_panel(generationFile,
                     responseFile,
@@ -253,51 +241,25 @@ public class AgentHandler implements Serializable {
     class ScenarioEvent implements Serializable {
         public static final String StopTag = "STOP_TAG";
         ScenarioEvent parent;
-        Double time;
-        ArrayList<Double> time_difference;
+        public Double time;
         String tag, command, comment;
-
-        int index = 0;
 
         public ScenarioEvent(ScenarioEvent _parent) {
             parent = _parent;
-            time_difference = new ArrayList<Double>();
         }
 
         public void setTag(String _tag) { tag = _tag; }
         public void setCommand(String _command) { command = _command; }
         public boolean isAbsolute() { return null == parent; }
-        public int getIndex() {return index; }
 
         public void setTime(double _time) {
-            if (parent != null) {
-                System.err.println("This event is not absolute timed!");
-            } else {
-                time = _time;
-            }
+            time = _time;
         }
-
-        public void addTime(double _time) {
-            _time *= 60;
-            if (parent == null) {
-                System.err.println("This event is not relative timed!");
-            } else {
-                time_difference.add(_time);
-            }
-        }
-        public void setIndex(int i) { index = i; happend = false; }
-        public int getMaxIndex() { return time_difference.size(); }
 
         public void setComment(String _comment) { comment = _comment; } 
 
         public double getClock() {
-            if (parent == null) return time;
-            else return parent.getClock() + time_difference.get(index);
-        }
-
-        public double getTimeIndex(int i) {
-            if (parent == null) return time;
-            else return time_difference.get(i);
+            return time ;
         }
 
         /* used while running the simulation
@@ -383,14 +345,6 @@ public class AgentHandler implements Serializable {
         ScenarioEvent>();
     private void setup_default_scenario() {
         startTime = 0;
-        /*
-        ScenarioEvent event  = new ScenarioEvent(null);
-        event.setTime(0);
-        event.setCommand("EVACUATE");
-        event.setTag("*");
-        event.setComment("全員避難開始");
-        events.put(0, event);
-        */
     }
 
     private void parseResponseFile(String filename) {
@@ -432,69 +386,26 @@ public class AgentHandler implements Serializable {
                 String items[] = line.split(",");
 
                 int id = Integer.parseInt(items[0]);
-                int parent_id = Integer.parseInt(items[1]);
+                /* [2015.01.22 I.Noda] parent_id has no meaning.
+                 */
+                //int parent_id = Integer.parseInt(items[1]); 
                 String tag = items[2];
                 String command = items[3];
-                ScenarioEvent event;
 
-                if (parent_id == 0) {
-                    event  = new ScenarioEvent(null);
-                    try {
-                        double time = (double)Itk.scanTimeStringToInt(items[4]) ;
-                        event.setTime(time) ;
-                        if (tag.equals("START")) startTime = time;
-                        else if (tag.equals("OUTBREAK")) outbreakTime = time;
-                    } catch(Exception ex) {
-                        System.err.println("no matching item:" + items[4] +
-                                           " while reading scenario.");
-                        System.err.println(line);
-                        continue;
-                    }
-                } else if (command.equals("ADD_STOP") ||
-                        command.equals("REMOVE_STOP")) {
-                    event  = new ScenarioEvent(events.get(parent_id));
-                    double ptime = (events.get(parent_id)).getClock();
-                    try {
-                        double time = (double)Itk.scanTimeStringToInt(items[4]) ;
-                        time -= ptime ;
-                        while (time < 0.) {
-                            time += 86400.0;
-                        }
-                        event.addTime(time / 60.);
-                    } catch(Exception ex) {
-                        System.err.println("no matching item:" + items[4] +
-                                " while reading scenario.");
-                        System.err.println(line);
-                        continue;
-                    }
-                } else {
-                    event  = new ScenarioEvent(events.get(parent_id));
-                    /* must have at least one dt */
-                    int dt = Integer.parseInt(items[4]);
-                    event.addTime(dt);
+                ScenarioEvent event = new ScenarioEvent(null);
+                try {
+                    double time = (double)Itk.scanTimeStringToInt(items[4]) ;
+                    event.setTime(time) ;
+                    if (tag.equals("START")) startTime = time;
+                    else if (tag.equals("OUTBREAK")) outbreakTime = time;
+                } catch(Exception ex) {
+                    Itk.dbgErr("wrong schenalio time:" + items[4]) ;
+                    Itk.dbgMsg("line", line) ;
+                    continue;
                 }
                 event.setCommand(command);
                 event.setTag(tag);
 
-                //System.err.print(id + "\t");
-                //System.err.print(parent_id + "\t");
-                //System.err.print(tag + "\t");
-                //System.err.print(command + "\t");
-
-                StringBuffer comment_buffer = new StringBuffer("");
-
-                for (int i = 5; i < items.length; ++i) {
-                    if (items[i].equals("")) continue;
-                    if (items[i].charAt(0) == '#') {
-                        comment_buffer.append(items[i]);
-                        continue;
-                    }
-                    int dt = Integer.parseInt(items[i]);
-                    event.addTime(dt);
-                }
-                event.setIndex(event.getMaxIndex() - 1);
-                //event.setIndex(0);
-                event.setComment(comment_buffer.toString());
                 events.put(id, event);
             }
         } catch (Exception e) {
@@ -1176,11 +1087,6 @@ public class AgentHandler implements Serializable {
         GridBagConstraints c = null;
 
         int max_events = 0;
-        for (ScenarioEvent event : events.values()) {
-            if (event.getMaxIndex() > max_events) {
-                max_events = event.getMaxIndex();
-            }
-        }
 
         int y = 0;
         for (ScenarioEvent event : events.values()) {
@@ -1209,7 +1115,7 @@ public class AgentHandler implements Serializable {
                     } else if (index == -1) {
                         event.setEnabled(false, map);
                     } else {
-                        event.setIndex(index);
+                        Itk.dbgErr("wrong index") ;
                     }
                 }
             }
@@ -1238,17 +1144,6 @@ public class AgentHandler implements Serializable {
                 c.gridy = y;
                 label_toggle_panel.add(radio_button, c);
                 
-                for (int i = 0; i < event.getMaxIndex(); ++i) {
-                    radio_button = new JRadioButton(timeToString(event.getTimeIndex(i)));
-                    radio_button.addActionListener(new RadioButtonListener(event, i, map));
-                    bgroup.add(radio_button);
-                    c = new GridBagConstraints();
-                    c.gridx = i + 3;
-                    c.gridy = y;
-                    label_toggle_panel.add(radio_button, c);
-
-                    if (event.getIndex() == i) radio_button.setSelected(true); 
-                }
             }
             y++;
         }

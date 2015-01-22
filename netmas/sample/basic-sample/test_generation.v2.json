@@ -12,7 +12,7 @@
 		   "until":"RESUME"}]},
  {"rule":"EACH",
   "agentType":{"className":"NaiveAgent","config":{}},
-  "total":5,"speedModel":"LANE",
+  "total":10,"speedModel":"LANE",
   "startPlace":"ROOM2","conditions":null,
   "startTime":"7:30","duration":1,
   "goal":"EXIT",
