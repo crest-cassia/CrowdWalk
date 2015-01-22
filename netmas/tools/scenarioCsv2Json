@@ -37,7 +37,7 @@ _END_
   sep = "\n\t\t" ;
 
 
-  op.on("-u","--use-stdout", sep + "output result stdout instead of to file.") {
+  op.on("-c","--use-stdout", sep + "output result stdout instead of to file.") {
     $conf.useStdout = true ;
   }
 
@@ -139,7 +139,7 @@ class ScenarioConv
   #++
   ## CSV ファイルの読み込み
   ## _csvFile_:: CSV ファイル名
-  def scanCsvFile(csvFile = @conf[:infile])
+  def scanCsvFile(csvFile = @conf.infile)
     if(csvFile.nil?) then
       CSV.parse($stdin) do |row|
         scanCsvRow(row) ;
@@ -156,6 +156,7 @@ class ScenarioConv
   ## CSV の一行データの解析
   ## _row_:: CSV 一行
   def scanCsvRow(row)
+    return if(row[0] =~ /^\#/) ;
     event = {} ;
     event[:id] = row[0];
     event[:parentId] = (row[1] == "0" ? nil : row[1]);
@@ -232,6 +233,20 @@ class ScenarioConv
 
   #--------------------------------------------------------------
   #++
+  ## JSON ファイルの書き出し
+  ## _jsonFile_:: CSV ファイル名
+  def saveJsonFile(jsonFile = @conf.outfile)
+    if(jsonFile.nil?) then
+      $stdout << to_json() ;
+    else
+      File::open(jsonFile,'w') {|ostrm|
+        ostrm << to_json() ;
+      }
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## JSON の生成
   def to_json()
     # JSON.pretty_generate(@eventList) ;
@@ -254,7 +269,7 @@ class ScenarioConv
       #ret += "\n" + indent1 ;
       ret += "}" ;
     }
-    ret += "\n" + "]" ;
+    ret += "\n" + "]" + "\n";
     return ret ;
   end
 
@@ -265,5 +280,5 @@ end # class Foo
 ########################################################################
 
 sConv = ScenarioConv.new($conf) ;
-sConv.scanCsvFile() ;
-puts sConv.to_json() ;
+sConv.scanCsvFile($conf.infile) ;
+sConv.saveJsonFile($conf.outfile) ;

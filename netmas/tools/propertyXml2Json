@@ -1,0 +1,292 @@
+#! /usr/bin/env ruby
+## -*- mode: ruby coding: utf-8 -*-
+## = Converter for Property XML to JSON
+## Author:: Itsuki Noda
+## Version:: 0.0 2014/12/?? Saito?
+##
+## === History
+## * [2014/12/??]: Create This File.
+## * [2015/01/22]: reformat by I.Noda
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'ostruct' ;
+require 'pp' ;
+require 'rexml/document'
+require 'json'
+#require 'active_support/core_ext'
+
+#------------------------------------------------------------------------
+#++
+$conf =
+  OpenStruct.new({
+                   :infile => nil,
+                   :force => true,
+                   :withXmlComments => false,
+                   :version => 1,
+                 }) ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]* <変換元のプロパティファイル>
+       XML形式のプロパティファイルをJSON形式に変換する。
+       変換元のプロパティファイルと同じディレクトリに、
+       変換結果のJSONファイルが作成される。
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-O","--useOldVersion", sep + "use old version."){
+    $conf.version = 0 ;
+  }
+
+  op.on("-x","--withXmlComments", sep + "convert XML comments."){
+    $conf.withXmlComments = true ;
+  }
+
+  op.on("-C","--checkExistence", sep + "confirm if the outfile exists."){
+    $conf.force = false ;
+  }
+
+  op.on_tail("-h","--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+
+if(ARGV.size != 1) then
+  puts($op) ;
+  exit(1) ;
+else
+  $conf.infile = ARGV[0] ;
+end
+
+#--======================================================================
+#++
+## description of class Foo.
+class PropertyConverter
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## 変換用テンプレート
+  ItemList =
+    [
+     {type: :text,    commentable: false, default: '',        name: 'comment'},
+     {type: :bool,    commentable: false, default: false,     name: 'debug'},
+     {type: :text,    commentable: false, default: 'none',    name: 'io_handler_type'},
+     {type: :emptyLine},
+     {type: :text,    commentable: true,  default: 'map.xml',         name: 'map_file'},
+     {type: :text,    commentable: true,  default: 'generation.csv',  name: 'generation_file'},
+     {type: :text,    commentable: true,  default: 'scenario.csv',    name: 'scenario_file'},
+     {type: :text,    commentable: true,  default: 'pollution.csv',   name: 'pollution_file'},
+     {type: :text,    commentable: true,  default: 'camera.csv',      name: 'camera_file'},
+     {type: :emptyLine},
+     {type: :numeric, commentable: true,  default: 1,         name: 'interval'},
+     {type: :numeric, commentable: true,  default: 0,         name: 'randseed'},
+     {type: :bool,    commentable: false, default: false,     name: 'random_navigation'},
+     {type: :text,    commentable: true,  default: 'density', name: 'speed_model'},
+     {type: :numeric, commentable: true,  default: 1,         name: 'loop_count'},
+     {type: :numeric, commentable: true,  default: 0,         name: 'exit_count'},
+     {type: :bool,    commentable: true,  default: true,      name: 'all_agent_speed_zero_break'},
+     {type: :emptyLine},
+     {type: :bool,    commentable: false, default: false,     name: 'timer_enable'},
+     {type: :text,    commentable: false, default: 'log/timer.log',   name: 'timer_file'},
+     {type: :emptyLine},
+     {type: :bool,    commentable: false, default: false,     name: 'time_series_log'},
+     {type: :text,    commentable: false, default: 'log',     name: 'time_series_log_path'},
+     {type: :numeric, commentable: false, default: 1,         name: 'time_series_log_interval'},
+     {type: :emptyLine},
+     {type: :bool,    commentable: false, default: false,     name: 'damage_speed_zero_log'},
+     {type: :text,    commentable: false, default: 'log/damage_speed_zero.csv', name: 'damage_speed_zero_log_path'},
+     {type: :emptyLine},
+     {type: :text,    commentable: true,  default: 'log/agent_movement_history.csv', name: 'agent_movement_history_file'},
+     {type: :text,    commentable: true,  default: 'log',     name: 'individual_pedestrians_log_dir'},
+     {type: :emptyLine},
+     {type: :bool,    commentable: false, default: false,     name: 'record_simulation_screen'},
+     {type: :text,    commentable: true,  default: 'screenshots', name: 'screenshot_dir'},
+     {type: :bool,    commentable: true,  default: true,      name: 'clear_screenshot_dir'},
+     {type: :text,    commentable: false, default: 'png',     name: 'screenshot_image_type'},
+     {type: :emptyLine},
+     {type: :numeric, commentable: true,  default: 0,         name: 'weight'},
+     {type: :numeric, commentable: true,  default: 2.0,       name: 'vertical_scale'},
+     {type: :numeric, commentable: true,  default: 1.0,       name: 'agent_size'},
+     {type: :numeric, commentable: true,  default: 1.0,       name: 'zoom'},
+     {type: :bool,    commentable: false, default: false,     name: 'hide_links'},
+     {type: :bool,    commentable: false, default: false,     name: 'density_mode'},
+     {type: :bool,    commentable: false, default: true,      name: 'change_agent_color_depending_on_speed'},
+     {type: :text,    commentable: false, default: 'none',    name: 'show_status'},
+     {type: :bool,    commentable: false, default: false,     name: 'show_logo'},
+     {type: :bool,    commentable: false, default: true,      name: 'show_3D_polygon'},
+     {type: :emptyLine},
+     {type: :bool,    commentable: false, default: false,     name: 'simulation_window_open'},
+     {type: :bool,    commentable: false, default: false,     name: 'auto_simulation_start'},
+    ]
+
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## テンプレート索引
+  ItemTable = {} ;
+  ItemList.each{|item|
+    ItemTable[item[:name]] = item if(item[:name]) ;
+  }
+
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## comment 用のスロット prefix
+  CommentPrefix = "__" ;
+
+  #--------------------------------------------------------------
+  #++
+  ## 変換
+  def convert(conf)
+    @conf = conf ;
+    setupFiles(conf) ;
+
+    if(conf.version >= 1) then
+      convertBody_version1() ;
+    else
+      convertBody_version0() ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 変換本体 (version 1)
+  def convertBody_version1()
+    File.open(@outfile, 'w') {|ostrm|
+      doc = REXML::Document.new(open(@infile)) ;
+
+      indent = '  ' ;
+      indent2 = indent + indent ;
+
+      commentCount = 0 ;
+      count = 0 ;
+
+      ostrm << "{" ;
+      REXML::XPath.first(doc.root,'/properties').each{|entry|
+        next if(!(entry.is_a?(REXML::Element) ||
+                  (@conf.withXmlComments && entry.is_a?(REXML::Comment)))) ;
+
+        ostrm << "," if(count > 0) ;
+        count += 1;
+        ostrm << "\n" << indent ;
+
+        if(entry.is_a?(REXML::Comment)) then
+          ostrm << getSlotValuePairJson(CommentPrefix + commentCount.to_s,
+                                        '<!--' + entry.to_s + '-->') ;
+          commentCount += 1;
+        elsif(entry.local_name == "comment") then
+          ostrm << getSlotValuePairJson(CommentPrefix + commentCount.to_s,
+                                        entry.text) ;
+          commentCount += 1;
+        elsif(entry.local_name == "entry") then
+          slot = entry.attribute('key').value ;
+          value = entry.text.to_s ;
+
+          # テキストでなければ、裸の値に変換
+          itemDef = ItemTable[slot] ;
+          value = eval(value) if(itemDef[:type] != :text) ;
+
+          # ファイル名であれば、無駄なパスを除く。
+          if(slot =~ /_file$/ && File.dirname(value) == @dirname) then
+            value = File.basename(value) ;
+          end
+
+          ostrm << getSlotValuePairJson(slot, value) ;
+        else
+          p [:warning, :unknownEntry, entry.to_s] ;
+        end
+      }
+      ostrm << "\n" << "}" ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 変換本体 (version 1)
+  def getSlotValuePairJson(slot, value)
+    table = { slot => value } ;
+    return table.to_json[1...-1] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 変換本体 (version 0)
+  def convertBody_version0()
+    doc = REXML::Document.new(open(@infile)) ;
+
+    properties = {}
+
+    if(doc.elements['properties/comment']) then
+      properties['comment'] = doc.elements['properties/comment'].text ;
+    end
+
+    doc.elements.each('properties/entry') {|entry| 
+      properties[entry.attributes['key']] = entry.text ;
+    }
+
+    File.open(@outfile, 'w') {|file|
+      file.print'{' ;
+      count = 0 ;
+      ItemList.each do |item|
+        file.print ',' if(count > 0) ;
+        count += 1 ;
+        file.print "\n" ;
+
+        if(item[:type] == :emptyLine) then
+          count = 0 ;
+        else
+          quote = (item[:type] == :text ? "'" : '')
+          value = properties[item[:name]]
+          if(value) then
+            if(['map_file', 'generation_file', 'scenario_file', 
+                'pollution_file', 'camera_file'].include?(item[:name])) then
+              value = File.basename(value) if File.dirname(value) == @dirname ;
+            end
+            file.print "    #{item[:name]}: #{quote}#{value}#{quote}" ;
+          else
+            file.print "#{item[:commentable] ? '//' : ''}    #{item[:name]}: #{quote}#{item[:default]}#{quote}" ;
+          end
+        end
+      end
+      file.puts "\n}" ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 入出力ファイル準備とチェック
+  def setupFiles(conf)
+    @infile = conf.infile ;
+    @outfile = @infile.sub(/\.xml$/i, '.json') ;
+
+    if(! @infile.end_with?('.xml')) then
+      throw "Error: XML形式のファイルを指定してください。" ;
+    elsif(! File.exists?(@infile)) then
+      throw "Error: '#{@infile}' ファイルが存在しません。" ;
+    elsif((!conf.force) &&  File.exists?(@outfile)) then
+      throw "Error: '#{@outfile}' ファイルがすでに存在しています。" ;
+    end
+
+    @dirname = File.dirname(@infile) ;
+
+    return true ;
+  end
+
+end # class Foo
+
+########################################################################
+########################################################################
+########################################################################
+
+pconv = PropertyConverter.new() ;
+
+pconv.convert($conf) ;
