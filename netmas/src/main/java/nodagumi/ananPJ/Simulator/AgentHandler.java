@@ -138,7 +138,6 @@ public class AgentHandler implements Serializable {
     private transient JLabel simulation_weight_value;
 
     private double startTime = 0.0;
-    private double outbreakTime = 0.0;
 
     private HashMap<MapNode, Integer> evacuatedAgentCountByExit;
     private AgentGenerationFile generate_agent = null;
@@ -370,7 +369,6 @@ public class AgentHandler implements Serializable {
              * #START, OUTBREAK
              * #EVACUATE, STOP
              * 1,0,START,,7:30,,#実験開始,
-             * 2,0,OUTBREAK,,7:40,,#テロ災害発生,
              * 3,2,DETECT,,5,10,#散布から検知までの所要時間,
              *
              * 2013.05.07 tkokada added a new command
@@ -397,7 +395,6 @@ public class AgentHandler implements Serializable {
                     double time = (double)Itk.scanTimeStringToInt(items[4]) ;
                     event.setTime(time) ;
                     if (tag.equals("START")) startTime = time;
-                    else if (tag.equals("OUTBREAK")) outbreakTime = time;
                 } catch(Exception ex) {
                     Itk.dbgErr("wrong schenalio time:" + items[4]) ;
                     Itk.dbgMsg("line", line) ;
@@ -799,10 +796,6 @@ public class AgentHandler implements Serializable {
             }
         }
         return all_goal_tags;
-    }
-
-    public double getOutbreakTime() {
-        return outbreakTime - startTime;
     }
 
     public int getEvacuatedCount(MapNode node) {

@@ -267,7 +267,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     Boolean stop_simulation = false;
     public boolean updateEveryTick() {
         synchronized (stop_simulation) {
-            // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
             if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
 		pollutionCalculator.updateNodesLinksAgents(poltime, map,
@@ -308,7 +307,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     public boolean updateEveryTickCui() {
         synchronized (stop_simulation) {
-            // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
 	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
                     getAgents());
@@ -325,7 +323,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     public void updateWithSerialize() {
         synchronized (stop_simulation) {
-            // double poltime = getSecond() - agentHandler.getOutbreakTime();
             double poltime = getSecond();
 	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
                     getAgents());
