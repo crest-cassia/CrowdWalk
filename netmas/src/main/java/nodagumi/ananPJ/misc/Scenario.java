@@ -19,6 +19,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Comparator;
 
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -200,36 +204,195 @@ public class Scenario {
                          }) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * セットアップ最終処理
+     */
+    public void finalizeSetup() {
+        // イベントが登録されて居ない場合のデフォルト
+        if(eventList.size() == 0) {
+            EventBase defaultEvent = new InitiateEvent() ;
+            addEvent(defaultEvent) ;
+        }
+        //イベントの整列
+        sortEvents() ;
+        // 最初の InitiateEvent からシミュレーション開始時刻を取り出す。
+        boolean findInitiate = false ;
+        for(EventBase event : eventList) {
+            if(event instanceof InitiateEvent) {
+                findInitiate = true ;
+                setOriginTime(event.atTime) ;
+                break ;
+            }
+        }
+        if(! findInitiate) {
+            Itk.dbgWrn("No Initiate Event.") ;
+        }
+    }
+
+    //------------------------------------------------------------
+    // CSV ファイル関連
+    //------------------------------------------------------------
+    /**
+     * CSV ファイル読み込み
+     * @param filename : CSV file name
+     * @return 読み込んだイベント数
+     */
+    public int scanCsvFile(String filename) {
+        try {
+            int nEvent = 0 ;
+            BufferedReader reader = new BufferedReader(new FileReader(filename)) ;
+
+            String line ;
+            while((line = reader.readLine()) != null) {
+                EventBase event = scanCsvOneLine(line) ;
+                if(event != null) {
+                    addEvent(event) ;
+                    nEvent++ ;
+                }
+            }
+
+            finalizeSetup() ;
+
+            return nEvent ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("Error in reading CSV file.") ;
+            Itk.dbgMsg("filename", filename) ;
+            System.exit(1) ;
+        }
+        return -1 ; // never reach.
+    }
+
+    //------------------------------------------------------------
+    /**
+     * CSV 一行読み込み
+     * @param line : CSV one line
+     * @return 生成されたイベント
+     */
+    public EventBase scanCsvOneLine(String line) {
+        // コメントは読み飛ばし
+        if(line.startsWith("#")) return null ;
+
+        try {
+            ShiftingStringList columns = ShiftingStringList.newFromCsvRow(line) ;
+
+            String tag = columns.nth(2) ;
+            String command = columns.nth(3) ;
+
+            String typeString ;
+            if(tag.equals("START") ||
+               tag.equals("RESPONSE")) {
+                typeString = tag ;
+            } else if(command.contains(":")) {
+                String subcoms[] = command.split(":") ;
+                typeString = subcoms[0] ;
+            } else {
+                typeString = command ;
+            }
+            EventBase event = newEventByName(typeString) ;
+            event.setupByCsvColumns(this, columns) ;
+
+            return event ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("error in CSV one line.") ;
+            Itk.dbgMsg("line", line) ;
+            System.exit(1) ;
+        }
+        return null ; // never reach
+    }
+
+    //------------------------------------------------------------
+    /**
+     * describe
+     */
+    public void describe() {
+        Itk.dbgMsg("Scenario", this) ;
+        Itk.dbgMsg("---Events---") ;
+        for(EventBase event : eventList) {
+            Itk.dbgMsg(">>>>>", event.toString()) ;
+        }
+    }
+
     //============================================================
     // Event クラス関連
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
-     * イベント型 enum
+     * Class Finder for Event
      */
-    static public enum EventType {
-        Initiate, Finish,
-        SetTag, AddTag, RemoveTag,
-        OpenGate, CloseGate,
-        ShutOff,
-        Alert,
-        None
+    static public ClassFinder eventClassFinder =
+        new ClassFinder() ;
+    static {
+        registerEventClass("Initiate", InitiateEvent.class) ;
+        registerEventClass("Finish", FinishEvent.class) ;
+        registerEventClass("Alert", AlertEvent.class) ;
+        registerEventClass("ShutOff", ShutOffEvent.class) ;
+        registerEventClass("OpenGate", OpenGateEvent.class) ;
+        registerEventClass("CloseGate", CloseGateEvent.class) ;
+        registerEventClass("SetTag", SetTagEvent.class) ;
+
+        // for old CSV scenario file format
+        registerEventClass("START", InitiateEvent.class) ;
+        registerEventClass("RESPONSE", FinishEvent.class) ;
+        registerEventClass("SET", SetTagEvent.class) ;
+        registerEventClass("REMOVE", SetTagEvent.class) ;
+        registerEventClass("ADD_STOP", CloseGateEvent.class) ;
+        registerEventClass("REMOVE_STOP", OpenGateEvent.class) ;
+        registerEventClass("STOP", ShutOffEvent.class) ;
+        registerEventClass("EVACUATE", AlertEvent.class) ;
     }
 
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //============================================================
+    //------------------------------------------------------------
     /**
-     * Lexicon for EventType
+     * 使用出来るイベントタイプの登録
      */
-    static public Lexicon eventLexicon = new Lexicon() ;
-    static {
-        eventLexicon.registerEnum(EventType.class) ;
-        eventLexicon.register("START", EventType.Initiate) ;
-        eventLexicon.register("RESPONSE", EventType.Finish) ;
-        eventLexicon.register("SET", EventType.AddTag) ;
-        eventLexicon.register("REMOVE", EventType.RemoveTag) ;
-        eventLexicon.register("ADD_STOP", EventType.CloseGate) ;
-        eventLexicon.register("REMOVE_STOP", EventType.OpenGate) ;
-        eventLexicon.register("STOP", EventType.ShutOff) ;
-        eventLexicon.register("EVACUATE", EventType.Alert) ;
+    static public void registerEventClass(Class<?> eventClass) {
+        try {
+            eventClassFinder.registerClassDummy(eventClass) ;
+            String aliasName =
+                (String)
+                eventClassFinder.callMethodForClass(eventClass,
+                                                    "getTypeName", true) ;
+            registerEventClass(aliasName, eventClass) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("cannot process registerEventClass()") ;
+            Itk.dbgMsg("eventClass",eventClass) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 使用出来るイベントタイプの登録
+     */
+    static public void registerEventClass(String aliasName,
+                                          Class<?> eventClass) {
+        eventClassFinder.alias(aliasName, eventClass) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * イベントクラスを得る。
+     */
+    static public Class<?> getEventClass(String className) 
+        throws ClassNotFoundException
+    {
+        return eventClassFinder.get(className) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * イベントクラスを見つけて、インスタンスを生成する。
+     * @param className クラスの名前
+     */
+    public EventBase newEventByName(String className)
+        throws ClassNotFoundException,
+               InstantiationException,
+               IllegalAccessException
+    {
+        return (EventBase)eventClassFinder.newByName(className) ;
     }
 
     //============================================================
@@ -250,12 +413,6 @@ public class Scenario {
          * null でも良いが、他から参照できない。
          */
         public String id = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * イベントの種類を示す
-         */
-        public EventType type = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -280,6 +437,22 @@ public class Scenario {
          * 過去の（既に完了した）ものか？
          */
         public boolean isCompleted = false ;
+
+        //----------------------------------------
+        /**
+         * CSV による setup
+         */
+        public void setupByCsvColumns(Scenario _scenario,
+                                      ShiftingStringList columns) {
+            scenario = _scenario ;
+
+            if(columns.nth(0).length() > 0 || !columns.nth(0).equals("0")) {
+                id = columns.nth(0) ;
+            }
+
+            atTimeString = columns.nth(4) ;
+            atTime = Scenario.convertToTimeValue(atTimeString) ;
+        }
 
         //----------------------------------------
         /**
@@ -333,6 +506,25 @@ public class Scenario {
          */
         abstract public boolean occur(double time, NetworkMapBase map) ;
 
+        //----------------------------------------
+        /**
+         * 文字列化
+         */
+        public String toString() {
+            return (getClass().getSimpleName() +
+                    "[" + id + ":" +
+                    "," + "@" + atTimeString +
+                    toStringTail() + "]") ;
+        }
+
+        //----------------------------------------
+        /**
+         * 文字列化 後半
+         */
+        public String toStringTail() {
+            return "" ;
+        }
+
     } // class EventBase
 
     //============================================================
@@ -383,6 +575,26 @@ public class Scenario {
          * 場所を指定するタグ
          */
         public Term placeTag = null ;
+
+       //----------------------------------------
+        /**
+         * CSV による setup
+         */
+        @Override
+        public void setupByCsvColumns(Scenario _scenario,
+                                      ShiftingStringList columns) {
+            super.setupByCsvColumns(_scenario, columns) ;
+
+            placeTag = new Term(columns.nth(2)) ;
+        }
+
+        //----------------------------------------
+        /**
+         * 文字列化 後半
+         */
+        public String toStringTail() {
+            return (super.toStringTail() + "," + "place=" + placeTag);
+        }
     } // class PlacedEvent
 
     //============================================================
@@ -450,6 +662,26 @@ public class Scenario {
          * デフォルトでは、placeTag と同じもの。
          */
         public Term gateTag = null ;
+
+       //----------------------------------------
+        /**
+         * CSV による setup
+         */
+        @Override
+        public void setupByCsvColumns(Scenario _scenario,
+                                      ShiftingStringList columns) {
+            super.setupByCsvColumns(_scenario, columns) ;
+
+            gateTag = placeTag ;
+        }
+
+        //----------------------------------------
+        /**
+         * 文字列化 後半
+         */
+        public String toStringTail() {
+            return (super.toStringTail() + "," + "gate=" + gateTag);
+        }
     } // class GateEvent
 
     //============================================================
@@ -547,9 +779,38 @@ public class Scenario {
          * 付加・削除の識別
          */
         public boolean onoff = true ;
+
        //----------------------------------------
         /**
-         * ゲート開放イベント発生処理
+         * CSV による setup
+         */
+        @Override
+        public void setupByCsvColumns(Scenario _scenario,
+                                     ShiftingStringList columns) {
+            super.setupByCsvColumns(_scenario, columns) ;
+
+            String command = columns.nth(3) ;
+            String subcoms[] = command.split(":") ;
+            if(subcoms.length < 2 || subcoms.length > 2 ||
+               subcoms[1].length() == 0) {
+                Itk.dbgWrn("Strange commands for SetTag event.") ;
+                Itk.dbgMsg("columns", columns) ;
+            } else {
+                noticeTag = new Term(subcoms[1]) ;
+            }
+            if(subcoms[0].equals("SET")) {
+                onoff = true ;
+            } else if(subcoms[0].equals("REMOVE")) {
+                onoff = false ;
+            } else {
+                Itk.dbgWrn("Strange commands for SetTag event.") ;
+                Itk.dbgMsg("columns", columns) ;
+            }
+        }
+
+       //----------------------------------------
+        /**
+         * タグ操作イベント発生処理
          * @param time : 現在の絶対時刻
          * @param map : 地図データ
          * @return : true を返す。
@@ -575,6 +836,16 @@ public class Scenario {
                 }
             }
             return true ;
+        }
+
+        //----------------------------------------
+        /**
+         * 文字列化 後半
+         */
+        public String toStringTail() {
+            return (super.toStringTail() +
+                    "," + "notice=" + noticeTag +
+                    "," + "on=" + onoff);
         }
     } // class SetTagEvent
 

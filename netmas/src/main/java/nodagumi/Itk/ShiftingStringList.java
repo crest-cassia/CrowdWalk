@@ -89,14 +89,14 @@ public class ShiftingStringList {
      * 現在の先頭を見る。（取り除かない）
      */
     public String top() {
-        return top(0) ;
+        return nth(0) ;
     }
 
     //------------------------------------------------------------
     /**
      * 現在のindexよりn番目を取り出す。
      */
-    public String top(int n) {
+    public String nth(int n) {
         return stringList[index + n] ;
     }
 

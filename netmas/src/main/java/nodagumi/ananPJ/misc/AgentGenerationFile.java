@@ -463,8 +463,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
         if(fileFormat == FileFormat.Ver1) {
-            genConfig.agentClassName = columns.top(0) ;
-            genConfig.agentConf = Term.newByJson(columns.top(1)) ;
+            genConfig.agentClassName = columns.nth(0) ;
+            genConfig.agentConf = Term.newByJson(columns.nth(1)) ;
             columns.shift(2) ;
         } else {
             /* [2014.12.29 I.Noda]
@@ -682,7 +682,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             if(matchHead.matches()) {
                 // CSV 解釈で、カンマで引数が分断されている場合。
                 String fullForm = 
-                    head + "," + columns.top(0) + "," + columns.top(1) ;
+                    head + "," + columns.nth(0) + "," + columns.nth(1) ;
                 Matcher matchFull2 = 
                     WaitDirective.FullPattern.matcher(fullForm) ;
                 if(matchFull2.matches()) {

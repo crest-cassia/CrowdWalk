@@ -104,7 +104,7 @@ public class ClassFinder {
      * @param fullName alias される名前。
      */
     public String alias(String shortName,
-                               String fullName) {
+                        String fullName) {
         return registerAlias(shortName, fullName) ;
     }
 
@@ -115,7 +115,7 @@ public class ClassFinder {
      * @param fullName alias される名前。
      */
     public String registerAlias(String shortName,
-                                       String fullName) {
+                                String fullName) {
         aliasTable.put(shortName, fullName) ;
         return shortName ;
     }
@@ -127,7 +127,7 @@ public class ClassFinder {
      * @param klass クラスオブジェクト
      */
     public String alias(String shortName,
-                               Class<?> klass) {
+                        Class<?> klass) {
         return registerAlias(shortName, klass) ;
     }
 
@@ -138,7 +138,7 @@ public class ClassFinder {
      * @param klass クラスオブジェクト
      */
     public String registerAlias(String shortName,
-                                       Class<?> klass) {
+                                Class<?> klass) {
         return registerAlias(shortName, klass.getName()) ;
     }
 

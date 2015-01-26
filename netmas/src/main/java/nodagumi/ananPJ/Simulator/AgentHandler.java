@@ -72,6 +72,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
+import nodagumi.ananPJ.misc.Scenario ;
 import nodagumi.ananPJ.network.DaRuMaClient;
 import nodagumi.ananPJ.network.FusionViewerConnector;
 
@@ -136,6 +137,12 @@ public class AgentHandler implements Serializable {
     private int simulation_weight = 0;
     private transient JScrollBar simulation_weight_control;
     private transient JLabel simulation_weight_value;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * シナリオ情報
+     */
+    Scenario scenario = new Scenario();
 
     private double startTime = 0.0;
 
@@ -351,6 +358,9 @@ public class AgentHandler implements Serializable {
             setup_default_scenario();
             return;
         }
+
+        scenario.scanCsvFile(filename) ;
+        scenario.describe() ;
 
         BufferedReader br = null;
         try {
