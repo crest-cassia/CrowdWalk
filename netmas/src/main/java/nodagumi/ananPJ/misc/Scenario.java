@@ -14,6 +14,11 @@ package nodagumi.ananPJ.misc;
 
 import java.lang.Double ;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Comparator;
+
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -25,6 +30,178 @@ import nodagumi.Itk.* ;
  * Scenario Class
  */
 public class Scenario {
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 起点となる時刻(絶対時刻)
+     */
+    private double originTime = 0.0 ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * イベント列
+     * 時間順序準に並んでいるものとする。
+     * （読み込み時にソートされる。）
+     */
+    private ArrayList<EventBase> eventList =
+        new ArrayList<EventBase>() ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * イベントインデックス
+     * イベントがどこまで進んでいるかを示す
+     */
+    private int eventIndex = 0 ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * イベントテーブル
+     * event id から引けるようにしておく
+     * 現状で、特に用はない。
+     */
+    private HashMap<String, EventBase> eventTable =
+        new HashMap<String, EventBase>() ;
+
+    //------------------------------------------------------------
+    // 時刻処理
+    //------------------------------------------------------------
+    /**
+     * 文字列から数値へ変換
+     * 可能なフォーマットは、"HH:MM:SS" もしくは "HH:MM"
+     * 返す値の単位は、秒。
+     */
+    static public double convertToTimeValue(String timeString) {
+        try {
+            return Itk.scanTimeStringToInt(timeString) ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("Exception",ex) ;
+            System.exit(1) ;
+        }
+        return 0 ; // never reach here.
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 数値から文字列へ変換
+     * 秒から "HH:MM:SS" へ。
+     * 少数以下は切り捨て。
+     */
+    static public String convertToTimeString(double timeVal) {
+        return Itk.formatSecTime((int)timeVal) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 起点時刻取得
+     */
+    public double getOriginTime() {
+        return originTime ;
+    }
+
+    //------------------------------------------------------------
+    // アクセスメソッド
+    /**
+     * 起点時刻文字列取得
+     */
+    public String getOriginTimeString() {
+        return convertToTimeString(getOriginTime()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 起点時刻セット
+     */
+    public double setOriginTime(double _originTime) {
+        originTime = _originTime ;
+        return originTime ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 文字列による起点時刻セット
+     */
+    public double setOriginTimeByTimeString(String _originTimeInStr) {
+        return setOriginTime(convertToTimeValue(_originTimeInStr)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 相対時刻取得
+     */
+    public double calcRelativeTime(double absTime) {
+        return absTime - getOriginTime() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 文字列からの相対時刻取得
+     */
+    public double calcRelativeTimeFromTimeString(String timeString) {
+        return calcRelativeTime(convertToTimeValue(timeString)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 絶対時刻取得
+     */
+    public double calcAbsoluteTime(double relTime) {
+        return relTime + getOriginTime() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 文字列からの絶対時刻取得
+     */
+    public double calcAbsoluteTimeFromTimeString(String timeString) {
+        return calcAbsoluteTime(convertToTimeValue(timeString)) ;
+    }
+
+    //------------------------------------------------------------
+    // イベント操作
+    //------------------------------------------------------------
+    /**
+     * イベントの登録
+     * 同名イベントの二重登録は許さない
+     */
+    public Scenario addEvent(EventBase event) {
+        eventList.add(event) ;
+        if(event.hasId()) {
+            if(eventTable.containsKey(event.id)) {
+                Itk.dbgWrn("duplicated event id:", event.id) ;
+                Itk.dbgMsg("previous entry:", eventTable.get(event.id)) ;
+                Itk.dbgMsg("added entry:", event) ;
+            } else {
+                eventTable.put(event.id, event) ;
+            }
+        }
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * イベントの整列
+     */
+    public void sortEvents(){
+        Collections.sort(eventList,
+                         new Comparator<EventBase>() {
+                             public int compare(EventBase event0,
+                                                EventBase event1) {
+                                 double time0 = event0.getRelativeTime() ;
+                                 double time1 = event1.getRelativeTime() ;
+                                 if(time0 > time1) {
+                                     return 1 ;
+                                 } else if(time0 < time1) {
+                                     return -1 ;
+                                 } else {
+                                     return 0 ;
+                                 }
+                             }
+                         }) ;
+    }
+
+    //============================================================
+    // Event クラス関連
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * イベント型 enum
@@ -62,6 +239,12 @@ public class Scenario {
     abstract static public class EventBase {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
+         * 所属するシナリオ。
+         */
+        public Scenario scenario = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
          * ID。
          * シナリオ内のイベント相互で参照するためのID。
          * null でも良いが、他から参照できない。
@@ -97,6 +280,24 @@ public class Scenario {
          * 過去の（既に完了した）ものか？
          */
         public boolean isCompleted = false ;
+
+        //----------------------------------------
+        /**
+         * id を持つかどうか
+         * @return 持てば true
+         */
+        public boolean hasId() {
+            return id != null ;
+        }
+
+        //----------------------------------------
+        /**
+         * 相対時刻
+         * @return scenario の origin time からの相対時刻
+         */
+        public double getRelativeTime() {
+            return scenario.calcRelativeTime(atTime) ;
+        }
 
         //----------------------------------------
         /**
