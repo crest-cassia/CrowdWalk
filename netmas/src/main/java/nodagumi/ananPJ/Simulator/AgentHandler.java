@@ -125,7 +125,8 @@ public class AgentHandler implements Serializable {
     private double averageSpeed = 0.0;
     private int evacuatedUsedLiftAgentCount = 0;
     private int evacuatedNoLiftAgentCount = 0;
-    private boolean rescueArrived = false;
+    /* [2015.01.29 I.Noda] */
+    //private boolean rescueArrived = false;
     private int maxAgentCount = 0;
     private boolean isAllAgentSpeedZeroBreak = false;
     private boolean isAllAgentSpeedZero = false;
@@ -319,7 +320,8 @@ public class AgentHandler implements Serializable {
                     link.setStop(b);
                 }
             } else if (command.equals("RESPONSE")) {
-                rescueArrived = b;
+                /* [2015.01.29 I.Noda] */
+                //rescueArrived = b;
             } else if (command.equals("ADD_STOP")) {
                 for (MapLink link : map.getLinks()) {
                     if (link.hasTag(tag)) {
@@ -361,6 +363,8 @@ public class AgentHandler implements Serializable {
 
         scenario.scanCsvFile(filename) ;
         scenario.describe() ;
+        startTime = scenario.getOriginTime() ;
+        if(scenario != null) return ;
 
         BufferedReader br = null;
         try {
@@ -426,11 +430,16 @@ public class AgentHandler implements Serializable {
     public void update(NetworkMapBase map, double time) {
         update_buttons();
 
-        ArrayList<EvacuationAgent> generated_agents_step = new
-            ArrayList<EvacuationAgent>();
+        /* [2015.01.28 I.Noda]
+         * comment out to change to use Scenario.
         for (ScenarioEvent event : events.values()) {
             event.checkIfHappend(time + startTime, map, time);
         }
+        */
+        scenario.advance(time, map) ;
+
+        ArrayList<EvacuationAgent> generated_agents_step = new
+            ArrayList<EvacuationAgent>();
 
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
@@ -477,8 +486,8 @@ public class AgentHandler implements Serializable {
 
     public boolean isFinished() {
         /* finish when rescue has arrived */
-        if (rescueArrived) {
-            System.err.println("finished:  rescue arrived");
+        if (scenario.isFinished()) {
+            Itk.dbgMsg("finished by the end of scenario.") ;
             return true;
         }
         if (isAllAgentSpeedZeroBreak) {
@@ -1092,20 +1101,23 @@ public class AgentHandler implements Serializable {
         int max_events = 0;
 
         int y = 0;
-        for (ScenarioEvent event : events.values()) {
+        /* [2015.01.28 I.Noda] */
+        //for (ScenarioEvent event : events.values()) {
+        for (Scenario.EventBase event : scenario.eventList) {
             c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = y;
             c.fill = GridBagConstraints.WEST;
 
-            // label_toggle_panel.add(new JLabel(event.comment), c);
             ButtonGroup bgroup = new ButtonGroup();
             toggle_scenario_button_groups.add(bgroup);
             class RadioButtonListener implements ActionListener {
                 int index;
-                ScenarioEvent event;
+                /* [2015.01.28 I.Noda] */
+                // ScenarioEvent event;
+                Scenario.EventBase event ;
                 NetworkMapBase map ;
-                public RadioButtonListener(ScenarioEvent _event,
+                public RadioButtonListener(Scenario.EventBase _event,
                         int _index,
                         NetworkMapBase _map) {
                     event = _event;
@@ -1114,22 +1126,22 @@ public class AgentHandler implements Serializable {
                 }
                 public void actionPerformed(ActionEvent e) {
                     if (index == -2) {
-                        event.setEnabled(true, map);
+                        event.occur(0, map) ;
                     } else if (index == -1) {
-                        event.setEnabled(false, map);
+                        event.unoccur(0, map) ;
                     } else {
                         Itk.dbgErr("wrong index") ;
                     }
                 }
             }
 
-            if (event.isAbsolute()) {
+            if (true) {
                 c = new GridBagConstraints();
                 c.gridx = 0;
                 c.gridy = y;
                 c.gridwidth = max_events + 3;
                 c.fill = GridBagConstraints.EAST;
-                label_toggle_panel.add(new JLabel(timeToString(event.getClock())), c);
+                label_toggle_panel.add(new JLabel(timeToString(event.getAbstractTime())), c);
             } else {
                 JRadioButton radio_button;
                 radio_button = new JRadioButton("enabled");

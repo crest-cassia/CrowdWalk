@@ -43,11 +43,17 @@ public class Scenario {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * シナリオが終了したかどうか
+     */
+    private boolean finishP = false ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * イベント列
      * 時間順序準に並んでいるものとする。
      * （読み込み時にソートされる。）
      */
-    private ArrayList<EventBase> eventList =
+    public ArrayList<EventBase> eventList =
         new ArrayList<EventBase>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -104,7 +110,6 @@ public class Scenario {
     }
 
     //------------------------------------------------------------
-    // アクセスメソッド
     /**
      * 起点時刻文字列取得
      */
@@ -159,6 +164,30 @@ public class Scenario {
      */
     public double calcAbsoluteTimeFromTimeString(String timeString) {
         return calcAbsoluteTime(convertToTimeValue(timeString)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 終了かどうか
+     */
+    public boolean isFinished() {
+        return finishP ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 終了セット
+     */
+    public void letFinished() {
+        letFinished(true) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 終了セット
+     */
+    public void letFinished(boolean flag) {
+        finishP = flag ;
     }
 
     //------------------------------------------------------------
@@ -228,6 +257,30 @@ public class Scenario {
         if(! findInitiate) {
             Itk.dbgWrn("No Initiate Event.") ;
         }
+    }
+
+    //------------------------------------------------------------
+    // イベント発生チェック及び実行
+    //------------------------------------------------------------
+    /**
+     * シナリオを時間まで進める。
+     * @param relTime : 相対時刻
+     * @param map : マップデータ
+     * @return 進んだシナリオの数
+     */
+    public int advance(double relTime, NetworkMapBase map) {
+        double absTime = calcAbsoluteTime(relTime) ;
+        int count = 0 ;
+        for(int i = eventIndex ; i < eventList.size() ; i++) {
+            EventBase event = eventList.get(i) ;
+            if(eventList.get(i).tryOccur(absTime, map)) {
+                count++ ;
+            } else {
+                break ;
+            }
+        }
+        eventIndex += count ;
+        return count ;
     }
 
     //------------------------------------------------------------
@@ -474,6 +527,15 @@ public class Scenario {
 
         //----------------------------------------
         /**
+         * 相対時刻
+         * @return scenario の origin time からの相対時刻
+         */
+        public double getAbstractTime() {
+            return atTime ;
+        }
+
+        //----------------------------------------
+        /**
          * 発生チェックと実行(以前の checkIfHappend)
          * @param time : 現在の絶対時刻
          * @return 実施したら true
@@ -499,12 +561,21 @@ public class Scenario {
 
         //----------------------------------------
         /**
-         * イベント発生処理 (以前の setEnabled)
+         * イベント発生処理 (以前の setEnabled(true))
          * @param time : 現在の絶対時刻
          * @param map : 地図データ
          * @return : 完了したら true を返す。false を返すと、延々呼び出される。
          */
         abstract public boolean occur(double time, NetworkMapBase map) ;
+
+        //----------------------------------------
+        /**
+         * イベント発生逆処理 (以前の setEnabled(false))
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : 完了したら true を返す。
+         */
+        abstract public boolean unoccur(double time, NetworkMapBase map) ;
 
         //----------------------------------------
         /**
@@ -544,6 +615,18 @@ public class Scenario {
         public boolean occur(double time, NetworkMapBase map) {
             return true ;
         }
+
+       //----------------------------------------
+        /**
+         * Start イベント発生逆処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        @Override
+        public boolean unoccur(double time, NetworkMapBase map) {
+            return true ;
+        }
     } // class InitiateEvent
 
     //============================================================
@@ -560,6 +643,20 @@ public class Scenario {
          */
         @Override
         public boolean occur(double time, NetworkMapBase map) {
+            scenario.letFinished() ;
+            return true ;
+        }
+
+       //----------------------------------------
+        /**
+         * 終了イベント発生逆処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        @Override
+        public boolean unoccur(double time, NetworkMapBase map) {
+            scenario.letFinished(false) ;
             return true ;
         }
     } // class FinishEvent
@@ -615,9 +712,33 @@ public class Scenario {
          */
         @Override
         public boolean occur(double time, NetworkMapBase map) {
+            return occur(time, map, false) ;
+        }
+
+       //----------------------------------------
+        /**
+         * 終了イベント発生逆処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        @Override
+        public boolean unoccur(double time, NetworkMapBase map) {
+            return occur(time, map, true) ;
+        } ;
+
+       //----------------------------------------
+        /**
+         * 終了イベント発生処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @param inverse : 逆操作かどうか
+         * @return : true を返す。
+         */
+        public boolean occur(double time, NetworkMapBase map, boolean inverse) {
             for(MapLink link : map.getLinks()) {
                 if(link.hasTag(placeTag)) {
-                    link.setEmergency(true) ;
+                    link.setEmergency(!inverse) ;
                 }
             }
             return true ;
@@ -642,9 +763,32 @@ public class Scenario {
          */
         @Override
         public boolean occur(double time, NetworkMapBase map) {
+            return occur(time, map, false) ;
+        }
+
+       //----------------------------------------
+        /**
+         * 終了イベント発生逆処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        @Override
+        public boolean unoccur(double time, NetworkMapBase map) {
+            return occur(time, map, true) ;
+        }
+
+       //----------------------------------------
+        /**
+         * 終了イベント発生処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        public boolean occur(double time, NetworkMapBase map, boolean inverse) {
             for(MapLink link : map.getLinks()) {
                 if(link.hasTag(placeTag)) {
-                    link.setStop(true) ;
+                    link.setStop(!inverse) ;
                 }
             }
             return true ;
@@ -699,14 +843,45 @@ public class Scenario {
          */
         @Override
         public boolean occur(double time, NetworkMapBase map) {
+            return occur(time, map, false) ;
+        }
+
+       //----------------------------------------
+        /**
+         * ゲート開放イベント発生逆処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        @Override
+        public boolean unoccur(double time, NetworkMapBase map) {
+            return occur(time, map, true) ;
+        }
+
+       //----------------------------------------
+        /**
+         * ゲート開放イベント発生処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        public boolean occur(double time, NetworkMapBase map, boolean inverse) {
             for(MapLink link : map.getLinks()) {
                 if(link.hasTag(placeTag)) {
-                    link.openGate(gateTag.getString()) ;
+                    if(!inverse) {
+                        link.openGate(gateTag.getString()) ;
+                    } else {
+                        link.closeGate(gateTag.getString()) ;
+                    }
                 }
             }
             for(MapNode node : map.getNodes()) {
                 if(node.hasTag(placeTag)) {
-                    node.openGate(gateTag.getString()) ;
+                    if(!inverse) {
+                        node.openGate(gateTag.getString()) ;
+                    } else {
+                        node.closeGate(gateTag.getString()) ;
+                    }
                 }
             }
             return true ;
@@ -728,14 +903,45 @@ public class Scenario {
          */
         @Override
         public boolean occur(double time, NetworkMapBase map) {
+            return occur(time, map, false) ;
+        }
+
+       //----------------------------------------
+        /**
+         * ゲート開放イベント発生逆処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        @Override
+        public boolean unoccur(double time, NetworkMapBase map) {
+            return occur(time, map, true) ;
+        }
+
+       //----------------------------------------
+        /**
+         * ゲート開放イベント発生処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        public boolean occur(double time, NetworkMapBase map, boolean inverse) {
             for(MapLink link : map.getLinks()) {
                 if(link.hasTag(placeTag)) {
-                    link.closeGate(gateTag.getString()) ;
+                    if(!inverse) {
+                        link.closeGate(gateTag.getString()) ;
+                    } else {
+                        link.openGate(gateTag.getString()) ;
+                    }
                 }
             }
             for(MapNode node : map.getNodes()) {
                 if(node.hasTag(placeTag)) {
-                    node.closeGate(gateTag.getString()) ;
+                    if(!inverse) {
+                        node.closeGate(gateTag.getString()) ;
+                    } else {
+                        node.openGate(gateTag.getString()) ;
+                    }
                 }
             }
             return true ;
@@ -817,9 +1023,32 @@ public class Scenario {
          */
         @Override
         public boolean occur(double time, NetworkMapBase map) {
+            return occur(time, map, false) ;
+        }
+
+       //----------------------------------------
+        /**
+         * タグ操作イベント発生逆処理
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @return : true を返す。
+         */
+        @Override
+        public boolean unoccur(double time, NetworkMapBase map) {
+            return occur(time, map, true) ;
+        }
+       //----------------------------------------
+        /**
+         * タグ操作イベント発生処理(generic)
+         * @param time : 現在の絶対時刻
+         * @param map : 地図データ
+         * @param inverse : 逆操作かどうか
+         * @return : true を返す。
+         */
+        public boolean occur(double time, NetworkMapBase map, boolean inverse) {
             for(MapLink link : map.getLinks()) {
                 if(link.hasTag(placeTag)) {
-                    if(onoff) {
+                    if(onoff ^ inverse) {
                         link.addTag(noticeTag.getString()) ;
                     } else {
                         link.removeTag(noticeTag.getString()) ;
@@ -828,7 +1057,7 @@ public class Scenario {
             }
             for(MapNode node : map.getNodes()) {
                 if(node.hasTag(placeTag)) {
-                    if(onoff) {
+                    if(onoff ^ inverse) {
                         node.addTag(noticeTag.getString()) ;
                     } else {
                         node.removeTag(noticeTag.getString()) ;
