@@ -33,6 +33,17 @@ abstract public class PlacedEvent extends EventBase {
 
     //----------------------------------------
     /**
+     * JSON Term による setup
+     */
+    public void setupByJson(Scenario _scenario,
+                            Term eventDef) {
+        super.setupByJson(_scenario, eventDef) ;
+
+        placeTag = eventDef.getArgTerm("placeTag") ;
+    }
+
+    //----------------------------------------
+    /**
      * CSV による setup
      */
     @Override

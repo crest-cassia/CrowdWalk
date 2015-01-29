@@ -23,6 +23,8 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import net.arnx.jsonic.JSON ;
+
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -285,6 +287,68 @@ public class Scenario {
     }
 
     //------------------------------------------------------------
+    // JSON ファイル関連
+    //------------------------------------------------------------
+    /**
+     * JSON ファイル読み込み
+     * @param filename : JSON file name
+     * @return 読み込んだイベント数
+     */
+    public int scanJsonFile(String filename) {
+        try {
+            int nEvent = 0 ;
+            BufferedReader reader = new BufferedReader(new FileReader(filename)) ;
+            Term json = Term.newByScannedJson(JSON.decode(reader),true) ;
+            if(json.isArray()) {
+                for(Object _item : json.getArray()) {
+                    Term eventDef = (Term)_item ;
+                    if(eventDef.isObject()) { // 正しく構造を持っている場合
+                        EventBase event =
+                            scanJsonFileOneItem(eventDef) ;
+                        if(event != null) {
+                            addEvent(event) ;
+                            nEvent++ ;
+                        }
+                    }
+                }
+                finalizeSetup() ;
+            } else {
+                Itk.dbgErr("Wrong scenario format in the file:", filename) ;
+                Itk.dbgMsg("json",json) ;
+                System.exit(1) ;
+            }
+            return nEvent ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("Error in reading JSON file.") ;
+            Itk.dbgMsg("filename", filename) ;
+            System.exit(1) ;
+        }
+        return -1 ; // never reach.
+    }
+
+    //------------------------------------------------------------
+    /**
+     * JSON による定義の1イベント分の読み込み
+     * @param json : JSON 文字列 (Term で)
+     * @return 生成したイベント
+     */
+    public EventBase scanJsonFileOneItem(Term eventDef) {
+        try {
+            String eventType = eventDef.getArgString("type") ;
+            EventBase event = newEventByName(eventType) ;
+            event.setupByJson(this, eventDef) ;
+            return event ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("error in Event definition by JSON.") ;
+            Itk.dbgMsg("eventDef", eventDef) ;
+            System.exit(1) ;
+        }
+        return null ; // never reach
+    }
+
+    //------------------------------------------------------------
     // CSV ファイル関連
     //------------------------------------------------------------
     /**
@@ -378,13 +442,15 @@ public class Scenario {
     static public ClassFinder eventClassFinder =
         new ClassFinder() ;
     static {
-        registerEventClass("Initiate", InitiateEvent.class) ;
-        registerEventClass("Finish", FinishEvent.class) ;
-        registerEventClass("Alert", AlertEvent.class) ;
-        registerEventClass("ShutOff", ShutOffEvent.class) ;
-        registerEventClass("OpenGate", OpenGateEvent.class) ;
-        registerEventClass("CloseGate", CloseGateEvent.class) ;
-        registerEventClass("SetTag", SetTagEvent.class) ;
+        registerEventClass("Initiate",	InitiateEvent.class) ;
+        registerEventClass("Finish",	FinishEvent.class) ;
+        registerEventClass("Alert",	 AlertEvent.class) ;
+        registerEventClass("ShutOff",	ShutOffEvent.class) ;
+        registerEventClass("OpenGate",	OpenGateEvent.class) ;
+        registerEventClass("CloseGate",	CloseGateEvent.class) ;
+        registerEventClass("SetTag",	SetTagEvent.class) ;
+        registerEventClass("AddTag",	SetTagEvent.class) ;
+        registerEventClass("RemoveTag",	SetTagEvent.class) ;
 
         // for old CSV scenario file format
         registerEventClass("START", InitiateEvent.class) ;

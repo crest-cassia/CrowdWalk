@@ -86,35 +86,35 @@ class ScenarioConv
   #++
   ## description of DefaultValues.
   SlotOrderTable = {
-    :initiate =>	[:id, :type, :parentId, :atTime,
+    :Initiate =>	[:id, :type, :atTime,
                          :comment],
-    :finish =>		[:id, :type, :parentId, :atTime, :later,
+    :Finish =>		[:id, :type, :atTime,
                          :comment],
-    :outbreak =>	[:id, :type, :parentId, :atTime, :later,
-                         :comment],
-    :setTag =>		[:id, :type, :parentId, :atTime, :later,
+#    :Outbreak =>	[:id, :type, :atTime,
+#                         :comment],
+    :SetTag =>		[:id, :type, :atTime,
                          :placeTag, :noticeTag, :onoff,
                          :comment],
-    :addTag =>		[:id, :type, :parentId, :atTime, :later,
+    :AddTag =>		[:id, :type, :atTime,
                          :placeTag, :noticeTag,
                          :comment],
-    :removeTag =>	[:id, :type, :parentId, :atTime, :later,
+    :RemoveTag =>	[:id, :type, :atTime,
                          :placeTag, :noticeTag,
                          :comment],
-    :openGate =>	[:id, :type, :parentId, :atTime, :later,
-                         :placeTag, :referenceTag,
+    :OpenGate =>	[:id, :type, :atTime,
+                         :placeTag, :gateTag,
                          :comment],
-    :closeGate =>	[:id, :type, :parentId, :atTime, :later,
-                         :placeTag, :referenceTag,
+    :CloseGate =>	[:id, :type, :atTime,
+                         :placeTag, :gateTag,
                          :comment],
-    :periodicGate =>	[:id, :type, :parentId, :atTime, :later,
-                         :placeTag, :referenceTag,
-                         :openInterval, :closeInterval,
-                         :comment],
-    :alert =>		[:id, :type, :parentId, :atTime, :later,
+#    :PeriodicGate =>	[:id, :type, :atTime,
+#                         :placeTag, :gateTag,
+#                         :openInterval, :closeInterval,
+#                         :comment],
+    :Alert =>		[:id, :type, :atTime,
                          :placeTag,
                          :comment],
-    :shutOff =>		[:id, :type, :parentId, :atTime, :later,
+    :ShutOff =>		[:id, :type, :atTime,
                          :placeTag,
                          :comment],
   } ;
@@ -181,47 +181,47 @@ class ScenarioConv
     }
 
     if(tag == "START") then
-      event[:type] = :initiate ;
-    elsif(tag == "OUTBREAK") then
-      event[:type] = :outbreak ;
+      event[:type] = :Initiate ;
+#    elsif(tag == "OUTBREAK") then
+#      event[:type] = :Outbreak ;
     elsif(command =~ /^SET\:/) then
       notice = command.split(':')[1..-1].join(':') ;
-      event[:type] = :addTag ;
+      event[:type] = :AddTag ;
       event[:placeTag] = tag ;
       event[:noticeTag] = notice ;
     elsif(command =~ /^REMOVE\:/) then
       notice = command.split(':')[1..-1].join(':') ;
-      event[:type] = :removeTag ;
+      event[:type] = :RemoveTag ;
       event[:placeTag] = tag ;
       event[:noticeTag] = notice ;
-    elsif(command == "BOTH") then
-      event[:type] = :both ;
-      event[:placeTag] = tag ;
+#    elsif(command == "BOTH") then
+#      event[:type] = :both ;
+#      event[:placeTag] = tag ;
     elsif(command == "EVACUATE") then
-      event[:type] = :alert ;
+      event[:type] = :Alert ;
       event[:placeTag] = tag ;
     elsif(command == "STOP") then
-      event[:type] = :shutOff ;
+      event[:type] = :ShutOff ;
       event[:placeTag] = tag ;
     elsif(command == "RESPONSE") then
-      event[:type] = :finish ;
-    elsif(command == "STOP_TIMES") then
-      event[:type] = :periodicGate ;
-      event[:placeTag] = tag ;
-      event[:referenceTag] = tag ;
-      (closeIntStr, openIntStr) = comments[0][1..-1].split('-') ;
-      event[:openInterval] = openIntStr.to_f ;
-      event[:closeInterval] = closeIntStr.to_f ;
+      event[:type] = :Finish ;
+#    elsif(command == "STOP_TIMES") then
+#      event[:type] = :PeriodicGate ;
+#      event[:placeTag] = tag ;
+#      event[:gateTag] = tag ;
+#      (closeIntStr, openIntStr) = comments[0][1..-1].split('-') ;
+#      event[:openInterval] = openIntStr.to_f ;
+#      event[:closeInterval] = closeIntStr.to_f ;
     elsif(command == "ADD_STOP") then
-      event[:type] = :closeGate ;
+      event[:type] = :CloseGate ;
       event[:placeTag] = tag ;
-      event[:referenceTag] = tag ;
+      event[:gateTag] = tag ;
       event.delete(:later) ;
       event[:atTime] = row[4]
     elsif(command == "REMOVE_STOP") then
-      event[:type] = :openGate ;
+      event[:type] = :OpenGate ;
       event[:placeTag] = tag ;
-      event[:referenceTag] = tag ;
+      event[:gateTag] = tag ;
       event.delete(:later) ;
       event[:atTime] = row[4]
     else

@@ -33,6 +33,20 @@ abstract public class GateEvent extends PlacedEvent {
 
     //----------------------------------------
     /**
+     * JSON Term による setup
+     */
+    public void setupByJson(Scenario _scenario,
+                            Term eventDef) {
+        super.setupByJson(_scenario, eventDef) ;
+
+        gateTag = eventDef.getArgTerm("gateTag") ;
+        if(gateTag == null) {
+            gateTag = placeTag ;
+        }
+    }
+
+    //----------------------------------------
+    /**
      * CSV による setup
      */
     @Override

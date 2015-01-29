@@ -251,7 +251,14 @@ public class AgentHandler implements Serializable {
             return;
         }
 
-        scenario.scanCsvFile(filename) ;
+        if(filename.endsWith(".json")) {
+            scenario.scanJsonFile(filename) ;
+        } else if (filename.endsWith(".csv")) {
+            scenario.scanCsvFile(filename) ;
+        } else {
+            Itk.dbgErr("Unknown scenario file suffix:", filename) ;
+            System.exit(1) ;
+        }
         scenario.describe() ;
     }
 

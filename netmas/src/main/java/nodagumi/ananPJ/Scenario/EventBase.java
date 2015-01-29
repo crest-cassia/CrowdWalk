@@ -64,13 +64,26 @@ abstract public class EventBase {
 
     //----------------------------------------
     /**
+     * JSON Term による setup
+     */
+    public void setupByJson(Scenario _scenario,
+                            Term eventDef) {
+        scenario = _scenario ;
+
+        id = eventDef.getArgString("id") ;
+        atTimeString = eventDef.getArgString("atTime") ;
+        atTime = Scenario.convertToTimeValue(atTimeString) ;
+    }
+
+    //----------------------------------------
+    /**
      * CSV による setup
      */
     public void setupByCsvColumns(Scenario _scenario,
 				  ShiftingStringList columns) {
 	scenario = _scenario ;
 
-	if(columns.nth(0).length() > 0 || !columns.nth(0).equals("0")) {
+        if(columns.nth(0).length() > 0) {
 	    id = columns.nth(0) ;
 	}
 

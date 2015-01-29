@@ -39,6 +39,27 @@ public class SetTagEvent extends PlacedEvent {
 
     //----------------------------------------
     /**
+     * JSON Term による setup
+     */
+    public void setupByJson(Scenario _scenario,
+                            Term eventDef) {
+        super.setupByJson(_scenario, eventDef) ;
+
+        noticeTag = eventDef.getArgTerm("noticeTag") ;
+        String eventType = eventDef.getArgString("type") ;
+        if(eventType.equals("AddTag")) {
+            onoff = true ;
+        } else if (eventType.equals("RemoveTag")) {
+            onoff = false ;
+        } else if(eventDef.hasArg("onoff")) {
+            onoff = eventDef.getArgBoolean("onoff") ;
+        } else {
+            onoff = true ;
+        }
+    }
+
+    //----------------------------------------
+    /**
      * CSV による setup
      */
     @Override
