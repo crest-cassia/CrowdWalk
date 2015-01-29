@@ -43,19 +43,6 @@ public class CalcPathLocally extends Thread implements Serializable {
 		Nodes subgoals = new Nodes();
 		//TODO: exits and other stairs are treated equally, but should not be
 		for (MapNode node : nodes) {
-			/* [2014.12.26 I.Noda]
-			 * "Exit" というタグの特別扱いを辞めるので、以下の機能はオフにする。
-			 */
-			/*
-			 * if (node.hasTag("Exit")) {
-			 *	node.addNavigationHint(realm,
-			 *			new NavigationHint(null, null, 0));
-			 *   System.out.println("CalcPathLocally.calcSubGoals call " +
-			 *           "addNavigationHint node:" + node.ID + ", " + realm);
-			 *	subgoals.add(node);
-			 *	continue;
-			 * }
-			*/
 			for (MapLink link : node.getPathways()) {
 				if (chooser.isExit(link)) {
 					subgoals.add(node);
