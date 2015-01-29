@@ -145,11 +145,6 @@ public abstract class OBNode extends DefaultMutableTreeNode
 
 	  if(tags.contains(_tag)) return true ;
 
-	  /* [2014.12.19 I.Noda] obsolete
-	   * これもバグの元。
-	   */
-      //if (_tag.equals("EMERGENCY")) { return hasTag("EXIT"); }
-
       return false;
   }
   
@@ -170,12 +165,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
 
   public boolean addTag(String _tag) {
       if (_tag == null || _tag.equals("")) return false;
-	  /* [2014.12.19 I.Noda] should obsolete 
-      if (! _tag.equals("root") && ! _tag.equals(_tag.toUpperCase())) {
-          System.err.println("小文字を含んだタグが使われています: " + _tag);
-          System.exit(0);
-      }
-      */
+
       if (hasTag(_tag)) {
           return false;
       }
