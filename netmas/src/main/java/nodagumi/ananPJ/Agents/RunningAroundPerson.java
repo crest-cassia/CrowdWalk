@@ -195,6 +195,19 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     /* minimum speed to break dead lock state */
     protected static final double MIN_SPEED_DEADLOCK = 0.3;
 
+    /* [2015.01.29 I.Noda]
+     *以下は、strait model で使われる。
+     */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Strait モデルで、超過密状態から抜け出すため、
+     * 対向流のエージェントで、最低間隔を決めておく。
+     * これをある程度大きくしておかないと、
+     * 対抗流から過大な力を受け、全く抜け出せなくなる。
+     */
+    protected static double InsensitiveDistanceInCounterFlow =
+        PERSONAL_SPACE * 0.5 ;
+
 /*
     protected static double A_0 = 0.5*0.962;//1.05;//0.5;
     protected static double A_1 = 1.5*0.869;//1.25;//0.97;//2.0;
@@ -907,7 +920,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     double force = calcSocialForceToHeading(dx,dy) ;
                     totalForce += force ;
                     if(countOther % laneWidthOther == 0) {
-                        insensitivePos = agentPos + MIN_DISTANCE_BETWEEN_AGENTS ;
+                        insensitivePos = (agentPos + 
+                                          InsensitiveDistanceInCounterFlow) ;
                     }
                 }
             }
@@ -1563,14 +1577,15 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 way = way_candidate;
                 way_samecost = null;
             } else if (cost == min_cost) { // 最小コストが同じ時の処理
-                if (way_samecost == null)
+                if (way_samecost == null) {
                     way_samecost = new MapLinkTable();
+                    way_samecost.add(way) ;
+                }
                 way_samecost.add(way_candidate);
             }
         }
 
         if (way_samecost != null && way_samecost.size()>0) {
-            //int i = (int)(Math.random() * way_samecost.size());
             way = way_samecost.get(random.nextInt(way_samecost.size())) ;
         }
 
