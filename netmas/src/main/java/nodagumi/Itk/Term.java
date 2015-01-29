@@ -14,6 +14,7 @@ package nodagumi.Itk;
 
 import java.lang.StringBuffer;
 import java.lang.Thread;
+import java.lang.Exception;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +98,8 @@ public class Term {
     private List<Object> array = null ;
 
     //------------------------------------------------------------
+    // コンストラクタ
+    //------------------------------------------------------------
     /**
      * コンストラクタ（無引数）
      */
@@ -155,6 +158,8 @@ public class Term {
         return term ;
     }
 
+    //------------------------------------------------------------
+    // 構造基本操作
     //------------------------------------------------------------
     /**
      * 全クリア
@@ -228,6 +233,8 @@ public class Term {
     }
 
     //------------------------------------------------------------
+    // 判定
+    //------------------------------------------------------------
     /**
      * null head 判定
      */
@@ -263,6 +270,8 @@ public class Term {
                  (body.size() == 1 && getArg(HeadSlot) != null))) ;
     }
 
+    //------------------------------------------------------------
+    // Head 操作
     //------------------------------------------------------------
     /**
      * head 取得
@@ -326,6 +335,8 @@ public class Term {
         }
     }
 
+    //------------------------------------------------------------
+    // Body/Arg 操作
     //------------------------------------------------------------
     /**
      * body 取得
@@ -520,6 +531,8 @@ public class Term {
     }
 
     //------------------------------------------------------------
+    // Array 操作
+    //------------------------------------------------------------
     /**
      * array 取得
      */
@@ -591,7 +604,6 @@ public class Term {
         return setArray(_array, true) ;
     }
 
-
     //------------------------------------------------------------
     /**
      * array 設定
@@ -613,7 +625,7 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * arg 設定
+     * array arg 設定
      */
     public Term setNth(int index, Object value){
         return setNth(index, value, true) ;
@@ -621,7 +633,7 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * arg 設定
+     * array arg 設定
      */
     public Term setNth(int index, Object value, boolean deepP) {
         if(isNullArray()) allocArray() ;
@@ -633,6 +645,8 @@ public class Term {
         return this ;
     }
 
+    //------------------------------------------------------------
+    // Term 変換
     //------------------------------------------------------------
     /**
      * check the value is bare data (not Term or null)
@@ -652,6 +666,8 @@ public class Term {
         return value ;
     }
 
+    //------------------------------------------------------------
+    // 比較
     //------------------------------------------------------------
     /**
      * 等価判定
@@ -712,6 +728,8 @@ public class Term {
                 getArray().equals(_array)) ;
     }
 
+    //------------------------------------------------------------
+    // タイプチェック
     //------------------------------------------------------------
     /**
      * nullかどうか？
@@ -775,9 +793,11 @@ public class Term {
      * 実効的なbody を持つか？
      */
     public boolean hasBody() {
-        return !isZeroArgs() ;
+        return (!isArray()) && (!isZeroArgs()) ;
     }
 
+    //------------------------------------------------------------
+    // 型変換
     //------------------------------------------------------------
     /**
      * String としての値。
@@ -863,6 +883,57 @@ public class Term {
             }
         }
         return buffer.toString() ;
+    }
+
+    //------------------------------------------------------------
+    // Object 型のアップデート
+    //------------------------------------------------------------
+    /**
+     * 部分 Object を使って、内部の値を更新
+     * Object でないものが渡ると、エラーで落ちる。
+     * (安直版)
+     * @param patch : update する部分 Object
+     * @param recursive : 深くまでの update を再帰的に行うか？
+     */
+    public Term updateObjectFacile(Term patch, boolean recursive) {
+        try {
+            return updateObject(patch, recursive) ;
+        } catch(Exception ex) {
+            ex.printStackTrace() ;
+            Itk.dbgErr("Illegal updateObject for Term.") ;
+            Itk.dbgMsg("this", this) ;
+            Itk.dbgMsg("patch", patch) ;
+            System.exit(1) ;
+        }
+        return this ; // never reach here
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 部分 Object を使って、内部の値を更新
+     * @param patch : update する部分 Object
+     * @param recursive : 深くまでの update を再帰的に行うか？
+     */
+    public Term updateObject(Term patch, boolean recursive)
+        throws Exception
+    {
+        if(!this.isObject())
+            throw new Exception("Can't update non-Object Term:" + this) ;
+        if(!patch.isObject())
+            throw new Exception("Can't update by non-Object Term:" + patch) ;
+
+        for(String slot : patch.getBody().keySet()) {
+            Term value = patch.getArgTerm(slot) ;
+            Term originalValue = this.getArgTerm(slot) ;
+            if(recursive &&
+               value != null && value.isObject() &&
+               originalValue != null && originalValue.isObject()) {
+                originalValue.updateObject(value, recursive) ;
+            } else {
+                this.setArg(slot, value) ;
+            }
+        }
+        return this ;
     }
 
     //============================================================

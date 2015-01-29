@@ -70,62 +70,82 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     public static String typeString = "RunningAroundPerson" ;
 
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 速度計算の定数
+     *
+     * ソーシャルフォースモデルのパラメータ学習 [2010/9/16 23:53 noda]
+     * * 速度誤差最適化 (expF) 
+     * * 9900 回目の学習結果
+     *
+     * * c0 = 0.962331091566513      // A_0
+     *   c1 = 0.869327852313837      // A_1
+     *   c2 = 4.68258910604962       // A_2
+     *   vStar = 1.02265769054586    // V_0
+     *   rStar = 0.522488010351651   // PERSONAL_SPACE の半分
+     *
+     * * 傾向：渋滞の状況はなんとなく再現している。ただし、戻りがある。
+     *   最高速度 (vStar) は低くなり勝ち。
+     *
+     * * 位置誤差最適化 (expG)
+     *
+     * * 9900 回目の学習結果
+     *
+     * * c0 = 1.97989178714465
+     *   c1 = 1.12202742329362
+     *   c2 = 0.95466478370757
+     *   vStar = 1.24504634565416
+     *   rStar = 0.805446866507348
+     */
+    protected static double A_0 = 0.962;//1.05;//0.5;
+    protected static double A_1 = 0.869;//1.25;//0.97;//2.0;
+    protected static double A_2 = 4.682;//0.81;//1.5;
+    protected static double V_0 = 1.02265769054586;
+    
+    protected static double MAX_SPEED = 0.96; // 自由速度
+    protected static double ZERO_SPEED = 0.1; // 最低速度？ [only density]
+
+    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
+
+    /* 同方向/逆方向のレーンでの単位距離
+     * 0.7 だとほとんど進まなくなる。
+     * 1.0 あたりか？
+     */
+    protected static double WidthUnit_SameLane = 0.9 ; //0.7;
+    protected static double WidthUnit_OtherLane = 0.9 ; //0.7;
+
+    /* [2015.01.17 I.Noda]
+     *以下は、density model で使われる。 [only density]
+     */
+    /* minimum distance between agents */
+    protected static final double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
+    /* mininum distance that agent can walk with max speed */
+    protected static final double DISTANCE_MAX_SPEED =
+        MAX_SPEED + MIN_DISTANCE_BETWEEN_AGENTS;    // 0.96 + 0.3
+    /* minimum speed to break dead lock state */
+    protected static final double MIN_SPEED_DEADLOCK = 0.3;
+
+    /* [2015.01.29 I.Noda]
+     *以下は、strait model で使われる。
+     */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Strait モデルで、超過密状態から抜け出すため、
+     * 対向流のエージェントで、最低間隔を決めておく。
+     * これをある程度大きくしておかないと、
+     * 対抗流から過大な力を受け、全く抜け出せなくなる。
+     */
+    protected static double InsensitiveDistanceInCounterFlow =
+        PERSONAL_SPACE * 0.5 ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 速度計算関係
-	 * emptyspeed : ??? Initial values 
+	 * emptyspeed : 自由速度。エージェント毎に設定
 	 * time_scale : シミュレーションステップ
-     * MAX_SPEED : 自由速度
-     * ZERO_SPEED : ???
-     * density : 人口密度らしい
-     * order_in_row : lane の中での順番。
-     *                set_swing でセットされ、calc_speed_lane で参照。
-     *                ***** 間違いの元になりそう。 *****
 	 */
     protected double emptyspeed = V_0;
     protected double time_scale = 1.0;//0.5; simulation time step 
-    public static double MAX_SPEED = 0.96;
-    public static double ZERO_SPEED = 0.1;
-    //protected double density;
-    //protected int order_in_row;
-
-    //============================================================
-    /**
-     * 経由点の通過情報
-     */
-    class CheckPoint implements Serializable {
-        public MapNode node;
-        public double time;
-        public String reason;
-        public CheckPoint(MapNode _node, double _time, String _reason) {
-            node = _node; time = _time; reason = _reason;
-        }
-    }
-
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 経由点の通過情報
-     */
-    protected ArrayList<CheckPoint> route;
-
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * sane_navigation_from_node の不要な呼び出し回避用
-     */
-    private boolean sane_navigation_from_node_forced = true;
-    private MapLink sane_navigation_from_node_current_link;
-    private MapLink sane_navigation_from_node_link;
-    private MapNode sane_navigation_from_node_node;
-    private MapLink sane_navigation_from_node_result;
-
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * next_link_candidate : 次に移るリンクの候補
-     *       preUpdate()でリセット、
-     *       move_commit()でnavigation()の結果をセット、
-     *       tryToPassNode()でsetCurrentLink()される。
-     */
-    //MapLink next_link_candidate = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -134,7 +154,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * move_set() でセット。
      * move_commit() のなかで、setPosition() される。
      */
-    //protected double next_position = 0.0;
     protected Place nextPlace = new Place();
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -166,105 +185,35 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     private SpeedCalculationModel calculation_model =
         SpeedCalculationModel.LaneModel;
 
+    //============================================================
+    /**
+     * 経由点の通過情報
+     */
+    class CheckPoint implements Serializable {
+        public MapNode node;
+        public double time;
+        public String reason;
+        public CheckPoint(MapNode _node, double _time, String _reason) {
+            node = _node; time = _time; reason = _reason;
+        }
+    }
+
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 速度計算の定数
+     * 経由点の通過情報
      */
-    protected static double A_0 = 0.962;//1.05;//0.5;
-    protected static double A_1 = 0.869;//1.25;//0.97;//2.0;
-    protected static double A_2 = 4.682;//0.81;//1.5;
-    protected static double V_0 = 1.02265769054586;
-    
-    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
+    protected ArrayList<CheckPoint> route;
 
-    /* 同方向/逆方向のレーンでの単位距離
-     * 0.7 だとほとんど進まなくなる。
-     * 1.0 あたりか？
-     */
-    protected static double WidthUnit_SameLane = 0.9 ; //0.7;
-    protected static double WidthUnit_OtherLane = 0.9 ; //0.7;
-
-    /* [2015.01.17 I.Noda]
-     *以下は、density model で使われる。
-     */
-    /* minimum distance between agents */
-    protected static final double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
-    /* mininum distance that agent can walk with max speed */
-    protected static final double DISTANCE_MAX_SPEED =
-        MAX_SPEED + MIN_DISTANCE_BETWEEN_AGENTS;    // 0.96 + 0.3
-    /* minimum speed to break dead lock state */
-    protected static final double MIN_SPEED_DEADLOCK = 0.3;
-
-    /* [2015.01.29 I.Noda]
-     *以下は、strait model で使われる。
-     */
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * Strait モデルで、超過密状態から抜け出すため、
-     * 対向流のエージェントで、最低間隔を決めておく。
-     * これをある程度大きくしておかないと、
-     * 対抗流から過大な力を受け、全く抜け出せなくなる。
+     * sane_navigation_from_node の不要な呼び出し回避用
      */
-    protected static double InsensitiveDistanceInCounterFlow =
-        PERSONAL_SPACE * 0.5 ;
+    private boolean sane_navigation_from_node_forced = true;
+    private MapLink sane_navigation_from_node_current_link;
+    private MapLink sane_navigation_from_node_link;
+    private MapNode sane_navigation_from_node_node;
+    private MapLink sane_navigation_from_node_result;
 
-/*
-    protected static double A_0 = 0.5*0.962;//1.05;//0.5;
-    protected static double A_1 = 1.5*0.869;//1.25;//0.97;//2.0;
-    protected static double A_2 = 4.682;//0.81;//1.5;
-    protected static double V_0 = 1.24504634565416;
-    
-    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
-    protected static double STAIR_SPEED_CO = 0.6;//0.7;
-*/
-    
-    
-/* 2010/9/16 23:53 noda
- *    * 速度誤差最適化 (expF)
- *
- *     * 9900 回目の学習結果
- *
- *       * c0 = 0.962331091566513
- *         c1 = 0.869327852313837
- *         c2 = 4.68258910604962
- *         vStar = 1.02265769054586
- *         rStar = 0.522488010351651
- *
- *     * 傾向：渋滞の状況はなんとなく再現している。ただし、戻りがある。
- *       最高速度 (vStar) は低くなり勝ち。
- *
- *   * 位置誤差最適化 (expG)
- *
- *     * 9900 回目の学習結果
- *
- *       * c0 = 1.97989178714465
- *         c1 = 1.12202742329362
- *         c2 = 0.95466478370757
- *         vStar = 1.24504634565416
- *         rStar = 0.805446866507348
- */
-    
-    /*
-    protected static double A_0 = 1.97989178714465;
-    protected static double A_1 = 1.12202742329362;
-    protected static double A_2 = 0.95466478370757;
-    
-    protected static double V_0 = 1.24504634565416;
-    protected static double PERSONAL_SPACE = 0.805446866507348;
-    */
-    
-    /*
-     protected static double A_0 = 0.962331091566513;
-     
-    protected static double A_1 = 0.869327852313837;
-    protected static double A_2 = 4.68258910604962;
-    
-    protected static double V_0 = 1.02265769054586;
-    protected static double PERSONAL_SPACE = 0.522488010351651;
-    
-    protected static double STAIR_SPEED_CO = 1.0;//0.7;
-    */
-    
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	/**
 	 * 推論理由を格納。
@@ -521,8 +470,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      */
     @Override
     public void preUpdate(double time) {
-        //next_link_candidate = null;
-
         calc_speed(time);
         move_set(speed, time, true);
     }

@@ -32,6 +32,37 @@ public class Term_Test {
     /**
      */
     @Test
+    public void test_updateObject() {
+        String str0 = "{'a':'foo', 'b':'def', 'c':1, 'jkl':null, 'x':[1,2,{},'234',null,{'xx':'yy','zz':'123'}], 'y':{'':'bar', 'a':3.21, 'b':[]}, 'zzz':'kkkkk'}" ;
+        str0 = str0.replaceAll("'","\"") ;
+        Itk.dbgVal("str0",str0) ;
+        Term term0 = Term.newByJson(str0) ;
+        Itk.dbgVal("term0",term0) ;
+
+        String str1 = "{'a':1, 'x':[3,4,null],'y':{'b':[10,20,30],'c':2.718}, 'z':{'a':1}}" ;
+        str1 = str1.replaceAll("'","\"") ;
+        Itk.dbgVal("str1",str1) ;
+        Term term1 = Term.newByJson(str1) ;
+        Itk.dbgVal("term1",term1) ;
+
+        term0.updateObjectFacile(term1, true) ;
+        Itk.dbgVal("term0",term0) ;
+    }
+    //------------------------------------------------------------
+    /**
+     */
+    //@Test
+    public void test_scanJsonComment() {
+        String str0 = "{'_':'foo', '_':'def', '_':1, 'jkl':null, 'x':[1,2,{},'234',null,{'xx':'yy','zz':'123'}], 'y':{'':'bar', 'a':3.21, 'b':[]}, '_':'kkkkk'}" ;
+        str0 = str0.replaceAll("'","\"") ;
+        Itk.dbgVal("str0",str0) ;
+        Term term0 = Term.newByJson(str0) ;
+        Itk.dbgVal("term0",term0) ;
+    }
+    //------------------------------------------------------------
+    /**
+     */
+    //@Test
     public void test_scanJson() {
         Itk.dbgMsgMethodInfo() ;
 
@@ -52,7 +83,7 @@ public class Term_Test {
     //------------------------------------------------------------
     /**
      */
-    @Test
+    //@Test
     public void test_array() {
         Itk.dbgMsgMethodInfo() ;
 
@@ -73,7 +104,7 @@ public class Term_Test {
     //------------------------------------------------------------
     /**
      */
-    @Test
+    //@Test
     public void test_construct() {
         Itk.dbgMsgMethodInfo() ;
 

@@ -76,21 +76,8 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * current_link: 現在いるリンク
-     * prev_node: 直前に通りすぎたノード
-     * next_node: 今向かっているノード
-     * direction: current_link 上での順・逆方向。+1.0 / -1.0
-     * position:現在のリンク上の、fromNodeからの位置を示す。
-     *          なので、逆向きの場合(fromNodeに向かっている場合)は、
-     *          position は徐々に減っていく。
+     * 現在地および前回の位置。
      */
-    /*
-    protected MapLink current_link;
-    protected MapNode prev_node;
-    protected MapNode next_node;
-    protected double direction = 0.0;
-    protected double position;
-    */
     protected Place currentPlace = new Place() ;
     protected Place lastPlace = new Place() ;
 

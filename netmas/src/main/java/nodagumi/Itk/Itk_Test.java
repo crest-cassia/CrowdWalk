@@ -31,9 +31,26 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * initialization test
+     */
+    static class Bar {
+        static int x = 0 ;
+        public int y = x++ ;
+    }
+    @Test
+    public void test_Init(){
+        Bar b0 = new Bar() ;
+        Itk.dbgVal("b0.y", b0.y) ;
+        Bar b1 = new Bar() ;
+        Itk.dbgVal("b1.y", b1.y) ;
+        Bar b2 = new Bar() ;
+        Itk.dbgVal("b2.y", b2.y) ;
+    }
+    //------------------------------------------------------------
+    /**
      * float test
      */
-    @Test
+    //@Test
     public void test_FloatMulti() {
         float f = 0.3f ;
         Itk.dbgVal("f", f) ;

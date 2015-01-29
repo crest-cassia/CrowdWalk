@@ -19,7 +19,7 @@
     <!--entry key="serialize_file">/tmp/serialized.xml</entry-->
     <!--entry key="serialize_interval">60</entry-->
     <!--entry key="deserialized_file">/tmp/serialized.xml</entry-->
-    <entry key="randseed">2525</entry>
+    <entry key="randseed">2524</entry>
     <entry key="random_navigation">true</entry>
     <entry key="speed_model">lane</entry>
     <!--entry key="density_density_speed_model_macro_timestep">10</entry-->
