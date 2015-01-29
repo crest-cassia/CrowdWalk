@@ -530,7 +530,7 @@ public class Scenario {
          * 相対時刻
          * @return scenario の origin time からの相対時刻
          */
-        public double getAbstractTime() {
+        public double getAbsoluteTime() {
             return atTime ;
         }
 

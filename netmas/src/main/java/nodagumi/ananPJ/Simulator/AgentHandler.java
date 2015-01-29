@@ -125,8 +125,6 @@ public class AgentHandler implements Serializable {
     private double averageSpeed = 0.0;
     private int evacuatedUsedLiftAgentCount = 0;
     private int evacuatedNoLiftAgentCount = 0;
-    /* [2015.01.29 I.Noda] */
-    //private boolean rescueArrived = false;
     private int maxAgentCount = 0;
     private boolean isAllAgentSpeedZeroBreak = false;
     private boolean isAllAgentSpeedZero = false;
@@ -245,112 +243,6 @@ public class AgentHandler implements Serializable {
         effectiveLinks = (MapLinkTable)model.getLinks().clone();
     }
 
-    class ScenarioEvent implements Serializable {
-        public static final String StopTag = "STOP_TAG";
-        ScenarioEvent parent;
-        public Double time;
-        String tag, command, comment;
-
-        public ScenarioEvent(ScenarioEvent _parent) {
-            parent = _parent;
-        }
-
-        public void setTag(String _tag) { tag = _tag; }
-        public void setCommand(String _command) { command = _command; }
-        public boolean isAbsolute() { return null == parent; }
-
-        public void setTime(double _time) {
-            time = _time;
-        }
-
-        public void setComment(String _comment) { comment = _comment; } 
-
-        public double getClock() {
-            return time ;
-        }
-
-        /* used while running the simulation
-         * modify links so that it affects agents */
-        boolean happend = false;
-        public void checkIfHappend(double clock,
-                NetworkMapBase map,
-                double time) {
-            if (happend || clock < getClock()) return;
-            if (command == null) return;
-            if (tag == null) return;
-
-            System.err.println(clock + "\t" + command + "\t" + tag);
-            message.append(timeToString(clock) + ":" + comment + "\n");
-
-            setEnabled(true, map);
-        }
-
-        public void setEnabled(boolean b,
-                NetworkMapBase map) {
-            happend = true;
-            if (command.startsWith("SET:")) {
-                String set_tag = command.substring(4);
-                System.err.println("set_tag: " + set_tag);
-                for (MapLink link : map.getLinks()) {
-                    if (!link.hasTag(tag)) continue;
-                    link.addTag(set_tag);
-                }
-            } else if (command.startsWith("REMOVE:")) {
-                String remove_tag = command.substring(7);
-                System.err.println("remove_tag: " + remove_tag);
-                for (MapLink link : map.getLinks()) {
-                    if (link.hasTag(tag)) {
-                        link.removeTag(remove_tag);
-                    }
-                }
-            } else if (command.equals("BOTH")) {
-                for (MapLink link : map.getLinks()) {
-                    if (!link.hasTag(tag)) continue;
-                    link.setEmergency(b);
-                    link.setStop(b);
-                }
-            } else if (command.equals("EVACUATE")) {
-                for (MapLink link : map.getLinks()) {
-                    if (!link.hasTag(tag)) continue;
-                    link.setEmergency(b);
-                }
-            } else if (command.equals("STOP")) {
-                for (MapLink link : map.getLinks()) {
-                    if (!link.hasTag(tag)) continue;
-                    link.setStop(b);
-                }
-            } else if (command.equals("RESPONSE")) {
-                /* [2015.01.29 I.Noda] */
-                //rescueArrived = b;
-            } else if (command.equals("ADD_STOP")) {
-                for (MapLink link : map.getLinks()) {
-                    if (link.hasTag(tag)) {
-                        link.closeGate(tag) ;
-                    }
-                }
-                for (MapNode node : map.getNodes()) {
-                    if(node.hasTag(tag)) {
-                        node.closeGate(tag) ;
-                    }
-                }
-            } else if (command.equals("REMOVE_STOP")) {
-                // System.err.println("  remove stop tag: " + tag);
-                for (MapLink link : map.getLinks()) {
-                    if (link.hasTag(tag)) {
-                        link.openGate(tag) ;
-                    }
-                }
-                for (MapNode node : map.getNodes()) {
-                    if(node.hasTag(tag)) {
-                        node.openGate(tag) ;
-                    }
-                }
-            }
-        }
-    }
-
-    HashMap<Integer, ScenarioEvent> events = new HashMap<Integer,
-        ScenarioEvent>();
     private void setup_default_scenario() {
         startTime = 0;
     }
@@ -364,65 +256,6 @@ public class AgentHandler implements Serializable {
         scenario.scanCsvFile(filename) ;
         scenario.describe() ;
         startTime = scenario.getOriginTime() ;
-        if(scenario != null) return ;
-
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(filename));
-        } catch (IOException e) {
-            System.err.println(e);
-            if (has_display) {
-                JOptionPane.showMessageDialog(null,
-                        "シナリオを開くのに失敗しました．");
-            }
-            setup_default_scenario();
-            return;
-        }
-        try {
-            /* #ID,親,TAG,COMMAND,TIME,,#備考,
-             * #START, OUTBREAK
-             * #EVACUATE, STOP
-             * 1,0,START,,7:30,,#実験開始,
-             * 3,2,DETECT,,5,10,#散布から検知までの所要時間,
-             *
-             * 2013.05.07 tkokada added a new command
-             * #ID,parent,tag,ADD_STOP,TIME,,#comment
-             * #ID,parent,tag,REMOVE_STOP,TIME,,#comment
-             *   This scenario adds or removes "STOP" tag to nodes or links 
-             *   including specified tag.
-             */
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("#")) continue;
-                String items[] = line.split(",");
-
-                int id = Integer.parseInt(items[0]);
-                /* [2015.01.22 I.Noda] parent_id has no meaning.
-                 */
-                //int parent_id = Integer.parseInt(items[1]); 
-                String tag = items[2];
-                String command = items[3];
-
-                ScenarioEvent event = new ScenarioEvent(null);
-                try {
-                    double time = (double)Itk.scanTimeStringToInt(items[4]) ;
-                    event.setTime(time) ;
-                    if (tag.equals("START")) startTime = time;
-                } catch(Exception ex) {
-                    Itk.dbgErr("wrong schenalio time:" + items[4]) ;
-                    Itk.dbgMsg("line", line) ;
-                    continue;
-                }
-                event.setCommand(command);
-                event.setTag(tag);
-
-                events.put(id, event);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }
     }
 
     /* need stable design to assign id */
@@ -430,12 +263,6 @@ public class AgentHandler implements Serializable {
     public void update(NetworkMapBase map, double time) {
         update_buttons();
 
-        /* [2015.01.28 I.Noda]
-         * comment out to change to use Scenario.
-        for (ScenarioEvent event : events.values()) {
-            event.checkIfHappend(time + startTime, map, time);
-        }
-        */
         scenario.advance(time, map) ;
 
         ArrayList<EvacuationAgent> generated_agents_step = new
@@ -1098,11 +925,9 @@ public class AgentHandler implements Serializable {
         label_toggle_panel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         GridBagConstraints c = null;
 
-        int max_events = 0;
+        int max_events = 1;
 
         int y = 0;
-        /* [2015.01.28 I.Noda] */
-        //for (ScenarioEvent event : events.values()) {
         for (Scenario.EventBase event : scenario.eventList) {
             c = new GridBagConstraints();
             c.gridx = 0;
@@ -1113,8 +938,6 @@ public class AgentHandler implements Serializable {
             toggle_scenario_button_groups.add(bgroup);
             class RadioButtonListener implements ActionListener {
                 int index;
-                /* [2015.01.28 I.Noda] */
-                // ScenarioEvent event;
                 Scenario.EventBase event ;
                 NetworkMapBase map ;
                 public RadioButtonListener(Scenario.EventBase _event,
@@ -1135,13 +958,13 @@ public class AgentHandler implements Serializable {
                 }
             }
 
-            if (true) {
+            if (false) {
                 c = new GridBagConstraints();
                 c.gridx = 0;
                 c.gridy = y;
                 c.gridwidth = max_events + 3;
                 c.fill = GridBagConstraints.EAST;
-                label_toggle_panel.add(new JLabel(timeToString(event.getAbstractTime())), c);
+                label_toggle_panel.add(new JLabel(timeToString(event.getAbsoluteTime())), c);
             } else {
                 JRadioButton radio_button;
                 radio_button = new JRadioButton("enabled");
@@ -1158,7 +981,14 @@ public class AgentHandler implements Serializable {
                 c.gridx = 2;
                 c.gridy = y;
                 label_toggle_panel.add(radio_button, c);
-                
+                radio_button = new JRadioButton(timeToString(event.getAbsoluteTime())) ;
+                radio_button.addActionListener(new RadioButtonListener(event, 0, map));
+                bgroup.add(radio_button);
+                c = new GridBagConstraints();
+                c.gridx = 3;
+                c.gridy = y;
+                label_toggle_panel.add(radio_button, c);
+                radio_button.setSelected(true);
             }
             y++;
         }
