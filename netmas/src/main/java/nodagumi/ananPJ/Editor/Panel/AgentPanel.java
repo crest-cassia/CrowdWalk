@@ -181,11 +181,6 @@ public class AgentPanel extends JPanel
         generateRandom.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-				/* [2014.12.26 I.Noda]
-				 * "Exit" タグの特別扱いがなくなり、ターゲットタグを
-				 * 指定する必要があるが、方法がないので、機能ＯＦＦ。
-				 */
-				//editor.placeAgentsRandomly(agent_place_tag.getText());
 				Itk.dbgErr("!!! placeAgentsRandomly() needs target now !!!") ;
             } 
         });
@@ -194,11 +189,6 @@ public class AgentPanel extends JPanel
         generateEven.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) { 
-				/* [2014.12.26 I.Noda]
-				 * "Exit" タグの特別扱いがなくなり、ターゲットタグを
-				 * 指定する必要があるが、方法がないので、機能ＯＦＦ。
-				 */
-				//editor.placeAgentsEvenly(agent_place_tag.getText());
 				Itk.dbgErr("!!! placeAgentsEvenly() needs target now !!!") ;
 			}
         });

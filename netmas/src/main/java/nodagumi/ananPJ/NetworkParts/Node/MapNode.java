@@ -229,14 +229,6 @@ public class MapNode extends OBMapPart implements Serializable {
 
     public NavigationHint getHint(final String key) {
         NavigationHint hint = hints.get(key);
-        /* [2014.12.26 I.Noda] 
-         * "Exit" タグの特別扱いをやめるので、機能ＯＦＦ
-         * ただ、hints の動作が不明なので、コメントで保留。
-         */
-        /*
-         * if (hint == null)
-         *   hint = hints.get("Exit");
-         */
         if (hint == null) {
             for (String _key : hints.keySet()) {
                 NavigationHint _hint = hints.get(_key);
