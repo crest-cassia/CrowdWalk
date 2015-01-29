@@ -540,7 +540,7 @@ class GenerateAgentFromLink extends GenerateAgent {
 
     @Override
     protected boolean finished(double time) {
-        if (super.finished(time) || start_link.getStop()) return true;
+        if (super.finished(time) || start_link.isShutOff()) return true;
         return false;
     }
 

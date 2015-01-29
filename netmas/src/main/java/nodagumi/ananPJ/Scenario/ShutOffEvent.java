@@ -62,7 +62,7 @@ public class ShutOffEvent extends PlacedEvent {
     public boolean occur(double time, NetworkMapBase map, boolean inverse) {
 	for(MapLink link : map.getLinks()) {
 	    if(link.hasTag(placeTag)) {
-		link.setStop(!inverse) ;
+		link.letShutOff(!inverse) ;
 	    }
 	}
 	return true ;

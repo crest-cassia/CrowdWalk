@@ -116,9 +116,23 @@ public class MapLink extends OBMapPart implements Serializable {
     }
     public boolean getEmergency() { return emergency; }
 
-    private boolean stop = false;
-    public void setStop(boolean b) { stop = b; }
-    public boolean getStop() { return stop; }
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェント生成禁止かどうかのフラグ
+     */
+    private boolean shutOffP = false;
+
+    //------------------------------------------------------------
+    /**
+     * 生成禁止フラグの操作
+     */
+    public void letShutOff(boolean onoff) { shutOffP = onoff; }
+
+    //------------------------------------------------------------
+    /**
+     * 生成禁止かどうかのチェック。
+     */
+    public boolean isShutOff() { return shutOffP; }
 
     // このリンクが現在 pollution level > 0.0 な PollutedArea 内を通っているかのフラグ
     protected boolean polluted = false;
