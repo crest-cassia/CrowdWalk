@@ -31,9 +31,21 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
-     * test dump call stack
+     * float test
      */
     @Test
+    public void test_FloatMulti() {
+        float f = 0.3f ;
+        Itk.dbgVal("f", f) ;
+        Itk.dbgVal("0.5f", 0.5f) ;
+        Itk.dbgVal("2.0f", 2.0f) ;
+        Itk.dbgVal("3f", 3f) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * test dump call stack
+     */
+    //@Test
     public void test_DumpStackTrace() {
         Itk.dumpStackTrace() ;
     }

@@ -1296,7 +1296,8 @@ public class SimulationPanel3D extends NetworkPanel3D
         String time_string =
             String.format("        Elapsed: %5.2fsec        ",
                 time);
-        String clock_string = model.getAgentHandler().getClockString(time);
+        String clock_string =
+			model.getAgentHandler().convertAbsoluteTimeString(time);
         simulation_status.setText("  "+ clock_string + time_string + evacuatedCount_string);
         canvas.message = "Time: " + clock_string + time_string + evacuatedCount_string;
     }

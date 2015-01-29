@@ -114,10 +114,6 @@ public class AgentFactory extends JPanel implements ItemListener,
     }
 
 	public boolean placeAgentsRandomly(String tag, String targetTag) {
-		/* [2014.12.26 I.Noda]
-		 * "Exit" タグの意味付けを排除することになったので、
-		 * tagetTag を指定するようにした。
-		 */
         MapLinkTable links = editor.getMap().getLinks(); 
         MapNodeTable nodes = editor.getMap().getNodes(); 
 
