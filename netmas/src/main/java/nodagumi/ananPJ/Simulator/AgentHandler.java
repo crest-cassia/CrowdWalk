@@ -143,8 +143,6 @@ public class AgentHandler implements Serializable {
      */
     Scenario scenario = new Scenario();
 
-    private double startTime = 0.0;
-
     private HashMap<MapNode, Integer> evacuatedAgentCountByExit;
     private AgentGenerationFile generate_agent = null;
 
@@ -244,7 +242,7 @@ public class AgentHandler implements Serializable {
     }
 
     private void setup_default_scenario() {
-        startTime = 0;
+        scenario.setOriginTime(0) ;
     }
 
     private void parseResponseFile(String filename) {
@@ -255,7 +253,6 @@ public class AgentHandler implements Serializable {
 
         scenario.scanCsvFile(filename) ;
         scenario.describe() ;
-        startTime = scenario.getOriginTime() ;
     }
 
     /* need stable design to assign id */
@@ -270,7 +267,7 @@ public class AgentHandler implements Serializable {
 
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
-                factory.tryUpdateAndGenerate(time + startTime,
+                factory.tryUpdateAndGenerate(scenario.calcAbsoluteTime(time),
                         model.getTimeScale(),
                         time, model, generated_agents_step);
             }
@@ -312,7 +309,7 @@ public class AgentHandler implements Serializable {
     }
 
     public boolean isFinished() {
-        /* finish when rescue has arrived */
+        /* finish when FinishEvent occurs */
         if (scenario.isFinished()) {
             Itk.dbgMsg("finished by the end of scenario.") ;
             return true;
@@ -411,7 +408,7 @@ public class AgentHandler implements Serializable {
             String time_string = String.format("Elapsed: %5.2fsec",
                     time);
             time_label.setText(time_string);
-            String clock_string = getClockString(time);
+            String clock_string = convertAbsoluteTimeString(time) ;
             clock_label.setText(clock_string);
             updateEvacuatedCount();
         }
@@ -447,7 +444,20 @@ public class AgentHandler implements Serializable {
                     updateEvacuatedCount();
                 }
                 if (agentMovementHistoryLogger != null) {
-                    agentMovementHistoryLogger.info(String.format("%s,%d,%s,%d,%s,%d,%s,%d", agent.getConfigLine().replaceAll(",", " "), agent.ID, timeToString(startTime + agent.generatedTime, true), (int)agent.generatedTime, timeToString(startTime + time, true), (int)time, timeToString(time - agent.generatedTime, true), (int)(time - agent.generatedTime)));
+                    agentMovementHistoryLogger
+                        .info(String
+                              .format("%s,%d,%s,%d,%s,%d,%s,%d",
+                                      agent.getConfigLine().replaceAll(",", " "),
+                                      agent.ID,
+                                      convertAbsoluteTimeString(agent.generatedTime,
+                                                                true),
+                                      (int)agent.generatedTime,
+                                      convertAbsoluteTimeString(time,
+                                                                true),
+                                      (int)time,
+                                      timeToString(time - agent.generatedTime,
+                                                   true),
+                                      (int)(time - agent.generatedTime)));
                 }
             } else {
                 ++count;
@@ -585,12 +595,15 @@ public class AgentHandler implements Serializable {
     // tkokada
     /* wrappers of fusion viewer connector */
     public void saveFusionViewerLog(String dir, double time, int count) {
-        fusionViewerConnector.saveFusionViewerLog(dir, startTime, time, count,
-                agents);
+        fusionViewerConnector.saveFusionViewerLog(dir,
+                                                  scenario.getOriginTime(),
+                                                  time, count,
+                                                  agents);
     }
     public void sendFusionViewerLog(double time, int count) {
-        fusionViewerConnector.sendFusionViewerLog(startTime, time, count,
-                agents);
+        fusionViewerConnector.sendFusionViewerLog(scenario.getOriginTime(),
+                                                  time, count,
+                                                  agents);
     }
     public void waitConnectionFusionViewer() {
         fusionViewerConnector.waitConnection();
@@ -672,21 +685,26 @@ public class AgentHandler implements Serializable {
         return averageSpeed;
     }
 
-    public String timeToString(double clock_time) {
-        double clock_sec = clock_time % 60;
-        clock_time -= clock_sec;
-        clock_time /= 60;
-        double clock_min = clock_time % 60;
-        clock_time -= clock_min;
-        clock_time /= 60;
-
-        return String.format("%02d:%02d:%02.0f",
-                (int)clock_time, (int)clock_min, clock_sec);
+    //------------------------------------------------------------
+    /**
+     * 実数時刻を文字列時刻に変更
+     * @param clock_time : 時刻を表す実数
+     * @return 時刻の文字列。時間は24時間を超える場合がある。
+     */
+    public String timeToString(double timeVal) {
+        return timeToString(timeVal, false) ;
     }
 
-    public String timeToString(double clock_time, boolean trunc) {
-        double sec = clock_time % 60;
-        int time = (int)clock_time / 60;
+    //------------------------------------------------------------
+    /**
+     * 実数時刻を文字列時刻に変更
+     * @param clock_time : 時刻を表す実数
+     * @param trunc : 24時を0時の戻すかどうか。trueで戻す。
+     * @return 時刻の文字列。時間は24時間を超える場合がある。
+     */
+    public String timeToString(double timeVal, boolean trunc) {
+        double sec = timeVal % 60;
+        int time = (int)timeVal / 60;
         int min = time % 60;
         time /= 60;
         if (trunc) {
@@ -1073,8 +1091,25 @@ public class AgentHandler implements Serializable {
         return maxAgentCount;
     }
 
-    public String getClockString(double clock) {
-        return timeToString(clock + startTime);
+    //------------------------------------------------------------
+    /**
+     * 相対時刻の文字列による絶体時刻標記を得る。
+     * @param relTime : 相対時刻
+     * @return 絶対時刻文字列
+     */
+    public String convertAbsoluteTimeString(double relTime) {
+        return timeToString(scenario.calcAbsoluteTime(relTime)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 相対時刻の文字列による絶体時刻標記を得る。
+     * @param relTime : 相対時刻
+     * @param trunc : 24時を0時にもどすか？
+     * @return 絶対時刻文字列
+     */
+    public String convertAbsoluteTimeString(double relTime, boolean trunc) {
+        return timeToString(scenario.calcAbsoluteTime(relTime), trunc) ;
     }
 
     public void dumpState(PrintWriter pw) {
