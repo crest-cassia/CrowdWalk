@@ -258,16 +258,21 @@ public class MapNode extends OBMapPart implements Serializable {
         String key = target.getString() ;
         NavigationHint hint = getHint(key);
         if (hint == null) {
-            System.err.println(key + " not found for id="
-                    + ID + "(" + getTagString() + ")");
+            if(hasTag(key)) { // 自分自身がターゲットの場合
+                // do nothing
+            } else { // target の情報が見つからない場合。
+                System.err.println(key + " not found for id="
+                                   + ID + "(" + getTagString() + ")");
 
-            for (String has_key : hints.keySet()) {
-                System.err.println(has_key);
+                for (String has_key : hints.keySet()) {
+                    System.err.println(has_key);
+                }
+                System.exit(1) ;
             }
+            return 0.0 ;
+        } else {
+            return hint.distance;
         }
-        //System.out.println("MapNode.getHint ID: " + ID + "hints: " +
-        //        hints.toString());
-        return hint.distance;
     }
 
     // tkokada:

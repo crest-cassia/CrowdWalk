@@ -72,7 +72,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
-import nodagumi.ananPJ.misc.Scenario ;
+import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.network.DaRuMaClient;
 import nodagumi.ananPJ.network.FusionViewerConnector;
 
@@ -928,7 +928,7 @@ public class AgentHandler implements Serializable {
         int max_events = 1;
 
         int y = 0;
-        for (Scenario.EventBase event : scenario.eventList) {
+        for (EventBase event : scenario.eventList) {
             c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = y;
@@ -938,9 +938,9 @@ public class AgentHandler implements Serializable {
             toggle_scenario_button_groups.add(bgroup);
             class RadioButtonListener implements ActionListener {
                 int index;
-                Scenario.EventBase event ;
+                EventBase event ;
                 NetworkMapBase map ;
-                public RadioButtonListener(Scenario.EventBase _event,
+                public RadioButtonListener(EventBase _event,
                         int _index,
                         NetworkMapBase _map) {
                     event = _event;

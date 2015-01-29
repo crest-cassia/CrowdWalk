@@ -4465,6 +4465,7 @@
     </Node>
     <Link from="1370775560" id="2069647086" length="77.33219865644426" to="1161458580" width="10.0"/>
     <Node height="0.0" id="90141159" x="8295.501444491196" y="5763.234687187999">
+      <tag>START_LINK1_FROM_NODE</tag>
       <link id="5057925"/>
       <link id="1550879744"/>
       <link id="461718585"/>
@@ -4473,6 +4474,7 @@
     </Node>
     <Link from="1161458580" id="5057925" length="22.513957471138166" to="90141159" width="10.0"/>
     <Node height="0.0" id="1908488267" x="8215.072224516329" y="5806.123667790658">
+      <tag>START_LINK1_TO_NODE</tag>
       <link id="1550879744"/>
       <link id="1525019510"/>
       <link id="910228110"/>
@@ -9162,6 +9164,7 @@
       <tag>SEASIDE_LINK</tag>
     </Link>
     <Node height="0.0" id="801328730" x="7753.198514237627" y="6086.833531595858">
+      <tag>START_LINK2_FROM_NODE</tag>
       <link id="1591179002"/>
       <link id="1780935330"/>
       <link id="814448698"/>
@@ -9225,6 +9228,7 @@
       <tag>SEASIDE_LINK</tag>
     </Link>
     <Node height="0.0" id="1565762513" x="7926.537350392688" y="5976.986234856321">
+      <tag>START_LINK2_TO_NODE</tag>
       <link id="814448698"/>
       <link id="874230926"/>
       <link id="308916011"/>
