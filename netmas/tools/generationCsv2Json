@@ -263,13 +263,24 @@ class GenerationConv
   ## _jsonFile_:: CSV ファイル名
   def saveJsonFile(jsonFile = @conf.outfile)
     if(jsonFile.nil?) then
-      $stdout << to_json() ;
+      saveJsonFileBody($stdout) ;
     else
       File::open(jsonFile,'w') {|ostrm|
-        ostrm << to_json() ;
+        saveJsonFileBody(ostrm) ;
       }
     end
   end
+
+  #--------------------------------------------------------------
+  #++
+  ## ストリームへのJSON書き出し
+  ## _outStrm_:: 出力先
+  def saveJsonFileBody(outStrm)
+      if(@conf.withHeader) then
+        outStrm << '#{ "version" : 2}' << "\n" ;
+      end
+      outStrm << to_json() ;
+    end
 
   #--------------------------------------------------------------
   #++
