@@ -1,0 +1,310 @@
+#! /usr/bin/env ruby
+## -*- mode: ruby; indent-tabs-mode: nil 
+## = Generation File Converter
+## Author:: Itsuki Noda
+## Version:: 0.0 2015/01/30 I.Noda
+##
+## === History
+## * [2015/01/30]: Create This File.
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'ostruct' ;
+require 'csv' ;
+require 'json' ;
+require 'pp' ;
+
+#------------------------------------------------------------------------
+#++
+$conf =
+  OpenStruct.new({
+                   :infile => nil,
+                   :outfile => nil,
+                   :withHeader => true,
+                   :useStdout => false,
+                   :csvQuoteChar => "'",
+                 }) ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]* <generation.csv> [<generation.json>]
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-q","--quoteChar Char", String, sep + "specify quote char for CSV.") {|char|
+    $conf.csvQuoteChar = char ;
+  }
+
+  op.on("-n","--[no-]noheader", sep + "without header line.") {|flag|
+    $conf.withHeader = !flag ;
+  }
+
+  op.on("-c","--use-stdout", sep + "output result stdout instead of to file.") {
+    $conf.useStdout = true ;
+  }
+
+  op.on_tail("-h", "--help",sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+
+#--------------------------------
+# ファイル名解析
+if(ARGV.empty?) then
+  $conf.infile = nil ;
+  $conf.outfile = nil ;
+  $conf.useStdout = true ;
+else
+  $conf.infile =ARGV.shift ;
+  if(ARGV.empty?) then
+    if($conf.useStdout) then
+      $conf.outfile = nil ;
+    else
+      $conf.outfile = (File.dirname($conf.infile) + "/" +
+                       File.basename($conf.infile,".csv") + ".json") ;
+    end
+  else
+    $conf.outfile = ARGV.shift ;
+  end
+end
+
+#--------------------------------
+# 余剰の引数がある。
+if(!ARGV.empty?) then
+  puts("Wrong command line:") ;
+  puts(op) ;
+  exit(1) ;
+end
+
+#--======================================================================
+#++
+## エージェント生成ファイル(generation)フォーマット変換
+class GenerationConv
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## ルールの種類と Slot の順番
+  SlotOrderTable = {
+    :EACH =>		[:rule, :agentType, :startPlace, :conditions,
+                         :startTime, :duration, :total,
+                         :speedModel,
+                         :goal, :plannedRoute],
+    :RANDOM =>		[:rule, :agentType, :startPlace, :conditions,
+                         :startTime, :duration, :total,
+                         :speedModel,
+                         :goal, :plannedRoute],
+    :EACHRANDOM =>	[:rule, :agentType, :startPlace, :conditions,
+                         :startTime, :duration, :total, :maxFromEach,
+                         :speedModel,
+                         :goal, :plannedRoute],
+    :TIMEEVERY =>	[:rule, :agentType, :startPlace, :conditions,
+                         :startTime, :everyEndTime, :everySeconds, :duration,
+                         :total,
+                         :speedModel,
+                         :goal, :plannedRoute],
+    :LINER_GENERATE_AGENT_RATIO => nil,
+  } ;
+
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## スピードモデルの種類
+  SpeedModelList = ["LANE","DENSITY","STRAIT"] ;
+
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## 生成ルールのリスト
+  attr :ruleList, true ;
+
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## CSV フォーマットのバージョン
+  ## :ver0, :ver1 のいずれか
+  attr :infileVersion, true ;
+
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## エージェント数の倍率
+  attr :lgaRatio, true ;
+
+  #--------------------------------------------------------------
+  #++
+  ## 初期化
+  ## _baz_:: about argument baz.
+  def initialize(conf)
+    @ruleList = [] ;
+    @infileVersion = :ver0 ;
+    @lgaRatio = 1 ;
+    @conf = conf ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## CSV ファイルの読み込み
+  ## _csvFile_:: CSV ファイル名
+  def scanCsvFile(csvFile = @conf.infile)
+    if(csvFile.nil?) then
+      scanCsvStream($stdin) ;
+    else
+      open(csvFile,"r"){|strm|
+        scanCsvStream(strm) ;
+      }
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## CSV ファイルの読み込み
+  ## _csvStream_:: CSV ファイル名
+  def scanCsvStream(csvStrm)
+    while(line = csvStrm.gets())
+      if(line =~ /^#/) then
+        line.gsub!(/^#/,'') ;
+        mode = JSON.load(line) ;
+        case(mode['version'])
+        when(0) then @infileVersion = :ver0 ;
+        when(1) then @infileVersion = :ver1 ;
+        else raise("illegal mode line:" + line) ;
+        end
+      else
+        CSV.parse(line, {:quote_char => @conf.csvQuoteChar}){|row|
+          scanCsvRow(row) ;
+        }
+      end
+    end
+  end
+
+
+  #--------------------------------------------------------------
+  #++
+  ## CSV の一行データの解析
+  ## _row_:: CSV 一行
+  def scanCsvRow(row)
+    ## rule type
+    rule = {} ;
+    ruleType = row.first().intern ;
+    if(SlotOrderTable.has_key?(ruleType)) then
+      row.shift ;
+    else
+      ruleType = :EACH ;
+    end
+    rule[:rule] = ruleType ;
+
+    ## LINER_GENERATE_AGENT_RATIO の場合。
+    if(ruleType == :LINER_GENERATE_AGENT_RATIO)
+      @lgaRatio = row.first.to_i ;
+      return ;
+    end
+
+    ## agent type
+    if(@infileVersion == :ver1) then
+      agentType = row.shift ;
+      agentParam = JSON.load(row.shift) ;
+      rule[:agentType] = ({ :className => agentType,
+                            :config => agentParam }) ;
+    else
+      rule[:agentType] = ({ :className => "NaiveAgent",
+                            :config => {}}) ;
+    end
+
+    ## start place
+    rule[:startPlace] = row.shift ;
+
+    ## start time
+    rule[:startTime] = row.shift ;
+
+    ## TIMEEVERYの場合は、出発時刻間隔
+    if(ruleType == :TIMEEVERY) then
+      rule[:everyEndTime] = row.shift ;
+      rule[:everySeconds] = row.shift.to_i ;
+    end
+
+    ## duration
+    rule[:duration] = row.shift.to_f ;
+
+    ## total
+    rule[:total] = row.shift.to_i * @lgaRatio ;
+
+    ## speed model
+    speedModel = row.first ;
+    if(SpeedModelList.member?(speedModel)) then
+      row.shift ;
+    else
+      speedModel = SpeedModelList.first ;
+    end
+    rule[:speedModel] = speedModel ;
+    rule[:conditions] = nil ;
+
+    ## goal
+    rule[:goal] = row.shift ;
+
+    ## planned route
+    route = [] ;
+    while(row.length > 0) 
+      route.push(row.shift) ;
+    end
+    rule[:plannedRoute] = route ;
+
+    @ruleList.push(rule) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## JSON ファイルの書き出し
+  ## _jsonFile_:: CSV ファイル名
+  def saveJsonFile(jsonFile = @conf.outfile)
+    if(jsonFile.nil?) then
+      $stdout << to_json() ;
+    else
+      File::open(jsonFile,'w') {|ostrm|
+        ostrm << to_json() ;
+      }
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## JSON の生成
+  def to_json()
+    # JSON.pretty_generate(@ruleList) ;
+    ret = "[" ;
+    indent1 = "  " ;
+    indent2 = indent1 * 2 ;
+    count = 0 ;
+    @ruleList.each{|rule|
+      ret += "," if(count > 0) ;
+      count += 1 ;
+      ret += "\n" + indent1 + "{ " ;
+      c = 0 ;
+      type = rule[:rule] ;
+      SlotOrderTable[type].each{|slot|
+        next if !rule.has_key?(slot) ;
+        ret += ",\n" + indent2 if(c > 0);
+        c += 1 ;
+        ret += (({slot => rule[slot]}.to_json)[1...-1]) ;
+      }
+      #ret += "\n" + indent1 ;
+      ret += "}" ;
+    }
+    ret += "\n" + "]" + "\n";
+    return ret ;
+  end
+
+end # class Foo
+
+########################################################################
+########################################################################
+########################################################################
+
+gConv = GenerationConv.new($conf) ;
+gConv.scanCsvFile($conf.infile) ;
+gConv.saveJsonFile($conf.outfile) ;
