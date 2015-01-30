@@ -97,8 +97,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     static {
         speedModelLexicon.registerMulti(new Object[][]
             {{"LANE", SpeedCalculationModel.LaneModel},
-             {"STRAIT",SpeedCalculationModel.StraitModel},
-             {"DENSITY", SpeedCalculationModel.DensityModel}
+             {"STRAIT",SpeedCalculationModel.StraitModel}
             }) ;
     }
 

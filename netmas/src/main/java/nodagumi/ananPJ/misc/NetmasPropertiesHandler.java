@@ -290,8 +290,8 @@ public class NetmasPropertiesHandler implements Serializable {
             randseed = getIntegerProperty(prop, "randseed");
             // speed model
             String speedModelString = getStringProperty(prop, "speed_model");
-            if (speedModelString.equals("density")) {
-                speedModel = SpeedCalculationModel.DensityModel;
+            if (speedModelString.equals("strait")) {
+                speedModel = SpeedCalculationModel.StraitModel;
             } else {
                 speedModel = SpeedCalculationModel.LaneModel;
                 System.err.println("NetmasCuiSimulator speed model: lane");

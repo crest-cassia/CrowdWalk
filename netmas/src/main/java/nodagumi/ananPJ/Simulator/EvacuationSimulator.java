@@ -901,25 +901,15 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                         new OutputStreamWriter(
                             new FileOutputStream(fileLog, false) , "utf-8")),
                     true);
-            /*if (resultType == timeSeriesLogType.Goal) {
-                for (EvacuationAgent agent : agents) {
-                    RunningAroundPerson rap = (RunningAroundPerson) agent;
-                    // log format:
-                    // agent,ID,evacuated,speed,density,position
-                    writer.write("agent," + rap.ID + "," + rap.isEvacuated() +
-                            "," + rap.getSpeed() + "," + rap.getDensity() + "," +
-                            rap.getPosition() + "\n");
-                }
-            } else {*/
             for (EvacuationAgent agent : agents) {
                 RunningAroundPerson rap = (RunningAroundPerson) agent;
                 // agent log format:
                 // agent,ID,evacuated,speed,density,position
                 writer.write("agent," + rap.ID + "," + rap.isEvacuated() +
 			     "," + rap.getSpeed() +
-			     "," + rap.getDensity() + // density is obsolete
+			     "," + "0" + //rap.getDensity() + // obsolete
 			     "," + rap.getLastPositionOnLink() + "\n");
-                totalAgentDensity += rap.getDensity();
+		totalAgentDensity += 0 ; //rap.getDensity(); // obsolete
                 totalAgentSpeed += rap.getSpeed();
             }
 	    for (MapLink link : getLinks()) {

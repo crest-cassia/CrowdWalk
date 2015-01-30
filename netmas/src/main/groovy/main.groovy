@@ -192,7 +192,7 @@ if (args.size() < 1) {
     start = System.nanoTime()
     def genfile = (new File(args[1])).getParent() + "/gen.csv"
     println "genfile:" + genfile
-    makeGenerationFile(genfile, ratioA, ratioB, ratio, "DENSITY")
+    makeGenerationFile(genfile, ratioA, ratioB, ratio, "STRAIT")
     cui = new NetmasCuiSimulator(args[1], randseed)
     cui.setScenarioSerial("NetmasCuiSimulator")
     //cui.linerGenerateAgentRatio = ratio

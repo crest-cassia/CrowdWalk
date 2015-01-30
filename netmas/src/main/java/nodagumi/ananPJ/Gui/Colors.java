@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.io.Serializable;
 import javax.vecmath.Color3f;
 
+import nodagumi.Itk.*;
+
 
 public class Colors implements Serializable {
 
@@ -63,7 +65,7 @@ public class Colors implements Serializable {
 	 * 歩行速度の性質から、原則はじめると急速に減速する。
 	 * なので、speed = 1 付近(自由速度に近い部分)を拡大する。
 	 */
-	float f = ((float) Math.pow(speed,5)) * 0.4f;
+	float f = ((float) Math.pow(speed,5)) * 0.35f;
         Color c_rgb = new Color(Color.HSBtoRGB(f, 0.8588f, 0.698f));
         // System.err.println("  speed: " + speed + ", R: " + c_rgb.getRed() +
                 // ", G: " + c_rgb.getGreen() + ", B: " + c_rgb.getBlue());
