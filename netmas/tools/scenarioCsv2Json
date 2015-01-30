@@ -118,8 +118,6 @@ class ScenarioConv
                          :placeTag,
                          :comment],
   } ;
-  ## description of DefaultOptsions.
-  DefaultConf = { :bar => :baz } ;
 
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
