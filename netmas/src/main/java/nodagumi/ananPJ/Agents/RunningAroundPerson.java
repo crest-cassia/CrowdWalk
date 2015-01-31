@@ -81,7 +81,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * * c0 = 0.962331091566513      // A_0
      *   c1 = 0.869327852313837      // A_1
      *   c2 = 4.68258910604962       // A_2
-     *   vStar = 1.02265769054586    // V_0
+     *   vStar = 1.02265769054586    // emptySpeed
      *   rStar = 0.522488010351651   // PERSONAL_SPACE の半分
      *
      * * 傾向：渋滞の状況はなんとなく再現している。ただし、戻りがある。
@@ -100,15 +100,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected static double FallBack_A_0 = 0.962;//1.05;//0.5;
     protected static double FallBack_A_1 = 0.869;//1.25;//0.97;//2.0;
     protected static double FallBack_A_2 = 4.682;//0.81;//1.5;
-    protected static double FallBack_V_0 = 1.02265769054586;
-    protected static double FallBack_MAX_SPEED = 0.96; // 自由速度
+    protected static double FallBack_EmptySpeed = 1.02265769054586;
     protected static double FallBack_PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
 
     protected double A_0 = FallBack_A_0 ;
     protected double A_1 = FallBack_A_1 ;
     protected double A_2 = FallBack_A_2 ;
-    protected double V_0 = FallBack_V_0 ;
-    protected double MAX_SPEED = FallBack_MAX_SPEED ;
+    protected double emptySpeed = FallBack_EmptySpeed;
     protected double PERSONAL_SPACE = FallBack_PERSONAL_SPACE ;
 
     /* 同方向/逆方向のレーンでの単位距離
@@ -140,10 +138,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 速度計算関係
-	 * emptyspeed : 自由速度。エージェント毎に設定
 	 * time_scale : シミュレーションステップ
 	 */
-    protected double emptyspeed = V_0;
     protected double time_scale = 1.0;//0.5; simulation time step 
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -270,7 +266,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         init(_id, _random);
         
         generatedTime = _generatedTime;
-        emptyspeed = _emptySpeed;
+        emptySpeed = _emptySpeed;
     }
 
     //------------------------------------------------------------
@@ -282,7 +278,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
         RunningAroundPerson r = (RunningAroundPerson)_r ;
         super.copyAndInitializeBody(r) ;
-        r.emptyspeed = emptyspeed;
+        r.emptySpeed = emptySpeed;
 
         return r;
     }
@@ -361,7 +357,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      *
      */
     public double getEmptySpeed() {
-        return emptyspeed;
+        return emptySpeed;
     }
 
     //------------------------------------------------------------
@@ -369,7 +365,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      *
      */
     public void setEmptySpeed(double s) {
-        emptyspeed = s;
+        emptySpeed = s;
     }
 
 	//############################################################
@@ -664,7 +660,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         /* [2015.01.10 I.Noda]
          * 余裕を持って探索するため、長めにとってみる。
          */
-        double maxDistance = (PERSONAL_SPACE + emptyspeed) * (time_scale + 1.0) ;
+        double maxDistance = (PERSONAL_SPACE + emptySpeed) * (time_scale + 1.0) ;
 
         //前方のエージェントを探している場所
         Place workingPlace = currentPlace.duplicate() ;
@@ -714,7 +710,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                                          SpeedCalculationModel model) {
         /* base speed */
         double baseSpeed =
-            currentPlace.getLink().calcEmptySpeedForAgent(emptyspeed,
+            currentPlace.getLink().calcEmptySpeedForAgent(emptySpeed,
                                                           this, time) ;
         //自由速度に向けた加速
         dv = A_0 * (baseSpeed - speed) ;
@@ -777,7 +773,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double totalForce = 0.0 ;
 
         //探す範囲
-        double maxDistance = (PERSONAL_SPACE + emptyspeed) * (time_scale + 1.0) ;
+        double maxDistance = (PERSONAL_SPACE + emptySpeed) * (time_scale + 1.0) ;
 
         //作業用の場所と経路計画
         Place workingPlace = currentPlace.duplicate() ;
@@ -1119,7 +1115,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 sane_navigation_from_node_current_link == currentPlace.getLink() &&
                 sane_navigation_from_node_link == passingPlace.getLink() &&
                 sane_navigation_from_node_node == passingPlace.getHeadingNode() &&
-                emptyspeed < currentPlace.getRemainingDistance()) ;
+                emptySpeed < currentPlace.getRemainingDistance()) ;
     }
 
     //------------------------------------------------------------
@@ -1311,7 +1307,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 add(time);
 
                 add(new JLabel("Speed"));
-                speed = new JSpinner(new SpinnerNumberModel(agent.emptyspeed,
+                speed = new JSpinner(new SpinnerNumberModel(agent.emptySpeed,
                         0.0, 10.0,
                         0.1));
                 speed.addChangeListener(this);
@@ -1338,8 +1334,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             
             private void updateAgent() {
                 agent.generatedTime = ((Double)(time.getValue())).doubleValue();
-                agent.emptyspeed = ((Double)(speed.getValue())).doubleValue();
-                agent.speed = agent.emptyspeed;
+                agent.emptySpeed = ((Double)(speed.getValue())).doubleValue();
+                agent.speed = agent.emptySpeed;
                 final String goalString = (String)navigationMode.getSelectedItem();
                 agent.setGoal(new Term(goalString));
             }
