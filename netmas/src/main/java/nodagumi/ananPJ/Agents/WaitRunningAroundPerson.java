@@ -33,13 +33,16 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェント同士の最小の距離。
+     * scatter での適用範囲を定めるのに使用。
+     */
+    protected static final double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
+
     protected boolean waiting = false;
 
-    /**
-     * Agent の詳細設定情報を格納しているもの
-     */
-    public Term config ;
-
+    //------------------------------------------------------------
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
@@ -51,6 +54,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         init(_id, speed,  _confidence, allowance, time, _random) ;
     }
 
+    //------------------------------------------------------------
     /**
      * 初期化。constractorから分離。
      */
@@ -65,34 +69,13 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         init(_id, _random) ;
     }
 
+    //------------------------------------------------------------
     /**
      * 初期化。constractorから分離。
      */
     @Override
     public void init(int _id, Random _random) {
         super.init(_id, _random);
-    }
-
-    /**
-     * Conf による初期化。
-     * 継承しているクラスの設定のため。
-     * @param conf json の連想配列形式を scan した Map
-     */
-    public void initByConf(Term conf) {
-        if(conf != null) {
-            config = conf ;
-        } else {
-            config = new Term() ;
-        }
-    } ;
-    /**
-     * Conf による初期化。(obsolete)
-     * 継承しているクラスの設定のため。
-     * @param confString json で書かれたAgentのconfigulation。
-     */
-    public void _initByConf(String confString) {
-        Term conf = Term.newByJson(confString) ;
-        initByConf(conf) ;
     }
 
     /**

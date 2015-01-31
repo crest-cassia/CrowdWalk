@@ -47,7 +47,6 @@ public abstract class EvacuationAgent extends OBMapPart
 implements Comparable<EvacuationAgent>, Serializable {
     private static final long serialVersionUID = 2580480798262915926L;
 
-    //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * agent_count は生成したエージェントの総数。
@@ -55,6 +54,12 @@ implements Comparable<EvacuationAgent>, Serializable {
      */
     static int agent_count = 0;
     public int agentNumber;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Agent の詳細設定情報を格納しているもの
+     */
+    public Term config ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -148,6 +153,31 @@ implements Comparable<EvacuationAgent>, Serializable {
         swing_width = random.nextDouble() * 2.0 - 1.0;
         // Pollution のサブクラスのインスタンスを取得
         pollution = Pollution.getInstance(pollutionType + "Pollution");
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Conf による初期化。
+     * 継承しているクラスの設定のため。
+     * @param conf json の連想配列形式を scan した Map
+     */
+    public void initByConf(Term conf) {
+        if(conf != null) {
+            config = conf ;
+        } else {
+            config = new Term() ;
+        }
+    } ;
+
+    //------------------------------------------------------------
+    /**
+     * Conf による初期化。(obsolete)
+     * 継承しているクラスの設定のため。
+     * @param confString json で書かれたAgentのconfigulation。
+     */
+    public void _initByConf(String confString) {
+        Term conf = Term.newByJson(confString) ;
+        initByConf(conf) ;
     }
 
     //------------------------------------------------------------
