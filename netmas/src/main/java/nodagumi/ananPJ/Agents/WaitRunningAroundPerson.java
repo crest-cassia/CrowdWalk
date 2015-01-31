@@ -126,48 +126,35 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         }
     }
 
-
+    /**
+     * WAIT_FOR/WAIT_UNTIL 中のエージェントをレーンごとに均等な間隔で配置する。
+     * ※制限事項
+     * ・同じレーン上に scatter 以外のエージェントが存在すると間隔が詰まり均等にならなくなる。
+     * ・対向流が発生すると laneWidth が変化するため均等な間隔にならない事がある。
+     */
     protected boolean scatter(double time) {
-        final ArrayList<EvacuationAgent> agents =
-            currentPlace.getLink().getAgents();
-        int index = Collections.binarySearch(agents, this) ;
-        /* [2015.01.07 I.Noda] bug!!!
-         * 本来、index が負になる（agents に存在しない）ことは
-         * 生じないはずだが、sort_order を front_first にすると、なぜか起きる。
-         * [解決] 上記の Comparator を指定することで、問題解消。
-         * これまで、なぜ動いていたのかは不明。
-         */
-        if(index < 0) {
-            Itk.dbgWrn("the agent can not found in the agent queue") ;
-            Itk.dbgVal("agent", this) ;
-            Itk.dbgVal("queue", agents) ;
-            index = 0 ;
+        ArrayList<EvacuationAgent> agents = currentPlace.getLane();
+        int laneWidth = currentPlace.getLaneWidth();
+        double space = currentPlace.getLinkLength() / ((agents.size() - 1) / laneWidth + 2);
+
+        // scatter メソッドが適用できないほど超過密状態の場合には pack を使用する
+        if (space <= MIN_DISTANCE_BETWEEN_AGENTS) {
+            return pack(time);
         }
 
-        /* [2015.01.07 I.Noda] bug!!!
-         * ここでは、なぜか、エージェントの進行方向を無視して計算している。
-         * しかし、本来、無視してはいけないはず。
-         */
-        double front_space =
-            currentPlace.getLinkLength() - currentPlace.getPositionOnLink();
-        double rear_space = currentPlace.getPositionOnLink();
-        int width = (int)currentPlace.getLinkWidth();
-
-        int rear_agent_i = index - width;
-        if (rear_agent_i > 0) {
-            rear_space = getPositionOnLink() - agents.get(rear_agent_i).getPositionOnLink() ;
+        int index = currentPlace.getIndexFromHeadingInLane(this) ;
+        double stopPosition = currentPlace.getLinkLength() - space * ((index / laneWidth) + 1);
+        double d = stopPosition - getAdvancingDistance();
+        // エージェントが停止予定位置より先にいた場合はその位置に留まらせる
+        if (d < 0.0) {
+            d = 0.0;
         }
-        int front_agent_i = index + width;
-        if (front_agent_i < agents.size()) {
-            front_space = agents.get(front_agent_i).getPositionOnLink() - getPositionOnLink();
-        }
-
         calc_speed(time);
-        double d = (front_space - rear_space) * 0.3; 
-        if (Math.abs(d) > Math.abs(speed)) {
-            d = Math.signum(d) * Math.abs(speed) * getDirection() ;
+        if (d > speed) {
+            d = speed;
         }
-        return move_set(d, time, false);
+        // scatter 制御を破綻させないため move_set() 内の d * time_scale を無効化する
+        return move_set(d / time_scale, time, false);
     }
     
     protected boolean pack(double time) {
