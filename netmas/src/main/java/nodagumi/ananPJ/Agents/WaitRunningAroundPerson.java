@@ -38,7 +38,9 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * エージェント同士の最小の距離。
      * scatter での適用範囲を定めるのに使用。
      */
-    protected static final double MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
+    protected static final double FallBack_MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
+    protected static final double MIN_DISTANCE_BETWEEN_AGENTS
+        = FallBack_MIN_DISTANCE_BETWEEN_AGENTS ;
 
     protected boolean waiting = false;
 

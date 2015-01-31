@@ -97,21 +97,29 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      *   vStar = 1.24504634565416
      *   rStar = 0.805446866507348
      */
-    protected static double A_0 = 0.962;//1.05;//0.5;
-    protected static double A_1 = 0.869;//1.25;//0.97;//2.0;
-    protected static double A_2 = 4.682;//0.81;//1.5;
-    protected static double V_0 = 1.02265769054586;
-    
-    protected static double MAX_SPEED = 0.96; // 自由速度
+    protected static double FallBack_A_0 = 0.962;//1.05;//0.5;
+    protected static double FallBack_A_1 = 0.869;//1.25;//0.97;//2.0;
+    protected static double FallBack_A_2 = 4.682;//0.81;//1.5;
+    protected static double FallBack_V_0 = 1.02265769054586;
+    protected static double FallBack_MAX_SPEED = 0.96; // 自由速度
+    protected static double FallBack_PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
 
-    protected static double PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
+    protected double A_0 = FallBack_A_0 ;
+    protected double A_1 = FallBack_A_1 ;
+    protected double A_2 = FallBack_A_2 ;
+    protected double V_0 = FallBack_V_0 ;
+    protected double MAX_SPEED = FallBack_MAX_SPEED ;
+    protected double PERSONAL_SPACE = FallBack_PERSONAL_SPACE ;
 
     /* 同方向/逆方向のレーンでの単位距離
      * 0.7 だとほとんど進まなくなる。
      * 1.0 あたりか？
      */
-    protected static double WidthUnit_SameLane = 0.9 ; //0.7;
-    protected static double WidthUnit_OtherLane = 0.9 ; //0.7;
+    protected static double FallBack_WidthUnit_SameLane = 0.9 ; //0.7;
+    protected static double FallBack_WidthUnit_OtherLane = 0.9 ; //0.7;
+
+    protected double WidthUnit_SameLane = FallBack_WidthUnit_SameLane ;
+    protected double WidthUnit_OtherLane = FallBack_WidthUnit_OtherLane ;
 
     /* [2015.01.29 I.Noda]
      *以下は、strait model で使われる。
@@ -123,8 +131,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * これをある程度大きくしておかないと、
      * 対抗流から過大な力を受け、全く抜け出せなくなる。
      */
-    protected static double InsensitiveDistanceInCounterFlow =
-        PERSONAL_SPACE * 0.5 ;
+    protected static double FallBack_InsensitiveDistanceInCounterFlow =
+        FallBack_PERSONAL_SPACE * 0.5 ;
+
+    protected double InsensitiveDistanceInCounterFlow =
+        FallBack_InsensitiveDistanceInCounterFlow ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -856,7 +867,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * @param dist : 他のエージェントまでの距離
      * @return 力
      */
-    protected static double calcSocialForce(double dist) {
+    protected double calcSocialForce(double dist) {
         return - A_1  * Math.exp(A_2 * (PERSONAL_SPACE - dist)) ;
     }
 
@@ -867,7 +878,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * @param dy : 横方向の距離
      * @return x 方向の力
      */
-    protected static double calcSocialForceToHeading(double dx, double dy) {
+    protected double calcSocialForceToHeading(double dx, double dy) {
         double dist = Math.sqrt(dx * dx + dy * dy) ;
         double force = calcSocialForce(dist) ;
         if(dist == 0.0) {

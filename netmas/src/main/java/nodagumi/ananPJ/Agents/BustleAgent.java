@@ -40,25 +40,25 @@ public class BustleAgent extends NaiveAgent
     /**
      * せわしない度合い（link の crowdness に乗ずる値）の規定値
      */
-    static final public double DefaultBustleWeight = 100.0 ;
+    static final public double FallBack_BustleWeight = 100.0 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * せわしない度合い（link の crowdness に乗ずる値）
      */
-    public double bustleWeight = DefaultBustleWeight ;
+    public double bustleWeight = FallBack_BustleWeight ;
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * 一度通った道をどれくらい避けるかの規定値
      */
-    static final public double DefaultTrailWeight = 100.0 ;
+    static final public double FallBack_TrailWeight = 100.0 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 一度通った道をどれくらい避けるか（link の trailCount に乗ずる値）
      */
-    public double trailWeight = DefaultTrailWeight ;
+    public double trailWeight = FallBack_TrailWeight ;
 
     //------------------------------------------------------------
     /**

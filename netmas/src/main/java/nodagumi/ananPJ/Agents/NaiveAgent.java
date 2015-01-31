@@ -46,13 +46,13 @@ public class NaiveAgent
     /**
      * 一度通った道に加えるカウントの大きさの規定値
      */
-    static final public double DefaultTrailCountStep = 1.0 ;
+    static final public double FallBack_TrailCountStep = 1.0 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 一度通った道に加えるカウントの大きさの規定値
      */
-    private double trailCountStep = DefaultTrailCountStep ;
+    private double trailCountStep = FallBack_TrailCountStep ;
 
     //============================================================
     /**
