@@ -103,21 +103,23 @@ public class CapriciousAgent extends NaiveAgent
         return r ;
     }
 
+    //------------------------------------------------------------
     /**
      * Conf による初期化。
      */
+    @Override
     public void initByConf(Term conf) {
         super.initByConf(conf) ;
-        if(config.hasArg("margin")) {
-            //Itk.dbgMsg("margin", config.get("margin")) ;
-            capriciousMargin = config.getArgDouble("margin") ;
-        }
+
+        capriciousMargin = getDoubleFromConfig("margin", capriciousMargin) ;
     } ;
+
     //------------------------------------------------------------
     /**
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
+    @Override
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
         MapNode other = _way.getOther(_node);
         double cost = other.getDistance(_target) ;

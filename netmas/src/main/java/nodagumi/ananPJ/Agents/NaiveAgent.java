@@ -167,6 +167,7 @@ public class NaiveAgent
     /**
      * Conf による初期化。
      */
+    @Override
     public void initByConf(Term conf) {
         super.initByConf(conf) ;
     } ;
@@ -176,6 +177,7 @@ public class NaiveAgent
      * あるwayを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
+    @Override
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
         return super.calcWayCostTo(_way, _node, _target) ;
     }

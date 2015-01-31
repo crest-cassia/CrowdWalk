@@ -182,6 +182,28 @@ implements Comparable<EvacuationAgent>, Serializable {
 
     //------------------------------------------------------------
     /**
+     * Conf からの値の取得(double)
+     */
+    public double getDoubleFromConfig(String slot, double fallback) {
+        if(config.hasArg(slot))
+            return config.getArgDouble(slot) ;
+        else
+            return fallback ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Conf からの値の取得(double)
+     */
+    public double getIntFromConfig(String slot, int fallback) {
+        if(config.hasArg(slot))
+            return config.getArgInt(slot) ;
+        else
+            return fallback ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * エージェント複製
      */
     public EvacuationAgent copyAndInitialize() {

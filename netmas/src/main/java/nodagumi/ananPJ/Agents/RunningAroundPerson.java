@@ -129,11 +129,11 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * これをある程度大きくしておかないと、
      * 対抗流から過大な力を受け、全く抜け出せなくなる。
      */
-    protected static double FallBack_InsensitiveDistanceInCounterFlow =
+    protected static double FallBack_insensitiveDistanceInCounterFlow =
         FallBack_PersonalSpace * 0.5 ;
 
-    protected double InsensitiveDistanceInCounterFlow =
-        FallBack_InsensitiveDistanceInCounterFlow ;
+    protected double insensitiveDistanceInCounterFlow =
+        FallBack_insensitiveDistanceInCounterFlow ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -264,13 +264,37 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             double _generatedTime,
             Random _random) {
         init(_id, _random);
-        
+
         generatedTime = _generatedTime;
         emptySpeed = _emptySpeed;
     }
 
     //------------------------------------------------------------
-	/**
+    /**
+     * Conf による初期化。
+     */
+    @Override
+    public void initByConf(Term conf) {
+        super.initByConf(conf) ;
+
+        A_0 = getDoubleFromConfig("A_0", A_0) ;
+        A_1 = getDoubleFromConfig("A_1", A_1) ;
+        A_2 = getDoubleFromConfig("A_2", A_2) ;
+        emptySpeed = getDoubleFromConfig("emptySpeed", emptySpeed) ;
+        personalSpace = getDoubleFromConfig("personalSpace", personalSpace) ;
+
+        widthUnit_SameLane =
+            getDoubleFromConfig("widthUnit_SameLane", widthUnit_SameLane) ;
+        widthUnit_OtherLane =
+            getDoubleFromConfig("widthUnit_OtherLane", widthUnit_OtherLane) ;
+        insensitiveDistanceInCounterFlow =
+            getDoubleFromConfig("insensitiveDistanceInCounterFlow",
+                                insensitiveDistanceInCounterFlow) ;
+
+    } ;
+
+    //------------------------------------------------------------
+    /**
 	 * 与えられたエージェントインスタンスに内容をコピーし、初期化。
      * 差分プログラミングにする。
 	 */
@@ -842,7 +866,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     totalForce += force ;
                     if(countOther % laneWidthOther == 0) {
                         insensitivePos = (agentPos + 
-                                          InsensitiveDistanceInCounterFlow) ;
+                                          insensitiveDistanceInCounterFlow) ;
                     }
                 }
             }

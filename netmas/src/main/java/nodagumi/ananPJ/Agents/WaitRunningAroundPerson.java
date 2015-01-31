@@ -33,14 +33,25 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * クラス名。
+     * ClassFinder でも参照できるようにしておく。
+     */
+    public static String typeString = "WaitRunningAroundPerson" ;
+    public static String getTypeName() {
+        return typeString ;
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェント同士の最小の距離。
      * scatter での適用範囲を定めるのに使用。
      */
-    protected static final double FallBack_MIN_DISTANCE_BETWEEN_AGENTS = 0.3;
-    protected static final double MIN_DISTANCE_BETWEEN_AGENTS
-        = FallBack_MIN_DISTANCE_BETWEEN_AGENTS ;
+    protected static final double FallBack_minDistanceBetweenAgents = 0.3;
+    protected double minDistanceBetweenAgents
+        = FallBack_minDistanceBetweenAgents ;
 
     protected boolean waiting = false;
 
@@ -50,10 +61,22 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      */
     public WaitRunningAroundPerson() {} ;
 
+    //------------------------------------------------------------
+    /**
+     * constractor。
+     */
     public WaitRunningAroundPerson(int _id,
             double speed, double _confidence,
             double allowance, double time, Random _random) {
         init(_id, speed,  _confidence, allowance, time, _random) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * constractor。
+     */
+    public WaitRunningAroundPerson(int _id, Random _random) {
+        init(_id, _random) ;
     }
 
     //------------------------------------------------------------
@@ -67,10 +90,6 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         super.init(_id, speed, _confidence, allowance, time, _random);
     }
 
-    public WaitRunningAroundPerson(int _id, Random _random) {
-        init(_id, _random) ;
-    }
-
     //------------------------------------------------------------
     /**
      * 初期化。constractorから分離。
@@ -80,6 +99,20 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         super.init(_id, _random);
     }
 
+    //------------------------------------------------------------
+    /**
+     * Conf による初期化。
+     */
+    @Override
+    public void initByConf(Term conf) {
+        super.initByConf(conf) ;
+
+        minDistanceBetweenAgents =
+            getDoubleFromConfig("minDistanceBetweenAgents",
+                                minDistanceBetweenAgents) ;
+    } ;
+
+    //------------------------------------------------------------
     /**
      * 複製操作のメイン
      */
@@ -111,6 +144,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         }
     }
 
+    //----------------------------------------------------------------------
     /**
      * WAIT_FOR/WAIT_UNTIL 中のエージェントをレーンごとに均等な間隔で配置する。
      * ※制限事項
@@ -123,7 +157,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         double space = currentPlace.getLinkLength() / ((agents.size() - 1) / laneWidth + 2);
 
         // scatter メソッドが適用できないほど超過密状態の場合には pack を使用する
-        if (space <= MIN_DISTANCE_BETWEEN_AGENTS) {
+        if (space <= minDistanceBetweenAgents) {
             return pack(time);
         }
 
@@ -142,6 +176,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return move_set(d / time_scale, time, false);
     }
     
+    //----------------------------------------------------------------------
+    /**
+     * できるだけ過密に並ぶ
+     */
     protected boolean pack(double time) {
         calc_speed(time);
 
@@ -153,6 +191,10 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     private double wait_time_start = NOT_WAITING;
 
     //------------------------------------------------------------
+    /**
+     * cycle 前処理。
+     * Wait directive の処理を呼び出す。
+     */
     @Override
     public void preUpdate(double time) {
         waiting = false;
@@ -238,11 +280,17 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
         return false ;
     }
 
+    //------------------------------------------------------------
+    /**
+     */
     @Override
     public boolean update(double time) {
         return super.update(time);
     }
 
+    //------------------------------------------------------------
+    /**
+     */
     @Override
     public ArrayList<Term> getPlannedRoute() {
         ArrayList<Term> goal_tags = new ArrayList<Term>();
@@ -264,15 +312,6 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
             delta++ ;
         }
         return goal_tags;
-    }
-
-    /**
-     * クラス名。
-     * ClassFinder でも参照できるようにしておく。
-     */
-    public static String typeString = "WaitRunningAroundPerson" ;
-    public static String getTypeName() {
-        return typeString ;
     }
 
 	//------------------------------------------------------------
