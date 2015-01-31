@@ -82,7 +82,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      *   c1 = 0.869327852313837      // A_1
      *   c2 = 4.68258910604962       // A_2
      *   vStar = 1.02265769054586    // emptySpeed
-     *   rStar = 0.522488010351651   // PERSONAL_SPACE の半分
+     *   rStar = 0.522488010351651   // personalSpace の半分
      *
      * * 傾向：渋滞の状況はなんとなく再現している。ただし、戻りがある。
      *   最高速度 (vStar) は低くなり勝ち。
@@ -101,13 +101,13 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected static double FallBack_A_1 = 0.869;//1.25;//0.97;//2.0;
     protected static double FallBack_A_2 = 4.682;//0.81;//1.5;
     protected static double FallBack_EmptySpeed = 1.02265769054586;
-    protected static double FallBack_PERSONAL_SPACE = 2.0 * 0.522;//0.75;//0.8;
+    protected static double FallBack_PersonalSpace = 2.0 * 0.522;//0.75;//0.8;
 
     protected double A_0 = FallBack_A_0 ;
     protected double A_1 = FallBack_A_1 ;
     protected double A_2 = FallBack_A_2 ;
     protected double emptySpeed = FallBack_EmptySpeed;
-    protected double PERSONAL_SPACE = FallBack_PERSONAL_SPACE ;
+    protected double personalSpace = FallBack_PersonalSpace ;
 
     /* 同方向/逆方向のレーンでの単位距離
      * 0.7 だとほとんど進まなくなる。
@@ -116,8 +116,8 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
     protected static double FallBack_WidthUnit_SameLane = 0.9 ; //0.7;
     protected static double FallBack_WidthUnit_OtherLane = 0.9 ; //0.7;
 
-    protected double WidthUnit_SameLane = FallBack_WidthUnit_SameLane ;
-    protected double WidthUnit_OtherLane = FallBack_WidthUnit_OtherLane ;
+    protected double widthUnit_SameLane = FallBack_WidthUnit_SameLane ;
+    protected double widthUnit_OtherLane = FallBack_WidthUnit_OtherLane ;
 
     /* [2015.01.29 I.Noda]
      *以下は、strait model で使われる。
@@ -130,7 +130,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * 対抗流から過大な力を受け、全く抜け出せなくなる。
      */
     protected static double FallBack_InsensitiveDistanceInCounterFlow =
-        FallBack_PERSONAL_SPACE * 0.5 ;
+        FallBack_PersonalSpace * 0.5 ;
 
     protected double InsensitiveDistanceInCounterFlow =
         FallBack_InsensitiveDistanceInCounterFlow ;
@@ -660,7 +660,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         /* [2015.01.10 I.Noda]
          * 余裕を持って探索するため、長めにとってみる。
          */
-        double maxDistance = (PERSONAL_SPACE + emptySpeed) * (time_scale + 1.0) ;
+        double maxDistance = (personalSpace + emptySpeed) * (time_scale + 1.0) ;
 
         //前方のエージェントを探している場所
         Place workingPlace = currentPlace.duplicate() ;
@@ -773,7 +773,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double totalForce = 0.0 ;
 
         //探す範囲
-        double maxDistance = (PERSONAL_SPACE + emptySpeed) * (time_scale + 1.0) ;
+        double maxDistance = (personalSpace + emptySpeed) * (time_scale + 1.0) ;
 
         //作業用の場所と経路計画
         Place workingPlace = currentPlace.duplicate() ;
@@ -808,7 +808,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     count++ ;
                     double dx = agentPos - relativePos ;
                     double dy =
-                        (WidthUnit_SameLane *
+                        (widthUnit_SameLane *
                          ((laneWidth - (count % laneWidth)) % laneWidth)) ;
                     double force = calcSocialForceToHeading(dx,dy) ;
                     totalForce += force ;
@@ -835,7 +835,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                     countOther++ ;
                     double dx = agentPos - relativePos ;
                     double dy =
-                        WidthUnit_OtherLane *
+                        widthUnit_OtherLane *
                         (((laneWidthOther - (countOther % laneWidthOther))
                           % laneWidthOther) + 1) ;
                     double force = calcSocialForceToHeading(dx,dy) ;
@@ -864,7 +864,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * @return 力
      */
     protected double calcSocialForce(double dist) {
-        return - A_1  * Math.exp(A_2 * (PERSONAL_SPACE - dist)) ;
+        return - A_1  * Math.exp(A_2 * (personalSpace - dist)) ;
     }
 
     //------------------------------------------------------------
@@ -1039,7 +1039,6 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
         MapLink way = null;
-        MapLink way_second = null;
 
         MapLinkTable way_samecost = null;
 
@@ -1090,17 +1089,14 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
             way = way_samecost.get(random.nextInt(way_samecost.size())) ;
         }
 
-        if (way == null) {
-            way = way_second;
-        }
         backupSituationForSaneNavigationFromNodeAfter(way) ;
 
-        if (way == null) {
-            return null;
+        if (way != null) {
+            navigation_reason
+                .add("\n -> chose")
+                .add(way.getOther(passingPlace.getHeadingNode())) ;
         }
 
-		navigation_reason.add("\n -> chose")
-            .add(way.getOther(passingPlace.getHeadingNode())) ;
         return way;
     }
 
