@@ -40,7 +40,7 @@ import javax.swing.table.TableColumnModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Editor.AgentFactory;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -77,8 +77,8 @@ public class AgentPanel extends JPanel
             switch(col) {
             case 0:
             {
-                if (agent instanceof RunningAroundPerson) {
-                    RunningAroundPerson rp = (RunningAroundPerson)agent;
+                if (agent instanceof WalkAgent) {
+                    WalkAgent rp = (WalkAgent)agent;
                     return rp.getGoal();
                 }
                 return "(NO GOAL)";
@@ -93,8 +93,8 @@ public class AgentPanel extends JPanel
             }
             case 3:
             {
-                if (agent instanceof RunningAroundPerson) {
-                    RunningAroundPerson rp = (RunningAroundPerson)agent;
+                if (agent instanceof WalkAgent) {
+                    WalkAgent rp = (WalkAgent)agent;
                     StringBuffer route_string = new StringBuffer(); 
                     for (Term via : rp.getPlannedRoute()) {
                         route_string.append("," + via);

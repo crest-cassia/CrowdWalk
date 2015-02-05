@@ -25,7 +25,7 @@ import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -888,10 +888,10 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         return networkMap;
     }
 
-    public void setSpeedCalculationModel(RunningAroundPerson
+    public void setSpeedCalculationModel(WalkAgent
             .SpeedCalculationModel _model) {
         for (AgentBase agent : agentsCache) {
-            RunningAroundPerson rap = (RunningAroundPerson) agent;
+            WalkAgent rap = (WalkAgent) agent;
             rap.setSpeedCalculationModel(_model);
         }
     }

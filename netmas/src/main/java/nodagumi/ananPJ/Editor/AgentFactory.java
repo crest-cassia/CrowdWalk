@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;

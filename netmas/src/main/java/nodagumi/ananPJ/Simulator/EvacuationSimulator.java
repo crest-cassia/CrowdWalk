@@ -24,7 +24,7 @@ import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -902,7 +902,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                             new FileOutputStream(fileLog, false) , "utf-8")),
                     true);
             for (AgentBase agent : agents) {
-                RunningAroundPerson rap = (RunningAroundPerson) agent;
+                WalkAgent rap = (WalkAgent) agent;
                 // agent log format:
                 // agent,ID,evacuated,speed,density,position
                 writer.write("agent," + rap.ID + "," + rap.isEvacuated() +
@@ -992,7 +992,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             if (agent.getSpeed() == 0.) {
                 // System.err.println("\tanget: " + agent.ID + ", damage: " +
                         // agent.currentExposureAmount + ", density: " +
-                        // ((RunningAroundPerson) agent).getDensity());
+                        // ((WalkAgent) agent).getDensity());
                 if (agent.currentExposureAmount >= 10.) {
                     dszn += 1;
                 }

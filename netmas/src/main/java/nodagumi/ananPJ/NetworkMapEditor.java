@@ -62,7 +62,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.MissingOptionException;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
+import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.Editor.EditorPanel3D;
 import nodagumi.ananPJ.Editor.Panel.AgentPanel;

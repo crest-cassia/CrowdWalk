@@ -41,7 +41,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -109,9 +109,9 @@ public class MapLink extends OBMapPart implements Serializable {
         if (!b) return;
 
         for (AgentBase agent : getAgents()) {
-            RunningAroundPerson rp = (RunningAroundPerson)agent;
-            rp.setGoal(SpecialTerm.Emergency);
-            rp.renavigate();
+            agent.setGoal(SpecialTerm.Emergency);
+            WalkAgent wagent = (WalkAgent)agent;
+            wagent.renavigate();
         }
     }
     public boolean getEmergency() { return emergency; }
@@ -472,8 +472,8 @@ public class MapLink extends OBMapPart implements Serializable {
 
         /* emergency mode? */
         if (getEmergency() 
-                && agent instanceof RunningAroundPerson) {
-            RunningAroundPerson rp = (RunningAroundPerson) agent;
+                && agent instanceof WalkAgent) {
+            WalkAgent rp = (WalkAgent) agent;
             if (!rp.getGoal().equals(SpecialTerm.Emergency)) {
                 rp.setGoal(SpecialTerm.Emergency) ;
                 rp.renavigate();

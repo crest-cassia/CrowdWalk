@@ -63,8 +63,8 @@ import javax.vecmath.Vector3d;
 import org.w3c.dom.Document;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
-import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
+import nodagumi.ananPJ.Agents.WalkAgent;
+import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -539,7 +539,7 @@ public class AgentHandler implements Serializable {
                 buff.append(agent.accumulatedExposureAmount); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
 
-                buff.append(((RunningAroundPerson)agent).getNextCandidateString());
+                buff.append(((WalkAgent)agent).getNextCandidateString());
             }
             individualPedestriansLogger.info(buff.toString());
         }
@@ -730,7 +730,7 @@ public class AgentHandler implements Serializable {
         int count_all = 0, count_evacuated = 0;
         for (AgentBase ea : getAgents()) {
             count_all++;
-            RunningAroundPerson rp = (RunningAroundPerson)ea;
+            WalkAgent rp = (WalkAgent)ea;
             each_level[rp.getTriage()]++;
             double t = rp.finishedTime;
             if (t == 0.0) continue;
@@ -818,7 +818,7 @@ public class AgentHandler implements Serializable {
             for (AgentBase agent : agents) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
-                buff.append(((RunningAroundPerson)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
+                buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
                 buff.append(model.getTimeScale()); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
@@ -1152,8 +1152,8 @@ public class AgentHandler implements Serializable {
             pw.print("generated," +
                     agent.agentNumber + "," +
                     agent.getClass().getSimpleName());
-            if (agent instanceof RunningAroundPerson) {
-                for (Term route : ((RunningAroundPerson)agent).getPlannedRoute()) {
+            if (agent instanceof WalkAgent) {
+                for (Term route : ((WalkAgent)agent).getPlannedRoute()) {
                     pw.print("," + route);
                 }
             }

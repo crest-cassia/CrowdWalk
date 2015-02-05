@@ -17,8 +17,8 @@ import java.util.Map;
 import net.arnx.jsonic.JSON ;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
+import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Agents.AwaitAgent;
 import nodagumi.ananPJ.Agents.*;
 
@@ -43,7 +43,7 @@ public abstract class GenerateAgent implements Serializable {
      * デフォルトのエージェント登録
      */
     static {
-        registerAgentClass(RunningAroundPerson.class) ;
+        registerAgentClass(WalkAgent.class) ;
         registerAgentClass(AwaitAgent.class) ;
         registerAgentClass(NaiveAgent.class) ;
         registerAgentClass(CapriciousAgent.class) ;
@@ -364,7 +364,7 @@ public abstract class GenerateAgent implements Serializable {
 
             agent.generatedTime = tick;
             agent.displayMode = model.getDisplayMode();
-            ((RunningAroundPerson) agent).setSpeedCalculationModel(
+            ((WalkAgent) agent).setSpeedCalculationModel(
                 speed_model);
             agent.setConfigLine(configLine);
             agents.add(agent);
@@ -636,7 +636,7 @@ class GenerateAgentFromNode extends GenerateAgent {
     /**
      * エージェントを初期位置に置く。 (obsolete)
      * [2015.01.10 I.Noda]
-     * おそらく、RunningAroundPerson あたりから取ってきた、古いコード。
+     * おそらく、WalkAgent あたりから取ってきた、古いコード。
      * 効率悪く、意味不明の操作が多い。
      * 上記の適宜に置き換え
      */

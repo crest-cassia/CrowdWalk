@@ -31,7 +31,7 @@ import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.NetmasTimer;
-import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
+import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
 
 public class SimulationLauncher extends BasicSimulationLauncher

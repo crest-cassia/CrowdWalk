@@ -29,7 +29,7 @@ import nodagumi.ananPJ.misc.RoutePlan;
 
 import nodagumi.Itk.*;
 
-public class AwaitAgent extends RunningAroundPerson
+public class AwaitAgent extends WalkAgent
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
 

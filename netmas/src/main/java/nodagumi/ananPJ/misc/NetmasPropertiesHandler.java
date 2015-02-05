@@ -11,8 +11,8 @@ import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
-import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
+import nodagumi.ananPJ.Agents.WalkAgent;
+import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Pollution;

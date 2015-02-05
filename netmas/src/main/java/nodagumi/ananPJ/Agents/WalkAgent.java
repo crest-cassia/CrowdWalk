@@ -60,7 +60,7 @@ import nodagumi.Itk.*;
  *  0,     GREEN,  100% #Normal
  */
 
-public class RunningAroundPerson extends AgentBase implements Serializable {
+public class WalkAgent extends AgentBase implements Serializable {
     private static final long serialVersionUID = -6313717005123377059L;
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -68,7 +68,7 @@ public class RunningAroundPerson extends AgentBase implements Serializable {
      * クラス名。
      * ClassFinder でも参照できるようにしておく。
      */
-    public static String typeString = "RunningAroundPerson" ;
+    public static String typeString = "WalkAgent" ;
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -218,13 +218,13 @@ public class RunningAroundPerson extends AgentBase implements Serializable {
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
-    public RunningAroundPerson() {} ;
+    public WalkAgent() {} ;
     
     //------------------------------------------------------------
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
-    public RunningAroundPerson(int _id, Random _random) {
+    public WalkAgent(int _id, Random _random) {
         init(_id, _random) ;
     }
 
@@ -232,7 +232,7 @@ public class RunningAroundPerson extends AgentBase implements Serializable {
     /**
      * constractor
      */
-    public RunningAroundPerson(int _id,
+    public WalkAgent(int _id,
             double _emptySpeed,
             double _confidence,
             double _maxAllowedDamage,
@@ -300,7 +300,7 @@ public class RunningAroundPerson extends AgentBase implements Serializable {
 	 */
     @Override
     public AgentBase copyAndInitializeBody(AgentBase _r) {
-        RunningAroundPerson r = (RunningAroundPerson)_r ;
+        WalkAgent r = (WalkAgent)_r ;
         super.copyAndInitializeBody(r) ;
         r.emptySpeed = emptySpeed;
 
@@ -1309,12 +1309,12 @@ public class RunningAroundPerson extends AgentBase implements Serializable {
         implements ChangeListener, ItemListener {
             private static final long serialVersionUID = -2502949408346819443L;
 
-            RunningAroundPerson agent;
+            WalkAgent agent;
 
             JSpinner time, speed;
             JComboBox navigationMode;
             public ParamSettingPanel(NetworkMap _networkMap,
-                    RunningAroundPerson _agent) {
+                    WalkAgent _agent) {
                 super();
                 setLayout(new GridLayout(3, 2));
                 agent = _agent;

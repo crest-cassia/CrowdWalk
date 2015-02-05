@@ -73,7 +73,7 @@ import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkPanel3D;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.RunningAroundPerson;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
@@ -1018,7 +1018,7 @@ public class SimulationPanel3D extends NetworkPanel3D
             case 0://GREEN
             {
                 if (menu_item_agent_color_speed.getState()) {
-					//if (!((RunningAroundPerson)agent).isPassedNode()){
+					//if (!((WalkAgent)agent).isPassedNode()){
 					/* [2015.01.08 I.Noda]
 					 * isPassedNode は常に true しか返さない。
 					 * また、このメソッドはもとから削除した。

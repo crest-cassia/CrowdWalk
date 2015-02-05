@@ -10,7 +10,7 @@ import org.apache.commons.cli.*;
 
 import nodagumi.ananPJ.*;
 import nodagumi.ananPJ.Agents.*;
-import nodagumi.ananPJ.Agents.RunningAroundPerson.*;
+import nodagumi.ananPJ.Agents.WalkAgent.*;
 import nodagumi.ananPJ.Simulator.*;
 import nodagumi.ananPJ.misc.*;
 import nodagumi.ananPJ.misc.CommunicationHandler.*;
