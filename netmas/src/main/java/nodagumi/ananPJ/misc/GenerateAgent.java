@@ -296,7 +296,7 @@ public abstract class GenerateAgent implements Serializable {
         return time > start_time + duration && generated >= total;
     }
 
-    abstract protected void place_agent(AwaitAgent agent);
+    abstract protected void place_agent(AgentBase agent);
 
     /* [2014.12.24 I.Noda] should fixed
      * 以下のアルゴリズム、正確に正しく total のエージェントを生成しない
@@ -349,9 +349,9 @@ public abstract class GenerateAgent implements Serializable {
              * 以下は、AwaitAgent の代わりに、
              * NaiveAgent にしたい。
              */
-            AwaitAgent agent = null;
+            AgentBase agent = null;
             try {
-                agent = (AwaitAgent)newAgentByName(agentClassName) ;
+                agent = newAgentByName(agentClassName) ;
                 agent.init(model.getMap().assignUniqueAgentId(), random);
                 if(agentConf != null)
                     agent.initByConf(agentConf) ;
@@ -545,7 +545,7 @@ class GenerateAgentFromLink extends GenerateAgent {
     }
 
     @Override
-    protected void place_agent(AwaitAgent agent) {
+    protected void place_agent(AgentBase agent) {
         agent.placeAtRandomPosition(start_link) ;
         //start_link.agentEnters(agent);
     }
@@ -629,7 +629,7 @@ class GenerateAgentFromNode extends GenerateAgent {
      * エージェントを初期位置に置く。
      */
     @Override
-    protected void place_agent(AwaitAgent agent) {
+    protected void place_agent(AgentBase agent) {
         agent.place(null, start_node, 0.0) ;
     }
     //------------------------------------------------------------
@@ -640,7 +640,7 @@ class GenerateAgentFromNode extends GenerateAgent {
      * 効率悪く、意味不明の操作が多い。
      * 上記の適宜に置き換え
      */
-    protected void place_agent_obsolete(AwaitAgent agent) {
+    protected void place_agent_obsolete(AgentBase agent) {
         /*
          */
         MapLinkTable way_candidates = start_node.getPathways(); 
