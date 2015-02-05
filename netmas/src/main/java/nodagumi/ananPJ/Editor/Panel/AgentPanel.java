@@ -78,8 +78,8 @@ public class AgentPanel extends JPanel
             case 0:
             {
                 if (agent instanceof WalkAgent) {
-                    WalkAgent rp = (WalkAgent)agent;
-                    return rp.getGoal();
+                    WalkAgent wagent = (WalkAgent)agent;
+                    return wagent.getGoal();
                 }
                 return "(NO GOAL)";
             }
@@ -94,9 +94,9 @@ public class AgentPanel extends JPanel
             case 3:
             {
                 if (agent instanceof WalkAgent) {
-                    WalkAgent rp = (WalkAgent)agent;
+                    WalkAgent wagent = (WalkAgent)agent;
                     StringBuffer route_string = new StringBuffer(); 
-                    for (Term via : rp.getPlannedRoute()) {
+                    for (Term via : wagent.getPlannedRoute()) {
                         route_string.append("," + via);
                     }
                     return route_string.toString();

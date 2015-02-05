@@ -341,14 +341,6 @@ public abstract class GenerateAgent implements Serializable {
         /* [I.Noda] ここで Agent 生成? */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
-            /*
-            AwaitAgent agent = new AwaitAgent(model.getMap().assignUniqueAgentId(),
-                    random);
-            */
-            /* [2014.12.24 I.Noda] should fix
-             * 以下は、AwaitAgent の代わりに、
-             * NaiveAgent にしたい。
-             */
             AgentBase agent = null;
             try {
                 agent = newAgentByName(agentClassName) ;

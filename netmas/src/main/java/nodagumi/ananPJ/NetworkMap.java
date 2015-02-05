@@ -891,8 +891,8 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     public void setSpeedCalculationModel(WalkAgent
             .SpeedCalculationModel _model) {
         for (AgentBase agent : agentsCache) {
-            WalkAgent rap = (WalkAgent) agent;
-            rap.setSpeedCalculationModel(_model);
+            WalkAgent wagent = (WalkAgent) agent;
+			wagent.setSpeedCalculationModel(_model);
         }
     }
 

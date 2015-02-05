@@ -539,7 +539,7 @@ public class AgentHandler implements Serializable {
                 buff.append(agent.accumulatedExposureAmount); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
 
-                buff.append(((WalkAgent)agent).getNextCandidateString());
+                buff.append(agent.getNextCandidateString());
             }
             individualPedestriansLogger.info(buff.toString());
         }
@@ -728,11 +728,10 @@ public class AgentHandler implements Serializable {
         int[] each_level = new int[4];
         double finish_total = 0.0, finish_max = Double.NEGATIVE_INFINITY;
         int count_all = 0, count_evacuated = 0;
-        for (AgentBase ea : getAgents()) {
+        for (AgentBase agent : getAgents()) {
             count_all++;
-            WalkAgent rp = (WalkAgent)ea;
-            each_level[rp.getTriage()]++;
-            double t = rp.finishedTime;
+            each_level[agent.getTriage()]++;
+            double t = agent.finishedTime;
             if (t == 0.0) continue;
             count_evacuated++;
             finish_total += t;
@@ -1152,10 +1151,8 @@ public class AgentHandler implements Serializable {
             pw.print("generated," +
                     agent.agentNumber + "," +
                     agent.getClass().getSimpleName());
-            if (agent instanceof WalkAgent) {
-                for (Term route : ((WalkAgent)agent).getPlannedRoute()) {
-                    pw.print("," + route);
-                }
+            for (Term route : agent.getPlannedRoute()) {
+                pw.print("," + route);
             }
             pw.println();
         }
