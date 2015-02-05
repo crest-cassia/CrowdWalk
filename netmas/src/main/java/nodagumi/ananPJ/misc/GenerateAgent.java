@@ -16,7 +16,7 @@ import java.util.Map;
 
 import net.arnx.jsonic.JSON ;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.WaitRunningAroundPerson;
@@ -74,10 +74,10 @@ public abstract class GenerateAgent implements Serializable {
     /**
      * エージェントクラスのインスタンス生成（ゼロ引数で）
      */
-    static public EvacuationAgent newAgentByName(String agentClassName) {
+    static public AgentBase newAgentByName(String agentClassName) {
         try {
-            EvacuationAgent agent =
-                (EvacuationAgent)classFinder.newByName(agentClassName) ;
+            AgentBase agent =
+                (AgentBase)classFinder.newByName(agentClassName) ;
             return agent ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
@@ -311,7 +311,7 @@ public abstract class GenerateAgent implements Serializable {
             double timeScale,
             double tick,
             EvacuationModelBase model,
-            List<EvacuationAgent> agents) {
+            List<AgentBase> agents) {
         if (!enabled) return;
 
         if (finished(time)) {

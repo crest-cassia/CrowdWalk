@@ -17,7 +17,7 @@ import java.io.Serializable;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.Link.Lift;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
@@ -82,7 +82,7 @@ public class SimulatorFrame2D extends JFrame
 
 		    	final double widthRatio = 160 / (maxY - minY);
 		    	final double heightRatio = 640 / (maxHeight - minHeight);
-		    	for (EvacuationAgent agent : model.getAgents()) {
+		    	for (AgentBase agent : model.getAgents()) {
 		    		if (agent.isEvacuated()) continue;
 		    		final Point2D pos = agent.getPos();
 		    		final double height = agent.getHeight();
@@ -129,7 +129,7 @@ public class SimulatorFrame2D extends JFrame
 		    		node.draw(g, true, false, false);
 		    	}
 				System.out.println("step3");
-		    	for (EvacuationAgent agent : model.getAgents()) {
+		    	for (AgentBase agent : model.getAgents()) {
 		    		agent.draw(g, true);
 		    	}
 				System.out.println("step4)");

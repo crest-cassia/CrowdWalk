@@ -42,7 +42,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.misc.Snapshot;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
 
@@ -573,7 +573,7 @@ public class MapNode extends OBMapPart implements Serializable {
      * @param time: 現在時刻
      * @return 規制が適用されたら true
      */
-    public boolean applyRestrictionToAgent(EvacuationAgent agent,
+    public boolean applyRestrictionToAgent(AgentBase agent,
                                               double time) {
         boolean applied = false ;
         /* 分担制御 */

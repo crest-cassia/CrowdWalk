@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -388,13 +388,13 @@ public class MapPartGroup extends OBNode implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public ArrayList<EvacuationAgent> getChildAgents() {
-        ArrayList<EvacuationAgent> children = new ArrayList<EvacuationAgent>();
+    public ArrayList<AgentBase> getChildAgents() {
+        ArrayList<AgentBase> children = new ArrayList<AgentBase>();
         Enumeration<OBNode> all_children = children();
         while (all_children.hasMoreElements()) {
             OBNode node = all_children.nextElement();
             if (node.getNodeType() == OBNode.NType.AGENT) {
-                children.add((EvacuationAgent)node);
+                children.add((AgentBase)node);
             }
         }
         return children;

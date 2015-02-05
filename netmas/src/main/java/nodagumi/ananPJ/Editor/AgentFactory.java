@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -32,7 +32,7 @@ public class AgentFactory extends JPanel implements ItemListener,
     JComboBox agentTypeList = null;
     private JPanel paramPanel = null;
 
-    EvacuationAgent agentCandidate = null;
+    AgentBase agentCandidate = null;
     NetworkMapEditor editor = null;
     Random random;
 
@@ -75,7 +75,7 @@ public class AgentFactory extends JPanel implements ItemListener,
         setPreferredSize(new Dimension(300, 220));
     }
 
-    public EvacuationAgent moveAgent(MapLink link, double position) {
+    public AgentBase moveAgent(MapLink link, double position) {
         /* make agent according to the current agent template */
         if (agentCandidate != null) {
 			agentCandidate.place(link, null, position);
@@ -100,7 +100,7 @@ public class AgentFactory extends JPanel implements ItemListener,
         String type = (String)agentTypeList.getSelectedItem();
 
         remove(paramPanel);
-        agentCandidate = EvacuationAgent.createEmptyAgent(type, random);
+        agentCandidate = AgentBase.createEmptyAgent(type, random);
         if (agentCandidate == null) {
             paramPanel = new JPanel();
             paramPanel.add(new JLabel("Not selected"));
@@ -187,7 +187,7 @@ public class AgentFactory extends JPanel implements ItemListener,
             MapLink link = linksToPlace.get(lId);
             //double position = Math.random() * link.length;
             double position = random.nextDouble() * link.length;
-            EvacuationAgent agent = moveAgent(link, position);
+            AgentBase agent = moveAgent(link, position);
             editor.getMap().addAgent((MapPartGroup)link.getParent(), agent.copyAndInitialize());
         }
         JOptionPane.showMessageDialog(null,
@@ -263,7 +263,7 @@ public class AgentFactory extends JPanel implements ItemListener,
         for (MapLink link : linksToPlace) {
             for (int i = 0; i < numAgents; ++i) {
                 double position = (i + 1) * link.length / (numAgents + 1);
-                EvacuationAgent agent = moveAgent(link, position);
+                AgentBase agent = moveAgent(link, position);
                 editor.getMap().addAgent((MapPartGroup)link.getParent(), agent.copyAndInitialize());
             }
         }

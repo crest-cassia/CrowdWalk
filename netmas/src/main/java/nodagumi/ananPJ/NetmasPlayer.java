@@ -39,7 +39,7 @@ import org.apache.commons.cli.MissingOptionException;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetmasCuiSimulator;
 import nodagumi.ananPJ.SimulationLauncher;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;

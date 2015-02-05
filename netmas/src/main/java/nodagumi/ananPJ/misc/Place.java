@@ -21,7 +21,7 @@ import java.awt.geom.Point2D;
 
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
 
@@ -667,7 +667,7 @@ public class Place {
     /**
      * レーン取得
      */
-    public ArrayList<EvacuationAgent> getLane() {
+    public ArrayList<AgentBase> getLane() {
         return getLink().getLane(getDirectionValue()) ;
     }
 
@@ -675,7 +675,7 @@ public class Place {
     /**
      * 対向レーン取得
      */
-    public ArrayList<EvacuationAgent> getOtherLane() {
+    public ArrayList<AgentBase> getOtherLane() {
         return getLink().getLane(-getDirectionValue()) ;
     }
 
@@ -700,7 +700,7 @@ public class Place {
      * レーンの中での順序
      * 進んでいないほど index が小さいとする。
      */
-    public int getIndexInLane(EvacuationAgent agent) {
+    public int getIndexInLane(AgentBase agent) {
         return Collections.binarySearch(getLane(), agent) ;
     }
 
@@ -709,7 +709,7 @@ public class Place {
      * レーンの中での順序
      * 進んでいるほど index が小さいとする。
      */
-    public int getIndexFromHeadingInLane(EvacuationAgent agent) {
+    public int getIndexFromHeadingInLane(AgentBase agent) {
         return getLane().size() - getIndexInLane(agent) - 1 ;
     }
 

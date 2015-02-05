@@ -40,7 +40,7 @@ import javax.swing.event.ChangeListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
@@ -97,7 +97,7 @@ public class MapLink extends OBMapPart implements Serializable {
     static protected double MAX_INPUT = 1.47; 
 
     /* place holder for values used in simulation */
-    protected ArrayList<EvacuationAgent> agents;
+    protected ArrayList<AgentBase> agents;
     public int displayMode = 0;
     protected double timeScale = 1.0;
     private boolean nodes_are_set = false;
@@ -108,7 +108,7 @@ public class MapLink extends OBMapPart implements Serializable {
         emergency = b;
         if (!b) return;
 
-        for (EvacuationAgent agent : getAgents()) {
+        for (AgentBase agent : getAgents()) {
             RunningAroundPerson rp = (RunningAroundPerson)agent;
             rp.setGoal(SpecialTerm.Emergency);
             rp.renavigate();
@@ -155,7 +155,7 @@ public class MapLink extends OBMapPart implements Serializable {
             double _length, double _width) {
         super(_id);
 
-        agents = new ArrayList<EvacuationAgent>();
+        agents = new ArrayList<AgentBase>();
         length = _length;
         width = _width;
 
@@ -209,7 +209,7 @@ public class MapLink extends OBMapPart implements Serializable {
 
         /* calculate the  total triage level */
         total_agent_triage_level = 0; 
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             total_agent_triage_level += agent.getTriage();
         }
     }
@@ -249,14 +249,14 @@ public class MapLink extends OBMapPart implements Serializable {
         return true;
     }
 
-    private ArrayList<EvacuationAgent> forwardLane =
-        new ArrayList<EvacuationAgent>() ;
-    private ArrayList<EvacuationAgent> backwardLane =
-        new ArrayList<EvacuationAgent>() ;
+    private ArrayList<AgentBase> forwardLane =
+        new ArrayList<AgentBase>() ;
+    private ArrayList<AgentBase> backwardLane =
+        new ArrayList<AgentBase>() ;
     public void setup_lanes() {
         forwardLane.clear() ;
         backwardLane.clear() ;
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             if (agent.isForwardDirection()) {
                 forwardLane.add(agent);
             } else {
@@ -271,7 +271,7 @@ public class MapLink extends OBMapPart implements Serializable {
         //Collections.sort(backwardLane);
     }
 
-    private void add_agent_to_lane(EvacuationAgent agent) {
+    private void add_agent_to_lane(AgentBase agent) {
         if (agent.isForwardDirection()) {
             forwardLane.add(agent);
             Collections.sort(forwardLane);    
@@ -282,7 +282,7 @@ public class MapLink extends OBMapPart implements Serializable {
     }
 
 
-    public ArrayList<EvacuationAgent> getLane(double speed) {
+    public ArrayList<AgentBase> getLane(double speed) {
         if (speed > 0) return forwardLane;
         else return backwardLane;
     }
@@ -460,7 +460,7 @@ public class MapLink extends OBMapPart implements Serializable {
                 .getHeight()) * position / length;
     }
 
-    public void agentEnters(EvacuationAgent agent) {
+    public void agentEnters(AgentBase agent) {
         agents.add(agent);
         /* [2015.01.09 I.Noda]
          * 以下の処理はおそらく無駄。
@@ -481,7 +481,7 @@ public class MapLink extends OBMapPart implements Serializable {
         }
     }
 
-    public void agentExits (EvacuationAgent agent) {
+    public void agentExits (AgentBase agent) {
         assert(agents.contains(agent));
         agents.remove(agent);
         if (! forwardLane.remove(agent)) {
@@ -841,7 +841,7 @@ public class MapLink extends OBMapPart implements Serializable {
         dialog.setVisible(true);
     }
 
-    public ArrayList<EvacuationAgent> getAgents() {
+    public ArrayList<AgentBase> getAgents() {
         return agents;
     }
 
@@ -1185,7 +1185,7 @@ public class MapLink extends OBMapPart implements Serializable {
      * @param time: 現在時刻
      * @return 規制が適用されたら true
      */
-    public boolean applyRestrictionToAgent(EvacuationAgent agent,
+    public boolean applyRestrictionToAgent(AgentBase agent,
                                            double time) {
         boolean applied = false ;
         /* 分断制御 */
@@ -1206,7 +1206,7 @@ public class MapLink extends OBMapPart implements Serializable {
      * @return 速度
      */
     public double calcEmptySpeedForAgent(double baseSpeed,
-                                         EvacuationAgent agent,
+                                         AgentBase agent,
                                          double time) {
         /* 階段における処理 */
         /* [2015.01.10 I.Noda] todo

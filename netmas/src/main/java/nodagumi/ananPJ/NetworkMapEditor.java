@@ -61,7 +61,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.MissingOptionException;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.Editor.EditorPanel3D;
@@ -454,7 +454,7 @@ public class NetworkMapEditor extends SimulationLauncher
         return networkMap.getLinks();
     }
 
-    public ArrayList<EvacuationAgent> getAgents() {
+    public ArrayList<AgentBase> getAgents() {
         return networkMap.getAgents();
     }
 

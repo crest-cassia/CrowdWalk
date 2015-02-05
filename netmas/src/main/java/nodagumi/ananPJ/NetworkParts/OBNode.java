@@ -39,7 +39,7 @@ import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
 import nodagumi.ananPJ.misc.osmTools.osmGroup;
 import nodagumi.ananPJ.misc.osmTools.osmLink;
 import nodagumi.ananPJ.misc.osmTools.osmNode;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
 
@@ -381,7 +381,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
     /**
      * ゲート（分断制御用交通規制）のチェック
      */
-    public boolean isGateClosed(EvacuationAgent agent, double time) {
+    public boolean isGateClosed(AgentBase agent, double time) {
         for(String gateTag: gateTable.keySet()) {
             GateBase gate = gateTable.get(gateTag) ;
             if(gate.isClosed(agent, time)) return true ;
@@ -454,7 +454,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
          * @param agent: 対象となるエージェント
          * @return デフォルトでは、単にこのゲートが閉じているかどうか
          */
-        public boolean isClosed(EvacuationAgent agent, double time) {
+        public boolean isClosed(AgentBase agent, double time) {
             return isClosed() ;
         }
 
@@ -466,7 +466,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
          * @param agent: 対象となるエージェント
          * @return デフォルトでは、単にこのゲートが閉じているかどうか
          */
-        public boolean isOpened(EvacuationAgent agent, double time) {
+        public boolean isOpened(AgentBase agent, double time) {
             return !isClosed(agent, time) ;
         }
 

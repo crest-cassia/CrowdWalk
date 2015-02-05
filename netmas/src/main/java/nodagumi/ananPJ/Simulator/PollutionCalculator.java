@@ -21,7 +21,7 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3f;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -128,7 +128,7 @@ public class PollutionCalculator implements Serializable {
 
     public void updateNodesLinksAgents(double time,
             NetworkMapBase map,
-            List<EvacuationAgent> agents) {
+            List<AgentBase> agents) {
         //if (debug) System.err.println("PC update: " + time + ", next: " + nextEvent);
 
         if (nextEvent != -1.0 && nextEvent <= time) {
@@ -150,7 +150,7 @@ public class PollutionCalculator implements Serializable {
             }
         }
 
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             if (agent.isEvacuated())
                 continue;
             if (! agent.getCurrentLink().isPolluted()) {

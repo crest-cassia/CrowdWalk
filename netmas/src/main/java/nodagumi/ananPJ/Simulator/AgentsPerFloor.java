@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 
 public class AgentsPerFloor extends JFrame implements Serializable {
@@ -65,12 +65,12 @@ public class AgentsPerFloor extends JFrame implements Serializable {
 		update(model.getAgents());
 	}
 	
-	public void update(List<EvacuationAgent> list) {
+	public void update(List<AgentBase> list) {
 		for (Double height : agentsPerFloor.keySet()) {
 			agentsPerFloor.put(height, 0);
 		}
 
-		for (final EvacuationAgent agent : list) {
+		for (final AgentBase agent : list) {
 			if (agent.isEvacuated()) continue;
 			final double height = agent.getHeight();
 			double minDiff = Double.MAX_VALUE;

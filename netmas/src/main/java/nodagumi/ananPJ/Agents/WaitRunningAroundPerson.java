@@ -117,7 +117,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * 複製操作のメイン
      */
     @Override
-    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+    public AgentBase copyAndInitializeBody(AgentBase _r) {
         WaitRunningAroundPerson r = (WaitRunningAroundPerson)_r ;
         super.copyAndInitializeBody(r) ;
 
@@ -152,7 +152,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * ・対向流が発生すると laneWidth が変化するため均等な間隔にならない事がある。
      */
     protected boolean scatter(double time) {
-        ArrayList<EvacuationAgent> agents = currentPlace.getLane();
+        ArrayList<AgentBase> agents = currentPlace.getLane();
         int laneWidth = currentPlace.getLaneWidth();
         double space = currentPlace.getLinkLength() / ((agents.size() - 1) / laneWidth + 2);
 

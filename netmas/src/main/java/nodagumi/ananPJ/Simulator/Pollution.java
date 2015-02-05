@@ -2,13 +2,13 @@ package nodagumi.ananPJ.Simulator;
 
 import java.util.HashMap;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 
 public abstract class Pollution {
-    public abstract void expose(EvacuationAgent agent, double pollutionLevel);
-    public abstract void effect(EvacuationAgent agent);
-    public abstract int getTriage(EvacuationAgent agent);
-    public abstract boolean finished(EvacuationAgent agent);
+    public abstract void expose(AgentBase agent, double pollutionLevel);
+    public abstract void effect(AgentBase agent);
+    public abstract int getTriage(AgentBase agent);
+    public abstract boolean finished(AgentBase agent);
 
     protected static HashMap<String, Pollution> pollutions = new HashMap<String, Pollution>();
 

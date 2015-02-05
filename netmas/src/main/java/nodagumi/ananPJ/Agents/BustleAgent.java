@@ -88,7 +88,7 @@ public class BustleAgent extends NaiveAgent
     /**
      * 複製操作のメイン
      */
-    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+    public AgentBase copyAndInitializeBody(AgentBase _r) {
         BustleAgent r = (BustleAgent)_r ;
         super.copyAndInitializeBody(r) ;
 	r.bustleWeight = bustleWeight ;

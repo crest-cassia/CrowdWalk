@@ -10,7 +10,7 @@ import org.apache.commons.cli.*;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.NetworkMap;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.BasicSimulationLauncher;
@@ -321,7 +321,7 @@ public class NetmasPropertiesHandler implements Serializable {
             // 早い内に設定ミスをユーザーに知らせるための検査
             String pollutionType = getString("pollution_type", null);
             if (pollutionType != null) {
-                EvacuationAgent.setPollutionType(pollutionType);
+                AgentBase.setPollutionType(pollutionType);
                 Pollution.getInstance(pollutionType + "Pollution");
             }
             getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());

@@ -62,7 +62,7 @@ import javax.vecmath.Vector3d;
 
 import org.w3c.dom.Document;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.NetworkMapBase;
@@ -110,9 +110,9 @@ public class AgentHandler implements Serializable {
     }
 
     private EvacuationModelBase model;
-    private List<EvacuationAgent> agents;
-    private ArrayList<EvacuationAgent> generated_agents;
-    private ArrayList<EvacuationAgent> evacuated_agents;
+    private List<AgentBase> agents;
+    private ArrayList<AgentBase> generated_agents;
+    private ArrayList<AgentBase> evacuated_agents;
 
     static final double defaultAgentSpeed = 1.4;
     static final double defaultAgentConfidence = 1.0;
@@ -159,7 +159,7 @@ public class AgentHandler implements Serializable {
     private Logger agentMovementHistoryLogger = null;
     private Logger individualPedestriansLogger = null;
 
-    public AgentHandler (ArrayList<EvacuationAgent> _agents,
+    public AgentHandler (ArrayList<AgentBase> _agents,
             String generationFile,
             String responseFile,
             String scenario_number,
@@ -175,14 +175,14 @@ public class AgentHandler implements Serializable {
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
 
         /* clone all agents already on board */
-        agents = new ArrayList<EvacuationAgent>();
-        for (final EvacuationAgent agent : _agents) {
+        agents = new ArrayList<AgentBase>();
+        for (final AgentBase agent : _agents) {
             agents.add(agent.copyAndInitialize());
         }
-        generated_agents = new ArrayList<EvacuationAgent>();
-        evacuated_agents = new ArrayList<EvacuationAgent>();
+        generated_agents = new ArrayList<AgentBase>();
+        evacuated_agents = new ArrayList<AgentBase>();
 
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             MapLink link = agent.getCurrentLink(); 
             link.agentEnters(agent);
         }
@@ -234,7 +234,7 @@ public class AgentHandler implements Serializable {
     }
 
     public void prepareForSimulation() {
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             agent.prepareForSimulation(model.getTimeScale());
         }
         // 初回は全リンクを対象とする
@@ -269,8 +269,8 @@ public class AgentHandler implements Serializable {
 
         scenario.advance(time, map) ;
 
-        ArrayList<EvacuationAgent> generated_agents_step = new
-            ArrayList<EvacuationAgent>();
+        ArrayList<AgentBase> generated_agents_step = new
+            ArrayList<AgentBase>();
 
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
@@ -284,7 +284,7 @@ public class AgentHandler implements Serializable {
             agents.addAll(generated_agents_step);
             generated_agents.addAll(generated_agents_step);
             if (effectiveLinksEnabled) {
-                for (EvacuationAgent agent : generated_agents_step) {
+                for (AgentBase agent : generated_agents_step) {
                     if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
                     effectiveLinks.add(agent.getCurrentLink());
                 }
@@ -300,14 +300,14 @@ public class AgentHandler implements Serializable {
         /* the following must be here, as direction etc. are
          * calculated in the methods call above, such as updateAgents.
          */
-        for (EvacuationAgent agent : generated_agents_step) {
+        for (AgentBase agent : generated_agents_step) {
             model.registerAgent(agent);
         }
 
         if (effectiveLinksEnabled) {
             // エージェントが存在するリンクのリストを更新
             effectiveLinks.clear();
-            for (EvacuationAgent agent : agents) {
+            for (AgentBase agent : agents) {
                 if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
                 effectiveLinks.add(agent.getCurrentLink());
             }
@@ -326,7 +326,7 @@ public class AgentHandler implements Serializable {
                 if (factory.enabled) return false;
             }
             boolean existNotFinished = false;
-            for (final EvacuationAgent agent : agents) {
+            for (final AgentBase agent : agents) {
                 if (!agent.finished()) {
                     existNotFinished = true;
                     break;
@@ -340,7 +340,7 @@ public class AgentHandler implements Serializable {
                 return false;
             }
         } else {
-            for (final EvacuationAgent agent : agents) {
+            for (final AgentBase agent : agents) {
                 if (!agent.finished()) return false;
             }
             for (GenerateAgent factory : generate_agent) {
@@ -373,9 +373,9 @@ public class AgentHandler implements Serializable {
         if (true) {
             synchronized (model) {
                 for (MapLink link : effectiveLinksEnabled ? effectiveLinks : model.getLinks()) {
-                    ArrayList<EvacuationAgent> pos_agents = link.getLane(1.0);
+                    ArrayList<AgentBase> pos_agents = link.getLane(1.0);
                     for(int i = 0 ; i < pos_agents.size() ; i++) {
-                        EvacuationAgent agent =
+                        AgentBase agent =
                             (isUsingFrontFirstOrderQueue ?
                              pos_agents.get(pos_agents.size() - i - 1) :
                              pos_agents.get(i)) ;
@@ -383,14 +383,14 @@ public class AgentHandler implements Serializable {
                         agent.preUpdate(time);
                         count += 1;
                     }
-                    ArrayList<EvacuationAgent> neg_agents = link.getLane(-1.0);
+                    ArrayList<AgentBase> neg_agents = link.getLane(-1.0);
                     for (int i = neg_agents.size() - 1; i >= 0; --i) {
-                        EvacuationAgent agent = neg_agents.get(i);
+                        AgentBase agent = neg_agents.get(i);
                         agent.preUpdate(time);
                         count += 1;
                     }
                     /*
-                    for (EvacuationAgent agent : link.getAgents()) {
+                    for (AgentBase agent : link.getAgents()) {
                         agent.preUpdate(time);
                         count += 1;
                     }
@@ -429,7 +429,7 @@ public class AgentHandler implements Serializable {
          * isUsingFrontFirstOrderQueue を参照する。
          */
         for(int k = 0 ; k < agents.size() ; k++) {
-            EvacuationAgent agent =
+            AgentBase agent =
                 (isUsingFrontFirstOrderQueue ?
                  agents.get(agents.size() - k - 1) :
                  agents.get(k)) ;
@@ -487,7 +487,7 @@ public class AgentHandler implements Serializable {
 
     public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
 
-    private void logIndividualPedestrians(double time, EvacuationAgent agent) {
+    private void logIndividualPedestrians(double time, AgentBase agent) {
         if (individualPedestriansLogger != null) {
             StringBuilder buff = new StringBuilder();
             if (agent.isEvacuated()) {
@@ -554,7 +554,7 @@ public class AgentHandler implements Serializable {
     }
 
     private void updateAgentViews() {
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             if (agent.isEvacuated())
                 continue;
             agent.updateViews();
@@ -569,7 +569,7 @@ public class AgentHandler implements Serializable {
         evacuatedUsedLiftAgentCount = 0;
         evacuatedNoLiftAgentCount = 0;
 
-        for (final EvacuationAgent agent : agents) {
+        for (final AgentBase agent : agents) {
             if (agent.isEvacuated()) {
                 evacuatedAgentCount++;
             } else {
@@ -581,7 +581,7 @@ public class AgentHandler implements Serializable {
 
     public void dumpAgentCurrent(PrintStream out) {
         for (int i = 0; i < agents.size(); ++i) {
-            EvacuationAgent agent = agents.get(i);
+            AgentBase agent = agents.get(i);
             if (!agent.finished()) {
                 out.printf("%d,%f,%f,%f,%f\n",
                         i,
@@ -594,7 +594,7 @@ public class AgentHandler implements Serializable {
     }
 
     public void dumpAgentResult(PrintStream out) {
-        for (final EvacuationAgent agent : agents) {
+        for (final AgentBase agent : agents) {
             agent.dumpResult(out);
         }
     }
@@ -636,7 +636,7 @@ public class AgentHandler implements Serializable {
     }
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             Term goal_tag = agent.getGoal();
             if (goal_tag != null &&
                 !all_goal_tags.contains(goal_tag.getString())) {
@@ -684,7 +684,7 @@ public class AgentHandler implements Serializable {
         return maxDamage;
     }
 
-    public final List<EvacuationAgent> getAgents() {
+    public final List<AgentBase> getAgents() {
         return agents;
     }
 
@@ -728,7 +728,7 @@ public class AgentHandler implements Serializable {
         int[] each_level = new int[4];
         double finish_total = 0.0, finish_max = Double.NEGATIVE_INFINITY;
         int count_all = 0, count_evacuated = 0;
-        for (EvacuationAgent ea : getAgents()) {
+        for (AgentBase ea : getAgents()) {
             count_all++;
             RunningAroundPerson rp = (RunningAroundPerson)ea;
             each_level[rp.getTriage()]++;
@@ -815,7 +815,7 @@ public class AgentHandler implements Serializable {
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
             writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
-            for (EvacuationAgent agent : agents) {
+            for (AgentBase agent : agents) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((RunningAroundPerson)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
@@ -1125,7 +1125,7 @@ public class AgentHandler implements Serializable {
         model.getMap().toDOM(doc);
         pw.print(dc.docToString(doc));
 
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             if (agent.isEvacuated()){
                 pw.print("evacuated," + 
                         agent.agentNumber + "," +
@@ -1143,12 +1143,12 @@ public class AgentHandler implements Serializable {
     }
 
     public void dumpStateDiff(PrintWriter pw) {
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             if (agent.isEvacuated()) continue;
             pw.println(agent.toString());
         }
 
-        for (EvacuationAgent agent : generated_agents) {
+        for (AgentBase agent : generated_agents) {
             pw.print("generated," +
                     agent.agentNumber + "," +
                     agent.getClass().getSimpleName());
@@ -1161,7 +1161,7 @@ public class AgentHandler implements Serializable {
         }
         generated_agents.clear();
 
-        for (EvacuationAgent agent : evacuated_agents) {
+        for (AgentBase agent : evacuated_agents) {
             pw.println("evacuated," + agent.agentNumber);
         }
         evacuated_agents.clear();

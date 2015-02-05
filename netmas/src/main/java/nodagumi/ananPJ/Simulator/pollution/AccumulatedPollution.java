@@ -1,6 +1,6 @@
 package nodagumi.ananPJ.Simulator.pollution;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Simulator.Pollution;
 import nodagumi.ananPJ.misc.SpecialTerm;
 import nodagumi.Itk.*;
@@ -23,7 +23,7 @@ public class AccumulatedPollution extends Pollution {
 
     public AccumulatedPollution() {}
 
-    public void expose(EvacuationAgent agent, double pollutionLevel) {
+    public void expose(AgentBase agent, double pollutionLevel) {
         if (! agent.isEvacuated()) {
             agent.currentExposureAmount = pollutionLevel;
             agent.accumulatedExposureAmount += pollutionLevel;
@@ -35,7 +35,7 @@ public class AccumulatedPollution extends Pollution {
     }
 
     // 呼び出し元で speed を更新した後に呼ばれる
-    public void effect(EvacuationAgent agent) {
+    public void effect(AgentBase agent) {
         if (agent.accumulatedExposureAmount >= INCAPACITATED_LEVEL) {
             agent.setSpeed(0.0);
         } else if (agent.accumulatedExposureAmount >= IRRITANT_LEVEL) {
@@ -44,7 +44,7 @@ public class AccumulatedPollution extends Pollution {
     }
 
     /* the state of the agent */
-    public int getTriage(EvacuationAgent agent) {
+    public int getTriage(AgentBase agent) {
         if (agent.accumulatedExposureAmount >= DEADLY_LEVEL)
             return 3;
         else if (agent.accumulatedExposureAmount >= UNBEARABLE_LEVEL)
@@ -55,7 +55,7 @@ public class AccumulatedPollution extends Pollution {
             return 0;
     }
 
-    public boolean finished(EvacuationAgent agent) {
+    public boolean finished(AgentBase agent) {
         return agent.isEvacuated() || getTriage(agent) >= 3;
     }
 }

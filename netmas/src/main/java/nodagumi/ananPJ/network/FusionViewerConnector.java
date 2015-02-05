@@ -42,7 +42,7 @@ public class FusionViewerConnector {
      * @param count simulation step.
      */
     public void saveFusionViewerLog(String dir, double startTime, double time,
-            int count, List<EvacuationAgent> agents) {
+            int count, List<AgentBase> agents) {
         System.err.println("saveFusionViewerLog " + count);
         updateCalendar(cal, time + startTime);
         PrintWriter writer = null;
@@ -74,7 +74,7 @@ public class FusionViewerConnector {
                     true);
             int agentNotFinished = 0;
             for (int i = 0; i < agents.size(); i++) {
-                EvacuationAgent agent = agents.get(i);
+                AgentBase agent = agents.get(i);
                 if (!agent.finished())
                     agentNotFinished += 1;
             }
@@ -82,7 +82,7 @@ public class FusionViewerConnector {
                     fusionViewerLogFormat.format(cal.getTime()), count,
                     agentNotFinished);
             for (int i = 0; i < agents.size(); i++) {
-                EvacuationAgent agent = agents.get(i);
+                AgentBase agent = agents.get(i);
                 if (!agent.finished()) {
                     writer.printf(fusionViewerLogOneLine,
                             agent.ID,
@@ -156,7 +156,7 @@ public class FusionViewerConnector {
     private boolean reconnect = true;
 
     public void sendFusionViewerLog(double startTime, double time, int count,
-            List<EvacuationAgent> agents) {
+            List<AgentBase> agents) {
 
         int len, offset = 0;
         int agentNotFinished = 0;
@@ -166,7 +166,7 @@ public class FusionViewerConnector {
             return;
         }
         for (int i = 0; i < agents.size(); i++) {
-            EvacuationAgent agent = agents.get(i);
+            AgentBase agent = agents.get(i);
             if (!agent.finished())
                 agentNotFinished += 1;
         }
@@ -249,7 +249,7 @@ public class FusionViewerConnector {
         }
         offset = 0;
         for (int i = 0; i < agents.size(); i++) {
-            EvacuationAgent agent = agents.get(i);
+            AgentBase agent = agents.get(i);
             if (!agent.finished()) {
                 float fx = (float) agent.getPos().getX();
                 float fy = (float) agent.getPos().getY() * -1.0f;

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nodagumi.ananPJ.NetworkMap;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
@@ -18,7 +18,7 @@ public interface EvacuationModelBase {
     public NetworkMap getMap();
     public MapLinkTable getLinks();
     public MapNodeTable getNodes();
-    public List<EvacuationAgent> getAgents();
+    public List<AgentBase> getAgents();
     public ArrayList<PollutedArea> getPollutions();
     public AgentHandler getAgentHandler();
 
@@ -29,7 +29,7 @@ public interface EvacuationModelBase {
     public int getScreenshotInterval();
     public void setScreenshotInterval(int t);
 
-    public void registerAgent(EvacuationAgent agent);
+    public void registerAgent(AgentBase agent);
 
     public void start();
     public void pause();

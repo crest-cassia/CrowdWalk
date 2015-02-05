@@ -58,7 +58,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
@@ -122,7 +122,7 @@ public class EditorFrame
     private boolean draggingNode = false;
     private Hover hoverLink = null;
     private MapNode hoverLinkFromCandidate = null;
-    private EvacuationAgent hoverAgent = null;
+    private AgentBase hoverAgent = null;
     private PollutedArea hoverPollution = null;
     // used on placeNodeLink method
     private MapNode initialNode = null;     // first placed node
@@ -667,7 +667,7 @@ public class EditorFrame
         for (MapPartGroup group : getChildGroups()) {
             group.selected = false;
         }
-        for (EvacuationAgent agent : getChildAgents()) {
+        for (AgentBase agent : getChildAgents()) {
             agent.selected = false;
         }
         for (PollutedArea area : getChildPollutedAreas()) {
@@ -1171,7 +1171,7 @@ public class EditorFrame
     
     private boolean updateHoverAgent(Point2D p) {
         /* Find an existing agent */
-        for (final EvacuationAgent agent : getChildAgents()) {
+        for (final AgentBase agent : getChildAgents()) {
             Point2D pos = agent.getPos();
 
             final Double dist = p.distance(pos);
@@ -1190,7 +1190,7 @@ public class EditorFrame
         if (hoverAgent == null) {
             return;
         }
-        EvacuationAgent a = hoverAgent;
+        AgentBase a = hoverAgent;
         if ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) {
             clearSelection();
         }
@@ -1394,7 +1394,7 @@ public class EditorFrame
 
     private int countSelectedAgent() {
         int c = 0;
-        for (final EvacuationAgent agent : getChildAgents()) {
+        for (final AgentBase agent : getChildAgents()) {
             if (agent.selected) c++;
         }
         return c;
@@ -1442,7 +1442,7 @@ public class EditorFrame
     }
     
     private void setAgentAttribute() {
-        EvacuationAgent.showAttributeDialog(editor.getMap(), getChildAgents());
+        AgentBase.showAttributeDialog(editor.getMap(), getChildAgents());
         clearSelection();
         repaint();
     }
@@ -1484,7 +1484,7 @@ public class EditorFrame
     }
 
     private void addAgentRoute() {
-        EvacuationAgent.showRouteDialog(editor.getMap(), getChildAgents());
+        AgentBase.showRouteDialog(editor.getMap(), getChildAgents());
         clearSelection();
         repaint();
     }
@@ -1555,13 +1555,13 @@ public class EditorFrame
 
     private void removeSelectedAgents() {
         editor._setModified(true);
-        ArrayList<EvacuationAgent> agentsToRemove = new ArrayList<EvacuationAgent>();
-        for (final EvacuationAgent agent : getChildAgents()) {
+        ArrayList<AgentBase> agentsToRemove = new ArrayList<AgentBase>();
+        for (final AgentBase agent : getChildAgents()) {
             if (agent.selected) {
                 agentsToRemove.add(agent);
             }
         }
-        for (EvacuationAgent agent : agentsToRemove) {
+        for (AgentBase agent : agentsToRemove) {
             editor.getMap().removeOBNode(current_group, agent, true);
         }
         editor.getAgentPanel().refresh();
@@ -2527,7 +2527,7 @@ public class EditorFrame
                 editor.getLinkPanel().refresh();
                 break;
             case EDIT_AGENT:
-                for (EvacuationAgent agent : getChildAgents()) {
+                for (AgentBase agent : getChildAgents()) {
                     if (selectedArea.contains(agent.getPos())) {
                         agent.selected = true;
                     }
@@ -3011,7 +3011,7 @@ public class EditorFrame
         return current_group.getChildLinks();
     }
 
-    public ArrayList<EvacuationAgent> getChildAgents() {
+    public ArrayList<AgentBase> getChildAgents() {
         return current_group.getChildAgents();
     }
 

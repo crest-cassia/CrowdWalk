@@ -72,7 +72,7 @@ import javax.vecmath.Vector3d;
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkPanel3D;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -105,7 +105,7 @@ public class SimulationPanel3D extends NetworkPanel3D
     public gas_display show_gas = gas_display.ORANGE;
     protected double pollutionColorSaturation = 0.0;
 
-    private List<EvacuationAgent> agents;
+    private List<AgentBase> agents;
     private ArrayList<PollutedArea> pollutions;
     EvacuationModelBase model = null;
     NetworkMap networkMap = null;
@@ -837,8 +837,8 @@ public class SimulationPanel3D extends NetworkPanel3D
     }
 
     /* generate object for agent */
-    //private void group_from_agent(EvacuationAgent agent) {
-    public void group_from_agent(EvacuationAgent agent) {
+    //private void group_from_agent(AgentBase agent) {
+    public void group_from_agent(AgentBase agent) {
         if (agent.isEvacuated())
             return;
         /* position */
@@ -906,7 +906,7 @@ public class SimulationPanel3D extends NetworkPanel3D
 
     /* used when registering agent while running simulation */
     int agent_count = 0;
-    public void registerAgentOnline(EvacuationAgent agent) {
+    public void registerAgentOnline(AgentBase agent) {
         agent_count++;
 
         if (agent_count > MAX_AGENT_COUNT) return;
@@ -938,7 +938,7 @@ public class SimulationPanel3D extends NetworkPanel3D
         simulation_map_objects.addChild(agent_group);
         map_objects.addChild(simulation_map_objects);
 
-        for (EvacuationAgent agent : agents) {
+        for (AgentBase agent : agents) {
             group_from_agent(agent);
         }
 
@@ -972,12 +972,12 @@ public class SimulationPanel3D extends NetworkPanel3D
 
     class UpdateAgent extends Behavior{
         WakeupOnElapsedTime won;
-        EvacuationAgent agent;
+        AgentBase agent;
         Appearance app;
         TransformGroup transform_group;
         BranchGroup branch_group;
 
-        public UpdateAgent(EvacuationAgent _agent,
+        public UpdateAgent(AgentBase _agent,
                 TransformGroup _transform_group,
                 BranchGroup _branch_group,
                 Appearance _app){
@@ -1444,14 +1444,14 @@ public class SimulationPanel3D extends NetworkPanel3D
     }
     /* to use debug */
     public void printAgents() {
-        for (EvacuationAgent ea : agents) {
+        for (AgentBase ea : agents) {
             System.err.println("SimulationPanel3D.printAgents agent id: " +
                     ea.ID + "position: " + ea.getPositionOnLink() + " pos: " + 
                     ea.getPos());
         }
     }
 
-    public List<EvacuationAgent> getAgents() {
+    public List<AgentBase> getAgents() {
         return agents;
     }
     public ArrayList<PollutedArea> getPollutions() {

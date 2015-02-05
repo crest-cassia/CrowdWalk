@@ -43,7 +43,7 @@ import org.apache.commons.cli.MissingOptionException;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.NetmasCuiSimulator;
 import nodagumi.ananPJ.NetworkMap;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.NetworkParts.Node.*;

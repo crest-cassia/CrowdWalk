@@ -60,7 +60,7 @@ import nodagumi.Itk.*;
  *  0,     GREEN,  100% #Normal
  */
 
-public class RunningAroundPerson extends EvacuationAgent implements Serializable {
+public class RunningAroundPerson extends AgentBase implements Serializable {
     private static final long serialVersionUID = -6313717005123377059L;
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -299,7 +299,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
      * 差分プログラミングにする。
 	 */
     @Override
-    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+    public AgentBase copyAndInitializeBody(AgentBase _r) {
         RunningAroundPerson r = (RunningAroundPerson)_r ;
         super.copyAndInitializeBody(r) ;
         r.emptySpeed = emptySpeed;
@@ -698,7 +698,7 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         RoutePlan workingRoutePlan = routePlan.duplicate() ;
 
         while (workingPlace.getAdvancingDistance() > 0) {
-            ArrayList<EvacuationAgent> agents = workingPlace.getLane() ;
+            ArrayList<AgentBase> agents = workingPlace.getLane() ;
             int currentWidth = workingPlace.getLaneWidth() ;
             int predecessorIndex = indexInLane + currentWidth ;
             if(agents.size() > 0 && predecessorIndex < agents.size()) {
@@ -816,9 +816,9 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
         //探索開始
         while(workingPlace.getAdvancingDistance() > 0) {
             //順方向探索
-            ArrayList<EvacuationAgent> sameLane = workingPlace.getLane() ;
+            ArrayList<AgentBase> sameLane = workingPlace.getLane() ;
             int laneWidth = workingPlace.getLaneWidth() ;
-            for(EvacuationAgent agent : sameLane) {
+            for(AgentBase agent : sameLane) {
                 double agentPos = agent.getAdvancingDistance() ;
                 if(agent == this) {
                     continue ;
@@ -839,12 +839,12 @@ public class RunningAroundPerson extends EvacuationAgent implements Serializable
                 }
             }
             //逆方向探索
-            ArrayList<EvacuationAgent> otherLane = workingPlace.getOtherLane() ;
+            ArrayList<AgentBase> otherLane = workingPlace.getOtherLane() ;
             int laneWidthOther = workingPlace.getOtherLaneWidth() ;
             double linkLength = workingPlace.getLinkLength() ;
             double insensitivePos = 0.0 ;
             for(int i = 0 ; i < otherLane.size() ; i++) {
-                EvacuationAgent agent = otherLane.get(otherLane.size() - i - 1);
+                AgentBase agent = otherLane.get(otherLane.size() - i - 1);
                 double agentPos = linkLength - agent.getAdvancingDistance() ;
                 if(agentPos > workingPlace.getAdvancingDistance()) {
                     // 探索範囲外

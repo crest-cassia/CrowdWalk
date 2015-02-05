@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -47,7 +47,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     //private MapNodeTable nodes = null;
     //private MapLinkTable links = null;
     private NetworkMapBase map = null ;
-    private ArrayList<EvacuationAgent> agents = null;
+    private ArrayList<AgentBase> agents = null;
     private String pollutionFileName = null;
 
     transient private SimulationPanel3D panel3d = null;
@@ -220,7 +220,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 linerGenerateAgentRatio,
                 random);
 
-        for (EvacuationAgent agent : getAgents()) {
+        for (AgentBase agent : getAgents()) {
             agent.displayMode = 4;
         }
     }
@@ -251,7 +251,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         return panel3d;
     }
 
-    public void registerAgent(EvacuationAgent agent) {
+    public void registerAgent(AgentBase agent) {
         if (panel3d != null) {
             panel3d.registerAgentOnline(agent);
         }
@@ -330,7 +330,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             agentHandler.update(map, getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
-                for (EvacuationAgent ea : getAgents())
+                for (AgentBase ea : getAgents())
                     panel3d.registerAgentOnline(ea);
             }
         }
@@ -667,8 +667,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 	return map.getNodes();
     }
 
-    //public ArrayList<EvacuationAgent> getAgents() {
-    public List<EvacuationAgent> getAgents() {
+    //public ArrayList<AgentBase> getAgents() {
+    public List<AgentBase> getAgents() {
         return agentHandler.getAgents();
     }
 
@@ -788,7 +788,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
      */
     public void saveGoalLog(String resultDirectory, Boolean finished) {
         // Goal log を記憶
-        for (EvacuationAgent agent: agents) {
+        for (AgentBase agent: agents) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
                 goalTimes.put(new Integer(agent.ID), new Double(getSecond()));
             }
@@ -810,7 +810,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             }
             evacuatedAgents.add(buff.toString());
         } else {  // finalize process
-            for (EvacuationAgent agent : agents) {
+            for (AgentBase agent : agents) {
                 if (!agent.isEvacuated()) {
                     goalTimes.put(new Integer(agent.ID),
                             new Double((getTickCount() + 1) * timeScale));
@@ -901,7 +901,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                         new OutputStreamWriter(
                             new FileOutputStream(fileLog, false) , "utf-8")),
                     true);
-            for (EvacuationAgent agent : agents) {
+            for (AgentBase agent : agents) {
                 RunningAroundPerson rap = (RunningAroundPerson) agent;
                 // agent log format:
                 // agent,ID,evacuated,speed,density,position
@@ -988,7 +988,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         int dszn = 0;   // number of damaged speed zero agents
         // count the number of agents with speed is zero and instantaneous 
         // damage is max value.
-        for (EvacuationAgent agent: agents) {
+        for (AgentBase agent: agents) {
             if (agent.getSpeed() == 0.) {
                 // System.err.println("\tanget: " + agent.ID + ", damage: " +
                         // agent.currentExposureAmount + ", density: " +

@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
@@ -53,7 +53,7 @@ public class EditorFramePanel extends JPanel implements Serializable {
     /* parameters related to editing */
     private Hover hoverNode = null;
     private Hover hoverLink = null;
-    private EvacuationAgent hoverAgent = null;
+    private AgentBase hoverAgent = null;
     private PollutedArea hoverArea = null;
     private Rectangle2D selectedArea = null;
     private Line2D scaleLine = null;
@@ -356,7 +356,7 @@ public class EditorFramePanel extends JPanel implements Serializable {
         }
         
         if (showAgents) {
-            for (EvacuationAgent agent : frame.getChildAgents()) {
+            for (AgentBase agent : frame.getChildAgents()) {
                 agent.draw(g, false);
             }
         }
@@ -553,7 +553,7 @@ public class EditorFramePanel extends JPanel implements Serializable {
         hoverLink = _hoverLink;
     }
     
-    public void updateHoverAgent(EvacuationAgent agent) {
+    public void updateHoverAgent(AgentBase agent) {
         hoverAgent = agent;
     }
     

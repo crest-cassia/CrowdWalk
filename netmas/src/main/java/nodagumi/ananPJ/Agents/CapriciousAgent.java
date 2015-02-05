@@ -96,7 +96,7 @@ public class CapriciousAgent extends NaiveAgent
      * 複製操作のメイン
      */
     @Override
-    public EvacuationAgent copyAndInitializeBody(EvacuationAgent _r) {
+    public AgentBase copyAndInitializeBody(AgentBase _r) {
         CapriciousAgent r = (CapriciousAgent)_r ;
         super.copyAndInitializeBody(r) ;
         r.capriciousMargin = capriciousMargin ;

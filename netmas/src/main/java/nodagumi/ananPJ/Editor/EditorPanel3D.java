@@ -17,7 +17,7 @@ import javax.vecmath.Vector3f;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkPanel3D;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 
@@ -30,7 +30,7 @@ public class EditorPanel3D extends NetworkPanel3D implements Serializable {
 
     private MapNode hoverNode = null;
     private MapLink hoverLink = null;
-    private EvacuationAgent hoverAgent = null;
+    private AgentBase hoverAgent = null;
     private Rectangle2D selectedArea = null;
 
     private EditorPanel3D(NetworkMapEditor editor, JFrame _parent) {

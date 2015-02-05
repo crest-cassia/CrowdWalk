@@ -24,7 +24,7 @@ import javax.swing.tree.TreeNode;
 import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
@@ -49,8 +49,8 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     private static final long serialVersionUID = -4302417008763441581L;
     private HashMap<Integer, OBNode> id_part_map =
         new HashMap<Integer, OBNode>();
-    private ArrayList<EvacuationAgent> agentsCache =
-        new ArrayList<EvacuationAgent>();
+    private ArrayList<AgentBase> agentsCache =
+        new ArrayList<AgentBase>();
     private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
 
     private String filename = null;
@@ -176,7 +176,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         } else     if (type == OBNode.NType.LINK) {
             linksCache.add((MapLink)node);
         } else     if (type == OBNode.NType.AGENT) {
-            agentsCache.add((EvacuationAgent)node);
+            agentsCache.add((AgentBase)node);
         } else     if (type == OBNode.NType.GROUP) {
             /* no operation */
         } else     if (type == OBNode.NType.ROOM) {
@@ -227,7 +227,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
             linksCache.remove((MapLink)node);
             break;
         case AGENT:
-            agentsCache.remove((EvacuationAgent)node);
+            agentsCache.remove((AgentBase)node);
             break;
         case GROUP:
             while (node.getChildCount() > 0) {
@@ -283,9 +283,9 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         return link;
     }
 
-    public EvacuationAgent addAgent(
+    public AgentBase addAgent(
             MapPartGroup parent,
-            EvacuationAgent agent) {
+            AgentBase agent) {
         // int id = assign_new_id();
         int id = assignUniqueAgentId();
         agent.ID = id;
@@ -295,7 +295,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         return agent;
     }
 
-    public EvacuationAgent addAgent(MapPartGroup parent, EvacuationAgent agent, boolean autoID) {
+    public AgentBase addAgent(MapPartGroup parent, AgentBase agent, boolean autoID) {
         if (autoID) {
             return addAgent(parent, agent);
         }
@@ -406,7 +406,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         return linksCache;
     }
 
-    public ArrayList<EvacuationAgent> getAgents() {
+    public ArrayList<AgentBase> getAgents() {
         return agentsCache;
     }
 
@@ -815,7 +815,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         for (MapLink link : linksCache)
             System.out.println("NetworkMap.printFields: linksCache: " +
                     link.toString());
-        for (EvacuationAgent agent : agentsCache)
+        for (AgentBase agent : agentsCache)
             System.out.println("NetworkMap.printFields: agentsCache: " +
                     agent.toString());
         for (EditorFrame frame : frames)
@@ -890,7 +890,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 
     public void setSpeedCalculationModel(RunningAroundPerson
             .SpeedCalculationModel _model) {
-        for (EvacuationAgent agent : agentsCache) {
+        for (AgentBase agent : agentsCache) {
             RunningAroundPerson rap = (RunningAroundPerson) agent;
             rap.setSpeedCalculationModel(_model);
         }
@@ -906,7 +906,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 
     public void setRandom(Random _random) {
         random = _random;
-        for (EvacuationAgent agent : agentsCache)
+        for (AgentBase agent : agentsCache)
             agent.setRandom(_random);
     }
 }

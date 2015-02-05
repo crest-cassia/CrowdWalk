@@ -43,8 +43,8 @@ import nodagumi.ananPJ.Simulator.Pollution;
 
 import nodagumi.Itk.* ;
 
-public abstract class EvacuationAgent extends OBMapPart
-implements Comparable<EvacuationAgent>, Serializable {
+public abstract class AgentBase extends OBMapPart
+implements Comparable<AgentBase>, Serializable {
     private static final long serialVersionUID = 2580480798262915926L;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -129,15 +129,15 @@ implements Comparable<EvacuationAgent>, Serializable {
      * constractors
      * 引数なしconstractorはClassFinder.newByName で必要。
      */
-    public EvacuationAgent() {} ;
-    public EvacuationAgent(int _id, Random _random) {
+    public AgentBase() {} ;
+    public AgentBase(int _id, Random _random) {
         init(_id, _random) ;
     }
 
     //------------------------------------------------------------
     /**
      * エージェントのクラス短縮名を取得。
-     * EvacuationAgent は abstract なので、null
+     * AgentBase は abstract なので、null
      */
     public static String getTypeName() { return null; };
 
@@ -206,9 +206,9 @@ implements Comparable<EvacuationAgent>, Serializable {
     /**
      * エージェント複製
      */
-    public EvacuationAgent copyAndInitialize() {
+    public AgentBase copyAndInitialize() {
         try {
-            EvacuationAgent r = (EvacuationAgent)this.getClass().newInstance() ;
+            AgentBase r = (AgentBase)this.getClass().newInstance() ;
             return copyAndInitializeBody(r) ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
@@ -222,7 +222,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     /**
      * 与えられたエージェントインスタンスに内容をコピーし、初期化。
      */
-    public EvacuationAgent copyAndInitializeBody(EvacuationAgent r) {
+    public AgentBase copyAndInitializeBody(AgentBase r) {
         r.ID = ID;
         r.generatedTime = generatedTime;
         r.currentPlace = currentPlace.duplicate() ;
@@ -247,11 +247,11 @@ implements Comparable<EvacuationAgent>, Serializable {
      * これまで決め打ちであったものを、GenerateAgent で登録されたものが
      * 自動で対応されるようにしてある。
      */
-    public static EvacuationAgent createEmptyAgent(String type, Random _random) {
+    public static AgentBase createEmptyAgent(String type, Random _random) {
         if (type.equals("NOT SELECTED")) {
             return null;
         } else {
-            EvacuationAgent agent = GenerateAgent.newAgentByName(type) ;
+            AgentBase agent = GenerateAgent.newAgentByName(type) ;
             if(agent != null) {
                 agent.init(0, _random) ;
                 return agent ;
@@ -613,7 +613,7 @@ implements Comparable<EvacuationAgent>, Serializable {
     /**
      * sort, binarySearch 用比較関数(古くて間違っている)
      */
-    public int compareTo_orig(EvacuationAgent rhs) {
+    public int compareTo_orig(AgentBase rhs) {
         double h1 = this.currentPlace.getPositionOnLink() ;
         double h2 = rhs.currentPlace.getPositionOnLink() ;
 
@@ -644,7 +644,7 @@ implements Comparable<EvacuationAgent>, Serializable {
      * エージェントのリンク上の進み具合で比較。
      * 逆向きなどはちゃんと方向を直して扱う。
      */
-    public int compareTo(EvacuationAgent rhs) {
+    public int compareTo(AgentBase rhs) {
         if(agentNumber == rhs.agentNumber) return 0 ;
 
         double h1 = this.currentPlace.getAdvancingDistance() ;
@@ -854,17 +854,17 @@ implements Comparable<EvacuationAgent>, Serializable {
      * Setting the agent's attributes
      */
     public static void showAttributeDialog(NetworkMap networkMap,
-            ArrayList<EvacuationAgent> agents) {
+            ArrayList<AgentBase> agents) {
         /* Set attributes with a dialog */
         class AttributeSetDialog  extends JDialog implements ActionListener {
             private static final long serialVersionUID = -5975770541398630L;
 
             private NetworkMap networkMap;
-            private ArrayList<EvacuationAgent> agents;
+            private ArrayList<AgentBase> agents;
             private JTextField[] textFields; 
 
             public AttributeSetDialog(NetworkMap _networkMap,
-                    ArrayList<EvacuationAgent> _agents) {
+                    ArrayList<AgentBase> _agents) {
                 super();
 
                 networkMap = _networkMap;
@@ -872,7 +872,7 @@ implements Comparable<EvacuationAgent>, Serializable {
                 agents = _agents;
 
                 int count = 0;
-                for (EvacuationAgent agent : agents) {
+                for (AgentBase agent : agents) {
                     if (agent.selected) {
                         ++count;
                     }
@@ -917,7 +917,7 @@ implements Comparable<EvacuationAgent>, Serializable {
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("OK")) {
                     final String goalString = (String)target.getSelectedItem();
-                    for (EvacuationAgent agent : agents) {
+                    for (AgentBase agent : agents) {
                         if (agent instanceof RunningAroundPerson) {
                             RunningAroundPerson rp = (RunningAroundPerson)agent;
                             if (rp.selected) rp.setGoal(new Term(goalString));
@@ -939,22 +939,22 @@ implements Comparable<EvacuationAgent>, Serializable {
      * ルート表示(for editor)
      */
     public static void showRouteDialog(NetworkMap networkMap,
-            ArrayList<EvacuationAgent> agents) {
+            ArrayList<AgentBase> agents) {
         /* Set attributes with a dialog */
         class AttributeSetDialog  extends JDialog implements ActionListener {
             private static final long serialVersionUID = -6560704811897168475L;
 
-            private ArrayList<EvacuationAgent> agents;
+            private ArrayList<AgentBase> agents;
 
             public AttributeSetDialog(NetworkMap networkMap,
-                    ArrayList<EvacuationAgent> _agents) {
+                    ArrayList<AgentBase> _agents) {
                 super();
 
                 this.setModal(true);
                 agents = _agents;
 
                 int count = 0;
-                for (EvacuationAgent agent : agents) {
+                for (AgentBase agent : agents) {
                     if (agent.selected) {
                         ++count;
                     }
@@ -1011,7 +1011,7 @@ implements Comparable<EvacuationAgent>, Serializable {
                         Term tag = new Term((String)routes[i].getSelectedItem());
                         planned_route.add(tag) ;
                     }
-                    for (EvacuationAgent agent : agents) {
+                    for (AgentBase agent : agents) {
                         if (agent instanceof RunningAroundPerson) {
                             RunningAroundPerson rp = (RunningAroundPerson)agent;
                             if (rp.selected) rp.setPlannedRoute(planned_route);

@@ -39,7 +39,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
 import nodagumi.ananPJ.Editor.AgentFactory;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
@@ -52,7 +52,7 @@ public class AgentPanel extends JPanel
     implements ListSelectionListener, Serializable {
     private static final long serialVersionUID = 8975068495519079933L;
     private NetworkMapEditor editor = null;
-    private ArrayList<EvacuationAgent> agents = null;
+    private ArrayList<AgentBase> agents = null;
     private AgentsDataModel data_model = null;
     public AgentFactory agentFactory = null;
     
@@ -73,7 +73,7 @@ public class AgentPanel extends JPanel
         }
 
         public Object getValueAt(final int row, final int col) {
-            EvacuationAgent agent = agents.get(row);
+            AgentBase agent = agents.get(row);
             switch(col) {
             case 0:
             {
@@ -151,12 +151,12 @@ public class AgentPanel extends JPanel
                 if (JOptionPane.showConfirmDialog(null, "Really remove agents?", "Proceed",
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
                         == JOptionPane.NO_OPTION) return;
-                ArrayList<EvacuationAgent> agentsToRemove = new ArrayList<EvacuationAgent>();
-                for (EvacuationAgent agent : agents) {
+                ArrayList<AgentBase> agentsToRemove = new ArrayList<AgentBase>();
+                for (AgentBase agent : agents) {
                     if (agent.selected) agentsToRemove.add(agent);
                 }
                 
-                for (EvacuationAgent agent : agentsToRemove) {
+                for (AgentBase agent : agentsToRemove) {
                     OBNode parent = (OBNode)agent.getParent();
                     editor.getMap().removeOBNode(parent, agent, true);
                 }

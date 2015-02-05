@@ -1,13 +1,13 @@
 package nodagumi.ananPJ.Simulator.pollution;
 
-import nodagumi.ananPJ.Agents.EvacuationAgent;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Simulator.Pollution;
 
 // 非蓄積型(洪水等)
 public class NonAccumulatedPollution extends Pollution {
     public NonAccumulatedPollution() {}
 
-    public void expose(EvacuationAgent agent, double pollutionLevel) {
+    public void expose(AgentBase agent, double pollutionLevel) {
         if (! agent.isEvacuated()) {
             agent.currentExposureAmount = pollutionLevel;
             agent.accumulatedExposureAmount = pollutionLevel;
@@ -20,7 +20,7 @@ public class NonAccumulatedPollution extends Pollution {
 
     /* effect of flood, this damage does not increase */
     // 呼び出し元で speed を更新した後に呼ばれる
-    public void effect(EvacuationAgent agent) {
+    public void effect(AgentBase agent) {
         if (agent.currentExposureAmount > 10.0) {
             agent.currentExposureAmount = 10.0;
         }
@@ -30,7 +30,7 @@ public class NonAccumulatedPollution extends Pollution {
     }
 
     /* the state of the agent */
-    public int getTriage(EvacuationAgent agent) {
+    public int getTriage(AgentBase agent) {
         if (agent.accumulatedExposureAmount >= 1.5)
             return 3;
         else if (agent.accumulatedExposureAmount >= 0.8)
@@ -41,7 +41,7 @@ public class NonAccumulatedPollution extends Pollution {
             return 0;
     }
 
-    public boolean finished(EvacuationAgent agent) {
+    public boolean finished(AgentBase agent) {
         return agent.isEvacuated() || getTriage(agent) >= 3;
     }
 }
