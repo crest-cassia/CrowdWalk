@@ -29,7 +29,7 @@ import nodagumi.ananPJ.misc.RoutePlan;
 
 import nodagumi.Itk.*;
 
-public class WaitRunningAroundPerson extends RunningAroundPerson
+public class AwaitAgent extends RunningAroundPerson
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
 
@@ -39,7 +39,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      * クラス名。
      * ClassFinder でも参照できるようにしておく。
      */
-    public static String typeString = "WaitRunningAroundPerson" ;
+    public static String typeString = "AwaitAgent" ;
     public static String getTypeName() {
         return typeString ;
     }
@@ -59,13 +59,13 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
-    public WaitRunningAroundPerson() {} ;
+    public AwaitAgent() {} ;
 
     //------------------------------------------------------------
     /**
      * constractor。
      */
-    public WaitRunningAroundPerson(int _id,
+    public AwaitAgent(int _id,
             double speed, double _confidence,
             double allowance, double time, Random _random) {
         init(_id, speed,  _confidence, allowance, time, _random) ;
@@ -75,7 +75,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
     /**
      * constractor。
      */
-    public WaitRunningAroundPerson(int _id, Random _random) {
+    public AwaitAgent(int _id, Random _random) {
         init(_id, _random) ;
     }
 
@@ -118,7 +118,7 @@ public class WaitRunningAroundPerson extends RunningAroundPerson
      */
     @Override
     public AgentBase copyAndInitializeBody(AgentBase _r) {
-        WaitRunningAroundPerson r = (WaitRunningAroundPerson)_r ;
+        AwaitAgent r = (AwaitAgent)_r ;
         super.copyAndInitializeBody(r) ;
 
         return r;

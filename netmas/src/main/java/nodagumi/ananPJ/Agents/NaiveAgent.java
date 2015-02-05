@@ -2,7 +2,7 @@
 /** 
  * 素朴なエージェント
  * いろんなエージェントクラスのベースにする予定のもの。
- * WaitRunningAroundPerson がベースだが、
+ * AwaitAgent がベースだが、
  * いずれ整理する予定
  * @author:: Itsuki Noda
  * @version:: 0.0 2014/12/19 I.Noda
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.Agents.WaitRunningAroundPerson ;
+import nodagumi.ananPJ.Agents.AwaitAgent ;
 
 import nodagumi.Itk.* ;
 
@@ -32,7 +32,7 @@ import nodagumi.Itk.* ;
  * 各種エージェントクラスのベースにするもの。
  */
 public class NaiveAgent
-    extends WaitRunningAroundPerson
+    extends AwaitAgent
     implements Serializable {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**

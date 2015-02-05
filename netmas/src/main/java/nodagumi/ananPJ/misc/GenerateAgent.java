@@ -19,7 +19,7 @@ import net.arnx.jsonic.JSON ;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.RunningAroundPerson;
-import nodagumi.ananPJ.Agents.WaitRunningAroundPerson;
+import nodagumi.ananPJ.Agents.AwaitAgent;
 import nodagumi.ananPJ.Agents.*;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -44,7 +44,7 @@ public abstract class GenerateAgent implements Serializable {
      */
     static {
         registerAgentClass(RunningAroundPerson.class) ;
-        registerAgentClass(WaitRunningAroundPerson.class) ;
+        registerAgentClass(AwaitAgent.class) ;
         registerAgentClass(NaiveAgent.class) ;
         registerAgentClass(CapriciousAgent.class) ;
         registerAgentClass(BustleAgent.class) ;
@@ -296,7 +296,7 @@ public abstract class GenerateAgent implements Serializable {
         return time > start_time + duration && generated >= total;
     }
 
-    abstract protected void place_agent(WaitRunningAroundPerson agent);
+    abstract protected void place_agent(AwaitAgent agent);
 
     /* [2014.12.24 I.Noda] should fixed
      * 以下のアルゴリズム、正確に正しく total のエージェントを生成しない
@@ -342,16 +342,16 @@ public abstract class GenerateAgent implements Serializable {
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
             /*
-            WaitRunningAroundPerson agent = new WaitRunningAroundPerson(model.getMap().assignUniqueAgentId(),
+            AwaitAgent agent = new AwaitAgent(model.getMap().assignUniqueAgentId(),
                     random);
             */
             /* [2014.12.24 I.Noda] should fix
-             * 以下は、WaitRunningAroundPerson の代わりに、
+             * 以下は、AwaitAgent の代わりに、
              * NaiveAgent にしたい。
              */
-            WaitRunningAroundPerson agent = null;
+            AwaitAgent agent = null;
             try {
-                agent = (WaitRunningAroundPerson)newAgentByName(agentClassName) ;
+                agent = (AwaitAgent)newAgentByName(agentClassName) ;
                 agent.init(model.getMap().assignUniqueAgentId(), random);
                 if(agentConf != null)
                     agent.initByConf(agentConf) ;
@@ -545,7 +545,7 @@ class GenerateAgentFromLink extends GenerateAgent {
     }
 
     @Override
-    protected void place_agent(WaitRunningAroundPerson agent) {
+    protected void place_agent(AwaitAgent agent) {
         agent.placeAtRandomPosition(start_link) ;
         //start_link.agentEnters(agent);
     }
@@ -629,7 +629,7 @@ class GenerateAgentFromNode extends GenerateAgent {
      * エージェントを初期位置に置く。
      */
     @Override
-    protected void place_agent(WaitRunningAroundPerson agent) {
+    protected void place_agent(AwaitAgent agent) {
         agent.place(null, start_node, 0.0) ;
     }
     //------------------------------------------------------------
@@ -640,7 +640,7 @@ class GenerateAgentFromNode extends GenerateAgent {
      * 効率悪く、意味不明の操作が多い。
      * 上記の適宜に置き換え
      */
-    protected void place_agent_obsolete(WaitRunningAroundPerson agent) {
+    protected void place_agent_obsolete(AwaitAgent agent) {
         /*
          */
         MapLinkTable way_candidates = start_node.getPathways(); 

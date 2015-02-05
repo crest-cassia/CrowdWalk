@@ -11,7 +11,7 @@
  * <P>新たな Agent のクラスを作る方法。</P>
  * <UL>
  *   <LI> 以下の package と import をすべていれる。 </LI>
- *   <LI> class 定義で WaitRunningAroundPerson を extends </LI>
+ *   <LI> class 定義で AwaitAgent を extends </LI>
  *   <LI> class 定義で Serializable を implements </LI>
  *   <LI> typeString を static で定義。これにクラス名(short name)をいれる。
  *   <LI> getTypeName() も定義しておく </LI>

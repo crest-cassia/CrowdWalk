@@ -30,7 +30,7 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLinkTable;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.RunningAroundPerson.SpeedCalculationModel;
-import nodagumi.ananPJ.Agents.WaitRunningAroundPerson.WaitDirective;
+import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
 import nodagumi.ananPJ.misc.GenerateAgent ;
 import nodagumi.Itk.*;
 
