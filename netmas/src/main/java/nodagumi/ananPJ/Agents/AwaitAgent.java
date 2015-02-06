@@ -104,8 +104,8 @@ public class AwaitAgent extends WalkAgent
      * Conf による初期化。
      */
     @Override
-    public void initByConf(Term conf) {
-        super.initByConf(conf) ;
+    public void initByConf(Term conf, Term fallback) {
+        super.initByConf(conf, fallback) ;
 
         minDistanceBetweenAgents =
             getDoubleFromConfig("minDistanceBetweenAgents",
@@ -206,9 +206,9 @@ public class AwaitAgent extends WalkAgent
             Term tag = routePlan.top() ;
             WaitDirective.Type waitType = WaitDirective.isDirective(tag) ;
             if(waitType != null) {
-                Term target = tag.getArgTerm("target") ;
-                Term how = tag.getArgTerm("how") ;
-                Term until = tag.getArgTerm("until") ;
+                Term target = tag.fetchArgTerm("target", configFallbackSlot) ;
+                Term how = tag.fetchArgTerm("how", configFallbackSlot) ;
+                Term until = tag.fetchArgTerm("until", configFallbackSlot) ;
 
                 try {
                     switch(waitType) {
@@ -305,7 +305,8 @@ public class AwaitAgent extends WalkAgent
             WaitDirective.Type type = 
                 WaitDirective.isDirective(candidate) ;
             if(type != null) {
-                goal_tags.add(candidate.getArgTerm("target")) ;
+                goal_tags.add(candidate.fetchArgTerm("target", 
+                                                     configFallbackSlot)) ;
             } else {
                 goal_tags.add(candidate);
             }
@@ -340,7 +341,7 @@ public class AwaitAgent extends WalkAgent
         WaitDirective.Type type =
             WaitDirective.isDirective(directive) ;
         if(type != null) {
-            return directive.getArgTerm("target") ;
+            return directive.fetchArgTerm("target", configFallbackSlot) ;
         } else {
             return null ;
         }

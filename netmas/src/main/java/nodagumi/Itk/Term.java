@@ -371,12 +371,39 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg 取得(fallback 付き)
+     */
+    public Object fetchArg(String slot, String fallbackSlot) {
+        if(hasArg(slot)) {
+            return getArg(slot) ;
+        } else if(hasArg(fallbackSlot)) {
+            Term fallbackTerm = getArgTerm(fallbackSlot) ;
+            return fallbackTerm.fetchArg(slot, fallbackSlot) ;
+        } else {
+            return null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * arg 取得 (Term)
      */
     public Term getArgTerm(String slot) {
         return convertValueToTerm(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (Term) (fallback 付き)
+     */
+    public Term fetchArgTerm(String slot, String fallbackSlot) {
+        return convertValueToTerm(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * Term への変換
+     */
     private Term convertValueToTerm(Object val) {
         if(val instanceof Term)
             return (Term)val ;
@@ -397,6 +424,18 @@ public class Term {
         return convertValueToString(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (String) (fallback 付き)
+     */
+    public String fetchArgString(String slot, String fallbackSlot) {
+        return convertValueToString(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * String への変換
+     */
     private String convertValueToString(Object val) {
         if(val == null) {
             return null ;
@@ -415,6 +454,18 @@ public class Term {
         return convertValueToBoolean(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (boolean) (fallback 付き)
+     */
+    public boolean fetchArgBoolean(String slot, String fallbackSlot) {
+        return convertValueToBoolean(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * boolean への変換
+     */
     private boolean convertValueToBoolean(Object val) {
         if(val instanceof Term) {
             return Boolean.valueOf(((Term)val).getString()) ;
@@ -440,6 +491,18 @@ public class Term {
         return convertValueToInt(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (int) (fallback 付き)
+     */
+    public int fetchArgInt(String slot, String fallbackSlot) {
+        return convertValueToInt(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * Int への変換
+     */
     private int convertValueToInt(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getInt() ;
@@ -464,6 +527,18 @@ public class Term {
         return convertValueToDouble(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (double) (fallback 付き)
+     */
+    public double fetchArgDouble(String slot, String fallbackSlot) {
+        return convertValueToDouble(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * Double への変換
+     */
     private double convertValueToDouble(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getDouble() ;

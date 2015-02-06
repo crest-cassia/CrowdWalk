@@ -63,6 +63,12 @@ implements Comparable<AgentBase>, Serializable {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * Agent の詳細設定情報を格納しているもの
+     */
+    static public String configFallbackSlot = "_fallback" ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * generatedTime: 生成された時刻
      * finishedTime: ゴールに到達した時刻
      * evacuated: ゴールに到達したかどうかのフラグ
@@ -161,11 +167,14 @@ implements Comparable<AgentBase>, Serializable {
      * 継承しているクラスの設定のため。
      * @param conf json の連想配列形式を scan した Map
      */
-    public void initByConf(Term conf) {
+    public void initByConf(Term conf, Term fallback) {
         if(conf != null) {
             config = conf ;
         } else {
             config = new Term() ;
+        }
+        if(fallback != null) {
+            config.setArg(configFallbackSlot, fallback) ;
         }
     } ;
 
@@ -175,9 +184,9 @@ implements Comparable<AgentBase>, Serializable {
      * 継承しているクラスの設定のため。
      * @param confString json で書かれたAgentのconfigulation。
      */
-    public void _initByConf(String confString) {
+        public void _initByConf(String confString, Term fallback) {
         Term conf = Term.newByJson(confString) ;
-        initByConf(conf) ;
+        initByConf(conf, fallback) ;
     }
 
     //------------------------------------------------------------
@@ -186,7 +195,7 @@ implements Comparable<AgentBase>, Serializable {
      */
     public double getDoubleFromConfig(String slot, double fallback) {
         if(config.hasArg(slot))
-            return config.getArgDouble(slot) ;
+            return config.fetchArgDouble(slot, configFallbackSlot) ;
         else
             return fallback ;
     }
@@ -197,7 +206,7 @@ implements Comparable<AgentBase>, Serializable {
      */
     public double getIntFromConfig(String slot, int fallback) {
         if(config.hasArg(slot))
-            return config.getArgInt(slot) ;
+            return config.fetchArgInt(slot, configFallbackSlot) ;
         else
             return fallback ;
     }
