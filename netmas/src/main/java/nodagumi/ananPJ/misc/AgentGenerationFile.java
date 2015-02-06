@@ -148,12 +148,6 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
          */
         public MapNodeTable startNodes = new MapNodeTable() ;
 
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * fallback （指定がなかった場合の設定値の既定値を集めたもの）
-         */
-        public Term fallback ;
-
         //----------------------------------------
         /**
          * JSON への変換
@@ -242,7 +236,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     public AgentGenerationFile(final String filename,
                                NetworkMapBase map,
-                               Term fallbackConfig,
+                               Term fallbackParameters,
                                boolean display,
                                double linerGenerateAgentRatio,
                                Random _random)
@@ -254,7 +248,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         setLinerGenerateAgentRatio(linerGenerateAgentRatio);
         setRandom(_random);
 
-        scanFile(filename, map, fallbackConfig, display) ;
+        scanFile(filename, map, fallbackParameters, display) ;
     }
 
     //------------------------------------------------------------
@@ -263,7 +257,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     public void scanFile(final String filename,
                          NetworkMapBase map,
-                         Term fallbackConfig,
+                         Term fallbackParameters,
                          boolean display)
         throws Exception
     {
@@ -288,10 +282,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         switch(fileFormat) {
         case Ver0:
         case Ver1:
-            scanCsvFile(br, map, fallbackConfig) ;
+            scanCsvFile(br, map, fallbackParameters) ;
             break ;
         case Ver2:
-            scanJsonFile(br, map, fallbackConfig) ;
+            scanJsonFile(br, map, fallbackParameters) ;
             break ;
         default:
             Itk.dbgErr("Unknown Format Version" + fileFormat.toString() +
@@ -370,7 +364,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     public void scanCsvFile(BufferedReader br,
                             NetworkMapBase map,
-                            Term fallbackConfig)
+                            Term fallbackParameters)
         throws Exception
     {
         String line = null;
@@ -392,7 +386,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 checkPlannedRouteInConfig(map, genConfig, line) ;
 
                 // ここから、エージェント生成が始まる。
-                doGenerationByConfig(map, genConfig, fallbackConfig) ;
+                doGenerationByConfig(map, genConfig, fallbackParameters) ;
             }
         } catch (Exception e) {
             System.err.println("Error in agent generation.");
@@ -723,7 +717,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     public void scanJsonFile(BufferedReader br,
                              NetworkMapBase map,
-                             Term fallbackConfig)
+                             Term fallbackParameters)
         throws Exception
     {
         Term json = Term.newByScannedJson(JSON.decode(br),true) ;
@@ -742,7 +736,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     checkPlannedRouteInConfig(map, genConfig, item.toJson()) ;
 
                     // ここから、エージェント生成が始まる。
-                    doGenerationByConfig(map, genConfig, fallbackConfig) ;
+                    doGenerationByConfig(map, genConfig, fallbackParameters) ;
                 } else {
                     Itk.dbgErr("wrong json for generation rule:",item.toJson()) ;
                     continue ;
@@ -926,8 +920,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     private void doGenerationByConfig(NetworkMapBase map,
                                       GenerationConfigBase genConfig,
-                                      Term fallbackConfig) {
-        genConfig.fallback = fallbackConfig ;
+                                      Term fallbackParameters) {
+        genConfig.fallbackParameters = fallbackParameters ;
         switch(genConfig.ruleTag) {
         case EACH:
             doGenerationForEach(map, genConfig) ;

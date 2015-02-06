@@ -217,6 +217,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 this,
                 has_display,
                 linerGenerateAgentRatio,
+                networkMap.fallbackParameters,
                 random);
 
         for (AgentBase agent : getAgents()) {

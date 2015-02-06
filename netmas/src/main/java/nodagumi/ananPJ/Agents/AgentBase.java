@@ -194,7 +194,7 @@ implements Comparable<AgentBase>, Serializable {
      * Conf からの値の取得(double)
      */
     public double getDoubleFromConfig(String slot, double fallback) {
-        if(config.hasArg(slot))
+        if(config.hasArg(slot, ConfigFallbackSlot))
             return config.fetchArgDouble(slot, ConfigFallbackSlot) ;
         else
             return fallback ;
@@ -205,7 +205,7 @@ implements Comparable<AgentBase>, Serializable {
      * Conf からの値の取得(double)
      */
     public double getIntFromConfig(String slot, int fallback) {
-        if(config.hasArg(slot))
+        if(config.hasArg(slot, ConfigFallbackSlot))
             return config.fetchArgInt(slot, ConfigFallbackSlot) ;
         else
             return fallback ;

@@ -33,6 +33,7 @@ import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.NetmasTimer;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
+import nodagumi.Itk.*;
 
 public class SimulationLauncher extends BasicSimulationLauncher
     implements SimulationController, Serializable {
@@ -111,6 +112,12 @@ public class SimulationLauncher extends BasicSimulationLauncher
             File model_file = new File(model_path);
             String model_filename = model_file.getName();
             scenario_name = model_filename + format.format(date);
+
+	    /* [2015-02-06 I.Noda]
+	     * ここで読み込むのが正しいか、不明
+	     */
+	    networkMap.scanFallbackFile(true) ;
+
             model = new EvacuationSimulator(networkMap, this, scenario_name, random);
             finished = false;
             model.setup();

@@ -52,11 +52,11 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
         public void setFile(File _file) {
             if (_file != null) { 
                 try {
-					Term fallbackForAgent =
-						editor.getMap().fallbackParameters.getArgTerm("agent") ;
+					Term fallbackParameters =
+						editor.getMap().fallbackParameters ;
                     file = new AgentGenerationFile(_file.getPath(),
 												   editor.getMap(),
-												   fallbackForAgent,
+												   fallbackParameters,
 												   true, 1.0, random);
                 } catch(Exception ex) {
 					ex.printStackTrace();

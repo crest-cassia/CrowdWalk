@@ -705,6 +705,10 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         }
         Element dom_root = (Element) toplevel.item(0);
 
+		/* [2015.02.06 I.Noda]
+		 * このあたり、使われていない設定読み込み。
+		 * おそらく、properties に集約されている？
+		 */
         /* some attributes */
 		pollutionFile = dom_root.getAttribute("PollutionSettings");
 		if (pollutionFile.isEmpty()) pollutionFile = null;
@@ -714,7 +718,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 		if (responseFile.isEmpty()) responseFile = null;
 		fallbackFile = dom_root.getAttribute("FallbackSettings") ;
 		if (fallbackFile.isEmpty()) fallbackFile = null;
-		scanFallbackFile(true) ;
 
         setRoot(OBNode.fromDom(dom_root));
         setupNetwork((OBNode)this.root);

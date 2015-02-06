@@ -1960,6 +1960,9 @@ public class NetworkMapEditor extends SimulationLauncher
             generationPath = propertiesHandler.getGenerationPath();
             scenarioPath = propertiesHandler.getScenarioPath();
 			fallbackPath = propertiesHandler.getFallbackPath() ;
+			Itk.dbgVal("fallbackPath", fallbackPath) ;
+			System.exit(1) ;
+
             isTimerEnabled = propertiesHandler.getIsTimerEnabled();
             timerPath = propertiesHandler.getTimerPath();
             serializePath = propertiesHandler.getSerializePath();

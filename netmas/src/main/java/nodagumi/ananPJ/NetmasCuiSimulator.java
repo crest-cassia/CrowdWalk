@@ -16,6 +16,7 @@ import nodagumi.ananPJ.misc.*;
 import nodagumi.ananPJ.misc.CommunicationHandler.*;
 import nodagumi.ananPJ.network.*;
 
+import nodagumi.Itk.*;
 
 public class NetmasCuiSimulator extends BasicSimulationLauncher
         implements Serializable {

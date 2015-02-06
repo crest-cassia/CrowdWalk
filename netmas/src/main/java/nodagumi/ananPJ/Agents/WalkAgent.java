@@ -290,7 +290,6 @@ public class WalkAgent extends AgentBase implements Serializable {
         insensitiveDistanceInCounterFlow =
             getDoubleFromConfig("insensitiveDistanceInCounterFlow",
                                 insensitiveDistanceInCounterFlow) ;
-
     } ;
 
     //------------------------------------------------------------

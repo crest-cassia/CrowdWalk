@@ -281,6 +281,7 @@ public class NetmasPropertiesHandler implements Serializable {
             generationPath = getStringProperty(prop, "generation_file");
             scenarioPath = getProperty(prop, "scenario_file");
 	    fallbackPath = getProperty(prop, "fallback_file") ;
+
             // timer enabled or not
             isTimerEnabled = getBooleanProperty(prop, "timer_enable");
             if (isTimerEnabled)

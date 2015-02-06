@@ -26,6 +26,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
+import nodagumi.ananPJ.NetworkMap;
 
 import nodagumi.Itk.*;
 
@@ -178,6 +179,12 @@ public abstract class GenerateAgent implements Serializable {
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
+         * fallback 情報
+         */
+        public Term fallbackParameters = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
          * 設定文字列（変換前の設定情報）
          */
         public String originalInfo = null ;
@@ -234,6 +241,12 @@ public abstract class GenerateAgent implements Serializable {
     public String agentClassName = DefaultAgentClassName ;
     public Term agentConf = null ; // config in json Term
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * fallback parameters
+     */
+    public Term fallbackParameters = null ;
+
     //------------------------------------------------------------
     /**
      *  Config によるコンストラクタ
@@ -249,6 +262,7 @@ public abstract class GenerateAgent implements Serializable {
         duration = config.duration ;
         total = config.total ;
         speed_model = config.speedModel ;
+        fallbackParameters = config.fallbackParameters ;
         random = _random;
         configLine = config.originalInfo ;
 
@@ -313,6 +327,13 @@ public abstract class GenerateAgent implements Serializable {
         }
         /* else, no time left, must generate all remains */
 
+        // fallbacks
+        Term fallbackForAgent =
+            ((fallbackParameters != null) ?
+             fallbackParameters.filterArgTerm("agent",
+                                              NetworkMap.FallbackSlot) :
+             null) ;
+
         /* [I.Noda] ここで Agent 生成? */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
@@ -320,7 +341,7 @@ public abstract class GenerateAgent implements Serializable {
             try {
                 agent = newAgentByName(agentClassName) ;
                 agent.init(model.getMap().assignUniqueAgentId(), random);
-                agent.initByConf(agentConf, null) ;
+                agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.dbgErr("class name not found") ;
                 Itk.dbgErr("agentClassName", agentClassName) ;
