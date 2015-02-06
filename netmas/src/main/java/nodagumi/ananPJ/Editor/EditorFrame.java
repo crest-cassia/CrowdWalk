@@ -40,7 +40,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +61,7 @@ import javax.swing.SpinnerNumberModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Editor.EditorFramePanel.TextPosition;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
@@ -70,6 +73,7 @@ import nodagumi.ananPJ.misc.GetDoublesDialog;
 import nodagumi.ananPJ.misc.GridPollutionAreaDialog;    // tkokada
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.navigation.CalcPath.Nodes;
+
 public class EditorFrame
     extends JFrame
     implements ActionListener,
@@ -980,12 +984,8 @@ public class EditorFrame
                     editor.setLinkAttribute();
                 } else if (e.getActionCommand().equals("Remove links")) {
                     editor.removeSelectedLinks();
-                } else if (e.getActionCommand().equals(
-                            "Set One-way Positive")) {
-                    editor.setOneWayLinks(true);
-                } else if (e.getActionCommand().equals(
-                            "Set One-way Negative")) {
-                    editor.setOneWayLinks(false);
+                } else if (e.getActionCommand().equals("Set One-way")) {
+                    editor.setOneWayLinks();
                 } else if (e.getActionCommand().equals(
                             "Set Road Closed")) {
                     editor.setRoadClosedLinks();
@@ -1012,12 +1012,7 @@ public class EditorFrame
         menu.add (mi);
 
         menu.addSeparator();
-        mi = new MenuItem("Set One-way Positive");
-        mi.addActionListener (listner);
-        mi.setEnabled(c >= 1);
-        menu.add(mi);
-
-        mi = new MenuItem("Set One-way Negative");
+        mi = new MenuItem("Set One-way");
         mi.addActionListener (listner);
         mi.setEnabled(c >= 1);
         menu.add(mi);
@@ -1040,11 +1035,7 @@ public class EditorFrame
     }
 
     private int countSelectedLinks() {
-        int count = 0;
-        for (final MapLink link : getChildLinks()) {
-            if (link.selected) ++count;
-        }
-        return count;
+        return getSelectedLinks().size();
     }
 
     // Place Nodes and LInks mode
@@ -1447,22 +1438,162 @@ public class EditorFrame
         repaint();
     }
 
-    private void setOneWayLinks(boolean positive) {
-        panel.updateHoverLink(null);
-        editor._setModified(true);
-        for (MapLink link : getChildLinks()) {
-            if (link.selected) {
-                if (positive) {
-                    link.setOneWayPositive() ;
-                    link.setOneWayNegative(false) ;
-                    link.setRoadClosed(false) ;
-                } else {
-                    link.setOneWayNegative() ;
-                    link.setOneWayPositive(false) ;
-                    link.setRoadClosed(false) ;
-                }
+    /**
+     * 末端に当たるノードかどうかを返す。
+     * getSeriesLinks() 用。
+     */
+    public boolean isTerminalNode(MapNode node, MapLink link, HashSet<MapLink> candidateLinkSet) {
+        for (MapLink _link : node.getLinks()) {
+            if (_link != link && candidateLinkSet.contains(_link)) {
+                return false;
             }
         }
+        // link (自分)以外に candidateLinks に含まれるリンクが node に接続されていなければ末端とする
+        return true;
+    }
+
+    /**
+     * candidateLinks をリンクが連なる順に並べ替えたリストを両端のノードと共に返す。
+     * (candidateLinks に含まれないリンクは接続されていないものと見なす)
+     * 条件:
+     * ・閉じたリンクを含んでいないこと。
+     * ・リンクが分岐している箇所がないこと。
+     * ・すべてのリンクが途切れなく接続されていること。
+     */
+    public HashMap getSeriesLinks(MapLinkTable candidateLinks) throws Exception {
+        MapLinkTable seriesLinks = new MapLinkTable();
+        HashSet<MapLink> candidateLinkSet = new HashSet<MapLink>(candidateLinks);
+        HashMap result = new HashMap();
+        result.put("linkTable", seriesLinks);
+
+        // 端のリンクを見つける
+        MapLink terminalLink = null;
+        MapNode terminalNode = null;
+        for (MapLink link : candidateLinks) {
+            if (isTerminalNode(link.getFrom(), link, candidateLinkSet)) {
+                terminalNode = link.getFrom();
+                terminalLink = link;
+                break;
+            }
+            if (isTerminalNode(link.getTo(), link, candidateLinkSet)) {
+                terminalNode = link.getTo();
+                terminalLink = link;
+                break;
+            }
+        }
+        // 見つからなかった(閉じたリンクのみだった)
+        if (terminalLink == null) {
+            throw new Exception("選択したリンクはループしているため、一方通行の設定ができません。");
+        }
+        result.put("firstNode", terminalNode);
+
+        // リンクをたどりながら、もう一方の端を探す
+        MapLink link = terminalLink;
+        MapNode node = link.getOther(terminalNode);
+        while (true) {
+            seriesLinks.add(link);
+            MapLink nextLink = null;
+            for (MapLink _link : node.getLinks()) {
+                if (_link != link && candidateLinkSet.contains(_link)) {
+                    if (nextLink != null) {
+                        throw new Exception("選択したリンクは分岐を含んでいるため、一方通行の設定ができません。");
+                    }
+                    nextLink = _link;
+                }
+            }
+            if (nextLink == null) {
+                if (seriesLinks.size() < candidateLinks.size()) {
+                    throw new Exception("選択したリンクは接続されていないリンクを含んでいるため、\n一方通行の設定ができません。");
+                }
+                result.put("lastNode", node);
+                return result;
+            }
+            link = nextLink;
+            node = link.getOther(node);
+        }
+    }
+
+    /**
+     * node から見て link の反対側に当たる位置を返す。
+     */
+    public TextPosition getClearPosition(MapLink link, MapNode node) {
+        if (Math.abs(node.getX() - link.getOther(node).getX())
+                < Math.abs(node.getY() - link.getOther(node).getY())) {
+            if (node.getY() < link.getOther(node).getY()) {
+                return TextPosition.UPPER;
+            } else {
+                return TextPosition.LOWER;
+            }
+        } else {
+            if (node.getX() < link.getOther(node).getX()) {
+                return TextPosition.LEFT;
+            } else {
+                return TextPosition.RIGHT;
+            }
+        }
+    }
+
+    /**
+     * 選択中のリンクを一方通行に設定する。
+     */
+    private void setOneWayLinks() {
+        panel.updateHoverLink(null);
+        editor._setModified(true);
+
+        MapLinkTable seriesLinks = null;
+        MapNode firstNode = null;
+        MapNode lastNode = null;
+        MapNode enteringNode = null;
+
+        // 選択中のリンクを連続したリンクに変換する
+        try {
+            HashMap result = getSeriesLinks(getSelectedLinks());
+            seriesLinks = (MapLinkTable)result.get("linkTable");
+            firstNode = (MapNode)result.get("firstNode");
+            lastNode = (MapNode)result.get("lastNode");
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Warning", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 両端のノードに "A", "B" ラベルを表示する
+        TextPosition positionA = getClearPosition(seriesLinks.get(0), firstNode);
+        TextPosition positionB = getClearPosition(seriesLinks.get(seriesLinks.size() - 1), lastNode);
+        panel.setOneWayIndicator(true, firstNode, positionA, lastNode, positionB);
+        panel.repaint();
+
+        // 方向を選択する
+        int type = JOptionPane.showConfirmDialog(this, "One-way from A to B(Y) or B to A(N) ?", "",
+                JOptionPane.YES_NO_CANCEL_OPTION);
+        switch (type) {
+        case JOptionPane.YES_OPTION:
+            enteringNode = firstNode;
+            break;
+        case JOptionPane.NO_OPTION:
+            Collections.reverse(seriesLinks);
+            enteringNode = lastNode;
+            break;
+        case JOptionPane.CANCEL_OPTION:
+            panel.setOneWayIndicator(false, null, TextPosition.CENTER, null, TextPosition.CENTER);
+            panel.repaint();
+            return;
+        }
+
+        // リンクに一方通行タグを振る
+        for (MapLink link : seriesLinks) {
+            if (link.isForwardDirectionFrom(enteringNode)) {
+                link.setOneWayPositive() ;
+                link.setOneWayNegative(false) ;
+                link.setRoadClosed(false) ;
+            } else {
+                link.setOneWayNegative() ;
+                link.setOneWayPositive(false) ;
+                link.setRoadClosed(false) ;
+            }
+            enteringNode = link.getOther(enteringNode);
+        }
+
+        panel.setOneWayIndicator(false, null, TextPosition.CENTER, null, TextPosition.CENTER);
         editor.getLinkPanel().refresh();
         clearSelection();
         repaint();
@@ -3025,6 +3156,19 @@ public class EditorFrame
 
     public ArrayList<OBNodeSymbolicLink> getSymbolicLinks() {
         return current_group.getSymbolicLinks();
+    }
+
+    /**
+     * 選択中のリンクのリストを返す。
+     */
+    public MapLinkTable getSelectedLinks() {
+        MapLinkTable selectedLinks = new MapLinkTable();
+        for (MapLink link : getChildLinks()) {
+            if (link.selected) {
+                selectedLinks.add(link);
+            }
+        }
+        return selectedLinks;
     }
 
     //public void setRandom(Random _random) {
