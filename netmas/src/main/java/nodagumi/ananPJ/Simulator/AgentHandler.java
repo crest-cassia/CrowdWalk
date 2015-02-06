@@ -189,9 +189,12 @@ public class AgentHandler implements Serializable {
 
         try {
             /* [I.Noda] generation file の読み込みはここ */
+            Term fallbackConfig = null ; //*****
             generate_agent = new AgentGenerationFile(generationFile,
-                                                     model.getMap(), has_display,
-                                                     linerGenerateAgentRatio, 
+                                                     model.getMap(),
+                                                     fallbackConfig,
+                                                     has_display,
+                                                     linerGenerateAgentRatio,
                                                      random);
         } catch(Exception ex) {
             ex.printStackTrace() ;

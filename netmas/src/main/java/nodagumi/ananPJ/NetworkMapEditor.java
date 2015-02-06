@@ -113,6 +113,7 @@ public class NetworkMapEditor extends SimulationLauncher
     private static String pollutionPath = null; // path to pollution file
     private static String generationPath = null; // path to generation file
     private static String scenarioPath = null; // path to scenario file
+	private static String fallbackPath = null; // path to fallback file
     private static SpeedCalculationModel speedModel = null;
     private static int exitCount = 0;
     private static long randseed = 0;
@@ -659,6 +660,7 @@ public class NetworkMapEditor extends SimulationLauncher
         networkMap.setGenerationFile(generationPath);
         networkMap.setPollutionFile(pollutionPath);
         networkMap.setResponseFile(scenarioPath);
+		networkMap.setFallbackFile(fallbackPath);
         networkMap.setupAfterLoad();
         updateAll();
         return true;
@@ -1515,6 +1517,18 @@ public class NetworkMapEditor extends SimulationLauncher
         return scenarioPath;
     }
 
+    public void setFallbackPath(String _fallbackPath) {
+        fallbackPath = _fallbackPath;
+        if (networkMap != null) {
+			networkMap.setFallbackFile(fallbackPath) ;
+			networkMap.scanFallbackFile(true) ;
+        }
+    }
+
+	public String getFallbackPath() {
+		return fallbackPath ;
+    }
+
     /**
      * Set isTimerEnabled.
      * @param isTimerEnabled the value to set.
@@ -1652,6 +1666,7 @@ public class NetworkMapEditor extends SimulationLauncher
         setPollutionPath(propertiesHandler.getPollutionPath());
         setGenerationPath(propertiesHandler.getGenerationPath());
         setScenarioPath(propertiesHandler.getScenarioPath());
+		setFallbackPath(propertiesHandler.getFallbackPath()) ;
         setIsTimerEnabled(propertiesHandler.getIsTimerEnabled());
         setTimerFile(propertiesHandler.getTimerPath());
         setSerializeFile(propertiesHandler.getSerializePath());
@@ -1936,11 +1951,15 @@ public class NetworkMapEditor extends SimulationLauncher
         } else {
             propertiesHandler = new NetmasPropertiesHandler(propertiesPath);
 
+			/* [2015-02-06 I.Noda]
+			 * このあたり、static とそうでないのが混在していてぐちゃぐちゃ。
+			 * 統一すべき */
             isDebug = propertiesHandler.getIsDebug();
             mapPath = propertiesHandler.getMapPath();
             pollutionPath = propertiesHandler.getPollutionPath();
             generationPath = propertiesHandler.getGenerationPath();
             scenarioPath = propertiesHandler.getScenarioPath();
+			fallbackPath = propertiesHandler.getFallbackPath() ;
             isTimerEnabled = propertiesHandler.getIsTimerEnabled();
             timerPath = propertiesHandler.getTimerPath();
             serializePath = propertiesHandler.getSerializePath();

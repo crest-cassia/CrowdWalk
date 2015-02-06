@@ -112,6 +112,20 @@ public class NetmasPropertiesHandler implements Serializable {
         return scenarioPath;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * fallback file
+     */
+    protected String fallbackPath = null;
+
+    //------------------------------------------------------------
+    /**
+     * fallback file を取得
+     */
+    public String getFallbackPath() {
+	return fallbackPath ;
+    }
+
     protected boolean isTimerEnabled = false;
     public boolean getIsTimerEnabled() {
         return isTimerEnabled;
@@ -266,6 +280,7 @@ public class NetmasPropertiesHandler implements Serializable {
             pollutionPath = getStringProperty(prop, "pollution_file");
             generationPath = getStringProperty(prop, "generation_file");
             scenarioPath = getProperty(prop, "scenario_file");
+	    fallbackPath = getProperty(prop, "fallback_file") ;
             // timer enabled or not
             isTimerEnabled = getBooleanProperty(prop, "timer_enable");
             if (isTimerEnabled)

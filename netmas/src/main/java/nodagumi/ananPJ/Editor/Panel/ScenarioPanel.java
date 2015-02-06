@@ -28,6 +28,8 @@ import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 
+import nodagumi.Itk.*;
+
 public class ScenarioPanel extends PanelWithTable implements Serializable {
     private static final long serialVersionUID = 5603704970745259422L;
     NetworkMapEditor editor = null;
@@ -35,6 +37,8 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
     JButton generateFileButton = null;
     JLabel responseFileLabel = null;
     JButton responseFileButton = null;
+	JLabel fallbackFileLabel = null ;
+	JButton fallbackFileButton = null ;
     Random random = null;
 
     JTable generationTable = null;
@@ -48,8 +52,11 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
         public void setFile(File _file) {
             if (_file != null) { 
                 try {
+					Term fallbackForAgent =
+						editor.getMap().fallbackParameters.getArgTerm("agent") ;
                     file = new AgentGenerationFile(_file.getPath(),
 												   editor.getMap(),
+												   fallbackForAgent,
 												   true, 1.0, random);
                 } catch(Exception ex) {
 					ex.printStackTrace();
@@ -117,6 +124,19 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
             }
         });
         button_panel.add(responseFileButton);
+
+        /* fallback file */
+        fallbackFileLabel = new JLabel("Fallback:");
+        button_panel.add(fallbackFileLabel);
+
+        fallbackFileButton = new JButton("Open Fallback File");
+        fallbackFileButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                open_fallback_file();
+            }
+        });
+        button_panel.add(fallbackFileButton);
+
         add(button_panel, BorderLayout.NORTH);
 
         generationDataModel = new AgentGenerationDataModel();
@@ -155,6 +175,26 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
 
         String filename = fd.getDirectory() + fd.getFile();
         editor.getMap().setResponseFile(filename);
+
+        refresh();
+    }
+
+	//------------------------------------------------------------
+	/**
+	 * set fallback file and scan it.
+	 */
+    private void open_fallback_file() {
+        FileDialog fd = new FileDialog(editor.getFrame(), 
+                "Set emergency response scenario", FileDialog.LOAD);
+
+        fd.setFile("");
+        fd.setDirectory(editor.getDirName());
+        fd.setVisible (true);
+        if (fd.getFile() == null) return;
+
+        String filename = fd.getDirectory() + fd.getFile();
+        editor.getMap().setFallbackFile(filename);
+		editor.getMap().scanFallbackFile(true) ;
 
         refresh();
     }

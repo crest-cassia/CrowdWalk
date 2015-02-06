@@ -65,7 +65,7 @@ implements Comparable<AgentBase>, Serializable {
     /**
      * Agent の詳細設定情報を格納しているもの
      */
-    static public String configFallbackSlot = "_fallback" ;
+    static public final String ConfigFallbackSlot = NetworkMap.FallbackSlot ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -174,7 +174,7 @@ implements Comparable<AgentBase>, Serializable {
             config = new Term() ;
         }
         if(fallback != null) {
-            config.setArg(configFallbackSlot, fallback) ;
+            config.setArg(ConfigFallbackSlot, fallback) ;
         }
     } ;
 
@@ -195,7 +195,7 @@ implements Comparable<AgentBase>, Serializable {
      */
     public double getDoubleFromConfig(String slot, double fallback) {
         if(config.hasArg(slot))
-            return config.fetchArgDouble(slot, configFallbackSlot) ;
+            return config.fetchArgDouble(slot, ConfigFallbackSlot) ;
         else
             return fallback ;
     }
@@ -206,7 +206,7 @@ implements Comparable<AgentBase>, Serializable {
      */
     public double getIntFromConfig(String slot, int fallback) {
         if(config.hasArg(slot))
-            return config.fetchArgInt(slot, configFallbackSlot) ;
+            return config.fetchArgInt(slot, ConfigFallbackSlot) ;
         else
             return fallback ;
     }

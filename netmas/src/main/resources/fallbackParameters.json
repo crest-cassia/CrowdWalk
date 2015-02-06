@@ -1,0 +1,24 @@
+{
+    "agent" : {
+	"className" : "NaiveAgent",
+	"A_0" : 0.962,
+	"A_1" : 0.869,
+	"A_2" : 4.682,
+	"emptySpeed" : 1.02265769054586,
+	"personalSpace" : 1.044,
+	"widthUnit_SameLane" : 0.9,
+	"widthUnit_OtherLane" : 0.9,
+	"insensitiveDistanceInCounterFlot" : 0.522,
+	"margin" : 200.0,
+	"weight" : 100.0,
+	"trail" : 100.0,
+	"trailCountStep" : 1.0,
+	"_" : null
+    },
+    "generation" : {
+	"rule" : "EACH",
+	"speedModel" : "STRAIT",
+	"_" : null
+    },
+    "_" : null
+}
