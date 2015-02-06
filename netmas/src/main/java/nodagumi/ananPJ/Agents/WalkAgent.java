@@ -392,6 +392,21 @@ public class WalkAgent extends AgentBase implements Serializable {
         emptySpeed = s;
     }
 
+    //------------------------------------------------------------
+    /**
+     * ゴールを変更
+     * シミュレーション途中でゴールを変更する場合に、
+     * 経路のリスケジュールが必要なので、その処理を追加。
+     */
+    @Override
+    public void changeGoal(Term _goal) {
+        Term oldGoal = getGoal() ;
+        super.setGoal(_goal) ;
+
+        if(!oldGoal.equals(_goal))
+            renavigate() ;
+    }
+
 	//############################################################
 	/**
 	 * シミュレーションステップ

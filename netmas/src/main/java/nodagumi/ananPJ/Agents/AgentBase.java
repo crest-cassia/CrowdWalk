@@ -299,6 +299,17 @@ implements Comparable<AgentBase>, Serializable {
 
     //------------------------------------------------------------
     /**
+     * ゴールを変更
+     * 基本的に setGoal と同じだが、
+     * シミュレーション途中でゴールを変更する場合に、
+     * クラスごとに処理を変更できるようにラッパーとして用意する。
+     */
+    public void changeGoal(Term _goal) {
+        setGoal(_goal) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * ゴールを取得
      */
     public Term getGoal() {
@@ -893,7 +904,6 @@ implements Comparable<AgentBase>, Serializable {
                 panel = new JPanel(new GridLayout(1, 2));
 
                 panel.add(new JLabel("Type:"));
-                //TODO should be something like: WalkAgent.getNavModeLabels()
                 target = new JComboBox(networkMap.getAllTags().toArray());
                 panel.add(target);
                 contentPane.add(panel, BorderLayout.NORTH);
@@ -918,10 +928,8 @@ implements Comparable<AgentBase>, Serializable {
                 if (e.getActionCommand().equals("OK")) {
                     final String goalString = (String)target.getSelectedItem();
                     for (AgentBase agent : agents) {
-                        if (agent instanceof WalkAgent) {
-                            WalkAgent rp = (WalkAgent)agent;
-                            if (rp.selected) rp.setGoal(new Term(goalString));
-                        } 
+                        if (agent.selected)
+                            agent.setGoal(new Term(goalString));
                     }
                     this.dispose();
                 } else if (e.getActionCommand().equals("Cancel")) {
@@ -986,7 +994,6 @@ implements Comparable<AgentBase>, Serializable {
                     routes[i] = new JComboBox(networkMap.getAllTags().toArray());
                     panel.add(routes[i]);
                 }
-                //TODO should be something like: WalkAgent.getNavModeLabels()
                 contentPane.add(panel, BorderLayout.NORTH);
 
                 /* ok and cancel button */
@@ -1012,10 +1019,8 @@ implements Comparable<AgentBase>, Serializable {
                         planned_route.add(tag) ;
                     }
                     for (AgentBase agent : agents) {
-                        if (agent instanceof WalkAgent) {
-                            WalkAgent rp = (WalkAgent)agent;
-                            if (rp.selected) rp.setPlannedRoute(planned_route);
-                        } 
+                        if (agent.selected)
+                            agent.setPlannedRoute(planned_route);
                     }
                     this.dispose();
                 } else if (e.getActionCommand().equals("Cancel")) {

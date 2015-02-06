@@ -24,7 +24,6 @@ import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -902,15 +901,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                             new FileOutputStream(fileLog, false) , "utf-8")),
                     true);
             for (AgentBase agent : agents) {
-                WalkAgent rap = (WalkAgent) agent;
                 // agent log format:
                 // agent,ID,evacuated,speed,density,position
-                writer.write("agent," + rap.ID + "," + rap.isEvacuated() +
-			     "," + rap.getSpeed() +
-			     "," + "0" + //rap.getDensity() + // obsolete
-			     "," + rap.getLastPositionOnLink() + "\n");
-		totalAgentDensity += 0 ; //rap.getDensity(); // obsolete
-                totalAgentSpeed += rap.getSpeed();
+                writer.write("agent," + agent.ID + "," + agent.isEvacuated() +
+			     "," + agent.getSpeed() +
+			     "," + "0" + //agent.getDensity() + // obsolete
+			     "," + agent.getLastPositionOnLink() + "\n");
+		totalAgentDensity += 0 ; //agent.getDensity(); // obsolete
+                totalAgentSpeed += agent.getSpeed();
             }
 	    for (MapLink link : getLinks()) {
                 // link log format:
@@ -990,9 +988,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         // damage is max value.
         for (AgentBase agent: agents) {
             if (agent.getSpeed() == 0.) {
-                // System.err.println("\tanget: " + agent.ID + ", damage: " +
-                        // agent.currentExposureAmount + ", density: " +
-                        // ((WalkAgent) agent).getDensity());
                 if (agent.currentExposureAmount >= 10.) {
                     dszn += 1;
                 }

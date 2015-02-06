@@ -41,7 +41,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -108,13 +107,27 @@ public class MapLink extends OBMapPart implements Serializable {
         emergency = b;
         if (!b) return;
 
-        for (AgentBase agent : getAgents()) {
-            agent.setGoal(SpecialTerm.Emergency);
-            WalkAgent wagent = (WalkAgent)agent;
-            wagent.renavigate();
-        }
+        informEmergencyToAllAgent() ;
     }
     public boolean getEmergency() { return emergency; }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントに Emergency を伝える。
+     */
+    public void informEmergencyToAgent(AgentBase agent) {
+        agent.changeGoal(SpecialTerm.Emergency) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 全エージェントに Emergency を伝える。
+     */
+    public void informEmergencyToAllAgent() {
+        for(AgentBase agent : getAgents()) {
+            informEmergencyToAgent(agent) ;
+        }
+    }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -470,14 +483,9 @@ public class MapLink extends OBMapPart implements Serializable {
         }
         */
 
-        /* emergency mode? */
-        if (getEmergency() 
-                && agent instanceof WalkAgent) {
-            WalkAgent rp = (WalkAgent) agent;
-            if (!rp.getGoal().equals(SpecialTerm.Emergency)) {
-                rp.setGoal(SpecialTerm.Emergency) ;
-                rp.renavigate();
-            }
+        /* 新しいリンクが emergency mode かどうかをチェック */
+        if (getEmergency()) {
+            informEmergencyToAgent(agent) ;
         }
     }
 
