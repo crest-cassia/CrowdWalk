@@ -12,6 +12,8 @@
 
 package nodagumi.Itk;
 
+import java.util.*;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 //import junit.framework.TestCase;
@@ -31,13 +33,47 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * String test
+     * 結果として、k=4 の時には、intern すると約2倍、
+     * k=13 の時には、intern すると300-400倍の高速化。
+     */
+    @Test
+    public void test_StringEqual() {
+        String prefix = "a" ;
+        //int k = 13 ;
+        int k = 4 ;
+        for(int i = 0 ; i < k ; i++) {
+            prefix = prefix + prefix ;
+        }
+
+        int n = 1000000 ;
+        ArrayList<String> array = new ArrayList<String>() ;
+        for(int i = 0 ; i < n ; i++) {
+            String data = prefix + i ;
+            array.add(data.intern()) ;
+        }
+
+        String key = (prefix + (n-1)).intern() ;
+
+        for(int i = 0 ; i < 10 ; i++) {
+            Itk.timerStart("array.contains") ;
+            Itk.dbgVal("contains",array.contains(key)) ;
+            Itk.timerShowLap("array.contains") ;
+
+            Itk.timerStart("array.intern") ;
+            for(String data : array) if(data == key) break ;
+            Itk.timerShowLap("array.intern") ;
+        }
+    }
+    //------------------------------------------------------------
+    /**
      * initialization test
      */
     static class Bar {
         static int x = 0 ;
         public int y = x++ ;
     }
-    @Test
+    //@Test
     public void test_Init(){
         Bar b0 = new Bar() ;
         Itk.dbgVal("b0.y", b0.y) ;

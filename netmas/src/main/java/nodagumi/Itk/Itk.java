@@ -294,6 +294,49 @@ public class Itk {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * 計時用テーブル
+     */
+    static public HashMap<String, Date> timerTable =
+        new HashMap<String, Date>() ;
+
+    //------------------------------------------------------------
+    /**
+     * 計時開始
+     */
+    static public Date timerStart(String tag) {
+        Date timer = new Date() ;
+        timerTable.put(tag, timer) ;
+        timer.setTime((new Date()).getTime()) ;
+        return timer ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 計時のラップタイム（秒）
+     */
+    static public double timerLap(String tag) {
+        Date now = new Date() ;
+        Date origin = timerTable.get(tag) ;
+        if(origin == null) {
+            Itk.dumpStackTrace() ;
+            Itk.dbgErr("The specified tag is not found in timerTable:" + tag) ;
+            return 0 ;
+        }
+        long diff = now.getTime() - origin.getTime() ;
+        return ((double)diff)/1000.0 ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 計時のラップタイム表示（秒）
+     */
+    static public void timerShowLap(String tag) {
+        double lap = timerLap(tag) ;
+        Itk.dbgMsg("Lap:"+tag, " " + lap + " [sec]") ;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 時刻文字列のフォーマット
      */
     static public final String DefaultTimeStrFormatPattern 
