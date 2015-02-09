@@ -26,6 +26,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
+import nodagumi.ananPJ.NetworkMap;
 
 import nodagumi.Itk.*;
 
@@ -178,6 +179,12 @@ public abstract class GenerateAgent implements Serializable {
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
+         * fallback 情報
+         */
+        public Term fallbackParameters = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
          * 設定文字列（変換前の設定情報）
          */
         public String originalInfo = null ;
@@ -234,50 +241,32 @@ public abstract class GenerateAgent implements Serializable {
     public String agentClassName = DefaultAgentClassName ;
     public Term agentConf = null ; // config in json Term
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * fallback parameters
+     */
+    public Term fallbackParameters = null ;
+
+    //------------------------------------------------------------
     /**
      *  Config によるコンストラクタ
      */
     public GenerateAgent(Config config, Random _random) {
-        this(config.agentClassName,
-             config.agentConf,
-             config.conditions,
-             config.goal,
-             config.plannedRoute,
-             config.startTime,
-             config.duration,
-             config.total,
-             config.speedModel,
-             _random,
-             config.originalInfo) ;
-    }
-
-    public GenerateAgent(String _agentClassName,
-                         Term _agentConf,
-            String[] conditions,
-            Term _goal,
-            List<Term> _planned_route,
-            double _start_time,
-            double _duration,
-            int _total,
-            SpeedCalculationModel _speed_model,
-            Random _random,
-            String _configLine) {
-        if(_agentClassName != null && _agentClassName.length() > 0) {
-            agentClassName = _agentClassName ;
-            agentConf = _agentConf ;
+        if(config.agentClassName != null && config.agentClassName.length() > 0) {
+            agentClassName = config.agentClassName ;
+            agentConf = config.agentConf ;
         }
-        //Itk.dbgMsg("agentClassName", agentClassName) ;
-
-        goal = _goal;
-        planned_route = _planned_route;
-        start_time = _start_time;
-        duration = _duration;
-        total = _total;
-        speed_model = _speed_model;
+        goal = config.goal ;
+        planned_route = config.plannedRoute ;
+        start_time = config.startTime ;
+        duration = config.duration ;
+        total = config.total ;
+        speed_model = config.speedModel ;
+        fallbackParameters = config.fallbackParameters ;
         random = _random;
-        configLine = _configLine;
+        configLine = config.originalInfo ;
 
-        parse_conditions(conditions);
+        parse_conditions(config.conditions);
     }
 
     protected void parse_conditions(String[] conditions) {
@@ -338,6 +327,13 @@ public abstract class GenerateAgent implements Serializable {
         }
         /* else, no time left, must generate all remains */
 
+        // fallbacks
+        Term fallbackForAgent =
+            ((fallbackParameters != null) ?
+             fallbackParameters.filterArgTerm("agent",
+                                              NetworkMap.FallbackSlot) :
+             null) ;
+
         /* [I.Noda] ここで Agent 生成? */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
@@ -345,8 +341,7 @@ public abstract class GenerateAgent implements Serializable {
             try {
                 agent = newAgentByName(agentClassName) ;
                 agent.init(model.getMap().assignUniqueAgentId(), random);
-                if(agentConf != null)
-                    agent.initByConf(agentConf) ;
+                agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.dbgErr("class name not found") ;
                 Itk.dbgErr("agentClassName", agentClassName) ;
@@ -502,32 +497,13 @@ public abstract class GenerateAgent implements Serializable {
 class GenerateAgentFromLink extends GenerateAgent {
     MapLink start_link;
 
+    //------------------------------------------------------------
     /**
      * Config によるコンストラクタ
      */
     public GenerateAgentFromLink(Config config, Random random) {
         super(config, random) ;
         start_link = (MapLink)config.startPlace ;
-    }
-
-
-    public GenerateAgentFromLink(String _agentClassName,
-                                 Term _agentConf,
-            MapLink _start_link,
-            String[] conditions,
-            Term _goal,
-            List<Term> _planned_route,
-            double _start_time,
-            double _duration,
-            int _total,
-            SpeedCalculationModel _speed_model,
-            Random _random,
-            String _configLine) {
-        super(_agentClassName,
-              _agentConf,
-              conditions, _goal, _planned_route, _start_time, _duration,
-                _total, _speed_model, _random, _configLine);
-        start_link = _start_link;
     }
 
     @Override
@@ -581,6 +557,7 @@ class GenerateAgentFromLink extends GenerateAgent {
 class GenerateAgentFromNode extends GenerateAgent {
     MapNode start_node;
 
+    //------------------------------------------------------------
     /**
      * Config によるコンストラクタ
      */
@@ -588,33 +565,6 @@ class GenerateAgentFromNode extends GenerateAgent {
         super(config, random) ;
         start_node = (MapNode)config.startPlace ;
     }
-
-    public GenerateAgentFromNode(String _agentClassName,
-                                 Term _agentConf,
-            MapNode _start_node,
-            String[] conditions,
-            Term _goal,
-            List<Term> _planned_route,
-            double _start_time,
-            double _duration,
-            int _total,
-            SpeedCalculationModel _speed_model,
-            Random _random,
-            String _configLine) {
-        super(_agentClassName,
-              _agentConf,
-              conditions, _goal, _planned_route, _start_time, _duration,
-                _total, _speed_model, _random, _configLine);
-        start_node = _start_node;
-        //System.err.println("GenerateAgentFromNode start_node: " + start_node.ID + " goal: " + _goal);
-    }
-
-    /*  use finished of super class
-    @Override
-    protected boolean finished(double time) {
-       (not implemented)
-    }
-     */
 
     //------------------------------------------------------------
     /**

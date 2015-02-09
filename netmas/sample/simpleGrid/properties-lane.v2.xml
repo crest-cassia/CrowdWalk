@@ -9,6 +9,7 @@
     <entry key="pollution_file">sample/simpleGrid/gas.csv</entry>
     <entry key="generation_file">sample/simpleGrid/gen.v2.json</entry>
     <entry key="scenario_file">sample/simpleGrid/scenario.csv</entry>
+    <entry key="fallback_file">sample/simpleGrid/fallbackParameters.json</entry>
     <entry key="timer_enable">true</entry>
     <entry key="timer_file">/tmp/timer.log</entry>
     <entry key="interval">0</entry>

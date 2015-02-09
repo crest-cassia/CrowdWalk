@@ -63,6 +63,12 @@ implements Comparable<AgentBase>, Serializable {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * Agent の詳細設定情報を格納しているもの
+     */
+    static public final String ConfigFallbackSlot = NetworkMap.FallbackSlot ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * generatedTime: 生成された時刻
      * finishedTime: ゴールに到達した時刻
      * evacuated: ゴールに到達したかどうかのフラグ
@@ -161,11 +167,14 @@ implements Comparable<AgentBase>, Serializable {
      * 継承しているクラスの設定のため。
      * @param conf json の連想配列形式を scan した Map
      */
-    public void initByConf(Term conf) {
+    public void initByConf(Term conf, Term fallback) {
         if(conf != null) {
             config = conf ;
         } else {
             config = new Term() ;
+        }
+        if(fallback != null) {
+            config.setArg(ConfigFallbackSlot, fallback) ;
         }
     } ;
 
@@ -175,9 +184,9 @@ implements Comparable<AgentBase>, Serializable {
      * 継承しているクラスの設定のため。
      * @param confString json で書かれたAgentのconfigulation。
      */
-    public void _initByConf(String confString) {
+        public void _initByConf(String confString, Term fallback) {
         Term conf = Term.newByJson(confString) ;
-        initByConf(conf) ;
+        initByConf(conf, fallback) ;
     }
 
     //------------------------------------------------------------
@@ -185,8 +194,8 @@ implements Comparable<AgentBase>, Serializable {
      * Conf からの値の取得(double)
      */
     public double getDoubleFromConfig(String slot, double fallback) {
-        if(config.hasArg(slot))
-            return config.getArgDouble(slot) ;
+        if(config.hasArg(slot, ConfigFallbackSlot))
+            return config.fetchArgDouble(slot, ConfigFallbackSlot) ;
         else
             return fallback ;
     }
@@ -196,8 +205,8 @@ implements Comparable<AgentBase>, Serializable {
      * Conf からの値の取得(double)
      */
     public double getIntFromConfig(String slot, int fallback) {
-        if(config.hasArg(slot))
-            return config.getArgInt(slot) ;
+        if(config.hasArg(slot, ConfigFallbackSlot))
+            return config.fetchArgInt(slot, ConfigFallbackSlot) ;
         else
             return fallback ;
     }

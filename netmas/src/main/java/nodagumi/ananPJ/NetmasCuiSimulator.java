@@ -16,6 +16,7 @@ import nodagumi.ananPJ.misc.*;
 import nodagumi.ananPJ.misc.CommunicationHandler.*;
 import nodagumi.ananPJ.network.*;
 
+import nodagumi.Itk.*;
 
 public class NetmasCuiSimulator extends BasicSimulationLauncher
         implements Serializable {
@@ -45,6 +46,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
     protected static String pPath = null; // path to pollution file
     protected static String gPath = null; // path to generation file
     protected static String sPath = null; // path to scenario file
+    protected static String fallbackPath = null; //
     protected static String serializeFile = null;    // path to serialized file
     protected static String timerFile = null;         // path to timer log file
     protected static String deserializeFile = null;
@@ -97,6 +99,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         pPath = propertiesHandler.getPollutionPath();
         gPath = propertiesHandler.getGenerationPath();
         sPath = propertiesHandler.getScenarioPath();
+	fallbackPath = propertiesHandler.getFallbackPath();
         // timer enabled or not
         isTimerEnabled = propertiesHandler.getIsTimerEnabled();
         timerFile = propertiesHandler.getTimerPath();
@@ -170,6 +173,8 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         networkMap.setPollutionFile(pPath);
         networkMap.setGenerationFile(gPath);
         networkMap.setResponseFile(sPath);
+	networkMap.setFallbackFile(fallbackPath);
+	networkMap.scanFallbackFile(true) ;
     }
 
     protected String scenarioSerial = null;

@@ -150,6 +150,16 @@ public class Term {
     //============================================================
     //------------------------------------------------------------
     /**
+     * new Object Term
+     */
+    static public Term newObjectTerm() {
+        Term term = new Term() ;
+        term.allocBody() ;
+        return term ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * new Array Term
      */
     static public Term newArrayTerm() {
@@ -359,6 +369,23 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg チェック(fallback をたどる)
+     */
+    public boolean hasArg(String slot, String fallbackSlot) {
+        if(isNullBody()) {
+            return false ;
+        } else if(body.containsKey(slot)) {
+            return true ;
+        } else if(body.containsKey(fallbackSlot)) {
+            return getArgTerm(fallbackSlot).hasArg(slot,fallbackSlot) ;
+        } else {
+            return false ;
+        }
+    }
+
+
+    //------------------------------------------------------------
+    /**
      * arg 取得
      */
     public Object getArg(String slot) {
@@ -371,12 +398,39 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg 取得(fallback 付き)
+     */
+    public Object fetchArg(String slot, String fallbackSlot) {
+        if(hasArg(slot)) {
+            return getArg(slot) ;
+        } else if(hasArg(fallbackSlot)) {
+            Term fallbackTerm = getArgTerm(fallbackSlot) ;
+            return fallbackTerm.fetchArg(slot, fallbackSlot) ;
+        } else {
+            return null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * arg 取得 (Term)
      */
     public Term getArgTerm(String slot) {
         return convertValueToTerm(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (Term) (fallback 付き)
+     */
+    public Term fetchArgTerm(String slot, String fallbackSlot) {
+        return convertValueToTerm(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * Term への変換
+     */
     private Term convertValueToTerm(Object val) {
         if(val instanceof Term)
             return (Term)val ;
@@ -391,12 +445,46 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg を filter(fallback 付き)
+     * @param slot : filter するスロット
+     * @param fallbackSlot : fallback で潜っていくスロット
+     * @return filter された結果。必ずコピーされる。
+     */
+    public Term filterArgTerm(String slot, String fallbackSlot) {
+        Term filteredTerm = Term.newObjectTerm() ;
+        if(hasArg(slot)) {
+            filteredTerm.updateObjectFacile(getArgTerm(slot),false) ;
+        }
+        if(hasArg(fallbackSlot)) {
+            Term fallbackTerm = getArgTerm(fallbackSlot) ;
+            Term filteredFallback =
+                fallbackTerm.filterArgTerm(slot, fallbackSlot) ;
+            filteredTerm.setArg(fallbackSlot, filteredFallback) ;
+        }
+        return filteredTerm ;
+    }
+
+
+    //------------------------------------------------------------
+    /**
      * arg 取得 (String)
      */
     public String getArgString(String slot) {
         return convertValueToString(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (String) (fallback 付き)
+     */
+    public String fetchArgString(String slot, String fallbackSlot) {
+        return convertValueToString(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * String への変換
+     */
     private String convertValueToString(Object val) {
         if(val == null) {
             return null ;
@@ -415,6 +503,18 @@ public class Term {
         return convertValueToBoolean(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (boolean) (fallback 付き)
+     */
+    public boolean fetchArgBoolean(String slot, String fallbackSlot) {
+        return convertValueToBoolean(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * boolean への変換
+     */
     private boolean convertValueToBoolean(Object val) {
         if(val instanceof Term) {
             return Boolean.valueOf(((Term)val).getString()) ;
@@ -440,6 +540,18 @@ public class Term {
         return convertValueToInt(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (int) (fallback 付き)
+     */
+    public int fetchArgInt(String slot, String fallbackSlot) {
+        return convertValueToInt(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * Int への変換
+     */
     private int convertValueToInt(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getInt() ;
@@ -464,6 +576,18 @@ public class Term {
         return convertValueToDouble(getArg(slot)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (double) (fallback 付き)
+     */
+    public double fetchArgDouble(String slot, String fallbackSlot) {
+        return convertValueToDouble(fetchArg(slot, fallbackSlot)) ;
+    }
+
+    //------------------------------
+    /**
+     * Double への変換
+     */
     private double convertValueToDouble(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getDouble() ;
@@ -901,8 +1025,8 @@ public class Term {
         } catch(Exception ex) {
             ex.printStackTrace() ;
             Itk.dbgErr("Illegal updateObject for Term.") ;
-            Itk.dbgMsg("this", this) ;
-            Itk.dbgMsg("patch", patch) ;
+            Itk.dbgVal("this", this) ;
+            Itk.dbgVal("patch", patch) ;
             System.exit(1) ;
         }
         return this ; // never reach here
@@ -917,20 +1041,22 @@ public class Term {
     public Term updateObject(Term patch, boolean recursive)
         throws Exception
     {
-        if(!this.isObject())
+        if(!this.isObject() && !this.isZeroArgs())
             throw new Exception("Can't update non-Object Term:" + this) ;
-        if(!patch.isObject())
+        if(!patch.isObject() && !patch.isZeroArgs())
             throw new Exception("Can't update by non-Object Term:" + patch) ;
 
-        for(String slot : patch.getBody().keySet()) {
-            Term value = patch.getArgTerm(slot) ;
-            Term originalValue = this.getArgTerm(slot) ;
-            if(recursive &&
-               value != null && value.isObject() &&
-               originalValue != null && originalValue.isObject()) {
-                originalValue.updateObject(value, recursive) ;
-            } else {
-                this.setArg(slot, value) ;
+        if(!patch.isZeroArgs()) {
+            for(String slot : patch.getBody().keySet()) {
+                Term value = patch.getArgTerm(slot) ;
+                Term originalValue = this.getArgTerm(slot) ;
+                if(recursive &&
+                   value != null && value.isObject() &&
+                   originalValue != null && originalValue.isObject()) {
+                    originalValue.updateObject(value, recursive) ;
+                } else {
+                    this.setArg(slot, value) ;
+                }
             }
         }
         return this ;

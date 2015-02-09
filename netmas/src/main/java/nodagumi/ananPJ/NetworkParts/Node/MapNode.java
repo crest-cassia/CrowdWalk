@@ -151,11 +151,11 @@ public class MapNode extends OBMapPart implements Serializable {
         cachePathways = new MapLinkTable();
         for (MapLink link : links) {
             if (link.isOneWayPositive() &&
-                    (link.getTo() == this)) {
+                    (link.getPositiveNode() == this)) {
                 continue;
             }
             if (link.isOneWayNegative() &&
-                    link.getFrom() == this) {
+                    link.getNegativeNode() == this) {
                 continue;
             }
             if (link.isRoadClosed()) {
@@ -186,11 +186,11 @@ public class MapNode extends OBMapPart implements Serializable {
         MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
             if (link.isOneWayPositive() &&
-                    (link.getFrom() == this)) {
+                    (link.getNegativeNode() == this)) {
                 continue;
             }
             if (link.isOneWayNegative() &&
-                    link.getTo() == this) {
+                    link.getPositiveNode() == this) {
                 continue;
             }
             if (link.isRoadClosed()) {

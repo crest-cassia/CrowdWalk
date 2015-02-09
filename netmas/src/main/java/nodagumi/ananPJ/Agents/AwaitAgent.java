@@ -104,8 +104,8 @@ public class AwaitAgent extends WalkAgent
      * Conf による初期化。
      */
     @Override
-    public void initByConf(Term conf) {
-        super.initByConf(conf) ;
+    public void initByConf(Term conf, Term fallback) {
+        super.initByConf(conf, fallback) ;
 
         minDistanceBetweenAgents =
             getDoubleFromConfig("minDistanceBetweenAgents",

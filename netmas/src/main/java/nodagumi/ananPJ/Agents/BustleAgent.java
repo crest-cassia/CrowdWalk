@@ -100,8 +100,8 @@ public class BustleAgent extends NaiveAgent
      * Conf による初期化。
      */
     @Override
-    public void initByConf(Term conf) {
-        super.initByConf(conf) ;
+    public void initByConf(Term conf, Term fallback) {
+        super.initByConf(conf, fallback) ;
 
         bustleWeight = getDoubleFromConfig("weight", bustleWeight) ;
         trailWeight = getDoubleFromConfig("trail", trailWeight) ;

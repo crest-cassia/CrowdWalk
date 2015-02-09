@@ -2,7 +2,10 @@ package nodagumi.ananPJ;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.InputStream;
 import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,6 +26,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.vecmath.Vector3d;
 
+import net.arnx.jsonic.JSON ;
+
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
@@ -38,6 +43,8 @@ import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
 import nodagumi.ananPJ.misc.NetMASSnapshot;
+
+import nodagumi.Itk.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,6 +64,30 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     private String pollutionFile = null;
     private String generationFile = null;
     private String responseFile = null;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * fallback file
+	 */
+	private String fallbackFile = null ;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * fallback parameter slot name
+	 */
+	static public final String FallbackSlot = "_fallback" ;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * fallback parameter resource name
+	 */
+	static public final String FallbackResource = "/fallbackParameters.json" ;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * fallback parameter
+	 */
+	public Term fallbackParameters = null ;
 
     private OBNode selectedOBNode = null;
     private boolean hasDisplay = true;
@@ -569,6 +600,59 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         responseFile = s;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * fallback （デフォルトセッティング）のファイル取得
+	 */
+	public String getFallbackFile() {
+		return fallbackFile ;
+	}
+
+	//------------------------------------------------------------
+	/**
+	 * fallback （デフォルトセッティング）のファイルセット
+	 */
+	public void setFallbackFile(String s) {
+		fallbackFile = s ;
+	}
+
+	//------------------------------------------------------------
+	/**
+	 * fallback （デフォルトセッティング）の読み込み
+	 * @param scanResourceP : resource の fallback も読み込むかどうか
+	 */
+	public void scanFallbackFile(boolean scanResourceP) {
+		if(fallbackFile != null) {
+			try {
+				BufferedReader buffer =
+					new BufferedReader(new FileReader(fallbackFile)) ;
+				fallbackParameters = Term.newByScannedJson(JSON.decode(buffer),
+														   true) ;
+			} catch (Exception ex) {
+				ex.printStackTrace() ;
+				Itk.dbgErr("Can not scan a fallback parameter file:",
+						   fallbackFile) ;
+				Itk.dbgMsg("Exception",ex) ;
+			}
+		} else {
+			fallbackParameters = new Term() ;
+		}
+
+		if(scanResourceP) {
+			try {
+				InputStream istrm =
+					getClass().getResourceAsStream(FallbackResource) ;
+				Term finalFallback =
+					Term.newByScannedJson(JSON.decode(istrm),true) ;
+				fallbackParameters.setArg(FallbackSlot, finalFallback) ;
+			} catch (Exception ex) {
+				ex.printStackTrace() ;
+				Itk.dbgErr("Can not scan a fallback resource file.") ;
+				Itk.dbgMsg("Exception",ex) ;
+			}
+		}
+	}
+
     public void testDumpNodes() {
         testDumpNodes((OBNode)root);
     }
@@ -600,6 +684,9 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         if (responseFile != null) {
             dom_root.setAttribute("ResponseSettings", responseFile);
         }
+        if (fallbackFile != null) {
+            dom_root.setAttribute("FallbackSettings", fallbackFile);
+        }
 
         doc.appendChild(dom_root);
 
@@ -618,13 +705,19 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         }
         Element dom_root = (Element) toplevel.item(0);
 
+		/* [2015.02.06 I.Noda]
+		 * このあたり、使われていない設定読み込み。
+		 * おそらく、properties に集約されている？
+		 */
         /* some attributes */
-        pollutionFile = dom_root.getAttribute("PollutionSettings");
-        if (pollutionFile.isEmpty()) pollutionFile = null;
-            generationFile = dom_root.getAttribute("GenerationSettings");
-        if (generationFile.isEmpty()) generationFile = null;
-            responseFile = dom_root.getAttribute("ResponseSettings");
-        if (responseFile.isEmpty()) responseFile = null;
+		pollutionFile = dom_root.getAttribute("PollutionSettings");
+		if (pollutionFile.isEmpty()) pollutionFile = null;
+		generationFile = dom_root.getAttribute("GenerationSettings");
+		if (generationFile.isEmpty()) generationFile = null;
+		responseFile = dom_root.getAttribute("ResponseSettings");
+		if (responseFile.isEmpty()) responseFile = null;
+		fallbackFile = dom_root.getAttribute("FallbackSettings") ;
+		if (fallbackFile.isEmpty()) fallbackFile = null;
 
         setRoot(OBNode.fromDom(dom_root));
         setupNetwork((OBNode)this.root);
@@ -876,6 +969,8 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         networkMap.setFileName(element.getAttribute("filename"));
         networkMap.setGenerationFile(element.getAttribute("generationFile"));
         networkMap.setResponseFile(element.getAttribute("responseFile"));
+		networkMap.setFallbackFile(element.getAttribute("fallbackFile")) ;
+		networkMap.scanFallbackFile(true) ;
 
         NodeList childNetworkMap = element.getChildNodes();
         for (int i = 0; i < childNetworkMap.getLength(); i++) {

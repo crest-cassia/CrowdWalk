@@ -167,6 +167,7 @@ public class AgentHandler implements Serializable {
             EvacuationModelBase _model,
             boolean _has_display,
             double linerGenerateAgentRatio,
+            Term fallbackParameters,
             Random _random) {
         model = _model;
         has_display = _has_display;
@@ -189,9 +190,11 @@ public class AgentHandler implements Serializable {
 
         try {
             /* [I.Noda] generation file の読み込みはここ */
-            generate_agent = new AgentGenerationFile(generationFile,
-                                                     model.getMap(), has_display,
-                                                     linerGenerateAgentRatio, 
+             generate_agent = new AgentGenerationFile(generationFile,
+                                                     model.getMap(),
+                                                     fallbackParameters,
+                                                     has_display,
+                                                     linerGenerateAgentRatio,
                                                      random);
         } catch(Exception ex) {
             ex.printStackTrace() ;

@@ -108,8 +108,8 @@ public class CapriciousAgent extends NaiveAgent
      * Conf による初期化。
      */
     @Override
-    public void initByConf(Term conf) {
-        super.initByConf(conf) ;
+    public void initByConf(Term conf, Term fallback) {
+        super.initByConf(conf, fallback) ;
 
         capriciousMargin = getDoubleFromConfig("margin", capriciousMargin) ;
     } ;

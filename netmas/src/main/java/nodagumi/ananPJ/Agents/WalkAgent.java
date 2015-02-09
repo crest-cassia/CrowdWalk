@@ -274,8 +274,8 @@ public class WalkAgent extends AgentBase implements Serializable {
      * Conf による初期化。
      */
     @Override
-    public void initByConf(Term conf) {
-        super.initByConf(conf) ;
+    public void initByConf(Term conf, Term fallback) {
+        super.initByConf(conf, fallback) ;
 
         A_0 = getDoubleFromConfig("A_0", A_0) ;
         A_1 = getDoubleFromConfig("A_1", A_1) ;
@@ -290,7 +290,6 @@ public class WalkAgent extends AgentBase implements Serializable {
         insensitiveDistanceInCounterFlow =
             getDoubleFromConfig("insensitiveDistanceInCounterFlow",
                                 insensitiveDistanceInCounterFlow) ;
-
     } ;
 
     //------------------------------------------------------------
