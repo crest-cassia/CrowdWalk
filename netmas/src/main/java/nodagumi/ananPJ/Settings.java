@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import nodagumi.Itk.*;
+
 public class Settings extends HashMap<String, String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	String settingsFilename = "settings.ini";
@@ -22,9 +24,11 @@ public class Settings extends HashMap<String, String> implements Serializable {
 	
 	public static Settings load(String s) {
 		if (settings != null) {
-			System.err.println("Settings already loaded with: "
-					+ settings.settingsFilename + "\n"
-					+ " tried to be loaded with: " + s);
+			if(!settings.settingsFilename.equals(s)) {
+				Itk.dbgWrn("Settings is alread loaded from:",
+						   settings.settingsFilename) ;
+				Itk.dbgMsg("ignored file",s) ;
+			}
 			return settings;
 		}
 		settings = new Settings();

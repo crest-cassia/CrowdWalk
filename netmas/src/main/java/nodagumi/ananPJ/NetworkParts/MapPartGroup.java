@@ -24,6 +24,8 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 
+import nodagumi.Itk.*;
+
 public class MapPartGroup extends OBNode implements Serializable {
     private static final long serialVersionUID = 3059772175240934632L;
     /* Position of the MapPart, relative to the parent node.
