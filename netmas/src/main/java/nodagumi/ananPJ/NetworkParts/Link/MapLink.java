@@ -581,15 +581,15 @@ public class MapLink extends OBMapPart implements Serializable {
         double x2 = 0.0;
         double y2 = 0.0;
         if (positive) {
-            x1 = getNegativeNode().getX();
-            y1 = getNegativeNode().getY();
-            x2 = getPositiveNode().getX();
-            y2 = getPositiveNode().getY();
+            x1 = getFrom().getX();
+            y1 = getFrom().getY();
+            x2 = getTo().getX();
+            y2 = getTo().getY();
         } else {
-            x1 = getPositiveNode().getX();
-            y1 = getPositiveNode().getY();
-            x2 = getNegativeNode().getX();
-            y2 = getNegativeNode().getY();
+            x1 = getTo().getX();
+            y1 = getTo().getY();
+            x2 = getFrom().getX();
+            y2 = getFrom().getY();
         }
         //double fwidth = width / (((MapPartGroup)(parent)).getScale());
         //double fwidth = width;

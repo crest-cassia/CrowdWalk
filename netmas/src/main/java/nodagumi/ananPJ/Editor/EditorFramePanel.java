@@ -44,6 +44,8 @@ import nodagumi.ananPJ.navigation.NavigationHint;
 public class EditorFramePanel extends JPanel implements Serializable {
     private static final long serialVersionUID = 5696254371521431653L;
 
+    public static enum TextPosition { CENTER, UPPER, LOWER, LEFT, RIGHT }
+
     /* -- Parameters
      */
     /* parameters related to what is edited */
@@ -86,6 +88,13 @@ public class EditorFramePanel extends JPanel implements Serializable {
     public Point point_on_panel = new Point(0, 0);
 
     Color linkColor = Color.YELLOW;
+
+    // 一方通行の編集時に表示するラベル関連
+    private boolean showOneWayIndicator = false;
+    private MapNode oneWayfirstNode = null;
+    private MapNode oneWaylastNode = null;
+    private TextPosition oneWayLabelPositionA = TextPosition.CENTER;
+    private TextPosition oneWayLabelPositionB = TextPosition.CENTER;
 
     /* constructor
      */
@@ -499,6 +508,14 @@ public class EditorFramePanel extends JPanel implements Serializable {
             g.setColor(Color.BLACK);
             g.draw(tempLine);
         }       
+
+        if (showOneWayIndicator) {
+            g.setColor(Color.RED);
+            drawScaleFixedText(g, oneWayfirstNode.getX(), oneWayfirstNode.getY(),
+                    "A", oneWayLabelPositionA, Font.BOLD, 18);
+            drawScaleFixedText(g, oneWaylastNode.getX(), oneWaylastNode.getY(),
+                    "B", oneWayLabelPositionB, Font.BOLD, 18);
+        }
     }
 
     // 背景画像を読み込み後直ちに表示する
@@ -532,6 +549,47 @@ public class EditorFramePanel extends JPanel implements Serializable {
                 
             }
         }
+    }
+
+    /**
+     * 指定された位置、フォントスタイル、フォントサイズで text を描画する。
+     * フォントサイズは描画スケールの影響を受けない。
+     */
+    public void drawScaleFixedText(Graphics2D g, double x, double y,
+            String text, TextPosition position, int fontStyle, int fontSize) {
+        double scale = g.getTransform().getScaleX();
+        Font font = new Font("SansSerif", fontStyle, (int)(fontSize / scale));
+        g.setFont(font);
+        FontMetrics fm = g.getFontMetrics();
+        int textWidth = fm.stringWidth(text);
+        int textHeight = fm.getHeight();
+
+        double dx = 0.0;
+        double dy = 0.0;
+        switch (position) {
+        case CENTER:
+            dx = textWidth / -2.0;
+            dy = textHeight / 5.0;
+            break;
+        case UPPER:
+            dx = textWidth / -2.0;
+            dy = textHeight / -3.0;
+            break;
+        case LOWER:
+            dx = textWidth / -2.0;
+            dy = textHeight / 1.3;
+            break;
+        case LEFT:
+            dx = -textWidth - textHeight / 3.0;
+            dy = textHeight / 5.0;
+            break;
+        case RIGHT:
+            dx = textHeight / 3.0;
+            dy = textHeight / 5.0;
+            break;
+        }
+
+        g.drawString(text, (float)(x + dx), (float)(y + dy));
     }
 
     /* -- Methods to set how drawn 
@@ -609,6 +667,14 @@ public class EditorFramePanel extends JPanel implements Serializable {
         tempLine = line;
     }
     
+    public void setOneWayIndicator(boolean enabled, MapNode firstNode, TextPosition positionA, MapNode lastNode, TextPosition positionB) {
+        showOneWayIndicator = enabled;
+        oneWayfirstNode = firstNode;
+        oneWaylastNode = lastNode;
+        oneWayLabelPositionA = positionA;
+        oneWayLabelPositionB = positionB;
+    }
+
     public void setBackgroundGroup(MapPartGroup group) {
         backgroundGroup = group;
     }
