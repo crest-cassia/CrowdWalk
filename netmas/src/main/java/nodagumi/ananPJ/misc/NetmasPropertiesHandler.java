@@ -306,12 +306,13 @@ public class NetmasPropertiesHandler implements Serializable {
             randseed = getIntegerProperty(prop, "randseed");
             // speed model
             String speedModelString = getStringProperty(prop, "speed_model");
-            if (speedModelString.equals("strait")) {
-                speedModel = SpeedCalculationModel.StraitModel;
-            } else {
-                speedModel = SpeedCalculationModel.LaneModel;
-                System.err.println("NetmasCuiSimulator speed model: lane");
-            }
+	    speedModel =
+		(SpeedCalculationModel)
+		AgentGenerationFile.speedModelLexicon.lookUp(speedModelString) ;
+	    if(speedModel == null) {
+		Itk.dbgMsg("speedModel","use lane model as default.") ;
+		speedModel = SpeedCalculationModel.LaneModel;
+	    }
             // time series log
             isTimeSeriesLog = getBooleanProperty(prop, "time_series_log");
             if (isTimeSeriesLog) {

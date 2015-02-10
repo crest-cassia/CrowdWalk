@@ -37,8 +37,6 @@ public class Lexicon {
     private HashMap<Object, ArrayList<String>> reverseTable = 
         new HashMap<Object, ArrayList<String>>() ;
 
-    
-
     //------------------------------------------------------------
     /**
      * constructor

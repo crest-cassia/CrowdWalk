@@ -81,7 +81,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * Lexicon for Generation Rule
      */
-    static Lexicon ruleLexicon = new Lexicon() ;
+    static public Lexicon ruleLexicon = new Lexicon() ;
     static {
         // Rule で定義された名前をそのまま文字列で Lexicon を
         // 引けるようにする。
@@ -93,11 +93,13 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
     /**
      * Lexicon for SpeedCalculationModel
      */
-    static private Lexicon speedModelLexicon = new Lexicon() ;
+    static public Lexicon speedModelLexicon = new Lexicon() ;
     static {
         speedModelLexicon.registerMulti(new Object[][]
             {{"LANE", SpeedCalculationModel.LaneModel},
-             {"STRAIT",SpeedCalculationModel.StraitModel}
+             {"lane", SpeedCalculationModel.LaneModel},
+             {"STRAIT",SpeedCalculationModel.StraitModel},
+             {"strait",SpeedCalculationModel.StraitModel}
             }) ;
     }
 
