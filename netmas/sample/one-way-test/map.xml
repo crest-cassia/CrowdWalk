@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Group GenerationSettings="sample/one-way-test/gen.csv" PollutionSettings="sample/one-way-test/gas.csv" ResponseSettings="sample/one-way-test/scenario.csv" defaultHeight="0.0" id="684967434" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+<Group GenerationSettings="sample/one-way-test/gen.csv" PollutionSettings="sample/one-way-test/gas.csv" ScenarioSettings="sample/one-way-test/scenario.csv" defaultHeight="0.0" id="684967434" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
   <tag>root</tag>
   <Node height="0.0" id="479044478" x="125.0" y="282.0">
     <tag>EXIT</tag>

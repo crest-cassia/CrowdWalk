@@ -10,7 +10,7 @@
     <!-- entry key="pollution_file">sample/basic-sample/gas.csv</entry
     -->
     <entry key="generation_file">sample/basic-sample/test_generation.v2.json</entry>
-    <entry key="scenario_file">sample/basic-sample/test_response.csv</entry>
+    <entry key="scenario_file">sample/basic-sample/test_scenario.csv</entry>
     <entry key="timer_enable">true</entry>
     <entry key="timer_file">/tmp/timer.log</entry>
     <entry key="interval">0</entry>

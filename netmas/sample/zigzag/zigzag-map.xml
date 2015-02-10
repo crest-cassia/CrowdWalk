@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Group GenerationSettings="sample/gen-zigzag.csv" PollutionSettings="sample/gas.csv" ResponseSettings="sample/scenario.csv" defaultHeight="0.0" id="1157057489" imageFileName="sample/zigzag//sample//sample//sample//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+<Group GenerationSettings="sample/gen-zigzag.csv" PollutionSettings="sample/gas.csv" ScenarioSettings="sample/scenario.csv" defaultHeight="0.0" id="1157057489" imageFileName="sample/zigzag//sample//sample//sample//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
   <tag>ROOT</tag>
   <Node height="0.0" id="1158011142" x="42.0" y="312.0">
     <tag>SECOND_GOAL</tag>

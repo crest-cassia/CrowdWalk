@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Group ResponseSettings="sample/2links/scenario.csv" GenerationSettings="sample/2links/gen.csv" defaultHeight="0.0" id="2054334425" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+<Group ScenarioSettings="sample/2links/scenario.csv" GenerationSettings="sample/2links/gen.csv" defaultHeight="0.0" id="2054334425" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
   <tag>root</tag>
   <Node height="0.0" id="1709008992" x="0.0" y="0.0">
     <tag>N1</tag>

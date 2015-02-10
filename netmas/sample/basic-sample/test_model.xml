@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Group GenerationSettings="test_generation.csv" PollutionSettings="" ResponseSettings="test_response.csv" defaultHeight="0.0" id="1850374459" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="0.0" pNorthWestY="0.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="0.05128188270283231" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+<Group GenerationSettings="test_generation.csv" PollutionSettings="" scenarioSettings="test_scenario.csv" defaultHeight="0.0" id="1850374459" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="0.0" pNorthWestY="0.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="0.05128188270283231" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
   <Group defaultHeight="0.0" id="326032321" imageFileName="rooms.png" maxHeight="5.0" minHeight="-5.0" pNorthWestX="0.0" pNorthWestY="0.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="0.05128188270283231" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
     <tag>1F</tag>
     <Node height="0.0" id="365042696" x="86.0" y="112.0">
