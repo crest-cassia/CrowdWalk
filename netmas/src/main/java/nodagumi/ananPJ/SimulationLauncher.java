@@ -80,8 +80,8 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private transient JLabel model_filename_label = new JLabel();
     private transient JButton generation_file_button = new JButton();
     private transient JLabel generation_filename_label = new JLabel();
-    private transient JButton response_file_button = new JButton();
-    private transient JLabel response_filename_label = new JLabel();
+    private transient JButton scenario_file_button = new JButton();
+    private transient JLabel scenario_filename_label = new JLabel();
 
     private boolean finished = true;
     private Boolean run_thread = false;

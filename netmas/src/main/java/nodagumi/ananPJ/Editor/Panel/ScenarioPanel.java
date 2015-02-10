@@ -35,8 +35,8 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
     NetworkMapEditor editor = null;
     JLabel generateFileLabel = null;
     JButton generateFileButton = null;
-    JLabel responseFileLabel = null;
-    JButton responseFileButton = null;
+    JLabel scenarioFileLabel = null;
+    JButton scenarioFileButton = null;
 	JLabel fallbackFileLabel = null ;
 	JButton fallbackFileButton = null ;
     Random random = null;
@@ -113,17 +113,17 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
         });
         button_panel.add(generateFileButton);
         
-        /* emergency response scenario */
-        responseFileLabel = new JLabel("Response:");
-        button_panel.add(responseFileLabel);
+        /* emergency scenario scenario */
+        scenarioFileLabel = new JLabel("Scenario:");
+        button_panel.add(scenarioFileLabel);
 
-        responseFileButton = new JButton("Open Response File");
-        responseFileButton.addActionListener(new ActionListener() {
+        scenarioFileButton = new JButton("Open Scenario File");
+        scenarioFileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                open_response_file();
+                open_scenario_file();
             }
         });
-        button_panel.add(responseFileButton);
+        button_panel.add(scenarioFileButton);
 
         /* fallback file */
         fallbackFileLabel = new JLabel("Fallback:");
@@ -164,9 +164,9 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
         refresh();
     }
 
-    private void open_response_file() {
+    private void open_scenario_file() {
         FileDialog fd = new FileDialog(editor.getFrame(), 
-                "Set emergency response scenario", FileDialog.LOAD);
+                "Set emergency scenario", FileDialog.LOAD);
 
         fd.setFile("");
         fd.setDirectory(editor.getDirName());
@@ -174,7 +174,7 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
         if (fd.getFile() == null) return;
 
         String filename = fd.getDirectory() + fd.getFile();
-        editor.getMap().setResponseFile(filename);
+        editor.getMap().setScenarioFile(filename);
 
         refresh();
     }
@@ -185,7 +185,7 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
 	 */
     private void open_fallback_file() {
         FileDialog fd = new FileDialog(editor.getFrame(), 
-                "Set emergency response scenario", FileDialog.LOAD);
+                "Set emergency scenario", FileDialog.LOAD);
 
         fd.setFile("");
         fd.setDirectory(editor.getDirName());
@@ -226,8 +226,8 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
             generationDataModel.setFile(null);
         }
 
-        if (editor.getMap().getResponseFile() != null) {
-            File response_file = new File(editor.getMap().getResponseFile());
+        if (editor.getMap().getScenarioFile() != null) {
+            File scenario_file = new File(editor.getMap().getScenarioFile());
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     adjustColumnPreferredWidth(generationTable);
@@ -235,20 +235,20 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
                 }
             });
             String message = "";
-            if (!response_file.exists()) {
+            if (!scenario_file.exists()) {
                 message += " (error: does not exist)";
-            } else if (response_file.isDirectory()) {
+            } else if (scenario_file.isDirectory()) {
                 message += " (error: is directory)";
-            } else if (!response_file.canRead()) {
+            } else if (!scenario_file.canRead()) {
                 message += " (error: unreadable)";
             }
-            responseFileLabel.setText("Response  : " +
-                    response_file.getName() +
+            scenarioFileLabel.setText("Scenario  : " +
+                    scenario_file.getName() +
                     message);
-            responseFileButton.setToolTipText(response_file.getPath());
+            scenarioFileButton.setToolTipText(scenario_file.getPath());
         } else {
-            responseFileLabel.setText("Response  : not given");
-            responseFileButton.setToolTipText(null);
+            scenarioFileLabel.setText("Scenario  : not given");
+            scenarioFileButton.setToolTipText(null);
         }
         repaint();
     }

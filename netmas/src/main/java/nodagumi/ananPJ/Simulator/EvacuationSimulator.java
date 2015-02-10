@@ -149,7 +149,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             }
             agentHandler.deserialize(
                     networkMap.getGenerationFile(),
-                    networkMap.getResponseFile(),
+                    networkMap.getScenarioFile(),
                     scenario_number,
                     map);
         }
@@ -173,7 +173,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             }
             agentHandler.deserialize(
                     networkMap.getGenerationFile(),
-                    networkMap.getResponseFile(),
+                    networkMap.getScenarioFile(),
                     scenario_number,
                     map);
         }
@@ -211,7 +211,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
         agentHandler = new AgentHandler(agents,
                 networkMap.getGenerationFile(),
-                networkMap.getResponseFile(),
+                networkMap.getScenarioFile(),
                 scenario_number,
                 map,
                 this,

@@ -161,7 +161,7 @@ public class AgentHandler implements Serializable {
 
     public AgentHandler (ArrayList<AgentBase> _agents,
             String generationFile,
-            String responseFile,
+            String scenarioFile,
             String scenario_number,
             NetworkMapBase map,
             EvacuationModelBase _model,
@@ -206,11 +206,11 @@ public class AgentHandler implements Serializable {
                 maxAgentCount += factory.getMaxGeneration();
             }
         }
-        parseResponseFile(responseFile);
+        parseScenarioFile(scenarioFile);
 
         if (has_display) {
             setup_control_panel(generationFile,
-                    responseFile,
+                    scenarioFile,
                     scenario_number,
                     map);
         }
@@ -223,7 +223,7 @@ public class AgentHandler implements Serializable {
             effectiveLinksEnabled = true;
     }
 
-    public void deserialize(String generationFile, String responseFile,
+    public void deserialize(String generationFile, String scenarioFile,
             String scenario_number, NetworkMapBase map) {
         control_panel = null;
         clock_label = new JLabel("NOT STARTED");
@@ -231,7 +231,7 @@ public class AgentHandler implements Serializable {
         evacuatedCount_label = new JLabel("NOT STARTED");
         message = new JTextArea("UNMaps Version 1.9.5\n");
         setup_control_panel(generationFile,
-                responseFile,
+                scenarioFile,
                 scenario_number,
                 map);
     }
@@ -248,7 +248,7 @@ public class AgentHandler implements Serializable {
         scenario.setOriginTime(0) ;
     }
 
-    private void parseResponseFile(String filename) {
+    private void parseScenarioFile(String filename) {
         if (filename == null || filename.isEmpty()) {
             setup_default_scenario();
             return;
@@ -881,7 +881,7 @@ public class AgentHandler implements Serializable {
     }
 
     private void setup_control_panel(String generationFileName,
-            String responseFileName,
+            String scenarioFileName,
             String scenario_number,
             NetworkMapBase map) {
         control_panel = new JPanel();
@@ -910,11 +910,11 @@ public class AgentHandler implements Serializable {
         }
 
         addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, new JLabel("Scenario"));
-        if (responseFileName != null) {
-            File response_file = new File(responseFileName);
-            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel(response_file.getName()));
+        if (scenarioFileName != null) {
+            File scenario_file = new File(scenarioFileName);
+            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel(scenario_file.getName()));
         } else {
-            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel("No response file"));
+            addJLabel(titlepanel, 1, 2, 1, 1, new JLabel("No scenario file"));
         }
 
         addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST, new JLabel("Pollution"));

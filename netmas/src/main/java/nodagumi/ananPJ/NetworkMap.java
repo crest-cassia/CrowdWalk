@@ -63,7 +63,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     private String filename = null;
     private String pollutionFile = null;
     private String generationFile = null;
-    private String responseFile = null;
+    private String scenarioFile = null;
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	/**
@@ -578,26 +578,15 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         generationFile = s;
     }
 
-    public String getResponseFile() {
-        if (responseFile == null)
+	public String getScenarioFile() {
+        if (scenarioFile == null)
             return null;
-        File response_file = new File(responseFile);
-        // if (!response_file.isAbsolute() && (filename != null)) {
-            // File mapfile = new File(filename);
-            // if (mapfile.getParent() != null) {
-        // response_file = new File(mapfile.getParent()
-                     // + File.separator
-                     // + responseFile);
-            // } else {
-        // return responseFile;
-        // }
-        // }
-        // return response_file.getAbsolutePath();
-        return response_file.getPath();
+		File _scenarioFile = new File(scenarioFile) ;
+        return _scenarioFile.getPath();
     }
 
-    public void setResponseFile(String s) {
-        responseFile = s;
+    public void setScenarioFile(String s) {
+        scenarioFile = s;
     }
 
 	//------------------------------------------------------------
@@ -681,8 +670,8 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         if (generationFile != null) {
             dom_root.setAttribute("GenerationSettings", generationFile);
         }
-        if (responseFile != null) {
-            dom_root.setAttribute("ResponseSettings", responseFile);
+        if (scenarioFile != null) {
+            dom_root.setAttribute("ScenarioSettings", scenarioFile);
         }
         if (fallbackFile != null) {
             dom_root.setAttribute("FallbackSettings", fallbackFile);
@@ -714,8 +703,8 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 		if (pollutionFile.isEmpty()) pollutionFile = null;
 		generationFile = dom_root.getAttribute("GenerationSettings");
 		if (generationFile.isEmpty()) generationFile = null;
-		responseFile = dom_root.getAttribute("ResponseSettings");
-		if (responseFile.isEmpty()) responseFile = null;
+		scenarioFile = dom_root.getAttribute("ScenarioSettings");
+		if (scenarioFile.isEmpty()) scenarioFile = null;
 		fallbackFile = dom_root.getAttribute("FallbackSettings") ;
 		if (fallbackFile.isEmpty()) fallbackFile = null;
 
@@ -953,12 +942,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         }
         element.appendChild(nodesCacheElement);
 
-        /*element.setAttribute("filename", "" + this.getFileName());
-        element.setAttribute("pollutionFile", "" + this.getPollutionFile());
-        element.setAttribute("generationFile", "" + this.getGenerationFile());
-        element.setAttribute("responseFile", "" + this.getResponseFile());
-        element.setAttribute("selectedOBNode", "" + this.getSelectedOBNode());
-        */
         return element;
     }
 
@@ -968,7 +951,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 
         networkMap.setFileName(element.getAttribute("filename"));
         networkMap.setGenerationFile(element.getAttribute("generationFile"));
-        networkMap.setResponseFile(element.getAttribute("responseFile"));
+        networkMap.setScenarioFile(element.getAttribute("scenarioFile"));
 		networkMap.setFallbackFile(element.getAttribute("fallbackFile")) ;
 		networkMap.scanFallbackFile(true) ;
 

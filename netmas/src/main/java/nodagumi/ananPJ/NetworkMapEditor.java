@@ -659,7 +659,7 @@ public class NetworkMapEditor extends SimulationLauncher
         // tkokada
         networkMap.setGenerationFile(generationPath);
         networkMap.setPollutionFile(pollutionPath);
-        networkMap.setResponseFile(scenarioPath);
+        networkMap.setScenarioFile(scenarioPath);
 		networkMap.setFallbackFile(fallbackPath);
         networkMap.setupAfterLoad();
         updateAll();
@@ -1509,7 +1509,7 @@ public class NetworkMapEditor extends SimulationLauncher
     public void setScenarioPath(String _scenarioPath) {
         scenarioPath = _scenarioPath;
         if (networkMap != null) {
-            networkMap.setResponseFile(scenarioPath);
+            networkMap.setScenarioFile(scenarioPath);
         }
     }
 
