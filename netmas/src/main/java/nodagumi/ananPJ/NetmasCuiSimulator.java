@@ -177,11 +177,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
 	networkMap.scanFallbackFile(true) ;
     }
 
-    protected String scenarioSerial = null;
-    public void setScenarioSerial(String _scenarioSerial) {
-        scenarioSerial = _scenarioSerial;
-    }
-
     boolean finished = false;
     public void initialize() {
         if (type == CommunicationType.RCV_NETWORK) {
@@ -195,8 +190,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         }
 
         if (!isDeserialized) {
-            model = new EvacuationSimulator(networkMap, null, scenarioSerial,
-                    random);
+	    model = new EvacuationSimulator(networkMap, null, random) ;
             // this method just set 0 to model.tick_count
             model.setProperties(properties);
             model.setup();
@@ -342,7 +336,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
             NetmasCuiSimulator sim = new NetmasCuiSimulator(propertiesPath);
             //sim.printInputtedOptions();
             //NetworkMap networkMap = sim.readMapWithName(mPath, random);
-            sim.scenarioSerial = "NetMASNetmasCuiSimulator";
             sim.initialize();
             sim.start();
         } else {

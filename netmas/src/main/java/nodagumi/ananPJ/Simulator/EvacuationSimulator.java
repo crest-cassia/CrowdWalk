@@ -35,6 +35,8 @@ import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
+import nodagumi.Itk.*;
+
 
 
 public class EvacuationSimulator implements EvacuationModelBase, Serializable {
@@ -56,7 +58,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     private int outlogInterval = 0;
     /** simulation time step */
     private double timeScale = 1.0; // original value: 1.0
-    private String scenario_serial = null;
 
     protected double tick_count = 0.0;
 
@@ -73,7 +74,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     public EvacuationSimulator(NetworkMap _networkMap,
             SimulationController _controller,
-            String _scenario_serial,
             Random _random) {
         networkMap = _networkMap;
         controller = _controller;
@@ -83,7 +83,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 	map = networkMap ;
         agents = networkMap.getAgents();
         pollutionFileName = networkMap.getPollutionFile();
-        scenario_serial = _scenario_serial;
         random = _random;
         //bug check
         //System.err.println("EvacuationSimulator check invalid links");
@@ -100,12 +99,11 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     }
 
     public EvacuationSimulator(NetworkMap networkMap, Random _random) {
-        this(networkMap, null, null, _random);
+        this(networkMap, null, _random);
     }
 
     public void deserialize(NetworkMap _networkMap,
-            SimulationController _controller,
-            String _scenario_serial) {
+			    SimulationController _controller) {
         networkMap = _networkMap;
         controller = _controller;
         if (controller instanceof BasicSimulationLauncher) {
@@ -114,7 +112,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 	map = networkMap ;
         agents = networkMap.getAgents();
         pollutionFileName = networkMap.getPollutionFile();
-        scenario_serial = _scenario_serial;
     }
 
     public void begin(boolean has_display) {
@@ -141,16 +138,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             buildModel (has_display);
             buildRoutes ();
         } else {
-            String scenario_number = null;
-            Pattern numonly = Pattern.compile("^\\d*$");
-            Matcher matcher = numonly.matcher(scenario_serial);
-            if (matcher.matches()) {
-                scenario_number = scenario_serial;
-            }
             agentHandler.deserialize(
                     networkMap.getGenerationFile(),
                     networkMap.getScenarioFile(),
-                    scenario_number,
                     map);
         }
         if (has_display)
@@ -165,16 +155,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             buildModel (has_display);
             buildRoutes ();
         } else {
-            String scenario_number = null;
-            Pattern numonly = Pattern.compile("^\\d*$");
-            Matcher matcher = numonly.matcher(scenario_serial);
-            if (matcher.matches()) {
-                scenario_number = scenario_serial;
-            }
             agentHandler.deserialize(
                     networkMap.getGenerationFile(),
                     networkMap.getScenarioFile(),
-                    scenario_number,
                     map);
         }
 
@@ -203,16 +186,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             }
         }
 
-        String scenario_number = null;
-        Pattern numonly = Pattern.compile("^\\d*$");
-        Matcher matcher = numonly.matcher(scenario_serial);
-        if (matcher.matches()) {
-            scenario_number = scenario_serial;
-        }
         agentHandler = new AgentHandler(agents,
                 networkMap.getGenerationFile(),
                 networkMap.getScenarioFile(),
-                scenario_number,
                 map,
                 this,
                 has_display,
@@ -338,13 +314,15 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     protected void output_results() {
         try {
-            PrintStream ps = new PrintStream("logs/"+scenario_serial+".log");
+	    /* [2015.02.10 I.Noda] use timestamp instead of scenario_serial. */
+	    String timestamp = Itk.getCurrentTimeStr() ;
+            PrintStream ps = new PrintStream("logs/" + timestamp + ".log");
             agentHandler.dumpAgentResult(ps);
             ps.close();
 
             File macro = new File("logs/macro.log");
             PrintWriter pw = new PrintWriter(new FileWriter(macro, true));
-            pw.print(scenario_serial + ",");
+            pw.print(timestamp + ",");
             pw.println(agentHandler.getStatisticsDescription());
             pw.close();
         } catch (IOException e) {
@@ -746,10 +724,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     public NetmasPropertiesHandler getProperties() {
         return properties;
-    }
-
-    public String getScenario_serial() {
-        return scenario_serial;
     }
 
     public void setRandom(Random _random) {

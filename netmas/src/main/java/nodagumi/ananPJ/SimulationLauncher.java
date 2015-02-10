@@ -42,7 +42,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     protected transient Settings settings;
     private transient JFrame main_frame;
-    String scenario_name = new String();
     protected Random random = null;
     private boolean isAllAgentSpeedZeroBreak = false;
     private NetmasTimer timer = null;
@@ -98,27 +97,17 @@ public class SimulationLauncher extends BasicSimulationLauncher
         }
 
         if (isDeserialized) {
-            System.out.println("SimulationLauncher.simulate:scenario_name: " +
-                    this.scenario_name);
             System.out.println("SimulationLauncher.simulate:finished: " +
                     finished);
             finished = false;
             model.begin(true, isDeserialized);
         } else {
-            Date date = new Date();
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-            String model_path = networkMap.getFileName();
-            if (model_path == null) { model_path = "tmp"; }
-            File model_file = new File(model_path);
-            String model_filename = model_file.getName();
-            scenario_name = model_filename + format.format(date);
-
 	    /* [2015-02-06 I.Noda]
 	     * ここで読み込むのが正しいか、不明
 	     */
 	    networkMap.scanFallbackFile(true) ;
 
-            model = new EvacuationSimulator(networkMap, this, scenario_name, random);
+            model = new EvacuationSimulator(networkMap, this, random);
             finished = false;
             model.setup();
             buildModel();

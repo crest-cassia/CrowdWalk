@@ -162,7 +162,6 @@ public class AgentHandler implements Serializable {
     public AgentHandler (ArrayList<AgentBase> _agents,
             String generationFile,
             String scenarioFile,
-            String scenario_number,
             NetworkMapBase map,
             EvacuationModelBase _model,
             boolean _has_display,
@@ -211,7 +210,6 @@ public class AgentHandler implements Serializable {
         if (has_display) {
             setup_control_panel(generationFile,
                     scenarioFile,
-                    scenario_number,
                     map);
         }
         fusionViewerConnector = new FusionViewerConnector();
@@ -224,7 +222,7 @@ public class AgentHandler implements Serializable {
     }
 
     public void deserialize(String generationFile, String scenarioFile,
-            String scenario_number, NetworkMapBase map) {
+                            NetworkMapBase map) {
         control_panel = null;
         clock_label = new JLabel("NOT STARTED");
         time_label = new JLabel("NOT STARTED!");
@@ -232,7 +230,6 @@ public class AgentHandler implements Serializable {
         message = new JTextArea("UNMaps Version 1.9.5\n");
         setup_control_panel(generationFile,
                 scenarioFile,
-                scenario_number,
                 map);
     }
 
@@ -882,7 +879,6 @@ public class AgentHandler implements Serializable {
 
     private void setup_control_panel(String generationFileName,
             String scenarioFileName,
-            String scenario_number,
             NetworkMapBase map) {
         control_panel = new JPanel();
         control_panel.setName("Control");
@@ -926,13 +922,10 @@ public class AgentHandler implements Serializable {
         }
 
         addJLabel(titlepanel, 0, 4, 1, 1, GridBagConstraints.EAST, new JLabel("ID"));
-        if (scenario_number != null) {
-            addJLabel(titlepanel, 1, 4, 1, 1, new JLabel(scenario_number));
-        } else {
-            JLabel sl = new JLabel("(NOT DEFINED)");
-            sl.setFont(new Font(null, Font.ITALIC, 9));
-            addJLabel(titlepanel, 1, 4, 1, 1, sl);
-        }
+        /* [2015.02.10 I.Noda] remove scenario_numbers */
+        JLabel sl = new JLabel("(NOT DEFINED)");
+        sl.setFont(new Font(null, Font.ITALIC, 9));
+        addJLabel(titlepanel, 1, 4, 1, 1, sl);
 
         clock_label.setHorizontalAlignment(JLabel.CENTER);
         clock_label.setFont(new Font("Lucida", Font.BOLD, 18));

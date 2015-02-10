@@ -340,7 +340,7 @@ public class Itk {
      * 時刻文字列のフォーマット
      */
     static public final String DefaultTimeStrFormatPattern 
-        = "yyyy-MM-dd HH:mm:ss.SSS" ;
+        = "yyyy-MM-dd_HH:mm:ss.SSS" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
