@@ -39,6 +39,8 @@ import net.arnx.jsonic.JSON ;
  */
 public class Itk {
     //------------------------------------------------------------
+    // デバッグ出力
+    //------------------------------------------------------------
     /**
      * デバッグ用出力汎用コマンド
      * @param tag 行の先頭のタグ
@@ -254,25 +256,7 @@ public class Itk {
     }
 
     //------------------------------------------------------------
-    /**
-     * UUID によりランダムな URI を生成
-     */
-    static public String genUriRandom() {
-        UUID uuid = UUID.randomUUID() ;
-        return "uri:uuid:" + uuid.toString() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 現在時刻をCalendarで取得
-     */
-    /*
-    static public Calendar getCurrentTimeCalendar() {
-        String tz = "JST" ;
-        return Calendar.getInstance(TimeZone.getTimeZone(tz)) ;
-    }
-    */
-
+    // 時刻・計時関係
     //------------------------------------------------------------
     /**
      * 現在時刻をDateで取得
@@ -281,16 +265,46 @@ public class Itk {
         return new Date() ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 時刻文字列のフォーマット
+     */
+    static public final String DefaultTimeStrFormatPattern 
+        = "yyyy-MM-dd_HH:mm:ss.SSS" ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 時刻フォーマット
+     */
+    static public final DateFormat DefaultTimeStrFormat 
+        = new SimpleDateFormat(DefaultTimeStrFormatPattern) ;
+
     //------------------------------------------------------------
     /**
-     * 現在時刻をTimeで取得
-     * (Time class は、java.sql.Time で、使わないので、とりあえず排除)
+     * 現在時刻をStringで取得
      */
-    /*
-    static public Time getCurrentTime() {
-        return new Time(getCurrentTimeDate().getTime()) ;
+    static public String getCurrentTimeStr() {
+        return getCurrentTimeStr(DefaultTimeStrFormat) ;
     }
-    */
+
+    //------------------------------------------------------------
+    /**
+     * 現在時刻をStringで取得
+     * @param formatPattern 指定のフォーマット
+     */
+    static public String getCurrentTimeStr(String formatPattern) {
+        return getCurrentTimeStr(new SimpleDateFormat(formatPattern)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在時刻をStringで取得
+     * @param form 指定のフォーマット
+     */
+    static public String getCurrentTimeStr(DateFormat form) {
+        Date date = getCurrentTimeDate() ;
+        return form.format(date) ;
+    }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -336,46 +350,59 @@ public class Itk {
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    static private Pattern timeStringPatternShort =
+        Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
+    static private Pattern timeStringPatternLong =
+        Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
+
+    //------------------------------------------------------------
     /**
-     * 時刻文字列のフォーマット
+     * 時間・時刻表示の解析
+     * もし解析できなければ、Exception を throw。
+     * 時間の形式は、 HH:MM:SS もしくは HH:MM
+     * @param timeStr 時間・時刻の文字列
+     * @return 時刻・時間を返す。
      */
-    static public final String DefaultTimeStrFormatPattern 
-        = "yyyy-MM-dd_HH:mm:ss.SSS" ;
+    static public int scanTimeStringToInt(String timeStr) throws Exception {
+        int timeVal = 0 ;
+
+        Matcher matchLong = timeStringPatternLong.matcher(timeStr) ;
+        if (matchLong.matches()) {
+            timeVal = (3600 * Integer.parseInt(matchLong.group(1)) +
+                       60 * Integer.parseInt(matchLong.group(2)) +
+                       Integer.parseInt(matchLong.group(3))) ;
+        } else {
+            Matcher matchShort = timeStringPatternShort.matcher(timeStr) ;
+            if (matchShort.matches()) {
+                timeVal = (3600 * Integer.parseInt(matchShort.group(1)) +
+                           60 * Integer.parseInt(matchShort.group(2))) ;
+            } else {
+                Itk.dbgErr("Illegal time format:" + timeStr) ;
+                throw new Exception("Illegal time format:" + timeStr) ;
+            }
+        }
+        return timeVal ;
+    }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 時刻フォーマット
-     */
-    static public final DateFormat DefaultTimeStrFormat 
-        = new SimpleDateFormat(DefaultTimeStrFormatPattern) ;
+    static private String timeStringFormatLong = "%02d:%02d:%02d" ;
 
     //------------------------------------------------------------
     /**
-     * 現在時刻をStringで取得
+     * 時間・時刻の文字列変換
+     * @param time 秒単位の整数
+     * @return 時刻・時間の文字列
      */
-    static public String getCurrentTimeStr() {
-        return getCurrentTimeStr(DefaultTimeStrFormat) ;
+    static public String formatSecTime(int time) {
+        int sec = time % 60 ;
+        int restMin = (time - sec) / 60 ;
+        int min = restMin % 60 ;
+        int hour = (restMin - min) / 60 ;
+        return String.format(timeStringFormatLong, hour, min, sec) ;
     }
 
     //------------------------------------------------------------
-    /**
-     * 現在時刻をStringで取得
-     * @param formatPattern 指定のフォーマット
-     */
-    static public String getCurrentTimeStr(String formatPattern) {
-        return getCurrentTimeStr(new SimpleDateFormat(formatPattern)) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 現在時刻をStringで取得
-     * @param form 指定のフォーマット
-     */
-    static public String getCurrentTimeStr(DateFormat form) {
-        Date date = getCurrentTimeDate() ;
-        return form.format(date) ;
-    }
-
+    // スタックトレース、現在のクラスやメソッド情報
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * StackTrace出力のヘッダ
@@ -450,56 +477,13 @@ public class Itk {
         return currentCall(offset + 1).getClassName() ;
     }
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    static private Pattern timeStringPatternShort =
-        Pattern.compile("(\\d?\\d):(\\d?\\d):?(\\d?\\d)?");
-    static private Pattern timeStringPatternLong =
-        Pattern.compile("(\\d?\\d):(\\d?\\d):(\\d?\\d)");
-
     //------------------------------------------------------------
     /**
-     * 時間・時刻表示の解析
-     * もし解析できなければ、Exception を throw。
-     * 時間の形式は、 HH:MM:SS もしくは HH:MM
-     * @param timeStr 時間・時刻の文字列
-     * @return 時刻・時間を返す。
+     * UUID によりランダムな URI を生成
      */
-    static public int scanTimeStringToInt(String timeStr) throws Exception {
-        int timeVal = 0 ;
-
-        Matcher matchLong = timeStringPatternLong.matcher(timeStr) ;
-        if (matchLong.matches()) {
-            timeVal = (3600 * Integer.parseInt(matchLong.group(1)) +
-                       60 * Integer.parseInt(matchLong.group(2)) +
-                       Integer.parseInt(matchLong.group(3))) ;
-        } else {
-            Matcher matchShort = timeStringPatternShort.matcher(timeStr) ;
-            if (matchShort.matches()) {
-                timeVal = (3600 * Integer.parseInt(matchShort.group(1)) +
-                           60 * Integer.parseInt(matchShort.group(2))) ;
-            } else {
-                Itk.dbgErr("Illegal time format:" + timeStr) ;
-                throw new Exception("Illegal time format:" + timeStr) ;
-            }
-        }
-        return timeVal ;
-    }
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    static private String timeStringFormatLong = "%02d:%02d:%02d" ;
-
-    //------------------------------------------------------------
-    /**
-     * 時間・時刻の文字列変換
-     * @param time 秒単位の整数
-     * @return 時刻・時間の文字列
-     */
-    static public String formatSecTime(int time) {
-        int sec = time % 60 ;
-        int restMin = (time - sec) / 60 ;
-        int min = restMin % 60 ;
-        int hour = (restMin - min) / 60 ;
-        return String.format(timeStringFormatLong, hour, min, sec) ;
+    static public String genUriRandom() {
+        UUID uuid = UUID.randomUUID() ;
+        return "uri:uuid:" + uuid.toString() ;
     }
 
     //============================================================
