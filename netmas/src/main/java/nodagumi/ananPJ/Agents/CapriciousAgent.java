@@ -77,16 +77,6 @@ public class CapriciousAgent extends NaiveAgent
     /**
      * constractor。
      */
-    public CapriciousAgent(int _id,
-                           double speed, double _confidence,
-                           double allowance, double time, Random _random) {
-        init(_id, speed,  _confidence, allowance, time, _random) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * constractor。
-     */
     public CapriciousAgent(int _id, Random _random) {
         init(_id, _random) ;
     }

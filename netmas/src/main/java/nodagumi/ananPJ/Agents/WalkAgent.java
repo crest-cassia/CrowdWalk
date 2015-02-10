@@ -230,20 +230,6 @@ public class WalkAgent extends AgentBase implements Serializable {
 
     //------------------------------------------------------------
     /**
-     * constractor
-     */
-    public WalkAgent(int _id,
-            double _emptySpeed,
-            double _confidence,
-            double _maxAllowedDamage,
-            double _generatedTime,
-            Random _random) {
-        init(_id, _emptySpeed, _confidence, _maxAllowedDamage, _generatedTime,
-             _random) ;
-    } ;
-
-    //------------------------------------------------------------
-    /**
      * 初期化。constractorから分離。
      */
     @Override
@@ -251,22 +237,6 @@ public class WalkAgent extends AgentBase implements Serializable {
         super.init(_id, _random);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 初期化。constractorから分離。
-     */
-    public void init(int _id,
-            double _emptySpeed,
-            double _confidence,
-            double _maxAllowedDamage,
-            double _generatedTime,
-            Random _random) {
-        init(_id, _random);
-
-        generatedTime = _generatedTime;
-        emptySpeed = _emptySpeed;
     }
 
     //------------------------------------------------------------
