@@ -223,7 +223,7 @@ public class NetmasPropertiesHandler implements Serializable {
         prop = new Properties();
         propertiescenarioPath = _propertiescenarioPath;
         try {
-            System.err.println(_propertiescenarioPath);
+	    Itk.dbgMsg("Load properties",_propertiescenarioPath);
             String path = _propertiescenarioPath.toLowerCase();
             if (path.endsWith(".xml")) {
                 prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
@@ -270,7 +270,6 @@ public class NetmasPropertiesHandler implements Serializable {
                     File file = new File(filePath);
                     if (file.getParent() == null) {
                         prop.setProperty(property_item, propertyDirPath.replaceAll("\\\\", "/") + "/" + filePath);
-                        //System.err.println(property_item + ": " + getString(property_item, ""));
                     }
                 }
             }
