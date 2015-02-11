@@ -201,9 +201,9 @@ public class Term {
      */
     private void clearArray(boolean warningP) {
         if(warningP && !isNullArray()) {
-            Itk.dbgWrn("set/alloc Head/Body to Term with Array.") ;
-            Itk.dbgMsg("Discard the Array.") ;
-            Itk.dbgMsg("array",array) ;
+            Itk.logWarn("set/alloc Head/Body to Term with Array.") ;
+            Itk.logWarn_("Discard the Array.") ;
+            Itk.logWarn_("array",array) ;
         }
 
         array = null ;
@@ -228,14 +228,14 @@ public class Term {
     private void clearHeadBody(boolean warningP) {
         if(warningP) {
             if(!isNullHead()) {
-                Itk.dbgWrn("set or alloc array to Term with Head.");
-                Itk.dbgMsg("Discard the Head.") ;
-                Itk.dbgMsg("head",head) ;
+                Itk.logWarn("set or alloc array to Term with Head.");
+                Itk.logWarn_("Discard the Head.") ;
+                Itk.logWarn_("head",head) ;
             }
             if(!isNullBody()) {
-                Itk.dbgWrn("set or alloc array to Term with Body.") ;
-                Itk.dbgMsg("Discard the Body.") ;
-                Itk.dbgMsg("body",body) ;
+                Itk.logWarn("set or alloc array to Term with Body.") ;
+                Itk.logWarn_("Discard the Body.") ;
+                Itk.logWarn_("body",body) ;
             }
         }
         head = null ;
@@ -437,8 +437,8 @@ public class Term {
         else if(val == null)
             return null ;
         else {
-            Itk.dbgWrn("can not cast to Term:" + val) ;
-            Itk.dbgMsg("generage new Term.") ;
+            Itk.logWarn("can not cast to Term:" + val) ;
+            Itk.logWarn_("generage new Term.") ;
             return new Term(val) ;
         }
     }
@@ -526,8 +526,8 @@ public class Term {
             return false ;
         } else {
             Thread.dumpStack() ;
-            Itk.dbgErr("can not convert to boolean:" + this.toString()) ;
-            Itk.dbgMsg("use false") ;
+            Itk.logError("can not convert to boolean:" + this.toString()) ;
+            Itk.logError_("use false") ;
             return false ;
         } 
     }
@@ -557,13 +557,13 @@ public class Term {
             return ((Term)val).getInt() ;
         } else if(val == null) {
             Thread.dumpStack() ;
-            Itk.dbgErr("can not convert null to int.") ;
-            Itk.dbgMsg("use zero") ;
+            Itk.logError("can not convert null to int.") ;
+            Itk.logError_("use zero") ;
             return 0 ;
         } else {
             Thread.dumpStack() ;
-            Itk.dbgErr("can not convert to int:" + this.toString()) ;
-            Itk.dbgMsg("use zero") ;
+            Itk.logError("can not convert to int:" + this.toString()) ;
+            Itk.logError_("use zero") ;
             return 0 ;
         } 
     }
@@ -593,13 +593,13 @@ public class Term {
             return ((Term)val).getDouble() ;
         } else if(val == null) {
             Thread.dumpStack() ;
-            Itk.dbgErr("can not convert null to double.") ;
-            Itk.dbgMsg("use zero") ;
+            Itk.logError("can not convert null to double.") ;
+            Itk.logError_("use zero") ;
             return 0.0 ;
         } else {
             Thread.dumpStack() ;
-            Itk.dbgErr("can not convert to double:" + this.toString()) ;
-            Itk.dbgMsg("use zero") ;
+            Itk.logError("can not convert to double:" + this.toString()) ;
+            Itk.logError_("use zero") ;
             return 0.0 ;
         } 
     }
@@ -933,8 +933,8 @@ public class Term {
             return null ;
         } else {
             Thread.dumpStack() ;
-            Itk.dbgErr("can not convert to String:" + this.toString()) ;
-            Itk.dbgMsg("use null.") ;
+            Itk.logError("can not convert to String:" + this.toString()) ;
+            Itk.logError_("use null.") ;
             return null ;
         }
     }
@@ -952,8 +952,8 @@ public class Term {
             }
         }
         Thread.dumpStack() ;
-        Itk.dbgErr("can not convert to int:" + this.toString()) ;
-        Itk.dbgMsg("use 0.") ;
+        Itk.logError("can not convert to int:" + this.toString()) ;
+        Itk.logError_("use 0.") ;
         return 0 ;
     }
 
@@ -970,8 +970,8 @@ public class Term {
             }
         }
         Thread.dumpStack() ;
-        Itk.dbgErr("can not convert to double:" + this.toString()) ;
-        Itk.dbgMsg("use 0.0") ;
+        Itk.logError("can not convert to double:" + this.toString()) ;
+        Itk.logError_("use 0.0") ;
         return 0.0 ;
     }
 
@@ -1024,9 +1024,9 @@ public class Term {
             return updateObject(patch, recursive) ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("Illegal updateObject for Term.") ;
-            Itk.dbgVal("this", this) ;
-            Itk.dbgVal("patch", patch) ;
+            Itk.logError("Illegal updateObject for Term.") ;
+            Itk.logError_("this", this) ;
+            Itk.logError_("patch", patch) ;
             System.exit(1) ;
         }
         return this ; // never reach here
@@ -1092,7 +1092,7 @@ public class Term {
             return buffer.toString() ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("error in converting to JSON.") ;
+            Itk.logError("error in converting to JSON.") ;
             return null ;
         }
     }

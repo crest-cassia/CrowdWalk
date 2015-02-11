@@ -132,7 +132,9 @@ public class MapPartGroup extends OBNode implements Serializable {
         sy = Double.parseDouble(element.getAttribute("sy"));
         r = Double.parseDouble(element.getAttribute("r"));
         if (sx != sy) {
-            System.err.println("Information: [" + element.getAttribute("tag") + " group] 背景画像の縦横比率が異なっています(sx = " + sx + ", sy = " + sy + ")");
+			Itk.logWarn("MapPartGroup", element.getAttribute("tag"),"group.",
+						"Aspect Ratio mismatch.",
+						"sx=", sx, "sy=", sy, ".") ;
         }
 
         setScale(Double.parseDouble(element.getAttribute("scale")));

@@ -223,7 +223,7 @@ public class NetmasPropertiesHandler implements Serializable {
         prop = new Properties();
         propertiescenarioPath = _propertiescenarioPath;
         try {
-	    Itk.dbgMsg("Load properties",_propertiescenarioPath);
+	    Itk.logInfo("Load properties",_propertiescenarioPath);
             String path = _propertiescenarioPath.toLowerCase();
             if (path.endsWith(".xml")) {
                 prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
@@ -309,7 +309,7 @@ public class NetmasPropertiesHandler implements Serializable {
 		(SpeedCalculationModel)
 		AgentGenerationFile.speedModelLexicon.lookUp(speedModelString) ;
 	    if(speedModel == null) {
-		Itk.dbgMsg("speedModel","use lane model as default.") ;
+		Itk.logInfo("speedModel","use lane model as default.") ;
 		speedModel = SpeedCalculationModel.LaneModel;
 	    }
             // time series log
@@ -348,13 +348,13 @@ public class NetmasPropertiesHandler implements Serializable {
 	    if(queueOrderStr != null) {
 		if(queueOrderStr.equals("front_first")) {
 		    AgentHandler.useFrontFirstOrderQueue(true) ;
-		    Itk.dbgMsg("use front_first order to sort agent queue.") ;
+		    Itk.logInfo("use front_first order to sort agent queue.") ;
 		} else if (queueOrderStr.equals("rear_first")) {
 		    AgentHandler.useFrontFirstOrderQueue(false) ;
-		    Itk.dbgMsg("use rear_first order to sort agent queue.") ;
+		    Itk.logInfo("use rear_first order to sort agent queue.") ;
 		} else {
-		    Itk.dbgErr("unknown queue_order:" + queueOrderStr) ;
-		    Itk.dbgMsg("use default order (rear_first)") ;
+		    Itk.logError("unknown queue_order:" + queueOrderStr) ;
+		    Itk.logError_("use default order (rear_first)") ;
 		}
 	    }
         } catch (IOException ioe) {

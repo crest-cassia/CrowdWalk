@@ -221,8 +221,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         if (individualPedestriansLogDir != null) {
             model.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
         }
-        if (isDebug)
-            System.err.println("NetmasCuiSimulator start!");
+	Itk.logDebug("NetmasCuiSimulator start!");
         while(!finished) {
             finished = model.updateEveryTickCui();
             if (serializeInterval >= 0 &&
@@ -247,10 +246,8 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
                 if (counter % timeSeriesLogInterval == 0)
                     model.saveGoalLog(timeSeriesLogPath, false);
                     //model.saveTimeSeriesLog(timeSeriesLogPath);
-            if (isDebug)
-                if ((counter % 100) == 0)
-                    System.out.println("NetmasCuiSimulator loop: " +
-                            loopCount + " count: " + counter);
+	    if ((counter % 100) == 0)
+		Itk.logDebug("Loop", loopCount, "count:", counter) ;
             if (exitCount > 0 && counter > exitCount) {
                 finished = true;
                 break;

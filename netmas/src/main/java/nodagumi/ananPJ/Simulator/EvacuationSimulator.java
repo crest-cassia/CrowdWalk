@@ -84,8 +84,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         agents = networkMap.getAgents();
         pollutionFileName = networkMap.getPollutionFile();
         random = _random;
-        //bug check
-        //System.err.println("EvacuationSimulator check invalid links");
         int counter = 0;
         for (MapLink link : map.getLinks()) {
 	    if (!map.getNodes().contains(link.getFrom()))
@@ -94,8 +92,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 counter += 1;
         }
         if (counter > 0)
-            System.err.println("EvacuationSimulator invalid links: " +
-                    counter);
+	    Itk.logWarn("EvacuationSimulator invalid links: ", counter);
     }
 
     public EvacuationSimulator(NetworkMap networkMap, Random _random) {
@@ -209,16 +206,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         if (controller != null) {
             if (_panel3d != null) {
                 panel3d = controller.setupFrame(this, _panel3d);
-                /*
-                System.err.println("EvacuationSimulator.buildDisplay " +
-                        "nonnull panel3d: " + panel3d);
-                */
             } else {
                 panel3d = controller.setupFrame(this, _panel3d);
-                /*
-                System.err.println("EvacuationSimulator.buildDisplay " +
-                        "is null panel3d: " + panel3d);
-                */
             }
         }
     }
@@ -373,7 +362,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 }
             }
             if (goals.size() == 0) {
-                System.err.println("goal:" + goal_tag + " no goal!!");
+		Itk.logWarn("No Goal", goal_tag) ;
                 return false;
             }
 
@@ -392,34 +381,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     return 0.0;
                 }
             });
-            /*
-            System.err.println("EvacuationSimulator.calc_goal_path result: ");
-            for (MapNode node : result.keySet()) {
-                System.err.print("\t" + node.getTags() + " - ");
-                if (result.get(node).node != null)
-                    System.err.print(result.get(node).node.getTags() + " - ");
-                else
-                    System.err.print("null - ");
-                if (result.get(node).link != null)
-                    System.err.print(result.get(node).link.ID + " - ");
-                else
-                    System.err.print("null - ");
-                System.err.println(result.get(node).len);
-            }
-            */
 	    synchronized(map.getNodes()) {
                 for (MapNode node : result.keySet()) {
                     NodeLinkLen nll = result.get(node);
                     node.addNavigationHint(goal_tag,
                             new NavigationHint(nll.node, nll.link, nll.len));
-                    /*
-                    System.err.println("EvacuationSimulator call " +
-                            "addNavigationHint node:" + node.ID + " " + 
-                            node.getTags() + ", " + goal_tag);
-                    */
                 }
             }
-            System.err.println("goal:" + goal_tag);
+	    Itk.logInfo("Found Goal", goal_tag) ;
             return true;
         }
     }
@@ -460,12 +429,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
 
         if (no_goal_list.size() != 0) {
-            System.err.println("WARNING: no nodes with the following tag " +
-                    "was found");
+            Itk.logWarn("no nodes with the following tag was found");
             for (String tag : no_goal_list) {
-                System.err.print(" " + tag);
+		Itk.logWarn_(tag);
             }
-            System.err.println();
         }
 
         /* emergency evacuation */
@@ -476,34 +443,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             }
             if (goals.size() == 0) {
 
-                System.err.println("no goal for Exit!");
+		Itk.logWarn("no goal for Exit!");
                 return;
             }
-            /*
-             * EMERGENCY 機能は現在使用していないためコメント化
-             *
-            validRouteKeys.add("EMERGENCY");
-            Dijkstra.Result result = Dijkstra.calc(goals,
-                    new PathChooser() {
-                public double evacuationRouteCost(MapLink link) {
-                    if (link.hasTag("HOTSPOT")) return 10000.0;
-                    else if (link.hasTag("WARMSPOT")) return 100.0;
-                    return 1.0;
-                }
-                public boolean isExit(MapLink link) {
-                    return false;
-                }
-                public double initialCost(MapNode node) {
-                    return 0.0;
-                }
-            });
-
-            for (MapNode node : result.keySet()) {
-                NodeLinkLen nll = result.get(node);
-                node.addNavigationHint("EMERGENCY",
-                        new NavigationHint(nll.node, nll.link, nll.len));
-            }
-            */
         }
         // tkokada: node check which no way to goal
         boolean hasGoal = true;
@@ -525,9 +467,9 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 if (goal.equals("EXIT"))
                     totalValidNodes += 1;
                 if (node.getHint(goal) == null) {
-                    System.err.println("EvacuationSimulator.buildRoute: " +
-                            "node:" + node.ID + " does not have any routes" +
-                            " for " + goal);
+		    Itk.logWarn("buildRoute",
+				"node:" + node.ID + " does not have any routes" +
+				" for " + goal);
                     hasGoal = false;
                     count += 1;
                     if (pathways.size() > 0) {
@@ -541,33 +483,12 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             numNoGoal.add(count);
         }
         // check whether all nodes have complete path to goals
-        System.err.println("EvacuationSimulator.buildRoute: bug cheking...");
+	Itk.logDebug("buildRoute: bug cheking...");
         for (int i = 0; i < all_goal_tags.size(); i++)
-            System.err.println("EvacuationSimulator.buildRoute: goal " +
-                    all_goal_tags.get(i) + " includes " + 
-                    numNoGoal.get(i) + " no goal nodes / all nodes" +
-                    totalValidNodes + ".");
-
-        // check VIEWPOINT
-        /*
-        int count = 0;
-        int totalcount= 0;
-        for (MapNode node : getNodes()) {
-            if (!((String) ((MapPartGroup) node.getParent()).toString())
-                    .contains("ALL_LINKS"))
-                continue;
-            totalcount += 1;
-            if (node.getHint("VIEWPOINT") == null) {
-                System.err.println("EvacuationSimulator.buildRoute: " +
-                        "node:" + node.ID + " does not have any routes" +
-                        " for VIEWPOINT");
-                hasGoal = false;
-                count += 1;
-            }
-        }
-        System.err.println("EvacuationSimulator.buildRoute: invalid for " +
-                "VIEWPOINT: " + count + " total: " + totalcount);
-        */
+	    Itk.logDebug("buildRoute: goal ",
+			 all_goal_tags.get(i) + " includes " +
+			 numNoGoal.get(i) + " no goal nodes / all nodes" +
+			 totalValidNodes + ".");
     }
 
     void resetValues() {
@@ -983,8 +904,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     // tkokada
     public boolean getIsAllAgentSpeedZero() {
         if (agentHandler == null) {
-            System.err.println("AgentHandler.isAllAgentsSpeedZero " +
-                    "agentHandler is null object.");
+	    Itk.logWarn("AgentHandler.isAllAgentsSpeedZero",
+			"agentHandler is null object.");
             return false;
         } else {
             return agentHandler.getIsAllAgentSpeedZero();
@@ -993,8 +914,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 
     public boolean getIsAllAgentSpeedZeroBreak() {
         if (agentHandler == null) {
-            System.err.println("AgentHandler.getIsAllAgentsSpeedZeroBreak " +
-                    "agentHandler is null object.");
+	    Itk.logWarn("AgentHandler.getIsAllAgentsSpeedZeroBreak",
+			"agentHandler is null object.");
             return false;
         } else {
             return agentHandler.getIsAllAgentSpeedZeroBreak();
@@ -1004,8 +925,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
     {
         if (agentHandler == null) {
-            System.err.println("AgentHandler.setIsAllAgentsSpeedZeroBreak " +
-                    "agentHandler is null object.");
+	    Itk.logWarn("AgentHandler.setIsAllAgentsSpeedZeroBreak",
+			"agentHandler is null object.");
         } else {
             agentHandler.setIsAllAgentSpeedZeroBreak(
                     _isAllAgentSpeedZeroBreak);

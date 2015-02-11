@@ -28,6 +28,8 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
+import nodagumi.Itk.*;
+
 
 public class PollutionCalculator implements Serializable {
     private static final long serialVersionUID = 29847234890234908L;
@@ -51,7 +53,7 @@ public class PollutionCalculator implements Serializable {
             nextEvent = -1.0;
         } else {
             readData(scheduleFileName);
-            System.err.println("MAX Pollution Level: " + maxPollutionLevel);
+	    Itk.logInfo("MAX Pollution Level", maxPollutionLevel) ;
             linearInterpolation(interpolationInterval);
             pollutionDataIterator = pollutionDataList.iterator();
             if (pollutionDataIterator.hasNext()) {

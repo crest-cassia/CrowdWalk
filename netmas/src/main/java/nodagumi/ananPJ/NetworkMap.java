@@ -619,9 +619,9 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 														   true) ;
 			} catch (Exception ex) {
 				ex.printStackTrace() ;
-				Itk.dbgErr("Can not scan a fallback parameter file:",
-						   fallbackFile) ;
-				Itk.dbgMsg("Exception",ex) ;
+				Itk.logError("Can not scan a fallback parameter file:",
+							 fallbackFile) ;
+				Itk.logError_("Exception",ex) ;
 			}
 		} else {
 			fallbackParameters = new Term() ;
@@ -636,8 +636,8 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 				fallbackParameters.setArg(FallbackSlot, finalFallback) ;
 			} catch (Exception ex) {
 				ex.printStackTrace() ;
-				Itk.dbgErr("Can not scan a fallback resource file.") ;
-				Itk.dbgMsg("Exception",ex) ;
+				Itk.logError("Can not scan a fallback resource file.") ;
+				Itk.logError_("Exception",ex) ;
 			}
 		}
 	}

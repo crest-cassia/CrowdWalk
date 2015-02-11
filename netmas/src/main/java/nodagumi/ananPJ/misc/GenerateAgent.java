@@ -65,8 +65,8 @@ public abstract class GenerateAgent implements Serializable {
             classFinder.alias(aliasName, agentClass) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("cannot process registerAgentClass()") ;
-            Itk.dbgMsg("agentClass",agentClass) ;
+            Itk.logError("cannot process registerAgentClass()") ;
+            Itk.logError_("agentClass",agentClass) ;
         }
     }
 
@@ -82,8 +82,8 @@ public abstract class GenerateAgent implements Serializable {
             return agent ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("can not find the class") ;
-            Itk.dbgMsg("agentClassName", agentClassName) ;
+            Itk.logError("can not find the class") ;
+            Itk.logError_("agentClassName", agentClassName) ;
             return null ;
         }
     }
@@ -343,8 +343,8 @@ public abstract class GenerateAgent implements Serializable {
                 agent.init(model.getMap().assignUniqueAgentId(), random);
                 agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
-                Itk.dbgErr("class name not found") ;
-                Itk.dbgErr("agentClassName", agentClassName) ;
+                Itk.logError("class name not found") ;
+                Itk.logError_("agentClassName", agentClassName) ;
                 ex.printStackTrace();
                 System.exit(1) ;
             }
@@ -403,9 +403,9 @@ public abstract class GenerateAgent implements Serializable {
             */
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("can not check the directive") ;
-            Itk.dbgMsg("directive", directive) ;
-            Itk.dbgMsg("agentClass", className) ;
+            Itk.logError("can not check the directive") ;
+            Itk.logError_("directive", directive) ;
+            Itk.logError_("agentClass", className) ;
             return false ;
         }
     }
@@ -448,9 +448,9 @@ public abstract class GenerateAgent implements Serializable {
             */
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("can not pushPlaceTag.") ;
-            Itk.dbgMsg("directive", directive) ;
-            Itk.dbgMsg("agentClass", className) ;
+            Itk.logError("can not pushPlaceTag.") ;
+            Itk.logError_("directive", directive) ;
+            Itk.logError_("agentClass", className) ;
             return 0 ;
         }
     }

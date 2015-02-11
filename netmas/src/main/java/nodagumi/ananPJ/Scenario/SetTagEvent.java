@@ -71,8 +71,8 @@ public class SetTagEvent extends PlacedEvent {
 	String subcoms[] = command.split(":") ;
 	if(subcoms.length < 2 || subcoms.length > 2 ||
 	   subcoms[1].length() == 0) {
-	    Itk.dbgWrn("Strange commands for SetTag event.") ;
-	    Itk.dbgMsg("columns", columns) ;
+	    Itk.logWarn("Strange commands for SetTag event.") ;
+	    Itk.logWarn_("columns", columns) ;
 	} else {
 	    noticeTag = new Term(subcoms[1]) ;
 	}
@@ -81,8 +81,8 @@ public class SetTagEvent extends PlacedEvent {
 	} else if(subcoms[0].equals("REMOVE")) {
 	    onoff = false ;
 	} else {
-	    Itk.dbgWrn("Strange commands for SetTag event.") ;
-	    Itk.dbgMsg("columns", columns) ;
+	    Itk.logWarn("Strange commands for SetTag event.") ;
+	    Itk.logWarn_("columns", columns) ;
 	}
     }
 

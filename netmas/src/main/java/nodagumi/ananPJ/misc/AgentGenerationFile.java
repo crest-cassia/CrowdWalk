@@ -267,7 +267,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         try {
             br = new BufferedReader(new FileReader(filename));
         } catch (IOException e) {
-            Itk.dbgErr(e) ;
+            Itk.logError(e.toString()) ;
             if (display) {
                 JOptionPane.showMessageDialog(null,
                 e.toString(),
@@ -290,8 +290,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             scanJsonFile(br, map, fallbackParameters) ;
             break ;
         default:
-            Itk.dbgErr("Unknown Format Version" + fileFormat.toString() +
-                       "(file=" + filename + ")") ;
+            Itk.logError("Unknown Format Version",
+                         fileFormat.toString(), "(file=" + filename + ")") ;
         }
         return ;
     }
@@ -306,14 +306,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      */
     public boolean tryScanModeLine(BufferedReader reader) {
         if(!reader.markSupported()) {
-            Itk.dbgWrn("This reader does not support mark():" + reader) ;
+            Itk.logWarn("This reader does not support mark()", reader) ;
             return false ;
         } else {
             try {
                 reader.mark(BufferedReadMax) ;
                 String line = reader.readLine() ;
                 if(line == null) {
-                    Itk.dbgWrn("This file is empty:" + reader) ;
+                    Itk.logWarn("This file is empty:" + reader) ;
                     return false ;
                 } else {
                     boolean scanned = scanModeLine(line) ;
@@ -322,8 +322,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 }
             } catch (Exception ex) {
                 ex.printStackTrace() ;
-                Itk.dbgErr("something wrong to set mark for:" + reader) ;
-                Itk.dbgMsg("BufferedReadMax", BufferedReadMax) ;
+                Itk.logError("something wrong to set mark for:" + reader) ;
+                Itk.logError_("BufferedReadMax", BufferedReadMax) ;
                 return false ;
             }
         }
@@ -508,11 +508,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         // total number of generated agents
         genConfig.total = Integer.parseInt(columns.get());
         if (liner_generate_agent_ratio > 0) {
-            System.err.println("GenerateAgentFile total: " +
-                               genConfig.total +
-                               ", ratio: " + liner_generate_agent_ratio);
+            Itk.logInfo("use liner_generate_agent_ratio",
+                        "genConfig.total:", genConfig.total,
+                        "ratio:", liner_generate_agent_ratio);
             genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
-            System.err.println("GenerateAgentFile total: " + genConfig.total);
+            Itk.logInfo("GenerateAgentFile final total",genConfig.total);
         }
 
         // speed model
@@ -703,7 +703,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     }
                 }
                 // ここで head に match しているとするならおかしい。
-                Itk.dbgWrn("strange tag form in planned route:" + head) ;
+                Itk.logWarn("strange tag form in planned route:" + head) ;
             }
             // それ以外の場合は、もとの head をTerm化して返す。
             return new Term(head) ;
@@ -732,20 +732,18 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
                     if(genConfig == null) continue ;
 
-                    //Itk.dbgMsg("genConfig",genConfig.toJson(false)) ;
-
                     // 経路情報に未定義のタグが使用されていないかチェックする
                     checkPlannedRouteInConfig(map, genConfig, item.toJson()) ;
 
                     // ここから、エージェント生成が始まる。
                     doGenerationByConfig(map, genConfig, fallbackParameters) ;
                 } else {
-                    Itk.dbgErr("wrong json for generation rule:",item.toJson()) ;
+                    Itk.logError("wrong json for generation rule:",item.toJson()) ;
                     continue ;
                 }
             }
         } else {
-            Itk.dbgErr("wrong json for generation file:",json.toJson()) ;
+            Itk.logError("wrong json for generation file:",json.toJson()) ;
             throw new Exception("wrong json for generation file:" + json.toJson()) ;
         }
     }
@@ -797,13 +795,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
         genConfig.total = json.getArgInt("total") ;
         if (liner_generate_agent_ratio > 0) {
-            /*
-            Itk.dbgMsg("GenerateAgentFile total: " +
-                       genConfig.total +
-                       ", ratio: " + liner_generate_agent_ratio);
-            */
             genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
-            Itk.dbgMsg("GenerateAgentFile total: " + genConfig.total);
+            Itk.logInfo("GenerateAgentFile total", genConfig.total);
         }
 
         genConfig.speedModel =
@@ -942,8 +935,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                                       genConfig)) ;
             break ;
         default:
-            Itk.dbgErr("AgentGenerationFile invalid rule " +
-                       "type in generation file!") ;
+            Itk.logError("AgentGenerationFile invalid rule " +
+                         "type in generation file!") ;
         }
     }
 
@@ -1106,8 +1099,8 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                     genConfig.startPlace = start_node ;
                     this.add(new GenerateAgentFromNode(genConfig, random)) ;
                 } else {
-                    Itk.dbgErr("no starting place for generation.") ;
-                    Itk.dbgMsg("config",genConfig) ;
+                    Itk.logError("no starting place for generation.") ;
+                    Itk.logError_("config",genConfig) ;
                 }
             }
             step_time += every_seconds;

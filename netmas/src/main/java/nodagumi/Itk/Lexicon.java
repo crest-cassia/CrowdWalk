@@ -89,11 +89,10 @@ public class Lexicon {
                            Object meaning,
                            boolean forceP) {
         if((! forceP) && (table.containsKey(word))) {
-            Itk.dbgMsg("Warning:",
-                       "duplicated word entry in a lexicon:" +
-                       word + "(meaning=" + meaning.toString() + ")" +
-                       "\n\t original meaning:" + table.get(word).toString() +
-                       "\n\t !!! new registration is ignored.") ;
+            Itk.logWarn("duplicated word entry in a lexicon:",
+                        word + "(meaning=" + meaning.toString() + ")" +
+                        "\n\t original meaning:" + table.get(word).toString() +
+                        "\n\t !!! new registration is ignored.") ;
             return null ;
         } else {
             if(!reverseTable.containsKey(meaning))
@@ -146,8 +145,7 @@ public class Lexicon {
     public Lexicon registerEnum(Class<?> enumClass, boolean forceP) {
         Enum<?>[] enumList = (Enum<?>[])enumClass.getEnumConstants() ;
         if(enumList == null) {
-            Itk.dbgMsg("Warning:",
-                       enumClass.toString() + " is not Enum class.") ;
+            Itk.logWarn(enumClass.toString() + " is not Enum class.") ;
             return null ;
         } else {
             for(Enum<?> enumItem : enumList) {

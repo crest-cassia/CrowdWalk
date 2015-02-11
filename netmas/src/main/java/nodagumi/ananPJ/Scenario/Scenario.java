@@ -88,7 +88,7 @@ public class Scenario {
             return Itk.scanTimeStringToInt(timeString) ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("Exception",ex) ;
+            Itk.logError("Exception",ex) ;
             System.exit(1) ;
         }
         return 0 ; // never reach here.
@@ -204,9 +204,9 @@ public class Scenario {
         eventList.add(event) ;
         if(event.hasId()) {
             if(eventTable.containsKey(event.id)) {
-                Itk.dbgWrn("duplicated event id:", event.id) ;
-                Itk.dbgMsg("previous entry:", eventTable.get(event.id)) ;
-                Itk.dbgMsg("added entry:", event) ;
+                Itk.logWarn("duplicated event id:", event.id) ;
+                Itk.logWarn_("previous entry:", eventTable.get(event.id)) ;
+                Itk.logWarn_("added entry:", event) ;
             } else {
                 eventTable.put(event.id, event) ;
             }
@@ -258,7 +258,7 @@ public class Scenario {
             }
         }
         if(! findInitiate) {
-            Itk.dbgWrn("No Initiate Event.") ;
+            Itk.logWarn("No Initiate Event.") ;
         }
     }
 
@@ -313,15 +313,15 @@ public class Scenario {
                 }
                 finalizeSetup() ;
             } else {
-                Itk.dbgErr("Wrong scenario format in the file:", filename) ;
-                Itk.dbgMsg("json",json) ;
+                Itk.logError("Wrong scenario format in the file:", filename) ;
+                Itk.logError_("json",json) ;
                 System.exit(1) ;
             }
             return nEvent ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("Error in reading JSON file.") ;
-            Itk.dbgMsg("filename", filename) ;
+            Itk.logError("Error in reading JSON file.") ;
+            Itk.logError_("filename", filename) ;
             System.exit(1) ;
         }
         return -1 ; // never reach.
@@ -341,8 +341,8 @@ public class Scenario {
             return event ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("error in Event definition by JSON.") ;
-            Itk.dbgMsg("eventDef", eventDef) ;
+            Itk.logError("error in Event definition by JSON.") ;
+            Itk.logError_("eventDef", eventDef) ;
             System.exit(1) ;
         }
         return null ; // never reach
@@ -375,8 +375,8 @@ public class Scenario {
             return nEvent ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("Error in reading CSV file.") ;
-            Itk.dbgMsg("filename", filename) ;
+            Itk.logError("Error in reading CSV file.") ;
+            Itk.logError_("filename", filename) ;
             System.exit(1) ;
         }
         return -1 ; // never reach.
@@ -414,8 +414,8 @@ public class Scenario {
             return event ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("error in CSV one line.") ;
-            Itk.dbgMsg("line", line) ;
+            Itk.logError("error in CSV one line.") ;
+            Itk.logError_("line", line) ;
             System.exit(1) ;
         }
         return null ; // never reach
@@ -426,10 +426,10 @@ public class Scenario {
      * describe
      */
     public void describe() {
-        Itk.dbgMsg("Scenario", this) ;
-        Itk.dbgMsg("---Events---") ;
+        Itk.logInfo("Scenario", this) ;
+        Itk.logInfo("---Events---") ;
         for(EventBase event : eventList) {
-            Itk.dbgMsg(">>>>>", event.toString()) ;
+            Itk.logInfo(">>>>>", event.toString()) ;
         }
     }
 
@@ -478,8 +478,8 @@ public class Scenario {
             registerEventClass(aliasName, eventClass) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("cannot process registerEventClass()") ;
-            Itk.dbgMsg("eventClass",eventClass) ;
+            Itk.logError("cannot process registerEventClass()") ;
+            Itk.logError_("eventClass",eventClass) ;
         }
     }
 

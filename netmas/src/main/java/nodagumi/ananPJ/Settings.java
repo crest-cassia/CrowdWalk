@@ -25,9 +25,9 @@ public class Settings extends HashMap<String, String> implements Serializable {
 	public static Settings load(String s) {
 		if (settings != null) {
 			if(!settings.settingsFilename.equals(s)) {
-				Itk.dbgWrn("Settings is alread loaded from:",
-						   settings.settingsFilename) ;
-				Itk.dbgMsg("ignored file",s) ;
+				Itk.logWarn("Settings is alread loaded from:",
+							settings.settingsFilename) ;
+				Itk.logWarn_("ignored file",s) ;
 			}
 			return settings;
 		}

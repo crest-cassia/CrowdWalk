@@ -17,6 +17,7 @@ import java.lang.StackTraceElement ;
 import java.lang.StringBuffer;
 
 import java.io.OutputStream ;
+import java.io.PrintStream;
 
 import java.util.UUID;
 import java.util.Calendar;
@@ -40,17 +41,35 @@ import net.arnx.jsonic.JSON ;
 public class Itk {
     //------------------------------------------------------------
     // デバッグ出力
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * デバッグ出力先
+     */
+    static public PrintStream dbgOutStream = System.out ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * デバッグ出力結合セパレータ
+     */
+    static public String dbgJoinSeparator = " " ;
+
     //------------------------------------------------------------
     /**
-     * デバッグ用出力汎用コマンド
-     * @param tag 行の先頭のタグ
-     * @param object 出力するオブジェクト
+     * デバッグ用出力汎用コマンド(出力ストリーム指定付)
+     * @param stream : 出力用ストリーム
+     * @param tag : 行の先頭のタグ
+     * @param object : 出力するオブジェクト
      */
-    static public void dbgGeneric(String tag, Object... objects) {
+    static public void dbgGeneric(PrintStream strm,
+                                  String tag, Object... objects) {
         try {
             StringBuffer buffer = new StringBuffer() ;
             buffer.append(tag).append(":") ;
+            int count = 0 ;
             for(Object obj : objects) {
+                if(count > 0) buffer.append(dbgJoinSeparator) ;
+                count++ ;
+
                 if(obj == null) {
                     buffer.append("(null)") ;
                 } 
@@ -63,10 +82,20 @@ public class Itk {
                     buffer.append(objectToString(obj)) ;
                 }
             }
-            System.out.println(buffer.toString()) ;
+            strm.println(buffer.toString()) ;
         } catch(/*TransformerException*/ Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * デバッグ用出力汎用コマンド
+     * @param tag 行の先頭のタグ
+     * @param object 出力するオブジェクト
+     */
+    static public void dbgGeneric(String tag, Object... objects) {
+        dbgGeneric(dbgOutStream, tag, objects) ;
     }
 
     //------------------------------------------------------------
@@ -256,6 +285,176 @@ public class Itk {
     }
 
     //------------------------------------------------------------
+    // ログ出力
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ログ出力先
+     */
+    static public PrintStream logOutStream = System.out ;
+
+    //------------------------------------------------------------
+    // ログ出力
+    //------------------------------------------------------------
+    /**
+     * ログ用出力汎用コマンド
+     * @param tag 行の先頭のタグ
+     * @param object 出力するオブジェクト
+     */
+    static public void logGeneric(String tag, Object... objects) {
+        dbgGeneric(logOutStream, tag, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ用出力汎用コマンド
+     * @param tag 行の先頭のタグ
+     * @param label 先頭に出すラベル
+     * @param object 出力するオブジェクト
+     */
+    static public void logGeneric(String tag, String label, Object... objects) {
+        logGeneric(tag + "[" + label + "]", objects) ;
+    }
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * ログレベル
+     */
+    static public enum LogLevel {
+        None,
+        Trace,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Fatal
+    } ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ログレベルタグ
+     */
+    static public String LogTagPrefix = "ITK_" ;
+
+    static public HashMap<LogLevel, String> LogTag =
+        new HashMap<LogLevel, String>() ;
+
+    static {
+        LogLevel[] enumList =
+            (LogLevel[])LogLevel.class.getEnumConstants() ;
+        for(LogLevel level : enumList) {
+            LogTag.put(level, LogTagPrefix + level.toString()) ;
+        }
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ログレベル
+     */
+    //static public LogLevel logLevel = LogLevel.Info ;
+    static public LogLevel logLevel = LogLevel.Debug ;
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力一般
+     * @param level : specify log level
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logOutput(LogLevel level, String label,
+                                 Object... objects) {
+        if(level.ordinal() >= logLevel.ordinal()) {
+            String tag = LogTag.get(level) ;
+            if(objects == null || objects.length == 0) {
+                logGeneric(tag, (Object)label) ;
+            } else {
+                logGeneric(tag, label, objects) ;
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力（Trace)
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logTrace(String label, Object... objects) {
+        logOutput(LogLevel.Trace, label, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力（Debug)
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logDebug(String label, Object... objects) {
+        logOutput(LogLevel.Debug, label, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力（Info)
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logInfo(String label, Object... objects) {
+        logOutput(LogLevel.Info, label, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力（Warn)
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logWarn(String label, Object... objects) {
+        logOutput(LogLevel.Warn, DbgWrnTail, "@", currentMethod(1)) ;
+        logOutput(LogLevel.Warn, label, objects) ;
+    }
+
+    static public void logWarn_(String label, Object... objects) {
+        logOutput(LogLevel.Warn, label, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力（Error)
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logError(String label, Object... objects) {
+        logOutput(LogLevel.Error, DbgErrTail, "@", currentMethod(1)) ;
+        logOutput(LogLevel.Error, label, objects) ;
+    }
+
+    static public void logError_(String label, Object... objects) {
+        logOutput(LogLevel.Error, label, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力（Fatal)
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logFatal(String label, Object... objects) {
+        logOutput(LogLevel.Error, DbgErrTail, "@", currentMethod(1)) ;
+        logOutput(LogLevel.Fatal, label, objects) ;
+    }
+
+    static public void logFatal_(String label, Object... objects) {
+        logOutput(LogLevel.Fatal, label, objects) ;
+    }
+
+    //------------------------------------------------------------
     // 時刻・計時関係
     //------------------------------------------------------------
     /**
@@ -333,7 +532,7 @@ public class Itk {
         Date origin = timerTable.get(tag) ;
         if(origin == null) {
             Itk.dumpStackTrace() ;
-            Itk.dbgErr("The specified tag is not found in timerTable:" + tag) ;
+            Itk.logError("The specified tag is not found in timerTable:" + tag) ;
             return 0 ;
         }
         long diff = now.getTime() - origin.getTime() ;
@@ -377,7 +576,7 @@ public class Itk {
                 timeVal = (3600 * Integer.parseInt(matchShort.group(1)) +
                            60 * Integer.parseInt(matchShort.group(2))) ;
             } else {
-                Itk.dbgErr("Illegal time format:" + timeStr) ;
+                Itk.logError("Illegal time format:" + timeStr) ;
                 throw new Exception("Illegal time format:" + timeStr) ;
             }
         }
@@ -520,7 +719,7 @@ public class Itk {
                 JSON.encode(this, ostrm, pprintP) ;
             } catch(Exception ex) {
                 ex.printStackTrace() ;
-                Itk.dbgErr("Exception",ex) ;
+                Itk.logError("Exception",ex) ;
             }
         }
 

@@ -202,7 +202,7 @@ public class ClassFinder {
             DummyTable.put(klass, object) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("can not register the class:" + klass) ;
+            Itk.logError("can not register the class:" + klass) ;
         }
     }
 

@@ -5,7 +5,7 @@ import nodagumi.ananPJ.NetworkMapEditor
 import nodagumi.ananPJ.NetmasCuiSimulator
 import nodagumi.ananPJ.NetworkParts.Link.*
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler
-
+import nodagumi.Itk.*
 
 /** copy files from src to dst */
 def copyFile(src, dst) {
@@ -67,7 +67,7 @@ def macroTimeStep = ""      /** time step of the simulation */
 def tick = 0.0      /** simulation counter */
 def dirString = ""  /** the directory where the logs are saved. */
 
-println "arg size: " + args.size() + ", args: " + args
+Itk.logInfo("Args", "arg size: ", args.size(), ", args: ", args) ;
 
 if (args.size() < 1) {
     dirString = '/tmp/'
@@ -96,7 +96,6 @@ if (args.size() < 1) {
     if (args[0] == 'cui') {
         start = System.nanoTime()
         cui = new NetmasCuiSimulator(args[1])
-        cui.setScenarioSerial("NetmasCuiSimulator")
         cui.initialize()
         init = System.nanoTime()
         cui.start()
@@ -121,7 +120,6 @@ if (args.size() < 1) {
     if (args[0] == 'cui') {
         start = System.nanoTime()
         cui = new NetmasCuiSimulator(args[1])
-        cui.setScenarioSerial("NetmasCuiSimulator")
         cui.initialize()
         init = System.nanoTime()
         cui.start()
@@ -137,7 +135,6 @@ if (args.size() < 1) {
         //tdict.delete()
         start = System.nanoTime()
         cui = new NetmasCuiSimulator(args[1])
-        cui.setScenarioSerial("NetmasCuiSimulator")
         cui.initialize()
         init = System.nanoTime()
         def timestep = Integer.parseInt(args[2])
@@ -162,7 +159,6 @@ if (args.size() < 1) {
         args[3]
     start = System.nanoTime()
     cui = new NetmasCuiSimulator(args[1], randseed)
-    cui.setScenarioSerial("NetmasCuiSimulator")
     cui.linerGenerateAgentRatio = ratio
     cui.initialize()
     init = System.nanoTime()
@@ -194,7 +190,6 @@ if (args.size() < 1) {
     println "genfile:" + genfile
     makeGenerationFile(genfile, ratioA, ratioB, ratio, "STRAIT")
     cui = new NetmasCuiSimulator(args[1], randseed)
-    cui.setScenarioSerial("NetmasCuiSimulator")
     //cui.linerGenerateAgentRatio = ratio
     cui.initialize()
     init = System.nanoTime()
@@ -225,7 +220,6 @@ if (args.size() < 1) {
     def genfile = (new File(args[1])).getParent() + "/gen.csv"
     makeGenerationFile(genfile, 0.5, 0.5, ratio, model)
     cui = new NetmasCuiSimulator(args[1], randseed)
-    cui.setScenarioSerial("NetmasCuiSimulator")
     //cui.linerGenerateAgentRatio = ratio
     cui.initialize()
     init = System.nanoTime()
@@ -246,9 +240,9 @@ if (args.size() < 1) {
 def n = 1000 * 1000 * 1000
 def initTime = (init - start) / n
 def loopTime = (finish - init) / n
-println String.format(' init: %.10f', initTime)
-println String.format(' loop: %.10f', loopTime)
-println String.format(' tick: %f', tick)
+Itk.logInfo("Final Status",String.format(' init: %.10f', initTime))
+Itk.logInfo("Final Status",String.format(' loop: %.10f', loopTime))
+Itk.logInfo("Final Status", String.format(' tick: %f', tick))
 
 def timeFilePath = dirString + '/time.csv'
 def timeFile = new File(timeFilePath)

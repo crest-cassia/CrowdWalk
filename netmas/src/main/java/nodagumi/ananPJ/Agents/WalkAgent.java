@@ -441,9 +441,9 @@ public class WalkAgent extends AgentBase implements Serializable {
             }
         }
         if(bestLink == null) { // もし見つからない場合
-            Itk.dbgErr("currentPlace has no way for routePlan.") ;
-            Itk.dbgMsg("currentPlace", currentPlace) ;
-            Itk.dbgMsg("routePlan", routePlan) ;
+            Itk.logError("currentPlace has no way for routePlan.") ;
+            Itk.logError_("currentPlace", currentPlace) ;
+            Itk.logError_("routePlan", routePlan) ;
             finalizeEvacuation(0, false) ;
         }
         currentPlace.setLink(bestLink) ;
@@ -637,8 +637,8 @@ public class WalkAgent extends AgentBase implements Serializable {
             calc_speed_lane_generic(time,calculation_model);
             break;
         default:
-            Itk.dbgErr("Unknown Speed Model") ;
-            Itk.dbgMsg("calculation_model",calculation_model) ;
+            Itk.logError("Unknown Speed Model") ;
+            Itk.logError_("calculation_model",calculation_model) ;
             break;
         }
 
@@ -732,8 +732,8 @@ public class WalkAgent extends AgentBase implements Serializable {
             dv += accumulateSocialForces(time) ;
             break;
         default:
-            Itk.dbgErr("Unknown Speed Model") ;
-            Itk.dbgMsg("calculation_model",model) ;
+            Itk.logError("Unknown Speed Model") ;
+            Itk.logError_("calculation_model",model) ;
             break;
         }
 
@@ -991,8 +991,8 @@ public class WalkAgent extends AgentBase implements Serializable {
          * エラーで落ちるようにしておく。
          */
         if (goal == null) {
-            Itk.dbgErr("An agent lost its goal.") ;
-            Itk.dbgMsg("agent.ID", this.ID) ;
+            Itk.logError("An agent lost its goal.") ;
+            Itk.logError_("agent.ID", this.ID) ;
             System.exit(1) ;
         }
 
@@ -1176,7 +1176,7 @@ public class WalkAgent extends AgentBase implements Serializable {
                 } else if (node.getHint(subgoal) != null) {
                     return subgoal;
                 } else {
-                    Itk.dbgWrn("no sub-goal hint for " + subgoal);
+                    Itk.logWarn("no sub-goal hint for " + subgoal);
                     workingRoutePlan.shift() ;
                 }
             }

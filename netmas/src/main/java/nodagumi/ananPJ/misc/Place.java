@@ -291,9 +291,9 @@ public class Place {
     public Place setEnteringNodeSafely(MapNode _node) {
         if(getLink() != null && _node != null && !isEitherNode(_node)) {
             Itk.dumpStackTrace() ;
-            Itk.dbgWrn("Specified node is not in the link. Instead using null.") ;
-            Itk.dbgMsg("node", _node) ;
-            Itk.dbgMsg("link", getLink()) ;
+            Itk.logWarn("Specified node is not in the link. Instead using null.") ;
+            Itk.logWarn_("node", _node) ;
+            Itk.logWarn_("link", getLink()) ;
         } else {
             setEnteringNodeDirectly(_node) ;
         }

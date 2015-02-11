@@ -181,7 +181,7 @@ public class AgentPanel extends JPanel
         generateRandom.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-				Itk.dbgErr("!!! placeAgentsRandomly() needs target now !!!") ;
+				Itk.logError("!!! placeAgentsRandomly() needs target now !!!") ;
             } 
         });
         generate_manip_panel.add(generateRandom);
@@ -189,7 +189,7 @@ public class AgentPanel extends JPanel
         generateEven.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) { 
-				Itk.dbgErr("!!! placeAgentsEvenly() needs target now !!!") ;
+				Itk.logError("!!! placeAgentsEvenly() needs target now !!!") ;
 			}
         });
         generate_manip_panel.add(generateEven);

@@ -1391,7 +1391,7 @@ public class NetworkMapEditor extends SimulationLauncher
                         }
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
-                                System.err.println("auto simulation start");
+								Itk.logInfo("auto simulation start");
                                 model.getAgentHandler().getStartButton().doClick();
                             }
                         });
@@ -1452,15 +1452,15 @@ public class NetworkMapEditor extends SimulationLauncher
 			 * コメントアウト
 			 */
 			//checkForReachability(targetTag);
-			Itk.dbgErr("!!! checkForReachability() needs target now !!!") ;
+			Itk.logError("!!! checkForReachability() needs target now !!!") ;
 		else if (e.getActionCommand() == "Place agents randomly (no tags)")
 			/* [2014.12.26 I.Noda] 同上 */
 		    //placeAgentsRandomly(null,targetTag);
-			Itk.dbgErr("!!! placeAgentsRandomly() needs target now !!!") ;
+			Itk.logError("!!! placeAgentsRandomly() needs target now !!!") ;
 		else if (e.getActionCommand() == "Place agents evenly (no tags)")
 			/* [2014.12.26 I.Noda] 同上 */
 			//placeAgentsEvenly(null,targetTag);
-			Itk.dbgErr("!!! placeAgentsEvenly() needs target now !!!") ;
+			Itk.logError("!!! placeAgentsEvenly() needs target now !!!") ;
         else if (e.getActionCommand() == "Simulate") simulate();
         else if (e.getActionCommand() == "Dump(test)")
             networkMap.testDumpNodes();
@@ -1954,14 +1954,13 @@ public class NetworkMapEditor extends SimulationLauncher
 			/* [2015-02-06 I.Noda]
 			 * このあたり、static とそうでないのが混在していてぐちゃぐちゃ。
 			 * 統一すべき */
+			/* [2015-02-11 I.Noda] このへん、通っていない？*/
             isDebug = propertiesHandler.getIsDebug();
             mapPath = propertiesHandler.getMapPath();
             pollutionPath = propertiesHandler.getPollutionPath();
             generationPath = propertiesHandler.getGenerationPath();
             scenarioPath = propertiesHandler.getScenarioPath();
 			fallbackPath = propertiesHandler.getFallbackPath() ;
-			Itk.dbgVal("fallbackPath", fallbackPath) ;
-			System.exit(1) ;
 
             isTimerEnabled = propertiesHandler.getIsTimerEnabled();
             timerPath = propertiesHandler.getTimerPath();

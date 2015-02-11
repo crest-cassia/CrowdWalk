@@ -197,7 +197,8 @@ public class AgentHandler implements Serializable {
                                                      random);
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            System.err.printf("Illegal AgentGenerationFile: %s\n%s", generationFile, ex.getMessage());
+            Itk.logError("Illegal AgentGenerationFile",
+                         generationFile, ex.getMessage());
             System.exit(1);
         }
         if (generate_agent != null) {
@@ -256,7 +257,7 @@ public class AgentHandler implements Serializable {
         } else if (filename.endsWith(".csv")) {
             scenario.scanCsvFile(filename) ;
         } else {
-            Itk.dbgErr("Unknown scenario file suffix:", filename) ;
+            Itk.logError("Unknown scenario file suffix:", filename) ;
             System.exit(1) ;
         }
         scenario.describe() ;
@@ -311,14 +312,13 @@ public class AgentHandler implements Serializable {
                 if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
                 effectiveLinks.add(agent.getCurrentLink());
             }
-            //System.err.println("effectiveLinks / modelLinks: " + effectiveLinks.size() + " / " + model.getLinks().size());
         }
     }
 
     public boolean isFinished() {
         /* finish when FinishEvent occurs */
         if (scenario.isFinished()) {
-            Itk.dbgMsg("finished by the end of scenario.") ;
+            Itk.logInfo("finished by the end of scenario.") ;
             return true;
         }
         if (isAllAgentSpeedZeroBreak) {
@@ -334,7 +334,7 @@ public class AgentHandler implements Serializable {
             }
             if (existNotFinished) {
                 if (isAllAgentSpeedZero) {
-                    System.err.println("finished:  all agents speed zero");
+                    Itk.logInfo("finished", "all agents speed zero");
                     return true;
                 }
                 return false;
@@ -347,7 +347,7 @@ public class AgentHandler implements Serializable {
                 if (factory.enabled) return false;
             }
         }
-        System.err.println("finished:  no more agents to generate");
+        Itk.logInfo("finished","no more agents to generate");
         return true;
     }
 
@@ -755,7 +755,7 @@ public class AgentHandler implements Serializable {
             // 「ロックファイルが残っているとログファイルに連番が振られて増え続けてしまう」不具合を回避する
             File file = new File(filePath + ".lck");
             if (file.exists()) {
-                System.err.println("delete lock file: " + filePath + ".lck");
+                Itk.logWarn("delete lock file", filePath + ".lck");
                 file.delete();
             }
 
@@ -973,7 +973,7 @@ public class AgentHandler implements Serializable {
                     } else if (index == -1) {
                         event.unoccur(0, map) ;
                     } else {
-                        Itk.dbgErr("wrong index") ;
+                        Itk.logError("wrong index") ;
                     }
                 }
             }

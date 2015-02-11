@@ -221,8 +221,8 @@ implements Comparable<AgentBase>, Serializable {
             return copyAndInitializeBody(r) ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.dbgErr("can not make a new instance from an agent.") ;
-            Itk.dbgMsg("agent", this) ;
+            Itk.logError("can not make a new instance from an agent.") ;
+            Itk.logError_("agent", this) ;
             return null ;
         }
     }
@@ -752,8 +752,8 @@ implements Comparable<AgentBase>, Serializable {
                 goalList.add(subgoal) ;
                 count++ ;
             } else {
-                Itk.dbgWrn("A directive includes no subgoal.") ;
-                Itk.dbgMsg("directive", directive) ;
+                Itk.logWarn("A directive includes no subgoal.") ;
+                Itk.logWarn_("directive", directive) ;
             }
         }
         return count ;
@@ -797,7 +797,7 @@ implements Comparable<AgentBase>, Serializable {
      * Agent については、fromDom はサポートしない
      */
     public static OBNode fromDom(Element element) {
-        Itk.dbgErr("fromDom() is not supported.") ;
+        Itk.logError("fromDom() is not supported.") ;
         return null ;
     }
 
