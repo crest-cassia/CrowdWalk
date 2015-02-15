@@ -400,14 +400,14 @@ public class Term {
     /**
      * arg 取得(fallback 付き)
      */
-    public Object fetchArg(String slot, String fallbackSlot) {
+    public Object fetchArg(String slot, String fallbackSlot, Object fallback) {
         if(hasArg(slot)) {
             return getArg(slot) ;
         } else if(hasArg(fallbackSlot)) {
             Term fallbackTerm = getArgTerm(fallbackSlot) ;
-            return fallbackTerm.fetchArg(slot, fallbackSlot) ;
+            return fallbackTerm.fetchArg(slot, fallbackSlot, fallback) ;
         } else {
-            return null ;
+            return fallback ;
         }
     }
 
@@ -423,8 +423,8 @@ public class Term {
     /**
      * arg 取得 (Term) (fallback 付き)
      */
-    public Term fetchArgTerm(String slot, String fallbackSlot) {
-        return convertValueToTerm(fetchArg(slot, fallbackSlot)) ;
+    public Term fetchArgTerm(String slot, String fallbackSlot, Term fallback) {
+        return convertValueToTerm(fetchArg(slot, fallbackSlot, fallback)) ;
     }
 
     //------------------------------
@@ -477,8 +477,8 @@ public class Term {
     /**
      * arg 取得 (String) (fallback 付き)
      */
-    public String fetchArgString(String slot, String fallbackSlot) {
-        return convertValueToString(fetchArg(slot, fallbackSlot)) ;
+    public String fetchArgString(String slot, String fallbackSlot, String fallback) {
+        return convertValueToString(fetchArg(slot, fallbackSlot, fallback)) ;
     }
 
     //------------------------------
@@ -507,8 +507,8 @@ public class Term {
     /**
      * arg 取得 (boolean) (fallback 付き)
      */
-    public boolean fetchArgBoolean(String slot, String fallbackSlot) {
-        return convertValueToBoolean(fetchArg(slot, fallbackSlot)) ;
+    public boolean fetchArgBoolean(String slot, String fallbackSlot, boolean fallback) {
+        return convertValueToBoolean(fetchArg(slot, fallbackSlot, fallback)) ;
     }
 
     //------------------------------
@@ -544,8 +544,8 @@ public class Term {
     /**
      * arg 取得 (int) (fallback 付き)
      */
-    public int fetchArgInt(String slot, String fallbackSlot) {
-        return convertValueToInt(fetchArg(slot, fallbackSlot)) ;
+    public int fetchArgInt(String slot, String fallbackSlot, int fallback) {
+        return convertValueToInt(fetchArg(slot, fallbackSlot, fallback)) ;
     }
 
     //------------------------------
@@ -555,6 +555,8 @@ public class Term {
     private int convertValueToInt(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getInt() ;
+        } else if(val instanceof Integer) {
+            return (int)val ;
         } else if(val == null) {
             Thread.dumpStack() ;
             Itk.logError("can not convert null to int.") ;
@@ -580,8 +582,8 @@ public class Term {
     /**
      * arg 取得 (double) (fallback 付き)
      */
-    public double fetchArgDouble(String slot, String fallbackSlot) {
-        return convertValueToDouble(fetchArg(slot, fallbackSlot)) ;
+    public double fetchArgDouble(String slot, String fallbackSlot, double fallback) {
+        return convertValueToDouble(fetchArg(slot, fallbackSlot, fallback)) ;
     }
 
     //------------------------------
@@ -591,6 +593,8 @@ public class Term {
     private double convertValueToDouble(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getDouble() ;
+        } else if(val instanceof Double) {
+            return (double)val ;
         } else if(val == null) {
             Thread.dumpStack() ;
             Itk.logError("can not convert null to double.") ;
@@ -674,6 +678,14 @@ public class Term {
             ret.add((T)element) ;
         }
         return ret ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * array 取得
+     */
+    public int getArraySize() {
+        return array.size() ;
     }
 
     //------------------------------------------------------------

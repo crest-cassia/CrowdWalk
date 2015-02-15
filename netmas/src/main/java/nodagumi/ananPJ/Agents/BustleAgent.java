@@ -82,6 +82,7 @@ public class BustleAgent extends NaiveAgent
         BustleAgent r = (BustleAgent)_r ;
         super.copyAndInitializeBody(r) ;
 	r.bustleWeight = bustleWeight ;
+        r.trailWeight = trailWeight ;
         return r ;
     }
 
