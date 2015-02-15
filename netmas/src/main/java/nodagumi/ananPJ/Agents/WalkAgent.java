@@ -120,11 +120,11 @@ public class WalkAgent extends AgentBase implements Serializable {
     protected double widthUnit_OtherLane = FallBack_WidthUnit_OtherLane ;
 
     /* [2015.01.29 I.Noda]
-     *以下は、strait model で使われる。
+     *以下は、plain model で使われる。
      */
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * Strait モデルで、超過密状態から抜け出すため、
+     * Plain モデルで、超過密状態から抜け出すため、
      * 対向流のエージェントで、最低間隔を決めておく。
      * これをある程度大きくしておかないと、
      * 対抗流から過大な力を受け、全く抜け出せなくなる。
@@ -163,7 +163,7 @@ public class WalkAgent extends AgentBase implements Serializable {
      */
     public static enum SpeedCalculationModel {
         LaneModel,
-        StraitModel,
+        PlainModel,
     }
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -634,7 +634,7 @@ public class WalkAgent extends AgentBase implements Serializable {
         case LaneModel:
             calc_speed_lane_generic(time,calculation_model) ;
             break;
-        case StraitModel:
+        case PlainModel:
             calc_speed_lane_generic(time,calculation_model);
             break;
         default:
@@ -713,7 +713,7 @@ public class WalkAgent extends AgentBase implements Serializable {
 
     //------------------------------------------------------------
     /**
-     * lane および strait による速度計算
+     * lane および plain による速度計算
      */
     private void calc_speed_lane_generic(double time,
                                          SpeedCalculationModel model) {
@@ -729,7 +729,7 @@ public class WalkAgent extends AgentBase implements Serializable {
             double distToPredecessor = calcDistanceToPredecessor(time) ;
             dv += calcSocialForce(distToPredecessor) ;
             break;
-        case StraitModel:
+        case PlainModel:
             dv += accumulateSocialForces(time) ;
             break;
         default:

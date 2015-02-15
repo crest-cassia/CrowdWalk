@@ -17,7 +17,7 @@
     },
     "generation" : {
 	"rule" : "EACH",
-	"speedModel" : "STRAIT",
+	"speedModel" : "PLAIN",
 	"_" : null
     },
     "_" : null

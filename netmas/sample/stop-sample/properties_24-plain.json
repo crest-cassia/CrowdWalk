@@ -4,7 +4,7 @@
     io_handler_type: 'none',
 
     map_file: '2014_1222.MOJI_width10.0_02.test_link.xml',
-    generation_file: '2014_1222_gen_test_18-strait.total_unknown.csv',
+    generation_file: '2014_1222_gen_test_18-plain.total_unknown.csv',
     //scenario_file: '2014_1222_scenario_r3_check2_01.csv',
     scenario_file: '2014_1222_scenario_r3_check2_01.json',
     camera_file: '2014_1111.camera_01',

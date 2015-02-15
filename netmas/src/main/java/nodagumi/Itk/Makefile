@@ -68,17 +68,17 @@ SAMPLE0w = sample/basic-sample/properties.xml		#wait
 SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
 SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
 SAMPLE0sm = sample/stop-sample/properties_24.json	#stop (門司港)
-SAMPLE0sms = sample/stop-sample/properties_24-strait.json #stop (門司港)
+SAMPLE0smp = sample/stop-sample/properties_24-plain.json #stop (門司港)
 SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
-SAMPLE0sg2s = sample/simpleGrid2/properties-strait.xml	#kawaguchi's sample
+SAMPLE0sg2p = sample/simpleGrid2/properties-plain.xml	#kawaguchi's sample
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
 SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
 SAMPLE2d = sample/simpleGrid/properties-density.v2.xml	#simple, version2
-SAMPLE2s = sample/simpleGrid/properties-strait.v2.xml	#simple, version2
+SAMPLE2p = sample/simpleGrid/properties-plain.v2.xml	#simple, version2
 SAMPLE2w = sample/basic-sample/properties.v2.xml	#wait, version2
 SAMPLE2i = sample/simpleGrid/properties-itk.v2.xml	#itk, version2
 SAMPLE2id = sample/simpleGrid/properties-itk-density.v2.xml	#itk, version2
-SAMPLE2is = sample/simpleGrid/properties-itk-strait.v2.xml	#itk, version2
+SAMPLE2ip = sample/simpleGrid/properties-itk-plain.v2.xml	#itk, version2
 
 SAMPLE2it = sample/simpleGrid/properties-itk-think.v2.xml	#think
 
@@ -104,12 +104,12 @@ run0s4 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s4))
 run0sm ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sm))
-run0sms ::
-	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sms))
+run0smp ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0smp))
 run0sg2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2))
-run0sg2s ::
-	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2s))
+run0sg2p ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2p))
 
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))
@@ -125,20 +125,20 @@ run2d ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2d))
 run2d_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2d) cui)
-run2s ::
-	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2s))
-run2s_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2s) cui)
+run2p ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2p))
+run2p_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2p) cui)
 run2w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2w))
 run2i ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2i))
 run2id ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2id))
-run2is ::
-	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2is))
-run2is_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2is) cui)
+run2ip ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2ip))
+run2ip_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2ip) cui)
 
 run2it ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2it))
