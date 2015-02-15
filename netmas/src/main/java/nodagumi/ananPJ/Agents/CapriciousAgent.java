@@ -111,9 +111,7 @@ public class CapriciousAgent extends NaiveAgent
      */
     @Override
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
-        MapNode other = _way.getOther(_node);
-        double cost = other.getDistance(_target) ;
-        cost += _way.length;
+        double cost = super.calcWayCostTo(_way, _node, _target) ;
         double noise = capriciousMargin * random.nextDouble() ;
         return cost + noise;
     }

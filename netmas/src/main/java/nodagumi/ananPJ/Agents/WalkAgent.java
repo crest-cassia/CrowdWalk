@@ -456,6 +456,7 @@ public class WalkAgent extends AgentBase implements Serializable {
      */
     @Override
     public void preUpdate(double time) {
+        super.preUpdate(time) ;
         calc_speed(time);
         move_set(speed, time, true);
     }

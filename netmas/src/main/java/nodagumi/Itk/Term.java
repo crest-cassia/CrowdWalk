@@ -806,6 +806,19 @@ public class Term {
     // 比較
     //------------------------------------------------------------
     /**
+     * hash code
+     */
+    @Override
+    public int hashCode() {
+        if(getHead() == null) {
+            return 0 ;
+        } else {
+            return head.hashCode() ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * 等価判定
      * head も body も null なら null と等しい。
      * head = null, body = {} は、null とは等しくなく、 {} と等しい。

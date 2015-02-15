@@ -60,6 +60,13 @@ public abstract class OBNode extends DefaultMutableTreeNode
   protected ArrayList<String> tags;
   public boolean selected = false;
 
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  /**
+   * alert message
+   */
+  public HashMap<Term, Double> alertMessageTable ;
+
+  //------------------------------------------------------------
   /**
     * 引数なしconstractor。 ClassFinder.newByName で必要。
 	*/
@@ -75,6 +82,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
   public void init(int _ID){
       ID = _ID;
       tags = new ArrayList<String>();
+      alertMessageTable = new HashMap<Term, Double>() ;
   }
   
   public abstract boolean isLeaf();
@@ -195,7 +203,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
       }
       return str.toString();
   }
-  
+
   /* verbose output used for hints */
   public String getHintString() {
       return "(default OBNode hint)";

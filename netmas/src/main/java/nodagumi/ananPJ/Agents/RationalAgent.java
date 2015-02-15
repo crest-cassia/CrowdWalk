@@ -15,7 +15,11 @@ package nodagumi.ananPJ.Agents;
 
 import java.io.Serializable;
 import java.util.Random;
+import java.util.HashMap;
 
+import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
@@ -54,6 +58,15 @@ public class RationalAgent extends BustleAgent
      */
     public ThinkEngine thinkEngine = new ThinkEngine() ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * alert された message
+     */
+    public HashMap<Term, Double> alertedMessageTable =
+        new HashMap<Term, Double>() ;
+
+    //------------------------------------------------------------
+    // コンストラクタ
     //------------------------------------------------------------
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
@@ -92,5 +105,50 @@ public class RationalAgent extends BustleAgent
         thinkEngine.setAgent(this) ;
         thinkEngine.setRule(getTermFromConfig("rule", null)) ;
     } ;
+
+    //------------------------------------------------------------
+    /**
+     * あるwayを選択した場合の目的地(_target)までのコスト。
+     * 正規のコストに、ランダム要素を加味する。
+     */
+    @Override
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
+        double cost = super.calcWayCostTo(_way, _node, _target) ;
+        double noise = capriciousMargin * random.nextDouble() ;
+        return cost + noise;
+    }
+
+    //------------------------------------------------------------
+    // alertMessage
+    //------------------------------------------------------------
+    /**
+     * Alert 関係
+     */
+    public void alertMessage(Term message, double time) {
+        alertedMessageTable.put(message, time) ;
+    }
+
+    //------------------------------------------------------------
+    // 推論
+    //------------------------------------------------------------
+    /**
+     * シミュレーション各サイクルの前半に呼ばれる。
+     */
+    @Override
+    public void preUpdate(double time) {
+        currentTime = time ;
+        thinkCycle() ;
+        super.preUpdate(time) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 思考ルーチン
+     * 状態が変わる毎に呼ばれるべき。
+     */
+    public Term thinkCycle() {
+        return thinkEngine.think() ;
+    }
+
 } // class RationalAgent
 

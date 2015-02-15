@@ -80,6 +80,8 @@ SAMPLE2i = sample/simpleGrid/properties-itk.v2.xml	#itk, version2
 SAMPLE2id = sample/simpleGrid/properties-itk-density.v2.xml	#itk, version2
 SAMPLE2is = sample/simpleGrid/properties-itk-strait.v2.xml	#itk, version2
 
+SAMPLE2it = sample/simpleGrid/properties-itk-think.v2.xml	#think
+
 run : run2
 
 run_base ::
@@ -135,6 +137,13 @@ run2id ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2id))
 run2is ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2is))
+run2is_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2is) cui)
+
+run2it ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2it))
+run2it_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2it) cui)
 
 
 ##------------------------------------------------------------

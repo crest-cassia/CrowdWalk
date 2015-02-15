@@ -13,7 +13,12 @@
 
 package nodagumi.ananPJ.Agents.Think;
 
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Agents.RationalAgent;
 import nodagumi.Itk.* ;
 
 //======================================================================
@@ -76,6 +81,19 @@ public class ThinkEngine {
      */
     static public Term Term_False = new Term("false") ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * log tag
+     */
+    static public String LogTagPrefix = "Think:" ;
+    public String logTag() {
+        if(agent == null) {
+            return LogTagPrefix + "(null)" ;
+        } else {
+            return LogTagPrefix + agent.toString() ;
+        }
+    }
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -124,6 +142,15 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
+     * get agent
+     */
+    public HashMap<Term, Double> getAlertedMessageTable() {
+        RationalAgent agent = (RationalAgent)getAgent() ;
+        return agent.alertedMessageTable ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * set rule
      */
     public Term setRule(Term _rule) {
@@ -155,7 +182,7 @@ public class ThinkEngine {
         if(expr == null || expr.isNull()) {
             return Term_Null ;
         } else if(expr.isArray()) {
-            return think_Proc(expr) ;
+            return think_proc(expr) ;
         } else if(!(expr.getHead() instanceof String)) {
             // maybe, true or false or numbers
             return expr ;
@@ -168,15 +195,19 @@ public class ThinkEngine {
             } else if(head.equals("false")) {
                 return Term_False ;
             } else if(head.equals("not")) {
-                return think_Not(expr.getArgTerm("body")) ;
+                return think_not(expr.getArgTerm("body")) ;
             } else if(head.equals("and")) {
-                return think_And(expr.getArgTerm("body")) ;
+                return think_and(expr.getArgTerm("body")) ;
             } else if(head.equals("or")) {
-                return think_Or(expr.getArgTerm("body")) ;
+                return think_or(expr.getArgTerm("body")) ;
             } else if(head.equals("proc")) {
-                return think_Proc(expr.getArgTerm("body")) ;
+                return think_proc(expr.getArgTerm("body")) ;
+            } else if(head.equals("if")) {
+                return think_if(expr) ;
+            } else if(head.equals("quote")) {
+                return expr.getArgTerm("value") ;
             } else {
-                return think_Generic(head, expr) ;
+                return thinkGeneric(head, expr) ;
             }
         }
     }
@@ -185,7 +216,7 @@ public class ThinkEngine {
     /**
      * 推論(not)
      */
-    public Term think_Not(Term expr) {
+    public Term think_not(Term expr) {
         Term result = think(expr) ;
         if(checkFalse(result)) {
             return Term_True ;
@@ -208,7 +239,7 @@ public class ThinkEngine {
     /**
      * 推論(And)
      */
-    public Term think_And(Term expr) {
+    public Term think_and(Term expr) {
         if(!expr.isArray()) {
             Itk.logError("Illegal proc body") ;
             Itk.logError_("expr:", expr) ;
@@ -228,7 +259,7 @@ public class ThinkEngine {
     /**
      * 推論(Or)
      */
-    public Term think_Or(Term expr) {
+    public Term think_or(Term expr) {
         if(!expr.isArray()) {
             Itk.logError("Illegal proc body") ;
             Itk.logError_("expr:", expr) ;
@@ -248,7 +279,7 @@ public class ThinkEngine {
     /**
      * 推論(proc)
      */
-    public Term think_Proc(Term expr) {
+    public Term think_proc(Term expr) {
         if(!expr.isArray()) {
             Itk.logError("Illegal proc body") ;
             Itk.logError_("expr:", expr) ;
@@ -265,11 +296,52 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
+     * 推論(proc)
+     */
+    public Term think_if(Term expr) {
+        Term condition = expr.getArgTerm("condition") ;
+        Term thenExpr = expr.getArgTerm("then") ;
+        Term elseExpr = expr.getArgTerm("else") ;
+
+        if(condition == null || thenExpr == null) {
+            Itk.logError("wrong if expr", expr) ;
+            System.exit(1) ;
+        }
+
+        Term cond = think(condition) ;
+
+        if(!checkFalse(cond)) {
+            return think(thenExpr) ;
+        } else {
+            if(elseExpr != null) {
+                return think(elseExpr) ;
+            } else {
+                return Term_False ;
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * 推論(generic)
      */
-    public Term think_Generic(String head, Term expr) {
+    public Term thinkGeneric(String head, Term expr) {
         if(head.equals("log")) {
-            return think_Log(head, expr) ;
+            return think_log(head, expr) ;
+        } else if(head.equals("getValue")) {
+            return think_getValue(head, expr) ;
+        } else if(head.equals("placeHasTag")) {
+            return think_placeHasTag(head, expr) ;
+        } else if(head.equals("listenAlert")) {
+            return think_listenAlert(head, expr) ;
+        } else if(head.equals("clearAlert")) {
+            return think_clearAlert(head, expr) ;
+        } else if(head.equals("clearAllAlert")) {
+            return think_clearAllAlert(head, expr) ;
+        } else if(head.equals("changeGoal")) {
+            return think_changeGoal(head, expr) ;
+        } else if(head.equals("clearPlannedRoute")) {
+            return think_clearPlannedRoute(head, expr) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
             return Term_Null ;
@@ -278,17 +350,136 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(generic)
+     * 推論(log)
+     *   {"":"log",
+     *    "special": ("alertMessages" | ...)}
+     *  OR
+     *   {"":"log",
+     *    "tag":<StringForTag>,
+     *    "value": <expr>}
      */
-    public Term think_Log(String head, Term expr) {
-        String tag = expr.getArgString("tag") ;
-        Term value = expr.getArgTerm("value") ;
-        Term result = think(value) ;
-        if(agent == null) {
-            Itk.logInfo("ThinkEngine", tag, ":", result) ;
+    public Term think_log(String head, Term expr) {
+        Term special = expr.getArgTerm("special") ;
+        if(special != null) {
+            if(special.equals("alertMessages")) {
+                think_logAlertMessages() ;
+            } else {
+                Itk.logError("unknown log special:", expr) ;
+            }
         } else {
-            Itk.logInfo("Agent(" + agent + ")", tag, ":", result) ;
+            String tag = expr.getArgString("tag") ;
+            Term value = expr.getArgTerm("value") ;
+            Term result = ((value != null) ? think(value) : null) ;
+
+            if(result == null) {
+                Itk.logInfo(logTag(), tag) ;
+            } else {
+                Itk.logInfo(logTag(), tag, ":", result) ;
+            }
         }
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(log alertMessages)
+     */
+    public void think_logAlertMessages() {
+        if(agent == null) {
+            Itk.logInfo(logTag(), "no alertMessages") ;
+        } else {
+            Itk.logInfo(logTag(), "alertMessages",
+                        "(time=", agent.currentTime, ")") ;
+            for(Map.Entry<Term, Double> entry :
+                    getAlertedMessageTable().entrySet()) {
+                Term message = entry.getKey() ;
+                double time = entry.getValue() ;
+                Itk.logInfo(LogTagPrefix, message, time) ;
+            }
+            Itk.logInfo(LogTagPrefix, "-----------------") ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(getValue)
+     */
+    public Term think_getValue(String head, Term expr) {
+        String name = expr.getArgString("name") ;
+        if(name.equals("currentTime")) {
+            return new Term(agent.currentTime) ;
+        } else if(name.equals("agentId")) {
+            return new Term(agent.ID) ;
+        } else {
+            Itk.logError("unknown parameter name for getValue.") ;
+            return Term_Null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(placeHasTag)
+     */
+    public Term think_placeHasTag(String head, Term expr) {
+        String tag = expr.getArgString("tag") ;
+        if(agent.getCurrentLink().hasTag(tag)) {
+            return Term_True ;
+        } else {
+            return Term_False ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(listenAlert)
+     */
+    public Term think_listenAlert(String head, Term expr) {
+        Term message = expr.getArgTerm("message") ;
+        Double time = getAlertedMessageTable().get(message) ;
+        if(time != null) {
+            return Term_True ;
+        } else {
+            return Term_False ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(clearAlert)
+     */
+    public Term think_clearAlert(String head, Term expr) {
+        Term message = expr.getArgTerm("message") ;
+        getAlertedMessageTable().remove(message) ;
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(clearAllAlert)
+     */
+    public Term think_clearAllAlert(String head, Term expr) {
+        getAlertedMessageTable().clear() ;
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(changeGoal)
+     */
+    public Term think_changeGoal(String head, Term expr) {
+        Term goalTag = expr.getArgTerm("goal") ;
+        agent.changeGoal(goalTag) ;
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(clear PlannedRoute)
+     * 注意：push PlannedRoute などを考える場合、PlannedRoute を
+     * コピーすべきか再考。（現状で、routeはエージェント同士で共有している）
+     */
+    public Term think_clearPlannedRoute(String head, Term expr) {
+        agent.setPlannedRoute(new ArrayList<Term>()) ;
         return Term_True ;
     }
 

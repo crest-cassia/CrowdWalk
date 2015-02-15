@@ -129,6 +129,22 @@ public class MapLink extends OBMapPart implements Serializable {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * alert message
+     */
+
+    public void addAlertMessage(Term message, double time, boolean onoff) {
+        if(onoff) {
+            alertMessageTable.put(message, time) ;
+            for(AgentBase agent : getAgents()) {
+                agent.alertMessage(message, time) ;
+            }
+        } else {
+            alertMessageTable.remove(message) ;
+        }
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェント生成禁止かどうかのフラグ
@@ -486,6 +502,11 @@ public class MapLink extends OBMapPart implements Serializable {
         /* 新しいリンクが emergency mode かどうかをチェック */
         if (getEmergency()) {
             informEmergencyToAgent(agent) ;
+        }
+
+        /* alert message を新しいエージェントに伝える */
+        for(HashMap.Entry<Term, Double> entry : alertMessageTable.entrySet()) {
+            agent.alertMessage(entry.getKey(), entry.getValue()) ;
         }
     }
 

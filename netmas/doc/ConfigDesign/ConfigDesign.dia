@@ -28,7 +28,7 @@
           <dia:boolean val="true"/>
         </dia:attribute>
         <dia:attribute name="scaling">
-          <dia:real val="0.32418575882911682"/>
+          <dia:real val="0.3264833390712738"/>
         </dia:attribute>
         <dia:attribute name="fitto">
           <dia:boolean val="true"/>
@@ -3822,16 +3822,16 @@ buffer|file|pipe|network|server|none#</dia:string>
     </dia:object>
     <dia:object type="UML - LargePackage" version="0" id="O32">
       <dia:attribute name="obj_pos">
-        <dia:point val="64,11"/>
+        <dia:point val="63,10"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="63.95,9.95;109.05,52.05"/>
+        <dia:rectangle val="62.95,8.95;108.05,51.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="64,11"/>
+        <dia:point val="63,10"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="45"/>
@@ -5927,7 +5927,7 @@ buffer|file|pipe|network|server|none#</dia:string>
         <dia:point val="-15.74,36.45"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-16.49,11.8875;66.05,37.2375"/>
+        <dia:rectangle val="-16.49,10.8875;65.05,37.2375"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -5937,8 +5937,8 @@ buffer|file|pipe|network|server|none#</dia:string>
         <dia:point val="63,36.45"/>
         <dia:point val="63,32"/>
         <dia:point val="63,32"/>
-        <dia:point val="63,12.7"/>
-        <dia:point val="66,12.7"/>
+        <dia:point val="63,11.7"/>
+        <dia:point val="65,11.7"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -7031,28 +7031,28 @@ WAIT_FOR の場合は double で待ち時間。#</dia:string>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O64">
       <dia:attribute name="obj_pos">
-        <dia:point val="65,26"/>
+        <dia:point val="64,25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="64.95,25.95;71.9778,29.5"/>
+        <dia:rectangle val="63.95,24.95;69.0974,27.55"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="65,26"/>
+        <dia:point val="64,25"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="6.9277734374999991"/>
+        <dia:real val="5.0474218749999995"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="3.4499999999999997"/>
+        <dia:real val="2.4999999999999996"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#StartEvent#</dia:string>
+        <dia:string>#Initiate#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
-        <dia:string>##</dia:string>
+        <dia:string>#CSV では "START"#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -7132,31 +7132,7 @@ WAIT_FOR の場合は double で待ち時間。#</dia:string>
       <dia:attribute name="comment_font_height">
         <dia:real val="0.69999999999999996"/>
       </dia:attribute>
-      <dia:attribute name="attributes">
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#atTime#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#TimeString#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#atTime は必須格となる。#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
+      <dia:attribute name="attributes"/>
       <dia:attribute name="operations"/>
       <dia:attribute name="template">
         <dia:boolean val="false"/>
@@ -7166,16 +7142,16 @@ WAIT_FOR の場合は double で待ち時間。#</dia:string>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O65">
       <dia:attribute name="obj_pos">
-        <dia:point val="65,37"/>
+        <dia:point val="64,33"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="64.95,36.95;81.23,41.65"/>
+        <dia:rectangle val="63.95,32.95;76.0491,37.65"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="65,37"/>
+        <dia:point val="64,33"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="16.18"/>
+        <dia:real val="11.999140624999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="4.5999999999999996"/>
@@ -7189,7 +7165,8 @@ WAIT_FOR の場合は double で待ち時間。#</dia:string>
       <dia:attribute name="comment">
         <dia:string>#発災時刻。
 pollution の開始など。
-将来的には、pollution のタイプやファイルを指定できるようにすべきかもしれない。#</dia:string>
+将来的には、pollution のタイプやファイルを
+指定できるようにすべきかもしれない。#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -7279,28 +7256,28 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O66">
       <dia:attribute name="obj_pos">
-        <dia:point val="66,31"/>
+        <dia:point val="64,29"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="65.95,30.95;71.095,33.55"/>
+        <dia:rectangle val="63.95,28.95;69.6361,31.55"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="66,31"/>
+        <dia:point val="64,29"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="5.0450390624999999"/>
+        <dia:real val="5.5860937499999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.4999999999999996"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#FinishEvent#</dia:string>
+        <dia:string>#Finish#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
-        <dia:string>#別名："Response"#</dia:string>
+        <dia:string>#CSV の "RESPONSE"#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -7390,19 +7367,19 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O67">
       <dia:attribute name="obj_pos">
-        <dia:point val="66,12"/>
+        <dia:point val="65,11"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="65.95,11.95;81.0999,24.3"/>
+        <dia:rectangle val="64.95,10.95;80.0999,20.85"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="66,12"/>
+        <dia:point val="65,11"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="15.049921875000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="12.249999999999998"/>
+        <dia:real val="9.7999999999999989"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#EventBase#</dia:string>
@@ -7414,7 +7391,7 @@ pollution の開始など。
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
-        <dia:boolean val="false"/>
+        <dia:boolean val="true"/>
       </dia:attribute>
       <dia:attribute name="suppress_attributes">
         <dia:boolean val="false"/>
@@ -7517,7 +7494,7 @@ pollution の開始など。
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#parent#</dia:string>
+            <dia:string>#?parent#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#String || Null#</dia:string>
@@ -7526,7 +7503,7 @@ pollution の開始など。
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>#null もしくは "0" の場合は親なし。#</dia:string>
+            <dia:string>#無視する。CSV 形式の名残#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -7549,7 +7526,7 @@ pollution の開始など。
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>#"START", "OUTBREAK", "RESPONSE|FINISH", "SET|ADD", "REMOVE", "EVACUATE", "STOP", "BOTH"#</dia:string>
+            <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -7563,7 +7540,7 @@ pollution の開始など。
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#?atTime#</dia:string>
+            <dia:string>#atTime#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#TimeString#</dia:string>
@@ -7595,7 +7572,7 @@ pollution の開始など。
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>#親イベントからの遅れ時間。秒単位。#</dia:string>
+            <dia:string>#無視する。CSVの名残#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -7617,13 +7594,13 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O68">
       <dia:attribute name="obj_pos">
-        <dia:point val="97,23"/>
+        <dia:point val="75,42"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="96.95,22.95;104.91,25.45"/>
+        <dia:rectangle val="74.95,41.95;82.91,44.45"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="97,23"/>
+        <dia:point val="75,42"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="7.8599999999999994"/>
@@ -7752,29 +7729,28 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O69">
       <dia:attribute name="obj_pos">
-        <dia:point val="71,44"/>
+        <dia:point val="86,35"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="70.95,43.95;93.95,49.6"/>
+        <dia:rectangle val="85.95,34.95;96.63,39.9"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="71,44"/>
+        <dia:point val="86,35"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="22.899999999999999"/>
+        <dia:real val="10.58"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="5.5499999999999989"/>
+        <dia:real val="4.8499999999999996"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#EvacuateEvent#</dia:string>
+        <dia:string>#Alert#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
-        <dia:string>#本来であれば、EmergencyAlarm タグを付与するイベントにすべき。
-その上で、各エージェントが、いろんなタグにどのように反応するかをかけるようにスべき。#</dia:string>
+        <dia:string>#CSV の "EVACUATE"#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -7857,7 +7833,7 @@ pollution の開始など。
       <dia:attribute name="attributes">
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#placeTag#</dia:string>
+            <dia:string>#message#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#String#</dia:string>
@@ -7866,7 +7842,8 @@ pollution の開始など。
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>#EvacuateModeを指定するためのタグ#</dia:string>
+            <dia:string>#エージェントに伝えられるメッセージ。
+デフォルトは "EVACUATE"#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -7888,13 +7865,13 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O70">
       <dia:attribute name="obj_pos">
-        <dia:point val="86,23"/>
+        <dia:point val="67,42"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="85.95,22.95;93.59,25.45"/>
+        <dia:rectangle val="66.95,41.95;74.59,44.45"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="86,23"/>
+        <dia:point val="67,42"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="7.5400000000000009"/>
@@ -8023,29 +8000,29 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O71">
       <dia:attribute name="obj_pos">
-        <dia:point val="83,37"/>
+        <dia:point val="80,23"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="82.95,36.95;92.51,41.9"/>
+        <dia:rectangle val="79.95,22.95;88.39,26.25"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="83,37"/>
+        <dia:point val="80,23"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.4599999999999991"/>
+        <dia:real val="8.3399999999999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="4.8499999999999996"/>
+        <dia:real val="3.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#ShutOffEvent#</dia:string>
+        <dia:string>#ShutOff#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
         <dia:string>#エージェントの生成をやめる。
-別名: "Stop"#</dia:string>
+CSV の "STOP"#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -8125,31 +8102,7 @@ pollution の開始など。
       <dia:attribute name="comment_font_height">
         <dia:real val="0.69999999999999996"/>
       </dia:attribute>
-      <dia:attribute name="attributes">
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#placeTag#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#String#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#削除する場所を指定するためのタグ#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
+      <dia:attribute name="attributes"/>
       <dia:attribute name="operations"/>
       <dia:attribute name="template">
         <dia:boolean val="false"/>
@@ -8159,32 +8112,31 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O72">
       <dia:attribute name="obj_pos">
-        <dia:point val="89,27"/>
+        <dia:point val="92,20"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="88.95,26.95;98.51,35.6"/>
+        <dia:rectangle val="91.95,19.95;106.918,23.5"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="89,27"/>
+        <dia:point val="92,20"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.4599999999999991"/>
+        <dia:real val="14.8681640625"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="8.5499999999999989"/>
+        <dia:real val="3.4499999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#PeriodicGateEvent#</dia:string>
+        <dia:string>#GateEvent#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
-        <dia:string>#信号機？
-別名：StopTimes#</dia:string>
+        <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
-        <dia:boolean val="false"/>
+        <dia:boolean val="true"/>
       </dia:attribute>
       <dia:attribute name="suppress_attributes">
         <dia:boolean val="false"/>
@@ -8264,62 +8216,16 @@ pollution の開始など。
       <dia:attribute name="attributes">
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#placeTag#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
             <dia:string>#String#</dia:string>
           </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#削除する場所を指定するためのタグ#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#openInterval#</dia:string>
-          </dia:attribute>
           <dia:attribute name="type">
-            <dia:string>#double#</dia:string>
+            <dia:string>#gateTag#</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>#歩ける時間間隔#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#closeInterval#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#double#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#停止時間間隔#</dia:string>
+            <dia:string>#gateに付与するタグ。デフォルトでは placeTag と同じ。#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -8341,28 +8247,28 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O73">
       <dia:attribute name="obj_pos">
-        <dia:point val="99,29"/>
+        <dia:point val="101,26"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="98.95,28.95;108.51,33.2"/>
+        <dia:rectangle val="100.95,25.95;107.779,28.55"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="99,29"/>
+        <dia:point val="101,26"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.4599999999999991"/>
+        <dia:real val="6.7286718749999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="4.1499999999999995"/>
+        <dia:real val="2.4999999999999996"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#AddStopEvent#</dia:string>
+        <dia:string>#OpenGate#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
-        <dia:string>#Set Tag の特殊型#</dia:string>
+        <dia:string>#CSV の "REMOVE_STOP"#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -8442,31 +8348,7 @@ pollution の開始など。
       <dia:attribute name="comment_font_height">
         <dia:real val="0.69999999999999996"/>
       </dia:attribute>
-      <dia:attribute name="attributes">
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#placeTag#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#String#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#削除する場所を指定するためのタグ#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
+      <dia:attribute name="attributes"/>
       <dia:attribute name="operations"/>
       <dia:attribute name="template">
         <dia:boolean val="false"/>
@@ -8476,28 +8358,28 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O74">
       <dia:attribute name="obj_pos">
-        <dia:point val="99,35"/>
+        <dia:point val="93,26"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="98.95,34.95;108.51,39.2"/>
+        <dia:rectangle val="92.95,25.95;98.6211,28.55"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="99,35"/>
+        <dia:point val="93,26"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.4599999999999991"/>
+        <dia:real val="5.5710937500000002"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="4.1499999999999995"/>
+        <dia:real val="2.4999999999999996"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#RemoveStopEvent#</dia:string>
+        <dia:string>#CloseGate#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
-        <dia:string>#RemoveTag の特殊型#</dia:string>
+        <dia:string>#CSV の "ADD_STOP"#</dia:string>
       </dia:attribute>
       <dia:attribute name="abstract">
         <dia:boolean val="false"/>
@@ -8577,31 +8459,7 @@ pollution の開始など。
       <dia:attribute name="comment_font_height">
         <dia:real val="0.69999999999999996"/>
       </dia:attribute>
-      <dia:attribute name="attributes">
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#placeTag#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#String#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#削除する場所を指定するためのタグ#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
+      <dia:attribute name="attributes"/>
       <dia:attribute name="operations"/>
       <dia:attribute name="template">
         <dia:boolean val="false"/>
@@ -8611,19 +8469,19 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O75">
       <dia:attribute name="obj_pos">
-        <dia:point val="95.73,20.85"/>
+        <dia:point val="81.13,39"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="89.72,20.8;96.58,23.05"/>
+        <dia:rectangle val="70.72,38.95;81.98,42.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="95.73,20.85"/>
-        <dia:point val="95.73,21.925"/>
-        <dia:point val="89.77,21.925"/>
-        <dia:point val="89.77,23"/>
+        <dia:point val="81.13,39"/>
+        <dia:point val="81.13,40.5"/>
+        <dia:point val="70.77,40.5"/>
+        <dia:point val="70.77,42"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -8646,32 +8504,28 @@ pollution の開始など。
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O88" connection="6"/>
+        <dia:connection handle="0" to="O85" connection="6"/>
         <dia:connection handle="1" to="O70" connection="1"/>
       </dia:connections>
       <dia:childnode parent="O32"/>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O76">
       <dia:attribute name="obj_pos">
-        <dia:point val="93.73,35.55"/>
+        <dia:point val="99.4341,23.45"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="92.88,27.95;103.78,36.6"/>
+        <dia:rectangle val="98.5841,23.4;104.414,26.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="93.73,35.55"/>
-        <dia:point val="93.73,36.55"/>
-        <dia:point val="98.73,36.55"/>
-        <dia:point val="98.73,28"/>
-        <dia:point val="103.73,28"/>
-        <dia:point val="103.73,29"/>
+        <dia:point val="99.4341,23.45"/>
+        <dia:point val="99.4341,24.725"/>
+        <dia:point val="104.364,24.725"/>
+        <dia:point val="104.364,26"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
-        <dia:enum val="1"/>
-        <dia:enum val="0"/>
         <dia:enum val="1"/>
         <dia:enum val="0"/>
         <dia:enum val="1"/>
@@ -8699,19 +8553,19 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O77">
       <dia:attribute name="obj_pos">
-        <dia:point val="95.73,20.85"/>
+        <dia:point val="81.13,39"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="94.88,20.8;100.98,23.05"/>
+        <dia:rectangle val="78.88,38.95;81.98,42.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="95.73,20.85"/>
-        <dia:point val="95.73,21.925"/>
-        <dia:point val="100.93,21.925"/>
-        <dia:point val="100.93,23"/>
+        <dia:point val="81.13,39"/>
+        <dia:point val="81.13,40.5"/>
+        <dia:point val="78.93,40.5"/>
+        <dia:point val="78.93,42"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -8734,32 +8588,28 @@ pollution の開始など。
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O88" connection="6"/>
+        <dia:connection handle="0" to="O85" connection="6"/>
         <dia:connection handle="1" to="O68" connection="1"/>
       </dia:connections>
       <dia:childnode parent="O32"/>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O78">
       <dia:attribute name="obj_pos">
-        <dia:point val="93.73,35.55"/>
+        <dia:point val="99.4341,23.45"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="92.88,33.95;103.78,36.6"/>
+        <dia:rectangle val="95.7355,23.4;100.284,26.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="93.73,35.55"/>
-        <dia:point val="93.73,36.55"/>
-        <dia:point val="98.73,36.55"/>
-        <dia:point val="98.73,34"/>
-        <dia:point val="103.73,34"/>
-        <dia:point val="103.73,35"/>
+        <dia:point val="99.4341,23.45"/>
+        <dia:point val="99.4341,24.725"/>
+        <dia:point val="95.7855,24.725"/>
+        <dia:point val="95.7855,26"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
-        <dia:enum val="1"/>
-        <dia:enum val="0"/>
         <dia:enum val="1"/>
         <dia:enum val="0"/>
         <dia:enum val="1"/>
@@ -8787,19 +8637,19 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O79">
       <dia:attribute name="obj_pos">
-        <dia:point val="73.525,24.25"/>
+        <dia:point val="72.525,20.8"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.4139,24.2;74.375,26.05"/>
+        <dia:rectangle val="66.4737,20.75;73.375,25.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="73.525,24.25"/>
-        <dia:point val="73.525,25.125"/>
-        <dia:point val="68.4639,25.125"/>
-        <dia:point val="68.4639,26"/>
+        <dia:point val="72.525,20.8"/>
+        <dia:point val="72.525,22.9"/>
+        <dia:point val="66.5237,22.9"/>
+        <dia:point val="66.5237,25"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -8829,19 +8679,19 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O80">
       <dia:attribute name="obj_pos">
-        <dia:point val="73.525,24.25"/>
+        <dia:point val="72.525,20.8"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.4725,24.2;74.375,31.05"/>
+        <dia:rectangle val="66.743,20.75;73.375,29.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="73.525,24.25"/>
-        <dia:point val="73.525,30"/>
-        <dia:point val="68.5225,30"/>
-        <dia:point val="68.5225,31"/>
+        <dia:point val="72.525,20.8"/>
+        <dia:point val="72.525,28"/>
+        <dia:point val="66.793,28"/>
+        <dia:point val="66.793,29"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -8871,19 +8721,19 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O81">
       <dia:attribute name="obj_pos">
-        <dia:point val="73.525,24.25"/>
+        <dia:point val="72.525,20.8"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="72.675,24.2;74.375,37.05"/>
+        <dia:rectangle val="69.9496,20.75;73.375,33.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="73.525,24.25"/>
-        <dia:point val="73.525,30"/>
-        <dia:point val="73.09,30"/>
-        <dia:point val="73.09,37"/>
+        <dia:point val="72.525,20.8"/>
+        <dia:point val="72.525,29"/>
+        <dia:point val="69.9996,29"/>
+        <dia:point val="69.9996,33"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -8913,19 +8763,19 @@ pollution の開始など。
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O82">
       <dia:attribute name="obj_pos">
-        <dia:point val="73.525,24.25"/>
+        <dia:point val="89.9401,16.45"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="72.675,24.2;93.78,27.05"/>
+        <dia:rectangle val="89.0901,16.4;99.4841,20.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="73.525,24.25"/>
-        <dia:point val="73.525,26"/>
-        <dia:point val="93.73,26"/>
-        <dia:point val="93.73,27"/>
+        <dia:point val="89.9401,16.45"/>
+        <dia:point val="89.9401,18.225"/>
+        <dia:point val="99.4341,18.225"/>
+        <dia:point val="99.4341,20"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -8933,7 +8783,7 @@ pollution の開始など。
         <dia:enum val="1"/>
       </dia:attribute>
       <dia:attribute name="orth_autoroute">
-        <dia:boolean val="false"/>
+        <dia:boolean val="true"/>
       </dia:attribute>
       <dia:attribute name="text_colour">
         <dia:color val="#000000"/>
@@ -8948,26 +8798,26 @@ pollution の開始など。
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O67" connection="6"/>
+        <dia:connection handle="0" to="O87" connection="6"/>
         <dia:connection handle="1" to="O72" connection="1"/>
       </dia:connections>
       <dia:childnode parent="O32"/>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O83">
       <dia:attribute name="obj_pos">
-        <dia:point val="73.525,24.25"/>
+        <dia:point val="89.9401,16.45"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="72.675,24.2;87.78,37.05"/>
+        <dia:rectangle val="84.12,16.4;90.7901,23.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="73.525,24.25"/>
-        <dia:point val="73.525,32"/>
-        <dia:point val="87.73,32"/>
-        <dia:point val="87.73,37"/>
+        <dia:point val="89.9401,16.45"/>
+        <dia:point val="89.9401,19.725"/>
+        <dia:point val="84.17,19.725"/>
+        <dia:point val="84.17,23"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -8975,7 +8825,7 @@ pollution の開始など。
         <dia:enum val="1"/>
       </dia:attribute>
       <dia:attribute name="orth_autoroute">
-        <dia:boolean val="false"/>
+        <dia:boolean val="true"/>
       </dia:attribute>
       <dia:attribute name="text_colour">
         <dia:color val="#000000"/>
@@ -8990,28 +8840,32 @@ pollution の開始など。
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O67" connection="6"/>
+        <dia:connection handle="0" to="O87" connection="6"/>
         <dia:connection handle="1" to="O71" connection="1"/>
       </dia:connections>
       <dia:childnode parent="O32"/>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O84">
       <dia:attribute name="obj_pos">
-        <dia:point val="73.525,24.25"/>
+        <dia:point val="72.525,20.8"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="72.675,24.2;82.5,44.05"/>
+        <dia:rectangle val="71.675,11.95;89.9901,21.85"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="73.525,24.25"/>
-        <dia:point val="73.525,34.125"/>
-        <dia:point val="82.45,34.125"/>
-        <dia:point val="82.45,44"/>
+        <dia:point val="72.525,20.8"/>
+        <dia:point val="72.525,21.8"/>
+        <dia:point val="81.2325,21.8"/>
+        <dia:point val="81.2325,12"/>
+        <dia:point val="89.9401,12"/>
+        <dia:point val="89.9401,13"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
+        <dia:enum val="1"/>
+        <dia:enum val="0"/>
         <dia:enum val="1"/>
         <dia:enum val="0"/>
         <dia:enum val="1"/>
@@ -9033,251 +8887,28 @@ pollution の開始など。
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O67" connection="6"/>
-        <dia:connection handle="1" to="O69" connection="1"/>
+        <dia:connection handle="1" to="O87" connection="1"/>
       </dia:connections>
       <dia:childnode parent="O32"/>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O85">
       <dia:attribute name="obj_pos">
-        <dia:point val="98,46"/>
+        <dia:point val="78,33"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="97.95,45.95;107.51,50.2"/>
+        <dia:rectangle val="77.95,32.95;84.31,39.05"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="98,46"/>
+        <dia:point val="78,33"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.4599999999999991"/>
+        <dia:real val="6.2599999999999998"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="4.1499999999999995"/>
+        <dia:real val="6"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#BothEvent#</dia:string>
-      </dia:attribute>
-      <dia:attribute name="stereotype">
-        <dia:string>##</dia:string>
-      </dia:attribute>
-      <dia:attribute name="comment">
-        <dia:string>#Stop + Evacuate#</dia:string>
-      </dia:attribute>
-      <dia:attribute name="abstract">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="suppress_attributes">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="suppress_operations">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="visible_attributes">
-        <dia:boolean val="true"/>
-      </dia:attribute>
-      <dia:attribute name="visible_operations">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="visible_comments">
-        <dia:boolean val="true"/>
-      </dia:attribute>
-      <dia:attribute name="wrap_operations">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="wrap_after_char">
-        <dia:int val="40"/>
-      </dia:attribute>
-      <dia:attribute name="comment_line_length">
-        <dia:int val="40"/>
-      </dia:attribute>
-      <dia:attribute name="comment_tagging">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="line_width">
-        <dia:real val="0.10000000000000001"/>
-      </dia:attribute>
-      <dia:attribute name="line_color">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="fill_color">
-        <dia:color val="#ffffff"/>
-      </dia:attribute>
-      <dia:attribute name="text_color">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="normal_font">
-        <dia:font family="monospace" style="0" name="Courier"/>
-      </dia:attribute>
-      <dia:attribute name="abstract_font">
-        <dia:font family="monospace" style="88" name="Courier-BoldOblique"/>
-      </dia:attribute>
-      <dia:attribute name="polymorphic_font">
-        <dia:font family="monospace" style="8" name="Courier-Oblique"/>
-      </dia:attribute>
-      <dia:attribute name="classname_font">
-        <dia:font family="sans" style="80" name="Helvetica-Bold"/>
-      </dia:attribute>
-      <dia:attribute name="abstract_classname_font">
-        <dia:font family="sans" style="88" name="Helvetica-BoldOblique"/>
-      </dia:attribute>
-      <dia:attribute name="comment_font">
-        <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
-      </dia:attribute>
-      <dia:attribute name="normal_font_height">
-        <dia:real val="0.80000000000000004"/>
-      </dia:attribute>
-      <dia:attribute name="polymorphic_font_height">
-        <dia:real val="0.80000000000000004"/>
-      </dia:attribute>
-      <dia:attribute name="abstract_font_height">
-        <dia:real val="0.80000000000000004"/>
-      </dia:attribute>
-      <dia:attribute name="classname_font_height">
-        <dia:real val="1"/>
-      </dia:attribute>
-      <dia:attribute name="abstract_classname_font_height">
-        <dia:real val="1"/>
-      </dia:attribute>
-      <dia:attribute name="comment_font_height">
-        <dia:real val="0.69999999999999996"/>
-      </dia:attribute>
-      <dia:attribute name="attributes">
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#placeTag#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#String#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#削除する場所を指定するためのタグ#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
-      <dia:attribute name="operations"/>
-      <dia:attribute name="template">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="templates"/>
-      <dia:childnode parent="O32"/>
-    </dia:object>
-    <dia:object type="UML - Generalization" version="1" id="O86">
-      <dia:attribute name="obj_pos">
-        <dia:point val="82.45,49.55"/>
-      </dia:attribute>
-      <dia:attribute name="obj_bb">
-        <dia:rectangle val="81.6,44.95;102.78,51.05"/>
-      </dia:attribute>
-      <dia:attribute name="meta">
-        <dia:composite type="dict"/>
-      </dia:attribute>
-      <dia:attribute name="orth_points">
-        <dia:point val="82.45,49.55"/>
-        <dia:point val="82.45,51"/>
-        <dia:point val="95,51"/>
-        <dia:point val="95,45"/>
-        <dia:point val="102.73,45"/>
-        <dia:point val="102.73,46"/>
-      </dia:attribute>
-      <dia:attribute name="orth_orient">
-        <dia:enum val="1"/>
-        <dia:enum val="0"/>
-        <dia:enum val="1"/>
-        <dia:enum val="0"/>
-        <dia:enum val="1"/>
-      </dia:attribute>
-      <dia:attribute name="orth_autoroute">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="text_colour">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="line_colour">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="name">
-        <dia:string>##</dia:string>
-      </dia:attribute>
-      <dia:attribute name="stereotype">
-        <dia:string>##</dia:string>
-      </dia:attribute>
-      <dia:connections>
-        <dia:connection handle="0" to="O69" connection="6"/>
-        <dia:connection handle="1" to="O85" connection="1"/>
-      </dia:connections>
-      <dia:childnode parent="O32"/>
-    </dia:object>
-    <dia:object type="UML - Generalization" version="1" id="O87">
-      <dia:attribute name="obj_pos">
-        <dia:point val="87.73,41.85"/>
-      </dia:attribute>
-      <dia:attribute name="obj_bb">
-        <dia:rectangle val="86.88,41.8;102.78,46.05"/>
-      </dia:attribute>
-      <dia:attribute name="meta">
-        <dia:composite type="dict"/>
-      </dia:attribute>
-      <dia:attribute name="orth_points">
-        <dia:point val="87.73,41.85"/>
-        <dia:point val="87.73,43"/>
-        <dia:point val="102.73,43"/>
-        <dia:point val="102.73,46"/>
-      </dia:attribute>
-      <dia:attribute name="orth_orient">
-        <dia:enum val="1"/>
-        <dia:enum val="0"/>
-        <dia:enum val="1"/>
-      </dia:attribute>
-      <dia:attribute name="orth_autoroute">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="text_colour">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="line_colour">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="name">
-        <dia:string>##</dia:string>
-      </dia:attribute>
-      <dia:attribute name="stereotype">
-        <dia:string>##</dia:string>
-      </dia:attribute>
-      <dia:connections>
-        <dia:connection handle="0" to="O71" connection="6"/>
-        <dia:connection handle="1" to="O85" connection="1"/>
-      </dia:connections>
-      <dia:childnode parent="O32"/>
-    </dia:object>
-    <dia:object type="UML - Class" version="0" id="O88">
-      <dia:attribute name="obj_pos">
-        <dia:point val="91,13"/>
-      </dia:attribute>
-      <dia:attribute name="obj_bb">
-        <dia:rectangle val="90.95,12.95;100.51,20.9"/>
-      </dia:attribute>
-      <dia:attribute name="elem_corner">
-        <dia:point val="91,13"/>
-      </dia:attribute>
-      <dia:attribute name="elem_width">
-        <dia:real val="9.4599999999999991"/>
-      </dia:attribute>
-      <dia:attribute name="elem_height">
-        <dia:real val="7.8499999999999996"/>
-      </dia:attribute>
-      <dia:attribute name="name">
-        <dia:string>#SetTagEvent#</dia:string>
+        <dia:string>#SetTag#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -9366,30 +8997,7 @@ pollution の開始など。
       <dia:attribute name="attributes">
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#placeTag#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="type">
-            <dia:string>#String#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="value">
-            <dia:string>##</dia:string>
-          </dia:attribute>
-          <dia:attribute name="comment">
-            <dia:string>#付与する場所を指定するためのタグ#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="visibility">
-            <dia:enum val="0"/>
-          </dia:attribute>
-          <dia:attribute name="abstract">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-          <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
-          </dia:attribute>
-        </dia:composite>
-        <dia:composite type="umlattribute">
-          <dia:attribute name="name">
-            <dia:string>#attachedTag#</dia:string>
+            <dia:string>#noticeTag#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#String#</dia:string>
@@ -9442,27 +9050,200 @@ if false, remove tag.#</dia:string>
       <dia:attribute name="templates"/>
       <dia:childnode parent="O32"/>
     </dia:object>
-    <dia:object type="UML - Generalization" version="1" id="O89">
+    <dia:object type="UML - Generalization" version="1" id="O86">
       <dia:attribute name="obj_pos">
-        <dia:point val="73.525,24.25"/>
+        <dia:point val="89.9401,16.45"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="72.675,11.95;95.78,25.3"/>
+        <dia:rectangle val="81.08,16.4;90.7901,33.05"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="73.525,24.25"/>
-        <dia:point val="73.525,25.25"/>
-        <dia:point val="84.6275,25.25"/>
-        <dia:point val="84.6275,12"/>
-        <dia:point val="95.73,12"/>
-        <dia:point val="95.73,13"/>
+        <dia:point val="89.9401,16.45"/>
+        <dia:point val="89.9401,27"/>
+        <dia:point val="81.13,27"/>
+        <dia:point val="81.13,33"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
         <dia:enum val="0"/>
+        <dia:enum val="1"/>
+      </dia:attribute>
+      <dia:attribute name="orth_autoroute">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="text_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="stereotype">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O87" connection="6"/>
+        <dia:connection handle="1" to="O85" connection="1"/>
+      </dia:connections>
+      <dia:childnode parent="O32"/>
+    </dia:object>
+    <dia:object type="UML - Class" version="0" id="O87">
+      <dia:attribute name="obj_pos">
+        <dia:point val="85,13"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="84.95,12.95;94.9302,16.5"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="85,13"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="9.8802343750000006"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="3.4499999999999997"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:string>#PlacedEvent#</dia:string>
+      </dia:attribute>
+      <dia:attribute name="stereotype">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="comment">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="abstract">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="suppress_attributes">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="suppress_operations">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="visible_attributes">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="visible_operations">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="visible_comments">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="wrap_operations">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="wrap_after_char">
+        <dia:int val="40"/>
+      </dia:attribute>
+      <dia:attribute name="comment_line_length">
+        <dia:int val="40"/>
+      </dia:attribute>
+      <dia:attribute name="comment_tagging">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_width">
+        <dia:real val="0.10000000000000001"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_color">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="text_color">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="normal_font">
+        <dia:font family="monospace" style="0" name="Courier"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_font">
+        <dia:font family="monospace" style="88" name="Courier-BoldOblique"/>
+      </dia:attribute>
+      <dia:attribute name="polymorphic_font">
+        <dia:font family="monospace" style="8" name="Courier-Oblique"/>
+      </dia:attribute>
+      <dia:attribute name="classname_font">
+        <dia:font family="sans" style="80" name="Helvetica-Bold"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_classname_font">
+        <dia:font family="sans" style="88" name="Helvetica-BoldOblique"/>
+      </dia:attribute>
+      <dia:attribute name="comment_font">
+        <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
+      </dia:attribute>
+      <dia:attribute name="normal_font_height">
+        <dia:real val="0.80000000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="polymorphic_font_height">
+        <dia:real val="0.80000000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_font_height">
+        <dia:real val="0.80000000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="classname_font_height">
+        <dia:real val="1"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_classname_font_height">
+        <dia:real val="1"/>
+      </dia:attribute>
+      <dia:attribute name="comment_font_height">
+        <dia:real val="0.69999999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="attributes">
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#placeTag#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#String#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>#EvacuateModeを指定するためのタグ#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="operations"/>
+      <dia:attribute name="template">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="templates"/>
+      <dia:childnode parent="O32"/>
+    </dia:object>
+    <dia:object type="UML - Generalization" version="1" id="O88">
+      <dia:attribute name="obj_pos">
+        <dia:point val="89.9401,16.45"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="89.0901,16.4;91.34,35.05"/>
+      </dia:attribute>
+      <dia:attribute name="meta">
+        <dia:composite type="dict"/>
+      </dia:attribute>
+      <dia:attribute name="orth_points">
+        <dia:point val="89.9401,16.45"/>
+        <dia:point val="89.9401,25.725"/>
+        <dia:point val="91.29,25.725"/>
+        <dia:point val="91.29,35"/>
+      </dia:attribute>
+      <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
         <dia:enum val="0"/>
         <dia:enum val="1"/>
@@ -9483,8 +9264,161 @@ if false, remove tag.#</dia:string>
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O67" connection="6"/>
-        <dia:connection handle="1" to="O88" connection="1"/>
+        <dia:connection handle="0" to="O87" connection="6"/>
+        <dia:connection handle="1" to="O69" connection="1"/>
+      </dia:connections>
+      <dia:childnode parent="O32"/>
+    </dia:object>
+    <dia:object type="UML - Class" version="0" id="O89">
+      <dia:attribute name="obj_pos">
+        <dia:point val="96,31"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="95.95,30.95;103.83,33.55"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="96,31"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="7.7799999999999994"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="2.4999999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:string>#PeriodicGate#</dia:string>
+      </dia:attribute>
+      <dia:attribute name="stereotype">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="comment">
+        <dia:string>#しばらく実装はペンディング#</dia:string>
+      </dia:attribute>
+      <dia:attribute name="abstract">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="suppress_attributes">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="suppress_operations">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="visible_attributes">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="visible_operations">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="visible_comments">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="wrap_operations">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="wrap_after_char">
+        <dia:int val="40"/>
+      </dia:attribute>
+      <dia:attribute name="comment_line_length">
+        <dia:int val="40"/>
+      </dia:attribute>
+      <dia:attribute name="comment_tagging">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_width">
+        <dia:real val="0.10000000000000001"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_color">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="text_color">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="normal_font">
+        <dia:font family="monospace" style="0" name="Courier"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_font">
+        <dia:font family="monospace" style="88" name="Courier-BoldOblique"/>
+      </dia:attribute>
+      <dia:attribute name="polymorphic_font">
+        <dia:font family="monospace" style="8" name="Courier-Oblique"/>
+      </dia:attribute>
+      <dia:attribute name="classname_font">
+        <dia:font family="sans" style="80" name="Helvetica-Bold"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_classname_font">
+        <dia:font family="sans" style="88" name="Helvetica-BoldOblique"/>
+      </dia:attribute>
+      <dia:attribute name="comment_font">
+        <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
+      </dia:attribute>
+      <dia:attribute name="normal_font_height">
+        <dia:real val="0.80000000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="polymorphic_font_height">
+        <dia:real val="0.80000000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_font_height">
+        <dia:real val="0.80000000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="classname_font_height">
+        <dia:real val="1"/>
+      </dia:attribute>
+      <dia:attribute name="abstract_classname_font_height">
+        <dia:real val="1"/>
+      </dia:attribute>
+      <dia:attribute name="comment_font_height">
+        <dia:real val="0.69999999999999996"/>
+      </dia:attribute>
+      <dia:attribute name="attributes"/>
+      <dia:attribute name="operations"/>
+      <dia:attribute name="template">
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="templates"/>
+      <dia:childnode parent="O32"/>
+    </dia:object>
+    <dia:object type="UML - Generalization" version="1" id="O90">
+      <dia:attribute name="obj_pos">
+        <dia:point val="99.4341,23.45"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="98.5841,23.4;100.284,31.05"/>
+      </dia:attribute>
+      <dia:attribute name="meta">
+        <dia:composite type="dict"/>
+      </dia:attribute>
+      <dia:attribute name="orth_points">
+        <dia:point val="99.4341,23.45"/>
+        <dia:point val="99.4341,27.225"/>
+        <dia:point val="99.89,27.225"/>
+        <dia:point val="99.89,31"/>
+      </dia:attribute>
+      <dia:attribute name="orth_orient">
+        <dia:enum val="1"/>
+        <dia:enum val="0"/>
+        <dia:enum val="1"/>
+      </dia:attribute>
+      <dia:attribute name="orth_autoroute">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="text_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="stereotype">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O72" connection="6"/>
+        <dia:connection handle="1" to="O89" connection="1"/>
       </dia:connections>
       <dia:childnode parent="O32"/>
     </dia:object>

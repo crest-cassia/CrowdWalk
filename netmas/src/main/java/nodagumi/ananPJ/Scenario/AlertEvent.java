@@ -28,6 +28,23 @@ import nodagumi.Itk.* ;
  * できるようにしたほうが良い。
  */
 public class AlertEvent extends PlacedEvent {
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 情報を示すフラグ
+     */
+    public Term message = null ;
+
+    //----------------------------------------
+    /**
+     * JSON Term による setup
+     */
+    public void setupByJson(Scenario _scenario,
+                            Term eventDef) {
+        super.setupByJson(_scenario, eventDef) ;
+
+        message = eventDef.getArgTerm("message") ;
+    }
+
     //----------------------------------------
     /**
      * 終了イベント発生処理
@@ -61,12 +78,20 @@ public class AlertEvent extends PlacedEvent {
      * @return : true を返す。
      */
     public boolean occur(double time, NetworkMapBase map, boolean inverse) {
-	for(MapLink link : map.getLinks()) {
-	    if(link.hasTag(placeTag)) {
-		link.setEmergency(!inverse) ;
-	    }
-	}
-	return true ;
+        for(MapLink link : map.getLinks()) {
+            if(link.hasTag(placeTag)) {
+                if(message == null) { 
+                    /* [2015.02.15 I.Noda] should be obsolete.
+                     * for backward compatibility
+                     */
+                    link.setEmergency(!inverse) ;
+                } else {
+                    double relativeTime = scenario.calcRelativeTime(time) ;
+                    link.addAlertMessage(message, relativeTime, !inverse) ;
+                }
+            }
+        }
+        return true ;
     }
 } // class AlertEvent
 

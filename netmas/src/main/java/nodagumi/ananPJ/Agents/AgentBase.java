@@ -76,6 +76,7 @@ implements Comparable<AgentBase>, Serializable {
     public double generatedTime;
     public double finishedTime;
     private boolean evacuated = false;
+    public double currentTime ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -613,7 +614,9 @@ implements Comparable<AgentBase>, Serializable {
     /**
      * シミュレーション各サイクルの前半に呼ばれる。
      */
-    abstract public void preUpdate(double time);
+    public void preUpdate(double time) {
+        currentTime = time ;
+    }
 
     //------------------------------------------------------------
     /**
@@ -784,6 +787,14 @@ implements Comparable<AgentBase>, Serializable {
         return true;
     }
 
+    //############################################################
+    /**
+     * Alert 関係
+     * RationalAgent 以下でないと意味がない
+     */
+    public void alertMessage(Term message, double time) {
+        // do nothing ;
+    }
     //############################################################
     /**
      * 入出力関係
