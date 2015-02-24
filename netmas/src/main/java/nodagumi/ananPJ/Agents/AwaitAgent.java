@@ -29,6 +29,10 @@ import nodagumi.ananPJ.misc.RoutePlan;
 
 import nodagumi.Itk.*;
 
+//======================================================================
+/**
+ * WAIT directive を解するエージェント
+ */
 public class AwaitAgent extends WalkAgent
     implements Serializable {
     private static final long serialVersionUID = -6498240875020862791L;
@@ -416,10 +420,12 @@ public class AwaitAgent extends WalkAgent
         //------------------------------
         /**
          * atom String 状態の wait directive を解析する。
+         * <pre>
          *   _directive_ ::= _head_(_target_,_how_,_until_)
          *   _head_      ::= "WAIT_UNTIL" | "WAIT_FOR"
          *   _how_       ::= ???
          *   _until_     ::= _eventTag_ | _duration_
+         * </pre>
          */
         static public WaitDirective scanDirective(Term directive) {
             return scanDirective(directive.getString()) ;

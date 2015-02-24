@@ -43,6 +43,10 @@ import nodagumi.ananPJ.Simulator.Pollution;
 
 import nodagumi.Itk.* ;
 
+//======================================================================
+/**
+ * エージェントのベース。抽象クラス。
+ */
 public abstract class AgentBase extends OBMapPart
 implements Comparable<AgentBase>, Serializable {
     private static final long serialVersionUID = 2580480798262915926L;

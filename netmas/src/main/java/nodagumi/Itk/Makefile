@@ -28,7 +28,10 @@ JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
 
 ##------------------------------------------------------------
 doc ::
-	javadoc -d doc -encoding utf-8 -charset utf-8 $(SRCFILES)
+	(cd ../.. ;\
+	javadoc -d ../../../doc/javadoc -encoding utf-8 \
+	-charset utf-8 -subpackages nodagumi)
+#	javadoc -d doc -encoding utf-8 -charset utf-8 $(SRCFILES)
 
 build : build_v
 

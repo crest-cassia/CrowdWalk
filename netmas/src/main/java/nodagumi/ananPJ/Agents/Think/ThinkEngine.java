@@ -23,7 +23,39 @@ import nodagumi.Itk.* ;
 
 //======================================================================
 /**
- * 思考エンジン
+ * 思考エンジン.
+ *
+ * ルールは、以下で定義される形式
+ * <pre>
+ *   _rule_ ::= _expr_
+ *   _expr_ ::= _null_ | [_expr_,_expr_,...] | _headedTerm_
+ *   _null_ ::= null | {}
+ *   _headedTerm_ ::= {"" : _head_, (_argKey_ : _expr_)*}
+ *   _head_ ::= _String_
+ *   _argKey_ ::= _String_
+ * </pre>
+ *
+ * <h3> Special Forms </h3>
+ * <ul>
+ *  <li> _null_ は, NOP (No Operation)扱い。
+ *  <li> [_expr_, ...] の形式は、{"" : "proc", "body" : [_expr_, ...]} と同じ。
+ *  <li> _headedTerm_ で以下は組み込み。
+ *    <pre>
+ *     {"" : "if", "condition" : _expr_, "then" : _expr_ (, "else" : _expr_)?}
+ *     {"" : "proc", "body" : [_expr_, _expr_, ...]}
+ *     {"" : "not", "body" : _expr_}
+ *     {"" : "and", "body" : [_expr_, _expr_, ...]}
+ *     {"" : "or", "body" : [_expr_, _expr_, ...]}
+ *     {"" : "true"}  ："true" と同じ
+ *     {"" : "false"} ："false" と同じ
+ *     {"" : "null"} : "null"  と同じ
+ *     {"" : "quote", "value" : _expr_}
+ *   </pre>
+ * </ul>
+ * <h3> 実処理用の _headedTerm_</h3>
+ * <ul>
+ *   <li> {"" : "log", "tag" : _String_, "value" : _expr_}
+ * </ul>
  */
 public class ThinkEngine {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -35,28 +67,6 @@ public class ThinkEngine {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ルールセット
-     * ルールは、以下で定義される形式
-     *   <rule> ::= <expr>
-     *   <expr> ::= <null> | [<expr>,<expr>,...] | <headedTerm>
-     *   <null> ::= null | {}
-     *   <headedTerm> ::= {"" : <head>, (<argKey> : <expr>)*}
-     *   <head> ::= <String>
-     *   <argKey> ::= <String>
-     * 
-     * <null> は, NOP (No Operation)扱い。
-     * [<expr>, ...] の形式は、{"" : "proc", "body" : [<expr>, ...]} と同じ。
-     * <headedTerm> で以下は組み込み。
-     *   {"" : "if", "condition" : <expr>, "then" : <expr> (, "else" : <expr>)?}
-     *   {"" : "proc", "body" : [<expr>, <expr>, ...]}
-     *   {"" : "not", "body" : <expr>}
-     *   {"" : "and", "body" : [<expr>, <expr>, ...]}
-     *   {"" : "or", "body" : [<expr>, <expr>, ...]}
-     *   {"" : "true"}  ："true" も同じ
-     *   {"" : "false"} ："false" も同じ
-     *   {"" : "null"} => "null" と同じ
-     *   {"" : "quote", "value" : <expr>}
-     * 実処理用の <headedTerm>
-     *   {"" : "log", "tag" : <String>, "value" : <expr>}
      */
     private Term rule = null ;
 

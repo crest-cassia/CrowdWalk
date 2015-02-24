@@ -60,6 +60,10 @@ import nodagumi.Itk.*;
  *  0,     GREEN,  100% #Normal
  */
 
+//======================================================================
+/**
+ * ソーシャルフォースモデルにより歩行するエージェント
+ */
 public class WalkAgent extends AgentBase implements Serializable {
     private static final long serialVersionUID = -6313717005123377059L;
 
@@ -72,8 +76,9 @@ public class WalkAgent extends AgentBase implements Serializable {
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 速度計算の定数
+     * 速度計算の定数。
      *
+     * <pre>
      * ソーシャルフォースモデルのパラメータ学習 [2010/9/16 23:53 noda]
      * * 速度誤差最適化 (expF) 
      * * 9900 回目の学習結果
@@ -96,6 +101,7 @@ public class WalkAgent extends AgentBase implements Serializable {
      *   c2 = 0.95466478370757
      *   vStar = 1.24504634565416
      *   rStar = 0.805446866507348
+     * </pre>
      */
     protected static double FallBack_A_0 = 0.962;//1.05;//0.5;
     protected static double FallBack_A_1 = 0.869;//1.25;//0.97;//2.0;
@@ -363,7 +369,7 @@ public class WalkAgent extends AgentBase implements Serializable {
 
     //------------------------------------------------------------
     /**
-     * ゴールを変更
+     * ゴールを変更。
      * シミュレーション途中でゴールを変更する場合に、
      * 経路のリスケジュールが必要なので、その処理を追加。
      */
