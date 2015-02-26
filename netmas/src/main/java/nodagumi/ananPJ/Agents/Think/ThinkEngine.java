@@ -192,7 +192,7 @@ public class ThinkEngine {
         if(expr == null || expr.isNull()) {
             return Term_Null ;
         } else if(expr.isArray()) {
-            return think_proc(expr) ;
+            return think_procBody(expr) ;
         } else if(!(expr.getHead() instanceof String)) {
             // maybe, true or false or numbers
             return expr ;
@@ -205,13 +205,13 @@ public class ThinkEngine {
             } else if(head.equals("false")) {
                 return Term_False ;
             } else if(head.equals("not")) {
-                return think_not(expr.getArgTerm("body")) ;
+                return think_not(expr) ;
             } else if(head.equals("and")) {
-                return think_and(expr.getArgTerm("body")) ;
+                return think_and(expr) ;
             } else if(head.equals("or")) {
-                return think_or(expr.getArgTerm("body")) ;
+                return think_or(expr) ;
             } else if(head.equals("proc")) {
-                return think_proc(expr.getArgTerm("body")) ;
+                return think_proc(expr) ;
             } else if(head.equals("if")) {
                 return think_if(expr) ;
             } else if(head.equals("quote")) {
@@ -224,10 +224,14 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(not)
+     * 推論(not)。
+     * <pre>
+     * { "" : "not",
+     *   "body" : _expr_ }
+     * </pre>
      */
     public Term think_not(Term expr) {
-        Term result = think(expr) ;
+        Term result = think(expr.getArgTerm("body")) ;
         if(checkFalse(result)) {
             return Term_True ;
         } else {
@@ -247,18 +251,23 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(And)
+     * 推論(And)。
+     * <pre>
+     * { "" : "and",
+     *   "body" : [_expr_, _expr_, ...] }
+     * </pre>
      */
     public Term think_and(Term expr) {
-        if(!expr.isArray()) {
-            Itk.logError("Illegal proc body") ;
+        Term body = expr.getArgTerm("body") ;
+        if(!body.isArray()) {
+            Itk.logError("Illegal and body") ;
             Itk.logError_("expr:", expr) ;
             System.exit(1) ;
         }
 
         Term result = Term_True ;
-        for(int i = 0 ; i < expr.getArraySize() ; i++) {
-            Term subExpr = expr.getNthTerm(i) ;
+        for(int i = 0 ; i < body.getArraySize() ; i++) {
+            Term subExpr = body.getNthTerm(i) ;
             result = think(subExpr) ;
             if(checkFalse(result)) break ;
         }
@@ -267,18 +276,23 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(Or)
+     * 推論(Or)。
+     * <pre>
+     * { "" : "or",
+     *   "body" : [ _expr_, _expr_, ...] }
+     * </pre>
      */
     public Term think_or(Term expr) {
-        if(!expr.isArray()) {
+        Term body = expr.getArgTerm("body") ;
+        if(!body.isArray()) {
             Itk.logError("Illegal proc body") ;
             Itk.logError_("expr:", expr) ;
             System.exit(1) ;
         }
 
         Term result = Term_False ;
-        for(int i = 0 ; i < expr.getArraySize() ; i++) {
-            Term subExpr = expr.getNthTerm(i) ;
+        for(int i = 0 ; i < body.getArraySize() ; i++) {
+            Term subExpr = body.getNthTerm(i) ;
             result = think(subExpr) ;
             if(!checkFalse(result)) break ;
         }
@@ -287,18 +301,33 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(proc)
+     * 推論(proc)。
+     * <pre>
+     * { "" : "proc",
+     *   "body" : [ _expr_, _expr_, ...] }
+     * OR
+     * [ _expr, _expr_, ...]
+     * </pre>
      */
     public Term think_proc(Term expr) {
-        if(!expr.isArray()) {
+        Term body = expr.getArgTerm("body") ;
+        return think_procBody(body) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(proc)の本体。
+     */
+    public Term think_procBody(Term body) {
+        if(!body.isArray()) {
             Itk.logError("Illegal proc body") ;
-            Itk.logError_("expr:", expr) ;
+            Itk.logError_("body:", body) ;
             System.exit(1) ;
         }
 
         Term result = Term_Null ;
-        for(int i = 0 ; i < expr.getArraySize() ; i++) {
-            Term subExpr = expr.getNthTerm(i) ;
+        for(int i = 0 ; i < body.getArraySize() ; i++) {
+            Term subExpr = body.getNthTerm(i) ;
             result = think(subExpr) ;
         }
         return result ;
@@ -306,7 +335,13 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(proc)
+     * 推論(if)。
+     * <pre>
+     * { "" : "if",
+     *   "condition" : _expr_,
+     *   "then" : _expr_,
+     *   "else" : _expr_ }
+     * </pre>
      */
     public Term think_if(Term expr) {
         Term condition = expr.getArgTerm("condition") ;
@@ -360,13 +395,15 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(log)
+     * 推論(log)。
+     * <pre>
      *   {"":"log",
      *    "special": ("alertMessages" | ...)}
      *  OR
      *   {"":"log",
-     *    "tag":<StringForTag>,
-     *    "value": <expr>}
+     *    "tag": _StringForTag_,
+     *    "value": _expr_}
+     * </pre>
      */
     public Term think_log(String head, Term expr) {
         Term special = expr.getArgTerm("special") ;
@@ -392,7 +429,7 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(log alertMessages)
+     * 推論(log alertMessages)。
      */
     public void think_logAlertMessages() {
         if(agent == null) {
@@ -412,7 +449,12 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(getValue)
+     * 推論(getValue)。
+     * <pre>
+     * { "" : "getValue",
+     *   "name" : _nameOfValue_ }
+     *  _nameOfValue_ ::= "name" | "currentTime" | "agentId"
+     * </pre>
      */
     public Term think_getValue(String head, Term expr) {
         String name = expr.getArgString("name") ;
@@ -428,7 +470,13 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(placeHasTag)
+     * 推論(placeHasTag)。
+     * 現在いるリンクがあるタグを持っているか？
+     * <pre>
+     * { "" : "placeHasTag",
+     *   "tag" : _tag_ }
+     * _tag ::= _String_
+     * </pre>
      */
     public Term think_placeHasTag(String head, Term expr) {
         String tag = expr.getArgString("tag") ;
@@ -441,7 +489,12 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(listenAlert)
+     * 推論(listenAlert)。
+     * <pre>
+     * { "" : "listenAlert",
+     *   "message" : _alertMessage_ }
+     * _alertMessage_ ::= _String_
+     * </pre>
      */
     public Term think_listenAlert(String head, Term expr) {
         Term message = expr.getArgTerm("message") ;
@@ -455,7 +508,12 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(clearAlert)
+     * 推論(clearAlert)。
+     * <pre>
+     * { "" : "clearAlert",
+     *   "message" : _alertMessage_ }
+     * _alertMessage_ ::= _String_
+     * </pre>
      */
     public Term think_clearAlert(String head, Term expr) {
         Term message = expr.getArgTerm("message") ;
@@ -465,7 +523,10 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(clearAllAlert)
+     * 推論(clearAllAlert)。
+     * <pre>
+     * { "" : "clearAllAlert" }
+     * </pre>
      */
     public Term think_clearAllAlert(String head, Term expr) {
         getAlertedMessageTable().clear() ;
@@ -474,7 +535,12 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(changeGoal)
+     * 推論(changeGoal)。
+     * <pre>
+     * { "" : "changeGoal",
+     *   "goal" : _goalTag_ }
+     * _goalTag_ ::= _String_
+     * </pre>
      */
     public Term think_changeGoal(String head, Term expr) {
         Term goalTag = expr.getArgTerm("goal") ;
@@ -484,7 +550,10 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
-     * 推論(clear PlannedRoute)
+     * 推論(clear PlannedRoute)。
+     * <pre>
+     * { "" : "clearPlannedRoute" }
+     * </pre>
      * 注意：push PlannedRoute などを考える場合、PlannedRoute を
      * コピーすべきか再考。（現状で、routeはエージェント同士で共有している）
      */
