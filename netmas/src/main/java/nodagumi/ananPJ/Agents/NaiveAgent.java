@@ -52,7 +52,7 @@ public class NaiveAgent
     /**
      * 一度通った道に加えるカウントの大きさの規定値
      */
-    private double trailCountStep = FallBack_TrailCountStep ;
+    protected double trailCountStep = FallBack_TrailCountStep ;
 
     //============================================================
     /**
@@ -160,6 +160,9 @@ public class NaiveAgent
     @Override
     public void initByConf(Term conf, Term fallback) {
         super.initByConf(conf, fallback) ;
+
+        trailCountStep = getDoubleFromConfig("trailCountStep", trailCountStep) ;
+
     } ;
 
     //------------------------------------------------------------
