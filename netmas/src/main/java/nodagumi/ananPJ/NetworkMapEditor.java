@@ -579,10 +579,10 @@ public class NetworkMapEditor extends SimulationLauncher
         frame.setMenuBar(menuBar);
     }
 
-    public String getVersion() {
+    public static String getVersion() {
         Properties prop = new Properties();
         try {
-            prop.load(this.getClass().getResourceAsStream("/netmas.properties"));
+            prop.load(NetworkMapEditor.class.getResourceAsStream("/netmas.properties"));
             return String.format("%s.%s.%s-%s", prop.getProperty("version"), prop.getProperty("branch"), prop.getProperty("revision"), prop.getProperty("commit_hash"));
         } catch(IOException e) {
             return "";

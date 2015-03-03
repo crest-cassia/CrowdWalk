@@ -4,49 +4,24 @@
  */
 
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.apache.tools.ant.taskdefs.condition.Os
 
 defaultTasks 'clean', 'build'
-// defaultTasks 'build','javadoc','groovydoc'
 
 apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'application'
 apply plugin: 'eclipse'
 
 repositories {
-    // maven {
-    //     url "http://download.osgeo.org/webdav/geotools"
-    // }
     mavenCentral()
 }
 
 dependencies {
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        compile localGroovy()   // Gradleに同梱されているGroovyを使う
-        compile 'commons-cli:commons-cli:1.2'
-        compile 'xalan:xalan:2.7.0'
-        compile 'net.arnx:jsonic:1.3.7'
-        compile 'net.sf.opencsv:opencsv:2.3'
-        compile 'junit:junit:4.12'
-        compile fileTree(dir: 'libs/jar', include: '*.jar')
-    } else {
-        // Linux/MacOS の場合は、gradle-1.12 を使うこと。
-	// また、groovy は別途、2.0.0 以上をインストールしておくこと。
-	groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.3.8'
-        //compile localGroovy()   // Gradleに同梱されているGroovyを使う
-	//ivy "org.apache.ivy:ivy:2.3.0"
-	//compile 'org.codehaus.groovy:groovy-all:2.3.8'
-        compile 'commons-cli:commons-cli:1.2'
-        // compile 'org.geotools:gt-shapefile:8.5'
-        // compile 'org.geotools:gt-swing:8.5'
-        compile 'net.arnx:jsonic:1.3.7'
-        compile 'net.sf.opencsv:opencsv:2.3'
-        compile 'junit:junit:4.12'
-        compile fileTree(dir: 'libs/jar/geotools-2.7-M3', include: '*.jar')
-        compile fileTree(dir: 'libs/jar', include: '*.jar')
-        compile fileTree(dir: 'libs/jar', include: '.SM.*.jar')
-    }
+    compile localGroovy()   // Gradleに同梱されているGroovyを使う
+    compile 'commons-cli:commons-cli:1.2'
+    compile 'xalan:xalan:2.7.0'
+    compile 'net.arnx:jsonic:1.3.7'
+    compile 'net.sf.opencsv:opencsv:2.3'
+    compile 'junit:junit:4.12'
+    compile fileTree(dir: 'libs/jar', include: '*.jar')
 
     runtime fileTree(dir: 'libs/windows/amd64', include: '*.dll')
     runtime fileTree(dir: 'libs/windows/i386', include: '*.dll')
@@ -58,53 +33,21 @@ dependencies {
 sourceSets {
     main {
         java {
-            srcDirs = ["src/main/java"];
-            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                exclude '**/ImportGis.java'
-            }
+            // 以下は別パッケージ(GisToCrowdwalk)に分かれたため使用されない
+            exclude '**/ImportGis.java'
         }
-        groovy {
-            srcDirs = ["src/main/groovy"];
-        }
-        compileClasspath = configurations.compile
-        runtimeClasspath = configurations.runtime
     }
 }
 
 def defaultEncoding = 'UTF-8'
-def classpathString = ''
 
 compileJava {
     options.encoding = defaultEncoding
-    classpath = configurations.compile
-}
-
-task pathingJar(type: Jar) {
-    appendix = "pathing"
-    doFirst {
-        manifest {
-            // If you want to check the details, see APPENDIXC.1 in README
-            //attributes "Class-Path": configurations.compile.files.join(" ")
-            attributes "Class-Path": classpathString
-            //attributes "Class-Path": relativeClasspathEntries.join(" ")
-        }
-    }
-}
-
-compileGroovy {
-    configurations.compile.files.each {
-        if (!it.toString().contains("xerces")) {
-            classpathString += ' ' + it
-        }
-    }
-    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-        dependsOn(pathingJar)
-        classpath = files(pathingJar.archivePath)
-    }
 }
 
 processResources {
     doFirst {
+        // バージョン番号を生成してリソースファイルにセットする
         def version = new File("version.txt").getText().trim()
         def branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
         def revision = 0
@@ -122,32 +65,13 @@ processResources {
 }
 
 jar {
-    manifest.mainAttributes("Main-Class" : "main")
-    /*
-    manifest {
-        def manifestClasspath = configurations.runtime.collect { it.getName() }.join(',')
-        manifestClasspath += ',' + configurations.compile.collect { it.getName() }.join(',')
-        manifestClasspath += ',' + configurations.groovy.collect { it.getName() }.join(',')
-        attributes 'Class-Path': manifestClasspath
-    }
-    */
-    /*
-    from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-    }
-    */
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        // Cygwinでは以下がないと不完全なjarファイルが生成される
-        doFirst {
-            from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
-                exclude 'META-INF/MANIFEST.MF'
-                exclude 'META-INF/*.SF'
-                exclude 'META-INF/*.DSA'
-                exclude 'META-INF/*.RSA'
-            }
+    manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.SystemLauncher")
+    doFirst {
+        from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+            exclude 'META-INF/MANIFEST.MF'
+            exclude 'META-INF/*.SF'
+            exclude 'META-INF/*.DSA'
+            exclude 'META-INF/*.RSA'
         }
     }
 }
@@ -170,21 +94,3 @@ task cleanAll {
        delete(f) ;
      }
 }
-
-/* task uberjar(type: Jar) { */
-    /* from files(sourceSets.main.output.classesDir) */
-    /* from configurations.runtime.asFileTree.files.collect{ zipTree(it) } */
-    /* manifest { */
-        /* attributes 'Main-Class': 'main' */
-    /* } */
-
-/* } */
-/* task('dist', type: Zip) { */
-    /* dependsOn 'jar' */
-    /* from jar.archivePath */
-    /* from configurations.runtime */
-/* } */
-// mainClassName = 'main'
-
-//manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.NetworkMapEditor")
-

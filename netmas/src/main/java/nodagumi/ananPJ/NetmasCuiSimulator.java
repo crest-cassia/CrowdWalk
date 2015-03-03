@@ -275,7 +275,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher
         return networkMap;
     }
 
-    public EvacuationModelBase getModel() {
+    public EvacuationSimulator getModel() {
         return model;
     }
 
