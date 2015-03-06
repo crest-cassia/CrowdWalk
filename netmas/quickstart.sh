@@ -9,7 +9,7 @@ fi
 if test "$(dirname $0)" = "." ; then
 	DIR='.'
 else
-        DIR=CROWDWALK
+        DIR=$CROWDWALK
 fi
 
 JAVA='java'
