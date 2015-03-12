@@ -65,88 +65,113 @@ test_all ::
 
 
 ##------------------------------------------------------------
-SAMPLE0 = sample/simpleGrid/properties-lane.xml		#simple
-SAMPLE0d = sample/simpleGrid/properties-density.xml	#density model
-SAMPLE0w = sample/basic-sample/properties.xml		#wait
-SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
-SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
-SAMPLE0sm = sample/stop-sample/properties_24.json	#stop (門司港)
-SAMPLE0smp = sample/stop-sample/properties_24-plain.json #stop (門司港)
-SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
-SAMPLE0sg2p = sample/simpleGrid2/properties-plain.xml	#kawaguchi's sample
-SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
-SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
-SAMPLE2d = sample/simpleGrid/properties-density.v2.xml	#simple, version2
-SAMPLE2p = sample/simpleGrid/properties-plain.v2.xml	#simple, version2
-SAMPLE2w = sample/basic-sample/properties.v2.xml	#wait, version2
-SAMPLE2i = sample/simpleGrid/properties-itk.v2.xml	#itk, version2
-SAMPLE2id = sample/simpleGrid/properties-itk-density.v2.xml	#itk, version2
-SAMPLE2ip = sample/simpleGrid/properties-itk-plain.v2.xml	#itk, version2
-
-SAMPLE2it = sample/simpleGrid/properties-itk-think.v2.xml	#think
-
 run : run2
 
 run_base ::
 	(cd $(BASEDIR) ; bash ./quickstart.sh)
 
+##-----
+SAMPLE0 = sample/simpleGrid/properties-lane.xml		#simple
 run0 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0))
 
+##-----
+SAMPLE0d = sample/simpleGrid/properties-density.xml	#density model
 run0d ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0d))
 
+##-----
+SAMPLE0w = sample/basic-sample/properties.xml		#wait
 run_wait :: run0w
 run0w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0w))
 
+##-----
+SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
 run0s2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s2))
 
+##-----
+SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
 run0s4 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s4))
+
+##-----
+SAMPLE0sm = sample/stop-sample/properties_24.json	#stop (門司港)
 run0sm ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sm))
+
+##-----
+SAMPLE0smp = sample/stop-sample/properties_24-plain.json #stop (門司港)
 run0smp ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0smp))
+
+##-----
+SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
 run0sg2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2))
+
+##-----
+SAMPLE0sg2p = sample/simpleGrid2/properties-plain.xml	#kawaguchi's sample
 run0sg2p ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2p))
 
+##-----
+SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))
-
 run1_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE1) cui)
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE1))
 
+##-----
+SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
 run2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2))
 run2_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2) cui)
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE2))
+
+##-----
+SAMPLE2d = sample/simpleGrid/properties-density.v2.xml	#simple, version2
 run2d ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2d))
 run2d_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2d) cui)
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE2d))
+
+##-----
+SAMPLE2p = sample/simpleGrid/properties-plain.v2.xml	#simple, version2
 run2p ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2p))
 run2p_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2p) cui)
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE2p))
+
+##-----
+SAMPLE2w = sample/basic-sample/properties.v2.xml	#wait, version2
 run2w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2w))
+
+##-----
+SAMPLE2i = sample/simpleGrid/properties-itk.v2.xml	#itk, version2
 run2i ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2i))
+
+##-----
+SAMPLE2id = sample/simpleGrid/properties-itk-density.v2.xml	#itk, version2
 run2id ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2id))
+
+##-----
+SAMPLE2ip = sample/simpleGrid/properties-itk-plain.v2.xml	#itk, version2
 run2ip ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2ip))
 run2ip_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2ip) cui)
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE2ip))
 
+##-----
+SAMPLE2it = sample/simpleGrid/properties-itk-think.v2.xml	#think
 run2it ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2it))
 run2it_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh $(SAMPLE2it) cui)
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE2it))
 
 
 ##------------------------------------------------------------
