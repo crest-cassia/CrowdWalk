@@ -56,7 +56,7 @@ public class NetmasPropertiesHandler implements Serializable {
 	    "queue_order" // "front_first" or "rear_first"
             );
 
-    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file", "node_appearance_file"};
+    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file", "node_appearance_file", "fallback_file"};
 
     protected String propertiescenarioPath = null;
     protected Properties prop = null;
