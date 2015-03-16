@@ -21,8 +21,16 @@ import nodagumi.Itk.* ;
 
 //============================================================
 /**
- * CloseGate Event (ADD_STOP)
- * ゲートを開く。
+ * CloseGate Event (ADD_STOP)。
+ * 指定したタグを持つリンク・ノードの、指定したタグのゲートを閉じる。
+ * <pre>
+ *  { "type" : "CloseGate",
+ *    "atTime" : __Time__,
+ *    "placeTag" : __Tag__,
+ *    "gateTag" : __Tag__}
+ * 
+ *  __Time__ ::= "hh:mm:ss"
+ * </pre>
  */
 public class CloseGateEvent extends GateEvent {
     //----------------------------------------

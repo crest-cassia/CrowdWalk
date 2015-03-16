@@ -21,7 +21,14 @@ import nodagumi.Itk.* ;
 
 //============================================================
 /**
- * Finish Event
+ * Finish Event。
+ * シミュレーション終了。
+ * <pre>
+ *  { "type" : "Finish",
+ *    "atTime" : __Time__}
+ *
+ *  __Time__ ::= "hh:mm:ss"
+ * </pre>
  */
 public class FinishEvent extends EventBase {
     //----------------------------------------

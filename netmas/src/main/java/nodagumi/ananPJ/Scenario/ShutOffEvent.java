@@ -21,8 +21,16 @@ import nodagumi.Itk.* ;
 
 //============================================================
 /**
- * ShutOff Event (STOP)
+ * ShutOff Event (STOP)。
  * 指定した場所のエージェント生成をやめる。
+ * <pre>
+ *  { "type" : "ShutOff",
+ *    "atTime" : __Time__,
+ *    "placeTag" : __Tag__}
+ *
+ *  __Time__ ::= "hh:mm:ss"
+ * </pre>
+ * <p>
  * [2015.01.21 I.Noda] 現状では生成停止だけだが、
  * いろいろな機能を実施できるようにしたほうが良いかもしれない。
  * その場合は、ControlEvent などに名前を買えるべきか？

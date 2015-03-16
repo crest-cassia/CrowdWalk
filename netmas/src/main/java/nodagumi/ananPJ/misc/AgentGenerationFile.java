@@ -34,7 +34,118 @@ import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
 import nodagumi.ananPJ.misc.GenerateAgent ;
 import nodagumi.Itk.*;
 
-/** Generate agents depending on a generation file.
+//======================================================================
+/**
+ * Generate agents depending on a generation file.
+ * Generation File は、Version 0, 1, 2 の3種類。
+ * その区別は、先頭行に
+ *  <pre>
+ *    #{ "version" : 2 }
+ *  </pre>
+ * という形で記述して区別する。
+ * <p>
+ * Version 2 では、2行目以降に Generation Rule の配列で JSON 形式で記述される。
+ * つまり、
+ *  <pre>
+ *    #{ "version" : 2 }
+ *    [ __Generation_Rule__,
+ *      __Generation_Rule__,
+ *      ... ]
+ *  </pre>
+ * となる。
+ * <code>__Generation_Rule__</code> には以下のバリエーションがある。
+ * <dl>
+ *   <dt>EACH</dt>
+ *     <dd>
+ *       指定したタグを持つすべてのリンクとノードから、
+ *       各々指定した数のエージェントが出発する。
+ *      <pre>
+ *        { "rule" : "EACH",
+ *          "ignore" : ("true" | "false")
+ *          "agentType" : { "className" : __AgentType__,
+ *                          "config": __AgentConfig__ },
+ *          "total" : __Integer__,
+ *          "speedModel" : __SpeedModel__,
+ *          "startPlace" : __Tag__,
+ *          "conditions" : __Conditions__,
+ *          "startTime" : __Time__,
+ *          "duration" : __DurationInSec__,
+ *          "goal" : __Tag__,
+ *          "plannedRoute" : [ __Tag__, __Tag__, ... ]
+ *        }
+ *      </pre>
+ *     </dd>
+ *   <dt>RANDOM</dt>
+ *     <dd>
+ *       指定したタグを持つすべてのリンクとノードから、
+ *       ランダムにエージェントが出発する。
+ *       エージェントの総数は指定した数(total)となる。
+ *      <pre>
+ *        { "rule" : "RANDOM",
+ *          "ignore" : ("true" | "false")
+ *          "agentType" : { "className" : __AgentType__,
+ *                          "config": __AgentConfig__ },
+ *          "total" : __Integer__,
+ *          "speedModel" : __SpeedModel__,
+ *          "startPlace" : __Tag__,
+ *          "conditions" : __Conditions__,
+ *          "startTime" : __Time__,
+ *          "duration" : __DurationInSec__,
+ *          "goal" : __Tag__,
+ *          "plannedRoute" : [ __Tag__, __Tag__, ... ]
+ *        }
+ *      </pre>
+ *     </dd>
+ *   <dt>EACHRANDOM</dt>
+ *     <dd>
+ *       RANDOMと同じだが、タグを持つ各リンク・ノードからは、
+ *       最低1エージェントは出発する。
+ *      （エージェントの出発しないリンク・ノードはない）
+ *      <pre>
+ *        { "rule" : "EACHRANDOM",
+ *          "ignore" : ("true" | "false")
+ *          "agentType" : { "className" : __AgentType__,
+ *                          "config": __AgentConfig__ },
+ *          "total" : __Integer__,
+ *          "maxFromEach" : __Integer__,
+ *          "speedModel" : __SpeedModel__,
+ *          "startPlace" : __Tag__,
+ *          "conditions" : __Conditions__,
+ *          "startTime" : __Time__,
+ *          "duration" : __DurationInSec__,
+ *          "goal" : __Tag__,
+ *          "plannedRoute" : [ __Tag__, __Tag__, ... ]
+ *        }
+ *      </pre>
+ *     </dd>
+ *   <dt>TIMEEVERY</dt>
+ *     <dd>
+ *       指定した時間区間のすべてのタイムステップに於いて、
+ *       指定したタグを持つすべてのリンクから、
+ *       各々指定した数のエージェントが出発する。
+ *       EACH を、時間区間全て分コピーしたものと同じ。
+ *      <pre>
+ *        { "rule" : "TIMEEVERY",
+ *          "ignore" : ("true" | "false")
+ *          "agentType" : { "className" : __AgentType__,
+ *                          "config": __AgentConfig__ },
+ *          "total" : __Integer__,
+ *          "speedModel" : __SpeedModel__,
+ *          "startPlace" : __Tag__,
+ *          "conditions" : __Conditions__,
+ *          "startTime" : __Time__,
+ *          "duration" : __DurationInSec__,
+ *          "everyEndTime" : __Time__,
+ *          "everySeconds" : __IntervalInSec__,
+ *          "goal" : __Tag__,
+ *          "plannedRoute" : [ __Tag__, __Tag__, ... ]
+ *        }
+ *      </pre>
+ *     </dd>
+ * </dl>
+ * <p>
+ * Version 0, 1 の形式は以下の通り。
+ * <pre>
  * format of generation file of one line:
  * [RULE_STRING,][AgentClass,AgentConf,]TAG,START_TIME,DURATION,TOTAL,EXIT_TAG[,ROUTE...]
  * TAG,START_TIME,DURATION,TOTAL[,EXIT_TAG,NAVIGATED_LINK_TAG]*
@@ -57,6 +168,7 @@ import nodagumi.Itk.*;
  * example2) RANDOM,LINK_TAG_2,09:00:00,1,10,EXIT_TAG_3
  * example3) EACHRANDOM,LINK_TAG_3,23:44:12,10,140,1,EXIT_TAG4,STATION
  * example6) TIMEEVERY,NaiveAgent,"{}",LINK_TAG_1,18:00:00,18:00:00,60,60,100,LANE,EXIT_1,EXIT_2,EXIT_3
+ * </pre>
  */
 public class AgentGenerationFile extends ArrayList<GenerateAgent> 
     implements Serializable {
@@ -123,7 +235,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
 
     //============================================================
     /**
-     * 生成ルール情報格納用クラス(Base)
+     * 生成ルール情報格納用クラス(Base)。
+     * Generation Rule は以下の形式の JSON (version 2 format).
+     *   
      */
     static private class GenerationConfigBase extends GenerateAgent.Config {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

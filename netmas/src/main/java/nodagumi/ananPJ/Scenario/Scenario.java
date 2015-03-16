@@ -34,7 +34,28 @@ import nodagumi.Itk.* ;
 
 //======================================================================
 /**
- * Scenario Class
+ * Scenario Class.
+ * <h2> シナリオファイル形式 </h2>
+ * シナリオファイルは、イベントの配列で、JSON で記述する。
+ * JSON の形式は以下の通り。
+ * <pre>
+ *   [
+ *     __Event__,
+ *     __Event__,
+ *     ...
+ *   ]
+ * </pre>
+ * <code>__Event__</code> としては、以下のものが用意されている。
+ * <ul>
+ *  <li>{@link InitiateEvent "Initiate"}</li>
+ *  <li>{@link FinishEvent "Finish"}</li>
+ *  <li>{@link AlertEvent "Alert"}</li>
+ *  <li>{@link SetTagEvent "SetTag", "AddTag", "RemoveTag"}</li>
+ *  <li>{@link ShutOffEvent "ShutOff"}</li>
+ *  <li>{@link OpenGateEvent "OpenGate"}</li>
+ *  <li>{@link CloseGateEvent "CloseGate"}</li>
+ *  <li>{@link PeriodicGateEvent "PeriodicGate"}</li>
+ * </ul>
  */
 public class Scenario {
 

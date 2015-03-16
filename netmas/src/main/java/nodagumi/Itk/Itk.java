@@ -37,6 +37,14 @@ import net.arnx.jsonic.JSON ;
 //======================================================================
 /**
  * Itk utility
+ * <p>
+ * [2015.03.16 I.Noda]
+ * 一時的に、各設定ファイルの形式へのリンクを貼っておく。 
+ * <ul>
+ *  <li> {@link nodagumi.ananPJ.Scenario.Scenario シナリオ記述}</li>
+ *  <li> {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}</li>
+ *  <li> {@link nodagumi.ananPJ.Agents.Think.ThinkEngine エージェント行動ルール}</li>
+ * </ul>
  */
 public class Itk {
     //------------------------------------------------------------

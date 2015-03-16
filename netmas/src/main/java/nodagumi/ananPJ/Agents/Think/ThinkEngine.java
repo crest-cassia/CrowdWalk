@@ -54,8 +54,15 @@ import nodagumi.Itk.* ;
  * </ul>
  * <h3> 実処理用の _headedTerm_</h3>
  * <ul>
- *   <li> {"" : "log", "tag" : _String_, "value" : _expr_}
- * </ul>
+ *   <li>{@link #think_log "log"}</li>
+ *   <li>{@link #think_getValue "getValue"}</li>
+ *   <li>{@link #think_placeHasTag "placeHasTag"}</li>
+ *   <li>{@link #think_listenAlert "listenAlert"}</li>
+ *   <li>{@link #think_clearAlert "clearAlert"}</li>
+ *   <li>{@link #think_clearAllAlert "clearAllAlert"}</li>
+ *   <li>{@link #think_changeGoal "changeGoal"}</li>
+ *   <li>{@link #think_clearPlannedRoute "clearPlannedRoute"}</li>
+ * </dl>
  */
 public class ThinkEngine {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

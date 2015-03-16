@@ -21,7 +21,14 @@ import nodagumi.Itk.* ;
 
 //============================================================
 /**
- * Initiate Event (START)
+ * Initiate Event (START)。
+ * シミュレーション開始時刻を指定する。
+ * <pre>
+ *  { "type" : "Initiate",
+ *    "atTime" : __Time__ }
+ *
+ *  __Time__ ::= "hh:mm:ss"
+ * </pre>
  */
 public class InitiateEvent extends EventBase {
     //----------------------------------------

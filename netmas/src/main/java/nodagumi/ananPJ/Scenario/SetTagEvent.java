@@ -20,9 +20,18 @@ import nodagumi.ananPJ.Scenario.Scenario;
 import nodagumi.Itk.* ;
 
 //============================================================
-/**
- * Set Tag Event (SET/REMOVE)
- * タグをセットする。
+/** 
+ * Set Tag Event (SET/REMOVE)。
+ * タグをリンクに追加/除去する。
+ * <pre>
+ *  { "type" : ( "SetTag" | "AddTag" | "RemoveTag" ),
+ *    "atTime" : __Time__,
+ *    "placeTag" : __Tag__,
+ *    ("onoff" : ( true | false ),)?
+ *    "noticeTag" : __Tag__}
+ *
+ *  __Time__ ::= "hh:mm:ss"
+ * </pre>
  */
 public class SetTagEvent extends PlacedEvent {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

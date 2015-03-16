@@ -21,8 +21,16 @@ import nodagumi.Itk.* ;
 
 //============================================================
 /**
- * OpenGate Event (REMOVE_STOP)
- * ゲートを開く。
+ * OpenGate Event (REMOVE_STOP)。
+ * 指定したタグを持つリンク・ノードの、指定したタグのゲートを開く。
+ * <pre>
+ *  { "type" : "OpenGate",
+ *    "atTime" : __Time__,
+ *    "placeTag" : __Tag__,
+ *    "gateTag" : __Tag__}
+ *
+ *  __Time__ ::= "hh:mm:ss"
+ * </pre>
  */
 public class OpenGateEvent extends GateEvent {
     //----------------------------------------
