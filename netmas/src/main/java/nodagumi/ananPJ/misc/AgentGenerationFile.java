@@ -143,6 +143,9 @@ import nodagumi.Itk.*;
  *      </pre>
  *     </dd>
  * </dl>
+ * {@code "agentType"} の {@code "className"} および {@code "config"} については、
+ * {@link nodagumi.ananPJ.misc.GenerateAgent GenerateAgent} で説明されている
+ * エージェントクラスとその設定パラメータを参照のこと。
  * <p>
  * Version 0, 1 の形式は以下の通り。
  * <pre>

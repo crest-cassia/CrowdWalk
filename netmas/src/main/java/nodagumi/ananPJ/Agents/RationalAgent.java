@@ -29,6 +29,16 @@ import nodagumi.Itk.*;
 //======================================================================
 /**
  * 理性のある、ルールに基づいて行動するエージェント
+ *
+ * <h3> config, fallbackResources に書ける設定 </h3>
+ * {@link BustleAgent} に加えて、
+ * <pre>
+ *  {
+ *    "margin" : __double__ // 距離コストに重畳するノイズの大きさ。一様乱数。
+ *    "rule" : __ThinkRule__ // 思考ルール
+ * }
+ * </pre>
+ * 思考ルールの記述法については {@link Think.ThinkEngine} 参照。
  */
 public class RationalAgent extends BustleAgent
     implements Serializable {

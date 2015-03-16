@@ -25,6 +25,15 @@ import nodagumi.Itk.* ;
 //======================================================================
 /**
  * せわしないエージェント
+ *
+ * <h3> config, fallbackResources に書ける設定 </h3>
+ * {@link NaiveAgent} に加えて、
+ * <pre>
+ *  {
+ *    "weight" : __double__ // 混雑度合いの重視度を表す値。
+ *    "trail" : __double__ // すでに通った道を避ける度合い。
+ * }
+ * </pre>
  */
 public class BustleAgent extends NaiveAgent
     implements Serializable {
@@ -101,7 +110,7 @@ public class BustleAgent extends NaiveAgent
     //------------------------------------------------------------
     /**
      * あるwayを選択した場合の目的地(_target)までのコスト。
-     * 正規のコストに、ランダム要素を加味する。
+     * 正規のコストに、混雑度合いと既知道路回避ファクタを加える。
      */
     @Override
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {

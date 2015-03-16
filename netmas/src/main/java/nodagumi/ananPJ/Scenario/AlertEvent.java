@@ -31,10 +31,15 @@ import nodagumi.Itk.* ;
  *
  *  __Time__ ::= "hh:mm:ss"
  * </pre>
+ * {@code "message"} の利用は、
+ * {@link nodagumi.ananPJ.Agents.RationalAgent RationalAgent} の
+ * {@link nodagumi.ananPJ.Agents.Think.ThinkEngine#think_listenAlert listenAlert} を
+ * 参照。
  * <p>
  * [2015.01.21 I.Noda] 現状では避難だけだが、
  * いろいろな指示（エージェントの意思変更）・情報提供(エージェントへの条件付与)
  * できるようにしたほうが良い。
+ * <p>
  * [2015.0216 I.Noda] 上記を実装。
  */
 public class AlertEvent extends PlacedEvent {

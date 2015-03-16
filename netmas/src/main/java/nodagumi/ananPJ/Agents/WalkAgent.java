@@ -62,7 +62,21 @@ import nodagumi.Itk.*;
 
 //======================================================================
 /**
- * ソーシャルフォースモデルにより歩行するエージェント
+ * ソーシャルフォースモデルにより歩行するエージェント。
+ *
+ * <h3> config, fallbackResources に書ける設定 </h3>
+ * <pre>
+ *  {
+ *    "A_0" : __double__, // social force の A_0
+ *    "A_1" : __double__, // social force の A_1
+ *    "A_2" : __double__, // social force の A_2
+ *    "emptySpeed" : __double__, // ??
+ *    "personalSpace" : __double__, // 個人スペース。排他領域。
+ *    "widthUnit_SameLane" : __double__, // 同方向流の隣レーンの間隔
+ *    "widthUnit_OtehrLane" : __double__, // 対向流のレーンまでの距離
+ *    "insensitiveDistanceInCounterFlow" : __double__ // 対向流の影響範囲
+ * }
+ * </pre>
  */
 public class WalkAgent extends AgentBase implements Serializable {
     private static final long serialVersionUID = -6313717005123377059L;

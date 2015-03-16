@@ -30,6 +30,14 @@ import nodagumi.Itk.* ;
 /**
  * 素朴なエージェント
  * 各種エージェントクラスのベースにするもの。
+ *
+ * <h3> config, fallbackResources に書ける設定 </h3>
+ * {@link AwaitAgent} に加えて、
+ * <pre>
+ *  {
+ *    "trailCountStep" : __double__ // 一度通った道のカウントアップの幅。
+ * }
+ * </pre>
  */
 public class NaiveAgent
     extends AwaitAgent

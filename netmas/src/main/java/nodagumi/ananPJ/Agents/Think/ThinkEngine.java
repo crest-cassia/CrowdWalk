@@ -502,6 +502,9 @@ public class ThinkEngine {
      *   "message" : _alertMessage_ }
      * _alertMessage_ ::= _String_
      * </pre>
+     * {@code "message"} は、
+     * {@link nodagumi.ananPJ.Scenario.Scenario Scenario} の中の
+     * {@link nodagumi.ananPJ.Scenario.AlertEvent AlertEvent} 参照。
      */
     public Term think_listenAlert(String head, Term expr) {
         Term message = expr.getArgTerm("message") ;

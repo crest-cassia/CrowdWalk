@@ -44,6 +44,14 @@ import nodagumi.Itk.* ;
 //======================================================================
 /**
  * 気まぐれエージェント
+ *
+ * <h3> config, fallbackResources に書ける設定 </h3>
+ * {@link NaiveAgent} に加えて、
+ * <pre>
+ *  {
+ *    "margin" : __double__ // 距離コストに重畳するノイズの大きさ。一様乱数。
+ * }
+ * </pre>
  */
 public class CapriciousAgent extends NaiveAgent
     implements Serializable {

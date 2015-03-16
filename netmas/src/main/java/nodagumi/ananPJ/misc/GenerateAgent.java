@@ -31,6 +31,20 @@ import nodagumi.ananPJ.NetworkMap;
 import nodagumi.Itk.*;
 
 
+//======================================================================
+/**
+ * エージェント生成機構。
+ * <h3>現在利用可能なエージェントリスト</h3>
+ * Generation File に書ける config の内容は、以下のリンク先参照。
+ * <ul>
+ *  <li> {@link nodagumi.ananPJ.Agents.WalkAgent WalkAgent} </li>
+ *  <li> {@link nodagumi.ananPJ.Agents.AwaitAgent AwaitAgent} </li>
+ *  <li> {@link nodagumi.ananPJ.Agents.NaiveAgent NaiveAgent} </li>
+ *  <li> {@link nodagumi.ananPJ.Agents.CapriciousAgent CapriciousAgent} </li>
+ *  <li> {@link nodagumi.ananPJ.Agents.BustleAgent BustleAgent} </li>
+ *  <li> {@link nodagumi.ananPJ.Agents.RationalAgent RationalAgent} </li>
+ * </ul>
+ */
 public abstract class GenerateAgent implements Serializable {
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

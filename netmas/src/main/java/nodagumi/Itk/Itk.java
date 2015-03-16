@@ -43,6 +43,7 @@ import net.arnx.jsonic.JSON ;
  * <ul>
  *  <li> {@link nodagumi.ananPJ.Scenario.Scenario シナリオ記述}</li>
  *  <li> {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}</li>
+ *  <li> {@link nodagumi.ananPJ.misc.GenerateAgent エージェント設定 config}</li>
  *  <li> {@link nodagumi.ananPJ.Agents.Think.ThinkEngine エージェント行動ルール}</li>
  * </ul>
  */

@@ -32,6 +32,14 @@ import nodagumi.Itk.*;
 //======================================================================
 /**
  * WAIT directive を解するエージェント
+ *
+ * <h3> config, fallbackResources に書ける設定 </h3>
+ * {@link WalkAgent} に加えて、
+ * <pre>
+ *  {
+ *    "minDistanceBetweenAgents" : __double__ // pack する際の最小距離(?)
+ * }
+ * </pre>
  */
 public class AwaitAgent extends WalkAgent
     implements Serializable {
