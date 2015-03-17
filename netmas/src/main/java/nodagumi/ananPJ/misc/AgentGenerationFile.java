@@ -63,7 +63,7 @@ import nodagumi.Itk.*;
  *        { "rule" : "EACH",
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
- *                          "config": __AgentConfig__ },
+ *                          (__AgentConfig__)* },
  *          "total" : __Integer__,
  *          "speedModel" : __SpeedModel__,
  *          "startPlace" : __Tag__,
@@ -84,7 +84,7 @@ import nodagumi.Itk.*;
  *        { "rule" : "RANDOM",
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
- *                          "config": __AgentConfig__ },
+ *                          (__AgentConfig__)* },
  *          "total" : __Integer__,
  *          "speedModel" : __SpeedModel__,
  *          "startPlace" : __Tag__,
@@ -105,7 +105,7 @@ import nodagumi.Itk.*;
  *        { "rule" : "EACHRANDOM",
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
- *                          "config": __AgentConfig__ },
+ *                          (__AgentConfig__)* },
  *          "total" : __Integer__,
  *          "maxFromEach" : __Integer__,
  *          "speedModel" : __SpeedModel__,
@@ -128,7 +128,7 @@ import nodagumi.Itk.*;
  *        { "rule" : "TIMEEVERY",
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
- *                          "config": __AgentConfig__ },
+ *                          (__AgentConfig__)* },
  *          "total" : __Integer__,
  *          "speedModel" : __SpeedModel__,
  *          "startPlace" : __Tag__,
@@ -884,7 +884,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         Term agentType = json.getArgTerm("agentType") ;
         genConfig.agentClassName = agentType.getArgString("className") ;
 
-        genConfig.agentConf = agentType.getArgTerm("config") ;
+        genConfig.agentConf = agentType ;
 
         if(!scanStartLinkTag(json.getArgString("startPlace"), map, genConfig))
             return null ;

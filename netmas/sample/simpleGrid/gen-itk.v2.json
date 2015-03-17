@@ -1,13 +1,13 @@
 #{ "version" : 2}
 [
  {"rule":"EACH",
-  "agentType":{"className":"BustleAgent","config":{"weight":-0.1, "trail":0.0}},
+  "agentType":{"className":"BustleAgent","weight":-0.1, "trail":0.0},
   "total":100,"speedModel":"LANE",
   "startPlace":"link-22-23","conditions":null,
   "startTime":"18:00:00","duration":60.0,
   "goal":"ROOT-N32","plannedRoute":["link-6-7","link-2-3","ROOT-N31","ROOT-N30"]},
  {"rule":"EACH",
-  "agentType":{"className":"BustleAgent","config":{"weight":-0.1, "trail":0.0}},
+  "agentType":{"className":"BustleAgent","weight":-0.1, "trail":0.0},
   "total":100,"speedModel":"LANE",
   "startPlace":"link-15-22","conditions":null,
   "startTime":"18:00:00","duration":60.0,

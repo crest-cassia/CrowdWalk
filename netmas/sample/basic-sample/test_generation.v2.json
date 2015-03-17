@@ -1,7 +1,7 @@
 #{ "version" : 2}
 [
  {"rule":"EACH",
-  "agentType":{"className":"NaiveAgent","config":{}},
+  "agentType":{"className":"NaiveAgent"},
   "total":5,"speedModel":"LANE",
   "startPlace":"ROOM1","conditions":null,
   "startTime":"7:30","duration":1,
@@ -11,7 +11,7 @@
 		   "how":"SCATTER",
 		   "until":"RESUME"}]},
  {"rule":"EACH",
-  "agentType":{"className":"NaiveAgent","config":{}},
+  "agentType":{"className":"NaiveAgent"},
   "total":10,"speedModel":"LANE",
   "startPlace":"ROOM2","conditions":null,
   "startTime":"7:30","duration":1,
@@ -21,7 +21,7 @@
 		   "how":"PACK",
 		   "until":300}]},
  {"rule":"EACH",
-  "agentType":{"className":"NaiveAgent","config":{}},
+  "agentType":{"className":"NaiveAgent"},
   "total":5,"speedModel":"LANE",
   "startPlace":"ROOM3","conditions":null,
   "startTime":"7:30","duration":1,
