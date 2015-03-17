@@ -13,6 +13,7 @@
 	"weight" : 100.0,
 	"trail" : 100.0,
 	"trailCountStep" : 1.0,
+	"rule" : [],
 	"_" : null
     },
     "generation" : {
