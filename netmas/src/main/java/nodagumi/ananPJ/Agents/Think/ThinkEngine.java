@@ -63,6 +63,8 @@ import nodagumi.Itk.* ;
  *   <li>{@link #think_changeGoal "changeGoal"}</li>
  *   <li>{@link #think_clearPlannedRoute "clearPlannedRoute"}</li>
  * </dl>
+ * また、上記にマッチしないアトム（配列でもオブジェクトでもないデータ）は、
+ * その値を直接返す。（リテラル扱い）
  */
 public class ThinkEngine {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -394,6 +396,9 @@ public class ThinkEngine {
             return think_changeGoal(head, expr) ;
         } else if(head.equals("clearPlannedRoute")) {
             return think_clearPlannedRoute(head, expr) ;
+        } else if(expr.isAtom()) { 
+            // expr がアトムで、かつ予約語でなければ、そのまま返す。
+            return expr ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
             return Term_Null ;
