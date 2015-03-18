@@ -76,10 +76,12 @@ implements Comparable<AgentBase>, Serializable {
      * generatedTime: 生成された時刻
      * finishedTime: ゴールに到達した時刻
      * evacuated: ゴールに到達したかどうかのフラグ
+     * stuck: スタックしたかどうかのフラグ
      */
     public double generatedTime;
     public double finishedTime;
     private boolean evacuated = false;
+    private boolean stuck = false;
     public double currentTime ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -293,8 +295,10 @@ implements Comparable<AgentBase>, Serializable {
     /**
      * 避難完了をセット
      */
-    public void setEvacuated(boolean evacuated, double time) {
+    public void setEvacuated(boolean evacuated, double time, boolean stuck) {
         this.evacuated = evacuated;
+        this.finishedTime = time;
+        this.stuck = stuck;
     }
 
     //------------------------------------------------------------
@@ -303,6 +307,14 @@ implements Comparable<AgentBase>, Serializable {
      */
     public boolean isEvacuated() {
         return evacuated;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * スタックしたかどうか
+     */
+    public boolean isStuck() {
+        return stuck;
     }
 
     //------------------------------------------------------------
@@ -593,10 +605,11 @@ implements Comparable<AgentBase>, Serializable {
      * @param time : 時刻
      * @param onNode : true なら currentPlace.getHeadingNode() 上
      *                 false なら currentPlace.getLink() 上
+     * @param stuck : スタックかどうか
      */
-    protected void finalizeEvacuation(double time, boolean onNode) {
+    protected void finalizeEvacuation(double time, boolean onNode, boolean stuck) {
         consumePlannedRoute() ;
-        setEvacuated(true, time) ;
+        setEvacuated(true, time, stuck) ;
         if(currentPlace.isWalking()) {
             lastPlace.set(currentPlace) ;
             currentPlace.getLink().agentExits(this) ;
