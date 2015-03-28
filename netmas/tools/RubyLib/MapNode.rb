@@ -113,7 +113,7 @@ class MapNode
   #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
-  def toArrayedXml()
+  def to_ArrayedXml()
     # head part
     axml = [[nil, XmlElementTag, ({ :id => @id,
                                     :x => @pos.x,
@@ -168,7 +168,7 @@ if($0 == __FILE__) then
       node0.addTag("foo") ;
       node0.addTag("bar") ;
 
-      axml0 = node0.toArrayedXml() ;
+      axml0 = node0.to_ArrayedXml() ;
       p axml0 ;
       xml0 = ItkXml.to_Xml(axml0) ;
       ItkXml::ppp(xml0) ;

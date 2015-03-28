@@ -112,7 +112,7 @@ class MapLink
   #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
-  def toArrayedXml()
+  def to_ArrayedXml()
     # head part
     axml = [[nil, XmlElementTag, ({ :id => @id,
                                     :from => @fromNode.id,
@@ -171,7 +171,7 @@ if($0 == __FILE__) then
       link2.addTag("bbb") ;
       link2.addTag("123") ;
 
-      axml = link2.toArrayedXml() ;
+      axml = link2.to_ArrayedXml() ;
       p axml ;
       xml = ItkXml.to_Xml(axml) ;
       ItkXml::ppp(xml) ;

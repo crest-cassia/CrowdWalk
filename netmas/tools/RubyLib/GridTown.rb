@@ -29,7 +29,8 @@ class GridTown < MapTown
     :sizeY => 10,
     :offset => Geo2D::Point.new(0.0,0.0),
     :nodeTagFormat => "node_%02d_%02d",
-    :linkTagFormat => "link_%s_%s",
+    :linkTagFormat => "link_%s__%s",
+    :linkWidth => 1.0,
     :randomSize => 0.0,
     nil => nil
   } ;
@@ -70,13 +71,14 @@ class GridTown < MapTown
     }
 
     @linkTagFormat = getConf(:linkTagFormat) ;
+    @linkWidth = getConf(:linkWidth) ;
 
     (0...@sizeX).each{|x|
       (0...@sizeY).each{|y|
         if(x > 0) then
           fromNode = @nodeTable[x-1][y] ;
           toNode = @nodeTable[x][y] ;
-          link = newLink(fromNode, toNode, 1.0) ;
+          link = newLink(fromNode, toNode, @linkWidth) ;
           tag = @linkTagFormat % [fromNode.tagList.first, toNode.tagList.first] ;
           link.addTag(tag) ;
         end
@@ -129,7 +131,7 @@ if($0 == __FILE__) then
     def test_a
       town = GridTown.new() ;
 
-      axml = town.toArrayedXml() ;
+      axml = town.to_ArrayedXml() ;
       p axml ;
       xml = ItkXml.to_Xml(axml) ;
       ItkXml::ppp(xml) ;

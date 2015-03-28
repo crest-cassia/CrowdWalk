@@ -17,15 +17,15 @@ require 'ostruct' ;
 require 'pp' ;
 
 require 'ItkXml.rb' ;
+require 'GridTown.rb' ;
 
 #------------------------------------------------------------------------
 #++
 $conf =
-  OpenStruct.new({
-                   :foo => false,
-                   :bar => 1,
-                   :baz => "test",
-                 }) ;
+  OpenStruct.new({ :outFile => nil,
+                   :townType => :grid,
+                   :gridConf => GridTown::DefaultConf.dup,
+                   }) ;
 
 #------------------------------------------------------------------------
 #++
@@ -39,14 +39,27 @@ _END_
   op.set_summary_width(60) ;
   sep = "\n\t\t" ;
 
-  op.on("-f","--[no-]foo", sep + "switch foo.") {|foo|
-    $conf.foo = foo ;
+  op.on("-o FILE", "--out FILE", String, sep + "output file.") {|file|
+    p file ;
+    $conf.outFile = ((file == "-") ? nil : file) ;
   }
-  op.on("-b","--bar BarVal", Integer, sep + "bar int value.") {|bar|
-    $conf.bar = bar ;
+  op.on("--grid", sep + "generate grid town.") {
+    $conf.townType = :grid ;
   }
-  op.on("-z","--baz BazVal", String, sep + "baz str value.") {|baz|
-    $conf.baz = baz ;
+  op.on("--gridLength LENGTH", Float, sep + "[grid] unit grid length.") {|len|
+    $conf.gridConf[:gridLength] = len ;
+  }
+  op.on("--sizeX X", Integer, sep + "[grid] size X.") {|size|
+    $conf.gridConf[:sizeX] = size ;
+  }
+  op.on("--sizeY Y", Integer, sep + "[grid] size Y.") {|size|
+    $conf.gridConf[:sizeY] = size ;
+  }
+  op.on("--lineWidth WIDTH", Float, sep + "[grid] line weidth.") {|width|
+    $conf.gridConf[:lineWidth] = width ;
+  }
+  op.on("--randomSize SIZE", Float, sep + "[grid] line weidth.") {|random|
+    $conf.gridConf[:randomSize] = random ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
     puts(op)
@@ -56,10 +69,25 @@ _END_
 
 $op.parse!(ARGV) ;
 $restArg = ARGV ;
-p [:rest, ARGV], [:conf,$conf] ; 
+p [:rest, ARGV], [:conf,$conf] ;
 
 ########################################################################
 ########################################################################
 ########################################################################
 
+town = nil ;
 
+case($conf.townType)
+when :grid ;
+  town = GridTown.new($conf.gridConf) ;
+else
+  raise "unknown town type:" + $conf.type ;
+end
+
+if($conf.outFile.nil?) then
+  $stdout << town.to_XmlString() ;
+else
+  open($conf.outFile,"w"){|strm|
+    strm <<  town.to_XmlString() ;
+  }
+end

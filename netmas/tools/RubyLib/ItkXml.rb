@@ -439,7 +439,7 @@ module ItkXml
   def genUniversalName(namespace, localname)
     return ("{%s}%s" % [namespace,localname]) ;
   end
-    
+
   #--------------------------------------------------------------
   #++
   ##

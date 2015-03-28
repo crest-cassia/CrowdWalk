@@ -169,7 +169,7 @@ class MapTown < WithConfParam
   #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
-  def toArrayedXml()
+  def to_ArrayedXml()
     setupBoundaryBox() ;
     # head part
     axml = [[nil, XmlElementTag,
@@ -196,15 +196,36 @@ class MapTown < WithConfParam
 
     ## node part
     @nodeList.each{|node|
-      axml.push(node.toArrayedXml()) ;
+      axml.push(node.to_ArrayedXml()) ;
     }
 
     ## link part
     @linkList.each{|link|
-      axml.push(link.toArrayedXml()) ;
+      axml.push(link.to_ArrayedXml()) ;
     }
 
     return axml ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## gen Xml Object
+  ## *return*:: xml
+  def to_Xml()
+    axml = to_ArrayedXml() ;
+    return ItkXml.to_Xml(axml) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## gen Xml Object
+  ## *return*:: xml
+  def to_XmlString(withHeader = true)
+    xml = to_Xml() ;
+    str = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>' ;
+    str << "\n" ;
+    ItkXml::ppp(xml, str) ;
+    return str ;
   end
 
 end # class MapTown
@@ -253,7 +274,7 @@ if($0 == __FILE__) then
       link2.addTag("bbb") ;
       link2.addTag("123") ;
 
-      axml = town.toArrayedXml() ;
+      axml = town.to_ArrayedXml() ;
       p axml ;
       xml = ItkXml.to_Xml(axml) ;
       ItkXml::ppp(xml) ;
