@@ -91,3 +91,5 @@ else
     strm <<  town.to_XmlString() ;
   }
 end
+
+p [:connectivity, town.checkConnectivity()] ;

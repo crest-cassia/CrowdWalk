@@ -167,6 +167,25 @@ class MapTown < WithConfParam
 
   #--------------------------------------------------------------
   #++
+  ## check connectivity
+  def checkConnectivity(startNode = @nodeList.first)
+    openList = [startNode] ;
+    closeList = {} ;
+    until(openList.empty?)
+      currentNode = openList.pop() ;
+      closeList[currentNode] = currentNode ;
+      currentNode.linkList.each{|link|
+        anotherNode = link.getAnotherNode(currentNode) ;
+        if(!closeList[anotherNode])
+          openList.push(anotherNode) ;
+        end
+      }
+    end
+    return @nodeList.size == closeList.size ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
   def to_ArrayedXml()

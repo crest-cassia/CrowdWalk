@@ -110,6 +110,34 @@ class MapLink
 
   #--------------------------------------------------------------
   #++
+  ## fromNode かどうか
+  def isFromNode(node)
+    node == @fromNode ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## toNode かどうか
+  def isToNode(node)
+    node == @toNode ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 反対側のNode
+  def getAnotherNode(node)
+    if(isFromNode(node))
+      return @toNode ;
+    elsif(isToNode(node))
+      return @fromNode ;
+    else
+      raise "The link has not this node:" + @toNode ;
+    end
+  end
+
+
+  #--------------------------------------------------------------
+  #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
   def to_ArrayedXml()
