@@ -111,6 +111,18 @@ class MapNode
 
   #--------------------------------------------------------------
   #++
+  ## inspect
+  def inspect()
+    ("\#<MapNode:" +
+     "id=#{@id}," +
+     "pos=#{@pos}," +
+     "height=#{@height}," +
+     "tagList=#{@tagList.inspect}," +
+     "linkList=#{linkList.map{|link| "link:#{link.id}"}.inspect}>")
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
   def to_ArrayedXml()

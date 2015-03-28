@@ -138,6 +138,19 @@ class MapLink
 
   #--------------------------------------------------------------
   #++
+  ## inspect
+  def inspect()
+    ("\#<MapLink:" +
+     "id=#{@id}," +
+     "fromNode=node:#{@fromNode.id}," +
+     "toNode=node:#{@toNode.id}," +
+     "length=#{@length}," +
+     "width=#{@width}," +
+     "tagList=#{@tagList.inspect}>")
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
   def to_ArrayedXml()

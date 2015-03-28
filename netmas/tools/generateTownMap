@@ -25,6 +25,7 @@ $conf =
   OpenStruct.new({ :outFile => nil,
                    :townType => :grid,
                    :gridConf => GridTown::DefaultConf.dup,
+                   :pruneN => 0,
                    }) ;
 
 #------------------------------------------------------------------------
@@ -61,6 +62,9 @@ _END_
   op.on("--randomSize SIZE", Float, sep + "[grid] line weidth.") {|random|
     $conf.gridConf[:randomSize] = random ;
   }
+  op.on("--pruneN N", Integer, sep + "[grid] line weidth.") {|n|
+    $conf.pruneN = n ;
+  }
   op.on_tail("--help", sep + "show this message.") { |h|
     puts(op)
     exit(1)
@@ -84,6 +88,8 @@ else
   raise "unknown town type:" + $conf.type ;
 end
 
+town.pruneLinks($conf.pruneN) ;
+
 if($conf.outFile.nil?) then
   $stdout << town.to_XmlString() ;
 else
@@ -92,4 +98,3 @@ else
   }
 end
 
-p [:connectivity, town.checkConnectivity()] ;

@@ -181,7 +181,49 @@ class MapTown < WithConfParam
         end
       }
     end
-    return @nodeList.size == closeList.size ;
+
+#    return @nodeList.size == closeList.size ;
+    # 前ノードに対して、close リストに含まれているか、nodeのリンクが無いなら、
+    # 単連結
+    @nodeList.each{|node|
+      if(closeList[node].nil? && node.linkList.size > 0) then
+        return false ;
+      end
+    }
+    return true ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 孤立ノードを削除
+  def pruneLinks(n)
+    (0...n).each{|i|
+      r = rand(@linkList.size) ;
+      link = @linkList[r] ;
+      link.fromNode.linkList.delete(link) ;
+      link.toNode.linkList.delete(link) ;
+      ## 単連結チェック。単連結でなければ、やり直し。
+      if(!checkConnectivity())
+#        p [:notConnected, r, link] ;
+        link.setFromToNode(link.fromNode, link.toNode) ;
+        redo ;
+      end
+      @linkList.delete(link) ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 孤立ノードを削除
+  def reduceIsolatedNode()
+    (0...@nodeList.size).each{|index|
+      node = @nodeList[index] ;
+      if(node.linkList.size() == 0) then
+        @nodeList[index] = nil ;
+      end
+    }
+    @nodeList.compact!() ;
+    return @nodeList ;
   end
 
   #--------------------------------------------------------------
