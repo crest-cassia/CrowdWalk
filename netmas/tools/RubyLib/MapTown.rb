@@ -276,7 +276,6 @@ class MapTown < WithConfParam
   ## *return*:: xml
   def to_Xml()
     axml = to_ArrayedXml() ;
-    p [Time.now, :done, :axml]
     return ItkXml.to_Xml(axml) ;
   end
 
