@@ -48,6 +48,14 @@ class GridTown < MapTown
   #++
   ## generate Grid Town
   def generateTown()
+    generateNodes() ;
+    generateLinks() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## generate Node in Town
+  def generateNodes()
     @offset = getConf(:offset) ;
     @sizeX = getConf(:sizeX) ;
     @sizeY = getConf(:sizeY) ;
@@ -55,7 +63,7 @@ class GridTown < MapTown
     @randomSize = getConf(:randomSize) ;
     @nodeTagFormat = getConf(:nodeTagFormat) ;
 
-    @nodeTable = [] ;
+    @nodeTable = [] ; # MapNode の 2次元 Array
 
     (0...@sizeX).each{|x|
       @nodeTable[x] = [] ;
@@ -69,7 +77,13 @@ class GridTown < MapTown
         @nodeTable[x][y] = node ;
       }
     }
+  end
 
+  #--------------------------------------------------------------
+  #++
+  ## generate Links in Town
+  ## @nodeList/@nodeTable にはすでに入っているとする。
+  def generateLinks()
     @linkTagFormat = getConf(:linkTagFormat) ;
     @linkWidth = getConf(:linkWidth) ;
 

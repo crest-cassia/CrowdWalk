@@ -197,6 +197,7 @@ class MapTown < WithConfParam
   #++
   ## 孤立ノードを削除
   def pruneLinks(n)
+    retryCount = 0 ;
     (0...n).each{|i|
       r = rand(@linkList.size) ;
       link = @linkList[r] ;
@@ -204,7 +205,8 @@ class MapTown < WithConfParam
       link.toNode.linkList.delete(link) ;
       ## 単連結チェック。単連結でなければ、やり直し。
       if(!checkConnectivity())
-#        p [:notConnected, r, link] ;
+        retryCount += 1 ;
+        p [:pruneLinks, :retry, retryCount] ;
         link.setFromToNode(link.fromNode, link.toNode) ;
         redo ;
       end
@@ -274,6 +276,7 @@ class MapTown < WithConfParam
   ## *return*:: xml
   def to_Xml()
     axml = to_ArrayedXml() ;
+    p [Time.now, :done, :axml]
     return ItkXml.to_Xml(axml) ;
   end
 

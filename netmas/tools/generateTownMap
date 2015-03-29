@@ -18,6 +18,7 @@ require 'pp' ;
 
 require 'ItkXml.rb' ;
 require 'GridTown.rb' ;
+require 'RadialTown.rb' ;
 
 #------------------------------------------------------------------------
 #++
@@ -25,6 +26,7 @@ $conf =
   OpenStruct.new({ :outFile => nil,
                    :townType => :grid,
                    :gridConf => GridTown::DefaultConf.dup,
+                   :radialConf => RadialTown::DefaultConf.dup,
                    :pruneN => 0,
                    }) ;
 
@@ -47,8 +49,17 @@ _END_
   op.on("--grid", sep + "generate grid town.") {
     $conf.townType = :grid ;
   }
-  op.on("--gridLength LENGTH", Float, sep + "[grid] unit grid length.") {|len|
+  op.on("--radial", "--circle", sep + "generate radial/circle town.") {
+    $conf.townType = :radial ;
+  }
+  op.on("--unit LENGTH", Float, sep + "[grid/radial] unit grid length.") {|len|
     $conf.gridConf[:gridLength] = len ;
+    $conf.radialConf[:gridLength] = len ;
+  }
+  op.on("--size N", Integer, sep + "[grid/radial] size.") {|size|
+    $conf.gridConf[:sizeX] = size ;
+    $conf.gridConf[:sizeY] = size ;
+    $conf.radialConf[:size] = size ;
   }
   op.on("--sizeX X", Integer, sep + "[grid] size X.") {|size|
     $conf.gridConf[:sizeX] = size ;
@@ -56,13 +67,18 @@ _END_
   op.on("--sizeY Y", Integer, sep + "[grid] size Y.") {|size|
     $conf.gridConf[:sizeY] = size ;
   }
-  op.on("--lineWidth WIDTH", Float, sep + "[grid] line weidth.") {|width|
+  op.on("--width WIDTH", Float, sep + "[grid/radial] line weidth.") {|width|
     $conf.gridConf[:lineWidth] = width ;
+    $conf.radialConf[:lineWidth] = width ;
   }
-  op.on("--randomSize SIZE", Float, sep + "[grid] line weidth.") {|random|
+  op.on("--divide FACTOR", Float, sep + "[radial] dividing facto.") {|factor|
+    $conf.radialConf[:divideFactor] = factor ;
+  }
+  op.on("--random SIZE", Float, sep + "[grid] line weidth.") {|random|
     $conf.gridConf[:randomSize] = random ;
+    $conf.radialConf[:randomSize] = random ;
   }
-  op.on("--pruneN N", Integer, sep + "[grid] line weidth.") {|n|
+  op.on("--prune N", Integer, sep + "[grid] line weidth.") {|n|
     $conf.pruneN = n ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
@@ -81,14 +97,22 @@ p [:rest, ARGV], [:conf,$conf] ;
 
 town = nil ;
 
+p [Time.now, :start]
+
 case($conf.townType)
 when :grid ;
   town = GridTown.new($conf.gridConf) ;
+when :radial ;
+  town = RadialTown.new($conf.radialConf) ;
 else
   raise "unknown town type:" + $conf.type ;
 end
 
+p [Time.now, :done, :generation, ]
+
 town.pruneLinks($conf.pruneN) ;
+
+p [Time.now, :done, :prune]
 
 if($conf.outFile.nil?) then
   $stdout << town.to_XmlString() ;
@@ -97,4 +121,6 @@ else
     strm <<  town.to_XmlString() ;
   }
 end
+
+p [Time.now, :done, :output]
 
