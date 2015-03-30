@@ -597,7 +597,7 @@ class GenerateAgentFromNode extends GenerateAgent {
      * 効率悪く、意味不明の操作が多い。
      * 上記の適宜に置き換え
      */
-    protected void place_agent_obsolete(AgentBase agent) {
+    protected void place_agent_obsolete(AgentBase agent) throws Exception {
         /*
          */
         MapLinkTable way_candidates = start_node.getPathways(); 

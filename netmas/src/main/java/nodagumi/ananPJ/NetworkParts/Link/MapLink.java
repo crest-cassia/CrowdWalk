@@ -874,47 +874,6 @@ public class MapLink extends OBMapPart implements Serializable {
         return agents;
     }
 
-    // One-way link implementation:
-    //  currenly, one-way link is supported to navigate complex routes with
-    //  one-way road. One-way link is defined by the two type tags 
-    //  "ONE-WAY-POSITIVE" and "ONE-WAY-NEGATIVE". These positive and negative 
-    //  means direction whether fromNode -> toNode or toNode -> fromNode.
-    //  To determine default direction, set North direction is positive, and 
-    //  ofcourse South is negative (if the link direct East or West, East is
-    //  assumed as positive and West is negative).
-
-    /**
-     * return North side (positive) node
-     */
-    public MapNode getPositiveNode() {
-        double x1 = getFrom().getX() - getTo().getX();
-        double y1 = getFrom().getY() - getTo().getY();
-        double s = Math.acos(x1/Math.sqrt(x1*x1+y1*y1));
-
-        if (y1 < 0.0)
-            s = Math.PI * 2 - s;
-        if (s >= 0.0 && s < Math.PI)
-            return getTo();
-        else
-            return getFrom();
-    }
-
-    /**
-     * return South side (positive) node
-     */
-    public MapNode getNegativeNode() {
-        double x1 = getFrom().getX() - getTo().getX();
-        double y1 = getFrom().getY() - getTo().getY();
-        double s = Math.acos(x1/Math.sqrt(x1*x1+y1*y1));
-
-        if (y1 < 0.0)
-            s = Math.PI * 2 - s;
-        if (s >= 0.0 && s < Math.PI)
-            return getFrom();
-        else
-            return getTo();
-    }
-
     @Override
     public NType getNodeType() {
         return NType.LINK;

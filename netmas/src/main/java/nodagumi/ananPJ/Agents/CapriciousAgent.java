@@ -37,6 +37,7 @@ import java.util.Map;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.NaiveAgent;
 
 import nodagumi.Itk.* ;
@@ -118,7 +119,7 @@ public class CapriciousAgent extends NaiveAgent
      * 正規のコストに、ランダム要素を加味する。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
         double cost = super.calcWayCostTo(_way, _node, _target) ;
         double noise = capriciousMargin * random.nextDouble() ;
         return cost + noise;

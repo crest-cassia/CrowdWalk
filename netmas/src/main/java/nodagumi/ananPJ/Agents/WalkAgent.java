@@ -460,11 +460,12 @@ public class WalkAgent extends AgentBase implements Serializable {
                 bestDist = dist ;
             }
         }
-        if(bestLink == null) { // もし見つからない場合
+        // 進行可能なリンクが一つも見つからない場合はエージェントをスタックさせる
+        if(bestLink == null) {
             Itk.logError("currentPlace has no way for routePlan.") ;
             Itk.logError_("currentPlace", currentPlace) ;
             Itk.logError_("routePlan", routePlan) ;
-            finalizeEvacuation(0, false) ;
+            finalizeEvacuation(0, false, true) ;
         }
         currentPlace.setLink(bestLink) ;
     }
@@ -582,7 +583,7 @@ public class WalkAgent extends AgentBase implements Serializable {
              */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getHeadingNode().hasTag(goal)){
-                finalizeEvacuation(time, true) ;
+                finalizeEvacuation(time, true, false) ;
 
                 return true;
             }
@@ -591,6 +592,15 @@ public class WalkAgent extends AgentBase implements Serializable {
             MapLink nextLink = navigate(time, currentPlace, routePlan, true) ;
             sane_navigation_from_node_forced = true;
 
+            // 進行可能なリンクが見つからなければスタックさせる
+            if (nextLink == null) {
+                Itk.logInfo("Agent stuck", String.format("%s ID: %d, time: %.1f, linkID: %d",
+                            getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
+                finalizeEvacuation(time, false, true) ;
+
+                return true;
+            }
+
             tryToPassNode(time, routePlan, nextLink) ;
 
             /* [2015.01.14 I.Noda]
@@ -598,11 +608,24 @@ public class WalkAgent extends AgentBase implements Serializable {
              */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getLink().hasTag(goal)){
-                finalizeEvacuation(time, true) ;
+                finalizeEvacuation(time, true, false) ;
 
                 return true ;
             }
         }
+
+        // 進行可能なリンクが見つからず停止している状態ならばスタックさせる
+        if (speed == 0.0) {
+            MapLinkTable way_candidates = currentPlace.getHeadingNode().getPathways();
+            if (way_candidates.size() == 0) {
+                Itk.logInfo("Agent stuck", String.format("%s ID: %d, time: %.1f, linkID: %d",
+                            getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
+                finalizeEvacuation(time, false, true) ;
+
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -619,7 +642,7 @@ public class WalkAgent extends AgentBase implements Serializable {
 
         if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
             getPrevNode().hasTag(goal)){
-            finalizeEvacuation(time, true) ;
+            finalizeEvacuation(time, true, false) ;
             return true;
         }
 
@@ -720,6 +743,9 @@ public class WalkAgent extends AgentBase implements Serializable {
                 MapLink nextLink =
                     sane_navigation_from_node(time, workingPlace,
                                               workingRoutePlan, true) ;
+                if (nextLink == null) {
+                    break;
+                }
                 workingPlace.transitTo(nextLink) ;
             }
         }
@@ -880,6 +906,9 @@ public class WalkAgent extends AgentBase implements Serializable {
             MapLink nextLink =
                 sane_navigation_from_node(time, workingPlace,
                                           workingRoutePlan, true) ;
+            if (nextLink == null) {
+                break;
+            }
             workingPlace.transitTo(nextLink) ;
         }
 
@@ -997,7 +1026,7 @@ public class WalkAgent extends AgentBase implements Serializable {
 
         /* trapped? */
         if (way_candidates.size() == 0) {
-            System.err.println("Warning: Agent trapped!");
+            Itk.logTrace("Agent trapped!");
             return null;
         }
 
@@ -1097,9 +1126,16 @@ public class WalkAgent extends AgentBase implements Serializable {
             } 
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost = calcWayCostTo(way_candidate,
+            double cost;
+            try {
+                cost = calcWayCostTo(way_candidate,
                                         passingPlace.getHeadingNode(),
                                         next_target) ;
+            } catch(TargetNotFoundException e) {
+                // この way_candidate からは next_target にたどり着けない
+                Itk.logTrace(e.getMessage());
+                continue;
+            }
 
             if (cost < min_cost) { // 最小cost置き換え
                 min_cost = cost;
@@ -1210,7 +1246,7 @@ public class WalkAgent extends AgentBase implements Serializable {
      * ある _node においてあるwayを選択した場合の目的地(_target)までのコスト。
      * ここを変えると、経路選択の方法が変えられる。
      */
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
         MapNode other = _way.getOther(_node);
         double cost = other.getDistance(_target) ;
         cost += _way.length;
@@ -1222,15 +1258,21 @@ public class WalkAgent extends AgentBase implements Serializable {
      * あるplaceから現在のroutePlanの次の目的地までのコスト。
      * @param workingPlace : 現在地を示す Place
      * @param workingRoutePlan : 現在の経路計画。保存される。
-     * @return コスト
+     * @return コスト<br>次の目的地へのルートが見つからない場合は Double.MAX_VALUE を返す
      */
     public double calcCostFromPlaceTo(Place _place,
                                       final RoutePlan _routePlan) {
         RoutePlan workingRoutePlan = _routePlan.duplicate() ;
         Term target = calcNextTarget(_place.getHeadingNode(),
                                      workingRoutePlan,false) ;
-        double costFromEnteringNode =
-            calcWayCostTo(_place.getLink(), _place.getEnteringNode(), target) ;
+        double costFromEnteringNode;
+        try {
+            costFromEnteringNode =
+                calcWayCostTo(_place.getLink(), _place.getEnteringNode(), target) ;
+        } catch(TargetNotFoundException e) {
+            Itk.logTrace(e.getMessage());
+            return Double.MAX_VALUE;
+        }
         double costFromPlace =
             costFromEnteringNode - _place.getAdvancingDistance() ;
         return costFromPlace ;

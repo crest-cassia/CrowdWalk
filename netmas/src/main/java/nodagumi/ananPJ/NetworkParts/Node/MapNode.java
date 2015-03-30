@@ -151,11 +151,11 @@ public class MapNode extends OBMapPart implements Serializable {
         cachePathways = new MapLinkTable();
         for (MapLink link : links) {
             if (link.isOneWayPositive() &&
-                    (link.getPositiveNode() == this)) {
+                    (link.getTo() == this)) {
                 continue;
             }
             if (link.isOneWayNegative() &&
-                    link.getNegativeNode() == this) {
+                    link.getFrom() == this) {
                 continue;
             }
             if (link.isRoadClosed()) {
@@ -186,11 +186,11 @@ public class MapNode extends OBMapPart implements Serializable {
         MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
             if (link.isOneWayPositive() &&
-                    (link.getNegativeNode() == this)) {
+                    (link.getFrom() == this)) {
                 continue;
             }
             if (link.isOneWayNegative() &&
-                    link.getPositiveNode() == this) {
+                    link.getTo() == this) {
                 continue;
             }
             if (link.isRoadClosed()) {
@@ -246,20 +246,14 @@ public class MapNode extends OBMapPart implements Serializable {
         return hint.way;
     }
 
-    public double getDistance(Term target){
+    public double getDistance(Term target) throws TargetNotFoundException {
         String key = target.getString() ;
         NavigationHint hint = getHint(key);
         if (hint == null) {
             if(hasTag(key)) { // 自分自身がターゲットの場合
                 // do nothing
             } else { // target の情報が見つからない場合。
-                System.err.println(key + " not found for id="
-                                   + ID + "(" + getTagString() + ")");
-
-                for (String has_key : hints.keySet()) {
-                    System.err.println(has_key);
-                }
-                System.exit(1) ;
+                throw new TargetNotFoundException(key + " not found for id=" + ID + "(" + getTagString() + ")");
             }
             return 0.0 ;
         } else {

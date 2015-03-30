@@ -18,6 +18,7 @@ import java.util.Map;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.NaiveAgent ;
 
 import nodagumi.Itk.* ;
@@ -113,7 +114,7 @@ public class BustleAgent extends NaiveAgent
      * 正規のコストに、混雑度合いと既知道路回避ファクタを加える。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
         double cost = super.calcWayCostTo(_way, _node, _target) ;
         double crowdness= bustleWeight * _way.realCrowdness() ;
         double trailCount = trailWeight * trailCountTable.get(_node, _way) ;

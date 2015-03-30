@@ -113,6 +113,7 @@ public class AgentHandler implements Serializable {
     private List<AgentBase> agents;
     private ArrayList<AgentBase> generated_agents;
     private ArrayList<AgentBase> evacuated_agents;
+    private ArrayList<AgentBase> stuck_agents;
 
     static final double defaultAgentSpeed = 1.4;
     static final double defaultAgentConfidence = 1.0;
@@ -181,6 +182,7 @@ public class AgentHandler implements Serializable {
         }
         generated_agents = new ArrayList<AgentBase>();
         evacuated_agents = new ArrayList<AgentBase>();
+        stuck_agents = new ArrayList<AgentBase>();
 
         for (AgentBase agent : agents) {
             MapLink link = agent.getCurrentLink(); 
@@ -447,6 +449,9 @@ public class AgentHandler implements Serializable {
                 i += 1;
                 evacuatedAgentCountByExit.put(exit, i);
                 evacuated_agents.add(agent);
+                if (agent.isStuck()) {
+                    stuck_agents.add(agent);
+                }
                 if (has_display) {
                     updateEvacuatedCount();
                 }
@@ -546,9 +551,19 @@ public class AgentHandler implements Serializable {
     }
 
     private void updateEvacuatedCount() {
-        String evacuatedCount_string = String.format("Walking: %d  Generated: %d  Evacuated: %d / %d", 
-            getAgents().size() - evacuated_agents.size(), getAgents().size(), evacuated_agents.size(),
-            getMaxAgentCount());
+        String evacuatedCount_string;
+        if (stuck_agents.isEmpty()) {
+            evacuatedCount_string = String.format(
+                    "Walking: %d  Generated: %d  Evacuated: %d / %d",
+                    getAgents().size() - evacuated_agents.size(), getAgents().size(),
+                    evacuated_agents.size(), getMaxAgentCount());
+        } else {
+            evacuatedCount_string = String.format(
+                    "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
+                    getAgents().size() - evacuated_agents.size(), getAgents().size(),
+                    evacuated_agents.size() - stuck_agents.size(), stuck_agents.size(),
+                    getMaxAgentCount());
+        }
         evacuatedCount_label.setText(evacuatedCount_string);
         SimulationPanel3D.updateEvacuatedCount(evacuatedCount_string);
     }
@@ -1040,11 +1055,11 @@ public class AgentHandler implements Serializable {
         update_buttons();
 
         control_button_panel.add(new JLabel("weight: "));
-        simulation_weight_control = new JScrollBar(JScrollBar.HORIZONTAL, simulation_weight, 1, 0, 1000);
+        simulation_weight_control = new JScrollBar(JScrollBar.HORIZONTAL, simulation_weight, 1, 0, 300);
         simulation_weight_control.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) { change_simulation_weight(); }
         });
-        simulation_weight_control.setPreferredSize(new Dimension(100, 20));
+        simulation_weight_control.setPreferredSize(new Dimension(150, 20));
         control_button_panel.add(simulation_weight_control);
         simulation_weight_value = new JLabel();
         simulation_weight_value.setHorizontalAlignment(JLabel.RIGHT);

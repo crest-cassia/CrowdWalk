@@ -22,6 +22,7 @@ import java.util.HashMap;
 import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.AwaitAgent ;
 
 import nodagumi.Itk.* ;
@@ -179,7 +180,7 @@ public class NaiveAgent
      * 正規のコストに、ランダム要素を加味する。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
         return super.calcWayCostTo(_way, _node, _target) ;
     }
 
