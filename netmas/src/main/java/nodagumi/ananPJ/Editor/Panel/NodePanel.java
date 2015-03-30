@@ -182,7 +182,7 @@ public class NodePanel extends PanelWithTable implements Serializable {
             Collections.sort(sortedNodes, new Comparator<MapNode>() {
                     @Override
                         public int compare(MapNode lhs, MapNode rhs) {
-                        return (int)((lhs.getHeight() - rhs.getHeight())*10);
+                        return (int)Math.signum(lhs.getHeight() - rhs.getHeight());
                     }
                 });
         }

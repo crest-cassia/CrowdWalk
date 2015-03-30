@@ -269,7 +269,7 @@ public class MapLink extends OBMapPart implements Serializable {
     }
     
     public boolean isStair() {
-        return (fromNode.getHeight() != toNode.getHeight());
+        return hasTag("STAIR");
     }
     
     public boolean isBetweenHeight(double min_h, double max_h) {
@@ -1241,7 +1241,7 @@ public class MapLink extends OBMapPart implements Serializable {
         /* [2015.01.10 I.Noda] todo
          * ここはちゃんと外部パラメータ化すべき。
          */
-        if (isStair() || hasTag("STAIR")) {
+        if (isStair()) {
             baseSpeed *= STAIR_SPEED_CO;
         }
         return baseSpeed ;
