@@ -365,8 +365,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
 		Itk.logWarn("No Goal", goal_tag) ;
                 return false;
             }
-
-            validRouteKeys.add(goal_tag);
+            Itk.logInfo("Found Goal", goal_tag) ;
 
             Dijkstra.Result result = Dijkstra.calc(goals,
                     new PathChooser() {
@@ -381,14 +380,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                     return 0.0;
                 }
             });
-	    synchronized(map.getNodes()) {
+            synchronized(map.getNodes()) {
+                validRouteKeys.add(goal_tag);
                 for (MapNode node : result.keySet()) {
                     NodeLinkLen nll = result.get(node);
                     node.addNavigationHint(goal_tag,
                             new NavigationHint(nll.node, nll.link, nll.len));
                 }
             }
-	    Itk.logInfo("Found Goal", goal_tag) ;
             return true;
         }
     }
@@ -427,6 +426,11 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             e.printStackTrace();
             System.exit(1);
         }
+
+        // 不要なメモリを速やかに解放する(メモリ消費量が多いほど実行速度が遅くなる傾向があるため)
+        workers = null;
+        threads = null;
+        System.gc();
 
         if (no_goal_list.size() != 0) {
             Itk.logWarn("no nodes with the following tag was found");
