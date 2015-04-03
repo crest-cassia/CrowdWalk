@@ -52,15 +52,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Vector3d;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.MissingOptionException;
-
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Editor.EditorFrame;
@@ -102,9 +93,7 @@ import org.w3c.dom.NodeList;
 
 
 public class NetworkMapEditor extends SimulationLauncher
-    implements ActionListener, WindowListener, SimulationController,
-           Serializable {
-    private static final long serialVersionUID = -1922412587784875240L;
+    implements ActionListener, WindowListener, SimulationController {
 
     private String dir_name = null;
 
@@ -121,13 +110,10 @@ public class NetworkMapEditor extends SimulationLauncher
     private static boolean isDebug = false; // debug mode
     private static boolean isTimerEnabled = false;
     private static String timerPath = null;         // path to timer log file
-    private static String serializePath = null;    // path to serialized file
-    private static String deserializePath = null;
     private static boolean isAllAgentSpeedZeroBreak = false;
     protected static boolean isTimeSeriesLog = false;
     protected static String timeSeriesLogPath = null;
     protected static int timeSeriesLogInterval = -1;
-    transient boolean isDeserialized = false;
 
     // Properties
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
@@ -266,81 +252,6 @@ public class NetworkMapEditor extends SimulationLauncher
         frame.repaint();
     }
 
-    public void deserialize() {
-        super.deserialize();
-
-        frame = new JFrame("Network Map Editor");
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-        tabbedPane = new JTabbedPane();
-        nodePanel = new NodePanel(this);
-        tabbedPane.add("Nodes", nodePanel);
-
-        linkPanel = new LinkPanel(this);
-        tabbedPane.add("Links", linkPanel);
-
-        agentPanel = new AgentPanel(this, random);
-        tabbedPane.add("Agents", agentPanel);
-
-        pollutionPanel = new PollutionPanel(this);
-        tabbedPane.add("Pollution", pollutionPanel);
-
-        scenarioPanel = new ScenarioPanel(this, random);
-        tabbedPane.add("Scenario", scenarioPanel);
-
-        browserPanel = new BrowserPanel(this);
-        tabbedPane.add("Browser", browserPanel);
-
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                final JTabbedPane pane = (JTabbedPane)e.getSource();
-                final JPanel selectedTab = (JPanel)pane.getSelectedComponent();
-                final String panelName = selectedTab.getName();
-
-                if (panelName == "NodePanel") {
-                    if (((NodePanel)selectedTab).getPlaceCheckBox()) {
-                        mode = EditorMode.PLACE_NODE;
-                    } else {
-                        mode = EditorMode.EDIT_NODE;
-                    }
-                } else if (panelName == "LinkPanel") {
-                    if (((LinkPanel)selectedTab).getPlaceCheckBox()) {
-                        mode = EditorMode.PLACE_LINK;
-                    } else {
-                        mode = EditorMode.EDIT_LINK;
-                    }
-                } else if (panelName == "PollutionPanel") {
-                    if (((PollutionPanel)selectedTab).getPlaceCheckBox()) {
-                        mode = EditorMode.PLACE_POLLUTION;
-                    } else {
-                        mode = EditorMode.EDIT_POLLUTION;
-                    }
-                } else if (panelName == "AgentPanel") {
-                    mode = EditorMode.EDIT_AGENT;
-                } else if (panelName == "BrowserPanel"){
-                    mode = EditorMode.BROWSE;
-                }
-            }
-        });
-
-        frame.add(tabbedPane, BorderLayout.CENTER);
-        frame.addWindowListener(this);
-
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
-        buttonPanel.add(new JLabel());
-        runButton = new JButton("Simulate");
-        runButton.addActionListener(this);
-        buttonPanel.add(runButton);
-
-        frame.add(buttonPanel, BorderLayout.SOUTH);
-
-        setup_menu();
-        frame.pack();
-
-        frame.repaint();
-    }
     public JFrame getFrame() { return frame; }
 
     public void setModified(boolean b) {
@@ -782,33 +693,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
     }
 
-    private boolean serializeToFile() {
-        FileDialog fd = new FileDialog(frame, "Serialize to file",
-                FileDialog.SAVE);
-        fd.setFile("serialized.xml");
-        fd.setDirectory("/tmp");
-        fd.setVisible (true);
-
-        if (fd.getFile() == null) return false;
-
-        mapPath = settings.get("inputdir", "") +
-            settings.get("mapfile", "");
-
-        String serializedFile = fd.getDirectory() + fd.getFile();
-        System.out.println("NetworkMapEditor.serializeToFile: " +
-                serializedFile);
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(
-                    new FileOutputStream(serializedFile));
-            oos.writeObject(this);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        System.out.println("NetworkMapEditor.serializeToFile: DONE!");
-
-        return true;
-    }
-
     private void quit () {
         if (!clearAll())
             return;
@@ -840,7 +724,7 @@ public class NetworkMapEditor extends SimulationLauncher
         // pollution area の読み込み(旧形式のため利用不能)
         // make_fv_rooms();
 
-        super.simulate(isDeserialized);
+        super.simulate(false);
     }
 
     // model.begin() をバックグラウンドで実行するためのモーダルダイアログ
@@ -1436,8 +1320,6 @@ public class NetworkMapEditor extends SimulationLauncher
         //else if (e.getActionCommand() == "Merge map") mergeMap();
         // else if (e.getActionCommand() == "Import nodes from file")
         //     importFromFv();
-        else if (e.getActionCommand() == "Serialize to file")
-            serializeToFile();
         // else if (e.getActionCommand() == "Make rooms from FV-based nodes")
         //     make_fv_rooms();
         else if (e.getActionCommand() == "Calculate exit paths")
@@ -1551,22 +1433,6 @@ public class NetworkMapEditor extends SimulationLauncher
         return timerPath;
     }
 
-    public void setSerializeFile(String _serializePath) {
-        serializePath = _serializePath;
-    }
-
-    public String getSerializeFile() {
-        return serializePath;
-    }
-
-    public void setDeserializePath(String _deserializePath) {
-        deserializePath = _deserializePath;
-    }
-
-    public String getDeserializePath() {
-        return deserializePath;
-    }
-
     public void setRandseed(long _randseed) {
         randseed = _randseed;
     }
@@ -1669,8 +1535,6 @@ public class NetworkMapEditor extends SimulationLauncher
 		setFallbackPath(propertiesHandler.getFallbackPath()) ;
         setIsTimerEnabled(propertiesHandler.getIsTimerEnabled());
         setTimerFile(propertiesHandler.getTimerPath());
-        setSerializeFile(propertiesHandler.getSerializePath());
-        setDeserializePath(propertiesHandler.getDeserializePath());
         setIsTimeSeriesLog(propertiesHandler.getIsTimeSeriesLog());
         setTimeSeriesLogPath(propertiesHandler.getTimeSeriesLogPath());
         setTimeSeriesLogInterval(propertiesHandler.getTimeSeriesLogInterval());
@@ -1795,208 +1659,4 @@ public class NetworkMapEditor extends SimulationLauncher
     public BrowserPanel getBrowserPanel() { return browserPanel; }
 
     public static NetmasPropertiesHandler getNetmasPropertiesHandler() { return propertiesHandler; }
-
-    // private void importFromFv() {
-    //     FileDialog fd = new FileDialog(frame, "Import pollution grids",
-    //             FileDialog.LOAD);
-    //     fd.setDirectory(settings.get("inputdir", ""));
-    //     fd.setVisible (true);
-    //
-    //     if (fd.getFile() == null) return;
-    //
-    //     String fv_file = fd.getDirectory() + fd.getFile();
-    //     openFvFile(fv_file);
-    // }
-    //
-    // private void openFvFile(String filename) {
-    //     try {
-    //         FileReader fr = new FileReader(filename);
-    //         BufferedReader br = new BufferedReader(fr);
-    //         String line;
-    //
-    //         /* Nodes */
-    //         line = br.readLine();
-    //         Pattern headPattern = Pattern.compile("Nodes");
-    //         Matcher headMatcher = headPattern.matcher(line);
-    //         if (!headMatcher.matches()) {
-    //             JOptionPane.showMessageDialog(frame,
-    //                     "Might not be a fv-based file.",
-    //                     "Import failed",
-    //                     JOptionPane.ERROR_MESSAGE);
-    //
-    //             return;
-    //         }
-    //
-    //         MapPartGroup group = networkMap.createGroupNode((MapPartGroup)
-    //                 networkMap.getRoot());
-    //         group.addTag("RoomFromFV");
-    //
-    //         Pattern timePattern = Pattern.compile("time.+");
-    //         Pattern nodePattern = Pattern.compile("(.+),(.+),(.+)");
-    //
-    //         Vector3d point_min = new Vector3d(Double.MAX_VALUE,
-    //                 Double.MAX_VALUE, Double.MAX_VALUE);
-    //         Vector3d point_max = new Vector3d(Double.MIN_VALUE,
-    //                 Double.MIN_VALUE, Double.MIN_VALUE);
-    //         ArrayList<Vector3d> node_points = new ArrayList<Vector3d>();
-    //         Map<Integer, MapPartGroup> height_group = new HashMap<Integer,
-    //             MapPartGroup>();
-    //
-    //         while (true) {
-    //             line = br.readLine();
-    //             if (line == null) break;
-    //             Matcher timeMatcher = timePattern.matcher(line);
-    //             if (timeMatcher.matches()) break;
-    //
-    //             Matcher nodeMatcher = nodePattern.matcher(line);
-    //             if (!nodeMatcher.matches()) {
-    //                 System.err.println("?" + line);
-    //                 continue;
-    //             }
-    //
-    //             double x = Double.parseDouble(nodeMatcher.group(1));
-    //             double y = -Double.parseDouble(nodeMatcher.group(2));
-    //             double z = Double.parseDouble(nodeMatcher.group(3));
-    //
-    //             Integer height = (int)z;
-    //             if (!height_group.containsKey(height)) {
-    //                 MapPartGroup child_group = networkMap.createGroupNode(
-    //                         group);
-    //                 height_group.put(height, child_group);
-    //                 child_group.addTag(""+height);
-    //             }
-    //
-    //             node_points.add(new Vector3d(x, y, z));
-    //
-    //             point_min.x = Math.min(point_min.x, x);
-    //             point_min.y = Math.min(point_min.y, y);
-    //             point_min.z = Math.min(point_min.z, z);
-    //             point_max.x = Math.max(point_max.x, x);
-    //             point_max.y = Math.max(point_max.y, y);
-    //             point_max.z = Math.max(point_max.z, z);
-    //         }
-    //         double width = Math.max(point_max.x - point_min.x,
-    //                 Math.max(point_max.y - point_min.y,
-    //                         (point_max.z - point_min.z)));
-    //
-    //         int count = 0;
-    //         for (Vector3d v : node_points) {
-    //             count += 1;
-    //             double x = (v.x  - point_min.x) / width * 1000;
-    //             double y = (v.y  - point_min.y) / width * 1000;
-    //             double z = (v.z  - point_min.z) / width * 1000;
-    //             Point2D xy = new Point2D.Double(x, y);
-    //             Integer height = (int)v.z;
-    //             MapPartGroup child_group = height_group.get(height);
-    //             MapNode node = networkMap.createMapNode(child_group, xy, z);
-    //             node.addTag("FVNODE_"+count);
-    //         }
-    //         System.err.println(point_min.z);
-    //         System.err.println(1/width * 1000);
-    //     } catch (IOException e) {
-    //         System.err.println(e);
-    //         return;
-    //     }
-    // }
-    //
-    // private void make_fv_rooms() {
-    //     if (isDeserialized)
-    //         return;
-    //
-    //     MapPartGroup group = networkMap.createGroupNode((MapPartGroup)
-    //             networkMap.getRoot());
-    //     group.addTag("ROOMS");
-    //     for (MapNode node : getNodes()) {
-    //         Matcher match = node.matchTag("FVNODE_(\\d+)");
-    //         if (match == null) continue;
-    //
-    //         int count = Integer.parseInt(match.group(1));
-    //         PollutedArea area = networkMap.createPollutedAreaPoint(group,
-    //                 node, count);
-    //         group.setScale(((MapPartGroup)node.getParent()).getScale());
-    //         area.addTag("" + count);
-    //     }
-    // }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Options options = new Options();
-
-        options.addOption(OptionBuilder.withArgName("properties_file")
-                .hasArg(true).withDescription("Path of properties file")
-                .isRequired(false).create("p"));
-
-        CommandLineParser parser = new BasicParser();
-        CommandLine cli = null;
-
-        try {
-            cli = parser.parse(options, args);
-        } catch (MissingOptionException moe) {
-            moe.printStackTrace();
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("NetworkMapEditor", options, true);
-            System.exit(1);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        propertiesPath = cli.getOptionValue("p");
-
-        // load properties
-        Properties prop = new Properties();
-        if (propertiesPath == null) {
-            //random = new Random(randseed);
-        } else {
-            propertiesHandler = new NetmasPropertiesHandler(propertiesPath);
-
-			/* [2015-02-06 I.Noda]
-			 * このあたり、static とそうでないのが混在していてぐちゃぐちゃ。
-			 * 統一すべき */
-			/* [2015-02-11 I.Noda] このへん、通っていない？*/
-            isDebug = propertiesHandler.getIsDebug();
-            mapPath = propertiesHandler.getMapPath();
-            pollutionPath = propertiesHandler.getPollutionPath();
-            generationPath = propertiesHandler.getGenerationPath();
-            scenarioPath = propertiesHandler.getScenarioPath();
-			fallbackPath = propertiesHandler.getFallbackPath() ;
-
-            isTimerEnabled = propertiesHandler.getIsTimerEnabled();
-            timerPath = propertiesHandler.getTimerPath();
-            serializePath = propertiesHandler.getSerializePath();
-            deserializePath = propertiesHandler.getDeserializePath();
-            randseed = propertiesHandler.getRandseed();
-            //random = new Random(randseed);
-            speedModel = propertiesHandler.getSpeedModel();
-            exitCount = propertiesHandler.getExitCount();
-            if (exitCount <= 0)
-                exitCount = 0;
-            isAllAgentSpeedZeroBreak =
-                propertiesHandler.getIsAllAgentSpeedZeroBreak();
-        }
-
-        if (deserializePath != null) {
-            try {
-                FileInputStream fis = new FileInputStream(deserializePath);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                NetworkMapEditor win = (NetworkMapEditor) ois.readObject();
-                win.deserialize();
-                win.isDeserialized = true;
-                win.setVisible(true);
-                win.updateAll();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            } catch (ClassNotFoundException cnfe) {
-                cnfe.printStackTrace();
-            }
-        } else {
-            NetworkMapEditor win = NetworkMapEditor.getInstance();
-            win.setVisible(true);
-        }
-    }
 }
-// ;;; Local Variables:
-// ;;; mode:java
-// ;;; tab-width:4
-// ;;; End:

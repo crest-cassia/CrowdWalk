@@ -33,8 +33,6 @@ dependencies {
 sourceSets {
     main {
         java {
-            // 以下は別パッケージ(GisToCrowdwalk)に分かれたため使用されない
-            exclude '**/ImportGis.java'
         }
     }
 }

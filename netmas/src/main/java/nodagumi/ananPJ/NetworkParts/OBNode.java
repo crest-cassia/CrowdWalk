@@ -36,9 +36,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
-import nodagumi.ananPJ.misc.osmTools.osmGroup;
-import nodagumi.ananPJ.misc.osmTools.osmLink;
-import nodagumi.ananPJ.misc.osmTools.osmNode;
 import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
@@ -124,15 +121,6 @@ public abstract class OBNode extends DefaultMutableTreeNode
           return OBNodeSymbolicLink.fromDom(element);
       } else if (tagName.equals("tag")){
           return null;
-      // tkokada
-      /*
-      } else if (tagName.equals(osmNode.getNodeTypeString())) {
-          return osmNode.fromDom(element);
-      } else if (tagName.equals(osmLink.getNodeTypeString())) {
-          return osmLink.fromDom(element);
-      */
-      } else if (tagName.equals(osmGroup.getNodeTypeString())) {
-          return osmGroup.fromDom(element);
       } else {
           System.err.println(tagName + " not known to OBnode.fromDom");
           return null;

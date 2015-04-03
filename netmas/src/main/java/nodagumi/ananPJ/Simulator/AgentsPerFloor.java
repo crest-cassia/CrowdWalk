@@ -108,26 +108,6 @@ public class AgentsPerFloor extends JFrame implements Serializable {
 			}
 		}
 	}
-    // tkokada
-    /*
-    private void writeObject(ObjectOutputStream stream) {
-        try {
-            stream.defaultWriteObject();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-
-    private void readObject(ObjectInputStream stream) {
-        try {
-            stream.defaultReadObject();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-        }
-    }
-    */
 }
 //;;; Local Variables:
 //;;; mode:java

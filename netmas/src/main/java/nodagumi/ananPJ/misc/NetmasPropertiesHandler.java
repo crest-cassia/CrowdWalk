@@ -17,8 +17,6 @@ import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Pollution;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
-import nodagumi.ananPJ.misc.CommunicationHandler;
-import nodagumi.ananPJ.misc.CommunicationHandler.CommunicationType;
 import nodagumi.ananPJ.network.DaRuMaClient;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
@@ -31,7 +29,6 @@ public class NetmasPropertiesHandler implements Serializable {
 
     public static final List cuiPropList = Arrays.asList(
             "debug",
-            "io_handler_type",
             "map_file",
             "pollution_file",
             "scenario_file",
@@ -39,11 +36,6 @@ public class NetmasPropertiesHandler implements Serializable {
             "timer_enable",
             "timer_file",
             "interval",
-            "addr",
-            "port",
-            "serialize_file",
-            "serialize_interval",
-            "deserialized_file",
             "randseed",
             "speed_model",
             "time_series_log",
@@ -84,12 +76,6 @@ public class NetmasPropertiesHandler implements Serializable {
      */
     public boolean getIsDebug() {
         return isDebug;
-    }
-
-    protected CommunicationType communicationType = null; /** file or pipe or 
-                                                          network */
-    public CommunicationType getCommunicationType() {
-        return communicationType;
     }
 
     protected String mapPath = null; // path to map file (required)
@@ -139,31 +125,6 @@ public class NetmasPropertiesHandler implements Serializable {
     protected int interval = -1;       // sleep time(msec) during loop
     public int getInterval() {
         return interval;
-    }
-
-    protected String serializePath = null;    // path to serialized file
-    public String getSerializePath() {
-        return serializePath;
-    }
-
-    protected int serializeInterval = -1;  // interval of serialize
-    public int getSerializeInterval() {
-        return serializeInterval;
-    }
-
-    protected String addr = null;      // IP address of destination host
-    public String getAddr() {
-        return addr;
-    }
-
-    protected int port = -1;           // port number of destination host
-    public int getPort() {
-        return port;
-    }
-
-    protected String deserializePath = null;
-    public String getDeserializePath() {
-        return deserializePath;
     }
 
     protected long randseed = 0;
@@ -216,8 +177,6 @@ public class NetmasPropertiesHandler implements Serializable {
         return isAllAgentSpeedZeroBreak;
     }
 
-    protected boolean isDeserialized = false;
-
     public NetmasPropertiesHandler(String _propertiescenarioPath) {
         // load properties
         prop = new Properties();
@@ -237,26 +196,6 @@ public class NetmasPropertiesHandler implements Serializable {
                 System.exit(1);
             }
             isDebug = getBooleanProperty(prop, "debug");
-            String typestr = getProperty(prop, "io_handler_type");
-            if (typestr == null)
-                communicationType = CommunicationType.SND_FILE;
-            else if (typestr.equals("buffer"))
-                communicationType = CommunicationType.SND_BUFFER;
-            else if (typestr.equals("file"))
-                communicationType = CommunicationType.SND_FILE;
-            else if (typestr.equals("pipe"))
-                communicationType = CommunicationType.SND_PIPE;
-            else if (typestr.equals("network"))
-                communicationType = CommunicationType.SND_NETWORK;
-            else if (typestr.equals("server"))
-                communicationType = CommunicationType.RCV_NETWORK;
-            else if (typestr.equals("none"))
-                communicationType = CommunicationType.NONE;
-            else {
-                System.err.println("NetmasPropertiesHandler: invalid " +
-                        "inputted type:" + typestr);
-                communicationType = CommunicationType.NONE;
-            }
 
             // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
             File propertyFile = new File(_propertiescenarioPath);
@@ -288,19 +227,6 @@ public class NetmasPropertiesHandler implements Serializable {
 
             // interval during main loop
             interval = getIntegerProperty(prop, "interval");
-            // destination address if I/O handler is network mode
-            addr = getStringProperty(prop, "addr");
-            // port number
-            port = getIntegerProperty(prop, "port");
-
-            // scerialize file
-            serializePath = getStringProperty(prop, "serialize_file");
-            // interval of serialize (loop count)
-            if (serializePath != null)
-                serializeInterval = getIntegerProperty(prop,
-                        "serialize_interval");
-            // descerialize file
-            deserializePath = getStringProperty(prop, "deserialized_file");
             // create random with seed
             randseed = getIntegerProperty(prop, "randseed");
             // speed model
@@ -372,16 +298,6 @@ public class NetmasPropertiesHandler implements Serializable {
         } else if (!((File) new File(mapPath)).exists()) {
             System.err.println("NetmasCuiSimulator: specified map file does " +
                     "not exist.");
-            return;
-        } else if (communicationType == CommunicationType.SND_FILE &&
-                serializePath == null) {
-            System.err.println("NetmasCuiSimulator: file mode requires" +
-                    " path to log.");
-            return;
-        } else if (communicationType == CommunicationType.SND_NETWORK &&
-                addr == null) {
-            System.err.println("NetmasCuiSimulator: network mode " +
-                    "requires destination address.");
             return;
         }
     }

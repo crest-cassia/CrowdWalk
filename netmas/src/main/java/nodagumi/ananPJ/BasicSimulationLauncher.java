@@ -11,7 +11,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
-import nodagumi.ananPJ.misc.osmTools.osmNetworkMap;
 import nodagumi.ananPJ.network.DaRuMaClient;
 
 
@@ -37,15 +36,6 @@ public abstract class BasicSimulationLauncher implements Serializable {
             // NetworkMap の生成時に random オブジェクトを初期化する
             // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
             _random.setSeed(properties.getRandseed());
-        }
-        // open street map
-        if (toplevel.item(0).getNodeName().equals("osm")) {
-            System.err.println("BasicSimulationLauncher read Open Street Map" +
-                    " format map file.");
-            osmNetworkMap network_map = new osmNetworkMap(_random);
-            if (!((osmNetworkMap) network_map).fromDOM(doc))
-                return null;
-            return (NetworkMap) network_map;
         }
         // NetMAS based map
         NetworkMap network_map = new NetworkMap(_random);

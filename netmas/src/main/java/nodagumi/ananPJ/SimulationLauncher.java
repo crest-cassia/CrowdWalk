@@ -54,9 +54,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private String damageSpeedZeroNumberLogPath = null;
 
     private SpeedCalculationModel speedModel = null;
-    private String fusionViewerLogPath = "log";
-    private boolean saveFusionViewerLogOption = false;
-    private boolean sendFusionViewerLogOption = false;
 
     protected NetworkMap networkMap;
     public NetworkMap getMap() { return networkMap; }
@@ -118,11 +115,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
             timer = new NetmasTimer(10, timerPath);
             timer.start();
         }
-        if (sendFusionViewerLogOption) {
-            System.err.println("call waitConnectionFusionViewer");
-            ((AgentHandler) model.getAgentHandler())
-                .waitConnectionFusionViewer();
-        }
         run_simulation = new Runnable() {
             public void run() {
                 while(!finished && run_thread) {
@@ -148,14 +140,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
                         if ((model.getSecond() % 60) == 0)
                             timer.writeElapsed();
                     }
-                    if (saveFusionViewerLogOption)
-                        ((AgentHandler) model.getAgentHandler())
-                            .saveFusionViewerLog(fusionViewerLogPath,
-                                    model.getSecond(), (int) model.getSecond());
-                    if (sendFusionViewerLogOption)
-                        ((AgentHandler) model.getAgentHandler())
-                            .sendFusionViewerLog(model.getSecond(),
-                                    (int) model.getSecond());
                 }
                 synchronized (run_thread) {
                     run_thread = false;
@@ -229,13 +213,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
                 if ((model.getSecond() % 60) == 0)
                     timer.writeElapsed();
             }
-            if (saveFusionViewerLogOption)
-                ((AgentHandler) model.getAgentHandler())
-                    .saveFusionViewerLog(fusionViewerLogPath, model.getSecond(),
-                            (int) model.getSecond());
-            if (sendFusionViewerLogOption)
-                ((AgentHandler) model.getAgentHandler()).sendFusionViewerLog(
-                    model.getSecond(), (int) model.getSecond());
         }
     }
 

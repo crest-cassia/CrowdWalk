@@ -74,7 +74,6 @@ import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.network.DaRuMaClient;
-import nodagumi.ananPJ.network.FusionViewerConnector;
 
 import nodagumi.Itk.*;
 
@@ -149,7 +148,6 @@ public class AgentHandler implements Serializable {
 
     boolean has_display;
     private Random random = null;
-    private FusionViewerConnector fusionViewerConnector = null;
 
     // プログラム制御用環境変数
     public String envSwitch = "";
@@ -215,7 +213,6 @@ public class AgentHandler implements Serializable {
                     scenarioFile,
                     map);
         }
-        fusionViewerConnector = new FusionViewerConnector();
 
         envSwitch = System.getenv("NETMAS");
         if (envSwitch == null)
@@ -612,23 +609,6 @@ public class AgentHandler implements Serializable {
         for (final AgentBase agent : agents) {
             agent.dumpResult(out);
         }
-    }
-
-    // tkokada
-    /* wrappers of fusion viewer connector */
-    public void saveFusionViewerLog(String dir, double time, int count) {
-        fusionViewerConnector.saveFusionViewerLog(dir,
-                                                  scenario.getOriginTime(),
-                                                  time, count,
-                                                  agents);
-    }
-    public void sendFusionViewerLog(double time, int count) {
-        fusionViewerConnector.sendFusionViewerLog(scenario.getOriginTime(),
-                                                  time, count,
-                                                  agents);
-    }
-    public void waitConnectionFusionViewer() {
-        fusionViewerConnector.waitConnection();
     }
 
     /* Accessors

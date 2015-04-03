@@ -142,26 +142,6 @@ public class PollutedAreaPoint extends PollutedArea implements Serializable {
 	public boolean getContactOfAgents() {return view;}
 	@Override
 	public void setContactOfAgents(boolean _view) {view = _view;}
-    // tkokada
-    /*
-    private void writeObject(ObjectOutputStream stream) {
-        try {
-            stream.defaultWriteObject();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-
-    private void readObject(ObjectInputStream stream) {
-        try {
-            stream.defaultReadObject();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-        }
-    }
-    */
 }
 //;;; Local Variables:
 //;;; mode:java
