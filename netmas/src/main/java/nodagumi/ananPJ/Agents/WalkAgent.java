@@ -3,40 +3,16 @@ package nodagumi.ananPJ.Agents;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.PrintStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.ClassNotFoundException;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Random;
 
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.vecmath.Vector3d;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.RoutePlan ;
@@ -1345,71 +1321,6 @@ public class WalkAgent extends AgentBase implements Serializable {
             g.fill(getCircle(cx, cy, 10));
         }
     }
-
-    //------------------------------------------------------------
-    /**
-     * (for editor)
-     */
-    @Override
-    public JPanel paramSettingPanel(NetworkMap network_map)  {
-        class ParamSettingPanel extends JPanel
-        implements ChangeListener, ItemListener {
-            private static final long serialVersionUID = -2502949408346819443L;
-
-            WalkAgent agent;
-
-            JSpinner time, speed;
-            JComboBox navigationMode;
-            public ParamSettingPanel(NetworkMap _networkMap,
-                    WalkAgent _agent) {
-                super();
-                setLayout(new GridLayout(3, 2));
-                agent = _agent;
-
-                add(new JLabel("Generated Time"));
-                time = new JSpinner(new SpinnerNumberModel(agent.generatedTime,
-                        0.0, 100.0,
-                        0.1));
-                time.addChangeListener(this);
-                add(time);
-
-                add(new JLabel("Speed"));
-                speed = new JSpinner(new SpinnerNumberModel(agent.emptySpeed,
-                        0.0, 10.0,
-                        0.1));
-                speed.addChangeListener(this);
-                add(speed);
-
-                add(new JLabel("Target Node/Link"));
-                ArrayList<String> all_tags = _networkMap.getAllTags();
-                all_tags.add("");
-                navigationMode = new JComboBox(all_tags.toArray());
-                navigationMode.addItemListener(this);
-                add(navigationMode);
-                updateAgent();
-            }
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                updateAgent();
-            }
-
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                updateAgent();
-            }
-            
-            private void updateAgent() {
-                agent.generatedTime = ((Double)(time.getValue())).doubleValue();
-                agent.emptySpeed = ((Double)(speed.getValue())).doubleValue();
-                agent.speed = agent.emptySpeed;
-                final String goalString = (String)navigationMode.getSelectedItem();
-                agent.setGoal(new Term(goalString));
-            }
-        };
-        return new ParamSettingPanel(network_map, this); 
-    }
-    
 }
 // ;;; Local Variables:
 // ;;; mode:java

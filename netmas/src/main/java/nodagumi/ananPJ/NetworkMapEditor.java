@@ -1,9 +1,10 @@
 package nodagumi.ananPJ;
 
-import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FileDialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
@@ -16,25 +17,15 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowAdapter;
 import java.awt.geom.Point2D;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,7 +41,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
@@ -69,9 +59,7 @@ import nodagumi.ananPJ.NetworkParts.Link.Lift;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
-import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
-import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.FilePathManipulation;
@@ -87,7 +75,6 @@ import nodagumi.ananPJ.network.DaRuMaClient;
 import nodagumi.Itk.Itk;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -229,6 +216,7 @@ public class NetworkMapEditor extends SimulationLauncher
                     }
                 } else if (panelName == "AgentPanel") {
                     mode = EditorMode.EDIT_AGENT;
+                    agentPanel.refresh();
                 } else if (panelName == "BrowserPanel"){
                     mode = EditorMode.BROWSE;
                 }
@@ -247,7 +235,7 @@ public class NetworkMapEditor extends SimulationLauncher
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
         setup_menu();
-        frame.pack();
+        frame.setSize(800, 700);
 
         frame.repaint();
     }
@@ -336,11 +324,9 @@ public class NetworkMapEditor extends SimulationLauncher
             switchTab(TabTypes.LINK);
             break;
         case EDIT_AGENT:
-            agentPanel.setPlaceCheckBox(false);
             switchTab(TabTypes.AGENT);
             break;
         case PLACE_AGENT:
-            agentPanel.setPlaceCheckBox(true);
             switchTab(TabTypes.AGENT);
             break;
         case EDIT_POLLUTION:
@@ -936,18 +922,6 @@ public class NetworkMapEditor extends SimulationLauncher
         }
     }
 
-	public void placeAgentsRandomly(String tag, String targetTag) {
-		if (!agentPanel.agentFactory.placeAgentsRandomly(tag,targetTag)) return;
-        setModified(true);
-        agentPanel.refresh();
-    }
-
-	public void placeAgentsEvenly(String tag, String targetTag) {
-		if (!agentPanel.agentFactory.placeAgentsEvenly(tag, targetTag)) return;
-        setModified(true);
-        agentPanel.refresh();
-    }
-
     public void makeLifts() {
         MapNode selectedNode = null;
         MapPartGroup parent = null;
@@ -1335,14 +1309,6 @@ public class NetworkMapEditor extends SimulationLauncher
 			 */
 			//checkForReachability(targetTag);
 			Itk.logError("!!! checkForReachability() needs target now !!!") ;
-		else if (e.getActionCommand() == "Place agents randomly (no tags)")
-			/* [2014.12.26 I.Noda] 同上 */
-		    //placeAgentsRandomly(null,targetTag);
-			Itk.logError("!!! placeAgentsRandomly() needs target now !!!") ;
-		else if (e.getActionCommand() == "Place agents evenly (no tags)")
-			/* [2014.12.26 I.Noda] 同上 */
-			//placeAgentsEvenly(null,targetTag);
-			Itk.logError("!!! placeAgentsEvenly() needs target now !!!") ;
         else if (e.getActionCommand() == "Simulate") simulate();
         else if (e.getActionCommand() == "Dump(test)")
             networkMap.testDumpNodes();

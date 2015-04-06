@@ -1,30 +1,14 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Agents;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.PrintStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.ClassNotFoundException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.vecmath.Vector3d;
 
 import org.w3c.dom.Element;
@@ -35,7 +19,6 @@ import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
@@ -898,186 +881,6 @@ implements Comparable<AgentBase>, Serializable {
     public double getHeight() {
         return currentPlace.getHeightForDisplay() ;
     }
-    
-    //------------------------------------------------------------
-    /**
-     * Setting the agent's attributes
-     */
-    public static void showAttributeDialog(NetworkMap networkMap,
-            ArrayList<AgentBase> agents) {
-        /* Set attributes with a dialog */
-        class AttributeSetDialog  extends JDialog implements ActionListener {
-            private static final long serialVersionUID = -5975770541398630L;
-
-            private NetworkMap networkMap;
-            private ArrayList<AgentBase> agents;
-            private JTextField[] textFields; 
-
-            public AttributeSetDialog(NetworkMap _networkMap,
-                    ArrayList<AgentBase> _agents) {
-                super();
-
-                networkMap = _networkMap;
-                this.setModal(true);
-                agents = _agents;
-
-                int count = 0;
-                for (AgentBase agent : agents) {
-                    if (agent.selected) {
-                        ++count;
-                    }
-                }
-                if (count == 0) return;
-                setUpPanel();
-            }
-            
-            JComboBox target;
-            private void setUpPanel() {
-                Container contentPane = getContentPane();
-
-                JPanel panel = null;
-
-                textFields = new JTextField[1];
-
-                /* labels and text fields */
-                panel = new JPanel(new GridLayout(1, 2));
-
-                panel.add(new JLabel("Type:"));
-                target = new JComboBox(networkMap.getAllTags().toArray());
-                panel.add(target);
-                contentPane.add(panel, BorderLayout.NORTH);
-
-                /* ok and cancel button */
-                textFields[0] = new JTextField("type");
-                panel = new JPanel(new GridLayout(1, 3));
-                panel.add(new JLabel());
-                JButton ok = new JButton("OK");
-                ok.addActionListener(this);
-                panel.add(ok);
-                JButton cancel = new JButton("Cancel");
-                cancel.addActionListener(this);
-                panel.add(cancel);
-
-                contentPane.add(panel, BorderLayout.SOUTH);
-                this.pack();
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("OK")) {
-                    final String goalString = (String)target.getSelectedItem();
-                    for (AgentBase agent : agents) {
-                        if (agent.selected)
-                            agent.setGoal(new Term(goalString));
-                    }
-                    this.dispose();
-                } else if (e.getActionCommand().equals("Cancel")) {
-                    this.dispose();
-                }
-            }
-
-        }
-        AttributeSetDialog dialog = new AttributeSetDialog(networkMap, agents);
-        dialog.setVisible(true);
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ルート表示(for editor)
-     */
-    public static void showRouteDialog(NetworkMap networkMap,
-            ArrayList<AgentBase> agents) {
-        /* Set attributes with a dialog */
-        class AttributeSetDialog  extends JDialog implements ActionListener {
-            private static final long serialVersionUID = -6560704811897168475L;
-
-            private ArrayList<AgentBase> agents;
-
-            public AttributeSetDialog(NetworkMap networkMap,
-                    ArrayList<AgentBase> _agents) {
-                super();
-
-                this.setModal(true);
-                agents = _agents;
-
-                int count = 0;
-                for (AgentBase agent : agents) {
-                    if (agent.selected) {
-                        ++count;
-                    }
-                }
-                if (count == 0) return;
-                setUpPanel(networkMap);
-            }
-            
-            JComboBox[] routes;
-            private void setUpPanel(NetworkMap networkMap) {
-                Container contentPane = getContentPane();
-
-                String route_length_str = JOptionPane.showInputDialog("Route length?");
-                if (route_length_str == null) {
-                    this.dispose();
-                    return;
-                }
-
-                int route_length = Integer.parseInt(route_length_str);
-                JPanel panel = null;
-
-                routes = new JComboBox[route_length];
-
-                /* labels and text fields */
-                panel = new JPanel(new GridLayout(route_length, 2));
-
-                for (int i = 0; i < route_length; ++i) {
-                    panel.add(new JLabel("Via " + i));
-                    routes[i] = new JComboBox(networkMap.getAllTags().toArray());
-                    panel.add(routes[i]);
-                }
-                contentPane.add(panel, BorderLayout.NORTH);
-
-                /* ok and cancel button */
-                panel = new JPanel(new GridLayout(1, 3));
-                panel.add(new JLabel());
-                JButton ok = new JButton("OK");
-                ok.addActionListener(this);
-                panel.add(ok);
-                JButton cancel = new JButton("Cancel");
-                cancel.addActionListener(this);
-                panel.add(cancel);
-
-                contentPane.add(panel, BorderLayout.SOUTH);
-                this.pack();
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("OK")) {
-                    ArrayList<Term> planned_route = new ArrayList<Term>();
-                    for (int i = 0; i < routes.length; i++) {
-                        Term tag = new Term((String)routes[i].getSelectedItem());
-                        planned_route.add(tag) ;
-                    }
-                    for (AgentBase agent : agents) {
-                        if (agent.selected)
-                            agent.setPlannedRoute(planned_route);
-                    }
-                    this.dispose();
-                } else if (e.getActionCommand().equals("Cancel")) {
-                    this.dispose();
-                }
-            }
-
-        }
-        AttributeSetDialog dialog = new AttributeSetDialog(networkMap, agents);
-        dialog.setVisible(true);
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ???
-     */
-    abstract public JPanel paramSettingPanel(NetworkMap networkMap);
-
 }
 // ;;; Local Variables:
 // ;;; mode:java

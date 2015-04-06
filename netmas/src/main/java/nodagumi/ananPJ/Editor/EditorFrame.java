@@ -4,7 +4,6 @@ package nodagumi.ananPJ.Editor;
 import java.awt.BorderLayout;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
@@ -29,16 +28,11 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -87,7 +81,6 @@ public class EditorFrame
     CheckboxMenuItem showNodeLabels = null;
     CheckboxMenuItem showLinks = null;
     CheckboxMenuItem showLinkLabels = null;
-    CheckboxMenuItem showAgents = null;
     CheckboxMenuItem showGroups = null;
     //CheckboxMenuItem showSubGroups = null;
     CheckboxMenuItem showPollution = null;
@@ -96,7 +89,6 @@ public class EditorFrame
     Menu background_group = null;
     MenuItem editNodeMode = null;
     MenuItem editLinkMode = null;
-    MenuItem editAgentMode = null;
     MenuItem editPollutionMode = null;
     MenuItem placeNodeMode = null;
     MenuItem placeLinkMode = null;
@@ -126,7 +118,6 @@ public class EditorFrame
     private boolean draggingNode = false;
     private Hover hoverLink = null;
     private MapNode hoverLinkFromCandidate = null;
-    private AgentBase hoverAgent = null;
     private PollutedArea hoverPollution = null;
     // used on placeNodeLink method
     private MapNode initialNode = null;     // first placed node
@@ -286,7 +277,6 @@ public class EditorFrame
                 panel.setShowLinks(showLinks.getState());
                 showLinkLabels.setEnabled(showLinks.getState());
                 panel.setShowLinkNames(showLinkLabels.getState());
-                panel.setShowAgents(showAgents.getState());
                 panel.setShowGroups(showGroups.getState());
                 //panel.setShowSubGroups(showSubGroups.getState());
                 panel.setShowPollution(showPollution.getState());
@@ -391,11 +381,6 @@ public class EditorFrame
         
         viewMenu.addSeparator();
 
-        showAgents = new CheckboxMenuItem("Show agents");
-        showAgents.setState(true);
-        showAgents.addItemListener(vo);
-        viewMenu.add(showAgents);
-
         showGroups = new CheckboxMenuItem("Show groups");
         showGroups.setState(true);
         showGroups.addItemListener(vo);
@@ -458,16 +443,6 @@ public class EditorFrame
         });
         modeMenu.add(placeNodeLinkMode);
         
-        placeAgentMode = new MenuItem ("Place Agents");
-        placeAgentMode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editor.setMode(EditorMode.PLACE_AGENT);
-                setStatus();
-            }
-        });
-        modeMenu.add(placeAgentMode);
-        
         placePollutionMode = new MenuItem ("Place Pollution Areas");
         placePollutionMode.addActionListener(new ActionListener() {
             @Override
@@ -500,15 +475,6 @@ public class EditorFrame
         });
         modeMenu.add(editLinkMode);
 
-        editAgentMode = new MenuItem ("Edit Agents");
-        editAgentMode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editor.setMode(EditorMode.EDIT_AGENT);
-                setStatus();
-            }
-        });
-        modeMenu.add(editAgentMode);
         editPollutionMode = new MenuItem ("Edit Pollution Area");
         editPollutionMode.addActionListener(new ActionListener() {
             @Override
@@ -679,11 +645,9 @@ public class EditorFrame
         }
         hoverNode = null;
         hoverLink = null;
-        hoverAgent = null;
         hoverPollution = null;
         panel.updateHoverNode(null);
         panel.updateHoverLink(null);
-        panel.updateHoverAgent(null);
         panel.updateHoverArea(null);
     }
 
@@ -1120,121 +1084,6 @@ public class EditorFrame
         }
     }
 
-    private boolean placeHoverAgent(Point2D p) {
-        for (final MapLink link : getChildLinks()) {
-            MapNode from = (MapNode)link.getFrom();
-            MapNode to = (MapNode)link.getTo();
-            Line2D line = new Line2D.Double(from.getLocalCoordinates(), to.getLocalCoordinates());
-            final double dist = line.ptSegDist(p);
-            if (dist < 5.0 / panel.getDrawingScale()) {
-                hoverLink = new Hover(link.getFrom(), link.getTo(), 1.0, 1.0);
-                hoverLink.setDummyHoverLink(link);
-                panel.updateHoverLink(hoverLink);
-                double base_x = to.getX() - from.getX();
-                double base_y = to.getY() - from.getY();
-                double p_x = p.getX() - from.getX();
-                double p_y = p.getY() - from.getY();
-                
-                double position = (base_x * p_x + base_y * p_y) /
-                (base_x * base_x + base_y * base_y) * link.length;
-                if (position < 0.0) position = 0.0;
-                else if (position > link.length) position = link.length;
-                
-                hoverAgent = editor.agentPanel.agentFactory.moveAgent(link, position);
-                panel.updateHoverAgent(hoverAgent);
-                return true;
-            }
-        }
-        final Boolean updated = (hoverAgent == null);
-        hoverAgent = null;
-        return updated;
-    }
-    
-    private void placeAgent(MouseEvent e) {
-        if (hoverAgent == null) {
-            return;
-        }
-
-        editor.getMap().addAgent(current_group, hoverAgent.copyAndInitialize());
-        editor._setModified(true);
-        editor.getAgentPanel().refresh();
-    }
-    
-    private boolean updateHoverAgent(Point2D p) {
-        /* Find an existing agent */
-        for (final AgentBase agent : getChildAgents()) {
-            Point2D pos = agent.getPos();
-
-            final Double dist = p.distance(pos);
-            if (dist < (5.0 / panel.getDrawingScale())) {
-                final boolean updated = (agent != hoverAgent);
-                hoverAgent = agent;
-                return updated;
-            }
-        }
-        final boolean updated = (hoverAgent != null);
-        hoverAgent = null;
-        return updated;
-    }
-
-    private void selectAgent(MouseEvent e) {
-        if (hoverAgent == null) {
-            return;
-        }
-        AgentBase a = hoverAgent;
-        if ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) {
-            clearSelection();
-        }
-        a.selected ^= true;
-    }
-    
-    private void manipulateAgent(MouseEvent e) {
-        final int c = countSelectedAgent();
-        if (c == 0) return;
-
-        class ManipulateAgentListener implements ActionListener {
-            EditorFrame editor = null;
-            ManipulateAgentListener(EditorFrame _editor) {
-                editor = _editor;
-            }
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("Set agent attribute")) {
-                    editor.setAgentAttribute();
-                } else if (e.getActionCommand().equals("Add to route plan")) {
-                    editor.addAgentRoute();
-                } else if (e.getActionCommand().equals("Remove agents")) {
-                    editor.removeSelectedAgents();
-                }
-            }
-        };
-        
-        ManipulateAgentListener listner = new ManipulateAgentListener(this);
-        PopupMenu menu = new PopupMenu ("Manipulate");
-        MenuItem mi = null;
-            
-        mi = new MenuItem ("Remove agents");
-        mi.addActionListener (listner);
-        mi.setEnabled(c >= 1);
-        menu.add (mi);
-
-        menu.addSeparator();
-        
-        mi = new MenuItem ("Set agent attribute");
-        mi.addActionListener (listner);
-        mi.setEnabled(c >= 1);
-        menu.add (mi);
-        
-        mi = new MenuItem("Add to route plan");
-        mi.addActionListener (listner);
-        mi.setEnabled(c >= 1);
-        menu.add (mi);
-
-        add (menu);
-        menu.show (this, e.getX(), e.getY());
-    }
-    
     private boolean updateHoverArea(Point2D p) {
         /* Find an existing agent */
         for (PollutedArea area : getChildPollutedAreas()) {
@@ -1383,14 +1232,6 @@ public class EditorFrame
         maxPollutionTag = i;
     }
 
-    private int countSelectedAgent() {
-        int c = 0;
-        for (final AgentBase agent : getChildAgents()) {
-            if (agent.selected) c++;
-        }
-        return c;
-    }
-    
     private void calcLinkLength() {
         String numStr = "";
         try {
@@ -1432,12 +1273,6 @@ public class EditorFrame
         repaint();
     }
     
-    private void setAgentAttribute() {
-        AgentBase.showAttributeDialog(editor.getMap(), getChildAgents());
-        clearSelection();
-        repaint();
-    }
-
     /**
      * 末端に当たるノードかどうかを返す。
      * getSeriesLinks() 用。
@@ -1614,12 +1449,6 @@ public class EditorFrame
         repaint();
     }
 
-    private void addAgentRoute() {
-        AgentBase.showRouteDialog(editor.getMap(), getChildAgents());
-        clearSelection();
-        repaint();
-    }
-
     private void setPollutionAttribute(int x, int y) {
         PollutedArea.showAttributeDialog(getChildPollutedAreas(), x, y);
         updatePollutionAreaTag();
@@ -1684,27 +1513,12 @@ public class EditorFrame
         repaint();
     }
 
-    private void removeSelectedAgents() {
-        editor._setModified(true);
-        ArrayList<AgentBase> agentsToRemove = new ArrayList<AgentBase>();
-        for (final AgentBase agent : getChildAgents()) {
-            if (agent.selected) {
-                agentsToRemove.add(agent);
-            }
-        }
-        for (AgentBase agent : agentsToRemove) {
-            editor.getMap().removeOBNode(current_group, agent, true);
-        }
-        editor.getAgentPanel().refresh();
-        repaint();
-    }
-
     private void removeSelectedPollution() {
         editor._setModified(true);
         ArrayList<PollutedArea> areasToRemove = new ArrayList<PollutedArea>();
-        for (final PollutedArea agent : getChildPollutedAreas()) {
-            if (agent.selected) {
-                areasToRemove.add(agent);
+        for (final PollutedArea area : getChildPollutedAreas()) {
+            if (area.selected) {
+                areasToRemove.add(area);
             }
         }
         for (PollutedArea area : areasToRemove) {
@@ -2374,10 +2188,6 @@ public class EditorFrame
             removeSelectedNodes();
             removeSelectedLinks();
             break;
-        case EDIT_AGENT:
-        case PLACE_AGENT:
-            removeSelectedAgents();
-            break;
         case EDIT_POLLUTION:
         case PLACE_POLLUTION:
             removeSelectedPollution();
@@ -2523,12 +2333,6 @@ public class EditorFrame
             case PLACE_NODE_LINK:
                 placeNodeLink(e);
                 return;
-            case PLACE_AGENT:
-                placeAgent(e);
-                break;
-            case EDIT_AGENT:
-                selectAgent(e);
-                break;
             case EDIT_POLLUTION:
                 selectArea(e);
                 break;
@@ -2546,10 +2350,6 @@ public class EditorFrame
             case PLACE_NODE_LINK:
                 placeNodeLink(e);
                 return;
-            case PLACE_AGENT:
-            case EDIT_AGENT:
-                manipulateAgent(e);
-                break;
             case EDIT_POLLUTION:
             case PLACE_POLLUTION:
                 manipulatePollution(e);
@@ -2657,14 +2457,6 @@ public class EditorFrame
                 }
                 editor.getLinkPanel().refresh();
                 break;
-            case EDIT_AGENT:
-                for (AgentBase agent : getChildAgents()) {
-                    if (selectedArea.contains(agent.getPos())) {
-                        agent.selected = true;
-                    }
-                }
-                editor.getAgentPanel().refresh();
-                break;
             case EDIT_POLLUTION:
                 for (PollutedArea area : getChildPollutedAreas()) {
                     // tkokada
@@ -2675,8 +2467,7 @@ public class EditorFrame
                         area.selected = true;
                     }
                     */
-                    // TODO: この & は問題ないのか?
-                    if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0 & area.selected) {
+                    if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0 && area.selected) {
                         area.selected = true;
                     } else {
                         area.selected = true;
@@ -2827,12 +2618,6 @@ public class EditorFrame
                 }
             }
             break;
-        case PLACE_AGENT:
-            if (placeHoverAgent(p)) {
-                panel.updateHoverAgent(hoverAgent);
-                panel.repaint();
-            }
-            break;
         case EDIT_NODE:
             if (updateHoverNode(p)) {
                 panel.updateHoverNode(hoverNode);
@@ -2842,12 +2627,6 @@ public class EditorFrame
         case EDIT_LINK:
             if (updateHoverLink(p)) {
                 panel.updateHoverLink(hoverLink);               
-                panel.repaint();
-            }
-            break;
-        case EDIT_AGENT:
-            if (updateHoverAgent(p)) {
-                panel.updateHoverAgent(hoverAgent);
                 panel.repaint();
             }
             break;
@@ -2932,10 +2711,6 @@ public class EditorFrame
         case KeyEvent.VK_Q:
             showLinks.setState(!showLinks.getState());
             status.setText("Showing links: " + showLinks.getState());
-            break;
-        case KeyEvent.VK_J:
-            showAgents.setState(!showAgents.getState());            
-            status.setText("Showing agents: " + showAgents.getState());
             break;
         case KeyEvent.VK_K:
             showGroups.setState(!showGroups.getState());

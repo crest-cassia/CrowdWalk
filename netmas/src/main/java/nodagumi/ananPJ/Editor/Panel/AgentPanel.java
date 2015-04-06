@@ -1,33 +1,15 @@
 package nodagumi.ananPJ.Editor.Panel;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -41,9 +23,6 @@ import javax.swing.table.TableColumnModel;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
-import nodagumi.ananPJ.Editor.AgentFactory;
-import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 
 import nodagumi.Itk.*;
@@ -54,11 +33,8 @@ public class AgentPanel extends JPanel
     private NetworkMapEditor editor = null;
     private ArrayList<AgentBase> agents = null;
     private AgentsDataModel data_model = null;
-    public AgentFactory agentFactory = null;
     
     JTable agent_table = null;
-    JCheckBox placeAgent = null;
-    JTextField agent_place_tag = null;
 
     final static String[] COLUMN_NAMES = { "Goal", "Type", "Position", "Route" };
 
@@ -116,7 +92,6 @@ public class AgentPanel extends JPanel
         agents = editor.getMap().getAgents();
         data_model = new AgentsDataModel();
         agent_table = new JTable(data_model);
-        agentFactory = new AgentFactory(editor, _random);
         setLayout(new BorderLayout());
         
         JPanel agent_list_panel = new JPanel(new BorderLayout());
@@ -128,77 +103,7 @@ public class AgentPanel extends JPanel
         agent_table.getSelectionModel().addListSelectionListener(this);
         agent_list_panel.add(tscrollpane, BorderLayout.CENTER);
 
-        /* manipulate list */
-        JPanel button_panel = new JPanel(new GridLayout(1, 2));
-        
-        placeAgent = new JCheckBox("place agent");
-        placeAgent.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == 2) {
-                    editor.setMode(EditorMode.EDIT_AGENT);
-                } else {
-                    editor.setMode(EditorMode.PLACE_AGENT);
-                }
-            }
-        });
-        button_panel.add(placeAgent);
-
-        JButton deleteAgents = new JButton("Delete selected agents");
-        deleteAgents.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (JOptionPane.showConfirmDialog(null, "Really remove agents?", "Proceed",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
-                        == JOptionPane.NO_OPTION) return;
-                ArrayList<AgentBase> agentsToRemove = new ArrayList<AgentBase>();
-                for (AgentBase agent : agents) {
-                    if (agent.selected) agentsToRemove.add(agent);
-                }
-                
-                for (AgentBase agent : agentsToRemove) {
-                    OBNode parent = (OBNode)agent.getParent();
-                    editor.getMap().removeOBNode(parent, agent, true);
-                }
-                refresh();
-            }
-        });
-        button_panel.add(deleteAgents);
-        agent_list_panel.add(button_panel, BorderLayout.SOUTH);
         add(agent_list_panel, BorderLayout.CENTER);     
-
-        /* agent generation */
-        JPanel generate_agent_panel = new JPanel(new BorderLayout());
-        generate_agent_panel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.BLACK), "generate agent"));
-        JPanel generate_manip_panel = new JPanel(new FlowLayout());
-
-        generate_manip_panel.add(new JLabel(" tag to place agent:"));
-        agent_place_tag = new JTextField();
-        agent_place_tag.setPreferredSize(new Dimension(300, 24));
-        generate_manip_panel.add(agent_place_tag);
-        JButton generateRandom = new JButton("Generate Randomly");
-        generateRandom.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-				Itk.logError("!!! placeAgentsRandomly() needs target now !!!") ;
-            } 
-        });
-        generate_manip_panel.add(generateRandom);
-        JButton generateEven = new JButton("Generate Evenly");
-        generateEven.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) { 
-				Itk.logError("!!! placeAgentsEvenly() needs target now !!!") ;
-			}
-        });
-        generate_manip_panel.add(generateEven);
-        generate_agent_panel.add(generate_manip_panel, BorderLayout.NORTH);
-
-        /* type of agent */
-        generate_agent_panel.add(agentFactory, BorderLayout.CENTER);
-
-        add(generate_agent_panel, BorderLayout.SOUTH);
     }
     
     @Override
@@ -250,14 +155,6 @@ public class AgentPanel extends JPanel
             TableColumn column = columnModel.getColumn(col);
             column.setPreferredWidth(max_width);
         }
-    }
-
-    public void setPlaceCheckBox(boolean b) {
-        placeAgent.setSelected(b);
-    }
-
-    public boolean getPlaceCheckBox() {
-        return placeAgent.getSelectedObjects() != null;
     }
 
     @Override

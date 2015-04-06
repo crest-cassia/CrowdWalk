@@ -10,24 +10,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
@@ -55,7 +48,6 @@ public class EditorFramePanel extends JPanel implements Serializable {
     /* parameters related to editing */
     private Hover hoverNode = null;
     private Hover hoverLink = null;
-    private AgentBase hoverAgent = null;
     private PollutedArea hoverArea = null;
     private Rectangle2D selectedArea = null;
     private Line2D scaleLine = null;
@@ -74,7 +66,6 @@ public class EditorFramePanel extends JPanel implements Serializable {
     private boolean showNodeLabels = false;
     private boolean showLinks = true;
     private boolean showLinkLabels = false;
-    private boolean showAgents = true;
     // tkokada, modified initial value
     //private boolean showGroups = true;
     private boolean showGroups = false;
@@ -364,12 +355,6 @@ public class EditorFramePanel extends JPanel implements Serializable {
             }
         }
         
-        if (showAgents) {
-            for (AgentBase agent : frame.getChildAgents()) {
-                agent.draw(g, false);
-            }
-        }
-        
         if (showGroups) {
             for (MapPartGroup group : frame.getChildGroups()) {
                 group.draw(g, false, showSubGroups);
@@ -439,14 +424,6 @@ public class EditorFramePanel extends JPanel implements Serializable {
             }
         }
         
-        if (hoverAgent != null) {
-            Point2D p = hoverAgent.getPos();
-            g.setColor(Color.WHITE);
-            g.fillOval((int)(p.getX()- 5), (int)(p.getY() - 5), 12, 12);
-            g.setColor(Color.BLUE);
-            g.fillOval((int)(p.getX()- 4), (int)(p.getY() - 4), 10, 10);
-        }
-
         if (hoverArea != null) {
             g.setColor(Color.BLUE);
             // tkokada
@@ -611,10 +588,6 @@ public class EditorFramePanel extends JPanel implements Serializable {
         hoverLink = _hoverLink;
     }
     
-    public void updateHoverAgent(AgentBase agent) {
-        hoverAgent = agent;
-    }
-    
     public void updateHoverArea(PollutedArea area) {
         hoverArea = area;
     }
@@ -643,10 +616,6 @@ public class EditorFramePanel extends JPanel implements Serializable {
         this.showLinks = showLinks;
     }
 
-    public void setShowAgents(boolean showAgents) {
-        this.showAgents = showAgents;
-    }
-    
     public void setShowGroups(boolean showGroups) {
         this.showGroups = showGroups;
     }
