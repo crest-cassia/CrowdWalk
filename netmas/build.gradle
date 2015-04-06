@@ -74,6 +74,15 @@ jar {
     }
 }
 
+javadoc {
+    destinationDir = file("./doc/javadoc/")
+    options.setEncoding("UTF-8")
+    options.charSet("UTF-8")
+    options.quiet()
+    options.noTimestamp()
+    setFailOnError(false)
+}
+
 task clearCache() {
     doFirst {
         File f = file("${System.getProperty("user.home")}/.gradle/cache/${project.group}/${project.name}")
