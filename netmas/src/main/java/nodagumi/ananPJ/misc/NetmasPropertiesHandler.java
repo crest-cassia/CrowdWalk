@@ -22,7 +22,403 @@ import nodagumi.ananPJ.Simulator.AgentHandler;
 
 import nodagumi.Itk.*;
 
-
+/**
+ * プロパティファイルを読み込んで設定値を参照する.
+ *
+ * <h3>プロパティファイルの記述形式</h3>
+ * <ul>
+ *   <li>
+ *     <p>JSON 形式</p>
+ *     <pre>
+ * {
+ *   "設定項目" : 設定値,
+ *            ・
+ *            ・
+ *            ・
+ *   "設定項目" : 設定値
+ * }</pre>
+ *   </li>
+ *   <li>
+ *     <p>XML 形式(非推奨)</p>
+ *     <pre>
+ * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+ * &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+ * &lt;properties&gt;
+ *     &lt;entry key="設定項目"&gt;設定値&lt;/entry&gt;
+ *                      ・
+ *                      ・
+ *                      ・
+ * &lt;/properties&gt;</pre>
+ *   </li>
+ * </ul>
+ *
+ * <h3>プロパティファイルの設定項目</h3>
+ * <ul>
+ *   <li>
+ *     <h4>debug</h4>
+ *     <pre>  デバッグモードの ON/OFF
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>map_file (設定必須)</h4>
+ *     <pre>  Map file へのファイルパス
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>generation_file (設定必須)</h4>
+ *     <pre>  Generation file へのファイルパス
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>scenario_file (設定必須)</h4>
+ *     <pre>  Scenario file へのファイルパス
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>fallback_file</h4>
+ *     <pre>  Fallback file(デフォルトセッティング値を記述した JSON ファイル) へのファイルパス
+ *  このファイルの内容はリソースデータ "fallbackParameters.json" の内容よりも優先される。
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>pollution_file</h4>
+ *     <pre>  Pollution file へのファイルパス
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>interpolation_interval</h4>
+ *     <pre>  Pollution データを線形補間する間隔(秒)
+ *  pollution file が設定されている時に設定する
+ *
+ *  設定値： 0       補間なし
+ *           1～n    この間隔で補間する
+ *  デフォルト値： 0</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>pollution_type</h4>
+ *     <pre>  pollution type(蓄積型or非蓄積型)の設定
+ *  pollution file が設定されている時に設定する
+ *  (例) 蓄積型：  ガス
+ *       非蓄積型：洪水
+ *
+ *  設定値： Accumulated | NonAccumulated
+ *  デフォルト値： NonAccumulated</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>pollution_color_saturation</h4>
+ *     <pre>  pollution level別の色の彩度の設定(図1,2)
+ *  pollution file が設定されている時に設定する
+ *  濃 0.0←--------→100.0 薄
+ *
+ *  設定値： 有理数
+ *  デフォルト値： 0.0</pre>
+ * <p>
+ *   <center>
+ *     <img src="./doc-files/pollution_color_saturation_1.png"/><br />図1　10.0のとき<br /><br />
+ *     <img src="./doc-files/pollution_color_saturation_2.png"/><br />図2　1.0のとき
+ *   </center>
+ * </p>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>pollution_color</h4>
+ *     <pre>  pollution地点の色の設定(図3)
+ *  pollution file が設定されている時に設定する
+ *
+ *  設定値： none | hsv | red | blue | orange
+ *           none：   なし
+ *           hsv：    pollution levelごとに色を変える
+ *           red：    赤色
+ *           blue：   青色
+ *           orange： オレンジ色
+ *  デフォルト値： orange</pre>
+ * <p>
+ *   <center>
+ *     <img src="./doc-files/pollution_color.png"/><br />図3　hsv のとき
+ *   </center>
+ * </p>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>camera_file</h4>
+ *     <pre>  シミュレーション画面で3D表示されている地図を映すカメラの位置情報を含んだ設定ファイル。
+ *  シミュレーション・ウィンドウのオープン時に Camera file を読み込んで Replay チェックボックスを ON にする。
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>link_appearance_file</h4>
+ *     <pre>  各リンクの設定を記述した設定ファイル
+ *
+ *  設定値： link_appearance_fileへのファイルパス(JSONまたはXML形式)
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>node_appearance_file</h4>
+ *     <pre>  各ノードの設定を記述した設定ファイル
+ *
+ *  設定値： node_appearance_fileへのファイルパス(JSONまたはXML形式)
+ *  デフォルト値： なし(シード指定なし)</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>randseed</h4>
+ *     <pre>  乱数発生のシード
+ *
+ *  設定値： 整数値
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>random_navigation</h4>
+ *     <pre>  random_navigation モードの ON/OFF
+ *  エージェントは通常、ゴールまでの最短距離を進むようになっているが、そのように進まないエージェントを
+ *  発生させるかどうかを設定することができる。
+ *  ※randseedの値を変更しないと、エージェントは同じ挙動をする。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>speed_model (設定必須)</h4>
+ *     <pre>  エージェントの歩行モデル
+ *  現在のところ必ず指定しなければならないが、廃止予定
+ *
+ *  設定値： density | expected_density | ???
+ *           density：エージェントの移動速度を前方の特定範囲のエージェント密度によって決定する。
+ *           expected_density：各エージェントが1ステップ以内に通過する可能性のあるリンクに対して
+ *                             重みをつけてエージェントの移動速度を決定する。
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>time_series_log</h4>
+ *     <pre>  時系列ログをとるかどうかの設定
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>time_series_log_path</h4>
+ *     <pre>  時系列ログを保管するディレクトリの指定
+ *  time_series_log が true の時に設定する
+ *
+ *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>time_series_log_interval</h4>
+ *     <pre>  ログを収集する時間の間隔の設定
+ *  time_series_log が true の時に設定する
+ *
+ *  設定値： 自然数
+ *  デフォルト値： 1</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>damage_speed_zero_log</h4>
+ *     <pre>  ダメージを受けて動けなくなってしまった(死んでしまった?)エージェントについてのログをとるかどうかの設定
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>damage_speed_zero_log_path</h4>
+ *     <pre>  死んでしまったエージェントについてのログの保管場所の指定
+ *  damage_speed_zero_log が true の時に設定する
+ *
+ *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>agent_movement_history_file</h4>
+ *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのログ(?)
+ *
+ *  設定値： agent_movement_history file へのファイルパス
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>individual_pedestrians_log_dir</h4>
+ *     <pre>  個別のエージェントに対するログデータを保管する場所の指定
+ *  ディレクトリを指定した時のみログを収集する。
+ *
+ *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>record_simulation_screen</h4>
+ *     <pre>  シミュレーション画面のスクリーンショットを記録する
+ *  ※clear_screenshot_dir が true ではなく、かつ出力先ディレクトリに画像ファイルが存在する
+ *    場合はエラー終了する。
+ *  ※この設定をtrueにすると、シミュレーションが遅くなる。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>screenshot_dir</h4>
+ *     <pre>  シミュレーション画面のスクリーンショットを保存するディレクトリ
+ *
+ *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
+ *  デフォルト値： screenshots</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>clear_screenshot_dir</h4>
+ *     <pre>  スクリーンショットディレクトリに存在する画像ファイル(.bmp|.gif|.jpg|.png)を
+ *  すべて削除する。
+ *  ※有効にするためには screenshot_dir の設定が必要
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>screenshot_image_type</h4>
+ *     <pre>  スクリーンショットの画像ファイル形式
+ *
+ *  設定値： bmp | gif | jpg | png
+ *  デフォルト値： png</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>weight</h4>
+ *     <pre>  1ステップごとの待ち時間(ミリ秒単位)
+ *  この設定値を小さくするとシミュレーションは早く進み、大きくするとシミュレーションは遅く進む。
+ *  早 0←--------→999 遅
+ *
+ *  設定値： 0～999
+ *  デフォルト値： 0</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>vertical_scale</h4>
+ *     <pre>  マップに対する垂直方向のスケールの大きさ
+ *
+ *  設定値： 0.1～49.9
+ *  デフォルト値： 1.0</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>agent_size</h4>
+ *     <pre>  エージェントの表示サイズ(図6,7)
+ *
+ *  設定値： 0.1～9.9
+ *  デフォルト値： 1.0</pre>
+ * <p>
+ *   <center>
+ *     <img src="./doc-files/agent_size_1.png"/><br />図6　1.0のとき<br /><br />
+ *     <img src="./doc-files/agent_size_2.png"/><br />図7　2.0のとき
+ *   </center>
+ * </p>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>zoom</h4>
+ *     <pre>  シミュレーション画面全体の表示倍率
+ *  camera_fileを設定し、シミュレーション画面のViewでReplayにチェックを入れたときに適用される。
+ *
+ *  設定値： 0.0～9.9
+ *  デフォルト値： 1.0</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>change_agent_color_depending_on_speed</h4>
+ *     <pre>  エージェントの移動速度によってエージェントの色を変化させる(図8,9)
+ *
+ *  設定値： true | false
+ *  デフォルト値： true</pre>
+ * <p>
+ *   <center>
+ *     <img src="./doc-files/change_agent_color_depending_on_speed_1.png"/><br />図8　true のとき<br /><br />
+ *     <img src="./doc-files/change_agent_color_depending_on_speed_2.png"/><br />図9　false のとき
+ *   </center>
+ * </p>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>show_status</h4>
+ *     <pre>  シミュレーション画面上にステータスラインを表示する。
+ *  通常のシミュレーション画面にはステータスラインは常に表示されているが、この設定を有効にすると
+ *  スクリーンショットにもステータスラインが表示される(図10,11)。
+ *
+ *  設定値： none | top | bottom
+ *           none：  表示しない
+ *           top：   上側に表示する
+ *           bottom：下側に表示する
+ *  デフォルト値： none</pre>
+ * <p>
+ *   <center>
+ *     <img src="./doc-files/show_status_1.png"/><br />図10　show_status を有効にしなかった場合のスクリーンショット<br /><br />
+ *     <img src="./doc-files/show_status_2.png"/><br />図11　show_status を top に設定した場合のスクリーンショット
+ *   </center>
+ * </p>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>show_logo</h4>
+ *     <pre>  シミュレーション画面に AIST ロゴを表示する(図12)
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ * <p>
+ *   <center>
+ *     <img src="./doc-files/show_logo.png"/><br />図12
+ *   </center>
+ * </p>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>simulation_window_open</h4>
+ *     <pre>  property fileを読み込んだ際に自動的に Simulation ウィンドウを開く
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>auto_simulation_start</h4>
+ *     <pre>  自動的に Simulation ウィンドウを開いて自動的にシミュレーションを開始する
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ * </ul>
+ */
 public class NetmasPropertiesHandler implements Serializable {
 
     private static final long serialVersionUID = 50125012L;
