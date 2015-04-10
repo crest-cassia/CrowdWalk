@@ -28,6 +28,9 @@ JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
 
 ##------------------------------------------------------------
 doc ::
+	( cd $(BASEDIR) ; gradle javadoc  )
+
+doc-old ::
 	(cd ../.. ;\
 	javadoc -d ../../../doc/javadoc -encoding utf-8 \
 	-charset utf-8 -subpackages nodagumi)
