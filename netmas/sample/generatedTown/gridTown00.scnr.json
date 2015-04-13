@@ -1,0 +1,12 @@
+[
+  { "type":"Initiate",
+    "atTime":"18:00:00"},
+  { "type":"Alert",
+    "atTime":"18:00:10",
+    "placeTag":"link_node_05_05__node_05_06",
+    "message":"foo-bar-baz"}
+  { "type":"Alert",
+    "atTime":"18:00:40",
+    "placeTag":"link_node_00_05__node_00_06",
+    "message":"emergency"}
+]

@@ -1,0 +1,41 @@
+#{ "version" : 2}
+[
+ {"rule":"EACH",
+  "agentType":{"className":"RationalAgent",
+               "weight": -0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "rule":[
+		   {"":"log",
+		    "":"null",
+		    "special":"alertMessages"},
+		   {"":"if",
+		    "condition":{"":"listenAlert",
+				 "message":"emergency"},
+		    "then":[{"":"changeGoal", "goal":"EXIT"},
+			    {"":"clearPlannedRoute"},
+			    {"x":"log","tag":"change goal to EXIT"},
+			    {"":"clearAlert", "message":"emergency"}]}
+	       ]},
+  "total":1000,"speedModel":"PLAIN",
+  "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"node_09_09",
+  "plannedRoute":["node_02_09","node_04_00","node_06_09","node_08_00"]},
+ {"rule":"EACH",
+  "agentType":{"className":"RationalAgent",
+	       "weight":-0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "rule":[
+		   {"":"log",
+		    "":"null",
+		    "tag":"Hello",
+		    "value":{"":"quote", "value":"bar"}}
+	       ]},
+  "total":1000,"speedModel":"PLAIN",
+  "startPlace":"link_node_00_08__node_00_09","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"node_09_00",
+  "plannedRoute":["node_02_00","node_04_09","node_06_00","node_08_09"]}
+]

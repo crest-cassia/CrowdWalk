@@ -177,6 +177,13 @@ run2it ::
 run2it_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE2it))
 
+##-----
+SAMPLE3gt00 = sample/generatedTown/gridTown00.prop.json
+run3gt00 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00))
+run3gt00_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00))
+
 
 ##------------------------------------------------------------
 FOO = a b c
