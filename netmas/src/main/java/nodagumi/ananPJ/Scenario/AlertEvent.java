@@ -27,6 +27,7 @@ import nodagumi.Itk.* ;
  *  { "type" : "Alert",
  *    "atTime" : __Time__,
  *    "placeTag" : __Tag__,
+ *    ("onoff" : ( true | false ),)?
  *    "message" : __String__}
  *
  *  __Time__ ::= "hh:mm:ss"
@@ -49,6 +50,14 @@ public class AlertEvent extends PlacedEvent {
      */
     public Term message = null ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 正操作か逆操作かどうか
+     * onoff == true ならば、Alert をセット
+     * そうでなければ、Alert を clear する。
+     */
+    public boolean onoff = true ;
+
     //----------------------------------------
     /**
      * JSON Term による setup
@@ -58,6 +67,11 @@ public class AlertEvent extends PlacedEvent {
         super.setupByJson(_scenario, eventDef) ;
 
         message = eventDef.getArgTerm("message") ;
+        if(eventDef.hasArg("onoff")) {
+            onoff = eventDef.getArgBoolean("onoff") ;
+        } else {
+            onoff = true ;
+        }
     }
 
     //----------------------------------------
@@ -69,7 +83,7 @@ public class AlertEvent extends PlacedEvent {
      */
     @Override
     public boolean occur(double time, NetworkMapBase map) {
-	return occur(time, map, false) ;
+        return occur(time, map, !onoff) ;
     }
 
     //----------------------------------------
@@ -81,7 +95,7 @@ public class AlertEvent extends PlacedEvent {
      */
     @Override
     public boolean unoccur(double time, NetworkMapBase map) {
-	return occur(time, map, true) ;
+        return occur(time, map, onoff) ;
     } ;
 
     //----------------------------------------
@@ -103,6 +117,7 @@ public class AlertEvent extends PlacedEvent {
                 } else {
                     double relativeTime = scenario.calcRelativeTime(time) ;
                     link.addAlertMessage(message, relativeTime, !inverse) ;
+                    Itk.logInfo("AlertEvent",onoff,link,message,relativeTime) ;
                 }
             }
         }

@@ -345,6 +345,14 @@ implements Comparable<AgentBase>, Serializable {
 
     //------------------------------------------------------------
     /**
+     * 全経路をセット
+     */
+    public void insertRouteTagSafely(Term tag) {
+        routePlan.insertSafely(tag) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 全経路を取得
      */
     public List<Term> getPlannedRoute() {

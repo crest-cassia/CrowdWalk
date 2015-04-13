@@ -35,6 +35,12 @@ public class RoutePlan {
      */
     private List<Term> route = null ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * route が share されているかどうか？
+     */
+    private boolean shared = true ;
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -65,7 +71,21 @@ public class RoutePlan {
      * route をセット
      */
     public RoutePlan setRoute(List<Term> _route) {
-        route = _route ;
+        return setRoute(_route, false) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * route をセット
+     */
+    public RoutePlan setRoute(List<Term> _route, boolean copy) {
+        if(copy) {
+            route = new ArrayList<Term>(_route) ;
+            shared = false ;
+        } else {
+            route = _route ;
+            shared = true ;
+        }
         return this ;
     }
 
@@ -173,10 +193,49 @@ public class RoutePlan {
 
     //------------------------------------------------------------
     /**
-     * プランの追加
+     * プランの追加(末尾)
      */
     public RoutePlan add(Term tag) {
         route.add(tag) ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * プランの追加(末尾)
+     */
+    public RoutePlan addSafely(Term tag) {
+        if(shared) {
+            route = new ArrayList<Term>(route) ;
+            shared = false ;
+        }
+        add(tag) ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * プランの追加
+     */
+    public RoutePlan insertSafely(Term tag) {
+        if(shared) {
+            route = new ArrayList<Term>(route) ;
+            shared = false ;
+        }
+        insert(tag) ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * プランの追加
+     */
+    public RoutePlan insert(Term tag) {
+        route.add(null) ;
+        for(int i = route.size() ; i > index ; i--) {
+            route.set(i-1, route.get(i-2)) ;
+        }
+        route.set(index, tag) ;
         return this ;
     }
 
@@ -193,8 +252,9 @@ public class RoutePlan {
      * プランの追加
      */
     public RoutePlan copyFrom(RoutePlan origin) {
-        route = origin.getRoute() ;
-        index = origin.getIndex() ;
+        setRoute(origin.getRoute()) ;
+        setIndex(origin.getIndex()) ;
+        shared = origin.shared ;
         return this ;
     }
 

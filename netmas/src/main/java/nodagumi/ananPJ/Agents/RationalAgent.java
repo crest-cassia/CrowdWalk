@@ -136,6 +136,7 @@ public class RationalAgent extends BustleAgent
      */
     public void alertMessage(Term message, double time) {
         alertedMessageTable.put(message, time) ;
+        Itk.logInfo("hear Alert Message", this, message, time, currentPlace) ;
     }
 
     //------------------------------------------------------------

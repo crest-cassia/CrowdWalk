@@ -62,6 +62,7 @@ import nodagumi.Itk.* ;
  *   <li>{@link #think_clearAllAlert "clearAllAlert"}</li>
  *   <li>{@link #think_changeGoal "changeGoal"}</li>
  *   <li>{@link #think_clearPlannedRoute "clearPlannedRoute"}</li>
+ *   <li>{@link #think_insertRoute "insertRoute"}</li>
  * </ul>
  * また、上記にマッチしないアトム（配列でもオブジェクトでもないデータ）は、
  * その値を直接返す。（リテラル扱い）
@@ -79,7 +80,6 @@ public class ThinkEngine {
      */
     private Term rule = null ;
 
-    
     //------------------------------------------------------------
     // 特殊 Term
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -396,6 +396,8 @@ public class ThinkEngine {
             return think_changeGoal(head, expr) ;
         } else if(head.equals("clearPlannedRoute")) {
             return think_clearPlannedRoute(head, expr) ;
+        } else if(head.equals("insertRoute")) {
+            return think_insertRoute(head, expr) ;
         } else if(expr.isAtom()) { 
             // expr がアトムで、かつ予約語でなければ、そのまま返す。
             return expr ;
@@ -569,11 +571,30 @@ public class ThinkEngine {
      * <pre>
      * { "" : "clearPlannedRoute" }
      * </pre>
-     * 注意：push PlannedRoute などを考える場合、PlannedRoute を
-     * コピーすべきか再考。（現状で、routeはエージェント同士で共有している）
      */
     public Term think_clearPlannedRoute(String head, Term expr) {
         agent.setPlannedRoute(new ArrayList<Term>()) ;
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(insert route)。
+     * <pre>
+     * { "" : "insertRoute",
+     *   "route" : _route_ }
+     * _route_ ::= _tag_ || [_tag_, _tag_, ...]
+     * </pre>
+     */
+    public Term think_insertRoute(String head, Term expr) {
+        Term route = expr.getArgTerm("route") ;
+        if(route.isArray()) {
+            for(int i = route.getArray().size() ; i > 0 ; i--) {
+                agent.insertRouteTagSafely(route.getNthTerm(i-1)) ;
+            }
+        } else {
+            agent.insertRouteTagSafely(route) ;
+        }
         return Term_True ;
     }
 
