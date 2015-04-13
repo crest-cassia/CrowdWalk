@@ -20,7 +20,7 @@ require 'pp' ;
 
 require 'ItkXml.rb' ;
 require 'GridTown.rb' ;
-#require 'RadialTown.rb' ;
+require 'RadialTown.rb' ;
 
 #------------------------------------------------------------------------
 #++
@@ -28,7 +28,7 @@ $conf =
   OpenStruct.new({ :outFile => nil,
                    :townType => :grid,
                    :gridConf => GridTown::DefaultConf.dup,
-#                   :radialConf => RadialTown::DefaultConf.dup,
+                   :radialConf => RadialTown::DefaultConf.dup,
                    :pruneN => 0,
                    }) ;
 
@@ -56,12 +56,12 @@ _END_
   }
   op.on("--unit LENGTH", Float, sep + "[grid/radial] unit grid length.") {|len|
     $conf.gridConf[:gridLength] = len ;
-    $conf.radialConf[:gridLength] = len  if($conf.radialConf) ;;
+    $conf.radialConf[:gridLength] = len ;
   }
   op.on("--size N", Integer, sep + "[grid/radial] size.") {|size|
     $conf.gridConf[:sizeX] = size ;
     $conf.gridConf[:sizeY] = size ;
-    $conf.radialConf[:size] = size if($conf.radialConf) ;
+    $conf.radialConf[:size] = size ;
   }
   op.on("--sizeX X", Integer, sep + "[grid] size X.") {|size|
     $conf.gridConf[:sizeX] = size ;
@@ -71,14 +71,17 @@ _END_
   }
   op.on("--width WIDTH", Float, sep + "[grid/radial] line weidth.") {|width|
     $conf.gridConf[:lineWidth] = width ;
-    $conf.radialConf[:lineWidth] = width  if($conf.radialConf) ;;
+    $conf.radialConf[:lineWidth] = width  ;
   }
-  op.on("--divide FACTOR", Float, sep + "[radial] dividing facto.") {|factor|
+  op.on("--divide FACTOR", Float, sep + "[radial] dividing factor.") {|factor|
     $conf.radialConf[:divideFactor] = factor ;
+  }
+  op.on("--angleUnit RATIO", Float, sep + "[radial] angle unit ratio.") {|ratio|
+    $conf.radialConf[:angleRatio] = ratio ;
   }
   op.on("--random SIZE", Float, sep + "[grid] line weidth.") {|random|
     $conf.gridConf[:randomSize] = random ;
-    $conf.radialConf[:randomSize] = random  if($conf.radialConf) ;;
+    $conf.radialConf[:randomSize] = random ;
   }
   op.on("--prune N", Integer, sep + "[grid] line weidth.") {|n|
     $conf.pruneN = n ;
