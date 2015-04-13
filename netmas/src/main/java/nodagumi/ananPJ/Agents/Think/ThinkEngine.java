@@ -62,7 +62,7 @@ import nodagumi.Itk.* ;
  *   <li>{@link #think_clearAllAlert "clearAllAlert"}</li>
  *   <li>{@link #think_changeGoal "changeGoal"}</li>
  *   <li>{@link #think_clearPlannedRoute "clearPlannedRoute"}</li>
- * </dl>
+ * </ul>
  * また、上記にマッチしないアトム（配列でもオブジェクトでもないデータ）は、
  * その値を直接返す。（リテラル扱い）
  */

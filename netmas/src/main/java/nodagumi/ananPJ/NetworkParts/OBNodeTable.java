@@ -24,7 +24,7 @@ import nodagumi.Itk.*;
 //======================================================================
 /**
  * OBNode のテーブル。 
- * ArrayList<OBNode> を置き換え、各種機能を提供する。
+ * ArrayList&lt;OBNode&gt; を置き換え、各種機能を提供する。
  */
 public class OBNodeTable<T extends OBNode> extends ArrayList<T> {
     //------------------------------------------------------------

@@ -71,7 +71,7 @@ public class ClassFinder {
     /**
      * alias table を参照しつつ、fullname を探す。
      * もし alias されていなければ、そのまま返す。
-     * @param shortName 探す名前
+     * @param name 探す名前
      */
     public String fullname(String name)
     {
@@ -86,7 +86,7 @@ public class ClassFinder {
     //------------------------------------------------------------
     /**
      * クラスを見つけて、インスタンスを生成する。
-     * @param Name クラスの名前
+     * @param name クラスの名前
      */
     public Object newByName(String name)
         throws ClassNotFoundException, 

@@ -1306,9 +1306,9 @@ implements java.io.Serializable</pre>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>
 <dd><code>node</code> - : このノードにおけるターゲットを探す。</dd>
-<dd><code>workingPlan</code> - : 指定された RoutePlan。shiftする可能性がある。</dd>
+<dd><code>workingRoutePlan</code> - : 指定された RoutePlan。shiftする可能性がある。</dd>
 <dt><span class="returnLabel">戻り値:</span></dt>
-<dd>: workingPlan の index 以降の次のターゲット、もしくは goal。
+<dd>: workingRoutePlan の index 以降の次のターゲット、もしくは goal。
  [2014.12.30 I.Noda] analysis
  次に来る、hint に記載されている route target を取り出す。
  今、top の target が現在のノードのタグにある場合、
@@ -1345,8 +1345,8 @@ implements java.io.Serializable</pre>
 <div class="block">あるplaceから現在のroutePlanの次の目的地までのコスト。</div>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>workingPlace</code> - : 現在地を示す Place</dd>
-<dd><code>workingRoutePlan</code> - : 現在の経路計画。保存される。</dd>
+<dd><code>_place</code> - : 現在地を示す Place</dd>
+<dd><code>_routePlan</code> - : 現在の経路計画。保存される。</dd>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>コスト<br>次の目的地へのルートが見つからない場合は Double.MAX_VALUE を返す</dd>
 </dl>

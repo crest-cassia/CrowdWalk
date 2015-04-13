@@ -333,7 +333,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     /**
      * Set isTimeSeriesLog.
-     * @param isTimeSeriesLog the value to set.
+     * @param _isTimeSeriesLog the value to set.
      */
     public void setIsTimeSeriesLog(boolean _isTimeSeriesLog) {
         isTimeSeriesLog = _isTimeSeriesLog;
@@ -349,7 +349,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     /**
      * Set timeSeriesLogPath.
-     * @param timeSeriesLogPath the value to set.
+     * @param _timeSeriesLogPath the value to set.
      */
     public void setTimeSeriesLogPath(String _timeSeriesLogPath) {
         timeSeriesLogPath = _timeSeriesLogPath;
@@ -365,7 +365,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     /**
      * Set timeSeriesLogInterval.
-     * @param timeSeriesLogInterval the value to set.
+     * @param _timeSeriesLogInterval the value to set.
      */
     public void setTimeSeriesLogInterval(int _timeSeriesLogInterval) {
         timeSeriesLogInterval = _timeSeriesLogInterval;

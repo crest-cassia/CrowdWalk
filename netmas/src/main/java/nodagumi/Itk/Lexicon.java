@@ -130,7 +130,7 @@ public class Lexicon {
     //------------------------------------------------------------
     /**
      * register word enum
-     * @param enumClass Enum で宣言したクラス (<EnumType>.class) 
+     * @param enumClass Enum で宣言したクラス (&lt;EnumType&gt;.class) 
      */
     public Lexicon registerEnum(Class<?> enumClass) {
         return registerEnum(enumClass, false) ;
@@ -139,7 +139,7 @@ public class Lexicon {
     //------------------------------------------------------------
     /**
      * register word enum
-     * @param enumClass Enum で宣言したクラス (<EnumType>.class)
+     * @param enumClass Enum で宣言したクラス (&lt;EnumType&gt;.class)
      * @param forceP 上書きするかどうか
      */
     public Lexicon registerEnum(Class<?> enumClass, boolean forceP) {
@@ -261,7 +261,7 @@ public class Lexicon {
     //------------------------------------------------------------
     /**
      * register word enum in primal
-     * @param enumClass Enum で宣言したクラス (<EnumType>.class) 
+     * @param enumClass Enum で宣言したクラス (&lt;EnumType&gt;.class) 
      */
     static public Lexicon _registerEnum(Class<?> enumClass) {
         return primal.registerEnum(enumClass) ;
@@ -270,7 +270,7 @@ public class Lexicon {
     //------------------------------------------------------------
     /**
      * register word enum in primal
-     * @param enumClass Enum で宣言したクラス (<EnumType>.class)
+     * @param enumClass Enum で宣言したクラス (&lt;EnumType&gt;.class)
      * @param forceP 上書きするかどうか
      */
     static public Lexicon _registerEnum(Class<?> enumClass, boolean forceP) {

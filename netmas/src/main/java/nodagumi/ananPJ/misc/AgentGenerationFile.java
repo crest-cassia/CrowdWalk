@@ -418,7 +418,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
      * try to check mode line
      * [example]
      *   # { 'version' : '1' }
-     * @param modeline 最初の行
+     * @param reader 最初の行を含む Reader
      * @return modelineの形式であれば true を返す。
      */
     public boolean tryScanModeLine(BufferedReader reader) {

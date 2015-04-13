@@ -37,29 +37,29 @@ import nodagumi.Itk.*;
  * 同じ扱いとする。
  *
  * JSON で表すときには、
- *     {"":<head>, <slot1>:<value1>, <slot2>:<value2>...} 
+ *     {"":_head_, _slot1_:_value1_, _slot2_:_value2_...} 
  * と表記する。
- * 引数のない場合は、単なる<head>だけの文字列と等価。
+ * 引数のない場合は、単なる_head_だけの文字列と等価。
  * すなわち、
- *     {"":<head>} == <head>
+ *     {"":_head_} == _head_
  * 配列は、
- *     [<value>,<value>,...]
+ *     [_value_,_value_,...]
  *
  * CSV の中での表記では、
- *     <head>(<slot1>:<value1>,<slot2>:<value2>...)
+ *     _head_(_slot1_:_value1_,_slot2_:_value2_...)
  * とする。ただしこの表記方法は obsolete。将来の保証はない。
  *
  * また、特例として、slot 名のない表記
- *     <head>(<value1>,<value2>...)
+ *     _head_(_value1_,_value2_...)
  * は以下と同じとみなす。
- *     <head>("1":<value1>,"2":<value2>...)
+ *     _head_("1":_value1_,"2":_value2_...)
  * CSV形式で配列はない。
  * 上と同じく、引数なしは引数ゼロと同じ。
- *     <head>() == <head>
+ *     _head_() == _head_
  *
- * <head> の無い (nullである) Objectを許す。
+ * _head_ の無い (nullである) Objectを許す。
  *
- * <head> も <body> もない項は null と同じとみなす。
+ * _head_ も _body_ もない項は null と同じとみなす。
  */
 public class Term {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

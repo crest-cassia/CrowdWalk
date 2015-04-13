@@ -1177,8 +1177,8 @@ public class WalkAgent extends AgentBase implements Serializable {
     /**
      * 指定された RoutePlan で、次のターゲットを得る。
      * @param node : このノードにおけるターゲットを探す。
-     * @param workingPlan : 指定された RoutePlan。shiftする可能性がある。
-     * @return : workingPlan の index 以降の次のターゲット、もしくは goal。
+     * @param workingRoutePlan : 指定された RoutePlan。shiftする可能性がある。
+     * @return : workingRoutePlan の index 以降の次のターゲット、もしくは goal。
      * [2014.12.30 I.Noda] analysis
      * 次に来る、hint に記載されている route target を取り出す。
      * 今、top の target が現在のノードのタグにある場合、
@@ -1232,8 +1232,8 @@ public class WalkAgent extends AgentBase implements Serializable {
     //------------------------------------------------------------
     /**
      * あるplaceから現在のroutePlanの次の目的地までのコスト。
-     * @param workingPlace : 現在地を示す Place
-     * @param workingRoutePlan : 現在の経路計画。保存される。
+     * @param _place : 現在地を示す Place
+     * @param _routePlan : 現在の経路計画。保存される。
      * @return コスト<br>次の目的地へのルートが見つからない場合は Double.MAX_VALUE を返す
      */
     public double calcCostFromPlaceTo(Place _place,

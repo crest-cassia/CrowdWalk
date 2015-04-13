@@ -1379,7 +1379,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     /**
      * Set isTimerEnabled.
-     * @param isTimerEnabled the value to set.
+     * @param _isTimerEnabled the value to set.
      */
     public void setIsTimerEnabled(boolean _isTimerEnabled) {
         isTimerEnabled = _isTimerEnabled;
@@ -1442,7 +1442,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     /**
      * Set isTimeSeriesLog.
-     * @param isTimeSeriesLog the value to set.
+     * @param _isTimeSeriesLog the value to set.
      */
     public void setIsTimeSeriesLog(boolean _isTimeSeriesLog) {
         isTimeSeriesLog = _isTimeSeriesLog;
@@ -1458,7 +1458,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     /**
      * Set timeSeriesLogPath.
-     * @param timeSeriesLogPath the value to set.
+     * @param _timeSeriesLogPath the value to set.
      */
     public void setTimeSeriesLogPath(String _timeSeriesLogPath) {
         timeSeriesLogPath = _timeSeriesLogPath;
@@ -1474,7 +1474,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
     /**
      * Set timeSeriesLogInterval.
-     * @param timeSeriesLogInterval the value to set.
+     * @param _timeSeriesLogInterval the value to set.
      */
     public void setTimeSeriesLogInterval(int _timeSeriesLogInterval) {
         timeSeriesLogInterval = _timeSeriesLogInterval;

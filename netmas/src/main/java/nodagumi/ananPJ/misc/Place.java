@@ -74,7 +74,7 @@ public class Place {
     /**
      * constractor
      * @param _link : エージェントのいるリンク
-     * @param _node : 入った側のノード
+     * @param _enteringNode : 入った側のノード
      */
     public Place(MapLink _link, MapNode _enteringNode) {
         set(_link, _enteringNode, true, 0.0) ;

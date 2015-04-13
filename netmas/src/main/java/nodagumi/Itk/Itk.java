@@ -65,9 +65,9 @@ public class Itk {
     //------------------------------------------------------------
     /**
      * デバッグ用出力汎用コマンド(出力ストリーム指定付)
-     * @param stream : 出力用ストリーム
+     * @param strm : 出力用ストリーム
      * @param tag : 行の先頭のタグ
-     * @param object : 出力するオブジェクト
+     * @param objects : 出力するオブジェクト
      */
     static public void dbgGeneric(PrintStream strm,
                                   String tag, Object... objects) {
@@ -101,7 +101,7 @@ public class Itk {
     /**
      * デバッグ用出力汎用コマンド
      * @param tag 行の先頭のタグ
-     * @param object 出力するオブジェクト
+     * @param objects 出力するオブジェクト
      */
     static public void dbgGeneric(String tag, Object... objects) {
         dbgGeneric(dbgOutStream, tag, objects) ;
@@ -112,7 +112,7 @@ public class Itk {
      * デバッグ用出力汎用コマンド
      * @param tag 行の先頭のタグ
      * @param label 先頭に出すラベル
-     * @param object 出力するオブジェクト
+     * @param objects 出力するオブジェクト
      */
     static public void dbgGeneric(String tag, String label, Object... objects) {
         dbgGeneric(tag + "[" + label + "]", objects) ;
@@ -152,7 +152,6 @@ public class Itk {
     //------------------------------------------------------------
     /**
      * デバッグ用出力コマンド
-     * @param label 先頭に出すラベル
      * @param object 出力するオブジェクト
      */
     static public void dbgVal(Object object) {
@@ -307,7 +306,7 @@ public class Itk {
     /**
      * ログ用出力汎用コマンド
      * @param tag 行の先頭のタグ
-     * @param object 出力するオブジェクト
+     * @param objects 出力するオブジェクト
      */
     static public void logGeneric(String tag, Object... objects) {
         dbgGeneric(logOutStream, tag, objects) ;
@@ -318,7 +317,7 @@ public class Itk {
      * ログ用出力汎用コマンド
      * @param tag 行の先頭のタグ
      * @param label 先頭に出すラベル
-     * @param object 出力するオブジェクト
+     * @param objects 出力するオブジェクト
      */
     static public void logGeneric(String tag, String label, Object... objects) {
         logGeneric(tag + "[" + label + "]", objects) ;
@@ -758,7 +757,7 @@ public class Itk {
 
         //------------------------------
         /**
-         * Json Object (Map<String,Object>) への変換
+         * Json Object (Map&lt;String,Object&gt;) への変換
          */
         static public Map<String,Object> pickObject(Map<String,Object> object,
                                                     String key){
@@ -791,7 +790,7 @@ public class Itk {
 
         //------------------------------
         /**
-         * Json Object (Map<String,Object>) への変換
+         * Json Object (Map&lt;String,Object&gt;) への変換
          */
         static public Map<String,Object> convertObject(Object object){
             return (Map<String,Object>)object ;
