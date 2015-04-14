@@ -29,11 +29,6 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
-import nodagumi.ananPJ.navigation.CalcPath;
-import nodagumi.ananPJ.navigation.Dijkstra;
-import nodagumi.ananPJ.navigation.NavigationHint;
-import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
-import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
 import nodagumi.Itk.*;
 
@@ -335,9 +330,6 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
     }
     
-    private ArrayList<String> validRouteKeys;
-    public boolean isValidRouteKey(String route) { return validRouteKeys.contains(route); }
-
     class CalcGoalPath implements Runnable {
         public boolean goalCalculated = false;
         public String goalTag;
@@ -351,50 +343,12 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
 
         private boolean calc_goal_path(String goal_tag) {
-            CalcPath.Nodes goals = new CalcPath.Nodes();
-	    for (MapNode node : map.getNodes()) {
-                if (node.hasTag(goal_tag)) goals.add(node);
-            }
-	    for (MapLink link : map.getLinks()) {
-                if (link.hasTag(goal_tag)) {
-                    goals.add(link.getFrom());
-                    goals.add(link.getTo());
-                }
-            }
-            if (goals.size() == 0) {
-		Itk.logWarn("No Goal", goal_tag) ;
-                return false;
-            }
-            Itk.logInfo("Found Goal", goal_tag) ;
-
-            Dijkstra.Result result = Dijkstra.calc(goals,
-                    new PathChooser() {
-                public double evacuationRouteCost(MapLink link) {
-                    //if (link.isStair()) return 5.0;
-                    return 1.0;
-                }
-                public boolean isExit(MapLink link) {
-                    return false;
-                }
-                public double initialCost(MapNode node) {
-                    return 0.0;
-                }
-            });
-            synchronized(map.getNodes()) {
-                validRouteKeys.add(goal_tag);
-                for (MapNode node : result.keySet()) {
-                    NodeLinkLen nll = result.get(node);
-                    node.addNavigationHint(goal_tag,
-                            new NavigationHint(nll.node, nll.link, nll.len));
-                }
-            }
-            return true;
+	    return map.calcGoalPath(goal_tag) ;
         }
     }
 
     private void buildRoutes() {
         /* evacuation based on goal tags */
-        validRouteKeys = new ArrayList<String>();;
         ArrayList<String> all_goal_tags = agentHandler.getAllGoalTags();
 
 	/* [2015.04.14 I.Noda]
