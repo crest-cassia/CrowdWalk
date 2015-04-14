@@ -12,9 +12,9 @@
 		   {"":"if",
 		    "condition":{"":"listenAlert",
 				 "message":"emergency"},
-		    "then":[{"":"changeGoal", "goal":"node_02_00"},
+		    "then":[{"":"changeGoal", "goal":"node_09_05"},
 			    {"":"clearPlannedRoute"},
-			    {"":"log","tag":"change goal to 02_00"},
+			    {"":"log","tag":"change goal to 09_05"},
 			    {"":"clearAlert", "message":"emergency"}]}
 		   {"":"if",
 		    "condition":{"":"listenAlert",

@@ -253,6 +253,7 @@ public class MapNode extends OBMapPart implements Serializable {
             if(hasTag(key)) { // 自分自身がターゲットの場合
                 // do nothing
             } else { // target の情報が見つからない場合。
+                Itk.logWarn("Target Not Found", "target:", key) ;
                 throw new TargetNotFoundException(key + " not found for id=" + ID + "(" + getTagString() + ")");
             }
             return 0.0 ;

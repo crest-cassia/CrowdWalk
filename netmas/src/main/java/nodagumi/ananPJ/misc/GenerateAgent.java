@@ -27,6 +27,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Simulator.EvacuationModelBase;
 import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 
 import nodagumi.Itk.*;
 
@@ -309,13 +310,19 @@ public abstract class GenerateAgent implements Serializable {
      * 指定した時間までの分を生成するようにすべき。
      */
     int generated = 0;
+
     /* TODO must wait finish until generate &
      * must control here with scenario */
+    //------------------------------------------------------------
+    /**
+     * エージェント生成
+     */
     public void tryUpdateAndGenerate(double time,
-            double timeScale,
-            double tick,
-            EvacuationModelBase model,
-            List<AgentBase> agents) {
+                                     double timeScale,
+                                     double tick,
+                                     EvacuationModelBase model,
+                                     List<AgentBase> agents,
+                                     NetworkMapBase map) {
         if (!enabled) return;
 
         if (finished(time)) {
@@ -377,6 +384,7 @@ public abstract class GenerateAgent implements Serializable {
                  new Term(new ArrayList<Term>(planned_route))) ;
             agent.setPlannedRoute((List)planned_route_in_Term.getArray());
 
+            agent.setMap(map) ;
             place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
             for (final String tag : tags) {

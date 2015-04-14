@@ -275,8 +275,9 @@ public class AgentHandler implements Serializable {
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
                 factory.tryUpdateAndGenerate(scenario.calcAbsoluteTime(time),
-                        model.getTimeScale(),
-                        time, model, generated_agents_step);
+                                             model.getTimeScale(),
+                                             time, model,
+                                             generated_agents_step, map);
             }
         }
 

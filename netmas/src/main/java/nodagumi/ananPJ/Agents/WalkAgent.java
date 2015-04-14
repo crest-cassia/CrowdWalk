@@ -1222,7 +1222,18 @@ public class WalkAgent extends AgentBase implements Serializable {
      * ある _node においてあるwayを選択した場合の目的地(_target)までのコスト。
      * ここを変えると、経路選択の方法が変えられる。
      */
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target)
+        throws TargetNotFoundException
+    {
+        /* [2015.04.14 I.Noda]
+         * もし新しい target なら、経路探査する。
+         */
+        String targetTag = _target.getString() ;
+        if(!map.isValidRouteKey(targetTag)) {
+            Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
+            map.calcGoalPathWithSync(targetTag) ;
+        }
+
         MapNode other = _way.getOther(_node);
         double cost = other.getDistance(_target) ;
         cost += _way.length;

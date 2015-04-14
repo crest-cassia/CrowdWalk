@@ -137,5 +137,20 @@ public class NetworkMapBase extends DefaultTreeModel {
         return true;
     }
 
+    //------------------------------------------------------------
+    /**
+     * synchronized された経路探索
+     * @return 探索成功かどうか。goal_tag が探索済みでも true を返す。
+     */
+    public boolean calcGoalPathWithSync(String goal_tag) {
+        synchronized(validRouteKeys) {
+            if(isValidRouteKey(goal_tag)) {
+                return true ;
+            } else {
+                return calcGoalPath(goal_tag) ;
+            }
+        }
+    }
+
 } // class NetworkMapBase
 

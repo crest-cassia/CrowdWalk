@@ -14,6 +14,7 @@ import javax.vecmath.Vector3d;
 import org.w3c.dom.Element;
 
 import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -66,6 +67,12 @@ implements Comparable<AgentBase>, Serializable {
     private boolean evacuated = false;
     private boolean stuck = false;
     public double currentTime ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * map: 自分の存在しているマップ。
+     */
+    protected NetworkMapBase map = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -272,6 +279,14 @@ implements Comparable<AgentBase>, Serializable {
      */
     public int getAgentNumber() {
         return agentNumber;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * マップをセット
+     */
+    public void setMap(NetworkMapBase _map) {
+        map = _map ;
     }
 
     //------------------------------------------------------------
