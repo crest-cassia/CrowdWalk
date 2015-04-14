@@ -289,11 +289,7 @@ public abstract class GenerateAgent implements Serializable {
         if (conditions == null) return;
         for (int i = 0; i < conditions.length; i++) {
             final String condition = conditions[i];
-            if (condition.startsWith("COLOR=")) {
-                tags.add(condition.substring(6));
-            } else {
-                tags.add(condition);
-            }
+            tags.add(condition);
         }
     }
 

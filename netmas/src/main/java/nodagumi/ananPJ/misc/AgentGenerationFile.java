@@ -74,6 +74,7 @@ import nodagumi.Itk.*;
  *          "plannedRoute" : [ __Tag__, __Tag__, ... ]
  *        }
  *      </pre>
+ *       __Conditions__ は、生成されたエージェントに付与されるタグの配列。
  *     </dd>
  *   <dt>RANDOM</dt>
  *     <dd>
@@ -875,20 +876,38 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         // ignore が true なら、項目を無視する。
         if(json.getArgBoolean("ignore")) { return null ; }
 
+        // rule
         Rule ruleTag = 
             (Rule)ruleLexicon.lookUp(json.getArgString("rule")) ;
         GenerationConfigBase genConfig = newConfigForRuleTag(ruleTag) ;
 
         genConfig.originalInfo = json.toJson() ;
 
+        // agentType & className ;
         Term agentType = json.getArgTerm("agentType") ;
         genConfig.agentClassName = agentType.getArgString("className") ;
-
         genConfig.agentConf = agentType ;
 
+        // startPlace
         if(!scanStartLinkTag(json.getArgString("startPlace"), map, genConfig))
             return null ;
 
+        // conditions
+        Term conditions = json.getArgTerm("conditions") ;
+        if(conditions != null) {
+            if(!conditions.isArray()) {
+                Itk.logError("'conditions' in generation file should be an array of tags.",
+                             "conditions=", conditions) ;
+                return null ;
+            }
+            int l = conditions.getArraySize() ;
+            genConfig.conditions = new String[l] ;
+            for(int i = 0 ; i < l ; i++) {
+                genConfig.conditions[i] = conditions.getNthString(i) ;
+            }
+        }
+
+        // startTime
         try {
             genConfig.startTime =
                 Itk.scanTimeStringToInt(json.getArgString("startTime")) ;
@@ -896,6 +915,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
             return null ;
         }
 
+        // everyEndTime, everySeconds
         if(genConfig.ruleTag == Rule.TIMEEVERY) {
             try {
                 String endTimeStr = json.getArgString("everyEndTime") ;
@@ -908,14 +928,17 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 json.getArgInt("everySeconds") ;
         }
 
+        // duration
         genConfig.duration = json.getArgDouble("duration") ;
 
+        // total
         genConfig.total = json.getArgInt("total") ;
         if (liner_generate_agent_ratio > 0) {
             genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
             Itk.logInfo("GenerateAgentFile total", genConfig.total);
         }
 
+        // speedModel
         genConfig.speedModel =
             (SpeedCalculationModel)
             speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
@@ -927,8 +950,10 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                 json.getArgInt("maxFromEach") ;
         }
 
+        // goal
         genConfig.goal = json.getArgTerm("goal") ;
 
+        // plannedRoute
         Term plannedRouteTerm = json.getArgTerm("plannedRoute") ;
         genConfig.plannedRoute =
             (plannedRouteTerm == null ?

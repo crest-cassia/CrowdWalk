@@ -355,7 +355,18 @@ implements Comparable<AgentBase>, Serializable {
      * 全経路をセット
      */
     public void setPlannedRoute(List<Term> _planned_route) {
+        setPlannedRoute(_planned_route, false) ;
+    }
+    //------------------------------------------------------------
+    /**
+     * 全経路をセット
+     * @param _planned_route : セットするルート(tag の配列)
+     * @param resetIndexP : index もリセットするかどうか。
+     */
+    public void setPlannedRoute(List<Term> _planned_route,
+                                boolean resetIndexP) {
         routePlan.setRoute(_planned_route) ;
+        if(resetIndexP) routePlan.resetIndex() ;
     }
 
     //------------------------------------------------------------

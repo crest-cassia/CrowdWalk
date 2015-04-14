@@ -56,6 +56,7 @@ import nodagumi.Itk.* ;
  * <ul>
  *   <li>{@link #think_log "log"}</li>
  *   <li>{@link #think_getValue "getValue"}</li>
+ *   <li>{@link #think_agentHasTag "agentHasTag"}</li>
  *   <li>{@link #think_placeHasTag "placeHasTag"}</li>
  *   <li>{@link #think_listenAlert "listenAlert"}</li>
  *   <li>{@link #think_clearAlert "clearAlert"}</li>
@@ -384,6 +385,8 @@ public class ThinkEngine {
             return think_log(head, expr) ;
         } else if(head.equals("getValue")) {
             return think_getValue(head, expr) ;
+        } else if(head.equals("agentHasTag")) {
+            return think_agentHasTag(head, expr) ;
         } else if(head.equals("placeHasTag")) {
             return think_placeHasTag(head, expr) ;
         } else if(head.equals("listenAlert")) {
@@ -412,18 +415,24 @@ public class ThinkEngine {
      * 推論(log)。
      * <pre>
      *   {"":"log",
-     *    "special": ("alertMessages" | ...)}
+     *    "special": ("alertMessages" | "tags" | ...)}
      *  OR
      *   {"":"log",
      *    "tag": _StringForTag_,
      *    "value": _expr_}
      * </pre>
+     * "special":"alertMessages" の場合は、
+     * エージェントが取得している alert message のリストが表示される。
+     * "special":"tags" の場合は、
+     * エージェントが保持している tag のリストが表示される。
      */
     public Term think_log(String head, Term expr) {
         Term special = expr.getArgTerm("special") ;
         if(special != null) {
             if(special.equals("alertMessages")) {
                 think_logAlertMessages() ;
+            } else if(special.equals("tags")) {
+                think_logTags() ;
             } else {
                 Itk.logError("unknown log special:", expr) ;
             }
@@ -447,10 +456,10 @@ public class ThinkEngine {
      */
     public void think_logAlertMessages() {
         if(agent == null) {
-            Itk.logInfo(logTag(), "no alertMessages") ;
+            Itk.logInfo(logTag(), "no agent") ;
         } else {
             Itk.logInfo(logTag(), "alertMessages",
-                        "(time=", agent.currentTime, ")") ;
+                        "time=", agent.currentTime) ;
             for(Map.Entry<Term, Double> entry :
                     getAlertedMessageTable().entrySet()) {
                 Term message = entry.getKey() ;
@@ -458,6 +467,18 @@ public class ThinkEngine {
                 Itk.logInfo(LogTagPrefix, message, time) ;
             }
             Itk.logInfo(LogTagPrefix, "-----------------") ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(log tags)。
+     */
+    public void think_logTags() {
+        if(agent == null) {
+            Itk.logInfo(logTag(), "no agent") ;
+        } else {
+            Itk.logInfo(logTag(), "tags=", agent.getTags()) ;
         }
     }
 
@@ -479,6 +500,25 @@ public class ThinkEngine {
         } else {
             Itk.logError("unknown parameter name for getValue.") ;
             return Term_Null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(agentHasTag)。
+     * エージェント自身があるタグを持っているか？
+     * <pre>
+     * { "" : "agentHasTag",
+     *   "tag" : _tag_ }
+     * _tag ::= _String_
+     * </pre>
+     */
+    public Term think_agentHasTag(String head, Term expr) {
+        String tag = expr.getArgString("tag") ;
+        if(agent.hasTag(tag)) {
+            return Term_True ;
+        } else {
+            return Term_False ;
         }
     }
 
@@ -573,7 +613,7 @@ public class ThinkEngine {
      * </pre>
      */
     public Term think_clearPlannedRoute(String head, Term expr) {
-        agent.setPlannedRoute(new ArrayList<Term>()) ;
+        agent.setPlannedRoute(new ArrayList<Term>(), true) ;
         return Term_True ;
     }
 
