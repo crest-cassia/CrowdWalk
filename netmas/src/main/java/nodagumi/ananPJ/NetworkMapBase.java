@@ -13,6 +13,7 @@
 package nodagumi.ananPJ;
 
 import java.util.ArrayList;
+import java.util.HashMap ;
 
 import java.io.Serializable;
 
@@ -51,15 +52,7 @@ public class NetworkMapBase extends DefaultTreeModel {
     /**
      * 経路探索されているかどうかのテーブル。
      */
-    private ArrayList<String> validRouteKeys;
-
-    //------------------------------------------------------------
-    /**
-     * 経路探索されているかどうかのチェック
-     */
-    public boolean isValidRouteKey(String route) { 
-        return validRouteKeys.contains(route); 
-    }
+    private HashMap<String, Boolean> validRouteKeys;
 
     //------------------------------------------------------------
     /**
@@ -67,7 +60,7 @@ public class NetworkMapBase extends DefaultTreeModel {
      */
     public NetworkMapBase() {
         super(null, true);
-        validRouteKeys = new ArrayList<String>();;
+        validRouteKeys = new HashMap<String, Boolean>();;
     }
 
     //------------------------------------------------------------
@@ -90,6 +83,26 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
+     * 経路探索されているかどうかのチェック
+     */
+    public boolean isCheckedRouteKey(String target) { 
+        return validRouteKeys.containsKey(target); 
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 経路探索されているかどうかのチェック
+     */
+    public boolean isValidRouteKey(String target) { 
+        if(isCheckedRouteKey(target)) {
+            return validRouteKeys.get(target);
+        } else {
+            return false ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * 経路探索
      * @return 探索成功かどうか
      */
@@ -106,6 +119,7 @@ public class NetworkMapBase extends DefaultTreeModel {
         }
         if (goals.size() == 0) {
             Itk.logWarn("No Goal", goal_tag) ;
+            validRouteKeys.put(goal_tag, false) ;
             return false;
         }
         Itk.logInfo("Found Goal", goal_tag) ;
@@ -126,7 +140,7 @@ public class NetworkMapBase extends DefaultTreeModel {
                           });
 
         synchronized(getNodes()) {
-            validRouteKeys.add(goal_tag);
+            validRouteKeys.put(goal_tag, true);
             for (MapNode node : result.keySet()) {
                 NodeLinkLen nll = result.get(node);
                 node.addNavigationHint(goal_tag,

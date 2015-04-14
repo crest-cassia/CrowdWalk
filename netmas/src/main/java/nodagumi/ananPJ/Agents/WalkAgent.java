@@ -1229,7 +1229,7 @@ public class WalkAgent extends AgentBase implements Serializable {
          * もし新しい target なら、経路探査する。
          */
         String targetTag = _target.getString() ;
-        if(!map.isValidRouteKey(targetTag)) {
+        if(!map.isCheckedRouteKey(targetTag)) {
             Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
             map.calcGoalPathWithSync(targetTag) ;
         }
