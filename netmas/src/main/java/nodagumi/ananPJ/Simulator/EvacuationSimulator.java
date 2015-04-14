@@ -397,9 +397,14 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         validRouteKeys = new ArrayList<String>();;
         ArrayList<String> all_goal_tags = agentHandler.getAllGoalTags();
 
+	/* [2015.04.14 I.Noda]
+	 * "EXIT" の特別扱いは行わない。
+	 */
+	/*
         if (!all_goal_tags.contains("EXIT")) {
             all_goal_tags.add("EXIT");
         }
+	*/
 
         ArrayList<String> no_goal_list = new ArrayList<String>();
         HashMap<String, CalcGoalPath> workers = new HashMap<String, CalcGoalPath>();
