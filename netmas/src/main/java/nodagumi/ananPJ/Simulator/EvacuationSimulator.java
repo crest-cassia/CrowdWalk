@@ -445,6 +445,10 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         }
 
         /* emergency evacuation */
+	/* [2015.04.14 I.Noda]
+	 * "EXIT" は特別扱いしないので、以下は要らない。
+	 */
+	/*
         {
             CalcPath.Nodes goals = new CalcPath.Nodes();
 	    for (MapNode node : map.getNodes()) {
@@ -456,6 +460,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
                 return;
             }
         }
+	*/
+
         // tkokada: node check which no way to goal
         boolean hasGoal = true;
         ArrayList<Integer> numNoGoal = new ArrayList<Integer>();

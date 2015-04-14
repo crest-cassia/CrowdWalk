@@ -64,5 +64,5 @@ public class NetworkMapBase extends DefaultTreeModel {
         return linksCache;
     }
 
-} // class Foo
+} // class NetworkMapBase
 
