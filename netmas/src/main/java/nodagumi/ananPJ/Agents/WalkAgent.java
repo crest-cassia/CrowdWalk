@@ -1025,16 +1025,13 @@ public class WalkAgent extends AgentBase implements Serializable {
         MapLink target =
             sane_navigation_from_node(time, passingPlace,
                                       workingRoutePlan, on_node) ;
-        if (target != null) {
-            return target;
+
+        // もし target が見つかっていなかったら、ランダムに選ぶ。
+        if(target == null) {
+            target = way_candidates.get(random.nextInt(way_candidates.size())) ;
         }
 
-        /* choose randomly */
-        int i = 0;
-        if (way_candidates.size() > 1) {
-            i = (int)(random.nextDouble() * (way_candidates.size() - 1));
-        }
-        return way_candidates.get(i);
+        return target ;
     }
 
     //------------------------------------------------------------

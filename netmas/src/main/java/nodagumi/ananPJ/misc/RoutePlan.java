@@ -232,8 +232,8 @@ public class RoutePlan {
      */
     public RoutePlan insert(Term tag) {
         route.add(null) ;
-        for(int i = route.size() ; i > index ; i--) {
-            route.set(i-1, route.get(i-2)) ;
+        for(int i = route.size() -1 ; i > index ; i--) {
+            route.set(i, route.get(i-1)) ;
         }
         route.set(index, tag) ;
         return this ;
