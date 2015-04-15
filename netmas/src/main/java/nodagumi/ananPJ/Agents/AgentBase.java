@@ -587,6 +587,30 @@ implements Comparable<AgentBase>, Serializable {
         random = _random;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 乱数生成(実数)
+     */
+    public double getRandomDouble() {
+        return random.nextDouble() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 乱数生成(整数)
+     */
+    public int getRandomInt() {
+        return random.nextInt() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 乱数生成(整数) 上限有り
+     */
+    public int getRandomInt(int n) {
+        return random.nextInt(n) ;
+    }
+
     //############################################################
     /**
      * 経路計画関連

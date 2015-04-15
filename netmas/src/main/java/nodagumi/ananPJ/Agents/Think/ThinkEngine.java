@@ -487,8 +487,12 @@ public class ThinkEngine {
      * 推論(getValue)。
      * <pre>
      * { "" : "getValue",
-     *   "name" : _nameOfValue_ }
-     *  _nameOfValue_ ::= "name" | "currentTime" | "agentId"
+     *   "name" : _nameOfValue_,
+     *  ("type" : _RandomType_,)  ;;; only for "random"
+     *  ("max" : _integer_)     ;;; only for "random"/"int"
+     * }
+     *  _nameOfValue_ ::= "name" | "currentTime" | "agentId" | "random"
+     *  _RandomType_ ::= "int" | "double"
      * </pre>
      */
     public Term think_getValue(String head, Term expr) {
@@ -497,8 +501,23 @@ public class ThinkEngine {
             return new Term(agent.currentTime) ;
         } else if(name.equals("agentId")) {
             return new Term(agent.ID) ;
+        } else if(name.equals("random")) {
+            String type = expr.getArgString("type") ;
+            if(type == null || type.equals("int")) {
+                if(expr.hasArg("max")) {
+                    return new Term(agent.getRandomInt(expr.getArgInt("max"))) ;
+                } else {
+                    return new Term(agent.getRandomInt()) ;
+                }
+            } else if(type.equals("double")) {
+                return new Term(agent.getRandomDouble()) ;
+            } else {
+                Itk.logError("unknown type for random in getValue.", 
+                             "type=", type) ;
+            return Term_Null ;
+            }
         } else {
-            Itk.logError("unknown parameter name for getValue.") ;
+            Itk.logError("unknown parameter name for getValue.", "name=",name) ;
             return Term_Null ;
         }
     }
