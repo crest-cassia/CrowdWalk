@@ -158,5 +158,32 @@ public class Term_Test {
         Itk.dbgMsg("term3==term4",term3.equals(term4)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     */
+    //@Test
+    public void test_isIntDouble() {
+        String str = "{'a':123, 'b':0, 'c': 12.34, 'd': 0.0, 'e':'123'}" ;
+        str = str.replaceAll("'","\"") ;
+        Itk.dbgVal("str",str) ;
+        Term term = Term.newByJson(str) ;
+        Itk.dbgVal("term", term) ;
+        Itk.dbgVal("term.getArg('a')",term.getArg("a")) ;
+        Itk.dbgVal("term.getArg('b')",term.getArg("b")) ;
+        Itk.dbgVal("term.getArg('c')",term.getArg("c")) ;
+        Itk.dbgVal("term.getArg('d')",term.getArg("d")) ;
+        Itk.dbgVal("term.getArg('e')",term.getArg("e")) ;
+        Itk.dbgVal("term.getArg('a').isInt()",term.getArgTerm("a").isInt()) ;
+        Itk.dbgVal("term.getArg('b').isInt()",term.getArgTerm("b").isInt()) ;
+        Itk.dbgVal("term.getArg('c').isInt()",term.getArgTerm("c").isInt()) ;
+        Itk.dbgVal("term.getArg('d').isInt()",term.getArgTerm("d").isInt()) ;
+        Itk.dbgVal("term.getArg('e').isInt()",term.getArgTerm("e").isInt()) ;
+        Itk.dbgVal("term.getArg('a').isDouble()",term.getArgTerm("a").isDouble()) ;
+        Itk.dbgVal("term.getArg('b').isDouble()",term.getArgTerm("b").isDouble()) ;
+        Itk.dbgVal("term.getArg('c').isDouble()",term.getArgTerm("c").isDouble()) ;
+        Itk.dbgVal("term.getArg('d').isDouble()",term.getArgTerm("d").isDouble()) ;
+        Itk.dbgVal("term.getArg('e').isDouble()",term.getArgTerm("e").isDouble()) ;
+    }
+
 } // class ClassFinderTest
 

@@ -553,6 +553,10 @@
 <dd>
 <div class="block">呼び出し</div>
 </dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">呼び出し.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaLogical</a></dt>
 <dd>
 <div class="block">呼び出し.</div>
@@ -560,6 +564,21 @@
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaMisc</a></dt>
 <dd>
 <div class="block">呼び出し.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_add-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_add(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">足し算
+ 
+   {"":("add" || "+"),
+    "left": _Term_,
+    "right": _Term_}
+ 
+ もしくは
+ 
+   {"":("add" || "+"),
+    "values": [_Term_, _Term_, _Term_, ...] }
+ 
+ _Term_ の和を返す。</div>
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call_agentHasTag-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_agentHasTag(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaMisc</a></dt>
 <dd>
@@ -585,9 +604,49 @@
 <dd>
 <div class="block">推論(clear PlannedRoute)。</div>
 </dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_div-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_div(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">割り算
+ 
+   {"":("div" || "/"),
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の差を返す。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_equal-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_equal(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">等しい
+ 
+   {"":"==",
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の等価チェック。</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call_getValue-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_getValue(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaMisc</a></dt>
 <dd>
 <div class="block">推論(getValue)。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_greaterOrEqual-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_greaterOrEqual(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">大なりイコール
+ 
+   {"":("&gt;=" || "=&gt;"),
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の等価チェック。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_greaterThan-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_greaterThan(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">大なり
+ 
+   {"":"&gt;",
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の等価チェック。</div>
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html#call_if-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_if(Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaLogical</a></dt>
 <dd>
@@ -596,6 +655,26 @@
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call_insertRoute-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_insertRoute(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaMisc</a></dt>
 <dd>
 <div class="block">推論(insert route)。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_lessOrEqual-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_lessOrEqual(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">小なりイコール
+ 
+   {"":("&lt;=" || "=&lt;"),
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の等価チェック。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_lessThan-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_lessThan(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">小なり
+ 
+   {"":"&lt;",
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の等価チェック。</div>
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call_listenAlert-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_listenAlert(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaMisc</a></dt>
 <dd>
@@ -612,6 +691,31 @@
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call_logTags-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_logTags(ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaMisc</a></dt>
 <dd>
 <div class="block">推論(log tags)。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_mod-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_mod(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">剰余系
+ 
+   {"":("mod" || "%"),
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の差を返す。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_mul-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_mul(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">掛け算
+ 
+   {"":("mul" || "*"),
+    "left": _Term_,
+    "right": _Term_}
+ 
+ もしくは
+ 
+   {"":("mul" || "*"),
+    "values": [_Term_, _Term_, _Term_, ...] }
+ 
+ _Term_ の和を返す。</div>
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html#call_not-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_not(Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaLogical</a></dt>
 <dd>
@@ -636,6 +740,16 @@
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call_quote-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_quote(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaMisc</a></dt>
 <dd>
 <div class="block">quote。</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_sub-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_sub(String, Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">引き算
+ 
+   {"":("sub" || "-"),
+    "left": _Term_,
+    "right": _Term_}
+ 
+ _Term_ の差を返す。</div>
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/ClassFinder.html#callMethodForClass-java.lang.String-java.lang.String-boolean-java.lang.Object...-">callMethodForClass(String, String, boolean, Object...)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/ClassFinder.html" title="nodagumi.Itk内のクラス">ClassFinder</a></dt>
 <dd>
@@ -826,6 +940,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/misc/CommunicationHandler.html#CommunicationType2String-nodagumi.ananPJ.misc.CommunicationHandler.CommunicationType-">CommunicationType2String(CommunicationHandler.CommunicationType)</a></span> - クラス のstaticメソッドnodagumi.ananPJ.misc.<a href="nodagumi/ananPJ/misc/CommunicationHandler.html" title="nodagumi.ananPJ.misc内のクラス">CommunicationHandler</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#compareLeftRightValues-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">compareLeftRightValues(Term, ThinkEngine)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">比較一般</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/AgentBase.html#compareTo-nodagumi.ananPJ.Agents.AgentBase-">compareTo(AgentBase)</a></span> - クラス のメソッドnodagumi.ananPJ.Agents.<a href="nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a></dt>
 <dd>
 <div class="block">sort, binarySearch 用比較関数
@@ -1570,6 +1688,10 @@
 <dd>
 <div class="block">arg 取得(fallback 付き)</div>
 </dd>
+<dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#fetchArgBigDecimal-java.lang.String-java.lang.String-int-">fetchArgBigDecimal(String, String, int)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
+<dd>
+<div class="block">arg 取得 (BigDecimal) (fallback 付き)</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#fetchArgBoolean-java.lang.String-java.lang.String-boolean-">fetchArgBoolean(String, String, boolean)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
 <dd>
 <div class="block">arg 取得 (boolean) (fallback 付き)</div>
@@ -1865,6 +1987,10 @@
 <dd>
 <div class="block">arg 取得</div>
 </dd>
+<dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#getArgBigDecimal-java.lang.String-">getArgBigDecimal(String)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
+<dd>
+<div class="block">arg 取得 (BigDecimal)</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#getArgBoolean-java.lang.String-">getArgBoolean(String)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
 <dd>
 <div class="block">arg 取得 (boolean)</div>
@@ -1907,6 +2033,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Simulator/AgentHandler.html#getAverageSpeed--">getAverageSpeed()</a></span> - クラス のメソッドnodagumi.ananPJ.Simulator.<a href="nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス">AgentHandler</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#getBigDecimal--">getBigDecimal()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
+<dd>
+<div class="block">big decimal としての値。</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#getBody--">getBody()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
 <dd>
 <div class="block">body 取得</div>
@@ -2469,6 +2599,10 @@
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#getNth-int-">getNth(int)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
 <dd>
 <div class="block">array nth 取得</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#getNthBigDecimal-int-">getNthBigDecimal(int)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
+<dd>
+<div class="block">array nth 取得 (BigDecimal)</div>
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#getNthDouble-int-">getNthDouble(int)</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
 <dd>
@@ -3136,6 +3270,10 @@
 <dd>
 <div class="block">ある程度進んだ地点の位置チェック。</div>
 </dd>
+<dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#isBigDecimal--">isBigDecimal()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
+<dd>
+<div class="block">BigDecimal となるかどうか？</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/NetworkMapBase.html#isCheckedRouteKey-java.lang.String-">isCheckedRouteKey(String)</a></span> - クラス のメソッドnodagumi.ananPJ.<a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a></dt>
 <dd>
 <div class="block">経路探索されているかどうかのチェック</div>
@@ -3291,6 +3429,10 @@
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#isNullHead--">isNullHead()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
 <dd>
 <div class="block">null head 判定</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#isNumber--">isNumber()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
+<dd>
+<div class="block">number となるかどうか？</div>
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Term.html#isObject--">isObject()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></dt>
 <dd>
@@ -4658,6 +4800,10 @@
 <dd>
 <div class="block">使用出来るイベントタイプの登録</div>
 </dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#registerFormulas--">registerFormulas()</a></span> - クラス のstaticメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>
+<div class="block">登録</div>
+</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html#registerFormulas--">registerFormulas()</a></span> - クラス のstaticメソッドnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaLogical</a></dt>
 <dd>
 <div class="block">登録</div>
@@ -5802,6 +5948,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/Itk_Test.html#test_Init--">test_Init()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Itk_Test.html" title="nodagumi.Itk内のクラス">Itk_Test</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/Itk/Term_Test.html#test_isIntDouble--">test_isIntDouble()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/Term_Test.html" title="nodagumi.Itk内のクラス">Term_Test</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="nodagumi/Itk/ClassFinder_Test.html#test_json--">test_json()</a></span> - クラス のメソッドnodagumi.Itk.<a href="nodagumi/Itk/ClassFinder_Test.html" title="nodagumi.Itk内のクラス">ClassFinder_Test</a></dt>
 <dd>
 <div class="block">new test</div>
@@ -5895,6 +6043,12 @@
 <dd>
 <div class="block">コンストラクタ</div>
 </dd>
+<dt><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">ThinkFormulaArithmetic</span></a> - <a href="nodagumi/ananPJ/Agents/Think/package-summary.html">nodagumi.ananPJ.Agents.Think</a>のクラス</dt>
+<dd>
+<div class="block">思考を表す式の処理系 (arithmetic. functions)</div>
+</dd>
+<dt><span class="memberNameLink"><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#ThinkFormulaArithmetic--">ThinkFormulaArithmetic()</a></span> - クラス のコンストラクタnodagumi.ananPJ.Agents.Think.<a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkFormulaArithmetic</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">ThinkFormulaLogical</span></a> - <a href="nodagumi/ananPJ/Agents/Think/package-summary.html">nodagumi.ananPJ.Agents.Think</a>のクラス</dt>
 <dd>
 <div class="block">論理演算および実行制御を表す式の処理系 (logica. functions).</div>

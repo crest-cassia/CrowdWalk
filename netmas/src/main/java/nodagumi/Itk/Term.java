@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import net.arnx.jsonic.JSON ;
 import net.arnx.jsonic.JSONWriter;
@@ -610,6 +611,47 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg 取得 (BigDecimal)
+     */
+    public BigDecimal getArgBigDecimal(String slot) {
+        return convertValueToBigDecimal(getArg(slot)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * arg 取得 (BigDecimal) (fallback 付き)
+     */
+    public BigDecimal fetchArgBigDecimal(String slot, String fallbackSlot,
+                                         int fallback) {
+        return convertValueToBigDecimal(fetchArg(slot, fallbackSlot, fallback)) ;
+    }
+
+    //------------------------------
+    /**
+     * BigDecimal への変換
+     */
+    private BigDecimal convertValueToBigDecimal(Object val) {
+        if(val instanceof Term) {
+            return ((Term)val).getBigDecimal() ;
+        } else if(val instanceof Integer) {
+            return new BigDecimal((Integer)val) ;
+        } else if(val instanceof Double) {
+            return new BigDecimal((Double)val) ;
+        } else if(val == null) {
+            Thread.dumpStack() ;
+            Itk.logError("can not convert null to BigDecimal.") ;
+            Itk.logError_("use zero") ;
+            return BigDecimal.ZERO ;
+        } else {
+            Thread.dumpStack() ;
+            Itk.logError("can not convert to BigDecimal:" + this.toString()) ;
+            Itk.logError_("use zero") ;
+            return BigDecimal.ZERO ;
+        } 
+    }
+
+    //------------------------------------------------------------
+    /**
      * body 設定
      */
     public Term setBody(HashMap<String,Object> _body) {
@@ -730,6 +772,14 @@ public class Term {
      */
     public double getNthDouble(int index) {
         return convertValueToDouble(getNth(index)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * array nth 取得 (BigDecimal)
+     */
+    public BigDecimal getNthBigDecimal(int index) {
+        return convertValueToBigDecimal(getNth(index)) ;
     }
 
     //------------------------------------------------------------
@@ -900,7 +950,11 @@ public class Term {
      * int となるか？
      */
     public boolean isInt() {
-        return (((head instanceof Number) || (head instanceof BigDecimal)) &&
+        return (((head instanceof BigDecimal &&
+                  ((BigDecimal)head).scale() <= 0) ||
+                 head instanceof BigInteger ||
+                 head instanceof Integer ||
+                 head instanceof Long) &&
                 isAtom()) ;
     }
 
@@ -909,8 +963,26 @@ public class Term {
      * double となるか？
      */
     public boolean isDouble() {
-        return (((head instanceof Number) || (head instanceof BigDecimal)) &&
-                isAtom()) ;
+        return (((head instanceof BigDecimal &&
+                  ((BigDecimal)head).scale() > 0) ||
+                 head instanceof Double ||
+                 head instanceof Float) && isAtom()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * number となるかどうか？
+     */
+    public boolean isNumber() {
+        return isInt() || isDouble() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * BigDecimal となるかどうか？
+     */
+    public boolean isBigDecimal() {
+        return isNumber() ;
     }
 
     //------------------------------------------------------------
@@ -998,6 +1070,26 @@ public class Term {
         Itk.logError("can not convert to double:" + this.toString()) ;
         Itk.logError_("use 0.0") ;
         return 0.0 ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * big decimal としての値。
+     */
+    public BigDecimal getBigDecimal() {
+        if(isNumber()) {
+            if (head instanceof BigDecimal) {
+                return ((BigDecimal)head) ;
+            } else if(isInt()) {
+                return new BigDecimal(getInt()) ;
+            } else if(isDouble()) {
+                return new BigDecimal(getDouble()) ;
+            }
+        }
+        Thread.dumpStack() ;
+        Itk.logError("can not convert to BigDecimal:" + this.toString()) ;
+        Itk.logError_("use 0") ;
+        return BigDecimal.ZERO ;
     }
 
     //------------------------------------------------------------
