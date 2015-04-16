@@ -24,7 +24,12 @@ import nodagumi.Itk.* ;
 
 //======================================================================
 /**
- * 思考を表す式の処理系
+ * 思考を表す式の処理系。
+ * 組み込まれている Formula リスト
+ * <ul>
+ *  <li>{@link ThinkFormulaLogical#call 論理形式および実行制御}</li>
+ *  <li>{@link ThinkFormulaMisc#call その他}</li>
+ * </ul>
  */
 abstract public class ThinkFormula {
     //============================================================
@@ -34,7 +39,8 @@ abstract public class ThinkFormula {
      */
     static public Lexicon lexicon = new Lexicon() ;
     static {
-	//lexicon.register(name, formula) ;
+        ThinkFormulaMisc.registerFormulas() ;
+        ThinkFormulaLogical.registerFormulas() ;
     }
 
     //============================================================
@@ -95,6 +101,16 @@ abstract public class ThinkFormula {
      * 呼び出し
      */
     abstract public Term call(String head, Term expr, ThinkEngine engine) ;
+
+    //------------------------------------------------------------
+    /**
+     * False かどうかのチェック
+     */
+    public boolean checkFalse(Term expr) {
+        return (expr == null ||
+                expr.equals(Term_Null) ||
+                expr.equals(Term_False)) ;
+    }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
