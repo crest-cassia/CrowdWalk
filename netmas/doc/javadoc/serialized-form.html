@@ -227,10 +227,15 @@
 <pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> nodesCache</pre>
 <div class="block">ノードテーブル</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>linksCache</h4>
 <pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> linksCache</pre>
 <div class="block">リンクテーブル</div>
+</li>
+<li class="blockListLast">
+<h4>validRouteKeys</h4>
+<pre>java.util.HashMap&lt;K,V&gt; validRouteKeys</pre>
+<div class="block">経路探索されているかどうかのテーブル。</div>
 </li>
 </ul>
 </li>
@@ -761,6 +766,11 @@
 <li class="blockList">
 <h4>currentTime</h4>
 <pre>double currentTime</pre>
+</li>
+<li class="blockList">
+<h4>map</h4>
+<pre><a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a> map</pre>
+<div class="block">map: 自分の存在しているマップ。</div>
 </li>
 <li class="blockList">
 <h4>goal</h4>
@@ -3149,10 +3159,6 @@
 <li class="blockList">
 <h4>stop_simulation</h4>
 <pre>java.lang.Boolean stop_simulation</pre>
-</li>
-<li class="blockList">
-<h4>validRouteKeys</h4>
-<pre>java.util.ArrayList&lt;E&gt; validRouteKeys</pre>
 </li>
 <li class="blockList">
 <h4>goalTimes</h4>

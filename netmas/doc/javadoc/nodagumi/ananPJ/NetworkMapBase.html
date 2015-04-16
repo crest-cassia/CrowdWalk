@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -202,15 +202,39 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <th class="colLast" scope="col">メソッドと説明</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPath-java.lang.String-">calcGoalPath</a></span>(java.lang.String&nbsp;goal_tag)</code>
+<div class="block">経路探索</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPathWithSync-java.lang.String-">calcGoalPathWithSync</a></span>(java.lang.String&nbsp;goal_tag)</code>
+<div class="block">synchronized された経路探索</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getLinks--">getLinks</a></span>()</code>
 <div class="block">リンクテーブル取得</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getNodes--">getNodes</a></span>()</code>
 <div class="block">ノードテーブル取得</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#isCheckedRouteKey-java.lang.String-">isCheckedRouteKey</a></span>(java.lang.String&nbsp;target)</code>
+<div class="block">経路探索されているかどうかのチェック</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#isValidRouteKey-java.lang.String-">isValidRouteKey</a></span>(java.lang.String&nbsp;target)</code>
+<div class="block">経路探索されているかどうかのチェック</div>
 </td>
 </tr>
 </table>
@@ -305,7 +329,7 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <a name="getLinks--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getLinks</h4>
 <pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;getLinks()</pre>
@@ -313,6 +337,54 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>link table</dd>
+</dl>
+</li>
+</ul>
+<a name="isCheckedRouteKey-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isCheckedRouteKey</h4>
+<pre>public&nbsp;boolean&nbsp;isCheckedRouteKey(java.lang.String&nbsp;target)</pre>
+<div class="block">経路探索されているかどうかのチェック</div>
+</li>
+</ul>
+<a name="isValidRouteKey-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isValidRouteKey</h4>
+<pre>public&nbsp;boolean&nbsp;isValidRouteKey(java.lang.String&nbsp;target)</pre>
+<div class="block">経路探索されているかどうかのチェック</div>
+</li>
+</ul>
+<a name="calcGoalPath-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>calcGoalPath</h4>
+<pre>public&nbsp;boolean&nbsp;calcGoalPath(java.lang.String&nbsp;goal_tag)</pre>
+<div class="block">経路探索</div>
+<dl>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>探索成功かどうか</dd>
+</dl>
+</li>
+</ul>
+<a name="calcGoalPathWithSync-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>calcGoalPathWithSync</h4>
+<pre>public&nbsp;boolean&nbsp;calcGoalPathWithSync(java.lang.String&nbsp;goal_tag)</pre>
+<div class="block">synchronized された経路探索</div>
+<dl>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>探索成功かどうか。goal_tag が探索済みでも true を返す。</dd>
 </dl>
 </li>
 </ul>

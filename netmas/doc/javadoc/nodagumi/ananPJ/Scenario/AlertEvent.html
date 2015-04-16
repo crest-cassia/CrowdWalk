@@ -126,13 +126,14 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="noda
   { "type" : "Alert",
     "atTime" : __Time__,
     "placeTag" : __Tag__,
+    ("onoff" : ( true | false ),)?
     "message" : __String__}
 
   __Time__ ::= "hh:mm:ss"
  </pre>
  <code>"message"</code> の利用は、
  <a href="../../../nodagumi/ananPJ/Agents/RationalAgent.html" title="nodagumi.ananPJ.Agents内のクラス"><code>RationalAgent</code></a> の
- <a href="../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_listenAlert-java.lang.String-nodagumi.Itk.Term-"><code>listenAlert</code></a> を
+ <code>listenAlert</code> を
  参照。
  <p>
  [2015.01.21 I.Noda] 現状では避難だけだが、
@@ -162,6 +163,14 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="noda
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/AlertEvent.html#message">message</a></span></code>
 <div class="block">情報を示すフラグ</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/AlertEvent.html#onoff">onoff</a></span></code>
+<div class="block">正操作か逆操作かどうか
+ onoff == true ならば、Alert をセット
+ そうでなければ、Alert を clear する。</div>
 </td>
 </tr>
 </table>
@@ -278,11 +287,23 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="noda
 <a name="message">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>message</h4>
 <pre>public&nbsp;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> message</pre>
 <div class="block">情報を示すフラグ</div>
+</li>
+</ul>
+<a name="onoff">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>onoff</h4>
+<pre>public&nbsp;boolean onoff</pre>
+<div class="block">正操作か逆操作かどうか
+ onoff == true ならば、Alert をセット
+ そうでなければ、Alert を clear する。</div>
 </li>
 </ul>
 </li>

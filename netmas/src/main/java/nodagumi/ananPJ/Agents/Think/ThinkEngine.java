@@ -42,7 +42,7 @@ import nodagumi.Itk.* ;
  * </ul>
  * <h3> 実処理用の _headedTerm_</h3>
  * <ul>
- *   <li>{@link ThinkFormula "ThinkFormula"}</li>
+ *   <li>{@link ThinkFormula ThinkFormula: 式要素 トップ}</li>
  * </ul>
  * また、上記にマッチしないアトム（配列でもオブジェクトでもないデータ）は、
  * その値を直接返す。（リテラル扱い）

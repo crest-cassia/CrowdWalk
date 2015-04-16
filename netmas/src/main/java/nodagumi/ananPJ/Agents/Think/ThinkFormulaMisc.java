@@ -97,7 +97,7 @@ public class ThinkFormulaMisc extends ThinkFormula {
 	if(head.equals("null")) {
 	    return Term_Null ;
         } else if(head.equals("quote")) {
-            return expr.getArgTerm("value") ;
+            return call_quote(head, expr, engine) ;
         } else if(head.equals("log")) {
             return call_log(head, expr, engine) ;
         } else if(head.equals("getValue")) {
@@ -122,6 +122,19 @@ public class ThinkFormulaMisc extends ThinkFormula {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
 	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * quote。
+     * <pre>
+     *   {"":"quote",
+     *    "value": _Term_ }
+     * </pre>
+     * _Term_ を評価せずに返す。
+     */
+    public Term call_quote(String head, Term expr, ThinkEngine engine) {
+            return expr.getArgTerm("value") ;
     }
 
     //------------------------------------------------------------

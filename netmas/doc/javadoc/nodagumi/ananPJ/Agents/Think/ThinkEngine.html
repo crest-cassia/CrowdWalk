@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>前のクラス</li>
-<li>次のクラス</li>
+<li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?nodagumi/ananPJ/Agents/Think/ThinkEngine.html" target="_top">フレーム</a></li>
@@ -122,33 +122,14 @@ extends java.lang.Object</pre>
    _argKey_ ::= _String_
  </pre>
 
- <h3> Special Forms </h3>
+ <h3> 組み込み Forms </h3>
  <ul>
   <li> _null_ は, NOP (No Operation)扱い。
   <li> [_expr_, ...] の形式は、{"" : "proc", "body" : [_expr_, ...]} と同じ。
-  <li> _headedTerm_ で以下は組み込み。
-    <pre>
-     {"" : "if", "condition" : _expr_, "then" : _expr_ (, "else" : _expr_)?}
-     {"" : "proc", "body" : [_expr_, _expr_, ...]}
-     {"" : "not", "body" : _expr_}
-     {"" : "and", "body" : [_expr_, _expr_, ...]}
-     {"" : "or", "body" : [_expr_, _expr_, ...]}
-     {"" : "true"}  ："true" と同じ
-     {"" : "false"} ："false" と同じ
-     {"" : "null"} : "null"  と同じ
-     {"" : "quote", "value" : _expr_}
-   </pre>
  </ul>
  <h3> 実処理用の _headedTerm_</h3>
  <ul>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_log-java.lang.String-nodagumi.Itk.Term-"><code>"log"</code></a></li>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_getValue-java.lang.String-nodagumi.Itk.Term-"><code>"getValue"</code></a></li>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_placeHasTag-java.lang.String-nodagumi.Itk.Term-"><code>"placeHasTag"</code></a></li>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_listenAlert-java.lang.String-nodagumi.Itk.Term-"><code>"listenAlert"</code></a></li>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_clearAlert-java.lang.String-nodagumi.Itk.Term-"><code>"clearAlert"</code></a></li>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_clearAllAlert-java.lang.String-nodagumi.Itk.Term-"><code>"clearAllAlert"</code></a></li>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_changeGoal-java.lang.String-nodagumi.Itk.Term-"><code>"changeGoal"</code></a></li>
-   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_clearPlannedRoute-java.lang.String-nodagumi.Itk.Term-"><code>"clearPlannedRoute"</code></a></li>
+   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><code>ThinkFormula: 式要素 トップ</code></a></li>
  </ul>
  また、上記にマッチしないアトム（配列でもオブジェクトでもないデータ）は、
  その値を直接返す。（リテラル扱い）</div>
@@ -174,24 +155,6 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#LogTagPrefix">LogTagPrefix</a></span></code>
 <div class="block">log tag</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#Term_False">Term_False</a></span></code>
-<div class="block">false</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#Term_Null">Term_Null</a></span></code>
-<div class="block">null</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#Term_True">Term_True</a></span></code>
-<div class="block">true</div>
 </td>
 </tr>
 </table>
@@ -240,27 +203,27 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">メソッドと説明</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#checkFalse-nodagumi.Itk.Term-">checkFalse</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">False かどうかのチェック</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#getAgent--">getAgent</a></span>()</code>
 <div class="block">get agent</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.HashMap&lt;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>,java.lang.Double&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#getAlertedMessageTable--">getAlertedMessageTable</a></span>()</code>
-<div class="block">get agent</div>
+<div class="block">get agent's alerted message table.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#getRule--">getRule</a></span>()</code>
 <div class="block">get rule</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#isNullAgent--">isNullAgent</a></span>()</code>
+<div class="block">check agent is null</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -281,119 +244,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_and-nodagumi.Itk.Term-">think_and</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(And)。</div>
-</td>
-</tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_changeGoal-java.lang.String-nodagumi.Itk.Term-">think_changeGoal</a></span>(java.lang.String&nbsp;head,
-                <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(changeGoal)。</div>
-</td>
-</tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_clearAlert-java.lang.String-nodagumi.Itk.Term-">think_clearAlert</a></span>(java.lang.String&nbsp;head,
-                <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(clearAlert)。</div>
-</td>
-</tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_clearAllAlert-java.lang.String-nodagumi.Itk.Term-">think_clearAllAlert</a></span>(java.lang.String&nbsp;head,
-                   <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(clearAllAlert)。</div>
-</td>
-</tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_clearPlannedRoute-java.lang.String-nodagumi.Itk.Term-">think_clearPlannedRoute</a></span>(java.lang.String&nbsp;head,
-                       <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(clear PlannedRoute)。</div>
-</td>
-</tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_getValue-java.lang.String-nodagumi.Itk.Term-">think_getValue</a></span>(java.lang.String&nbsp;head,
-              <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(getValue)。</div>
-</td>
-</tr>
-<tr id="i13" class="rowColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_if-nodagumi.Itk.Term-">think_if</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(if)。</div>
-</td>
-</tr>
-<tr id="i14" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_listenAlert-java.lang.String-nodagumi.Itk.Term-">think_listenAlert</a></span>(java.lang.String&nbsp;head,
-                 <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(listenAlert)。</div>
-</td>
-</tr>
-<tr id="i15" class="rowColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_log-java.lang.String-nodagumi.Itk.Term-">think_log</a></span>(java.lang.String&nbsp;head,
-         <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(log)。</div>
-</td>
-</tr>
-<tr id="i16" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_logAlertMessages--">think_logAlertMessages</a></span>()</code>
-<div class="block">推論(log alertMessages)。</div>
-</td>
-</tr>
-<tr id="i17" class="rowColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_not-nodagumi.Itk.Term-">think_not</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(not)。</div>
-</td>
-</tr>
-<tr id="i18" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_or-nodagumi.Itk.Term-">think_or</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(Or)。</div>
-</td>
-</tr>
-<tr id="i19" class="rowColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_placeHasTag-java.lang.String-nodagumi.Itk.Term-">think_placeHasTag</a></span>(java.lang.String&nbsp;head,
-                 <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(placeHasTag)。</div>
-</td>
-</tr>
-<tr id="i20" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_proc-nodagumi.Itk.Term-">think_proc</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(proc)。</div>
-</td>
-</tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think_procBody-nodagumi.Itk.Term-">think_procBody</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;body)</code>
-<div class="block">推論(proc)の本体。</div>
-</td>
-</tr>
-<tr id="i22" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think--">think</a></span>()</code>
 <div class="block">推論(top)</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#think-nodagumi.Itk.Term-">think</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
 <div class="block">推論(本体)</div>
-</td>
-</tr>
-<tr id="i24" class="altColor">
-<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html#thinkGeneric-java.lang.String-nodagumi.Itk.Term-">thinkGeneric</a></span>(java.lang.String&nbsp;head,
-            <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</code>
-<div class="block">推論(generic)</div>
 </td>
 </tr>
 </table>
@@ -418,36 +276,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>フィールドの詳細</h3>
-<a name="Term_Null">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Term_Null</h4>
-<pre>public static&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> Term_Null</pre>
-<div class="block">null</div>
-</li>
-</ul>
-<a name="Term_True">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Term_True</h4>
-<pre>public static&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> Term_True</pre>
-<div class="block">true</div>
-</li>
-</ul>
-<a name="Term_False">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Term_False</h4>
-<pre>public static&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> Term_False</pre>
-<div class="block">false</div>
-</li>
-</ul>
 <a name="LogTagPrefix">
 <!--   -->
 </a>
@@ -534,6 +362,16 @@ extends java.lang.Object</pre>
 <div class="block">get agent</div>
 </li>
 </ul>
+<a name="isNullAgent--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isNullAgent</h4>
+<pre>public&nbsp;boolean&nbsp;isNullAgent()</pre>
+<div class="block">check agent is null</div>
+</li>
+</ul>
 <a name="getAlertedMessageTable--">
 <!--   -->
 </a>
@@ -541,7 +379,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getAlertedMessageTable</h4>
 <pre>public&nbsp;java.util.HashMap&lt;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>,java.lang.Double&gt;&nbsp;getAlertedMessageTable()</pre>
-<div class="block">get agent</div>
+<div class="block">get agent's alerted message table.</div>
 </li>
 </ul>
 <a name="setRule-nodagumi.Itk.Term-">
@@ -577,259 +415,11 @@ extends java.lang.Object</pre>
 <a name="think-nodagumi.Itk.Term-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>think</h4>
 <pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
 <div class="block">推論(本体)</div>
-</li>
-</ul>
-<a name="think_not-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_not</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_not(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(not)。
- <pre>
- { "" : "not",
-   "body" : _expr_ }
- </pre></div>
-</li>
-</ul>
-<a name="checkFalse-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkFalse</h4>
-<pre>public&nbsp;boolean&nbsp;checkFalse(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">False かどうかのチェック</div>
-</li>
-</ul>
-<a name="think_and-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_and</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_and(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(And)。
- <pre>
- { "" : "and",
-   "body" : [_expr_, _expr_, ...] }
- </pre></div>
-</li>
-</ul>
-<a name="think_or-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_or</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_or(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(Or)。
- <pre>
- { "" : "or",
-   "body" : [ _expr_, _expr_, ...] }
- </pre></div>
-</li>
-</ul>
-<a name="think_proc-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_proc</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_proc(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(proc)。
- <pre>
- { "" : "proc",
-   "body" : [ _expr_, _expr_, ...] }
- OR
- [ _expr, _expr_, ...]
- </pre></div>
-</li>
-</ul>
-<a name="think_procBody-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_procBody</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_procBody(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;body)</pre>
-<div class="block">推論(proc)の本体。</div>
-</li>
-</ul>
-<a name="think_if-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_if</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_if(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(if)。
- <pre>
- { "" : "if",
-   "condition" : _expr_,
-   "then" : _expr_,
-   "else" : _expr_ }
- </pre></div>
-</li>
-</ul>
-<a name="thinkGeneric-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>thinkGeneric</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;thinkGeneric(java.lang.String&nbsp;head,
-                         <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(generic)</div>
-</li>
-</ul>
-<a name="think_log-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_log</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_log(java.lang.String&nbsp;head,
-                      <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(log)。
- <pre>
-   {"":"log",
-    "special": ("alertMessages" | ...)}
-  OR
-   {"":"log",
-    "tag": _StringForTag_,
-    "value": _expr_}
- </pre></div>
-</li>
-</ul>
-<a name="think_logAlertMessages--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_logAlertMessages</h4>
-<pre>public&nbsp;void&nbsp;think_logAlertMessages()</pre>
-<div class="block">推論(log alertMessages)。</div>
-</li>
-</ul>
-<a name="think_getValue-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_getValue</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_getValue(java.lang.String&nbsp;head,
-                           <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(getValue)。
- <pre>
- { "" : "getValue",
-   "name" : _nameOfValue_ }
-  _nameOfValue_ ::= "name" | "currentTime" | "agentId"
- </pre></div>
-</li>
-</ul>
-<a name="think_placeHasTag-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_placeHasTag</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_placeHasTag(java.lang.String&nbsp;head,
-                              <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(placeHasTag)。
- 現在いるリンクがあるタグを持っているか？
- <pre>
- { "" : "placeHasTag",
-   "tag" : _tag_ }
- _tag ::= _String_
- </pre></div>
-</li>
-</ul>
-<a name="think_listenAlert-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_listenAlert</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_listenAlert(java.lang.String&nbsp;head,
-                              <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(listenAlert)。
- <pre>
- { "" : "listenAlert",
-   "message" : _alertMessage_ }
- _alertMessage_ ::= _String_
- </pre>
- <code>"message"</code> は、
- <a href="../../../../nodagumi/ananPJ/Scenario/Scenario.html" title="nodagumi.ananPJ.Scenario内のクラス"><code>Scenario</code></a> の中の
- <a href="../../../../nodagumi/ananPJ/Scenario/AlertEvent.html" title="nodagumi.ananPJ.Scenario内のクラス"><code>AlertEvent</code></a> 参照。</div>
-</li>
-</ul>
-<a name="think_clearAlert-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_clearAlert</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_clearAlert(java.lang.String&nbsp;head,
-                             <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(clearAlert)。
- <pre>
- { "" : "clearAlert",
-   "message" : _alertMessage_ }
- _alertMessage_ ::= _String_
- </pre></div>
-</li>
-</ul>
-<a name="think_clearAllAlert-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_clearAllAlert</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_clearAllAlert(java.lang.String&nbsp;head,
-                                <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(clearAllAlert)。
- <pre>
- { "" : "clearAllAlert" }
- </pre></div>
-</li>
-</ul>
-<a name="think_changeGoal-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>think_changeGoal</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_changeGoal(java.lang.String&nbsp;head,
-                             <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(changeGoal)。
- <pre>
- { "" : "changeGoal",
-   "goal" : _goalTag_ }
- _goalTag_ ::= _String_
- </pre></div>
-</li>
-</ul>
-<a name="think_clearPlannedRoute-java.lang.String-nodagumi.Itk.Term-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>think_clearPlannedRoute</h4>
-<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;think_clearPlannedRoute(java.lang.String&nbsp;head,
-                                    <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr)</pre>
-<div class="block">推論(clear PlannedRoute)。
- <pre>
- { "" : "clearPlannedRoute" }
- </pre>
- 注意：push PlannedRoute などを考える場合、PlannedRoute を
- コピーすべきか再考。（現状で、routeはエージェント同士で共有している）</div>
 </li>
 </ul>
 </li>
@@ -860,7 +450,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li>前のクラス</li>
-<li>次のクラス</li>
+<li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?nodagumi/ananPJ/Agents/Think/ThinkEngine.html" target="_top">フレーム</a></li>

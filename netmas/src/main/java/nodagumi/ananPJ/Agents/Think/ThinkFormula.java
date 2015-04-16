@@ -27,8 +27,8 @@ import nodagumi.Itk.* ;
  * 思考を表す式の処理系。
  * 組み込まれている Formula リスト
  * <ul>
- *  <li>{@link ThinkFormulaLogical#call 論理形式および実行制御}</li>
- *  <li>{@link ThinkFormulaMisc#call その他}</li>
+ *  <li>{@link ThinkFormulaLogical#call Logical: 論理形式および実行制御}</li>
+ *  <li>{@link ThinkFormulaMisc#call Misc: その他}</li>
  * </ul>
  */
 abstract public class ThinkFormula {
