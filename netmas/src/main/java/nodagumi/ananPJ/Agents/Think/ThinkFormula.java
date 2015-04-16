@@ -64,6 +64,26 @@ abstract public class ThinkFormula {
 	return (ThinkFormula)(lexicon.lookUp(head.getString())) ;
     }
 
+    //============================================================
+    // 特殊 Term
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * null
+     */
+    static public Term Term_Null = new Term() ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * true
+     */
+    static public Term Term_True = new Term("true") ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * false
+     */
+    static public Term Term_False = new Term("false") ;
+
     //------------------------------------------------------------
     /**
      * コンストラクタ

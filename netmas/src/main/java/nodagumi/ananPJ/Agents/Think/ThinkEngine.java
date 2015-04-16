@@ -81,26 +81,6 @@ public class ThinkEngine {
      */
     private Term rule = null ;
 
-    //============================================================
-    // 特殊 Term
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * null
-     */
-    static public Term Term_Null = new Term() ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * true
-     */
-    static public Term Term_True = new Term("true") ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * false
-     */
-    static public Term Term_False = new Term("false") ;
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * log tag
@@ -200,7 +180,7 @@ public class ThinkEngine {
      */
     public Term think(Term expr) {
         if(expr == null || expr.isNull()) {
-            return Term_Null ;
+            return ThinkFormula.Term_Null ;
         } else if(expr.isArray()) {
             return think_procBody(expr) ;
         } else if(!(expr.getHead() instanceof String)) {
@@ -209,11 +189,11 @@ public class ThinkEngine {
         } else {
             String head = expr.getHeadString() ;
             if(head.equals("null")) {
-                return Term_Null ;
+                return ThinkFormula.Term_Null ;
             } else if(head.equals("true")) {
-                return Term_True ;
+                return ThinkFormula.Term_True ;
             } else if(head.equals("false")) {
-                return Term_False ;
+                return ThinkFormula.Term_False ;
             } else if(head.equals("not")) {
                 return think_not(expr) ;
             } else if(head.equals("and")) {
@@ -243,9 +223,9 @@ public class ThinkEngine {
     public Term think_not(Term expr) {
         Term result = think(expr.getArgTerm("body")) ;
         if(checkFalse(result)) {
-            return Term_True ;
+            return ThinkFormula.Term_True ;
         } else {
-            return Term_False ;
+            return ThinkFormula.Term_False ;
         }
     }
 
@@ -255,8 +235,8 @@ public class ThinkEngine {
      */
     public boolean checkFalse(Term expr) {
         return (expr == null ||
-                expr.equals(Term_Null) ||
-                expr.equals(Term_False)) ;
+                expr.equals(ThinkFormula.Term_Null) ||
+                expr.equals(ThinkFormula.Term_False)) ;
     }
 
     //------------------------------------------------------------
@@ -275,7 +255,7 @@ public class ThinkEngine {
             System.exit(1) ;
         }
 
-        Term result = Term_True ;
+        Term result = ThinkFormula.Term_True ;
         for(int i = 0 ; i < body.getArraySize() ; i++) {
             Term subExpr = body.getNthTerm(i) ;
             result = think(subExpr) ;
@@ -300,7 +280,7 @@ public class ThinkEngine {
             System.exit(1) ;
         }
 
-        Term result = Term_False ;
+        Term result = ThinkFormula.Term_False ;
         for(int i = 0 ; i < body.getArraySize() ; i++) {
             Term subExpr = body.getNthTerm(i) ;
             result = think(subExpr) ;
@@ -335,7 +315,7 @@ public class ThinkEngine {
             System.exit(1) ;
         }
 
-        Term result = Term_Null ;
+        Term result = ThinkFormula.Term_Null ;
         for(int i = 0 ; i < body.getArraySize() ; i++) {
             Term subExpr = body.getNthTerm(i) ;
             result = think(subExpr) ;
@@ -371,7 +351,7 @@ public class ThinkEngine {
             if(elseExpr != null) {
                 return think(elseExpr) ;
             } else {
-                return Term_False ;
+                return ThinkFormula.Term_False ;
             }
         }
     }
@@ -406,7 +386,7 @@ public class ThinkEngine {
             return expr ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
-            return Term_Null ;
+            return ThinkFormula.Term_Null ;
         }
     }
 
@@ -447,7 +427,7 @@ public class ThinkEngine {
                 Itk.logInfo(logTag(), tag, ":", result) ;
             }
         }
-        return Term_True ;
+        return ThinkFormula.Term_True ;
     }
 
     //------------------------------------------------------------
@@ -514,11 +494,11 @@ public class ThinkEngine {
             } else {
                 Itk.logError("unknown type for random in getValue.", 
                              "type=", type) ;
-            return Term_Null ;
+            return ThinkFormula.Term_Null ;
             }
         } else {
             Itk.logError("unknown parameter name for getValue.", "name=",name) ;
-            return Term_Null ;
+            return ThinkFormula.Term_Null ;
         }
     }
 
@@ -535,9 +515,9 @@ public class ThinkEngine {
     public Term think_agentHasTag(String head, Term expr) {
         String tag = expr.getArgString("tag") ;
         if(agent.hasTag(tag)) {
-            return Term_True ;
+            return ThinkFormula.Term_True ;
         } else {
-            return Term_False ;
+            return ThinkFormula.Term_False ;
         }
     }
 
@@ -554,9 +534,9 @@ public class ThinkEngine {
     public Term think_placeHasTag(String head, Term expr) {
         String tag = expr.getArgString("tag") ;
         if(agent.getCurrentLink().hasTag(tag)) {
-            return Term_True ;
+            return ThinkFormula.Term_True ;
         } else {
-            return Term_False ;
+            return ThinkFormula.Term_False ;
         }
     }
 
@@ -576,9 +556,9 @@ public class ThinkEngine {
         Term message = expr.getArgTerm("message") ;
         Double time = getAlertedMessageTable().get(message) ;
         if(time != null) {
-            return Term_True ;
+            return ThinkFormula.Term_True ;
         } else {
-            return Term_False ;
+            return ThinkFormula.Term_False ;
         }
     }
 
@@ -594,7 +574,7 @@ public class ThinkEngine {
     public Term think_clearAlert(String head, Term expr) {
         Term message = expr.getArgTerm("message") ;
         getAlertedMessageTable().remove(message) ;
-        return Term_True ;
+        return ThinkFormula.Term_True ;
     }
 
     //------------------------------------------------------------
@@ -606,7 +586,7 @@ public class ThinkEngine {
      */
     public Term think_clearAllAlert(String head, Term expr) {
         getAlertedMessageTable().clear() ;
-        return Term_True ;
+        return ThinkFormula.Term_True ;
     }
 
     //------------------------------------------------------------
@@ -621,7 +601,7 @@ public class ThinkEngine {
     public Term think_changeGoal(String head, Term expr) {
         Term goalTag = expr.getArgTerm("goal") ;
         agent.changeGoal(goalTag) ;
-        return Term_True ;
+        return ThinkFormula.Term_True ;
     }
 
     //------------------------------------------------------------
@@ -633,7 +613,7 @@ public class ThinkEngine {
      */
     public Term think_clearPlannedRoute(String head, Term expr) {
         agent.setPlannedRoute(new ArrayList<Term>(), true) ;
-        return Term_True ;
+        return ThinkFormula.Term_True ;
     }
 
     //------------------------------------------------------------
@@ -654,7 +634,7 @@ public class ThinkEngine {
         } else {
             agent.insertRouteTagSafely(route) ;
         }
-        return Term_True ;
+        return ThinkFormula.Term_True ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

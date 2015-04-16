@@ -58,10 +58,10 @@ public class ThinkFormulaMisc extends ThinkFormula {
     @Override
     public Term call(String head, Term expr, ThinkEngine engine) {
 	if(head.equals("null")) {
-	    return engine.Term_Null ;
-	} else {
+	    return Term_Null ;
+        } else {
 	    Itk.logWarn("unknown expression", "expr=", expr) ;
-	    return engine.Term_Null ;
+	    return Term_Null ;
 	}
     }
 
