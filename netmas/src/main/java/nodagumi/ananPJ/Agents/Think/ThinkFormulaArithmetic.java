@@ -66,6 +66,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
         ThinkFormula.register("/", singleton) ;
         ThinkFormula.register("mod", singleton) ;
         ThinkFormula.register("%", singleton) ;
+
         ThinkFormula.register("equal", singleton) ;
         ThinkFormula.register("==", singleton) ;
         ThinkFormula.register(">", singleton) ;
@@ -74,6 +75,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
         ThinkFormula.register("<", singleton) ;
         ThinkFormula.register("<=", singleton) ;
         ThinkFormula.register("=<", singleton) ;
+
+        ThinkFormula.register("random", singleton) ;
 
         return true ;
     }
@@ -92,6 +95,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   <li>{@link #call_greaterThan "&gt;="}</li>
      *   <li>{@link #call_greaterThan "&lt;"}</li>
      *   <li>{@link #call_greaterThan "&lt;="}</li>
+     *   <li>{@link #call_random "random"}</li>
      * </ul>
      */
     @Override
@@ -116,6 +120,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    return call_lessThan(head, expr, engine) ;
 	} else if(head.equals("<=") || head.equals("=<")) {
 	    return call_lessOrEqual(head, expr, engine) ;
+        } else if(head.equals("random")) {
+	    return call_random(head, expr, engine) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -407,7 +413,34 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	return 0 ; // never reach here.
     }
 
-
+    //------------------------------------------------------------
+    /**
+     * 乱数
+     * <pre>
+     *   {"":"random",
+     *    "type" : _RandomType_,
+     *    "max" : _integer_ ;;;  "int" の場合のみ
+     *   }
+     *  _RandomType_ ::= "int" | "double"
+     * </pre>
+     */
+    public Term call_random(String head, Term expr, ThinkEngine engine) {
+        String type = expr.getArgString("type") ;
+        if(type == null || type.equals("int")) {
+            if(expr.hasArg("max")) {
+                return new Term(engine.getAgent()
+                                .getRandomInt(expr.getArgInt("max"))) ;
+            } else {
+                return new Term(engine.getAgent().getRandomInt()) ;
+            }
+        } else if(type.equals("double")) {
+            return new Term(engine.getAgent().getRandomDouble()) ;
+        } else {
+            Itk.logError("unknown type for random in getValue.",
+                         "type=", type) ;
+            return Term_Null ;
+        }
+    }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

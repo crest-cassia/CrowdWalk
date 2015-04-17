@@ -116,11 +116,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * <pre>
      * { "" : "getValue",
      *   "name" : _nameOfValue_,
-     *  ("type" : _RandomType_,)  ;;; only for "random"
-     *  ("max" : _integer_)     ;;; only for "random"/"int"
      * }
-     *  _nameOfValue_ ::= "name" | "currentTime" | "agentId" | "random"
-     *  _RandomType_ ::= "int" | "double"
+     *  _nameOfValue_ ::= "name" | "currentTime" | "agentId"
      * </pre>
      */
     public Term call_getValue(String head, Term expr, ThinkEngine engine) {
@@ -129,22 +126,6 @@ public class ThinkFormulaAgent extends ThinkFormula {
             return new Term(engine.getAgent().currentTime) ;
         } else if(name.equals("agentId")) {
             return new Term(engine.getAgent().ID) ;
-        } else if(name.equals("random")) {
-            String type = expr.getArgString("type") ;
-            if(type == null || type.equals("int")) {
-                if(expr.hasArg("max")) {
-                    return new Term(engine.getAgent()
-                                    .getRandomInt(expr.getArgInt("max"))) ;
-                } else {
-                    return new Term(engine.getAgent().getRandomInt()) ;
-                }
-            } else if(type.equals("double")) {
-                return new Term(engine.getAgent().getRandomDouble()) ;
-            } else {
-                Itk.logError("unknown type for random in getValue.", 
-                             "type=", type) ;
-            return Term_Null ;
-            }
         } else {
             Itk.logError("unknown parameter name for getValue.", "name=",name) ;
             return Term_Null ;
