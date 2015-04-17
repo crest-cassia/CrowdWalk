@@ -1,0 +1,13 @@
+# 実行例
+    $ ruby -I /path/to/crowdwalk-utils/libs /path/to/crowdwalk-utils/mapfile-tagging.rb -i map.xml -o map-after.xml -c config.csv
+
+# Tips
+    RUBYLIB=/path/to/crowdwalk-utils/libs/
+のようにしておけば、-I オプションが不要になって便利
+
+    $ ruby /path/to/crowdwalk-utils/mapfile-tagging.rb -i map.xml -o map-after.xml -c config.csv
+
+
+# 課題
+ROAD-CLOSED が振られたタグから generation させないように工夫する
+

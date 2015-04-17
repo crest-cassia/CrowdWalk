@@ -3,7 +3,7 @@ require 'benchmark'
 
 result = Benchmark.realtime do
 
-	pattern = "0001010001000000100000101"
+	pattern = "00111000000" + "10100001000"
 
 	command1 = "./start.sh #{pattern}"
 	puts command1
