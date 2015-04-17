@@ -55,7 +55,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
             ex.printStackTrace() ;
         }
 
+        ThinkFormula.register("getFallback", singleton) ;
         ThinkFormula.register("getParam", singleton) ;
+        ThinkFormula.register("setParam", singleton) ;
         ThinkFormula.register("agentHasTag", singleton) ;
         ThinkFormula.register("placeHasTag", singleton) ;
         ThinkFormula.register("listenAlert", singleton) ;
@@ -73,7 +75,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * 呼び出し.
      * 以下のフォーマット
      * <ul>
+     *   <li>{@link #call_getFallback "getFallback"}</li>
      *   <li>{@link #call_getParam "getParam"}</li>
+     *   <li>{@link #call_setParam "setParam"}</li>
      *   <li>{@link #call_agentHasTag "agentHasTag"}</li>
      *   <li>{@link #call_placeHasTag "placeHasTag"}</li>
      *   <li>{@link #call_listenAlert "listenAlert"}</li>
@@ -86,8 +90,12 @@ public class ThinkFormulaAgent extends ThinkFormula {
      */
     @Override
     public Term call(String head, Term expr, ThinkEngine engine) {
-	if(head.equals("getParam")) {
+	if(head.equals("getFallback")) {
+            return call_getFallback(head, expr, engine) ;
+        } else if(head.equals("getParam")) {
             return call_getParam(head, expr, engine) ;
+        } else if(head.equals("setParam")) {
+            return call_setParam(head, expr, engine) ;
         } else if(head.equals("agentHasTag")) {
             return call_agentHasTag(head, expr, engine) ;
         } else if(head.equals("placeHasTag")) {
@@ -112,27 +120,72 @@ public class ThinkFormulaAgent extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
+     * 推論(getFallback)。
+     * <pre>
+     * { "" : "getFallback",
+     *   "name" : _nameOfValue_,
+     * }
+     *  _nameOfValue_ ::= any Fallback Parameters
+     * </pre>
+     */
+    public Term call_getFallback(String head, Term expr, ThinkEngine engine) {
+        String name = expr.getArgString("name") ;
+        RationalAgent agent = (RationalAgent)engine.getAgent() ;
+
+        return agent.getTermFromConfig(name, Term_Null) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 推論(getParam)。
      * <pre>
      * { "" : "getParam",
      *   "name" : _nameOfValue_,
      * }
      *  _nameOfValue_ ::= "currentTime" | "agentId" | "linkId" |
-     *                    "speed" | "goal"
+     *                    "speed" | "emptySpeed" | "goal"
      * </pre>
      */
     public Term call_getParam(String head, Term expr, ThinkEngine engine) {
         String name = expr.getArgString("name") ;
+        RationalAgent agent = (RationalAgent)engine.getAgent() ;
+
         if(name.equals("currentTime")) {
-            return new Term(engine.getAgent().currentTime) ;
+            return new Term(agent.currentTime) ;
         } else if(name.equals("agentId")) {
-            return new Term(engine.getAgent().ID) ;
+            return new Term(agent.ID) ;
         } else if(name.equals("linkId")) {
-	    return new Term(engine.getAgent().getCurrentLink().ID) ;
+	    return new Term(agent.getCurrentLink().ID) ;
         } else if(name.equals("speed")) {
-	    return new Term(engine.getAgent().getSpeed()) ;
+	    return new Term(agent.getSpeed()) ;
+        } else if(name.equals("emptySpeed")) {
+	    return new Term(agent.getEmptySpeed()) ;
         } else if(name.equals("goal")) {
-	    return engine.getAgent().getGoal() ;
+	    return agent.getGoal() ;
+        } else {
+            Itk.logError("unknown parameter name for getParam.", "name=",name) ;
+            return Term_Null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(setParam)。
+     * <pre>
+     * { "" : "setParam",
+     *   "name" : _nameOfValue_,
+     *   "value" : _Term_,
+     * }
+     *  _nameOfValue_ ::= "emptySpeed" 
+     * </pre>
+     */
+    public Term call_setParam(String head, Term expr, ThinkEngine engine) {
+        String name = expr.getArgString("name") ;
+        Term value = engine.think(expr.getArgTerm("value")) ;
+        RationalAgent agent = (RationalAgent)engine.getAgent() ;
+        if(name.equals("emptySpeed")) {
+            agent.setEmptySpeed(value.getDouble()) ;
+            return value ;
         } else {
             Itk.logError("unknown parameter name for getParam.", "name=",name) ;
             return Term_Null ;

@@ -181,7 +181,7 @@ implements Comparable<AgentBase>, Serializable {
      * 継承しているクラスの設定のため。
      * @param confString json で書かれたAgentのconfigulation。
      */
-        public void _initByConf(String confString, Term fallback) {
+    public void _initByConf(String confString, Term fallback) {
         Term conf = Term.newByJson(confString) ;
         initByConf(conf, fallback) ;
     }
