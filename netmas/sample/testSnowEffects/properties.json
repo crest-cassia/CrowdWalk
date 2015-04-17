@@ -1,0 +1,19 @@
+{
+  "__0":"NetmasCuiSimulator",
+  "debug":true,
+  "map_file":"map.xml",
+  "generation_file":"gen.json",
+  "scenario_file":"scenario.json",
+  "timer_enable":false,
+  "timer_file":"/tmp/timer.log",
+  "interval":0,
+  "randseed":2525,
+  "random_navigation":false,
+  "speed_model":"density",
+  "time_series_log":true,
+  "time_series_log_path":"tmp",
+  "time_series_log_interval":1,
+  "loop_count":1,
+  "exit_count":0,
+  "all_agent_speed_zero_break":false
+}

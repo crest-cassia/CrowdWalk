@@ -1,0 +1,10 @@
+#{ "version" : 2}
+[
+ {"rule":"EACH",
+  "ignore":"xtrue",
+  "agentType":{"className":"AwaitAgent"},
+  "total":1,"speedModel":"LANE",
+  "startPlace":"START","conditions":null,
+  "startTime":"18:00:00","duration":60.0,
+  "goal":"GOAL"}
+]
