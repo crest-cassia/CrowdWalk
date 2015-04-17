@@ -55,7 +55,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
             ex.printStackTrace() ;
         }
 
-        ThinkFormula.register("getValue", singleton) ;
+        ThinkFormula.register("getParam", singleton) ;
         ThinkFormula.register("agentHasTag", singleton) ;
         ThinkFormula.register("placeHasTag", singleton) ;
         ThinkFormula.register("listenAlert", singleton) ;
@@ -73,7 +73,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * 呼び出し.
      * 以下のフォーマット
      * <ul>
-     *   <li>{@link #call_getValue "getValue"}</li>
+     *   <li>{@link #call_getParam "getParam"}</li>
      *   <li>{@link #call_agentHasTag "agentHasTag"}</li>
      *   <li>{@link #call_placeHasTag "placeHasTag"}</li>
      *   <li>{@link #call_listenAlert "listenAlert"}</li>
@@ -86,8 +86,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      */
     @Override
     public Term call(String head, Term expr, ThinkEngine engine) {
-	if(head.equals("getValue")) {
-            return call_getValue(head, expr, engine) ;
+	if(head.equals("getParam")) {
+            return call_getParam(head, expr, engine) ;
         } else if(head.equals("agentHasTag")) {
             return call_agentHasTag(head, expr, engine) ;
         } else if(head.equals("placeHasTag")) {
@@ -112,22 +112,22 @@ public class ThinkFormulaAgent extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 推論(getValue)。
+     * 推論(getParam)。
      * <pre>
-     * { "" : "getValue",
+     * { "" : "getParam",
      *   "name" : _nameOfValue_,
      * }
-     *  _nameOfValue_ ::= "name" | "currentTime" | "agentId"
+     *  _nameOfValue_ ::= "currentTime" | "agentId"
      * </pre>
      */
-    public Term call_getValue(String head, Term expr, ThinkEngine engine) {
+    public Term call_getParam(String head, Term expr, ThinkEngine engine) {
         String name = expr.getArgString("name") ;
         if(name.equals("currentTime")) {
             return new Term(engine.getAgent().currentTime) ;
         } else if(name.equals("agentId")) {
             return new Term(engine.getAgent().ID) ;
         } else {
-            Itk.logError("unknown parameter name for getValue.", "name=",name) ;
+            Itk.logError("unknown parameter name for getParam.", "name=",name) ;
             return Term_Null ;
         }
     }

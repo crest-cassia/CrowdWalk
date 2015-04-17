@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
+<li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaAgent.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
 <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
@@ -304,6 +304,21 @@ extends <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" tit
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_random-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_random</a></span>(java.lang.String&nbsp;head,
+           <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr,
+           <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkEngine</a>&nbsp;engine)</code>
+<div class="block">乱数
+ 
+   {"":"random",
+    "type" : _RandomType_,
+    "max" : _integer_ ;;;  "int" の場合のみ
+   }
+  _RandomType_ ::= "int" | "double"
+ </div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_sub-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call_sub</a></span>(java.lang.String&nbsp;head,
         <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr,
         <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkEngine</a>&nbsp;engine)</code>
@@ -316,7 +331,7 @@ extends <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" tit
  _Term_ の差を返す。</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">call</a></span>(java.lang.String&nbsp;head,
     <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr,
@@ -324,14 +339,14 @@ extends <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" tit
 <div class="block">呼び出し.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#compareLeftRightValues-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">compareLeftRightValues</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr,
                       <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkEngine</a>&nbsp;engine)</code>
 <div class="block">比較一般</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#registerFormulas--">registerFormulas</a></span>()</code>
 <div class="block">登録</div>
@@ -414,6 +429,7 @@ extends <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" tit
    <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_greaterThan-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>"&gt;="</code></a></li>
    <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_greaterThan-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>"&lt;"</code></a></li>
    <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_greaterThan-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>"&lt;="</code></a></li>
+   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call_random-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>"random"</code></a></li>
  </ul></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">定義:</span></dt>
@@ -614,12 +630,31 @@ extends <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" tit
 <a name="compareLeftRightValues-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>compareLeftRightValues</h4>
 <pre>public&nbsp;int&nbsp;compareLeftRightValues(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr,
                                   <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkEngine</a>&nbsp;engine)</pre>
 <div class="block">比較一般</div>
+</li>
+</ul>
+<a name="call_random-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>call_random</h4>
+<pre>public&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;call_random(java.lang.String&nbsp;head,
+                        <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;expr,
+                        <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html" title="nodagumi.ananPJ.Agents.Think内のクラス">ThinkEngine</a>&nbsp;engine)</pre>
+<div class="block">乱数
+ <pre>
+   {"":"random",
+    "type" : _RandomType_,
+    "max" : _integer_ ;;;  "int" の場合のみ
+   }
+  _RandomType_ ::= "int" | "double"
+ </pre></div>
 </li>
 </ul>
 </li>
@@ -649,7 +684,7 @@ extends <a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" tit
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormula.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
+<li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaAgent.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
 <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
