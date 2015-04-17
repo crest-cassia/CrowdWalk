@@ -1,0 +1,53 @@
+{
+    comment: 'NetmasCuiSimulator',
+    debug: true,
+    io_handler_type: 'none',
+
+    map_file: 'map_00100100100_1-4_1-5_2-2_open.xml',
+    generation_file: 'generation.csv',
+    scenario_file: 'response.csv',
+    camera_file: 'camera.csv',
+
+    interval: 0,
+    randseed: 1023,
+    random_navigation: false,
+    speed_model: 'density',
+    loop_count: 1,
+    exit_count: 0,
+    all_agent_speed_zero_break: true,
+
+    timer_enable: false,
+    timer_file: 'log/timer.log',
+
+    time_series_log: false,
+    time_series_log_path: 'log',
+    time_series_log_interval: 1,
+
+    damage_speed_zero_log: false,
+    damage_speed_zero_log_path: 'log/damage_speed_zero.csv',
+
+    //agent_movement_history_file: 'log/agent_movement_history.csv',
+    individual_pedestrians_log_dir: 'log/00100100100_1-4_1-5_2-2_open',
+
+    record_simulation_screen: false,
+    //screenshot_dir: 'screenshots',
+    //clear_screenshot_dir: true,
+    //screenshot_image_type: 'png',
+
+//  weight: 0,
+    vertical_scale: 2.0,
+    agent_size: 5.0,
+    zoom: 1.0,
+    hide_links: false,
+    density_mode: false,
+    change_agent_color_depending_on_speed: true,
+    show_status: 'none',
+    show_logo: false,
+    show_3D_polygon: true,
+    //show_3D_polygon: false,
+
+    simulation_window_open: true,
+    //simulation_window_open: false,
+    //auto_simulation_start: false,
+    auto_simulation_start: true
+}
