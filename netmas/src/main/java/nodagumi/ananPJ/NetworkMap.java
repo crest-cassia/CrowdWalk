@@ -54,8 +54,6 @@ import org.w3c.dom.Text;
 
 public class NetworkMap extends NetworkMapBase implements Serializable {
     private static final long serialVersionUID = -4302417008763441581L;
-    private HashMap<Integer, OBNode> id_part_map =
-        new HashMap<Integer, OBNode>();
     private ArrayList<AgentBase> agentsCache =
         new ArrayList<AgentBase>();
     private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
@@ -165,14 +163,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         setRoot((DefaultMutableTreeNode)root);
     }
 
-    /* create contents */
-    public void addObject(int id, OBNode node) {
-        id_part_map.put(id, node);
-    }
-
-    public OBNode getObject(int id) {
-        return id_part_map.get(id);
-    }
     /* create contents */
     //Random rand = new Random();
 
@@ -423,19 +413,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         _obinode.setUserObject(null);
     }
     
-    /* accessing contents */
-    public ArrayList<OBNode> getOBElements() {
-        return new ArrayList<OBNode>(id_part_map.values());
-    }
-    
-    public MapNodeTable getNodes() {
-        return nodesCache;
-    }
-
-    public MapLinkTable getLinks() {
-        return linksCache;
-    }
-
     public ArrayList<AgentBase> getAgents() {
         return agentsCache;
     }

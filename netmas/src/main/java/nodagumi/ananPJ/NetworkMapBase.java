@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import javax.swing.tree.DefaultTreeModel;
 
+import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.navigation.CalcPath;
@@ -36,6 +37,13 @@ import nodagumi.Itk.*;
  * なので、まとめておくものを作っておく。
  */
 public class NetworkMapBase extends DefaultTreeModel {
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ID から NetworkParts を取り出すための table.
+     */
+    protected HashMap<Integer, OBNode> id_part_map =
+        new HashMap<Integer, OBNode>();
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ノードテーブル
@@ -61,6 +69,41 @@ public class NetworkMapBase extends DefaultTreeModel {
     public NetworkMapBase() {
         super(null, true);
         validRouteKeys = new HashMap<String, Boolean>();;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * IDテーブルへのNetworkParts(OBNode)の登録
+     * @param id : part の id.
+     * @param part : 登録するpart.
+     */
+    public void addObject(int id, OBNode part) {
+        // 重複登録であれば警告
+        if(id_part_map.containsKey(id)) {
+            Itk.logWarn("duplicated ID", "id=", id, "part=", part) ;
+        }
+
+        id_part_map.put(id, part);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * IDテーブルからNetworkPartsの取り出し。
+     * @param id : 取り出す part の id.
+     * @return 取り出した part. もしなければ、null。
+     */
+    public OBNode getObject(int id) {
+        return id_part_map.get(id);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * IDテーブルの中身(NetworkParts)を取り出す。
+     * NetworkMap から移動。
+     * @return NetworkParts の ArrayList。
+     */
+    public ArrayList<OBNode> getOBElements() {
+        return new ArrayList<OBNode>(id_part_map.values());
     }
 
     //------------------------------------------------------------
