@@ -89,7 +89,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 	 */
 	public Term fallbackParameters = null ;
 
-    private OBNode selectedOBNode = null;
     private boolean hasDisplay = true;
     private Random random = null;
 
@@ -836,15 +835,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 
     }
 
-    /* selected OBNode getter/setter
-     */
-    public void setSelectedOBNode(OBNode _obNode){
-        selectedOBNode = _obNode;
-    }
-    public OBNode getSelectedOBNode(){
-        return selectedOBNode;
-    }
-    
     public void setFrames(ArrayList<EditorFrame> frames) {
         this.frames = frames;
     }
