@@ -42,6 +42,7 @@ abstract public class ThinkFormula {
         ThinkFormulaMisc.registerFormulas() ;
         ThinkFormulaLogical.registerFormulas() ;
         ThinkFormulaArithmetic.registerFormulas() ;
+        ThinkFormulaAgent.registerFormulas() ;
     }
 
     //============================================================
