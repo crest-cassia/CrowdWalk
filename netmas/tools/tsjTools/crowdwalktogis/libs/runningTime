@@ -1,0 +1,18 @@
+function setStarttime() {
+        start_time=`date +%s`
+		echo "##### Running Time Measurement Start"
+}
+
+function getEndtime() {
+        end_time=`date +%s`
+
+        SS=`expr ${end_time} - ${start_time}`
+
+        HH=`expr ${SS} / 3600`
+        SS=`expr ${SS} % 3600`
+        MM=`expr ${SS} / 60`
+        SS=`expr ${SS} % 60`
+
+        echo "##### Running Time: ${HH}:${MM}:${SS}"
+}
+

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+  <Document>
+    <name>Catalina - gx:Track</name>
+    <description>Catalina Island to Long Beach by helicopter.</description>
+
+    <Style id="agent_0">
+      <IconStyle>
+		<scale>0.6</scale>
+		<color>8f00ff00</color>
+        <Icon>
+          <href>../../images/man.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <color>8fffffff</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+
+    <Style id="agent_1">
+      <IconStyle>
+		<scale>0.6</scale>
+		<color>8f00ffff</color>
+        <Icon>
+          <href>../../images/man.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <color>8fffffff</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+
+    <Style id="agent_2">
+      <IconStyle>
+		<scale>0.6</scale>
+		<color>8f0066ff</color>
+        <Icon>
+          <href>../../images/man.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <color>8fffffff</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+
+    <Style id="agent_3">
+      <IconStyle>
+		<scale>0.6</scale>
+		<color>8f0000ff</color>
+        <Icon>
+          <href>../../images/man.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <color>8fffffff</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+
+	<% placemarks.each do |placemark| %>
+    <Placemark>
+      <!--<name>#<%= placemark[:name] %></name>-->
+      <styleUrl>#agent_<%= placemark[:colorId] %></styleUrl>
+	  <gx:Track>
+	    <altitudeMode>relativeToGround</altitudeMode>
+	    <% placemark[:gxTracks].each do |track| %><when><%= track[:when] %></when>
+	    <% end %>
+	    <% placemark[:gxTracks].each do |track| %><gx:coord><%= track[:longitude] %> <%= track[:latitude] %> <%= track[:altitude] %></gx:coord>
+		<gx:angles>0 0 0</gx:angles>
+	    <% end %>
+	  </gx:Track>
+    </Placemark>
+	<% end %>
+  </Document>
+</kml>
+
+
