@@ -117,7 +117,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * { "" : "getParam",
      *   "name" : _nameOfValue_,
      * }
-     *  _nameOfValue_ ::= "currentTime" | "agentId"
+     *  _nameOfValue_ ::= "currentTime" | "agentId" | "linkId" |
+     *                    "speed" | "goal"
      * </pre>
      */
     public Term call_getParam(String head, Term expr, ThinkEngine engine) {
@@ -126,6 +127,12 @@ public class ThinkFormulaAgent extends ThinkFormula {
             return new Term(engine.getAgent().currentTime) ;
         } else if(name.equals("agentId")) {
             return new Term(engine.getAgent().ID) ;
+        } else if(name.equals("linkId")) {
+	    return new Term(engine.getAgent().getCurrentLink().ID) ;
+        } else if(name.equals("speed")) {
+	    return new Term(engine.getAgent().getSpeed()) ;
+        } else if(name.equals("goal")) {
+	    return engine.getAgent().getGoal() ;
         } else {
             Itk.logError("unknown parameter name for getParam.", "name=",name) ;
             return Term_Null ;
