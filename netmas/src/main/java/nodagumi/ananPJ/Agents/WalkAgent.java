@@ -447,6 +447,19 @@ public class WalkAgent extends AgentBase implements Serializable {
     }
 
 
+	/**
+ 	 * 雪に関するタグがついたリンクを通過したときの速度変更を表すプライベートメ>ソッド
+	 * TODO: マジックナンバーを外部ファイルに移すように変更する
+	 * （辻が追加）
+	 */
+    private void snow_effect() {
+        MapLink currentLink = currentPlace.getLink() ;
+        if (!currentLink.hasTag("SNOW_REMOVAL") && currentLink.hasTag("SNOW_COVERAVGE")) {
+            speed *= 0.3;
+        }
+    }
+
+
     //------------------------------------------------------------
     /**
      * preUpdate
@@ -455,6 +468,7 @@ public class WalkAgent extends AgentBase implements Serializable {
     public void preUpdate(double time) {
         super.preUpdate(time) ;
         calc_speed(time);
+		this.snow_effect(); // <- 雪の影響を追加
         move_set(speed, time, true);
     }
 
