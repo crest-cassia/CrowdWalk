@@ -176,7 +176,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         return id;
     }
 
-    private int agentUniqueId = 1000;
+	private int agentUniqueId = 1000;
     public int assignUniqueAgentId() {
         synchronized(this) {
             agentUniqueId += 1;

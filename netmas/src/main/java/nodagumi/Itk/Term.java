@@ -518,19 +518,21 @@ public class Term {
      */
     private boolean convertValueToBoolean(Object val) {
         if(val instanceof Term) {
-            return Boolean.valueOf(((Term)val).getString()) ;
+            Term term = ((Term)val) ;
+            if(term.isAtom()) {
+                return convertValueToBoolean(term.getHead()) ;
+            }
         } else if(val instanceof Boolean) {
             return (Boolean)val ;
         } else if(val instanceof String) {
             return Boolean.valueOf((String)val) ;
         } else if(val == null) {
             return false ;
-        } else {
-            Thread.dumpStack() ;
-            Itk.logError("can not convert to boolean:" + this.toString()) ;
-            Itk.logError_("use false") ;
-            return false ;
-        } 
+        }
+        Thread.dumpStack() ;
+        Itk.logError("can not convert to boolean:" + this.toString()) ;
+        Itk.logError_("use false") ;
+        return false ;
     }
 
     //------------------------------------------------------------
