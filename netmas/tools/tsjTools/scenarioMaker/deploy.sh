@@ -5,12 +5,14 @@ key=$1
 
 TEMPORARY_DIR=./tmp/kanazawa-$key
 
+CROWDWALK_TO_GIS=$CROWDWALK/tools/tsjTools/crowdwalktogis
+
 #tar xfvz $TEMPORARY_DIR.tar.gz
 
 cd $TEMPORARY_DIR 
 
-ln -s ~/crowdwalktogis/generate-kml.sh ./generate-kml.sh
-ln -s ~/crowdwalktogis/deploy.sh ./deploy.sh
+ln -s $CROWDWALK_TO_GIS/generate-kml.sh ./generate-kml.sh
+ln -s $CROWDWALK_TO_GIS/deploy.sh ./deploy.sh
 ./generate-kml.sh
 ./deploy.sh
 

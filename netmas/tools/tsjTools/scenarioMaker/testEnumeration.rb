@@ -1,11 +1,18 @@
+# encoding: utf-8
+require 'benchmark'
 
-pattern = "0001010001000000100000101"
+result = Benchmark.realtime do
 
-command1 = "./start.sh #{pattern}"
-puts command1
-system command1
+	pattern = "0001010001000000100000101"
 
-command2 = "./deploy.sh #{pattern}"
-puts command2
-system command2
+	command1 = "./start.sh #{pattern}"
+	puts command1
+	system command1
+	
+	command2 = "./deploy.sh #{pattern}"
+	puts command2
+	system command2
+
+end
+puts "実行時間: #{result}s"
 
