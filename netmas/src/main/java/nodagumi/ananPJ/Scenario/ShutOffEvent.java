@@ -26,10 +26,13 @@ import nodagumi.Itk.* ;
  * <pre>
  *  { "type" : "ShutOff",
  *    "atTime" : __Time__,
- *    "placeTag" : __Tag__}
+ *    ("placeTag" : __Tag__, |
+ *     "placeId" : __Int__,)
+ *  }
  *
  *  __Time__ ::= "hh:mm:ss"
  * </pre>
+ * "placeTag" もしくは "placeId" のいずれかを指定する。
  * <p>
  * [2015.01.21 I.Noda] 現状では生成停止だけだが、
  * いろいろな機能を実施できるようにしたほうが良いかもしれない。
@@ -69,7 +72,7 @@ public class ShutOffEvent extends PlacedEvent {
      */
     public boolean occur(double time, NetworkMapBase map, boolean inverse) {
 	for(MapLink link : map.getLinks()) {
-	    if(link.hasTag(placeTag)) {
+            if(checkTagOrId(link)) {
 		link.letShutOff(!inverse) ;
 	    }
 	}

@@ -26,12 +26,14 @@ import nodagumi.Itk.* ;
  * <pre>
  *  { "type" : ( "SetTag" | "AddTag" | "RemoveTag" ),
  *    "atTime" : __Time__,
- *    "placeTag" : __Tag__,
+ *    ("placeTag" : __Tag__, |
+ *     "placeId" : __Int__,)
  *    ("onoff" : ( true | false ),)?
  *    "noticeTag" : __Tag__}
  *
  *  __Time__ ::= "hh:mm:ss"
  * </pre>
+ * "placeTag" もしくは "placeId" のいずれかを指定する。
  */
 public class SetTagEvent extends PlacedEvent {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -128,7 +130,7 @@ public class SetTagEvent extends PlacedEvent {
      */
     public boolean occur(double time, NetworkMapBase map, boolean inverse) {
 	for(MapLink link : map.getLinks()) {
-	    if(link.hasTag(placeTag)) {
+            if(checkTagOrId(link)) {
 		if(onoff ^ inverse) {
 		    link.addTag(noticeTag.getString()) ;
 		} else {
@@ -137,7 +139,7 @@ public class SetTagEvent extends PlacedEvent {
 	    }
 	}
 	for(MapNode node : map.getNodes()) {
-	    if(node.hasTag(placeTag)) {
+            if(checkTagOrId(node)) {
 		if(onoff ^ inverse) {
 		    node.addTag(noticeTag.getString()) ;
 		} else {

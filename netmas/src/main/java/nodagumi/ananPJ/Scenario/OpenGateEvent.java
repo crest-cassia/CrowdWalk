@@ -26,11 +26,13 @@ import nodagumi.Itk.* ;
  * <pre>
  *  { "type" : "OpenGate",
  *    "atTime" : __Time__,
- *    "placeTag" : __Tag__,
+ *    ("placeTag" : __Tag__, |
+ *     "placeId" : __Int__,)
  *    "gateTag" : __Tag__}
  *
  *  __Time__ ::= "hh:mm:ss"
  * </pre>
+ * "placeTag" もしくは "placeId" のいずれかで場所を指定する。
  */
 public class OpenGateEvent extends GateEvent {
     //----------------------------------------
@@ -66,7 +68,7 @@ public class OpenGateEvent extends GateEvent {
      */
     public boolean occur(double time, NetworkMapBase map, boolean inverse) {
 	for(MapLink link : map.getLinks()) {
-	    if(link.hasTag(placeTag)) {
+            if(checkTagOrId(link)) {
 		if(!inverse) {
 		    link.openGate(gateTag.getString()) ;
 		} else {
@@ -75,7 +77,7 @@ public class OpenGateEvent extends GateEvent {
 	    }
 	}
 	for(MapNode node : map.getNodes()) {
-	    if(node.hasTag(placeTag)) {
+            if(checkTagOrId(node)) {
 		if(!inverse) {
 		    node.openGate(gateTag.getString()) ;
 		} else {

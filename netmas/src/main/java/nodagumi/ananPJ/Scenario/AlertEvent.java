@@ -26,12 +26,14 @@ import nodagumi.Itk.* ;
  * <pre>
  *  { "type" : "Alert",
  *    "atTime" : __Time__,
- *    "placeTag" : __Tag__,
+ *    ("placeTag" : __Tag__, |
+ *     "placeId" : __Int__,)
  *    ("onoff" : ( true | false ),)?
  *    "message" : __String__}
  *
  *  __Time__ ::= "hh:mm:ss"
  * </pre>
+ * "placeTag" もしくは "placeId" のいずれかを指定する。
  * {@code "message"} の利用は、
  * {@link nodagumi.ananPJ.Agents.RationalAgent RationalAgent} の
  * {@link nodagumi.ananPJ.Agents.Think.ThinkEngine#think_listenAlert listenAlert} を
@@ -108,7 +110,7 @@ public class AlertEvent extends PlacedEvent {
      */
     public boolean occur(double time, NetworkMapBase map, boolean inverse) {
         for(MapLink link : map.getLinks()) {
-            if(link.hasTag(placeTag)) {
+            if(checkTagOrId(link)) {
                 if(message == null) { 
                     /* [2015.02.15 I.Noda] should be obsolete.
                      * for backward compatibility

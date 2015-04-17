@@ -13,6 +13,7 @@
 package nodagumi.ananPJ.Scenario;
 
 import nodagumi.ananPJ.NetworkMapBase;
+import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
@@ -30,6 +31,7 @@ abstract public class PlacedEvent extends EventBase {
      * 場所を指定するタグ
      */
     public Term placeTag = null ;
+    public int placeId = 0 ;
 
     //----------------------------------------
     /**
@@ -40,6 +42,9 @@ abstract public class PlacedEvent extends EventBase {
         super.setupByJson(_scenario, eventDef) ;
 
         placeTag = eventDef.getArgTerm("placeTag") ;
+        if(placeTag == null) {
+            placeId = eventDef.getArgInt("placeId") ;
+        }
     }
 
     //----------------------------------------
@@ -56,10 +61,26 @@ abstract public class PlacedEvent extends EventBase {
 
     //----------------------------------------
     /**
+     * placeTag もしくは placeId を持つか調べる。
+     */
+    public boolean checkTagOrId(OBNode mapObject) {
+        if(placeTag == null) {
+            return mapObject.ID == placeId ;
+        } else {
+            return mapObject.hasTag(placeTag) ;
+        }
+    }
+
+    //----------------------------------------
+    /**
      * 文字列化 後半
      */
     public String toStringTail() {
-	return (super.toStringTail() + "," + "place=" + placeTag);
+        if(placeTag == null) {
+            return (super.toStringTail() + "," + "id=" + placeId);
+        } else {
+            return (super.toStringTail() + "," + "place=" + placeTag);
+        }
     }
 } // class PlacedEvent
 
