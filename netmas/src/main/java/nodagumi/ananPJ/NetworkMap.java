@@ -131,7 +131,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         int id = assign_new_id();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
-        id_part_map.put(id, (OBNode)root);
+		addObject(id, (OBNode)root);
 
         setRoot((DefaultMutableTreeNode)root);
     }
@@ -142,7 +142,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         int id = assign_new_id();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
-        id_part_map.put(id, (OBNode)root);
+        addObject(id, (OBNode)root);
 
         setRoot((DefaultMutableTreeNode)root);
     }
@@ -158,7 +158,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         random = _random;
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
-        id_part_map.put(id, (OBNode)root);
+		addObject(id, (OBNode)root);
 
         setRoot((DefaultMutableTreeNode)root);
     }
@@ -166,7 +166,12 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     /* create contents */
     //Random rand = new Random();
 
-    private int assign_new_id() {
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @return 新しい id
+     */
+    protected int assign_new_id() {
         int id;
         do {
             id = Math.abs(random.nextInt());
@@ -187,7 +192,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     private void insertOBNode (OBNode parent,
             OBNode node,
             boolean can_undo) {
-        id_part_map.put(node.ID, node);
+        addObject(node.ID, node);
         insertNodeInto(node, parent, parent.getChildCount());
 
         OBNode.NType type = node.getNodeType();
@@ -232,7 +237,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     public void removeOBNode (OBNode parent,
             OBNode node,
             boolean can_undo) {
-        id_part_map.remove(node.ID);
+        removeObject(node.ID);
 
         OBNode.NType type = node.getNodeType();
         if (type != OBNode.NType.SYMLINK) {
@@ -309,7 +314,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         // int id = assign_new_id();
         int id = assignUniqueAgentId();
         agent.ID = id;
-        id_part_map.put(id, agent);
+        addObject(id, agent);
         agentsCache.add(agent);
         insertNodeInto(agent, parent, parent.getChildCount());
         return agent;
@@ -319,7 +324,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         if (autoID) {
             return addAgent(parent, agent);
         }
-        id_part_map.put(agent.ID, agent);
+        addObject(agent.ID, agent);
         agentsCache.add(agent);
         insertNodeInto(agent, parent, parent.getChildCount());
         return agent;
@@ -700,7 +705,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     @SuppressWarnings("unchecked")
     private void setupNodes(OBNode ob_node) {
         if (OBNode.NType.NODE == ob_node.getNodeType()) {
-            id_part_map.put(ob_node.ID, ob_node);
+            addObject(ob_node.ID, ob_node);
             MapNode node = (MapNode) ob_node;
 
             nodesCache.add(node);
@@ -715,13 +720,13 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     @SuppressWarnings("unchecked")
     private void setupLinks(OBNode ob_node) {
         if (OBNode.NType.LINK == ob_node.getNodeType()) {
-            id_part_map.put(ob_node.ID, ob_node);
+            addObject(ob_node.ID, ob_node);
             MapLink link = (MapLink) ob_node;
             linksCache.add(link);
 
             String[] nodes = (String[])ob_node.getUserObject();
-            MapNode from_node = (MapNode)id_part_map.get(Integer.parseInt(nodes[0]));
-            MapNode to_node = (MapNode)id_part_map.get(Integer.parseInt(nodes[1]));
+            MapNode from_node = (MapNode)getObject(Integer.parseInt(nodes[0]));
+            MapNode to_node = (MapNode)getObject(Integer.parseInt(nodes[1]));
 
             if (from_node == null) {
                 System.err.println(Integer.parseInt("from_node is null " + nodes[0]));
@@ -752,15 +757,15 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     @SuppressWarnings("unchecked")
     private void setupOthers(OBNode ob_node) {
 		if (OBNode.NType.GROUP == ob_node.getNodeType()) {
-            id_part_map.put(ob_node.ID, ob_node);
+            addObject(ob_node.ID, ob_node);
             for (Enumeration<OBNode> e = ob_node.children(); e.hasMoreElements();) {
                 OBNode child = e.nextElement();
                 setupOthers(child);
             }
         } else if (ob_node.getNodeType() == OBNode.NType.SYMLINK) {
-            id_part_map.put(ob_node.ID, ob_node);
+            addObject(ob_node.ID, ob_node);
             Integer orig_id = (Integer)ob_node.getUserObject();
-            OBNode original = (OBNode)id_part_map.get(orig_id);
+            OBNode original = (OBNode)getObject(orig_id);
             
             OBNodeSymbolicLink symlink = (OBNodeSymbolicLink)ob_node;
             symlink.setOriginal(original);

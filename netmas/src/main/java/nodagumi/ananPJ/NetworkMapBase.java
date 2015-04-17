@@ -88,6 +88,16 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
+     * IDテーブルへのNetworkParts(OBNode)の登録
+     * @param id : part の id.
+     * @param part : 登録するpart.
+     */
+    public void removeObject(int id) {
+        id_part_map.remove(id) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * IDテーブルからNetworkPartsの取り出し。
      * @param id : 取り出す part の id.
      * @return 取り出した part. もしなければ、null。
