@@ -31,7 +31,10 @@ keys.each do |key|
 	steps_string = log_json_data['steps']
 	steps_integer = steps_string.to_i
 	
-	stats.push({ 'steps'=>steps_integer, 'query'=>key })
+	average_time_string = log_json_data['average_time']
+	evacuation_time_string = log_json_data['evacuation_time']
+	
+	stats.push({ 'steps'=>steps_integer, 'query'=>key, 'average_time'=>average_time_string, 'evacuation_time'=>evacuation_time_string })
 
 end
 	
