@@ -454,7 +454,7 @@ public class WalkAgent extends AgentBase implements Serializable {
 	 */
     private void snow_effect() {
         MapLink currentLink = currentPlace.getLink() ;
-        if (!currentLink.hasTag("SNOW_REMOVAL") && currentLink.hasTag("SNOW_COVERAVGE")) {
+        if (!currentLink.hasTag("SNOW_REMOVAL") && currentLink.hasTag("SNOW_COVERAGE")) {
             speed *= 0.3;
         }
     }
