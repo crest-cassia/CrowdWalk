@@ -24,7 +24,7 @@ import nodagumi.Itk.*;
 //======================================================================
 /**
  * MapLink のテーブル。 
- * ArrayList&lt;MapLink&gt; を置き換え、各種機能を提供する。
+ * {@literal ArrayList<MapLink>} を置き換え、各種機能を提供する。
  */
 public class MapLinkTable extends OBNodeTable<MapLink> {
     //------------------------------------------------------------

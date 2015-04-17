@@ -36,48 +36,8 @@ import net.arnx.jsonic.JSON ;
 
 //======================================================================
 /**
- * Itk utility
- * <p>
- * [2015.03.16 I.Noda]
- * 一時的に、各設定ファイルの形式へのリンクを貼っておく。 
- * <ul>
- *  <li> {@link nodagumi.ananPJ.Scenario.Scenario シナリオ記述}</li>
- *  <li> {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}</li>
- *  <li> {@link nodagumi.ananPJ.misc.GenerateAgent エージェント設定 config}</li>
- *  <li> {@link nodagumi.ananPJ.Agents.Think.ThinkEngine エージェント行動ルール}</li>
- *  <li> {@link #fallback 各種設定とFallback}</li>
- * </ul>
- * <h2><a name="fallback">各種設定とFallback</a></h2>
- * Agent のconfig など、シミュレーションの各種設定は、以下の優先順位で決定される。
- * <ol>
- *   <li> Agentに関するパラメータについては、
- *       {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}
- *       の中の、"agentType" の項目で、エージェントクラス名と共に規定値を
- *       指定できる。
- *       設定できる項目はエージェントクラスにより異なる。
- *       各クラスでの設定項目は、
- *       {@link nodagumi.ananPJ.misc.GenerateAgent エージェント設定 config} を
- *       参照。
- *   </li>
- *   <li> 全ての設定項目について、
- *        シミュレーション実行のための properties ファイルの
- *        "fallback_file" で指定した JSON ファイルにおいて規定値を指定できる。
- *        記載例は、"sample/simpleGrid/fallbackParameters.json" を参照。
- *   </li>
- *   <li> 全ての設定項目について、
- *        開発レポジトリの "src/main/resources/fallbackParameters.json" に
- *        おいて規定値を指定できる。
- *        このファイルは、buildする段階で jar ファイルに取り込まれる。
- *   </li>
- *   <li> 上記のいずれにも指定されなかった設定項目については、プログラム中で、
- *        指定した定数が規定値として指定される。
- *   </li>
- * </ol>
- * 上記の優先順位に則ったパラメータの設定は、できるだけ、標準的なメソッドとして
- * 用意されるべきである。
- * 例えば、{@link nodagumi.ananPJ.Agent.AgentBase AgentBase クラス}の
- * getDoubleFromConfig(), getIntFromConfig(), getTermFromConfig() などの
- * メソッドである。
+ * General Utility for Itk.
+ * デバッグ用の各種ツール群。
  */
 public class Itk {
     //------------------------------------------------------------
@@ -789,7 +749,7 @@ public class Itk {
 
         //------------------------------
         /**
-         * Json Object (Map&lt;String,Object&gt;) への変換
+         * Json Object ({@literal Map<String,Object>}) への変換
          */
         static public Map<String,Object> pickObject(Map<String,Object> object,
                                                     String key){
@@ -822,7 +782,7 @@ public class Itk {
 
         //------------------------------
         /**
-         * Json Object (Map&lt;String,Object&gt;) への変換
+         * Json Object ({@literal Map<String,Object>}) への変換
          */
         static public Map<String,Object> convertObject(Object object){
             return (Map<String,Object>)object ;

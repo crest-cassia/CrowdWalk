@@ -70,6 +70,10 @@
 <!-- ========= END OF TOP NAVBAR ========= -->
 <div class="header">
 <h1 title="パッケージ" class="title">パッケージ&nbsp;nodagumi.ananPJ</h1>
+<div class="docSummary">
+<div class="block">CrowdWalk の概要.</div>
+</div>
+<p>参照先:&nbsp;<a href="#package.description">説明</a></p>
 </div>
 <div class="contentContainer">
 <ul class="blockList">
@@ -148,6 +152,53 @@
 </table>
 </li>
 </ul>
+<a name="package.description">
+<!--   -->
+</a>
+<h2 title="パッケージnodagumi.ananPJの説明">パッケージnodagumi.ananPJの説明</h2>
+<div class="block">CrowdWalk の概要.
+
+ <hr>
+ <h3>設定ファイルの書き方</h3>
+ <ul>
+  <li> <a href="../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス"><code>実行properties</code></a></li>
+  <li> <a href="../../nodagumi/ananPJ/Scenario/Scenario.html" title="nodagumi.ananPJ.Scenario内のクラス"><code>シナリオ記述</code></a></li>
+  <li> <a href="../../nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント生成ルール</code></a></li>
+  <li> <a href="../../nodagumi/ananPJ/misc/GenerateAgent.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント設定 config</code></a></li>
+  <li> <a href="../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><code>エージェント行動ルール</code></a></li>
+  <li> <a href="#fallback"> 各種設定とFallback</a></li>
+ </ul>
+ <h4><a name="fallback">各種設定とFallback</a></h4>
+ Agent のconfig など、シミュレーションの各種設定は、以下の優先順位で決定される。
+ <ol>
+   <li> Agentに関するパラメータについては、
+       <a href="../../nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント生成ルール</code></a>
+       の中の、"agentType" の項目で、エージェントクラス名と共に規定値を
+       指定できる。
+       設定できる項目はエージェントクラスにより異なる。
+       各クラスでの設定項目は、
+       <a href="../../nodagumi/ananPJ/misc/GenerateAgent.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント設定 config</code></a> を
+       参照。
+   </li>
+   <li> 全ての設定項目について、
+        シミュレーション実行のための properties ファイルの
+        "fallback_file" で指定した JSON ファイルにおいて規定値を指定できる。
+        記載例は、"sample/simpleGrid/fallbackParameters.json" を参照。
+   </li>
+   <li> 全ての設定項目について、
+        開発レポジトリの "src/main/resources/fallbackParameters.json" に
+        おいて規定値を指定できる。
+        このファイルは、buildする段階で jar ファイルに取り込まれる。
+   </li>
+   <li> 上記のいずれにも指定されなかった設定項目については、プログラム中で、
+        指定した定数が規定値として指定される。
+   </li>
+ </ol>
+ 上記の優先順位に則ったパラメータの設定は、できるだけ、標準的なメソッドとして
+ 用意されるべきである。
+ 例えば、<a href="../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス"><code>AgentBase クラス</code></a>の
+ getDoubleFromConfig(), getIntFromConfig(), getTermFromConfig() などの
+ メソッドである。</div>
 </div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
 <div class="bottomNav"><a name="navbar.bottom">

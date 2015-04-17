@@ -110,48 +110,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">Itk</span>
 extends java.lang.Object</pre>
-<div class="block">Itk utility
- <p>
- [2015.03.16 I.Noda]
- 一時的に、各設定ファイルの形式へのリンクを貼っておく。 
- <ul>
-  <li> <a href="../../nodagumi/ananPJ/Scenario/Scenario.html" title="nodagumi.ananPJ.Scenario内のクラス"><code>シナリオ記述</code></a></li>
-  <li> <a href="../../nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント生成ルール</code></a></li>
-  <li> <a href="../../nodagumi/ananPJ/misc/GenerateAgent.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント設定 config</code></a></li>
-  <li> <a href="../../nodagumi/ananPJ/Agents/Think/ThinkEngine.html" title="nodagumi.ananPJ.Agents.Think内のクラス"><code>エージェント行動ルール</code></a></li>
-  <li> <code>各種設定とFallback</code></li>
- </ul>
- <h2><a name="fallback">各種設定とFallback</a></h2>
- Agent のconfig など、シミュレーションの各種設定は、以下の優先順位で決定される。
- <ol>
-   <li> Agentに関するパラメータについては、
-       <a href="../../nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント生成ルール</code></a>
-       の中の、"agentType" の項目で、エージェントクラス名と共に規定値を
-       指定できる。
-       設定できる項目はエージェントクラスにより異なる。
-       各クラスでの設定項目は、
-       <a href="../../nodagumi/ananPJ/misc/GenerateAgent.html" title="nodagumi.ananPJ.misc内のクラス"><code>エージェント設定 config</code></a> を
-       参照。
-   </li>
-   <li> 全ての設定項目について、
-        シミュレーション実行のための properties ファイルの
-        "fallback_file" で指定した JSON ファイルにおいて規定値を指定できる。
-        記載例は、"sample/simpleGrid/fallbackParameters.json" を参照。
-   </li>
-   <li> 全ての設定項目について、
-        開発レポジトリの "src/main/resources/fallbackParameters.json" に
-        おいて規定値を指定できる。
-        このファイルは、buildする段階で jar ファイルに取り込まれる。
-   </li>
-   <li> 上記のいずれにも指定されなかった設定項目については、プログラム中で、
-        指定した定数が規定値として指定される。
-   </li>
- </ol>
- 上記の優先順位に則ったパラメータの設定は、できるだけ、標準的なメソッドとして
- 用意されるべきである。
- 例えば、<code>AgentBase クラス</code>の
- getDoubleFromConfig(), getIntFromConfig(), getTermFromConfig() などの
- メソッドである。</div>
+<div class="block">General Utility for Itk.
+ デバッグ用の各種ツール群。</div>
 </li>
 </ul>
 </div>

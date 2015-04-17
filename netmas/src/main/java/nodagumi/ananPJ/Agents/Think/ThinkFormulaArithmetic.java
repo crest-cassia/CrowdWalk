@@ -91,10 +91,10 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   <li>{@link #call_div "div"}</li>
      *   <li>{@link #call_mod "mod"}</li>
      *   <li>{@link #call_equal "equal"}</li>
-     *   <li>{@link #call_greaterThan "&gt;"}</li>
-     *   <li>{@link #call_greaterThan "&gt;="}</li>
-     *   <li>{@link #call_greaterThan "&lt;"}</li>
-     *   <li>{@link #call_greaterThan "&lt;="}</li>
+     *   <li>{@link #call_greaterThan "greater"}</li>
+     *   <li>{@link #call_greaterThan "greaterOrEqual"}</li>
+     *   <li>{@link #call_greaterThan "less"}</li>
+     *   <li>{@link #call_greaterThan "lessOrEqual"}</li>
      *   <li>{@link #call_random "random"}</li>
      * </ul>
      */
@@ -130,7 +130,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 足し算
+     * 足し算.
      * <pre>
      *   {"":("add" || "+"),
      *    "left": _Term_,
@@ -173,7 +173,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 引き算
+     * 引き算.
      * <pre>
      *   {"":("sub" || "-"),
      *    "left": _Term_,
@@ -198,7 +198,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 掛け算
+     * 掛け算.
      * <pre>
      *   {"":("mul" || "*"),
      *    "left": _Term_,
@@ -241,7 +241,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 割り算
+     * 割り算.
      * <pre>
      *   {"":("div" || "/"),
      *    "left": _Term_,
@@ -266,7 +266,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 剰余系
+     * 剰余系.
      * <pre>
      *   {"":("mod" || "%"),
      *    "left": _Term_,
@@ -291,7 +291,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 等しい
+     * 等しい.
      * <pre>
      *   {"":"==",
      *    "left": _Term_,
@@ -320,9 +320,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 大なり
+     * 大なり.
      * <pre>
-     *   {"":"&gt;",
+     *   {"":{@literal ">"},
      *    "left": _Term_,
      *    "right": _Term_}
      * </pre>
@@ -339,9 +339,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 大なりイコール
+     * 大なりイコール.
      * <pre>
-     *   {"":("&gt;=" || "=&gt;"),
+     *   {"":{@literal (">=" || "=>")},
      *    "left": _Term_,
      *    "right": _Term_}
      * </pre>
@@ -358,9 +358,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 小なり
+     * 小なり.
      * <pre>
-     *   {"":"&lt;",
+     *   {"":{@literal "<"},
      *    "left": _Term_,
      *    "right": _Term_}
      * </pre>
@@ -377,9 +377,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 小なりイコール
+     * 小なりイコール.
      * <pre>
-     *   {"":("&lt;=" || "=&lt;"),
+     *   {"":{@literal ("<=" || "=<")},
      *    "left": _Term_,
      *    "right": _Term_}
      * </pre>
@@ -396,7 +396,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 比較一般
+     * 比較一般.
      */
     public int compareLeftRightValues(Term expr, ThinkEngine engine) {
 	if(expr.hasArg("left") && expr.hasArg("right")) {
@@ -415,7 +415,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
-     * 乱数
+     * 乱数.
      * <pre>
      *   {"":"random",
      *    "type" : _RandomType_,

@@ -41,14 +41,14 @@ import nodagumi.Itk.*;
  *   <li>
  *     <p>XML 形式(非推奨)</p>
  *     <pre>
- * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
- * &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
- * &lt;properties&gt;
- *     &lt;entry key="設定項目"&gt;設定値&lt;/entry&gt;
+ * {@literal <?xml version="1.0" encoding="UTF-8"?>}
+ * {@literal <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">}
+ * {@literal <properties>}
+ *     {@literal <entry key="設定項目">設定値</entry>}
  *                      ・
  *                      ・
  *                      ・
- * &lt;/properties&gt;</pre>
+ * {@literal </properties></pre>}
  *   </li>
  * </ul>
  *
