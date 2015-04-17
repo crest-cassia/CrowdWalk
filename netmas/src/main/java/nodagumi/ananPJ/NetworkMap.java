@@ -175,7 +175,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         int id;
         do {
             id = Math.abs(random.nextInt());
-            //System.err.println("\033[1;33massign_new_id:\033[0m " + id);
             if (id < 0) { id = -id; }
         } while (id_part_map.containsKey(id));
         return id;
