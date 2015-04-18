@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ;
 
 import java.awt.BorderLayout;
@@ -89,7 +90,7 @@ public class NetworkMapEditor extends SimulationLauncher
     private static String pollutionPath = null; // path to pollution file
     private static String generationPath = null; // path to generation file
     private static String scenarioPath = null; // path to scenario file
-	private static String fallbackPath = null; // path to fallback file
+    private static String fallbackPath = null; // path to fallback file
     private static SpeedCalculationModel speedModel = null;
     private static int exitCount = 0;
     private static long randseed = 0;
@@ -557,7 +558,7 @@ public class NetworkMapEditor extends SimulationLauncher
         networkMap.setGenerationFile(generationPath);
         networkMap.setPollutionFile(pollutionPath);
         networkMap.setScenarioFile(scenarioPath);
-		networkMap.setFallbackFile(fallbackPath);
+        networkMap.setFallbackFile(fallbackPath);
         networkMap.setupAfterLoad();
         updateAll();
         return true;

@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ;
 
 import java.io.FileInputStream;
@@ -13,6 +14,7 @@ import org.w3c.dom.NodeList;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.network.DaRuMaClient;
 
+import nodagumi.Itk.*;
 
 public abstract class BasicSimulationLauncher implements Serializable {
     private DaRuMaClient darumaClient = DaRuMaClient.getInstance();
@@ -41,6 +43,7 @@ public abstract class BasicSimulationLauncher implements Serializable {
         NetworkMap network_map = new NetworkMap(_random);
         if (false == network_map.fromDOM(doc))
             return null;
+        Itk.logInfo("Load Map File", file_name) ;
         network_map.setFileName(file_name);
         return network_map;
     }

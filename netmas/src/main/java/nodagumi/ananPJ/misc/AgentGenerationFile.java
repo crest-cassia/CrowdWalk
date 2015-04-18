@@ -403,9 +403,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         case Ver0:
         case Ver1:
             scanCsvFile(br, map, fallbackParameters) ;
+            Itk.logInfo("Load Generation File (CSV)", filename) ;
             break ;
         case Ver2:
             scanJsonFile(br, map, fallbackParameters) ;
+            Itk.logInfo("Load Generation File (JSON)", filename) ;
             break ;
         default:
             Itk.logError("Unknown Format Version",
@@ -630,7 +632,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
                         "genConfig.total:", genConfig.total,
                         "ratio:", liner_generate_agent_ratio);
             genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
-            Itk.logInfo("GenerateAgentFile final total",genConfig.total);
+            Itk.logInfo("Agent Population (CSV)",genConfig.total);
         }
 
         // speed model
@@ -935,7 +937,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent>
         genConfig.total = json.getArgInt("total") ;
         if (liner_generate_agent_ratio > 0) {
             genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
-            Itk.logInfo("GenerateAgentFile total", genConfig.total);
+            Itk.logInfo("Agent Population (JSON)", genConfig.total);
         }
 
         // speedModel

@@ -50,9 +50,11 @@ public class PollutionCalculator implements Serializable {
     public PollutionCalculator(String scheduleFileName,
             ArrayList<PollutedArea> _pollution, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
+	    Itk.logInfo("Load Pollution File", "(none)") ;
             nextEvent = -1.0;
         } else {
             readData(scheduleFileName);
+	    Itk.logInfo("Load Pollution File", scheduleFileName);
 	    Itk.logInfo("MAX Pollution Level", maxPollutionLevel) ;
             linearInterpolation(interpolationInterval);
             pollutionDataIterator = pollutionDataList.iterator();

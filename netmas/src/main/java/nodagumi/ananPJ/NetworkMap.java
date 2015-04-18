@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ;
 
 import java.awt.geom.Point2D;
@@ -597,6 +598,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 					new BufferedReader(new FileReader(fallbackFile)) ;
 				fallbackParameters = Term.newByScannedJson(JSON.decode(buffer),
 														   true) ;
+				Itk.logInfo("Load Fallback File", fallbackFile) ;
 			} catch (Exception ex) {
 				ex.printStackTrace() ;
 				Itk.logError("Can not scan a fallback parameter file:",

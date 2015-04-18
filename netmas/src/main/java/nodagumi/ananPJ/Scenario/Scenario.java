@@ -333,16 +333,17 @@ public class Scenario {
                     }
                 }
                 finalizeSetup() ;
+                Itk.logInfo("Load Scenario File", filename) ;
             } else {
-                Itk.logError("Wrong scenario format in the file:", filename) ;
-                Itk.logError_("json",json) ;
+                Itk.logError("Wrong scenario format in the file", filename) ;
+                Itk.logError_("json=",json) ;
                 System.exit(1) ;
             }
             return nEvent ;
         } catch(Exception ex) {
             ex.printStackTrace() ;
-            Itk.logError("Error in reading JSON file.") ;
-            Itk.logError_("filename", filename) ;
+            Itk.logError("Error in reading JSON file") ;
+            Itk.logError_("filename=", filename) ;
             System.exit(1) ;
         }
         return -1 ; // never reach.

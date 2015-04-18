@@ -578,15 +578,18 @@ public class NetmasPropertiesHandler implements Serializable {
         prop = new Properties();
         propertiescenarioPath = _propertiescenarioPath;
         try {
-	    Itk.logInfo("Load properties",_propertiescenarioPath);
             String path = _propertiescenarioPath.toLowerCase();
             if (path.endsWith(".xml")) {
                 prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
+		Itk.logInfo("Load Properties File (XML)",
+			    _propertiescenarioPath);
             } else if (path.endsWith(".json")) {
                 HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiescenarioPath));
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     prop.setProperty(entry.getKey(), entry.getValue().toString());
                 }
+		Itk.logInfo("Load Properties File (JSON)",
+			    _propertiescenarioPath);
             } else {
                 System.err.println("Property file error - 拡張子が不正です: " + _propertiescenarioPath);
                 System.exit(1);
