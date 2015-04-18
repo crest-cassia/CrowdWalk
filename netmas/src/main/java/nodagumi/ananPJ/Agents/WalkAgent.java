@@ -665,14 +665,16 @@ public class WalkAgent extends AgentBase implements Serializable {
         /* [2015.01.09 I.Noda]
          * リンクの交通規制など (Gate)
          */
-        currentPlace.getLink().applyRestrictionToAgent(this, time) ;
+        speed = currentPlace.getLink().calcRestrictedSpeed(speed, this, time) ;
 
         /* [2015.01.09 I.Noda]
          * リンクを踏破しているなら、headingNode での規制
          * ノードの交通規制など (STOP)
          */
         if (!currentPlace.isBeyondLinkWithAdvance(speed)) {
-            currentPlace.getHeadingNode().applyRestrictionToAgent(this, time) ;
+            speed = currentPlace.getHeadingNode().calcRestrictedSpeed(speed,
+                                                                      this,
+                                                                      time) ;
         }
 
         pollution.effect(this);

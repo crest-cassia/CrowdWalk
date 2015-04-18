@@ -1173,16 +1173,14 @@ public class MapLink extends OBMapPart implements Serializable {
      * @param time: 現在時刻
      * @return 規制が適用されたら true
      */
-    public boolean applyRestrictionToAgent(AgentBase agent,
-                                           double time) {
-        boolean applied = false ;
+    public double calcRestrictedSpeed(double speed, AgentBase agent,
+                                      double time) {
         /* 分断制御 */
         if(isGateClosed(agent, time)) {
-            agent.setSpeed(0) ;
-            applied = true ;
+            speed = 0 ;
         }
 
-        return applied ;
+        return speed ;
     }
 
     //------------------------------------------------------------
@@ -1191,7 +1189,7 @@ public class MapLink extends OBMapPart implements Serializable {
      * @param baseSpeed: 元になるスピード
      * @param agent: 対象となるエージェント。リンク上にいる。
      * @param time: 現在時刻
-     * @return 速度
+     * @return 自由速度
      */
     public double calcEmptySpeedForAgent(double baseSpeed,
                                          AgentBase agent,
