@@ -5,6 +5,7 @@
   "map_file":"gridTown00.map.xml",
   "generation_file":"gridTown00.gen.json",
   "scenario_file":"gridTown00.scnr.json",
+  "fallback_file":"gridTown00.fb.json",
   "timer_enable":true,
   "timer_file":"/tmp/timer.log",
   "interval":0,
