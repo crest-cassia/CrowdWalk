@@ -21,5 +21,17 @@
 	"speedModel" : "PLAIN",
 	"_" : null
     },
+    "link" : {
+	"speedRestrictRule" : [],
+	"emptySpeedRestrictRule" : [
+	    { "type" : "multiply",
+	      "tag" : "STAIR",
+	      "factor" : 0.6 } ],
+	"_" : null
+    },
+    "node" : {
+	"speedRestrictRule" : [],
+	"_" : null
+    },
     "_" : null
 }

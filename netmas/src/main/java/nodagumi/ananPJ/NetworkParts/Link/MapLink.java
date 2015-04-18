@@ -41,6 +41,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -80,12 +81,64 @@ public class MapLink extends OBMapPart implements Serializable {
     } ;
 
     //============================================================
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //------------------------------------------------------------
     /**
-     * 速度決定用パラメータ
-     * STAIR_SPEED_CO: 階段における減速率
+     * 共通パラメータを、fallbackParameterから設定。
      */
-    protected static double STAIR_SPEED_CO = 0.6;//0.7;
+    public static void setupCommonParameters(Term wholeFallbacks) {
+        fallbackParameters =
+            wholeFallbacks.filterArgTerm("link",
+                                         NetworkMap.FallbackSlot) ;
+        speedRestrictRule =
+            fallbackParameters.fetchArgTerm("speedRestrictRule",
+                                            NetworkMap.FallbackSlot,
+                                            Term.newArrayTerm()) ;
+        emptySpeedRestrictRule =
+            fallbackParameters.fetchArgTerm("emptySpeedRestrictRule",
+                                            NetworkMap.FallbackSlot,
+                                            Term.newArrayTerm()) ;
+    } ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * リンク用の fallback パラメータ
+     */
+    public static Term fallbackParameters = null ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * リンクによる速度の制約計算で用いるルール。
+     * Array 型 Term の形で格納される。
+     * Array の要素は、ルールを示す ObjectTerm。
+     * <pre>
+     *  [ { "type" : "multiply",
+     *      "tag" : "FOO",
+     *      "factor" : 0.5 },
+     *    { "type" : "multiply",
+     *      "tag" : "BAR",
+     *      "factor" : 0.9 } ]
+     * </pre>
+     */
+    public static Term speedRestrictRule = null ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * リンクによる自由速度に制約を加える時のルール
+     * Array 型 Term の形で格納される。
+     * Array の要素は、ルールを示す ObjectTerm。
+     * <pre>
+     *  [ { "type" : "multiply",
+     *      "tag" : "FOO",
+     *      "factor" : 0.5 },
+     *    { "type" : "multiply",
+     *      "tag" : "BAR",
+     *      "factor" : 0.9 } ]
+     * </pre>
+     */
+    public static Term emptySpeedRestrictRule = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -266,10 +319,6 @@ public class MapLink extends OBMapPart implements Serializable {
         
         if (phi < 1.0) return 1.0;
         return phi;
-    }
-    
-    public boolean isStair() {
-        return hasTag("STAIR");
     }
     
     public boolean isBetweenHeight(double min_h, double max_h) {
@@ -1180,28 +1229,61 @@ public class MapLink extends OBMapPart implements Serializable {
             speed = 0 ;
         }
 
+        /* 制約ルール適用 */
+        for(int i = 0 ; i < speedRestrictRule.getArraySize() ; i++) {
+            Term rule = speedRestrictRule.getNthTerm(i) ;
+            speed = applyRestrictionRule(speed, rule, agent, time) ;
+        }
+
         return speed ;
     }
 
     //------------------------------------------------------------
     /**
      * そのリンクにおける自由速度
-     * @param baseSpeed: 元になるスピード
+     * @param emptySpeed: 元になるスピード
      * @param agent: 対象となるエージェント。リンク上にいる。
      * @param time: 現在時刻
      * @return 自由速度
      */
-    public double calcEmptySpeedForAgent(double baseSpeed,
+    public double calcEmptySpeedForAgent(double emptySpeed,
                                          AgentBase agent,
                                          double time) {
-        /* 階段における処理 */
-        /* [2015.01.10 I.Noda] todo
-         * ここはちゃんと外部パラメータ化すべき。
-         */
-        if (isStair()) {
-            baseSpeed *= STAIR_SPEED_CO;
+        /* 制約ルール適用 */
+        for(int i = 0 ; i < emptySpeedRestrictRule.getArraySize() ; i++) {
+            Term rule = emptySpeedRestrictRule.getNthTerm(i) ;
+            emptySpeed = applyRestrictionRule(emptySpeed, rule, agent, time) ;
         }
-        return baseSpeed ;
+
+        return emptySpeed ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ルールに従い速度等に制限を加える。
+     * @param value: 元になる値
+     * @param rule: ルール
+     * @param agent: 対象となるエージェント。リンク上にいる。
+     * @param time: 現在時刻
+     * @return 変更された値
+     */
+    public double applyRestrictionRule(double value, Term rule,
+                                       AgentBase agent, double time) {
+        String tag = rule.getArgString("tag") ;
+        if(hasTag(tag)) {
+            String type = rule.getArgString("type") ;
+            double factor = rule.getArgDouble("factor") ;
+            if(type.equals("set")) {
+                value = factor ;
+            } else if(type.equals("multiply")) {
+                value *= factor ;
+            } else if(type.equals("add")) {
+                value += factor ;
+            } else {
+                Itk.logError("unknown restriction rule type", "rule=", rule) ;
+            }
+        }
+        return value ;
     }
 
 }

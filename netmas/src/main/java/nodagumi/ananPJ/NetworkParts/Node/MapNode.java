@@ -49,6 +49,14 @@ import nodagumi.Itk.*;
 public class MapNode extends OBMapPart implements Serializable {
     private static final long serialVersionUID = -7438706484453707443L;
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * 共通パラメータを、fallbackParameterから設定。
+     */
+    public static void setupCommonParameters(Term fallback) {
+    } ;
+
     /* global coordinates */
     private Point2D absolute_coordinates;
     private double height;

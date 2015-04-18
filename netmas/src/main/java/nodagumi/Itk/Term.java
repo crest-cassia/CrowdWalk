@@ -446,7 +446,18 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * arg を filter(fallback 付き)
+     * arg を filter(fallback 付き)。
+     * 例えば、
+     * <pre>
+     * { "a" : { "x" : 1, "y" : 2 },
+     *   "b" : { "u" : 3, "v" : 4 },
+     *   "_fallback_" : { "a" : { "y" : 5, "z" : 6 }, 
+     *                    "b" : { "u" : 7, "w" : 8 }}}
+     * </pre>
+     * から以下を構築する。
+     * <pre>
+     * { "x" : 1, "y" : 2, "_fallback_" : { "y" : 5, "z" : 6 } }
+     * </pre>
      * @param slot : filter するスロット
      * @param fallbackSlot : fallback で潜っていくスロット
      * @return filter された結果。必ずコピーされる。

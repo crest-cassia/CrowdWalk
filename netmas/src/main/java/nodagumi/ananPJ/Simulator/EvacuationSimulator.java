@@ -524,6 +524,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
     }
 
     public void setup() {
+	MapLink.setupCommonParameters(networkMap.fallbackParameters) ;
+	MapNode.setupCommonParameters(networkMap.fallbackParameters) ;
         resetValues();
     }
 
