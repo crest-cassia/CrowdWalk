@@ -164,9 +164,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         setRoot((DefaultMutableTreeNode)root);
     }
 
-    /* create contents */
-    //Random rand = new Random();
-
     //------------------------------------------------------------
     /**
      * ユニークな id の取得
@@ -645,20 +642,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     public boolean toDOM(Document doc) {
         Element dom_root =((OBNode)this.root).toDom(doc, "root");
 
-        /* some attributes */
-        if (pollutionFile != null) {
-            dom_root.setAttribute("PollutionSettings", pollutionFile);
-        }
-        if (generationFile != null) {
-            dom_root.setAttribute("GenerationSettings", generationFile);
-        }
-        if (scenarioFile != null) {
-            dom_root.setAttribute("ScenarioSettings", scenarioFile);
-        }
-        if (fallbackFile != null) {
-            dom_root.setAttribute("FallbackSettings", fallbackFile);
-        }
-
         doc.appendChild(dom_root);
 
         return true;
@@ -675,20 +658,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
             return false;
         }
         Element dom_root = (Element) toplevel.item(0);
-
-		/* [2015.02.06 I.Noda]
-		 * このあたり、使われていない設定読み込み。
-		 * おそらく、properties に集約されている？
-		 */
-        /* some attributes */
-		pollutionFile = dom_root.getAttribute("PollutionSettings");
-		if (pollutionFile.isEmpty()) pollutionFile = null;
-		generationFile = dom_root.getAttribute("GenerationSettings");
-		if (generationFile.isEmpty()) generationFile = null;
-		scenarioFile = dom_root.getAttribute("ScenarioSettings");
-		if (scenarioFile.isEmpty()) scenarioFile = null;
-		fallbackFile = dom_root.getAttribute("FallbackSettings") ;
-		if (fallbackFile.isEmpty()) fallbackFile = null;
 
         setRoot(OBNode.fromDom(dom_root));
         setupNetwork((OBNode)this.root);
