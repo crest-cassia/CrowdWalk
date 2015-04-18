@@ -112,6 +112,9 @@ public class MapLink extends OBMapPart implements Serializable {
      * リンクによる速度の制約計算で用いるルール。
      * Array 型 Term の形で格納される。
      * Array の要素は、ルールを示す ObjectTerm。
+     * 以下は例。詳細は、
+     * {@link nodagumi.ananPJ.NetworkParts.OBMapPart#applyRestrictionRule applyRestrictionRule} 
+     * を参照。
      * <pre>
      *  [ { "type" : "multiply",
      *      "tag" : "FOO",
@@ -129,6 +132,9 @@ public class MapLink extends OBMapPart implements Serializable {
      * リンクによる自由速度に制約を加える時のルール
      * Array 型 Term の形で格納される。
      * Array の要素は、ルールを示す ObjectTerm。
+     * 以下は例。詳細は、
+     * {@link nodagumi.ananPJ.NetworkParts.OBMapPart#applyRestrictionRule applyRestrictionRule} 
+     * を参照。
      * <pre>
      *  [ { "type" : "multiply",
      *      "tag" : "FOO",
@@ -1256,34 +1262,6 @@ public class MapLink extends OBMapPart implements Serializable {
         }
 
         return emptySpeed ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ルールに従い速度等に制限を加える。
-     * @param value: 元になる値
-     * @param rule: ルール
-     * @param agent: 対象となるエージェント。リンク上にいる。
-     * @param time: 現在時刻
-     * @return 変更された値
-     */
-    public double applyRestrictionRule(double value, Term rule,
-                                       AgentBase agent, double time) {
-        String tag = rule.getArgString("tag") ;
-        if(hasTag(tag)) {
-            String type = rule.getArgString("type") ;
-            double factor = rule.getArgDouble("factor") ;
-            if(type.equals("set")) {
-                value = factor ;
-            } else if(type.equals("multiply")) {
-                value *= factor ;
-            } else if(type.equals("add")) {
-                value += factor ;
-            } else {
-                Itk.logError("unknown restriction rule type", "rule=", rule) ;
-            }
-        }
-        return value ;
     }
 
 }

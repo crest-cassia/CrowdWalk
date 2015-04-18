@@ -34,6 +34,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -54,8 +55,42 @@ public class MapNode extends OBMapPart implements Serializable {
     /**
      * 共通パラメータを、fallbackParameterから設定。
      */
-    public static void setupCommonParameters(Term fallback) {
+    public static void setupCommonParameters(Term wholeFallbacks) {
+        fallbackParameters =
+            wholeFallbacks.filterArgTerm("link",
+                                         NetworkMap.FallbackSlot) ;
+        speedRestrictRule =
+            fallbackParameters.fetchArgTerm("speedRestrictRule",
+                                            NetworkMap.FallbackSlot,
+                                            Term.newArrayTerm()) ;
     } ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * リンク用の fallback パラメータ
+     */
+    public static Term fallbackParameters = null ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * リンクによる速度の制約計算で用いるルール。
+     * Array 型 Term の形で格納される。
+     * Array の要素は、ルールを示す ObjectTerm。
+     * 以下は例。詳細は、
+     * {@link nodagumi.ananPJ.NetworkParts.OBMapPart#applyRestrictionRule applyRestrictionRule} 
+     * を参照。
+     * <pre>
+     *  [ { "type" : "multiply",
+     *      "tag" : "FOO",
+     *      "factor" : 0.5 },
+     *    { "type" : "multiply",
+     *      "tag" : "BAR",
+     *      "factor" : 0.9 } ]
+     * </pre>
+     */
+    public static Term speedRestrictRule = null ;
 
     /* global coordinates */
     private Point2D absolute_coordinates;
@@ -581,6 +616,12 @@ public class MapNode extends OBMapPart implements Serializable {
         /* 分担制御 */
         if(isGateClosed(agent, time)) {
             speed = 0.0 ;
+        }
+
+        /* 制約ルール適用 */
+        for(int i = 0 ; i < speedRestrictRule.getArraySize() ; i++) {
+            Term rule = speedRestrictRule.getNthTerm(i) ;
+            speed = applyRestrictionRule(speed, rule, agent, time) ;
         }
 
         return speed ;
