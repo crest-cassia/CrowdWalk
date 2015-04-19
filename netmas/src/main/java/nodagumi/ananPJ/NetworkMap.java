@@ -621,23 +621,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
 		}
 	}
 
-    public void testDumpNodes() {
-        testDumpNodes((OBNode)root);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void testDumpNodes(OBNode node) {
-        System.err.println(node.toString());
-
-        for (Enumeration<OBNode> e = node.children();e.hasMoreElements();) {
-            final OBNode child = e.nextElement();
-            for (int i = 0; i < child.getDepth(); ++i) {
-                System.err.print(" ");
-            }
-            testDumpNodes(child);
-        }
-    }
-
     /* converting to/from DOM */
     public boolean toDOM(Document doc) {
         Element dom_root =((OBNode)this.root).toDom(doc, "root");

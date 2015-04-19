@@ -1311,8 +1311,6 @@ public class NetworkMapEditor extends SimulationLauncher
 			//checkForReachability(targetTag);
 			Itk.logError("!!! checkForReachability() needs target now !!!") ;
         else if (e.getActionCommand() == "Simulate") simulate();
-        else if (e.getActionCommand() == "Dump(test)")
-            networkMap.testDumpNodes();
         else if (e.getActionCommand() == "Show 3D") show3D();
     }
 
