@@ -143,11 +143,8 @@ public class AgentHandler {
     boolean has_display;
     private Random random = null;
 
-    // プログラム制御用環境変数
-    public String envSwitch = "";
     // エージェントが存在するリンクのリスト
     private MapLinkTable effectiveLinks = null;
-    private boolean effectiveLinksEnabled = false;
 
     private Logger agentMovementHistoryLogger = null;
     private Logger individualPedestriansLogger = null;
@@ -208,11 +205,6 @@ public class AgentHandler {
                     map);
         }
 
-        envSwitch = System.getenv("NETMAS");
-        if (envSwitch == null)
-            envSwitch = "";
-        if (envSwitch.indexOf("effectiveLinks") != -1)
-            effectiveLinksEnabled = true;
     }
 
     public void setupFrame(String generationFile, String scenarioFile,
@@ -276,11 +268,9 @@ public class AgentHandler {
         if (! generated_agents_step.isEmpty()) {
             agents.addAll(generated_agents_step);
             generated_agents.addAll(generated_agents_step);
-            if (effectiveLinksEnabled) {
-                for (AgentBase agent : generated_agents_step) {
-                    if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
-                    effectiveLinks.add(agent.getCurrentLink());
-                }
+            for (AgentBase agent : generated_agents_step) {
+                if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
+                effectiveLinks.add(agent.getCurrentLink());
             }
         }
         preprocessLinks(time);
@@ -297,13 +287,13 @@ public class AgentHandler {
             simulator.registerAgent(agent);
         }
 
-        if (effectiveLinksEnabled) {
-            // エージェントが存在するリンクのリストを更新
-            effectiveLinks.clear();
-            for (AgentBase agent : agents) {
-                if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
-                effectiveLinks.add(agent.getCurrentLink());
-            }
+        // エージェントが存在するリンクのリストを更新
+        effectiveLinks.clear();
+        for (AgentBase agent : agents) {
+            if (agent.isEvacuated() ||
+                effectiveLinks.contains(agent.getCurrentLink()))
+                continue;
+            effectiveLinks.add(agent.getCurrentLink());
         }
     }
 
@@ -364,7 +354,7 @@ public class AgentHandler {
 
         if (true) {
             synchronized (simulator) {
-                for (MapLink link : effectiveLinksEnabled ? effectiveLinks : simulator.getLinks()) {
+                for (MapLink link : effectiveLinks) {
                     ArrayList<AgentBase> pos_agents = link.getLane(1.0);
                     for(int i = 0 ; i < pos_agents.size() ; i++) {
                         AgentBase agent =
