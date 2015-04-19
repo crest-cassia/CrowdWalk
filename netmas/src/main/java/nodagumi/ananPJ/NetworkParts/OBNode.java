@@ -351,19 +351,6 @@ public abstract class OBNode extends DefaultMutableTreeNode
         return panel;
     }
 
-    public Element storeToDOM(Document doc, String tag) {
-        Element element = doc.createElement(tag);
-        element.setAttribute("class", "OBNode");
-
-        Element idElement = doc.createElement("ID");
-        idElement.setAttribute("class", "int");
-        Text idText = doc.createTextNode("" + ID);
-        idElement.appendChild(idText);
-        element.appendChild(idElement);
-
-        return element;
-    }
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ゲート（分断制御用交通規制）テーブル。

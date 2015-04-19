@@ -848,66 +848,6 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
         System.out.println("NetworkMap.printFields: filename: " + filename);
     }
 
-    public Element storeToDOM(Document doc, String tag) {
-        Element element = doc.createElement(tag);
-        element.setAttribute("class", "NetworkMap");
-
-        Element idElement = doc.createElement("id");
-        idElement.setAttribute("class", "int");
-        Text idText = doc.createTextNode("" + ((MapPartGroup) root).ID);
-        idElement.appendChild(idText);
-        element.appendChild(idElement);
-
-        for (Object obj : id_part_map.keySet().toArray()) {
-            Element id_part_mapElement = doc.createElement("id_part_map");
-            id_part_mapElement.setAttribute("class",
-                    "HashMap<Integer, OBNode>");
-            Element id_part_map_keyElement = doc.createElement("key");
-            id_part_map_keyElement.setAttribute("class", "Integer");
-            Text id_part_map_keyText = doc.createTextNode(
-                "" + ((Integer) obj));
-            id_part_map_keyElement.appendChild(id_part_map_keyText);
-            id_part_mapElement.appendChild(id_part_map_keyElement);
-
-            Element id_part_map_valueElement =
-                ((OBNode) id_part_map.get(obj)).storeToDOM(doc, "value");
-            id_part_mapElement.appendChild(id_part_map_valueElement);
-
-            element.appendChild(id_part_mapElement);
-        }
-
-        Element nodesCacheElement = doc.createElement("nodesCache");
-        nodesCacheElement.setAttribute("class", "MapNodeTable");
-        for (MapNode node : nodesCache) {
-            Element nodeElement = node.storeToDOM(doc, "node");
-            nodesCacheElement.appendChild(nodeElement);
-        }
-        element.appendChild(nodesCacheElement);
-
-        return element;
-    }
-
-    public NetworkMap restoreToDOM(Element element) {
-        int id = Integer.parseInt(element.getAttribute("rootID"));
-        NetworkMap networkMap = new NetworkMap(id, random);
-
-        networkMap.setFileName(element.getAttribute("filename"));
-        networkMap.setGenerationFile(element.getAttribute("generationFile"));
-        networkMap.setScenarioFile(element.getAttribute("scenarioFile"));
-		networkMap.setFallbackFile(element.getAttribute("fallbackFile")) ;
-		networkMap.scanFallbackFile(true) ;
-
-        NodeList childNetworkMap = element.getChildNodes();
-        for (int i = 0; i < childNetworkMap.getLength(); i++) {
-            if (childNetworkMap.item(i) instanceof Element) {
-                Element child = (Element) childNetworkMap.item(i);
-                if (child.getTagName().equals(""))
-                    this.setFileName(child.getAttribute(""));
-            }
-        }
-        return networkMap;
-    }
-
     public void setSpeedCalculationModel(WalkAgent
             .SpeedCalculationModel _model) {
         for (AgentBase agent : agentsCache) {
