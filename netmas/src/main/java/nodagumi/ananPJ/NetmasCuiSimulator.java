@@ -8,7 +8,6 @@ import nodagumi.ananPJ.Agents.*;
 import nodagumi.ananPJ.Agents.WalkAgent.*;
 import nodagumi.ananPJ.Simulator.*;
 import nodagumi.ananPJ.misc.*;
-import nodagumi.ananPJ.network.*;
 
 import nodagumi.Itk.*;
 
