@@ -35,6 +35,8 @@ import org.xml.sax.SAXException;
 
 import org.apache.xml.serializer.OutputPropertiesFactory;
 
+import nodagumi.Itk.*;
+
 
 public class DaRuMaClient {
 
@@ -71,50 +73,26 @@ public class DaRuMaClient {
 
     /* some utility methods, not necesseraly related to DaRuMa,
      * but more in xml manipulation
+     * [2015.04.19 I.Noda] Method bodies are moved to ItkXmlUtility.
      */
     public Document newDocument() {
-        return builder.newDocument();
+        return ItkXmlUtility.singleton.newDocument();
     }
     
     public String docToString(Document doc) {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        if (false == docToStream(doc, outStream)) return null;
-
-        return outStream.toString();
+	return ItkXmlUtility.singleton.docToString(doc) ;
     }
 
     public boolean docToStream(Document doc, OutputStream stream) {
-        DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(stream);
-        try {
-            transformer.transform(source, result);
-        } catch (TransformerException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true; 
+	return ItkXmlUtility.singleton.docToStream(doc, stream) ;
     }
     
     public Document stringToDoc(String string) {
-        try {
-            return builder.parse(string);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+	return ItkXmlUtility.singleton.stringToDoc(string) ;
     }
     
     public Document streamToDoc(InputStream is) {
-        try {
-            return builder.parse(is);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+	return ItkXmlUtility.singleton.streamToDoc(is) ;
     }
 
     /* DaRuMa related methods

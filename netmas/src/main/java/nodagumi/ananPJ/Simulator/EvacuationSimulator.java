@@ -69,14 +69,8 @@ public class EvacuationSimulator implements EvacuationModelBase {
     public EvacuationSimulator(NetworkMap _networkMap,
             SimulationController _controller,
             Random _random) {
-        networkMap = _networkMap;
-        controller = _controller;
-        if (controller instanceof BasicSimulationLauncher) {
-            properties = ((BasicSimulationLauncher)controller).getProperties();
-        }
-	map = networkMap ;
-        agents = networkMap.getAgents();
-        pollutionFileName = networkMap.getPollutionFile();
+	setupFrame(_networkMap, _controller) ;
+
         random = _random;
         int counter = 0;
         for (MapLink link : map.getLinks()) {
