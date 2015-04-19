@@ -33,7 +33,7 @@ import nodagumi.Itk.*;
 
 
 
-public class EvacuationSimulator implements EvacuationModelBase {
+public class EvacuationSimulator {
     public static enum timeSeriesLogTYpe {
         All,        /* save all agents, map information */
         Goal        /* save goal times of agents */
@@ -479,7 +479,6 @@ public class EvacuationSimulator implements EvacuationModelBase {
         return getTickCount() * timeScale;
     }
 
-    @Override
     public NetworkMap getMap() {
         return networkMap;
     }
@@ -547,7 +546,6 @@ public class EvacuationSimulator implements EvacuationModelBase {
         return pollutionCalculator.getMaxPollutionLevel();
     }
 
-    @Override
     public void recalculatePaths() {
         synchronized (stop_simulation) {
             stop_simulation = true;
@@ -556,12 +554,10 @@ public class EvacuationSimulator implements EvacuationModelBase {
         }
     }
 
-    @Override
     public double getTickCount() {
         return tick_count;
     }
 
-    @Override
     public void start() {
         if (controller != null) {
             controller.start();
@@ -571,7 +567,6 @@ public class EvacuationSimulator implements EvacuationModelBase {
         }
     }
 
-    @Override
     public void pause() {
         if (controller != null) {
             controller.pause();
@@ -581,14 +576,12 @@ public class EvacuationSimulator implements EvacuationModelBase {
         }
     }
 
-    @Override
     public void step() {
         if (controller != null) {
             controller.step();
         }
     }
 
-    @Override
     public boolean isRunning() {
         // tkokada
         if (controller != null) {
@@ -598,7 +591,6 @@ public class EvacuationSimulator implements EvacuationModelBase {
         }
     }
 
-    @Override
     public int getDisplayMode() {
         return 4;
     }

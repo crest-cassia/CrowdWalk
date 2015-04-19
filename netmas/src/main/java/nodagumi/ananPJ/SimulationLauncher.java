@@ -24,7 +24,6 @@ import javax.swing.JTabbedPane;
 
 import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.DumpState;
-import nodagumi.ananPJ.Simulator.EvacuationModelBase;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
@@ -54,7 +53,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     protected NetworkMap networkMap;
     public NetworkMap getMap() { return networkMap; }
-    public EvacuationModelBase getModel() { return model; }
+    public EvacuationSimulator getSimulator() { return simulator; }
 
     /* the constructor without arguments are for to be used as
      *  a base class for classes launching simulations */
@@ -75,7 +74,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private boolean finished = true;
     private Boolean run_thread = false;
     private transient Runnable run_simulation = null;
-    protected EvacuationSimulator model = null;
+    protected EvacuationSimulator simulator = null;
 
     protected void simulate(boolean isDeserialized) {
         if ((!isDeserialized) && (!finished)) {
@@ -90,19 +89,19 @@ public class SimulationLauncher extends BasicSimulationLauncher
             System.out.println("SimulationLauncher.simulate:finished: " +
                     finished);
             finished = false;
-            model.begin(true, isDeserialized);
+            simulator.begin(true, isDeserialized);
         } else {
 	    /* [2015-02-06 I.Noda]
 	     * ここで読み込むのが正しいか、不明
 	     */
 	    networkMap.scanFallbackFile(true) ;
 
-            model = new EvacuationSimulator(networkMap, this, random);
+            simulator = new EvacuationSimulator(networkMap, this, random);
             finished = false;
-            model.setup();
+            simulator.setup();
             buildModel();
-            model.buildDisplay();
-            model.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
+            simulator.buildDisplay();
+	    simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
         }
         if (isTimerEnabled) {
             timer = new NetmasTimer(10, timerPath);
@@ -112,25 +111,25 @@ public class SimulationLauncher extends BasicSimulationLauncher
             public void run() {
                 while(!finished && run_thread) {
                     dump_state.preUpdate();
-                    finished = model.updateEveryTick();
+                    finished = simulator.updateEveryTick();
                     dump_state.postUpdate();
                     boolean isTimezero = false;
-                    if (model.getSecond() == 0)
+                    if (simulator.getSecond() == 0)
                         isTimezero = true;
                     if (isTimeSeriesLog) {
-                        if (((int) model.getSecond()) % timeSeriesLogInterval
+                        if (((int) simulator.getSecond()) % timeSeriesLogInterval
                                 == 0)
-                            model.saveTimeSeriesLog(timeSeriesLogPath);
+                            simulator.saveTimeSeriesLog(timeSeriesLogPath);
                     }
                     if (isDamageSpeedZeroNumberLog) {
-                        model.saveSimpleGoalLog("tmp", isTimezero);
-                        model.saveDamagedSpeedZeroNumberLog(
+                        simulator.saveSimpleGoalLog("tmp", isTimezero);
+                        simulator.saveDamagedSpeedZeroNumberLog(
                                 damageSpeedZeroNumberLogPath, isTimezero);
                     }
                     if (isTimerEnabled) {
                         timer.tick();
                         timer.writeInterval();
-                        if ((model.getSecond() % 60) == 0)
+                        if ((simulator.getSecond() % 60) == 0)
                             timer.writeElapsed();
                     }
                 }
@@ -146,7 +145,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     }
 
     protected boolean buildModel() {
-        model.begin(true, false, null);
+	simulator.begin(true, false, null);
         return true;
     }
 
@@ -190,20 +189,20 @@ public class SimulationLauncher extends BasicSimulationLauncher
     public void step() {
         synchronized (run_thread) {
             dump_state.preUpdate();
-            finished = model.updateEveryTick();
+            finished = simulator.updateEveryTick();
             dump_state.postUpdate();
             boolean isTimezero = false;
-            if (model.getSecond() == 0)
+            if (simulator.getSecond() == 0)
                 isTimezero = true;
             if (isTimeSeriesLog) {
-                model.saveGoalLog(timeSeriesLogPath, false);    // GUIモードでは出力対象外なので無意味
-                if (((int) model.getSecond()) % timeSeriesLogInterval == 0)
-                    model.saveTimeSeriesLog(timeSeriesLogPath);
+                simulator.saveGoalLog(timeSeriesLogPath, false);    // GUIモードでは出力対象外なので無意味
+                if (((int) simulator.getSecond()) % timeSeriesLogInterval == 0)
+                    simulator.saveTimeSeriesLog(timeSeriesLogPath);
             }
             if (isTimerEnabled) {
                 timer.tick();
                 timer.writeInterval();
-                if ((model.getSecond() % 60) == 0)
+                if ((simulator.getSecond() % 60) == 0)
                     timer.writeElapsed();
             }
         }
@@ -219,12 +218,12 @@ public class SimulationLauncher extends BasicSimulationLauncher
     protected transient DumpState dump_state = null;
 
     @Override
-    public SimulationPanel3D setupFrame(final EvacuationModelBase model) {
+    public SimulationPanel3D setupFrame(final EvacuationSimulator simulator) {
         simulation_frame = new JFrame("Simulation Preview");
 
         simulation_frame.addWindowListener(new WindowListener() {
             public void windowOpened(WindowEvent e) {
-                simulationWindowOpenedOperation(panel, model);
+                simulationWindowOpenedOperation(panel, simulator);
             }
             public void windowIconified(WindowEvent e) {            }
             public void windowDeiconified(WindowEvent e) {          }
@@ -236,7 +235,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
             public void windowClosed(WindowEvent e) {           }
         });
 
-        panel = new SimulationPanel3D(model, simulation_frame);
+        panel = new SimulationPanel3D(simulator, simulation_frame);
         initSimulationPanel3D(panel);
         int w = settings.get("3dpanel_width", 800);
         int h = settings.get("3dpanel_height", 600);
@@ -248,9 +247,9 @@ public class SimulationLauncher extends BasicSimulationLauncher
         simulation_frame.add(tabs, BorderLayout.EAST);
         panel.addViewChangeListener(this);
 
-        dump_state = new DumpState(model);
+        dump_state = new DumpState(simulator);
 
-        tabs.add(model.getAgentHandler().getControlPanel());
+        tabs.add(simulator.getAgentHandler().getControlPanel());
         tabs.add(panel.getControlPanel());
         tabs.add(dump_state.getDumpPanel());
         simulation_frame.setMenuBar(panel.getMenuBar());
@@ -263,16 +262,16 @@ public class SimulationLauncher extends BasicSimulationLauncher
     }
 
     @Override
-    public SimulationPanel3D setupFrame(final EvacuationModelBase model,
+    public SimulationPanel3D setupFrame(final EvacuationSimulator simulator,
             SimulationPanel3D _panel) {
-        if (model == null)
+        if (simulator == null)
             return null;
         if (_panel == null) {
-            setupFrame(model);
+            setupFrame(simulator);
         } else {
             panel = _panel;
             simulation_frame = panel.parent;
-            panel.setupFrame(model, simulation_frame);
+            panel.setupFrame(simulator, simulation_frame);
             int w = settings.get("3dpanel_width", 800);
             int h = settings.get("3dpanel_height", 600);
             panel.setCanvasSize(w, h);
@@ -282,13 +281,14 @@ public class SimulationLauncher extends BasicSimulationLauncher
             // simulation_frame.setMenuBar(panel.getMenuBar());
             // simulation_frame.pack();
             // simulation_frame.setVisible(true);
-            //panel.deserialize(model, simulation_frame);
+            //panel.deserialize(simulator, simulation_frame);
         }
 
         return panel;
     }
 
-    public void simulationWindowOpenedOperation(SimulationPanel3D panel, final EvacuationModelBase model) {
+    public void simulationWindowOpenedOperation(SimulationPanel3D panel, 
+						final EvacuationSimulator simulator) {
         // NetworkMapEditor で定義する
     }
 
@@ -313,7 +313,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     public void setRandom(Random _random) {
         random = _random;
         networkMap.setRandom(_random);
-        model.setRandom(_random);
+        simulator.setRandom(_random);
     }
 
     public void setSpeedModel(SpeedCalculationModel _speedModel) {

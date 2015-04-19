@@ -106,7 +106,7 @@ public class AgentHandler {
         isUsingFrontFirstOrderQueue = flag ;
     }
 
-    private EvacuationModelBase model;
+    private EvacuationSimulator simulator;
     private List<AgentBase> agents;
     private ArrayList<AgentBase> generated_agents;
     private ArrayList<AgentBase> evacuated_agents;
@@ -156,12 +156,12 @@ public class AgentHandler {
             String generationFile,
             String scenarioFile,
             NetworkMapBase map,
-            EvacuationModelBase _model,
+            EvacuationSimulator _simulator,
             boolean _has_display,
             double linerGenerateAgentRatio,
             Term fallbackParameters,
             Random _random) {
-        model = _model;
+        simulator = _simulator;
         has_display = _has_display;
         random = _random;
 
@@ -184,7 +184,7 @@ public class AgentHandler {
         try {
             /* [I.Noda] generation file の読み込みはここ */
              generate_agent = new AgentGenerationFile(generationFile,
-                                                     model.getMap(),
+                                                     simulator.getMap(),
                                                      fallbackParameters,
                                                      has_display,
                                                      linerGenerateAgentRatio,
@@ -229,10 +229,10 @@ public class AgentHandler {
 
     public void prepareForSimulation() {
         for (AgentBase agent : agents) {
-            agent.prepareForSimulation(model.getTimeScale());
+            agent.prepareForSimulation(simulator.getTimeScale());
         }
         // 初回は全リンクを対象とする
-        effectiveLinks = (MapLinkTable)model.getLinks().clone();
+        effectiveLinks = (MapLinkTable)simulator.getLinks().clone();
     }
 
     private void setup_default_scenario() {
@@ -267,8 +267,8 @@ public class AgentHandler {
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
                 factory.tryUpdateAndGenerate(scenario.calcAbsoluteTime(time),
-                                             model.getTimeScale(),
-                                             time, model,
+                                             simulator.getTimeScale(),
+                                             time, simulator,
                                              generated_agents_step, map);
             }
         }
@@ -294,7 +294,7 @@ public class AgentHandler {
          * calculated in the methods call above, such as updateAgents.
          */
         for (AgentBase agent : generated_agents_step) {
-            model.registerAgent(agent);
+            simulator.registerAgent(agent);
         }
 
         if (effectiveLinksEnabled) {
@@ -344,16 +344,16 @@ public class AgentHandler {
     }
 
     private void preprocessLinks(double time) {
-        synchronized (model) {
-            for (MapLink link : model.getLinks()) {
+        synchronized (simulator) {
+            for (MapLink link : simulator.getLinks()) {
                 link.preUpdate(time);
             }
         }
     }
 
     private void updateLinks(double time) {
-        synchronized (model) {
-            for (MapLink link : model.getLinks()) {
+        synchronized (simulator) {
+            for (MapLink link : simulator.getLinks()) {
                 link.update(time);
             }
         }
@@ -363,8 +363,8 @@ public class AgentHandler {
         int count = 0;
 
         if (true) {
-            synchronized (model) {
-                for (MapLink link : effectiveLinksEnabled ? effectiveLinks : model.getLinks()) {
+            synchronized (simulator) {
+                for (MapLink link : effectiveLinksEnabled ? effectiveLinks : simulator.getLinks()) {
                     ArrayList<AgentBase> pos_agents = link.getLane(1.0);
                     for(int i = 0 ; i < pos_agents.size() ; i++) {
                         AgentBase agent =
@@ -807,7 +807,7 @@ public class AgentHandler {
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
-                buff.append(model.getTimeScale()); buff.append(",");
+                buff.append(simulator.getTimeScale()); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {
@@ -878,8 +878,8 @@ public class AgentHandler {
         /* title & clock */
         JPanel titlepanel = new JPanel(new GridBagLayout());
         addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, new JLabel("Map"));
-        if (model.getMap().getFileName() != null) {
-            File map_file = new File(model.getMap().getFileName());
+        if (simulator.getMap().getFileName() != null) {
+            File map_file = new File(simulator.getMap().getFileName());
             addJLabel(titlepanel, 1, 0, 1, 1, new JLabel(map_file.getName()));
         } else {
             addJLabel(titlepanel, 1, 0, 1, 1, new JLabel("No map file"));
@@ -902,8 +902,8 @@ public class AgentHandler {
         }
 
         addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST, new JLabel("Pollution"));
-        if (model.getMap().getPollutionFile() != null) {
-            File pollution_file = new File(model.getMap().getPollutionFile());
+        if (simulator.getMap().getPollutionFile() != null) {
+            File pollution_file = new File(simulator.getMap().getPollutionFile());
             addJLabel(titlepanel, 1, 3, 1, 1, new JLabel(pollution_file.getName()));
         } else {
             addJLabel(titlepanel, 1, 3, 1, 1, new JLabel("No pollution file"));
@@ -1012,17 +1012,17 @@ public class AgentHandler {
 
         start_button = new JButton(start_icon);
         start_button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.start(); update_buttons(); }
+            public void actionPerformed(ActionEvent e) { simulator.start(); update_buttons(); }
         });
         control_button_panel.add(start_button);
         pause_button = new JButton(pause_icon);
         pause_button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.pause(); update_buttons(); }
+            public void actionPerformed(ActionEvent e) { simulator.pause(); update_buttons(); }
         });
         control_button_panel.add(pause_button);
         step_button = new JButton(step_icon);
         step_button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.step(); update_buttons(); }
+            public void actionPerformed(ActionEvent e) { simulator.step(); update_buttons(); }
         });
         control_button_panel.add(step_button);
         update_buttons();
@@ -1065,7 +1065,7 @@ public class AgentHandler {
     }
 
     public void update_buttons() {
-        boolean is_running = model.isRunning();
+        boolean is_running = simulator.isRunning();
         if (start_button != null) {
             start_button.setEnabled(!is_running);
         }
@@ -1104,7 +1104,7 @@ public class AgentHandler {
 
     public void dumpState(PrintWriter pw) {
         Document doc = ItkXmlUtility.singleton.newDocument();
-        model.getMap().toDOM(doc);
+        simulator.getMap().toDOM(doc);
         pw.print(ItkXmlUtility.singleton.docToString(doc));
 
         for (AgentBase agent : agents) {

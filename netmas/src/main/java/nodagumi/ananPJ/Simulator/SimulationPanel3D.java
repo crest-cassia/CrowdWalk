@@ -103,17 +103,17 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
     private List<AgentBase> agents;
     private ArrayList<PollutedArea> pollutions;
-    EvacuationModelBase model = null;
+    EvacuationSimulator simulator = null;
     NetworkMap networkMap = null;
     private static String evacuatedCount_string = "";
     
     protected BranchGroup agent_group = null;
-    public SimulationPanel3D(EvacuationModelBase _model, JFrame _parent) {
-        super(_model.getNodes(), _model.getLinks(), _parent, _model.getProperties());
-        model = _model;
-        networkMap = model.getMap();
-        agents = model.getAgents();
-        pollutions = model.getPollutions();
+    public SimulationPanel3D(EvacuationSimulator _simulator, JFrame _parent) {
+        super(_simulator.getNodes(), _simulator.getLinks(), _parent, _simulator.getProperties());
+        simulator = _simulator;
+        networkMap = simulator.getMap();
+        agents = simulator.getAgents();
+        pollutions = simulator.getPollutions();
 
         agent_group = new BranchGroup();
         agent_group.setCapability(BranchGroup.ALLOW_DETACH);
@@ -126,7 +126,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     }
 
     public void readProperties() {
-        NetmasPropertiesHandler properties = model.getProperties();
+        NetmasPropertiesHandler properties = simulator.getProperties();
         if (properties != null) {
             try {
 				show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE", gas_display.getNames())) ;
@@ -138,12 +138,12 @@ public class SimulationPanel3D extends NetworkPanel3D {
         }
     }
     
-    public void setupFrame(EvacuationModelBase _model, JFrame _parent) {
-        super.setupFrame(_model.getNodes(), _model.getLinks(), _parent);
-        model = _model;
-        networkMap = model.getMap();
-        agents = model.getAgents();
-        pollutions = model.getPollutions();
+    public void setupFrame(EvacuationSimulator _simulator, JFrame _parent) {
+        super.setupFrame(_simulator.getNodes(), _simulator.getLinks(), _parent);
+        simulator = _simulator;
+        networkMap = simulator.getMap();
+        agents = simulator.getAgents();
+        pollutions = simulator.getPollutions();
 
         if (agent_group != null)
             agent_group.detach();
@@ -276,7 +276,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
         menu_item_step = new MenuItem("Step");
         menu_item_step.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { model.step(); }
+            public void actionPerformed(ActionEvent e) { simulator.step(); }
         });
         menu_action.add(menu_item_step);
 
@@ -284,8 +284,8 @@ public class SimulationPanel3D extends NetworkPanel3D {
         menu_item_start.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setMenuActionStartEnabled(false);
-                model.start();
-                model.getAgentHandler().update_buttons();
+                simulator.start();
+				simulator.getAgentHandler().update_buttons();
             }
         });
         menu_action.add(menu_item_start);
@@ -295,8 +295,8 @@ public class SimulationPanel3D extends NetworkPanel3D {
         menu_item_pause.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setMenuActionStartEnabled(true);
-                model.pause();
-                model.getAgentHandler().update_buttons();
+                simulator.pause();
+                simulator.getAgentHandler().update_buttons();
             }
         });
         menu_action.add(menu_item_pause);
@@ -480,13 +480,13 @@ public class SimulationPanel3D extends NetworkPanel3D {
         checkbox_panel.setBorder(new CompoundBorder(checkbox_panel.getBorder(), new EmptyBorder(0, 4, 0, 0)));
         checkbox_panel.setLayout(new BoxLayout(checkbox_panel, BoxLayout.Y_AXIS));
         record_snapshots = new JCheckBox("Record simulation screen");
-        record_snapshots.setSelected(model.getScreenshotInterval() != 0);
+        record_snapshots.setSelected(simulator.getScreenshotInterval() != 0);
         record_snapshots.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 if (record_snapshots.isSelected()) {
-                    model.setScreenshotInterval(1);
+                    simulator.setScreenshotInterval(1);
                 } else {
-                    model.setScreenshotInterval(0);
+                    simulator.setScreenshotInterval(0);
                 }
             }
         });
@@ -721,7 +721,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     private void record_current_camera_position() {
         view_trans.getTransform(viewTrans3D);
         viewTrans3D.get(viewMatrix);
-        CurrentCameraPosition view = new CurrentCameraPosition(model.getTickCount(),
+        CurrentCameraPosition view = new CurrentCameraPosition(simulator.getTickCount(),
                 vertical_zoom, agent_size,
                 (Matrix4d)viewMatrix.clone());
         
@@ -1192,7 +1192,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             if (pollutionColorSaturation > 0.0) {
                 density = (float)pollution.getDensity() / (float)pollutionColorSaturation;
             } else {
-                float maxPollutionLevel = (float)((EvacuationSimulator)model).getMaxPollutionLevel();
+                float maxPollutionLevel = (float)simulator.getMaxPollutionLevel();
                 if (maxPollutionLevel > 0.0) {
                     density = (float)pollution.getDensity() / (maxPollutionLevel / 2.0f);
                 }
@@ -1288,7 +1288,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             String.format("        Elapsed: %5.2fsec        ",
                 time);
         String clock_string =
-			model.getAgentHandler().convertAbsoluteTimeString(time);
+			simulator.getAgentHandler().convertAbsoluteTimeString(time);
         simulation_status.setText("  "+ clock_string + time_string + evacuatedCount_string);
         canvas.message = "Time: " + clock_string + time_string + evacuatedCount_string;
     }
@@ -1352,7 +1352,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     protected void mouseClickedCallback(MouseEvent e) {
         if (selected_link != null && e.getButton() == MouseEvent.BUTTON2) {
             System.out.println("removing " + selected_link.getTagString());
-            synchronized (model) {
+            synchronized (simulator) {
                 selected_link.prepareRemove();
                 selected_shape.removeAllGeometries();
                 int i = 0;
@@ -1364,7 +1364,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 link_geoms.remove(i);
                 networkMap.removeOBNode((OBNode)selected_link.getParent(), selected_link, false);
             }
-            model.recalculatePaths();
+            simulator.recalculatePaths();
             selected_link = null;
         }
     }

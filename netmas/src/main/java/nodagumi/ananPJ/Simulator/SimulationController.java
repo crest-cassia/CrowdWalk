@@ -10,9 +10,9 @@ public interface SimulationController {
 	public void step();
 	public boolean isRunning();
 	
-	/* callback from the model */
-	public SimulationPanel3D setupFrame(EvacuationModelBase model);
-    public SimulationPanel3D setupFrame(EvacuationModelBase model,
+	/* callback from the simulator */
+	public SimulationPanel3D setupFrame(EvacuationSimulator simulator);
+    public SimulationPanel3D setupFrame(EvacuationSimulator simulator,
             SimulationPanel3D panel);
 	public void notifyViewChange(SimulationPanel3D panel);
 }

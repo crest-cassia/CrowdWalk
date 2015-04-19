@@ -60,7 +60,7 @@ import nodagumi.ananPJ.NetworkParts.Link.Lift;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
-import nodagumi.ananPJ.Simulator.EvacuationModelBase;
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.FilePathManipulation;
@@ -642,7 +642,7 @@ public class NetworkMapEditor extends SimulationLauncher
         super.simulate(false);
     }
 
-    // model.begin() をバックグラウンドで実行するためのモーダルダイアログ
+    // simulator.begin() をバックグラウンドで実行するためのモーダルダイアログ
     private class WaitDialog extends JDialog {
         public boolean canceled = false;
 
@@ -699,7 +699,7 @@ public class NetworkMapEditor extends SimulationLauncher
     public boolean buildModel() {
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                model.begin(true, false, null);
+                simulator.begin(true, false, null);
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         // ここでダイアログを閉じる
@@ -1087,14 +1087,14 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     // シミュレーションウィンドウが最初に表示された時に呼び出される
-    public void simulationWindowOpenedOperation(SimulationPanel3D panel, final EvacuationModelBase model) {
+    public void simulationWindowOpenedOperation(SimulationPanel3D panel, final EvacuationSimulator simulator) {
         // プロパティファイルに設定された情報に従ってシミュレーションウィンドウの各コントロールの初期設定をおこなう
         if (propertiesHandler == null) {
             return;
         }
         boolean successful = true;
         if (propertiesHandler.isDefined("weight")) {
-            model.getAgentHandler().setSimulationWeight(weight);
+            simulator.getAgentHandler().setSimulationWeight(weight);
         }
         if (cameraPath != null) {
             if (panel.loadCameraworkFromFile(cameraPath)) {
@@ -1178,7 +1178,7 @@ public class NetworkMapEditor extends SimulationLauncher
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
 								Itk.logInfo("auto simulation start");
-                                model.getAgentHandler().getStartButton().doClick();
+                                simulator.getAgentHandler().getStartButton().doClick();
                             }
                         });
                     }
@@ -1187,10 +1187,10 @@ public class NetworkMapEditor extends SimulationLauncher
             }
         }
         if (propertiesHandler.isDefined("agent_movement_history_file")) {
-            model.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
+            simulator.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
         }
         if (propertiesHandler.isDefined("individual_pedestrians_log_dir")) {
-            model.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
+            simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
         }
     }
 

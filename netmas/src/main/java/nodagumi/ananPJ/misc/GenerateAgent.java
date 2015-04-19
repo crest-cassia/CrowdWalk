@@ -15,6 +15,8 @@ import java.util.Map;
 
 import net.arnx.jsonic.JSON ;
 
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.WalkAgent;
@@ -24,7 +26,6 @@ import nodagumi.ananPJ.Agents.*;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.Simulator.EvacuationModelBase;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkMapBase;
 
@@ -316,7 +317,7 @@ public abstract class GenerateAgent {
     public void tryUpdateAndGenerate(double time,
                                      double timeScale,
                                      double tick,
-                                     EvacuationModelBase model,
+                                     EvacuationSimulator simulator,
                                      List<AgentBase> agents,
                                      NetworkMapBase map) {
         if (!enabled) return;
@@ -358,7 +359,7 @@ public abstract class GenerateAgent {
             AgentBase agent = null;
             try {
                 agent = newAgentByName(agentClassName) ;
-                agent.init(model.getMap().assignUniqueAgentId(), random);
+                agent.init(simulator.getMap().assignUniqueAgentId(), random);
                 agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.logError("class name not found") ;
@@ -368,7 +369,7 @@ public abstract class GenerateAgent {
             }
 
             agent.generatedTime = tick;
-            agent.displayMode = model.getDisplayMode();
+            agent.displayMode = simulator.getDisplayMode();
             ((WalkAgent) agent).setSpeedCalculationModel(
                 speed_model);
             agent.setConfigLine(configLine);

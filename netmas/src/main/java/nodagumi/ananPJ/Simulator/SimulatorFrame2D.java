@@ -27,7 +27,7 @@ public class SimulatorFrame2D extends JFrame
 	/**
 	 * A 2D version of simulation preview
 	 */
-	EvacuationModelBase model = null;
+	EvacuationSimulator simulator = null;
 	Image backgroundImage = null;
 	int layer = 0;
 
@@ -57,9 +57,9 @@ public class SimulatorFrame2D extends JFrame
 	double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
 	double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
 
-	public SimulatorFrame2D(EvacuationModelBase _model, int _layer) {
+	public SimulatorFrame2D(EvacuationSimulator _simulator, int _layer) {
 		super("Simulation Frame");
-		model = _model;
+		simulator = _simulator;
 		layer = _layer;
 
 		//promptDisplaySettings();
@@ -79,7 +79,7 @@ public class SimulatorFrame2D extends JFrame
 
 		    	final double widthRatio = 160 / (maxY - minY);
 		    	final double heightRatio = 640 / (maxHeight - minHeight);
-		    	for (AgentBase agent : model.getAgents()) {
+		    	for (AgentBase agent : simulator.getAgents()) {
 		    		if (agent.isEvacuated()) continue;
 		    		final Point2D pos = agent.getPos();
 		    		final double height = agent.getHeight();
@@ -116,17 +116,17 @@ public class SimulatorFrame2D extends JFrame
 		    				null);
 		    	}
 				System.out.println("step1");
-		    	for (final MapLink link : model.getLinks()) {
+		    	for (final MapLink link : simulator.getLinks()) {
                     // temporally non scaling
 		    		link.draw(g, true, false, false, false);
 		    	}
 				System.out.println("step2");
 		    	g.setStroke(new BasicStroke(1.0f));
-		    	for (MapNode node : model.getNodes()) {
+		    	for (MapNode node : simulator.getNodes()) {
 		    		node.draw(g, true, false, false);
 		    	}
 				System.out.println("step3");
-		    	for (AgentBase agent : model.getAgents()) {
+		    	for (AgentBase agent : simulator.getAgents()) {
 		    		agent.draw(g, true);
 		    	}
 				System.out.println("step4)");
@@ -144,7 +144,7 @@ public class SimulatorFrame2D extends JFrame
 	}
 
 	private void setupDisplaySettings() {
-    	for (final MapNode node : model.getNodes()) {
+    	for (final MapNode node : simulator.getNodes()) {
     		//if (!node.isInLayer(layer, minHeight, maxHeight)) continue;
     		final double x = node.getX();
     		minX = Math.min(x, minX);

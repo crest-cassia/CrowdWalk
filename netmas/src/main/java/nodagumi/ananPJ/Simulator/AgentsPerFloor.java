@@ -31,14 +31,14 @@ public class AgentsPerFloor extends JFrame {
 	GraphPane gpane;
 	JLabel status;
 
-	public AgentsPerFloor(EvacuationModelBase model) {
+	public AgentsPerFloor(EvacuationSimulator simulator) {
 		super("Agents per floor");
 		setLayout(new BorderLayout());
 		agentsPerFloor = new HashMap<Double, Integer>();
 		floors = new ArrayList<Double>();
 		gpane = new GraphPane();
 
-		for (final MapNode node : model.getNodes()) {
+		for (final MapNode node : simulator.getNodes()) {
 			if (!agentsPerFloor.containsKey(node.getHeight())) {
 				agentsPerFloor.put(node.getHeight(), 0);
 				floors.add(node.getHeight());
@@ -46,7 +46,7 @@ public class AgentsPerFloor extends JFrame {
 			minDepth = Math.min(minDepth, node.getHeight());
 			maxDepth = Math.max(maxDepth, node.getHeight());
 		}
-		agentCount = model.getAgents().size();
+		agentCount = simulator.getAgents().size();
 		Collections.sort(floors);
 
 		gpane.setSize(600, 600);
@@ -60,7 +60,7 @@ public class AgentsPerFloor extends JFrame {
     	add(status, BorderLayout.SOUTH);
 
     	pack();
-		update(model.getAgents());
+		update(simulator.getAgents());
 	}
 	
 	public void update(List<AgentBase> list) {

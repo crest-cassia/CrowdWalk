@@ -30,11 +30,11 @@ public class DumpState {
 	protected JLabel dump_filename;
 	protected PrintWriter dump_writer;
 	
-	protected EvacuationModelBase model;
+	protected EvacuationSimulator simulator;
 	protected Settings settings;
 	
-	public DumpState(EvacuationModelBase _model) {
-		model = _model;
+	public DumpState(EvacuationSimulator _simulator) {
+		simulator = _simulator;
 		settings = Settings.getSettings();
 
 		setup_dump_panel();
@@ -100,8 +100,8 @@ public class DumpState {
 	
 	public void postUpdate() {
 		if (dump_writer != null) {
-			dump_writer.println("time," + model.getTickCount());
-			model.getAgentHandler().dumpStateDiff(dump_writer);
+			dump_writer.println("time," + simulator.getTickCount());
+			simulator.getAgentHandler().dumpStateDiff(dump_writer);
 		}
 	}
 	protected void update_dump_writer() {
@@ -113,9 +113,9 @@ public class DumpState {
 	    	try {
 	    		FileWriter fw = new FileWriter(dump_filename.getText());
 	    		dump_writer = new PrintWriter(fw);
-	    		dump_writer.println(model.getMap().getFileName());
-				dump_writer.println("initialtime," + model.getTickCount());
-				model.getAgentHandler().dumpState(dump_writer);
+	    		dump_writer.println(simulator.getMap().getFileName());
+				dump_writer.println("initialtime," + simulator.getTickCount());
+				simulator.getAgentHandler().dumpState(dump_writer);
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, e.toString(), "Could not open dumpfile",
 						JOptionPane.ERROR_MESSAGE);
