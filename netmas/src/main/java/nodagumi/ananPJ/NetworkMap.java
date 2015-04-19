@@ -303,21 +303,16 @@ public class NetworkMap extends NetworkMapBase {
         return link;
     }
 
-    public AgentBase addAgent(
-            MapPartGroup parent,
-            AgentBase agent) {
-        // int id = assign_new_id();
-        int id = assignUniqueAgentId();
-        agent.ID = id;
-        addObject(id, agent);
-        agentsCache.add(agent);
-        insertNodeInto(agent, parent, parent.getChildCount());
-        return agent;
+    public AgentBase addAgent(MapPartGroup parent, AgentBase agent) {
+        return addAgent(parent, agent, true) ;
     }
 
-    public AgentBase addAgent(MapPartGroup parent, AgentBase agent, boolean autoID) {
+    public AgentBase addAgent(MapPartGroup parent, AgentBase agent, 
+                              boolean autoID) {
         if (autoID) {
-            return addAgent(parent, agent);
+            // int id = assign_new_id();
+            int id = assignUniqueAgentId();
+            agent.ID = id;
         }
         addObject(agent.ID, agent);
         agentsCache.add(agent);
