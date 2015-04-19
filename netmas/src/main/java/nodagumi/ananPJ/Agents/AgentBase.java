@@ -115,6 +115,10 @@ implements Comparable<AgentBase>, Serializable {
      */
     public int displayMode = 0;
     protected double swing_width;
+
+    /**
+     * 設定文字列（generation file 中の設定情報の文字列）
+     */
     protected String configLine = "none";
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -565,7 +569,7 @@ implements Comparable<AgentBase>, Serializable {
 
     //------------------------------------------------------------
     /**
-     * 設定用
+     * 設定文字列（generation file 中の設定情報の文字列）を取得
      */
     public String getConfigLine() {
         return configLine;
@@ -573,7 +577,7 @@ implements Comparable<AgentBase>, Serializable {
 
     //------------------------------------------------------------
     /**
-     * 設定用
+     * 設定文字列（generation file 中の設定情報の文字列）を格納
      */
     public void setConfigLine(String str) {
         configLine = str;

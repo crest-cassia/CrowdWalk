@@ -122,6 +122,8 @@ public abstract class GenerateAgent implements Serializable {
         return classFinder.aliasTable.keySet().toArray(new String[0]) ;
     }
 
+    //============================================================
+    //============================================================
     /**
      * エージェント生成用設定情報用クラス
      * あまりに引数が多いので、整理。
@@ -132,12 +134,6 @@ public abstract class GenerateAgent implements Serializable {
          * エージェントのクラス名
          */
         public String agentClassName = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * エージェント設定情報 (JSON 文字列) (obsolete)
-         */
-        //public String agentConfString = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -201,7 +197,7 @@ public abstract class GenerateAgent implements Serializable {
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
-         * 設定文字列（変換前の設定情報）
+         * 設定文字列（generation file 中の設定情報の文字列）
          */
         public String originalInfo = null ;
 
@@ -232,7 +228,7 @@ public abstract class GenerateAgent implements Serializable {
 
             return jObject ;
         }
-    }
+    } // end class Config
 
     public Term goal;
     List<Term> planned_route;
@@ -241,8 +237,13 @@ public abstract class GenerateAgent implements Serializable {
     SpeedCalculationModel speed_model = null;
     Random random = null;
     List<String> tags = new ArrayList<String>(); 
-    public String configLine;
+
     public boolean enabled = true;
+
+    /**
+     * 設定文字列（generation file 中の設定情報の文字列
+     */
+    public String configLine;
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
