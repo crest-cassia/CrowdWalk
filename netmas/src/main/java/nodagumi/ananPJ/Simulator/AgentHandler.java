@@ -72,7 +72,6 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.Scenario.*;
-import nodagumi.ananPJ.network.DaRuMaClient;
 
 import nodagumi.Itk.*;
 
@@ -112,10 +111,6 @@ public class AgentHandler {
     private ArrayList<AgentBase> generated_agents;
     private ArrayList<AgentBase> evacuated_agents;
     private ArrayList<AgentBase> stuck_agents;
-
-    static final double defaultAgentSpeed = 1.4;
-    static final double defaultAgentConfidence = 1.0;
-    static final double defaultAgentHitPoint = 100.0;
 
     private int evacuatedAgentCount = 0;
     private int waitingAgentCount = 0;
@@ -261,8 +256,6 @@ public class AgentHandler {
         scenario.describe() ;
     }
 
-    /* need stable design to assign id */
-    private int manualId = 1024;
     public void update(NetworkMapBase map, double time) {
         update_buttons();
 
@@ -1110,10 +1103,9 @@ public class AgentHandler {
     }
 
     public void dumpState(PrintWriter pw) {
-        DaRuMaClient dc = new DaRuMaClient();
-        Document doc = dc.newDocument();
+        Document doc = ItkXmlUtility.singleton.newDocument();
         model.getMap().toDOM(doc);
-        pw.print(dc.docToString(doc));
+        pw.print(ItkXmlUtility.singleton.docToString(doc));
 
         for (AgentBase agent : agents) {
             if (agent.isEvacuated()){

@@ -11,18 +11,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
-import nodagumi.ananPJ.network.DaRuMaClient;
 
 import nodagumi.Itk.*;
 
 public abstract class BasicSimulationLauncher {
-    private DaRuMaClient darumaClient = DaRuMaClient.getInstance();
     protected NetmasPropertiesHandler properties = null;
 
     protected NetworkMap readMapWithName(String file_name, Random _random)
             throws IOException {
         FileInputStream fis = new FileInputStream(file_name);
-        Document doc = darumaClient.streamToDoc(fis);
+        Document doc = ItkXmlUtility.singleton.streamToDoc(fis);
         if (doc == null) {
             System.err.println("ERROR Could not read map.");
             return null;

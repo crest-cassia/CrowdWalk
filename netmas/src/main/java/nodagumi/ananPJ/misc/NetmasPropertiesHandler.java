@@ -17,7 +17,6 @@ import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Pollution;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
-import nodagumi.ananPJ.network.DaRuMaClient;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
 import nodagumi.Itk.*;

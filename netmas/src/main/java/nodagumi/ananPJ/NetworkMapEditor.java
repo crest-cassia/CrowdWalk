@@ -71,9 +71,9 @@ import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooserFactory;
-import nodagumi.ananPJ.network.DaRuMaClient;
 
 import nodagumi.Itk.Itk;
+import nodagumi.Itk.ItkXmlUtility;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -134,8 +134,6 @@ public class NetworkMapEditor extends SimulationLauncher
     private boolean modified = false;
     transient private MenuItem calcExitPathMenu;
     transient private MenuItem calcTagPathMenu;
-    transient private MenuItem loadMapFromDarumaMenuItem;
-    transient private MenuItem saveMapFromDarumaMenuItem;
 
     transient private JTabbedPane tabbedPane = null;
     transient private NodePanel nodePanel = null;
@@ -145,8 +143,6 @@ public class NetworkMapEditor extends SimulationLauncher
     transient public ScenarioPanel scenarioPanel = null;
     transient public BrowserPanel browserPanel = null;
 
-
-    private DaRuMaClient darumaClient = DaRuMaClient.getInstance();
 
     /* used in the object browser */
     public enum TabTypes {
@@ -376,23 +372,6 @@ public class NetworkMapEditor extends SimulationLauncher
         mi.addActionListener((ActionListener) this);
         fileMenu.add(mi);
 
-        /*
-        fileMenu.add(new MenuItem("-"));
-
-        mi = new MenuItem("Connect DaRuMa");
-        mi.addActionListener((ActionListener) this);
-        fileMenu.add(mi);
-
-        loadMapFromDarumaMenuItem = new MenuItem("Load map from DaRuMa");
-        loadMapFromDarumaMenuItem.addActionListener((ActionListener) this);
-        loadMapFromDarumaMenuItem.setEnabled(false);        
-        fileMenu.add(loadMapFromDarumaMenuItem);
-
-        saveMapFromDarumaMenuItem = new MenuItem("Save map to DaRuMa");
-        saveMapFromDarumaMenuItem.addActionListener((ActionListener) this);
-        saveMapFromDarumaMenuItem.setEnabled(false);
-        fileMenu.add(saveMapFromDarumaMenuItem);
-        */
         fileMenu.add(new MenuItem("-"));
 
         ms = new MenuShortcut (java.awt.event.KeyEvent.VK_O);
@@ -564,58 +543,6 @@ public class NetworkMapEditor extends SimulationLauncher
         return true;
     }
 
-    Document mapToDom() {
-        String title_str = JOptionPane.showInputDialog(frame, "Title",
-                mapPath);
-        if (title_str == null) return null;
-
-        // String comments_str = JOptionPane.showInputDialog(this,
-        // "Comments?", "");
-        Document doc = darumaClient.newDocument();
-        if (!networkMap.toDOM(doc)) return null;
-
-        return doc;
-    }
-
-    private void saveMapToDaRuMa() {
-        Document doc = mapToDom();
-        if (doc == null) return;
-
-        String title_str = doc.getElementsByTagName("title").item(0)
-            .getTextContent();
-        System.err.println(title_str);
-
-        /* sending to DaRuMa server */
-        System.err.println(darumaClient.docToString(doc));
-        Document result = darumaClient.insert(
-                "http://staff.aist.go.jp/shunsuke.soeda/nodagumi/ananPJ/Network",
-                "network", title_str, doc);
-        if (result == null) {
-            JOptionPane.showMessageDialog(frame, "Could not send message to " +
-                    "DaRuMa server.", "failure", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        NodeList resultNodeList = result.getElementsByTagName("misp:Status");
-        if (resultNodeList.getLength() == 0) {
-            JOptionPane.showMessageDialog(frame,
-                    "Message returned from DaRuMa server does not contain a " +
-                    "Status tag\n" + darumaClient.docToString(result),
-                    "failure", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Node resultNode = resultNodeList.item(0);
-        if (resultNode.getTextContent().equals("FAILURE")) {
-            Node errorMessageNode = result.getElementsByTagName("misp:Error")
-                .item(0);
-            JOptionPane.showMessageDialog(frame, errorMessageNode
-                    .getTextContent(), "failure", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        JOptionPane.showMessageDialog(frame, darumaClient.docToString(result),
-                "result", JOptionPane.INFORMATION_MESSAGE);
-    }
-
     private boolean saveMapAs() {
         FileDialog fd = new FileDialog(frame, "Export map", FileDialog.SAVE);
         fd.setFile(settings.get("mapfile", ""));
@@ -655,9 +582,10 @@ public class NetworkMapEditor extends SimulationLauncher
         try {
             FileOutputStream fos = new FileOutputStream(mapPath);
 
-            Document doc = darumaClient.newDocument();
+            Document doc = ItkXmlUtility.singleton.newDocument() ;
             networkMap.toDOM(doc);
-            boolean result = darumaClient.docToStream(doc, fos);
+            boolean result =
+                ItkXmlUtility.singleton.docToStream(doc, fos);
             if (false == result) {
                 JOptionPane.showMessageDialog(frame,
                         "Could no save to:\n" + mapPath
@@ -1282,12 +1210,6 @@ public class NetworkMapEditor extends SimulationLauncher
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == "New") clearAll();
         else if (e.getActionCommand() == "Quit") quit ();
-
-        // else if (e.getActionCommand() == "Connect DaRuMa") connectDaRuMa();
-        // else if (e.getActionCommand() == "Load map from DaRuMa")
-            // loadMapFromDaRuMa();
-        else if (e.getActionCommand() == "Save map to DaRuMa")
-            saveMapToDaRuMa();
         else if (e.getActionCommand() == "Open map") openMap();
         else if (e.getActionCommand() == "Save map") saveMap();
         else if (e.getActionCommand() == "Save map as") saveMapAs();
