@@ -12,7 +12,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -24,11 +23,10 @@ import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
 
 public class SimulatorFrame2D extends JFrame 
-    implements MouseListener, Serializable {
+	implements MouseListener {
 	/**
 	 * A 2D version of simulation preview
 	 */
-	private static final long serialVersionUID = 7301627149272184580L;
 	EvacuationModelBase model = null;
 	Image backgroundImage = null;
 	int layer = 0;
@@ -68,7 +66,6 @@ public class SimulatorFrame2D extends JFrame
 		setupDisplaySettings();
 		
 		JPanel panel = new JPanel(){
-			private static final long serialVersionUID = 5407436483445151595L;
 
 			@Override
 			public void paintComponent (Graphics g0) {

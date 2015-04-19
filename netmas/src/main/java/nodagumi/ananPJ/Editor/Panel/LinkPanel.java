@@ -12,7 +12,6 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -35,8 +34,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 
 public class LinkPanel extends PanelWithTable
-    implements MapLink.AttributePanel.Listener, Serializable {
-    private static final long serialVersionUID = 3544793106934363743L;
+	implements MapLink.AttributePanel.Listener {
     NetworkMapEditor editor = null;
     MapLinkTable shownLinks = null;
     LinksDataModel dataModel = null;
@@ -50,7 +48,6 @@ public class LinkPanel extends PanelWithTable
     final static String[] COLUMN_NAMES = { "Tags", "Length", "Width", "Parent" };
 
     private class LinksDataModel extends AbstractTableModel {
-        private static final long serialVersionUID = -3741296945009406074L;
 
         public LinksDataModel(final MapLinkTable _links) {
             shownLinks = _links;

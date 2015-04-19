@@ -11,7 +11,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -23,24 +22,22 @@ import javax.swing.JFrame;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 
 
-public abstract class NetworkPanel3D extends NetworkPanel3DBase 
-    implements Serializable {
+public abstract class NetworkPanel3D extends NetworkPanel3DBase {
     /**
      * Listen to user events
      * - User keystrokes
      * - Picking objects
      * - View control by mouse dragging
      */
-    private static final long serialVersionUID = -6526471479789757625L;
     protected NetworkPanel3D(MapNodeTable _nodes,
             MapLinkTable _links, JFrame _parent, NetmasPropertiesHandler _properties) {
         super(_nodes, _links, _parent, _properties);
     }
 
-    protected void deserialize(MapNodeTable _nodes,
-            MapLinkTable _links, JFrame _parent) {
-        super.deserialize(_nodes, _links, _parent);
-    }
+	protected void setupFrame(MapNodeTable _nodes,
+							  MapLinkTable _links, JFrame _parent) {
+		super.setupFrame(_nodes, _links, _parent);
+	}
 
     protected transient PickCanvas pick_canvas;
     protected int button_held_down = 0;

@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,9 +24,7 @@ import javax.swing.SpinnerNumberModel;
  */
 
 public class GridPollutionAreaDialog extends JDialog 
-    implements ActionListener, Serializable {
-	
-	private static final long serialVersionUID = 1L;
+    implements ActionListener {
 	
 	private JSpinner[] values;
 	

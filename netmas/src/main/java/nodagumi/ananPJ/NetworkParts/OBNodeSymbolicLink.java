@@ -3,16 +3,14 @@ package nodagumi.ananPJ.NetworkParts;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class OBNodeSymbolicLink extends OBMapPart implements Serializable {
+public class OBNodeSymbolicLink extends OBMapPart {
 	/**
 	 * エディタ上で別のグループに存在するノードを表示するためのシンボリックリンク．
 	 */
-	private static final long serialVersionUID = 2287558438601265909L;
 	
 	private OBNode original = null;
 	

@@ -1,6 +1,5 @@
 package nodagumi.ananPJ.navigation;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,7 +12,7 @@ import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 import nodagumi.ananPJ.navigation.Dijkstra;
 
 
-public class Flooding extends Dijkstra implements Serializable {
+public class Flooding extends Dijkstra {
 
     static public Result calc(Nodes subgoals, PathChooser chooser) {
         Result frontier = new Result();

@@ -410,15 +410,15 @@ public class NetworkMapEditor extends SimulationLauncher
         fileMenu.add(mi);
 
         // fileMenu.add(new MenuItem("-"));
-        //
         // mi = new MenuItem("Import nodes from file");
         // mi.addActionListener((ActionListener) this);
         // fileMenu.add(mi);
 
-        fileMenu.add(new MenuItem("-"));
-        mi = new MenuItem("Serialize to file");
-        mi.addActionListener((ActionListener) this);
-        fileMenu.add(mi);
+        //[2015.04.19 I.Noda] remove serialize facilities.
+        //fileMenu.add(new MenuItem("-"));
+        //mi = new MenuItem("Serialize to file");
+        //mi.addActionListener((ActionListener) this);
+        //fileMenu.add(mi);
 
         // mi = new MenuItem("Make rooms from FV-based nodes");
         // mi.addActionListener((ActionListener) this);
@@ -976,7 +976,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
         class CreateLifts extends JDialog 
         implements ActionListener {
-            private static final long serialVersionUID = -5056607959020407478L;
             public ArrayList<JCheckBox> checkBoxes = new
                 ArrayList<JCheckBox>();
             public JSpinner length, width;

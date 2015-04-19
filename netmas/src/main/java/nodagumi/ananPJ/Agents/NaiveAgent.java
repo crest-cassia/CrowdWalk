@@ -14,7 +14,6 @@
 
 package nodagumi.ananPJ.Agents;
 
-import java.io.Serializable;
 import java.util.Random;
 import java.util.Map;
 import java.util.HashMap;
@@ -41,8 +40,7 @@ import nodagumi.Itk.* ;
  * </pre>
  */
 public class NaiveAgent
-    extends AwaitAgent
-    implements Serializable {
+    extends AwaitAgent {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * クラス名。

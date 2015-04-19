@@ -3,7 +3,6 @@ package nodagumi.ananPJ.navigation;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashMap;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
@@ -12,7 +11,7 @@ import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
-public class Dijkstra implements Serializable {
+public class Dijkstra {
     static public class Result extends HashMap<MapNode, NodeLinkLen> {}
 
     static public Result calc(Nodes subgoals,

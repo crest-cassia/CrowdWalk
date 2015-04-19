@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,8 +37,7 @@ import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Editor.EditorFrame;
 
 public class FramePanel extends JPanel
-implements ListSelectionListener, ActionListener, Serializable {
-	private static final long serialVersionUID = -6369150149687689989L;
+	implements ListSelectionListener, ActionListener {
 
 	NetworkMapEditor editor = null;
 	ArrayList<EditorFrame> sortedFrames = null;
@@ -49,7 +47,6 @@ implements ListSelectionListener, ActionListener, Serializable {
 	final static String[] COLUMN_NAMES = { "Id", "Label", "Height" };
 
 	private class FramesDataModel extends AbstractTableModel {
-		private static final long serialVersionUID = 9153918128769337742L;
 
 		@Override
 		public int getColumnCount() {
@@ -84,7 +81,6 @@ implements ListSelectionListener, ActionListener, Serializable {
 
 	class FrameSettings extends JPanel 
 	implements ChangeListener {
-		private static final long serialVersionUID = 8839696306183481684L;
 
 		NetworkMapEditor editor = null;
 		FramePanel frame_panel = null;

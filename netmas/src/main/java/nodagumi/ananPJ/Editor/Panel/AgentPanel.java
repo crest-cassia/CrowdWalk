@@ -3,7 +3,6 @@ package nodagumi.ananPJ.Editor.Panel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -28,8 +27,7 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.Itk.*;
 
 public class AgentPanel extends JPanel
-    implements ListSelectionListener, Serializable {
-    private static final long serialVersionUID = 8975068495519079933L;
+	implements ListSelectionListener {
     private NetworkMapEditor editor = null;
     private ArrayList<AgentBase> agents = null;
     private AgentsDataModel data_model = null;
@@ -39,7 +37,6 @@ public class AgentPanel extends JPanel
     final static String[] COLUMN_NAMES = { "Goal", "Type", "Position", "Route" };
 
     private class AgentsDataModel extends AbstractTableModel {
-        private static final long serialVersionUID = 6682455819993737049L;
 
         public int getColumnCount() { return 4; }
         public int getRowCount() { return agents.size();}

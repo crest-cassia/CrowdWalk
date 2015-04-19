@@ -9,7 +9,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import java.util.ArrayList;	// tkokada
 
@@ -28,8 +27,7 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.geometry.Sphere;
 
-public class PollutedAreaPoint extends PollutedArea implements Serializable {
-	private static final long serialVersionUID = -3523475414463313763L;
+public class PollutedAreaPoint extends PollutedArea {
 
 	Vector3d point;
 	int roomId;

@@ -3,13 +3,12 @@ package nodagumi.ananPJ.misc;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
 // シミュレーションの実行にかかった実時間をミリ秒精度で出力する
 // (プログラムのパフォーマンス計測に用いる)
-public class NetmasTimer implements Serializable {
+public class NetmasTimer {
 
     private int interval = 0;
     private int counter = 0;

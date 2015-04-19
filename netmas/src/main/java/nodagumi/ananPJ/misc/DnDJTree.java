@@ -26,11 +26,10 @@ import javax.swing.tree.*;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 
 
-public class DnDJTree extends JTree implements DragSourceListener, DropTargetListener, DragGestureListener, Serializable {
+public class DnDJTree extends JTree implements DragSourceListener, DropTargetListener, DragGestureListener {
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = 301520739962500142L;
 	private static final String NAME = "TREE-TEST";
     private static final DataFlavor localObjectFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, NAME);
     private static final DataFlavor[] supportedFlavors = { localObjectFlavor };
@@ -205,7 +204,6 @@ public class DnDJTree extends JTree implements DragSourceListener, DropTargetLis
 
     // custom renderer
     class DnDTreeCellRenderer extends DefaultTreeCellRenderer {
-		private static final long serialVersionUID = 7581674778969949080L;
 
 		private boolean isTargetNode;
     	private boolean isTargetNodeLeaf;

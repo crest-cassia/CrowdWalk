@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,11 +19,10 @@ import javax.swing.JPanel;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 
-public class AgentsPerFloor extends JFrame implements Serializable {
+public class AgentsPerFloor extends JFrame {
 	/**
 	 * Show how many agent are at each floor.
 	 */
-	private static final long serialVersionUID = -6779263030018451070L;
 	double minDepth = Double.MAX_VALUE, maxDepth = Double.MIN_VALUE;
 	int agentCount;
 	HashMap<Double, Integer> agentsPerFloor;
@@ -91,7 +89,6 @@ public class AgentsPerFloor extends JFrame implements Serializable {
 		/**
 		 * graph
 		 */
-		private static final long serialVersionUID = -7988066437536299759L;
 
 		@Override
 		public void paintComponent(Graphics g0) {

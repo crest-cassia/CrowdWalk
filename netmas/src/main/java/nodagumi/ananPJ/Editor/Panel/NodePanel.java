@@ -10,7 +10,6 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,8 +33,7 @@ import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 
-public class NodePanel extends PanelWithTable implements Serializable {
-    private static final long serialVersionUID = -5011285748841425804L;
+public class NodePanel extends PanelWithTable {
     NetworkMapEditor editor = null;
     MapNodeTable sortedNodes = null;
     NodesDataModel dataModel = null;
@@ -50,7 +48,6 @@ public class NodePanel extends PanelWithTable implements Serializable {
     final static String[] COLUMN_NAMES = { "Tags", "Is Exit", "Position", "Parent" };
 
     private class NodesDataModel extends AbstractTableModel {
-        private static final long serialVersionUID = -8473021012580835372L;
 
         public int getColumnCount() { return 4; }
         public int getRowCount() { synchronized(sortedNodes){

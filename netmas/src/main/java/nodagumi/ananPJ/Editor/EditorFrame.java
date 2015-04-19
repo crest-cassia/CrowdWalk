@@ -32,7 +32,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,10 +71,8 @@ public class EditorFrame
     extends JFrame
     implements ActionListener,
            MouseListener, MouseWheelListener, MouseMotionListener,
-           KeyListener, WindowListener, WindowFocusListener,
-           Serializable
+           KeyListener, WindowListener, WindowFocusListener
 {
-    private static final long serialVersionUID = 5426605331457096822L;
 
     CheckboxMenuItem showNodes = null;
     CheckboxMenuItem showNodeLabels = null;
@@ -540,7 +537,6 @@ public class EditorFrame
     }
 
     class MapPartGroupButton extends JButton implements ActionListener {
-        private static final long serialVersionUID = -1229787907250905245L;
         private MapPartGroup node;
         private EditorFrame frame;
 
@@ -1563,7 +1559,6 @@ public class EditorFrame
     class DuplicateAndMoveNodesDialog
     extends JDialog
     implements ActionListener {
-        private static final long serialVersionUID = 6841599203121649383L;
 
         private JSpinner[] values;
         private JComboBox cb;
@@ -1724,7 +1719,6 @@ public class EditorFrame
     }
     
     class AllStairSets extends HashMap<String, StairSet> {
-        private static final long serialVersionUID = 1279654193238382509L;
         public double height_diff = 0.0;
     }
     
@@ -1783,7 +1777,6 @@ public class EditorFrame
             /**
              * 
              */
-            private static final long serialVersionUID = 6457121956206125919L;
             public JSpinner[] values;
             public DuplicateFloorCount() {
                 this.setModal(true);

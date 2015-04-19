@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -54,8 +53,7 @@ import nodagumi.Itk.*;
  * }
  * </pre>
  */
-public class WalkAgent extends AgentBase implements Serializable {
-    private static final long serialVersionUID = -6313717005123377059L;
+public class WalkAgent extends AgentBase {
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -173,7 +171,7 @@ public class WalkAgent extends AgentBase implements Serializable {
     /**
      * 経由点の通過情報
      */
-    class CheckPoint implements Serializable {
+    class CheckPoint {
         public MapNode node;
         public double time;
         public String reason;
@@ -382,7 +380,6 @@ public class WalkAgent extends AgentBase implements Serializable {
      */
     @Override
     public void prepareForSimulation(double _timeScale) {
-        /* tkokada: modified to apply deserialize method */
         if (!isEvacuated()) {
             if(currentPlace.isBeforeStartFromLink()) { // リンクが初期位置
                 prepareForSimulation_FromLink() ;

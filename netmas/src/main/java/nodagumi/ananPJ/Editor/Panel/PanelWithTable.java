@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -15,8 +14,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 public abstract class PanelWithTable extends JPanel
-implements ListSelectionListener, Serializable {
-	private static final long serialVersionUID = 5923909190896858320L;
+	implements ListSelectionListener {
 
 	protected void adjustColumnPreferredWidth(JTable table) {
 		TableColumnModel columnModel = table.getColumnModel();

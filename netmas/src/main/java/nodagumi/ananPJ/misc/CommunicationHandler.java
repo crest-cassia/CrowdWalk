@@ -3,7 +3,6 @@ package nodagumi.ananPJ.misc;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 /*
  * CommunicationHandler manages inputs and outputs from/to multiple I/O.
@@ -12,8 +11,7 @@ import java.io.Serializable;
  * (for example, NetMASNetworkHandler) handles input type
  * ${CommunicationType_NAME}.
  */
-public abstract class CommunicationHandler extends Thread
-    implements Serializable {
+public abstract class CommunicationHandler extends Thread {
 
     public enum CommunicationType {
         RCV_BUFFER,

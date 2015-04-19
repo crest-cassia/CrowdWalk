@@ -4,7 +4,6 @@ package nodagumi.ananPJ.Agents;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -32,8 +31,7 @@ import nodagumi.Itk.* ;
  * エージェントのベース。抽象クラス。
  */
 public abstract class AgentBase extends OBMapPart
-implements Comparable<AgentBase>, Serializable {
-    private static final long serialVersionUID = 2580480798262915926L;
+implements Comparable<AgentBase> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**

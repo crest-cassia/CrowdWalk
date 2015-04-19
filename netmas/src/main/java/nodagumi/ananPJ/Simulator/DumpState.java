@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -25,7 +24,7 @@ import javax.swing.JPanel;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 
-public class DumpState implements Serializable {
+public class DumpState {
 	protected JPanel dump_panel;
 	protected JCheckBox enable_dump;
 	protected JLabel dump_filename;

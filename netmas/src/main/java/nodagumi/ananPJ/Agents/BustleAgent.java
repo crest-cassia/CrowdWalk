@@ -12,7 +12,6 @@
 
 package nodagumi.ananPJ.Agents;
 
-import java.io.Serializable;
 import java.util.Random;
 import java.util.Map;
 
@@ -36,8 +35,7 @@ import nodagumi.Itk.* ;
  * }
  * </pre>
  */
-public class BustleAgent extends NaiveAgent
-    implements Serializable {
+public class BustleAgent extends NaiveAgent {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * クラス名。

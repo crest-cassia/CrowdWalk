@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -34,7 +33,7 @@ import nodagumi.Itk.*;
 
 
 
-public class EvacuationSimulator implements EvacuationModelBase, Serializable {
+public class EvacuationSimulator implements EvacuationModelBase {
     public static enum timeSeriesLogTYpe {
         All,        /* save all agents, map information */
         Goal        /* save goal times of agents */
@@ -94,8 +93,8 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
         this(networkMap, null, _random);
     }
 
-    public void deserialize(NetworkMap _networkMap,
-			    SimulationController _controller) {
+    public void setupFrame(NetworkMap _networkMap,
+			   SimulationController _controller) {
         networkMap = _networkMap;
         controller = _controller;
         if (controller instanceof BasicSimulationLauncher) {
@@ -130,7 +129,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             buildModel (has_display);
             buildRoutes ();
         } else {
-            agentHandler.deserialize(
+            agentHandler.setupFrame(
                     networkMap.getGenerationFile(),
                     networkMap.getScenarioFile(),
                     map);
@@ -147,7 +146,7 @@ public class EvacuationSimulator implements EvacuationModelBase, Serializable {
             buildModel (has_display);
             buildRoutes ();
         } else {
-            agentHandler.deserialize(
+            agentHandler.setupFrame(
                     networkMap.getGenerationFile(),
                     networkMap.getScenarioFile(),
                     map);

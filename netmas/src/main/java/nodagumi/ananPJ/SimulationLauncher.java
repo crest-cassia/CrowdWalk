@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,9 +35,7 @@ import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.Itk.*;
 
 public class SimulationLauncher extends BasicSimulationLauncher
-    implements SimulationController, Serializable {
-
-    private static final long serialVersionUID = 3014238657739616307L;
+    implements SimulationController {
 
     protected transient Settings settings;
     private transient JFrame main_frame;
@@ -64,10 +61,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     public SimulationLauncher(Random _random) {
         random = _random;
         networkMap = new NetworkMap(_random);
-        settings = Settings.load("NetworkMapEditor.ini");
-    }
-
-    public void deserialize() {
         settings = Settings.load("NetworkMapEditor.ini");
     }
 
@@ -279,7 +272,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
         } else {
             panel = _panel;
             simulation_frame = panel.parent;
-            panel.deserialize(model, simulation_frame);
+            panel.setupFrame(model, simulation_frame);
             int w = settings.get("3dpanel_width", 800);
             int h = settings.get("3dpanel_height", 600);
             panel.setCanvasSize(w, h);

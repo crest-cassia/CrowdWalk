@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -17,7 +16,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 public class GetDoublesDialog extends JDialog 
-implements ActionListener, Serializable {
+	implements ActionListener {
 	private JSpinner[] values;
 	public boolean proceed = false;
 	public GetDoublesDialog(String title,

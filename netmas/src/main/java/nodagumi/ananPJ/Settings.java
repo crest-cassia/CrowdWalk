@@ -8,13 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashMap;
 
 import nodagumi.Itk.*;
 
-public class Settings extends HashMap<String, String> implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Settings extends HashMap<String, String> {
 	String settingsFilename = "settings.ini";
 	static Settings settings = null;	
 

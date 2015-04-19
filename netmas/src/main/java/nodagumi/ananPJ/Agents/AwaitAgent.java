@@ -4,7 +4,6 @@ package nodagumi.ananPJ.Agents;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,9 +40,7 @@ import nodagumi.Itk.*;
  * }
  * </pre>
  */
-public class AwaitAgent extends WalkAgent
-    implements Serializable {
-    private static final long serialVersionUID = -6498240875020862791L;
+public class AwaitAgent extends WalkAgent {
 
     //============================================================
     //------------------------------------------------------------

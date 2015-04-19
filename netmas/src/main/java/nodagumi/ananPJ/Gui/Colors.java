@@ -1,15 +1,12 @@
 package nodagumi.ananPJ.Gui;
 
 import java.awt.Color;
-import java.io.Serializable;
 import javax.vecmath.Color3f;
 
 import nodagumi.Itk.*;
 
 
-public class Colors implements Serializable {
-
-    private static final long serialVersionUID = 6164276270323927488L;
+public class Colors {
 
     static public final Color3f BLACK = new Color3f(0.3f, 0.3f, 0.3f);
     static public final Color3f BLACK2 = new Color3f(0.0f, 0.0f, 0.0f);

@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
@@ -39,8 +38,7 @@ import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 
 public class PollutionPanel extends JPanel 
-implements ActionListener, ListSelectionListener, Serializable {
-	private static final long serialVersionUID = -8907318830563961670L;
+	implements ActionListener, ListSelectionListener {
 	NetworkMapEditor editor = null;
 	JLabel pollutionFileLabel = null;
 
@@ -52,7 +50,6 @@ implements ActionListener, ListSelectionListener, Serializable {
 		"Tags"};
 
 	private class RoomDataModel extends AbstractTableModel {
-		private static final long serialVersionUID = -4213633342883812858L;
 		
 		public RoomDataModel() {
 		}

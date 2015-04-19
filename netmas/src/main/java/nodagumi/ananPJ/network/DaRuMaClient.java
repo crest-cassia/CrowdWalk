@@ -7,7 +7,6 @@ package nodagumi.ananPJ.network;
 // import java.io.ObjectOutputStream;
 // import java.io.OutputStream;
 // import java.io.PrintStream;
-// import java.io.Serializable;
 import java.io.*;
 
 // import java.net.Socket;
@@ -34,11 +33,10 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-//import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 
 
-public class DaRuMaClient implements Serializable {
+public class DaRuMaClient {
 
     private String host = "localhost";
     private int port = 5050;

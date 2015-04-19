@@ -3,14 +3,12 @@ package nodagumi.ananPJ.navigation;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 
-public class NavigationHint implements Comparable<NavigationHint>,
-       Serializable {
+public class NavigationHint implements Comparable<NavigationHint> {
     final public MapNode exit;
     final public MapLink way;
     final public double distance;

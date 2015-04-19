@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +30,7 @@ import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.Itk.*;
 
 
-public class PollutionCalculator implements Serializable {
-    private static final long serialVersionUID = 29847234890234908L;
+public class PollutionCalculator {
     static double AGENT_HEIGHT = 1.5;
 
     double nextEvent = 0;

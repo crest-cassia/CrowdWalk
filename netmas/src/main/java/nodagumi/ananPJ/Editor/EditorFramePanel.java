@@ -15,7 +15,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
@@ -34,8 +33,7 @@ import nodagumi.ananPJ.navigation.NavigationHint;
  * specific editor frame. note that the frame is further related to
  * a specific group.
  */
-public class EditorFramePanel extends JPanel implements Serializable {
-    private static final long serialVersionUID = 5696254371521431653L;
+public class EditorFramePanel extends JPanel {
 
     public static enum TextPosition { CENTER, UPPER, LOWER, LEFT, RIGHT }
 

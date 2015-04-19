@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Random;
 
 import org.w3c.dom.Document;
@@ -16,7 +15,7 @@ import nodagumi.ananPJ.network.DaRuMaClient;
 
 import nodagumi.Itk.*;
 
-public abstract class BasicSimulationLauncher implements Serializable {
+public abstract class BasicSimulationLauncher {
     private DaRuMaClient darumaClient = DaRuMaClient.getInstance();
     protected NetmasPropertiesHandler properties = null;
 

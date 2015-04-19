@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List ;
 import java.util.Iterator;
@@ -174,9 +173,7 @@ import nodagumi.Itk.*;
  * example6) TIMEEVERY,NaiveAgent,"{}",LINK_TAG_1,18:00:00,18:00:00,60,60,100,LANE,EXIT_1,EXIT_2,EXIT_3
  * </pre>
  */
-public class AgentGenerationFile extends ArrayList<GenerateAgent> 
-    implements Serializable {
-    private static final long serialVersionUID = 2334273513164226078L;
+public class AgentGenerationFile extends ArrayList<GenerateAgent> {
     private Random random = null;
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();

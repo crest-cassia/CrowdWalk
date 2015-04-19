@@ -12,7 +12,6 @@
  * <UL>
  *   <LI> 以下の package と import をすべていれる。 </LI>
  *   <LI> class 定義で AwaitAgent を extends </LI>
- *   <LI> class 定義で Serializable を implements </LI>
  *   <LI> typeString を static で定義。これにクラス名(short name)をいれる。
  *   <LI> getTypeName() も定義しておく </LI>
  *   <LI> コンストラクタは、引数なし、2引数、6引数のものを定義しておく <LI>
@@ -31,7 +30,6 @@
 
 package nodagumi.ananPJ.Agents;
 
-import java.io.Serializable;
 import java.util.Random;
 import java.util.Map;
 
@@ -54,8 +52,7 @@ import nodagumi.Itk.* ;
  * }
  * </pre>
  */
-public class CapriciousAgent extends NaiveAgent
-    implements Serializable {
+public class CapriciousAgent extends NaiveAgent {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * クラス名。

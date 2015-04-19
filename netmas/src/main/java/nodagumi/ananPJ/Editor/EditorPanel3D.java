@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import javax.media.j3d.Group;
 import javax.media.j3d.Transform3D;
@@ -23,8 +22,7 @@ import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
-public class EditorPanel3D extends NetworkPanel3D implements Serializable {
-    private static final long serialVersionUID = 6529629957086182488L;
+public class EditorPanel3D extends NetworkPanel3D {
 
     private NetworkMapEditor editor;
 

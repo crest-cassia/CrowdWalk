@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -30,8 +29,7 @@ import nodagumi.ananPJ.misc.AgentGenerationFile;
 
 import nodagumi.Itk.*;
 
-public class ScenarioPanel extends PanelWithTable implements Serializable {
-    private static final long serialVersionUID = 5603704970745259422L;
+public class ScenarioPanel extends PanelWithTable { 
     NetworkMapEditor editor = null;
     JLabel generateFileLabel = null;
     JButton generateFileButton = null;
@@ -44,7 +42,6 @@ public class ScenarioPanel extends PanelWithTable implements Serializable {
     JTable generationTable = null;
     final static String[] COLUMN_NAMES = { "Goal", "Start", "Path" };
     private class AgentGenerationDataModel extends AbstractTableModel {
-        private static final long serialVersionUID = 8846594313399230323L;
         AgentGenerationFile file = null;
         public AgentGenerationDataModel() {
         }

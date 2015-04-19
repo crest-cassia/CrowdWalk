@@ -11,7 +11,6 @@ import java.awt.geom.AffineTransform;   // tkokada
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import java.util.ArrayList; // tkokada
 
@@ -30,9 +29,7 @@ import org.w3c.dom.Element;
 
 import com.sun.j3d.utils.geometry.Box;
 
-public class PollutedAreaRectangle extends PollutedArea
-    implements Serializable {
-    private static final long serialVersionUID = -8958754706816120068L;
+public class PollutedAreaRectangle extends PollutedArea {
 
     public PollutedAreaRectangle(int id) {
         super(id);

@@ -19,7 +19,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,8 +52,7 @@ import nodagumi.ananPJ.misc.SpecialTerm;
 import nodagumi.Itk.*;
 
 
-public class MapLink extends OBMapPart implements Serializable {
-    private static final long serialVersionUID = 4960899670982905174L;
+public class MapLink extends OBMapPart {
 
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -745,7 +743,6 @@ public class MapLink extends OBMapPart implements Serializable {
 
     public static class AttributePanel  extends JPanel 
     implements ActionListener, ChangeListener {
-        private static final long serialVersionUID = -6573997617890390259L;
         private JSpinner length, width;
         private boolean detectChange = true;
         static public interface Listener {
@@ -823,7 +820,6 @@ public class MapLink extends OBMapPart implements Serializable {
         /* Set attributes with a dialog */
         class AttributeSetDialog extends JDialog  
         implements ActionListener {
-            private static final long serialVersionUID = 7977802020577822078L;
             private MapNode from = null;
             private MapNode to = null;
 

@@ -419,9 +419,7 @@ import nodagumi.Itk.*;
  *   </li>
  * </ul>
  */
-public class NetmasPropertiesHandler implements Serializable {
-
-    private static final long serialVersionUID = 50125012L;
+public class NetmasPropertiesHandler {
 
     public static final List cuiPropList = Arrays.asList(
             "debug",

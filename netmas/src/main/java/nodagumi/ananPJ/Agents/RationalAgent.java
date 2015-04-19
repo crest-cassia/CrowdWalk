@@ -13,7 +13,6 @@
 
 package nodagumi.ananPJ.Agents;
 
-import java.io.Serializable;
 import java.util.Random;
 import java.util.HashMap;
 
@@ -40,8 +39,7 @@ import nodagumi.Itk.*;
  * </pre>
  * 思考ルールの記述法については {@link Think.ThinkEngine} 参照。
  */
-public class RationalAgent extends BustleAgent
-    implements Serializable {
+public class RationalAgent extends BustleAgent {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * クラス名。

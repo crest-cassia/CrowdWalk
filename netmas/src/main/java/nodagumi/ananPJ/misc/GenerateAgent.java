@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ import nodagumi.Itk.*;
  *  <li> {@link nodagumi.ananPJ.Agents.RationalAgent RationalAgent} </li>
  * </ul>
  */
-public abstract class GenerateAgent implements Serializable {
+public abstract class GenerateAgent {
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**

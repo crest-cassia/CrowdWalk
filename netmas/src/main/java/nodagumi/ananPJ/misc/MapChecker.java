@@ -7,7 +7,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -25,7 +24,7 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 
 
 class ProgressBarDialog extends JDialog 
-    implements ActionListener, Serializable {
+	implements ActionListener {
 	int count;
 
 	JProgressBar bar;

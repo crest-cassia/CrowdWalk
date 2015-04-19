@@ -16,7 +16,6 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +48,7 @@ import org.w3c.dom.Text;
  * modify the following methods.
  *  OBNode.fromDom(Element element)
  */
-public abstract class OBNode extends DefaultMutableTreeNode
-    implements Serializable {
+public abstract class OBNode extends DefaultMutableTreeNode {
   public enum NType{NODE,LINK,AGENT,GROUP,ROOM,SYMLINK}
 
   public int ID;
@@ -210,7 +208,6 @@ public abstract class OBNode extends DefaultMutableTreeNode
   }
   
   static class TagSetupPanel extends JPanel {
-    private static final long serialVersionUID = 3573992132966257203L;
     private ArrayList<OBNode> nodes;
     private ArrayList<String> tags = new ArrayList<String>();
     private ArrayList<JCheckBox> tag_cbs = new ArrayList<JCheckBox>();

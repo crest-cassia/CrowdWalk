@@ -3,7 +3,6 @@ package nodagumi.ananPJ.navigation;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,7 +11,7 @@ import java.util.HashMap;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 
-public class CalcPath implements Serializable {
+public class CalcPath {
     /* calculate evacuation paths
      */
     public static class Nodes extends MapNodeTable {};

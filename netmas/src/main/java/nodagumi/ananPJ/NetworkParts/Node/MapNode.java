@@ -16,7 +16,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,9 +46,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
 
-public class MapNode extends OBMapPart implements Serializable {
-    private static final long serialVersionUID = -7438706484453707443L;
-
+public class MapNode extends OBMapPart {
     //============================================================
     //------------------------------------------------------------
     /**
@@ -387,7 +384,6 @@ public class MapNode extends OBMapPart implements Serializable {
     public static void showAttributeDialog(MapNodeTable nodes) {
         /* Set attributes with a dialog */
         class AttributeSetDialog  extends JDialog {
-            private static final long serialVersionUID = 3824609997449144923L;
             private boolean singleNode;
             private MapNodeTable nodes;
 

@@ -13,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -46,8 +45,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 
 public class BrowserPanel
 extends JPanel
-implements MouseListener, TreeSelectionListener, Serializable {
-	private static final long serialVersionUID = -1584209347343617161L;
+	implements MouseListener, TreeSelectionListener {
 
 	private NetworkMapEditor editor = null;
 	DnDJTree tree;
@@ -237,7 +235,6 @@ implements MouseListener, TreeSelectionListener, Serializable {
 	class TagNameAndHeightDialog
 	extends JDialog
 	implements ActionListener {
-		private static final long serialVersionUID = 5981796182956953284L;
 		private JSpinner height;
 		private JTextField tag = new JTextField(10);
 		private JButton ok_button;
@@ -416,7 +413,6 @@ implements MouseListener, TreeSelectionListener, Serializable {
         /* Set attributes with a dialog */
     	class notifyDialog extends JDialog  
         implements ActionListener {
-			private static final long serialVersionUID = 8733681453456302201L;
 			JLabel tagsField= new JLabel(text);
     	    JButton ok = new JButton("OK");
         	private Container contentPane;

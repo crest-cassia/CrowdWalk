@@ -18,7 +18,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 
@@ -31,8 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.vecmath.Vector3f;
 
-public abstract class PollutedArea extends OBNode implements Serializable {
-	private static final long serialVersionUID = 5254990917660112549L;
+public abstract class PollutedArea extends OBNode {
 
 	public PollutedArea(int _id) {
 		super(_id);
@@ -57,7 +55,6 @@ public abstract class PollutedArea extends OBNode implements Serializable {
 			int x, int y) {
         /* Set attributes with a dialog */
     	class AttributeSetDialog  extends JDialog implements ActionListener, KeyListener {
-			private static final long serialVersionUID = 1234092384029348L;
 
 			private ArrayList<PollutedArea> areas;
 

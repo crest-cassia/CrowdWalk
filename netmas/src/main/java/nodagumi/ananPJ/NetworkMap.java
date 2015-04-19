@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,8 +52,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 
-public class NetworkMap extends NetworkMapBase implements Serializable {
-    private static final long serialVersionUID = -4302417008763441581L;
+public class NetworkMap extends NetworkMapBase {
     private ArrayList<AgentBase> agentsCache =
         new ArrayList<AgentBase>();
     private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
@@ -92,7 +90,7 @@ public class NetworkMap extends NetworkMapBase implements Serializable {
     private Random random = null;
 
     /* undo related stuff */
-    class UndoInformation implements Serializable {
+    class UndoInformation {
         public boolean addition;
         public OBNode parent;
         public OBNode node;

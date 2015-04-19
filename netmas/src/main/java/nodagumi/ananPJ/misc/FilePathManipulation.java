@@ -5,10 +5,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.LinkedList;
 
-public class FilePathManipulation implements Serializable {
+public class FilePathManipulation {
 	public static String getRelativePath(String base_str,
 			String file_str) {
 		if (base_str.equals(file_str)) return file_str;

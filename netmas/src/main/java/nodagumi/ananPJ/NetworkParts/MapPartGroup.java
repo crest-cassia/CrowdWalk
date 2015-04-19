@@ -8,7 +8,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -26,8 +25,7 @@ import nodagumi.ananPJ.misc.FilePathManipulation;
 
 import nodagumi.Itk.*;
 
-public class MapPartGroup extends OBNode implements Serializable {
-    private static final long serialVersionUID = 3059772175240934632L;
+public class MapPartGroup extends OBNode {
     /* Position of the MapPart, relative to the parent node.
      */
     private Point2D pNorthWest = null;

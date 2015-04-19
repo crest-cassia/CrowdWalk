@@ -4,14 +4,13 @@ package nodagumi.ananPJ.NetworkParts;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
 
 /* Parent of agent/node/link (leaf of OB) */
-public abstract class OBMapPart extends OBNode implements Serializable {
+public abstract class OBMapPart extends OBNode {
 
 	/**
 	 * 引数なしconstractor。 ClassFinder.newByName で必要。

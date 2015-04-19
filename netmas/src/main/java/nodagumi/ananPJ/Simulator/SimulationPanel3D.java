@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,9 +82,7 @@ import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
-public class SimulationPanel3D extends NetworkPanel3D
-        implements Serializable {
-    private static final long serialVersionUID = -4438166088239555983L;
+public class SimulationPanel3D extends NetworkPanel3D {
     public static int MAX_AGENT_COUNT = 500000;
 
     public static enum gas_display {
@@ -141,8 +138,8 @@ public class SimulationPanel3D extends NetworkPanel3D
         }
     }
     
-    public void deserialize(EvacuationModelBase _model, JFrame _parent) {
-        super.deserialize(_model.getNodes(), _model.getLinks(), _parent);
+    public void setupFrame(EvacuationModelBase _model, JFrame _parent) {
+        super.setupFrame(_model.getNodes(), _model.getLinks(), _parent);
         model = _model;
         networkMap = model.getMap();
         agents = model.getAgents();

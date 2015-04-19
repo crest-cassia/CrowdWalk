@@ -8,14 +8,13 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 
 
-public class Hover implements Serializable {
+public class Hover {
     private Point2D currentPos;
     private Line2D line;
     private MapNode dummyHoverNode;

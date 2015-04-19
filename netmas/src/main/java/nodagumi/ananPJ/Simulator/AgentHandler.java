@@ -24,7 +24,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.io.*;
 import java.lang.ClassNotFoundException;
 //import java.lang.System;
@@ -77,7 +76,7 @@ import nodagumi.ananPJ.network.DaRuMaClient;
 
 import nodagumi.Itk.*;
 
-public class AgentHandler implements Serializable {
+public class AgentHandler {
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -221,8 +220,8 @@ public class AgentHandler implements Serializable {
             effectiveLinksEnabled = true;
     }
 
-    public void deserialize(String generationFile, String scenarioFile,
-                            NetworkMapBase map) {
+    public void setupFrame(String generationFile, String scenarioFile,
+                           NetworkMapBase map) {
         control_panel = null;
         clock_label = new JLabel("NOT STARTED");
         time_label = new JLabel("NOT STARTED!");

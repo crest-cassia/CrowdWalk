@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,14 +14,13 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 
-public class Lift extends MapLink implements Serializable {
+public class Lift extends MapLink {
 	/**
 	 * A simplified model of a lift.
 	 * - The time to pass the lift is constant.
 	 * - The length is the time for an agent to leave this link.
 	 * - The width is the capacity of the lift (unused).
 	 */
-	private static final long serialVersionUID = 7468322576593400814L;
 	private double timeToDecend = 0.0;
 	MapNode upperFloor = null;
 
@@ -30,7 +28,6 @@ public class Lift extends MapLink implements Serializable {
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = -8663778086808815987L;
 		String id = null;
 		Lift targetFloor = null;
 		double targetTime = 0.0;
@@ -143,10 +140,7 @@ public class Lift extends MapLink implements Serializable {
 
 	static public class LiftManager extends HashMap<String, Shaft>{
 		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 5461679066558979368L;
-		/* A singleton that holds all the lift information.
+		 * A singleton that holds all the lift information.
 		 */
 		static LiftManager manager = null;
 		

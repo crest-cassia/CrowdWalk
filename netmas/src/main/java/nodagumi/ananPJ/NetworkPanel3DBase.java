@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,8 +91,7 @@ import nodagumi.Itk.*;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-public abstract class NetworkPanel3DBase extends JPanel 
-    implements Serializable {
+public abstract class NetworkPanel3DBase extends JPanel {
     /**
      * Basic class for 3D canvas and other controls.
      * - Place canvas
@@ -102,7 +100,6 @@ public abstract class NetworkPanel3DBase extends JPanel
      * - menu and status bar
      * - show logo 
      */
-    private static final long serialVersionUID = 6164276270221427488L;
     public static final int TOP = 1;
     public static final int BOTTOM = 2;
 
@@ -139,7 +136,6 @@ public abstract class NetworkPanel3DBase extends JPanel
      * - capture
      */
     protected class CaptureCanvas3D extends Canvas3D {
-        private static final long serialVersionUID = -2962828992621609919L;
 
         public CaptureCanvas3D(GraphicsConfiguration arg0) {
             super(arg0);
@@ -406,15 +402,15 @@ public abstract class NetworkPanel3DBase extends JPanel
         }
     }
 
-    protected void deserialize(MapNodeTable _nodes,
-            MapLinkTable _links,
-            JFrame _parent) {
-        nodes = _nodes;
-        links = _links;
-        parent = _parent;
+    protected void setupFrame(MapNodeTable _nodes,
+			      MapLinkTable _links,
+			      JFrame _parent) {
+	nodes = _nodes;
+	links = _links;
+	parent = _parent;
 
-        canvas_width = 800;
-        canvas_height = 600;
+	canvas_width = 800;
+	canvas_height = 600;
     }
 
     public void setCanvasSize(int w, int h) {

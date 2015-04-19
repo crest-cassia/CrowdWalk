@@ -15,8 +15,6 @@ package nodagumi.ananPJ;
 import java.util.ArrayList;
 import java.util.HashMap ;
 
-import java.io.Serializable;
-
 import javax.swing.tree.DefaultTreeModel;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
