@@ -65,6 +65,8 @@ import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.Colors.*;
+import nodagumi.ananPJ.Gui.ViewChangeListener;
+import nodagumi.ananPJ.Gui.ViewChangeManager;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -97,6 +99,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
     private boolean isInitialized = false;
 
     BoundingSphere bounds = new BoundingSphere(new Point3d(), 20000.0);
+    private ViewChangeManager viewChangeManager;
 
     /* flags to control drawing */
     protected float link_transparency = 0.5f;
@@ -570,6 +573,10 @@ public abstract class NetworkPanel3DBase extends JPanel {
         /* other objects */
         registerOtherObjects();
 
+        viewChangeManager = new ViewChangeManager();
+        viewChangeManager.setSchedulingBounds(bounds);
+        objRoot.addChild(viewChangeManager);
+
         objRoot.compile();
 
         return objRoot;
@@ -683,6 +690,20 @@ public abstract class NetworkPanel3DBase extends JPanel {
                                 - point_min.z)))));
         point_center.z = 0;
         return scale;
+    }
+
+    /**
+     * 描画更新イベント用のリスナを登録する.
+     */
+    public void addViewChangeListener(String event, ViewChangeListener listener) {
+        viewChangeManager.addViewChangeListener(event, listener);
+    }
+
+    /**
+     * 描画更新イベントの発生を通知する.
+     */
+    public void notifyViewChange(String event) {
+        viewChangeManager.notifyViewChange(event);
     }
 
     /* setting up links */
