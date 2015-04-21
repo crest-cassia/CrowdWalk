@@ -274,21 +274,6 @@ public class EvacuationSimulator {
         }
     }
 
-    public void updateWithSerialize() {
-        synchronized (stop_simulation) {
-            double poltime = getSecond();
-	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
-                    getAgents());
-            // Runtime.getRuntime().gc();
-            agentHandler.update(map, getSecond());
-            if (panel3d != null) {
-                panel3d.updateClock(getSecond());
-                for (AgentBase ea : getAgents())
-                    panel3d.registerAgentOnline(ea);
-            }
-        }
-    }
-
     protected void output_results() {
         try {
 	    /* [2015.02.10 I.Noda] use timestamp instead of scenario_serial. */

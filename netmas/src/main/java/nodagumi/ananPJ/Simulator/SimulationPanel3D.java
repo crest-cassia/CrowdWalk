@@ -25,15 +25,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.media.j3d.Appearance;
-import javax.media.j3d.Background;
 import javax.media.j3d.BadTransformException;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
@@ -862,9 +858,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         Sphere sphere = new Sphere((float)(2), app);
 
         agent_transforms.addChild(sphere);
-        /* color: tkokada */
-        // Background background = new Background(new Color3f(1.0f, 1.0f, 1.0f));
-        // background.setApplicationBounds(bounds);
 
         /* handling */
         BranchGroup bgroup = new BranchGroup();
@@ -1401,23 +1394,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         return super.colors_for_link(link);
     }
 
-    /* view change by mouse */
-    @Override
-    protected void view_changed() {
-        notifiyViewChangeListeners();
-    }
-
-    ArrayList<SimulationController> view_change_listeners =
-        new ArrayList<SimulationController>();
-
-    public void addViewChangeListener(SimulationController controller) {
-        view_change_listeners.add(controller);
-    }
-    protected void notifiyViewChangeListeners() {
-        for (SimulationController c : view_change_listeners) {
-            c.notifyViewChange(this);
-        }
-    }
     public void setShowLogo(boolean b) {
         show_logo = b;
     }

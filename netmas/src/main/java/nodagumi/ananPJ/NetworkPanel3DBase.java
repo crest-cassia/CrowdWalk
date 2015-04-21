@@ -1,7 +1,6 @@
 package nodagumi.ananPJ;
 
 import java.awt.BorderLayout;
-import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -15,29 +14,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Background;
-import javax.media.j3d.BadTransformException;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Canvas3D;
@@ -52,6 +42,7 @@ import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.J3DGraphics2D;
 import javax.media.j3d.LineArray;
 import javax.media.j3d.LineAttributes;
+import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.Raster;
 import javax.media.j3d.Shape3D;
@@ -60,10 +51,8 @@ import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
 import javax.media.j3d.TriangleFanArray;
 import javax.media.j3d.WakeupOnElapsedTime;
-import javax.media.j3d.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
@@ -73,11 +62,6 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.geometry.Sphere;
 
 import net.arnx.jsonic.JSON;
-
-// import com.sun.image.codec.jpeg.ImageFormatException;
-// import com.sun.image.codec.jpeg.JPEGImageEncoder;
-// import com.sun.image.codec.jpeg.JPEGEncodeParam;
-// import com.sun.image.codec.jpeg.JPEGCodec;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.Colors.*;
@@ -224,37 +208,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
                 System.err.println("image is null!");
                 return;
             }
-//            /*
-//            try {
-//                ImageIO.write(img, "jpeg", new File(filename));
-//            } catch (IOException ioe) {
-//                ioe.printStackTrace();
-//            }
-//            */
-//            /*
-//             File file = new File(filename);
-//            try {
-//                ImageIO.write(img, "BMP", file);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }*/
-//
-//            // 上のImageIO.writeが動かないため、下記の処理を使いました 2011.5.18
-//            //(NetworkMapEditor でスクリーンキャプチャが取れない)
-//            // 下羅さん作成の下記の処理に差し替えます
-//            // また下記の記述では、jpgがスクリーンキャプチャファイルとして出力されることを意図しています
-//            // この修正に連動して、EvacuationSimulator.java のupdateEveryTick()の中の記述を
-//            // 変更しています。（bmp →jpg）
-//            try {
-//                OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename));
-//                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fileOutputStream);
-//                JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(img);
-//                encodeParam.setQuality(1.0f, false);
-//                encoder.encode(img, encodeParam);
-//                fileOutputStream.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
             try {
                 ImageIO.write(img, screenshotImageType,
                     new File(screenshotDir + "/" + filename + "." + screenshotImageType));

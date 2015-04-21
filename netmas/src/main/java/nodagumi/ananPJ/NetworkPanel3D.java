@@ -8,10 +8,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -169,7 +165,6 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
     private void drag_screen_right(double dx, double dy, MouseEvent e) {
         trans_trans.x += (int)dx;
         trans_trans.y -= (int)dy;
-        view_changed();
         update_viewtrans();
     }
 
@@ -181,7 +176,6 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
             if (rot_x > 0) rot_x = 0;
             if (rot_x < -Math.PI / 2) rot_x = -Math.PI / 2;
         }
-        view_changed();
         update_viewtrans();
     }
 
@@ -192,13 +186,9 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
             c = -c;
             for (int i = 0; i < c; i++) zoom_scale *= 1.1;
         }
-        view_changed();
         update_viewtrans();
     }
     
-    protected void view_changed() {
-    }
-
     protected void keyTypedCallback(char c) {
         switch(c) {
         case 'h':
