@@ -23,6 +23,8 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RationalAgent;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
+import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+
 import nodagumi.Itk.* ;
 
 //======================================================================
@@ -60,7 +62,13 @@ public class ThinkFormulaAgent extends ThinkFormula {
         ThinkFormula.register("setParam", singleton) ;
         ThinkFormula.register("agentHasTag", singleton) ;
         ThinkFormula.register("placeHasTag", singleton) ;
+        ThinkFormula.register("addAgentTag", singleton) ;
+        ThinkFormula.register("addPlaceTag", singleton) ;
+        ThinkFormula.register("removeAgentTag", singleton) ;
+        ThinkFormula.register("removePlaceTag", singleton) ;
         ThinkFormula.register("listenAlert", singleton) ;
+        ThinkFormula.register("saveAlert", singleton) ;
+        ThinkFormula.register("announceAlert", singleton) ;
         ThinkFormula.register("clearAlert", singleton) ;
         ThinkFormula.register("clearAlertAll", singleton) ;
         ThinkFormula.register("changeGoal", singleton) ;
@@ -80,7 +88,13 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *   <li>{@link #call_setParam "setParam"}</li>
      *   <li>{@link #call_agentHasTag "agentHasTag"}</li>
      *   <li>{@link #call_placeHasTag "placeHasTag"}</li>
+     *   <li>{@link #call_addAgentTag "addAgentTag"}</li>
+     *   <li>{@link #call_addPlaceTag "addPlaceTag"}</li>
+     *   <li>{@link #call_removeAgentTag "removeAgentTag"}</li>
+     *   <li>{@link #call_removePlaceTag "removePlaceTag"}</li>
      *   <li>{@link #call_listenAlert "listenAlert"}</li>
+     *   <li>{@link #call_saveAlert "saveAlert"}</li>
+     *   <li>{@link #call_announceAlert "announceAlert"}</li>
      *   <li>{@link #call_clearAlert "clearAlert"}</li>
      *   <li>{@link #call_clearAllAlert "clearAllAlert"}</li>
      *   <li>{@link #call_changeGoal "changeGoal"}</li>
@@ -100,8 +114,20 @@ public class ThinkFormulaAgent extends ThinkFormula {
             return call_agentHasTag(head, expr, engine) ;
         } else if(head.equals("placeHasTag")) {
             return call_placeHasTag(head, expr, engine) ;
+        } else if(head.equals("addAgentTag")) {
+            return call_addAgentTag(head, expr, engine) ;
+        } else if(head.equals("addPlaceTag")) {
+            return call_addPlaceTag(head, expr, engine) ;
+        } else if(head.equals("removeAgentTag")) {
+            return call_removeAgentTag(head, expr, engine) ;
+        } else if(head.equals("removePlaceTag")) {
+            return call_removePlaceTag(head, expr, engine) ;
         } else if(head.equals("listenAlert")) {
             return call_listenAlert(head, expr, engine) ;
+        } else if(head.equals("saveAlert")) {
+            return call_saveAlert(head, expr, engine) ;
+        } else if(head.equals("announceAlert")) {
+            return call_announceAlert(head, expr, engine) ;
         } else if(head.equals("clearAlert")) {
             return call_clearAlert(head, expr, engine) ;
         } else if(head.equals("clearAllAlert")) {
@@ -232,6 +258,76 @@ public class ThinkFormulaAgent extends ThinkFormula {
 
     //------------------------------------------------------------
     /**
+     * 推論(addAgentTag)。
+     * エージェント自身にあるタグを追加。
+     * <pre>
+     * { "" : "addAgentTag",
+     *   "tag" : _tag_ }
+     * _tag ::= _String_
+     * </pre>
+     */
+    public Term call_addAgentTag(String head, Term expr, ThinkEngine engine) {
+        String tag = expr.getArgString("tag") ;
+        if(engine.getAgent().addTag(tag)) {
+            return Term_True ;
+        } else {
+            return Term_False ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(addPlaceTag)。
+     * 現在いるリンクにあるタグを追加。
+     * <pre>
+     * { "" : "addPlaceTag",
+     *   "tag" : _tag_ }
+     * _tag ::= _String_
+     * </pre>
+     */
+    public Term call_addPlaceTag(String head, Term expr, ThinkEngine engine) {
+        String tag = expr.getArgString("tag") ;
+        if(engine.getAgent().getCurrentLink().addTag(tag)) {
+            return Term_True ;
+        } else {
+            return Term_False ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(removeAgentTag)。
+     * エージェント自身からあるタグを削除。
+     * <pre>
+     * { "" : "removeAgentTag",
+     *   "tag" : _tag_ }
+     * _tag ::= _String_
+     * </pre>
+     */
+    public Term call_removeAgentTag(String head, Term expr, ThinkEngine engine) {
+        String tag = expr.getArgString("tag") ;
+        engine.getAgent().removeTag(tag) ;
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(removePlaceTag)。
+     * 現在いるリンクからあるタグを削除。
+     * <pre>
+     * { "" : "removePlaceTag",
+     *   "tag" : _tag_ }
+     * _tag ::= _String_
+     * </pre>
+     */
+    public Term call_removePlaceTag(String head, Term expr, ThinkEngine engine) {
+        String tag = expr.getArgString("tag") ;
+        engine.getAgent().getCurrentLink().removeTag(tag) ;
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 推論(listenAlert)。
      * <pre>
      * { "" : "listenAlert",
@@ -250,6 +346,58 @@ public class ThinkFormulaAgent extends ThinkFormula {
         } else {
             return Term_False ;
         }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(saveAlert)。
+     * <pre>
+     * { "" : "saveAlert",
+     *   "message" : _alertMessage_,
+     *  ("redundant" : _Boolean_) }
+     * _alertMessage_ ::= _String_
+     * </pre>
+     * "redundant" は、重複を許すかどうか。true だと重複の追加を許す。
+     * デフォルトは false。
+     *
+     * @return Alert 追加に成功したら Term_True を返す。
+     */
+    public Term call_saveAlert(String head, Term expr, ThinkEngine engine) {
+        Term message = expr.getArgTerm("message") ;
+        boolean redundant = expr.getArgBoolean("redundant") ;
+        Double time = engine.getAlertedMessageTable().get(message) ;
+        if(redundant || (time == null)) {
+            engine.getAlertedMessageTable().put(message,
+                                                engine.getAgent().currentTime) ;
+            return ThinkFormula.Term_True ;
+        } else {
+            return ThinkFormula.Term_False ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(announceAlert)。
+     * 現在地に Alert を追加（発表）する。
+     * <pre>
+     * { "" : "announceAlert",
+     *   "message" : _alertMessage_,
+     *  ("redundant" : _Boolean_) }
+     * _alertMessage_ ::= _String_
+     * </pre>
+     * "redundant" は、重複を許すかどうか。true だと重複の追加を許す。
+     * デフォルトは false。
+     *
+     * @return Alert 追加に成功したら Term_True を返す。
+     */
+    public Term call_announceAlert(String head, Term expr, ThinkEngine engine) {
+        Term message = expr.getArgTerm("message") ;
+        boolean redundant = expr.getArgBoolean("redundant") ;
+        MapLink currentLink = engine.getAgent().getCurrentLink() ;
+        Double time = engine.getAgent().currentTime ;
+
+        currentLink.addAlertMessage(message, time, true) ;
+        return ThinkFormula.Term_True ;
     }
 
     //------------------------------------------------------------
