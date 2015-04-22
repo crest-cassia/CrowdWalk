@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -140,6 +140,10 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagu
 <th class="colLast" scope="col">フィールドと説明</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeId">placeId</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeTag">placeTag</a></span></code>
 <div class="block">場所を指定するタグ</div>
@@ -185,20 +189,26 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagu
 <th class="colLast" scope="col">メソッドと説明</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#checkTagOrId-nodagumi.ananPJ.NetworkParts.OBNode-">checkTagOrId</a></span>(<a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;mapObject)</code>
+<div class="block">placeTag もしくは placeId を持つか調べる。</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#setupByCsvColumns-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.ShiftingStringList-">setupByCsvColumns</a></span>(<a href="../../../nodagumi/ananPJ/Scenario/Scenario.html" title="nodagumi.ananPJ.Scenario内のクラス">Scenario</a>&nbsp;_scenario,
                  <a href="../../../nodagumi/Itk/ShiftingStringList.html" title="nodagumi.Itk内のクラス">ShiftingStringList</a>&nbsp;columns)</code>
 <div class="block">CSV による setup</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#setupByJson-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.Term-">setupByJson</a></span>(<a href="../../../nodagumi/ananPJ/Scenario/Scenario.html" title="nodagumi.ananPJ.Scenario内のクラス">Scenario</a>&nbsp;_scenario,
            <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;eventDef)</code>
 <div class="block">JSON Term による setup</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#toStringTail--">toStringTail</a></span>()</code>
 <div class="block">文字列化 後半</div>
@@ -236,11 +246,20 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagu
 <a name="placeTag">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>placeTag</h4>
 <pre>public&nbsp;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> placeTag</pre>
 <div class="block">場所を指定するタグ</div>
+</li>
+</ul>
+<a name="placeId">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>placeId</h4>
+<pre>public&nbsp;int placeId</pre>
 </li>
 </ul>
 </li>
@@ -296,6 +315,16 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagu
 <dt><span class="overrideSpecifyLabel">オーバーライド:</span></dt>
 <dd><code><a href="../../../nodagumi/ananPJ/Scenario/EventBase.html#setupByCsvColumns-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.ShiftingStringList-">setupByCsvColumns</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagumi.ananPJ.Scenario内のクラス">EventBase</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="checkTagOrId-nodagumi.ananPJ.NetworkParts.OBNode-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkTagOrId</h4>
+<pre>public&nbsp;boolean&nbsp;checkTagOrId(<a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;mapObject)</pre>
+<div class="block">placeTag もしくは placeId を持つか調べる。</div>
 </li>
 </ul>
 <a name="toStringTail--">

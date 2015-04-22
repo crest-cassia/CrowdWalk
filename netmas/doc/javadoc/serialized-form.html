@@ -76,86 +76,14 @@
 <li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.BasicSimulationLauncher">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.BasicSimulationLauncher</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>darumaClient</h4>
-<pre><a href="nodagumi/ananPJ/network/DaRuMaClient.html" title="nodagumi.ananPJ.network内のクラス">DaRuMaClient</a> darumaClient</pre>
-</li>
-<li class="blockListLast">
-<h4>properties</h4>
-<pre><a href="nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a> properties</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetmasCuiSimulator">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetmasCuiSimulator.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetmasCuiSimulator</a> extends <a href="nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">BasicSimulationLauncher</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>model</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a> model</pre>
-</li>
-<li class="blockList">
-<h4>networkMap</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
-</li>
-<li class="blockList">
-<h4>agentMovementHistoryPath</h4>
-<pre>java.lang.String agentMovementHistoryPath</pre>
-</li>
-<li class="blockList">
-<h4>individualPedestriansLogDir</h4>
-<pre>java.lang.String individualPedestriansLogDir</pre>
-</li>
-<li class="blockList">
-<h4>isAllAgentSpeedZeroBreak</h4>
-<pre>boolean isAllAgentSpeedZeroBreak</pre>
-</li>
-<li class="blockList">
-<h4>loopCount</h4>
-<pre>int loopCount</pre>
-</li>
-<li class="blockList">
-<h4>linerGenerateAgentRatio</h4>
-<pre>double linerGenerateAgentRatio</pre>
-</li>
-<li class="blockListLast">
-<h4>propertiesHandler</h4>
-<pre><a href="nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a> propertiesHandler</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkMap">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetworkMap</a> extends <a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-4302417008763441581L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
-<li class="blockList">
-<h4>id_part_map</h4>
-<pre>java.util.HashMap&lt;K,V&gt; id_part_map</pre>
-</li>
 <li class="blockList">
 <h4>agentsCache</h4>
 <pre>java.util.ArrayList&lt;E&gt; agentsCache</pre>
@@ -191,10 +119,6 @@
 <div class="block">fallback parameter</div>
 </li>
 <li class="blockList">
-<h4>selectedOBNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> selectedOBNode</pre>
-</li>
-<li class="blockList">
 <h4>hasDisplay</h4>
 <pre>boolean hasDisplay</pre>
 </li>
@@ -223,6 +147,11 @@
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
 <li class="blockList">
+<h4>id_part_map</h4>
+<pre>java.util.HashMap&lt;K,V&gt; id_part_map</pre>
+<div class="block">ID から NetworkParts を取り出すための table.</div>
+</li>
+<li class="blockList">
 <h4>nodesCache</h4>
 <pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> nodesCache</pre>
 <div class="block">ノードテーブル</div>
@@ -241,138 +170,10 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkMapEditor">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkMapEditor.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetworkMapEditor</a> extends <a href="nodagumi/ananPJ/SimulationLauncher.html" title="nodagumi.ananPJ内のクラス">SimulationLauncher</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>dir_name</h4>
-<pre>java.lang.String dir_name</pre>
-</li>
-<li class="blockList">
-<h4>loopCount</h4>
-<pre>int loopCount</pre>
-</li>
-<li class="blockList">
-<h4>weight</h4>
-<pre>int weight</pre>
-</li>
-<li class="blockList">
-<h4>verticalScale</h4>
-<pre>double verticalScale</pre>
-</li>
-<li class="blockList">
-<h4>agentSize</h4>
-<pre>double agentSize</pre>
-</li>
-<li class="blockList">
-<h4>cameraPath</h4>
-<pre>java.lang.String cameraPath</pre>
-</li>
-<li class="blockList">
-<h4>zoom</h4>
-<pre>double zoom</pre>
-</li>
-<li class="blockList">
-<h4>recordSimulationScreen</h4>
-<pre>boolean recordSimulationScreen</pre>
-</li>
-<li class="blockList">
-<h4>screenshotDir</h4>
-<pre>java.lang.String screenshotDir</pre>
-</li>
-<li class="blockList">
-<h4>clearScreenshotDir</h4>
-<pre>boolean clearScreenshotDir</pre>
-</li>
-<li class="blockList">
-<h4>screenshotImageType</h4>
-<pre>java.lang.String screenshotImageType</pre>
-</li>
-<li class="blockList">
-<h4>simulationWindowOpen</h4>
-<pre>boolean simulationWindowOpen</pre>
-</li>
-<li class="blockList">
-<h4>autoSimulationStart</h4>
-<pre>boolean autoSimulationStart</pre>
-</li>
-<li class="blockList">
-<h4>hideLinks</h4>
-<pre>boolean hideLinks</pre>
-</li>
-<li class="blockList">
-<h4>densityMode</h4>
-<pre>boolean densityMode</pre>
-</li>
-<li class="blockList">
-<h4>changeAgentColorDependingOnSpeed</h4>
-<pre>boolean changeAgentColorDependingOnSpeed</pre>
-</li>
-<li class="blockList">
-<h4>showStatus</h4>
-<pre>boolean showStatus</pre>
-</li>
-<li class="blockList">
-<h4>showStatusPosition</h4>
-<pre>java.lang.String showStatusPosition</pre>
-</li>
-<li class="blockList">
-<h4>showLogo</h4>
-<pre>boolean showLogo</pre>
-</li>
-<li class="blockList">
-<h4>show3dPolygon</h4>
-<pre>boolean show3dPolygon</pre>
-</li>
-<li class="blockList">
-<h4>agentMovementHistoryPath</h4>
-<pre>java.lang.String agentMovementHistoryPath</pre>
-</li>
-<li class="blockList">
-<h4>individualPedestriansLogDir</h4>
-<pre>java.lang.String individualPedestriansLogDir</pre>
-</li>
-<li class="blockList">
-<h4>modified</h4>
-<pre>boolean modified</pre>
-</li>
-<li class="blockList">
-<h4>darumaClient</h4>
-<pre><a href="nodagumi/ananPJ/network/DaRuMaClient.html" title="nodagumi.ananPJ.network内のクラス">DaRuMaClient</a> darumaClient</pre>
-</li>
-<li class="blockList">
-<h4>mode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMapEditor.EditorMode.html" title="nodagumi.ananPJ内の列挙型">NetworkMapEditor.EditorMode</a> mode</pre>
-</li>
-<li class="blockList">
-<h4>runButton</h4>
-<pre>javax.swing.JButton runButton</pre>
-</li>
-<li class="blockList">
-<h4>waitDialog</h4>
-<pre>nodagumi.ananPJ.NetworkMapEditor.WaitDialog waitDialog</pre>
-</li>
-<li class="blockListLast">
-<h4>imageFileFilter</h4>
-<pre>java.io.FilenameFilter imageFileFilter</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkPanel3D">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkPanel3D.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetworkPanel3D</a> extends <a href="nodagumi/ananPJ/NetworkPanel3DBase.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-6526471479789757625L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -401,10 +202,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkPanel3DBase.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetworkPanel3DBase</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>6164276270221427488L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -597,10 +394,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkPanel3DBase.CaptureCanvas3D.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetworkPanel3DBase.CaptureCanvas3D</a> extends javax.media.j3d.Canvas3D implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-2962828992621609919L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -625,10 +418,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Settings.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.Settings</a> extends java.util.HashMap&lt;java.lang.String,java.lang.String&gt; implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>1L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -636,82 +425,6 @@
 <li class="blockListLast">
 <h4>settingsFilename</h4>
 <pre>java.lang.String settingsFilename</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.SimulationLauncher">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/SimulationLauncher.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.SimulationLauncher</a> extends <a href="nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">BasicSimulationLauncher</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>3014238657739616307L</dd>
-</dl>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>random</h4>
-<pre>java.util.Random random</pre>
-</li>
-<li class="blockList">
-<h4>isAllAgentSpeedZeroBreak</h4>
-<pre>boolean isAllAgentSpeedZeroBreak</pre>
-</li>
-<li class="blockList">
-<h4>timer</h4>
-<pre><a href="nodagumi/ananPJ/misc/NetmasTimer.html" title="nodagumi.ananPJ.misc内のクラス">NetmasTimer</a> timer</pre>
-</li>
-<li class="blockList">
-<h4>isTimerEnabled</h4>
-<pre>boolean isTimerEnabled</pre>
-</li>
-<li class="blockList">
-<h4>timerPath</h4>
-<pre>java.lang.String timerPath</pre>
-</li>
-<li class="blockList">
-<h4>isTimeSeriesLog</h4>
-<pre>boolean isTimeSeriesLog</pre>
-</li>
-<li class="blockList">
-<h4>timeSeriesLogPath</h4>
-<pre>java.lang.String timeSeriesLogPath</pre>
-</li>
-<li class="blockList">
-<h4>timeSeriesLogInterval</h4>
-<pre>int timeSeriesLogInterval</pre>
-</li>
-<li class="blockList">
-<h4>isDamageSpeedZeroNumberLog</h4>
-<pre>boolean isDamageSpeedZeroNumberLog</pre>
-</li>
-<li class="blockList">
-<h4>damageSpeedZeroNumberLogPath</h4>
-<pre>java.lang.String damageSpeedZeroNumberLogPath</pre>
-</li>
-<li class="blockList">
-<h4>speedModel</h4>
-<pre><a href="nodagumi/ananPJ/Agents/WalkAgent.SpeedCalculationModel.html" title="nodagumi.ananPJ.Agents内の列挙型">WalkAgent.SpeedCalculationModel</a> speedModel</pre>
-</li>
-<li class="blockList">
-<h4>networkMap</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
-</li>
-<li class="blockList">
-<h4>finished</h4>
-<pre>boolean finished</pre>
-</li>
-<li class="blockList">
-<h4>run_thread</h4>
-<pre>java.lang.Boolean run_thread</pre>
-</li>
-<li class="blockListLast">
-<h4>model</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a> model</pre>
 </li>
 </ul>
 </li>
@@ -726,10 +439,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">nodagumi.ananPJ.Agents.AgentBase</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>2580480798262915926L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -829,6 +538,7 @@
 <li class="blockList">
 <h4>configLine</h4>
 <pre>java.lang.String configLine</pre>
+<div class="block">設定文字列（generation file 中の設定情報の文字列）</div>
 </li>
 <li class="blockListLast">
 <h4>random</h4>
@@ -843,10 +553,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Agents/AwaitAgent.html" title="nodagumi.ananPJ.Agents内のクラス">nodagumi.ananPJ.Agents.AwaitAgent</a> extends <a href="nodagumi/ananPJ/Agents/WalkAgent.html" title="nodagumi.ananPJ.Agents内のクラス">WalkAgent</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-6498240875020862791L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -964,10 +670,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Agents/WalkAgent.html" title="nodagumi.ananPJ.Agents内のクラス">nodagumi.ananPJ.Agents.WalkAgent</a> extends <a href="nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-6313717005123377059L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1074,10 +776,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/EditorFrame.html" title="nodagumi.ananPJ.Editor内のクラス">nodagumi.ananPJ.Editor.EditorFrame</a> extends javax.swing.JFrame implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>5426605331457096822L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1286,10 +984,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/EditorFramePanel.html" title="nodagumi.ananPJ.Editor内のクラス">nodagumi.ananPJ.Editor.EditorFramePanel</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>5696254371521431653L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1426,10 +1120,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/EditorPanel3D.html" title="nodagumi.ananPJ.Editor内のクラス">nodagumi.ananPJ.Editor.EditorPanel3D</a> extends <a href="nodagumi/ananPJ/NetworkPanel3D.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3D</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>6529629957086182488L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1467,10 +1157,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/AgentPanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.AgentPanel</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>8975068495519079933L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1507,10 +1193,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/BrowserPanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.BrowserPanel</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-1584209347343617161L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1567,10 +1249,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/FramePanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.FramePanel</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-6369150149687689989L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1615,10 +1293,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/LinkPanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.LinkPanel</a> extends <a href="nodagumi/ananPJ/Editor/Panel/PanelWithTable.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">PanelWithTable</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>3544793106934363743L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1675,10 +1349,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/NodePanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.NodePanel</a> extends <a href="nodagumi/ananPJ/Editor/Panel/PanelWithTable.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">PanelWithTable</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-5011285748841425804L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1731,19 +1401,11 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/PanelWithTable.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.PanelWithTable</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>5923909190896858320L</dd>
-</dl>
 </li>
 <li class="blockList"><a name="nodagumi.ananPJ.Editor.Panel.PollutionPanel">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/PollutionPanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.PollutionPanel</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-8907318830563961670L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1788,10 +1450,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Editor/Panel/ScenarioPanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.ScenarioPanel</a> extends <a href="nodagumi/ananPJ/Editor/Panel/PanelWithTable.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">PanelWithTable</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>5603704970745259422L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1847,30 +1505,12 @@
 </ul>
 </li>
 <li class="blockList">
-<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.Gui</h2>
-<ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.Gui.Colors">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Gui/Colors.html" title="nodagumi.ananPJ.Gui内のクラス">nodagumi.ananPJ.Gui.Colors</a> extends java.lang.Object implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>6164276270323927488L</dd>
-</dl>
-</li>
-</ul>
-</li>
-<li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.misc</h2>
 <ul class="blockList">
 <li class="blockList"><a name="nodagumi.ananPJ.misc.AgentGenerationFile">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.AgentGenerationFile</a> extends java.util.ArrayList&lt;<a href="nodagumi/ananPJ/misc/GenerateAgent.html" title="nodagumi.ananPJ.misc内のクラス">GenerateAgent</a>&gt; implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>2334273513164226078L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1901,38 +1541,10 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.misc.CommunicationHandler">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/misc/CommunicationHandler.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.CommunicationHandler</a> extends java.lang.Thread implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>isDebug</h4>
-<pre>boolean isDebug</pre>
-</li>
-<li class="blockList">
-<h4>stopFlag</h4>
-<pre>boolean stopFlag</pre>
-</li>
-<li class="blockListLast">
-<h4>type</h4>
-<pre><a href="nodagumi/ananPJ/misc/CommunicationHandler.CommunicationType.html" title="nodagumi.ananPJ.misc内の列挙型">CommunicationHandler.CommunicationType</a> type</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.misc.DnDJTree">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/misc/DnDJTree.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.DnDJTree</a> extends javax.swing.JTree implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>301520739962500142L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1944,81 +1556,6 @@
 <li class="blockListLast">
 <h4>draggedNode</h4>
 <pre>javax.swing.tree.TreeNode draggedNode</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.misc.FilePathManipulation">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/misc/FilePathManipulation.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.FilePathManipulation</a> extends java.lang.Object implements Serializable</h3>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.misc.GenerateAgent">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/misc/GenerateAgent.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.GenerateAgent</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>goal</h4>
-<pre><a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> goal</pre>
-</li>
-<li class="blockList">
-<h4>planned_route</h4>
-<pre>java.util.List&lt;E&gt; planned_route</pre>
-</li>
-<li class="blockList">
-<h4>start_time</h4>
-<pre>double start_time</pre>
-</li>
-<li class="blockList">
-<h4>duration</h4>
-<pre>double duration</pre>
-</li>
-<li class="blockList">
-<h4>total</h4>
-<pre>int total</pre>
-</li>
-<li class="blockList">
-<h4>speed_model</h4>
-<pre><a href="nodagumi/ananPJ/Agents/WalkAgent.SpeedCalculationModel.html" title="nodagumi.ananPJ.Agents内の列挙型">WalkAgent.SpeedCalculationModel</a> speed_model</pre>
-</li>
-<li class="blockList">
-<h4>random</h4>
-<pre>java.util.Random random</pre>
-</li>
-<li class="blockList">
-<h4>tags</h4>
-<pre>java.util.List&lt;E&gt; tags</pre>
-</li>
-<li class="blockList">
-<h4>configLine</h4>
-<pre>java.lang.String configLine</pre>
-</li>
-<li class="blockList">
-<h4>enabled</h4>
-<pre>boolean enabled</pre>
-</li>
-<li class="blockList">
-<h4>agentClassName</h4>
-<pre>java.lang.String agentClassName</pre>
-<div class="block">エージェントクラスの名前を格納。</div>
-</li>
-<li class="blockList">
-<h4>agentConf</h4>
-<pre><a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> agentConf</pre>
-</li>
-<li class="blockList">
-<h4>fallbackParameters</h4>
-<pre><a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> fallbackParameters</pre>
-<div class="block">fallback parameters</div>
-</li>
-<li class="blockListLast">
-<h4>generated</h4>
-<pre>int generated</pre>
 </li>
 </ul>
 </li>
@@ -2048,10 +1585,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/misc/GridPollutionAreaDialog.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.GridPollutionAreaDialog</a> extends javax.swing.JDialog implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>1L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2068,201 +1601,11 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.misc.Hover">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/misc/Hover.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.Hover</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>currentPos</h4>
-<pre>java.awt.geom.Point2D currentPos</pre>
-</li>
-<li class="blockList">
-<h4>line</h4>
-<pre>java.awt.geom.Line2D line</pre>
-</li>
-<li class="blockList">
-<h4>dummyHoverNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> dummyHoverNode</pre>
-</li>
-<li class="blockList">
-<h4>dummyHoverLink</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> dummyHoverLink</pre>
-</li>
-<li class="blockList">
-<h4>orig_node</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> orig_node</pre>
-</li>
-<li class="blockList">
-<h4>orig_link</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> orig_link</pre>
-</li>
-<li class="blockList">
-<h4>from</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> from</pre>
-</li>
-<li class="blockList">
-<h4>to</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> to</pre>
-</li>
-<li class="blockList">
-<h4>width</h4>
-<pre>double width</pre>
-</li>
-<li class="blockListLast">
-<h4>length</h4>
-<pre>double length</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.misc.NetmasPropertiesHandler">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.NetmasPropertiesHandler</a> extends java.lang.Object implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>50125012L</dd>
-</dl>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>propertiescenarioPath</h4>
-<pre>java.lang.String propertiescenarioPath</pre>
-</li>
-<li class="blockList">
-<h4>prop</h4>
-<pre>java.util.Properties prop</pre>
-</li>
-<li class="blockList">
-<h4>isDebug</h4>
-<pre>boolean isDebug</pre>
-</li>
-<li class="blockList">
-<h4>mapPath</h4>
-<pre>java.lang.String mapPath</pre>
-</li>
-<li class="blockList">
-<h4>pollutionPath</h4>
-<pre>java.lang.String pollutionPath</pre>
-</li>
-<li class="blockList">
-<h4>generationPath</h4>
-<pre>java.lang.String generationPath</pre>
-</li>
-<li class="blockList">
-<h4>scenarioPath</h4>
-<pre>java.lang.String scenarioPath</pre>
-</li>
-<li class="blockList">
-<h4>fallbackPath</h4>
-<pre>java.lang.String fallbackPath</pre>
-<div class="block">fallback file</div>
-</li>
-<li class="blockList">
-<h4>isTimerEnabled</h4>
-<pre>boolean isTimerEnabled</pre>
-</li>
-<li class="blockList">
-<h4>timerPath</h4>
-<pre>java.lang.String timerPath</pre>
-</li>
-<li class="blockList">
-<h4>interval</h4>
-<pre>int interval</pre>
-</li>
-<li class="blockList">
-<h4>randseed</h4>
-<pre>long randseed</pre>
-</li>
-<li class="blockList">
-<h4>isTimeSeriesLog</h4>
-<pre>boolean isTimeSeriesLog</pre>
-</li>
-<li class="blockList">
-<h4>timeSeriesLogPath</h4>
-<pre>java.lang.String timeSeriesLogPath</pre>
-</li>
-<li class="blockList">
-<h4>timeSeriesLogInterval</h4>
-<pre>int timeSeriesLogInterval</pre>
-</li>
-<li class="blockList">
-<h4>isDamageSpeedZero</h4>
-<pre>boolean isDamageSpeedZero</pre>
-</li>
-<li class="blockList">
-<h4>damageSpeedZeroPath</h4>
-<pre>java.lang.String damageSpeedZeroPath</pre>
-</li>
-<li class="blockList">
-<h4>exitCount</h4>
-<pre>int exitCount</pre>
-</li>
-<li class="blockList">
-<h4>loopCount</h4>
-<pre>int loopCount</pre>
-</li>
-<li class="blockListLast">
-<h4>isAllAgentSpeedZeroBreak</h4>
-<pre>boolean isAllAgentSpeedZeroBreak</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.misc.NetmasTimer">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/misc/NetmasTimer.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.NetmasTimer</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>interval</h4>
-<pre>int interval</pre>
-</li>
-<li class="blockList">
-<h4>counter</h4>
-<pre>int counter</pre>
-</li>
-<li class="blockList">
-<h4>startTime</h4>
-<pre>long startTime</pre>
-</li>
-<li class="blockList">
-<h4>currentTime</h4>
-<pre>long currentTime</pre>
-</li>
-<li class="blockList">
-<h4>previousTime</h4>
-<pre>long previousTime</pre>
-</li>
-<li class="blockListLast">
-<h4>writer</h4>
-<pre>java.io.PrintWriter writer</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.navigation</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.navigation.CalcPath">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/navigation/CalcPath.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.CalcPath</a> extends java.lang.Object implements Serializable</h3>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.navigation.CalcPath.NodeByHeight">
 <!--   -->
 </a>
@@ -2273,93 +1616,10 @@
 </a>
 <h3>Class <a href="nodagumi/ananPJ/navigation/CalcPath.Nodes.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.CalcPath.Nodes</a> extends <a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> implements Serializable</h3>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.navigation.CalcPathLocally">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/navigation/CalcPathLocally.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.CalcPathLocally</a> extends java.lang.Thread implements Serializable</h3>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.navigation.Dijkstra">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/navigation/Dijkstra.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.Dijkstra</a> extends java.lang.Object implements Serializable</h3>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.navigation.Dijkstra.Result">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/navigation/Dijkstra.Result.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.Dijkstra.Result</a> extends java.util.HashMap&lt;<a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>,<a href="nodagumi/ananPJ/navigation/CalcPath.NodeLinkLen.html" title="nodagumi.ananPJ.navigation内のクラス">CalcPath.NodeLinkLen</a>&gt; implements Serializable</h3>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.navigation.Flooding">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/navigation/Flooding.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.Flooding</a> extends <a href="nodagumi/ananPJ/navigation/Dijkstra.html" title="nodagumi.ananPJ.navigation内のクラス">Dijkstra</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>map</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a> map</pre>
-</li>
-<li class="blockList">
-<h4>goalTags</h4>
-<pre>java.util.ArrayList&lt;E&gt; goalTags</pre>
-</li>
-<li class="blockListLast">
-<h4>tables</h4>
-<pre>java.util.ArrayList&lt;E&gt; tables</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.navigation.NavigationHint">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/navigation/NavigationHint.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.NavigationHint</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>exit</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> exit</pre>
-</li>
-<li class="blockList">
-<h4>way</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> way</pre>
-</li>
-<li class="blockListLast">
-<h4>distance</h4>
-<pre>double distance</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList">
-<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.network</h2>
-<ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.network.DaRuMaClient">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/network/DaRuMaClient.html" title="nodagumi.ananPJ.network内のクラス">nodagumi.ananPJ.network.DaRuMaClient</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>host</h4>
-<pre>java.lang.String host</pre>
-</li>
-<li class="blockListLast">
-<h4>port</h4>
-<pre>int port</pre>
-</li>
-</ul>
-</li>
-</ul>
 </li>
 </ul>
 </li>
@@ -2370,10 +1630,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">nodagumi.ananPJ.NetworkParts.MapPartGroup</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>3059772175240934632L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2495,10 +1751,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/OBNodeSymbolicLink.html" title="nodagumi.ananPJ.NetworkParts内のクラス">nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>2287558438601265909L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2506,6 +1758,7 @@
 <li class="blockListLast">
 <h4>original</h4>
 <pre><a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> original</pre>
+<div class="block">エディタ上で別のグループに存在するノードを表示するためのシンボリックリンク．</div>
 </li>
 </ul>
 </li>
@@ -2525,10 +1778,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/Lift.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.Lift</a> extends <a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>7468322576593400814L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2536,6 +1785,10 @@
 <li class="blockList">
 <h4>timeToDecend</h4>
 <pre>double timeToDecend</pre>
+<div class="block">A simplified model of a lift.
+ - The time to pass the lift is constant.
+ - The length is the time for an agent to leave this link.
+ - The width is the capacity of the lift (unused).</div>
 </li>
 <li class="blockList">
 <h4>upperFloor</h4>
@@ -2561,19 +1814,11 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/Lift.LiftManager.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.Lift.LiftManager</a> extends java.util.HashMap&lt;java.lang.String,<a href="nodagumi/ananPJ/NetworkParts/Link/Lift.Shaft.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift.Shaft</a>&gt; implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>5461679066558979368L</dd>
-</dl>
 </li>
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/Lift.Shaft.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft</a> extends java.util.ArrayList&lt;<a href="nodagumi/ananPJ/NetworkParts/Link/Lift.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift</a>&gt; implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-8663778086808815987L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2614,10 +1859,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.MapLink</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>4960899670982905174L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2691,10 +1932,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.MapLink.AttributePanel</a> extends javax.swing.JPanel implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-6573997617890390259L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2733,10 +1970,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">nodagumi.ananPJ.NetworkParts.Node.MapNode</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-7438706484453707443L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2800,19 +2033,11 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>5254990917660112549L</dd>
-</dl>
 </li>
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedAreaPoint.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint</a> extends <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-3523475414463313763L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2837,10 +2062,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedAreaRectangle.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle</a> extends <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-8958754706816120068L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -2878,143 +2099,10 @@
 <li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.Simulator</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.Simulator.AgentHandler">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.AgentHandler</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>model</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a> model</pre>
-</li>
-<li class="blockList">
-<h4>agents</h4>
-<pre>java.util.List&lt;E&gt; agents</pre>
-</li>
-<li class="blockList">
-<h4>generated_agents</h4>
-<pre>java.util.ArrayList&lt;E&gt; generated_agents</pre>
-</li>
-<li class="blockList">
-<h4>evacuated_agents</h4>
-<pre>java.util.ArrayList&lt;E&gt; evacuated_agents</pre>
-</li>
-<li class="blockList">
-<h4>stuck_agents</h4>
-<pre>java.util.ArrayList&lt;E&gt; stuck_agents</pre>
-</li>
-<li class="blockList">
-<h4>evacuatedAgentCount</h4>
-<pre>int evacuatedAgentCount</pre>
-</li>
-<li class="blockList">
-<h4>waitingAgentCount</h4>
-<pre>int waitingAgentCount</pre>
-</li>
-<li class="blockList">
-<h4>totalDamage</h4>
-<pre>double totalDamage</pre>
-</li>
-<li class="blockList">
-<h4>maxDamage</h4>
-<pre>double maxDamage</pre>
-</li>
-<li class="blockList">
-<h4>averageSpeed</h4>
-<pre>double averageSpeed</pre>
-</li>
-<li class="blockList">
-<h4>evacuatedUsedLiftAgentCount</h4>
-<pre>int evacuatedUsedLiftAgentCount</pre>
-</li>
-<li class="blockList">
-<h4>evacuatedNoLiftAgentCount</h4>
-<pre>int evacuatedNoLiftAgentCount</pre>
-</li>
-<li class="blockList">
-<h4>maxAgentCount</h4>
-<pre>int maxAgentCount</pre>
-</li>
-<li class="blockList">
-<h4>isAllAgentSpeedZeroBreak</h4>
-<pre>boolean isAllAgentSpeedZeroBreak</pre>
-</li>
-<li class="blockList">
-<h4>isAllAgentSpeedZero</h4>
-<pre>boolean isAllAgentSpeedZero</pre>
-</li>
-<li class="blockList">
-<h4>simulation_weight</h4>
-<pre>int simulation_weight</pre>
-</li>
-<li class="blockList">
-<h4>scenario</h4>
-<pre><a href="nodagumi/ananPJ/Scenario/Scenario.html" title="nodagumi.ananPJ.Scenario内のクラス">Scenario</a> scenario</pre>
-<div class="block">シナリオ情報</div>
-</li>
-<li class="blockList">
-<h4>evacuatedAgentCountByExit</h4>
-<pre>java.util.HashMap&lt;K,V&gt; evacuatedAgentCountByExit</pre>
-</li>
-<li class="blockList">
-<h4>generate_agent</h4>
-<pre><a href="nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス">AgentGenerationFile</a> generate_agent</pre>
-</li>
-<li class="blockList">
-<h4>has_display</h4>
-<pre>boolean has_display</pre>
-</li>
-<li class="blockList">
-<h4>random</h4>
-<pre>java.util.Random random</pre>
-</li>
-<li class="blockList">
-<h4>envSwitch</h4>
-<pre>java.lang.String envSwitch</pre>
-</li>
-<li class="blockList">
-<h4>effectiveLinks</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> effectiveLinks</pre>
-</li>
-<li class="blockList">
-<h4>effectiveLinksEnabled</h4>
-<pre>boolean effectiveLinksEnabled</pre>
-</li>
-<li class="blockList">
-<h4>agentMovementHistoryLogger</h4>
-<pre>java.util.logging.Logger agentMovementHistoryLogger</pre>
-</li>
-<li class="blockList">
-<h4>individualPedestriansLogger</h4>
-<pre>java.util.logging.Logger individualPedestriansLogger</pre>
-</li>
-<li class="blockList">
-<h4>manualId</h4>
-<pre>int manualId</pre>
-</li>
-<li class="blockList">
-<h4>individualPedestriansLogDir</h4>
-<pre>java.lang.String individualPedestriansLogDir</pre>
-</li>
-<li class="blockListLast">
-<h4>toggle_scenario_button_groups</h4>
-<pre>java.util.ArrayList&lt;E&gt; toggle_scenario_button_groups</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.Simulator.AgentsPerFloor">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Simulator/AgentsPerFloor.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.AgentsPerFloor</a> extends javax.swing.JFrame implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-6779263030018451070L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -3022,10 +2110,12 @@
 <li class="blockList">
 <h4>minDepth</h4>
 <pre>double minDepth</pre>
+<div class="block">Show how many agent are at each floor.</div>
 </li>
 <li class="blockList">
 <h4>maxDepth</h4>
 <pre>double maxDepth</pre>
+<div class="block">Show how many agent are at each floor.</div>
 </li>
 <li class="blockList">
 <h4>agentCount</h4>
@@ -3051,183 +2141,10 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.Simulator.DumpState">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Simulator/DumpState.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.DumpState</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>dump_panel</h4>
-<pre>javax.swing.JPanel dump_panel</pre>
-</li>
-<li class="blockList">
-<h4>enable_dump</h4>
-<pre>javax.swing.JCheckBox enable_dump</pre>
-</li>
-<li class="blockList">
-<h4>dump_filename</h4>
-<pre>javax.swing.JLabel dump_filename</pre>
-</li>
-<li class="blockList">
-<h4>dump_writer</h4>
-<pre>java.io.PrintWriter dump_writer</pre>
-</li>
-<li class="blockList">
-<h4>model</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a> model</pre>
-</li>
-<li class="blockListLast">
-<h4>settings</h4>
-<pre><a href="nodagumi/ananPJ/Settings.html" title="nodagumi.ananPJ内のクラス">Settings</a> settings</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.Simulator.EvacuationSimulator">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.EvacuationSimulator</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>map</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a> map</pre>
-</li>
-<li class="blockList">
-<h4>agents</h4>
-<pre>java.util.ArrayList&lt;E&gt; agents</pre>
-</li>
-<li class="blockList">
-<h4>pollutionFileName</h4>
-<pre>java.lang.String pollutionFileName</pre>
-</li>
-<li class="blockList">
-<h4>controller</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a> controller</pre>
-</li>
-<li class="blockList">
-<h4>screenshotInterval</h4>
-<pre>int screenshotInterval</pre>
-</li>
-<li class="blockList">
-<h4>outlogInterval</h4>
-<pre>int outlogInterval</pre>
-</li>
-<li class="blockList">
-<h4>timeScale</h4>
-<pre>double timeScale</pre>
-<div class="block">simulation time step</div>
-</li>
-<li class="blockList">
-<h4>tick_count</h4>
-<pre>double tick_count</pre>
-</li>
-<li class="blockList">
-<h4>pollutionCalculator</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/PollutionCalculator.html" title="nodagumi.ananPJ.Simulator内のクラス">PollutionCalculator</a> pollutionCalculator</pre>
-</li>
-<li class="blockList">
-<h4>agentHandler</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス">AgentHandler</a> agentHandler</pre>
-</li>
-<li class="blockList">
-<h4>networkMap</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
-</li>
-<li class="blockList">
-<h4>linerGenerateAgentRatio</h4>
-<pre>double linerGenerateAgentRatio</pre>
-</li>
-<li class="blockList">
-<h4>random</h4>
-<pre>java.util.Random random</pre>
-</li>
-<li class="blockList">
-<h4>logging_count</h4>
-<pre>int logging_count</pre>
-</li>
-<li class="blockList">
-<h4>properties</h4>
-<pre><a href="nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a> properties</pre>
-</li>
-<li class="blockList">
-<h4>stop_simulation</h4>
-<pre>java.lang.Boolean stop_simulation</pre>
-</li>
-<li class="blockList">
-<h4>goalTimes</h4>
-<pre>java.util.HashMap&lt;K,V&gt; goalTimes</pre>
-</li>
-<li class="blockList">
-<h4>evacuatedAgents</h4>
-<pre>java.util.ArrayList&lt;E&gt; evacuatedAgents</pre>
-</li>
-<li class="blockListLast">
-<h4>exitNodeList</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> exitNodeList</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.Simulator.PollutionCalculator">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Simulator/PollutionCalculator.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.PollutionCalculator</a> extends java.lang.Object implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>29847234890234908L</dd>
-</dl>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>nextEvent</h4>
-<pre>double nextEvent</pre>
-</li>
-<li class="blockList">
-<h4>timeScale</h4>
-<pre>double timeScale</pre>
-</li>
-<li class="blockList">
-<h4>maxPollutionLevel</h4>
-<pre>double maxPollutionLevel</pre>
-</li>
-<li class="blockList">
-<h4>polluted_area_sorted</h4>
-<pre>java.util.HashMap&lt;K,V&gt; polluted_area_sorted</pre>
-</li>
-<li class="blockList">
-<h4>pollutionDataList</h4>
-<pre>java.util.ArrayList&lt;E&gt; pollutionDataList</pre>
-</li>
-<li class="blockList">
-<h4>pollutionDataIterator</h4>
-<pre>java.util.Iterator&lt;E&gt; pollutionDataIterator</pre>
-</li>
-<li class="blockListLast">
-<h4>pollutionData</h4>
-<pre>double[] pollutionData</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.Simulator.SimulationPanel3D">
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.SimulationPanel3D</a> extends <a href="nodagumi/ananPJ/NetworkPanel3D.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3D</a> implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>-4438166088239555983L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -3249,8 +2166,8 @@
 <pre>java.util.ArrayList&lt;E&gt; pollutions</pre>
 </li>
 <li class="blockList">
-<h4>model</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a> model</pre>
+<h4>simulator</h4>
+<pre><a href="nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a> simulator</pre>
 </li>
 <li class="blockList">
 <h4>networkMap</h4>
@@ -3428,17 +2345,14 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/Simulator/SimulatorFrame2D.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.SimulatorFrame2D</a> extends javax.swing.JFrame implements Serializable</h3>
-<dl class="nameValue">
-<dt>serialVersionUID:</dt>
-<dd>7301627149272184580L</dd>
-</dl>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
 <li class="blockList">
-<h4>model</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a> model</pre>
+<h4>simulator</h4>
+<pre><a href="nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a> simulator</pre>
+<div class="block">A 2D version of simulation preview</div>
 </li>
 <li class="blockList">
 <h4>backgroundImage</h4>

@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -123,8 +123,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">NetworkMap</span>
-extends <a href="../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>
-implements java.io.Serializable</pre>
+extends <a href="../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a></pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
 <dd><a href="../../serialized-form.html#nodagumi.ananPJ.NetworkMap">直列化された形式</a></dd>
@@ -171,7 +170,7 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.<a href="../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a></h3>
-<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#linksCache">linksCache</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#nodesCache">nodesCache</a></code></li>
+<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#id_part_map">id_part_map</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#linksCache">linksCache</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#nodesCache">nodesCache</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.javax.swing.tree.DefaultTreeModel">
@@ -234,9 +233,10 @@ implements java.io.Serializable</pre>
         boolean&nbsp;autoID)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#addObject-int-nodagumi.ananPJ.NetworkParts.OBNode-">addObject</a></span>(int&nbsp;id,
-         <a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;node)</code>&nbsp;</td>
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#assign_new_id--">assign_new_id</a></span>()</code>
+<div class="block">ユニークな id の取得</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
@@ -338,142 +338,97 @@ implements java.io.Serializable</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getHasDisplay--">getHasDisplay</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i23" class="rowColor">
-<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getLinks--">getLinks</a></span>()</code>
-<div class="block">リンクテーブル取得</div>
-</td>
-</tr>
-<tr id="i24" class="altColor">
-<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getNodes--">getNodes</a></span>()</code>
-<div class="block">ノードテーブル取得</div>
-</td>
-</tr>
-<tr id="i25" class="rowColor">
-<td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getOBElements--">getOBElements</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i26" class="altColor">
-<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getObject-int-">getObject</a></span>(int&nbsp;id)</code>&nbsp;</td>
-</tr>
-<tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getPollutionFile--">getPollutionFile</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getRooms--">getRooms</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getScenarioFile--">getScenarioFile</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
-<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#getSelectedOBNode--">getSelectedOBNode</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i31" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#makeStairs--">makeStairs</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/Editor/EditorFrame.html" title="nodagumi.ananPJ.Editor内のクラス">EditorFrame</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#openEditorFrame-nodagumi.ananPJ.NetworkMapEditor-nodagumi.ananPJ.NetworkParts.MapPartGroup-">openEditorFrame</a></span>(<a href="../../nodagumi/ananPJ/NetworkMapEditor.html" title="nodagumi.ananPJ内のクラス">NetworkMapEditor</a>&nbsp;editor,
                <a href="../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">MapPartGroup</a>&nbsp;obinode)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#prepareForSave--">prepareForSave</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#printFields--">printFields</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#removeEditorFrame-nodagumi.ananPJ.NetworkParts.MapPartGroup-">removeEditorFrame</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">MapPartGroup</a>&nbsp;_obinode)</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#removeOBNode-nodagumi.ananPJ.NetworkParts.OBNode-nodagumi.ananPJ.NetworkParts.OBNode-boolean-">removeOBNode</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;parent,
             <a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;node,
             boolean&nbsp;can_undo)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
-<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#restoreToDOM-org.w3c.dom.Element-">restoreToDOM</a></span>(org.w3c.dom.Element&nbsp;element)</code>&nbsp;</td>
-</tr>
-<tr id="i38" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#scanFallbackFile-boolean-">scanFallbackFile</a></span>(boolean&nbsp;scanResourceP)</code>
 <div class="block">fallback （デフォルトセッティング）の読み込み</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setFallbackFile-java.lang.String-">setFallbackFile</a></span>(java.lang.String&nbsp;s)</code>
 <div class="block">fallback （デフォルトセッティング）のファイルセット</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setFileName-java.lang.String-">setFileName</a></span>(java.lang.String&nbsp;file_name)</code>&nbsp;</td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setFrames-java.util.ArrayList-">setFrames</a></span>(java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/Editor/EditorFrame.html" title="nodagumi.ananPJ.Editor内のクラス">EditorFrame</a>&gt;&nbsp;frames)</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setGenerationFile-java.lang.String-">setGenerationFile</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setHasDisplay-boolean-">setHasDisplay</a></span>(boolean&nbsp;_hasDisplay)</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setPollutionFile-java.lang.String-">setPollutionFile</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setRandom-java.util.Random-">setRandom</a></span>(java.util.Random&nbsp;_random)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setScenarioFile-java.lang.String-">setScenarioFile</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setSelectedOBNode-nodagumi.ananPJ.NetworkParts.OBNode-">setSelectedOBNode</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;_obNode)</code>&nbsp;</td>
-</tr>
-<tr id="i48" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setSpeedCalculationModel-nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel-">setSpeedCalculationModel</a></span>(<a href="../../nodagumi/ananPJ/Agents/WalkAgent.SpeedCalculationModel.html" title="nodagumi.ananPJ.Agents内の列挙型">WalkAgent.SpeedCalculationModel</a>&nbsp;_model)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#setupAfterLoad--">setupAfterLoad</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
-<td class="colFirst"><code>org.w3c.dom.Element</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#storeToDOM-org.w3c.dom.Document-java.lang.String-">storeToDOM</a></span>(org.w3c.dom.Document&nbsp;doc,
-          java.lang.String&nbsp;tag)</code>&nbsp;</td>
-</tr>
-<tr id="i51" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#testDumpNodes--">testDumpNodes</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i52" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#testDumpNodes-nodagumi.ananPJ.NetworkParts.OBNode-">testDumpNodes</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;node)</code>&nbsp;</td>
-</tr>
-<tr id="i53" class="rowColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#toDOM-org.w3c.dom.Document-">toDOM</a></span>(org.w3c.dom.Document&nbsp;doc)</code>&nbsp;</td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMap.html#undo-nodagumi.ananPJ.NetworkMapEditor-">undo</a></span>(<a href="../../nodagumi/ananPJ/NetworkMapEditor.html" title="nodagumi.ananPJ内のクラス">NetworkMapEditor</a>&nbsp;editor)</code>&nbsp;</td>
 </tr>
@@ -483,7 +438,7 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.<a href="../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a></h3>
-<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPath-java.lang.String-">calcGoalPath</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPathWithSync-java.lang.String-">calcGoalPathWithSync</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#isCheckedRouteKey-java.lang.String-">isCheckedRouteKey</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#isValidRouteKey-java.lang.String-">isValidRouteKey</a></code></li>
+<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#addObject-int-nodagumi.ananPJ.NetworkParts.OBNode-">addObject</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPath-java.lang.String-">calcGoalPath</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPathWithSync-java.lang.String-">calcGoalPathWithSync</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#getLinks--">getLinks</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#getNodes--">getNodes</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#getOBElements--">getOBElements</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#getObject-int-">getObject</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#isCheckedRouteKey-java.lang.String-">isCheckedRouteKey</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#isValidRouteKey-java.lang.String-">isValidRouteKey</a>, <a href="../../nodagumi/ananPJ/NetworkMapBase.html#removeObject-int-">removeObject</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.swing.tree.DefaultTreeModel">
@@ -623,23 +578,18 @@ implements java.io.Serializable</pre>
 <pre>public&nbsp;void&nbsp;undo(<a href="../../nodagumi/ananPJ/NetworkMapEditor.html" title="nodagumi.ananPJ内のクラス">NetworkMapEditor</a>&nbsp;editor)</pre>
 </li>
 </ul>
-<a name="addObject-int-nodagumi.ananPJ.NetworkParts.OBNode-">
+<a name="assign_new_id--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>addObject</h4>
-<pre>public&nbsp;void&nbsp;addObject(int&nbsp;id,
-                      <a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;node)</pre>
-</li>
-</ul>
-<a name="getObject-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getObject</h4>
-<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;getObject(int&nbsp;id)</pre>
+<h4>assign_new_id</h4>
+<pre>protected&nbsp;int&nbsp;assign_new_id()</pre>
+<div class="block">ユニークな id の取得</div>
+<dl>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>新しい id</dd>
+</dl>
 </li>
 </ul>
 <a name="assignUniqueAgentId--">
@@ -800,49 +750,6 @@ implements java.io.Serializable</pre>
 <pre>public&nbsp;void&nbsp;removeEditorFrame(<a href="../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">MapPartGroup</a>&nbsp;_obinode)</pre>
 </li>
 </ul>
-<a name="getOBElements--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getOBElements</h4>
-<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt;&nbsp;getOBElements()</pre>
-</li>
-</ul>
-<a name="getNodes--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNodes</h4>
-<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;getNodes()</pre>
-<div class="block"><span class="descfrmTypeLabel">クラスからコピーされた説明:&nbsp;<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getNodes--">NetworkMapBase</a></code></span></div>
-<div class="block">ノードテーブル取得</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">オーバーライド:</span></dt>
-<dd><code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getNodes--">getNodes</a></code>&nbsp;クラス内&nbsp;<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a></code></dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>node table</dd>
-</dl>
-</li>
-</ul>
-<a name="getLinks--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getLinks</h4>
-<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;getLinks()</pre>
-<div class="block"><span class="descfrmTypeLabel">クラスからコピーされた説明:&nbsp;<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getLinks--">NetworkMapBase</a></code></span></div>
-<div class="block">リンクテーブル取得</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">オーバーライド:</span></dt>
-<dd><code><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getLinks--">getLinks</a></code>&nbsp;クラス内&nbsp;<code><a href="../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a></code></dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>link table</dd>
-</dl>
-</li>
-</ul>
 <a name="getAgents--">
 <!--   -->
 </a>
@@ -985,24 +892,6 @@ implements java.io.Serializable</pre>
 </dl>
 </li>
 </ul>
-<a name="testDumpNodes--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>testDumpNodes</h4>
-<pre>public&nbsp;void&nbsp;testDumpNodes()</pre>
-</li>
-</ul>
-<a name="testDumpNodes-nodagumi.ananPJ.NetworkParts.OBNode-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>testDumpNodes</h4>
-<pre>public&nbsp;void&nbsp;testDumpNodes(<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;node)</pre>
-</li>
-</ul>
 <a name="toDOM-org.w3c.dom.Document-">
 <!--   -->
 </a>
@@ -1019,24 +908,6 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>fromDOM</h4>
 <pre>public&nbsp;boolean&nbsp;fromDOM(org.w3c.dom.Document&nbsp;doc)</pre>
-</li>
-</ul>
-<a name="setSelectedOBNode-nodagumi.ananPJ.NetworkParts.OBNode-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSelectedOBNode</h4>
-<pre>public&nbsp;void&nbsp;setSelectedOBNode(<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;_obNode)</pre>
-</li>
-</ul>
-<a name="getSelectedOBNode--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSelectedOBNode</h4>
-<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;getSelectedOBNode()</pre>
 </li>
 </ul>
 <a name="setFrames-java.util.ArrayList-">
@@ -1091,25 +962,6 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>printFields</h4>
 <pre>public&nbsp;void&nbsp;printFields()</pre>
-</li>
-</ul>
-<a name="storeToDOM-org.w3c.dom.Document-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>storeToDOM</h4>
-<pre>public&nbsp;org.w3c.dom.Element&nbsp;storeToDOM(org.w3c.dom.Document&nbsp;doc,
-                                      java.lang.String&nbsp;tag)</pre>
-</li>
-</ul>
-<a name="restoreToDOM-org.w3c.dom.Element-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>restoreToDOM</h4>
-<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;restoreToDOM(org.w3c.dom.Element&nbsp;element)</pre>
 </li>
 </ul>
 <a name="setSpeedCalculationModel-nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel-">

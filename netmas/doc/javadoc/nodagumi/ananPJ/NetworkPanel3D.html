@@ -142,8 +142,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public abstract class <span class="typeNameLabel">NetworkPanel3D</span>
-extends <a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase</a>
-implements java.io.Serializable</pre>
+extends <a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase</a></pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
 <dd><a href="../../serialized-form.html#nodagumi.ananPJ.NetworkPanel3D">直列化された形式</a></dd>
@@ -277,7 +276,12 @@ implements java.io.Serializable</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#NetworkPanel3D-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-nodagumi.ananPJ.misc.NetmasPropertiesHandler-">NetworkPanel3D</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;_nodes,
               <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;_links,
               javax.swing.JFrame&nbsp;_parent,
-              <a href="../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a>&nbsp;_properties)</code>&nbsp;</td>
+              <a href="../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a>&nbsp;_properties)</code>
+<div class="block">Listen to user events
+ - User keystrokes
+ - Picking objects
+ - View control by mouse dragging</div>
+</td>
 </tr>
 </table>
 </li>
@@ -296,33 +300,33 @@ implements java.io.Serializable</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#deserialize-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-">deserialize</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;_nodes,
-           <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;_links,
-           javax.swing.JFrame&nbsp;_parent)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#keyTypedCallback-char-">keyTypedCallback</a></span>(char&nbsp;c)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#keyTypedCallback-char-">keyTypedCallback</a></span>(char&nbsp;c)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseClickedCallback-java.awt.event.MouseEvent-">mouseClickedCallback</a></span>(java.awt.event.MouseEvent&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseClickedCallback-java.awt.event.MouseEvent-">mouseClickedCallback</a></span>(java.awt.event.MouseEvent&nbsp;e)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseDraggedCallback-java.awt.event.MouseEvent-">mouseDraggedCallback</a></span>(java.awt.event.MouseEvent&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseDraggedCallback-java.awt.event.MouseEvent-">mouseDraggedCallback</a></span>(java.awt.event.MouseEvent&nbsp;e)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseMovedCallback-java.awt.event.MouseEvent-">mouseMovedCallback</a></span>(java.awt.event.MouseEvent&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseMovedCallback-java.awt.event.MouseEvent-">mouseMovedCallback</a></span>(java.awt.event.MouseEvent&nbsp;e)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseWheelCallback-int-">mouseWheelCallback</a></span>(int&nbsp;c)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#mouseWheelCallback-int-">mouseWheelCallback</a></span>(int&nbsp;c)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#setupContents--">setupContents</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#setupContents--">setupContents</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3D.html#setupFrame-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-">setupFrame</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;_nodes,
+          <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;_links,
+          javax.swing.JFrame&nbsp;_parent)</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
@@ -448,6 +452,10 @@ implements java.io.Serializable</pre>
                          <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;_links,
                          javax.swing.JFrame&nbsp;_parent,
                          <a href="../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a>&nbsp;_properties)</pre>
+<div class="block">Listen to user events
+ - User keystrokes
+ - Picking objects
+ - View control by mouse dragging</div>
 </li>
 </ul>
 </li>
@@ -458,18 +466,18 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
-<a name="deserialize-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-">
+<a name="setupFrame-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>deserialize</h4>
-<pre>protected&nbsp;void&nbsp;deserialize(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;_nodes,
-                           <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;_links,
-                           javax.swing.JFrame&nbsp;_parent)</pre>
+<h4>setupFrame</h4>
+<pre>protected&nbsp;void&nbsp;setupFrame(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;_nodes,
+                          <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;_links,
+                          javax.swing.JFrame&nbsp;_parent)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">オーバーライド:</span></dt>
-<dd><code><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#deserialize-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-">deserialize</a></code>&nbsp;クラス内&nbsp;<code><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase</a></code></dd>
+<dd><code><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setupFrame-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-">setupFrame</a></code>&nbsp;クラス内&nbsp;<code><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase</a></code></dd>
 </dl>
 </li>
 </ul>

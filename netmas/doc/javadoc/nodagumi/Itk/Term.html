@@ -304,7 +304,7 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/Term.html#filterArgTerm-java.lang.String-java.lang.String-">filterArgTerm</a></span>(java.lang.String&nbsp;slot,
              java.lang.String&nbsp;fallbackSlot)</code>
-<div class="block">arg を filter(fallback 付き)</div>
+<div class="block">arg を filter(fallback 付き)。</div>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
@@ -1017,7 +1017,18 @@ extends java.lang.Object</pre>
 <h4>filterArgTerm</h4>
 <pre>public&nbsp;<a href="../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;filterArgTerm(java.lang.String&nbsp;slot,
                           java.lang.String&nbsp;fallbackSlot)</pre>
-<div class="block">arg を filter(fallback 付き)</div>
+<div class="block">arg を filter(fallback 付き)。
+ 例えば、
+ <pre>
+ { "a" : { "x" : 1, "y" : 2 },
+   "b" : { "u" : 3, "v" : 4 },
+   "_fallback_" : { "a" : { "y" : 5, "z" : 6 }, 
+                    "b" : { "u" : 7, "w" : 8 }}}
+ </pre>
+ から以下を構築する。
+ <pre>
+ { "x" : 1, "y" : 2, "_fallback_" : { "y" : 5, "z" : 6 } }
+ </pre></div>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>
 <dd><code>slot</code> - : filter するスロット</dd>

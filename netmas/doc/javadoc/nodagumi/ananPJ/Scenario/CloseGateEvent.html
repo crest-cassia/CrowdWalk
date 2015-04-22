@@ -130,11 +130,13 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/GateEvent.html" title="nodagu
  <pre>
   { "type" : "CloseGate",
     "atTime" : __Time__,
-    "placeTag" : __Tag__,
+    ("placeTag" : __Tag__, |
+     "placeId" : __Int__,)
     "gateTag" : __Tag__}
  
   __Time__ ::= "hh:mm:ss"
- </pre></div>
+ </pre>
+ "placeTag" もしくは "placeId" のいずれかで場所を指定する。</div>
 </li>
 </ul>
 </div>
@@ -159,7 +161,7 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/GateEvent.html" title="nodagu
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.Scenario.<a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="nodagumi.ananPJ.Scenario内のクラス">PlacedEvent</a></h3>
-<code><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeTag">placeTag</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeId">placeId</a>, <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeTag">placeTag</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.nodagumi.ananPJ.Scenario.EventBase">
@@ -228,6 +230,13 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/GateEvent.html" title="nodagu
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.Scenario.<a href="../../../nodagumi/ananPJ/Scenario/GateEvent.html" title="nodagumi.ananPJ.Scenario内のクラス">GateEvent</a></h3>
 <code><a href="../../../nodagumi/ananPJ/Scenario/GateEvent.html#setupByCsvColumns-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.ShiftingStringList-">setupByCsvColumns</a>, <a href="../../../nodagumi/ananPJ/Scenario/GateEvent.html#setupByJson-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.Term-">setupByJson</a>, <a href="../../../nodagumi/ananPJ/Scenario/GateEvent.html#toStringTail--">toStringTail</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.nodagumi.ananPJ.Scenario.PlacedEvent">
+<!--   -->
+</a>
+<h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.Scenario.<a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="nodagumi.ananPJ.Scenario内のクラス">PlacedEvent</a></h3>
+<code><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#checkTagOrId-nodagumi.ananPJ.NetworkParts.OBNode-">checkTagOrId</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.nodagumi.ananPJ.Scenario.EventBase">

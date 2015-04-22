@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../nodagumi/ananPJ/Simulator/AgentsPerFloor.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
-<li><a href="../../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/Simulator/DumpState.html" target="_top">フレーム</a></li>
@@ -106,19 +106,10 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>すべての実装されたインタフェース:</dt>
-<dd>java.io.Serializable</dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">DumpState</span>
-extends java.lang.Object
-implements java.io.Serializable</pre>
-<dl>
-<dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../../serialized-form.html#nodagumi.ananPJ.Simulator.DumpState">直列化された形式</a></dd>
-</dl>
+extends java.lang.Object</pre>
 </li>
 </ul>
 </div>
@@ -154,12 +145,12 @@ implements java.io.Serializable</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/DumpState.html#enable_dump">enable_dump</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/DumpState.html#model">model</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/Settings.html" title="nodagumi.ananPJ内のクラス">Settings</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/DumpState.html#settings">settings</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/DumpState.html#simulator">simulator</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -176,7 +167,7 @@ implements java.io.Serializable</pre>
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/DumpState.html#DumpState-nodagumi.ananPJ.Simulator.EvacuationModelBase-">DumpState</a></span>(<a href="../../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a>&nbsp;_model)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/DumpState.html#DumpState-nodagumi.ananPJ.Simulator.EvacuationSimulator-">DumpState</a></span>(<a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a>&nbsp;_simulator)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -271,13 +262,13 @@ implements java.io.Serializable</pre>
 <pre>protected&nbsp;java.io.PrintWriter dump_writer</pre>
 </li>
 </ul>
-<a name="model">
+<a name="simulator">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>model</h4>
-<pre>protected&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a> model</pre>
+<h4>simulator</h4>
+<pre>protected&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a> simulator</pre>
 </li>
 </ul>
 <a name="settings">
@@ -297,13 +288,13 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>コンストラクタの詳細</h3>
-<a name="DumpState-nodagumi.ananPJ.Simulator.EvacuationModelBase-">
+<a name="DumpState-nodagumi.ananPJ.Simulator.EvacuationSimulator-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DumpState</h4>
-<pre>public&nbsp;DumpState(<a href="../../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a>&nbsp;_model)</pre>
+<pre>public&nbsp;DumpState(<a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a>&nbsp;_simulator)</pre>
 </li>
 </ul>
 </li>
@@ -387,7 +378,7 @@ implements java.io.Serializable</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../nodagumi/ananPJ/Simulator/AgentsPerFloor.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
-<li><a href="../../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/Simulator/DumpState.html" target="_top">フレーム</a></li>

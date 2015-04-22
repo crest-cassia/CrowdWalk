@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -127,8 +127,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public abstract class <span class="typeNameLabel">OBMapPart</span>
-extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>
-implements java.io.Serializable</pre>
+extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
 <dd><a href="../../../serialized-form.html#nodagumi.ananPJ.NetworkParts.OBMapPart">直列化された形式</a></dd>
@@ -211,12 +210,21 @@ implements java.io.Serializable</pre>
 <th class="colLast" scope="col">メソッドと説明</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#applyRestrictionRule-double-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.AgentBase-double-">applyRestrictionRule</a></span>(double&nbsp;value,
+                    <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;rule,
+                    <a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent,
+                    double&nbsp;time)</code>
+<div class="block">ルールに従い速度等のvalueに制限を加える。</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#init-int-">init</a></span>(int&nbsp;_ID)</code>
 <div class="block">初期化。</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#isLeaf--">isLeaf</a></span>()</code>&nbsp;</td>
 </tr>
@@ -226,7 +234,7 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></h3>
-<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#addTag-java.lang.String-">addTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#allTagsClear--">allTagsClear</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#fromDom-org.w3c.dom.Element-">fromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getHintString--">getHintString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeType--">getNodeType</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeTypeString--">getNodeTypeString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#postLoad-boolean-">postLoad</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#prepareForSave-boolean-">prepareForSave</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#removeTag-java.lang.String-">removeTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#storeToDOM-org.w3c.dom.Document-java.lang.String-">storeToDOM</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#toDom-org.w3c.dom.Document-java.lang.String-">toDom</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#addTag-java.lang.String-">addTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#allTagsClear--">allTagsClear</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#fromDom-org.w3c.dom.Element-">fromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getHintString--">getHintString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeType--">getNodeType</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeTypeString--">getNodeTypeString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#postLoad-boolean-">postLoad</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#prepareForSave-boolean-">prepareForSave</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#removeTag-java.lang.String-">removeTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#toDom-org.w3c.dom.Document-java.lang.String-">toDom</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -300,7 +308,7 @@ implements java.io.Serializable</pre>
 <a name="isLeaf--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isLeaf</h4>
 <pre>public&nbsp;boolean&nbsp;isLeaf()</pre>
@@ -309,6 +317,43 @@ implements java.io.Serializable</pre>
 <dd><code>isLeaf</code>&nbsp;インタフェース内&nbsp;<code>javax.swing.tree.TreeNode</code></dd>
 <dt><span class="overrideSpecifyLabel">定義:</span></dt>
 <dd><code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isLeaf--">isLeaf</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="applyRestrictionRule-double-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.AgentBase-double-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>applyRestrictionRule</h4>
+<pre>public&nbsp;double&nbsp;applyRestrictionRule(double&nbsp;value,
+                                   <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;rule,
+                                   <a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent,
+                                   double&nbsp;time)</pre>
+<div class="block">ルールに従い速度等のvalueに制限を加える。
+ ルールの書き方は、以下の通り。
+ <pre>
+   _rule_ ::= { "type" : _Type_,
+                "tag" : _String_,
+                "factor" : _Double_ }
+   _Type_ ::= "set" | "multiply" | "add"
+ </pre>
+ "tag" には、link, node が所有すべきタグを指定する。
+ このタグを持つlink,node 上のエージェントが受ける影響を求める。
+ "factor" は、"type" により意味が異なる。
+ <ul>
+   <li> "set" : value を "factor" で置き換え。 </li>
+   <li> "multiply" : value に "factor" を乗ずる。 </li>
+   <li> "add" : value に "factor" で加える。 </li>
+ </ul></div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>value:</code> - 元になる値</dd>
+<dd><code>rule:</code> - ルール</dd>
+<dd><code>agent:</code> - 対象となるエージェント。リンク上にいる。</dd>
+<dd><code>time:</code> - 現在時刻</dd>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>変更された値</dd>
 </dl>
 </li>
 </ul>

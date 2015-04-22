@@ -118,8 +118,69 @@ extends java.lang.Object</pre>
  組み込まれている Formula リスト
  <ul>
   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaLogical.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>Logical: 論理形式および実行制御</code></a></li>
+  <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaArithmetic.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>Arithmetic: 数値処理など</code></a></li>
+  <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaAgent.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>Agent: エージェント制御関係</code></a></li>
   <li><a href="../../../../nodagumi/ananPJ/Agents/Think/ThinkFormulaMisc.html#call-java.lang.String-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.Think.ThinkEngine-"><code>Misc: その他</code></a></li>
- </ul></div>
+ </ul>
+
+ <h3>新しい Formula の作成方法 </h3>
+ <a name="addToExistingThinkFormula"></a>
+ <h4> すでにある ThinkFormula*** への追加 </h4>
+ 新しい Formula の head 名を、<code>"fooBar"</code> とする。
+ また、それに対応するメソッド名を、<code>call_fooBar()</code> とする。
+ <ol>
+   <li> <code>static public boolean registerFormulas()</code> の定義の中に、
+        <code>ThinkFormula.register("fooBar", singleton);</code> を追加。
+   </li>
+   <li> <code>public Term call(...)</code> のところの JavaDoc の記述に、
+        <code>&lt;li&gt;{@link #call_fooBar "fooBar"}&lt;/li&gt;</code> を追加。
+        (javadoc でちゃんと参照できるようにしておくため。)
+   </li>
+   <li> <code>public Term call(...)</code> の定義の <code>if / else if</code> の並び
+        のところで、
+        <code>else if(head.equals("fooBar")) { return call_fooBar(head, expr, engine);}</code> 
+        を追加する。
+   </li>
+   <li> <code>public Term call_fooBar(...)</code> を定義する。
+        このメソッドの引数は、
+        <ul>
+          <li> <code>String head</code>: "fooBar" が渡ってくるはず。 </li>
+          <li> <code>Term expr</code>: formula そのものが渡される。
+               formula の引数などをアクセスする場合には、
+               <code>expr.getArgInt("argName")</code> などを呼び出す。
+          </li>
+          <li> <code>ThinkEngine engine</code>: formula を処理する ThinkEngine。
+               再帰的な呼び出しの場合は、<code>engine.think(...)</code> を
+               使う。
+               対象となっているエージェントは、<code>engine.getAgent()</code> で
+               参照できる。
+          </li>
+        </ul>
+        このメソッドの戻り値は、そのまま formula の戻り値として扱われる。
+   </li>
+ </ol>
+ 
+ <h4> 新たに ThinkFormula*** を作成する場合 </h4>
+ 新たに作るものを、<code>ThinkFormulaBazBaz.java</code> とする。
+ <ol>
+   <li> <code>ThinkFormulaMisc.java</code> などを参考に
+        <code>ThinkFormulaBazBaz.java</code> の雛形を作る。
+   </li>
+   <li> <code>ThinkFormulaBazBaz.java</code> の雛形で必須のなのは、
+        代表インスタンスの <code>static ThinkFormula singleton;</code> と、
+        <code>public boolean registerFormulas(){...}</code>。
+   </li>
+   <li> <a href="#addToExistingThinkFormula">「すでにある ThinkFormula*** への追加」</a> 
+        に従い、formulaを追加。
+   </li>
+   <li> <code>"ThinkFormula.java"</code> の <code>static public Lexicon lexicon</code> の
+        宣言の後にある <code>static { ... }</code> 中に、
+        <code>ThinkFormulaBazBaz.registerFormulas();</code> を追加。
+   </li>
+   <li> さらに、<code>abstract public class ThinkFormula</code> の javadoc のところに、
+        <code>&lt;li&gt;{@link ThinkFormulaBazBaz#call BazBaz: ???}&lt;/li&gt;</code> を追加。
+   </li>
+ </ol></div>
 </li>
 </ul>
 </div>

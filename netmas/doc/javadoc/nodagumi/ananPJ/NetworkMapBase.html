@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -149,12 +149,18 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <th class="colLast" scope="col">フィールドと説明</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected java.util.HashMap&lt;java.lang.Integer,<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#id_part_map">id_part_map</a></span></code>
+<div class="block">ID から NetworkParts を取り出すための table.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#linksCache">linksCache</a></span></code>
 <div class="block">リンクテーブル</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#nodesCache">nodesCache</a></span></code>
 <div class="block">ノードテーブル</div>
@@ -202,39 +208,64 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <th class="colLast" scope="col">メソッドと説明</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#addObject-int-nodagumi.ananPJ.NetworkParts.OBNode-">addObject</a></span>(int&nbsp;id,
+         <a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;part)</code>
+<div class="block">IDテーブルへのNetworkParts(OBNode)の登録</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPath-java.lang.String-">calcGoalPath</a></span>(java.lang.String&nbsp;goal_tag)</code>
 <div class="block">経路探索</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPathWithSync-java.lang.String-">calcGoalPathWithSync</a></span>(java.lang.String&nbsp;goal_tag)</code>
 <div class="block">synchronized された経路探索</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getLinks--">getLinks</a></span>()</code>
 <div class="block">リンクテーブル取得</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getNodes--">getNodes</a></span>()</code>
 <div class="block">ノードテーブル取得</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getOBElements--">getOBElements</a></span>()</code>
+<div class="block">IDテーブルの中身(NetworkParts)を取り出す。</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getObject-int-">getObject</a></span>(int&nbsp;id)</code>
+<div class="block">IDテーブルからNetworkPartsの取り出し。</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#isCheckedRouteKey-java.lang.String-">isCheckedRouteKey</a></span>(java.lang.String&nbsp;target)</code>
 <div class="block">経路探索されているかどうかのチェック</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#isValidRouteKey-java.lang.String-">isValidRouteKey</a></span>(java.lang.String&nbsp;target)</code>
 <div class="block">経路探索されているかどうかのチェック</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#removeObject-int-">removeObject</a></span>(int&nbsp;id)</code>
+<div class="block">IDテーブルへのNetworkParts(OBNode)の登録</div>
 </td>
 </tr>
 </table>
@@ -266,6 +297,16 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <!--   -->
 </a>
 <h3>フィールドの詳細</h3>
+<a name="id_part_map">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>id_part_map</h4>
+<pre>protected&nbsp;java.util.HashMap&lt;java.lang.Integer,<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt; id_part_map</pre>
+<div class="block">ID から NetworkParts を取り出すための table.</div>
+</li>
+</ul>
 <a name="nodesCache">
 <!--   -->
 </a>
@@ -312,6 +353,68 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
+<a name="addObject-int-nodagumi.ananPJ.NetworkParts.OBNode-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addObject</h4>
+<pre>public&nbsp;void&nbsp;addObject(int&nbsp;id,
+                      <a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;part)</pre>
+<div class="block">IDテーブルへのNetworkParts(OBNode)の登録</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>id</code> - : part の id.</dd>
+<dd><code>part</code> - : 登録するpart.</dd>
+</dl>
+</li>
+</ul>
+<a name="removeObject-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeObject</h4>
+<pre>public&nbsp;void&nbsp;removeObject(int&nbsp;id)</pre>
+<div class="block">IDテーブルへのNetworkParts(OBNode)の登録</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>id</code> - : part の id.</dd>
+<dd><code>part</code> - : 登録するpart.</dd>
+</dl>
+</li>
+</ul>
+<a name="getObject-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getObject</h4>
+<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&nbsp;getObject(int&nbsp;id)</pre>
+<div class="block">IDテーブルからNetworkPartsの取り出し。</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>id</code> - : 取り出す part の id.</dd>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>取り出した part. もしなければ、null。</dd>
+</dl>
+</li>
+</ul>
+<a name="getOBElements--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOBElements</h4>
+<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt;&nbsp;getOBElements()</pre>
+<div class="block">IDテーブルの中身(NetworkParts)を取り出す。
+ NetworkMap から移動。</div>
+<dl>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>NetworkParts の ArrayList。</dd>
+</dl>
+</li>
+</ul>
 <a name="getNodes--">
 <!--   -->
 </a>

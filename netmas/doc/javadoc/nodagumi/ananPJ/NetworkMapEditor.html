@@ -118,17 +118,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>すべての実装されたインタフェース:</dt>
-<dd>java.awt.event.ActionListener, java.awt.event.WindowListener, java.io.Serializable, java.util.EventListener, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></dd>
+<dd>java.awt.event.ActionListener, java.awt.event.WindowListener, java.util.EventListener, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">NetworkMapEditor</span>
 extends <a href="../../nodagumi/ananPJ/SimulationLauncher.html" title="nodagumi.ananPJ内のクラス">SimulationLauncher</a>
 implements java.awt.event.ActionListener, java.awt.event.WindowListener, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></pre>
-<dl>
-<dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../serialized-form.html#nodagumi.ananPJ.NetworkMapEditor">直列化された形式</a></dd>
-</dl>
 </li>
 </ul>
 </div>
@@ -300,7 +296,7 @@ implements java.awt.event.ActionListener, java.awt.event.WindowListener, <a href
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.<a href="../../nodagumi/ananPJ/SimulationLauncher.html" title="nodagumi.ananPJ内のクラス">SimulationLauncher</a></h3>
-<code><a href="../../nodagumi/ananPJ/SimulationLauncher.html#dump_state">dump_state</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#model">model</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#networkMap">networkMap</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#panel">panel</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#random">random</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#settings">settings</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#simulation_frame">simulation_frame</a></code></li>
+<code><a href="../../nodagumi/ananPJ/SimulationLauncher.html#dump_state">dump_state</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#networkMap">networkMap</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#panel">panel</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#random">random</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#settings">settings</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#simulation_frame">simulation_frame</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#simulator">simulator</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.nodagumi.ananPJ.BasicSimulationLauncher">
@@ -596,8 +592,8 @@ implements java.awt.event.ActionListener, java.awt.event.WindowListener, <a href
 </tr>
 <tr id="i59" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapEditor.html#simulationWindowOpenedOperation-nodagumi.ananPJ.Simulator.SimulationPanel3D-nodagumi.ananPJ.Simulator.EvacuationModelBase-">simulationWindowOpenedOperation</a></span>(<a href="../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;panel,
-                               <a href="../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a>&nbsp;model)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapEditor.html#simulationWindowOpenedOperation-nodagumi.ananPJ.Simulator.SimulationPanel3D-nodagumi.ananPJ.Simulator.EvacuationSimulator-">simulationWindowOpenedOperation</a></span>(<a href="../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;panel,
+                               <a href="../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a>&nbsp;simulator)</code>&nbsp;</td>
 </tr>
 <tr id="i60" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -641,7 +637,7 @@ implements java.awt.event.ActionListener, java.awt.event.WindowListener, <a href
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.<a href="../../nodagumi/ananPJ/SimulationLauncher.html" title="nodagumi.ananPJ内のクラス">SimulationLauncher</a></h3>
-<code><a href="../../nodagumi/ananPJ/SimulationLauncher.html#deserialize--">deserialize</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#getDamageSpeedZeroNumberLogPath--">getDamageSpeedZeroNumberLogPath</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#getIsDamageSpeedZeroNumberLog--">getIsDamageSpeedZeroNumberLog</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#getMap--">getMap</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#getModel--">getModel</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#isRunning--">isRunning</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#notifyViewChange-nodagumi.ananPJ.Simulator.SimulationPanel3D-">notifyViewChange</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#pause--">pause</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setDamageSpeedZeroNumberLogPath-java.lang.String-">setDamageSpeedZeroNumberLogPath</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setIsDamageSpeedZeroNumberLog-boolean-">setIsDamageSpeedZeroNumberLog</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationModelBase-">setupFrame</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationModelBase-nodagumi.ananPJ.Simulator.SimulationPanel3D-">setupFrame</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#simulate-boolean-">simulate</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#start--">start</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#step--">step</a></code></li>
+<code><a href="../../nodagumi/ananPJ/SimulationLauncher.html#getDamageSpeedZeroNumberLogPath--">getDamageSpeedZeroNumberLogPath</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#getIsDamageSpeedZeroNumberLog--">getIsDamageSpeedZeroNumberLog</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#getMap--">getMap</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#getSimulator--">getSimulator</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#isRunning--">isRunning</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#notifyViewChange-nodagumi.ananPJ.Simulator.SimulationPanel3D-">notifyViewChange</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#pause--">pause</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setDamageSpeedZeroNumberLogPath-java.lang.String-">setDamageSpeedZeroNumberLogPath</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setIsDamageSpeedZeroNumberLog-boolean-">setIsDamageSpeedZeroNumberLog</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationSimulator-">setupFrame</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationSimulator-nodagumi.ananPJ.Simulator.SimulationPanel3D-">setupFrame</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#simulate-boolean-">simulate</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#start--">start</a>, <a href="../../nodagumi/ananPJ/SimulationLauncher.html#step--">step</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.nodagumi.ananPJ.BasicSimulationLauncher">
@@ -662,7 +658,7 @@ implements java.awt.event.ActionListener, java.awt.event.WindowListener, <a href
 <!--   -->
 </a>
 <h3>インタフェースから継承されたメソッド&nbsp;nodagumi.ananPJ.Simulator.<a href="../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></h3>
-<code><a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#isRunning--">isRunning</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#notifyViewChange-nodagumi.ananPJ.Simulator.SimulationPanel3D-">notifyViewChange</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#pause--">pause</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationModelBase-">setupFrame</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationModelBase-nodagumi.ananPJ.Simulator.SimulationPanel3D-">setupFrame</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#start--">start</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#step--">step</a></code></li>
+<code><a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#isRunning--">isRunning</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#notifyViewChange-nodagumi.ananPJ.Simulator.SimulationPanel3D-">notifyViewChange</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#pause--">pause</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationSimulator-">setupFrame</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#setupFrame-nodagumi.ananPJ.Simulator.EvacuationSimulator-nodagumi.ananPJ.Simulator.SimulationPanel3D-">setupFrame</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#start--">start</a>, <a href="../../nodagumi/ananPJ/Simulator/SimulationController.html#step--">step</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1241,17 +1237,17 @@ implements java.awt.event.ActionListener, java.awt.event.WindowListener, <a href
 </dl>
 </li>
 </ul>
-<a name="simulationWindowOpenedOperation-nodagumi.ananPJ.Simulator.SimulationPanel3D-nodagumi.ananPJ.Simulator.EvacuationModelBase-">
+<a name="simulationWindowOpenedOperation-nodagumi.ananPJ.Simulator.SimulationPanel3D-nodagumi.ananPJ.Simulator.EvacuationSimulator-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>simulationWindowOpenedOperation</h4>
 <pre>public&nbsp;void&nbsp;simulationWindowOpenedOperation(<a href="../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;panel,
-                                            <a href="../../nodagumi/ananPJ/Simulator/EvacuationModelBase.html" title="nodagumi.ananPJ.Simulator内のインタフェース">EvacuationModelBase</a>&nbsp;model)</pre>
+                                            <a href="../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a>&nbsp;simulator)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">オーバーライド:</span></dt>
-<dd><code><a href="../../nodagumi/ananPJ/SimulationLauncher.html#simulationWindowOpenedOperation-nodagumi.ananPJ.Simulator.SimulationPanel3D-nodagumi.ananPJ.Simulator.EvacuationModelBase-">simulationWindowOpenedOperation</a></code>&nbsp;クラス内&nbsp;<code><a href="../../nodagumi/ananPJ/SimulationLauncher.html" title="nodagumi.ananPJ内のクラス">SimulationLauncher</a></code></dd>
+<dd><code><a href="../../nodagumi/ananPJ/SimulationLauncher.html#simulationWindowOpenedOperation-nodagumi.ananPJ.Simulator.SimulationPanel3D-nodagumi.ananPJ.Simulator.EvacuationSimulator-">simulationWindowOpenedOperation</a></code>&nbsp;クラス内&nbsp;<code><a href="../../nodagumi/ananPJ/SimulationLauncher.html" title="nodagumi.ananPJ内のクラス">SimulationLauncher</a></code></dd>
 </dl>
 </li>
 </ul>

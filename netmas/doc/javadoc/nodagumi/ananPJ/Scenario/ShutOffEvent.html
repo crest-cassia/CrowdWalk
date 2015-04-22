@@ -125,10 +125,13 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="noda
  <pre>
   { "type" : "ShutOff",
     "atTime" : __Time__,
-    "placeTag" : __Tag__}
+    ("placeTag" : __Tag__, |
+     "placeId" : __Int__,)
+  }
 
   __Time__ ::= "hh:mm:ss"
  </pre>
+ "placeTag" もしくは "placeId" のいずれかを指定する。
  <p>
  [2015.01.21 I.Noda] 現状では生成停止だけだが、
  いろいろな機能を実施できるようにしたほうが良いかもしれない。
@@ -150,7 +153,7 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="noda
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.Scenario.<a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="nodagumi.ananPJ.Scenario内のクラス">PlacedEvent</a></h3>
-<code><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeTag">placeTag</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeId">placeId</a>, <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#placeTag">placeTag</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.nodagumi.ananPJ.Scenario.EventBase">
@@ -218,7 +221,7 @@ extends <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="noda
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.Scenario.<a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html" title="nodagumi.ananPJ.Scenario内のクラス">PlacedEvent</a></h3>
-<code><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#setupByCsvColumns-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.ShiftingStringList-">setupByCsvColumns</a>, <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#setupByJson-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.Term-">setupByJson</a>, <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#toStringTail--">toStringTail</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#checkTagOrId-nodagumi.ananPJ.NetworkParts.OBNode-">checkTagOrId</a>, <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#setupByCsvColumns-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.ShiftingStringList-">setupByCsvColumns</a>, <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#setupByJson-nodagumi.ananPJ.Scenario.Scenario-nodagumi.Itk.Term-">setupByJson</a>, <a href="../../../nodagumi/ananPJ/Scenario/PlacedEvent.html#toStringTail--">toStringTail</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.nodagumi.ananPJ.Scenario.EventBase">
