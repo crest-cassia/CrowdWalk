@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 
+import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
@@ -28,6 +29,12 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
     protected NetworkPanel3D(MapNodeTable _nodes,
             MapLinkTable _links, JFrame _parent, NetmasPropertiesHandler _properties) {
         super(_nodes, _links, _parent, _properties);
+
+        addViewChangeListener("viewpoint changed", new ViewChangeListener() {
+            public void update() {
+                update_viewtrans();
+            }
+        });
     }
 
 	protected void setupFrame(MapNodeTable _nodes,
@@ -165,7 +172,7 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
     private void drag_screen_right(double dx, double dy, MouseEvent e) {
         trans_trans.x += (int)dx;
         trans_trans.y -= (int)dy;
-        update_viewtrans();
+        notifyViewChange("viewpoint changed");
     }
 
     private void drag_screen_left(double dx, double dy, MouseEvent e) {
@@ -176,7 +183,7 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
             if (rot_x > 0) rot_x = 0;
             if (rot_x < -Math.PI / 2) rot_x = -Math.PI / 2;
         }
-        update_viewtrans();
+        notifyViewChange("viewpoint changed");
     }
 
     protected void mouseWheelCallback(int c) {
@@ -186,7 +193,7 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
             c = -c;
             for (int i = 0; i < c; i++) zoom_scale *= 1.1;
         }
-        update_viewtrans();
+        notifyViewChange("viewpoint changed");
     }
     
     protected void keyTypedCallback(char c) {

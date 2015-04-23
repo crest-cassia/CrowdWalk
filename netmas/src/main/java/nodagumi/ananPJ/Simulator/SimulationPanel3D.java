@@ -508,7 +508,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 } else {
                     link_transparency = 0.5f;
                 }
-                link_transparency_changed_flag = true;
+                notifyViewChange("link transparency changed");
             }
         });
         checkbox_panel.add(hide_normallink_cb);
@@ -1349,13 +1349,13 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 selected_link.prepareRemove();
                 selected_shape.removeAllGeometries();
                 int i = 0;
-                for (; i < link_geoms.size(); i++) {
-                    UpdateLink ul = link_geoms.get(i);
-                    ul.disabled = true;
-                    if (ul.link == selected_link) break;
+                for (Link3DProperty property : normalLinks) {
+                    if (property.link == selected_link) {
+                        normalLinks.remove(property);
+                        networkMap.removeOBNode((OBNode)selected_link.getParent(), selected_link, false);
+                        break;
+                    }
                 }
-                link_geoms.remove(i);
-                networkMap.removeOBNode((OBNode)selected_link.getParent(), selected_link, false);
             }
             simulator.recalculatePaths();
             selected_link = null;
@@ -1386,6 +1386,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             selected_link = null;
         }
     }
+
     @Override
     protected Color3f colors_for_link(MapLink link) {
         if (link.hasTag("SIM_RED")) {

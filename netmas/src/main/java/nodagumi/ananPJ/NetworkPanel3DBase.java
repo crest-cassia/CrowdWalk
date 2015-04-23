@@ -2,6 +2,7 @@ package nodagumi.ananPJ;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.GraphicsConfiguration;
@@ -28,7 +29,6 @@ import javax.imageio.ImageIO;
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Background;
-import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ColoringAttributes;
@@ -103,7 +103,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
     /* flags to control drawing */
     protected float link_transparency = 0.5f;
-    protected boolean link_transparency_changed_flag = false;
 
     static protected Color3f link_color = Colors.WHITE;
     protected String screenshotDir = "screenshots";
@@ -115,7 +114,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
     protected boolean show_3d_polygon = true;
 
     protected float link_width = 1.0f;
-    protected boolean link_width_changed_flag = false;
     protected boolean link_draw_density_mode = false;
 
     /* Canvas class
@@ -317,6 +315,31 @@ public abstract class NetworkPanel3DBase extends JPanel {
             e.printStackTrace();
             System.exit(1);
         }
+
+        viewChangeManager = new ViewChangeManager() {
+            public void jobEntered() {
+                parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            }
+
+            public void jobLeaved() {
+                parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+        };
+        addViewChangeListener("link color changed", new ViewChangeListener() {
+            public void update() {
+                updateLinkColor();
+            }
+        });
+        addViewChangeListener("link transparency changed", new ViewChangeListener() {
+            public void update() {
+                updateLinkTransparency();
+            }
+        });
+        addViewChangeListener("link width changed", new ViewChangeListener() {
+            public void update() {
+                updateLinkWidth();
+            }
+        });
     }
 
     protected void loadLinkAppearances(InputStream is) throws Exception {
@@ -423,7 +446,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
             @Override
             public void actionPerformed(ActionEvent event) {
                 link_transparency = t;
-                link_transparency_changed_flag = true;
+                notifyViewChange("link transparency changed");
             }
         }
         MenuItem mi = new MenuItem("not transparent");
@@ -448,7 +471,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
             @Override
             public void actionPerformed(ActionEvent event) {
                 link_width = t;
-                link_width_changed_flag = true;
+                notifyViewChange("link width changed");
             }
         }
         for (float w = 1.0f; w < 17; w *= 2) {
@@ -573,7 +596,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
         /* other objects */
         registerOtherObjects();
 
-        viewChangeManager = new ViewChangeManager();
         viewChangeManager.setSchedulingBounds(bounds);
         objRoot.addChild(viewChangeManager);
 
@@ -702,53 +724,58 @@ public abstract class NetworkPanel3DBase extends JPanel {
     /**
      * 描画更新イベントの発生を通知する.
      */
-    public void notifyViewChange(String event) {
-        viewChangeManager.notifyViewChange(event);
+    public boolean notifyViewChange(String event) {
+        return viewChangeManager.notifyViewChange(event);
     }
 
-    /* setting up links */
-    protected class UpdateLink extends Behavior {
-        WakeupOnElapsedTime won;
+    /**
+     * リンク描画パラメータの保存用.
+     */
+    protected class Link3DProperty {
         public MapLink link;
         public Shape3D shape;
-        public boolean disabled = false;
+        public Color3f color;
 
-        public UpdateLink(MapLink _link, Shape3D _shape) {
-            won = new WakeupOnElapsedTime(10);
-            link = _link;
-            shape = _shape;
+        public Link3DProperty(MapLink link, Shape3D shape, Color3f color) {
+            this.link = link;
+            this.shape = shape;
+            this.color = color;
         }
+    }
 
-        public void initialize() {
-            wakeupOn(won);
-        }
+    protected ArrayList<Link3DProperty> normalLinks;
 
-        @Override
-        public void processStimulus(java.util.Enumeration criteria) {
-            if (!disabled) {
-                update_link_geom(this);
-                wakeupOn(won);
+    /**
+     * すべての通常リンクの色を最新の状態にする.
+     */
+    public void updateLinkColor() {
+        for (Link3DProperty property : normalLinks) {
+            Color3f currentColor = colors_for_link(property.link);
+            if (currentColor != property.color) {
+                LineArray geometory = (LineArray)property.shape.getGeometry();
+                geometory.setColor(0, currentColor);
+                geometory.setColor(1, currentColor);
+                property.color = currentColor;
             }
         }
     }
 
-    protected void update_link_geom(UpdateLink link_geom) {
-        MapLink link = link_geom.link;
-
-        LineArray geometory = (LineArray) link_geom.shape.getGeometry();
-        Color3f c = colors_for_link(link);
-        geometory.setColor(0, c);
-        geometory.setColor(1, c);
-        if (link_transparency_changed_flag) {
-            link_transparency_changed_flag = false;
-            TransparencyAttributes ta = link_geom.shape.getAppearance()
-                    .getTransparencyAttributes();
+    /**
+     * すべての通常リンクの透明度を link_transparency 値で更新する.
+     */
+    public void updateLinkTransparency() {
+        for (Link3DProperty property : normalLinks) {
+            TransparencyAttributes ta = property.shape.getAppearance().getTransparencyAttributes();
             ta.setTransparency(link_transparency);
         }
-        if (link_width_changed_flag) {
-            link_width_changed_flag = false;
-            LineAttributes la = link_geom.shape.getAppearance()
-                    .getLineAttributes();
+    }
+
+    /**
+     * すべての通常リンクの幅を link_width 値で更新する.
+     */
+    public void updateLinkWidth() {
+        for (Link3DProperty property : normalLinks) {
+            LineAttributes la = property.shape.getAppearance().getLineAttributes();
             la.setLineWidth(link_width);
         }
     }
@@ -808,7 +835,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
     /* Determinate link geometry
      */
-    protected ArrayList<UpdateLink> link_geoms = new ArrayList<UpdateLink>();
 
     protected BranchGroup structure_group = new BranchGroup();
     boolean show_structure = true;
@@ -820,6 +846,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
             structure_group = null;
             structure_group = new BranchGroup();
         }
+        normalLinks = new ArrayList<Link3DProperty>();
 
         Appearance path_appearance = new Appearance();
         TransparencyAttributes ta = new TransparencyAttributes(
@@ -936,20 +963,18 @@ public abstract class NetworkPanel3DBase extends JPanel {
                 geometory.setCapability(GeometryArray.ALLOW_COLOR_WRITE);
 
                 geometory.setCoordinates(0, vertices);
-                geometory.setColor(0, Colors.DEFAULT_LINK_COLOR);
-                geometory.setColor(1, Colors.DEFAULT_LINK_COLOR);
+                Color3f color = colors_for_link(link);
+                geometory.setColor(0, color);
+                geometory.setColor(1, color);
 
                 Shape3D shape = new Shape3D(geometory, path_appearance);
                 shape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
                 TransformGroup linkgroup = new TransformGroup();
                 linkgroup.addChild(shape);
-                UpdateLink ul = new UpdateLink(link, shape);
-                ul.setSchedulingBounds(bounds);
-                linkgroup.addChild(ul);
-                link_geoms.add(ul);
 
                 map_objects.addChild(linkgroup);
                 canvasobj_to_obnode.put(shape, link);
+                normalLinks.add(new Link3DProperty(link, shape, color));
             }
         }
 
@@ -1099,11 +1124,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
     public void captureNextFrame(String filename) {
         canvas.catpureNextFrame(filename);
-    }
-
-    public void setLinkDrawWith(int i) {
-        link_width = i;
-        link_width_changed_flag = true;
     }
 
     public void setShowStructure(boolean b) {
