@@ -318,11 +318,11 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
         viewChangeManager = new ViewChangeManager() {
             public void jobEntered() {
-                parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                // parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             }
 
             public void jobLeaved() {
-                parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                // parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         };
         addViewChangeListener("link color changed", new ViewChangeListener() {

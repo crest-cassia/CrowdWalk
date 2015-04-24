@@ -102,6 +102,13 @@ public class SimulationLauncher extends BasicSimulationLauncher
                     dump_state.preUpdate();
                     finished = simulator.updateEveryTick();
                     dump_state.postUpdate();
+                    while (! panel.notifyViewChange("simulation progressed")) {
+                        synchronized (this) {
+                            try {
+                                wait(10);
+                            } catch (InterruptedException e) {}
+                        }
+                    }
                     boolean isTimezero = false;
                     if (simulator.getSecond() == 0)
                         isTimezero = true;
@@ -180,6 +187,13 @@ public class SimulationLauncher extends BasicSimulationLauncher
             dump_state.preUpdate();
             finished = simulator.updateEveryTick();
             dump_state.postUpdate();
+            while (! panel.notifyViewChange("simulation progressed")) {
+                synchronized (this) {
+                    try {
+                        wait(10);
+                    } catch (InterruptedException e) {}
+                }
+            }
             boolean isTimezero = false;
             if (simulator.getSecond() == 0)
                 isTimezero = true;
