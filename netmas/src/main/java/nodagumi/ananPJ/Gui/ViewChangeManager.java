@@ -22,7 +22,7 @@ public class ViewChangeManager extends Behavior {
 
     public ViewChangeManager() {
         wonFrame = new WakeupOnElapsedFrames(0);
-        wonTime = new WakeupOnElapsedTime(100);
+        wonTime = new WakeupOnElapsedTime(5);   // この程度ならば無駄な負荷が掛かることはない
     }
 
     @Override

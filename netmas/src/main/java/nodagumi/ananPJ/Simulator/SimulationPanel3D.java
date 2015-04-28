@@ -31,7 +31,6 @@ import java.util.List;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BadTransformException;
-import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
@@ -72,8 +71,6 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Link.Lift.LiftManager;
-import nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
@@ -96,7 +93,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     };
     
     public gas_display show_gas = gas_display.ORANGE;
-    protected double pollutionColorSaturation = 0.0;
+    protected double pollutionColorSaturation = 10.0;
 
     private List<AgentBase> agents;
     private ArrayList<PollutedArea> pollutions;
@@ -104,6 +101,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     NetworkMap networkMap = null;
     private static String evacuatedCount_string = "";
     private ArrayList<Agent3D> agent3dObjects = new ArrayList<Agent3D>();
+    private ArrayList<PollutedArea3D> pollutedArea3dObjects = new ArrayList<PollutedArea3D>();
     
     protected BranchGroup agent_group = null;
     public SimulationPanel3D(EvacuationSimulator _simulator, JFrame _parent) {
@@ -124,6 +122,13 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
         addViewChangeListener("simulation progressed", new ViewChangeListener() {
             public void update() {
+                updateLinkColor();
+                updatePollutedAreas();
+                updateAgents();
+            }
+        });
+        addViewChangeListener("agent size changed", new ViewChangeListener() {
+            public void update() {
                 updateAgents();
             }
         });
@@ -133,8 +138,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
         NetmasPropertiesHandler properties = simulator.getProperties();
         if (properties != null) {
             try {
-				show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE", gas_display.getNames())) ;
-                pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
+                show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE",
+                            gas_display.getNames()).toUpperCase()) ;
+                pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 10.0);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -360,7 +366,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 1, 1, 500);
     
         vertical_zoom_control.addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {change_vertical_zoom();}
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                change_vertical_zoom();
+                notifyViewChange("agent size changed");
+            }
         });
         vertical_zoom_control.setPreferredSize(new Dimension(200, 20));
         c = new GridBagConstraints();
@@ -393,7 +402,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 (int)(agent_size * 10), 1, 1, 100);
         agent_size_control.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
-                change_agent_size();}
+                change_agent_size();
+                notifyViewChange("agent size changed");
+            }
         });
         agent_size_control.setPreferredSize(new Dimension(200, 20));
         c = new GridBagConstraints();
@@ -846,30 +857,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         agent_group.addChild(agent3d.getBranchGroup());
     }
 
-    //private TransformGroup groupFromPollution(PollutedArea pollution) {
-    public TransformGroup groupFromPollution(PollutedArea pollution) {
-        Appearance app = new Appearance();
-        app.setColoringAttributes(new ColoringAttributes(0.2f, 0.2f, 0.2f, ColoringAttributes.SHADE_FLAT));
-        app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        app.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
-        TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.5f);
-        app.setTransparencyAttributes(ta);
-
-        RenderingAttributes rattr = new RenderingAttributes();
-        rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_VALUE_WRITE);
-        rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_FUNCTION_WRITE); 
-        rattr.setCapability(RenderingAttributes.ALLOW_DEPTH_ENABLE_READ);
-        app.setRenderingAttributes(rattr);
-
-        TransformGroup pollutionTransforms = pollution.get3DShape(app);
-        UpdatePollution tb = new UpdatePollution(pollution,
-                pollutionTransforms, app);
-        tb.setSchedulingBounds(bounds);
-        pollutionTransforms.addChild(tb);
-
-        return pollutionTransforms;
-    }
-
     /* used when registering agent while running simulation */
     int agent_count = 0;
     public void registerAgentOnline(AgentBase agent) {
@@ -908,31 +895,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
             group_from_agent(agent);
         }
 
-        if (show_gas != gas_display.NONE) {
-            for (PollutedArea pollution : pollutions) {
-                TransformGroup pollutionTransforms = groupFromPollution(pollution);
-                if (pollutionTransforms == null) continue;
-                simulation_map_objects.addChild(pollutionTransforms);
-            }
-        }
-
-        LiftManager lm = LiftManager.getInstance();
-        for (String key : lm.keySet()) {
-            Shaft shaft = lm.get(key);
-
-            TransformGroup shaftTransforms = new TransformGroup();
-
-            shaftTransforms.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-            Appearance app = new Appearance();
-            app.setColoringAttributes(new ColoringAttributes(1.0f, 1.0f, 0.0f,
-                        ColoringAttributes.FASTEST));
-            Sphere sphere = new Sphere(1f, app);
-            shaftTransforms.addChild(sphere);
-            UpdateShaft tb = new UpdateShaft(shaft, shaftTransforms);
-            tb.setSchedulingBounds(bounds);
-            shaftTransforms.addChild(tb);
-
-            simulation_map_objects.addChild(shaftTransforms);
+        for (PollutedArea pollutedArea : pollutions) {
+            PollutedArea3D pollutedArea3d = new PollutedArea3D(pollutedArea);
+            pollutedArea3dObjects.add(pollutedArea3d);
+            simulation_map_objects.addChild(pollutedArea3d.getTransformGroup());
         }
     }
 
@@ -1106,62 +1072,40 @@ public class SimulationPanel3D extends NetworkPanel3D {
         }
     }
 
-    class UpdateShaft extends Behavior{
-        WakeupOnElapsedTime won;
-        Shaft shaft;
-        TransformGroup transformGroup;
+    /**
+     * シミュレーション画面上に表示する PollutedArea の 3D オブジェクト.
+     */
+    private class PollutedArea3D {
+        private PollutedArea pollutedArea;
+        private Appearance app;
+        private TransformGroup transformGroup;
+        private gas_display gasDisplay = null;
+        private float density = 0.0f;
+        private Color3f color;
 
-        public UpdateShaft(Shaft _shaft,
-                TransformGroup _transformGroup){
-            won = new WakeupOnElapsedTime(10);
-            shaft = _shaft;
-            transformGroup = _transformGroup;
+        public PollutedArea3D(PollutedArea _pollutedArea) {
+            pollutedArea = _pollutedArea;
+            initialize();
         }
 
-        public void initialize(){
-            wakeupOn(won);
+        public TransformGroup getTransformGroup() { return transformGroup; }
+
+        public void initialize() {
+            app = new Appearance();
+            app.setColoringAttributes(new ColoringAttributes(0.2f, 0.2f, 0.2f, ColoringAttributes.SHADE_FLAT));
+            app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
+            app.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.5f);
+            app.setTransparencyAttributes(ta);
+
+            RenderingAttributes rattr = new RenderingAttributes();
+            rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_VALUE_WRITE);
+            rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_FUNCTION_WRITE);
+            rattr.setCapability(RenderingAttributes.ALLOW_DEPTH_ENABLE_READ);
+            app.setRenderingAttributes(rattr);
+
+            transformGroup = pollutedArea.get3DShape(app);
         }
-
-        @SuppressWarnings("unchecked")
-        public void processStimulus(java.util.Enumeration criteria){
-            Point2D pos;
-            double height;
-            pos = shaft.getPos();
-            if (pos == null) return;
-            height = shaft.getHeight();
-
-            Transform3D trans3d = new Transform3D();
-            trans3d.setTranslation(new Vector3d(pos.getX(), pos.getY(), height));
-            try {
-                transformGroup.setTransform(trans3d);
-            } catch (BadTransformException e) {
-                System.err.println(shaft.getPos());
-            }
-            wakeupOn(won);
-        }
-    }
-
-    class UpdatePollution extends Behavior{
-        WakeupOnElapsedTime won;
-        PollutedArea pollution;
-        Appearance app;
-        TransformGroup transformGroup;
-
-        public UpdatePollution(PollutedArea _pollution,
-                TransformGroup _transformGroup,
-                Appearance _app){
-            won = new WakeupOnElapsedTime(10);
-            pollution = _pollution;
-            transformGroup = _transformGroup;
-            app = _app;
-        }
-
-        public void initialize(){
-            wakeupOn(won);
-        }
-
-        /* When a person immobilize in 20 seconds */
-        static final float MAX_DENSITY = 0.01f;
 
         private Color3f set_color_red(float density) {
             Color c_rgb = new Color(density, 0.0f, 0.0f);
@@ -1181,78 +1125,41 @@ public class SimulationPanel3D extends NetworkPanel3D {
             Color3f c = new Color3f(c_rgb);
             return c;
         }
+
         private Color3f set_color_orange(float density){
             Color c_rgb = new Color(1.0f,(float)(0.5-density) + 0.5f, 0.0f);
             Color3f c = new Color3f(c_rgb);
             return c;           
         }
+
         private Color3f set_color_none() {
             Color c_rgb = new Color(0.0f, 0.0f, 0.0f);
             Color3f c = new Color3f(c_rgb);
             return c;
         }       
-        @SuppressWarnings("unchecked")
-        public void processStimulus(java.util.Enumeration criteria){
 
-            // float density = (float)pollution.getDensity() / MAX_DENSITY;
-            float density = 0.0f;
-            //System.out.println("Pollution Area ID "+pollution.ID+" density "+density);
+        /**
+         * PollutedArea の現在の状態と表示色に合わせて表示を更新する.
+         *
+         * 状態と表示色に変化がなければ何もしない。
+         */
+        public void update() {
+            float lastDensity = density;
+            //System.out.println("Pollution Area ID "+pollutedArea.ID+" density "+density);
             if (pollutionColorSaturation > 0.0) {
-                density = (float)pollution.getDensity() / (float)pollutionColorSaturation;
+                density = (float)pollutedArea.getDensity() / (float)pollutionColorSaturation;
             } else {
                 float maxPollutionLevel = (float)simulator.getMaxPollutionLevel();
                 if (maxPollutionLevel > 0.0) {
-                    density = (float)pollution.getDensity() / (maxPollutionLevel / 2.0f);
+                    density = (float)pollutedArea.getDensity() / (maxPollutionLevel / 2.0f);
                 }
             }
             if (density > 1.0) density = 1.0f;
 
-            /*
-             * 修正2011年9月29日
-             * 有害危険物質の濃度に応じて対象範囲の矩形の色を変更するために
-             * 修正点1の濃度が低い場合の矩形の色の更新処理をスキップする部分を削除します。
-             * また、修正点2における歩行者がいない場合には対象範囲の矩形の色をなくす処理を削除します。
-             *
-             * */
-
-            /* 修正点1
-            if (density < 0.1) {
-                wakeupOn(won);
+            if (density == lastDensity && show_gas == gasDisplay) {
                 return;
-            }*/
-
-            /* 修正点2
-            Color3f c = null;
-            if(!pollution.getContactOfAgents()){
-                c = set_color_none();
-            } else {
-                switch(show_gas) {
-                case RED:
-                    c = set_color_red(density);
-                    break;
-                case BLUE:
-                    c = set_color_blue(density);
-                    break;
-                case HSV:
-                    c = set_color_hsv(density);
-                    break;
-                case ORANGE:
-                    c = set_color_orange(density);
-                    break;
-                default:
-                    wakeupOn(won);
-                    return;
-                }
-
-                app.setColoringAttributes(new ColoringAttributes(c,
-                        ColoringAttributes.FASTEST));
-                app.setTransparencyAttributes(
-                        new TransparencyAttributes(TransparencyAttributes.NICEST,
-                                1.0f - density / 3.0f));
             }
-            */
 
-            /*以下は修正点2の修正部分*/
             Color3f c = null;
 
             switch(show_gas) {
@@ -1269,21 +1176,23 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 c = set_color_orange(density);
                 break;
             default:
-                wakeupOn(won);
+                app.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.NICEST, 1.0f));
                 return;
             }
 
-            app.setColoringAttributes(new ColoringAttributes(c,
-                    ColoringAttributes.FASTEST));
-            app.setTransparencyAttributes(
-                    new TransparencyAttributes(TransparencyAttributes.NICEST,
-                            1.0f - density / 1.5f));
-                            //1.0f - density / 3.0f));
-            
-            /*以上は修正点2の修正部分*/
-            
-            wakeupOn(won);
+            app.setColoringAttributes(new ColoringAttributes(c, ColoringAttributes.FASTEST));
+            app.setTransparencyAttributes(new TransparencyAttributes(
+                        TransparencyAttributes.NICEST, 1.0f - density / 1.5f));
+            gasDisplay = show_gas;
+        }
+    }
 
+    /**
+     * 全 PollutedArea の表示を更新する.
+     */
+    public void updatePollutedAreas() {
+        for (PollutedArea3D pollutedArea3d : pollutedArea3dObjects) {
+            pollutedArea3d.update();
         }
     }
 
