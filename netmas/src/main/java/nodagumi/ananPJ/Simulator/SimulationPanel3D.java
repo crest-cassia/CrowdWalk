@@ -907,6 +907,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
      */
     private class Agent3D {
         private AgentBase agent;
+        private MapPartGroup group;
         private float agentTransparency;
         private Appearance app;
         private TransformGroup transformGroup;
@@ -915,6 +916,11 @@ public class SimulationPanel3D extends NetworkPanel3D {
         private int shadingModel;
         private Color3f colorBySpeed;
         private double speed = -1.0;
+        private Point2D pos;
+        private double height;
+        private Vector3d swing;
+        private double agentSize;
+        private double verticalZoom;
 
         public Agent3D(AgentBase _agent) {
             agent = _agent;
@@ -930,12 +936,12 @@ public class SimulationPanel3D extends NetworkPanel3D {
             if (agent.isEvacuated()) {
                 return;
             }
+            group = (MapPartGroup)(agent.getCurrentLink()).getParent();
 
             /* position */
-            Point2D pos = agent.getPos();
-            Vector3d swing = agent.getSwing();
-            double height = agent.getHeight() /
-                ((MapPartGroup)(agent.getCurrentLink()).getParent()).getScale();
+            pos = (Point2D)agent.getPos().clone();
+            swing = agent.getSwing();
+            height = agent.getHeight() / group.getScale();
 
             transformGroup = createTransformGroup(pos.getX() + swing.getX(),
                     pos.getY() + swing.getY(), height + swing.getZ());
@@ -971,15 +977,12 @@ public class SimulationPanel3D extends NetworkPanel3D {
             }
 
             MapLink current_pathway = (MapLink)agent.getCurrentLink();
-            MapPartGroup group = (MapPartGroup)current_pathway.getParent();
+            group = (MapPartGroup)current_pathway.getParent();
             if (group == null) {
                 /* the link the agent is on was removed */
                 agent.exposed(10000);
                 return false;
             }
-            Point2D pos = agent.getPos();
-            double height = agent.getHeight();
-            height /= group.getScale();
 
             if (agentTransparency != agent_transparency) {
                 agentTransparency = agent_transparency;
@@ -994,33 +997,55 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 app.setColoringAttributes(new ColoringAttributes(color, shadingModel));
             }
 
-            /* move a bit right or left */
-            Vector3d swing = agent.getSwing();
-
-            Transform3D trans3d = new Transform3D();
-            trans3d.setTranslation(new Vector3d(pos.getX() + swing.getX(),
-                    pos.getY() + swing.getY(),
-                    height + swing.getZ()));
-            trans3d.setScale(new Vector3d(agent_size, agent_size, agent_size / vertical_zoom));
-            try {
-                transformGroup.setTransform(trans3d);
-            } catch (BadTransformException e) {
-                final MapLink l = agent.getCurrentLink();
-                System.err.println(e.getMessage());
-                System.err.println(l.getTagString());
-                System.err.println(" " + l.getFrom().getAbsoluteCoordinates());
-                System.err.println(" " + l.getTo().getAbsoluteCoordinates());
-                System.err.println(" " + l.length);
-                System.err.println(pos.getX() + "\t" + pos.getY() + "\t" + agent.getHeight());
-                agent.dumpResult(System.err);
+            if (updateTransformParameters()) {
+                Transform3D trans3d = new Transform3D();
+                trans3d.setTranslation(new Vector3d(pos.getX() + swing.getX(),
+                        pos.getY() + swing.getY(),
+                        height + swing.getZ()));
+                trans3d.setScale(new Vector3d(agentSize, agentSize, agentSize / verticalZoom));
+                try {
+                    transformGroup.setTransform(trans3d);
+                } catch (BadTransformException e) {
+                    final MapLink l = agent.getCurrentLink();
+                    System.err.println(e.getMessage());
+                    System.err.println(l.getTagString());
+                    System.err.println(" " + l.getFrom().getAbsoluteCoordinates());
+                    System.err.println(" " + l.getTo().getAbsoluteCoordinates());
+                    System.err.println(" " + l.length);
+                    System.err.println(pos.getX() + "\t" + pos.getY() + "\t" + agent.getHeight());
+                    agent.dumpResult(System.err);
+                }
             }
             return true;
         }
 
         /**
+         * エージェントの Transform 関連のパラメータを更新する.
+         *
+         * @return 変化したパラメータがあれば true、なければ false
+         */
+        private boolean updateTransformParameters() {
+            Point2D _pos = pos;
+            double _height = height;
+            Vector3d _swing = swing;
+            double _agentSize = agentSize;
+            double _verticalZoom = verticalZoom;
+
+            pos = (Point2D)agent.getPos().clone();   // TODO: 問題がなければ普通のコピーにする
+            height = agent.getHeight() / group.getScale();
+            /* move a bit right or left */
+            swing = agent.getSwing();       // 毎回 new されるため普通のコピーで問題ない
+            agentSize = agent_size;
+            verticalZoom = vertical_zoom;
+
+            return height != _height || agentSize != _agentSize || verticalZoom != _verticalZoom
+                || ! pos.equals(_pos) || ! swing.equals(_swing);
+        }
+
+        /**
          * エージェントの状態に応じた描画色をセットする.
          */
-        public void setColor() {
+        private void setColor() {
             /* determine color based on triage */
             color = agent_color;
             shadingModel = ColoringAttributes.FASTEST;
