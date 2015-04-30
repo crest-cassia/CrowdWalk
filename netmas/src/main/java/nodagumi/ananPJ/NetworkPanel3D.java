@@ -45,6 +45,7 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
     protected transient PickCanvas pick_canvas;
     protected int button_held_down = 0;
     protected double drag_sensitivity = 0.01;
+    protected boolean viewpointChangeInhibited = false;
     
     @Override
     protected void setupContents() {
@@ -170,12 +171,18 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
     }
 
     private void drag_screen_right(double dx, double dy, MouseEvent e) {
+        if (getViewpointChangeInhibited()) {
+            return;
+        }
         trans_trans.x += (int)dx;
         trans_trans.y -= (int)dy;
         notifyViewChange("viewpoint changed");
     }
 
     private void drag_screen_left(double dx, double dy, MouseEvent e) {
+        if (getViewpointChangeInhibited()) {
+            return;
+        }
         rot_x += dy * drag_sensitivity; 
         rot_z += dx * drag_sensitivity;
 
@@ -187,6 +194,9 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
     }
 
     protected void mouseWheelCallback(int c) {
+        if (getViewpointChangeInhibited()) {
+            return;
+        }
         if (c > 0) {
             for (int i = 0; i < c; i++) zoom_scale *= 0.9;
         } else {
@@ -204,6 +214,22 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
         default:
             break;
         }
+    }
+
+    /**
+     * マウス操作による視点移動とズーム機能を一時的に禁止するかどうかのフラグをセットする.
+     */
+    public synchronized void setViewpointChangeInhibited(boolean b) {
+        viewpointChangeInhibited = b;
+    }
+
+    /**
+     * マウス操作による視点移動とズーム機能を一時的に禁止するかどうかを返す.
+     *
+     * @return 禁止する場合は true
+     */
+    public synchronized boolean getViewpointChangeInhibited() {
+        return viewpointChangeInhibited;
     }
 }
 //;;; Local Variables:

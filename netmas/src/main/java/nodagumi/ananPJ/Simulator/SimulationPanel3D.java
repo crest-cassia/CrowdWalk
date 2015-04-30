@@ -218,6 +218,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     Transform3D viewTrans3D = null;
     Matrix4d viewMatrix = null;
     ArrayList<CurrentCameraPosition> camera_position_list = null; 
+    private boolean forceUpdateCamerawork = true;
 
     JCheckBox debug_mode_cb = null;
     JCheckBox hide_normallink_cb = null;
@@ -469,6 +470,16 @@ public class SimulationPanel3D extends NetworkPanel3D {
         JPanel camerawork_replay = new JPanel();
         camerawork_replay.setLayout(new BoxLayout(camerawork_replay, BoxLayout.Y_AXIS));
         replay_recorded_camera_position = new JCheckBox("Replay");
+        replay_recorded_camera_position.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (replay_recorded_camera_position.isSelected()) {
+                    setForceUpdateCamerawork(true);
+                    setViewpointChangeInhibited(true);
+                } else {
+                    setViewpointChangeInhibited(false);
+                }
+            }
+        });
         camerawork_replay.add(replay_recorded_camera_position);
 
         layout = new FlowLayout(FlowLayout.LEFT);
@@ -1239,6 +1250,22 @@ public class SimulationPanel3D extends NetworkPanel3D {
         evacuatedCount_string = evacuatedCount;
     }
 
+    /**
+     * camerawork の更新処理を強制的に実行するかどうかのフラグをセットする.
+     */
+    public synchronized void setForceUpdateCamerawork(boolean b) {
+        forceUpdateCamerawork = b;
+    }
+
+    /**
+     * camerawork の更新処理を強制的に実行するかどうかを返す.
+     *
+     * @return 強制的に実行する場合は true
+     */
+    public synchronized boolean getForceUpdateCamerawork() {
+        return forceUpdateCamerawork;
+    }
+
     protected void update_camerawork(double time) {
         if (replay_recorded_camera_position.isSelected() &&
                 camera_position_list.size() > 0) {
@@ -1253,14 +1280,22 @@ public class SimulationPanel3D extends NetworkPanel3D {
             }
             // tkokada agent size in camera file is ignored.
             if (last_camera == null) {
+                // ※通常ここは通らないので無駄を省く処理は省略する
                 viewTrans3D.set(next_camera.matrix);
                 //agent_size = next_camera.agent_size;
                 vertical_zoom = next_camera.vertical_zoom;
             } else if (next_camera == null) {
+                if (last_camera.time < time && ! getForceUpdateCamerawork()) {
+                    return;
+                }
                 viewTrans3D.set(last_camera.matrix);
                 //agent_size = last_camera.agent_size;
                 vertical_zoom = last_camera.vertical_zoom;
             } else{
+                if (last_camera.vertical_zoom == next_camera.vertical_zoom &&
+                        last_camera.matrix.equals(next_camera.matrix) && ! getForceUpdateCamerawork()) {
+                    return;
+                }
                 double ratio = (time - last_camera.time) /
                     (next_camera.time - last_camera.time);
                 Matrix4d matrix = new Matrix4d(last_camera.matrix);
@@ -1285,6 +1320,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             matrix.mul(scale_matrix);
             viewTrans3D.set(matrix);
             view_trans.setTransform(viewTrans3D);
+            setForceUpdateCamerawork(false);
         }
     }
 
@@ -1350,6 +1386,12 @@ public class SimulationPanel3D extends NetworkPanel3D {
     
     public void setReplay(boolean b) {
         replay_recorded_camera_position.setSelected(b);
+        if (b) {
+            setForceUpdateCamerawork(true);
+            setViewpointChangeInhibited(true);
+        } else {
+            setViewpointChangeInhibited(false);
+        }
     }
     
     public void setAgentColorSpeed(boolean b) {

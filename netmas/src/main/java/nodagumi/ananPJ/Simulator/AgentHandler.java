@@ -383,10 +383,12 @@ public class AgentHandler {
     }
 
     private void updateAgents(double time) {
-        try {
-            Thread.sleep(simulation_weight);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (simulation_weight > 0) {
+            try {
+                Thread.sleep(simulation_weight);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         int count = 0;
@@ -399,7 +401,6 @@ public class AgentHandler {
             time_label.setText(time_string);
             String clock_string = convertAbsoluteTimeString(time) ;
             clock_label.setText(clock_string);
-            updateEvacuatedCount();
         }
 
         // tkokada
@@ -432,9 +433,6 @@ public class AgentHandler {
                 if (agent.isStuck()) {
                     stuck_agents.add(agent);
                 }
-                if (has_display) {
-                    updateEvacuatedCount();
-                }
                 if (agentMovementHistoryLogger != null) {
                     agentMovementHistoryLogger
                         .info(String
@@ -461,6 +459,9 @@ public class AgentHandler {
                 }
             }
             logIndividualPedestrians(time, agent);
+        }
+        if (has_display) {
+            updateEvacuatedCount();
         }
         // tkokada
         if (existNonZeroSpeedAgent)
