@@ -57,7 +57,6 @@ public class ViewChangeManager extends Behavior {
      * 描画更新イベント用のリスナを登録する.
      */
     public synchronized void addViewChangeListener(String event, ViewChangeListener listener) {
-        System.err.println("@addViewChangeListener: " + event);
         viewChangeListeners.put(event, listener);
     }
 
