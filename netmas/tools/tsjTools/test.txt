@@ -1,0 +1,169 @@
+2196 steps (0 時間 36 分 36 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00011010000-10010010000 }
+2246 steps (0 時間 37 分 26 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00011100000-10010010000 }
+2274 steps (0 時間 37 分 54 秒):
+   7 times (0.026 %)
+   typicals: { kanazawa-00011000001-10010010000 }
+2572 steps (0 時間 42 分 52 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00001101000-10010010000 }
+2573 steps (0 時間 42 分 53 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00000111000-10010010000 }
+2605 steps (0 時間 43 分 25 秒):
+   6 times (0.022 %)
+   typicals: { kanazawa-00000101001-10010010000 }
+2676 steps (0 時間 44 分 36 秒):
+   7 times (0.026 %)
+   typicals: { kanazawa-00000101001-10001010000 }
+2742 steps (0 時間 45 分 42 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00000111000-10001010000 }
+2869 steps (0 時間 47 分 49 秒):
+   7 times (0.026 %)
+   typicals: { kanazawa-00000110001-10001010000 }
+2875 steps (0 時間 47 分 55 秒):
+   20 times (0.073 %)
+   typicals: { kanazawa-00000100011-10001010000 }
+2896 steps (0 時間 48 分 16 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00100110000-10010010000 }
+2918 steps (0 時間 48 分 38 秒):
+   7 times (0.026 %)
+   typicals: { kanazawa-00100100001-10010010000 }
+2927 steps (0 時間 48 分 47 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00100101000-10010010000 }
+2954 steps (0 時間 49 分 14 秒):
+   27 times (0.099 %)
+   typicals: { kanazawa-00000010011-10010010000 }
+2979 steps (0 時間 49 分 39 秒):
+   7 times (0.026 %)
+   typicals: { kanazawa-00100010001-10010010000 }
+2996 steps (0 時間 49 分 56 秒):
+   1 times (0.004 %)
+   typicals: { kanazawa-00100011000-10010010000 }
+2998 steps (0 時間 49 分 58 秒):
+   8 times (0.029 %)
+   typicals: { kanazawa-00011010000-10010000001 }
+3037 steps (0 時間 50 分 37 秒):
+   56 times (0.206 %)
+   typicals: { kanazawa-00011000001-10010000001 }
+3038 steps (0 時間 50 分 38 秒):
+   7 times (0.026 %)
+   typicals: { kanazawa-00000111000-10000010001 }
+3040 steps (0 時間 50 分 40 秒):
+   49 times (0.18 %)
+   typicals: { kanazawa-00000101001-10000010001 }
+3058 steps (0 時間 50 分 58 秒):
+   35 times (0.129 %)
+   typicals: { kanazawa-00011001000-10010000001 }
+3108 steps (0 時間 51 分 48 秒):
+   8 times (0.029 %)
+   typicals: { kanazawa-00100011000-10010000001 }
+3109 steps (0 時間 51 分 49 秒):
+   36 times (0.132 %)
+   typicals: { kanazawa-00011010000-10000000011 }
+3120 steps (0 時間 52 分 0 秒):
+   64 times (0.235 %)
+   typicals: { kanazawa-00100001001-10010000001 }
+3127 steps (0 時間 52 分 7 秒):
+   64 times (0.235 %)
+   typicals: { kanazawa-00100010001-10010000001 }
+3128 steps (0 時間 52 分 8 秒):
+   56 times (0.206 %)
+   typicals: { kanazawa-00000110001-10000010001 }
+3134 steps (0 時間 52 分 14 秒):
+   252 times (0.926 %)
+   typicals: { kanazawa-00011000001-10000000011 }
+3135 steps (0 時間 52 分 15 秒):
+   160 times (0.588 %)
+   typicals: { kanazawa-00000100011-10000010001 }
+3140 steps (0 時間 52 分 20 秒):
+   36 times (0.132 %)
+   typicals: { kanazawa-00011001000-10000000011 }
+3160 steps (0 時間 52 分 40 秒):
+   216 times (0.793 %)
+   typicals: { kanazawa-00100000011-10010000001 }
+3217 steps (0 時間 53 分 37 秒):
+   50 times (0.184 %)
+   typicals: { kanazawa-00000000111-10010010000 }
+3381 steps (0 時間 56 分 21 秒):
+   56 times (0.206 %)
+   typicals: { kanazawa-00000110001-10010000001 }
+3400 steps (0 時間 56 分 40 秒):
+   160 times (0.588 %)
+   typicals: { kanazawa-00000100011-10010000001 }
+3407 steps (0 時間 56 分 47 秒):
+   56 times (0.206 %)
+   typicals: { kanazawa-00000101001-10010000001 }
+3475 steps (0 時間 57 分 55 秒):
+   8 times (0.029 %)
+   typicals: { kanazawa-00000111000-10010000001 }
+3650 steps (1 時間 0 分 50 秒):
+   288 times (1.058 %)
+   typicals: { kanazawa-00100010001-10000000011 }
+3672 steps (1 時間 1 分 12 秒):
+   972 times (3.57 %)
+   typicals: { kanazawa-00100000011-10000000011 }
+3681 steps (1 時間 1 分 21 秒):
+   288 times (1.058 %)
+   typicals: { kanazawa-00100001001-10000000011 }
+3748 steps (1 時間 2 分 28 秒):
+   36 times (0.132 %)
+   typicals: { kanazawa-00100011000-10000000011 }
+3754 steps (1 時間 2 分 34 秒):
+   196 times (0.72 %)
+   typicals: { kanazawa-00000110001-10000000011 }
+3776 steps (1 時間 2 分 56 秒):
+   560 times (2.057 %)
+   typicals: { kanazawa-00000100011-10000000011 }
+3785 steps (1 時間 3 分 5 秒):
+   196 times (0.72 %)
+   typicals: { kanazawa-00000101001-10000000011 }
+3805 steps (1 時間 3 分 25 秒):
+   27 times (0.099 %)
+   typicals: { kanazawa-00000010011-10001010000 }
+3853 steps (1 時間 4 分 13 秒):
+   28 times (0.103 %)
+   typicals: { kanazawa-00000111000-10000000011 }
+3856 steps (1 時間 4 分 16 秒):
+   50 times (0.184 %)
+   typicals: { kanazawa-00000000111-10001010000 }
+3876 steps (1 時間 4 分 36 秒):
+   189 times (0.694 %)
+   typicals: { kanazawa-00000010011-10000010001 }
+3903 steps (1 時間 5 分 3 秒):
+   350 times (1.286 %)
+   typicals: { kanazawa-00000000111-10000010001 }
+3936 steps (1 時間 5 分 36 秒):
+   10200 times (37.466 %)
+   typicals: { kanazawa-00000000111-00000010011 }
+3938 steps (1 時間 5 分 38 秒):
+   3132 times (11.504 %)
+   typicals: { kanazawa-00000010011-00000010011 }
+4067 steps (1 時間 7 分 47 秒):
+   972 times (3.57 %)
+   typicals: { kanazawa-00000010011-00010000011 }
+4279 steps (1 時間 11 分 19 秒):
+   400 times (1.469 %)
+   typicals: { kanazawa-00000000111-00011000001 }
+4327 steps (1 時間 12 分 7 秒):
+   1400 times (5.142 %)
+   typicals: { kanazawa-00000000111-00010000011 }
+4918 steps (1 時間 21 分 58 秒):
+   756 times (2.777 %)
+   typicals: { kanazawa-00000010011-00001000011 }
+4969 steps (1 時間 22 分 49 秒):
+   1400 times (5.142 %)
+   typicals: { kanazawa-00000000111-00001000011 }
+4990 steps (1 時間 23 分 10 秒):
+   1512 times (5.554 %)
+   typicals: { kanazawa-00000010011-00000000111 }
+5016 steps (1 時間 23 分 36 秒):
+   2800 times (10.285 %)
+   typicals: { kanazawa-00000000111-00000000111 }
+number of files: 27225

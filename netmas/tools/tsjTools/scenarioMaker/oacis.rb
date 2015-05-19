@@ -1,5 +1,4 @@
 # coding: utf-8
-
 # oacis_exec.rb
 
 
@@ -16,4 +15,6 @@ end
 command = "./start.sh #{query}" 
 puts command
 system(command)
+
+
 

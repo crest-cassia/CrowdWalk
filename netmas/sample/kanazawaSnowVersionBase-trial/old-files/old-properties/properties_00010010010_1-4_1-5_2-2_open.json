@@ -3,7 +3,7 @@
     debug: true,
     io_handler_type: 'none',
 
-    map_file: 'map.xml',
+    map_file: 'map_00010010010_1-4_1-5_2-2_open.xml',
     generation_file: 'generation.csv',
     scenario_file: 'response.csv',
     camera_file: 'camera.csv',
@@ -17,7 +17,7 @@
     all_agent_speed_zero_break: true,
 
     timer_enable: false,
-//    timer_file: 'log/timer.log',
+    timer_file: 'log/timer.log',
 
     time_series_log: false,
     time_series_log_path: 'log',
@@ -26,8 +26,8 @@
     damage_speed_zero_log: false,
     damage_speed_zero_log_path: 'log/damage_speed_zero.csv',
 
-    agent_movement_history_file: 'log/agent_movement_history.csv',
-//    individual_pedestrians_log_dir: 'log',
+    //agent_movement_history_file: 'log/agent_movement_history.csv',
+    individual_pedestrians_log_dir: 'log/00010010010_1-4_1-5_2-2_open',
 
     record_simulation_screen: false,
     //screenshot_dir: 'screenshots',

@@ -49,10 +49,37 @@ stats = keys_using.map do |key|
 	average_time_string = log_json_data['average_time']
 	evacuation_time_string = log_json_data['evacuation_time']
 	
+
+=begin
+	evacuation_filename = target_dir_path + key + "/evacuation.json"
+
+	evacuation = open(evacuation_filename, "r:UTF-8") do |io|
+    	JSON.load( io )
+	end
+
+	average_steps = evacuation.map{|element| element['time']*3600}.reduce {|sum, n| sum + n }/evacuation.size
+
+
+	puts "key: #{key}, average: #{average_steps}"
+=end
+
+#	{ 'steps'=>steps_integer, 'query'=>key, 'average_time'=>average_time_string, 'evacuation_time'=>evacuation_time_string, 'average_steps'=> average_steps }
 	{ 'steps'=>steps_integer, 'query'=>key, 'average_time'=>average_time_string, 'evacuation_time'=>evacuation_time_string }
 
 end
 	
+
+=begin
+File.open("result.csv", "w") do |io|
+	stats.each do |stat|
+		key = stat['query']
+		average_steps = stat['average_steps']
+		steps = stat['steps']
+		io.puts "#{key},#{steps}, #{average_steps}"
+	end
+
+end
+=end
 
 
 # steps で sort

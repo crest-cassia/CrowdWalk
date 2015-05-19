@@ -47,7 +47,7 @@ key = args[:key]
 
 # "011100101" => [false, true, true, ...]
 using_flag = key.chars.map {|item| (item=="1")}
-p using_flag
+#p using_flag
 
 
 # 任意オプションの処理
