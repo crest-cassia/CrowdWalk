@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
@@ -54,6 +55,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
   public int ID;
   protected ArrayList<String> tags;
   public boolean selected = false;
+  protected NetworkMap networkMap;
 
   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   /**
@@ -207,6 +209,20 @@ public abstract class OBNode extends DefaultMutableTreeNode {
       return (parent.isOffspring(node));
   }
   
+  /**
+   * NetworkMap をセットする.
+   */
+  public void setNetworkMap(NetworkMap networkMap) {
+    this.networkMap = networkMap;
+  }
+
+  /**
+   * NetworkMap を返す.
+   */
+  public NetworkMap getNetworkMap() {
+    return networkMap;
+  }
+
   static class TagSetupPanel extends JPanel {
     private ArrayList<OBNode> nodes;
     private ArrayList<String> tags = new ArrayList<String>();

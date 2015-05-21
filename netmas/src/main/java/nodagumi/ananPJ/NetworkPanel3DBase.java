@@ -93,8 +93,8 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
     protected SimpleUniverse universe = null;
 
-    private MapNodeTable nodes;
-    private MapLinkTable links;
+    protected MapNodeTable nodes;
+    protected MapLinkTable links;
 
     private boolean isInitialized = false;
 
@@ -142,7 +142,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
         @Override
         public void postRender() {
-            //System.err.println("- postRender");
             super.postRender();
 
             boolean flushRequired = false;
@@ -176,7 +175,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
         @Override
         public synchronized void preRender() {
-            //System.err.println("- preRender");
             //int width = 800;
             //int height = 600;
             setCanvasSize(canvas_width, canvas_height);
@@ -184,8 +182,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
         }
 
         @Override
-        public  synchronized void postSwap() {
-            //System.err.println("- postSwap");
+        public synchronized void postSwap() {
             super.postSwap();
 
             if (filename == null) return;
@@ -216,8 +213,14 @@ public abstract class NetworkPanel3DBase extends JPanel {
                 ioe.printStackTrace();
             }
             filename = null;
+            screenShotCaptured();
         }
     };
+
+    /**
+     * スクリーンショットのファイル作成が完了した時に呼ばれる.
+     */
+    protected void screenShotCaptured() {}
 
     // リンクの表示スタイル(幅, 色, 透明度)をタグ別に指定するために使用するクラス
     protected class LinkAppearance {
@@ -325,11 +328,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
                 // parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         };
-        addViewChangeListener("link color changed", new ViewChangeListener() {
-            public void update() {
-                updateLinkColor();
-            }
-        });
         addViewChangeListener("link transparency changed", new ViewChangeListener() {
             public void update() {
                 updateLinkTransparency();
@@ -656,7 +654,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
         map_objects_parent.addChild(map_objects);
 
         setup_links();
-        setup_nodes(map_objects);
+        setup_nodes();
         register_map_objects();
         Transform3D map_trans = new Transform3D();
 
@@ -728,46 +726,22 @@ public abstract class NetworkPanel3DBase extends JPanel {
         return viewChangeManager.notifyViewChange(event);
     }
 
-    /**
-     * リンク描画パラメータの保存用.
-     */
-    protected class Link3DProperty {
-        public MapLink link;
-        public Shape3D shape;
-        public Color3f color;
+    // 全リンクの MapLink と BranchGroup との対応
+    protected HashMap<MapLink, BranchGroup> linkGroups = new HashMap<>();
 
-        public Link3DProperty(MapLink link, Shape3D shape, Color3f color) {
-            this.link = link;
-            this.shape = shape;
-            this.color = color;
-        }
-    }
-
-    // すべての通常リンク(LinkAppearance が定義されたタグが振られていないリンク)
-    protected ArrayList<Link3DProperty> normalLinks;
-
-    /**
-     * すべての通常リンクの色を最新の状態にする.
-     */
-    public void updateLinkColor() {
-        for (Link3DProperty property : normalLinks) {
-            Color3f currentColor = colors_for_link(property.link);
-            if (currentColor != property.color) {
-                LineArray geometory = (LineArray)property.shape.getGeometry();
-                geometory.setColor(0, currentColor);
-                geometory.setColor(1, currentColor);
-                property.color = currentColor;
-            }
-        }
-    }
+    // 表示対象ノードの MapNode と TransformGroup との対応
+    protected HashMap<MapNode, BranchGroup> displayedNodeGroups = new HashMap<>();
 
     /**
      * すべての通常リンクの透明度を link_transparency 値で更新する.
      */
     public void updateLinkTransparency() {
-        for (Link3DProperty property : normalLinks) {
-            TransparencyAttributes ta = property.shape.getAppearance().getTransparencyAttributes();
-            ta.setTransparency(link_transparency);
+        for (BranchGroup group : linkGroups.values()) {
+            if (group.numChildren() == 1) {
+                Shape3D shape = (Shape3D)group.getChild(0);
+                TransparencyAttributes ta = shape.getAppearance().getTransparencyAttributes();
+                ta.setTransparency(link_transparency);
+            }
         }
     }
 
@@ -775,9 +749,12 @@ public abstract class NetworkPanel3DBase extends JPanel {
      * すべての通常リンクの幅を link_width 値で更新する.
      */
     public void updateLinkWidth() {
-        for (Link3DProperty property : normalLinks) {
-            LineAttributes la = property.shape.getAppearance().getLineAttributes();
-            la.setLineWidth(link_width);
+        for (BranchGroup group : linkGroups.values()) {
+            if (group.numChildren() == 1) {
+                Shape3D shape = (Shape3D)group.getChild(0);
+                LineAttributes la = shape.getAppearance().getLineAttributes();
+                la.setLineWidth(link_width);
+            }
         }
     }
 
@@ -847,7 +824,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
             structure_group = null;
             structure_group = new BranchGroup();
         }
-        normalLinks = new ArrayList<Link3DProperty>();
         path_appearance = createPathAppearance();
 
         // tkokada polygon
@@ -880,7 +856,8 @@ public abstract class NetworkPanel3DBase extends JPanel {
                 continue;
             }
 
-            TransformGroup linkgroup = new TransformGroup();
+            BranchGroup linkgroup = new BranchGroup();
+            linkgroup.setCapability(BranchGroup.ALLOW_DETACH);
             LinkAppearance linkAppearance = getLinkAppearance(link);
             if (linkAppearance != null) {
                 Shape3D[] shapes = createLinkShapes(link, linkAppearance);
@@ -892,6 +869,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
                 linkgroup.addChild(shape);
                 canvasobj_to_obnode.put(shape, link);
             }
+            linkGroups.put(link, linkgroup);
             map_objects.addChild(linkgroup);
         }
 
@@ -1034,8 +1012,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
         Shape3D shape = new Shape3D(geometory, path_appearance);
         shape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
-
-        normalLinks.add(new Link3DProperty(link, shape, color));
         return shape;
     }
 
@@ -1096,25 +1072,38 @@ public abstract class NetworkPanel3DBase extends JPanel {
         return shapes;
     }
 
-    protected void setup_nodes(TransformGroup objects) {
+    protected void setup_nodes() {
         for (MapNode node : nodes) {
             NodeAppearance nodeAppearance = getNodeAppearance(node);
             if (nodeAppearance != null) {
-                Point2D pos = node.getAbsoluteCoordinates();
-                double x = pos.getX();
-                double y = pos.getY();
-                double z = node.getHeight() / ((MapPartGroup)node.getParent()).getScale();
-
-                Transform3D trans = new Transform3D();
-                trans.setTranslation(new Vector3d(x, y, z));
-
-                TransformGroup node_group = new TransformGroup(trans);
-                // ※API ドキュメントでは Sphere(float radius, Appearance ap) となっているが、実際には直径として扱われる
-                node_group.addChild(new Sphere((float)nodeAppearance.diameter, nodeAppearance.appearance));
-
-                objects.addChild(node_group);
+                BranchGroup nodeGroup = createNodeGroup(node);
+                map_objects.addChild(nodeGroup);
+                displayedNodeGroups.put(node, nodeGroup);
             }
         }
+    }
+
+    /**
+     * ノード表示用の3Dオブジェクトを生成する.
+     */
+    public BranchGroup createNodeGroup(MapNode node) {
+        Point2D pos = node.getAbsoluteCoordinates();
+        double x = pos.getX();
+        double y = pos.getY();
+        double z = node.getHeight() / ((MapPartGroup)node.getParent()).getScale();
+
+        Transform3D trans = new Transform3D();
+        trans.setTranslation(new Vector3d(x, y, z));
+
+        TransformGroup group = new TransformGroup(trans);
+        NodeAppearance nodeAppearance = getNodeAppearance(node);
+        // ※API ドキュメントでは Sphere(float radius, Appearance ap) となっているが、実際には直径として扱われる
+        group.addChild(new Sphere((float)nodeAppearance.diameter, nodeAppearance.appearance));
+
+        BranchGroup nodeGroup = new BranchGroup();
+        nodeGroup.setCapability(BranchGroup.ALLOW_DETACH);
+        nodeGroup.addChild(group);
+        return nodeGroup;
     }
 
     /**

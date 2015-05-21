@@ -967,8 +967,12 @@ public class MapLink extends OBMapPart {
      */
     @Override
     public void allTagsClear() {
+        boolean tagsIsEmpty = tags.isEmpty();
         super.allTagsClear() ;
         clearCacheInNodes() ;
+        if (! tagsIsEmpty && networkMap != null) {
+            networkMap.getNotifier().linkTagRemoved(this);
+        }
     }
 
     /**
@@ -978,8 +982,12 @@ public class MapLink extends OBMapPart {
     @Override
     public boolean addTag(String _tag) {
         boolean result = super.addTag(_tag) ;
-        if(result) 
+        if (result) {
             clearCacheInNodes() ;
+            if (networkMap != null) {
+                networkMap.getNotifier().linkTagAdded(this, _tag);
+            }
+        }
         return result ;
     }
 
@@ -989,8 +997,12 @@ public class MapLink extends OBMapPart {
      */
     @Override
     public void removeTag(String _tag) {
+        int tagsSize = tags.size();
         super.removeTag(_tag) ;
         clearCacheInNodes() ;
+        if (networkMap != null && tags.size() < tagsSize) {
+            networkMap.getNotifier().linkTagRemoved(this);
+        }
     }
 
     /**

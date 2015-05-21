@@ -5,6 +5,8 @@ import nodagumi.ananPJ.Simulator.Pollution;
 
 // 非蓄積型(洪水等)
 public class NonAccumulatedPollution extends Pollution {
+    private int lastTriageLevel = 0;    // 更新チェック用
+
     public NonAccumulatedPollution() {}
 
     public void expose(AgentBase agent, double pollutionLevel) {
@@ -16,6 +18,12 @@ public class NonAccumulatedPollution extends Pollution {
         // if (getTriage(agent) != 0) {
         //     agent.setGoal("EMERGENCY");
         // }
+
+        int triageLevel = getTriage(agent);
+        if (triageLevel != lastTriageLevel) {
+            agent.getNetworkMap().getNotifier().agentMoved(agent);
+            lastTriageLevel = triageLevel;
+        }
     }
 
     /* effect of flood, this damage does not increase */

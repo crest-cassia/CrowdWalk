@@ -21,6 +21,8 @@ public class AccumulatedPollution extends Pollution {
     // 最低刺激
     public static final double IRRITANT_LEVEL = 1.3;
 
+    private int lastTriageLevel = 0;    // 更新チェック用
+
     public AccumulatedPollution() {}
 
     public void expose(AgentBase agent, double pollutionLevel) {
@@ -29,8 +31,13 @@ public class AccumulatedPollution extends Pollution {
             agent.accumulatedExposureAmount += pollutionLevel;
         }
 
-        if (getTriage(agent) != 0) { 
+        int triageLevel = getTriage(agent);
+        if (triageLevel != 0) {
 	    agent.setGoal(SpecialTerm.Emergency) ;
+        }
+        if (triageLevel != lastTriageLevel) {
+            agent.getNetworkMap().getNotifier().agentMoved(agent);
+            lastTriageLevel = triageLevel;
         }
     }
 

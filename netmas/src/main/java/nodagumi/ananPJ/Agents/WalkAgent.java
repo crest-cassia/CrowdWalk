@@ -151,6 +151,8 @@ public class WalkAgent extends AgentBase {
      */
     boolean update_swing_flag = true;//false;
 
+    private double lastSpeed = 0.0;     // 更新チェック用
+
     //============================================================
     /**
      * 速度モデル
@@ -675,6 +677,13 @@ public class WalkAgent extends AgentBase {
         }
 
         pollution.effect(this);
+
+        if (networkMap != null && speed != lastSpeed) {
+            if (! isEvacuated()) {
+                networkMap.getNotifier().agentSpeedChanged(this);
+            }
+            lastSpeed = speed;
+        }
     }
 
     //------------------------------------------------------------

@@ -33,6 +33,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
+import nodagumi.ananPJ.NetworkParts.NetworkMapPartsNotifier;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
 import nodagumi.ananPJ.NetworkParts.Link.Lift;
@@ -88,6 +89,7 @@ public class NetworkMap extends NetworkMapBase {
 
     private boolean hasDisplay = true;
     private Random random = null;
+    private NetworkMapPartsNotifier notifier;
 
     /* undo related stuff */
     class UndoInformation {
@@ -133,6 +135,7 @@ public class NetworkMap extends NetworkMapBase {
 		addObject(id, (OBNode)root);
 
         setRoot((DefaultMutableTreeNode)root);
+        notifier = new NetworkMapPartsNotifier(this);
     }
 
     public NetworkMap(Random _random) {
@@ -144,6 +147,7 @@ public class NetworkMap extends NetworkMapBase {
         addObject(id, (OBNode)root);
 
         setRoot((DefaultMutableTreeNode)root);
+        notifier = new NetworkMapPartsNotifier(this);
     }
 
     public NetworkMap(Random _random, boolean _hasDisplay) {
@@ -160,6 +164,18 @@ public class NetworkMap extends NetworkMapBase {
 		addObject(id, (OBNode)root);
 
         setRoot((DefaultMutableTreeNode)root);
+        notifier = new NetworkMapPartsNotifier(this);
+    }
+
+    /**
+     * IDテーブルへのNetworkParts(OBNode)の登録
+     * @param id : part の id.
+     * @param part : 登録するpart.
+     */
+    @Override
+    public void addObject(int id, OBNode part) {
+        super.addObject(id, part);
+        part.setNetworkMap(this);
     }
 
     //------------------------------------------------------------
@@ -239,12 +255,14 @@ public class NetworkMap extends NetworkMapBase {
             clearSymlinks(node);
         }
 
+        boolean linkRemoved = false;
         switch (type) {
         case NODE:
             nodesCache.remove((MapNode)node);
             break;
         case LINK:
             linksCache.remove((MapLink)node);
+            linkRemoved = true;
             break;
         case AGENT:
             agentsCache.remove((AgentBase)node);
@@ -265,6 +283,10 @@ public class NetworkMap extends NetworkMapBase {
             undo_list.add(new UndoInformation(parent, node, false));
         }
         removeNodeFromParent(node);
+
+        if (linkRemoved) {
+            notifier.linkRemoved((MapLink)node);
+        }
     }
 
     public MapNode createMapNode(
@@ -702,7 +724,7 @@ public class NetworkMap extends NetworkMapBase {
     
     @SuppressWarnings("unchecked")
     private void setupOthers(OBNode ob_node) {
-		if (OBNode.NType.GROUP == ob_node.getNodeType()) {
+        if (OBNode.NType.GROUP == ob_node.getNodeType()) {
             addObject(ob_node.ID, ob_node);
             for (Enumeration<OBNode> e = ob_node.children(); e.hasMoreElements();) {
                 OBNode child = e.nextElement();
@@ -715,10 +737,11 @@ public class NetworkMap extends NetworkMapBase {
             
             OBNodeSymbolicLink symlink = (OBNodeSymbolicLink)ob_node;
             symlink.setOriginal(original);
+        } else if (ob_node.getNodeType() == OBNode.NType.ROOM){
+            addObject(ob_node.ID, ob_node);
         } else if (ob_node.getNodeType() == OBNode.NType.NODE ||
                 ob_node.getNodeType() == OBNode.NType.LINK ||
-                ob_node.getNodeType() == OBNode.NType.AGENT ||
-                ob_node.getNodeType() == OBNode.NType.ROOM
+                ob_node.getNodeType() == OBNode.NType.AGENT
                 ){
         } else {
             System.err.println("unknown type " + ob_node.getNodeType() + " in setting up network");
@@ -845,6 +868,11 @@ public class NetworkMap extends NetworkMapBase {
         for (AgentBase agent : agentsCache)
             agent.setRandom(_random);
     }
+
+    /**
+     * NetworkMap の構成要素の状態変化を監視・通知するオブジェクトを返す.
+     */
+    public NetworkMapPartsNotifier getNotifier() { return notifier; }
 }
 //;;; Local Variables:
 //;;; mode:java

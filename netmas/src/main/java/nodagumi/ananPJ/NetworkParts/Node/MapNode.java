@@ -313,6 +313,42 @@ public class MapNode extends OBMapPart {
             return hint.distance;
     }
 
+    /**
+     * タグをクリア。
+     */
+    @Override
+    public void allTagsClear() {
+        boolean tagsIsEmpty = tags.isEmpty();
+        super.allTagsClear() ;
+        if (! tagsIsEmpty && networkMap != null) {
+            networkMap.getNotifier().nodeTagRemoved(this);
+        }
+    }
+
+    /**
+     * タグを追加。
+     */
+    @Override
+    public boolean addTag(String _tag) {
+        boolean result = super.addTag(_tag) ;
+        if (result && networkMap != null) {
+            networkMap.getNotifier().nodeTagAdded(this, _tag);
+        }
+        return result ;
+    }
+
+    /**
+     * タグを削除。
+     */
+    @Override
+    public void removeTag(String _tag) {
+        int tagsSize = tags.size();
+        super.removeTag(_tag) ;
+        if (networkMap != null && tags.size() < tagsSize) {
+            networkMap.getNotifier().nodeTagRemoved(this);
+        }
+    }
+
     private Rectangle2D getSquare(double cx, double cy, double l, double scale) {
         return new Rectangle2D.Double(getX() - l / scale,
                 getY() - l / scale,

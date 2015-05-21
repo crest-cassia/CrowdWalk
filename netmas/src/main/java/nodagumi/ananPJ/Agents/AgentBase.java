@@ -658,6 +658,9 @@ implements Comparable<AgentBase> {
             currentPlace.getLink().agentExits(this) ;
             currentPlace.quitLastLink() ;
         }
+        if (networkMap != null) {
+            networkMap.getNotifier().agentEvacuated(this);
+        }
     }
 
     //############################################################

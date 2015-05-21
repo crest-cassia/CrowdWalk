@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.geom.Point2D;
 import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -64,6 +65,7 @@ import org.w3c.dom.Document;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
+import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -142,6 +144,7 @@ public class AgentHandler {
 
     boolean has_display;
     private Random random = null;
+    private NetworkMap networkMap;
 
     // エージェントが存在するリンクのリスト
     private MapLinkTable effectiveLinks = null;
@@ -161,6 +164,7 @@ public class AgentHandler {
         simulator = _simulator;
         has_display = _has_display;
         random = _random;
+        networkMap = (NetworkMap)map;
 
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
 
@@ -295,7 +299,36 @@ public class AgentHandler {
                 continue;
             effectiveLinks.add(agent.getCurrentLink());
         }
+
+        // 位置が変化したエージェントを通知する
+        for (AgentBase agent : agents) {
+            if (agent.isEvacuated())
+                continue;
+            boolean agentMoved = false;
+
+            Point2D currentPosition = agent.getPos();
+            Point2D lastPosition = lastPositions.get(agent);
+            if (lastPosition == null || ! currentPosition.equals(lastPosition)) {
+                lastPositions.put(agent, currentPosition);
+                agentMoved = true;
+            }
+
+            Vector3d currentSwing = agent.getSwing();
+            Vector3d lastSwing = lastSwings.get(agent);
+            if (lastSwing == null || ! currentSwing.equals(lastSwing)) {
+                lastSwings.put(agent, currentSwing);
+                agentMoved = true;
+            }
+
+            if (agentMoved) {
+                networkMap.getNotifier().agentMoved(agent);
+            }
+        }
     }
+
+    // 更新チェック用
+    private HashMap<AgentBase, Point2D> lastPositions = new HashMap<>();
+    private HashMap<AgentBase, Vector3d> lastSwings = new HashMap<>();
 
     public boolean isFinished() {
         /* finish when FinishEvent occurs */
