@@ -21,7 +21,7 @@ public class NonAccumulatedPollution extends Pollution {
 
         int triageLevel = getTriage(agent);
         if (triageLevel != lastTriageLevel) {
-            agent.getNetworkMap().getNotifier().agentMoved(agent);
+            agent.getNetworkMap().getNotifier().agentTriageChanged(agent);
             lastTriageLevel = triageLevel;
         }
     }

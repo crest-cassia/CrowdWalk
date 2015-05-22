@@ -36,7 +36,7 @@ public class AccumulatedPollution extends Pollution {
 	    agent.setGoal(SpecialTerm.Emergency) ;
         }
         if (triageLevel != lastTriageLevel) {
-            agent.getNetworkMap().getNotifier().agentMoved(agent);
+            agent.getNetworkMap().getNotifier().agentTriageChanged(agent);
             lastTriageLevel = triageLevel;
         }
     }
