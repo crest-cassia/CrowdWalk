@@ -36,7 +36,6 @@ import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.NetworkMapPartsNotifier;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
-import nodagumi.ananPJ.NetworkParts.Link.Lift;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.OBNode.NType;
@@ -308,18 +307,6 @@ public class NetworkMap extends NetworkMapBase {
             double _width) {
         int id = assign_new_id();
         MapLink link = new MapLink(id, _from, _to, _length, _width);
-        link.prepareAdd();
-        insertOBNode(parent, link, true);
-        return link;
-    }
-
-    public Lift createLift(MapPartGroup parent,
-            MapNode _from,
-            MapNode _to,
-            double _length,
-            double _width) {
-        int id = assign_new_id();
-        Lift link = new Lift(id, _from, _to, _length, _width);
         link.prepareAdd();
         insertOBNode(parent, link, true);
         return link;

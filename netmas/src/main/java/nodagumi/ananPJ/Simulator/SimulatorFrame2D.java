@@ -17,7 +17,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkParts.Link.Lift;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
@@ -88,19 +87,6 @@ public class SimulatorFrame2D extends JFrame
 		    		final int y = (int)((maxHeight - height) * heightRatio) + 62;
 		    		
 		    		g.fillOval(x, y, 3, 3);
-		    	}
-		    	/* draw lifts */
-		    	Lift.LiftManager lm = Lift.LiftManager.getInstance();
-		    	for (String shaftKey : lm.keySet()) {
-		    		Lift.Shaft shaft = lm.get(shaftKey);
-		    		final Point2D pos = shaft.get(0).getFrom().getAbsoluteCoordinates();
-		    		final int x = (int)((pos.getY() - minY) * widthRatio) + 820; 
-		    		final double sh = shaft.get(shaft.size() - 1).getFrom().getHeight();
-		    		final int sy = (int)((maxHeight - sh) * heightRatio) + 62;
-		    		final double eh = shaft.get(0).getTo().getHeight();
-		    		final int ey = (int)((maxHeight - eh) * heightRatio) + 62;
-		    		g.setColor(Color.YELLOW);
-		    		g.drawLine(x, sy, x, ey);
 		    	}
 		    	
 	    		g.setColor(Color.BLACK);

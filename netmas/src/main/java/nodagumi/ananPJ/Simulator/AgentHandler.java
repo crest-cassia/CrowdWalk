@@ -119,8 +119,6 @@ public class AgentHandler {
     private double totalDamage = 0.0;
     private double maxDamage = 0.0;
     private double averageSpeed = 0.0;
-    private int evacuatedUsedLiftAgentCount = 0;
-    private int evacuatedNoLiftAgentCount = 0;
     private int maxAgentCount = 0;
     private boolean isAllAgentSpeedZeroBreak = false;
     private boolean isAllAgentSpeedZero = false;
@@ -595,8 +593,6 @@ public class AgentHandler {
         totalDamage = 0.0;
         maxDamage = 0.0;
         evacuatedAgentCount = 0;
-        evacuatedUsedLiftAgentCount = 0;
-        evacuatedNoLiftAgentCount = 0;
 
         for (final AgentBase agent : agents) {
             if (agent.isEvacuated()) {
@@ -628,24 +624,10 @@ public class AgentHandler {
         }
     }
 
-    /* Accessors
-     */
-    public enum EvacuationType {
-        ALL, USED_LIFT, NO_LIFT
-    };
-
-    public int getEvacuated(EvacuationType t) {
-        switch (t) {
-        case ALL:
-            return evacuatedAgentCount;
-        case USED_LIFT:
-            return evacuatedUsedLiftAgentCount;
-        case NO_LIFT:
-            return evacuatedNoLiftAgentCount;
-        default:
-            return 0;
-        }
+    public int getEvacuatedCount() {
+        return evacuatedAgentCount;
     }
+
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
         for (AgentBase agent : agents) {

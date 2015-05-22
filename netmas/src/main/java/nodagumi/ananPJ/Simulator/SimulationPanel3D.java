@@ -266,7 +266,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
     JScrollBar agent_size_control;
     JLabel agent_size_value;
 
-    //Color3f agent_color = GREEN;
     Color3f agent_color = Colors.DEFAULT_AGENT_COLOR;
 
     JLabel simulation_status;
@@ -310,20 +309,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
         menu_view.add(menu_item_agent_color_speed);
 
         menu_view.add("-");
-        MenuItem item = new MenuItem("Change agent color");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { change_agent_color(); }
-        });
-        menu_view.add(item);
-        item = new MenuItem("Change link color");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { change_link_color(); }
-        });
-        menu_view.add(item);
         
         Menu menu_pollution_color = new Menu("Change pollution color settings");
         menu_view.add(menu_pollution_color);
-        item = new MenuItem("None");
+        MenuItem item = new MenuItem("None");
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 show_gas = gas_display.NONE;
@@ -899,24 +888,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         }
     }
 
-    //private void change_agent_color() {
-    public void change_agent_color() {
-        Color color = JColorChooser.showDialog(this, "Select agent color",
-                agent_color.get());
-        if (color == null) return;
-        agent_color = new Color3f(color);
-        repaint();
-    }
-
-    //private void change_link_color() {
-    public void change_link_color() {
-        Color color = JColorChooser.showDialog(this, "Select link color",
-                link_color.get());
-        if (color == null) return;
-        link_color = new Color3f(color);
-        repaint();
-    }
-    
     /* making objects */
     protected BranchGroup simulation_map_objects;
     private BoundingSphere bounds = new BoundingSphere(new Point3d(), 200000.0);

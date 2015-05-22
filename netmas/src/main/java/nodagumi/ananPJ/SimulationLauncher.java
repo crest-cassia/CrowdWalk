@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import nodagumi.ananPJ.Simulator.AgentHandler;
-import nodagumi.ananPJ.Simulator.DumpState;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
@@ -99,9 +98,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
         run_simulation = new Runnable() {
             public void run() {
                 while(!finished && run_thread) {
-                    dump_state.preUpdate();
                     finished = simulator.updateEveryTick();
-                    dump_state.postUpdate();
                     boolean isTimezero = false;
                     if (simulator.getSecond() == 0)
                         isTimezero = true;
@@ -177,9 +174,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     @Override
     public void step() {
         synchronized (run_thread) {
-            dump_state.preUpdate();
             finished = simulator.updateEveryTick();
-            dump_state.postUpdate();
             boolean isTimezero = false;
             if (simulator.getSecond() == 0)
                 isTimezero = true;
@@ -204,7 +199,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     protected transient SimulationPanel3D panel = null;
     protected transient JFrame simulation_frame = null;
-    protected transient DumpState dump_state = null;
 
     @Override
     public SimulationPanel3D setupFrame(final EvacuationSimulator simulator) {
@@ -235,11 +229,8 @@ public class SimulationLauncher extends BasicSimulationLauncher
         JTabbedPane tabs = new JTabbedPane();
         simulation_frame.add(tabs, BorderLayout.EAST);
 
-        dump_state = new DumpState(simulator);
-
         tabs.add(simulator.getAgentHandler().getControlPanel());
         tabs.add(panel.getControlPanel());
-        tabs.add(dump_state.getDumpPanel());
         simulation_frame.setMenuBar(panel.getMenuBar());
         simulation_frame.pack();
         simulation_frame.setVisible(true);

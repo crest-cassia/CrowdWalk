@@ -104,7 +104,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
     /* flags to control drawing */
     protected float link_transparency = 0.5f;
 
-    static protected Color3f link_color = Colors.WHITE;
     protected String screenshotDir = "screenshots";
     protected String screenshotImageType = "png";
     protected boolean show_logo = false;
@@ -768,8 +767,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
         } else if (link.getEmergency()) {
             return Colors.GREEN;
         } else if (link.isShutOff()) {
-            return Colors.YELLOW;
-        } else if (link.hasTag("LIFT")) {
             return Colors.YELLOW;
         } else if (link.hasTag("RED")) {
             return Colors.RED;
