@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 /**
  * CrowdWalk の概要.
  *

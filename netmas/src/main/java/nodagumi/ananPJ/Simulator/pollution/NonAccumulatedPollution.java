@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Simulator.pollution;
 
 import nodagumi.ananPJ.Agents.AgentBase;

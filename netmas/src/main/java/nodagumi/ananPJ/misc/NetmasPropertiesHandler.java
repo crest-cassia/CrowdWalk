@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.misc;
 
 import java.io.*;
@@ -421,25 +422,25 @@ import nodagumi.Itk.*;
 public class NetmasPropertiesHandler {
 
     public static final List cuiPropList = Arrays.asList(
-            "debug",
-            "map_file",
-            "pollution_file",
-            "scenario_file",
-            "generation_file",
-            "timer_enable",
-            "timer_file",
-            "interval",
-            "randseed",
-            "speed_model",
-            "time_series_log",
-            "time_series_log_path",
-            "time_series_log_interval",
-            "loop_count",
-            "exit_count",
-	    "all_agent_speed_zero_break",
-	    /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
-	    "queue_order" // "front_first" or "rear_first"
-            );
+                                                         "debug",
+                                                         "map_file",
+                                                         "pollution_file",
+                                                         "scenario_file",
+                                                         "generation_file",
+                                                         "timer_enable",
+                                                         "timer_file",
+                                                         "interval",
+                                                         "randseed",
+                                                         "speed_model",
+                                                         "time_series_log",
+                                                         "time_series_log_path",
+                                                         "time_series_log_interval",
+                                                         "loop_count",
+                                                         "exit_count",
+                                                         "all_agent_speed_zero_break",
+                                                         /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
+                                                         "queue_order" // "front_first" or "rear_first"
+                                                         );
 
     public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file", "node_appearance_file", "fallback_file"};
 
@@ -502,7 +503,7 @@ public class NetmasPropertiesHandler {
      * fallback file を取得
      */
     public String getFallbackPath() {
-	return fallbackPath ;
+        return fallbackPath ;
     }
 
     protected boolean isTimerEnabled = false;
@@ -544,7 +545,7 @@ public class NetmasPropertiesHandler {
         return timeSeriesLogInterval;
     }
 
-    // 
+    //
     protected boolean isDamageSpeedZero = false;
     public boolean getIsDamageSpeedZero() {
         return isDamageSpeedZero;
@@ -578,15 +579,15 @@ public class NetmasPropertiesHandler {
             String path = _propertiescenarioPath.toLowerCase();
             if (path.endsWith(".xml")) {
                 prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
-		Itk.logInfo("Load Properties File (XML)",
-			    _propertiescenarioPath);
+                Itk.logInfo("Load Properties File (XML)",
+                            _propertiescenarioPath);
             } else if (path.endsWith(".json")) {
                 HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiescenarioPath));
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     prop.setProperty(entry.getKey(), entry.getValue().toString());
                 }
-		Itk.logInfo("Load Properties File (JSON)",
-			    _propertiescenarioPath);
+                Itk.logInfo("Load Properties File (JSON)",
+                            _propertiescenarioPath);
             } else {
                 System.err.println("Property file error - 拡張子が不正です: " + _propertiescenarioPath);
                 System.exit(1);
@@ -614,7 +615,7 @@ public class NetmasPropertiesHandler {
             pollutionPath = getStringProperty(prop, "pollution_file");
             generationPath = getStringProperty(prop, "generation_file");
             scenarioPath = getProperty(prop, "scenario_file");
-	    fallbackPath = getProperty(prop, "fallback_file") ;
+            fallbackPath = getProperty(prop, "fallback_file") ;
 
             // timer enabled or not
             isTimerEnabled = getBooleanProperty(prop, "timer_enable");
@@ -627,34 +628,34 @@ public class NetmasPropertiesHandler {
             randseed = getIntegerProperty(prop, "randseed");
             // speed model
             String speedModelString = getStringProperty(prop, "speed_model");
-	    speedModel =
-		(SpeedCalculationModel)
-		AgentGenerationFile.speedModelLexicon.lookUp(speedModelString) ;
-	    if(speedModel == null) {
-		Itk.logInfo("speedModel","use lane model as default.") ;
-		speedModel = SpeedCalculationModel.LaneModel;
-	    }
+            speedModel =
+                (SpeedCalculationModel)
+                AgentGenerationFile.speedModelLexicon.lookUp(speedModelString) ;
+            if(speedModel == null) {
+                Itk.logInfo("speedModel","use lane model as default.") ;
+                speedModel = SpeedCalculationModel.LaneModel;
+            }
             // time series log
             isTimeSeriesLog = getBooleanProperty(prop, "time_series_log");
             if (isTimeSeriesLog) {
                 timeSeriesLogPath = getStringProperty(prop,
-                        "time_series_log_path");
+                                                      "time_series_log_path");
                 timeSeriesLogInterval = getIntegerProperty(prop,
-                        "time_series_log_interval");
+                                                           "time_series_log_interval");
             }
             // the number of agents with damaged speed zero
             isDamageSpeedZero = getBooleanProperty(prop,
                                                    "damage_speed_zero_log");
             if (isDamageSpeedZero) {
                 damageSpeedZeroPath = getStringProperty(prop,
-                        "damage_speed_zero_log_path");
+                                                        "damage_speed_zero_log_path");
             }
             // loop count
             loopCount = getIntegerProperty(prop, "loop_count");
             // exit count
             exitCount = getIntegerProperty(prop, "exit_count");
             isAllAgentSpeedZeroBreak = getBooleanProperty(prop,
-                    "all_agent_speed_zero_break");
+                                                          "all_agent_speed_zero_break");
 
             // 早い内に設定ミスをユーザーに知らせるための検査
             String pollutionType = getString("pollution_type", null);
@@ -665,20 +666,20 @@ public class NetmasPropertiesHandler {
             getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);
 
-	    /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
-	    String queueOrderStr = getProperty(prop, "queue_order") ;
-	    if(queueOrderStr != null) {
-		if(queueOrderStr.equals("front_first")) {
-		    AgentHandler.useFrontFirstOrderQueue(true) ;
-		    Itk.logInfo("use front_first order to sort agent queue.") ;
-		} else if (queueOrderStr.equals("rear_first")) {
-		    AgentHandler.useFrontFirstOrderQueue(false) ;
-		    Itk.logInfo("use rear_first order to sort agent queue.") ;
-		} else {
-		    Itk.logError("unknown queue_order:" + queueOrderStr) ;
-		    Itk.logError_("use default order (rear_first)") ;
-		}
-	    }
+            /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
+            String queueOrderStr = getProperty(prop, "queue_order") ;
+            if(queueOrderStr != null) {
+                if(queueOrderStr.equals("front_first")) {
+                    AgentHandler.useFrontFirstOrderQueue(true) ;
+                    Itk.logInfo("use front_first order to sort agent queue.") ;
+                } else if (queueOrderStr.equals("rear_first")) {
+                    AgentHandler.useFrontFirstOrderQueue(false) ;
+                    Itk.logInfo("use rear_first order to sort agent queue.") ;
+                } else {
+                    Itk.logError("unknown queue_order:" + queueOrderStr) ;
+                    Itk.logError_("use default order (rear_first)") ;
+                }
+            }
         } catch (IOException ioe) {
             ioe.printStackTrace();
             System.exit(1);
@@ -689,11 +690,11 @@ public class NetmasPropertiesHandler {
         // check property options
         if (mapPath == null) {
             System.err.println("NetmasCuiSimulator: map file is " +
-                    "required.");
+                               "required.");
             return;
         } else if (!((File) new File(mapPath)).exists()) {
             System.err.println("NetmasCuiSimulator: specified map file does " +
-                    "not exist.");
+                               "not exist.");
             return;
         }
     }
@@ -850,8 +851,8 @@ public class NetmasPropertiesHandler {
 
         Options options = new Options();
         options.addOption(OptionBuilder.withArgName("properties_file")
-                .hasArg(true).withDescription("Path of properties file")
-                .isRequired(true).create("p"));
+                          .hasArg(true).withDescription("Path of properties file")
+                          .isRequired(true).create("p"));
 
         CommandLineParser parser = new BasicParser();
         CommandLine cli = null;

@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Editor;
 
 import java.awt.geom.Rectangle2D;

@@ -1,3 +1,4 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Editor.Panel;
 
 import java.awt.BorderLayout;
