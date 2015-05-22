@@ -1,19 +1,8 @@
 package nodagumi.ananPJ;
 
 import java.awt.BorderLayout;
-import java.awt.FileDialog;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -23,7 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import nodagumi.ananPJ.Simulator.AgentHandler;
-import nodagumi.ananPJ.Simulator.DumpState;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
@@ -110,9 +98,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
         run_simulation = new Runnable() {
             public void run() {
                 while(!finished && run_thread) {
-                    dump_state.preUpdate();
                     finished = simulator.updateEveryTick();
-                    dump_state.postUpdate();
                     boolean isTimezero = false;
                     if (simulator.getSecond() == 0)
                         isTimezero = true;
@@ -188,9 +174,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     @Override
     public void step() {
         synchronized (run_thread) {
-            dump_state.preUpdate();
             finished = simulator.updateEveryTick();
-            dump_state.postUpdate();
             boolean isTimezero = false;
             if (simulator.getSecond() == 0)
                 isTimezero = true;
@@ -215,7 +199,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     protected transient SimulationPanel3D panel = null;
     protected transient JFrame simulation_frame = null;
-    protected transient DumpState dump_state = null;
 
     @Override
     public SimulationPanel3D setupFrame(final EvacuationSimulator simulator) {
@@ -245,13 +228,9 @@ public class SimulationLauncher extends BasicSimulationLauncher
         simulation_frame.add(panel, BorderLayout.CENTER);
         JTabbedPane tabs = new JTabbedPane();
         simulation_frame.add(tabs, BorderLayout.EAST);
-        panel.addViewChangeListener(this);
-
-        dump_state = new DumpState(simulator);
 
         tabs.add(simulator.getAgentHandler().getControlPanel());
         tabs.add(panel.getControlPanel());
-        tabs.add(dump_state.getDumpPanel());
         simulation_frame.setMenuBar(panel.getMenuBar());
         simulation_frame.pack();
         simulation_frame.setVisible(true);
@@ -294,11 +273,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     public void initSimulationPanel3D(SimulationPanel3D panel) {
         // NetworkMapEditor で定義する
-    }
-
-    @Override
-    public void notifyViewChange(SimulationPanel3D panel) {
-        /* do nothing */
     }
 
     public boolean getIsAllAgentSpeedZeroBreak() {

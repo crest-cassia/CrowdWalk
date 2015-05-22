@@ -490,10 +490,6 @@ public class EditorFrame
         mi.addActionListener (this);
         actionMenu.add (mi);
 
-        mi = new MenuItem ("Make lifts");
-        mi.addActionListener (this);
-        actionMenu.add (mi);
-
         mi = new MenuItem ("Make stairs");
         mi.addActionListener (this);
         actionMenu.add (mi);
@@ -2234,10 +2230,6 @@ public class EditorFrame
         
         else if (e.getActionCommand() == "Calc link length by distance") {
             calcLinkLength();
-        }
-
-        else if (e.getActionCommand() == "Make lifts") {
-            editor.makeLifts();
         }
 
         else if (e.getActionCommand() == "Make stairs") {

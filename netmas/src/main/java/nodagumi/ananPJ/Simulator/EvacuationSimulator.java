@@ -228,9 +228,23 @@ public class EvacuationSimulator {
             agentHandler.update(map, getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
-                if (screenshotInterval != 0) {
-                    if ((((int)getTickCount()) % screenshotInterval) == 0) {
-                        panel3d.captureNextFrame(String.format("capture%06d", (int)getTickCount()));
+                boolean captureScreenShot = (screenshotInterval != 0);
+                if (captureScreenShot) {
+                    panel3d.setScreenShotFileName(String.format("capture%06d", (int)getTickCount()));
+                }
+                while (! panel3d.notifyViewChange("simulation progressed")) {
+                    synchronized (this) {
+                        try {
+                            wait(10);
+                        } catch (InterruptedException e) {}
+                    }
+                }
+                if (captureScreenShot) {
+                    // スクリーンショットを撮り終えるまで待つ
+                    synchronized (this) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {}
                     }
                 }
                 if (outlogInterval == 0) {
@@ -271,21 +285,6 @@ public class EvacuationSimulator {
             return true;
         } else {
             return false;
-        }
-    }
-
-    public void updateWithSerialize() {
-        synchronized (stop_simulation) {
-            double poltime = getSecond();
-	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
-                    getAgents());
-            // Runtime.getRuntime().gc();
-            agentHandler.update(map, getSecond());
-            if (panel3d != null) {
-                panel3d.updateClock(getSecond());
-                for (AgentBase ea : getAgents())
-                    panel3d.registerAgentOnline(ea);
-            }
         }
     }
 
@@ -622,7 +621,7 @@ public class EvacuationSimulator {
                     new OutputStreamWriter(new FileOutputStream(fileLog,
                             !createfile) , "utf-8")), true);
             writer.write(((int) getSecond()) + "," +
-                    agentHandler.getEvacuated(AgentHandler.EvacuationType.ALL) + "\n");
+                    agentHandler.getEvacuatedCount() + "\n");
             writer.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();

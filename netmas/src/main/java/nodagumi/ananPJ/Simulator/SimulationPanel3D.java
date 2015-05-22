@@ -25,17 +25,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.media.j3d.Appearance;
-import javax.media.j3d.Background;
 import javax.media.j3d.BadTransformException;
-import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
@@ -69,16 +67,18 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.Gui.Colors;
+import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkPanel3D;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
+import nodagumi.ananPJ.NetworkParts.NetworkMapPartsListener;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Link.Lift.LiftManager;
-import nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft;
+import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.Itk.*;
 
 import com.sun.j3d.utils.geometry.Sphere;
 
@@ -99,13 +99,16 @@ public class SimulationPanel3D extends NetworkPanel3D {
     };
     
     public gas_display show_gas = gas_display.ORANGE;
-    protected double pollutionColorSaturation = 0.0;
+    protected double pollutionColorSaturation = 10.0;
 
     private List<AgentBase> agents;
     private ArrayList<PollutedArea> pollutions;
     EvacuationSimulator simulator = null;
     NetworkMap networkMap = null;
     private static String evacuatedCount_string = "";
+    private boolean firstStep = true;
+    private ArrayList<String> screenShotFileNames = new ArrayList();
+    private ArrayList<Double> simulationTimes = new ArrayList();
     
     protected BranchGroup agent_group = null;
     public SimulationPanel3D(EvacuationSimulator _simulator, JFrame _parent) {
@@ -123,14 +126,85 @@ public class SimulationPanel3D extends NetworkPanel3D {
         viewMatrix = new Matrix4d();
         camera_position_list = new ArrayList<CurrentCameraPosition>();
         readProperties();
+
+        addViewChangeListener("simulation progressed", new ViewChangeListener() {
+            public void update() {
+                synchronized (simulationTimes) {
+                    double time = simulationTimes.remove(0);
+                    update_camerawork(time);
+                    update_clockstring(time);
+                }
+                updateLinks();
+                updateNodes();
+                if (firstStep) {
+                    // PollutedArea の初期色は灰色なので全て塗り替える
+                    updateAllPollutedAreas();
+                    firstStep = false;
+                } else {
+                    updatePollutedAreas();
+                }
+                updateAgents();
+                synchronized (screenShotFileNames) {
+                    if (! screenShotFileNames.isEmpty()) {
+                        // Canvas3D の更新が全くないと postSwap() が呼び出されずスクリーンショットが
+                        // 撮れないため、ダミーの更新を入れておく。
+                        synchronized (changedLinks) {
+                            if (changedLinks.isEmpty()) {
+                                changedLinks.add(links.get(0));
+                            }
+                        }
+                        canvas.catpureNextFrame(screenShotFileNames.remove(0));
+                        updateLinks();
+                    }
+                }
+            }
+        });
+        addViewChangeListener("pollution color changed", new ViewChangeListener() {
+            public void update() {
+                updateAllPollutedAreas();
+            }
+        });
+        addViewChangeListener("agent size changed", new ViewChangeListener() {
+            public void update() {
+                updateAllAgents(true, false);
+            }
+        });
+        addViewChangeListener("agent color mode changed", new ViewChangeListener() {
+            public void update() {
+                updateAllAgents(false, true);
+            }
+        });
+        addViewChangeListener("link removed", new ViewChangeListener() {
+            public void update() {
+                synchronized (simulator) {
+                    synchronized (removedLinks) {
+                        for (MapLink link : removedLinks) {
+                            BranchGroup linkgroup = linkGroups.get(link);
+                            ((TransformGroup)linkgroup.getParent()).removeChild(linkgroup);
+                            linkGroups.remove(link);
+                        }
+                        removedLinks.clear();
+                    }
+                    simulator.recalculatePaths();
+                }
+            }
+        });
+        addNetworkMapPartsListener();
+    }
+
+    public void screenShotCaptured() {
+        synchronized (simulator) {
+            simulator.notify();
+        }
     }
 
     public void readProperties() {
         NetmasPropertiesHandler properties = simulator.getProperties();
         if (properties != null) {
             try {
-				show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE", gas_display.getNames())) ;
-                pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
+                show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE",
+                            gas_display.getNames()).toUpperCase()) ;
+                pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 10.0);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -162,17 +236,18 @@ public class SimulationPanel3D extends NetworkPanel3D {
     }
 
     public void updateClock(double time) {
-        /* put some weight */
-        try {
-            while (canvas.hasFrameToCapture()) {
-                Thread.sleep(100);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        synchronized (simulationTimes) {
+            simulationTimes.add(new Double(time));
         }
+    }
 
-        update_camerawork(time);
-        update_clockstring(time);
+    /**
+     * スクリーンショット用のファイル名をセットする.
+     */
+    public void setScreenShotFileName(String filename) {
+        synchronized (screenShotFileNames) {
+            screenShotFileNames.add(filename);
+        }
     }
 
     /* control view */
@@ -191,7 +266,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
     JScrollBar agent_size_control;
     JLabel agent_size_value;
 
-    //Color3f agent_color = GREEN;
     Color3f agent_color = Colors.DEFAULT_AGENT_COLOR;
 
     JLabel simulation_status;
@@ -208,6 +282,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     Transform3D viewTrans3D = null;
     Matrix4d viewMatrix = null;
     ArrayList<CurrentCameraPosition> camera_position_list = null; 
+    private boolean forceUpdateCamerawork = true;
 
     JCheckBox debug_mode_cb = null;
     JCheckBox hide_normallink_cb = null;
@@ -228,47 +303,53 @@ public class SimulationPanel3D extends NetworkPanel3D {
         menu_item_agent_color_speed.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 change_agent_color_depending_on_speed_cb.setSelected(menu_item_agent_color_speed.getState());
+                notifyViewChange("agent color mode changed");
             }
         });
         menu_view.add(menu_item_agent_color_speed);
 
         menu_view.add("-");
-        MenuItem item = new MenuItem("Change agent color");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { change_agent_color(); }
-        });
-        menu_view.add(item);
-        item = new MenuItem("Change link color");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { change_link_color(); }
-        });
-        menu_view.add(item);
         
         Menu menu_pollution_color = new Menu("Change pollution color settings");
         menu_view.add(menu_pollution_color);
-        item = new MenuItem("None");
+        MenuItem item = new MenuItem("None");
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { show_gas = gas_display.NONE; }
+            public void actionPerformed(ActionEvent e) {
+                show_gas = gas_display.NONE;
+                notifyViewChange("pollution color changed");
+            }
         });
         menu_pollution_color.add(item);
         item = new MenuItem("HSV");
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { show_gas = gas_display.HSV; }
+            public void actionPerformed(ActionEvent e) {
+                show_gas = gas_display.HSV;
+                notifyViewChange("pollution color changed");
+            }
         });
         menu_pollution_color.add(item);
         item = new MenuItem("Red");
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { show_gas = gas_display.RED; }
+            public void actionPerformed(ActionEvent e) {
+                show_gas = gas_display.RED;
+                notifyViewChange("pollution color changed");
+            }
         });
         menu_pollution_color.add(item);
         item = new MenuItem("Blue");
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { show_gas = gas_display.BLUE; }
+            public void actionPerformed(ActionEvent e) {
+                show_gas = gas_display.BLUE;
+                notifyViewChange("pollution color changed");
+            }
         });
         menu_pollution_color.add(item);
         item = new MenuItem("Orange");
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { show_gas = gas_display.ORANGE; }
+            public void actionPerformed(ActionEvent e) {
+                show_gas = gas_display.ORANGE;
+                notifyViewChange("pollution color changed");
+            }
         });
         menu_pollution_color.add(item);
 
@@ -356,7 +437,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 1, 1, 500);
     
         vertical_zoom_control.addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {change_vertical_zoom();}
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                change_vertical_zoom();
+                notifyViewChange("agent size changed");
+            }
         });
         vertical_zoom_control.setPreferredSize(new Dimension(200, 20));
         c = new GridBagConstraints();
@@ -389,7 +473,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 (int)(agent_size * 10), 1, 1, 100);
         agent_size_control.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
-                change_agent_size();}
+                change_agent_size();
+                notifyViewChange("agent size changed");
+            }
         });
         agent_size_control.setPreferredSize(new Dimension(200, 20));
         c = new GridBagConstraints();
@@ -454,6 +540,16 @@ public class SimulationPanel3D extends NetworkPanel3D {
         JPanel camerawork_replay = new JPanel();
         camerawork_replay.setLayout(new BoxLayout(camerawork_replay, BoxLayout.Y_AXIS));
         replay_recorded_camera_position = new JCheckBox("Replay");
+        replay_recorded_camera_position.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (replay_recorded_camera_position.isSelected()) {
+                    setForceUpdateCamerawork(true);
+                    setViewpointChangeInhibited(true);
+                } else {
+                    setViewpointChangeInhibited(false);
+                }
+            }
+        });
         camerawork_replay.add(replay_recorded_camera_position);
 
         layout = new FlowLayout(FlowLayout.LEFT);
@@ -512,7 +608,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 } else {
                     link_transparency = 0.5f;
                 }
-                link_transparency_changed_flag = true;
+                notifyViewChange("link transparency changed");
             }
         });
         checkbox_panel.add(hide_normallink_cb);
@@ -541,6 +637,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         change_agent_color_depending_on_speed_cb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 menu_item_agent_color_speed.setState(change_agent_color_depending_on_speed_cb.isSelected());
+                notifyViewChange("agent color mode changed");
             }
         });
         checkbox_panel.add(change_agent_color_depending_on_speed_cb);
@@ -791,24 +888,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         }
     }
 
-    //private void change_agent_color() {
-    public void change_agent_color() {
-        Color color = JColorChooser.showDialog(this, "Select agent color",
-                agent_color.get());
-        if (color == null) return;
-        agent_color = new Color3f(color);
-        repaint();
-    }
-
-    //private void change_link_color() {
-    public void change_link_color() {
-        Color color = JColorChooser.showDialog(this, "Select link color",
-                link_color.get());
-        if (color == null) return;
-        link_color = new Color3f(color);
-        repaint();
-    }
-    
     /* making objects */
     protected BranchGroup simulation_map_objects;
     private BoundingSphere bounds = new BoundingSphere(new Point3d(), 200000.0);
@@ -837,67 +916,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
     public void group_from_agent(AgentBase agent) {
         if (agent.isEvacuated())
             return;
-        /* position */
-        Point2D pos = agent.getPos();
-        Vector3d swing = agent.getSwing();
-        double height = agent.getHeight() /
-            ((MapPartGroup)(agent.getCurrentLink()).getParent()).getScale();
-
-        TransformGroup agent_transforms =
-            createTransformGroup(pos.getX() + swing.getX(),
-                    pos.getY() + swing.getY(),
-                    height + swing.getZ());
-
-        /* appearance */
-        Appearance app = new Appearance();
-        //app.setColoringAttributes(new ColoringAttributes(Colors.WHITE,
-        app.setColoringAttributes(new ColoringAttributes(Colors.GREEN,
-                    ColoringAttributes.FASTEST));
-        app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        TransparencyAttributes ta = new TransparencyAttributes(
-                TransparencyAttributes.NICEST, agent_transparency);
-        ta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
-        app.setTransparencyAttributes(ta);
-
-        Sphere sphere = new Sphere((float)(2), app);
-
-        agent_transforms.addChild(sphere);
-        /* color: tkokada */
-        // Background background = new Background(new Color3f(1.0f, 1.0f, 1.0f));
-        // background.setApplicationBounds(bounds);
-
-        /* handling */
-        BranchGroup bgroup = new BranchGroup();
-        bgroup.setCapability(BranchGroup.ALLOW_DETACH);
-        bgroup.addChild(agent_transforms);
-        UpdateAgent tb = new UpdateAgent(agent, agent_transforms, bgroup, app);
-        tb.setSchedulingBounds(bounds);
-        agent_transforms.addChild(tb);
-        agent_group.addChild(bgroup);
-    }
-
-    //private TransformGroup groupFromPollution(PollutedArea pollution) {
-    public TransformGroup groupFromPollution(PollutedArea pollution) {
-        Appearance app = new Appearance();
-        app.setColoringAttributes(new ColoringAttributes(0.2f, 0.2f, 0.2f, ColoringAttributes.SHADE_FLAT));
-        app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        app.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
-        TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.5f);
-        app.setTransparencyAttributes(ta);
-
-        RenderingAttributes rattr = new RenderingAttributes();
-        rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_VALUE_WRITE);
-        rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_FUNCTION_WRITE); 
-        rattr.setCapability(RenderingAttributes.ALLOW_DEPTH_ENABLE_READ);
-        app.setRenderingAttributes(rattr);
-
-        TransformGroup pollutionTransforms = pollution.get3DShape(app);
-        UpdatePollution tb = new UpdatePollution(pollution,
-                pollutionTransforms, app);
-        tb.setSchedulingBounds(bounds);
-        pollutionTransforms.addChild(tb);
-
-        return pollutionTransforms;
+        Agent3D agent3d = new Agent3D(agent);
+        agent_group.addChild(agent3d.getBranchGroup());
+        displayedAgents.put(agent, agent3d);
     }
 
     /* used when registering agent while running simulation */
@@ -905,7 +926,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     public void registerAgentOnline(AgentBase agent) {
         agent_count++;
 
-        if (agent_count > MAX_AGENT_COUNT) return;
+        // if (agent_count > MAX_AGENT_COUNT) return;
         group_from_agent(agent);
     }
 
@@ -938,222 +959,447 @@ public class SimulationPanel3D extends NetworkPanel3D {
             group_from_agent(agent);
         }
 
-        if (show_gas != gas_display.NONE) {
-            for (PollutedArea pollution : pollutions) {
-                TransformGroup pollutionTransforms = groupFromPollution(pollution);
-                if (pollutionTransforms == null) continue;
-                simulation_map_objects.addChild(pollutionTransforms);
-            }
-        }
-
-        LiftManager lm = LiftManager.getInstance();
-        for (String key : lm.keySet()) {
-            Shaft shaft = lm.get(key);
-
-            TransformGroup shaftTransforms = new TransformGroup();
-
-            shaftTransforms.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-            Appearance app = new Appearance();
-            app.setColoringAttributes(new ColoringAttributes(1.0f, 1.0f, 0.0f,
-                        ColoringAttributes.FASTEST));
-            Sphere sphere = new Sphere(1f, app);
-            shaftTransforms.addChild(sphere);
-            UpdateShaft tb = new UpdateShaft(shaft, shaftTransforms);
-            tb.setSchedulingBounds(bounds);
-            shaftTransforms.addChild(tb);
-
-            simulation_map_objects.addChild(shaftTransforms);
+        for (PollutedArea pollutedArea : pollutions) {
+            PollutedArea3D pollutedArea3d = new PollutedArea3D(pollutedArea);
+            displayedPollutedAreas.put(pollutedArea, pollutedArea3d);
+            simulation_map_objects.addChild(pollutedArea3d.getTransformGroup());
         }
     }
 
-    class UpdateAgent extends Behavior{
-        WakeupOnElapsedTime won;
-        AgentBase agent;
-        Appearance app;
-        TransformGroup transform_group;
-        BranchGroup branch_group;
+    // 状態が変化したオブジェクトを一時的に保存するバッファ(重複登録を避けるため HashSet を使っている)
+    private HashSet<MapLink> removedLinks = new HashSet();
+    private HashSet<MapLink> changedLinks = new HashSet();
+    private HashSet<MapNode> changedNodes = new HashSet();
+    private HashSet<PollutedArea> changedPollutedAreas = new HashSet();
+    private HashSet<AgentBase> addedAgents = new HashSet();
+    private HashSet<AgentBase> movedAgents = new HashSet();
+    private HashSet<AgentBase> colorChangedAgents = new HashSet();
+    private HashSet<AgentBase> evacuatedAgents = new HashSet();
 
-        public UpdateAgent(AgentBase _agent,
-                TransformGroup _transform_group,
-                BranchGroup _branch_group,
-                Appearance _app){
-            won = new WakeupOnElapsedTime(10);
-            agent = _agent;
-            transform_group = _transform_group;
-            branch_group = _branch_group;
-            app = _app;
-        }
-
-        public void initialize(){
-            wakeupOn(won);
-        }
-
-        @SuppressWarnings("unchecked")
-        public void processStimulus(java.util.Enumeration criteria) {
-            if (agent.isEvacuated()) {
-                branch_group.detach();
-                return;
+    /**
+     * NetworkMap の構成要素の状態変化を監視するリスナを登録する.
+     */
+    private void addNetworkMapPartsListener() {
+        networkMap.getNotifier().addListener(new NetworkMapPartsListener() {
+            /**
+             * リンクが削除された.
+             */
+            public void linkRemoved(MapLink link) {
+                BranchGroup linkgroup = linkGroups.get(link);
+                Shape3D shape = (Shape3D)linkgroup.getChild(0);
+                if (shape != null) {
+                    canvasobj_to_obnode.remove(shape);
+                }
+                synchronized (removedLinks) {
+                    removedLinks.add(link);
+                }
+                notifyViewChange("link removed");
             }
 
-			MapLink current_pathway = (MapLink)agent.getCurrentLink();
-            MapPartGroup group = (MapPartGroup)current_pathway.getParent();
-            if (group == null) {
-                /* the link the agent is on was removed */
-                agent.exposed(10000);
-                return;
-            } 
-            Point2D pos = agent.getPos();
-            double height = agent.getHeight();
-            height /= group.getScale();;
-
-            TransparencyAttributes ta = app.getTransparencyAttributes();
-            ta.setTransparency(agent_transparency);
-
-            /* determine color based on triage */
-            switch (agent.getTriage()) {
-            case 0://GREEN
-            {
-                if (menu_item_agent_color_speed.getState()) {
-					if (false) {
-                        app.setColoringAttributes(new ColoringAttributes(
-                                    Colors.YELLOW, ColoringAttributes.FASTEST));
-                    } else if (agent.getCurrentLink() != null &&
-                            agent.getCurrentLink().getLaneWidth(
-                            agent.getDirection()) == 0) {
-                        app.setColoringAttributes(new ColoringAttributes(
-                                    Colors.LIGHTB, ColoringAttributes.NICEST));
-                    } else {
-                        /*
-                        float f = ((float)(agent.getSpeed())) * 0.31f;
-                        Color c_rgb = new Color(Color.HSBtoRGB(f, 0.8f, 0.8f));
-                        Color3f c = new Color3f(c_rgb);
-                        app.setColoringAttributes(new ColoringAttributes(c,
-                                    ColoringAttributes.FASTEST));
-                        */
-                        app.setColoringAttributes(new ColoringAttributes(
-                                    Colors.speedToColor3f(agent.getSpeed()),
-                                    ColoringAttributes.FASTEST));
-                    }
-                } else if (agent.hasTag("BLUE")){
-                    app.setColoringAttributes(new ColoringAttributes(
-                                Colors.BLUE, ColoringAttributes.FASTEST));
-                } else if (agent.hasTag("APINK")){
-                    app.setColoringAttributes(new ColoringAttributes(
-                                Colors.APINK, ColoringAttributes.FASTEST));
-                } else if (agent.hasTag("YELLOW")){
-                    app.setColoringAttributes(new ColoringAttributes(
-                                Colors.YELLOW, ColoringAttributes.FASTEST));
-                } else {
-                    app.setColoringAttributes(new ColoringAttributes(
-                                agent_color, ColoringAttributes.FASTEST));
+            /**
+             * リンクタグが追加された.
+             */
+            public void linkTagAdded(MapLink link, String tag) {
+                // ※シミュレーション開始後のタグ変化のみ確認できればよいのでここでログ出力している。
+                Itk.logInfo("Link Tag Added", tag);
+                synchronized (changedLinks) {
+                    changedLinks.add(link);
                 }
             }
-            break;
-            case 1://YELLOW -> agent_color
-                app.setColoringAttributes(new ColoringAttributes(
-                            Colors.YELLOW, ColoringAttributes.FASTEST));
-                break;
-            case 2://RED    -> PINK (Any damaged person ) -> Poisonus red
-                app.setColoringAttributes(new ColoringAttributes(
-                            Colors.PRED, ColoringAttributes.FASTEST));
-                break;
-            case 3://PURPLE -> Deeply RED ( Dead )           Poisonus red
-                app.setColoringAttributes(new ColoringAttributes(
-                            Colors.BLACK2, ColoringAttributes.FASTEST));
-                break;
+
+            /**
+             * リンクタグが削除された.
+             */
+            public void linkTagRemoved(MapLink link) {
+                Itk.logInfo("Link Tag Removed");
+                synchronized (changedLinks) {
+                    changedLinks.add(link);
+                }
             }
 
-            /* move a bit right or left */
+            /**
+             * ノードタグが追加された.
+             */
+            public void nodeTagAdded(MapNode node, String tag) {
+                Itk.logInfo("Node Tag Added", tag);
+                synchronized (changedNodes) {
+                    changedNodes.add(node);
+                }
+            }
+
+            /**
+             * ノードタグが削除された.
+             */
+            public void nodeTagRemoved(MapNode node) {
+                Itk.logInfo("Node Tag Removed");
+                synchronized (changedNodes) {
+                    changedNodes.add(node);
+                }
+            }
+
+            /**
+             * Pollution レベルが変化した.
+             */
+            public void pollutionLevelChanged(PollutedArea pollutedArea) {
+                synchronized (changedPollutedAreas) {
+                    changedPollutedAreas.add(pollutedArea);
+                }
+            }
+
+            /**
+             * エージェントが追加された.
+             */
+            public void agentAdded(AgentBase agent) {
+                synchronized (addedAgents) {
+                    addedAgents.add(agent);
+                }
+            }
+
+            /**
+             * エージェントが移動した(swing も含む).
+             */
+            public void agentMoved(AgentBase agent) {
+                synchronized (movedAgents) {
+                    movedAgents.add(agent);
+                }
+            }
+
+            /**
+             * エージェントのスピードが変化した.
+             */
+            public void agentSpeedChanged(AgentBase agent) {
+                synchronized (colorChangedAgents) {
+                    colorChangedAgents.add(agent);
+                }
+            }
+
+            /**
+             * エージェントのトリアージレベルが変化した.
+             */
+            public void agentTriageChanged(AgentBase agent) {
+                synchronized (colorChangedAgents) {
+                    colorChangedAgents.add(agent);
+                }
+            }
+
+            /**
+             * エージェントの避難が完了した.
+             */
+            public void agentEvacuated(AgentBase agent) {
+                synchronized (evacuatedAgents) {
+                    evacuatedAgents.add(agent);
+                }
+            }
+        });
+    }
+
+    private HashMap<PollutedArea, PollutedArea3D> displayedPollutedAreas = new HashMap<>();
+    private HashMap<AgentBase, Agent3D> displayedAgents = new HashMap<>();
+
+    /**
+     * タグが更新されたリンクを再表示する.
+     */
+    public void updateLinks() {
+        synchronized (changedLinks) {
+            for (MapLink link : changedLinks) {
+                for (Map.Entry<Shape3D, OBNode> entry : canvasobj_to_obnode.entrySet()) {
+                    if (entry.getValue() == link) {
+                        // remove shape
+                        canvasobj_to_obnode.remove(entry.getKey());
+                        break;
+                    }
+                }
+
+                BranchGroup linkgroup = linkGroups.get(link);
+                linkgroup.detach();
+                linkgroup = new BranchGroup();
+                linkgroup.setCapability(BranchGroup.ALLOW_DETACH);
+
+                LinkAppearance linkAppearance = getLinkAppearance(link);
+                if (linkAppearance != null) {
+                    Shape3D[] shapes = createLinkShapes(link, linkAppearance);
+                    for (Shape3D shape : shapes) {
+                        linkgroup.addChild(shape);
+                    }
+                } else {
+                    Shape3D shape = createLinkShape(link);
+                    linkgroup.addChild(shape);
+                    canvasobj_to_obnode.put(shape, link);
+                }
+                linkGroups.put(link, linkgroup);
+                map_objects.addChild(linkgroup);
+            }
+            changedLinks.clear();
+        }
+    }
+
+    /**
+     * タグが更新されたノードを再表示する.
+     *
+     * ※NodeAppearance が定義されたタグ付きのノードのみ表示される。
+     */
+    public void updateNodes() {
+        synchronized (changedNodes) {
+            for (MapNode node : changedNodes) {
+                BranchGroup nodeGroup = displayedNodeGroups.get(node);
+                if (nodeGroup != null) {
+                    nodeGroup.detach();
+                }
+                displayedNodeGroups.remove(node);
+
+                NodeAppearance nodeAppearance = getNodeAppearance(node);
+                if (nodeAppearance != null) {
+                    nodeGroup = createNodeGroup(node);
+                    map_objects.addChild(nodeGroup);
+                    displayedNodeGroups.put(node, nodeGroup);
+                }
+            }
+            changedNodes.clear();
+        }
+    }
+
+    /**
+     * Pollution レベルが変化した PollutedArea を再表示する.
+     */
+    public void updatePollutedAreas() {
+        synchronized (changedPollutedAreas) {
+            for (PollutedArea pollutedArea : changedPollutedAreas) {
+                PollutedArea3D pollutedArea3D = displayedPollutedAreas.get(pollutedArea);
+                pollutedArea3D.updateColor();
+            }
+            changedPollutedAreas.clear();
+        }
+    }
+
+    /**
+     * 追加・移動・スピード変化・トリアージレベル変化・避難完了したエージェントの表示を更新する.
+     */
+    public void updateAgents() {
+        // 追加 - エージェントを新規に表示する
+        synchronized (addedAgents) {
+            synchronized (movedAgents) {
+                synchronized (colorChangedAgents) {
+                    for (AgentBase agent : addedAgents) {
+                        Agent3D agent3d = displayedAgents.get(agent);
+                        if (agent3d == null) {
+                            agent3d = new Agent3D(agent);
+                            agent_group.addChild(agent3d.getBranchGroup());
+                            displayedAgents.put(agent, agent3d);
+                            // updatePosition/updateColor する必要はないため対象から外す
+                            movedAgents.remove(agent);
+                            colorChangedAgents.remove(agent);
+                        }
+                    }
+                }
+            }
+            addedAgents.clear();
+        }
+        // 避難完了 - エージェントを表示対象から外す
+        synchronized (evacuatedAgents) {
+            synchronized (movedAgents) {
+                synchronized (colorChangedAgents) {
+                    for (AgentBase agent : evacuatedAgents) {
+                        Agent3D agent3d = displayedAgents.get(agent);
+                        agent3d.detach();
+                        displayedAgents.remove(agent);
+                        // updatePosition/updateColor してはいけないため対象から外す
+                        movedAgents.remove(agent);
+                        colorChangedAgents.remove(agent);
+                    }
+                }
+            }
+            evacuatedAgents.clear();
+        }
+        // 移動 - エージェントの表示位置を更新する
+        synchronized (movedAgents) {
+            for (AgentBase agent : movedAgents) {
+                Agent3D agent3d = displayedAgents.get(agent);
+                agent3d.updatePosition();
+            }
+            movedAgents.clear();
+        }
+        // スピード変化・トリアージレベル変化 - エージェントの表示色を更新する
+        synchronized (colorChangedAgents) {
+            for (AgentBase agent : colorChangedAgents) {
+                Agent3D agent3d = displayedAgents.get(agent);
+                agent3d.updateColor();
+            }
+            colorChangedAgents.clear();
+        }
+    }
+
+    /**
+     * シミュレーション画面上に表示するエージェントの 3D オブジェクト.
+     */
+    private class Agent3D {
+        private AgentBase agent;
+        private Appearance app;
+        private TransformGroup transformGroup;
+        private BranchGroup branchGroup;
+        private Color3f lastColor;
+
+        public Agent3D(AgentBase _agent) {
+            agent = _agent;
+            initialize();
+        }
+
+        public TransformGroup getTransformGroup() { return transformGroup; }
+
+        public BranchGroup getBranchGroup() { return branchGroup; }
+
+        /**
+         * エージェントを新規に表示する.
+         */
+        public void initialize() {
+            /* position */
+            Point2D pos = agent.getPos();
             Vector3d swing = agent.getSwing();
+            MapPartGroup group = (MapPartGroup)(agent.getCurrentLink()).getParent();
+            double height = agent.getHeight() / group.getScale();
+
+            transformGroup = createTransformGroup(pos.getX() + swing.getX(),
+                    pos.getY() + swing.getY(), height + swing.getZ());
+
+            /* appearance */
+            app = new Appearance();
+            app.setColoringAttributes(new ColoringAttributes(agent_color,
+                        ColoringAttributes.FASTEST));
+            lastColor = agent_color;
+            app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
+            TransparencyAttributes ta = new TransparencyAttributes(
+                    TransparencyAttributes.NICEST, agent_transparency);
+            ta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+            app.setTransparencyAttributes(ta);
+
+            Sphere sphere = new Sphere((float)(2), app);
+            transformGroup.addChild(sphere);
+
+            branchGroup = new BranchGroup();
+            branchGroup.setCapability(BranchGroup.ALLOW_DETACH);
+            branchGroup.addChild(transformGroup);
+        }
+
+        /**
+         * エージェントを表示対象から外す.
+         */
+        public void detach() {
+            branchGroup.detach();
+        }
+
+        /**
+         * エージェントの表示位置を更新する.
+         */
+        public void updatePosition() {
+            if (agent.isEvacuated()) {
+                return;
+            }
+            Point2D pos = agent.getPos();
+            Vector3d swing = agent.getSwing();
+            MapPartGroup group = (MapPartGroup)(agent.getCurrentLink()).getParent();
+            double height = agent.getHeight() / group.getScale();
 
             Transform3D trans3d = new Transform3D();
             trans3d.setTranslation(new Vector3d(pos.getX() + swing.getX(),
                     pos.getY() + swing.getY(),
                     height + swing.getZ()));
-            trans3d.setScale(new Vector3d(agent_size,
-                    agent_size,
-                    agent_size / vertical_zoom));
-            try {
-                transform_group.setTransform(trans3d);
-            } catch (BadTransformException e) {
-                if (agent.getCurrentLink() == null) {
-                    System.err.println("agent is not on a position");
-                } else { 
-                    final MapLink l = agent.getCurrentLink();
-                    System.err.println(e.getMessage());
-                    System.err.println(l.getTagString());
-                    System.err.println(" " +
-                            l.getFrom().getAbsoluteCoordinates());
-                    System.err.println(" " +
-                            l.getTo().getAbsoluteCoordinates());
-                    System.err.println(" " + l.length);
-                }
-                System.err.println(pos.getX() + "\t"
-                        + pos.getY() + "\t"
-                        + agent.getHeight() + "\t");
-                agent.dumpResult(System.err);
-            }
-
-            wakeupOn(won);
-        }
-    }
-
-    class UpdateShaft extends Behavior{
-        WakeupOnElapsedTime won;
-        Shaft shaft;
-        TransformGroup transformGroup;
-
-        public UpdateShaft(Shaft _shaft,
-                TransformGroup _transformGroup){
-            won = new WakeupOnElapsedTime(10);
-            shaft = _shaft;
-            transformGroup = _transformGroup;
-        }
-
-        public void initialize(){
-            wakeupOn(won);
-        }
-
-        @SuppressWarnings("unchecked")
-        public void processStimulus(java.util.Enumeration criteria){
-            Point2D pos;
-            double height;
-            pos = shaft.getPos();
-            if (pos == null) return;
-            height = shaft.getHeight();
-
-            Transform3D trans3d = new Transform3D();
-            trans3d.setTranslation(new Vector3d(pos.getX(), pos.getY(), height));
+            trans3d.setScale(new Vector3d(agent_size, agent_size, agent_size / vertical_zoom));
             try {
                 transformGroup.setTransform(trans3d);
             } catch (BadTransformException e) {
-                System.err.println(shaft.getPos());
+                final MapLink l = agent.getCurrentLink();
+                System.err.println(e.getMessage());
+                System.err.println(l.getTagString());
+                System.err.println(" " + l.getFrom().getAbsoluteCoordinates());
+                System.err.println(" " + l.getTo().getAbsoluteCoordinates());
+                System.err.println(" " + l.length);
+                System.err.println(pos.getX() + "\t" + pos.getY() + "\t" + agent.getHeight());
+                agent.dumpResult(System.err);
             }
-            wakeupOn(won);
+        }
+
+        /**
+         * エージェントの表示色を更新する.
+         */
+        public void updateColor() {
+            if (agent.isEvacuated()) {
+                return;
+            }
+            /* determine color based on triage */
+            Color3f color = agent_color;
+            switch (agent.getTriage()) {
+            case 0://GREEN
+                if (menu_item_agent_color_speed.getState()) {
+                    color = Colors.speedToColor3f(agent.getSpeed());
+                } else if (agent.hasTag("BLUE")){
+                    color = Colors.BLUE;
+                } else if (agent.hasTag("APINK")){
+                    color = Colors.APINK;
+                } else if (agent.hasTag("YELLOW")){
+                    color = Colors.YELLOW;
+                }
+                break;
+            case 1://YELLOW -> agent_color
+                color = Colors.YELLOW;
+                break;
+            case 2://RED    -> PINK (Any damaged person ) -> Poisonus red
+                color = Colors.PRED;
+                break;
+            case 3://PURPLE -> Deeply RED ( Dead )           Poisonus red
+                color = Colors.BLACK2;
+                break;
+            }
+            if (! color.equals(lastColor)) {
+                app.setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.FASTEST));
+                lastColor = color;
+            }
         }
     }
 
-    class UpdatePollution extends Behavior{
-        WakeupOnElapsedTime won;
-        PollutedArea pollution;
-        Appearance app;
-        TransformGroup transformGroup;
+    /**
+     * 全エージェントの表示を更新する.
+     */
+    public void updateAllAgents(boolean position, boolean color) {
+        for (Agent3D agent3d : displayedAgents.values()) {
+            if (position) {
+                agent3d.updatePosition();
+            }
+            if (color) {
+                agent3d.updateColor();
+            }
+        }
+    }
 
-        public UpdatePollution(PollutedArea _pollution,
-                TransformGroup _transformGroup,
-                Appearance _app){
-            won = new WakeupOnElapsedTime(10);
-            pollution = _pollution;
-            transformGroup = _transformGroup;
-            app = _app;
+    /**
+     * シミュレーション画面上に表示する PollutedArea の 3D オブジェクト.
+     */
+    private class PollutedArea3D {
+        private PollutedArea pollutedArea;
+        private Appearance app;
+        private TransformGroup transformGroup;
+
+        public PollutedArea3D(PollutedArea _pollutedArea) {
+            pollutedArea = _pollutedArea;
+            initialize();
         }
 
-        public void initialize(){
-            wakeupOn(won);
-        }
+        public TransformGroup getTransformGroup() { return transformGroup; }
 
-        /* When a person immobilize in 20 seconds */
-        static final float MAX_DENSITY = 0.01f;
+        public void initialize() {
+            app = new Appearance();
+            app.setColoringAttributes(new ColoringAttributes(0.2f, 0.2f, 0.2f, ColoringAttributes.SHADE_FLAT));
+            app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
+            app.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+            TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.NICEST, 0.5f);
+            app.setTransparencyAttributes(ta);
+
+            RenderingAttributes rattr = new RenderingAttributes();
+            rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_VALUE_WRITE);
+            rattr.setCapability(RenderingAttributes.ALLOW_ALPHA_TEST_FUNCTION_WRITE);
+            rattr.setCapability(RenderingAttributes.ALLOW_DEPTH_ENABLE_READ);
+            app.setRenderingAttributes(rattr);
+
+            transformGroup = pollutedArea.get3DShape(app);
+        }
 
         private Color3f set_color_red(float density) {
             Color c_rgb = new Color(density, 0.0f, 0.0f);
@@ -1173,78 +1419,35 @@ public class SimulationPanel3D extends NetworkPanel3D {
             Color3f c = new Color3f(c_rgb);
             return c;
         }
+
         private Color3f set_color_orange(float density){
             Color c_rgb = new Color(1.0f,(float)(0.5-density) + 0.5f, 0.0f);
             Color3f c = new Color3f(c_rgb);
             return c;           
         }
+
         private Color3f set_color_none() {
             Color c_rgb = new Color(0.0f, 0.0f, 0.0f);
             Color3f c = new Color3f(c_rgb);
             return c;
         }       
-        @SuppressWarnings("unchecked")
-        public void processStimulus(java.util.Enumeration criteria){
 
-            // float density = (float)pollution.getDensity() / MAX_DENSITY;
+        /**
+         * PollutedArea の現在の状態と表示色に合わせて表示を更新する.
+         */
+        public void updateColor() {
             float density = 0.0f;
-            //System.out.println("Pollution Area ID "+pollution.ID+" density "+density);
+            //System.out.println("Pollution Area ID "+pollutedArea.ID+" density "+density);
             if (pollutionColorSaturation > 0.0) {
-                density = (float)pollution.getDensity() / (float)pollutionColorSaturation;
+                density = (float)pollutedArea.getDensity() / (float)pollutionColorSaturation;
             } else {
                 float maxPollutionLevel = (float)simulator.getMaxPollutionLevel();
                 if (maxPollutionLevel > 0.0) {
-                    density = (float)pollution.getDensity() / (maxPollutionLevel / 2.0f);
+                    density = (float)pollutedArea.getDensity() / (maxPollutionLevel / 2.0f);
                 }
             }
             if (density > 1.0) density = 1.0f;
 
-            /*
-             * 修正2011年9月29日
-             * 有害危険物質の濃度に応じて対象範囲の矩形の色を変更するために
-             * 修正点1の濃度が低い場合の矩形の色の更新処理をスキップする部分を削除します。
-             * また、修正点2における歩行者がいない場合には対象範囲の矩形の色をなくす処理を削除します。
-             *
-             * */
-
-            /* 修正点1
-            if (density < 0.1) {
-                wakeupOn(won);
-                return;
-            }*/
-
-            /* 修正点2
-            Color3f c = null;
-            if(!pollution.getContactOfAgents()){
-                c = set_color_none();
-            } else {
-                switch(show_gas) {
-                case RED:
-                    c = set_color_red(density);
-                    break;
-                case BLUE:
-                    c = set_color_blue(density);
-                    break;
-                case HSV:
-                    c = set_color_hsv(density);
-                    break;
-                case ORANGE:
-                    c = set_color_orange(density);
-                    break;
-                default:
-                    wakeupOn(won);
-                    return;
-                }
-
-                app.setColoringAttributes(new ColoringAttributes(c,
-                        ColoringAttributes.FASTEST));
-                app.setTransparencyAttributes(
-                        new TransparencyAttributes(TransparencyAttributes.NICEST,
-                                1.0f - density / 3.0f));
-            }
-            */
-
-            /*以下は修正点2の修正部分*/
             Color3f c = null;
 
             switch(show_gas) {
@@ -1261,21 +1464,22 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 c = set_color_orange(density);
                 break;
             default:
-                wakeupOn(won);
+                app.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.NICEST, 1.0f));
                 return;
             }
 
-            app.setColoringAttributes(new ColoringAttributes(c,
-                    ColoringAttributes.FASTEST));
-            app.setTransparencyAttributes(
-                    new TransparencyAttributes(TransparencyAttributes.NICEST,
-                            1.0f - density / 1.5f));
-                            //1.0f - density / 3.0f));
-            
-            /*以上は修正点2の修正部分*/
-            
-            wakeupOn(won);
+            app.setColoringAttributes(new ColoringAttributes(c, ColoringAttributes.FASTEST));
+            app.setTransparencyAttributes(new TransparencyAttributes(
+                        TransparencyAttributes.NICEST, 1.0f - density / 1.5f));
+        }
+    }
 
+    /**
+     * 全 PollutedArea の表示を更新する.
+     */
+    public void updateAllPollutedAreas() {
+        for (PollutedArea pollutedArea : pollutions) {
+            displayedPollutedAreas.get(pollutedArea).updateColor();
         }
     }
 
@@ -1297,6 +1501,22 @@ public class SimulationPanel3D extends NetworkPanel3D {
         evacuatedCount_string = evacuatedCount;
     }
 
+    /**
+     * camerawork の更新処理を強制的に実行するかどうかのフラグをセットする.
+     */
+    public synchronized void setForceUpdateCamerawork(boolean b) {
+        forceUpdateCamerawork = b;
+    }
+
+    /**
+     * camerawork の更新処理を強制的に実行するかどうかを返す.
+     *
+     * @return 強制的に実行する場合は true
+     */
+    public synchronized boolean getForceUpdateCamerawork() {
+        return forceUpdateCamerawork;
+    }
+
     protected void update_camerawork(double time) {
         if (replay_recorded_camera_position.isSelected() &&
                 camera_position_list.size() > 0) {
@@ -1311,14 +1531,22 @@ public class SimulationPanel3D extends NetworkPanel3D {
             }
             // tkokada agent size in camera file is ignored.
             if (last_camera == null) {
+                // ※通常ここは通らないので無駄を省く処理は省略する
                 viewTrans3D.set(next_camera.matrix);
                 //agent_size = next_camera.agent_size;
                 vertical_zoom = next_camera.vertical_zoom;
             } else if (next_camera == null) {
+                if (last_camera.time < time && ! getForceUpdateCamerawork()) {
+                    return;
+                }
                 viewTrans3D.set(last_camera.matrix);
                 //agent_size = last_camera.agent_size;
                 vertical_zoom = last_camera.vertical_zoom;
             } else{
+                if (last_camera.vertical_zoom == next_camera.vertical_zoom &&
+                        last_camera.matrix.equals(next_camera.matrix) && ! getForceUpdateCamerawork()) {
+                    return;
+                }
                 double ratio = (time - last_camera.time) /
                     (next_camera.time - last_camera.time);
                 Matrix4d matrix = new Matrix4d(last_camera.matrix);
@@ -1343,56 +1571,44 @@ public class SimulationPanel3D extends NetworkPanel3D {
             matrix.mul(scale_matrix);
             viewTrans3D.set(matrix);
             view_trans.setTransform(viewTrans3D);
+            setForceUpdateCamerawork(false);
         }
     }
 
     MapLink selected_link = null;
-    Shape3D selected_shape = null;
     @Override
-    protected void mouseClickedCallback(MouseEvent e) {
+    protected synchronized void mouseClickedCallback(MouseEvent e) {
         if (selected_link != null && e.getButton() == MouseEvent.BUTTON2) {
             System.out.println("removing " + selected_link.getTagString());
-            synchronized (simulator) {
-                selected_link.prepareRemove();
-                selected_shape.removeAllGeometries();
-                int i = 0;
-                for (; i < link_geoms.size(); i++) {
-                    UpdateLink ul = link_geoms.get(i);
-                    ul.disabled = true;
-                    if (ul.link == selected_link) break;
-                }
-                link_geoms.remove(i);
-                networkMap.removeOBNode((OBNode)selected_link.getParent(), selected_link, false);
-            }
-            simulator.recalculatePaths();
+            selected_link.prepareRemove();
+            networkMap.removeOBNode((OBNode)selected_link.getParent(), selected_link, false);
             selected_link = null;
         }
     }
 
     @Override
-    protected void mouseMovedCallback(MouseEvent e) {
-        // tkokada
-        synchronized(this) {
-            if (selected_link != null) {
-                selected_link.removeTag("SIM_RED");
-            }
+    protected synchronized void mouseMovedCallback(MouseEvent e) {
+        // if (selected_link != null) {
+        //     selected_link.removeTag("SIM_RED");
+        // }
 
-            if (true) {//for mouse only
-                pick_canvas.setShapeLocation(e);
-                PickInfo result = pick_canvas.pickClosest();
-                if (result != null &&
-                        canvasobj_to_obnode.containsKey(result.getNode())) {
-                    selected_shape = (Shape3D) result.getNode();
-                    MapLink link = (MapLink)canvasobj_to_obnode.get(
-                            selected_shape);
+        if (true) {//for mouse only
+            pick_canvas.setShapeLocation(e);
+            PickInfo result = pick_canvas.pickClosest();
+            if (result != null) {
+                Shape3D shape = (Shape3D)result.getNode();
+                MapLink link = (MapLink)canvasobj_to_obnode.get(shape);
+                if (link != null) {
                     selected_link = link;
-                    link.addTag("SIM_RED");
+                    // TODO: 効果が感じられないため無効にする。見直し必要。
+                    // link.addTag("SIM_RED");
                     return;
                 }
             }
-            selected_link = null;
         }
+        selected_link = null;
     }
+
     @Override
     protected Color3f colors_for_link(MapLink link) {
         if (link.hasTag("SIM_RED")) {
@@ -1401,29 +1617,18 @@ public class SimulationPanel3D extends NetworkPanel3D {
         return super.colors_for_link(link);
     }
 
-    /* view change by mouse */
-    @Override
-    protected void view_changed() {
-        notifiyViewChangeListeners();
-    }
-
-    ArrayList<SimulationController> view_change_listeners =
-        new ArrayList<SimulationController>();
-
-    public void addViewChangeListener(SimulationController controller) {
-        view_change_listeners.add(controller);
-    }
-    protected void notifiyViewChangeListeners() {
-        for (SimulationController c : view_change_listeners) {
-            c.notifyViewChange(this);
-        }
-    }
     public void setShowLogo(boolean b) {
         show_logo = b;
     }
     
     public void setReplay(boolean b) {
         replay_recorded_camera_position.setSelected(b);
+        if (b) {
+            setForceUpdateCamerawork(true);
+            setViewpointChangeInhibited(true);
+        } else {
+            setViewpointChangeInhibited(false);
+        }
     }
     
     public void setAgentColorSpeed(boolean b) {

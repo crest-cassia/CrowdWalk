@@ -32,6 +32,8 @@ import javax.vecmath.Vector3f;
 
 public abstract class PollutedArea extends OBNode {
 
+        protected double lastPollutionLevel = 0.0;  // 更新チェック用
+
 	public PollutedArea(int _id) {
 		super(_id);
 	}
@@ -122,6 +124,17 @@ public abstract class PollutedArea extends OBNode {
     	AttributeSetDialog dialog = new AttributeSetDialog(areas);
        dialog.setLocation(x, y);
     	dialog.setVisible(true);
+    }
+
+    @Override
+    public void setUserObject(Object userObject) {
+        super.setUserObject(userObject);
+
+        double pollutionLevel = ((Double)userObject).doubleValue();
+        if (pollutionLevel != lastPollutionLevel) {
+            networkMap.getNotifier().pollutionLevelChanged(this);
+            lastPollutionLevel = pollutionLevel;
+        }
     }
 }
 //;;; Local Variables:
