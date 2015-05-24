@@ -33,7 +33,7 @@ public class PollutedAreaPoint extends PollutedArea {
 	Vector3d point;
 	int roomId;
 	boolean view;
-	public PollutedAreaPoint(int id, int _room_id, Vector3d _point) {
+	public PollutedAreaPoint(String id, int _room_id, Vector3d _point) {
 		super(id);
 		
 		point = _point;

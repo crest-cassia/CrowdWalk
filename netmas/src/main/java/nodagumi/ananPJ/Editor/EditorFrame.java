@@ -842,7 +842,7 @@ public class EditorFrame
             return true;
         }
 
-        final MapNode tmpNode = new MapNode(-1, p, getDefaultHeight());
+        final MapNode tmpNode = new MapNode("-1", p, getDefaultHeight());
         Line2D line = new Line2D.Double (from.getLocalCoordinates(),
                 tmpNode.getLocalCoordinates());
         double lineLength = line.getP1().distance(line.getP2());

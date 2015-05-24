@@ -128,7 +128,7 @@ public class NetworkMap extends NetworkMapBase {
     public NetworkMap() {
 		super() ;
         random = new Random();
-        int id = assign_new_id();
+        String id = assign_new_id();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
 		addObject(id, (OBNode)root);
@@ -140,7 +140,7 @@ public class NetworkMap extends NetworkMapBase {
     public NetworkMap(Random _random) {
 		super() ;
         random = _random;
-        int id = assign_new_id();
+        String id = assign_new_id();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
         addObject(id, (OBNode)root);
@@ -155,7 +155,7 @@ public class NetworkMap extends NetworkMapBase {
     }
 
     /* to restore from DOM */
-    public NetworkMap(int id, Random _random) {
+    public NetworkMap(String id, Random _random) {
 		super();
         random = _random;
         root = new MapPartGroup(id);
@@ -172,33 +172,105 @@ public class NetworkMap extends NetworkMapBase {
      * @param part : 登録するpart.
      */
     @Override
-    public void addObject(int id, OBNode part) {
+    public void addObject(String id, OBNode part) {
         super.addObject(id, part);
         part.setNetworkMap(this);
     }
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * NetworkParts の prefix の規定値
+     */
+    public static String DefaultPartIdPrefix = "_p" ;
+
+    /**
+     * NetworkParts の prefix の規定値
+     */
+    public static String DefaultAgentIdPrefix = "ag" ;
+
+    /**
+     * NetworkParts の id 部の桁数の規定値
+     */
+    public static int DefaultPartIdDigit = 5 ;
+
+    /**
+     * NetworkParts の suffix の規定値
+     */
+    public static String DefaultPartIdSuffix = "" ;
+
+    /**
+     * NetworkParts の id counter
+     */
+    public static int PartIdCounter = 0 ;
 
     //------------------------------------------------------------
     /**
      * ユニークな id の取得
      * @return 新しい id
      */
-    protected int assign_new_id() {
-        int id;
-        do {
-            id = Math.abs(random.nextInt());
-            if (id < 0) { id = -id; }
-        } while (partTable.containsKey(id));
-        return id;
+    protected String assign_new_id() {
+        return assign_new_id(DefaultPartIdPrefix) ;
     }
 
-	private int agentUniqueId = 1000;
-    public int assignUniqueAgentId() {
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @return 新しい id
+     */
+    protected String assign_new_id(String prefix) {
+        return assign_new_id(prefix, DefaultPartIdDigit) ;
+    }
+
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @param digit : id 数値部分の桁数
+     * @return 新しい id
+     */
+    protected String assign_new_id(String prefix, int digit) {
+        return assign_new_id(prefix, digit, DefaultPartIdSuffix) ;
+    }
+
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @param digit : id 数値部分の桁数
+     * @param suffix : id の suffix
+     * @return 新しい id
+     */
+    protected String assign_new_id(String prefix, int digit, String suffix) {
+        String format = prefix + String.format("%%0%dd", digit) + suffix ;
+
         synchronized(this) {
-            agentUniqueId += 1;
+            String id ;
+            do {
+                id = String.format(format, PartIdCounter) ;
+                PartIdCounter++ ;
+            } while(partTable.containsKey(id)) ;
+            return id ;
         }
-        return agentUniqueId;
     }
 
+    //------------------------------------------------------------
+    /**
+     * ユニークなエージェント用 id の取得
+     * @return 新しい id
+     */
+    public String assignUniqueAgentId() {
+        return assignUniqueAgentId(DefaultAgentIdPrefix) ;
+    }
+
+    /**
+     * ユニークなエージェント用 id の取得
+     * @param prefix : id の prefix
+     * @return 新しい id
+     */
+    public String assignUniqueAgentId(String prefix) {
+        return assign_new_id(prefix) ;
+    }
+
+    //------------------------------------------------------------
     private void insertOBNode (OBNode parent,
             OBNode node,
             boolean can_undo) {
@@ -292,7 +364,7 @@ public class NetworkMap extends NetworkMapBase {
             MapPartGroup parent,
             Point2D _coordinates,
             double _height) {
-        int id = assign_new_id();
+        String id = assign_new_id();
         MapNode node = new MapNode(id,
                 _coordinates, _height);
         insertOBNode(parent, node, true);
@@ -305,7 +377,7 @@ public class NetworkMap extends NetworkMapBase {
             MapNode _to,
             double _length,
             double _width) {
-        int id = assign_new_id();
+        String id = assign_new_id();
         MapLink link = new MapLink(id, _from, _to, _length, _width);
         link.prepareAdd();
         insertOBNode(parent, link, true);
@@ -319,8 +391,7 @@ public class NetworkMap extends NetworkMapBase {
     public AgentBase addAgent(MapPartGroup parent, AgentBase agent, 
                               boolean autoID) {
         if (autoID) {
-            // int id = assign_new_id();
-            int id = assignUniqueAgentId();
+            String id = assignUniqueAgentId();
             agent.ID = id;
         }
         addObject(agent.ID, agent);
@@ -335,7 +406,7 @@ public class NetworkMap extends NetworkMapBase {
             double min_height,
             double max_height,
             double angle) {
-        int id = assign_new_id();
+        String id = assign_new_id();
         PollutedArea area = new PollutedAreaRectangle(id,
                 bounds, min_height, max_height, angle);
         insertOBNode(parent, area, true);
@@ -346,7 +417,7 @@ public class NetworkMap extends NetworkMapBase {
             MapPartGroup parent,
             MapNode node,
             int room_id) {
-        int id = assign_new_id();
+        String id = assign_new_id();
         Vector3d point = node.getPoint();
         PollutedArea area = new PollutedAreaPoint(id, room_id, point); 
         insertOBNode(parent, area, true);
@@ -354,7 +425,7 @@ public class NetworkMap extends NetworkMapBase {
     }
 
     public MapPartGroup createGroupNode(MapPartGroup parent){
-        int id = assign_new_id();
+        String id = assign_new_id();
         MapPartGroup group = new MapPartGroup(id);
         insertOBNode(parent, group, true);
         return group; 
@@ -366,7 +437,7 @@ public class NetworkMap extends NetworkMapBase {
 
     public OBNodeSymbolicLink createSymLink(MapPartGroup parent,
             OBNode orig){
-        int id = assign_new_id();
+        String id = assign_new_id();
         OBNodeSymbolicLink symlink = new OBNodeSymbolicLink(id, orig);
         insertOBNode(parent, symlink, true);
         return symlink; 
@@ -680,8 +751,8 @@ public class NetworkMap extends NetworkMapBase {
             linksCache.add(link);
 
             String[] nodes = (String[])ob_node.getUserObject();
-            MapNode from_node = (MapNode)getObject(Integer.parseInt(nodes[0]));
-            MapNode to_node = (MapNode)getObject(Integer.parseInt(nodes[1]));
+            MapNode from_node = (MapNode)getObject(nodes[0]);
+            MapNode to_node = (MapNode)getObject(nodes[1]);
 
             if (from_node == null) {
                 System.err.println(Integer.parseInt("from_node is null " + nodes[0]));
@@ -719,7 +790,7 @@ public class NetworkMap extends NetworkMapBase {
             }
         } else if (ob_node.getNodeType() == OBNode.NType.SYMLINK) {
             addObject(ob_node.ID, ob_node);
-            Integer orig_id = (Integer)ob_node.getUserObject();
+            String orig_id = (String)ob_node.getUserObject();
             OBNode original = (OBNode)getObject(orig_id);
             
             OBNodeSymbolicLink symlink = (OBNodeSymbolicLink)ob_node;

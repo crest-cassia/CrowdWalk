@@ -32,7 +32,7 @@ import com.sun.j3d.utils.geometry.Box;
 
 public class PollutedAreaRectangle extends PollutedArea {
 
-    public PollutedAreaRectangle(int id) {
+    public PollutedAreaRectangle(String id) {
         super(id);
     }
 
@@ -45,7 +45,7 @@ public class PollutedAreaRectangle extends PollutedArea {
 
     public boolean selected;
     public boolean view;
-    public PollutedAreaRectangle(int _id,
+    public PollutedAreaRectangle(String _id,
             Rectangle2D _bounds,
             double _min_height,
             double _max_height,
@@ -109,7 +109,7 @@ public class PollutedAreaRectangle extends PollutedArea {
     protected void getAttributesFromDom(Element element) {
         super.getAttributesFromDom(element);
 
-        ID = Integer.parseInt(element.getAttribute("id"));
+        ID = element.getAttribute("id");
 
         double x1 = Double.parseDouble(element.getAttribute("pWestX"));
         double x2 = Double.parseDouble(element.getAttribute("pEastX"));
@@ -231,7 +231,7 @@ public class PollutedAreaRectangle extends PollutedArea {
     }
 
     public static OBNode fromDom(Element element) {
-        PollutedAreaRectangle room = new PollutedAreaRectangle(0);
+        PollutedAreaRectangle room = new PollutedAreaRectangle("");
         room.getAttributesFromDom(element);
         //System.err.println(room.toString());
         return room;

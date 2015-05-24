@@ -31,7 +31,7 @@ abstract public class PlacedEvent extends EventBase {
      * 場所を指定するタグ
      */
     public Term placeTag = null ;
-    public int placeId = 0 ;
+    public String placeId = "" ;
 
     //----------------------------------------
     /**
@@ -43,7 +43,7 @@ abstract public class PlacedEvent extends EventBase {
 
         placeTag = eventDef.getArgTerm("placeTag") ;
         if(placeTag == null) {
-            placeId = eventDef.getArgInt("placeId") ;
+            placeId = eventDef.getArgString("placeId") ;
         }
     }
 

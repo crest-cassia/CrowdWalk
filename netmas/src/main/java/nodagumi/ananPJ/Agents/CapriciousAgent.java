@@ -83,7 +83,7 @@ public class CapriciousAgent extends NaiveAgent {
     /**
      * constractor。
      */
-    public CapriciousAgent(int _id, Random _random) {
+    public CapriciousAgent(String _id, Random _random) {
         init(_id, _random) ;
     }
 

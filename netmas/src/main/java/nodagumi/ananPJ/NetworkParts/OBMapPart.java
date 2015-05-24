@@ -17,7 +17,7 @@ public abstract class OBMapPart extends OBNode {
 	 */
 	public OBMapPart() {} ;
 
-    public OBMapPart(int _ID){
+    public OBMapPart(String _ID){
 		init(_ID) ;
 	}
 
@@ -25,7 +25,7 @@ public abstract class OBMapPart extends OBNode {
 	 * 初期化。constractorから分離。
 	 */
     @Override
-    public void init(int _ID){
+    public void init(String _ID){
         super.init(_ID);
         this.setAllowsChildren(false);
     }

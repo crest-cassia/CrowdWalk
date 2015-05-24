@@ -74,7 +74,7 @@ public class AwaitAgent extends WalkAgent {
     /**
      * constractor。
      */
-    public AwaitAgent(int _id, Random _random) {
+    public AwaitAgent(String _id, Random _random) {
         init(_id, _random) ;
     }
 
@@ -83,7 +83,7 @@ public class AwaitAgent extends WalkAgent {
      * 初期化。constractorから分離。
      */
     @Override
-    public void init(int _id, Random _random) {
+    public void init(String _id, Random _random) {
         super.init(_id, _random);
     }
 

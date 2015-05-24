@@ -109,7 +109,7 @@ public class MapNode extends OBMapPart {
         return new Point2D.Double(this.getLocalX(),this.getLocalY());
     }
 
-    public MapNode(int _ID,
+    public MapNode(String _ID,
             Point2D _absoluteCoordinates,
             double _height) {
         super(_ID);
@@ -544,7 +544,7 @@ public class MapNode extends OBMapPart {
     }
 
     public static MapNode fromDom(Element element) {
-        int id = Integer.parseInt(element.getAttribute("id"));
+        String id = element.getAttribute("id");
         double x = Double.parseDouble(element.getAttribute("x"));
         double y = Double.parseDouble(element.getAttribute("y"));
         Point2D coordinates = new Point2D.Double(x, y);

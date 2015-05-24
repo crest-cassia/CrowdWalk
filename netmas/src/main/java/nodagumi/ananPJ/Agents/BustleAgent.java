@@ -78,7 +78,7 @@ public class BustleAgent extends NaiveAgent {
     /**
      * constractor。
      */
-    public BustleAgent(int _id, Random _random) {
+    public BustleAgent(String _id, Random _random) {
         init(_id, _random) ;
     }
 

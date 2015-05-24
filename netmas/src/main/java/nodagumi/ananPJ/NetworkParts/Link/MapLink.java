@@ -237,7 +237,7 @@ public class MapLink extends OBMapPart {
     public static final Color LIGHT_BLUE = new Color(0.4f, 0.4f, 1.0f);
 
     /* Constructors */
-    public MapLink(int _id,
+    public MapLink(String _id,
             double _length, double _width) {
         super(_id);
 
@@ -247,7 +247,7 @@ public class MapLink extends OBMapPart {
 
         selected = false;
     }
-    public MapLink(int _id, 
+    public MapLink(String _id, 
             MapNode _from, MapNode _to,
             double _length, double _width
             ) {
@@ -946,7 +946,7 @@ public class MapLink extends OBMapPart {
     }
 
     public static MapLink fromDom(Element element) {
-        int id = Integer.parseInt(element.getAttribute("id"));
+        String id = element.getAttribute("id");
         double length = Double.parseDouble(element.getAttribute("length"));
         double width = Double.parseDouble(element.getAttribute("width"));
         String nodes[] = new String[2];

@@ -630,7 +630,7 @@ public class EvacuationSimulator {
     }
 
     /* when agents goal */
-    private HashMap<Integer, Double> goalTimes = new HashMap<Integer, Double>();
+    private HashMap<String, Double> goalTimes = new HashMap<String, Double>();
     // EXITノード毎の避難完了者数(ログのバッファリング用)
     private ArrayList<String> evacuatedAgents = new ArrayList<String>();
     private MapNodeTable exitNodeList = null;
@@ -641,7 +641,7 @@ public class EvacuationSimulator {
         // Goal log を記憶
         for (AgentBase agent: agents) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
-                goalTimes.put(new Integer(agent.ID), new Double(getSecond()));
+                goalTimes.put(agent.ID, new Double(getSecond()));
             }
         }
 
@@ -663,7 +663,7 @@ public class EvacuationSimulator {
         } else {  // finalize process
             for (AgentBase agent : agents) {
                 if (!agent.isEvacuated()) {
-                    goalTimes.put(new Integer(agent.ID),
+                    goalTimes.put(agent.ID,
                             new Double((getTickCount() + 1) * timeScale));
                 }
             }

@@ -15,11 +15,11 @@ public class OBNodeSymbolicLink extends OBMapPart {
 	
 	private OBNode original = null;
 	
-	public OBNodeSymbolicLink(int _id) {
+	public OBNodeSymbolicLink(String _id) {
 		super(_id);
 	}
 	
-	public OBNodeSymbolicLink(int _id,
+	public OBNodeSymbolicLink(String _id,
 			OBNode _original) {
 		super(_id);
 		original = _original;
@@ -46,8 +46,8 @@ public class OBNodeSymbolicLink extends OBMapPart {
 	@Override
 	public Element toDom(Document dom, String tagname) {
 		Element element = super.toDom(dom, getNodeTypeString());
-		element.setAttribute("id", "" + ID);
-		element.setAttribute("orig", "" + original.ID);
+		element.setAttribute("id", ID);
+		element.setAttribute("orig", original.ID);
 		return element;
 	}
 		
@@ -56,8 +56,8 @@ public class OBNodeSymbolicLink extends OBMapPart {
 	}
 	
 	public static OBNodeSymbolicLink fromDom(Element element) {
-		int id = Integer.parseInt(element.getAttribute("id"));
-		int orig_id = Integer.parseInt(element.getAttribute("orig"));
+		String id = element.getAttribute("id");
+        String orig_id = element.getAttribute("orig");
 		
 		OBNodeSymbolicLink symlink = new OBNodeSymbolicLink(id);
 		symlink.setUserObject(orig_id);

@@ -146,7 +146,7 @@ public class NaiveAgent
     /**
      * constractor。
      */
-    public NaiveAgent(int _id, Random _random) {
+    public NaiveAgent(String _id, Random _random) {
         init(_id, _random) ;
     }
 

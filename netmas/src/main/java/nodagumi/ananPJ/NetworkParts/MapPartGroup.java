@@ -57,7 +57,7 @@ public class MapPartGroup extends OBNode {
     public double r  = 0.0;
 
     /* Constructor */
-    public MapPartGroup(int _ID,
+    public MapPartGroup(String _ID,
             Point2D _pNorthWest,
             Point2D _pSouthEast,
             double _pTheta,
@@ -76,14 +76,14 @@ public class MapPartGroup extends OBNode {
       fromParentCache.rotate(-pTheta);
     }
       
-    public MapPartGroup(int _ID,
+    public MapPartGroup(String _ID,
             Point2D _pNorthWest,
             Point2D _pSouthEast,
             double _pTheta) {
         this(_ID, _pNorthWest, _pSouthEast, _pTheta, null);
     }
     
-    public MapPartGroup(int _ID) {
+    public MapPartGroup(String _ID) {
         this(_ID,
                 new Point2D.Double(5.0, 45.0), /* NW*/
                 new Point2D.Double(600.0, 600.0), /* SE */
@@ -92,7 +92,7 @@ public class MapPartGroup extends OBNode {
     }
 
     private void addAttributesToDom(Element element) {
-        element.setAttribute("id", "" + ID);
+        element.setAttribute("id", ID);
         element.setAttribute("pNorthWestX", "" + pNorthWest.getX());
         element.setAttribute("pNorthWestY", "" + pNorthWest.getY());
         element.setAttribute("pSouthEastX", "" + pSouthEast.getX());
@@ -115,7 +115,7 @@ public class MapPartGroup extends OBNode {
     @Override
     protected void getAttributesFromDom(Element element) {
         super.getAttributesFromDom(element);
-        ID = Integer.parseInt(element.getAttribute("id"));
+        ID = element.getAttribute("id");
         double x = Double.parseDouble(element.getAttribute("pNorthWestX"));
         double y = Double.parseDouble(element.getAttribute("pNorthWestY"));
         pNorthWest = new Point2D.Double(x, y);
@@ -201,7 +201,7 @@ public class MapPartGroup extends OBNode {
     }
 
     public static OBNode fromDom(Element element) {
-        MapPartGroup group = new MapPartGroup(0);
+        MapPartGroup group = new MapPartGroup("");
         group.getAttributesFromDom(element);
         NodeList elm_children = element.getChildNodes();
         for (int i = 0; i < elm_children.getLength(); ++i) {

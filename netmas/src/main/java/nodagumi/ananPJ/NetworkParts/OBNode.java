@@ -52,7 +52,7 @@ import org.w3c.dom.Text;
 public abstract class OBNode extends DefaultMutableTreeNode {
     public enum NType{NODE,LINK,AGENT,GROUP,ROOM,SYMLINK}
 
-    public int ID;
+    public String ID;
     protected ArrayList<String> tags;
     public boolean selected = false;
     protected NetworkMap networkMap;
@@ -67,16 +67,16 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
-    public OBNode() { this(0) ;} ;
+    public OBNode() { this("") ;} ;
 
-    public OBNode(int _ID){
+    public OBNode(String _ID){
         init(_ID) ;
     }
 
     /**
      * 初期化。constractorから分離。
      */
-    public void init(int _ID){
+    public void init(String _ID){
         ID = _ID;
         tags = new ArrayList<String>();
         alertMessageTable = new HashMap<Term, Double>() ;

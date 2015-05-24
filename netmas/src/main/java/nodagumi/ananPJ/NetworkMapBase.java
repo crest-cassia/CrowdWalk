@@ -39,8 +39,8 @@ public class NetworkMapBase extends DefaultTreeModel {
     /**
      * ID から NetworkParts を取り出すための table.
      */
-    protected HashMap<Integer, OBNode> partTable =
-        new HashMap<Integer, OBNode>();
+    protected HashMap<String, OBNode> partTable =
+        new HashMap<String, OBNode>();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -75,7 +75,7 @@ public class NetworkMapBase extends DefaultTreeModel {
      * @param id : part の id.
      * @param part : 登録するpart.
      */
-    public void addObject(int id, OBNode part) {
+    public void addObject(String id, OBNode part) {
         // 重複登録であれば警告
         if(partTable.containsKey(id)) {
             Itk.logWarn("duplicated ID", "id=", id, "part=", part) ;
@@ -89,7 +89,7 @@ public class NetworkMapBase extends DefaultTreeModel {
      * IDテーブルからのNetworkParts(OBNode)の削除
      * @param id : 削除するpart の id.
      */
-    public void removeObject(int id) {
+    public void removeObject(String id) {
         partTable.remove(id) ;
     }
 
@@ -99,7 +99,7 @@ public class NetworkMapBase extends DefaultTreeModel {
      * @param id : 取り出す part の id.
      * @return 取り出した part. もしなければ、null。
      */
-    public OBNode getObject(int id) {
+    public OBNode getObject(String id) {
         return partTable.get(id);
     }
 

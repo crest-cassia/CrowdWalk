@@ -35,7 +35,7 @@ public abstract class PollutedArea extends OBNode {
 
         protected double lastPollutionLevel = 0.0;  // 更新チェック用
 
-	public PollutedArea(int _id) {
+	public PollutedArea(String _id) {
 		super(_id);
 	}
 	
