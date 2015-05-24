@@ -14,6 +14,7 @@ package nodagumi.ananPJ;
 
 import java.util.ArrayList;
 import java.util.HashMap ;
+import java.util.Collection ;
 
 import javax.swing.tree.DefaultTreeModel;
 
@@ -39,7 +40,7 @@ public class NetworkMapBase extends DefaultTreeModel {
     /**
      * ID から NetworkParts を取り出すための table.
      */
-    protected HashMap<String, OBNode> partTable =
+    private HashMap<String, OBNode> partTable =
         new HashMap<String, OBNode>();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -71,13 +72,23 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
+     * IDテーブルのidの重複チェック
+     * @param id : part の id.
+     * @return id がすでに登録されていれば true
+     */
+    public boolean checkObjectId(String id) {
+        return partTable.containsKey(id) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * IDテーブルへのNetworkParts(OBNode)の登録
      * @param id : part の id.
      * @param part : 登録するpart.
      */
     public void addObject(String id, OBNode part) {
         // 重複登録であれば警告
-        if(partTable.containsKey(id)) {
+        if(checkObjectId(id)) {
             Itk.logWarn("duplicated ID", "id=", id, "part=", part) ;
         }
 
@@ -111,6 +122,15 @@ public class NetworkMapBase extends DefaultTreeModel {
      */
     public ArrayList<OBNode> getOBElements() {
         return new ArrayList<OBNode>(partTable.values());
+    }
+
+    //------------------------------------------------------------
+    /**
+     * IDテーブルの中身(NetworkParts)を取り出す。Collectionとして返す。
+     * @return NetworkParts の Collection
+     */
+    public Collection<OBNode> getOBCollection() {
+        return partTable.values() ;
     }
 
     //------------------------------------------------------------

@@ -530,13 +530,13 @@ public class MapNode extends OBMapPart {
     public Element toDom(Document dom, String tagname) {
         Element element = super.toDom(dom, getNodeTypeString());
 
-        element.setAttribute("id", "" + ID);
+        element.setAttribute("id", ID);
         element.setAttribute("x", "" + absolute_coordinates.getX());
         element.setAttribute("y", "" + absolute_coordinates.getY());
         element.setAttribute("height", "" + getHeight());
         for (MapLink link : links) {
             Element link_element = dom.createElement("link");
-            link_element.setAttribute("id", "" + link.ID);
+            link_element.setAttribute("id", link.ID);
             element.appendChild(link_element);
         }
 

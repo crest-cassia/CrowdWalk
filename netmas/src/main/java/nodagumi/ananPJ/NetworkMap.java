@@ -166,8 +166,10 @@ public class NetworkMap extends NetworkMapBase {
         notifier = new NetworkMapPartsNotifier(this);
     }
 
+    //------------------------------------------------------------
     /**
      * IDテーブルへのNetworkParts(OBNode)の登録
+     * NetworkMapBase での処理に加え、part に NetworkMap 自身を登録する。
      * @param id : part の id.
      * @param part : 登録するpart.
      */
@@ -247,7 +249,7 @@ public class NetworkMap extends NetworkMapBase {
             do {
                 id = String.format(format, PartIdCounter) ;
                 PartIdCounter++ ;
-            } while(partTable.containsKey(id)) ;
+            } while(checkObjectId(id)) ;
             return id ;
         }
     }
@@ -494,7 +496,7 @@ public class NetworkMap extends NetworkMapBase {
 
     public ArrayList<MapPartGroup> getGroups() {
         ArrayList<MapPartGroup> groups = new ArrayList<MapPartGroup>();
-        for (OBNode node : partTable.values()) {
+        for (OBNode node : getOBCollection()) {
             if (node.getNodeType() == OBNode.NType.GROUP &&
                     !node.getTags().isEmpty()) {
                 groups.add((MapPartGroup)node);

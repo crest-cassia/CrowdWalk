@@ -150,7 +150,7 @@ public class PollutedAreaRectangle extends PollutedArea {
     public Element toDom(Document dom, String tagname) {
         Element element = super.toDom(dom, getNodeTypeString());
 
-        element.setAttribute("id", "" + ID);
+        element.setAttribute("id", ID);
         element.setAttribute("pWestX", "" + bounds.getMinX());
         element.setAttribute("pEastX", "" + bounds.getMaxX());
         element.setAttribute("pNorthY", "" + bounds.getMinY());
@@ -231,7 +231,7 @@ public class PollutedAreaRectangle extends PollutedArea {
     }
 
     public static OBNode fromDom(Element element) {
-        PollutedAreaRectangle room = new PollutedAreaRectangle("");
+        PollutedAreaRectangle room = new PollutedAreaRectangle(null);
         room.getAttributesFromDom(element);
         //System.err.println(room.toString());
         return room;

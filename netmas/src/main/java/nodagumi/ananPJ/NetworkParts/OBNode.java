@@ -67,7 +67,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
-    public OBNode() { this("") ;} ;
+    public OBNode() { this(null) ;} ;
 
     public OBNode(String _ID){
         init(_ID) ;

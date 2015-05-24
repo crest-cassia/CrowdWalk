@@ -201,7 +201,7 @@ public class MapPartGroup extends OBNode {
     }
 
     public static OBNode fromDom(Element element) {
-        MapPartGroup group = new MapPartGroup("");
+        MapPartGroup group = new MapPartGroup(null);
         group.getAttributesFromDom(element);
         NodeList elm_children = element.getChildNodes();
         for (int i = 0; i < elm_children.getLength(); ++i) {

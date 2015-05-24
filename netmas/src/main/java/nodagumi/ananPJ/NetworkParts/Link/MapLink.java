@@ -933,11 +933,11 @@ public class MapLink extends OBMapPart {
     @Override
     public Element toDom(Document dom, String tagname) {
         Element element = super.toDom(dom, getNodeTypeString());
-        element.setAttribute("id", "" + ID);
+        element.setAttribute("id", ID);
         element.setAttribute("length", "" + length);
         element.setAttribute("width", "" + width);
-        element.setAttribute("from", "" + fromNode.ID);
-        element.setAttribute("to", "" + toNode.ID);
+        element.setAttribute("from", fromNode.ID);
+        element.setAttribute("to", toNode.ID);
         return element;
     }
     

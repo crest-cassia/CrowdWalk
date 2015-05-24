@@ -263,7 +263,7 @@ implements Comparable<AgentBase> {
         } else {
             AgentBase agent = GenerateAgent.newAgentByName(type) ;
             if(agent != null) {
-                agent.init("", _random) ;
+                agent.init(null, _random) ;
                 return agent ;
             } else {
                 return null ;
