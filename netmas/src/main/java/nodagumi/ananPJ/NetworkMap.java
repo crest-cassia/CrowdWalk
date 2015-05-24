@@ -128,7 +128,7 @@ public class NetworkMap extends NetworkMapBase {
     public NetworkMap() {
 		super() ;
         random = new Random();
-        String id = assign_new_id();
+        String id = assignNewId();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
 		addObject(id, (OBNode)root);
@@ -140,7 +140,7 @@ public class NetworkMap extends NetworkMapBase {
     public NetworkMap(Random _random) {
 		super() ;
         random = _random;
-        String id = assign_new_id();
+        String id = assignNewId();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
         addObject(id, (OBNode)root);
@@ -180,79 +180,10 @@ public class NetworkMap extends NetworkMapBase {
     }
 
     //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * NetworkParts の prefix の規定値
-     */
-    public static String DefaultPartIdPrefix = "_p" ;
-
     /**
      * NetworkParts の prefix の規定値
      */
     public static String DefaultAgentIdPrefix = "ag" ;
-
-    /**
-     * NetworkParts の id 部の桁数の規定値
-     */
-    public static int DefaultPartIdDigit = 5 ;
-
-    /**
-     * NetworkParts の suffix の規定値
-     */
-    public static String DefaultPartIdSuffix = "" ;
-
-    /**
-     * NetworkParts の id counter
-     */
-    public static int PartIdCounter = 0 ;
-
-    //------------------------------------------------------------
-    /**
-     * ユニークな id の取得
-     * @return 新しい id
-     */
-    protected String assign_new_id() {
-        return assign_new_id(DefaultPartIdPrefix) ;
-    }
-
-    /**
-     * ユニークな id の取得
-     * @param prefix : id の prefix
-     * @return 新しい id
-     */
-    protected String assign_new_id(String prefix) {
-        return assign_new_id(prefix, DefaultPartIdDigit) ;
-    }
-
-    /**
-     * ユニークな id の取得
-     * @param prefix : id の prefix
-     * @param digit : id 数値部分の桁数
-     * @return 新しい id
-     */
-    protected String assign_new_id(String prefix, int digit) {
-        return assign_new_id(prefix, digit, DefaultPartIdSuffix) ;
-    }
-
-    /**
-     * ユニークな id の取得
-     * @param prefix : id の prefix
-     * @param digit : id 数値部分の桁数
-     * @param suffix : id の suffix
-     * @return 新しい id
-     */
-    protected String assign_new_id(String prefix, int digit, String suffix) {
-        String format = prefix + String.format("%%0%dd", digit) + suffix ;
-
-        synchronized(this) {
-            String id ;
-            do {
-                id = String.format(format, PartIdCounter) ;
-                PartIdCounter++ ;
-            } while(checkObjectId(id)) ;
-            return id ;
-        }
-    }
 
     //------------------------------------------------------------
     /**
@@ -269,7 +200,7 @@ public class NetworkMap extends NetworkMapBase {
      * @return 新しい id
      */
     public String assignUniqueAgentId(String prefix) {
-        return assign_new_id(prefix) ;
+        return assignNewId(prefix) ;
     }
 
     //------------------------------------------------------------
@@ -366,7 +297,7 @@ public class NetworkMap extends NetworkMapBase {
             MapPartGroup parent,
             Point2D _coordinates,
             double _height) {
-        String id = assign_new_id();
+        String id = assignNewId();
         MapNode node = new MapNode(id,
                 _coordinates, _height);
         insertOBNode(parent, node, true);
@@ -379,7 +310,7 @@ public class NetworkMap extends NetworkMapBase {
             MapNode _to,
             double _length,
             double _width) {
-        String id = assign_new_id();
+        String id = assignNewId();
         MapLink link = new MapLink(id, _from, _to, _length, _width);
         link.prepareAdd();
         insertOBNode(parent, link, true);
@@ -408,7 +339,7 @@ public class NetworkMap extends NetworkMapBase {
             double min_height,
             double max_height,
             double angle) {
-        String id = assign_new_id();
+        String id = assignNewId();
         PollutedArea area = new PollutedAreaRectangle(id,
                 bounds, min_height, max_height, angle);
         insertOBNode(parent, area, true);
@@ -419,7 +350,7 @@ public class NetworkMap extends NetworkMapBase {
             MapPartGroup parent,
             MapNode node,
             int room_id) {
-        String id = assign_new_id();
+        String id = assignNewId();
         Vector3d point = node.getPoint();
         PollutedArea area = new PollutedAreaPoint(id, room_id, point); 
         insertOBNode(parent, area, true);
@@ -427,7 +358,7 @@ public class NetworkMap extends NetworkMapBase {
     }
 
     public MapPartGroup createGroupNode(MapPartGroup parent){
-        String id = assign_new_id();
+        String id = assignNewId();
         MapPartGroup group = new MapPartGroup(id);
         insertOBNode(parent, group, true);
         return group; 
@@ -439,14 +370,13 @@ public class NetworkMap extends NetworkMapBase {
 
     public OBNodeSymbolicLink createSymLink(MapPartGroup parent,
             OBNode orig){
-        String id = assign_new_id();
+        String id = assignNewId();
         OBNodeSymbolicLink symlink = new OBNodeSymbolicLink(id, orig);
         insertOBNode(parent, symlink, true);
         return symlink; 
     }
 
     public void clearSymlinks(final OBNode orig) {
-        //System.err.println("Orig:" + orig.ID);
         applyToAllChildrenRec((OBNode)root,
                 null,
                 new OBTreeCrawlFunctor() {

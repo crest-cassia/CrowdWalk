@@ -36,6 +36,79 @@ import nodagumi.Itk.*;
  * なので、まとめておくものを作っておく。
  */
 public class NetworkMapBase extends DefaultTreeModel {
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * NetworkParts の prefix の規定値
+     */
+    public static String DefaultPartIdPrefix = "_p" ;
+
+    /**
+     * NetworkParts の id 部の桁数の規定値
+     */
+    public static int DefaultPartIdDigit = 5 ;
+
+    /**
+     * NetworkParts の suffix の規定値
+     */
+    public static String DefaultPartIdSuffix = "" ;
+
+    /**
+     * NetworkParts の id counter
+     */
+    public static int PartIdCounter = 0 ;
+
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @return 新しい id
+     */
+    protected String assignNewId() {
+        return assignNewId(DefaultPartIdPrefix) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @return 新しい id
+     */
+    protected String assignNewId(String prefix) {
+        return assignNewId(prefix, DefaultPartIdDigit) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @param digit : id 数値部分の桁数
+     * @return 新しい id
+     */
+    protected String assignNewId(String prefix, int digit) {
+        return assignNewId(prefix, digit, DefaultPartIdSuffix) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @param digit : id 数値部分の桁数
+     * @param suffix : id の suffix
+     * @return 新しい id
+     */
+    protected String assignNewId(String prefix, int digit, String suffix) {
+        String format = prefix + String.format("%%0%dd", digit) + suffix ;
+
+        synchronized(this) {
+            String id ;
+            do {
+                id = String.format(format, PartIdCounter) ;
+                PartIdCounter++ ;
+            } while(checkObjectId(id)) ;
+            return id ;
+        }
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ID から NetworkParts を取り出すための table.
