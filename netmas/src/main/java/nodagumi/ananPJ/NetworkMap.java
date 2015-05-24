@@ -187,7 +187,7 @@ public class NetworkMap extends NetworkMapBase {
         do {
             id = Math.abs(random.nextInt());
             if (id < 0) { id = -id; }
-        } while (id_part_map.containsKey(id));
+        } while (partTable.containsKey(id));
         return id;
     }
 
@@ -423,7 +423,7 @@ public class NetworkMap extends NetworkMapBase {
 
     public ArrayList<MapPartGroup> getGroups() {
         ArrayList<MapPartGroup> groups = new ArrayList<MapPartGroup>();
-        for (OBNode node : id_part_map.values()) {
+        for (OBNode node : partTable.values()) {
             if (node.getNodeType() == OBNode.NType.GROUP &&
                     !node.getTags().isEmpty()) {
                 groups.add((MapPartGroup)node);

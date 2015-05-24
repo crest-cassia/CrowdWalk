@@ -39,7 +39,7 @@ public class NetworkMapBase extends DefaultTreeModel {
     /**
      * ID から NetworkParts を取り出すための table.
      */
-    protected HashMap<Integer, OBNode> id_part_map =
+    protected HashMap<Integer, OBNode> partTable =
         new HashMap<Integer, OBNode>();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -77,21 +77,20 @@ public class NetworkMapBase extends DefaultTreeModel {
      */
     public void addObject(int id, OBNode part) {
         // 重複登録であれば警告
-        if(id_part_map.containsKey(id)) {
+        if(partTable.containsKey(id)) {
             Itk.logWarn("duplicated ID", "id=", id, "part=", part) ;
         }
 
-        id_part_map.put(id, part);
+        partTable.put(id, part);
     }
 
     //------------------------------------------------------------
     /**
-     * IDテーブルへのNetworkParts(OBNode)の登録
-     * @param id : part の id.
-     * @param part : 登録するpart.
+     * IDテーブルからのNetworkParts(OBNode)の削除
+     * @param id : 削除するpart の id.
      */
     public void removeObject(int id) {
-        id_part_map.remove(id) ;
+        partTable.remove(id) ;
     }
 
     //------------------------------------------------------------
@@ -101,7 +100,7 @@ public class NetworkMapBase extends DefaultTreeModel {
      * @return 取り出した part. もしなければ、null。
      */
     public OBNode getObject(int id) {
-        return id_part_map.get(id);
+        return partTable.get(id);
     }
 
     //------------------------------------------------------------
@@ -111,7 +110,7 @@ public class NetworkMapBase extends DefaultTreeModel {
      * @return NetworkParts の ArrayList。
      */
     public ArrayList<OBNode> getOBElements() {
-        return new ArrayList<OBNode>(id_part_map.values());
+        return new ArrayList<OBNode>(partTable.values());
     }
 
     //------------------------------------------------------------
