@@ -190,11 +190,11 @@ public class MapNode extends OBMapPart {
         /* modification to apply One-way link */
         cachePathways = new MapLinkTable();
         for (MapLink link : links) {
-            if (link.isOneWayPositive() &&
+            if (link.isOneWayForward() &&
                     (link.getTo() == this)) {
                 continue;
             }
-            if (link.isOneWayNegative() &&
+            if (link.isOneWayBackward() &&
                     link.getFrom() == this) {
                 continue;
             }
@@ -225,11 +225,11 @@ public class MapNode extends OBMapPart {
         /* modification to apply One-way link */
         MapLinkTable availableLinks = new MapLinkTable();
         for (MapLink link : links) {
-            if (link.isOneWayPositive() &&
+            if (link.isOneWayForward() &&
                     (link.getFrom() == this)) {
                 continue;
             }
-            if (link.isOneWayNegative() &&
+            if (link.isOneWayBackward() &&
                     link.getTo() == this) {
                 continue;
             }

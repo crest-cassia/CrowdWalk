@@ -29,7 +29,7 @@
     <link id="408025296"/>
   </Node>
   <Link from="1122969252" id="1798141107" length="106.00471687618433" to="1667899113" width="1.0">
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
     <tag>root-L2</tag>
   </Link>
   <Node height="0.0" id="374398896" x="241.0" y="176.0">
@@ -55,7 +55,7 @@
   </Node>
   <Link from="321723450" id="143872271" length="100.24470060806208" to="1122969252" width="1.0">
     <tag>root-L7</tag>
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
   </Link>
   <Node height="0.0" id="1478599078" x="496.0" y="279.0">
     <tag>root-N8</tag>
@@ -105,11 +105,11 @@
     <tag>root-L9</tag>
   </Link>
   <Link from="1124004830" id="408025296" length="87.36704184073076" to="1667899113" width="1.0">
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
     <tag>root-L10</tag>
   </Link>
   <Link from="321723450" id="1381973618" length="86.0" to="1618311804" width="1.0">
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
     <tag>root-L11</tag>
   </Link>
   <Link from="273231754" id="1090762546" length="146.01369798755184" to="1084368895" width="1.0">

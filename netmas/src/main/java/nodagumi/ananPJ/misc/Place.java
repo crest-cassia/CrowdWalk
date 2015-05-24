@@ -486,8 +486,8 @@ public class Place {
      */
     public boolean isRestrictedLink() {
         MapLink _link = getLink() ;
-        return (_link.isOneWayPositive() ||
-                _link.isOneWayNegative() ||
+        return (_link.isOneWayForward() ||
+                _link.isOneWayBackward() ||
                 _link.isRoadClosed()) ;
     }
 

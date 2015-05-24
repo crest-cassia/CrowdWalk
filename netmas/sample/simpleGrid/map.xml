@@ -282,31 +282,31 @@
   <Link from="31" id="1448253377" length="20.0" to="30" width="2.0">
   </Link>
   <Link from="26" id="1256314383" length="10.0" to="36" width="2.0">
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
   </Link>
   <Link from="4" id="1887277917" length="20.0" to="3" width="2.0"/>
   <Link from="4" id="1359555774" length="10.0" to="33" width="2.0">
-    <tag>ONE-WAY-NEGATIVE</tag>
+    <tag>ONE-WAY-BACKWARD</tag>
   </Link>
   <Link from="33" id="1649871878" length="10.0" to="5" width="2.0">
-    <tag>ONE-WAY-NEGATIVE</tag>
+    <tag>ONE-WAY-BACKWARD</tag>
   </Link>
   <Link from="11" id="1469950720" length="10.0" to="34" width="2.0">
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
   </Link>
   <Link from="34" id="465094938" length="10.0" to="12" width="2.0">
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
   </Link>
   <Link from="12" id="715853369" length="20.0" to="13" width="2.0"/>
   <Link from="18" id="1844678257" length="20.0" to="17" width="2.0"/>
   <Link from="35" id="517188045" length="10.0" to="19" width="2.0">
-    <tag>ONE-WAY-NEGATIVE</tag>
+    <tag>ONE-WAY-BACKWARD</tag>
   </Link>
   <Link from="35" id="1469198716" length="10.0" to="18" width="2.0">
-    <tag>ONE-WAY-NEGATIVE</tag>
+    <tag>ONE-WAY-BACKWARD</tag>
   </Link>
   <Link from="36" id="252423336" length="10.0" to="25" width="2.0">
-    <tag>ONE-WAY-POSITIVE</tag>
+    <tag>ONE-WAY-FORWARD</tag>
   </Link>
   <Link from="26" id="1879338613" length="20.0" to="27" width="2.0"/>
 </Group>

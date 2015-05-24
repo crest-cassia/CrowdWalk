@@ -158,7 +158,7 @@ log file format consits of agent lines and link lines. Agent line and link line
 include the information as follows:
 
 agent:  agent,$ID,$EVACUATED,$SPEED,$DNEISTY,$POSITION
-link:   link,$ID,$POSITIVE_AGENT,$NEGATIVE_AGENT,$DENSITY
+link:   link,$ID,$FORWARD_AGENT,$BACKWARD_AGENT,$DENSITY
 
     $ID:                identifier
     $EVACUATED:         evacuated or not? with true or false.
@@ -166,8 +166,8 @@ link:   link,$ID,$POSITIVE_AGENT,$NEGATIVE_AGENT,$DENSITY
     $DENSITY:           pedestrian density around the agents (number of
                         pedestrians / meter^2)
     $POSITION:          One dimensional position on the link (meter).
-    $POSITIVE_AGENT:    the number of agents with positive direction.
-    $NEGATIVE_AGENT:    the number of agents with negative direction.
+    $FORWARD_AGENT:    the number of agents with forward direction.
+    $BACKWARD_AGENT:    the number of agents with backward direction.
     $DENSITY:           pedestiran density on the link (number of pedestirians /
                         meter^2)
 
@@ -288,7 +288,7 @@ The logs in result directory:
 - time series (n.log)
     - every links
         - link density
-        - number of agent (positive, negative)
+        - number of agent (forward, backward)
     - every agents
         - evacuated or not
         - density arround agent

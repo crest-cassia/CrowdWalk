@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":6,"i11":6,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":6,"i19":6,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -172,10 +172,6 @@ extends javax.swing.JPanel</pre>
 <td class="colFirst"><code>protected class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.NodeAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.NodeAppearance</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.UpdateLink.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.UpdateLink</a></span></code>&nbsp;</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="nested.classes.inherited.from.class.javax.swing.JPanel">
@@ -240,136 +236,140 @@ extends javax.swing.JPanel</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#canvasobj_to_obnode">canvasobj_to_obnode</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected static javax.vecmath.Color3f</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#link_color">link_color</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.HashMap&lt;<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>,javax.media.j3d.BranchGroup&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#displayedNodeGroups">displayedNodeGroups</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#link_draw_density_mode">link_draw_density_mode</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.UpdateLink.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.UpdateLink</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#link_geoms">link_geoms</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected float</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#link_transparency">link_transparency</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#link_transparency_changed_flag">link_transparency_changed_flag</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected float</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#link_width">link_width</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#link_width_changed_flag">link_width_changed_flag</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected java.util.LinkedHashMap&lt;java.lang.String,<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.LinkAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.LinkAppearance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#linkAppearances">linkAppearances</a></span></code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.util.HashMap&lt;<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>,javax.media.j3d.BranchGroup&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#linkGroups">linkGroups</a></span></code>&nbsp;</td>
+</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#links">links</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected javax.media.j3d.TransformGroup</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#map_objects">map_objects</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected javax.media.j3d.BranchGroup</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#map_objects_parent">map_objects_parent</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.awt.Menu</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#menu_action">menu_action</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.awt.MenuBar</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#menu_bar">menu_bar</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.awt.Menu</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#menu_view">menu_view</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#messagePosition">messagePosition</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.util.LinkedHashMap&lt;java.lang.String,<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.NodeAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.NodeAppearance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#nodeAppearances">nodeAppearances</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#nodes">nodes</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected javax.swing.JFrame</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#parent">parent</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected javax.media.j3d.Appearance</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#path_appearance">path_appearance</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#rot_x">rot_x</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#rot_y">rot_y</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#rot_z">rot_z</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected javax.media.j3d.BranchGroup</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#scene">scene</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#screenshotDir">screenshotDir</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#screenshotImageType">screenshotImageType</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#show_3d_polygon">show_3d_polygon</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#show_logo">show_logo</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#show_message">show_message</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected javax.media.j3d.BranchGroup</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#structure_group">structure_group</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#TOP">TOP</a></span></code>
 <div class="block">Basic class for 3D canvas and other controls</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected javax.vecmath.Vector3d</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#trans_trans">trans_trans</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected javax.media.j3d.Transform3D</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#trans3d_home">trans3d_home</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected com.sun.j3d.utils.universe.SimpleUniverse</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#universe">universe</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected javax.media.j3d.TransformGroup</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#view_trans">view_trans</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected javax.media.j3d.BranchGroup</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#view_trans_parent">view_trans_parent</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#zoom_scale">zoom_scale</a></span></code>&nbsp;</td>
 </tr>
@@ -432,132 +432,192 @@ extends javax.swing.JPanel</pre>
 <th class="colLast" scope="col">メソッドと説明</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#addViewChangeListener-java.lang.String-nodagumi.ananPJ.Gui.ViewChangeListener-">addViewChangeListener</a></span>(java.lang.String&nbsp;event,
+                     <a href="../../nodagumi/ananPJ/Gui/ViewChangeListener.html" title="nodagumi.ananPJ.Gui内のインタフェース">ViewChangeListener</a>&nbsp;listener)</code>
+<div class="block">描画更新イベント用のリスナを登録する.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#calcObjectScale-javax.media.j3d.TransformGroup-">calcObjectScale</a></span>(javax.media.j3d.TransformGroup&nbsp;objects)</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#captureNextFrame-java.lang.String-">captureNextFrame</a></span>(java.lang.String&nbsp;filename)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected javax.vecmath.Color3f</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#colors_for_link-nodagumi.ananPJ.NetworkParts.Link.MapLink-">colors_for_link</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&nbsp;link)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected javax.vecmath.Color3f</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#colors_for_polygon-java.lang.String-">colors_for_polygon</a></span>(java.lang.String&nbsp;tag)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>javax.media.j3d.Shape3D</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#createLinkShape-nodagumi.ananPJ.NetworkParts.Link.MapLink-">createLinkShape</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&nbsp;link)</code>
+<div class="block">リンク表示用の Shape3D オブジェクトを生成する(通常リンク用).</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>javax.media.j3d.Shape3D[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#createLinkShapes-nodagumi.ananPJ.NetworkParts.Link.MapLink-nodagumi.ananPJ.NetworkPanel3DBase.LinkAppearance-">createLinkShapes</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&nbsp;link,
+                <a href="../../nodagumi/ananPJ/NetworkPanel3DBase.LinkAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.LinkAppearance</a>&nbsp;linkAppearance)</code>
+<div class="block">リンク表示用の Shape3D オブジェクトを生成する(色付きリンク用).</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>javax.media.j3d.BranchGroup</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#createNodeGroup-nodagumi.ananPJ.NetworkParts.Node.MapNode-">createNodeGroup</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;node)</code>
+<div class="block">ノード表示用の3Dオブジェクトを生成する.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>protected javax.media.j3d.Appearance</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#createPathAppearance--">createPathAppearance</a></span>()</code>
+<div class="block">通常リンク表示用の Appearance オブジェクトを生成する.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>protected javax.media.j3d.TransformGroup</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#createPolygon-javax.vecmath.Point3d:A-java.lang.String-">createPolygon</a></span>(javax.vecmath.Point3d[]&nbsp;vertices,
              java.lang.String&nbsp;tag)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#getIsInitialized--">getIsInitialized</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.LinkAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.LinkAppearance</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#getLinkAppearance-nodagumi.ananPJ.NetworkParts.Link.MapLink-">getLinkAppearance</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&nbsp;link)</code>
+<div class="block">link に振られているタグにマッチする LinkAppearance を返す.</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.awt.MenuBar</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#getMenuBar--">getMenuBar</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.NodeAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.NodeAppearance</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#getNodeAppearance-nodagumi.ananPJ.NetworkParts.Node.MapNode-">getNodeAppearance</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;node)</code>
+<div class="block">node に振られているタグにマッチする NodeAppearance を返す.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#initialize--">initialize</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#loadLinkAppearances-java.io.InputStream-">loadLinkAppearances</a></span>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#loadNodeAppearances-java.io.InputStream-">loadNodeAppearances</a></span>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#notifyViewChange-java.lang.String-">notifyViewChange</a></span>(java.lang.String&nbsp;event)</code>
+<div class="block">描画更新イベントの発生を通知する.</div>
+</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#register_map_objects--">register_map_objects</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#registerOtherObjects--">registerOtherObjects</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i20" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#screenShotCaptured--">screenShotCaptured</a></span>()</code>
+<div class="block">スクリーンショットのファイル作成が完了した時に呼ばれる.</div>
+</td>
+</tr>
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setCanvasSize-int-int-">setCanvasSize</a></span>(int&nbsp;w,
              int&nbsp;h)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setIsInitialized-boolean-">setIsInitialized</a></span>(boolean&nbsp;_isInitialized)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setLinkDrawWith-int-">setLinkDrawWith</a></span>(int&nbsp;i)</code>&nbsp;</td>
-</tr>
-<tr id="i15" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setScreenshotDir-java.lang.String-">setScreenshotDir</a></span>(java.lang.String&nbsp;dirPath)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setScreenshotImageType-java.lang.String-">setScreenshotImageType</a></span>(java.lang.String&nbsp;type)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setShowStructure-boolean-">setShowStructure</a></span>(boolean&nbsp;b)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setup_control_panel--">setup_control_panel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setup_links--">setup_links</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setup_nodes-javax.media.j3d.TransformGroup-">setup_nodes</a></span>(javax.media.j3d.TransformGroup&nbsp;objects)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setup_nodes--">setup_nodes</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setupContents--">setupContents</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setupExtraContents--">setupExtraContents</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setupFrame-nodagumi.ananPJ.NetworkParts.Node.MapNodeTable-nodagumi.ananPJ.NetworkParts.Link.MapLinkTable-javax.swing.JFrame-">setupFrame</a></span>(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;_nodes,
           <a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;_links,
           javax.swing.JFrame&nbsp;_parent)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setupMenu--">setupMenu</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setViewPoint-double-">setViewPoint</a></span>(double&nbsp;scale)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#setViewToHome--">setViewToHome</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>protected javax.media.j3d.TransparencyAttributes</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#transparency_for_polygon-java.lang.String-">transparency_for_polygon</a></span>(java.lang.String&nbsp;tag)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#update_link_geom-nodagumi.ananPJ.NetworkPanel3DBase.UpdateLink-">update_link_geom</a></span>(<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.UpdateLink.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.UpdateLink</a>&nbsp;link_geom)</code>&nbsp;</td>
-</tr>
-<tr id="i29" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#update_viewtrans--">update_viewtrans</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#update3dPolygon--">update3dPolygon</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i38" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#updateLinkTransparency--">updateLinkTransparency</a></span>()</code>
+<div class="block">すべての通常リンクの透明度を link_transparency 値で更新する.</div>
+</td>
+</tr>
+<tr id="i39" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkPanel3DBase.html#updateLinkWidth--">updateLinkWidth</a></span>()</code>
+<div class="block">すべての通常リンクの幅を link_width 値で更新する.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -659,6 +719,24 @@ extends javax.swing.JPanel</pre>
 <pre>protected&nbsp;com.sun.j3d.utils.universe.SimpleUniverse universe</pre>
 </li>
 </ul>
+<a name="nodes">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>nodes</h4>
+<pre>protected&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> nodes</pre>
+</li>
+</ul>
+<a name="links">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>links</h4>
+<pre>protected&nbsp;<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> links</pre>
+</li>
+</ul>
 <a name="link_transparency">
 <!--   -->
 </a>
@@ -666,24 +744,6 @@ extends javax.swing.JPanel</pre>
 <li class="blockList">
 <h4>link_transparency</h4>
 <pre>protected&nbsp;float link_transparency</pre>
-</li>
-</ul>
-<a name="link_transparency_changed_flag">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>link_transparency_changed_flag</h4>
-<pre>protected&nbsp;boolean link_transparency_changed_flag</pre>
-</li>
-</ul>
-<a name="link_color">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>link_color</h4>
-<pre>protected static&nbsp;javax.vecmath.Color3f link_color</pre>
 </li>
 </ul>
 <a name="screenshotDir">
@@ -747,15 +807,6 @@ extends javax.swing.JPanel</pre>
 <li class="blockList">
 <h4>link_width</h4>
 <pre>protected&nbsp;float link_width</pre>
-</li>
-</ul>
-<a name="link_width_changed_flag">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>link_width_changed_flag</h4>
-<pre>protected&nbsp;boolean link_width_changed_flag</pre>
 </li>
 </ul>
 <a name="link_draw_density_mode">
@@ -947,22 +998,40 @@ extends javax.swing.JPanel</pre>
 <pre>protected&nbsp;javax.media.j3d.BranchGroup map_objects_parent</pre>
 </li>
 </ul>
-<a name="link_geoms">
+<a name="linkGroups">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>link_geoms</h4>
-<pre>protected&nbsp;java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.UpdateLink.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.UpdateLink</a>&gt; link_geoms</pre>
+<h4>linkGroups</h4>
+<pre>protected&nbsp;java.util.HashMap&lt;<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>,javax.media.j3d.BranchGroup&gt; linkGroups</pre>
+</li>
+</ul>
+<a name="displayedNodeGroups">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>displayedNodeGroups</h4>
+<pre>protected&nbsp;java.util.HashMap&lt;<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>,javax.media.j3d.BranchGroup&gt; displayedNodeGroups</pre>
 </li>
 </ul>
 <a name="structure_group">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>structure_group</h4>
 <pre>protected&nbsp;javax.media.j3d.BranchGroup structure_group</pre>
+</li>
+</ul>
+<a name="path_appearance">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>path_appearance</h4>
+<pre>protected&nbsp;javax.media.j3d.Appearance path_appearance</pre>
 </li>
 </ul>
 </li>
@@ -993,6 +1062,16 @@ extends javax.swing.JPanel</pre>
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
+<a name="screenShotCaptured--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>screenShotCaptured</h4>
+<pre>protected&nbsp;void&nbsp;screenShotCaptured()</pre>
+<div class="block">スクリーンショットのファイル作成が完了した時に呼ばれる.</div>
+</li>
+</ul>
 <a name="loadLinkAppearances-java.io.InputStream-">
 <!--   -->
 </a>
@@ -1150,13 +1229,45 @@ extends javax.swing.JPanel</pre>
 <pre>protected&nbsp;double&nbsp;calcObjectScale(javax.media.j3d.TransformGroup&nbsp;objects)</pre>
 </li>
 </ul>
-<a name="update_link_geom-nodagumi.ananPJ.NetworkPanel3DBase.UpdateLink-">
+<a name="addViewChangeListener-java.lang.String-nodagumi.ananPJ.Gui.ViewChangeListener-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>update_link_geom</h4>
-<pre>protected&nbsp;void&nbsp;update_link_geom(<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.UpdateLink.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.UpdateLink</a>&nbsp;link_geom)</pre>
+<h4>addViewChangeListener</h4>
+<pre>public&nbsp;void&nbsp;addViewChangeListener(java.lang.String&nbsp;event,
+                                  <a href="../../nodagumi/ananPJ/Gui/ViewChangeListener.html" title="nodagumi.ananPJ.Gui内のインタフェース">ViewChangeListener</a>&nbsp;listener)</pre>
+<div class="block">描画更新イベント用のリスナを登録する.</div>
+</li>
+</ul>
+<a name="notifyViewChange-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>notifyViewChange</h4>
+<pre>public&nbsp;boolean&nbsp;notifyViewChange(java.lang.String&nbsp;event)</pre>
+<div class="block">描画更新イベントの発生を通知する.</div>
+</li>
+</ul>
+<a name="updateLinkTransparency--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateLinkTransparency</h4>
+<pre>public&nbsp;void&nbsp;updateLinkTransparency()</pre>
+<div class="block">すべての通常リンクの透明度を link_transparency 値で更新する.</div>
+</li>
+</ul>
+<a name="updateLinkWidth--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateLinkWidth</h4>
+<pre>public&nbsp;void&nbsp;updateLinkWidth()</pre>
+<div class="block">すべての通常リンクの幅を link_width 値で更新する.</div>
 </li>
 </ul>
 <a name="colors_for_link-nodagumi.ananPJ.NetworkParts.Link.MapLink-">
@@ -1195,13 +1306,74 @@ extends javax.swing.JPanel</pre>
 <pre>protected&nbsp;void&nbsp;setup_links()</pre>
 </li>
 </ul>
-<a name="setup_nodes-javax.media.j3d.TransformGroup-">
+<a name="createPathAppearance--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createPathAppearance</h4>
+<pre>protected&nbsp;javax.media.j3d.Appearance&nbsp;createPathAppearance()</pre>
+<div class="block">通常リンク表示用の Appearance オブジェクトを生成する.</div>
+</li>
+</ul>
+<a name="getLinkAppearance-nodagumi.ananPJ.NetworkParts.Link.MapLink-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLinkAppearance</h4>
+<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.LinkAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.LinkAppearance</a>&nbsp;getLinkAppearance(<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&nbsp;link)</pre>
+<div class="block">link に振られているタグにマッチする LinkAppearance を返す.</div>
+</li>
+</ul>
+<a name="createLinkShape-nodagumi.ananPJ.NetworkParts.Link.MapLink-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createLinkShape</h4>
+<pre>public&nbsp;javax.media.j3d.Shape3D&nbsp;createLinkShape(<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&nbsp;link)</pre>
+<div class="block">リンク表示用の Shape3D オブジェクトを生成する(通常リンク用).</div>
+</li>
+</ul>
+<a name="createLinkShapes-nodagumi.ananPJ.NetworkParts.Link.MapLink-nodagumi.ananPJ.NetworkPanel3DBase.LinkAppearance-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createLinkShapes</h4>
+<pre>public&nbsp;javax.media.j3d.Shape3D[]&nbsp;createLinkShapes(<a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&nbsp;link,
+                                                  <a href="../../nodagumi/ananPJ/NetworkPanel3DBase.LinkAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.LinkAppearance</a>&nbsp;linkAppearance)</pre>
+<div class="block">リンク表示用の Shape3D オブジェクトを生成する(色付きリンク用).</div>
+</li>
+</ul>
+<a name="setup_nodes--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setup_nodes</h4>
-<pre>protected&nbsp;void&nbsp;setup_nodes(javax.media.j3d.TransformGroup&nbsp;objects)</pre>
+<pre>protected&nbsp;void&nbsp;setup_nodes()</pre>
+</li>
+</ul>
+<a name="createNodeGroup-nodagumi.ananPJ.NetworkParts.Node.MapNode-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createNodeGroup</h4>
+<pre>public&nbsp;javax.media.j3d.BranchGroup&nbsp;createNodeGroup(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;node)</pre>
+<div class="block">ノード表示用の3Dオブジェクトを生成する.</div>
+</li>
+</ul>
+<a name="getNodeAppearance-nodagumi.ananPJ.NetworkParts.Node.MapNode-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNodeAppearance</h4>
+<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkPanel3DBase.NodeAppearance.html" title="nodagumi.ananPJ内のクラス">NetworkPanel3DBase.NodeAppearance</a>&nbsp;getNodeAppearance(<a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;node)</pre>
+<div class="block">node に振られているタグにマッチする NodeAppearance を返す.</div>
 </li>
 </ul>
 <a name="createPolygon-javax.vecmath.Point3d:A-java.lang.String-">
@@ -1230,15 +1402,6 @@ extends javax.swing.JPanel</pre>
 <li class="blockList">
 <h4>captureNextFrame</h4>
 <pre>public&nbsp;void&nbsp;captureNextFrame(java.lang.String&nbsp;filename)</pre>
-</li>
-</ul>
-<a name="setLinkDrawWith-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setLinkDrawWith</h4>
-<pre>public&nbsp;void&nbsp;setLinkDrawWith(int&nbsp;i)</pre>
 </li>
 </ul>
 <a name="setShowStructure-boolean-">

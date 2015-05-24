@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/NetworkParts/NetworkMapPartsNotifier.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
 <li><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
@@ -164,7 +164,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></h3>
-<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#alertMessageTable">alertMessageTable</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#ID">ID</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#selected">selected</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#tags">tags</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#alertMessageTable">alertMessageTable</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#ID">ID</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#networkMap">networkMap</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#selected">selected</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#tags">tags</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -192,7 +192,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#OBMapPart-int-">OBMapPart</a></span>(int&nbsp;_ID)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#OBMapPart-java.lang.String-">OBMapPart</a></span>(java.lang.String&nbsp;_ID)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -220,7 +220,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#init-int-">init</a></span>(int&nbsp;_ID)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#init-java.lang.String-">init</a></span>(java.lang.String&nbsp;_ID)</code>
 <div class="block">初期化。</div>
 </td>
 </tr>
@@ -234,7 +234,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></h3>
-<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#addTag-java.lang.String-">addTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#allTagsClear--">allTagsClear</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#fromDom-org.w3c.dom.Element-">fromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getHintString--">getHintString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeType--">getNodeType</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeTypeString--">getNodeTypeString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#postLoad-boolean-">postLoad</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#prepareForSave-boolean-">prepareForSave</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#removeTag-java.lang.String-">removeTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#toDom-org.w3c.dom.Document-java.lang.String-">toDom</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#addTag-java.lang.String-">addTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#allTagsClear--">allTagsClear</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#fromDom-org.w3c.dom.Element-">fromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getHintString--">getHintString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNetworkMap--">getNetworkMap</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeType--">getNodeType</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNodeTypeString--">getNodeTypeString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#postLoad-boolean-">postLoad</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#prepareForSave-boolean-">prepareForSave</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#removeTag-java.lang.String-">removeTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setNetworkMap-nodagumi.ananPJ.NetworkMap-">setNetworkMap</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#toDom-org.w3c.dom.Document-java.lang.String-">toDom</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -274,13 +274,13 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <div class="block">引数なしconstractor。 ClassFinder.newByName で必要。</div>
 </li>
 </ul>
-<a name="OBMapPart-int-">
+<a name="OBMapPart-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>OBMapPart</h4>
-<pre>public&nbsp;OBMapPart(int&nbsp;_ID)</pre>
+<pre>public&nbsp;OBMapPart(java.lang.String&nbsp;_ID)</pre>
 </li>
 </ul>
 </li>
@@ -291,17 +291,17 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
-<a name="init-int-">
+<a name="init-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>init</h4>
-<pre>public&nbsp;void&nbsp;init(int&nbsp;_ID)</pre>
+<pre>public&nbsp;void&nbsp;init(java.lang.String&nbsp;_ID)</pre>
 <div class="block">初期化。constractorから分離。</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">オーバーライド:</span></dt>
-<dd><code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#init-int-">init</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></code></dd>
+<dd><code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#init-java.lang.String-">init</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -384,7 +384,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/NetworkParts/NetworkMapPartsNotifier.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
 <li><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">

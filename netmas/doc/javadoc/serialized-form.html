@@ -127,12 +127,12 @@
 <pre>java.util.Random random</pre>
 </li>
 <li class="blockList">
-<h4>undo_list</h4>
-<pre>java.util.ArrayList&lt;E&gt; undo_list</pre>
+<h4>notifier</h4>
+<pre><a href="nodagumi/ananPJ/NetworkParts/NetworkMapPartsNotifier.html" title="nodagumi.ananPJ.NetworkParts内のクラス">NetworkMapPartsNotifier</a> notifier</pre>
 </li>
 <li class="blockListLast">
-<h4>agentUniqueId</h4>
-<pre>int agentUniqueId</pre>
+<h4>undo_list</h4>
+<pre>java.util.ArrayList&lt;E&gt; undo_list</pre>
 </li>
 </ul>
 </li>
@@ -147,8 +147,8 @@
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
 <li class="blockList">
-<h4>id_part_map</h4>
-<pre>java.util.HashMap&lt;K,V&gt; id_part_map</pre>
+<h4>partTable</h4>
+<pre>java.util.HashMap&lt;K,V&gt; partTable</pre>
 <div class="block">ID から NetworkParts を取り出すための table.</div>
 </li>
 <li class="blockList">
@@ -185,6 +185,10 @@
 <li class="blockList">
 <h4>drag_sensitivity</h4>
 <pre>double drag_sensitivity</pre>
+</li>
+<li class="blockList">
+<h4>viewpointChangeInhibited</h4>
+<pre>boolean viewpointChangeInhibited</pre>
 </li>
 <li class="blockList">
 <h4>last_point</h4>
@@ -231,12 +235,12 @@
 <pre>javax.media.j3d.BoundingSphere bounds</pre>
 </li>
 <li class="blockList">
-<h4>link_transparency</h4>
-<pre>float link_transparency</pre>
+<h4>viewChangeManager</h4>
+<pre><a href="nodagumi/ananPJ/Gui/ViewChangeManager.html" title="nodagumi.ananPJ.Gui内のクラス">ViewChangeManager</a> viewChangeManager</pre>
 </li>
 <li class="blockList">
-<h4>link_transparency_changed_flag</h4>
-<pre>boolean link_transparency_changed_flag</pre>
+<h4>link_transparency</h4>
+<pre>float link_transparency</pre>
 </li>
 <li class="blockList">
 <h4>screenshotDir</h4>
@@ -265,10 +269,6 @@
 <li class="blockList">
 <h4>link_width</h4>
 <pre>float link_width</pre>
-</li>
-<li class="blockList">
-<h4>link_width_changed_flag</h4>
-<pre>boolean link_width_changed_flag</pre>
 </li>
 <li class="blockList">
 <h4>link_draw_density_mode</h4>
@@ -363,8 +363,12 @@
 <pre>javax.vecmath.Vector3d point_center</pre>
 </li>
 <li class="blockList">
-<h4>link_geoms</h4>
-<pre>java.util.ArrayList&lt;E&gt; link_geoms</pre>
+<h4>linkGroups</h4>
+<pre>java.util.HashMap&lt;K,V&gt; linkGroups</pre>
+</li>
+<li class="blockList">
+<h4>displayedNodeGroups</h4>
+<pre>java.util.HashMap&lt;K,V&gt; displayedNodeGroups</pre>
 </li>
 <li class="blockList">
 <h4>structure_group</h4>
@@ -373,6 +377,10 @@
 <li class="blockList">
 <h4>show_structure</h4>
 <pre>boolean show_structure</pre>
+</li>
+<li class="blockList">
+<h4>path_appearance</h4>
+<pre>javax.media.j3d.Appearance path_appearance</pre>
 </li>
 <li class="blockList">
 <h4>polygonGroup</h4>
@@ -724,6 +732,10 @@
 <h4>update_swing_flag</h4>
 <pre>boolean update_swing_flag</pre>
 <div class="block">swing を更新するかどうか（表示用？）</div>
+</li>
+<li class="blockList">
+<h4>lastSpeed</h4>
+<pre>double lastSpeed</pre>
 </li>
 <li class="blockList">
 <h4>calculation_model</h4>
@@ -1721,7 +1733,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>ID</h4>
-<pre>int ID</pre>
+<pre>java.lang.String ID</pre>
 </li>
 <li class="blockList">
 <h4>tags</h4>
@@ -1730,6 +1742,10 @@
 <li class="blockList">
 <h4>selected</h4>
 <pre>boolean selected</pre>
+</li>
+<li class="blockList">
+<h4>networkMap</h4>
+<pre><a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
 </li>
 <li class="blockList">
 <h4>alertMessageTable</h4>
@@ -1774,87 +1790,6 @@
 <li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts.Link</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.Lift">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/Lift.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.Lift</a> extends <a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>timeToDecend</h4>
-<pre>double timeToDecend</pre>
-<div class="block">A simplified model of a lift.
- - The time to pass the lift is constant.
- - The length is the time for an agent to leave this link.
- - The width is the capacity of the lift (unused).</div>
-</li>
-<li class="blockList">
-<h4>upperFloor</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> upperFloor</pre>
-</li>
-<li class="blockList">
-<h4>shaftId</h4>
-<pre>java.lang.String shaftId</pre>
-</li>
-<li class="blockList">
-<h4>shaft</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/Lift.Shaft.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift.Shaft</a> shaft</pre>
-</li>
-<li class="blockListLast">
-<h4>agentWating</h4>
-<pre>boolean agentWating</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.Lift.LiftManager">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/Lift.LiftManager.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.Lift.LiftManager</a> extends java.util.HashMap&lt;java.lang.String,<a href="nodagumi/ananPJ/NetworkParts/Link/Lift.Shaft.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift.Shaft</a>&gt; implements Serializable</h3>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/Lift.Shaft.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft</a> extends java.util.ArrayList&lt;<a href="nodagumi/ananPJ/NetworkParts/Link/Lift.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift</a>&gt; implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>id</h4>
-<pre>java.lang.String id</pre>
-</li>
-<li class="blockList">
-<h4>targetFloor</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/Lift.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift</a> targetFloor</pre>
-</li>
-<li class="blockList">
-<h4>targetTime</h4>
-<pre>double targetTime</pre>
-</li>
-<li class="blockList">
-<h4>lastFloor</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/Lift.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift</a> lastFloor</pre>
-</li>
-<li class="blockList">
-<h4>lastTime</h4>
-<pre>double lastTime</pre>
-</li>
-<li class="blockList">
-<h4>time</h4>
-<pre>double time</pre>
-</li>
-<li class="blockListLast">
-<h4>state</h4>
-<pre>nodagumi.ananPJ.NetworkParts.Link.Lift.Shaft.State state</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.MapLink">
 <!--   -->
 </a>
@@ -2033,6 +1968,17 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>直列化されたフィールド</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>lastPollutionLevel</h4>
+<pre>double lastPollutionLevel</pre>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint">
 <!--   -->
@@ -2174,6 +2120,18 @@
 <pre><a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
 </li>
 <li class="blockList">
+<h4>firstStep</h4>
+<pre>boolean firstStep</pre>
+</li>
+<li class="blockList">
+<h4>screenShotFileNames</h4>
+<pre>java.util.ArrayList&lt;E&gt; screenShotFileNames</pre>
+</li>
+<li class="blockList">
+<h4>simulationTimes</h4>
+<pre>java.util.ArrayList&lt;E&gt; simulationTimes</pre>
+</li>
+<li class="blockList">
 <h4>agent_group</h4>
 <pre>javax.media.j3d.BranchGroup agent_group</pre>
 </li>
@@ -2274,6 +2232,10 @@
 <pre>java.util.ArrayList&lt;E&gt; camera_position_list</pre>
 </li>
 <li class="blockList">
+<h4>forceUpdateCamerawork</h4>
+<pre>boolean forceUpdateCamerawork</pre>
+</li>
+<li class="blockList">
 <h4>debug_mode_cb</h4>
 <pre>javax.swing.JCheckBox debug_mode_cb</pre>
 </li>
@@ -2326,16 +2288,48 @@
 <pre>boolean show_agents</pre>
 </li>
 <li class="blockList">
-<h4>selected_link</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> selected_link</pre>
+<h4>removedLinks</h4>
+<pre>java.util.HashSet&lt;E&gt; removedLinks</pre>
 </li>
 <li class="blockList">
-<h4>selected_shape</h4>
-<pre>javax.media.j3d.Shape3D selected_shape</pre>
+<h4>changedLinks</h4>
+<pre>java.util.HashSet&lt;E&gt; changedLinks</pre>
+</li>
+<li class="blockList">
+<h4>changedNodes</h4>
+<pre>java.util.HashSet&lt;E&gt; changedNodes</pre>
+</li>
+<li class="blockList">
+<h4>changedPollutedAreas</h4>
+<pre>java.util.HashSet&lt;E&gt; changedPollutedAreas</pre>
+</li>
+<li class="blockList">
+<h4>addedAgents</h4>
+<pre>java.util.HashSet&lt;E&gt; addedAgents</pre>
+</li>
+<li class="blockList">
+<h4>movedAgents</h4>
+<pre>java.util.HashSet&lt;E&gt; movedAgents</pre>
+</li>
+<li class="blockList">
+<h4>colorChangedAgents</h4>
+<pre>java.util.HashSet&lt;E&gt; colorChangedAgents</pre>
+</li>
+<li class="blockList">
+<h4>evacuatedAgents</h4>
+<pre>java.util.HashSet&lt;E&gt; evacuatedAgents</pre>
+</li>
+<li class="blockList">
+<h4>displayedPollutedAreas</h4>
+<pre>java.util.HashMap&lt;K,V&gt; displayedPollutedAreas</pre>
+</li>
+<li class="blockList">
+<h4>displayedAgents</h4>
+<pre>java.util.HashMap&lt;K,V&gt; displayedAgents</pre>
 </li>
 <li class="blockListLast">
-<h4>view_change_listeners</h4>
-<pre>java.util.ArrayList&lt;E&gt; view_change_listeners</pre>
+<h4>selected_link</h4>
+<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> selected_link</pre>
 </li>
 </ul>
 </li>

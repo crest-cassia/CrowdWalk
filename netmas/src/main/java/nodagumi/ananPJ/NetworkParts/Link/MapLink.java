@@ -59,20 +59,20 @@ public class MapLink extends OBMapPart {
     /**
      * Special Tags
      */
-    static public final String Tag_OneWayPositive = "ONE-WAY-POSITIVE" ;
-    static public final String Tag_OneWayNegative = "ONE-WAY-NEGATIVE" ;
+    static public final String Tag_OneWayForward = "ONE-WAY-FORWARD" ;
+    static public final String Tag_OneWayBackward = "ONE-WAY-BACKWARD" ;
     static public final String Tag_RoadClosed = "ROAD-CLOSED" ;
     static public final String Tag_Stair = "STAIR" ;
-    static public enum SpecialTagId { OneWayPositive,
-                                      OneWayNegative,
+    static public enum SpecialTagId { OneWayForward,
+                                      OneWayBackward,
                                       RoadClosed,
                                       Stair
     } ;
     static public Lexicon tagLexicon = new Lexicon() ;
     static {
         tagLexicon.registerMulti(new Object[][]
-            {{Tag_OneWayPositive, SpecialTagId.OneWayPositive},
-             {Tag_OneWayNegative, SpecialTagId.OneWayNegative},
+            {{Tag_OneWayForward, SpecialTagId.OneWayForward},
+             {Tag_OneWayBackward, SpecialTagId.OneWayBackward},
              {Tag_RoadClosed, SpecialTagId.RoadClosed},
              {Tag_Stair, SpecialTagId.Stair}
             }) ;
@@ -410,54 +410,54 @@ public class MapLink extends OBMapPart {
         if (!showScaling)
             scale = g.getTransform().getScaleX();
         g.setStroke(new BasicStroke(2.0f / ((float)scale)));
-        boolean oneWayPositive = this.isOneWayPositive() ;
-        boolean oneWayNegative = this.isOneWayNegative() ;
+        boolean oneWayForward = this.isOneWayForward() ;
+        boolean oneWayBackward = this.isOneWayBackward() ;
         boolean roadClosed = this.isRoadClosed() ;
 
 
         if (isSymbolic) {
             g.setColor(Color.GRAY);
-            if (oneWayPositive)
+            if (oneWayForward)
                 g.fill(getArrow(0.0, scale, true));
-            else if (oneWayNegative)
+            else if (oneWayBackward)
                 g.fill(getArrow(0.0, scale, false));
             else
                 g.fill(getRect(0.0, scale, false));
             g.setColor(Color.YELLOW);
-            if (oneWayPositive)
+            if (oneWayForward)
                 g.draw(getArrow(0.0, scale, true));
-            else if (oneWayNegative)
+            else if (oneWayBackward)
                 g.draw(getArrow(0.0, scale, false));
             else
                 g.draw(getRect(0.0, scale, false));
         } else if (selected) {
             g.setColor(Color.BLACK);
-            if (oneWayPositive)
+            if (oneWayForward)
                 g.fill(getArrow(0.0, scale, true));
-            else if (oneWayNegative)
+            else if (oneWayBackward)
                 g.fill(getArrow(0.0, scale, false));
             else
                 g.fill(getRect(0.0, scale, false));
             g.setColor(Color.RED);
-            if (oneWayPositive)
+            if (oneWayForward)
                 g.draw(getArrow(0.0, scale, true));
-            else if (oneWayNegative)
+            else if (oneWayBackward)
                 g.draw(getArrow(0.0, scale, false));
             else
                 g.draw(getRect(0.0, scale, false));
         } else if (width == 0) {
             g.setColor(Color.YELLOW);
-            if (oneWayPositive)
+            if (oneWayForward)
                 g.fill(getArrow(0.0, scale, true));
-            else if (oneWayNegative)
+            else if (oneWayBackward)
                 g.fill(getArrow(0.0, scale, false));
             else
                 g.fill(getRect(0.0, scale, false));
         } else {
-            if (oneWayPositive) {
+            if (oneWayForward) {
                 g.setColor(Color.MAGENTA);
                 g.fill(getArrow(0.0, scale, true));
-            } else if (oneWayNegative) {
+            } else if (oneWayBackward) {
                 g.setColor(LIGHT_BLUE);
                 g.fill(getArrow(0.0, scale, false));
             } else if (roadClosed) {
@@ -467,9 +467,9 @@ public class MapLink extends OBMapPart {
                 g.fill(getRect(0.0, scale, false));
             }
             g.setColor(Color.BLACK);
-            if (oneWayPositive)
+            if (oneWayForward)
                 g.draw(getArrow(0.0, scale, true));
-            else if (oneWayNegative)
+            else if (oneWayBackward)
                 g.draw(getArrow(0.0, scale, false));
             else
                 g.draw(getRect(0.0, scale, false));
@@ -512,9 +512,9 @@ public class MapLink extends OBMapPart {
             //g.setStroke(new BasicStroke((float)width));
             Color c = getColorFromDensity();
             g.setColor(c);
-            if (this.isOneWayPositive())
+            if (this.isOneWayForward())
                 g.draw(getArrow(0.0, scale, true));
-            else if (this.isOneWayNegative())
+            else if (this.isOneWayBackward())
                 g.draw(getArrow(0.0, scale, false));
             else
                 g.draw(getRect(0.0, scale, true));
@@ -646,15 +646,15 @@ public class MapLink extends OBMapPart {
         return p;
     }
 
-    // create arrow polygon consist of seven coordinates. positive means the 
+    // create arrow polygon consist of seven coordinates. forward means the 
     // direction of arrow: true(from-to), false(to-from)
     public GeneralPath getArrow(double border, double scale,
-            boolean positive) {
+            boolean forward) {
         double x1 = 0.0;
         double y1 = 0.0;
         double x2 = 0.0;
         double y2 = 0.0;
-        if (positive) {
+        if (forward) {
             x1 = getFrom().getX();
             y1 = getFrom().getY();
             x2 = getTo().getX();
@@ -1128,55 +1128,55 @@ public class MapLink extends OBMapPart {
 
     //------------------------------------------------------------
     /**
-     * OneWay (positive) のチェック
-     * @return OneWayPositive なら true
+     * OneWay (forward) のチェック
+     * @return OneWayForward なら true
      */
-    public boolean isOneWayPositive() {
-        return hasTag(Tag_OneWayPositive) ;
+    public boolean isOneWayForward() {
+        return hasTag(Tag_OneWayForward) ;
     }
 
     //------------------------------------------------------------
     /**
-     * OneWay (positive) にする。
+     * OneWay (forward) にする。
      * @return 変化があったなら true
      */
-    public boolean setOneWayPositive() {
-        return setOneWayPositive(true) ;
+    public boolean setOneWayForward() {
+        return setOneWayForward(true) ;
     }
     //------------------------------------------------------------
     /**
-     * OneWay (positive) にする。
+     * OneWay (forward) にする。
      * @param flag もし false なら OneWay 解除。
      * @return 変化があったなら true
      */
-    public boolean setOneWayPositive(boolean flag) {
-        return setSpecialTag(Tag_OneWayPositive, flag) ;
+    public boolean setOneWayForward(boolean flag) {
+        return setSpecialTag(Tag_OneWayForward, flag) ;
     }
 
     //------------------------------------------------------------
     /**
-     * OneWay (negative) のチェック
-     * @return OneWayNegative なら true
+     * OneWay (backward) のチェック
+     * @return OneWayBackward なら true
      */
-    public boolean isOneWayNegative() {
-        return hasTag(Tag_OneWayNegative) ;
+    public boolean isOneWayBackward() {
+        return hasTag(Tag_OneWayBackward) ;
     }
 
     //------------------------------------------------------------
     /**
-     * OneWay (negative) にする。
+     * OneWay (backward) にする。
      * @return 変化があったなら true
      */
-    public boolean setOneWayNegative() {
-        return setOneWayNegative(true) ;
+    public boolean setOneWayBackward() {
+        return setOneWayBackward(true) ;
     }
     //------------------------------------------------------------
     /**
-     * OneWay (negative) にする。
+     * OneWay (backward) にする。
      * @return 変化があったなら true
      */
-    public boolean setOneWayNegative(boolean flag) {
-        return setSpecialTag(Tag_OneWayNegative, flag) ;
+    public boolean setOneWayBackward(boolean flag) {
+        return setSpecialTag(Tag_OneWayBackward, flag) ;
     }
 
     //------------------------------------------------------------

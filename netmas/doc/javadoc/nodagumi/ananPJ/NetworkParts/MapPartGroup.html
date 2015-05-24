@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>前のクラス</li>
-<li><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/NetworkParts/NetworkMapPartsListener.html" title="nodagumi.ananPJ.NetworkParts内のインタフェース"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/NetworkParts/MapPartGroup.html" target="_top">フレーム</a></li>
@@ -187,7 +187,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></h3>
-<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#alertMessageTable">alertMessageTable</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#ID">ID</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#selected">selected</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#tags">tags</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#alertMessageTable">alertMessageTable</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#ID">ID</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#networkMap">networkMap</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#selected">selected</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#tags">tags</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -210,16 +210,16 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html#MapPartGroup-int-">MapPartGroup</a></span>(int&nbsp;_ID)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html#MapPartGroup-java.lang.String-">MapPartGroup</a></span>(java.lang.String&nbsp;_ID)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html#MapPartGroup-int-java.awt.geom.Point2D-java.awt.geom.Point2D-double-">MapPartGroup</a></span>(int&nbsp;_ID,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html#MapPartGroup-java.lang.String-java.awt.geom.Point2D-java.awt.geom.Point2D-double-">MapPartGroup</a></span>(java.lang.String&nbsp;_ID,
             java.awt.geom.Point2D&nbsp;_pNorthWest,
             java.awt.geom.Point2D&nbsp;_pSouthEast,
             double&nbsp;_pTheta)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html#MapPartGroup-int-java.awt.geom.Point2D-java.awt.geom.Point2D-double-java.lang.String-">MapPartGroup</a></span>(int&nbsp;_ID,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html#MapPartGroup-java.lang.String-java.awt.geom.Point2D-java.awt.geom.Point2D-double-java.lang.String-">MapPartGroup</a></span>(java.lang.String&nbsp;_ID,
             java.awt.geom.Point2D&nbsp;_pNorthWest,
             java.awt.geom.Point2D&nbsp;_pSouthEast,
             double&nbsp;_pTheta,
@@ -430,7 +430,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></h3>
-<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#addTag-java.lang.String-">addTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#allTagsClear--">allTagsClear</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#init-int-">init</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#removeTag-java.lang.String-">removeTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a></code></li>
+<code><a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#addTag-java.lang.String-">addTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#allTagsClear--">allTagsClear</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNetworkMap--">getNetworkMap</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#init-java.lang.String-">init</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#removeTag-java.lang.String-">removeTag</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setNetworkMap-nodagumi.ananPJ.NetworkMap-">setNetworkMap</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -513,38 +513,38 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <!--   -->
 </a>
 <h3>コンストラクタの詳細</h3>
-<a name="MapPartGroup-int-java.awt.geom.Point2D-java.awt.geom.Point2D-double-java.lang.String-">
+<a name="MapPartGroup-java.lang.String-java.awt.geom.Point2D-java.awt.geom.Point2D-double-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>MapPartGroup</h4>
-<pre>public&nbsp;MapPartGroup(int&nbsp;_ID,
+<pre>public&nbsp;MapPartGroup(java.lang.String&nbsp;_ID,
                     java.awt.geom.Point2D&nbsp;_pNorthWest,
                     java.awt.geom.Point2D&nbsp;_pSouthEast,
                     double&nbsp;_pTheta,
                     java.lang.String&nbsp;_imageFileName)</pre>
 </li>
 </ul>
-<a name="MapPartGroup-int-java.awt.geom.Point2D-java.awt.geom.Point2D-double-">
+<a name="MapPartGroup-java.lang.String-java.awt.geom.Point2D-java.awt.geom.Point2D-double-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>MapPartGroup</h4>
-<pre>public&nbsp;MapPartGroup(int&nbsp;_ID,
+<pre>public&nbsp;MapPartGroup(java.lang.String&nbsp;_ID,
                     java.awt.geom.Point2D&nbsp;_pNorthWest,
                     java.awt.geom.Point2D&nbsp;_pSouthEast,
                     double&nbsp;_pTheta)</pre>
 </li>
 </ul>
-<a name="MapPartGroup-int-">
+<a name="MapPartGroup-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MapPartGroup</h4>
-<pre>public&nbsp;MapPartGroup(int&nbsp;_ID)</pre>
+<pre>public&nbsp;MapPartGroup(java.lang.String&nbsp;_ID)</pre>
 </li>
 </ul>
 </li>
@@ -1026,7 +1026,7 @@ extends <a href="../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodag
 <div class="subNav">
 <ul class="navList">
 <li>前のクラス</li>
-<li><a href="../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/NetworkParts/NetworkMapPartsListener.html" title="nodagumi.ananPJ.NetworkParts内のインタフェース"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/NetworkParts/MapPartGroup.html" target="_top">フレーム</a></li>

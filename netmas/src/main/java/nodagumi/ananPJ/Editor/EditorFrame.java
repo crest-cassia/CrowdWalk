@@ -1409,12 +1409,12 @@ public class EditorFrame
         // リンクに一方通行タグを振る
         for (MapLink link : seriesLinks) {
             if (link.isForwardDirectionFrom(enteringNode)) {
-                link.setOneWayPositive() ;
-                link.setOneWayNegative(false) ;
+                link.setOneWayForward() ;
+                link.setOneWayBackward(false) ;
                 link.setRoadClosed(false) ;
             } else {
-                link.setOneWayNegative() ;
-                link.setOneWayPositive(false) ;
+                link.setOneWayBackward() ;
+                link.setOneWayForward(false) ;
                 link.setRoadClosed(false) ;
             }
             enteringNode = link.getOther(enteringNode);
@@ -1432,8 +1432,8 @@ public class EditorFrame
         for (MapLink link : getChildLinks()) {
             if (link.selected) {
                 link.setRoadClosed() ;
-                link.setOneWayPositive(false) ;
-                link.setOneWayNegative(false) ;
+                link.setOneWayForward(false) ;
+                link.setOneWayBackward(false) ;
             }
         }
         editor.getLinkPanel().refresh();
@@ -1496,8 +1496,8 @@ public class EditorFrame
         editor._setModified(true);
         for (MapLink link : getChildLinks()) {
                 if (link.selected) {
-                    link.setOneWayPositive(false) ;
-                    link.setOneWayNegative(false) ;
+                    link.setOneWayForward(false) ;
+                    link.setOneWayBackward(false) ;
                     link.setRoadClosed(false) ;
                 }
         }

@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/Lift.Shaft.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
+<li>前のクラス</li>
 <li><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
@@ -124,10 +124,6 @@ var activeTableTab = "activeTableTab";
 <dl>
 <dt>すべての実装されたインタフェース:</dt>
 <dd>java.io.Serializable, java.lang.Cloneable, javax.swing.tree.MutableTreeNode, javax.swing.tree.TreeNode</dd>
-</dl>
-<dl>
-<dt>直系の既知のサブクラス:</dt>
-<dd><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/Lift.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">Lift</a></dd>
 </dl>
 <hr>
 <br>
@@ -250,11 +246,11 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#Tag_OneWayNegative">Tag_OneWayNegative</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#Tag_OneWayBackward">Tag_OneWayBackward</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#Tag_OneWayPositive">Tag_OneWayPositive</a></span></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#Tag_OneWayForward">Tag_OneWayForward</a></span></code>
 <div class="block">Special Tags</div>
 </td>
 </tr>
@@ -288,7 +284,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></h3>
-<code><a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#alertMessageTable">alertMessageTable</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#ID">ID</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#selected">selected</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#tags">tags</a></code></li>
+<code><a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#alertMessageTable">alertMessageTable</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#ID">ID</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#networkMap">networkMap</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#selected">selected</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#tags">tags</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -311,12 +307,12 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#MapLink-int-double-double-">MapLink</a></span>(int&nbsp;_id,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#MapLink-java.lang.String-double-double-">MapLink</a></span>(java.lang.String&nbsp;_id,
        double&nbsp;_length,
        double&nbsp;_width)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#MapLink-int-nodagumi.ananPJ.NetworkParts.Node.MapNode-nodagumi.ananPJ.NetworkParts.Node.MapNode-double-double-">MapLink</a></span>(int&nbsp;_id,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#MapLink-java.lang.String-nodagumi.ananPJ.NetworkParts.Node.MapNode-nodagumi.ananPJ.NetworkParts.Node.MapNode-double-double-">MapLink</a></span>(java.lang.String&nbsp;_id,
        <a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;_from,
        <a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;_to,
        double&nbsp;_length,
@@ -472,7 +468,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <td class="colFirst"><code>java.awt.geom.GeneralPath</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#getArrow-double-double-boolean-">getArrow</a></span>(double&nbsp;border,
         double&nbsp;scale,
-        boolean&nbsp;positive)</code>&nbsp;</td>
+        boolean&nbsp;forward)</code>&nbsp;</td>
 </tr>
 <tr id="i24" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink.AttributePanel</a></code></td>
@@ -579,14 +575,14 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </tr>
 <tr id="i46" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#isOneWayNegative--">isOneWayNegative</a></span>()</code>
-<div class="block">OneWay (negative) のチェック</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#isOneWayBackward--">isOneWayBackward</a></span>()</code>
+<div class="block">OneWay (backward) のチェック</div>
 </td>
 </tr>
 <tr id="i47" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#isOneWayPositive--">isOneWayPositive</a></span>()</code>
-<div class="block">OneWay (positive) のチェック</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#isOneWayForward--">isOneWayForward</a></span>()</code>
+<div class="block">OneWay (forward) のチェック</div>
 </td>
 </tr>
 <tr id="i48" class="altColor">
@@ -652,26 +648,26 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </tr>
 <tr id="i60" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayNegative--">setOneWayNegative</a></span>()</code>
-<div class="block">OneWay (negative) にする。</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayBackward--">setOneWayBackward</a></span>()</code>
+<div class="block">OneWay (backward) にする。</div>
 </td>
 </tr>
 <tr id="i61" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayNegative-boolean-">setOneWayNegative</a></span>(boolean&nbsp;flag)</code>
-<div class="block">OneWay (negative) にする。</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayBackward-boolean-">setOneWayBackward</a></span>(boolean&nbsp;flag)</code>
+<div class="block">OneWay (backward) にする。</div>
 </td>
 </tr>
 <tr id="i62" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayPositive--">setOneWayPositive</a></span>()</code>
-<div class="block">OneWay (positive) にする。</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayForward--">setOneWayForward</a></span>()</code>
+<div class="block">OneWay (forward) にする。</div>
 </td>
 </tr>
 <tr id="i63" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayPositive-boolean-">setOneWayPositive</a></span>(boolean&nbsp;flag)</code>
-<div class="block">OneWay (positive) にする。</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#setOneWayForward-boolean-">setOneWayForward</a></span>(boolean&nbsp;flag)</code>
+<div class="block">OneWay (forward) にする。</div>
 </td>
 </tr>
 <tr id="i64" class="altColor">
@@ -736,14 +732,14 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a></h3>
-<code><a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#applyRestrictionRule-double-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.AgentBase-double-">applyRestrictionRule</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#init-int-">init</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#isLeaf--">isLeaf</a></code></li>
+<code><a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#applyRestrictionRule-double-nodagumi.Itk.Term-nodagumi.ananPJ.Agents.AgentBase-double-">applyRestrictionRule</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#init-java.lang.String-">init</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html#isLeaf--">isLeaf</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.nodagumi.ananPJ.NetworkParts.OBNode">
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.NetworkParts.<a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></h3>
-<code><a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getHintString--">getHintString</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#postLoad-boolean-">postLoad</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#prepareForSave-boolean-">prepareForSave</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a></code></li>
+<code><a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getHintString--">getHintString</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getNetworkMap--">getNetworkMap</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTags--">getTags</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#getTagString--">getTagString</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-double-">isGateClosed</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkParts.OBNode-">isOffspring</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#postLoad-boolean-">postLoad</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#prepareForSave-boolean-">prepareForSave</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setNetworkMap-nodagumi.ananPJ.NetworkMap-">setNetworkMap</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../../nodagumi/ananPJ/NetworkParts/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -773,30 +769,30 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <!--   -->
 </a>
 <h3>フィールドの詳細</h3>
-<a name="Tag_OneWayPositive">
+<a name="Tag_OneWayForward">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>Tag_OneWayPositive</h4>
-<pre>public static final&nbsp;java.lang.String Tag_OneWayPositive</pre>
+<h4>Tag_OneWayForward</h4>
+<pre>public static final&nbsp;java.lang.String Tag_OneWayForward</pre>
 <div class="block">Special Tags</div>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.NetworkParts.Link.MapLink.Tag_OneWayPositive">定数フィールド値</a></dd>
+<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.NetworkParts.Link.MapLink.Tag_OneWayForward">定数フィールド値</a></dd>
 </dl>
 </li>
 </ul>
-<a name="Tag_OneWayNegative">
+<a name="Tag_OneWayBackward">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>Tag_OneWayNegative</h4>
-<pre>public static final&nbsp;java.lang.String Tag_OneWayNegative</pre>
+<h4>Tag_OneWayBackward</h4>
+<pre>public static final&nbsp;java.lang.String Tag_OneWayBackward</pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.NetworkParts.Link.MapLink.Tag_OneWayNegative">定数フィールド値</a></dd>
+<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.NetworkParts.Link.MapLink.Tag_OneWayBackward">定数フィールド値</a></dd>
 </dl>
 </li>
 </ul>
@@ -1025,24 +1021,24 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <!--   -->
 </a>
 <h3>コンストラクタの詳細</h3>
-<a name="MapLink-int-double-double-">
+<a name="MapLink-java.lang.String-double-double-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>MapLink</h4>
-<pre>public&nbsp;MapLink(int&nbsp;_id,
+<pre>public&nbsp;MapLink(java.lang.String&nbsp;_id,
                double&nbsp;_length,
                double&nbsp;_width)</pre>
 </li>
 </ul>
-<a name="MapLink-int-nodagumi.ananPJ.NetworkParts.Node.MapNode-nodagumi.ananPJ.NetworkParts.Node.MapNode-double-double-">
+<a name="MapLink-java.lang.String-nodagumi.ananPJ.NetworkParts.Node.MapNode-nodagumi.ananPJ.NetworkParts.Node.MapNode-double-double-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MapLink</h4>
-<pre>public&nbsp;MapLink(int&nbsp;_id,
+<pre>public&nbsp;MapLink(java.lang.String&nbsp;_id,
                <a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;_from,
                <a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;_to,
                double&nbsp;_length,
@@ -1462,7 +1458,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <h4>getArrow</h4>
 <pre>public&nbsp;java.awt.geom.GeneralPath&nbsp;getArrow(double&nbsp;border,
                                           double&nbsp;scale,
-                                          boolean&nbsp;positive)</pre>
+                                          boolean&nbsp;forward)</pre>
 </li>
 </ul>
 <a name="getLine2D--">
@@ -1754,42 +1750,42 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </dl>
 </li>
 </ul>
-<a name="isOneWayPositive--">
+<a name="isOneWayForward--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isOneWayPositive</h4>
-<pre>public&nbsp;boolean&nbsp;isOneWayPositive()</pre>
-<div class="block">OneWay (positive) のチェック</div>
+<h4>isOneWayForward</h4>
+<pre>public&nbsp;boolean&nbsp;isOneWayForward()</pre>
+<div class="block">OneWay (forward) のチェック</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
-<dd>OneWayPositive なら true</dd>
+<dd>OneWayForward なら true</dd>
 </dl>
 </li>
 </ul>
-<a name="setOneWayPositive--">
+<a name="setOneWayForward--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setOneWayPositive</h4>
-<pre>public&nbsp;boolean&nbsp;setOneWayPositive()</pre>
-<div class="block">OneWay (positive) にする。</div>
+<h4>setOneWayForward</h4>
+<pre>public&nbsp;boolean&nbsp;setOneWayForward()</pre>
+<div class="block">OneWay (forward) にする。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>変化があったなら true</dd>
 </dl>
 </li>
 </ul>
-<a name="setOneWayPositive-boolean-">
+<a name="setOneWayForward-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setOneWayPositive</h4>
-<pre>public&nbsp;boolean&nbsp;setOneWayPositive(boolean&nbsp;flag)</pre>
-<div class="block">OneWay (positive) にする。</div>
+<h4>setOneWayForward</h4>
+<pre>public&nbsp;boolean&nbsp;setOneWayForward(boolean&nbsp;flag)</pre>
+<div class="block">OneWay (forward) にする。</div>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>
 <dd><code>flag</code> - もし false なら OneWay 解除。</dd>
@@ -1798,42 +1794,42 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </dl>
 </li>
 </ul>
-<a name="isOneWayNegative--">
+<a name="isOneWayBackward--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isOneWayNegative</h4>
-<pre>public&nbsp;boolean&nbsp;isOneWayNegative()</pre>
-<div class="block">OneWay (negative) のチェック</div>
+<h4>isOneWayBackward</h4>
+<pre>public&nbsp;boolean&nbsp;isOneWayBackward()</pre>
+<div class="block">OneWay (backward) のチェック</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
-<dd>OneWayNegative なら true</dd>
+<dd>OneWayBackward なら true</dd>
 </dl>
 </li>
 </ul>
-<a name="setOneWayNegative--">
+<a name="setOneWayBackward--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setOneWayNegative</h4>
-<pre>public&nbsp;boolean&nbsp;setOneWayNegative()</pre>
-<div class="block">OneWay (negative) にする。</div>
+<h4>setOneWayBackward</h4>
+<pre>public&nbsp;boolean&nbsp;setOneWayBackward()</pre>
+<div class="block">OneWay (backward) にする。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>変化があったなら true</dd>
 </dl>
 </li>
 </ul>
-<a name="setOneWayNegative-boolean-">
+<a name="setOneWayBackward-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setOneWayNegative</h4>
-<pre>public&nbsp;boolean&nbsp;setOneWayNegative(boolean&nbsp;flag)</pre>
-<div class="block">OneWay (negative) にする。</div>
+<h4>setOneWayBackward</h4>
+<pre>public&nbsp;boolean&nbsp;setOneWayBackward(boolean&nbsp;flag)</pre>
+<div class="block">OneWay (backward) にする。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>変化があったなら true</dd>
@@ -1966,7 +1962,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/Lift.Shaft.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
+<li>前のクラス</li>
 <li><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">

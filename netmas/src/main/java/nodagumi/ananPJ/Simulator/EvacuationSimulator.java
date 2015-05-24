@@ -764,7 +764,7 @@ public class EvacuationSimulator {
             }
 	    for (MapLink link : getLinks()) {
                 // link log format:
-                // link,ID,positive_agents,negative_agents,density
+                // link,ID,forward_agents,backward_agents,density
                 double linkDensity = (link.getLane(1.0).size() +
                         link.getLane(-1.0).size()) /
                     (link.length * link.width);

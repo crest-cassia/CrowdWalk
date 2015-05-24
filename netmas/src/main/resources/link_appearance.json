@@ -68,13 +68,13 @@ Usable color names:
         color: 'YELLOW',
         transparency: 0.2525
     },
-    'ONE-WAY-POSITIVE': {
+    'ONE-WAY-FORWARD': {
         width_fixed: true,
         width_ratio: 3.0,
         color: 'PURPLE',
         transparency: 0.5
     },
-    'ONE-WAY-NEGATIVE': {
+    'ONE-WAY-BACKWARD': {
         width_fixed: true,
         width_ratio: 3.0,
         color: 'LIGHTBLUE',
