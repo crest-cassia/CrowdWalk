@@ -58,63 +58,14 @@ public class NetworkMapBase extends DefaultTreeModel {
      */
     public static int PartIdCounter = 0 ;
 
-    //------------------------------------------------------------
-    /**
-     * ユニークな id の取得
-     * @return 新しい id
-     */
-    protected String assignNewId() {
-        return assignNewId(DefaultPartIdPrefix) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ユニークな id の取得
-     * @param prefix : id の prefix
-     * @return 新しい id
-     */
-    protected String assignNewId(String prefix) {
-        return assignNewId(prefix, DefaultPartIdDigit) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ユニークな id の取得
-     * @param prefix : id の prefix
-     * @param digit : id 数値部分の桁数
-     * @return 新しい id
-     */
-    protected String assignNewId(String prefix, int digit) {
-        return assignNewId(prefix, digit, DefaultPartIdSuffix) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * ユニークな id の取得
-     * @param prefix : id の prefix
-     * @param digit : id 数値部分の桁数
-     * @param suffix : id の suffix
-     * @return 新しい id
-     */
-    protected String assignNewId(String prefix, int digit, String suffix) {
-        String format = prefix + String.format("%%0%dd", digit) + suffix ;
-
-        synchronized(this) {
-            String id ;
-            do {
-                id = String.format(format, PartIdCounter) ;
-                PartIdCounter++ ;
-            } while(checkObjectId(id)) ;
-            return id ;
-        }
-    }
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ID から NetworkParts を取り出すための table.
      */
-    private HashMap<String, OBNode> partTable =
-        new HashMap<String, OBNode>();
+    private UniqIdObjectTable<OBNode> partTable =
+        new UniqIdObjectTable<OBNode>(DefaultPartIdPrefix,
+                                      DefaultPartIdDigit,
+                                      DefaultPartIdSuffix) ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -150,7 +101,38 @@ public class NetworkMapBase extends DefaultTreeModel {
      * @return id がすでに登録されていれば true
      */
     public boolean checkObjectId(String id) {
-        return partTable.containsKey(id) ;
+        return !partTable.isUniqId(id) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @return 新しい id
+     */
+    protected String assignNewId() {
+        return partTable.getUniqId() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @return 新しい id
+     */
+    protected String assignNewId(String prefix) {
+        return partTable.getUniqId(prefix) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ユニークな id の取得
+     * @param prefix : id の prefix
+     * @param digit : id 数値部分の桁数
+     * @param suffix : id の suffix
+     * @return 新しい id
+     */
+    protected String assignNewId(String prefix, String suffix) {
+        return partTable.getUniqId(prefix, suffix) ;
     }
 
     //------------------------------------------------------------
@@ -160,11 +142,6 @@ public class NetworkMapBase extends DefaultTreeModel {
      * @param part : 登録するpart.
      */
     public void addObject(String id, OBNode part) {
-        // 重複登録であれば警告
-        if(checkObjectId(id)) {
-            Itk.logWarn("duplicated ID", "id=", id, "part=", part) ;
-        }
-
         partTable.put(id, part);
     }
 
