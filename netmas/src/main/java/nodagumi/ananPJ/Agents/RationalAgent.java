@@ -85,8 +85,8 @@ public class RationalAgent extends BustleAgent {
     /**
      * constractor。
      */
-    public RationalAgent(String _id, Random _random) {
-        init(_id, _random) ;
+    public RationalAgent(Random _random) {
+        init(_random) ;
     }
 
     //------------------------------------------------------------

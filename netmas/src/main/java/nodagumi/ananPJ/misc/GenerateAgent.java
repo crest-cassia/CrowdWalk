@@ -359,7 +359,7 @@ public abstract class GenerateAgent {
             AgentBase agent = null;
             try {
                 agent = newAgentByName(agentClassName) ;
-                agent.init(simulator.getMap().assignUniqueAgentId(), random);
+                agent.init(random);
                 agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.logError("class name not found") ;

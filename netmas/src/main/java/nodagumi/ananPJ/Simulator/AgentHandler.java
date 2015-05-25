@@ -271,6 +271,10 @@ public class AgentHandler {
             agents.addAll(generated_agents_step);
             generated_agents.addAll(generated_agents_step);
             for (AgentBase agent : generated_agents_step) {
+                /* [2015.05.25 I.Noda] 
+                 * registerAgent から切り離して、Agent に ID をふる。
+                 */
+                simulator.getMap().assignUniqIdForAgent(agent) ;
                 if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
                 effectiveLinks.add(agent.getCurrentLink());
             }
@@ -284,6 +288,7 @@ public class AgentHandler {
 
         /* the following must be here, as direction etc. are
          * calculated in the methods call above, such as updateAgents.
+         * [2015.05.25 I.Noda] おそらく表示のために、ここにないといけない。
          */
         for (AgentBase agent : generated_agents_step) {
             simulator.registerAgent(agent);

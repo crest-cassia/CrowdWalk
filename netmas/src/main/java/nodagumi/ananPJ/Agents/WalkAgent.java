@@ -218,19 +218,11 @@ public class WalkAgent extends AgentBase {
     
     //------------------------------------------------------------
     /**
-     * 引数なしconstractor。 ClassFinder.newByName で必要。
-     */
-    public WalkAgent(String _id, Random _random) {
-        init(_id, _random) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 初期化。constractorから分離。
      */
     @Override
-    public void init(String _id, Random _random) {
-        super.init(_id, _random);
+    public void init(Random _random) {
+        super.init(_random);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
     }

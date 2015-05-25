@@ -44,19 +44,19 @@ public class UniqIdObjectTable<Klass> extends HashMap<String, Klass> {
     /**
      * id の prefix
      */
-    private String idPrefix = DefaultIdPrefix ;
+    private String idPrefix ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * id の suffix
      */
-    private String idSuffix = DefaultIdSuffix ;
+    private String idSuffix ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * id の 数値部分の桁数
      */
-    private int idDigit = DefaultIdDigit ;
+    private int idDigit ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -73,20 +73,40 @@ public class UniqIdObjectTable<Klass> extends HashMap<String, Klass> {
     //------------------------------------------------------------
     /**
      * 初期化
-     * @param _baz: about argument baz.
      */
     public UniqIdObjectTable() {
-	super() ;
+        this(DefaultIdPrefix, DefaultIdDigit, DefaultIdSuffix) ;
     }
 
     //------------------------------------------------------------
     /**
      * 初期化
-     * @param _baz: about argument baz.
+     * @param prefix : 生成する ID の prefix
+     */
+    public UniqIdObjectTable(String prefix) {
+        this(prefix, DefaultIdDigit, DefaultIdSuffix) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 初期化
+     * @param prefix : 生成する ID の prefix
+     * @param digit : 生成する ID の数字部分の桁数
+     */
+    public UniqIdObjectTable(String prefix, int digit) {
+        this(prefix, digit, DefaultIdSuffix) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 初期化
+     * @param prefix : 生成する ID の prefix
+     * @param digit : 生成する ID の数字部分の桁数
+     * @param suffix : 生成する ID の suffix
      */
     public UniqIdObjectTable(String prefix, int digit, String suffix) {
-	this() ;
-	setIdPrefix(prefix) ;
+	super() ;
+        setIdPrefix(prefix) ;
 	setIdDigit(digit) ;
 	setIdSuffix(suffix) ;
     }

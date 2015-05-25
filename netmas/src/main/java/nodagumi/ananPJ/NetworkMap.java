@@ -51,15 +51,61 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-
+//======================================================================
+/**
+ * シミュレーションで用いるデータをまとめて保持するクラス。
+ */
 public class NetworkMap extends NetworkMapBase {
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+	 * エージェントの配列
+	 */
     private ArrayList<AgentBase> agentsCache =
         new ArrayList<AgentBase>();
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * NetworkParts の prefix の規定値
+     */
+    public static String DefaultAgentIdPrefix = "ag" ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+	 * エージェントテーブル。
+     * エージェントの id とエージェントを結びつけるもの。
+	 */
+    private UniqIdObjectTable<AgentBase> agentTable =
+        new UniqIdObjectTable<AgentBase>(DefaultAgentIdPrefix) ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+	 * ???
+	 */
     private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+	 * ???
+	 */
     private String filename = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+	 * 汚染地域データのファイル
+	 */
     private String pollutionFile = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+	 * エージェント生成ルールのファイル
+	 */
     private String generationFile = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+	 * シナリオファイル
+	 */
     private String scenarioFile = null;
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -179,50 +225,26 @@ public class NetworkMap extends NetworkMapBase {
         part.setNetworkMap(this);
     }
 
-    //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * NetworkParts の prefix の規定値
-     */
-    public static String DefaultAgentIdPrefix = "ag" ;
-
-    //------------------------------------------------------------
-    /**
-     * ユニークなエージェント用 id の取得
-     * @return 新しい id
-     */
-    public String assignUniqueAgentId() {
-        return assignUniqueAgentId(DefaultAgentIdPrefix) ;
-    }
-
-    /**
-     * ユニークなエージェント用 id の取得
-     * @param prefix : id の prefix
-     * @return 新しい id
-     */
-    public String assignUniqueAgentId(String prefix) {
-        return assignNewId(prefix) ;
-    }
-
     //------------------------------------------------------------
     private void insertOBNode (OBNode parent,
-            OBNode node,
-            boolean can_undo) {
+                               OBNode node,
+                               boolean can_undo) {
         addObject(node.ID, node);
         insertNodeInto(node, parent, parent.getChildCount());
 
         OBNode.NType type = node.getNodeType();
         if (type == OBNode.NType.NODE) {
             nodesCache.add((MapNode)node);
-        } else     if (type == OBNode.NType.LINK) {
+        } else if (type == OBNode.NType.LINK) {
             linksCache.add((MapLink)node);
-        } else     if (type == OBNode.NType.AGENT) {
+        } else if (type == OBNode.NType.AGENT) {
+            Itk.logWarn("insert Agent OBNode is obsolute.", node) ;
             agentsCache.add((AgentBase)node);
-        } else     if (type == OBNode.NType.GROUP) {
+        } else if (type == OBNode.NType.GROUP) {
             /* no operation */
-        } else     if (type == OBNode.NType.ROOM) {
+        } else if (type == OBNode.NType.ROOM) {
             /* no operation */
-        } else     if (type == OBNode.NType.SYMLINK) {
+        } else if (type == OBNode.NType.SYMLINK) {
             /* no operation */
         } else {
             System.err.println("unkown type added");
@@ -270,6 +292,7 @@ public class NetworkMap extends NetworkMapBase {
             linkRemoved = true;
             break;
         case AGENT:
+            Itk.logWarn("remove Agent OBNode is obsolute") ;
             agentsCache.remove((AgentBase)node);
             break;
         case GROUP:
@@ -318,19 +341,28 @@ public class NetworkMap extends NetworkMapBase {
         return link;
     }
 
-    public AgentBase addAgent(MapPartGroup parent, AgentBase agent) {
-        return addAgent(parent, agent, true) ;
+    //------------------------------------------------------------
+    /**
+     * エージェントを追加。
+     * @param agent : 追加するエージェント。ID は自動生成。
+     * @return agent がそのまま変える。
+     */
+    public AgentBase assignUniqIdForAgent(AgentBase agent) {
+        String id = agentTable.putWithUniqId(agent) ;
+        agent.ID = id;
+        return agent ;
     }
 
-    public AgentBase addAgent(MapPartGroup parent, AgentBase agent, 
-                              boolean autoID) {
-        if (autoID) {
-            String id = assignUniqueAgentId();
-            agent.ID = id;
-        }
-        addObject(agent.ID, agent);
+    //------------------------------------------------------------
+    /**
+     * エージェントを追加。
+     * @param agent : 追加するエージェント。
+     * @param autoID : true なら、ID を自動生成。
+     * @return agent がそのまま変える。
+     */
+    public AgentBase addAgent(AgentBase agent) {
+        agent.setNetworkMap(this) ;
         agentsCache.add(agent);
-        insertNodeInto(agent, parent, parent.getChildCount());
         return agent;
     }
 

@@ -209,13 +209,7 @@ public class EvacuationSimulator {
         if (panel3d != null) {
             panel3d.registerAgentOnline(agent);
         }
-        //agents.add(agent);
-        //getMap().addAgent((MapPartGroup) getLinks().get(0).getParent(), agent);
-	if (map.getLinks().size() > 0) {
-	    getMap().addAgent((MapPartGroup) map.getLinks().get(0).getParent(), agent, false/* エージェントIDを変更しない */);
-        //} else {
-        //    getMap().addAgent((MapPartGroup) getMap().root, agent);
-        }
+        getMap().addAgent(agent) ;
     }
 
     Boolean stop_simulation = false;

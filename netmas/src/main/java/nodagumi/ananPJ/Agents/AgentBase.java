@@ -135,8 +135,8 @@ implements Comparable<AgentBase> {
      * 引数なしconstractorはClassFinder.newByName で必要。
      */
     public AgentBase() {} ;
-    public AgentBase(String _id, Random _random) {
-        init(_id, _random) ;
+    public AgentBase(Random _random) {
+        init(_random) ;
     }
 
     //------------------------------------------------------------
@@ -150,8 +150,8 @@ implements Comparable<AgentBase> {
     /**
      * 初期化。constractorから分離。
      */
-    public void init(String _id, Random _random) {
-        super.init(_id);
+    public void init(Random _random) {
+        super.init(null);
         random = _random;
         agentNumber = agent_count++;
         //swing_width = Math.random() * 2.0 - 1.0;
@@ -263,7 +263,7 @@ implements Comparable<AgentBase> {
         } else {
             AgentBase agent = GenerateAgent.newAgentByName(type) ;
             if(agent != null) {
-                agent.init(null, _random) ;
+                agent.init(_random) ;
                 return agent ;
             } else {
                 return null ;
