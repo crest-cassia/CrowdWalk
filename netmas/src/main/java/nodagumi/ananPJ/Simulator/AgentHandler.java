@@ -279,6 +279,7 @@ public class AgentHandler {
                 effectiveLinks.add(agent.getCurrentLink());
             }
         }
+
         preprocessLinks(time);
         preprocessAgents(time);
         updateLinks(time);

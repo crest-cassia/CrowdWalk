@@ -355,6 +355,15 @@ public class NetworkMap extends NetworkMapBase {
 
     //------------------------------------------------------------
     /**
+     * テーブル中のエージェント総数
+     * @return agent 総数
+     */
+    public int totalAgentNumberInTable() {
+        return agentTable.size() ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * エージェントを追加。
      * @param agent : 追加するエージェント。
      * @param autoID : true なら、ID を自動生成。
