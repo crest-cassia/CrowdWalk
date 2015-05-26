@@ -561,7 +561,7 @@ public class WalkAgent extends AgentBase {
 
             // 進行可能なリンクが見つからなければスタックさせる
             if (nextLink == null) {
-                Itk.logInfo("Agent stuck", String.format("%s ID: %d, time: %.1f, linkID: %d",
+                Itk.logInfo("Agent stuck", String.format("%s ID: %s, time: %.1f, linkID: %s",
                             getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
                 finalizeEvacuation(time, false, true) ;
 
@@ -585,7 +585,7 @@ public class WalkAgent extends AgentBase {
         if (speed == 0.0) {
             MapLinkTable way_candidates = currentPlace.getHeadingNode().getPathways();
             if (way_candidates.size() == 0) {
-                Itk.logInfo("Agent stuck", String.format("%s ID: %d, time: %.1f, linkID: %d",
+                Itk.logInfo("Agent stuck", String.format("%s ID: %s, time: %.1f, linkID: %s",
                             getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
                 finalizeEvacuation(time, false, true) ;
 
