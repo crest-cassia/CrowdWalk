@@ -115,9 +115,9 @@ public class AgentHandler {
      * agents 廃止。
      */
     //private List<AgentBase> agents;
-    private ArrayList<AgentBase> generated_agents;
-    private ArrayList<AgentBase> evacuated_agents;
-    private ArrayList<AgentBase> stuck_agents;
+    private ArrayList<AgentBase> generatedAgents;
+    private ArrayList<AgentBase> evacuatedAgents;
+    private ArrayList<AgentBase> stuckAgents;
 
     private double totalDamage = 0.0;
     private double maxDamage = 0.0;
@@ -173,9 +173,9 @@ public class AgentHandler {
          * agents 廃止。
          */
         //agents = new ArrayList<AgentBase>();
-        generated_agents = new ArrayList<AgentBase>();
-        evacuated_agents = new ArrayList<AgentBase>();
-        stuck_agents = new ArrayList<AgentBase>();
+        generatedAgents = new ArrayList<AgentBase>();
+        evacuatedAgents = new ArrayList<AgentBase>();
+        stuckAgents = new ArrayList<AgentBase>();
 
         try {
             /* [I.Noda] generation file の読み込みはここ */
@@ -252,25 +252,24 @@ public class AgentHandler {
 
         scenario.advance(time, map) ;
 
-        ArrayList<AgentBase> generated_agents_step = new
-            ArrayList<AgentBase>();
+        ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
 
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
                 factory.tryUpdateAndGenerate(scenario.calcAbsoluteTime(time),
                                              simulator.getTimeScale(),
                                              time, simulator,
-                                             generated_agents_step, map);
+                                             generatedAgentsInStep, map);
             }
         }
 
-        if (! generated_agents_step.isEmpty()) {
+        if (! generatedAgentsInStep.isEmpty()) {
             /* [2015.05.27 I.Noda]
              * agents 廃止。
              */
-            //agents.addAll(generated_agents_step);
-            generated_agents.addAll(generated_agents_step);
-            for (AgentBase agent : generated_agents_step) {
+            //agents.addAll(generatedAgentsInStep);
+            generatedAgents.addAll(generatedAgentsInStep);
+            for (AgentBase agent : generatedAgentsInStep) {
                 /* [2015.05.25 I.Noda] 
                  * registerAgent から切り離して、Agent に ID をふる。
                  */
@@ -291,7 +290,7 @@ public class AgentHandler {
          * calculated in the methods call above, such as updateAgents.
          * [2015.05.25 I.Noda] おそらく表示のために、ここにないといけない。
          */
-        for (AgentBase agent : generated_agents_step) {
+        for (AgentBase agent : generatedAgentsInStep) {
             simulator.registerAgent(agent);
         }
 
@@ -472,9 +471,9 @@ public class AgentHandler {
                     i = new Integer(0);
                 i += 1;
                 evacuatedAgentCountByExit.put(exit, i);
-                evacuated_agents.add(agent);
+                evacuatedAgents.add(agent);
                 if (agent.isStuck()) {
-                    stuck_agents.add(agent);
+                    stuckAgents.add(agent);
                 }
                 if (agentMovementHistoryLogger != null) {
                     agentMovementHistoryLogger
@@ -576,17 +575,17 @@ public class AgentHandler {
 
     private void updateEvacuatedCount() {
         String evacuatedCount_string;
-        if (stuck_agents.isEmpty()) {
+        if (stuckAgents.isEmpty()) {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated: %d / %d",
-                    getAllAgentList().size() - evacuated_agents.size(), 
+                    getAllAgentList().size() - evacuatedAgents.size(), 
                     getAllAgentList().size(),
-                    evacuated_agents.size(), getMaxAgentCount());
+                    evacuatedAgents.size(), getMaxAgentCount());
         } else {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
-                    getAllAgentList().size() - evacuated_agents.size(), getAllAgentList().size(),
-                    evacuated_agents.size() - stuck_agents.size(), stuck_agents.size(),
+                    getAllAgentList().size() - evacuatedAgents.size(), getAllAgentList().size(),
+                    evacuatedAgents.size() - stuckAgents.size(), stuckAgents.size(),
                     getMaxAgentCount());
         }
         evacuatedCount_label.setText(evacuatedCount_string);
@@ -678,7 +677,7 @@ public class AgentHandler {
          * おそらく、これで良いはず。
          */
         //return evacuatedAgentCount;
-        return evacuated_agents.size() ;
+        return evacuatedAgents.size() ;
     }
 
     public ArrayList<String> getAllGoalTags() {
