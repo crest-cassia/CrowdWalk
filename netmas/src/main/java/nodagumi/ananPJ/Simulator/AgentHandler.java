@@ -168,6 +168,7 @@ public class AgentHandler {
 
         /* clone all agents already on board */
         agents = new ArrayList<AgentBase>();
+        Itk.dbgVal("!!!!!!!!!!!!!! _agents.size()",_agents.size()) ;
         for (final AgentBase agent : _agents) {
             agents.add(agent.copyAndInitialize());
         }

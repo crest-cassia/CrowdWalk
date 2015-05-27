@@ -863,30 +863,6 @@ public class NetworkMap extends NetworkMapBase {
         setup_after_load_rec((OBNode)root);
     }
 
-    public void printFields() {
-        for (MapNode node : nodesCache)
-            System.out.println("NetworkMap.printFields: nodesCache: " +
-                    node.toString());
-        for (MapLink link : linksCache)
-            System.out.println("NetworkMap.printFields: linksCache: " +
-                    link.toString());
-        for (AgentBase agent : agentsCache)
-            System.out.println("NetworkMap.printFields: agentsCache: " +
-                    agent.toString());
-        for (EditorFrame frame : frames)
-            System.out.println("NetworkMap.printFields: frames: " +
-                    frame.toString());
-        System.out.println("NetworkMap.printFields: filename: " + filename);
-    }
-
-    public void setSpeedCalculationModel(WalkAgent
-            .SpeedCalculationModel _model) {
-        for (AgentBase agent : agentsCache) {
-            WalkAgent wagent = (WalkAgent) agent;
-			wagent.setSpeedCalculationModel(_model);
-        }
-    }
-
     public void setHasDisplay(boolean _hasDisplay) {
         hasDisplay = _hasDisplay;
     }
@@ -897,7 +873,7 @@ public class NetworkMap extends NetworkMapBase {
 
     public void setRandom(Random _random) {
         random = _random;
-        for (AgentBase agent : agentsCache)
+        for (AgentBase agent : agentTable.values())
             agent.setRandom(_random);
     }
 
