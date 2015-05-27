@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Formatter;
@@ -211,7 +212,7 @@ public class AgentHandler {
     }
 
     public void prepareForSimulation() {
-        for (AgentBase agent : agents) {
+        for (AgentBase agent : getAllAgentList()) {
             agent.prepareForSimulation(simulator.getTimeScale());
         }
         // 初回は全リンクを対象とする
@@ -286,7 +287,7 @@ public class AgentHandler {
 
         // エージェントが存在するリンクのリストを更新
         effectiveLinks.clear();
-        for (AgentBase agent : agents) {
+        for (AgentBase agent : getAllAgentList()) {
             if (agent.isEvacuated() ||
                 effectiveLinks.contains(agent.getCurrentLink()))
                 continue;
@@ -294,7 +295,7 @@ public class AgentHandler {
         }
 
         // 位置が変化したエージェントを通知する
-        for (AgentBase agent : agents) {
+        for (AgentBase agent : getAllAgentList()) {
             if (agent.isEvacuated())
                 continue;
             boolean agentMoved = false;
@@ -334,7 +335,7 @@ public class AgentHandler {
                 if (factory.enabled) return false;
             }
             boolean existNotFinished = false;
-            for (final AgentBase agent : agents) {
+            for (final AgentBase agent : getAllAgentList()) {
                 if (!agent.finished()) {
                     existNotFinished = true;
                     break;
@@ -348,7 +349,7 @@ public class AgentHandler {
                 return false;
             }
         } else {
-            for (final AgentBase agent : agents) {
+            for (final AgentBase agent : getAllAgentList()) {
                 if (!agent.finished()) return false;
             }
             for (GenerateAgent factory : generate_agent) {
@@ -435,12 +436,19 @@ public class AgentHandler {
          * 念の為、逆順に処理をすることにする。
          * 過去の順番での処理にも switch できるように、
          * isUsingFrontFirstOrderQueue を参照する。
+         *
+         * [2015.05.27 I.Noda]
+         * ここの部分、agent の並びは、どうでもいいはず？
+         * なので、agents を使う代わりに、getAllAgentList を使うことにする。
          */
+        /*
         for(int k = 0 ; k < agents.size() ; k++) {
             AgentBase agent =
                 (isUsingFrontFirstOrderQueue ?
                  agents.get(agents.size() - k - 1) :
                  agents.get(k)) ;
+        */
+        for(AgentBase agent : getAllAgentList()) {
 
             if (agent.isEvacuated())
                 continue;
@@ -561,12 +569,13 @@ public class AgentHandler {
         if (stuck_agents.isEmpty()) {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated: %d / %d",
-                    getAgents().size() - evacuated_agents.size(), getAgents().size(),
+                    getAllAgentList().size() - evacuated_agents.size(), 
+                    getAllAgentList().size(),
                     evacuated_agents.size(), getMaxAgentCount());
         } else {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
-                    getAgents().size() - evacuated_agents.size(), getAgents().size(),
+                    getAllAgentList().size() - evacuated_agents.size(), getAllAgentList().size(),
                     evacuated_agents.size() - stuck_agents.size(), stuck_agents.size(),
                     getMaxAgentCount());
         }
@@ -575,7 +584,7 @@ public class AgentHandler {
     }
 
     private void updateAgentViews() {
-        for (AgentBase agent : agents) {
+        for (AgentBase agent : getAllAgentList()) {
             if (agent.isEvacuated())
                 continue;
             agent.updateViews();
@@ -587,7 +596,7 @@ public class AgentHandler {
         totalDamage = 0.0;
         maxDamage = 0.0;
 
-        for (final AgentBase agent : agents) {
+        for (final AgentBase agent : getAllAgentList()) {
             if (!agent.isEvacuated()) {
                 // (do nothing)
                 // evacuatedAgentCount++;
@@ -598,6 +607,10 @@ public class AgentHandler {
         }
     }
 
+    /* [2015.05.27 I.Noda]
+     * agents を obsolute にするために、以下、使わないようにする。
+     */
+    /*
     public void dumpAgentCurrent(PrintStream out) {
         for (int i = 0; i < agents.size(); ++i) {
             AgentBase agent = agents.get(i);
@@ -611,9 +624,40 @@ public class AgentHandler {
             }
         }
     }
+    */
 
+    /* [2015.05.27 I.Noda]
+     * 上記の代用物
+     */
+    public void dumpAgentCurrent(PrintStream out) {
+        for(AgentBase agent : networkMap.allAgentList()) {
+            if (!agent.finished()) {
+                out.printf("%s,%f,%f,%f,%f\n",
+                           agent.ID,
+                           agent.accumulatedExposureAmount,
+                           agent.getPos().getX(),
+                           agent.getPos().getY(),
+                           agent.getHeight());
+            }
+        }
+    }
+
+    /* [2015.05.27 I.Noda]
+     * agents を obsolute にするために、以下、使わないようにする。
+     */
+    /*
     public void dumpAgentResult(PrintStream out) {
         for (final AgentBase agent : agents) {
+            agent.dumpResult(out);
+        }
+    }
+    */
+
+    /* [2015.05.27 I.Noda]
+     * 上記の代用物
+     */
+    public void dumpAgentResult(PrintStream out) {
+        for (final AgentBase agent : networkMap.allAgentList()) {
             agent.dumpResult(out);
         }
     }
@@ -629,6 +673,12 @@ public class AgentHandler {
 
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
+        /* [2015.05.27 I.Noda]
+         * agents を obsolute にするために、以下、使わないようにする。
+         * この関数を呼ぶ時点（simulation の最初）では、agents は空のはず。
+         * なので、エージェントごとにゴールを集める必要はない。
+         */
+        /*
         for (AgentBase agent : agents) {
             Term goal_tag = agent.getGoal();
             if (goal_tag != null &&
@@ -641,6 +691,7 @@ public class AgentHandler {
                 }
             }
         }
+        */
 
         for (GenerateAgent factory : generate_agent) {
             Term goal_tag = factory.goal;
@@ -675,6 +726,15 @@ public class AgentHandler {
 
     public final List<AgentBase> getAgents() {
         return agents;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 生成されたすべてのエージェントの Collection を返す。
+     * @return 全エージェントのリスト
+     */
+    public final Collection<AgentBase> getAllAgentList() {
+        return networkMap.allAgentList() ;
     }
 
     public double getAverageSpeed() {
@@ -717,7 +777,7 @@ public class AgentHandler {
         int[] each_level = new int[4];
         double finish_total = 0.0, finish_max = Double.NEGATIVE_INFINITY;
         int count_all = 0, count_evacuated = 0;
-        for (AgentBase agent : getAgents()) {
+        for (AgentBase agent : getAllAgentList()) {
             count_all++;
             each_level[agent.getTriage()]++;
             double t = agent.finishedTime;
@@ -803,7 +863,7 @@ public class AgentHandler {
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
             writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
-            for (AgentBase agent : agents) {
+            for (AgentBase agent : getAllAgentList()) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
@@ -1108,7 +1168,7 @@ public class AgentHandler {
         simulator.getMap().toDOM(doc);
         pw.print(ItkXmlUtility.singleton.docToString(doc));
 
-        for (AgentBase agent : agents) {
+        for (AgentBase agent : getAllAgentList()) {
             if (agent.isEvacuated()){
                 pw.print("evacuated," + 
                         agent.agentNumber + "," +
@@ -1123,29 +1183,6 @@ public class AgentHandler {
         for (GenerateAgent factory : generate_agent) {
             factory.dumpAgentToGenerate(pw);
         }
-    }
-
-    public void dumpStateDiff(PrintWriter pw) {
-        for (AgentBase agent : agents) {
-            if (agent.isEvacuated()) continue;
-            pw.println(agent.toString());
-        }
-
-        for (AgentBase agent : generated_agents) {
-            pw.print("generated," +
-                    agent.agentNumber + "," +
-                    agent.getClass().getSimpleName());
-            for (Term route : agent.getPlannedRoute()) {
-                pw.print("," + route);
-            }
-            pw.println();
-        }
-        generated_agents.clear();
-
-        for (AgentBase agent : evacuated_agents) {
-            pw.println("evacuated," + agent.agentNumber);
-        }
-        evacuated_agents.clear();
     }
 
     public void setRandom(Random _random) {

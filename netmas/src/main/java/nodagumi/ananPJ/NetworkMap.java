@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -351,6 +352,15 @@ public class NetworkMap extends NetworkMapBase {
      */
     public int totalAgentNumberInTable() {
         return agentTable.size() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントの配列を返す。
+     * @return agent の配列
+     */
+    public Collection<AgentBase> allAgentList() {
+        return agentTable.values() ;
     }
 
     //------------------------------------------------------------
