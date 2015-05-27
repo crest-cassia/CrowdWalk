@@ -349,7 +349,14 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     public ArrayList<AgentBase> getAgents() {
-        return networkMap.getAgents();
+        /* [2015.05.27 I.Noda]
+         * networkMap.getAgents() はもう使わない。
+         * かわりに AgentHandler's getAgents() に統一。
+         * ただ、このNetworkMapEditor の時点で、AgentHandler が存在しない。
+         * なので、ここでは dummy の配列を返すことにする。
+         */
+        //return networkMap.getAgents();
+        return new ArrayList<AgentBase>() ;
     }
 
     public ArrayList<OBNode> getOBElements() {

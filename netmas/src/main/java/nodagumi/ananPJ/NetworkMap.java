@@ -56,13 +56,6 @@ import org.w3c.dom.Text;
  * シミュレーションで用いるデータをまとめて保持するクラス。
  */
 public class NetworkMap extends NetworkMapBase {
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-	 * エージェントの配列
-	 */
-    private ArrayList<AgentBase> agentsCache =
-        new ArrayList<AgentBase>();
-
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -239,7 +232,6 @@ public class NetworkMap extends NetworkMapBase {
             linksCache.add((MapLink)node);
         } else if (type == OBNode.NType.AGENT) {
             Itk.logWarn("insert Agent OBNode is obsolute.", node) ;
-            agentsCache.add((AgentBase)node);
         } else if (type == OBNode.NType.GROUP) {
             /* no operation */
         } else if (type == OBNode.NType.ROOM) {
@@ -293,7 +285,6 @@ public class NetworkMap extends NetworkMapBase {
             break;
         case AGENT:
             Itk.logWarn("remove Agent OBNode is obsolute") ;
-            agentsCache.remove((AgentBase)node);
             break;
         case GROUP:
             while (node.getChildCount() > 0) {
@@ -371,7 +362,6 @@ public class NetworkMap extends NetworkMapBase {
      */
     public AgentBase addAgent(AgentBase agent) {
         agent.setNetworkMap(this) ;
-        agentsCache.add(agent);
         return agent;
     }
 
@@ -462,10 +452,6 @@ public class NetworkMap extends NetworkMapBase {
         _obinode.setUserObject(null);
     }
     
-    public ArrayList<AgentBase> getAgents() {
-        return agentsCache;
-    }
-
     public ArrayList<MapPartGroup> getGroups() {
         ArrayList<MapPartGroup> groups = new ArrayList<MapPartGroup>();
         for (OBNode node : getOBCollection()) {

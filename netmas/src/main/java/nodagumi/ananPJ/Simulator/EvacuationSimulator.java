@@ -96,7 +96,6 @@ public class EvacuationSimulator {
             properties = ((BasicSimulationLauncher)controller).getProperties();
         }
 	map = networkMap ;
-        agents = networkMap.getAgents();
         pollutionFileName = networkMap.getPollutionFile();
     }
 
@@ -172,15 +171,14 @@ public class EvacuationSimulator {
             }
         }
 
-        agentHandler = new AgentHandler(agents,
-                networkMap.getGenerationFile(),
-                networkMap.getScenarioFile(),
-                map,
-                this,
-                has_display,
-                linerGenerateAgentRatio,
-                networkMap.fallbackParameters,
-                random);
+        agentHandler = new AgentHandler(networkMap.getGenerationFile(),
+                                        networkMap.getScenarioFile(),
+                                        map,
+                                        this,
+                                        has_display,
+                                        linerGenerateAgentRatio,
+                                        networkMap.fallbackParameters,
+                                        random);
 
         for (AgentBase agent : getAgents()) {
             agent.displayMode = 4;
@@ -633,7 +631,7 @@ public class EvacuationSimulator {
      */
     public void saveGoalLog(String resultDirectory, Boolean finished) {
         // Goal log を記憶
-        for (AgentBase agent: agents) {
+        for (AgentBase agent: getAgents()) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
                 goalTimes.put(agent.ID, new Double(getSecond()));
             }
@@ -655,7 +653,7 @@ public class EvacuationSimulator {
             }
             evacuatedAgents.add(buff.toString());
         } else {  // finalize process
-            for (AgentBase agent : agents) {
+            for (AgentBase agent : getAgents()) {
                 if (!agent.isEvacuated()) {
                     goalTimes.put(agent.ID,
                             new Double((getTickCount() + 1) * timeScale));
@@ -746,7 +744,7 @@ public class EvacuationSimulator {
                         new OutputStreamWriter(
                             new FileOutputStream(fileLog, false) , "utf-8")),
                     true);
-            for (AgentBase agent : agents) {
+            for (AgentBase agent : getAgents()) {
                 // agent log format:
                 // agent,ID,evacuated,speed,density,position
                 writer.write("agent," + agent.ID + "," + agent.isEvacuated() +
@@ -782,12 +780,12 @@ public class EvacuationSimulator {
             // average_link_density
             double average_link_density, average_agent_density,
                    average_agent_speed = 0.0;
-            if (agents.size() == 0) {
+            if (getAgents().size() == 0) {
                 average_agent_density = 0.0;
                 average_agent_speed = 0.0;
             } else {
-                average_agent_density = totalAgentDensity / agents.size();
-                average_agent_speed = totalAgentSpeed / agents.size();
+                average_agent_density = totalAgentDensity / getAgents().size();
+                average_agent_speed = totalAgentSpeed / getAgents().size();
             }
 	    if (getLinks().size() == 0)
                 average_link_density = 0.0;
@@ -832,7 +830,7 @@ public class EvacuationSimulator {
         int dszn = 0;   // number of damaged speed zero agents
         // count the number of agents with speed is zero and instantaneous 
         // damage is max value.
-        for (AgentBase agent: agents) {
+        for (AgentBase agent: getAgents()) {
             if (agent.getSpeed() == 0.) {
                 if (agent.currentExposureAmount >= 10.) {
                     dszn += 1;

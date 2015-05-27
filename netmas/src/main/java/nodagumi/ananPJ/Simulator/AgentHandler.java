@@ -150,15 +150,14 @@ public class AgentHandler {
     private Logger agentMovementHistoryLogger = null;
     private Logger individualPedestriansLogger = null;
 
-    public AgentHandler (ArrayList<AgentBase> _agents,
-            String generationFile,
-            String scenarioFile,
-            NetworkMapBase map,
-            EvacuationSimulator _simulator,
-            boolean _has_display,
-            double linerGenerateAgentRatio,
-            Term fallbackParameters,
-            Random _random) {
+    public AgentHandler (String generationFile,
+                         String scenarioFile,
+                         NetworkMapBase map,
+                         EvacuationSimulator _simulator,
+                         boolean _has_display,
+                         double linerGenerateAgentRatio,
+                         Term fallbackParameters,
+                         Random _random) {
         simulator = _simulator;
         has_display = _has_display;
         random = _random;
@@ -168,10 +167,6 @@ public class AgentHandler {
 
         /* clone all agents already on board */
         agents = new ArrayList<AgentBase>();
-        Itk.dbgVal("!!!!!!!!!!!!!! _agents.size()",_agents.size()) ;
-        for (final AgentBase agent : _agents) {
-            agents.add(agent.copyAndInitialize());
-        }
         generated_agents = new ArrayList<AgentBase>();
         evacuated_agents = new ArrayList<AgentBase>();
         stuck_agents = new ArrayList<AgentBase>();

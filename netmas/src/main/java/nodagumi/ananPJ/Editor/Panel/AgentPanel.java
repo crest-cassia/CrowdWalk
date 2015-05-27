@@ -87,7 +87,7 @@ public class AgentPanel extends JPanel
     
     public AgentPanel (NetworkMapEditor _editor, Random _random) {
         editor = _editor;
-        agents = editor.getMap().getAgents();
+        agents = editor.getAgents();
         data_model = new AgentsDataModel();
         agent_table = new JTable(data_model);
         setLayout(new BorderLayout());
@@ -115,7 +115,7 @@ public class AgentPanel extends JPanel
     public void refresh() {
         if (lockRefresh) return;
 
-        agents = editor.getMap().getAgents();
+        agents = editor.getAgents();
         lockValueChanged = true;
         data_model.fireTableDataChanged();
         updateSelectionFromAgents();
