@@ -87,6 +87,7 @@ public class AgentPanel extends JPanel
     
     public AgentPanel (NetworkMapEditor _editor, Random _random) {
         editor = _editor;
+        Itk.logWarn("edit.getAgents() is obsolute.  Should be escape.") ;
         agents = editor.getAgents();
         data_model = new AgentsDataModel();
         agent_table = new JTable(data_model);
@@ -115,6 +116,7 @@ public class AgentPanel extends JPanel
     public void refresh() {
         if (lockRefresh) return;
 
+        Itk.logWarn("edit.getAgents() is obsolute.  Should be escape.") ;
         agents = editor.getAgents();
         lockValueChanged = true;
         data_model.fireTableDataChanged();
