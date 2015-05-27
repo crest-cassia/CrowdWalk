@@ -888,6 +888,15 @@ public class WalkAgent extends AgentBase {
             workingPlace.transitTo(nextLink) ;
         }
 
+        /* [2015.05.27 I.Noda]
+         * スピードダウンの原因追及のためのチェック。
+         */
+        if(false && count + countOther > 20) {
+            Itk.dbgVal("WalkAgent:count", count) ;
+            Itk.dbgVal("WalkAgent:countOther", countOther) ;
+            Itk.dbgVal("WalkAgent:totalForce", totalForce) ;
+        }
+
         return totalForce ;
     }
 
