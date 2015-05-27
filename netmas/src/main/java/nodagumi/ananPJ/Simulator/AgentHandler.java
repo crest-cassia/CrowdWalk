@@ -437,19 +437,19 @@ public class AgentHandler {
         if (true) {
             synchronized (simulator) {
                 for (MapLink link : effectiveLinks) {
-                    ArrayList<AgentBase> pos_agents = link.getLane(1.0);
-                    for(int i = 0 ; i < pos_agents.size() ; i++) {
+                    ArrayList<AgentBase> forwardAgents = link.getLane(1.0);
+                    for(int i = 0 ; i < forwardAgents.size() ; i++) {
                         AgentBase agent =
                             (isUsingFrontFirstOrderQueue ?
-                             pos_agents.get(pos_agents.size() - i - 1) :
-                             pos_agents.get(i)) ;
+                             forwardAgents.get(forwardAgents.size() - i - 1) :
+                             forwardAgents.get(i)) ;
 
                         agent.preUpdate(time);
                         count += 1;
                     }
-                    ArrayList<AgentBase> neg_agents = link.getLane(-1.0);
-                    for (int i = neg_agents.size() - 1; i >= 0; --i) {
-                        AgentBase agent = neg_agents.get(i);
+                    ArrayList<AgentBase> backwardAgents = link.getLane(-1.0);
+                    for (int i = backwardAgents.size() - 1; i >= 0; --i) {
+                        AgentBase agent = backwardAgents.get(i);
                         agent.preUpdate(time);
                         count += 1;
                     }
