@@ -111,6 +111,21 @@ public class AgentHandler {
 
     private EvacuationSimulator simulator;
 
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * NetworkParts の prefix の規定値
+     */
+    public static String DefaultAgentIdPrefix = "ag" ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェントテーブル。
+     * エージェントの id とエージェントを結びつけるもの。
+     */
+    private UniqIdObjectTable<AgentBase> agentTable =
+        new UniqIdObjectTable<AgentBase>(DefaultAgentIdPrefix) ;
+
     /* [2015.05.27 I.Noda]
      * agents 廃止。
      */
@@ -213,6 +228,18 @@ public class AgentHandler {
 
     }
 
+    //------------------------------------------------------------
+    /**
+     * エージェントを追加。
+     * @param agent : 追加するエージェント。ID は自動生成。
+     * @return agent がそのまま変える。
+     */
+    public AgentBase assignUniqIdForAgent(AgentBase agent) {
+        String id = agentTable.putWithUniqId(agent) ;
+        agent.ID = id;
+        return agent ;
+    }
+
     public void setupFrame(String generationFile, String scenarioFile,
                            NetworkMapBase map) {
         control_panel = null;
@@ -280,7 +307,7 @@ public class AgentHandler {
                 /* [2015.05.25 I.Noda] 
                  * registerAgent から切り離して、Agent に ID をふる。
                  */
-                simulator.getMap().assignUniqIdForAgent(agent) ;
+                assignUniqIdForAgent(agent) ;
                 addWalkingAgent(agent) ;
                 if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
                 effectiveLinks.add(agent.getCurrentLink());
@@ -685,7 +712,7 @@ public class AgentHandler {
      * 上記の代用物
      */
     public void dumpAgentResult(PrintStream out) {
-        for (final AgentBase agent : networkMap.allAgentList()) {
+        for (final AgentBase agent : getAllAgentCollection()) {
             agent.dumpResult(out);
         }
     }
@@ -767,7 +794,7 @@ public class AgentHandler {
      * @return 全エージェントのリスト
      */
     public final Collection<AgentBase> getAllAgentCollection() {
-        return networkMap.allAgentList() ;
+        return agentTable.values() ;
     }
 
     //------------------------------------------------------------

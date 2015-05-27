@@ -57,21 +57,6 @@ import org.w3c.dom.Text;
  * シミュレーションで用いるデータをまとめて保持するクラス。
  */
 public class NetworkMap extends NetworkMapBase {
-    //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * NetworkParts の prefix の規定値
-     */
-    public static String DefaultAgentIdPrefix = "ag" ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-	 * エージェントテーブル。
-     * エージェントの id とエージェントを結びつけるもの。
-	 */
-    private UniqIdObjectTable<AgentBase> agentTable =
-        new UniqIdObjectTable<AgentBase>(DefaultAgentIdPrefix) ;
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
 	 * ???
@@ -331,48 +316,6 @@ public class NetworkMap extends NetworkMapBase {
         link.prepareAdd();
         insertOBNode(parent, link, true);
         return link;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * エージェントを追加。
-     * @param agent : 追加するエージェント。ID は自動生成。
-     * @return agent がそのまま変える。
-     */
-    public AgentBase assignUniqIdForAgent(AgentBase agent) {
-        String id = agentTable.putWithUniqId(agent) ;
-        agent.ID = id;
-        return agent ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * テーブル中のエージェント総数
-     * @return agent 総数
-     */
-    public int totalAgentNumberInTable() {
-        return agentTable.size() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * エージェントの配列を返す。
-     * @return agent の配列
-     */
-    public Collection<AgentBase> allAgentList() {
-        return agentTable.values() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * エージェントを追加。
-     * @param agent : 追加するエージェント。
-     * @param autoID : true なら、ID を自動生成。
-     * @return agent がそのまま変える。
-     */
-    public AgentBase addAgent(AgentBase agent) {
-        agent.setNetworkMap(this) ;
-        return agent;
     }
 
     public PollutedArea createPollutedAreaRectangle(
@@ -869,8 +812,6 @@ public class NetworkMap extends NetworkMapBase {
 
     public void setRandom(Random _random) {
         random = _random;
-        for (AgentBase agent : agentTable.values())
-            agent.setRandom(_random);
     }
 
     /**
