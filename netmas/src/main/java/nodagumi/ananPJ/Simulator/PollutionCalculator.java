@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collection;
 import java.util.regex.Matcher;
 
 import javax.media.j3d.Appearance;
@@ -130,8 +131,8 @@ public class PollutionCalculator {
     }
 
     public void updateNodesLinksAgents(double time,
-            NetworkMapBase map,
-            List<AgentBase> agents) {
+                                       NetworkMapBase map,
+                                       Collection<AgentBase> agents) {
         //if (debug) System.err.println("PC update: " + time + ", next: " + nextEvent);
 
         if (nextEvent != -1.0 && nextEvent <= time) {

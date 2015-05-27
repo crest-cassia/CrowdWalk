@@ -110,7 +110,11 @@ public class AgentHandler {
     }
 
     private EvacuationSimulator simulator;
-    private List<AgentBase> agents;
+
+    /* [2015.05.27 I.Noda]
+     * agents 廃止。
+     */
+    //private List<AgentBase> agents;
     private ArrayList<AgentBase> generated_agents;
     private ArrayList<AgentBase> evacuated_agents;
     private ArrayList<AgentBase> stuck_agents;
@@ -165,7 +169,10 @@ public class AgentHandler {
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
 
         /* clone all agents already on board */
-        agents = new ArrayList<AgentBase>();
+        /* [2015.05.27 I.Noda]
+         * agents 廃止。
+         */
+        //agents = new ArrayList<AgentBase>();
         generated_agents = new ArrayList<AgentBase>();
         evacuated_agents = new ArrayList<AgentBase>();
         stuck_agents = new ArrayList<AgentBase>();
@@ -258,7 +265,10 @@ public class AgentHandler {
         }
 
         if (! generated_agents_step.isEmpty()) {
-            agents.addAll(generated_agents_step);
+            /* [2015.05.27 I.Noda]
+             * agents 廃止。
+             */
+            //agents.addAll(generated_agents_step);
             generated_agents.addAll(generated_agents_step);
             for (AgentBase agent : generated_agents_step) {
                 /* [2015.05.25 I.Noda] 
@@ -724,9 +734,14 @@ public class AgentHandler {
         return maxDamage;
     }
 
+    /* [2015.05.27 I.Noda]
+     * agents 廃止。
+     */
+    /*
     public final List<AgentBase> getAgents() {
         return agents;
     }
+    */
 
     //------------------------------------------------------------
     /**
