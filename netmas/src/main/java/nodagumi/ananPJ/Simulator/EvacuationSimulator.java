@@ -180,7 +180,7 @@ public class EvacuationSimulator {
                                         networkMap.fallbackParameters,
                                         random);
 
-        for (AgentBase agent : getAllAgentList()) {
+        for (AgentBase agent : getAllAgentCollection()) {
             agent.displayMode = 4;
         }
     }
@@ -216,7 +216,7 @@ public class EvacuationSimulator {
             double poltime = getSecond();
             if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
 		pollutionCalculator.updateNodesLinksAgents(poltime, map,
-                        getAllAgentList());
+                        getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
             agentHandler.update(map, getSecond());
             if (panel3d != null) {
@@ -269,7 +269,7 @@ public class EvacuationSimulator {
         synchronized (stop_simulation) {
             double poltime = getSecond();
 	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
-                    getAllAgentList());
+                    getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
             agentHandler.update(map, getSecond());
             tick_count += 1.0;
@@ -526,8 +526,17 @@ public class EvacuationSimulator {
      * すべてのエージェントのリスト（Collection）を返す。
      * @return Agent の Collection
      */
-    public Collection<AgentBase> getAllAgentList() {
-        return agentHandler.getAllAgentList() ;
+    public Collection<AgentBase> getAllAgentCollection() {
+        return agentHandler.getAllAgentCollection() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントのリスト（Collection）を返す。
+     * @return Agent の Collection
+     */
+    public Collection<AgentBase> getWalkingAgentCollection() {
+        return agentHandler.getWalkingAgentCollection() ;
     }
 
     //public ArrayList<AgentBase> getAgents() {
@@ -539,7 +548,7 @@ public class EvacuationSimulator {
     public List<AgentBase> getAgents() {
         //return agentHandler.getAgents();
         Itk.logWarn("getAgents() is obsolute.") ;
-        return new ArrayList(getAllAgentList()) ;
+        return new ArrayList(getAllAgentCollection()) ;
     }
 
     public AgentHandler getAgentHandler() {
@@ -647,7 +656,11 @@ public class EvacuationSimulator {
      */
     public void saveGoalLog(String resultDirectory, Boolean finished) {
         // Goal log を記憶
-        for (AgentBase agent: getAllAgentList()) {
+        /* [2015.05.27 I.Noda]
+         * ここで、AllAgent を使うべきか、WalkingAgent だけでよいか、
+         * 不明。
+         */
+        for (AgentBase agent: getAllAgentCollection()) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
                 goalTimes.put(agent.ID, new Double(getSecond()));
             }
@@ -669,7 +682,7 @@ public class EvacuationSimulator {
             }
             evacuatedAgents.add(buff.toString());
         } else {  // finalize process
-            for (AgentBase agent : getAllAgentList()) {
+            for (AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.isEvacuated()) {
                     goalTimes.put(agent.ID,
                             new Double((getTickCount() + 1) * timeScale));
@@ -760,7 +773,7 @@ public class EvacuationSimulator {
                         new OutputStreamWriter(
                             new FileOutputStream(fileLog, false) , "utf-8")),
                     true);
-            for (AgentBase agent : getAllAgentList()) {
+            for (AgentBase agent : getAllAgentCollection()) {
                 // agent log format:
                 // agent,ID,evacuated,speed,density,position
                 writer.write("agent," + agent.ID + "," + agent.isEvacuated() +
@@ -796,12 +809,12 @@ public class EvacuationSimulator {
             // average_link_density
             double average_link_density, average_agent_density,
                    average_agent_speed = 0.0;
-            if (getAllAgentList().size() == 0) {
+            if (getAllAgentCollection().size() == 0) {
                 average_agent_density = 0.0;
                 average_agent_speed = 0.0;
             } else {
-                average_agent_density = totalAgentDensity / getAllAgentList().size();
-                average_agent_speed = totalAgentSpeed / getAllAgentList().size();
+                average_agent_density = totalAgentDensity / getAllAgentCollection().size();
+                average_agent_speed = totalAgentSpeed / getAllAgentCollection().size();
             }
 	    if (getLinks().size() == 0)
                 average_link_density = 0.0;
@@ -846,7 +859,11 @@ public class EvacuationSimulator {
         int dszn = 0;   // number of damaged speed zero agents
         // count the number of agents with speed is zero and instantaneous 
         // damage is max value.
-        for (AgentBase agent: getAllAgentList()) {
+        /* [2015.05.27 I.Noda]
+         * ここの部分、AllAgent で計算すべきなのか、
+         * WalkingAgent で計算すべきなのか、不明。
+         */
+        for (AgentBase agent: getAllAgentCollection()) {
             if (agent.getSpeed() == 0.) {
                 if (agent.currentExposureAmount >= 10.) {
                     dszn += 1;

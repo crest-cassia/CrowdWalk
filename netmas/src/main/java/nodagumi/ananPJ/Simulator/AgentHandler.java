@@ -119,6 +119,12 @@ public class AgentHandler {
     private ArrayList<AgentBase> evacuatedAgents;
     private ArrayList<AgentBase> stuckAgents;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 今動いているエージェントの集まり
+     */
+    private HashMap<String, AgentBase> walkingAgentTable ;
+
     private double totalDamage = 0.0;
     private double maxDamage = 0.0;
     private double averageSpeed = 0.0;
@@ -176,6 +182,7 @@ public class AgentHandler {
         generatedAgents = new ArrayList<AgentBase>();
         evacuatedAgents = new ArrayList<AgentBase>();
         stuckAgents = new ArrayList<AgentBase>();
+        walkingAgentTable = new HashMap<String, AgentBase>() ;
 
         try {
             /* [I.Noda] generation file の読み込みはここ */
@@ -219,7 +226,7 @@ public class AgentHandler {
     }
 
     public void prepareForSimulation() {
-        for (AgentBase agent : getAllAgentList()) {
+        for (AgentBase agent : getAllAgentCollection()) {
             agent.prepareForSimulation(simulator.getTimeScale());
         }
         // 初回は全リンクを対象とする
@@ -274,6 +281,7 @@ public class AgentHandler {
                  * registerAgent から切り離して、Agent に ID をふる。
                  */
                 simulator.getMap().assignUniqIdForAgent(agent) ;
+                addWalkingAgent(agent) ;
                 if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
                 effectiveLinks.add(agent.getCurrentLink());
             }
@@ -296,17 +304,28 @@ public class AgentHandler {
 
         // エージェントが存在するリンクのリストを更新
         effectiveLinks.clear();
-        for (AgentBase agent : getAllAgentList()) {
-            if (agent.isEvacuated() ||
-                effectiveLinks.contains(agent.getCurrentLink()))
+        ArrayList<AgentBase> evacuatedAgentsInStep = new ArrayList<AgentBase>() ;
+        for (AgentBase agent : getWalkingAgentCollection()) {
+            if(agent.isEvacuated()) {
+                evacuatedAgentsInStep.add(agent) ;
+                continue ;
+            } 
+            if(effectiveLinks.contains(agent.getCurrentLink())) {
                 continue;
+            }
             effectiveLinks.add(agent.getCurrentLink());
         }
 
+        // evacuate したエージェントを、walkingAgentTable から除く。
+        for(AgentBase agent : evacuatedAgentsInStep) {
+            removeWalkingAgent(agent) ;
+        }
+
         // 位置が変化したエージェントを通知する
-        for (AgentBase agent : getAllAgentList()) {
-            if (agent.isEvacuated())
+        for (AgentBase agent : getWalkingAgentCollection()) {
+            if (agent.isEvacuated()) {
                 continue;
+            }
             boolean agentMoved = false;
 
             Point2D currentPosition = agent.getPos();
@@ -344,7 +363,7 @@ public class AgentHandler {
                 if (factory.enabled) return false;
             }
             boolean existNotFinished = false;
-            for (final AgentBase agent : getAllAgentList()) {
+            for (final AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.finished()) {
                     existNotFinished = true;
                     break;
@@ -358,7 +377,7 @@ public class AgentHandler {
                 return false;
             }
         } else {
-            for (final AgentBase agent : getAllAgentList()) {
+            for (final AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.finished()) return false;
             }
             for (GenerateAgent factory : generate_agent) {
@@ -448,7 +467,7 @@ public class AgentHandler {
          *
          * [2015.05.27 I.Noda]
          * ここの部分、agent の並びは、どうでもいいはず？
-         * なので、agents を使う代わりに、getAllAgentList を使うことにする。
+         * なので、agents を使う代わりに、getAllAgentCollection を使うことにする。
          */
         /*
         for(int k = 0 ; k < agents.size() ; k++) {
@@ -457,7 +476,7 @@ public class AgentHandler {
                  agents.get(agents.size() - k - 1) :
                  agents.get(k)) ;
         */
-        for(AgentBase agent : getAllAgentList()) {
+        for(AgentBase agent : getWalkingAgentCollection()) {
 
             if (agent.isEvacuated())
                 continue;
@@ -578,13 +597,13 @@ public class AgentHandler {
         if (stuckAgents.isEmpty()) {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated: %d / %d",
-                    getAllAgentList().size() - evacuatedAgents.size(), 
-                    getAllAgentList().size(),
+                    getAllAgentCollection().size() - evacuatedAgents.size(), 
+                    getAllAgentCollection().size(),
                     evacuatedAgents.size(), getMaxAgentCount());
         } else {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
-                    getAllAgentList().size() - evacuatedAgents.size(), getAllAgentList().size(),
+                    getAllAgentCollection().size() - evacuatedAgents.size(), getAllAgentCollection().size(),
                     evacuatedAgents.size() - stuckAgents.size(), stuckAgents.size(),
                     getMaxAgentCount());
         }
@@ -593,7 +612,7 @@ public class AgentHandler {
     }
 
     private void updateAgentViews() {
-        for (AgentBase agent : getAllAgentList()) {
+        for (AgentBase agent : getWalkingAgentCollection()){
             if (agent.isEvacuated())
                 continue;
             agent.updateViews();
@@ -605,7 +624,7 @@ public class AgentHandler {
         totalDamage = 0.0;
         maxDamage = 0.0;
 
-        for (final AgentBase agent : getAllAgentList()) {
+        for (final AgentBase agent : getWalkingAgentCollection()) {
             if (!agent.isEvacuated()) {
                 // (do nothing)
                 // evacuatedAgentCount++;
@@ -639,7 +658,7 @@ public class AgentHandler {
      * 上記の代用物
      */
     public void dumpAgentCurrent(PrintStream out) {
-        for(AgentBase agent : networkMap.allAgentList()) {
+        for(AgentBase agent : getWalkingAgentCollection()) {
             if (!agent.finished()) {
                 out.printf("%s,%f,%f,%f,%f\n",
                            agent.ID,
@@ -747,8 +766,41 @@ public class AgentHandler {
      * 生成されたすべてのエージェントの Collection を返す。
      * @return 全エージェントのリスト
      */
-    public final Collection<AgentBase> getAllAgentList() {
+    public final Collection<AgentBase> getAllAgentCollection() {
         return networkMap.allAgentList() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントをテーブルに追加
+     * @param agent : 追加するエージェント
+     */
+    public void addWalkingAgent(AgentBase agent) {
+        walkingAgentTable.put(agent.ID, agent) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントのCollectionを返す。
+     * @return エージェントのCollection。
+     */
+    public Collection<AgentBase> getWalkingAgentCollection() {
+        return walkingAgentTable.values() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントテーブルより一人取り除く。
+     * @return agent : 取り除くエージェント
+     */
+    public boolean removeWalkingAgent(AgentBase agent) {
+        if(walkingAgentTable.containsKey(agent.ID)) {
+            walkingAgentTable.remove(agent.ID) ;
+            return true ;
+        } else {
+            Itk.logWarn("agent is not in walkingTable:", agent) ;
+            return false ;
+        }
     }
 
     public double getAverageSpeed() {
@@ -791,7 +843,7 @@ public class AgentHandler {
         int[] each_level = new int[4];
         double finish_total = 0.0, finish_max = Double.NEGATIVE_INFINITY;
         int count_all = 0, count_evacuated = 0;
-        for (AgentBase agent : getAllAgentList()) {
+        for (AgentBase agent : getAllAgentCollection()) {
             count_all++;
             each_level[agent.getTriage()]++;
             double t = agent.finishedTime;
@@ -877,7 +929,7 @@ public class AgentHandler {
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
             writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
-            for (AgentBase agent : getAllAgentList()) {
+            for (AgentBase agent : getAllAgentCollection()) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
@@ -1182,7 +1234,7 @@ public class AgentHandler {
         simulator.getMap().toDOM(doc);
         pw.print(ItkXmlUtility.singleton.docToString(doc));
 
-        for (AgentBase agent : getAllAgentList()) {
+        for (AgentBase agent : getAllAgentCollection()) {
             if (agent.isEvacuated()){
                 pw.print("evacuated," + 
                         agent.agentNumber + "," +
