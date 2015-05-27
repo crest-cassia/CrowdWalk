@@ -114,8 +114,6 @@ public class AgentHandler {
     private ArrayList<AgentBase> evacuated_agents;
     private ArrayList<AgentBase> stuck_agents;
 
-    private int evacuatedAgentCount = 0;
-    private int waitingAgentCount = 0;
     private double totalDamage = 0.0;
     private double maxDamage = 0.0;
     private double averageSpeed = 0.0;
@@ -170,11 +168,6 @@ public class AgentHandler {
         generated_agents = new ArrayList<AgentBase>();
         evacuated_agents = new ArrayList<AgentBase>();
         stuck_agents = new ArrayList<AgentBase>();
-
-        for (AgentBase agent : agents) {
-            MapLink link = agent.getCurrentLink(); 
-            link.agentEnters(agent);
-        }
 
         try {
             /* [I.Noda] generation file の読み込みはここ */
@@ -425,7 +418,6 @@ public class AgentHandler {
         }
 
         int count = 0;
-        waitingAgentCount = 0;
         double speedTotal = 0.0;
 
         if (has_display) {
@@ -594,11 +586,11 @@ public class AgentHandler {
         /* pollution */
         totalDamage = 0.0;
         maxDamage = 0.0;
-        evacuatedAgentCount = 0;
 
         for (final AgentBase agent : agents) {
-            if (agent.isEvacuated()) {
-                evacuatedAgentCount++;
+            if (!agent.isEvacuated()) {
+                // (do nothing)
+                // evacuatedAgentCount++;
             } else {
                 totalDamage += agent.accumulatedExposureAmount;
                 if (agent.accumulatedExposureAmount > maxDamage) maxDamage = agent.accumulatedExposureAmount;
@@ -627,7 +619,12 @@ public class AgentHandler {
     }
 
     public int getEvacuatedCount() {
-        return evacuatedAgentCount;
+        /* [2015.05.27 I.Noda]
+         * agents の使われ方整理のため、evacuatedAgentCount を取り除く作業。
+         * おそらく、これで良いはず。
+         */
+        //return evacuatedAgentCount;
+        return evacuated_agents.size() ;
     }
 
     public ArrayList<String> getAllGoalTags() {
@@ -666,10 +663,6 @@ public class AgentHandler {
 
     public HashMap<MapNode, Integer> getExitNodesMap() {
         return evacuatedAgentCountByExit;
-    }
-
-    public int getWaiting() {
-        return waitingAgentCount;
     }
 
     public double getTotalDamage() {
