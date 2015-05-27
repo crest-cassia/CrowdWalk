@@ -486,23 +486,7 @@ public class AgentHandler {
 
         // tkokada
         boolean existNonZeroSpeedAgent = false;
-        /* [2015.01.08 I.Noda]
-         * agents の queue は、現状で逆順に並んでいるので、
-         * 念の為、逆順に処理をすることにする。
-         * 過去の順番での処理にも switch できるように、
-         * isUsingFrontFirstOrderQueue を参照する。
-         *
-         * [2015.05.27 I.Noda]
-         * ここの部分、agent の並びは、どうでもいいはず？
-         * なので、agents を使う代わりに、getAllAgentCollection を使うことにする。
-         */
-        /*
-        for(int k = 0 ; k < agents.size() ; k++) {
-            AgentBase agent =
-                (isUsingFrontFirstOrderQueue ?
-                 agents.get(agents.size() - k - 1) :
-                 agents.get(k)) ;
-        */
+
         for(AgentBase agent : getWalkingAgentCollection()) {
 
             if (agent.isEvacuated())
@@ -624,14 +608,16 @@ public class AgentHandler {
         if (stuckAgents.isEmpty()) {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated: %d / %d",
-                    getAllAgentCollection().size() - evacuatedAgents.size(), 
-                    getAllAgentCollection().size(),
-                    evacuatedAgents.size(), getMaxAgentCount());
+                    numOfWalkingAgents(),
+                    numOfAllAgents(),
+                    numOfEvacuatedAgents(), getMaxAgentCount());
         } else {
             evacuatedCount_string = String.format(
                     "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
-                    getAllAgentCollection().size() - evacuatedAgents.size(), getAllAgentCollection().size(),
-                    evacuatedAgents.size() - stuckAgents.size(), stuckAgents.size(),
+                    numOfWalkingAgents(),
+                    numOfAllAgents(),
+                    numOfEvacuatedAgents() - numOfStuckAgents(),
+                    numOfStuckAgents(),
                     getMaxAgentCount());
         }
         evacuatedCount_label.setText(evacuatedCount_string);
@@ -717,15 +703,6 @@ public class AgentHandler {
         }
     }
 
-    public int getEvacuatedCount() {
-        /* [2015.05.27 I.Noda]
-         * agents の使われ方整理のため、evacuatedAgentCount を取り除く作業。
-         * おそらく、これで良いはず。
-         */
-        //return evacuatedAgentCount;
-        return evacuatedAgents.size() ;
-    }
-
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
         /* [2015.05.27 I.Noda]
@@ -799,6 +776,16 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
+     * 生成されたすべてのエージェントの数
+     * @return 全エージェントの数
+     */
+    public int numOfAllAgents() {
+        return agentTable.size() ;
+    }
+
+
+    //------------------------------------------------------------
+    /**
      * 歩いているエージェントをテーブルに追加
      * @param agent : 追加するエージェント
      */
@@ -832,6 +819,33 @@ public class AgentHandler {
 
     public double getAverageSpeed() {
         return averageSpeed;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントの数
+     * @return エージェントの数
+     */
+    public int numOfWalkingAgents() {
+        return walkingAgentTable.size() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 避難完了したエージェントの数
+     * @return エージェントの数
+     */
+    public int numOfEvacuatedAgents() {
+        return evacuatedAgents.size() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * スタック中のエージェントの数
+     * @return エージェントの数
+     */
+    public int numOfStuckAgents() {
+        return stuckAgents.size() ;
     }
 
     //------------------------------------------------------------

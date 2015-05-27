@@ -481,6 +481,7 @@ public class Itk {
     //------------------------------------------------------------
     /**
      * 現在時刻をStringで取得
+     * @return 現在時刻文字列
      */
     static public String getCurrentTimeStr() {
         return getCurrentTimeStr(DefaultTimeStrFormat) ;
@@ -490,6 +491,7 @@ public class Itk {
     /**
      * 現在時刻をStringで取得
      * @param formatPattern 指定のフォーマット
+     * @return 現在時刻文字列
      */
     static public String getCurrentTimeStr(String formatPattern) {
         return getCurrentTimeStr(new SimpleDateFormat(formatPattern)) ;
@@ -499,6 +501,7 @@ public class Itk {
     /**
      * 現在時刻をStringで取得
      * @param form 指定のフォーマット
+     * @return 現在時刻文字列
      */
     static public String getCurrentTimeStr(DateFormat form) {
         Date date = getCurrentTimeDate() ;

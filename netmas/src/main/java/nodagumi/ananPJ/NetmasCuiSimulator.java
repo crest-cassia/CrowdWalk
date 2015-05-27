@@ -174,7 +174,11 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
                     model.saveGoalLog(timeSeriesLogPath, false);
                     //model.saveTimeSeriesLog(timeSeriesLogPath);
 	    if ((counter % 100) == 0)
-		Itk.logDebug("Loop", loopCount, "count:", counter) ;
+		Itk.logDebug("Cycle", 
+                             "count:", counter,
+                             "time:", Itk.getCurrentTimeStr(),
+                             "walking:", 
+                             model.getAgentHandler().numOfWalkingAgents()) ;
             if (exitCount > 0 && counter > exitCount) {
                 finished = true;
                 break;

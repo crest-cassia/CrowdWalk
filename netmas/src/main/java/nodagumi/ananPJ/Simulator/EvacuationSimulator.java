@@ -638,7 +638,7 @@ public class EvacuationSimulator {
                     new OutputStreamWriter(new FileOutputStream(fileLog,
                             !createfile) , "utf-8")), true);
             writer.write(((int) getSecond()) + "," +
-                    agentHandler.getEvacuatedCount() + "\n");
+                    agentHandler.numOfEvacuatedAgents() + "\n");
             writer.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();

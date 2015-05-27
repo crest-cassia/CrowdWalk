@@ -109,6 +109,8 @@ run0sm ::
 SAMPLE0smp = sample/stop-sample/properties_24-plain.json #stop (門司港)
 run0smp ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0smp))
+run0smp_cui ::
+	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE0smp))
 
 ##-----
 SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
