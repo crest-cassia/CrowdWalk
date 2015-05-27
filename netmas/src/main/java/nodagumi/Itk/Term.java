@@ -976,8 +976,7 @@ public class Term {
      * double となるか？
      */
     public boolean isDouble() {
-        return (((head instanceof BigDecimal &&
-                  ((BigDecimal)head).scale() > 0) ||
+        return ((head instanceof BigDecimal ||
                  head instanceof Double ||
                  head instanceof Float) && isAtom()) ;
     }
