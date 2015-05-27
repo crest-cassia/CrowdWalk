@@ -207,7 +207,6 @@ public class EvacuationSimulator {
         if (panel3d != null) {
             panel3d.registerAgentOnline(agent);
         }
-        agent.setNetworkMap(getMap()) ;
     }
 
     Boolean stop_simulation = false;
