@@ -752,7 +752,7 @@ public class WalkAgent extends AgentBase {
             dv += calcSocialForce(distToPredecessor) ;
             break;
         case PlainModel:
-            double lowerBound = -((baseSpeed / time_scale) + dv) * 100.0;
+            double lowerBound = -((baseSpeed / time_scale) + dv) ;
             dv += accumulateSocialForces(time, lowerBound) ;
             break;
         default:
@@ -824,12 +824,12 @@ public class WalkAgent extends AgentBase {
 
         //探索開始
         while(workingPlace.getAdvancingDistance() > 0) {
-            //            if(totalForce < lowerBound) { break ; }
+            if(totalForce < lowerBound) { break ; }
             //順方向探索
             ArrayList<AgentBase> sameLane = workingPlace.getLane() ;
             int laneWidth = workingPlace.getLaneWidth() ;
             for(AgentBase agent : sameLane) {
-                // if(totalForce < lowerBound) { break ; }
+                if(totalForce < lowerBound) { break ; }
                 double agentPos = agent.getAdvancingDistance() ;
                 if(agent == this) {
                     continue ;
@@ -855,7 +855,7 @@ public class WalkAgent extends AgentBase {
             double linkLength = workingPlace.getLinkLength() ;
             double insensitivePos = 0.0 ;
             for(int i = 0 ; i < otherLane.size() ; i++) {
-                //                if(totalForce < lowerBound) { break ; }
+                if(totalForce < lowerBound) { break ; }
                 AgentBase agent = otherLane.get(otherLane.size() - i - 1);
                 double agentPos = linkLength - agent.getAdvancingDistance() ;
                 if(agentPos > workingPlace.getAdvancingDistance()) {
