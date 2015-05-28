@@ -207,6 +207,14 @@ public class EvacuationSimulator {
         if (panel3d != null) {
             panel3d.registerAgentOnline(agent);
         }
+        /* [2015.05.29 I.Noda]
+         * 以下のコード、commit b5c5c85e で一旦消したものの、
+         * 渋滞するはずのコードが渋滞しなくなり、おかしい。
+         * なので、復活。しかしなぜ必要なのかわからない。
+         * agent には、map は、NetworkMapBase として設定してある。
+         * それ以外に必要という事かもしれない。
+         */
+        agent.setNetworkMap(getMap()) ;
     }
 
     Boolean stop_simulation = false;
