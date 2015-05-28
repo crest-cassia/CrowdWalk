@@ -752,7 +752,8 @@ public class WalkAgent extends AgentBase {
             dv += calcSocialForce(distToPredecessor) ;
             break;
         case PlainModel:
-            dv += accumulateSocialForces(time) ;
+            double lowerBound = -((baseSpeed / time_scale) + dv) * 100.0;
+            dv += accumulateSocialForces(time, lowerBound) ;
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
@@ -797,9 +798,10 @@ public class WalkAgent extends AgentBase {
      *          1,2,3,4,5 番目のエージェントの横ずれ幅は、
      *          3u, 2u, 1u, 3u, 2u となる。
      * @param time : 時刻
+     * @param lowerBound : 計算上の力の下限。余計な計算しないために。
      * @return 力
      */
-    private double accumulateSocialForces(double time) {
+    private double accumulateSocialForces(double time, double lowerBound) {
         //求める力
         double totalForce = 0.0 ;
 
@@ -822,10 +824,12 @@ public class WalkAgent extends AgentBase {
 
         //探索開始
         while(workingPlace.getAdvancingDistance() > 0) {
+            //            if(totalForce < lowerBound) { break ; }
             //順方向探索
             ArrayList<AgentBase> sameLane = workingPlace.getLane() ;
             int laneWidth = workingPlace.getLaneWidth() ;
             for(AgentBase agent : sameLane) {
+                // if(totalForce < lowerBound) { break ; }
                 double agentPos = agent.getAdvancingDistance() ;
                 if(agent == this) {
                     continue ;
@@ -851,6 +855,7 @@ public class WalkAgent extends AgentBase {
             double linkLength = workingPlace.getLinkLength() ;
             double insensitivePos = 0.0 ;
             for(int i = 0 ; i < otherLane.size() ; i++) {
+                //                if(totalForce < lowerBound) { break ; }
                 AgentBase agent = otherLane.get(otherLane.size() - i - 1);
                 double agentPos = linkLength - agent.getAdvancingDistance() ;
                 if(agentPos > workingPlace.getAdvancingDistance()) {
@@ -891,10 +896,11 @@ public class WalkAgent extends AgentBase {
         /* [2015.05.27 I.Noda]
          * スピードダウンの原因追及のためのチェック。
          */
-        if(false && count + countOther > 20) {
+        if(false && totalForce < lowerBound) {
             Itk.dbgVal("WalkAgent:count", count) ;
             Itk.dbgVal("WalkAgent:countOther", countOther) ;
             Itk.dbgVal("WalkAgent:totalForce", totalForce) ;
+            Itk.dbgVal("WalkAgent:lowerBound", lowerBound) ;
         }
 
         return totalForce ;
