@@ -825,30 +825,7 @@ public class WalkAgent extends AgentBase {
         //探索開始
         while(workingPlace.getAdvancingDistance() > 0) {
             if(totalForce < lowerBound) { break ; }
-            //順方向探索
-            ArrayList<AgentBase> sameLane = workingPlace.getLane() ;
-            int laneWidth = workingPlace.getLaneWidth() ;
-            for(AgentBase agent : sameLane) {
-                if(totalForce < lowerBound) { break ; }
-                double agentPos = agent.getAdvancingDistance() ;
-                if(agent == this) {
-                    continue ;
-                } else if(agentPos > workingPlace.getAdvancingDistance()) {
-                    // 探索範囲外
-                    break ; // for からの脱出
-                } else if(agentPos <= relativePos) {
-                    // 当該エージェントの後方なので無視
-                    continue ; // 次の for へ
-                } else {
-                    count++ ;
-                    double dx = agentPos - relativePos ;
-                    double dy =
-                        (widthUnit_SameLane *
-                         ((laneWidth - (count % laneWidth)) % laneWidth)) ;
-                    double force = calcSocialForceToHeading(dx,dy) ;
-                    totalForce += force ;
-                }
-            }
+
             //逆方向探索
             ArrayList<AgentBase> otherLane = workingPlace.getOtherLane() ;
             int laneWidthOther = workingPlace.getOtherLaneWidth() ;
@@ -882,6 +859,32 @@ public class WalkAgent extends AgentBase {
                     }
                 }
             }
+
+            //順方向探索
+            ArrayList<AgentBase> sameLane = workingPlace.getLane() ;
+            int laneWidth = workingPlace.getLaneWidth() ;
+            for(AgentBase agent : sameLane) {
+                if(totalForce < lowerBound) { break ; }
+                double agentPos = agent.getAdvancingDistance() ;
+                if(agent == this) {
+                    continue ;
+                } else if(agentPos > workingPlace.getAdvancingDistance()) {
+                    // 探索範囲外
+                    break ; // for からの脱出
+                } else if(agentPos <= relativePos) {
+                    // 当該エージェントの後方なので無視
+                    continue ; // 次の for へ
+                } else {
+                    count++ ;
+                    double dx = agentPos - relativePos ;
+                    double dy =
+                        (widthUnit_SameLane *
+                         ((laneWidth - (count % laneWidth)) % laneWidth)) ;
+                    double force = calcSocialForceToHeading(dx,dy) ;
+                    totalForce += force ;
+                }
+            }
+
             //次のリンクへ進む
             relativePos -= workingPlace.getLinkLength() ;
             MapLink nextLink =
