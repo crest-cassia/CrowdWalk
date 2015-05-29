@@ -382,6 +382,7 @@ public abstract class GenerateAgent {
             agent.setPlannedRoute((List)planned_route_in_Term.getArray());
 
             agent.setMap(map) ;
+            
             place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
             for (final String tag : tags) {

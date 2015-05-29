@@ -42,7 +42,7 @@ public class EvacuationSimulator {
 
     //private MapNodeTable nodes = null;
     //private MapLinkTable links = null;
-    private NetworkMapBase map = null ;
+    //private NetworkMapBase map = null ; // networkMap で代用。
     private ArrayList<AgentBase> agents = null;
     private String pollutionFileName = null;
 
@@ -74,10 +74,10 @@ public class EvacuationSimulator {
 
         random = _random;
         int counter = 0;
-        for (MapLink link : map.getLinks()) {
-	    if (!map.getNodes().contains(link.getFrom()))
+        for (MapLink link : networkMap.getLinks()) {
+	    if (!networkMap.getNodes().contains(link.getFrom()))
                 counter += 1;
-	    else if (!map.getNodes().contains(link.getTo()))
+	    else if (!networkMap.getNodes().contains(link.getTo()))
                 counter += 1;
         }
         if (counter > 0)
@@ -95,7 +95,6 @@ public class EvacuationSimulator {
         if (controller instanceof BasicSimulationLauncher) {
             properties = ((BasicSimulationLauncher)controller).getProperties();
         }
-	map = networkMap ;
         pollutionFileName = networkMap.getPollutionFile();
     }
 
@@ -126,7 +125,7 @@ public class EvacuationSimulator {
             agentHandler.setupFrame(
                     networkMap.getGenerationFile(),
                     networkMap.getScenarioFile(),
-                    map);
+                    networkMap);
         }
         if (has_display)
             buildDisplay();
@@ -143,7 +142,7 @@ public class EvacuationSimulator {
             agentHandler.setupFrame(
                     networkMap.getGenerationFile(),
                     networkMap.getScenarioFile(),
-                    map);
+                    networkMap);
         }
 
         agentHandler.prepareForSimulation();
@@ -173,7 +172,7 @@ public class EvacuationSimulator {
 
         agentHandler = new AgentHandler(networkMap.getGenerationFile(),
                                         networkMap.getScenarioFile(),
-                                        map,
+                                        networkMap,
                                         this,
                                         has_display,
                                         linerGenerateAgentRatio,
@@ -213,6 +212,9 @@ public class EvacuationSimulator {
          * なので、復活。しかしなぜ必要なのかわからない。
          * agent には、map は、NetworkMapBase として設定してある。
          * それ以外に必要という事かもしれない。
+         * また、ここでないといけないらしい。
+         * GenerateAgent の tryUpdateAndGenerate() で入れてみたが、
+         * おかしくなる。
          */
         agent.setNetworkMap(getMap()) ;
     }
@@ -222,10 +224,10 @@ public class EvacuationSimulator {
         synchronized (stop_simulation) {
             double poltime = getSecond();
             if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
-		pollutionCalculator.updateNodesLinksAgents(poltime, map,
+		pollutionCalculator.updateNodesLinksAgents(poltime, networkMap,
                         getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
-            agentHandler.update(map, getSecond());
+            agentHandler.update(networkMap, getSecond());
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
                 boolean captureScreenShot = (screenshotInterval != 0);
@@ -275,10 +277,10 @@ public class EvacuationSimulator {
     public boolean updateEveryTickCui() {
         synchronized (stop_simulation) {
             double poltime = getSecond();
-	    pollutionCalculator.updateNodesLinksAgents(poltime, map,
+	    pollutionCalculator.updateNodesLinksAgents(poltime, networkMap,
                     getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
-            agentHandler.update(map, getSecond());
+            agentHandler.update(networkMap, getSecond());
             tick_count += 1.0;
         }
         if (agentHandler.isFinished()) {
@@ -335,7 +337,7 @@ public class EvacuationSimulator {
         }
 
         private boolean calc_goal_path(String goal_tag) {
-	    return map.calcGoalPath(goal_tag) ;
+	    return networkMap.calcGoalPath(goal_tag) ;
         }
     }
 
@@ -414,7 +416,7 @@ public class EvacuationSimulator {
         int totalValidNodes = 0;
         for (String goal : all_goal_tags) {
             int count = 0;
-	    for (MapNode node : map.getNodes()) {
+	    for (MapNode node : networkMap.getNodes()) {
                 MapLinkTable pathways = node.getPathways();
                 boolean notHasAllLinks = false;
                 for (MapLink link : pathways) {
@@ -521,11 +523,11 @@ public class EvacuationSimulator {
     }
 
     public MapLinkTable getLinks() {
-	return map.getLinks();
+	return networkMap.getLinks();
     }
 
     public MapNodeTable getNodes() {
-	return map.getNodes();
+	return networkMap.getNodes();
     }
 
     //------------------------------------------------------------

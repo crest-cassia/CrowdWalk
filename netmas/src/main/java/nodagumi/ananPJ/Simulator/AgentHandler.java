@@ -176,7 +176,7 @@ public class AgentHandler {
 
     public AgentHandler (String generationFile,
                          String scenarioFile,
-                         NetworkMapBase map,
+                         NetworkMap map,
                          EvacuationSimulator _simulator,
                          boolean _has_display,
                          double linerGenerateAgentRatio,
@@ -185,7 +185,7 @@ public class AgentHandler {
         simulator = _simulator;
         has_display = _has_display;
         random = _random;
-        networkMap = (NetworkMap)map;
+        networkMap = map ;
 
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
 
@@ -202,11 +202,11 @@ public class AgentHandler {
         try {
             /* [I.Noda] generation file の読み込みはここ */
              generate_agent = new AgentGenerationFile(generationFile,
-                                                     simulator.getMap(),
-                                                     fallbackParameters,
-                                                     has_display,
-                                                     linerGenerateAgentRatio,
-                                                     random);
+                                                      networkMap,
+                                                      fallbackParameters,
+                                                      has_display,
+                                                      linerGenerateAgentRatio,
+                                                      random);
         } catch(Exception ex) {
             ex.printStackTrace() ;
             Itk.logError("Illegal AgentGenerationFile",
@@ -293,7 +293,7 @@ public class AgentHandler {
                 factory.tryUpdateAndGenerate(scenario.calcAbsoluteTime(time),
                                              simulator.getTimeScale(),
                                              time, simulator,
-                                             generatedAgentsInStep, map);
+                                             generatedAgentsInStep, networkMap);
             }
         }
 
