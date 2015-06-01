@@ -233,11 +233,9 @@ public class SimulationLauncher extends BasicSimulationLauncher
         tabs.add(simulator.getAgentHandler().getControlPanel());
         tabs.add(panel.getControlPanel());
         simulation_frame.setMenuBar(panel.getMenuBar());
+        simulation_frame.setResizable(false);   // ※setResizable は pack の前に置かないとサイズがおかしくなる。
         simulation_frame.pack();
         simulation_frame.setVisible(true);
-
-        // tkokada
-        simulation_frame.setResizable(false);
         return panel;
     }
 
