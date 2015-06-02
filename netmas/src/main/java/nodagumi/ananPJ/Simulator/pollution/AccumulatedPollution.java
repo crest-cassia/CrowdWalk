@@ -63,7 +63,10 @@ public class AccumulatedPollution extends Pollution {
             return 0;
     }
 
-    public boolean finished(AgentBase agent) {
-        return agent.isEvacuated() || getTriage(agent) >= 3;
+    /**
+     * エージェントの死亡判定
+     */
+    public boolean isDead(AgentBase agent) {
+        return getTriage(agent) >= 3;
     }
 }

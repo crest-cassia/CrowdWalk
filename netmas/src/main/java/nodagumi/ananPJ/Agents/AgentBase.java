@@ -58,12 +58,14 @@ implements Comparable<AgentBase> {
      * generatedTime: 生成された時刻
      * finishedTime: ゴールに到達した時刻
      * evacuated: ゴールに到達したかどうかのフラグ
-     * stuck: スタックしたかどうかのフラグ
+     * stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)
+     * dead: 死亡したかどうかのフラグ(死亡しても evacuated は false のまま)
      */
     public double generatedTime;
     public double finishedTime;
     private boolean evacuated = false;
     private boolean stuck = false;
+    private boolean dead = false;
     public double currentTime ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -319,6 +321,14 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
+     * 死亡したかどうか
+     */
+    public boolean isDead() {
+        return dead;
+    }
+
+    //------------------------------------------------------------
+    /**
      * ゴールをセット
      */
     public void setGoal(Term _goal) {
@@ -551,18 +561,21 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * ???
+     * 動作が終了(避難完了または死亡)しているか?
      */
     public boolean finished() {
-        return pollution.finished(this);
+        return isEvacuated() || isDead();
     }
 
     //------------------------------------------------------------
     /**
-     * ???
+     * 汚染環境(洪水、ガス等)に暴露する
      */
     public void exposed(double c) {
-        pollution.expose(this, c);
+        if (! isDead()) {
+            pollution.expose(this, c);
+            dead = pollution.isDead(this);
+        }
     }
 
     //------------------------------------------------------------

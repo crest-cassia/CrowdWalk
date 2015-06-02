@@ -508,7 +508,7 @@ public class AgentHandler {
                 if (agentMovementHistoryLogger != null) {
                     agentMovementHistoryLogger
                         .info(String
-                              .format("%s,%d,%s,%d,%s,%d,%s,%d",
+                              .format("%s,%s,%s,%d,%s,%d,%s,%d",
                                       agent.getConfigLine().replaceAll(",", " "),
                                       agent.ID,
                                       convertAbsoluteTimeString(agent.generatedTime,

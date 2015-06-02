@@ -9,7 +9,7 @@ public abstract class Pollution {
     public abstract void expose(AgentBase agent, double pollutionLevel);
     public abstract void effect(AgentBase agent);
     public abstract int getTriage(AgentBase agent);
-    public abstract boolean finished(AgentBase agent);
+    public abstract boolean isDead(AgentBase agent);
 
     protected static HashMap<String, Pollution> pollutions = new HashMap<String, Pollution>();
 
