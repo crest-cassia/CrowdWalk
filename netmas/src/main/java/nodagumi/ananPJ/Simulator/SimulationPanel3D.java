@@ -918,8 +918,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
         if (agent.isEvacuated())
             return;
         Agent3D agent3d = new Agent3D(agent);
-        agent_group.addChild(agent3d.getBranchGroup());
-        displayedAgents.put(agent, agent3d);
+        synchronized (displayedAgents) {
+            agent_group.addChild(agent3d.getBranchGroup());
+            displayedAgents.put(agent, agent3d);
+        }
     }
 
     /* used when registering agent while running simulation */
@@ -1180,15 +1182,17 @@ public class SimulationPanel3D extends NetworkPanel3D {
         synchronized (addedAgents) {
             synchronized (movedAgents) {
                 synchronized (colorChangedAgents) {
-                    for (AgentBase agent : addedAgents) {
-                        Agent3D agent3d = displayedAgents.get(agent);
-                        if (agent3d == null) {
-                            agent3d = new Agent3D(agent);
-                            agent_group.addChild(agent3d.getBranchGroup());
-                            displayedAgents.put(agent, agent3d);
-                            // updatePosition/updateColor する必要はないため対象から外す
-                            movedAgents.remove(agent);
-                            colorChangedAgents.remove(agent);
+                    synchronized (displayedAgents) {
+                        for (AgentBase agent : addedAgents) {
+                            Agent3D agent3d = displayedAgents.get(agent);
+                            if (agent3d == null) {
+                                agent3d = new Agent3D(agent);
+                                agent_group.addChild(agent3d.getBranchGroup());
+                                displayedAgents.put(agent, agent3d);
+                                // updatePosition/updateColor する必要はないため対象から外す
+                                movedAgents.remove(agent);
+                                colorChangedAgents.remove(agent);
+                            }
                         }
                     }
                 }
@@ -1197,33 +1201,38 @@ public class SimulationPanel3D extends NetworkPanel3D {
         }
         // 避難完了 - エージェントを表示対象から外す
         synchronized (evacuatedAgents) {
-            synchronized (movedAgents) {
-                synchronized (colorChangedAgents) {
-                    for (AgentBase agent : evacuatedAgents) {
-                        Agent3D agent3d = displayedAgents.get(agent);
-                        agent3d.detach();
-                        displayedAgents.remove(agent);
-                        // updatePosition/updateColor してはいけないため対象から外す
-                        movedAgents.remove(agent);
-                        colorChangedAgents.remove(agent);
-                    }
+            synchronized (displayedAgents) {
+                for (AgentBase agent : evacuatedAgents) {
+                    Agent3D agent3d = displayedAgents.get(agent);
+                    agent3d.detach();
+                    displayedAgents.remove(agent);
                 }
             }
             evacuatedAgents.clear();
         }
         // 移動 - エージェントの表示位置を更新する
         synchronized (movedAgents) {
-            for (AgentBase agent : movedAgents) {
-                Agent3D agent3d = displayedAgents.get(agent);
-                agent3d.updatePosition();
+            synchronized (displayedAgents) {
+                for (AgentBase agent : movedAgents) {
+                    if (agent.isEvacuated()) {
+                        continue;
+                    }
+                    Agent3D agent3d = displayedAgents.get(agent);
+                    agent3d.updatePosition();
+                }
             }
             movedAgents.clear();
         }
         // スピード変化・トリアージレベル変化 - エージェントの表示色を更新する
         synchronized (colorChangedAgents) {
-            for (AgentBase agent : colorChangedAgents) {
-                Agent3D agent3d = displayedAgents.get(agent);
-                agent3d.updateColor();
+            synchronized (displayedAgents) {
+                for (AgentBase agent : colorChangedAgents) {
+                    if (agent.isEvacuated()) {
+                        continue;
+                    }
+                    Agent3D agent3d = displayedAgents.get(agent);
+                    agent3d.updateColor();
+                }
             }
             colorChangedAgents.clear();
         }
@@ -1360,12 +1369,14 @@ public class SimulationPanel3D extends NetworkPanel3D {
      * 全エージェントの表示を更新する.
      */
     public void updateAllAgents(boolean position, boolean color) {
-        for (Agent3D agent3d : displayedAgents.values()) {
-            if (position) {
-                agent3d.updatePosition();
-            }
-            if (color) {
-                agent3d.updateColor();
+        synchronized (displayedAgents) {
+            for (Agent3D agent3d : displayedAgents.values()) {
+                if (position) {
+                    agent3d.updatePosition();
+                }
+                if (color) {
+                    agent3d.updateColor();
+                }
             }
         }
     }
