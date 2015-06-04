@@ -127,7 +127,7 @@ public class AwaitAgent extends WalkAgent {
             pack(time);
             return true;
         } else {
-            System.err.println("WARNING: how to move not stated!");
+            Itk.logWarn("how to move not stated!", this);
             return false ;
         }
     }
@@ -260,8 +260,7 @@ public class AwaitAgent extends WalkAgent {
                 if(returnP) return true;
             }
         } else if (wait_time != NOT_WAITING) {
-            System.err.println("WARNING: agent " + agentNumber
-                               + "pushed out from " + target);
+            Itk.logWarn("Pushed Out", "agent " + ID + " pushed out from " + target);
             wait_time = NOT_WAITING;
             routePlan.shift() ;
         }

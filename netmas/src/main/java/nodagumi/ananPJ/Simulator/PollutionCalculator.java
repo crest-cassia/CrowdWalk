@@ -169,7 +169,7 @@ public class PollutionCalculator {
             for (PollutedArea area : agent.getCurrentLink().getIntersectedPollutionAreas()) {
                 if (area.contains(point)) {
                     pollutionLevel = (Double)area.getUserObject();
-                    if (debug) System.err.println(agent.agentNumber + " " + pollutionLevel);
+                    if (debug) System.err.println(agent.ID + " " + pollutionLevel);
                 // System.err.printf("in pollution calculator agent: %04d, " + 
                         // "d: %.4f, speed: %.4f, %s\n", agent.ID, d,
                         // agent.getSpeed(), best_area.getTags());

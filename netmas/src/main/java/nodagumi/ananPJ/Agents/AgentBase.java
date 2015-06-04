@@ -35,14 +35,6 @@ implements Comparable<AgentBase> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * agent_count は生成したエージェントの総数。
-     * agentNumber は、agent の中での通しナンバー。
-     */
-    static int agent_count = 0;
-    public int agentNumber;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * Agent の詳細設定情報を格納しているもの
      */
     public Term config ;
@@ -155,7 +147,6 @@ implements Comparable<AgentBase> {
     public void init(Random _random) {
         super.init(null);
         random = _random;
-        agentNumber = agent_count++;
         //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
         // Pollution のサブクラスのインスタンスを取得
@@ -277,13 +268,6 @@ implements Comparable<AgentBase> {
     /**
      * インスタンス変数へのアクセス
      */
-    //------------------------------------------------------------
-    /**
-     * エージェント id
-     */
-    public int getAgentNumber() {
-        return agentNumber;
-    }
 
     //------------------------------------------------------------
     /**
@@ -720,16 +704,9 @@ implements Comparable<AgentBase> {
 
         // tkokada modified
         if (h1 == h2) {
-            //return (int)((agentNumber - rhs.agentNumber) * getDirection());
             // m.saito modified
-            if (agentNumber == rhs.agentNumber) {
-                return 0;
-            } else if (agentNumber > rhs.agentNumber) {
-                return (int)(1 * getDirection());
-            } else {
-                return (int)(-1 * getDirection());
-            }
-            //return 0;
+            // i.noda modified [2015.06.04]
+            return ID.compareTo(rhs.ID) ;
         } else if (h1 > h2) {
             return (int)(1 * getDirection());
             //return 1;
@@ -746,7 +723,7 @@ implements Comparable<AgentBase> {
      * 逆向きなどはちゃんと方向を直して扱う。
      */
     public int compareTo(AgentBase rhs) {
-        if(agentNumber == rhs.agentNumber) return 0 ;
+        if(this == rhs) return 0 ;
 
         double h1 = this.currentPlace.getAdvancingDistance() ;
         double h2 = rhs.currentPlace.getAdvancingDistance() ;
@@ -755,10 +732,8 @@ implements Comparable<AgentBase> {
             return 1 ;
         } else if(h1 < h2) {
             return -1 ;
-        } else if(agentNumber > rhs.agentNumber) {
-            return 1;
         } else {
-            return -1;
+            return ID.compareTo(rhs.ID) ;
         }
     }
 
