@@ -1270,28 +1270,6 @@ public class AgentHandler {
         return timeToString(scenario.calcAbsoluteTime(relTime), trunc) ;
     }
 
-    public void dumpState(PrintWriter pw) {
-        Document doc = ItkXmlUtility.singleton.newDocument();
-        simulator.getMap().toDOM(doc);
-        pw.print(ItkXmlUtility.singleton.docToString(doc));
-
-        for (AgentBase agent : getAllAgentCollection()) {
-            if (agent.isEvacuated()){
-                pw.print("evacuated," + 
-                        agent.agentNumber + "," +
-                        agent.finishedTime + "," +
-                        agent.getLastNode().getTagString()
-                );
-            } else {
-                pw.print(agent.toString());
-            }
-            pw.println();
-        }
-        for (GenerateAgent factory : generate_agent) {
-            factory.dumpAgentToGenerate(pw);
-        }
-    }
-
     public void setRandom(Random _random) {
         random = _random;
         if (generate_agent != null)
