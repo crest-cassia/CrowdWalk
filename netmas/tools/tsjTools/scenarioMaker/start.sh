@@ -33,12 +33,17 @@ mkdir -p log
 sh $CROWDWALK/quickstart.sh properties.json --cui # --log-level Error --tick tickfile.txt
 
 # 避難時間の集計情報を _output.json へと出力
-ruby ../../RubyLibs/calculate_evacuation_time.rb > ./log/_output.json
+ruby $CROWDWALK/tools/tsjTools/scenarioMaker/RubyLibs/calculate_evacuation_time.rb > ./log/_output.json
 
 
 cd ../../
 
+
+mv $TEMPORARY_DIR/log/_output.json ./tmp/_output-$key.json
+rm -rf $TEMPORARY_DIR
+
 # 圧縮する
 #tar cfvz $TEMPORARY_DIR.tar.gz $TEMPORARY_DIR
+
 
 
