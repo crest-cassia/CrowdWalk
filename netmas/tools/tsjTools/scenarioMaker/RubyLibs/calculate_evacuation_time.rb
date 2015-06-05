@@ -7,6 +7,10 @@ require 'json'
 evacuation_steps_array = Array.new
 
 
+dirname = Dir::pwd.split("/")[-1]
+#puts dirname
+key = dirname.split("-")[-1]
+
 filename = "./log/agent_movement_history.csv"
 File.open(filename) do |io|
 	
@@ -31,7 +35,7 @@ evacuation_steps = evacuation_steps_array.max
 
 
 
-output = { "average_steps" => average_steps, "evacuation_steps" => evacuation_steps }
+output = { "key" => key, "average_steps" => average_steps, "evacuation_steps" => evacuation_steps }
 
 
 puts JSON.generate(output)
