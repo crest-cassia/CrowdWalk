@@ -39,8 +39,9 @@ ruby $CROWDWALK/tools/tsjTools/scenarioMaker/RubyLibs/calculate_evacuation_time.
 cd ../../
 
 
-#mv $TEMPORARY_DIR/log/_output.json ./tmp/_output-$key.json
-#rm -rf $TEMPORARY_DIR
+# 出力された _output.json ファイルを退避させたのち、一時的に作成したディレクトリを削除
+mv $TEMPORARY_DIR/log/_output.json ./tmp/_output-$key.json
+rm -rf $TEMPORARY_DIR
 
 # 圧縮する
 #tar cfvz $TEMPORARY_DIR.tar.gz $TEMPORARY_DIR
