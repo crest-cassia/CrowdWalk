@@ -50,7 +50,6 @@ public class EvacuationSimulator {
     protected SimulationController controller = null;
 
     private int screenshotInterval = 0;
-    private int outlogInterval = 0;
     /** simulation time step */
     private double timeScale = 1.0; // original value: 1.0
 
@@ -247,18 +246,6 @@ public class EvacuationSimulator {
                         try {
                             wait();
                         } catch (InterruptedException e) {}
-                    }
-                }
-                if (outlogInterval == 0) {
-                    //do nothing
-                } else if ((((int)getTickCount()) % outlogInterval) == 0) {
-                    try {
-                        PrintStream psa = new PrintStream("logs/agents" +
-                                getTickCount()+".csv");
-                        agentHandler.dumpAgentCurrent(psa);
-                        psa.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -492,14 +479,6 @@ public class EvacuationSimulator {
         return screenshotInterval;
     }
 
-    public void setOutlogInterval (int i) {
-        outlogInterval = i;
-    }
-
-    public int getOutlogInterval () {
-        return outlogInterval;
-    }
-
     public void setTimeScale (double d) {
         timeScale = d;
     }
@@ -633,26 +612,6 @@ public class EvacuationSimulator {
         random = _random;
         if (agentHandler != null)
             agentHandler.setRandom(_random);
-    }
-
-    public void saveSimpleGoalLog(String dict, boolean createfile) {
-        File fileLog = new File(dict + "/goalLog.log");
-        if (createfile) {
-            File fileLogDirectory = fileLog.getParentFile();
-            if (fileLogDirectory != null && !fileLogDirectory.exists())
-                fileLogDirectory.mkdirs();
-        }
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(fileLog,
-                            !createfile) , "utf-8")), true);
-            writer.write(((int) getSecond()) + "," +
-                    agentHandler.numOfEvacuatedAgents() + "\n");
-            writer.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
     }
 
     /* when agents goal */
@@ -860,35 +819,6 @@ public class EvacuationSimulator {
         logging_count++;
 
         return true;
-    }
-
-    // tkokada
-    public void saveDamagedSpeedZeroNumberLog(String filepath,
-            boolean createfile) {
-        int dszn = 0;   // number of damaged speed zero agents
-        // count the number of agents with speed is zero and instantaneous 
-        // damage is max value.
-        /* [2015.05.27 I.Noda]
-         * ここの部分、AllAgent で計算すべきなのか、
-         * WalkingAgent で計算すべきなのか、不明。
-         */
-        for (AgentBase agent: getAllAgentCollection()) {
-            if (agent.getSpeed() == 0.) {
-                if (agent.currentExposureAmount >= 10.) {
-                    dszn += 1;
-                }
-            }
-        }
-        try {
-            PrintWriter writer = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(
-                        new FileOutputStream(filepath, !createfile), "utf-8")),
-                        true);
-            writer.write(dszn + "\n");
-            writer.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
     }
 
     // tkokada

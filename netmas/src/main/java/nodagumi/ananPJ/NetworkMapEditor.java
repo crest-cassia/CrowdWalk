@@ -1308,11 +1308,6 @@ public class NetworkMapEditor extends SimulationLauncher
             super.setTimeSeriesLogPath(timeSeriesLogPath);
             super.setTimeSeriesLogInterval(timeSeriesLogInterval);
         }
-        if (propertiesHandler.getIsDamageSpeedZero()) {
-            super.setIsDamageSpeedZeroNumberLog(true);
-            super.setDamageSpeedZeroNumberLogPath(propertiesHandler
-                    .getDamageSpeedZeroPath());
-        }
     }
 
     // 画像ファイルか?

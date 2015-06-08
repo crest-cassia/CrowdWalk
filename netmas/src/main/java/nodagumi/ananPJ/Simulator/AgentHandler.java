@@ -652,41 +652,6 @@ public class AgentHandler {
      * agents を obsolute にするために、以下、使わないようにする。
      */
     /*
-    public void dumpAgentCurrent(PrintStream out) {
-        for (int i = 0; i < agents.size(); ++i) {
-            AgentBase agent = agents.get(i);
-            if (!agent.finished()) {
-                out.printf("%d,%f,%f,%f,%f\n",
-                        i,
-                        agent.accumulatedExposureAmount,
-                        agent.getPos().getX(),
-                        agent.getPos().getY(),
-                        agent.getHeight());
-            }
-        }
-    }
-    */
-
-    /* [2015.05.27 I.Noda]
-     * 上記の代用物
-     */
-    public void dumpAgentCurrent(PrintStream out) {
-        for(AgentBase agent : getWalkingAgentCollection()) {
-            if (!agent.finished()) {
-                out.printf("%s,%f,%f,%f,%f\n",
-                           agent.ID,
-                           agent.accumulatedExposureAmount,
-                           agent.getPos().getX(),
-                           agent.getPos().getY(),
-                           agent.getHeight());
-            }
-        }
-    }
-
-    /* [2015.05.27 I.Noda]
-     * agents を obsolute にするために、以下、使わないようにする。
-     */
-    /*
     public void dumpAgentResult(PrintStream out) {
         for (final AgentBase agent : agents) {
             agent.dumpResult(out);

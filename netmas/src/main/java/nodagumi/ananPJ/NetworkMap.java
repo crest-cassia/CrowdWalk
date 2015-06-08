@@ -41,7 +41,6 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.OBNode.NType;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint;
 import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
 import nodagumi.ananPJ.misc.NetMASSnapshot;
 
@@ -327,17 +326,6 @@ public class NetworkMap extends NetworkMapBase {
         String id = assignNewId();
         PollutedArea area = new PollutedAreaRectangle(id,
                 bounds, min_height, max_height, angle);
-        insertOBNode(parent, area, true);
-        return area;
-    }
-
-    public PollutedArea createPollutedAreaPoint(
-            MapPartGroup parent,
-            MapNode node,
-            int room_id) {
-        String id = assignNewId();
-        Vector3d point = node.getPoint();
-        PollutedArea area = new PollutedAreaPoint(id, room_id, point); 
         insertOBNode(parent, area, true);
         return area;
     }

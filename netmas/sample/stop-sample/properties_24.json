@@ -23,9 +23,6 @@
     time_series_log_path: 'log',
     time_series_log_interval: 1,
 
-    damage_speed_zero_log: false,
-    damage_speed_zero_log_path: 'log/damage_speed_zero.csv',
-
     //agent_movement_history_file: 'log/agent_movement_history.csv',
     //individual_pedestrians_log_dir: 'log',
 

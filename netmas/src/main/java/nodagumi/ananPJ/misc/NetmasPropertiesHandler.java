@@ -245,23 +245,6 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>damage_speed_zero_log</h4>
- *     <pre>  ダメージを受けて動けなくなってしまった(死んでしまった?)エージェントについてのログをとるかどうかの設定
- *
- *  設定値： true | false
- *  デフォルト値： false</pre>
- *   </li>
- *
- *   <li>
- *     <h4>damage_speed_zero_log_path</h4>
- *     <pre>  死んでしまったエージェントについてのログの保管場所の指定
- *  damage_speed_zero_log が true の時に設定する
- *
- *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
- *  デフォルト値： なし</pre>
- *   </li>
- *
- *   <li>
  *     <h4>agent_movement_history_file</h4>
  *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのログ(?)
  *
@@ -545,16 +528,6 @@ public class NetmasPropertiesHandler {
         return timeSeriesLogInterval;
     }
 
-    //
-    protected boolean isDamageSpeedZero = false;
-    public boolean getIsDamageSpeedZero() {
-        return isDamageSpeedZero;
-    }
-    protected String damageSpeedZeroPath = null;
-    public String getDamageSpeedZeroPath() {
-        return damageSpeedZeroPath;
-    }
-
     // End condition of simulation
     protected int exitCount = 0;
     public int getExitCount() {
@@ -642,13 +615,6 @@ public class NetmasPropertiesHandler {
                                                       "time_series_log_path");
                 timeSeriesLogInterval = getIntegerProperty(prop,
                                                            "time_series_log_interval");
-            }
-            // the number of agents with damaged speed zero
-            isDamageSpeedZero = getBooleanProperty(prop,
-                                                   "damage_speed_zero_log");
-            if (isDamageSpeedZero) {
-                damageSpeedZeroPath = getStringProperty(prop,
-                                                        "damage_speed_zero_log_path");
             }
             // loop count
             loopCount = getIntegerProperty(prop, "loop_count");

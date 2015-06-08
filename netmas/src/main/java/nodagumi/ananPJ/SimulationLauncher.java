@@ -35,8 +35,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private boolean isTimeSeriesLog = false;
     private String timeSeriesLogPath = null;
     private int timeSeriesLogInterval = -1;
-    private boolean isDamageSpeedZeroNumberLog = false;
-    private String damageSpeedZeroNumberLogPath = null;
 
     private SpeedCalculationModel speedModel = null;
 
@@ -100,18 +98,10 @@ public class SimulationLauncher extends BasicSimulationLauncher
             public void run() {
                 while(!finished && run_thread) {
                     finished = simulator.updateEveryTick();
-                    boolean isTimezero = false;
-                    if (simulator.getSecond() == 0)
-                        isTimezero = true;
                     if (isTimeSeriesLog) {
                         if (((int) simulator.getSecond()) % timeSeriesLogInterval
                                 == 0)
                             simulator.saveTimeSeriesLog(timeSeriesLogPath);
-                    }
-                    if (isDamageSpeedZeroNumberLog) {
-                        simulator.saveSimpleGoalLog("tmp", isTimezero);
-                        simulator.saveDamagedSpeedZeroNumberLog(
-                                damageSpeedZeroNumberLogPath, isTimezero);
                     }
                     if (isTimerEnabled) {
                         timer.tick();
@@ -359,23 +349,5 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     public String getTimerFile() {
         return timerPath;
-    }
-
-    public boolean getIsDamageSpeedZeroNumberLog() {
-        return isDamageSpeedZeroNumberLog;
-    }
-
-    public void setIsDamageSpeedZeroNumberLog(boolean
-            _isDamageSpeedZeroNumberLog) {
-        isDamageSpeedZeroNumberLog = _isDamageSpeedZeroNumberLog;
-    }
-
-    public String getDamageSpeedZeroNumberLogPath() {
-        return damageSpeedZeroNumberLogPath;
-    }
-
-    public void setDamageSpeedZeroNumberLogPath(String
-            _damageSpeedZeroNumberLogPath) {
-        damageSpeedZeroNumberLogPath = _damageSpeedZeroNumberLogPath;
     }
 }
