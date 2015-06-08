@@ -337,7 +337,9 @@ public class EvacuationSimulator {
         }
 
         private boolean calc_goal_path(String goal_tag) {
-	    return networkMap.calcGoalPath(goal_tag) ;
+	    boolean result = networkMap.calcGoalPath(goal_tag) ;
+            Itk.logInfo("Built Route", goal_tag) ;
+            return result;
         }
     }
 
@@ -682,7 +684,8 @@ public class EvacuationSimulator {
             }
             StringBuffer buff = new StringBuffer();
             int index = 0;
-            for (MapNode node : exitNodeList) {
+            // for (MapNode node : exitNodeList) {
+            for (MapNode node : agentHandler.getExitNodesMap().keySet()) {
                 if (index > 0) {
                     buff.append(",");
                 }
@@ -739,7 +742,8 @@ public class EvacuationSimulator {
             try {
                 writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(evacuatedAgentsLog, false), "utf-8")), true);
                 int index = 0;
-                for (MapNode node : exitNodeList) {
+                // for (MapNode node : exitNodeList) {
+                for (MapNode node : agentHandler.getExitNodesMap().keySet()) {
                     writer.write((index == 0 ? "" : ",") + node.getTagLabel());
                     index++;
                 }

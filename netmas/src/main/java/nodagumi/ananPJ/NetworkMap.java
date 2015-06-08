@@ -661,6 +661,10 @@ public class NetworkMap extends NetworkMapBase {
         if (OBNode.NType.LINK == ob_node.getNodeType()) {
             addObject(ob_node.ID, ob_node);
             MapLink link = (MapLink) ob_node;
+            if (link.hasTag("TEMPORARY_GATHERING_LOCATION_LINK")) {
+                System.err.println("to 40m: " + link.ID);
+                link.width = 40.0;
+            }
             linksCache.add(link);
 
             String[] nodes = (String[])ob_node.getUserObject();

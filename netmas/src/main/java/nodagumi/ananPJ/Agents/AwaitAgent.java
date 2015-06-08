@@ -215,6 +215,10 @@ public class AwaitAgent extends WalkAgent {
         super.preUpdate(time);
     }
 
+    public boolean isWaiting() {
+        return waiting;
+    }
+
     //------------------------------------------------------------
     /**
      * WAIT_UNTIL の場合の preUpdate 処理

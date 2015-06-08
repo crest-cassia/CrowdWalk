@@ -62,11 +62,13 @@ implements Comparable<AgentBase> {
      * dead: 死亡したかどうかのフラグ(死亡しても evacuated は false のまま)
      */
     public double generatedTime;
-    public double finishedTime;
+    public double finishedTime = 0.0;
     private boolean evacuated = false;
     private boolean stuck = false;
     private boolean dead = false;
     public double currentTime ;
+    public double remainingDistanceOfGeneratedLink = -1.0;
+    public double advancingDistanceOfFinishedLink = 0.0;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -956,6 +958,10 @@ implements Comparable<AgentBase> {
      */
     public double getHeight() {
         return currentPlace.getHeightForDisplay() ;
+    }
+
+    public boolean isWaiting() {
+        return false;
     }
 }
 // ;;; Local Variables:

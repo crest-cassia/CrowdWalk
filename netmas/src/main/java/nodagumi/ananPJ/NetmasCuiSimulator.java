@@ -184,11 +184,11 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
                 break;
             }
             // この interval 機能は本当に必要なのか?
-            try {
-                Thread.sleep(interval);
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
-            }
+            // try {
+            //     Thread.sleep(interval);
+            // } catch (InterruptedException ie) {
+            //     ie.printStackTrace();
+            // }
         }
         if (isTimeSeriesLog) {
             // flush log file

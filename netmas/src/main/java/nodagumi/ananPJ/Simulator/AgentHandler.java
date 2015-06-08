@@ -530,7 +530,20 @@ public class AgentHandler {
                         existNonZeroSpeedAgent = true;
                 }
             }
-            logIndividualPedestrians(time, agent);
+            // logIndividualPedestrians(time, agent);
+            if (agent.isEvacuated()) {
+                _logIndividualPedestrians(time, agent);
+            } else if (agent.finished()) {
+                if (agent.finishedTime == 0.0) {
+                    agent.finishedTime = time;
+                    agent.advancingDistanceOfFinishedLink = agent.getAdvancingDistance();
+                }
+            } else {
+                _logIndividualPedestrians(time, agent);
+                if (agent.remainingDistanceOfGeneratedLink == -1.0) {
+                    agent.remainingDistanceOfGeneratedLink = agent.getRemainingDistance();
+                }
+            }
         }
         if (has_display) {
             updateEvacuatedCount();
@@ -544,6 +557,31 @@ public class AgentHandler {
     }
 
     public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
+
+    private void _logIndividualPedestrians(double time, AgentBase agent) {
+        if (individualPedestriansLogger != null) {
+            StringBuilder buff = new StringBuilder();
+            if (agent.isEvacuated()) {
+                buff.append(agent.ID); buff.append(",");
+                buff.append(0.0); buff.append(",");
+                buff.append(-1); buff.append(",");
+                buff.append(0);
+            } else {
+                buff.append(agent.ID); buff.append(",");
+
+                if (agent.isWaiting()) {
+                    // 1.02265769054586;
+                    buff.append(999.0); buff.append(",");
+                } else {
+                    buff.append(agent.getSpeed()); buff.append(",");
+                }
+
+                buff.append(agent.getCurrentLink().ID); buff.append(",");
+                buff.append((int)agent.getDirection());
+            }
+            individualPedestriansLogger.info(buff.toString());
+        }
+    }
 
     private void logIndividualPedestrians(double time, AgentBase agent) {
         if (individualPedestriansLogger != null) {
@@ -957,7 +995,8 @@ public class AgentHandler {
             }
         }, dirPath + "/log_individual_pedestrians.csv");
         individualPedestriansLogger.setUseParentHandlers(false); // コンソールには出力しない
-        individualPedestriansLogger.info("pedestrianID,current_position_in_model_x,current_position_in_model_y,current_position_in_model_z,current_position_for_drawing_x,current_position_for_drawing_y,current_position_for_drawing_z,current_acceleration,current_velocity,current_linkID,current_nodeID_of_forward_movement,current_nodeID_of_backward_movement,current_distance_from_node_of_forward_movement,current_moving_direction,generated_time,current_traveling_period,current_exposure,amount_exposure,current_status_by_exposure,next_assigned_passage_node");
+        // individualPedestriansLogger.info("pedestrianID,current_position_in_model_x,current_position_in_model_y,current_position_in_model_z,current_position_for_drawing_x,current_position_for_drawing_y,current_position_for_drawing_z,current_acceleration,current_velocity,current_linkID,current_nodeID_of_forward_movement,current_nodeID_of_backward_movement,current_distance_from_node_of_forward_movement,current_moving_direction,generated_time,current_traveling_period,current_exposure,amount_exposure,current_status_by_exposure,next_assigned_passage_node");
+        individualPedestriansLogger.info("pedestrianID,current_velocity,current_linkID,current_moving_direction");
     }
 
     public void closeIndividualPedestriansLogger() {
@@ -969,13 +1008,35 @@ public class AgentHandler {
         // log_individual_pedestrians_initial.csv
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
-            writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
+            // writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
+            writer.write("pedestrianID,pedestrian_moving_model,generated_time,finished_time,current_traveling_period,generated_position,finished_position,distnation_nodeID,assigned_passage_nodes,status\n");
+            // for (AgentBase agent : getAllAgentCollection()) {
+            //     StringBuilder buff = new StringBuilder();
+            //     buff.append(agent.ID); buff.append(",");
+            //     buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
+            //     buff.append((int)agent.generatedTime); buff.append(",");
+            //     buff.append(simulator.getTimeScale()); buff.append(",");
+            //     buff.append(agent.getLastNode().ID); buff.append(",");
+            //     int idx = 0;
+            //     for (Term route : agent.getPlannedRoute()) {
+            //         if (idx > 0) {
+            //             buff.append(" ");
+            //         }
+            //         idx++;
+            //         buff.append(route);
+            //     }
+            //     buff.append("\n");
+            //     writer.write(buff.toString());
+            // }
             for (AgentBase agent : getAllAgentCollection()) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
+                buff.append((int)agent.finishedTime); buff.append(",");
                 buff.append(simulator.getTimeScale()); buff.append(",");
+                buff.append(agent.remainingDistanceOfGeneratedLink); buff.append(",");
+                buff.append(agent.advancingDistanceOfFinishedLink); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {
@@ -985,6 +1046,8 @@ public class AgentHandler {
                     idx++;
                     buff.append(route);
                 }
+                buff.append(",");
+                buff.append(agent.isEvacuated() ? "evacuated" : "dead");
                 buff.append("\n");
                 writer.write(buff.toString());
             }
