@@ -70,6 +70,20 @@ public class PollutionCalculator {
         timeScale = _timeScale;
     }
 
+    //------------------------------------------------------------
+    /**
+     * pollution data を読み込む。
+     * <ul>
+     *   <li> ファイルの形式は、CSV。</li>
+     *   <li> "#" で始まる行はコメント行 </li>
+     *   <li> 各行の先頭は、開始からの時刻。続いて、各エリアの density が並ぶ。</li>
+     *   <li> 各エリアとの対応は、各 Area (PollutionAreaRectangle) の tag と、density の序数。</li>
+     *   <li> 各エリアは、序数と同じ整数値のタグを持つ。</li>
+     * </ul>
+     * 読み込まれたデータは、pollutionDataList に入れられる。
+     * pollutionDataList の各要素は、[時刻、density1, density2, ...] という
+     * double の配列。
+     */
     private void readData(String fileName) {
         pollutionDataList.clear();
         try {
