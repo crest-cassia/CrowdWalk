@@ -99,7 +99,7 @@ run0s2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s2))
 
 ##-----
-SAMPLE0s4 = sample/4links/properties.xml		#stop (4link)
+SAMPLE0s4 = sample/4links/properties.xml		#stop (4link, gas)
 run0s4 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s4))
 
