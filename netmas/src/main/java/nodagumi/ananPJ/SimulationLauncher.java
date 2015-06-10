@@ -31,9 +31,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private NetmasTimer timer = null;
     private boolean isTimerEnabled = false;
     private String timerPath = null;
-    private boolean isTimeSeriesLog = false;
-    private String timeSeriesLogPath = null;
-    private int timeSeriesLogInterval = -1;
 
     private SpeedCalculationModel speedModel = null;
 

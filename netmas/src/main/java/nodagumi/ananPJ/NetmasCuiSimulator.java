@@ -19,10 +19,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected static boolean isDebug = false; // debug mode
     protected static int interval = 0;        // sleep time(msec) during loop
 
-    // whether call NetworkMap.saveTimeSeriesLog in loop
-    protected static boolean isTimeSeriesLog = false;
-    protected static String timeSeriesLogPath = null;
-    protected static int timeSeriesLogInterval = -1;
     protected static SpeedCalculationModel speed_model = null;
     // End condition of simulation
     protected static int exitCount = 0;

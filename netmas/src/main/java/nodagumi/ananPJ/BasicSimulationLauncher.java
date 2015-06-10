@@ -38,6 +38,22 @@ public abstract class BasicSimulationLauncher {
      */
     protected Random random = null;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * TimeSeriesLog を取るかどうか
+     */
+    protected boolean isTimeSeriesLog = false;
+
+    /**
+     * TimeSeriesLog へのパス
+     */
+    protected String timeSeriesLogPath = null;
+
+    /**
+     * TimeSeriesLog のインターバル
+     */
+    protected int timeSeriesLogInterval = -1;
+
     //------------------------------------------------------------
     /**
      * constructor
