@@ -32,6 +32,20 @@ public abstract class BasicSimulationLauncher {
      */
     protected EvacuationSimulator simulator = null;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 乱数生成器。
+     */
+    protected Random random = null;
+
+    //------------------------------------------------------------
+    /**
+     * constructor
+     */
+    public BasicSimulationLauncher(Random _random) {
+        random = _random ;
+    }
+
     //------------------------------------------------------------
     /**
      * シミュレータ実体の取り出し

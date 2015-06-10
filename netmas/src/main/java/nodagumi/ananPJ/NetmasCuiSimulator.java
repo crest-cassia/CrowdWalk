@@ -50,8 +50,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected static Random random = null;
 
     public NetmasCuiSimulator(Random _random) {
-        super();
-        random = _random;
+        super(_random);
     }
 
     public NetmasCuiSimulator(String _propertiesPath) {
@@ -63,10 +62,17 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     }
 
     public NetmasCuiSimulator(String _propertiesPath, boolean withSeed, int randseed) {
-        super();
+        super(null) ;
         // load properties
         Properties prop = new Properties();
         propertiesHandler = new NetmasPropertiesHandler(_propertiesPath);
+
+        // create random with seed
+        if (! withSeed) {
+            randseed = (int)propertiesHandler.getRandseed();
+        }
+        random = new Random(randseed);
+
         // debug mode
         isDebug = propertiesHandler.getIsDebug();
         // input files
@@ -80,11 +86,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         timerFile = propertiesHandler.getTimerPath();
         // interval during main loop
         interval = propertiesHandler.getInterval();
-        // create random with seed
-        if (! withSeed) {
-            randseed = (int)propertiesHandler.getRandseed();
-        }
-        random = new Random(randseed);
         // speed model
         speed_model = propertiesHandler.getSpeedModel();
         // time series log

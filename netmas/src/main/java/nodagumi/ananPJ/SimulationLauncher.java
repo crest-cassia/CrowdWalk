@@ -27,7 +27,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     protected transient Settings settings;
     private transient JFrame main_frame;
-    protected Random random = null;
     private boolean isAllAgentSpeedZeroBreak = false;
     private NetmasTimer timer = null;
     private boolean isTimerEnabled = false;
@@ -44,7 +43,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     /* the constructor without arguments are for to be used as
      *  a base class for classes launching simulations */
     public SimulationLauncher(Random _random) {
-        random = _random;
+        super(_random) ;
         networkMap = new NetworkMap(_random);
         settings = Settings.load("NetworkMapEditor.ini");
     }
