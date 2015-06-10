@@ -141,18 +141,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     @Override
     public void step() {
         synchronized (run_thread) {
-            finished = simulator.updateEveryTick();
-            if (isTimeSeriesLog) {
-                simulator.saveGoalLog(timeSeriesLogPath, false);    // GUIモードでは出力対象外なので無意味
-                if (((int) simulator.getSecond()) % timeSeriesLogInterval == 0)
-                    simulator.saveTimeSeriesLog(timeSeriesLogPath);
-            }
-            if (isTimerEnabled) {
-                timer.tick();
-                timer.writeInterval();
-                if ((simulator.getSecond() % 60) == 0)
-                    timer.writeElapsed();
-            }
+            simulateOneStepBare() ;
         }
     }
 
