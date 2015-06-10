@@ -84,23 +84,10 @@ public class NetworkMapEditor extends SimulationLauncher
 
     private String dir_name = null;
 
-    private static String propertiesPath = null;
-    private static String mapPath = null;
-    private static String pollutionPath = null; // path to pollution file
-    private static String generationPath = null; // path to generation file
-    private static String scenarioPath = null; // path to scenario file
-    private static String fallbackPath = null; // path to fallback file
-    private static SpeedCalculationModel speedModel = null;
-    private static int exitCount = 0;
     private static long randseed = 0;
     private int loopCount = -1;
     private static boolean isDebug = false; // debug mode
-    private static boolean isTimerEnabled = false;
-    private static String timerPath = null;         // path to timer log file
     private static boolean isAllAgentSpeedZeroBreak = false;
-    protected static boolean isTimeSeriesLog = false;
-    protected static String timeSeriesLogPath = null;
-    protected static int timeSeriesLogInterval = -1;
 
     // Properties
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
@@ -275,6 +262,12 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public void setDirName(String _dir_name) {
         dir_name = _dir_name;
+    }
+
+    @Override
+    public void setMapPath(String _mapPath) {
+        super.setMapPath(_mapPath) ;
+        openMapWithName();
     }
 
     public void switchTab(TabTypes tt) {
@@ -1051,60 +1044,6 @@ public class NetworkMapEditor extends SimulationLauncher
         return isDebug;
     }
 
-    public void setMapFileName(String _mapPath) {
-        mapPath = _mapPath;
-        openMapWithName();
-    }
-
-    public String getMapFilename() {
-        return mapPath;
-    }
-
-    public void setPollutionPath(String _pollutionPath) {
-        pollutionPath = _pollutionPath;
-        if (networkMap != null) {
-            networkMap.setPollutionFile(pollutionPath);
-        }
-    }
-
-    public String getPollutionPath() {
-        return pollutionPath;
-    }
-
-    public void setGenerationPath(String _generationPath) {
-        generationPath = _generationPath;
-        if (networkMap != null) {
-            networkMap.setGenerationFile(generationPath);
-        }
-    }
-
-    public String getGenerationpath() {
-        return generationPath;
-    }
-
-    public void setScenarioPath(String _scenarioPath) {
-        scenarioPath = _scenarioPath;
-        if (networkMap != null) {
-            networkMap.setScenarioFile(scenarioPath);
-        }
-    }
-
-    public String getScenarioPath() {
-        return scenarioPath;
-    }
-
-    public void setFallbackPath(String _fallbackPath) {
-        fallbackPath = _fallbackPath;
-        if (networkMap != null) {
-			networkMap.setFallbackFile(fallbackPath) ;
-			networkMap.scanFallbackFile(true) ;
-        }
-    }
-
-	public String getFallbackPath() {
-		return fallbackPath ;
-    }
-
     public void setRandseed(long _randseed) {
         randseed = _randseed;
     }
@@ -1119,14 +1058,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public Random getRandom() {
         return random;
-    }
-
-    public void setExitCount(int _exitCount) {
-        exitCount = _exitCount;
-    }
-
-    public int getExitCount() {
-        return exitCount;
     }
 
     public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
@@ -1144,7 +1075,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
         setIsDebug(propertiesHandler.getIsDebug());
         // I/O handler ?
-        setMapFileName(propertiesHandler.getMapPath());
+        setMapPath(propertiesHandler.getMapPath());
         setPollutionPath(propertiesHandler.getPollutionPath());
         setGenerationPath(propertiesHandler.getGenerationPath());
         setScenarioPath(propertiesHandler.getScenarioPath());

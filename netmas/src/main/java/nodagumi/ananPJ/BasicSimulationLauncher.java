@@ -97,6 +97,42 @@ public abstract class BasicSimulationLauncher {
      */
     protected int counter = 0 ;
 
+    /**
+     * 終了カウント。
+     */
+    protected static int exitCount = 0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 実験設定ファイル。
+     */
+    protected static String propertiesPath = null;
+
+    /**
+     * マップファイル。
+     */
+    protected static String mapPath = null;
+
+    /**
+     * 障害設定ファイル。
+     */
+    protected static String pollutionPath = null; // path to pollution file
+
+    /**
+     * エージェント生成ルールファイル。
+     */
+    protected static String generationPath = null; // path to generation file
+
+    /**
+     * イベントシナリオファイル。
+     */
+    protected static String scenarioPath = null; // path to scenario file
+
+    /**
+     * 規定値ファイル。
+     */
+    protected static String fallbackPath = null; // path to fallback file
+
     //------------------------------------------------------------
     /**
      * constructor
@@ -112,6 +148,20 @@ public abstract class BasicSimulationLauncher {
      * シミュレータ実体の取り出し
      */
     public EvacuationSimulator getSimulator() { return simulator; }
+
+    /**
+     * 終了カウント設定。
+     */
+    public void setExitCount(int _exitCount) {
+        exitCount = _exitCount;
+    }
+
+    /**
+     * 終了カウント取得。
+     */
+    public int getExitCount() {
+        return exitCount;
+    }
 
     /**
      * マップ取得
@@ -206,6 +256,62 @@ public abstract class BasicSimulationLauncher {
      */
     public String getTimerPath() {
         return timerPath;
+    }
+
+    //------------------------------------------------------------
+    // Pathへのアクセスメソッド
+    //------------------------------------------------------------
+    public void setMapPath(String _mapPath) {
+        mapPath = _mapPath;
+    }
+
+    public String getMapPath() {
+        return mapPath;
+    }
+
+    public void setPollutionPath(String _pollutionPath) {
+        pollutionPath = _pollutionPath;
+        if (networkMap != null) {
+            networkMap.setPollutionFile(pollutionPath);
+        }
+    }
+
+    public String getPollutionPath() {
+        return pollutionPath;
+    }
+
+    public void setGenerationPath(String _generationPath) {
+        generationPath = _generationPath;
+        if (networkMap != null) {
+            networkMap.setGenerationFile(generationPath);
+        }
+    }
+
+    public String getGenerationPath() {
+        return generationPath;
+    }
+
+    public void setScenarioPath(String _scenarioPath) {
+        scenarioPath = _scenarioPath;
+        if (networkMap != null) {
+            networkMap.setScenarioFile(scenarioPath);
+        }
+    }
+
+    public String getScenarioPath() {
+        return scenarioPath;
+    }
+
+    public void setFallbackPath(String _fallbackPath) {
+        fallbackPath = _fallbackPath;
+        if (networkMap != null) {
+			networkMap.setFallbackFile(fallbackPath) ;
+			networkMap.scanFallbackFile(true) ;
+        }
+    }
+
+	public String getFallbackPath() {
+		return fallbackPath ;
     }
 
     //------------------------------------------------------------

@@ -17,15 +17,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected static boolean isDebug = false; // debug mode
     protected static int interval = 0;        // sleep time(msec) during loop
 
-    // End condition of simulation
-    protected static int exitCount = 0;
-
-    protected static String propertiesPath = null;    // java.util.Properties
-    protected static String mPath = null; // path to map file (required)
-    protected static String pPath = null; // path to pollution file
-    protected static String gPath = null; // path to generation file
-    protected static String sPath = null; // path to scenario file
-    protected static String fallbackPath = null; //
     protected String agentMovementHistoryPath = null;
     protected String individualPedestriansLogDir = null;
 
@@ -35,8 +26,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected double linerGenerateAgentRatio = 1.0;
 
     protected NetmasPropertiesHandler propertiesHandler = null;
-
-    protected static Random random = null;
 
     public NetmasCuiSimulator(Random _random) {
         super(_random);
@@ -65,10 +54,10 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         // debug mode
         isDebug = propertiesHandler.getIsDebug();
         // input files
-        mPath = propertiesHandler.getMapPath();
-        pPath = propertiesHandler.getPollutionPath();
-        gPath = propertiesHandler.getGenerationPath();
-        sPath = propertiesHandler.getScenarioPath();
+        mapPath = propertiesHandler.getMapPath();
+        pollutionPath = propertiesHandler.getPollutionPath();
+        generationPath = propertiesHandler.getGenerationPath();
+        scenarioPath = propertiesHandler.getScenarioPath();
 	fallbackPath = propertiesHandler.getFallbackPath();
         // timer enabled or not
         isTimerEnabled = propertiesHandler.getIsTimerEnabled();
@@ -89,18 +78,18 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         isAllAgentSpeedZeroBreak =
             propertiesHandler.getIsAllAgentSpeedZeroBreak();
         // check property options
-        if (mPath == null) {
+        if (mapPath == null) {
             System.err.println("NetmasCuiSimulator: map file is " +
                     "required.");
             return;
-        } else if (!((File) new File(mPath)).exists()) {
+        } else if (!((File) new File(mapPath)).exists()) {
             System.err.println("NetmasCuiSimulator: specified map file does " +
                     "not exist.");
             return;
         }
         properties = propertiesHandler;
         try {
-            networkMap = readMapWithName(mPath, random);
+            networkMap = readMapWithName(mapPath, random);
             networkMap.setHasDisplay(false);
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -116,9 +105,9 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             System.exit(1);
         }
         // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
-        networkMap.setPollutionFile(pPath);
-        networkMap.setGenerationFile(gPath);
-        networkMap.setScenarioFile(sPath);
+        networkMap.setPollutionFile(pollutionPath);
+        networkMap.setGenerationFile(generationPath);
+        networkMap.setScenarioFile(scenarioPath);
 	networkMap.setFallbackFile(fallbackPath);
 	networkMap.scanFallbackFile(true) ;
     }
