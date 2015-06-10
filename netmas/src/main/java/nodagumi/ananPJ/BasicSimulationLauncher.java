@@ -10,8 +10,9 @@ import java.util.Random;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.misc.NetmasTimer;
 
 import nodagumi.Itk.*;
 
@@ -53,6 +54,22 @@ public abstract class BasicSimulationLauncher {
      * TimeSeriesLog のインターバル
      */
     protected int timeSeriesLogInterval = -1;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Timer の Log を取るかどうか
+     */
+    protected boolean isTimerEnabled = false;
+
+    /**
+     * Timer そのもの
+     */
+    protected NetmasTimer timer = null;
+
+    /**
+     * Timer ログへのパス
+     */
+    protected String timerPath = null;
 
     //------------------------------------------------------------
     /**

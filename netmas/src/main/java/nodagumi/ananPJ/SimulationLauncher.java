@@ -28,9 +28,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     protected transient Settings settings;
     private transient JFrame main_frame;
     private boolean isAllAgentSpeedZeroBreak = false;
-    private NetmasTimer timer = null;
-    private boolean isTimerEnabled = false;
-    private String timerPath = null;
 
     private SpeedCalculationModel speedModel = null;
 

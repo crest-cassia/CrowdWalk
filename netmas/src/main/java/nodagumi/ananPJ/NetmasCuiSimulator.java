@@ -29,15 +29,12 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected static String gPath = null; // path to generation file
     protected static String sPath = null; // path to scenario file
     protected static String fallbackPath = null; //
-    protected static String timerFile = null;         // path to timer log file
     protected String agentMovementHistoryPath = null;
     protected String individualPedestriansLogDir = null;
 
-    protected static boolean isTimerEnabled = false;
     protected static int counter;
     protected boolean isAllAgentSpeedZeroBreak = false;
 
-    protected static NetmasTimer timer = null;
     protected int loopCount = -1;
     protected double linerGenerateAgentRatio = 1.0;
 
@@ -79,7 +76,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
 	fallbackPath = propertiesHandler.getFallbackPath();
         // timer enabled or not
         isTimerEnabled = propertiesHandler.getIsTimerEnabled();
-        timerFile = propertiesHandler.getTimerPath();
+        timerPath = propertiesHandler.getTimerPath();
         // interval during main loop
         interval = propertiesHandler.getInterval();
         // speed model
@@ -141,7 +138,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
         if (isTimerEnabled)
-            timer = new NetmasTimer(10, timerFile);
+            timer = new NetmasTimer(10, timerPath);
         counter = 0;
         if (isTimerEnabled)
             timer.start();
