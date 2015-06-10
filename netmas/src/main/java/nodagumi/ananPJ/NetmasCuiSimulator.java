@@ -14,8 +14,6 @@ import nodagumi.Itk.*;
 
 public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
-    protected NetworkMap networkMap;
-
     protected static boolean isDebug = false; // debug mode
     protected static int interval = 0;        // sleep time(msec) during loop
 
@@ -158,12 +156,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
                 finished = true;
                 break;
             }
-            // この interval 機能は本当に必要なのか?
-            try {
-                Thread.sleep(interval);
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
-            }
         }
         if (isTimeSeriesLog) {
             // flush log file
@@ -176,10 +168,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             timer.writeElapsed();
             timer.stop();
         }
-    }
-
-    public NetworkMap getMap() {
-        return networkMap;
     }
 
 }

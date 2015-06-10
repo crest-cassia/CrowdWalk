@@ -35,6 +35,12 @@ public abstract class BasicSimulationLauncher {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * 地図およびエージェント格納体
+     */
+    protected NetworkMap networkMap;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 乱数生成器。
      */
     protected Random random = null;
@@ -97,6 +103,12 @@ public abstract class BasicSimulationLauncher {
      * シミュレータ実体の取り出し
      */
     public EvacuationSimulator getSimulator() { return simulator; }
+
+    //------------------------------------------------------------
+    /**
+     * マップ取得
+     */
+    public NetworkMap getMap() { return networkMap; }
 
     //------------------------------------------------------------
     /**

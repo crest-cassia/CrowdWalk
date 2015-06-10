@@ -31,9 +31,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     private SpeedCalculationModel speedModel = null;
 
-    protected NetworkMap networkMap;
-    public NetworkMap getMap() { return networkMap; }
-
     /* the constructor without arguments are for to be used as
      *  a base class for classes launching simulations */
     public SimulationLauncher(Random _random) {
