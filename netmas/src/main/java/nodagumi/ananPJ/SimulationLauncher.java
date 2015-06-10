@@ -87,18 +87,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
         run_simulation = new Runnable() {
             public void run() {
                 while(!finished && run_thread) {
-                    finished = simulator.updateEveryTick();
-                    if (isTimeSeriesLog) {
-                        if (((int) simulator.getSecond()) % timeSeriesLogInterval
-                                == 0)
-                            simulator.saveTimeSeriesLog(timeSeriesLogPath);
-                    }
-                    if (isTimerEnabled) {
-                        timer.tick();
-                        timer.writeInterval();
-                        if ((simulator.getSecond() % 60) == 0)
-                            timer.writeElapsed();
-                    }
+                    simulateOneStepBare() ;
                 }
                 synchronized (run_thread) {
                     run_thread = false;

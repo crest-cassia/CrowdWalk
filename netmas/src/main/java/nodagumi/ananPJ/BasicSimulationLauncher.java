@@ -138,4 +138,30 @@ public abstract class BasicSimulationLauncher {
         return properties;
     }
 
+    //------------------------------------------------------------
+    /**
+     * シミュレーションのステップ（synchronize していない）
+     */
+    protected void simulateOneStepBare() {
+        finished = simulator.updateEveryTick();
+        if (isTimeSeriesLog) {
+            if (((int) simulator.getSecond()) % timeSeriesLogInterval == 0)
+                simulator.saveGoalLog(timeSeriesLogPath, false);
+                simulator.saveTimeSeriesLog(timeSeriesLogPath);
+        }
+        if (isTimerEnabled) {
+            timer.tick();
+            timer.writeInterval();
+            if ((simulator.getSecond() % 60) == 0)
+                timer.writeElapsed();
+        }
+        counter++ ;
+        if ((counter % 100) == 0)
+            Itk.logDebug("Cycle",
+                         "count:", counter,
+                         "time:", Itk.getCurrentTimeStr(),
+                         "walking:",
+                         simulator.getAgentHandler().numOfWalkingAgents()) ;
+    }
+
 }

@@ -153,24 +153,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
 	Itk.logDebug("NetmasCuiSimulator start!");
         finished = false;
         while (!finished) {
-            finished = simulator.updateEveryTickCui();
-            if (isTimerEnabled) {
-                timer.tick();
-                timer.writeInterval();
-                if ((counter % 60) == 0)
-                    timer.writeElapsed();
-            }
-            counter++;
-            if (isTimeSeriesLog)
-                if (counter % timeSeriesLogInterval == 0)
-                    simulator.saveGoalLog(timeSeriesLogPath, false);
-                    //simulator.saveTimeSeriesLog(timeSeriesLogPath);
-	    if ((counter % 100) == 0)
-		Itk.logDebug("Cycle", 
-                             "count:", counter,
-                             "time:", Itk.getCurrentTimeStr(),
-                             "walking:", 
-                             simulator.getAgentHandler().numOfWalkingAgents()) ;
+            simulateOneStepBare() ;
             if (exitCount > 0 && counter > exitCount) {
                 finished = true;
                 break;
