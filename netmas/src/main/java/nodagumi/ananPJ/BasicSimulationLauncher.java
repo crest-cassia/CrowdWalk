@@ -11,12 +11,37 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 
 import nodagumi.Itk.*;
 
+//======================================================================
+/**
+ * GUI/CUI 共通の部分を記述する。
+ */
 public abstract class BasicSimulationLauncher {
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 属性を扱うハンドラ
+     */
     protected NetmasPropertiesHandler properties = null;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * simulator の実体
+     */
+    protected EvacuationSimulator simulator = null;
+
+    //------------------------------------------------------------
+    /**
+     * シミュレータ実体の取り出し
+     */
+    public EvacuationSimulator getSimulator() { return simulator; }
+
+    //------------------------------------------------------------
+    /**
+     * 地図の読み込み
+     */
     protected NetworkMap readMapWithName(String file_name, Random _random)
             throws IOException {
         FileInputStream fis = new FileInputStream(file_name);

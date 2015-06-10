@@ -40,7 +40,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     protected NetworkMap networkMap;
     public NetworkMap getMap() { return networkMap; }
-    public EvacuationSimulator getSimulator() { return simulator; }
 
     /* the constructor without arguments are for to be used as
      *  a base class for classes launching simulations */
@@ -61,7 +60,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private boolean finished = true;
     private Boolean run_thread = false;
     private transient Runnable run_simulation = null;
-    protected EvacuationSimulator simulator = null;
 
     protected void simulate(boolean isDeserialized) {
         if ((!isDeserialized) && (!finished)) {

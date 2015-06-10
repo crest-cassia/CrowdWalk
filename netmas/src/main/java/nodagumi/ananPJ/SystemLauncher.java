@@ -80,7 +80,7 @@ public class SystemLauncher {
                 // tick 情報の出力
                 if (commandLine.hasOption("tick")) {
                     String tickFilePath = commandLine.getOptionValue("tick");
-                    double tick = simulator.getModel().getSecond();
+                    double tick = simulator.getSimulator().getSecond();
                     saveTick(tickFilePath, tick);
                 }
             } else {

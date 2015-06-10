@@ -14,7 +14,6 @@ import nodagumi.Itk.*;
 
 public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
-    protected EvacuationSimulator model;
     protected NetworkMap networkMap;
 
     protected static boolean isDebug = false; // debug mode
@@ -135,14 +134,14 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     }
 
     public void initialize() {
-        model = new EvacuationSimulator(networkMap, null, random) ;
+        simulator = new EvacuationSimulator(networkMap, null, random) ;
         // this method just set 0 to model.tick_count
-        model.setProperties(properties);
-        model.setup();
+        simulator.setProperties(properties);
+        simulator.setup();
         // model.begin set files (pol, gen, sce) to networkMap
-        model.setLinerGenerateAgentRatio(linerGenerateAgentRatio);
-        model.begin(false, false, null);
-        model.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
+        simulator.setLinerGenerateAgentRatio(linerGenerateAgentRatio);
+        simulator.begin(false, false, null);
+        simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
         if (isTimerEnabled)
             timer = new NetmasTimer(10, timerFile);
@@ -153,15 +152,15 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
     public void start() {
         if (agentMovementHistoryPath != null) {
-            model.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
+            simulator.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
         }
         if (individualPedestriansLogDir != null) {
-            model.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
+            simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
         }
 	Itk.logDebug("NetmasCuiSimulator start!");
         boolean finished = false;
         while (!finished) {
-            finished = model.updateEveryTickCui();
+            finished = simulator.updateEveryTickCui();
             if (isTimerEnabled) {
                 timer.tick();
                 timer.writeInterval();
@@ -171,14 +170,14 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             counter++;
             if (isTimeSeriesLog)
                 if (counter % timeSeriesLogInterval == 0)
-                    model.saveGoalLog(timeSeriesLogPath, false);
-                    //model.saveTimeSeriesLog(timeSeriesLogPath);
+                    simulator.saveGoalLog(timeSeriesLogPath, false);
+                    //simulator.saveTimeSeriesLog(timeSeriesLogPath);
 	    if ((counter % 100) == 0)
 		Itk.logDebug("Cycle", 
                              "count:", counter,
                              "time:", Itk.getCurrentTimeStr(),
                              "walking:", 
-                             model.getAgentHandler().numOfWalkingAgents()) ;
+                             simulator.getAgentHandler().numOfWalkingAgents()) ;
             if (exitCount > 0 && counter > exitCount) {
                 finished = true;
                 break;
@@ -192,10 +191,10 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         }
         if (isTimeSeriesLog) {
             // flush log file
-            model.saveGoalLog(timeSeriesLogPath, true);
+            simulator.saveGoalLog(timeSeriesLogPath, true);
         }
         if (individualPedestriansLogDir != null) {
-            model.getAgentHandler().closeIndividualPedestriansLogger();
+            simulator.getAgentHandler().closeIndividualPedestriansLogger();
         }
         if (isTimerEnabled) {
             timer.writeElapsed();
@@ -207,8 +206,5 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         return networkMap;
     }
 
-    public EvacuationSimulator getModel() {
-        return model;
-    }
 }
 
