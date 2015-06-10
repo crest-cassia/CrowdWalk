@@ -13,6 +13,7 @@ import org.w3c.dom.NodeList;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.misc.NetmasTimer;
+import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
 import nodagumi.Itk.*;
 
@@ -38,6 +39,12 @@ public abstract class BasicSimulationLauncher {
      * 地図およびエージェント格納体
      */
     protected NetworkMap networkMap;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * スピードモデル
+     */
+    protected SpeedCalculationModel speedModel = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -99,16 +106,107 @@ public abstract class BasicSimulationLauncher {
     }
 
     //------------------------------------------------------------
+    // アクセスメソッド
+    //------------------------------------------------------------
     /**
      * シミュレータ実体の取り出し
      */
     public EvacuationSimulator getSimulator() { return simulator; }
 
-    //------------------------------------------------------------
     /**
      * マップ取得
      */
     public NetworkMap getMap() { return networkMap; }
+
+    /**
+     * スピードモデル設定。
+     */
+    public void setSpeedModel(SpeedCalculationModel _speedModel) {
+        speedModel = _speedModel;
+    }
+
+    /**
+     * スピードモデル取得。
+     */
+    public SpeedCalculationModel getSpeedModel() {
+        return speedModel;
+    }
+
+    /**
+     * Set isTimeSeriesLog.
+     * @param _isTimeSeriesLog the value to set.
+     */
+    public void setIsTimeSeriesLog(boolean _isTimeSeriesLog) {
+        isTimeSeriesLog = _isTimeSeriesLog;
+    }
+
+    /**
+     * Get isTimeSeriesLog.
+     * @return isTimeSeriesLog as boolean.
+     */
+    public boolean getIsTimeSeriesLog() {
+        return isTimeSeriesLog;
+    }
+
+    /**
+     * Set timeSeriesLogPath.
+     * @param _timeSeriesLogPath the value to set.
+     */
+    public void setTimeSeriesLogPath(String _timeSeriesLogPath) {
+        timeSeriesLogPath = _timeSeriesLogPath;
+    }
+
+    /**
+     * Get timeSeriesLogPath.
+     * @return timeSeriesLogPath as String.
+     */
+    public String getTimeSeriesLogPath() {
+        return timeSeriesLogPath;
+    }
+
+    /**
+     * Set timeSeriesLogInterval.
+     * @param _timeSeriesLogInterval the value to set.
+     */
+    public void setTimeSeriesLogInterval(int _timeSeriesLogInterval) {
+        timeSeriesLogInterval = _timeSeriesLogInterval;
+    }
+
+    /**
+     * Get timeSeriesLogInterval.
+     * @return timeSeriesLogInterval as int.
+     */
+    public int getTimeSeriesLogInterval() {
+        return timeSeriesLogInterval;
+    }
+
+    /**
+     * タイマー有効化。
+     */
+    public void setIsTimerEnabled(boolean _isTimerEnabled) {
+        isTimerEnabled = _isTimerEnabled;
+    }
+
+    /**
+     * タイマー有効・無効チェック。
+     */
+    public boolean getIsTimerEnabled() {
+        return isTimerEnabled;
+    }
+
+    /**
+     * タイマーファイルパス設定。
+     */
+    public void setTimerPath(String _timerPath) {
+        timerPath = _timerPath;
+    }
+
+    /**
+     * タイマーファイルパス取得。
+     */
+    public String getTimerPath() {
+        return timerPath;
+    }
 
     //------------------------------------------------------------
     /**

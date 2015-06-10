@@ -17,7 +17,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected static boolean isDebug = false; // debug mode
     protected static int interval = 0;        // sleep time(msec) during loop
 
-    protected static SpeedCalculationModel speed_model = null;
     // End condition of simulation
     protected static int exitCount = 0;
 
@@ -77,7 +76,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         // interval during main loop
         interval = propertiesHandler.getInterval();
         // speed model
-        speed_model = propertiesHandler.getSpeedModel();
+        speedModel = propertiesHandler.getSpeedModel();
         // time series log
         isTimeSeriesLog = propertiesHandler.getIsTimeSeriesLog();
         timeSeriesLogPath = propertiesHandler.getTimeSeriesLogPath();

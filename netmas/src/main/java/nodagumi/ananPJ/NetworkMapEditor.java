@@ -1105,28 +1105,6 @@ public class NetworkMapEditor extends SimulationLauncher
 		return fallbackPath ;
     }
 
-    /**
-     * Set isTimerEnabled.
-     * @param _isTimerEnabled the value to set.
-     */
-    public void setIsTimerEnabled(boolean _isTimerEnabled) {
-        isTimerEnabled = _isTimerEnabled;
-    }
-    /**
-     * Get isTimerEnabled.
-     * @return isTimerEnabled as boolean.
-     */
-    public boolean getIsTimerEnabled() {
-        return isTimerEnabled;
-    }
-    public void setTimerFile(String _timerPath) {
-        timerPath = _timerPath;
-    }
-
-    public String getTimerFile() {
-        return timerPath;
-    }
-
     public void setRandseed(long _randseed) {
         randseed = _randseed;
     }
@@ -1141,14 +1119,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public Random getRandom() {
         return random;
-    }
-
-    public void setSpeedModel(SpeedCalculationModel _speedModel) {
-        speedModel = _speedModel;
-    }
-
-    public SpeedCalculationModel getSpeedModel() {
-        return speedModel;
     }
 
     public void setExitCount(int _exitCount) {
@@ -1168,54 +1138,6 @@ public class NetworkMapEditor extends SimulationLauncher
         return isAllAgentSpeedZeroBreak;
     }
 
-    /**
-     * Set isTimeSeriesLog.
-     * @param _isTimeSeriesLog the value to set.
-     */
-    public void setIsTimeSeriesLog(boolean _isTimeSeriesLog) {
-        isTimeSeriesLog = _isTimeSeriesLog;
-    }
-
-    /**
-     * Get isTimeSeriesLog.
-     * @return isTimeSeriesLog as boolean.
-     */
-    public boolean getIsTimeSeriesLog() {
-        return isTimeSeriesLog;
-    }
-
-    /**
-     * Set timeSeriesLogPath.
-     * @param _timeSeriesLogPath the value to set.
-     */
-    public void setTimeSeriesLogPath(String _timeSeriesLogPath) {
-        timeSeriesLogPath = _timeSeriesLogPath;
-    }
-
-    /**
-     * Get timeSeriesLogPath.
-     * @return timeSeriesLogPath as String.
-     */
-    public String getTimeSeriesLogPath() {
-        return timeSeriesLogPath;
-    }
-
-    /**
-     * Set timeSeriesLogInterval.
-     * @param _timeSeriesLogInterval the value to set.
-     */
-    public void setTimeSeriesLogInterval(int _timeSeriesLogInterval) {
-        timeSeriesLogInterval = _timeSeriesLogInterval;
-    }
-
-    /**
-     * Get timeSeriesLogInterval.
-     * @return timeSeriesLogInterval as int.
-     */
-    public int getTimeSeriesLogInterval() {
-        return timeSeriesLogInterval;
-    }
-
     public void setProperties(String _propertiesFile) {
         propertiesHandler = new NetmasPropertiesHandler(_propertiesFile);
         properties = propertiesHandler;
@@ -1228,7 +1150,7 @@ public class NetworkMapEditor extends SimulationLauncher
         setScenarioPath(propertiesHandler.getScenarioPath());
 		setFallbackPath(propertiesHandler.getFallbackPath()) ;
         setIsTimerEnabled(propertiesHandler.getIsTimerEnabled());
-        setTimerFile(propertiesHandler.getTimerPath());
+        setTimerPath(propertiesHandler.getTimerPath());
         setIsTimeSeriesLog(propertiesHandler.getIsTimeSeriesLog());
         setTimeSeriesLogPath(propertiesHandler.getTimeSeriesLogPath());
         setTimeSeriesLogInterval(propertiesHandler.getTimeSeriesLogInterval());
@@ -1300,7 +1222,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
         if (isTimerEnabled) {
             super.setIsTimerEnabled(true);
-            super.setTimerFile(timerPath);
+            super.setTimerPath(timerPath);
         }
 
         if (isTimeSeriesLog) {

@@ -234,7 +234,7 @@ public abstract class GenerateAgent {
     List<Term> planned_route;
     double start_time, duration;
     int total;
-    SpeedCalculationModel speed_model = null;
+    SpeedCalculationModel speedModel = null;
     Random random = null;
     List<String> tags = new ArrayList<String>(); 
 
@@ -278,7 +278,7 @@ public abstract class GenerateAgent {
         start_time = config.startTime ;
         duration = config.duration ;
         total = config.total ;
-        speed_model = config.speedModel ;
+        speedModel = config.speedModel ;
         fallbackParameters = config.fallbackParameters ;
         random = _random;
         configLine = config.originalInfo ;
@@ -371,7 +371,7 @@ public abstract class GenerateAgent {
             agent.generatedTime = tick;
             agent.displayMode = simulator.getDisplayMode();
             ((WalkAgent) agent).setSpeedCalculationModel(
-                speed_model);
+                speedModel);
             agent.setConfigLine(configLine);
             agents.add(agent);
             agent.setGoal(new Term(goal));

@@ -29,8 +29,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private transient JFrame main_frame;
     private boolean isAllAgentSpeedZeroBreak = false;
 
-    private SpeedCalculationModel speedModel = null;
-
     /* the constructor without arguments are for to be used as
      *  a base class for classes launching simulations */
     public SimulationLauncher(Random _random) {
@@ -241,75 +239,4 @@ public class SimulationLauncher extends BasicSimulationLauncher
         simulator.setRandom(_random);
     }
 
-    public void setSpeedModel(SpeedCalculationModel _speedModel) {
-        speedModel = _speedModel;
-    }
-
-    public SpeedCalculationModel getSpeedModel() {
-        return speedModel;
-    }
-
-    /**
-     * Set isTimeSeriesLog.
-     * @param _isTimeSeriesLog the value to set.
-     */
-    public void setIsTimeSeriesLog(boolean _isTimeSeriesLog) {
-        isTimeSeriesLog = _isTimeSeriesLog;
-    }
-
-    /**
-     * Get isTimeSeriesLog.
-     * @return isTimeSeriesLog as boolean.
-     */
-    public boolean getIsTimeSeriesLog() {
-        return isTimeSeriesLog;
-    }
-
-    /**
-     * Set timeSeriesLogPath.
-     * @param _timeSeriesLogPath the value to set.
-     */
-    public void setTimeSeriesLogPath(String _timeSeriesLogPath) {
-        timeSeriesLogPath = _timeSeriesLogPath;
-    }
-
-    /**
-     * Get timeSeriesLogPath.
-     * @return timeSeriesLogPath as String.
-     */
-    public String getTimeSeriesLogPath() {
-        return timeSeriesLogPath;
-    }
-
-    /**
-     * Set timeSeriesLogInterval.
-     * @param _timeSeriesLogInterval the value to set.
-     */
-    public void setTimeSeriesLogInterval(int _timeSeriesLogInterval) {
-        timeSeriesLogInterval = _timeSeriesLogInterval;
-    }
-
-    /**
-     * Get timeSeriesLogInterval.
-     * @return timeSeriesLogInterval as int.
-     */
-    public int getTimeSeriesLogInterval() {
-        return timeSeriesLogInterval;
-    }
-
-    public void setIsTimerEnabled(boolean _isTimerEnabled) {
-        isTimerEnabled = _isTimerEnabled;
-    }
-
-    public boolean getIsTimerEnabled() {
-        return isTimerEnabled;
-    }
-
-    public void setTimerFile(String _timerPath) {
-        timerPath = _timerPath;
-    }
-
-    public String getTimerFile() {
-        return timerPath;
-    }
 }
