@@ -156,9 +156,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
     public void step() {
         synchronized (run_thread) {
             finished = simulator.updateEveryTick();
-            boolean isTimezero = false;
-            if (simulator.getSecond() == 0)
-                isTimezero = true;
             if (isTimeSeriesLog) {
                 simulator.saveGoalLog(timeSeriesLogPath, false);    // GUIモードでは出力対象外なので無意味
                 if (((int) simulator.getSecond()) % timeSeriesLogInterval == 0)

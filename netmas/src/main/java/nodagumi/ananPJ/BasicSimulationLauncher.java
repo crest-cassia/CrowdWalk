@@ -130,7 +130,12 @@ public abstract class BasicSimulationLauncher {
         return network_map;
     }
 
+    //------------------------------------------------------------
+    /**
+     * プロパティへの橋渡し。
+     */
     public NetmasPropertiesHandler getProperties() {
         return properties;
     }
+
 }
