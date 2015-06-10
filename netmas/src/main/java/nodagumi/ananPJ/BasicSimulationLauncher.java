@@ -71,6 +71,19 @@ public abstract class BasicSimulationLauncher {
      */
     protected String timerPath = null;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 実行が終了しているかどうかのフラグ。
+     * simulation を走らせて終了条件を迎えた時に true となる。
+     */
+    protected boolean finished = true;
+
+    /**
+     * シミュレーションのサイクルカウント。
+     * simulation step 1回終了する毎に、１増える。
+     */
+    protected int counter = 0 ;
+
     //------------------------------------------------------------
     /**
      * constructor

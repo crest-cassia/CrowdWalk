@@ -32,7 +32,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected String agentMovementHistoryPath = null;
     protected String individualPedestriansLogDir = null;
 
-    protected static int counter;
     protected boolean isAllAgentSpeedZeroBreak = false;
 
     protected int loopCount = -1;
@@ -152,7 +151,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
         }
 	Itk.logDebug("NetmasCuiSimulator start!");
-        boolean finished = false;
+        finished = false;
         while (!finished) {
             finished = simulator.updateEveryTickCui();
             if (isTimerEnabled) {
