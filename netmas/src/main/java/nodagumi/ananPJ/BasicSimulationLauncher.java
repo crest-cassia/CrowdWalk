@@ -108,6 +108,11 @@ public abstract class BasicSimulationLauncher {
      */
     protected static int exitCount = 0;
 
+    /**
+     * 終了条件の１つ。
+     */
+    protected boolean isAllAgentSpeedZeroBreak = false;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 実験設定ファイル。
@@ -203,6 +208,22 @@ public abstract class BasicSimulationLauncher {
     }
 
     /**
+     * 終了条件１のセット
+     */
+    public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
+    {
+        isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
+    }
+
+    /**
+     * 終了条件１
+     */
+    public boolean getIsAllAgentSpeedZeroBreak() {
+        return isAllAgentSpeedZeroBreak;
+    }
+
+    //------------------------------------------------------------
+    /**
      * Set isTimeSeriesLog.
      * @param _isTimeSeriesLog the value to set.
      */
@@ -281,14 +302,23 @@ public abstract class BasicSimulationLauncher {
     //------------------------------------------------------------
     // Pathへのアクセスメソッド
     //------------------------------------------------------------
+    /**
+     *
+     */
     public void setMapPath(String _mapPath) {
         mapPath = _mapPath;
     }
 
+    /**
+     *
+     */
     public String getMapPath() {
         return mapPath;
     }
 
+    /**
+     *
+     */
     public void setPollutionPath(String _pollutionPath) {
         pollutionPath = _pollutionPath;
         if (networkMap != null) {
@@ -296,10 +326,16 @@ public abstract class BasicSimulationLauncher {
         }
     }
 
+    /**
+     *
+     */
     public String getPollutionPath() {
         return pollutionPath;
     }
 
+    /**
+     *
+     */
     public void setGenerationPath(String _generationPath) {
         generationPath = _generationPath;
         if (networkMap != null) {
@@ -307,10 +343,16 @@ public abstract class BasicSimulationLauncher {
         }
     }
 
+    /**
+     *
+     */
     public String getGenerationPath() {
         return generationPath;
     }
 
+    /**
+     *
+     */
     public void setScenarioPath(String _scenarioPath) {
         scenarioPath = _scenarioPath;
         if (networkMap != null) {
@@ -318,20 +360,36 @@ public abstract class BasicSimulationLauncher {
         }
     }
 
+    /**
+     *
+     */
     public String getScenarioPath() {
         return scenarioPath;
     }
 
+    /**
+     *
+     */
     public void setFallbackPath(String _fallbackPath) {
         fallbackPath = _fallbackPath;
         if (networkMap != null) {
-			networkMap.setFallbackFile(fallbackPath) ;
-			networkMap.scanFallbackFile(true) ;
+            networkMap.setFallbackFile(fallbackPath) ;
+            networkMap.scanFallbackFile(true) ;
         }
     }
 
-	public String getFallbackPath() {
-		return fallbackPath ;
+    /**
+     *
+     */
+    public String getFallbackPath() {
+            return fallbackPath ;
+    }
+
+    /**
+     * プロパティへの橋渡し。
+     */
+    public NetmasPropertiesHandler getProperties() {
+        return properties;
     }
 
     //------------------------------------------------------------
@@ -368,10 +426,32 @@ public abstract class BasicSimulationLauncher {
 
     //------------------------------------------------------------
     /**
-     * プロパティへの橋渡し。
+     * ファイルからプロパティの読み込み。
      */
-    public NetmasPropertiesHandler getProperties() {
-        return properties;
+    public void setPropertiesFromFile(String _propertiesFile) {
+        properties = new NetmasPropertiesHandler(_propertiesFile);
+
+        isDebug = properties.getIsDebug();
+        // files
+        setMapPath(properties.getMapPath());
+        setPollutionPath(properties.getPollutionPath());
+        setGenerationPath(properties.getGenerationPath());
+        setScenarioPath(properties.getScenarioPath());
+        setFallbackPath(properties.getFallbackPath()) ;
+        // timer & time series
+        setIsTimerEnabled(properties.getIsTimerEnabled());
+        setTimerPath(properties.getTimerPath());
+        setIsTimeSeriesLog(properties.getIsTimeSeriesLog());
+        setTimeSeriesLogPath(properties.getTimeSeriesLogPath());
+        setTimeSeriesLogInterval(properties.getTimeSeriesLogInterval());
+        //models
+        setSpeedModel(properties.getSpeedModel());
+        setExitCount(properties.getExitCount()) ;
+        setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
+        // random
+        random = new Random(properties.getRandseed()) ;
+
+
     }
 
     //------------------------------------------------------------

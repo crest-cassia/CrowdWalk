@@ -133,7 +133,7 @@ public class SystemLauncher {
         }
         NetworkMapEditor mapEditor = new NetworkMapEditor(random);
         if (propertiesFilePath != null) {
-            mapEditor.setProperties(propertiesFilePath);
+            mapEditor.setPropertiesFromFile(propertiesFilePath);
         }
         mapEditor.setVisible(true);
         return mapEditor;

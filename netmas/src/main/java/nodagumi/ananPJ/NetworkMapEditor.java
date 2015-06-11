@@ -84,8 +84,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
     private String dir_name = null;
 
-    private static boolean isAllAgentSpeedZeroBreak = false;
-
     // Properties
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
     public static final String[] IMAGE_TYPES = {"bmp", "gif", "jpg", "png"};
@@ -1030,38 +1028,10 @@ public class NetworkMapEditor extends SimulationLauncher
         else if (e.getActionCommand() == "Show 3D") show3D();
     }
 
-    public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
-    {
-        isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
-    }
+    @Override
+    public void setPropertiesFromFile(String _propertiesFile) {
+        super.setPropertiesFromFile(_propertiesFile) ;
 
-    public boolean getIsAllAgentSpeedZeroBreak() {
-        return isAllAgentSpeedZeroBreak;
-    }
-
-    public void setProperties(String _propertiesFile) {
-        properties = new NetmasPropertiesHandler(_propertiesFile);
-
-        isDebug = properties.getIsDebug();
-        // I/O handler ?
-        setMapPath(properties.getMapPath());
-        setPollutionPath(properties.getPollutionPath());
-        setGenerationPath(properties.getGenerationPath());
-        setScenarioPath(properties.getScenarioPath());
-		setFallbackPath(properties.getFallbackPath()) ;
-        setIsTimerEnabled(properties.getIsTimerEnabled());
-        setTimerPath(properties.getTimerPath());
-        setIsTimeSeriesLog(properties.getIsTimeSeriesLog());
-        setTimeSeriesLogPath(properties.getTimeSeriesLogPath());
-        setTimeSeriesLogInterval(properties.getTimeSeriesLogInterval());
-        assert random != null;
-        setSpeedModel(properties.getSpeedModel());
-        int tmpExitCount = properties.getExitCount();
-        if (tmpExitCount <= 0)
-            tmpExitCount = 0;
-        setExitCount(tmpExitCount);
-        setIsAllAgentSpeedZeroBreak(properties
-                .getIsAllAgentSpeedZeroBreak());
         try {
             weight = properties.getInteger("weight", weight);
             if (weight < 0 || weight > 999) {

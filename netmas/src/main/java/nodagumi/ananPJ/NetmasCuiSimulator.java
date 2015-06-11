@@ -19,11 +19,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected String agentMovementHistoryPath = null;
     protected String individualPedestriansLogDir = null;
 
-    protected boolean isAllAgentSpeedZeroBreak = false;
-
     protected double linerGenerateAgentRatio = 1.0;
-
-    protected NetmasPropertiesHandler propertiesHandler = null;
 
     public NetmasCuiSimulator(Random _random) {
         super(_random);
@@ -32,35 +28,10 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     public NetmasCuiSimulator(String _propertiesPath) {
         super(null) ;
         // load properties
-        propertiesHandler = new NetmasPropertiesHandler(_propertiesPath);
+        setPropertiesFromFile(_propertiesPath) ;
 
-        // create random with seed
-        random = new Random(propertiesHandler.getRandseed()) ;
-
-        // debug mode
-        isDebug = propertiesHandler.getIsDebug();
-        // input files
-        mapPath = propertiesHandler.getMapPath();
-        pollutionPath = propertiesHandler.getPollutionPath();
-        generationPath = propertiesHandler.getGenerationPath();
-        scenarioPath = propertiesHandler.getScenarioPath();
-	fallbackPath = propertiesHandler.getFallbackPath();
-        // timer enabled or not
-        isTimerEnabled = propertiesHandler.getIsTimerEnabled();
-        timerPath = propertiesHandler.getTimerPath();
         // interval during main loop
-        interval = propertiesHandler.getInterval();
-        // speed model
-        speedModel = propertiesHandler.getSpeedModel();
-        // time series log
-        isTimeSeriesLog = propertiesHandler.getIsTimeSeriesLog();
-        timeSeriesLogPath = propertiesHandler.getTimeSeriesLogPath();
-        timeSeriesLogInterval = propertiesHandler.
-            getTimeSeriesLogInterval();
-        // exit count
-        exitCount = propertiesHandler.getExitCount();
-        isAllAgentSpeedZeroBreak =
-            propertiesHandler.getIsAllAgentSpeedZeroBreak();
+        interval = properties.getInterval();
         // check property options
         if (mapPath == null) {
             System.err.println("NetmasCuiSimulator: map file is " +
@@ -71,7 +42,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
                     "not exist.");
             return;
         }
-        properties = propertiesHandler;
         try {
             networkMap = readMapWithName(mapPath, random);
             networkMap.setHasDisplay(false);
@@ -79,8 +49,8 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             ioe.printStackTrace();
         }
         try {
-            agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
-            individualPedestriansLogDir = propertiesHandler.getDirectoryPath("individual_pedestrians_log_dir", null);
+            agentMovementHistoryPath = properties.getFilePath("agent_movement_history_file", null, false);
+            individualPedestriansLogDir = properties.getDirectoryPath("individual_pedestrians_log_dir", null);
             if (individualPedestriansLogDir != null) {
                 individualPedestriansLogDir = individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
             }
