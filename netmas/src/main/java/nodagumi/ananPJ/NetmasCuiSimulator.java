@@ -14,7 +14,6 @@ import nodagumi.Itk.*;
 
 public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
-    protected static boolean isDebug = false; // debug mode
     protected static int interval = 0;        // sleep time(msec) during loop
 
     protected String agentMovementHistoryPath = null;

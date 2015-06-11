@@ -85,7 +85,6 @@ public class NetworkMapEditor extends SimulationLauncher
     private String dir_name = null;
 
     private static long randseed = 0;
-    private static boolean isDebug = false; // debug mode
     private static boolean isAllAgentSpeedZeroBreak = false;
 
     // Properties
@@ -1035,14 +1034,6 @@ public class NetworkMapEditor extends SimulationLauncher
         else if (e.getActionCommand() == "Show 3D") show3D();
     }
 
-    public void setIsDebug(boolean _isDebug) {
-        isDebug = _isDebug;
-    }
-
-    public boolean getIsDebug() {
-        return isDebug;
-    }
-
     public void setRandseed(long _randseed) {
         randseed = _randseed;
     }
@@ -1072,7 +1063,7 @@ public class NetworkMapEditor extends SimulationLauncher
         propertiesHandler = new NetmasPropertiesHandler(_propertiesFile);
         properties = propertiesHandler;
 
-        setIsDebug(propertiesHandler.getIsDebug());
+        isDebug = propertiesHandler.getIsDebug();
         // I/O handler ?
         setMapPath(propertiesHandler.getMapPath());
         setPollutionPath(propertiesHandler.getPollutionPath());

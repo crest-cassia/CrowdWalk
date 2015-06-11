@@ -24,6 +24,12 @@ import nodagumi.Itk.*;
 public abstract class BasicSimulationLauncher {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * デバッグモード
+     */
+    protected static boolean isDebug = false; // debug mode
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 属性を扱うハンドラ
      */
     protected NetmasPropertiesHandler properties = null;
