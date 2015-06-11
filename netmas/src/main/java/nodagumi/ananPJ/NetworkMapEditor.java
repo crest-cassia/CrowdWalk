@@ -110,9 +110,6 @@ public class NetworkMapEditor extends SimulationLauncher
     protected String agentMovementHistoryPath = null;
     protected String individualPedestriansLogDir = null;
 
-    /* copy from CUI simulator */
-    private static NetmasPropertiesHandler propertiesHandler = null;
-
     transient private MenuBar menuBar;
     private boolean modified = false;
     transient private MenuItem calcExitPathMenu;
@@ -887,11 +884,11 @@ public class NetworkMapEditor extends SimulationLauncher
     // シミュレーションウィンドウが最初に表示された時に呼び出される
     public void simulationWindowOpenedOperation(SimulationPanel3D panel, final EvacuationSimulator simulator) {
         // プロパティファイルに設定された情報に従ってシミュレーションウィンドウの各コントロールの初期設定をおこなう
-        if (propertiesHandler == null) {
+        if (properties == null) {
             return;
         }
         boolean successful = true;
-        if (propertiesHandler.isDefined("weight")) {
+        if (properties.isDefined("weight")) {
             simulator.getAgentHandler().setSimulationWeight(weight);
         }
         if (cameraPath != null) {
@@ -902,46 +899,46 @@ public class NetworkMapEditor extends SimulationLauncher
                 successful = false;
             }
         }
-        if (propertiesHandler.isDefined("vertical_scale")) {
+        if (properties.isDefined("vertical_scale")) {
             panel.setVerticalScale(verticalScale);
         }
-        if (propertiesHandler.isDefined("record_simulation_screen")) {
+        if (properties.isDefined("record_simulation_screen")) {
             if (recordSimulationScreen != panel.getRecordSnapshots().isSelected()) {
                 panel.getRecordSnapshots().doClick();
             }
         }
-        if (propertiesHandler.isDefined("screenshot_dir")) {
+        if (properties.isDefined("screenshot_dir")) {
             panel.setScreenshotDir(screenshotDir);
         }
-        if (propertiesHandler.isDefined("clear_screenshot_dir")) {
+        if (properties.isDefined("clear_screenshot_dir")) {
             if (recordSimulationScreen && clearScreenshotDir) {
                 FilePathManipulation.deleteFiles(screenshotDir, imageFileFilter);
             }
         }
-        if (propertiesHandler.isDefined("screenshot_image_type")) {
+        if (properties.isDefined("screenshot_image_type")) {
             panel.setScreenshotImageType(screenshotImageType);
         }
-        if (propertiesHandler.isDefined("debug")) {
+        if (properties.isDefined("debug")) {
             if (isDebug != panel.getDebugMode().isSelected()) {
                 panel.getDebugMode().doClick();
             }
         }
-        if (propertiesHandler.isDefined("hide_links")) {
+        if (properties.isDefined("hide_links")) {
             if (hideLinks != panel.getHideNormalLink().isSelected()) {
                 panel.getHideNormalLink().doClick();
             }
         }
-        if (propertiesHandler.isDefined("density_mode")) {
+        if (properties.isDefined("density_mode")) {
             if (densityMode != panel.getDensityMode().isSelected()) {
                 panel.getDensityMode().doClick();
             }
         }
-        if (propertiesHandler.isDefined("change_agent_color_depending_on_speed")) {
+        if (properties.isDefined("change_agent_color_depending_on_speed")) {
             if (changeAgentColorDependingOnSpeed != panel.getChangeAgentColorDependingOnSpeed().isSelected()) {
                 panel.getChangeAgentColorDependingOnSpeed().doClick();
             }
         }
-        if (propertiesHandler.isDefined("show_status")) {
+        if (properties.isDefined("show_status")) {
             if (showStatus != panel.getShowStatus().isSelected()) {
                 panel.getShowStatus().doClick();
             }
@@ -952,17 +949,17 @@ public class NetworkMapEditor extends SimulationLauncher
                 panel.getBottom().doClick();
             }
         }
-        if (propertiesHandler.isDefined("show_logo")) {
+        if (properties.isDefined("show_logo")) {
             if (showLogo != panel.getShowLogo().isSelected()) {
                 panel.getShowLogo().doClick();
             }
         }
-        if (propertiesHandler.isDefined("show_3D_polygon")) {
+        if (properties.isDefined("show_3D_polygon")) {
             if (show3dPolygon != panel.getShow3dPolygon().isSelected()) {
                 panel.getShow3dPolygon().doClick();
             }
         }
-        if (propertiesHandler.isDefined("auto_simulation_start")) {
+        if (properties.isDefined("auto_simulation_start")) {
             if (successful && autoSimulationStart) {
                 // ※スクリーンショットの1枚目が真っ黒になるのを防ぐため
                 Thread thread = new Thread(new Runnable() {
@@ -984,23 +981,23 @@ public class NetworkMapEditor extends SimulationLauncher
                 thread.start();
             }
         }
-        if (propertiesHandler.isDefined("agent_movement_history_file")) {
+        if (properties.isDefined("agent_movement_history_file")) {
             simulator.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
         }
-        if (propertiesHandler.isDefined("individual_pedestrians_log_dir")) {
+        if (properties.isDefined("individual_pedestrians_log_dir")) {
             simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
         }
     }
 
     // SimulationPanel3D を生成した直後に呼び出される(simulationWindowOpenedOperation ではうまく対処できない分の処理)
     public void initSimulationPanel3D(SimulationPanel3D panel) {
-        if (propertiesHandler == null) {
+        if (properties == null) {
             return;
         }
-        if (propertiesHandler.isDefined("agent_size")) {
+        if (properties.isDefined("agent_size")) {
             panel.setAgentSize(agentSize);
         }
-        if (propertiesHandler.isDefined("zoom")) {
+        if (properties.isDefined("zoom")) {
             panel.setScaleOnReplay(zoom);
         }
     }
@@ -1043,74 +1040,73 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     public void setProperties(String _propertiesFile) {
-        propertiesHandler = new NetmasPropertiesHandler(_propertiesFile);
-        properties = propertiesHandler;
+        properties = new NetmasPropertiesHandler(_propertiesFile);
 
-        isDebug = propertiesHandler.getIsDebug();
+        isDebug = properties.getIsDebug();
         // I/O handler ?
-        setMapPath(propertiesHandler.getMapPath());
-        setPollutionPath(propertiesHandler.getPollutionPath());
-        setGenerationPath(propertiesHandler.getGenerationPath());
-        setScenarioPath(propertiesHandler.getScenarioPath());
-		setFallbackPath(propertiesHandler.getFallbackPath()) ;
-        setIsTimerEnabled(propertiesHandler.getIsTimerEnabled());
-        setTimerPath(propertiesHandler.getTimerPath());
-        setIsTimeSeriesLog(propertiesHandler.getIsTimeSeriesLog());
-        setTimeSeriesLogPath(propertiesHandler.getTimeSeriesLogPath());
-        setTimeSeriesLogInterval(propertiesHandler.getTimeSeriesLogInterval());
+        setMapPath(properties.getMapPath());
+        setPollutionPath(properties.getPollutionPath());
+        setGenerationPath(properties.getGenerationPath());
+        setScenarioPath(properties.getScenarioPath());
+		setFallbackPath(properties.getFallbackPath()) ;
+        setIsTimerEnabled(properties.getIsTimerEnabled());
+        setTimerPath(properties.getTimerPath());
+        setIsTimeSeriesLog(properties.getIsTimeSeriesLog());
+        setTimeSeriesLogPath(properties.getTimeSeriesLogPath());
+        setTimeSeriesLogInterval(properties.getTimeSeriesLogInterval());
         assert random != null;
-        setSpeedModel(propertiesHandler.getSpeedModel());
-        int tmpExitCount = propertiesHandler.getExitCount();
+        setSpeedModel(properties.getSpeedModel());
+        int tmpExitCount = properties.getExitCount();
         if (tmpExitCount <= 0)
             tmpExitCount = 0;
         setExitCount(tmpExitCount);
-        setIsAllAgentSpeedZeroBreak(propertiesHandler
+        setIsAllAgentSpeedZeroBreak(properties
                 .getIsAllAgentSpeedZeroBreak());
         try {
-            weight = propertiesHandler.getInteger("weight", weight);
+            weight = properties.getInteger("weight", weight);
             if (weight < 0 || weight > 999) {
                 throw new Exception("Property error - 設定値が範囲(0～999)外です: weight:" + weight);
             }
-            verticalScale = propertiesHandler.getDouble("vertical_scale", verticalScale);
+            verticalScale = properties.getDouble("vertical_scale", verticalScale);
             if (verticalScale < 0.1 || verticalScale > 49.9) {
                 throw new Exception("Property error - 設定値が範囲(0.1～49.9)外です: vertical_scale:" + verticalScale);
             }
-            agentSize = propertiesHandler.getDouble("agent_size", agentSize);
+            agentSize = properties.getDouble("agent_size", agentSize);
             if (agentSize < 0.1 || agentSize > 9.9) {
                 throw new Exception("Property error - 設定値が範囲(0.1～9.9)外です: agent_size:" + agentSize);
             }
-            zoom = propertiesHandler.getDouble("zoom", zoom);
+            zoom = properties.getDouble("zoom", zoom);
             if (zoom < 0.0 || zoom > 9.9) {
                 throw new Exception("Property error - 設定値が範囲(0.0～9.9)外です: zoom:" + zoom);
             }
-            cameraPath = propertiesHandler.getFilePath("camera_file", null);
-            recordSimulationScreen = propertiesHandler.getBoolean("record_simulation_screen", recordSimulationScreen);
-            screenshotDir = propertiesHandler.getDirectoryPath("screenshot_dir", screenshotDir).replaceFirst("[/\\\\]+$", "");
-            clearScreenshotDir = propertiesHandler.getBoolean("clear_screenshot_dir", clearScreenshotDir);
-            if (clearScreenshotDir && ! propertiesHandler.isDefined("screenshot_dir")) {
+            cameraPath = properties.getFilePath("camera_file", null);
+            recordSimulationScreen = properties.getBoolean("record_simulation_screen", recordSimulationScreen);
+            screenshotDir = properties.getDirectoryPath("screenshot_dir", screenshotDir).replaceFirst("[/\\\\]+$", "");
+            clearScreenshotDir = properties.getBoolean("clear_screenshot_dir", clearScreenshotDir);
+            if (clearScreenshotDir && ! properties.isDefined("screenshot_dir")) {
                 throw new Exception("Property error - clear_screenshot_dir を有効にするためには screenshot_dir の設定が必要です。");
             }
             if (recordSimulationScreen && ! clearScreenshotDir && new File(screenshotDir).list(imageFileFilter).length > 0) {
                 throw new Exception("Property error - スクリーンショットディレクトリに画像ファイルが残っています: screenshot_dir:" + screenshotDir);
             }
-            screenshotImageType = propertiesHandler.getString("screenshot_image_type", screenshotImageType, IMAGE_TYPES);
-            hideLinks = propertiesHandler.getBoolean("hide_links", hideLinks);
-            densityMode = propertiesHandler.getBoolean("density_mode", densityMode);
+            screenshotImageType = properties.getString("screenshot_image_type", screenshotImageType, IMAGE_TYPES);
+            hideLinks = properties.getBoolean("hide_links", hideLinks);
+            densityMode = properties.getBoolean("density_mode", densityMode);
             changeAgentColorDependingOnSpeed =
-                propertiesHandler.getBoolean("change_agent_color_depending_on_speed", changeAgentColorDependingOnSpeed);
-            String show_status = propertiesHandler.getString("show_status", "none", SHOW_STATUS_VALUES);
+                properties.getBoolean("change_agent_color_depending_on_speed", changeAgentColorDependingOnSpeed);
+            String show_status = properties.getString("show_status", "none", SHOW_STATUS_VALUES);
             if (show_status.equals("none")) {
                 showStatus = false;
             } else {
                 showStatus = true;
                 showStatusPosition = show_status;
             }
-            showLogo = propertiesHandler.getBoolean("show_logo", showLogo);
-            show3dPolygon = propertiesHandler.getBoolean("show_3D_polygon", show3dPolygon);
-            simulationWindowOpen = propertiesHandler.getBoolean("simulation_window_open", simulationWindowOpen);
-            autoSimulationStart = propertiesHandler.getBoolean("auto_simulation_start", autoSimulationStart);
-            agentMovementHistoryPath = propertiesHandler.getFilePath("agent_movement_history_file", null, false);
-            individualPedestriansLogDir = propertiesHandler.getDirectoryPath("individual_pedestrians_log_dir", null);
+            showLogo = properties.getBoolean("show_logo", showLogo);
+            show3dPolygon = properties.getBoolean("show_3D_polygon", show3dPolygon);
+            simulationWindowOpen = properties.getBoolean("simulation_window_open", simulationWindowOpen);
+            autoSimulationStart = properties.getBoolean("auto_simulation_start", autoSimulationStart);
+            agentMovementHistoryPath = properties.getFilePath("agent_movement_history_file", null, false);
+            individualPedestriansLogDir = properties.getDirectoryPath("individual_pedestrians_log_dir", null);
             if (individualPedestriansLogDir != null) {
                 individualPedestriansLogDir = individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
             }
@@ -1167,5 +1163,4 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public BrowserPanel getBrowserPanel() { return browserPanel; }
 
-    public static NetmasPropertiesHandler getNetmasPropertiesHandler() { return propertiesHandler; }
 }
