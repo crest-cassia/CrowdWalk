@@ -1032,6 +1032,14 @@ public class NetworkMapEditor extends SimulationLauncher
     public void setPropertiesFromFile(String _propertiesFile) {
         super.setPropertiesFromFile(_propertiesFile) ;
 
+        setPropertiesForDisplay() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 画面出力用properties設定
+     */
+    private void setPropertiesForDisplay() {
         try {
             weight = properties.getInteger("weight", weight);
             if (weight < 0 || weight > 999) {
@@ -1084,19 +1092,6 @@ public class NetworkMapEditor extends SimulationLauncher
             //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
             System.err.println(e.getMessage());
             System.exit(1);
-        }
-
-        openMapWithName();
-
-        if (isTimerEnabled) {
-            super.setIsTimerEnabled(true);
-            super.setTimerPath(timerPath);
-        }
-
-        if (isTimeSeriesLog) {
-            super.setIsTimeSeriesLog(true);
-            super.setTimeSeriesLogPath(timeSeriesLogPath);
-            super.setTimeSeriesLogInterval(timeSeriesLogInterval);
         }
     }
 
