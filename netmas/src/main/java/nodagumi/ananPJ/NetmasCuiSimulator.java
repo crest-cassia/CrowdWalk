@@ -57,20 +57,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     }
 
     public void initialize() {
-        simulator = new EvacuationSimulator(networkMap, null, random) ;
-        // this method just set 0 to model.tick_count
-        simulator.setProperties(properties);
-        simulator.setup();
-        // model.begin set files (pol, gen, sce) to networkMap
-        simulator.begin(false) ;
-        simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
-
-        if (isTimerEnabled) {
-            timer = new NetmasTimer(10, timerPath);
-            timer.start();
-        }
-        counter = 0;
-        finished = false;
+        initializeSimulatorEntity(false) ;
     }
 
     public void start() {

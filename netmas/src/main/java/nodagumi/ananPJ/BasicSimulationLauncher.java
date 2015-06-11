@@ -462,6 +462,31 @@ public abstract class BasicSimulationLauncher {
 
     //------------------------------------------------------------
     /**
+     * シミュレーションの初期化。
+     */
+    protected void initializeSimulatorEntity(boolean hasDisplay) {
+        simulator = new EvacuationSimulator(networkMap, this, random) ;
+
+        simulator.setProperties(properties);
+        simulator.setup();
+
+        // model.begin set files (pol, gen, sce) to networkMap
+        simulator.begin(hasDisplay) ;
+        if(hasDisplay) simulator.buildDisplay();
+
+        simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
+
+        // this method just set 0 to model.tick_count
+        if (isTimerEnabled) {
+            timer = new NetmasTimer(10, timerPath);
+            timer.start();
+        }
+        counter = 0;
+        finished = false;
+    }
+
+    //------------------------------------------------------------
+    /**
      * シミュレーションのステップ（synchronize していない）
      */
     protected void simulateOneStepBare() {

@@ -67,9 +67,17 @@ public class EvacuationSimulator {
     private NetmasPropertiesHandler properties = null;
 
     public EvacuationSimulator(NetworkMap _networkMap,
-            SimulationController _controller,
-            Random _random) {
-	setupFrame(_networkMap, _controller) ;
+                               BasicSimulationLauncher _controller,
+                               Random _random) {
+        // _controller が画面を持つ SimulationControllerなら、セット
+        if(_controller instanceof SimulationController) {
+            controller = (SimulationController)_controller ;
+        } else {
+            controller = null ;
+        }
+
+        networkMap = _networkMap ;
+        pollutionFileName = networkMap.getPollutionFile();
 
         random = _random;
         int counter = 0;
@@ -85,16 +93,6 @@ public class EvacuationSimulator {
 
     public EvacuationSimulator(NetworkMap networkMap, Random _random) {
         this(networkMap, null, _random);
-    }
-
-    public void setupFrame(NetworkMap _networkMap,
-			   SimulationController _controller) {
-        networkMap = _networkMap;
-        controller = _controller;
-        if (controller instanceof BasicSimulationLauncher) {
-            properties = ((BasicSimulationLauncher)controller).getProperties();
-        }
-        pollutionFileName = networkMap.getPollutionFile();
     }
 
     public void begin(boolean has_display) {

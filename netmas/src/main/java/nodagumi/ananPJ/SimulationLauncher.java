@@ -57,18 +57,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
             return;
         }
 
-        simulator = new EvacuationSimulator(networkMap, this, random);
-        simulator.setup();
-        simulator.begin(true) ;
-        simulator.buildDisplay();
-        simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
-
-        if (isTimerEnabled) {
-            timer = new NetmasTimer(10, timerPath);
-            timer.start();
-        }
-        counter = 0 ;
-        finished = false;
+        initializeSimulatorEntity(true) ;
 
         run_simulation = new Runnable() {
             public void run() {
