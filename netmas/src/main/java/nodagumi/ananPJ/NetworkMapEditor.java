@@ -615,20 +615,6 @@ public class NetworkMapEditor extends SimulationLauncher
         frame.setVisible(true);
     }
 
-    protected void simulate() {
-        if (properties != null) {
-            // シミュレーション結果をCUIモードと一致させるため
-            random.setSeed(properties.getRandseed());
-            // BasicSimulationLauncher#readMapWithName() で使われる分の代わり
-            random.nextInt();
-        }
-
-        // pollution area の読み込み(旧形式のため利用不能)
-        // make_fv_rooms();
-
-        super.simulate() ;
-    }
-
     // simulator.begin() をバックグラウンドで実行するためのモーダルダイアログ
     private class WaitDialog extends JDialog {
         public boolean canceled = false;

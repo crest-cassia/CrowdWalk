@@ -49,24 +49,8 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
     public void start() {
         Itk.logDebug("NetmasCuiSimulator start!");
-        while (!finished) {
-            simulateOneStepBare() ;
-            if (exitCount > 0 && counter > exitCount) {
-                finished = true;
-                break;
-            }
-        }
-        if (isTimeSeriesLog) {
-            // flush log file
-            simulator.saveGoalLog(timeSeriesLogPath, true);
-        }
-        if (individualPedestriansLogDir != null) {
-            simulator.getAgentHandler().closeIndividualPedestriansLogger();
-        }
-        if (isTimerEnabled) {
-            timer.writeElapsed();
-            timer.stop();
-        }
+        paused = false ;
+        simulateMainLoop() ;
     }
 
 }

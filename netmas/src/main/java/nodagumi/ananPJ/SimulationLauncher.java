@@ -27,7 +27,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     protected transient Settings settings;
     private transient JFrame main_frame;
-    private boolean isAllAgentSpeedZeroBreak = false;
 
     /* the constructor without arguments are for to be used as
      *  a base class for classes launching simulations */
@@ -45,10 +44,10 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private transient JButton scenario_file_button = new JButton();
     private transient JLabel scenario_filename_label = new JLabel();
 
-    private boolean paused = true ;
     private transient Runnable simulationRunnable = null;
 
     protected void simulate() {
+        // 既に終わっていたら、警告メッセージ
         if (!finished) {
             JOptionPane.showMessageDialog(null,
                     "Previous simulation not finished?",
@@ -57,17 +56,13 @@ public class SimulationLauncher extends BasicSimulationLauncher
             return;
         }
 
+        // シミュレータの実体の初期化
         initializeSimulatorEntity(true) ;
 
+        // メインループの Runnable 作成。
         simulationRunnable = new Runnable() {
             public void run() {
-                while(!finished && !paused) {
-                    simulateOneStepBare() ;
-                }
-                if (isTimerEnabled) {
-                    timer.writeElapsed();
-                    timer.stop();
-                }
+                simulateMainLoop() ;
                 synchronized (simulationRunnable) {
                     paused = true ;
                 }
@@ -198,21 +193,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     public void initSimulationPanel3D(SimulationPanel3D panel) {
         // NetworkMapEditor で定義する
-    }
-
-    public boolean getIsAllAgentSpeedZeroBreak() {
-        return isAllAgentSpeedZeroBreak;
-    }
-
-    public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
-    {
-        isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
-    }
-
-    public void setRandom(Random _random) {
-        random = _random;
-        networkMap.setRandom(_random);
-        simulator.setRandom(_random);
     }
 
 }

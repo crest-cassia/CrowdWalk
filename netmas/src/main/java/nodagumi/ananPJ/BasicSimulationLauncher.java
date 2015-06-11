@@ -110,6 +110,12 @@ public abstract class BasicSimulationLauncher {
     protected boolean finished = true;
 
     /**
+     * 実行が中断しているかどうかのフラグ。
+     * 画面を持つモードなどで、途中でとめて、mainLoop を抜けたい時に true ;
+     */
+    protected boolean paused = true ;
+
+    /**
      * シミュレーションのサイクルカウント。
      * simulation step 1回終了する毎に、１増える。
      */
@@ -177,6 +183,12 @@ public abstract class BasicSimulationLauncher {
      */
     public void setRandom(Random _random) {
         random = _random;
+        if(networkMap != null) {
+            networkMap.setRandom(_random);
+        }
+        if(simulator != null) {
+            simulator.setRandom(_random);
+        }
     }
 
     /**
@@ -510,6 +522,8 @@ public abstract class BasicSimulationLauncher {
         if (individualPedestriansLogDir != null) {
             simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
         }
+        // rand seed setup
+        random.setSeed(properties.getRandseed());
 
         // this method just set 0 to model.tick_count
         if (isTimerEnabled) {
@@ -546,4 +560,34 @@ public abstract class BasicSimulationLauncher {
                          simulator.getAgentHandler().numOfWalkingAgents()) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * シミュレーションのメインループ。
+     * 初期化などは住んでいるものとする。
+     * また、pause で止まった後の再開もこれで行う。
+     */
+    protected void simulateMainLoop() {
+        while (!finished && !paused) {
+            simulateOneStepBare() ;
+            if (exitCount > 0 && counter > exitCount) {
+                finished = true;
+                break;
+            }
+        }
+        // ログの書き出し。ログは、最後に出力。
+        if(finished) {
+            if(isTimeSeriesLog) {
+                // flush log file
+                simulator.saveGoalLog(timeSeriesLogPath, true);
+            }
+            if (individualPedestriansLogDir != null) {
+                simulator.getAgentHandler().closeIndividualPedestriansLogger();
+            }
+        }
+        // 経過時間の表示。
+        if (isTimerEnabled) {
+            timer.writeElapsed();
+            timer.stop();
+        }
+    }
 }
