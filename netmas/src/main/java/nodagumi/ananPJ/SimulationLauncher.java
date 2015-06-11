@@ -63,9 +63,8 @@ public class SimulationLauncher extends BasicSimulationLauncher
         networkMap.scanFallbackFile(true) ;
 
         simulator = new EvacuationSimulator(networkMap, this, random);
-        finished = false;
         simulator.setup();
-        buildModel();
+        simulator.begin(true) ;
         simulator.buildDisplay();
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
@@ -73,6 +72,9 @@ public class SimulationLauncher extends BasicSimulationLauncher
             timer = new NetmasTimer(10, timerPath);
             timer.start();
         }
+        counter = 0 ;
+        finished = false;
+
         run_simulation = new Runnable() {
             public void run() {
                 while(!finished && run_thread) {
@@ -89,10 +91,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
         };
     }
 
-    protected boolean buildModel() {
-        simulator.begin(true) ;
-        return true;
-    }
 
     private void quit() {
         settings.put("launcher_width", main_frame.getWidth());

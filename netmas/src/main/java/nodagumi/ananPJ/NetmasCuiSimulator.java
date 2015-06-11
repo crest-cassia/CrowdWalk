@@ -17,8 +17,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     protected String agentMovementHistoryPath = null;
     protected String individualPedestriansLogDir = null;
 
-    protected double linerGenerateAgentRatio = 1.0;
-
     public NetmasCuiSimulator(Random _random) {
         super(_random);
     }
@@ -68,15 +66,15 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         simulator.setProperties(properties);
         simulator.setup();
         // model.begin set files (pol, gen, sce) to networkMap
-        simulator.setLinerGenerateAgentRatio(linerGenerateAgentRatio);
         simulator.begin(false) ;
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
-        if (isTimerEnabled)
+        if (isTimerEnabled) {
             timer = new NetmasTimer(10, timerPath);
-        counter = 0;
-        if (isTimerEnabled)
             timer.start();
+        }
+        counter = 0;
+        finished = false;
     }
 
     public void start() {
@@ -87,7 +85,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
         }
 	Itk.logDebug("NetmasCuiSimulator start!");
-        finished = false;
         while (!finished) {
             simulateOneStepBare() ;
             if (exitCount > 0 && counter > exitCount) {
