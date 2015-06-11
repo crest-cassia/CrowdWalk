@@ -534,11 +534,6 @@ public class NetmasPropertiesHandler {
         return exitCount;
     }
 
-    protected int loopCount = -1;
-    public int getLoopCount() {
-        return loopCount;
-    }
-
     protected boolean isAllAgentSpeedZeroBreak = false;
     public boolean getIsAllAgentSpeedZeroBreak() {
         return isAllAgentSpeedZeroBreak;
@@ -616,8 +611,6 @@ public class NetmasPropertiesHandler {
                 timeSeriesLogInterval = getIntegerProperty(prop,
                                                            "time_series_log_interval");
             }
-            // loop count
-            loopCount = getIntegerProperty(prop, "loop_count");
             // exit count
             exitCount = getIntegerProperty(prop, "exit_count");
             isAllAgentSpeedZeroBreak = getBooleanProperty(prop,

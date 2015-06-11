@@ -85,7 +85,6 @@ public class NetworkMapEditor extends SimulationLauncher
     private String dir_name = null;
 
     private static long randseed = 0;
-    private int loopCount = -1;
     private static boolean isDebug = false; // debug mode
     private static boolean isAllAgentSpeedZeroBreak = false;
 

@@ -22,7 +22,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
     protected boolean isAllAgentSpeedZeroBreak = false;
 
-    protected int loopCount = -1;
     protected double linerGenerateAgentRatio = 1.0;
 
     protected NetmasPropertiesHandler propertiesHandler = null;
@@ -71,8 +70,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         timeSeriesLogPath = propertiesHandler.getTimeSeriesLogPath();
         timeSeriesLogInterval = propertiesHandler.
             getTimeSeriesLogInterval();
-        // loop count
-        loopCount = propertiesHandler.getLoopCount();
         // exit count
         exitCount = propertiesHandler.getExitCount();
         isAllAgentSpeedZeroBreak =
