@@ -57,11 +57,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
             return;
         }
 
-        /* [2015-02-06 I.Noda]
-         * ここで読み込むのが正しいか、不明
-         */
-        networkMap.scanFallbackFile(true) ;
-
         simulator = new EvacuationSimulator(networkMap, this, random);
         simulator.setup();
         simulator.begin(true) ;

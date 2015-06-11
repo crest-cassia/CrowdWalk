@@ -524,11 +524,10 @@ public class NetworkMapEditor extends SimulationLauncher
             return false;
         }
         if (networkMap == null) return false;
+
         // tkokada
-        networkMap.setGenerationFile(generationPath);
-        networkMap.setPollutionFile(pollutionPath);
-        networkMap.setScenarioFile(scenarioPath);
-        networkMap.setFallbackFile(fallbackPath);
+        setupNetworkMap() ;
+
         networkMap.setupAfterLoad();
         updateAll();
         return true;

@@ -133,7 +133,7 @@ run1_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE1))
 
 ##-----
-SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2
+SAMPLE2 = sample/simpleGrid/properties-lane.v2.xml	#simple, version2,fallback
 run2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE2))
 run2_cui ::
@@ -183,7 +183,7 @@ run2it_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE2it))
 
 ##-----
-SAMPLE3gt00 = sample/generatedTown/gridTown00.prop.json
+SAMPLE3gt00 = sample/generatedTown/gridTown00.prop.json   # fallback
 run3gt00 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00))
 run3gt00_cui ::

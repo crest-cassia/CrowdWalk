@@ -421,6 +421,18 @@ public abstract class BasicSimulationLauncher {
 
     //------------------------------------------------------------
     /**
+     * 地図の初期設定を、Launcher から渡す。
+     */
+    protected void setupNetworkMap() {
+        networkMap.setPollutionFile(pollutionPath);
+        networkMap.setGenerationFile(generationPath);
+        networkMap.setScenarioFile(scenarioPath);
+        networkMap.setFallbackFile(fallbackPath);
+        networkMap.scanFallbackFile(true) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * ファイルからプロパティの読み込み。
      */
     public void setPropertiesFromFile(String _propertiesFile) {

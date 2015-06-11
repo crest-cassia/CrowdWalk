@@ -53,11 +53,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             System.exit(1);
         }
         // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
-        networkMap.setPollutionFile(pollutionPath);
-        networkMap.setGenerationFile(generationPath);
-        networkMap.setScenarioFile(scenarioPath);
-	networkMap.setFallbackFile(fallbackPath);
-	networkMap.scanFallbackFile(true) ;
+        setupNetworkMap() ;
     }
 
     public void initialize() {
