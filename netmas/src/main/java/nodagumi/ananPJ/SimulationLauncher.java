@@ -45,8 +45,8 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private transient JButton scenario_file_button = new JButton();
     private transient JLabel scenario_filename_label = new JLabel();
 
-    private Boolean run_thread = false;
-    private transient Runnable run_simulation = null;
+    private boolean paused = true ;
+    private transient Runnable simulationRunnable = null;
 
     protected void simulate() {
         if (!finished) {
@@ -59,17 +59,17 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
         initializeSimulatorEntity(true) ;
 
-        run_simulation = new Runnable() {
+        simulationRunnable = new Runnable() {
             public void run() {
-                while(!finished && run_thread) {
+                while(!finished && !paused) {
                     simulateOneStepBare() ;
-                }
-                synchronized (run_thread) {
-                    run_thread = false;
                 }
                 if (isTimerEnabled) {
                     timer.writeElapsed();
                     timer.stop();
+                }
+                synchronized (simulationRunnable) {
+                    paused = true ;
                 }
             }
         };
@@ -96,10 +96,10 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     @Override
     public void start() {
-        synchronized (run_thread) {
-            if (run_thread == false) {
-                run_thread = true;
-                Thread thread = new Thread(run_simulation);
+        synchronized (simulationRunnable) {
+            if (paused) {
+                paused = false ;
+                Thread thread = new Thread(simulationRunnable);
                 thread.start();
             }
         }
@@ -107,21 +107,21 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     @Override
     public void pause() {
-        synchronized (run_thread) {
-            run_thread = false;
+        synchronized (simulationRunnable) {
+            paused = true ;
         }
     }
 
     @Override
     public void step() {
-        synchronized (run_thread) {
+        synchronized (simulationRunnable) {
             simulateOneStepBare() ;
         }
     }
 
     @Override
     public boolean isRunning() {
-        return run_thread;
+        return !paused;
     }
 
     protected transient SimulationPanel3D panel = null;

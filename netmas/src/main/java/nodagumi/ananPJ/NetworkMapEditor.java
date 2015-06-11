@@ -137,7 +137,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
     protected NetworkMapEditor(Random _random) {
         super(_random);
-        random = _random;
 
         frame = new JFrame("Network Map Editor");
         frame.setLayout(new BorderLayout());
