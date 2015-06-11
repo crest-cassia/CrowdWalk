@@ -14,8 +14,6 @@ import nodagumi.Itk.*;
 
 public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
-    protected static int interval = 0;        // sleep time(msec) during loop
-
     protected String agentMovementHistoryPath = null;
     protected String individualPedestriansLogDir = null;
 
@@ -30,8 +28,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         // load properties
         setPropertiesFromFile(_propertiesPath) ;
 
-        // interval during main loop
-        interval = properties.getInterval();
         // check property options
         if (mapPath == null) {
             System.err.println("NetmasCuiSimulator: map file is " +

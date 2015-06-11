@@ -412,7 +412,6 @@ public class NetmasPropertiesHandler {
                                                          "generation_file",
                                                          "timer_enable",
                                                          "timer_file",
-                                                         "interval",
                                                          "randseed",
                                                          "speed_model",
                                                          "time_series_log",
@@ -497,11 +496,6 @@ public class NetmasPropertiesHandler {
     protected String timerPath = null;         // path to timer log file
     public String getTimerPath() {
         return timerPath;
-    }
-
-    protected int interval = -1;       // sleep time(msec) during loop
-    public int getInterval() {
-        return interval;
     }
 
     protected long randseed = 0;
@@ -590,8 +584,6 @@ public class NetmasPropertiesHandler {
             if (isTimerEnabled)
                 timerPath = getStringProperty(prop, "timer_file");
 
-            // interval during main loop
-            interval = getIntegerProperty(prop, "interval");
             // create random with seed
             randseed = getIntegerProperty(prop, "randseed");
             // speed model
