@@ -98,51 +98,8 @@ public class EvacuationSimulator {
     }
 
     public void begin(boolean has_display) {
-        buildModel(has_display);
-        buildRoutes();
-        buildDisplay(null);
-
-        agentHandler.prepareForSimulation();
-
-        add_tags_to_nodes_and_links();
-
-        File log_directory = new File("logs");
-        if (!log_directory.isDirectory() &&
-                !log_directory.mkdir()) {
-            JOptionPane.showMessageDialog(null,
-                    "Cannot create directory for log output.",
-                    "error creating directory",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public void begin(boolean has_display, boolean isDeserialized) {
-        if (!isDeserialized) {
-            buildModel (has_display);
-            buildRoutes ();
-        } else {
-            agentHandler.setupFrame(
-                    networkMap.getGenerationFile(),
-                    networkMap.getScenarioFile(),
-                    networkMap);
-        }
-        if (has_display)
-            buildDisplay();
-
-        agentHandler.prepareForSimulation();
-    }
-
-    public void begin(boolean has_display, boolean isDeserialized,
-            SimulationPanel3D _panel3d) {
-        if (!isDeserialized) {
-            buildModel (has_display);
-            buildRoutes ();
-        } else {
-            agentHandler.setupFrame(
-                    networkMap.getGenerationFile(),
-                    networkMap.getScenarioFile(),
-                    networkMap);
-        }
+        buildModel (has_display);
+        buildRoutes ();
 
         agentHandler.prepareForSimulation();
     }

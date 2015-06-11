@@ -39,7 +39,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             return;
         }
         try {
-            networkMap = readMapWithName(mapPath, random);
+            networkMap = readMapWithName(mapPath) ;
             networkMap.setHasDisplay(false);
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -69,7 +69,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         simulator.setup();
         // model.begin set files (pol, gen, sce) to networkMap
         simulator.setLinerGenerateAgentRatio(linerGenerateAgentRatio);
-        simulator.begin(false, false, null);
+        simulator.begin(false) ;
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
         if (isTimerEnabled)

@@ -48,8 +48,8 @@ public class SimulationLauncher extends BasicSimulationLauncher
     private Boolean run_thread = false;
     private transient Runnable run_simulation = null;
 
-    protected void simulate(boolean isDeserialized) {
-        if ((!isDeserialized) && (!finished)) {
+    protected void simulate() {
+        if (!finished) {
             JOptionPane.showMessageDialog(null,
                     "Previous simulation not finished?",
                     "Could not start simulation",
@@ -57,24 +57,18 @@ public class SimulationLauncher extends BasicSimulationLauncher
             return;
         }
 
-        if (isDeserialized) {
-            System.out.println("SimulationLauncher.simulate:finished: " +
-                    finished);
-            finished = false;
-            simulator.begin(true, isDeserialized);
-        } else {
-	    /* [2015-02-06 I.Noda]
-	     * ここで読み込むのが正しいか、不明
-	     */
-	    networkMap.scanFallbackFile(true) ;
+        /* [2015-02-06 I.Noda]
+         * ここで読み込むのが正しいか、不明
+         */
+        networkMap.scanFallbackFile(true) ;
 
-            simulator = new EvacuationSimulator(networkMap, this, random);
-            finished = false;
-            simulator.setup();
-            buildModel();
-            simulator.buildDisplay();
-	    simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
-        }
+        simulator = new EvacuationSimulator(networkMap, this, random);
+        finished = false;
+        simulator.setup();
+        buildModel();
+        simulator.buildDisplay();
+        simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
+
         if (isTimerEnabled) {
             timer = new NetmasTimer(10, timerPath);
             timer.start();
@@ -96,7 +90,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
     }
 
     protected boolean buildModel() {
-	simulator.begin(true, false, null);
+        simulator.begin(true) ;
         return true;
     }
 

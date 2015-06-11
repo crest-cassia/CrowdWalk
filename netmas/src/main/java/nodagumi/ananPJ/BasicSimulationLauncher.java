@@ -396,7 +396,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * 地図の読み込み
      */
-    protected NetworkMap readMapWithName(String file_name, Random _random)
+    protected NetworkMap readMapWithName(String file_name)
             throws IOException {
         FileInputStream fis = new FileInputStream(file_name);
         Document doc = ItkXmlUtility.singleton.streamToDoc(fis);
@@ -410,13 +410,8 @@ public abstract class BasicSimulationLauncher {
                     "invalid inputted DOM object.");
             return null;
         }
-        if (properties != null) {
-            // NetworkMap の生成時に random オブジェクトを初期化する
-            // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
-            _random.setSeed(properties.getRandseed());
-        }
         // NetMAS based map
-        NetworkMap network_map = new NetworkMap(_random);
+        NetworkMap network_map = new NetworkMap(random);
         if (false == network_map.fromDOM(doc))
             return null;
         Itk.logInfo("Load Map File", file_name) ;
@@ -432,6 +427,8 @@ public abstract class BasicSimulationLauncher {
         properties = new NetmasPropertiesHandler(_propertiesFile);
 
         isDebug = properties.getIsDebug();
+        // random
+        random = new Random(properties.getRandseed()) ;
         // files
         setMapPath(properties.getMapPath());
         setPollutionPath(properties.getPollutionPath());
@@ -448,9 +445,6 @@ public abstract class BasicSimulationLauncher {
         setSpeedModel(properties.getSpeedModel());
         setExitCount(properties.getExitCount()) ;
         setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
-        // random
-        random = new Random(properties.getRandseed()) ;
-
 
     }
 

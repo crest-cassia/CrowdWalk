@@ -516,7 +516,7 @@ public class NetworkMapEditor extends SimulationLauncher
         clearAll();
         mapPath = tmp;
         try {
-            networkMap = readMapWithName(mapPath, random);
+            networkMap = readMapWithName(mapPath) ;
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, e.getStackTrace(),
                     "ファイルを開けません",
@@ -630,7 +630,7 @@ public class NetworkMapEditor extends SimulationLauncher
         // pollution area の読み込み(旧形式のため利用不能)
         // make_fv_rooms();
 
-        super.simulate(false);
+        super.simulate() ;
     }
 
     // simulator.begin() をバックグラウンドで実行するためのモーダルダイアログ
@@ -690,7 +690,7 @@ public class NetworkMapEditor extends SimulationLauncher
     public boolean buildModel() {
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                simulator.begin(true, false, null);
+                simulator.begin(true) ;
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         // ここでダイアログを閉じる
