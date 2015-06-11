@@ -84,7 +84,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
     private String dir_name = null;
 
-    private static long randseed = 0;
     private static boolean isAllAgentSpeedZeroBreak = false;
 
     // Properties
@@ -1034,22 +1033,6 @@ public class NetworkMapEditor extends SimulationLauncher
         else if (e.getActionCommand() == "Show 3D") show3D();
     }
 
-    public void setRandseed(long _randseed) {
-        randseed = _randseed;
-    }
-
-    public long getRandseed() {
-        return randseed;
-    }
-
-    public void setRandom(Random _random) {
-        random = _random;
-    }
-
-    public Random getRandom() {
-        return random;
-    }
-
     public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
     {
         isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
@@ -1075,8 +1058,6 @@ public class NetworkMapEditor extends SimulationLauncher
         setIsTimeSeriesLog(propertiesHandler.getIsTimeSeriesLog());
         setTimeSeriesLogPath(propertiesHandler.getTimeSeriesLogPath());
         setTimeSeriesLogInterval(propertiesHandler.getTimeSeriesLogInterval());
-        setRandseed(propertiesHandler.getRandseed());
-        // random はコンストラクタ引数でのみセットされるべき(randseed を反映した再現性確保のため)
         assert random != null;
         setSpeedModel(propertiesHandler.getSpeedModel());
         int tmpExitCount = propertiesHandler.getExitCount();
@@ -1169,11 +1150,7 @@ public class NetworkMapEditor extends SimulationLauncher
     private static NetworkMapEditor instance = null;
     public static NetworkMapEditor getInstance() {
         if (instance == null) {
-            if (randseed == 0) {
-                instance = new NetworkMapEditor(new Random());
-            } else {
-                instance = new NetworkMapEditor(new Random(randseed));
-            }
+            instance = new NetworkMapEditor(new Random());
         }
         return instance;
     }

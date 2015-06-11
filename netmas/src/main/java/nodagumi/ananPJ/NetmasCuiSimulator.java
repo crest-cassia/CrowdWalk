@@ -30,24 +30,12 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     }
 
     public NetmasCuiSimulator(String _propertiesPath) {
-        this(_propertiesPath, false, -1);
-    }
-
-    public NetmasCuiSimulator(String _propertiesPath, int randseed) {
-        this(_propertiesPath, true, randseed);
-    }
-
-    public NetmasCuiSimulator(String _propertiesPath, boolean withSeed, int randseed) {
         super(null) ;
         // load properties
-        Properties prop = new Properties();
         propertiesHandler = new NetmasPropertiesHandler(_propertiesPath);
 
         // create random with seed
-        if (! withSeed) {
-            randseed = (int)propertiesHandler.getRandseed();
-        }
-        random = new Random(randseed);
+        random = new Random(propertiesHandler.getRandseed()) ;
 
         // debug mode
         isDebug = propertiesHandler.getIsDebug();

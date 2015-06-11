@@ -156,6 +156,20 @@ public abstract class BasicSimulationLauncher {
     public EvacuationSimulator getSimulator() { return simulator; }
 
     /**
+     * 乱数生成器セット。
+     */
+    public void setRandom(Random _random) {
+        random = _random;
+    }
+
+    /**
+     * 乱数生成器取り出し。
+     */
+    public Random getRandom() {
+        return random;
+    }
+
+    /**
      * 終了カウント設定。
      */
     public void setExitCount(int _exitCount) {
