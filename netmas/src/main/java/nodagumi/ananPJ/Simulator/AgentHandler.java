@@ -899,7 +899,7 @@ public class AgentHandler {
         }
     }
 
-    public void initAgentMovementHistorLogger(String name, String filePath) {
+    public void initAgentMovementHistoryLogger(String name, String filePath) {
         agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
             public String format(final LogRecord record) {
                 return formatMessage(record) + "\n";

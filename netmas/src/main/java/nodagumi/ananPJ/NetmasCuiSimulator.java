@@ -14,9 +14,6 @@ import nodagumi.Itk.*;
 
 public class NetmasCuiSimulator extends BasicSimulationLauncher {
 
-    protected String agentMovementHistoryPath = null;
-    protected String individualPedestriansLogDir = null;
-
     public NetmasCuiSimulator(Random _random) {
         super(_random);
     }
@@ -42,16 +39,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        try {
-            agentMovementHistoryPath = properties.getFilePath("agent_movement_history_file", null, false);
-            individualPedestriansLogDir = properties.getDirectoryPath("individual_pedestrians_log_dir", null);
-            if (individualPedestriansLogDir != null) {
-                individualPedestriansLogDir = individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
-            }
-        } catch(Exception e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
         // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
         setupNetworkMap() ;
     }
@@ -61,13 +48,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     }
 
     public void start() {
-        if (agentMovementHistoryPath != null) {
-            simulator.getAgentHandler().initAgentMovementHistorLogger("agent_movement_history", agentMovementHistoryPath);
-        }
-        if (individualPedestriansLogDir != null) {
-            simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
-        }
-	Itk.logDebug("NetmasCuiSimulator start!");
+        Itk.logDebug("NetmasCuiSimulator start!");
         while (!finished) {
             simulateOneStepBare() ;
             if (exitCount > 0 && counter > exitCount) {
