@@ -174,6 +174,10 @@ public class EvacuationSimulator {
     }
 
     Boolean stop_simulation = false;
+    //------------------------------------------------------------
+    /**
+     * 汎用 updateEveryTick() ;
+     */
     public boolean updateEveryTick() {
         synchronized (stop_simulation) {
             double poltime = getSecond();
@@ -182,6 +186,8 @@ public class EvacuationSimulator {
                         getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
             agentHandler.update(networkMap, getSecond());
+
+            // 描画
             if (panel3d != null) {
                 panel3d.updateClock(getSecond());
                 boolean captureScreenShot = (screenshotInterval != 0);
@@ -204,32 +210,10 @@ public class EvacuationSimulator {
                     }
                 }
             }
-            tick_count += 1.0;
-        }
-        if (agentHandler.isFinished()) {
-            // output_results();
-            agentHandler.closeAgentMovementHistorLogger();
-            agentHandler.closeIndividualPedestriansLogger();
-            return true;
-        } else {
-            return false;
-        }
-    }
 
-    public boolean updateEveryTickCui() {
-        synchronized (stop_simulation) {
-            double poltime = getSecond();
-	    pollutionCalculator.updateNodesLinksAgents(poltime, networkMap,
-                    getWalkingAgentCollection());
-            // Runtime.getRuntime().gc();
-            agentHandler.update(networkMap, getSecond());
             tick_count += 1.0;
         }
-        if (agentHandler.isFinished()) {
-            return true;
-        } else {
-            return false;
-        }
+        return agentHandler.isFinished() ;
     }
 
     protected void output_results() {

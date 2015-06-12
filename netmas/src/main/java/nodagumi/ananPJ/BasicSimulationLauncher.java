@@ -582,6 +582,7 @@ public abstract class BasicSimulationLauncher {
             }
             if (individualPedestriansLogDir != null) {
                 simulator.getAgentHandler().closeIndividualPedestriansLogger();
+                simulator.getAgentHandler().closeAgentMovementHistorLogger();
             }
         }
         // 経過時間の表示。
