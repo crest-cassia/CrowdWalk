@@ -30,21 +30,61 @@ import org.w3c.dom.Element;
 
 import com.sun.j3d.utils.geometry.Box;
 
+//======================================================================
+/**
+ * 地図上の方形エリア。
+ */
 public class MapAreaRectangle extends MapArea {
 
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 描画用の色。
+     */
+    static Color gray8050 = new Color(0.8f, 0.8f, 0.8f, 0.5f);
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 境界
+     */
+    private Rectangle2D bounds;
+
+    /**
+     * 高さの範囲。
+     */
+    private double minHeight, maxHeight;
+
+    /**
+     * 角度。
+     */
+    private double angle;   // tkokada
+
+    /**
+     * ??
+     */
+    protected static boolean nsWarned = false;
+
+    /**
+     * ??
+     */
+    protected static boolean weWarned = false;
+
+    /**
+     * ??
+     */
+    public boolean selected;
+
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ
+     */
     public MapAreaRectangle(String id) {
         super(id);
     }
 
-    private Rectangle2D bounds;
-    private double minHeight, maxHeight;
-    private double angle;   // tkokada
-
-    protected static boolean nsWarned = false;
-    protected static boolean weWarned = false;
-
-    public boolean selected;
-    //    public boolean view;
+    /**
+     * コンストラクタ
+     */
     public MapAreaRectangle(String _id,
             Rectangle2D _bounds,
             double _min_height,
@@ -57,6 +97,10 @@ public class MapAreaRectangle extends MapArea {
         angle = _angle * Math.PI / 180; // tkokada
     }
     
+    //------------------------------------------------------------
+    /**
+     * 包含判定
+     */
     @Override
     public boolean contains(Vector3f point) {
         if (point.getZ() < minHeight || point.getZ() > maxHeight) {
@@ -72,22 +116,38 @@ public class MapAreaRectangle extends MapArea {
         return true;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 包含判定
+     */
     @Override
     public boolean contains(Point2D point) {
         // tkokada
         return bounds.contains(rotatePoint(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()), point, -angle));
     }
     
+    //------------------------------------------------------------
+    /**
+     * 交差判定
+     */
     @Override
 	public boolean intersectsLine(Line2D line) {
         return bounds.intersectsLine(line);
     }
 
+    //------------------------------------------------------------
+    /**
+     * 形状。
+     */
     @Override
     public Shape getShape() {
         return bounds;
     }
     
+    //------------------------------------------------------------
+    /**
+     * 頂点リスト。
+     */
     @Override // tkokada
     public ArrayList<Point2D> getAllVertices() {
         ArrayList<Point2D> allVertices = new ArrayList<Point2D>();
@@ -100,11 +160,19 @@ public class MapAreaRectangle extends MapArea {
         return allVertices;
     }
     
+    //------------------------------------------------------------
+    /**
+     * 角度。
+     */
     @Override // tkokada
     public double getAngle() {
         return angle;
     }
 
+    //------------------------------------------------------------
+    /**
+     * DOM からの取得。
+     */
     @Override
     protected void getAttributesFromDom(Element element) {
         super.getAttributesFromDom(element);
@@ -146,6 +214,10 @@ public class MapAreaRectangle extends MapArea {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * DOM へ。
+     */
     @Override
     public Element toDom(Document dom, String tagname) {
         Element element = super.toDom(dom, getNodeTypeString());
@@ -162,6 +234,10 @@ public class MapAreaRectangle extends MapArea {
         return element;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 回転。
+     */
     // tkokada added
     private Point2D rotatePoint(Point2D origin, Point2D point, double angle) {
         return new Point2D.Double(
@@ -169,7 +245,10 @@ public class MapAreaRectangle extends MapArea {
                 origin.getY() + (point.getX() - origin.getX()) * Math.sin(angle) + (point.getY() - origin.getY()) * Math.cos(angle));
     }
     
-    static Color gray8050 = new Color(0.8f, 0.8f, 0.8f, 0.5f);
+    //------------------------------------------------------------
+    /**
+     * 描画。
+     */
     @Override
     public void draw(Graphics2D g, 
             boolean experiment) {
@@ -189,6 +268,10 @@ public class MapAreaRectangle extends MapArea {
                 (float)bounds.getMaxY());
     }
 
+    //------------------------------------------------------------
+    /**
+     * 3D描画。
+     */
     @Override
     public TransformGroup get3DShape(Appearance app) {
         float x = (float)bounds.getCenterX();
@@ -215,21 +298,21 @@ public class MapAreaRectangle extends MapArea {
         
         return areaTransforms;
     }
-    /* to/from DOM codes */
-    static public String getNodeTypeString() {
-        return "Room";
-    }
 
+    //------------------------------------------------------------
+    /**
+     * 距離。
+     */
     @Override
-    public NType getNodeType() {
-        return NType.ROOM;
+    public double distance(Vector3f point) {
+        // TODO Auto-generated method stub
+        return Double.MAX_VALUE;
     }
 
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
+    //------------------------------------------------------------
+    /**
+     * DOM
+     */
     public static OBNode fromDom(Element element) {
         MapAreaRectangle room = new MapAreaRectangle(null);
         room.getAttributesFromDom(element);
@@ -238,29 +321,24 @@ public class MapAreaRectangle extends MapArea {
 
     }
 
+    //------------------------------------------------------------
+    /**
+     * 文字列化。
+     */
     @Override   
     public String toString() {
         return getTagString() + bounds.toString();
     }
 
+    //------------------------------------------------------------
+    /**
+     * ???
+     */
     @Override
     public String getHintString() {
         return "" + bounds.toString();
     }
     
-    @Override
-    public double getDensity() {
-        Object o = getUserObject();
-        if (o != null && o instanceof Double) return ((Double)o).doubleValue();
-        return 0.0;
-    }
-
-    @Override
-    public double distance(Vector3f point) {
-        // TODO Auto-generated method stub
-        return Double.MAX_VALUE;
-    }
-
 }
 //;;; Local Variables:
 //;;; mode:java

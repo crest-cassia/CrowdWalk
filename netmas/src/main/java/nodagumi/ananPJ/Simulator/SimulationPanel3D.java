@@ -1447,13 +1447,12 @@ public class SimulationPanel3D extends NetworkPanel3D {
          */
         public void updateColor() {
             float density = 0.0f;
-            //System.out.println("MapArea ID "+area.ID+" density "+density);
             if (pollutionColorSaturation > 0.0) {
-                density = (float)area.getDensity() / (float)pollutionColorSaturation;
+                density = (float)area.getPollutionLevel() / (float)pollutionColorSaturation;
             } else {
                 float maxPollutionLevel = (float)simulator.getMaxPollutionLevel();
                 if (maxPollutionLevel > 0.0) {
-                    density = (float)area.getDensity() / (maxPollutionLevel / 2.0f);
+                    density = (float)area.getPollutionLevel() / (maxPollutionLevel / 2.0f);
                 }
             }
             if (density > 1.0) density = 1.0f;

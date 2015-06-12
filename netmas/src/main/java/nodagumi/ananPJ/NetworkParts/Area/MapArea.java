@@ -31,27 +31,110 @@ import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.vecmath.Vector3f;
 
+//======================================================================
+/**
+ * 地図上のエリア。
+ */
 public abstract class MapArea extends OBNode {
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 現在の Pollution 情報
+     */
+    protected double currentPollutionLevel = 0.0;
+
+    /**
+     * 直前の Pollution 情報
+     */
     protected double lastPollutionLevel = 0.0;  // 更新チェック用
 
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ
+     */
     public MapArea(String _id) {
         super(_id);
     }
 
+    //------------------------------------------------------------
+    /**
+     * Pollution Level を格納。
+     */
+    public void setPollutionLevel(double level) {
+        currentPollutionLevel = level ;
+        if (currentPollutionLevel != lastPollutionLevel) {
+            networkMap.getNotifier().pollutionLevelChanged(this);
+        }
+        lastPollutionLevel = currentPollutionLevel ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Pollution Level を取得。
+     */
+    public double getPollutionLevel() {
+        return currentPollutionLevel ;
+    }
+
+
+    //------------------------------------------------------------
+    /**
+     * 包含判定。
+     */
     public abstract boolean contains(Point2D point);
+
+    //------------------------------------------------------------
+    /**
+     * 包含判定。
+     */
     public abstract boolean contains(Vector3f point);
+
+    //------------------------------------------------------------
+    /**
+     * 交差判定。
+     */
     public abstract boolean intersectsLine(Line2D line);
+
+    //------------------------------------------------------------
+    /**
+     * 距離
+     */
     public abstract double distance(Vector3f point);
+
+    //------------------------------------------------------------
+    /**
+     * 形状を取得。
+     */
     public abstract Shape getShape();
+
+    //------------------------------------------------------------
+    /**
+     * 頂点リスト。
+     */
     public abstract ArrayList<Point2D> getAllVertices();	// tkokada
+
+    //------------------------------------------------------------
+    /**
+     * 方向。
+     */
     public abstract double getAngle();	// tkokada
 
+    //------------------------------------------------------------
+    /**
+     * 描画。
+     */
     public abstract void draw(Graphics2D g, boolean experiment);
-    public abstract TransformGroup get3DShape(Appearance app);
-    public abstract double getDensity();
 
-    //For view customize : contact agent with pollution_area
+    //------------------------------------------------------------
+    /**
+     * 3D形状。
+     */
+    public abstract TransformGroup get3DShape(Appearance app);
+
+    //------------------------------------------------------------
+    /**
+     * For view customize : contact agent with pollution_area.
+     */
     public static void showAttributeDialog(ArrayList<MapArea> areas,
                                            int x, int y) {
         /* Set attributes with a dialog */
@@ -125,16 +208,32 @@ public abstract class MapArea extends OBNode {
         dialog.setVisible(true);
     }
 
-    @Override
-    public void setUserObject(Object userObject) {
-        super.setUserObject(userObject);
-
-        double pollutionLevel = ((Double)userObject).doubleValue();
-        if (pollutionLevel != lastPollutionLevel) {
-            networkMap.getNotifier().pollutionLevelChanged(this);
-            lastPollutionLevel = pollutionLevel;
-        }
+    //------------------------------------------------------------
+    /**
+     * to/from DOM codes
+     */
+    static public String getNodeTypeString() {
+        return "Room";
     }
+
+    //------------------------------------------------------------
+    /**
+     * タイプ。
+     */
+    @Override
+    public NType getNodeType() {
+        return NType.ROOM;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 末端判定。
+     */
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
+
 }
 //;;; Local Variables:
 //;;; mode:java

@@ -33,6 +33,15 @@ import nodagumi.Itk.*;
 
 
 public class PollutionCalculator {
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェントの高さ。
+     * エージェントが Area に入っているとき、確実に床より上の位置に
+     * するための下駄。
+     * Area の inside-outside は、空間的に行なっているため、必要。
+     */
     static double AGENT_HEIGHT = 1.5;
 
     double nextInstantTime = 0;
@@ -164,7 +173,7 @@ public class PollutionCalculator {
                 }
                 link.setPolluted(false);
                 for (MapArea area : link.getIntersectedMapAreas()) {
-                    if ((Double)area.getUserObject() != 0.0) {
+                    if (area.getPollutionLevel() != 0.0) {
                         link.setPolluted(true);
                         break;
                     }
@@ -186,7 +195,7 @@ public class PollutionCalculator {
                     (float)(agent.getHeight() + AGENT_HEIGHT));
             for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
                 if (area.contains(point)) {
-                    pollutionLevel = (Double)area.getUserObject();
+                    pollutionLevel = area.getPollutionLevel() ;
                     Itk.logNone("polluted", agent.ID + " " + pollutionLevel) ;
                     agent.exposed(pollutionLevel * timeScale);
                     break;
@@ -224,7 +233,7 @@ public class PollutionCalculator {
                 polluted_area_sorted.put(index, area);
             }
             // current density 値の初期化
-            area.setUserObject(new Double(0.0));
+            area.setPollutionLevel(0.0) ;
         }
     }
 
@@ -240,9 +249,9 @@ public class PollutionCalculator {
              * いずれは、タグ（文字列として）と pollutionInstant 内の
              * index を、hash table で結ばないといけない。
              */
-            Double pollutionLevel = currentInstant.getValue(index-1) ;
+            double pollutionLevel = currentInstant.getValue(index-1) ;
 
-            area.setUserObject(pollutionLevel);
+            area.setPollutionLevel(pollutionLevel);
         }
 
         if (pollutionInstantIterator.hasNext()) {

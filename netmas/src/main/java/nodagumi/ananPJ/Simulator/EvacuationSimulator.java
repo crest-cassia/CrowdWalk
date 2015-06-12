@@ -685,9 +685,9 @@ public class EvacuationSimulator {
                 // agent,ID,evacuated,speed,density,position
                 writer.write("agent," + agent.ID + "," + agent.isEvacuated() +
 			     "," + agent.getSpeed() +
-			     "," + "0" + //agent.getDensity() + // obsolete
+			     "," + "0" +
 			     "," + agent.getLastPositionOnLink() + "\n");
-		totalAgentDensity += 0 ; //agent.getDensity(); // obsolete
+		totalAgentDensity += 0 ;
                 totalAgentSpeed += agent.getSpeed();
             }
 	    for (MapLink link : getLinks()) {
