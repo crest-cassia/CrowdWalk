@@ -65,9 +65,19 @@ public class PollutionCalculator {
     private double maxPollutionLevel = 0.0;
 
     /**
-     * area と TAG のマップ。
+     * TAG と index のマップ。
      */
-    HashMap<Integer, MapArea> areaTable ;
+    HashMap<String, Integer> tagIndexTable = new HashMap<String, Integer>() ;
+
+    /**
+     * TAG のリスト。tagIndexTable の逆テーブルになっている。
+     */
+    ArrayList<String> tagList = new ArrayList<String>() ;
+
+    /**
+     * area と index のマップ。
+     */
+    HashMap<MapArea, Integer> areaIndexTable = new HashMap<MapArea, Integer>() ;
 
     /**
      * Pollution の時間変化の配列。
@@ -90,7 +100,7 @@ public class PollutionCalculator {
      * コンストラクタ。
      */
     public PollutionCalculator(String scheduleFileName,
-            ArrayList<MapArea> _pollution, double _timeScale, double interpolationInterval) {
+            ArrayList<MapArea> _areaList, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
 	    Itk.logInfo("Load Pollution File", "(none)") ;
             nextInstantTime = -1.0;
@@ -108,7 +118,7 @@ public class PollutionCalculator {
             }
         }
         
-        setupPollutedAreas(_pollution);
+        setupPollutedAreas(_areaList);
         timeScale = _timeScale;
     }
 
@@ -140,6 +150,12 @@ public class PollutionCalculator {
                         double value = Double.parseDouble(strItems[index]) ;
                         // 先頭は time なので、１つずらす。
                         instant.setValue(index-1, value) ;
+                        // 新しいタグ生成が必要ならば、それをチェック。
+                        if((index-1) >= tagList.size()) {
+                            String tag = (new Integer(index)).toString() ;
+                            addTag(tag) ;
+                        }
+                        // pollution の最大値を求める
                         if (value > maxPollutionLevel) {
                             maxPollutionLevel = value;
                         }
@@ -235,8 +251,8 @@ public class PollutionCalculator {
             for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
                 if (area.contains(point)) {
                     pollutionLevel = area.getPollutionLevel() ;
-                    Itk.logNone("polluted", agent.ID + " " + pollutionLevel) ;
                     agent.exposed(pollutionLevel * timeScale);
+                    Itk.logNone("polluted", agent.ID + " " + pollutionLevel) ;
                     break;
                 }
             }
@@ -258,17 +274,20 @@ public class PollutionCalculator {
      * 機能が必要。
      */
     private void setupPollutedAreas(ArrayList<MapArea> areas) {
-        areaTable = new HashMap<Integer, MapArea>();
-
         for (MapArea area : areas) {
-            Matcher m = area.matchTag("^(\\d+)$");
-            if (m != null) {
-                int index = Integer.parseInt(m.group(0));
-
-                areaTable.put(index, area);
+            String matchedTag = null ;
+            for(String tag : tagList) {
+                if(area.hasTag(tag)) {
+                    if(areaIndexTable.containsKey(area)) {
+                        Itk.logWarn("The area matchs with multiple pollution tag",
+                                    area, tag) ;
+                    } else {
+                        Integer index = tagIndexTable.get(tag) ;
+                        areaIndexTable.put(area, index) ;
+                        area.setPollutionLevel(0.0) ;
+                    }
+                }
             }
-            // current density 値の初期化
-            area.setPollutionLevel(0.0) ;
         }
     }
 
@@ -279,17 +298,11 @@ public class PollutionCalculator {
     private void updatePollution() {
         Itk.logDebug("PC: updating pollution ",nextInstantTime);
 
-        for (Integer index : areaTable.keySet()) {
-            MapArea area = areaTable.get(index);
+        for (HashMap.Entry<MapArea, Integer> entry : areaIndexTable.entrySet()) {
+            MapArea area = entry.getKey() ;
+            Integer index = entry.getValue() ;
 
-            /* [2015.06.12 I.Noda]
-             * 現状で、Area のタグに書かれる数字の Index と、
-             * pollutionInstant の中のindex はひとつずれている。
-             * いずれは、タグ（文字列として）と pollutionInstant 内の
-             * index を、hash table で結ばないといけない。
-             */
-            double pollutionLevel = currentInstant.getValue(index-1) ;
-
+            double pollutionLevel = currentInstant.getValue(index) ;
             area.setPollutionLevel(pollutionLevel);
         }
 
@@ -306,7 +319,7 @@ public class PollutionCalculator {
      * pollution されたエリアを返す。
      */
     public ArrayList<MapArea> getPollutions() {
-        return new ArrayList<MapArea>(areaTable.values());
+        return new ArrayList<MapArea>(areaIndexTable.keySet());
     }
 
     //------------------------------------------------------------
@@ -314,6 +327,23 @@ public class PollutionCalculator {
      * pollution の最大値。
      */
     public double getMaxPollutionLevel() { return maxPollutionLevel; }
+
+    //------------------------------------------------------------
+    /**
+     * Tag の登録。
+     */
+    private boolean addTag(String tag) {
+        if(tagIndexTable.containsKey(tag)) {
+            Itk.logWarn("duplicated tag",tag) ;
+            return false ;
+        } else {
+            int index = tagList.size() ;
+            tagList.add(tag) ;
+            tagIndexTable.put(tag, index) ;
+            return true ;
+        }
+    }
+
 
     //============================================================
     /**
