@@ -1,10 +1,6 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkParts.Area;
 
-import nodagumi.ananPJ.NetworkParts.OBNode;
-//import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
-
-
 //import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Graphics2D;
@@ -31,6 +27,10 @@ import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.vecmath.Vector3f;
 
+import nodagumi.ananPJ.NetworkParts.OBNode;
+//import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
+import nodagumi.ananPJ.Simulator.PollutionCalculator.*;
+
 //======================================================================
 /**
  * 地図上のエリア。
@@ -41,12 +41,7 @@ public abstract class MapArea extends OBNode {
     /**
      * 現在の Pollution 情報
      */
-    protected double currentPollutionLevel = 0.0;
-
-    /**
-     * 直前の Pollution 情報
-     */
-    protected double lastPollutionLevel = 0.0;  // 更新チェック用
+    public PollutionLevelInfo pollutionLevel = null ;
 
     //------------------------------------------------------------
     /**
@@ -60,22 +55,27 @@ public abstract class MapArea extends OBNode {
     /**
      * Pollution Level を格納。
      */
-    public void setPollutionLevel(double level) {
-        currentPollutionLevel = level ;
-        if (currentPollutionLevel != lastPollutionLevel) {
+    public void pollutionIsUpdated() {
+        if(pollutionLevel.isChanged(true)) {
             networkMap.getNotifier().pollutionLevelChanged(this);
         }
-        lastPollutionLevel = currentPollutionLevel ;
     }
 
     //------------------------------------------------------------
     /**
      * Pollution Level を取得。
      */
-    public double getPollutionLevel() {
-        return currentPollutionLevel ;
+    public PollutionLevelInfo getPollutionLevel() {
+        return pollutionLevel ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * Pollution されているかどうか。
+     */
+    public boolean isPolluted() {
+        return pollutionLevel.isPolluted() ;
+    }
 
     //------------------------------------------------------------
     /**

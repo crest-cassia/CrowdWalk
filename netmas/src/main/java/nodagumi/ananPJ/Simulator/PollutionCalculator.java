@@ -264,7 +264,7 @@ public class PollutionCalculator {
                 }
                 link.setPolluted(false);
                 for (MapArea area : link.getIntersectedMapAreas()) {
-                    if (area.getPollutionLevel() != 0.0) {
+                    if (area.isPolluted()) {
                         link.setPolluted(true);
                         break;
                     }
@@ -286,7 +286,7 @@ public class PollutionCalculator {
                     (float)(agent.getHeight() + AGENT_HEIGHT));
             for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
                 if (area.contains(point)) {
-                    pollutionLevel = area.getPollutionLevel() ;
+                    pollutionLevel = area.getPollutionLevel().getCurrentLevel() ;
                     agent.exposed(pollutionLevel * timeScale);
                     Itk.logNone("polluted", agent.ID + " " + pollutionLevel) ;
                     break;
@@ -320,7 +320,8 @@ public class PollutionCalculator {
                     } else {
                         Integer index = tagIndexTable.get(tag) ;
                         areaIndexTable.put(area, index) ;
-                        area.setPollutionLevel(0.0) ;
+                        area.pollutionLevel = newPollutionLevelInfo() ;
+                        area.pollutionIsUpdated() ;
                     }
                 }
             }
@@ -339,7 +340,8 @@ public class PollutionCalculator {
             Integer index = entry.getValue() ;
 
             double pollutionLevel = currentInstant.getValue(index) ;
-            area.setPollutionLevel(pollutionLevel);
+            area.getPollutionLevel().setCurrentLevel(pollutionLevel) ;
+            area.pollutionIsUpdated() ;
         }
 
         if (pollutionInstantIterator.hasNext()) {
@@ -380,6 +382,13 @@ public class PollutionCalculator {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * PollutionLevelInfo の生成
+     */
+    public PollutionLevelInfo newPollutionLevelInfo() {
+        return new PollutionLevelInfo(this) ;
+    }
 
     //============================================================
     /**
@@ -425,4 +434,81 @@ public class PollutionCalculator {
 
     } // end class PollutionInstant
 
+    //============================================================
+    /**
+     * エリアにおける Pollution の効果の情報
+     */
+    public static class PollutionLevelInfo {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * PollutionCalculator へのリンク。
+         */
+        private PollutionCalculator calculator = null ;
+
+        /**
+         * 現在の効果。
+         */
+        private double currentLevel = 0.0 ;
+
+        /**
+         * 一つ前の効果。
+         */
+        private double lastLevel = 0.0 ;
+
+        //--------------------------------------------------
+        /**
+         * コンストラクタ。
+         */
+        public PollutionLevelInfo(PollutionCalculator _calculator) {
+            calculator = _calculator ;
+            currentLevel = 0.0 ;
+            lastLevel = 0.0 ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * 実レベルを設定。
+         */
+        public void setCurrentLevel(double level) {
+            currentLevel = level ;
+        } ;
+
+        //--------------------------------------------------
+        /**
+         * 実レベルを取得。
+         */
+        public double getCurrentLevel() {
+            return currentLevel ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * 正規化レベルを取得。
+         */
+        public double getNormalizedLevel() {
+            return currentLevel / calculator.getMaxPollutionLevel() ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * 汚染されているかどうかのチェック。
+         */
+        public boolean isPolluted() {
+            return currentLevel > 0.0 ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * 変化を検出。
+         * @param update : 検出した後、lastLevelを更新するかどうか？
+         * @return もし変化していたら true。変化無ければ false。
+         */
+        public boolean isChanged(boolean update) {
+            boolean changed = (currentLevel != lastLevel) ;
+            if(update) {
+                lastLevel = currentLevel ;
+            }
+            return changed ;
+        } ;
+    }
 }

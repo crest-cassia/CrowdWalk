@@ -486,10 +486,6 @@ public class EvacuationSimulator {
         return pollutionCalculator.getPollutions();
     }
 
-    public double getMaxPollutionLevel() {
-        return pollutionCalculator.getMaxPollutionLevel();
-    }
-
     public void recalculatePaths() {
         synchronized (stop_simulation) {
             stop_simulation = true;
