@@ -44,7 +44,7 @@ public class MapAreaRectangle extends MapArea {
     protected static boolean weWarned = false;
 
     public boolean selected;
-    public boolean view;
+    //    public boolean view;
     public MapAreaRectangle(String _id,
             Rectangle2D _bounds,
             double _min_height,
@@ -261,10 +261,6 @@ public class MapAreaRectangle extends MapArea {
         return Double.MAX_VALUE;
     }
 
-    @Override
-    public boolean getContactOfAgents() {return view;}
-    @Override
-    public void setContactOfAgents(boolean _view) {view = _view;}
 }
 //;;; Local Variables:
 //;;; mode:java

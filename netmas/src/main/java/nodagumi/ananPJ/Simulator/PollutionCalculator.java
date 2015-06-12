@@ -184,13 +184,7 @@ public class PollutionCalculator {
                 if (area.contains(point)) {
                     pollutionLevel = (Double)area.getUserObject();
                     if (debug) System.err.println(agent.ID + " " + pollutionLevel);
-                // System.err.printf("in pollution calculator agent: %04d, " + 
-                        // "d: %.4f, speed: %.4f, %s\n", agent.ID, d,
-                        // agent.getSpeed(), best_area.getTags());
                     agent.exposed(pollutionLevel * timeScale);
-                    // if (pollutionLevel > 0.0)
-                    //     System.err.print(" " + pollutionLevel);
-                    area.setContactOfAgents(true);
                     break;
                 }
             }

@@ -52,8 +52,6 @@ public abstract class MapArea extends OBNode {
     public abstract double getDensity();
 
     //For view customize : contact agent with pollution_area
-    public abstract boolean getContactOfAgents();
-    public abstract void setContactOfAgents(boolean _view);
     public static void showAttributeDialog(ArrayList<MapArea> areas,
                                            int x, int y) {
         /* Set attributes with a dialog */
