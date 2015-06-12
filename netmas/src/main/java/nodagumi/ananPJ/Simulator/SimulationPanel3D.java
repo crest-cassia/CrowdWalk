@@ -84,7 +84,6 @@ import nodagumi.Itk.*;
 import com.sun.j3d.utils.geometry.Sphere;
 
 public class SimulationPanel3D extends NetworkPanel3D {
-    public static int MAX_AGENT_COUNT = 500000;
 
     public static enum gas_display {
         NONE, HSV, RED, BLUE, ORANGE;
@@ -929,7 +928,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
     public void registerAgentOnline(AgentBase agent) {
         agent_count++;
 
-        // if (agent_count > MAX_AGENT_COUNT) return;
         group_from_agent(agent);
     }
 
