@@ -10,9 +10,9 @@ import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 
 /**
- * NetworkMap ã®æ§‹æˆè¦ç´ ã®çŠ¶æ…‹å¤‰åŒ–ã‚’é€šçŸ¥ã™ã‚‹.
+ * NetworkMap ¤Î¹½À®Í×ÁÇ¤Î¾õÂÖÊÑ²½¤òÄÌÃÎ¤¹¤ë.
  *
- * ã‚¤ãƒ™ãƒ³ãƒˆã¯ä½¿ç”¨ã›ãšã€é€šçŸ¥ç”¨ã®ãƒ¡ã‚½ãƒƒãƒ‰ã‹ã‚‰ç›´æ¥ãƒªã‚¹ãƒŠã®ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å‘¼ã³å‡ºã—ã¦ã„ã‚‹ã€‚
+ * ¥¤¥Ù¥ó¥È¤Ï»ÈÍÑ¤»¤º¡¢ÄÌÃÎÍÑ¤Î¥á¥½¥Ã¥É¤«¤éÄ¾ÀÜ¥ê¥¹¥Ê¤Î¥á¥½¥Ã¥É¤ò¸Æ¤Ó½Ğ¤·¤Æ¤¤¤ë¡£
  */
 public class NetworkMapPartsNotifier {
     private NetworkMap map;
@@ -27,14 +27,14 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ãƒªã‚¹ãƒŠã‚’ç™»éŒ²ã™ã‚‹.
+     * ¥ê¥¹¥Ê¤òÅĞÏ¿¤¹¤ë.
      */
     public synchronized void addListener(NetworkMapPartsListener listener) {
         listeners.add(listener);
     }
 
     /**
-     * ãƒªãƒ³ã‚¯ãŒå‰Šé™¤ã•ã‚ŒãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥ê¥ó¥¯¤¬ºï½ü¤µ¤ì¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void linkRemoved(MapLink link) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -43,7 +43,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ãƒªãƒ³ã‚¯ã‚¿ã‚°ãŒè¿½åŠ ã•ã‚ŒãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥ê¥ó¥¯¥¿¥°¤¬ÄÉ²Ã¤µ¤ì¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void linkTagAdded(MapLink link, String tag) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -52,7 +52,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ãƒªãƒ³ã‚¯ã‚¿ã‚°ãŒå‰Šé™¤ã•ã‚ŒãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥ê¥ó¥¯¥¿¥°¤¬ºï½ü¤µ¤ì¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void linkTagRemoved(MapLink link) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -61,7 +61,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ãƒãƒ¼ãƒ‰ã‚¿ã‚°ãŒè¿½åŠ ã•ã‚ŒãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥Î¡¼¥É¥¿¥°¤¬ÄÉ²Ã¤µ¤ì¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void nodeTagAdded(MapNode node, String tag) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -70,7 +70,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ãƒãƒ¼ãƒ‰ã‚¿ã‚°ãŒå‰Šé™¤ã•ã‚ŒãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥Î¡¼¥É¥¿¥°¤¬ºï½ü¤µ¤ì¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void nodeTagRemoved(MapNode node) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -79,7 +79,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * Pollution ãƒ¬ãƒ™ãƒ«ãŒå¤‰åŒ–ã—ãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * Pollution ¥ì¥Ù¥ë¤¬ÊÑ²½¤·¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void pollutionLevelChanged(MapArea area) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -88,7 +88,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆãŒè¿½åŠ ã•ã‚ŒãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤¬ÄÉ²Ã¤µ¤ì¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void agentAdded(AgentBase agent) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -97,7 +97,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆãŒç§»å‹•(swing ã‚‚å«ã‚€)ã—ãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤¬°ÜÆ°(swing ¤â´Ş¤à)¤·¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void agentMoved(AgentBase agent) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -106,7 +106,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®ã‚¹ãƒ”ãƒ¼ãƒ‰ãŒå¤‰åŒ–ã—ãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤Î¥¹¥Ô¡¼¥É¤¬ÊÑ²½¤·¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void agentSpeedChanged(AgentBase agent) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -115,7 +115,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®ãƒˆãƒªã‚¢ãƒ¼ã‚¸ãƒ¬ãƒ™ãƒ«ãŒå¤‰åŒ–ã—ãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤Î¥È¥ê¥¢¡¼¥¸¥ì¥Ù¥ë¤¬ÊÑ²½¤·¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void agentTriageChanged(AgentBase agent) {
         for (NetworkMapPartsListener listener : listeners) {
@@ -124,7 +124,7 @@ public class NetworkMapPartsNotifier {
     }
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®é¿é›£ãŒå®Œäº†ã—ãŸäº‹ã‚’é€šçŸ¥ã™ã‚‹.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤ÎÈòÆñ¤¬´°Î»¤·¤¿»ö¤òÄÌÃÎ¤¹¤ë.
      */
     public void agentEvacuated(AgentBase agent) {
         for (NetworkMapPartsListener listener : listeners) {

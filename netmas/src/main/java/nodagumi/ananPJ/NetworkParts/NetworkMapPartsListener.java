@@ -7,65 +7,65 @@ import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 
 /**
- * NetworkMap ã®æ§‹æˆè¦ç´ ã®çŠ¶æ…‹å¤‰åŒ–ã‚’ç›£è¦–ã™ã‚‹ãƒªã‚¹ãƒŠç”¨ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹.
+ * NetworkMap ¤Î¹½À®Í×ÁÇ¤Î¾õÂÖÊÑ²½¤ò´Æ»ë¤¹¤ë¥ê¥¹¥ÊÍÑ¥¤¥ó¥¿¡¼¥Õ¥§¥¤¥¹.
  *
- * ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ç”»é¢ã®æç”»æ›´æ–°ç”¨ã€‚<br />
- * é€šçŸ¥å…ƒã®ã‚¹ãƒ¬ãƒƒãƒ‰ã‹ã‚‰ç›´æ¥å‘¼ã°ã‚Œã‚‹ãŸã‚ã€æ™‚é–“ã®æ›ã‹ã‚‹å‡¦ç†ã¯ã—ãªã„ã“ã¨ã€‚
+ * ¥·¥ß¥å¥ì¡¼¥·¥ç¥ó²èÌÌ¤ÎÉÁ²è¹¹¿·ÍÑ¡£<br />
+ * ÄÌÃÎ¸µ¤Î¥¹¥ì¥Ã¥É¤«¤éÄ¾ÀÜ¸Æ¤Ğ¤ì¤ë¤¿¤á¡¢»ş´Ö¤Î³İ¤«¤ë½èÍı¤Ï¤·¤Ê¤¤¤³¤È¡£
  */
 public interface NetworkMapPartsListener {
     /**
-     * ãƒªãƒ³ã‚¯ãŒå‰Šé™¤ã•ã‚ŒãŸ.
+     * ¥ê¥ó¥¯¤¬ºï½ü¤µ¤ì¤¿.
      */
     public void linkRemoved(MapLink link);
 
     /**
-     * ãƒªãƒ³ã‚¯ã‚¿ã‚°ãŒè¿½åŠ ã•ã‚ŒãŸ.
+     * ¥ê¥ó¥¯¥¿¥°¤¬ÄÉ²Ã¤µ¤ì¤¿.
      */
     public void linkTagAdded(MapLink link, String tag);
 
     /**
-     * ãƒªãƒ³ã‚¯ã‚¿ã‚°ãŒå‰Šé™¤ã•ã‚ŒãŸ.
+     * ¥ê¥ó¥¯¥¿¥°¤¬ºï½ü¤µ¤ì¤¿.
      */
     public void linkTagRemoved(MapLink link);
 
     /**
-     * ãƒãƒ¼ãƒ‰ã‚¿ã‚°ãŒè¿½åŠ ã•ã‚ŒãŸ.
+     * ¥Î¡¼¥É¥¿¥°¤¬ÄÉ²Ã¤µ¤ì¤¿.
      */
     public void nodeTagAdded(MapNode node, String tag);
 
     /**
-     * ãƒãƒ¼ãƒ‰ã‚¿ã‚°ãŒå‰Šé™¤ã•ã‚ŒãŸ.
+     * ¥Î¡¼¥É¥¿¥°¤¬ºï½ü¤µ¤ì¤¿.
      */
     public void nodeTagRemoved(MapNode node);
 
     /**
-     * Pollution ãƒ¬ãƒ™ãƒ«ãŒå¤‰åŒ–ã—ãŸ.
+     * Pollution ¥ì¥Ù¥ë¤¬ÊÑ²½¤·¤¿.
      */
 
     public void pollutionLevelChanged(MapArea area);
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆãŒè¿½åŠ ã•ã‚ŒãŸ.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤¬ÄÉ²Ã¤µ¤ì¤¿.
      */
     public void agentAdded(AgentBase agent);
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆãŒç§»å‹•ã—ãŸ(swing ã‚‚å«ã‚€).
+     * ¥¨¡¼¥¸¥§¥ó¥È¤¬°ÜÆ°¤·¤¿(swing ¤â´Ş¤à).
      */
     public void agentMoved(AgentBase agent);
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®ã‚¹ãƒ”ãƒ¼ãƒ‰ãŒå¤‰åŒ–ã—ãŸ.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤Î¥¹¥Ô¡¼¥É¤¬ÊÑ²½¤·¤¿.
      */
     public void agentSpeedChanged(AgentBase agent);
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®ãƒˆãƒªã‚¢ãƒ¼ã‚¸ãƒ¬ãƒ™ãƒ«ãŒå¤‰åŒ–ã—ãŸ.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤Î¥È¥ê¥¢¡¼¥¸¥ì¥Ù¥ë¤¬ÊÑ²½¤·¤¿.
      */
     public void agentTriageChanged(AgentBase agent);
 
     /**
-     * ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã®é¿é›£ãŒå®Œäº†ã—ãŸ.
+     * ¥¨¡¼¥¸¥§¥ó¥È¤ÎÈòÆñ¤¬´°Î»¤·¤¿.
      */
     public void agentEvacuated(AgentBase agent);
 }
