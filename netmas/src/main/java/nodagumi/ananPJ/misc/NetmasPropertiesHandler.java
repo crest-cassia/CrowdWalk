@@ -612,7 +612,7 @@ public class NetmasPropertiesHandler {
             String pollutionType = getString("pollution_type", null);
             if (pollutionType != null) {
                 AgentBase.setPollutionType(pollutionType);
-                PollutionBase.getInstance(pollutionType + "Pollution");
+                PollutionBase.getInstance(pollutionType) ;
             }
             getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);

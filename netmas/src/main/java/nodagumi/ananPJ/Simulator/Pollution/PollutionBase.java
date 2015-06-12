@@ -13,28 +13,60 @@ public abstract class PollutionBase {
     public abstract int getTriage(AgentBase agent);
     public abstract boolean isDead(AgentBase agent);
 
-    protected static HashMap<String, PollutionBase> pollutions =
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    protected static HashMap<String, PollutionBase> instanceTable =
         new HashMap<String, PollutionBase>();
 
-    // サブクラスのインスタンスを取得(必要なら生成)する
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    protected static ClassFinder classFinder = new ClassFinder() ;
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * サブクラスのインスタンスを取得(必要なら生成)する。
+     */
     public static PollutionBase getInstance(String className) {
-        PollutionBase pollution = pollutions.get(className);
+        PollutionBase pollution = instanceTable.get(className);
         if (pollution == null) {
             pollution = createInstance(className);
-            pollutions.put(className, pollution);
+            instanceTable.put(className, pollution);
         }
         return pollution;
     }
 
+    //============================================================
+    //------------------------------------------------------------
     // サブクラスのインスタンスを生成する
     protected static PollutionBase createInstance(String className) {
         try {
-            Class<PollutionBase> clazz = (Class<PollutionBase>)Class.forName("nodagumi.ananPJ.Simulator.Pollution." + className);
-            return clazz.newInstance();
-        } catch (ReflectiveOperationException e) {
-            System.err.println("Property error - pollution_type の設定が間違っています。");
+            return (PollutionBase)classFinder.newByName(className) ;
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.logError("pollution_type の設定が間違っています。",
+                         className) ;
             System.exit(1);
         }
         return null;
     }
+
+    //============================================================
+    //------------------------------------------------------------
+    // 別名登録。
+    protected static void register(String className, Class<?> klass) {
+        classFinder.registerAlias(className, klass) ;
+    }
+
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * デフォルトのPollutionクラス登録
+     */
+    static {
+        register("Accumulated", AccumulatedPollution.class) ;
+        register("NonAccumulated", NonAccumulatedPollution.class) ;
+    }
+
+
 }

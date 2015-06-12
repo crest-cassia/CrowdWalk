@@ -150,7 +150,7 @@ implements Comparable<AgentBase> {
         //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
         // Pollution のサブクラスのインスタンスを取得
-        pollution = PollutionBase.getInstance(pollutionType + "Pollution");
+        pollution = PollutionBase.getInstance(pollutionType) ;
     }
 
     //------------------------------------------------------------
