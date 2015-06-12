@@ -26,10 +26,16 @@ public class AccumulatedPollution extends PollutionBase {
 
     public AccumulatedPollution() {}
 
+    public PollutionBase.PollutionEffectInfo newEffectInfo(AgentBase agent) {
+        return new PollutionEffectInfo(agent, this) ;
+    }
+
     public void expose(AgentBase agent, double pollutionLevel) {
+        PollutionEffectInfo effectInfo =
+            (PollutionEffectInfo)agent.pollutionEffect ;
         if (! agent.isEvacuated()) {
-            agent.currentExposureAmount = pollutionLevel;
-            agent.accumulatedExposureAmount += pollutionLevel;
+            effectInfo.currentExposureAmount = pollutionLevel;
+            effectInfo.accumulatedExposureAmount += pollutionLevel;
         }
 
         int triageLevel = getTriage(agent);
@@ -44,20 +50,24 @@ public class AccumulatedPollution extends PollutionBase {
 
     // 呼び出し元で speed を更新した後に呼ばれる
     public void effect(AgentBase agent) {
-        if (agent.accumulatedExposureAmount >= INCAPACITATED_LEVEL) {
+        PollutionEffectInfo effectInfo =
+            (PollutionEffectInfo)agent.pollutionEffect ;
+        if (effectInfo.accumulatedExposureAmount >= INCAPACITATED_LEVEL) {
             agent.setSpeed(0.0);
-        } else if (agent.accumulatedExposureAmount >= IRRITANT_LEVEL) {
-            agent.setSpeed(agent.getSpeed() * (INCAPACITATED_LEVEL - agent.accumulatedExposureAmount) / INCAPACITATED_LEVEL);
+        } else if (effectInfo.accumulatedExposureAmount >= IRRITANT_LEVEL) {
+            agent.setSpeed(agent.getSpeed() * (INCAPACITATED_LEVEL - effectInfo.accumulatedExposureAmount) / INCAPACITATED_LEVEL);
         }
     }
 
     /* the state of the agent */
     public int getTriage(AgentBase agent) {
-        if (agent.accumulatedExposureAmount >= DEADLY_LEVEL)
+        PollutionEffectInfo effectInfo =
+            (PollutionEffectInfo)agent.pollutionEffect ;
+        if (effectInfo.accumulatedExposureAmount >= DEADLY_LEVEL)
             return 3;
-        else if (agent.accumulatedExposureAmount >= UNBEARABLE_LEVEL)
+        else if (effectInfo.accumulatedExposureAmount >= UNBEARABLE_LEVEL)
             return 2;
-        else if (agent.accumulatedExposureAmount >= INCAPACITATED_LEVEL)
+        else if (effectInfo.accumulatedExposureAmount >= INCAPACITATED_LEVEL)
             return 1;
         else
             return 0;
@@ -69,4 +79,52 @@ public class AccumulatedPollution extends PollutionBase {
     public boolean isDead(AgentBase agent) {
         return getTriage(agent) >= 3;
     }
+
+    //============================================================
+    //============================================================
+    /**
+     * Pollution の状態をエージェント毎に保持する構造体。
+     */
+    public static class PollutionEffectInfo
+        extends PollutionBase.PollutionEffectInfo {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 現状の暴露量
+         */
+        public double currentExposureAmount = 0.0 ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 累積暴露量
+         */
+        public double accumulatedExposureAmount = 0.0;
+
+        //--------------------------------------------------
+        /**
+         * コンストラクタ
+         */
+        public PollutionEffectInfo(AgentBase _agent, PollutionBase _pollution) {
+            super(_agent, _pollution) ;
+            currentExposureAmount = 0.0 ;
+            accumulatedExposureAmount = 0.0;
+        }
+
+        //--------------------------------------------------
+        /**
+         * dumpResult 用の値。
+         */
+        public double currentValueForLog() {
+            return currentExposureAmount ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * dumpResult 用の値。
+         */
+        public double accumulatedValueForLog() {
+            return accumulatedExposureAmount ;
+        }
+
+    }
+
 }

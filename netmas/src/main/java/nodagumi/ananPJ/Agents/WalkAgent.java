@@ -668,7 +668,7 @@ public class WalkAgent extends AgentBase {
                                                                       time) ;
         }
 
-        pollution.effect(this);
+        pollutionEffect.effect() ;
 
         if (networkMap != null && speed != lastSpeed) {
             if (! isEvacuated()) {
@@ -1293,7 +1293,7 @@ public class WalkAgent extends AgentBase {
         out.print("" + generatedTime + ",");
         out.print("" + finishedTime + ",");/* 0.0 if not evacuated */
         out.print("" + getTriage() + ",");
-        out.print("" + accumulatedExposureAmount);
+        out.print("" + pollutionEffect.accumulatedValueForLog()) ;
         for (final CheckPoint cp : route) {
             if (cp.node.getTags().size() != 0) {
                 out.print("," + cp.node.getTagString().replace(',', '-'));

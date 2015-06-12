@@ -565,8 +565,8 @@ public class AgentHandler {
                 buff.append(0); buff.append(",");
                 buff.append((int)agent.generatedTime); buff.append(",");
                 buff.append((int)time); buff.append(",");
-                buff.append(agent.currentExposureAmount); buff.append(",");
-                buff.append(agent.accumulatedExposureAmount); buff.append(",");
+                buff.append(agent.pollutionEffect.currentValueForLog()); buff.append(",");
+                buff.append(agent.pollutionEffect.accumulatedValueForLog()); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
             } else {
                 buff.append(agent.ID); buff.append(",");
@@ -593,8 +593,8 @@ public class AgentHandler {
                 buff.append((int)agent.generatedTime); buff.append(",");
                 buff.append((int)time); buff.append(",");
 
-                buff.append(agent.currentExposureAmount); buff.append(",");
-                buff.append(agent.accumulatedExposureAmount); buff.append(",");
+                buff.append(agent.pollutionEffect.currentValueForLog()); buff.append(",");
+                buff.append(agent.pollutionEffect.accumulatedValueForLog()); buff.append(",");
                 buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
 
                 buff.append(agent.getNextCandidateString());
@@ -642,8 +642,9 @@ public class AgentHandler {
                 // (do nothing)
                 // evacuatedAgentCount++;
             } else {
-                totalDamage += agent.accumulatedExposureAmount;
-                if (agent.accumulatedExposureAmount > maxDamage) maxDamage = agent.accumulatedExposureAmount;
+                double damage = agent.pollutionEffect.accumulatedValueForLog() ;
+                totalDamage += damage ;
+                if (damage > maxDamage) maxDamage = damage ;
             }
         }
     }

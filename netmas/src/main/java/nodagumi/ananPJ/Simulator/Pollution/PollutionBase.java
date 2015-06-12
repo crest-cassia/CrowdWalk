@@ -12,6 +12,7 @@ public abstract class PollutionBase {
     public abstract void effect(AgentBase agent);
     public abstract int getTriage(AgentBase agent);
     public abstract boolean isDead(AgentBase agent);
+    public abstract PollutionEffectInfo newEffectInfo(AgentBase agent) ;
 
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -68,5 +69,79 @@ public abstract class PollutionBase {
         register("NonAccumulated", NonAccumulatedPollution.class) ;
     }
 
+    //============================================================
+    //============================================================
+    /**
+     * Pollution の状態をエージェント毎に保持する構造体。
+     */
+    abstract public static class PollutionEffectInfo {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * エージェントへのリンク
+         */
+        public AgentBase agent = null ;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * pollution の影響計算するところ。
+         */
+        public PollutionBase pollution = null ;
+
+        //--------------------------------------------------
+        /**
+         * コンストラクタ
+         */
+        public PollutionEffectInfo(AgentBase _agent, PollutionBase _pollution) {
+            agent = _agent ;
+            pollution = _pollution ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * export
+         */
+        public void expose(double pollutionLevel) {
+            pollution.expose(agent, pollutionLevel) ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * effect
+         */
+        public void effect() {
+            pollution.effect(agent) ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * effect
+         */
+        public int getTriage() {
+            Itk.dbgVal("agent", agent) ;
+            Itk.dbgVal("pollution", pollution) ;
+            return pollution.getTriage(agent) ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * is Dead
+         */
+        public boolean isDead() {
+            return pollution.isDead(agent) ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * dumpResult 用の値。(現在値)
+         */
+        abstract public double currentValueForLog() ;
+
+        //--------------------------------------------------
+        /**
+         * dumpResult 用の値。(累積値)
+         */
+        abstract public double accumulatedValueForLog() ;
+
+    }
 
 }

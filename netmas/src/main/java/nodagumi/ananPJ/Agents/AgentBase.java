@@ -94,12 +94,14 @@ implements Comparable<AgentBase> {
      * currentExposuerAmount: 現在の暴露量
      * accumulatedExposuerAmount: 暴露量の累積
      * pollutionType: 累積するかどうか？
-     * pollution: ???
+     * pollution: pollutionによる影響の処理を行う部分。
      */
-    public double currentExposureAmount = 0.0;
-    public double accumulatedExposureAmount = 0.0;
     protected static String pollutionType = "NonAccumulated";
-    protected PollutionBase pollution = null;
+    public PollutionBase.PollutionEffectInfo pollutionEffect ;
+
+    //public double currentExposureAmount = 0.0;
+    //public double accumulatedExposureAmount = 0.0;
+    //    protected PollutionBase pollution = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -128,7 +130,7 @@ implements Comparable<AgentBase> {
      * constractors
      * 引数なしconstractorはClassFinder.newByName で必要。
      */
-    public AgentBase() {} ;
+    public AgentBase() {}
     public AgentBase(Random _random) {
         init(_random) ;
     }
@@ -150,7 +152,8 @@ implements Comparable<AgentBase> {
         //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
         // Pollution のサブクラスのインスタンスを取得
-        pollution = PollutionBase.getInstance(pollutionType) ;
+        pollutionEffect =
+            PollutionBase.getInstance(pollutionType).newEffectInfo(this) ;
     }
 
     //------------------------------------------------------------
@@ -540,7 +543,7 @@ implements Comparable<AgentBase> {
      * ???
      */
     public int getTriage() {
-        return pollution.getTriage(this);
+        return pollutionEffect.getTriage() ;
     }
 
     //------------------------------------------------------------
@@ -557,8 +560,8 @@ implements Comparable<AgentBase> {
      */
     public void exposed(double c) {
         if (! isDead()) {
-            pollution.expose(this, c);
-            dead = pollution.isDead(this);
+            pollutionEffect.expose(c);
+            dead = pollutionEffect.isDead() ;
         }
     }
 
