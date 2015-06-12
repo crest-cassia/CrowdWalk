@@ -1246,7 +1246,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         private Appearance app;
         private TransformGroup transformGroup;
         private BranchGroup branchGroup;
-        private Color3f lastColor;
+        private Color3f lastColor = null;
 
         public Agent3D(AgentBase _agent) {
             agent = _agent;
@@ -1272,9 +1272,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
             /* appearance */
             app = new Appearance();
-            app.setColoringAttributes(new ColoringAttributes(agent_color,
-                        ColoringAttributes.FASTEST));
-            lastColor = agent_color;
+            updateColor();
             app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
             TransparencyAttributes ta = new TransparencyAttributes(
                     TransparencyAttributes.NICEST, agent_transparency);
