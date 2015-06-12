@@ -43,9 +43,12 @@ public class PollutionCalculator {
 
     HashMap<Integer, MapArea> polluted_area_sorted;
 
-    private ArrayList<double[]> pollutionDataList = new ArrayList<double[]>();
-    private Iterator<double[]> pollutionDataIterator = null;
-    private double[] pollutionData = null;
+    private ArrayList<PollutionInstant> pollutionInstantList =
+        new ArrayList<PollutionInstant>();
+
+    private Iterator<PollutionInstant> pollutionInstantIterator = null;
+
+    private PollutionInstant nextInstant = null;
 
     public PollutionCalculator(String scheduleFileName,
             ArrayList<MapArea> _pollution, double _timeScale, double interpolationInterval) {
@@ -57,10 +60,10 @@ public class PollutionCalculator {
 	    Itk.logInfo("Load Pollution File", scheduleFileName);
 	    Itk.logInfo("MAX Pollution Level", maxPollutionLevel) ;
             linearInterpolation(interpolationInterval);
-            pollutionDataIterator = pollutionDataList.iterator();
-            if (pollutionDataIterator.hasNext()) {
-                pollutionData = pollutionDataIterator.next();
-                nextEvent = pollutionData[0];
+            pollutionInstantIterator = pollutionInstantList.iterator();
+            if (pollutionInstantIterator.hasNext()) {
+                nextInstant = pollutionInstantIterator.next();
+                nextEvent = nextInstant.relativeTime ;
             } else {
                 nextEvent = -1.0;
             }
@@ -80,26 +83,29 @@ public class PollutionCalculator {
      *   <li> 各エリアとの対応は、各 Area (MapAreaRectangle) の tag と、density の序数。</li>
      *   <li> 各エリアは、序数と同じ整数値のタグを持つ。</li>
      * </ul>
-     * 読み込まれたデータは、pollutionDataList に入れられる。
-     * pollutionDataList の各要素は、[時刻、density1, density2, ...] という
-     * double の配列。
+     * 読み込まれたデータは、pollutionInstantList に入れられる。
+     * pollutionInstantList の各要素は、[時刻、density1, density2, ...] という
+     * PollutionInsatnt の配列。
      */
     private void readData(String fileName) {
-        pollutionDataList.clear();
+        pollutionInstantList.clear();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line = reader.readLine();
             while (line != null) {
                 if (! line.trim().startsWith("#")) {
                     String[] strItems = line.split(",");
-                    double[] items = new double[strItems.length];
-                    for (int index = 0; index < items.length; index++) {
-                        items[index] = Double.parseDouble(strItems[index]);
-                        if (index > 0 && items[index] > maxPollutionLevel) {
-                            maxPollutionLevel = items[index];
+                    PollutionInstant instant = new PollutionInstant() ;
+                    instant.relativeTime = Double.parseDouble(strItems[0]) ;
+                    for (int index = 1; index < strItems.length; index++) {
+                        double value = Double.parseDouble(strItems[index]) ;
+                        // 先頭は time なので、１つずらす。
+                        instant.setValue(index-1, value) ;
+                        if (value > maxPollutionLevel) {
+                            maxPollutionLevel = value;
                         }
                     }
-                    pollutionDataList.add(items);
+                    pollutionInstantList.add(instant);
                 }
                 line = reader.readLine();
             }
@@ -111,37 +117,38 @@ public class PollutionCalculator {
 
     // pollution データを interval 秒区分で線形補間する
     private void linearInterpolation(double interval) {
-        if (interval <= 0.0 || pollutionDataList.isEmpty()) {
+        if (interval <= 0.0 || pollutionInstantList.isEmpty()) {
             return;
         }
-        ArrayList<double[]> interpolatedPollutionDataList = new ArrayList<double[]>();
-        double[] lastItems = null;
-        for (double[] items : pollutionDataList) {
-            if (lastItems != null) {
-                double lastEventTime = lastItems[0];
-                double eventTime = items[0];
+        ArrayList<PollutionInstant> interpolatedPollutionInstantList =
+            new ArrayList<PollutionInstant>();
+        PollutionInstant lastInstant = null;
+        for (PollutionInstant instant : pollutionInstantList) {
+            if (lastInstant != null) {
+                double lastEventTime = lastInstant.relativeTime ;
+                double eventTime = instant.relativeTime ;
                 if ((eventTime - lastEventTime) > interval) {
                     // 線形補間
                     for (double time = lastEventTime + interval; time < eventTime; time += interval) {
-                        double[] interpolatedItems = new double[items.length];
-                        interpolatedItems[0] = time;
-                        for (int index = 1; index < items.length; index++) {
-                            if (items[index] == lastItems[index]) {
-                                interpolatedItems[index] = items[index];
-                            } else {
-                                double a = (time - lastEventTime) / (eventTime - lastEventTime);    // 補間係数
-                                interpolatedItems[index] = lastItems[index] + a * (items[index] - lastItems[index]);
-                            }
+                        PollutionInstant interpolatedInstant
+                            = new PollutionInstant() ;
+                        interpolatedInstant.relativeTime = time;
+                        for (int index = 0; index < instant.valueSize(); index++) {
+                            double a = (time - lastEventTime) / (eventTime - lastEventTime);    // 補間係数
+                            double v = (lastInstant.getValue(index) +
+                                        a * (instant.getValue(index) -
+                                             lastInstant.getValue(index)));
+                            interpolatedInstant.setValue(index, v) ;
                         }
-                        interpolatedPollutionDataList.add(interpolatedItems);
+                        interpolatedPollutionInstantList.add(interpolatedInstant);
                     }
                 }
             }
-            interpolatedPollutionDataList.add(items);
-            lastItems = items;
+            interpolatedPollutionInstantList.add(instant);
+            lastInstant = instant;
         }
-        pollutionDataList.clear();
-        pollutionDataList.addAll(interpolatedPollutionDataList);
+        pollutionInstantList.clear();
+        pollutionInstantList.addAll(interpolatedPollutionInstantList);
     }
 
     public void updateNodesLinksAgents(double time,
@@ -194,6 +201,17 @@ public class PollutionCalculator {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * Pollution Area のタグがついた MapArea を探す。
+     * [2015.06.12 I.Noda]
+     * 現状の設定では、数字のみのタグを、Pollution 用のタグと解釈する。
+     * これは、あまりにひどい設計なので、修正が必要。
+     * また、ある Index を示すタグを持つ Area はただひとつであることを
+     * 仮定している。
+     * この設定も、まずいか、あるいは、ただひとつであることをチェックする
+     * 機能が必要。
+     */
     private void setup_polluted_areas(ArrayList<MapArea> areas) {
         polluted_area_sorted = new HashMap<Integer, MapArea>();
 
@@ -206,8 +224,6 @@ public class PollutionCalculator {
             if (m != null) {
                 int index = Integer.parseInt(m.group(0));
 
-                //System.out.println("index "+index);
-
                 polluted_area_sorted.put(index, area);
             }
             // current density 値の初期化
@@ -216,25 +232,25 @@ public class PollutionCalculator {
     }
 
     private void update_pollution() {
-        if (debug) System.err.println("PC: updating pollution " + nextEvent);
-        
-        //System.out.println("in update_pollution() items: "+items[0]+" "+items[1]+" "+items[2]+" "+items[3]+" "+items[4]);
-        
+        Itk.logDebug("PC: updating pollution ",nextEvent);
+
         for (Integer index : polluted_area_sorted.keySet()) {
             MapArea area = polluted_area_sorted.get(index);
-            
-            //System.out.println("index "+index+"index.intValue() "+index.intValue());
-                
-            Double pollutionLevel = pollutionData[index.intValue()];
-            
-            if (debug) System.err.println("(" + index + "=" + pollutionLevel + ") ");
-            
+
+            /* [2015.06.12 I.Noda]
+             * 現状で、Area のタグに書かれる数字の Index と、
+             * pollutionInstant の中のindex はひとつずれている。
+             * いずれは、タグ（文字列として）と pollutionInstant 内の
+             * index を、hash table で結ばないといけない。
+             */
+            Double pollutionLevel = nextInstant.getValue(index-1) ;
+
             area.setUserObject(pollutionLevel);
         }
 
-        if (pollutionDataIterator.hasNext()) {
-            pollutionData = pollutionDataIterator.next();
-            nextEvent = pollutionData[0];
+        if (pollutionInstantIterator.hasNext()) {
+            nextInstant = pollutionInstantIterator.next();
+            nextEvent = nextInstant.relativeTime ;
         } else {
             nextEvent = -1.0;
         }
@@ -245,4 +261,51 @@ public class PollutionCalculator {
     }
 
     public double getMaxPollutionLevel() { return maxPollutionLevel; }
+
+
+    //============================================================
+    /**
+     * ある特定時点での Pollution 状況。
+     */
+    public static class PollutionInstant {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * タイムスライスの時刻
+         */
+        public double relativeTime = 0.0 ;
+
+        /**
+         * Pollution の値
+         */
+        private ArrayList<Double> value = new ArrayList<Double>() ;
+
+        //--------------------------------------------------
+        /**
+         * Pollution の値を取得。
+         */
+        public Double getValue(int index) {
+            return value.get(index) ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * Pollution の値をセット。
+         */
+        public void setValue(int index, double val) {
+            while(value.size() <= index) { value.add(0.0) ;}
+            value.set(index, val) ;
+        }
+
+        //--------------------------------------------------
+        /**
+         * Pollution の値の数。
+         */
+        public int valueSize() {
+            return value.size() ;
+        }
+
+
+
+    } // end class PollutionInstant
+
 }
