@@ -35,11 +35,9 @@ import nodagumi.Itk.*;
 public class PollutionCalculator {
     static double AGENT_HEIGHT = 1.5;
 
-    double nextEvent = 0;
+    double nextInstantTime = 0;
     double timeScale;
     private double maxPollutionLevel = 0.0;
-
-    public static boolean debug = false;
 
     HashMap<Integer, MapArea> polluted_area_sorted;
 
@@ -48,13 +46,13 @@ public class PollutionCalculator {
 
     private Iterator<PollutionInstant> pollutionInstantIterator = null;
 
-    private PollutionInstant nextInstant = null;
+    private PollutionInstant currentInstant = null;
 
     public PollutionCalculator(String scheduleFileName,
             ArrayList<MapArea> _pollution, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
 	    Itk.logInfo("Load Pollution File", "(none)") ;
-            nextEvent = -1.0;
+            nextInstantTime = -1.0;
         } else {
             readData(scheduleFileName);
 	    Itk.logInfo("Load Pollution File", scheduleFileName);
@@ -62,10 +60,10 @@ public class PollutionCalculator {
             linearInterpolation(interpolationInterval);
             pollutionInstantIterator = pollutionInstantList.iterator();
             if (pollutionInstantIterator.hasNext()) {
-                nextInstant = pollutionInstantIterator.next();
-                nextEvent = nextInstant.relativeTime ;
+                currentInstant = pollutionInstantIterator.next();
+                nextInstantTime = currentInstant.relativeTime ;
             } else {
-                nextEvent = -1.0;
+                nextInstantTime = -1.0;
             }
         }
         
@@ -154,9 +152,8 @@ public class PollutionCalculator {
     public void updateNodesLinksAgents(double time,
                                        NetworkMapBase map,
                                        Collection<AgentBase> agents) {
-        //if (debug) System.err.println("PC update: " + time + ", next: " + nextEvent);
 
-        if (nextEvent != -1.0 && nextEvent <= time) {
+        if (nextInstantTime != -1.0 && nextInstantTime <= time) {
             // System.out.println("  PC update next event: " + time);
             update_pollution();
 
@@ -190,7 +187,7 @@ public class PollutionCalculator {
             for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
                 if (area.contains(point)) {
                     pollutionLevel = (Double)area.getUserObject();
-                    if (debug) System.err.println(agent.ID + " " + pollutionLevel);
+                    Itk.logNone("polluted", agent.ID + " " + pollutionLevel) ;
                     agent.exposed(pollutionLevel * timeScale);
                     break;
                 }
@@ -232,7 +229,7 @@ public class PollutionCalculator {
     }
 
     private void update_pollution() {
-        Itk.logDebug("PC: updating pollution ",nextEvent);
+        Itk.logDebug("PC: updating pollution ",nextInstantTime);
 
         for (Integer index : polluted_area_sorted.keySet()) {
             MapArea area = polluted_area_sorted.get(index);
@@ -243,16 +240,16 @@ public class PollutionCalculator {
              * いずれは、タグ（文字列として）と pollutionInstant 内の
              * index を、hash table で結ばないといけない。
              */
-            Double pollutionLevel = nextInstant.getValue(index-1) ;
+            Double pollutionLevel = currentInstant.getValue(index-1) ;
 
             area.setUserObject(pollutionLevel);
         }
 
         if (pollutionInstantIterator.hasNext()) {
-            nextInstant = pollutionInstantIterator.next();
-            nextEvent = nextInstant.relativeTime ;
+            currentInstant = pollutionInstantIterator.next();
+            nextInstantTime = currentInstant.relativeTime ;
         } else {
-            nextEvent = -1.0;
+            nextInstantTime = -1.0;
         }
     }
     
@@ -270,7 +267,8 @@ public class PollutionCalculator {
     public static class PollutionInstant {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
-         * タイムスライスの時刻
+         * タイムスライスの時刻。
+         * 実際には、このタイムスライスが終わる時刻。
          */
         public double relativeTime = 0.0 ;
 
