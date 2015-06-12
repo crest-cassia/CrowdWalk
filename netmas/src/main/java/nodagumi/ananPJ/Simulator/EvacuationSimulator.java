@@ -27,7 +27,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import nodagumi.Itk.*;
@@ -115,11 +115,11 @@ public class EvacuationSimulator {
             System.exit(1);
         }
 
-        // リンク上にかかるPollutedAreaのリストをリンクにセットする
-        for (PollutedArea area : networkMap.getRooms()) {
+        // リンク上にかかるMapAreaのリストをリンクにセットする
+        for (MapArea area : networkMap.getRooms()) {
 	    for (MapLink link : getLinks()) {
                 if (area.intersectsLine(link.getLine2D())) {
-                    link.addIntersectedPollutionArea(area);
+                    link.addIntersectedMapArea(area);
                 }
             }
         }
@@ -498,7 +498,7 @@ public class EvacuationSimulator {
         return agentHandler;
     }
 
-    public ArrayList<PollutedArea> getPollutions() {
+    public ArrayList<MapArea> getPollutions() {
         return pollutionCalculator.getPollutions();
     }
 

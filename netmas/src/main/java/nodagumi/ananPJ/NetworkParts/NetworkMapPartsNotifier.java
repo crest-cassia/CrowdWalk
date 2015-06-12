@@ -7,7 +7,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 
 /**
  * NetworkMap の構成要素の状態変化を通知する.
@@ -81,9 +81,9 @@ public class NetworkMapPartsNotifier {
     /**
      * Pollution レベルが変化した事を通知する.
      */
-    public void pollutionLevelChanged(PollutedArea pollutedArea) {
+    public void pollutionLevelChanged(MapArea area) {
         for (NetworkMapPartsListener listener : listeners) {
-            listener.pollutionLevelChanged(pollutedArea);
+            listener.pollutionLevelChanged(area);
         }
     }
 

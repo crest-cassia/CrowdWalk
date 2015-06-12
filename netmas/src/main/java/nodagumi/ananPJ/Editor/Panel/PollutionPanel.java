@@ -36,7 +36,7 @@ import javax.swing.table.TableColumnModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 
 public class PollutionPanel extends JPanel 
 	implements ActionListener, ListSelectionListener {
@@ -63,11 +63,11 @@ public class PollutionPanel extends JPanel
 		}
 
 		public Object getValueAt(final int row, final int col) {
-			ArrayList<PollutedArea> rooms = editor.getMap().getRooms();
+			ArrayList<MapArea> rooms = editor.getMap().getRooms();
 			if (rooms.isEmpty()) {
 				return "ERR(" + row + ", " + col + ")";
 			}
-			PollutedArea area = rooms.get(row);
+			MapArea area = rooms.get(row);
 			switch(col) {
 			case 0:
 			{

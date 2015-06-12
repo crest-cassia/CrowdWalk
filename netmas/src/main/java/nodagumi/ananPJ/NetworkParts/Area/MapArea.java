@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts.Pollution;
+package nodagumi.ananPJ.NetworkParts.Area;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
 //import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
@@ -31,11 +31,11 @@ import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.vecmath.Vector3f;
 
-public abstract class PollutedArea extends OBNode {
+public abstract class MapArea extends OBNode {
 
         protected double lastPollutionLevel = 0.0;  // 更新チェック用
 
-	public PollutedArea(String _id) {
+	public MapArea(String _id) {
 		super(_id);
 	}
 	
@@ -54,19 +54,19 @@ public abstract class PollutedArea extends OBNode {
 	//For view customize : contact agent with pollution_area
 	public abstract boolean getContactOfAgents();
 	public abstract void setContactOfAgents(boolean _view);
-	public static void showAttributeDialog(ArrayList<PollutedArea> areas,
+	public static void showAttributeDialog(ArrayList<MapArea> areas,
 			int x, int y) {
         /* Set attributes with a dialog */
     	class AttributeSetDialog  extends JDialog implements ActionListener, KeyListener {
 
-			private ArrayList<PollutedArea> areas;
+			private ArrayList<MapArea> areas;
 
         	private ArrayList<String> tags;
         	
         	private JTextField[] tagFields;
         	boolean singleArea;
 
-        	public AttributeSetDialog(ArrayList<PollutedArea> _areas) {
+        	public AttributeSetDialog(ArrayList<MapArea> _areas) {
         		super();
 
         		this.setModal(true);
@@ -84,7 +84,7 @@ public abstract class PollutedArea extends OBNode {
     		@Override
     		public void actionPerformed(ActionEvent e) {
     			if (e.getActionCommand().equals("OK")) {
-    				for (PollutedArea area : areas) {
+    				for (MapArea area : areas) {
     					if (area.selected) {
     						if (singleArea) {
     							for (int i = 0; i < tags.size(); ++i) {

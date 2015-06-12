@@ -26,7 +26,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.navigation.NavigationHint;
 
@@ -47,7 +47,7 @@ public class EditorFramePanel extends JPanel {
     /* parameters related to editing */
     private Hover hoverNode = null;
     private Hover hoverLink = null;
-    private PollutedArea hoverArea = null;
+    private MapArea hoverArea = null;
     private Rectangle2D selectedArea = null;
     private Line2D scaleLine = null;
     public boolean setScaleMode = false;
@@ -305,14 +305,14 @@ public class EditorFramePanel extends JPanel {
         
         /* actual objects */
         if (showPollution) {
-            for (final PollutedArea area : frame.getChildPollutedAreas()) {
+            for (final MapArea area : frame.getChildMapAreas()) {
                 // tkokada
                 // apply a rotation rectangle, here.
                 double angle = area.getAngle();
                 if (!Double.isNaN(angle)) {
                     AffineTransform af = g.getTransform();
                     af.rotate(angle, ((Rectangle2D) area.getShape()).getCenterX(), ((Rectangle2D) area.getShape()).getCenterY());
-                    // draw center point of pollution area
+                    // draw center point of map area
                     /*
                     g.setColor(Color.GREEN);
                     g.fill(new Rectangle2D.Double(
@@ -428,7 +428,7 @@ public class EditorFramePanel extends JPanel {
             // tkokada
             // apply the rotated rectangles to show.
             boolean drawSelectedArea = false;
-            for (PollutedArea area : frame.getChildPollutedAreas()) {
+            for (MapArea area : frame.getChildMapAreas()) {
                 if (((Rectangle2D) area.getShape()).contains((Rectangle2D) hoverArea.getShape())) {
                     double angle = area.getAngle();
                     if (!Double.isNaN(angle)) {
@@ -446,8 +446,8 @@ public class EditorFramePanel extends JPanel {
                 g.draw(hoverArea.getShape());
             }
         }
-        // draw selected Pollution Area by using EDIT_POLLUTION multi selection
-        for (PollutedArea area: frame.getChildPollutedAreas()) {
+        // draw selected MapArea by using EDIT_POLLUTION multi selection
+        for (MapArea area: frame.getChildMapAreas()) {
             if (area.selected) {
                 double angle = area.getAngle();
                 if (!Double.isNaN(angle)) {
@@ -587,7 +587,7 @@ public class EditorFramePanel extends JPanel {
         hoverLink = _hoverLink;
     }
     
-    public void updateHoverArea(PollutedArea area) {
+    public void updateHoverArea(MapArea area) {
         hoverArea = area;
     }
     

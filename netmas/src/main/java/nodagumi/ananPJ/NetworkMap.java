@@ -40,8 +40,8 @@ import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.OBNode.NType;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle;
 import nodagumi.ananPJ.misc.NetMASSnapshot;
 
 import nodagumi.Itk.*;
@@ -317,14 +317,14 @@ public class NetworkMap extends NetworkMapBase {
         return link;
     }
 
-    public PollutedArea createPollutedAreaRectangle(
+    public MapArea createMapAreaRectangle(
             MapPartGroup parent,
             Rectangle2D bounds,
             double min_height,
             double max_height,
             double angle) {
         String id = assignNewId();
-        PollutedArea area = new PollutedAreaRectangle(id,
+        MapArea area = new MapAreaRectangle(id,
                 bounds, min_height, max_height, angle);
         insertOBNode(parent, area, true);
         return area;
@@ -440,15 +440,15 @@ public class NetworkMap extends NetworkMapBase {
         return groups;
     }
 
-    public ArrayList<PollutedArea> getRooms() {
-        ArrayList<PollutedArea> rooms = new ArrayList<PollutedArea>();
+    public ArrayList<MapArea> getRooms() {
+        ArrayList<MapArea> rooms = new ArrayList<MapArea>();
         findRoomRec((OBNode)root, rooms);
         return rooms;
     }
 
-    private void findRoomRec(OBNode node, ArrayList<PollutedArea> rooms) {
+    private void findRoomRec(OBNode node, ArrayList<MapArea> rooms) {
         if (node.getNodeType() == NType.ROOM) {
-            rooms.add((PollutedArea)node);
+            rooms.add((MapArea)node);
         }
         for (int i = 0; i < node.getChildCount(); ++i) {
             TreeNode child = node.getChildAt(i);

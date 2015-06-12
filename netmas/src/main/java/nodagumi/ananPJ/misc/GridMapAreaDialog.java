@@ -24,14 +24,14 @@ import javax.swing.SpinnerNumberModel;
  * division number.
  */
 
-public class GridPollutionAreaDialog extends JDialog 
+public class GridMapAreaDialog extends JDialog 
     implements ActionListener {
 	
 	private JSpinner[] values;
 	
 	public boolean proceed = false;
 	
-	public GridPollutionAreaDialog(String title,
+	public GridMapAreaDialog(String title,
 			String[] labels,
 			double min_height[],
 			double max_height[],
@@ -111,7 +111,7 @@ public class GridPollutionAreaDialog extends JDialog
 			int[] vertical_division,
 			int[] horizontal_division,
 			double[] rotation) {
-		GridPollutionAreaDialog gdd = new GridPollutionAreaDialog("", labels,
+		GridMapAreaDialog gdd = new GridMapAreaDialog("", labels,
 				min_height, max_height, vertical_division, horizontal_division,
 				rotation);
     	gdd.setVisible(true);

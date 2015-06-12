@@ -4,7 +4,7 @@ package nodagumi.ananPJ.NetworkParts;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 
 /**
  * NetworkMap の構成要素の状態変化を監視するリスナ用インターフェイス.
@@ -41,7 +41,8 @@ public interface NetworkMapPartsListener {
     /**
      * Pollution レベルが変化した.
      */
-    public void pollutionLevelChanged(PollutedArea pollutedArea);
+
+    public void pollutionLevelChanged(MapArea area);
 
     /**
      * エージェントが追加された.

@@ -24,7 +24,7 @@ import javax.vecmath.Vector3f;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
@@ -41,14 +41,14 @@ public class PollutionCalculator {
 
     public static boolean debug = false;
 
-    HashMap<Integer, PollutedArea> polluted_area_sorted;
+    HashMap<Integer, MapArea> polluted_area_sorted;
 
     private ArrayList<double[]> pollutionDataList = new ArrayList<double[]>();
     private Iterator<double[]> pollutionDataIterator = null;
     private double[] pollutionData = null;
 
     public PollutionCalculator(String scheduleFileName,
-            ArrayList<PollutedArea> _pollution, double _timeScale, double interpolationInterval) {
+            ArrayList<MapArea> _pollution, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
 	    Itk.logInfo("Load Pollution File", "(none)") ;
             nextEvent = -1.0;
@@ -77,7 +77,7 @@ public class PollutionCalculator {
      *   <li> ファイルの形式は、CSV。</li>
      *   <li> "#" で始まる行はコメント行 </li>
      *   <li> 各行の先頭は、開始からの時刻。続いて、各エリアの density が並ぶ。</li>
-     *   <li> 各エリアとの対応は、各 Area (PollutionAreaRectangle) の tag と、density の序数。</li>
+     *   <li> 各エリアとの対応は、各 Area (MapAreaRectangle) の tag と、density の序数。</li>
      *   <li> 各エリアは、序数と同じ整数値のタグを持つ。</li>
      * </ul>
      * 読み込まれたデータは、pollutionDataList に入れられる。
@@ -155,11 +155,11 @@ public class PollutionCalculator {
 
             // pollution対象リンクの汚染フラグを更新する(汚染度が0に戻ることも考慮する)
 	    for (MapLink link : map.getLinks()) {
-                if (link.getIntersectedPollutionAreas().isEmpty()) {
+                if (link.getIntersectedMapAreas().isEmpty()) {
                     continue;
                 }
                 link.setPolluted(false);
-                for (PollutedArea area : link.getIntersectedPollutionAreas()) {
+                for (MapArea area : link.getIntersectedMapAreas()) {
                     if ((Double)area.getUserObject() != 0.0) {
                         link.setPolluted(true);
                         break;
@@ -180,7 +180,7 @@ public class PollutionCalculator {
             Vector3f point = new Vector3f((float)agent.getPos().getX(),
                     (float)agent.getPos().getY(),
                     (float)(agent.getHeight() + AGENT_HEIGHT));
-            for (PollutedArea area : agent.getCurrentLink().getIntersectedPollutionAreas()) {
+            for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
                 if (area.contains(point)) {
                     pollutionLevel = (Double)area.getUserObject();
                     if (debug) System.err.println(agent.ID + " " + pollutionLevel);
@@ -200,12 +200,12 @@ public class PollutionCalculator {
         }
     }
 
-    private void setup_polluted_areas(ArrayList<PollutedArea> areas) {
-        polluted_area_sorted = new HashMap<Integer, PollutedArea>();
+    private void setup_polluted_areas(ArrayList<MapArea> areas) {
+        polluted_area_sorted = new HashMap<Integer, MapArea>();
 
         //System.out.println("in setup_polluted_areas");
 
-        for (PollutedArea area : areas) {
+        for (MapArea area : areas) {
             //System.out.println("in setup_polluted_areas"+areas);
 
             Matcher m = area.matchTag("^(\\d+)$");
@@ -227,7 +227,7 @@ public class PollutionCalculator {
         //System.out.println("in update_pollution() items: "+items[0]+" "+items[1]+" "+items[2]+" "+items[3]+" "+items[4]);
         
         for (Integer index : polluted_area_sorted.keySet()) {
-            PollutedArea area = polluted_area_sorted.get(index);
+            MapArea area = polluted_area_sorted.get(index);
             
             //System.out.println("index "+index+"index.intValue() "+index.intValue());
                 
@@ -246,8 +246,8 @@ public class PollutionCalculator {
         }
     }
     
-    public ArrayList<PollutedArea> getPollutions() {
-        return new ArrayList<PollutedArea>(polluted_area_sorted.values());
+    public ArrayList<MapArea> getPollutions() {
+        return new ArrayList<MapArea>(polluted_area_sorted.values());
     }
 
     public double getMaxPollutionLevel() { return maxPollutionLevel; }

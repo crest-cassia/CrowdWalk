@@ -61,9 +61,9 @@ import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
 import nodagumi.ananPJ.NetworkParts.OBNode; // tkokada
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
-import nodagumi.ananPJ.misc.GridPollutionAreaDialog;    // tkokada
+import nodagumi.ananPJ.misc.GridMapAreaDialog;    // tkokada
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 
@@ -115,7 +115,7 @@ public class EditorFrame
     private boolean draggingNode = false;
     private Hover hoverLink = null;
     private MapNode hoverLinkFromCandidate = null;
-    private PollutedArea hoverPollution = null;
+    private MapArea hoverPollution = null;
     // used on placeNodeLink method
     private MapNode initialNode = null;     // first placed node
     private MapNode prevNode = null;        // to make link from
@@ -440,7 +440,7 @@ public class EditorFrame
         });
         modeMenu.add(placeNodeLinkMode);
         
-        placePollutionMode = new MenuItem ("Place Pollution Areas");
+        placePollutionMode = new MenuItem ("Place Map Areas");
         placePollutionMode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -632,7 +632,7 @@ public class EditorFrame
         for (AgentBase agent : getChildAgents()) {
             agent.selected = false;
         }
-        for (PollutedArea area : getChildPollutedAreas()) {
+        for (MapArea area : getChildMapAreas()) {
             area.selected = false;
         }
         hoverNode = null;
@@ -1078,7 +1078,7 @@ public class EditorFrame
 
     private boolean updateHoverArea(Point2D p) {
         /* Find an existing agent */
-        for (PollutedArea area : getChildPollutedAreas()) {
+        for (MapArea area : getChildMapAreas()) {
             if (area.contains(p)) {
                 final boolean updated = (!area.equals(hoverPollution));
                 hoverPollution = area;
@@ -1091,7 +1091,7 @@ public class EditorFrame
     }
 
     private void selectArea(MouseEvent e) {
-        PollutedArea a = hoverPollution;
+        MapArea a = hoverPollution;
         if ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) {
             clearSelection();
         }
@@ -1103,7 +1103,7 @@ public class EditorFrame
     }
  
     // reviced by tkokada
-    private void placePollutionArea () {
+    private void placeMapArea () {
         String labels[] = {"min height", "max height", "vertical division", "horizontal division",
                 "rotation"};
         double range[][] = {
@@ -1114,7 +1114,7 @@ public class EditorFrame
                 {1, 1000, getVerticalDivision()},
                 {1, 1000, getHorizontalDivision()}};
 
-        double height[] = GridPollutionAreaDialog.showDialog("Height", labels,
+        double height[] = GridMapAreaDialog.showDialog("Height", labels,
                 range[0], range[1], division[0], division[1], range[2]);
         
         // tkokada height[2]: vertical_division, height[3]: horizontal_division, height[4]: angle
@@ -1129,12 +1129,12 @@ public class EditorFrame
                         centroid.getY() - selectedArea.getHeight() / height[2] / 2,
                         selectedArea.getWidth() / height[3],
                         selectedArea.getHeight() / height[2]);
-                editor.getMap().createPollutedAreaRectangle(current_group,
+                editor.getMap().createMapAreaRectangle(current_group,
                     bounds, height[0], height[1], height[4]);
             //System.out.println("created bounds cx:" + bounds.getCenterX() + ", cy:" + bounds.getCenterY());
             }
         }
-        updatePollutionAreaTag();
+        updateMapAreaTag();
         editor._setModified(true);
         editor.getPollutionPanel().refresh();
         clearSelection();
@@ -1208,14 +1208,14 @@ public class EditorFrame
     // this method should be called when pollution area tag is added/removed/modified.
     // currently, pollution area has initial index as a tag with int number.
     // if you want to modify this tag, following "" + i, this becomes the tag.
-    public void updatePollutionAreaTag() {
+    public void updateMapAreaTag() {
         int i = 1;
         ArrayList<String> tagToRemove = new ArrayList<String>();
         for (i = 1; i < maxPollutionTag; i++) {
             tagToRemove.add("" + i);
         }
         i = 1;
-        for (PollutedArea area : getChildPollutedAreas()) {
+        for (MapArea area : getChildMapAreas()) {
             for (String tag : tagToRemove)
                 area.removeTag(tag);
             area.addTag("" + i);
@@ -1442,8 +1442,8 @@ public class EditorFrame
     }
 
     private void setPollutionAttribute(int x, int y) {
-        PollutedArea.showAttributeDialog(getChildPollutedAreas(), x, y);
-        updatePollutionAreaTag();
+        MapArea.showAttributeDialog(getChildMapAreas(), x, y);
+        updateMapAreaTag();
         clearSelection();
         repaint();
     }
@@ -1507,16 +1507,16 @@ public class EditorFrame
 
     private void removeSelectedPollution() {
         editor._setModified(true);
-        ArrayList<PollutedArea> areasToRemove = new ArrayList<PollutedArea>();
-        for (final PollutedArea area : getChildPollutedAreas()) {
+        ArrayList<MapArea> areasToRemove = new ArrayList<MapArea>();
+        for (final MapArea area : getChildMapAreas()) {
             if (area.selected) {
                 areasToRemove.add(area);
             }
         }
-        for (PollutedArea area : areasToRemove) {
+        for (MapArea area : areasToRemove) {
             editor.getMap().removeOBNode(current_group, area, true);
         }
-        updatePollutionAreaTag();
+        updateMapAreaTag();
         editor.getPollutionPanel().refresh();
         repaint();
     }
@@ -2443,9 +2443,9 @@ public class EditorFrame
                 editor.getLinkPanel().refresh();
                 break;
             case EDIT_POLLUTION:
-                for (PollutedArea area : getChildPollutedAreas()) {
+                for (MapArea area : getChildMapAreas()) {
                     // tkokada
-                    // add an angle parameter to PollutionAreaRectangle,
+                    // add an angle parameter to MapAreaRectangle,
                     // apply the angle to this determination.
                     /* old source code
                     if (selectedArea.contains(area.getShape().getBounds())) {
@@ -2467,7 +2467,7 @@ public class EditorFrame
                 editor.getPollutionPanel().refresh();
                 break;
             case PLACE_POLLUTION:
-                placePollutionArea();
+                placeMapArea();
                 break;
             default:
                 break;
@@ -2910,8 +2910,8 @@ public class EditorFrame
         return current_group.getChildGroups();
     }
 
-    public ArrayList<PollutedArea> getChildPollutedAreas() {
-        return current_group.getChildPollutedAreas();
+    public ArrayList<MapArea> getChildMapAreas() {
+        return current_group.getChildMapAreas();
     }
 
     public ArrayList<OBNodeSymbolicLink> getSymbolicLinks() {

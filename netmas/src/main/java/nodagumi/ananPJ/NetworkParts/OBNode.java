@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle;
+import nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle;
 import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
@@ -115,8 +115,8 @@ public abstract class OBNode extends DefaultMutableTreeNode {
             return MapNode.fromDom(element);
         } else if (tagName.equals(MapLink.getNodeTypeString())) {
             return MapLink.fromDom(element);
-        } else if (tagName.equals(PollutedAreaRectangle.getNodeTypeString())) {
-            return PollutedAreaRectangle.fromDom(element);
+        } else if (tagName.equals(MapAreaRectangle.getNodeTypeString())) {
+            return MapAreaRectangle.fromDom(element);
         } else if (tagName.equals(OBNodeSymbolicLink.getNodeTypeString())) {
             return OBNodeSymbolicLink.fromDom(element);
         } else if (tagName.equals("tag")){
@@ -357,7 +357,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         }
     }
 
-    // Conversion from MapNode, MapLink, PollutedArea to OBNode
+    // Conversion from MapNode, MapLink, MapArea to OBNode
     @SuppressWarnings("unchecked")
     public static JPanel setupTagPanel(ArrayList nodes, JDialog parent) {
         TagSetupPanel panel = new TagSetupPanel(nodes, parent);

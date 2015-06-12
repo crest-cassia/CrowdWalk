@@ -21,7 +21,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 
 import nodagumi.Itk.*;
@@ -417,13 +417,13 @@ public class MapPartGroup extends OBNode {
     }
 
     @SuppressWarnings("unchecked")
-    public ArrayList<PollutedArea> getChildPollutedAreas() {
-        ArrayList<PollutedArea> children = new ArrayList<PollutedArea>();
+    public ArrayList<MapArea> getChildMapAreas() {
+        ArrayList<MapArea> children = new ArrayList<MapArea>();
         Enumeration<OBNode> all_children = children();
         while (all_children.hasMoreElements()) {
             OBNode node = all_children.nextElement();
             if (node.getNodeType() == OBNode.NType.ROOM) {
-                children.add((PollutedArea)node);
+                children.add((MapArea)node);
             }
         }
         return children;

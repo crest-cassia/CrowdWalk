@@ -46,7 +46,7 @@ import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.SpecialTerm;
 
 import nodagumi.Itk.*;
@@ -220,15 +220,15 @@ public class MapLink extends OBMapPart {
      */
     public boolean isShutOff() { return shutOffP; }
 
-    // このリンクが現在 pollution level > 0.0 な PollutedArea 内を通っているかのフラグ
+    // このリンクが現在 pollution level > 0.0 な MapArea 内を通っているかのフラグ
     protected boolean polluted = false;
     public void setPolluted(boolean b) { polluted = b; }
     public boolean isPolluted() { return polluted; }
 
-    // このリンク上にかかっている PollutedArea のリスト
-    protected ArrayList<PollutedArea> intersectedPollutionAreas = new ArrayList<PollutedArea>();
-    public void addIntersectedPollutionArea(PollutedArea area) { intersectedPollutionAreas.add(area); }
-    public ArrayList<PollutedArea> getIntersectedPollutionAreas() { return intersectedPollutionAreas; }
+    // このリンク上にかかっている MapArea のリスト
+    protected ArrayList<MapArea> intersectedMapAreas = new ArrayList<MapArea>();
+    public void addIntersectedMapArea(MapArea area) { intersectedMapAreas.add(area); }
+    public ArrayList<MapArea> getIntersectedMapAreas() { return intersectedMapAreas; }
 
     /* some values used for drawing */
     public static final BasicStroke broad = new BasicStroke(9.0f);

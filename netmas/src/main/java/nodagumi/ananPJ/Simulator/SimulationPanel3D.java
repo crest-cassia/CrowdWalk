@@ -77,7 +77,7 @@ import nodagumi.ananPJ.NetworkParts.NetworkMapPartsListener;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea;
+import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.Itk.*;
 
@@ -103,7 +103,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     protected double pollutionColorSaturation = 10.0;
 
     private List<AgentBase> agents;
-    private ArrayList<PollutedArea> pollutions;
+    private ArrayList<MapArea> pollutions;
     EvacuationSimulator simulator = null;
     NetworkMap networkMap = null;
     private static String evacuatedCount_string = "";
@@ -138,11 +138,11 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 updateLinks();
                 updateNodes();
                 if (firstStep) {
-                    // PollutedArea の初期色は灰色なので全て塗り替える
-                    updateAllPollutedAreas();
+                    // MapArea の初期色は灰色なので全て塗り替える
+                    updateAllMapAreas();
                     firstStep = false;
                 } else {
-                    updatePollutedAreas();
+                    updateMapAreas();
                 }
                 updateAgents();
                 synchronized (screenShotFileNames) {
@@ -162,7 +162,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         });
         addViewChangeListener("pollution color changed", new ViewChangeListener() {
             public void update() {
-                updateAllPollutedAreas();
+                updateAllMapAreas();
             }
         });
         addViewChangeListener("agent size changed", new ViewChangeListener() {
@@ -962,10 +962,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
             group_from_agent(agent);
         }
 
-        for (PollutedArea pollutedArea : pollutions) {
-            PollutedArea3D pollutedArea3d = new PollutedArea3D(pollutedArea);
-            displayedPollutedAreas.put(pollutedArea, pollutedArea3d);
-            simulation_map_objects.addChild(pollutedArea3d.getTransformGroup());
+        for (MapArea area : pollutions) {
+            MapArea3D area3d = new MapArea3D(area);
+            displayedMapAreas.put(area, area3d);
+            simulation_map_objects.addChild(area3d.getTransformGroup());
         }
     }
 
@@ -973,7 +973,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     private HashSet<MapLink> removedLinks = new HashSet();
     private HashSet<MapLink> changedLinks = new HashSet();
     private HashSet<MapNode> changedNodes = new HashSet();
-    private HashSet<PollutedArea> changedPollutedAreas = new HashSet();
+    private HashSet<MapArea> changedMapAreas = new HashSet();
     private HashSet<AgentBase> addedAgents = new HashSet();
     private HashSet<AgentBase> movedAgents = new HashSet();
     private HashSet<AgentBase> colorChangedAgents = new HashSet();
@@ -1043,9 +1043,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
             /**
              * Pollution レベルが変化した.
              */
-            public void pollutionLevelChanged(PollutedArea pollutedArea) {
-                synchronized (changedPollutedAreas) {
-                    changedPollutedAreas.add(pollutedArea);
+            public void pollutionLevelChanged(MapArea area) {
+                synchronized (changedMapAreas) {
+                    changedMapAreas.add(area);
                 }
             }
 
@@ -1096,7 +1096,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         });
     }
 
-    private HashMap<PollutedArea, PollutedArea3D> displayedPollutedAreas = new HashMap<>();
+    private HashMap<MapArea, MapArea3D> displayedMapAreas = new HashMap<>();
     private HashMap<AgentBase, Agent3D> displayedAgents = new HashMap<>();
 
     /**
@@ -1162,15 +1162,15 @@ public class SimulationPanel3D extends NetworkPanel3D {
     }
 
     /**
-     * Pollution レベルが変化した PollutedArea を再表示する.
+     * Pollution レベルが変化した MapArea を再表示する.
      */
-    public void updatePollutedAreas() {
-        synchronized (changedPollutedAreas) {
-            for (PollutedArea pollutedArea : changedPollutedAreas) {
-                PollutedArea3D pollutedArea3D = displayedPollutedAreas.get(pollutedArea);
-                pollutedArea3D.updateColor();
+    public void updateMapAreas() {
+        synchronized (changedMapAreas) {
+            for (MapArea area : changedMapAreas) {
+                MapArea3D area3D = displayedMapAreas.get(area) ;
+                area3D.updateColor();
             }
-            changedPollutedAreas.clear();
+            changedMapAreas.clear();
         }
     }
 
@@ -1382,15 +1382,15 @@ public class SimulationPanel3D extends NetworkPanel3D {
     }
 
     /**
-     * シミュレーション画面上に表示する PollutedArea の 3D オブジェクト.
+     * シミュレーション画面上に表示する MapArea の 3D オブジェクト.
      */
-    private class PollutedArea3D {
-        private PollutedArea pollutedArea;
+    private class MapArea3D {
+        private MapArea area;
         private Appearance app;
         private TransformGroup transformGroup;
 
-        public PollutedArea3D(PollutedArea _pollutedArea) {
-            pollutedArea = _pollutedArea;
+        public MapArea3D(MapArea _area) {
+            area = _area;
             initialize();
         }
 
@@ -1410,7 +1410,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             rattr.setCapability(RenderingAttributes.ALLOW_DEPTH_ENABLE_READ);
             app.setRenderingAttributes(rattr);
 
-            transformGroup = pollutedArea.get3DShape(app);
+            transformGroup = area.get3DShape(app);
         }
 
         private Color3f set_color_red(float density) {
@@ -1445,17 +1445,17 @@ public class SimulationPanel3D extends NetworkPanel3D {
         }       
 
         /**
-         * PollutedArea の現在の状態と表示色に合わせて表示を更新する.
+         * MapArea の現在の状態と表示色に合わせて表示を更新する.
          */
         public void updateColor() {
             float density = 0.0f;
-            //System.out.println("Pollution Area ID "+pollutedArea.ID+" density "+density);
+            //System.out.println("MapArea ID "+area.ID+" density "+density);
             if (pollutionColorSaturation > 0.0) {
-                density = (float)pollutedArea.getDensity() / (float)pollutionColorSaturation;
+                density = (float)area.getDensity() / (float)pollutionColorSaturation;
             } else {
                 float maxPollutionLevel = (float)simulator.getMaxPollutionLevel();
                 if (maxPollutionLevel > 0.0) {
-                    density = (float)pollutedArea.getDensity() / (maxPollutionLevel / 2.0f);
+                    density = (float)area.getDensity() / (maxPollutionLevel / 2.0f);
                 }
             }
             if (density > 1.0) density = 1.0f;
@@ -1487,11 +1487,11 @@ public class SimulationPanel3D extends NetworkPanel3D {
     }
 
     /**
-     * 全 PollutedArea の表示を更新する.
+     * 全 MapArea の表示を更新する.
      */
-    public void updateAllPollutedAreas() {
-        for (PollutedArea pollutedArea : pollutions) {
-            displayedPollutedAreas.get(pollutedArea).updateColor();
+    public void updateAllMapAreas() {
+        for (MapArea area : pollutions) {
+            displayedMapAreas.get(area).updateColor();
         }
     }
 
@@ -1662,7 +1662,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     public List<AgentBase> getAgents() {
         return agents;
     }
-    public ArrayList<PollutedArea> getPollutions() {
+    public ArrayList<MapArea> getPollutions() {
         return pollutions;
     }
     public BoundingSphere getBoundingSphere() {

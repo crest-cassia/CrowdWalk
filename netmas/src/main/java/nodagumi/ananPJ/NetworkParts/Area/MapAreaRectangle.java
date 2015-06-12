@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts.Pollution;
+package nodagumi.ananPJ.NetworkParts.Area;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -30,9 +30,9 @@ import org.w3c.dom.Element;
 
 import com.sun.j3d.utils.geometry.Box;
 
-public class PollutedAreaRectangle extends PollutedArea {
+public class MapAreaRectangle extends MapArea {
 
-    public PollutedAreaRectangle(String id) {
+    public MapAreaRectangle(String id) {
         super(id);
     }
 
@@ -45,7 +45,7 @@ public class PollutedAreaRectangle extends PollutedArea {
 
     public boolean selected;
     public boolean view;
-    public PollutedAreaRectangle(String _id,
+    public MapAreaRectangle(String _id,
             Rectangle2D _bounds,
             double _min_height,
             double _max_height,
@@ -117,7 +117,7 @@ public class PollutedAreaRectangle extends PollutedArea {
         double y2 = Double.parseDouble(element.getAttribute("pSouthY"));
         if (y1 > y2) {
             if (! nsWarned) {
-                System.err.println(String.format("Pollution coordinate error: pNorthY = %s > pSouthY = %s", y1, y2));
+                System.err.println(String.format("MapArea coordinate error: pNorthY = %s > pSouthY = %s", y1, y2));
                 nsWarned = true;
                 // System.exit(1);
             }
@@ -127,7 +127,7 @@ public class PollutedAreaRectangle extends PollutedArea {
         }
         if (x1 > x2) {
             if (! weWarned) {
-                System.err.println(String.format("Pollution coordinate error: pWestX = %s > pEastX = %s", x1, x2));
+                System.err.println(String.format("MapArea coordinate error: pWestX = %s > pEastX = %s", x1, x2));
                 weWarned = true;
                 // System.exit(1);
             }
@@ -201,19 +201,19 @@ public class PollutedAreaRectangle extends PollutedArea {
         Transform3D trans3d = new Transform3D();
         trans3d.setTranslation(new Vector3d(x, y, z));
         trans3d.setRotation(new AxisAngle4d(0, 0, 1.0, angle)); // tkokada
-        TransformGroup pollutionTransforms = null;
+        TransformGroup areaTransforms = null;
         try {
-            pollutionTransforms = new TransformGroup(trans3d);
+            areaTransforms = new TransformGroup(trans3d);
         } catch (BadTransformException e){
-            pollutionTransforms = new TransformGroup();
-            System.err.println("PollutedAreaRectangle.get3DShape: catch BadTransformException!");
+            areaTransforms = new TransformGroup();
+            System.err.println("MapAreaRectangle.get3DShape: catch BadTransformException!");
             return null;
         }
 
         Box box = new Box(dx, dy, dz, app);
-        pollutionTransforms.addChild(box);
+        areaTransforms.addChild(box);
         
-        return pollutionTransforms;
+        return areaTransforms;
     }
     /* to/from DOM codes */
     static public String getNodeTypeString() {
@@ -231,7 +231,7 @@ public class PollutedAreaRectangle extends PollutedArea {
     }
 
     public static OBNode fromDom(Element element) {
-        PollutedAreaRectangle room = new PollutedAreaRectangle(null);
+        MapAreaRectangle room = new MapAreaRectangle(null);
         room.getAttributesFromDom(element);
         //System.err.println(room.toString());
         return room;
