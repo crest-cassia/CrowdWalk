@@ -375,6 +375,17 @@ public class Itk {
 
     //------------------------------------------------------------
     /**
+     * ログ出力（None)。
+     * 必ず何も出力しない。コメントアウト代わり。
+     * @param label : label string. quoted by "[" and "]".
+     * @param objects : rest data to output.  
+     *                  If empty, label becomes the first object.
+     */
+    static public void logNone(String label, Object... objects) {
+    }
+
+    //------------------------------------------------------------
+    /**
      * ログ出力（Trace)
      * @param label : label string. quoted by "[" and "]".
      * @param objects : rest data to output.  
