@@ -32,6 +32,10 @@ import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.Itk.*;
 
 
+//======================================================================
+/**
+ * Pollution による影響を計算する部分。
+ */
 public class PollutionCalculator {
 
     //============================================================
@@ -44,19 +48,47 @@ public class PollutionCalculator {
      */
     static double AGENT_HEIGHT = 1.5;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 次に pollution を更新する時刻。
+     */
     double nextInstantTime = 0;
+
+    /**
+     * タイムスケール。被曝量を計算するときに用いる。
+     */
     double timeScale;
+
+    /**
+     * 最大の pollution level。
+     */
     private double maxPollutionLevel = 0.0;
 
+    /**
+     * area と TAG のマップ。
+     */
     HashMap<Integer, MapArea> polluted_area_sorted;
 
+    /**
+     * Pollution の時間変化の配列。
+     */
     private ArrayList<PollutionInstant> pollutionInstantList =
         new ArrayList<PollutionInstant>();
 
+    /**
+     * 上記時間変化を順番に取り出すためのもの。
+     */
     private Iterator<PollutionInstant> pollutionInstantIterator = null;
 
+    /**
+     * 現在の pollution。
+     */
     private PollutionInstant currentInstant = null;
 
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ。
+     */
     public PollutionCalculator(String scheduleFileName,
             ArrayList<MapArea> _pollution, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
@@ -122,7 +154,10 @@ public class PollutionCalculator {
         }
     }
 
-    // pollution データを interval 秒区分で線形補間する
+    //------------------------------------------------------------
+    /**
+     * pollution データを interval 秒区分で線形補間する
+     */
     private void linearInterpolation(double interval) {
         if (interval <= 0.0 || pollutionInstantList.isEmpty()) {
             return;
@@ -158,6 +193,10 @@ public class PollutionCalculator {
         pollutionInstantList.addAll(interpolatedPollutionInstantList);
     }
 
+    //------------------------------------------------------------
+    /**
+     * 毎回呼ばれるメインのサイクル。
+     */
     public void updateNodesLinksAgents(double time,
                                        NetworkMapBase map,
                                        Collection<AgentBase> agents) {
@@ -237,6 +276,10 @@ public class PollutionCalculator {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * pollution を更新する際に呼ばれる。
+     */
     private void update_pollution() {
         Itk.logDebug("PC: updating pollution ",nextInstantTime);
 
@@ -262,12 +305,19 @@ public class PollutionCalculator {
         }
     }
     
+    //------------------------------------------------------------
+    /**
+     * pollution されたエリアを返す。
+     */
     public ArrayList<MapArea> getPollutions() {
         return new ArrayList<MapArea>(polluted_area_sorted.values());
     }
 
+    //------------------------------------------------------------
+    /**
+     * pollution の最大値。
+     */
     public double getMaxPollutionLevel() { return maxPollutionLevel; }
-
 
     //============================================================
     /**
@@ -310,8 +360,6 @@ public class PollutionCalculator {
         public int valueSize() {
             return value.size() ;
         }
-
-
 
     } // end class PollutionInstant
 
