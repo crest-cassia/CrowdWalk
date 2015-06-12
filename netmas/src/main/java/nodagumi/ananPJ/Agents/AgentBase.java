@@ -22,7 +22,7 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
-import nodagumi.ananPJ.Simulator.Pollution;
+import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
 
 import nodagumi.Itk.* ;
 
@@ -99,7 +99,7 @@ implements Comparable<AgentBase> {
     public double currentExposureAmount = 0.0;
     public double accumulatedExposureAmount = 0.0;
     protected static String pollutionType = "NonAccumulated";
-    protected Pollution pollution = null;
+    protected PollutionBase pollution = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -150,7 +150,7 @@ implements Comparable<AgentBase> {
         //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
         // Pollution のサブクラスのインスタンスを取得
-        pollution = Pollution.getInstance(pollutionType + "Pollution");
+        pollution = PollutionBase.getInstance(pollutionType + "Pollution");
     }
 
     //------------------------------------------------------------

@@ -1,11 +1,12 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.Simulator.pollution;
+package nodagumi.ananPJ.Simulator.Pollution;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Simulator.Pollution;
+import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
+import nodagumi.Itk.*;
 
 // 非蓄積型(洪水等)
-public class NonAccumulatedPollution extends Pollution {
+public class NonAccumulatedPollution extends PollutionBase {
     private int lastTriageLevel = 0;    // 更新チェック用
 
     public NonAccumulatedPollution() {}

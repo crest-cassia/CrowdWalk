@@ -16,7 +16,7 @@ import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Simulator.Pollution;
+import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
@@ -612,7 +612,7 @@ public class NetmasPropertiesHandler {
             String pollutionType = getString("pollution_type", null);
             if (pollutionType != null) {
                 AgentBase.setPollutionType(pollutionType);
-                Pollution.getInstance(pollutionType + "Pollution");
+                PollutionBase.getInstance(pollutionType + "Pollution");
             }
             getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);

@@ -1,13 +1,13 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.Simulator.pollution;
+package nodagumi.ananPJ.Simulator.Pollution;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Simulator.Pollution;
+import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
 import nodagumi.ananPJ.misc.SpecialTerm;
 import nodagumi.Itk.*;
 
 // 蓄積型(ガス等)
-public class AccumulatedPollution extends Pollution {
+public class AccumulatedPollution extends PollutionBase {
     // 参考データ: 三井化学アグロ株式会社 / クロルピクリンの物性・分解性 / 気中濃度と人体への影響
     //   http://www.mitsui-agro.com/tabid/147/Default.aspx#04a4
     //
