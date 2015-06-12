@@ -22,6 +22,8 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3f;
 
+import com.opencsv.CSVParser ;
+
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
@@ -135,15 +137,29 @@ public class PollutionCalculator {
      * 読み込まれたデータは、pollutionInstantList に入れられる。
      * pollutionInstantList の各要素は、[時刻、density1, density2, ...] という
      * PollutionInsatnt の配列。
+     * <p>
+     * [2015.06.12 I.Noda]
+     * 新たに、先頭行が "#" で始まる場合、その開始行を、以下のように解釈
+     * するようにする。
+     *
+     *      #<開始時刻>, タグ1, タグ2, タグ3, ...
+     *
+     * この場合、タグ1,2,3は、上記の整数値タグの代わりに用いられる。
+     * つまり、整数値タグでないタグをもつ Area を指定できる。
+     * なお、タグ1,2,3で指定した以上のデータが並んでいる場合は、
+     * 自動的に、その序数の整数値を持つタグが使われる。
      */
     private void readData(String fileName) {
         pollutionInstantList.clear();
         try {
+            CSVParser csvParser = new CSVParser() ;
+            int lineCount = 0 ;
+
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line = reader.readLine();
             while (line != null) {
                 if (! line.trim().startsWith("#")) {
-                    String[] strItems = line.split(",");
+                    String[] strItems = csvParser.parseLine(line) ;
                     PollutionInstant instant = new PollutionInstant() ;
                     instant.relativeTime = Double.parseDouble(strItems[0]) ;
                     for (int index = 1; index < strItems.length; index++) {
@@ -161,7 +177,17 @@ public class PollutionCalculator {
                         }
                     }
                     pollutionInstantList.add(instant);
+                } else if(lineCount == 0) { // # で始まる先頭行の場合。
+                    // 形式を、
+                    // # <開始時刻>, <tag1>, <tag2>, <tag3>, <tag4>,... とする。
+                    // <開始時刻>は無くても良い。（その場合でもカンマは必要）
+                    String[] strItems = csvParser.parseLine(line) ;
+                    // [2015.06.12 I.Noda] 現状で、開始時刻は未対応。
+                    for(int index = 1; index < strItems.length ; index++) {
+                        addTag(strItems[index]) ;
+                    }
                 }
+                lineCount++ ;
                 line = reader.readLine();
             }
         } catch (IOException e) {

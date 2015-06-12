@@ -104,6 +104,11 @@ run0s4 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s4))
 
 ##-----
+SAMPLE0s4t = sample/4links/properties-tagPol.xml	#stop (4link, gas, tag指定)
+run0s4t ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s4t))
+
+##-----
 SAMPLE0sm = sample/stop-sample/properties_24.json	#stop (門司港)
 run0sm ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sm))
