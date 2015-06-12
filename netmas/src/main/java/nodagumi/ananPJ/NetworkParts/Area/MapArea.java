@@ -33,98 +33,98 @@ import javax.vecmath.Vector3f;
 
 public abstract class MapArea extends OBNode {
 
-        protected double lastPollutionLevel = 0.0;  // 更新チェック用
+    protected double lastPollutionLevel = 0.0;  // 更新チェック用
 
-	public MapArea(String _id) {
-		super(_id);
-	}
-	
-	public abstract boolean contains(Point2D point);
-	public abstract boolean contains(Vector3f point);
-	public abstract boolean intersectsLine(Line2D line);
-	public abstract double distance(Vector3f point);
-	public abstract Shape getShape();
-	public abstract ArrayList<Point2D> getAllVertices();	// tkokada
-	public abstract double getAngle();	// tkokada
-	
-	public abstract void draw(Graphics2D g, boolean experiment);
-	public abstract TransformGroup get3DShape(Appearance app);
-	public abstract double getDensity();
-	
-	//For view customize : contact agent with pollution_area
-	public abstract boolean getContactOfAgents();
-	public abstract void setContactOfAgents(boolean _view);
-	public static void showAttributeDialog(ArrayList<MapArea> areas,
-			int x, int y) {
+    public MapArea(String _id) {
+        super(_id);
+    }
+
+    public abstract boolean contains(Point2D point);
+    public abstract boolean contains(Vector3f point);
+    public abstract boolean intersectsLine(Line2D line);
+    public abstract double distance(Vector3f point);
+    public abstract Shape getShape();
+    public abstract ArrayList<Point2D> getAllVertices();	// tkokada
+    public abstract double getAngle();	// tkokada
+
+    public abstract void draw(Graphics2D g, boolean experiment);
+    public abstract TransformGroup get3DShape(Appearance app);
+    public abstract double getDensity();
+
+    //For view customize : contact agent with pollution_area
+    public abstract boolean getContactOfAgents();
+    public abstract void setContactOfAgents(boolean _view);
+    public static void showAttributeDialog(ArrayList<MapArea> areas,
+                                           int x, int y) {
         /* Set attributes with a dialog */
-    	class AttributeSetDialog  extends JDialog implements ActionListener, KeyListener {
+        class AttributeSetDialog  extends JDialog implements ActionListener, KeyListener {
 
-			private ArrayList<MapArea> areas;
+            private ArrayList<MapArea> areas;
 
-        	private ArrayList<String> tags;
-        	
-        	private JTextField[] tagFields;
-        	boolean singleArea;
+            private ArrayList<String> tags;
 
-        	public AttributeSetDialog(ArrayList<MapArea> _areas) {
-        		super();
+            private JTextField[] tagFields;
+            boolean singleArea;
 
-        		this.setModal(true);
-        		areas = _areas;
+            public AttributeSetDialog(ArrayList<MapArea> _areas) {
+                super();
 
-    			setUpPanel();
-        	}
-        	
-        	private void setUpPanel() {
-        		Container contentPane = getContentPane();
-        		contentPane.add(OBNode.setupTagPanel(areas, this));
+                this.setModal(true);
+                areas = _areas;
 
-        		this.pack();
-        	}
-    		@Override
-    		public void actionPerformed(ActionEvent e) {
-    			if (e.getActionCommand().equals("OK")) {
-    				for (MapArea area : areas) {
-    					if (area.selected) {
-    						if (singleArea) {
-    							for (int i = 0; i < tags.size(); ++i) {
-    								String str = tagFields[i + 2].getText();
-    								area.tags.set(i, str);
-    							}
+                setUpPanel();
+            }
 
-    							String new_tag_str = tagFields[1].getText();
-    							if (!new_tag_str.equals("")) {
-    								area.tags.add(new_tag_str);
-    							}
-    						} else {
-    							String new_tag_str = tagFields[0].getText();
-    							area.tags.add(new_tag_str);
-    						}
-    					}
-    				}
-    				this.dispose();
-    			} else if (e.getActionCommand().equals("Cancel")) {
-    				this.dispose();
-    			}
-    		}
+            private void setUpPanel() {
+                Container contentPane = getContentPane();
+                contentPane.add(OBNode.setupTagPanel(areas, this));
 
-			@Override
-			public void keyPressed(KeyEvent e) {
-			}
+                this.pack();
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("OK")) {
+                    for (MapArea area : areas) {
+                        if (area.selected) {
+                            if (singleArea) {
+                                for (int i = 0; i < tags.size(); ++i) {
+                                    String str = tagFields[i + 2].getText();
+                                    area.tags.set(i, str);
+                                }
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
+                                String new_tag_str = tagFields[1].getText();
+                                if (!new_tag_str.equals("")) {
+                                    area.tags.add(new_tag_str);
+                                }
+                            } else {
+                                String new_tag_str = tagFields[0].getText();
+                                area.tags.add(new_tag_str);
+                            }
+                        }
+                    }
+                    this.dispose();
+                } else if (e.getActionCommand().equals("Cancel")) {
+                    this.dispose();
+                }
+            }
 
-			@Override
-			public void keyTyped(KeyEvent e) {
-				
-			}
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
         }
 
-    	AttributeSetDialog dialog = new AttributeSetDialog(areas);
-       dialog.setLocation(x, y);
-    	dialog.setVisible(true);
+        AttributeSetDialog dialog = new AttributeSetDialog(areas);
+        dialog.setLocation(x, y);
+        dialog.setVisible(true);
     }
 
     @Override
