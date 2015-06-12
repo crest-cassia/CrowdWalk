@@ -67,7 +67,7 @@ public class PollutionCalculator {
     /**
      * area と TAG のマップ。
      */
-    HashMap<Integer, MapArea> polluted_area_sorted;
+    HashMap<Integer, MapArea> areaTable ;
 
     /**
      * Pollution の時間変化の配列。
@@ -108,7 +108,7 @@ public class PollutionCalculator {
             }
         }
         
-        setup_polluted_areas(_pollution);
+        setupPollutedAreas(_pollution);
         timeScale = _timeScale;
     }
 
@@ -203,7 +203,7 @@ public class PollutionCalculator {
 
         if (nextInstantTime != -1.0 && nextInstantTime <= time) {
             // System.out.println("  PC update next event: " + time);
-            update_pollution();
+            updatePollution();
 
             // pollution対象リンクの汚染フラグを更新する(汚染度が0に戻ることも考慮する)
 	    for (MapLink link : map.getLinks()) {
@@ -257,19 +257,15 @@ public class PollutionCalculator {
      * この設定も、まずいか、あるいは、ただひとつであることをチェックする
      * 機能が必要。
      */
-    private void setup_polluted_areas(ArrayList<MapArea> areas) {
-        polluted_area_sorted = new HashMap<Integer, MapArea>();
-
-        //System.out.println("in setup_polluted_areas");
+    private void setupPollutedAreas(ArrayList<MapArea> areas) {
+        areaTable = new HashMap<Integer, MapArea>();
 
         for (MapArea area : areas) {
-            //System.out.println("in setup_polluted_areas"+areas);
-
             Matcher m = area.matchTag("^(\\d+)$");
             if (m != null) {
                 int index = Integer.parseInt(m.group(0));
 
-                polluted_area_sorted.put(index, area);
+                areaTable.put(index, area);
             }
             // current density 値の初期化
             area.setPollutionLevel(0.0) ;
@@ -280,11 +276,11 @@ public class PollutionCalculator {
     /**
      * pollution を更新する際に呼ばれる。
      */
-    private void update_pollution() {
+    private void updatePollution() {
         Itk.logDebug("PC: updating pollution ",nextInstantTime);
 
-        for (Integer index : polluted_area_sorted.keySet()) {
-            MapArea area = polluted_area_sorted.get(index);
+        for (Integer index : areaTable.keySet()) {
+            MapArea area = areaTable.get(index);
 
             /* [2015.06.12 I.Noda]
              * 現状で、Area のタグに書かれる数字の Index と、
@@ -310,7 +306,7 @@ public class PollutionCalculator {
      * pollution されたエリアを返す。
      */
     public ArrayList<MapArea> getPollutions() {
-        return new ArrayList<MapArea>(polluted_area_sorted.values());
+        return new ArrayList<MapArea>(areaTable.values());
     }
 
     //------------------------------------------------------------
