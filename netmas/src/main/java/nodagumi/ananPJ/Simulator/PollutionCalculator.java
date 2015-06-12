@@ -182,6 +182,16 @@ public class PollutionCalculator {
                     // # <開始時刻>, <tag1>, <tag2>, <tag3>, <tag4>,... とする。
                     // <開始時刻>は無くても良い。（その場合でもカンマは必要）
                     String[] strItems = csvParser.parseLine(line) ;
+                    try {
+                        String timeStr = strItems[0].replaceAll("[\\# ]*","") ;
+                        Itk.dbgVal("timeStr", timeStr) ;
+                        if(timeStr.length() > 0) {
+                            int beginTime = Itk.scanTimeStringToInt(timeStr) ;
+                            Itk.dbgVal("beginTime",beginTime) ;
+                        } 
+                    } catch(Exception ex) {
+                        Itk.logWarn("Illegal Time Format", strItems[0]) ;
+                    }
                     // [2015.06.12 I.Noda] 現状で、開始時刻は未対応。
                     for(int index = 1; index < strItems.length ; index++) {
                         addTag(strItems[index]) ;
