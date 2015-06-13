@@ -178,13 +178,26 @@ public class AgentHandler {
      */
     private Logger agentMovementHistoryLogger = null;
 
+    /**
+     * agentMovementHistoryLogger の CSV フォーマットは以下の通り。
+     * 各行のカラムの順：
+     *		"GenerationFileの情報"
+     *		"エージェントID"
+     *		"発生時刻1"
+     *		"発生時刻2"
+     *		"到着時刻1"
+     *		"到着時刻2"
+     *		"移動時間1"
+     *		"移動時間2"
+     */
     private static CsvFormatter<AgentBase> agentMovementHistoryLoggerFormatter =
         new CsvFormatter<AgentBase>() ;
     static {
         CsvFormatter<AgentBase> formatter = agentMovementHistoryLoggerFormatter ;
         formatter
             .addColumn(formatter.new Column("GenerationFileの情報") {
-                    public String value(AgentBase agent, Object timeObj) {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
                         return agent.getConfigLine().replaceAll(",", " ") ;}})
             .addColumn(formatter.new Column("エージェントID") {
                     public String value(AgentBase agent, Object timeObj,
@@ -227,7 +240,162 @@ public class AgentHandler {
             ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * individualPedestriansLogger
+     */
     private Logger individualPedestriansLogger = null;
+
+    /**
+     * individualPedestriansLogger のCSVフォーマットは以下の通り。
+     * 各行のカラムの順：
+     *		"pedestrianID"
+     *		"current_position_in_model_x"
+     *		"current_position_in_model_y"
+     *		"current_position_in_model_z"
+     *		"current_position_for_drawing_x"
+     *		"current_position_for_drawing_y"
+     *		"current_position_for_drawing_z"
+     *		"current_acceleration"
+     *		"current_velocity"
+     *		"current_linkID"
+     *		"current_nodeID_of_forward_movement"
+     *		"current_nodeID_of_backward_movement"
+     *		"current_distance_from_node_of_forward_movement"
+     *		"current_moving_direction"
+     *		"generated_time"
+     *		"current_traveling_period"
+     *		"current_exposure"
+     *		"amount_exposure"
+     *		"current_status_by_exposure"
+     *		"next_assigned_passage_node"
+     */
+    private static CsvFormatter<AgentBase> individualPedestriansLoggerFormatter =
+        new CsvFormatter<AgentBase>() ;
+    static {
+        CsvFormatter<AgentBase> formatter = individualPedestriansLoggerFormatter ;
+        formatter
+            .addColumn(formatter.new Column("pedestrianID") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return agent.ID ;}})
+            .addColumn(formatter.new Column("current_position_in_model_x") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getPos().getX())) ;}})
+            .addColumn(formatter.new Column("current_position_in_model_y") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getPos().getY())) ;}})
+            .addColumn(formatter.new Column("current_position_in_model_z") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getHeight())) ;}})
+            .addColumn(formatter.new Column("current_position_for_drawing_x") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getPos().getX() 
+                                      + agent.getSwing().x)) ;}})
+            .addColumn(formatter.new Column("current_position_for_drawing_y") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getPos().getY() 
+                                      + agent.getSwing().y)) ;}})
+            .addColumn(formatter.new Column("current_position_for_drawing_z") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + ((agent.getHeight() /
+                                       ((MapPartGroup)agent.getCurrentLink().getParent()).getScale())
+                                      + agent.getSwing().z)) ;}})
+            .addColumn(formatter.new Column("current_acceleration") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getAcceleration())) ;}})
+            .addColumn(formatter.new Column("current_velocity") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getSpeed())) ;}})
+            .addColumn(formatter.new Column("current_linkID") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + -1 :
+                                agent.getCurrentLink().ID ) ;}})
+            .addColumn(formatter.new Column("current_nodeID_of_forward_movement") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + -1 :
+                                agent.getNextNode().ID ) ;}})
+            .addColumn(formatter.new Column("current_nodeID_of_backward_movement") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                agent.getLastNode().ID :
+                                agent.getPrevNode().ID ) ;}})
+            .addColumn(formatter.new Column("current_distance_from_node_of_forward_movement") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0.0 :
+                                "" + (agent.getRemainingDistance())) ;}})
+            .addColumn(formatter.new Column("current_moving_direction") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return (agent.isEvacuated() ?
+                                "" + 0 :
+                                "" + ((int)agent.getDirection())) ;}})
+            .addColumn(formatter.new Column("generated_time") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return "" + ((int)agent.generatedTime) ;}})
+            .addColumn(formatter.new Column("current_traveling_period") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        return "" + (time.intValue()) ;}})
+            .addColumn(formatter.new Column("current_exposure") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        return "" + (agent.pollutionEffect.currentValueForLog()) ;}})
+            .addColumn(formatter.new Column("amount_exposure") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        return "" + (agent.pollutionEffect.accumulatedValueForLog()) ;}})
+            .addColumn(formatter.new Column("current_status_by_exposure") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        AgentHandler handler = (AgentHandler)agentHandlerObj ;
+                        return TRIAGE_LABELS[agent.getTriage()] ;}})
+            .addColumn(formatter.new Column("next_assigned_passage_node") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        AgentHandler handler = (AgentHandler)agentHandlerObj ;
+                        return (agent.isEvacuated() ?
+                                "" :
+                                agent.getNextCandidateString()) ;}})
+            ;
+    }
 
     //------------------------------------------------------------
     /**
@@ -565,6 +733,11 @@ public class AgentHandler {
                     stuckAgents.add(agent);
                 }
                 if (agentMovementHistoryLogger != null) {
+                    /* [2015.06.13 I.Noda]
+                     * CsvFormatter の導入により、下記を置き換え。
+                     * 安定動作確認次第、コメントアウト分消去。
+                     */
+                    /*
                     agentMovementHistoryLogger
                         .info(String
                               .format("%s,%s,%s,%d,%s,%d,%s,%d",
@@ -579,6 +752,10 @@ public class AgentHandler {
                                       timeToString(time - agent.generatedTime,
                                                    true),
                                       (int)(time - agent.generatedTime)));
+                    */
+                    agentMovementHistoryLoggerFormatter
+                        .outputValueToLoggerInfo(agentMovementHistoryLogger,
+                                                 agent, new Double(time), this);
                 }
             } else {
                 ++count;
@@ -604,7 +781,11 @@ public class AgentHandler {
 
     public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
 
-    private void logIndividualPedestrians(double time, AgentBase agent) {
+    /* [2015.06.13 I.Noda]
+     * CsvFormatter の導入により、下記を置き換え。
+     * 安定動作確認次第、obsolute分は削除
+     */
+    private void logIndividualPedestrians_obsolute(double time, AgentBase agent) {
         if (individualPedestriansLogger != null) {
             StringBuilder buff = new StringBuilder();
             if (agent.isEvacuated()) {
@@ -661,6 +842,19 @@ public class AgentHandler {
             individualPedestriansLogger.info(buff.toString());
         }
     }
+
+    //------------------------------------------------------------
+    /**
+     * individualPedestriansLogger への出力。
+     */
+    private void logIndividualPedestrians(double time, AgentBase agent) {
+        if (individualPedestriansLogger != null) {
+            individualPedestriansLoggerFormatter
+                .outputValueToLoggerInfo(individualPedestriansLogger,
+                                         agent, new Double(time), this);
+        }
+    }
+
 
     private void updateEvacuatedCount() {
         String evacuatedCount_string;
@@ -966,7 +1160,15 @@ public class AgentHandler {
             }
         }, filePath);
         agentMovementHistoryLogger.setUseParentHandlers(false); // コンソールには出力しない
+        /* [2015.06.13 I.Noda]
+         * CsvFormatter の導入により、下記を置き換え。
+         * 安定動作確認次第、コメントアウト分消去。
+         */
+        /*
         agentMovementHistoryLogger.info("GenerationFileの情報,エージェントID,発生時刻1,発生時刻2,到着時刻1,到着時刻2,移動時間1,移動時間2");
+        */
+        agentMovementHistoryLoggerFormatter
+            .outputHeaderToLoggerInfo(agentMovementHistoryLogger) ;
     }
 
     public void closeAgentMovementHistorLogger() {
@@ -982,7 +1184,16 @@ public class AgentHandler {
             }
         }, dirPath + "/log_individual_pedestrians.csv");
         individualPedestriansLogger.setUseParentHandlers(false); // コンソールには出力しない
+        /* [2015.06.13 I.Noda]
+         * CsvFormatter の導入により、下記を置き換え。
+         * 安定動作確認次第、コメントアウト分消去。
+         */
+        /*
         individualPedestriansLogger.info("pedestrianID,current_position_in_model_x,current_position_in_model_y,current_position_in_model_z,current_position_for_drawing_x,current_position_for_drawing_y,current_position_for_drawing_z,current_acceleration,current_velocity,current_linkID,current_nodeID_of_forward_movement,current_nodeID_of_backward_movement,current_distance_from_node_of_forward_movement,current_moving_direction,generated_time,current_traveling_period,current_exposure,amount_exposure,current_status_by_exposure,next_assigned_passage_node");
+        */
+        individualPedestriansLoggerFormatter
+            .outputHeaderToLoggerInfo(individualPedestriansLogger) ;
+
     }
 
     public void closeIndividualPedestriansLogger() {
