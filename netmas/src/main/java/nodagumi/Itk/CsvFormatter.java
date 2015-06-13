@@ -1,0 +1,429 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
+/** CSV Formatter
+ * @author:: Itsuki Noda
+ * @version:: 0.0 2015/06/13 I.Noda
+ * <B>History:</B>
+ * <UL>
+ *   <LI> [2015/06/13]: Create This File. </LI>
+ *   <LI> [YYYY/MM/DD]: add more </LI>
+ * </UL>
+ * <B>Usage:</B>
+ * ...
+ */
+
+package nodagumi.Itk;
+
+import java.lang.Iterable;
+import java.util.ArrayList;
+import java.util.logging.Logger;
+import java.io.Writer;
+import java.io.PrintStream; 
+
+
+//======================================================================
+/**
+ * CSV のフォーマット出力を整理するためのライブラリ
+ */
+public class CsvFormatter<T> {
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Column情報
+     */
+    private ArrayList<Column> columnList = new ArrayList<Column>() ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 区切り記号
+     */
+    private String columnSeparator = "," ;
+    private String rawSeparator = "," ;
+
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ。
+     */
+    public CsvFormatter() {
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Column情報追加。
+     * 以下のように記述することを想定。
+     *    csvFormatter.addColumn(csvFormatter.new Column("foo"){
+     *         public String value(T object) { return object.foo() ; }
+     *         }) ;
+     * @param column:: column 情報
+     */
+    public CsvFormatter addColumn(Column column) {
+	columnList.add(column) ;
+	return this ;
+    }
+
+    //------------------------------------------------------------
+    // ヘッダー関連
+    //------------------------------------------------------------
+    /**
+     * ヘッダー出力。
+     * @param logger : 出力する Logger
+     */
+    public void outputHeaderToLoggerInfo(Logger logger) {
+	StringBuilder buffer = outputHeaderToBuffer() ;
+	logger.info(buffer.toString()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ヘッダー出力。
+     * @param writer : 出力する writer
+     */
+    public void outputHeaderToWriter(Writer writer) {
+	StringBuilder buffer = outputHeaderToBuffer() ;
+	buffer.append("\n") ;
+	try {
+	    writer.write(buffer.toString()) ;
+	} catch(Exception ex) {
+	    ex.printStackTrace() ;
+	    Itk.logError("IOException: ", writer, buffer) ;
+	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ヘッダー出力。
+     * @param stream : 出力する stream
+     */
+    public void outputHeaderToStream(PrintStream stream) {
+	StringBuilder buffer = outputHeaderToBuffer() ;
+	stream.println(buffer.toString()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ヘッダー出力。
+     * @return 内容を追加した buffer。
+     */
+    public StringBuilder outputHeaderToBuffer() {
+	return outputHeaderToBuffer(new StringBuilder()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ヘッダー出力。
+     * @param buffer:: StringBuilder を与える。
+     * @return buffer を内容を追加して返す。
+     */
+    public StringBuilder outputHeaderToBuffer(StringBuilder buffer) {
+	int i = 0 ;
+	for(Column column : columnList) {
+	    if(i > 0) buffer.append(columnSeparator) ;
+	    buffer.append(column.header) ;
+	    i++ ;
+	}
+	return buffer ;
+    }
+
+    //------------------------------------------------------------
+    // データ出力関連
+    //------------------------------------------------------------
+    /**
+     * データ行出力。
+     * @param logger : 出力する Logger
+     * @param object : Column#value に引き渡すデータ。
+     */
+    public void outputValueToLoggerInfo(Logger logger, T object) {
+	StringBuilder buffer = outputValueToBuffer(object) ;
+	logger.info(buffer.toString()) ;
+    }
+
+    /**
+     */
+    public void outputValueToLoggerInfo(Logger logger, T object1,
+					Object object2) {
+	StringBuilder buffer = outputValueToBuffer(object1, object2) ;
+	logger.info(buffer.toString()) ;
+    }
+
+    /**
+     */
+    public void outputValueToLoggerInfo(Logger logger, T object1,
+					Object object2, Object object3) {
+	StringBuilder buffer = outputValueToBuffer(object1, object2, object3) ;
+	logger.info(buffer.toString()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * データ行出力。
+     * @param writer : 出力する Writer
+     * @param object : Column#value に引き渡すデータ。
+     */
+    public void outputValueToWriter(Writer writer, T object) {
+	StringBuilder buffer = outputValueToBuffer(object) ;
+	buffer.append("\n") ;
+	try {
+	    writer.write(buffer.toString()) ;
+	} catch(Exception ex) {
+	    ex.printStackTrace() ;
+	    Itk.logError("IOException: ", writer, buffer) ;
+	}
+    }
+
+    /**
+     */
+    public void outputValueToWriter(Writer writer, T object1,
+				    Object object2) {
+	StringBuilder buffer = outputValueToBuffer(object1, object2) ;
+	buffer.append("\n") ;
+	try {
+	    writer.write(buffer.toString()) ;
+	} catch(Exception ex) {
+	    ex.printStackTrace() ;
+	    Itk.logError("IOException: ", writer, buffer) ;
+	}
+    }
+
+    /**
+     */
+    public void outputValueToWriter(Writer writer, T object1,
+				    Object object2, Object object3) {
+	StringBuilder buffer = outputValueToBuffer(object1, object2, object3) ;
+	try {
+	    writer.write(buffer.toString()) ;
+	} catch(Exception ex) {
+	    ex.printStackTrace() ;
+	    Itk.logError("IOException: ", writer, buffer) ;
+	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * データ行出力。
+     * @param stream : 出力する Stream
+     * @param object : Column#value に引き渡すデータ。
+     */
+    public void outputValueToStream(PrintStream stream, T object) {
+	StringBuilder buffer = outputValueToBuffer(object) ;
+	stream.println(buffer.toString()) ;
+    }
+
+    /**
+     */
+    public void outputValueToStream(PrintStream stream, T object1,
+				    Object object2) {
+	StringBuilder buffer = outputValueToBuffer(object1, object2) ;
+	stream.println(buffer.toString()) ;
+    }
+
+    /**
+     */
+    public void outputValueToStream(PrintStream stream, T object1,
+				    Object object2, Object object3) {
+	StringBuilder buffer = outputValueToBuffer(object1, object2, object3) ;
+	stream.println(buffer.toString()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * データ行出力。
+     * @param object : Column#value に引き渡すデータ。
+     * @return 内容を追加した buffer。
+     */
+    public StringBuilder outputValueToBuffer(T object) {
+	return outputValueToBuffer(new StringBuilder(), object) ;
+    }
+
+    /**
+     */
+    public StringBuilder outputValueToBuffer(T object1, Object object2) {
+	return outputValueToBuffer(new StringBuilder(), object1, object2) ;
+    }
+
+    /**
+     */
+    public StringBuilder outputValueToBuffer(T object1, Object object2,
+					     Object object3) {
+	return outputValueToBuffer(new StringBuilder(), object1, object2, object3);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * データ行出力。
+     * @param buffer : 出力する buffer。
+     * @param object : Column#value に引き渡すデータ。
+     * @return 内容を追加した buffer。
+     */
+    public StringBuilder outputValueToBuffer(StringBuilder buffer, T object) {
+	int i = 0 ;
+	for(Column column : columnList) {
+	    if(i > 0) buffer.append(columnSeparator) ;
+	    buffer.append(column.value(object)) ;
+	    i++ ;
+	}
+	return buffer ;
+    }
+
+    /**
+     */
+    public StringBuilder outputValueToBuffer(StringBuilder buffer, T object1,
+					     Object object2) {
+	int i = 0 ;
+	for(Column column : columnList) {
+	    if(i > 0) buffer.append(columnSeparator) ;
+	    buffer.append(column.value(object1, object2)) ;
+	    i++ ;
+	}
+	return buffer ;
+    }
+
+    /**
+     */
+    public StringBuilder outputValueToBuffer(StringBuilder buffer, T object1,
+					     Object object2, Object object3) {
+	int i = 0 ;
+	for(Column column : columnList) {
+	    if(i > 0) buffer.append(columnSeparator) ;
+	    buffer.append(column.value(object1, object2, object3)) ;
+	    i++ ;
+	}
+	return buffer ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * データ行を全て出力。
+     * @param logger : 出力する Logger
+     * @param objectList : Column#value に引き渡すデータのIterable
+     */
+    public void outputAllValueToLoggerInfo(Logger logger,
+					   Iterable<T> objectList) {
+	for(T object : objectList) {
+	    outputValueToLoggerInfo(logger, object) ;
+	}
+    }
+
+    /**
+     */
+    public void outputAllValueToLoggerInfo(Logger logger,
+					   Iterable<T> objectList,
+					   Object object2) {
+	for(T object : objectList) {
+	    outputValueToLoggerInfo(logger, object, object2) ;
+	}
+    }
+
+    /**
+     */
+    public void outputAllValueToLoggerInfo(Logger logger,
+					   Iterable<T> objectList,
+					   Object object2, Object object3) {
+	for(T object : objectList) {
+	    outputValueToLoggerInfo(logger, object, object2, object3) ;
+	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * データ行を全て出力。
+     * @param writer : 出力する Writer
+     * @param objectList : Column#value に引き渡すデータのIterable
+     */
+    public void outputAllValueToWriter(Writer writer,
+				       Iterable<T> objectList) {
+	for(T object : objectList) {
+	    outputValueToWriter(writer, object) ;
+	}
+    }
+
+    /**
+     */
+    public void outputAllValueToWriter(Writer writer,
+				       Iterable<T> objectList,
+				       Object object2) {
+	for(T object : objectList) {
+	    outputValueToWriter(writer, object, object2) ;
+	}
+    }
+
+    /**
+     */
+    public void outputAllValueToWriter(Writer writer,
+				       Iterable<T> objectList,
+				       Object object2, Object object3) {
+	for(T object : objectList) {
+	    outputValueToWriter(writer, object, object2, object3) ;
+	}
+    }
+
+    //------------------------------------------------------------
+    /**
+     * データ行を全て出力。
+     * @param stream : 出力する Stream
+     * @param objectList : Column#value に引き渡すデータのIterable
+     */
+    public void outputAllValueToStream(PrintStream stream,
+				       Iterable<T> objectList) {
+	for(T object : objectList) {
+	    outputValueToStream(stream, object) ;
+	}
+    }
+
+    /**
+     */
+    public void outputAllValueToStream(PrintStream stream,
+				       Iterable<T> objectList,
+				       Object object2) {
+	for(T object : objectList) {
+	    outputValueToStream(stream, object, object2) ;
+	}
+    }
+
+    /**
+     */
+    public void outputAllValueToStream(PrintStream stream,
+				       Iterable<T> objectList,
+				       Object object2, Object object3) {
+	for(T object : objectList) {
+	    outputValueToStream(stream, object, object2, object3) ;
+	}
+    }
+
+    //============================================================
+    //============================================================
+    public class Column {
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * Column のヘッダ
+	 */
+	public String header ;
+
+	//----------------------------------------
+	/**
+	 * コンストラクタ
+	 */
+	public Column(String _header) {
+	    header = _header ;
+	}
+
+	//----------------------------------------
+	/**
+	 * 値の出力
+	 */
+	public String value(T object) { return "" ; }
+
+	//----------------------------------------
+	/**
+	 * 値の出力(2入力)
+	 */
+	public String value(T object1, Object object2) { return "" ; }
+
+	//----------------------------------------
+	/**
+	 * 値の出力(3入力)
+	 */
+	public String value(T object1, Object object2, Object object3) { 
+	    return "" ; 
+	}
+    }
+
+} // class Foo
+

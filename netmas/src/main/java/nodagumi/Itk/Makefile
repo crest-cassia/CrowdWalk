@@ -63,6 +63,9 @@ test_Lexicon ::
 test_Term ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Term_Test
 
+test_CsvFormatter ::
+	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).CsvFormatter_Test
+
 
 test_all ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(ALLTESTS)

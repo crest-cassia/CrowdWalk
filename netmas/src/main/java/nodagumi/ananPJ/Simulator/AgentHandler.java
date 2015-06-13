@@ -76,6 +76,7 @@ import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.Scenario.*;
 
+import nodagumi.Itk.CsvFormatter;
 import nodagumi.Itk.*;
 
 public class AgentHandler {
@@ -171,9 +172,67 @@ public class AgentHandler {
     // エージェントが存在するリンクのリスト
     private MapLinkTable effectiveLinks = null;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * agentMovementHistoryLogger
+     */
     private Logger agentMovementHistoryLogger = null;
+
+    private static CsvFormatter<AgentBase> agentMovementHistoryLoggerFormatter =
+        new CsvFormatter<AgentBase>() ;
+    static {
+        CsvFormatter<AgentBase> formatter = agentMovementHistoryLoggerFormatter ;
+        formatter
+            .addColumn(formatter.new Column("GenerationFileの情報") {
+                    public String value(AgentBase agent, Object timeObj) {
+                        return agent.getConfigLine().replaceAll(",", " ") ;}})
+            .addColumn(formatter.new Column("エージェントID") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return agent.ID ;}})
+            .addColumn(formatter.new Column("発生時刻1") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        AgentHandler handler = (AgentHandler)agentHandlerObj;
+                        return handler.convertAbsoluteTimeString(agent.generatedTime, true);}})
+            .addColumn(formatter.new Column("発生時刻2") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return "" + (int)agent.generatedTime ;}})
+            .addColumn(formatter.new Column("到着時刻1") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        AgentHandler handler = (AgentHandler)agentHandlerObj;
+                        return handler.convertAbsoluteTimeString(time,true) ;}})
+            .addColumn(formatter.new Column("到着時刻2") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        AgentHandler handler = (AgentHandler)agentHandlerObj;
+                        return "" + time.intValue() ;}})
+            .addColumn(formatter.new Column("移動時間1") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        AgentHandler handler = (AgentHandler)agentHandlerObj;
+                        return handler.timeToString(time - agent.generatedTime,
+                                                    true) ;}})
+            .addColumn(formatter.new Column("移動時間2") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Double time = (Double)timeObj ;
+                        AgentHandler handler = (AgentHandler)agentHandlerObj;
+                        return "" + (int)(time - agent.generatedTime) ;}})
+            ;
+    }
+
     private Logger individualPedestriansLogger = null;
 
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ
+     */
     public AgentHandler (String generationFile,
                          String scenarioFile,
                          NetworkMap map,
