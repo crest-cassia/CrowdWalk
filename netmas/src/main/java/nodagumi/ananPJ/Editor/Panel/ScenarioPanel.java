@@ -99,7 +99,7 @@ public class ScenarioPanel extends PanelWithTable {
         editor = _editor;
         random = _random;
         setLayout(new BorderLayout());
-        button_panel = new JPanel(new GridLayout(2, 2));
+        button_panel = new JPanel(new GridLayout(3, 2));
         /* agent generation scenario */
         generateFileLabel = new JLabel("Generate:");
         button_panel.add(generateFileLabel);
