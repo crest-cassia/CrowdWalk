@@ -1049,7 +1049,6 @@ public class NetworkMapEditor extends SimulationLauncher
         }
     };
 
-    //private static Random random = new Random();
     private static NetworkMapEditor instance = null;
     public static NetworkMapEditor getInstance() {
         if (instance == null) {

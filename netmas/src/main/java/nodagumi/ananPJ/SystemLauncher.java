@@ -124,6 +124,11 @@ public class SystemLauncher {
      */
     public static NetworkMapEditor launchNetworkMapEditor(String propertiesFilePath) throws Exception {
         Random random = new Random();
+        /* [2015.06.15 I.Noda] 
+         * 以下は、無駄な処理。
+         * 混乱回避のため、削除しておく。
+         */
+        /*
         if (propertiesFilePath != null) {
             NetmasPropertiesHandler properties = new NetmasPropertiesHandler(propertiesFilePath);
             int randseed = properties.getInteger("randseed", -1);
@@ -131,6 +136,7 @@ public class SystemLauncher {
                 random.setSeed(randseed);
             }
         }
+        */
         NetworkMapEditor mapEditor = new NetworkMapEditor(random);
         if (propertiesFilePath != null) {
             mapEditor.setPropertiesFromFile(propertiesFilePath);
