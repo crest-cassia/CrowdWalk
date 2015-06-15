@@ -21,7 +21,6 @@
     <!--entry key="deserialized_file">/tmp/serialized.xml</entry-->
     <entry key="randseed">2525</entry>
     <entry key="random_navigation">true</entry>
-    <entry key="speed_model">lane</entry>
     <!--entry key="density_density_speed_model_macro_timestep">10</entry-->
     <entry key="time_series_log">true</entry>
     <entry key="time_series_log_path">/tmp</entry>

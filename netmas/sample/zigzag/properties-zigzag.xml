@@ -19,9 +19,6 @@
     <!--entry key="deserialized_file">/tmp/serialized.xml</entry-->
     <entry key="randseed">2525</entry>
     <entry key="random_navigation">false</entry>
-    <!--entry key="speed_model">density</entry-->
-    <!--entry key="speed_model">lane</entry-->
-    <entry key="speed_model">density</entry>
     <entry key="run_detail_time_step">false</entry>
     <entry key="time_series_log">true</entry>
     <entry key="time_series_log_path">/tmp</entry>

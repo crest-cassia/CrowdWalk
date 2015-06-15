@@ -13,7 +13,6 @@ import net.arnx.jsonic.JSON;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
-import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
@@ -204,18 +203,6 @@ import nodagumi.Itk.*;
  *
  *  設定値： true | false
  *  デフォルト値： false</pre>
- *   </li>
- *
- *   <li>
- *     <h4>speed_model (設定必須)</h4>
- *     <pre>  エージェントの歩行モデル
- *  現在のところ必ず指定しなければならないが、廃止予定
- *
- *  設定値： density | expected_density | ???
- *           density：エージェントの移動速度を前方の特定範囲のエージェント密度によって決定する。
- *           expected_density：各エージェントが1ステップ以内に通過する可能性のあるリンクに対して
- *                             重みをつけてエージェントの移動速度を決定する。
- *  デフォルト値： なし</pre>
  *   </li>
  *
  *   <li>
@@ -413,7 +400,6 @@ public class NetmasPropertiesHandler {
                                                          "timer_enable",
                                                          "timer_file",
                                                          "randseed",
-                                                         "speed_model",
                                                          "time_series_log",
                                                          "time_series_log_path",
                                                          "time_series_log_interval",
@@ -503,11 +489,6 @@ public class NetmasPropertiesHandler {
         return randseed;
     }
 
-    protected static SpeedCalculationModel speedModel = null;
-    public SpeedCalculationModel getSpeedModel() {
-        return speedModel;
-    }
-
     // whether call NetworkMap.saveTimeSeriesLog in loop
     protected boolean isTimeSeriesLog = false;
     public boolean getIsTimeSeriesLog() {
@@ -586,15 +567,6 @@ public class NetmasPropertiesHandler {
 
             // create random with seed
             randseed = getIntegerProperty(prop, "randseed");
-            // speed model
-            String speedModelString = getStringProperty(prop, "speed_model");
-            speedModel =
-                (SpeedCalculationModel)
-                AgentGenerationFile.speedModelLexicon.lookUp(speedModelString) ;
-            if(speedModel == null) {
-                Itk.logInfo("speedModel","use lane model as default.") ;
-                speedModel = SpeedCalculationModel.LaneModel;
-            }
             // time series log
             isTimeSeriesLog = getBooleanProperty(prop, "time_series_log");
             if (isTimeSeriesLog) {

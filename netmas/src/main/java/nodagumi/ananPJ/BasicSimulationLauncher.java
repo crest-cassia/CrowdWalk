@@ -13,7 +13,6 @@ import org.w3c.dom.NodeList;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.misc.NetmasTimer;
-import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
 import nodagumi.Itk.*;
 
@@ -45,12 +44,6 @@ public abstract class BasicSimulationLauncher {
      * 地図およびエージェント格納体
      */
     protected NetworkMap networkMap;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * スピードモデル
-     */
-    protected SpeedCalculationModel speedModel = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -216,20 +209,6 @@ public abstract class BasicSimulationLauncher {
      * マップ取得
      */
     public NetworkMap getMap() { return networkMap; }
-
-    /**
-     * スピードモデル設定。
-     */
-    public void setSpeedModel(SpeedCalculationModel _speedModel) {
-        speedModel = _speedModel;
-    }
-
-    /**
-     * スピードモデル取得。
-     */
-    public SpeedCalculationModel getSpeedModel() {
-        return speedModel;
-    }
 
     /**
      * 終了条件１のセット
@@ -477,8 +456,7 @@ public abstract class BasicSimulationLauncher {
         setIsTimeSeriesLog(properties.getIsTimeSeriesLog());
         setTimeSeriesLogPath(properties.getTimeSeriesLogPath());
         setTimeSeriesLogInterval(properties.getTimeSeriesLogInterval());
-        //models
-        setSpeedModel(properties.getSpeedModel());
+        // ending condition
         setExitCount(properties.getExitCount()) ;
         setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
 

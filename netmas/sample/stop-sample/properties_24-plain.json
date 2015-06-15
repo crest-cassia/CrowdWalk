@@ -12,7 +12,6 @@
     interval: 0,
     randseed: 1023,
     random_navigation: false,
-    speed_model: 'density',
     loop_count: 1,
     exit_count: 0,
     all_agent_speed_zero_break: true,

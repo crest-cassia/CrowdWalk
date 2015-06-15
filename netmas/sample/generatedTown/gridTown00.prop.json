@@ -11,7 +11,6 @@
   "interval":0,
   "randseed":2524,
   "random_navigation":true,
-  "speed_model":"plain",
   "time_series_log":true,
   "time_series_log_path":"/tmp",
   "time_series_log_interval":1,
