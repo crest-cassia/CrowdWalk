@@ -85,28 +85,29 @@
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
 <li class="blockList">
-<h4>agentsCache</h4>
-<pre>java.util.ArrayList&lt;E&gt; agentsCache</pre>
-</li>
-<li class="blockList">
 <h4>frames</h4>
 <pre>java.util.ArrayList&lt;E&gt; frames</pre>
+<div class="block">???</div>
 </li>
 <li class="blockList">
 <h4>filename</h4>
 <pre>java.lang.String filename</pre>
+<div class="block">???</div>
 </li>
 <li class="blockList">
 <h4>pollutionFile</h4>
 <pre>java.lang.String pollutionFile</pre>
+<div class="block">汚染地域データのファイル</div>
 </li>
 <li class="blockList">
 <h4>generationFile</h4>
 <pre>java.lang.String generationFile</pre>
+<div class="block">エージェント生成ルールのファイル</div>
 </li>
 <li class="blockList">
 <h4>scenarioFile</h4>
 <pre>java.lang.String scenarioFile</pre>
+<div class="block">シナリオファイル</div>
 </li>
 <li class="blockList">
 <h4>fallbackFile</h4>
@@ -148,7 +149,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>partTable</h4>
-<pre>java.util.HashMap&lt;K,V&gt; partTable</pre>
+<pre><a href="nodagumi/Itk/UniqIdObjectTable.html" title="nodagumi.Itk内のクラス">UniqIdObjectTable</a>&lt;<a href="nodagumi/Itk/UniqIdObjectTable.html" title="UniqIdObjectTable内の型パラメータ">Klass</a>&gt; partTable</pre>
 <div class="block">ID から NetworkParts を取り出すための table.</div>
 </li>
 <li class="blockList">
@@ -452,10 +453,6 @@
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
 <li class="blockList">
-<h4>agentNumber</h4>
-<pre>int agentNumber</pre>
-</li>
-<li class="blockList">
 <h4>config</h4>
 <pre><a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> config</pre>
 <div class="block">Agent の詳細設定情報を格納しているもの</div>
@@ -466,7 +463,8 @@
 <div class="block">generatedTime: 生成された時刻
  finishedTime: ゴールに到達した時刻
  evacuated: ゴールに到達したかどうかのフラグ
- stuck: スタックしたかどうかのフラグ</div>
+ stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)
+ dead: 死亡したかどうかのフラグ(死亡しても evacuated は false のまま)</div>
 </li>
 <li class="blockList">
 <h4>finishedTime</h4>
@@ -479,6 +477,10 @@
 <li class="blockList">
 <h4>stuck</h4>
 <pre>boolean stuck</pre>
+</li>
+<li class="blockList">
+<h4>dead</h4>
+<pre>boolean dead</pre>
 </li>
 <li class="blockList">
 <h4>currentTime</h4>
@@ -519,20 +521,8 @@
 <pre>double dv</pre>
 </li>
 <li class="blockList">
-<h4>currentExposureAmount</h4>
-<pre>double currentExposureAmount</pre>
-<div class="block">currentExposuerAmount: 現在の暴露量
- accumulatedExposuerAmount: 暴露量の累積
- pollutionType: 累積するかどうか？
- pollution: ???</div>
-</li>
-<li class="blockList">
-<h4>accumulatedExposureAmount</h4>
-<pre>double accumulatedExposureAmount</pre>
-</li>
-<li class="blockList">
-<h4>pollution</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a> pollution</pre>
+<h4>pollutionEffect</h4>
+<pre><a href="nodagumi/ananPJ/Simulator/Pollution/PollutionBase.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase.PollutionEffectInfo</a> pollutionEffect</pre>
 </li>
 <li class="blockList">
 <h4>displayMode</h4>
@@ -922,7 +912,7 @@
 </li>
 <li class="blockList">
 <h4>hoverPollution</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a> hoverPollution</pre>
+<pre><a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a> hoverPollution</pre>
 </li>
 <li class="blockList">
 <h4>initialNode</h4>
@@ -1018,7 +1008,7 @@
 </li>
 <li class="blockList">
 <h4>hoverArea</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a> hoverArea</pre>
+<pre><a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a> hoverArea</pre>
 </li>
 <li class="blockList">
 <h4>selectedArea</h4>
@@ -1165,42 +1155,6 @@
 <li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.Editor.Panel</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.Editor.Panel.AgentPanel">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Editor/Panel/AgentPanel.html" title="nodagumi.ananPJ.Editor.Panel内のクラス">nodagumi.ananPJ.Editor.Panel.AgentPanel</a> extends javax.swing.JPanel implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>editor</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMapEditor.html" title="nodagumi.ananPJ内のクラス">NetworkMapEditor</a> editor</pre>
-</li>
-<li class="blockList">
-<h4>agents</h4>
-<pre>java.util.ArrayList&lt;E&gt; agents</pre>
-</li>
-<li class="blockList">
-<h4>data_model</h4>
-<pre>nodagumi.ananPJ.Editor.Panel.AgentPanel.AgentsDataModel data_model</pre>
-</li>
-<li class="blockList">
-<h4>agent_table</h4>
-<pre>javax.swing.JTable agent_table</pre>
-</li>
-<li class="blockList">
-<h4>lockRefresh</h4>
-<pre>java.lang.Boolean lockRefresh</pre>
-</li>
-<li class="blockListLast">
-<h4>lockValueChanged</h4>
-<pre>java.lang.Boolean lockValueChanged</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.Editor.Panel.BrowserPanel">
 <!--   -->
 </a>
@@ -1593,10 +1547,10 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.misc.GridPollutionAreaDialog">
+<li class="blockList"><a name="nodagumi.ananPJ.misc.GridMapAreaDialog">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/misc/GridPollutionAreaDialog.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.GridPollutionAreaDialog</a> extends javax.swing.JDialog implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/misc/GridMapAreaDialog.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.GridMapAreaDialog</a> extends javax.swing.JDialog implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1788,6 +1742,65 @@
 </ul>
 </li>
 <li class="blockList">
+<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts.Area</h2>
+<ul class="blockList">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Area.MapArea">
+<!--   -->
+</a>
+<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">nodagumi.ananPJ.NetworkParts.Area.MapArea</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>直列化されたフィールド</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>pollutionLevel</h4>
+<pre><a href="nodagumi/ananPJ/Simulator/PollutionCalculator.PollutionLevelInfo.html" title="nodagumi.ananPJ.Simulator内のクラス">PollutionCalculator.PollutionLevelInfo</a> pollutionLevel</pre>
+<div class="block">現在の Pollution 情報</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle">
+<!--   -->
+</a>
+<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Area/MapAreaRectangle.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle</a> extends <a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>直列化されたフィールド</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>bounds</h4>
+<pre>java.awt.geom.Rectangle2D bounds</pre>
+<div class="block">境界</div>
+</li>
+<li class="blockList">
+<h4>minHeight</h4>
+<pre>double minHeight</pre>
+<div class="block">高さの範囲。</div>
+</li>
+<li class="blockList">
+<h4>maxHeight</h4>
+<pre>double maxHeight</pre>
+<div class="block">高さの範囲。</div>
+</li>
+<li class="blockList">
+<h4>angle</h4>
+<pre>double angle</pre>
+<div class="block">角度。</div>
+</li>
+<li class="blockListLast">
+<h4>selected</h4>
+<pre>boolean selected</pre>
+<div class="block">??</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts.Link</h2>
 <ul class="blockList">
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.MapLink">
@@ -1844,8 +1857,8 @@
 <pre>boolean polluted</pre>
 </li>
 <li class="blockList">
-<h4>intersectedPollutionAreas</h4>
-<pre>java.util.ArrayList&lt;E&gt; intersectedPollutionAreas</pre>
+<h4>intersectedMapAreas</h4>
+<pre>java.util.ArrayList&lt;E&gt; intersectedMapAreas</pre>
 </li>
 <li class="blockList">
 <h4>total_agent_triage_level</h4>
@@ -1962,131 +1975,8 @@
 </ul>
 </li>
 <li class="blockList">
-<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts.Pollution</h2>
-<ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>lastPollutionLevel</h4>
-<pre>double lastPollutionLevel</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedAreaPoint.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaPoint</a> extends <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>point</h4>
-<pre>javax.vecmath.Vector3d point</pre>
-</li>
-<li class="blockList">
-<h4>roomId</h4>
-<pre>int roomId</pre>
-</li>
-<li class="blockListLast">
-<h4>view</h4>
-<pre>boolean view</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedAreaRectangle.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">nodagumi.ananPJ.NetworkParts.Pollution.PollutedAreaRectangle</a> extends <a href="nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>bounds</h4>
-<pre>java.awt.geom.Rectangle2D bounds</pre>
-</li>
-<li class="blockList">
-<h4>minHeight</h4>
-<pre>double minHeight</pre>
-</li>
-<li class="blockList">
-<h4>maxHeight</h4>
-<pre>double maxHeight</pre>
-</li>
-<li class="blockList">
-<h4>angle</h4>
-<pre>double angle</pre>
-</li>
-<li class="blockList">
-<h4>selected</h4>
-<pre>boolean selected</pre>
-</li>
-<li class="blockListLast">
-<h4>view</h4>
-<pre>boolean view</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.Simulator</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.Simulator.AgentsPerFloor">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Simulator/AgentsPerFloor.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.AgentsPerFloor</a> extends javax.swing.JFrame implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>minDepth</h4>
-<pre>double minDepth</pre>
-<div class="block">Show how many agent are at each floor.</div>
-</li>
-<li class="blockList">
-<h4>maxDepth</h4>
-<pre>double maxDepth</pre>
-<div class="block">Show how many agent are at each floor.</div>
-</li>
-<li class="blockList">
-<h4>agentCount</h4>
-<pre>int agentCount</pre>
-</li>
-<li class="blockList">
-<h4>agentsPerFloor</h4>
-<pre>java.util.HashMap&lt;K,V&gt; agentsPerFloor</pre>
-</li>
-<li class="blockList">
-<h4>floors</h4>
-<pre>java.util.ArrayList&lt;E&gt; floors</pre>
-</li>
-<li class="blockList">
-<h4>gpane</h4>
-<pre>nodagumi.ananPJ.Simulator.AgentsPerFloor.GraphPane gpane</pre>
-</li>
-<li class="blockListLast">
-<h4>status</h4>
-<pre>javax.swing.JLabel status</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.Simulator.SimulationPanel3D">
 <!--   -->
 </a>
@@ -2102,10 +1992,6 @@
 <li class="blockList">
 <h4>pollutionColorSaturation</h4>
 <pre>double pollutionColorSaturation</pre>
-</li>
-<li class="blockList">
-<h4>agents</h4>
-<pre>java.util.List&lt;E&gt; agents</pre>
 </li>
 <li class="blockList">
 <h4>pollutions</h4>
@@ -2300,8 +2186,8 @@
 <pre>java.util.HashSet&lt;E&gt; changedNodes</pre>
 </li>
 <li class="blockList">
-<h4>changedPollutedAreas</h4>
-<pre>java.util.HashSet&lt;E&gt; changedPollutedAreas</pre>
+<h4>changedMapAreas</h4>
+<pre>java.util.HashSet&lt;E&gt; changedMapAreas</pre>
 </li>
 <li class="blockList">
 <h4>addedAgents</h4>
@@ -2320,8 +2206,8 @@
 <pre>java.util.HashSet&lt;E&gt; evacuatedAgents</pre>
 </li>
 <li class="blockList">
-<h4>displayedPollutedAreas</h4>
-<pre>java.util.HashMap&lt;K,V&gt; displayedPollutedAreas</pre>
+<h4>displayedMapAreas</h4>
+<pre>java.util.HashMap&lt;K,V&gt; displayedMapAreas</pre>
 </li>
 <li class="blockList">
 <h4>displayedAgents</h4>
@@ -2330,75 +2216,6 @@
 <li class="blockListLast">
 <h4>selected_link</h4>
 <pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> selected_link</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.Simulator.SimulatorFrame2D">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/Simulator/SimulatorFrame2D.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.SimulatorFrame2D</a> extends javax.swing.JFrame implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>simulator</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a> simulator</pre>
-<div class="block">A 2D version of simulation preview</div>
-</li>
-<li class="blockList">
-<h4>backgroundImage</h4>
-<pre>java.awt.Image backgroundImage</pre>
-</li>
-<li class="blockList">
-<h4>layer</h4>
-<pre>int layer</pre>
-</li>
-<li class="blockList">
-<h4>scale</h4>
-<pre>double scale</pre>
-</li>
-<li class="blockList">
-<h4>tx</h4>
-<pre>double tx</pre>
-</li>
-<li class="blockList">
-<h4>ty</h4>
-<pre>double ty</pre>
-</li>
-<li class="blockList">
-<h4>displayMinHeight</h4>
-<pre>double displayMinHeight</pre>
-</li>
-<li class="blockList">
-<h4>displayMaxHeight</h4>
-<pre>double displayMaxHeight</pre>
-</li>
-<li class="blockList">
-<h4>minHeight</h4>
-<pre>double minHeight</pre>
-</li>
-<li class="blockList">
-<h4>maxHeight</h4>
-<pre>double maxHeight</pre>
-</li>
-<li class="blockList">
-<h4>minX</h4>
-<pre>double minX</pre>
-</li>
-<li class="blockList">
-<h4>minY</h4>
-<pre>double minY</pre>
-</li>
-<li class="blockList">
-<h4>maxX</h4>
-<pre>double maxX</pre>
-</li>
-<li class="blockListLast">
-<h4>maxY</h4>
-<pre>double maxY</pre>
 </li>
 </ul>
 </li>
@@ -2413,6 +2230,43 @@
 <!--   -->
 </a>
 <h3>Class <a href="nodagumi/Itk/Itk.JsonObject.html" title="nodagumi.Itk内のクラス">nodagumi.Itk.Itk.JsonObject</a> extends java.util.HashMap&lt;java.lang.String,java.lang.Object&gt; implements Serializable</h3>
+</li>
+<li class="blockList"><a name="nodagumi.Itk.UniqIdObjectTable">
+<!--   -->
+</a>
+<h3>Class <a href="nodagumi/Itk/UniqIdObjectTable.html" title="nodagumi.Itk内のクラス">nodagumi.Itk.UniqIdObjectTable</a> extends java.util.HashMap&lt;java.lang.String,<a href="nodagumi/Itk/UniqIdObjectTable.html" title="UniqIdObjectTable内の型パラメータ">Klass</a>&gt; implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>直列化されたフィールド</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>idPrefix</h4>
+<pre>java.lang.String idPrefix</pre>
+<div class="block">id の prefix</div>
+</li>
+<li class="blockList">
+<h4>idSuffix</h4>
+<pre>java.lang.String idSuffix</pre>
+<div class="block">id の suffix</div>
+</li>
+<li class="blockList">
+<h4>idDigit</h4>
+<pre>int idDigit</pre>
+<div class="block">id の 数値部分の桁数</div>
+</li>
+<li class="blockList">
+<h4>idFormatCache</h4>
+<pre>java.lang.String idFormatCache</pre>
+<div class="block">id のフォーマット</div>
+</li>
+<li class="blockListLast">
+<h4>idCounter</h4>
+<pre>int idCounter</pre>
+<div class="block">id のフォーマット</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 </li>

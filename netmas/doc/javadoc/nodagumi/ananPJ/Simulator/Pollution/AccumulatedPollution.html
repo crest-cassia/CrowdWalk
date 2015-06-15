@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -49,10 +49,10 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>前のクラス</li>
-<li><a href="../../../../nodagumi/ananPJ/Simulator/pollution/NonAccumulatedPollution.html" title="nodagumi.ananPJ.Simulator.pollution内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../index.html?nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html" target="_top">フレーム</a></li>
+<li><a href="../../../../index.html?nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html" target="_top">フレーム</a></li>
 <li><a href="AccumulatedPollution.html" target="_top">フレームなし</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>サマリー:&nbsp;</li>
-<li>ネスト&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">ネスト</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">メソッド</a></li>
@@ -91,7 +91,7 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">nodagumi.ananPJ.Simulator.pollution</div>
+<div class="subTitle">nodagumi.ananPJ.Simulator.Pollution</div>
 <h2 title="クラス AccumulatedPollution" class="title">クラス AccumulatedPollution</h2>
 </div>
 <div class="contentContainer">
@@ -99,10 +99,10 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">nodagumi.ananPJ.Simulator.Pollution</a></li>
+<li><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">nodagumi.ananPJ.Simulator.Pollution.PollutionBase</a></li>
 <li>
 <ul class="inheritance">
-<li>nodagumi.ananPJ.Simulator.pollution.AccumulatedPollution</li>
+<li>nodagumi.ananPJ.Simulator.Pollution.AccumulatedPollution</li>
 </ul>
 </li>
 </ul>
@@ -114,13 +114,34 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">AccumulatedPollution</span>
-extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></pre>
+extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></pre>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>ネストされたクラスのサマリー</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="ネストされたクラスのサマリー表、ネストされたクラスのリストおよび説明">
+<caption><span>ネストされたクラス</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">修飾子とタイプ</th>
+<th class="colLast" scope="col">クラスと説明</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">AccumulatedPollution.PollutionEffectInfo</a></span></code>
+<div class="block">Pollution の状態をエージェント毎に保持する構造体。</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -135,27 +156,27 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#DEADLY_LEVEL">DEADLY_LEVEL</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#DEADLY_LEVEL">DEADLY_LEVEL</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#INCAPACITATED_LEVEL">INCAPACITATED_LEVEL</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#INCAPACITATED_LEVEL">INCAPACITATED_LEVEL</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#IRRITANT_LEVEL">IRRITANT_LEVEL</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#IRRITANT_LEVEL">IRRITANT_LEVEL</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#UNBEARABLE_LEVEL">UNBEARABLE_LEVEL</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#UNBEARABLE_LEVEL">UNBEARABLE_LEVEL</a></span></code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.nodagumi.ananPJ.Simulator.Pollution">
+<li class="blockList"><a name="fields.inherited.from.class.nodagumi.ananPJ.Simulator.Pollution.PollutionBase">
 <!--   -->
 </a>
-<h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.Simulator.<a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></h3>
-<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html#pollutions">pollutions</a></code></li>
+<h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.Simulator.Pollution.<a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></h3>
+<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#classFinder">classFinder</a>, <a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#instanceTable">instanceTable</a></code></li>
 </ul>
 </li>
 </ul>
@@ -171,7 +192,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#AccumulatedPollution--">AccumulatedPollution</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#AccumulatedPollution--">AccumulatedPollution</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -190,28 +211,34 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#effect-nodagumi.ananPJ.Agents.AgentBase-">effect</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#effect-nodagumi.ananPJ.Agents.AgentBase-">effect</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#expose-nodagumi.ananPJ.Agents.AgentBase-double-">expose</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#expose-nodagumi.ananPJ.Agents.AgentBase-double-">expose</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent,
       double&nbsp;pollutionLevel)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#finished-nodagumi.ananPJ.Agents.AgentBase-">finished</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#getTriage-nodagumi.ananPJ.Agents.AgentBase-">getTriage</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html#getTriage-nodagumi.ananPJ.Agents.AgentBase-">getTriage</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#isDead-nodagumi.ananPJ.Agents.AgentBase-">isDead</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>
+<div class="block">エージェントの死亡判定</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase.PollutionEffectInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html#newEffectInfo-nodagumi.ananPJ.Agents.AgentBase-">newEffectInfo</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.nodagumi.ananPJ.Simulator.Pollution">
+<li class="blockList"><a name="methods.inherited.from.class.nodagumi.ananPJ.Simulator.Pollution.PollutionBase">
 <!--   -->
 </a>
-<h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.Simulator.<a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></h3>
-<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html#createInstance-java.lang.String-">createInstance</a>, <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html#getInstance-java.lang.String-">getInstance</a></code></li>
+<h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.Simulator.Pollution.<a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></h3>
+<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#createInstance-java.lang.String-">createInstance</a>, <a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#getInstance-java.lang.String-">getInstance</a>, <a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#register-java.lang.String-java.lang.Class-">register</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -243,7 +270,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <pre>public static final&nbsp;double DEADLY_LEVEL</pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.pollution.AccumulatedPollution.DEADLY_LEVEL">定数フィールド値</a></dd>
+<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.Pollution.AccumulatedPollution.DEADLY_LEVEL">定数フィールド値</a></dd>
 </dl>
 </li>
 </ul>
@@ -256,7 +283,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <pre>public static final&nbsp;double UNBEARABLE_LEVEL</pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.pollution.AccumulatedPollution.UNBEARABLE_LEVEL">定数フィールド値</a></dd>
+<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.Pollution.AccumulatedPollution.UNBEARABLE_LEVEL">定数フィールド値</a></dd>
 </dl>
 </li>
 </ul>
@@ -269,7 +296,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <pre>public static final&nbsp;double INCAPACITATED_LEVEL</pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.pollution.AccumulatedPollution.INCAPACITATED_LEVEL">定数フィールド値</a></dd>
+<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.Pollution.AccumulatedPollution.INCAPACITATED_LEVEL">定数フィールド値</a></dd>
 </dl>
 </li>
 </ul>
@@ -282,7 +309,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <pre>public static final&nbsp;double IRRITANT_LEVEL</pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
-<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.pollution.AccumulatedPollution.IRRITANT_LEVEL">定数フィールド値</a></dd>
+<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.Pollution.AccumulatedPollution.IRRITANT_LEVEL">定数フィールド値</a></dd>
 </dl>
 </li>
 </ul>
@@ -311,6 +338,19 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
+<a name="newEffectInfo-nodagumi.ananPJ.Agents.AgentBase-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newEffectInfo</h4>
+<pre>public&nbsp;<a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase.PollutionEffectInfo</a>&nbsp;newEffectInfo(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">定義:</span></dt>
+<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#newEffectInfo-nodagumi.ananPJ.Agents.AgentBase-">newEffectInfo</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="expose-nodagumi.ananPJ.Agents.AgentBase-double-">
 <!--   -->
 </a>
@@ -321,7 +361,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
                    double&nbsp;pollutionLevel)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">定義:</span></dt>
-<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html#expose-nodagumi.ananPJ.Agents.AgentBase-double-">expose</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></code></dd>
+<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#expose-nodagumi.ananPJ.Agents.AgentBase-double-">expose</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -334,7 +374,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <pre>public&nbsp;void&nbsp;effect(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">定義:</span></dt>
-<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html#effect-nodagumi.ananPJ.Agents.AgentBase-">effect</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></code></dd>
+<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#effect-nodagumi.ananPJ.Agents.AgentBase-">effect</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -347,20 +387,21 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <pre>public&nbsp;int&nbsp;getTriage(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">定義:</span></dt>
-<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html#getTriage-nodagumi.ananPJ.Agents.AgentBase-">getTriage</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></code></dd>
+<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#getTriage-nodagumi.ananPJ.Agents.AgentBase-">getTriage</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="finished-nodagumi.ananPJ.Agents.AgentBase-">
+<a name="isDead-nodagumi.ananPJ.Agents.AgentBase-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>finished</h4>
-<pre>public&nbsp;boolean&nbsp;finished(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
+<h4>isDead</h4>
+<pre>public&nbsp;boolean&nbsp;isDead(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
+<div class="block">エージェントの死亡判定</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">定義:</span></dt>
-<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html#finished-nodagumi.ananPJ.Agents.AgentBase-">finished</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></code></dd>
+<dd><code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html#isDead-nodagumi.ananPJ.Agents.AgentBase-">isDead</a></code>&nbsp;クラス内&nbsp;<code><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -392,10 +433,10 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <div class="subNav">
 <ul class="navList">
 <li>前のクラス</li>
-<li><a href="../../../../nodagumi/ananPJ/Simulator/pollution/NonAccumulatedPollution.html" title="nodagumi.ananPJ.Simulator.pollution内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../../nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../index.html?nodagumi/ananPJ/Simulator/pollution/AccumulatedPollution.html" target="_top">フレーム</a></li>
+<li><a href="../../../../index.html?nodagumi/ananPJ/Simulator/Pollution/AccumulatedPollution.html" target="_top">フレーム</a></li>
 <li><a href="AccumulatedPollution.html" target="_top">フレームなし</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
@@ -416,7 +457,7 @@ extends <a href="../../../../nodagumi/ananPJ/Simulator/Pollution.html" title="no
 <div>
 <ul class="subNavList">
 <li>サマリー:&nbsp;</li>
-<li>ネスト&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">ネスト</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">メソッド</a></li>

@@ -306,16 +306,16 @@ implements java.awt.event.ActionListener, java.awt.event.MouseListener, java.awt
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#getChildLinks--">getChildLinks</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#getChildNodes--">getChildNodes</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#getChildMapAreas--">getChildMapAreas</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#getChildNodesAndSymlinks--">getChildNodesAndSymlinks</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#getChildNodes--">getChildNodes</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#getChildPollutedAreas--">getChildPollutedAreas</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#getChildNodesAndSymlinks--">getChildNodesAndSymlinks</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Editor/EditorFramePanel.TextPosition.html" title="nodagumi.ananPJ.Editor内の列挙型">EditorFramePanel.TextPosition</a></code></td>
@@ -486,7 +486,7 @@ implements java.awt.event.ActionListener, java.awt.event.MouseListener, java.awt
 </tr>
 <tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#updatePollutionAreaTag--">updatePollutionAreaTag</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Editor/EditorFrame.html#updateMapAreaTag--">updateMapAreaTag</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -659,13 +659,13 @@ implements java.awt.event.ActionListener, java.awt.event.MouseListener, java.awt
 <pre>public&nbsp;java.awt.geom.Rectangle2D&nbsp;getRegion()</pre>
 </li>
 </ul>
-<a name="updatePollutionAreaTag--">
+<a name="updateMapAreaTag--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>updatePollutionAreaTag</h4>
-<pre>public&nbsp;void&nbsp;updatePollutionAreaTag()</pre>
+<h4>updateMapAreaTag</h4>
+<pre>public&nbsp;void&nbsp;updateMapAreaTag()</pre>
 </li>
 </ul>
 <a name="isTerminalNode-nodagumi.ananPJ.NetworkParts.Node.MapNode-nodagumi.ananPJ.NetworkParts.Link.MapLink-java.util.HashSet-">
@@ -1228,13 +1228,13 @@ implements java.awt.event.ActionListener, java.awt.event.MouseListener, java.awt
 <pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">MapPartGroup</a>&gt;&nbsp;getChildGroups()</pre>
 </li>
 </ul>
-<a name="getChildPollutedAreas--">
+<a name="getChildMapAreas--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getChildPollutedAreas</h4>
-<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&gt;&nbsp;getChildPollutedAreas()</pre>
+<h4>getChildMapAreas</h4>
+<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;&nbsp;getChildMapAreas()</pre>
 </li>
 </ul>
 <a name="getSymbolicLinks--">

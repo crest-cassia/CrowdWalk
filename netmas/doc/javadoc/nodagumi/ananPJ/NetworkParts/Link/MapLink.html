@@ -211,8 +211,8 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#fromNode">fromNode</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#intersectedPollutionAreas">intersectedPollutionAreas</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#intersectedMapAreas">intersectedMapAreas</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
@@ -343,7 +343,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#addIntersectedPollutionArea-nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea-">addIntersectedPollutionArea</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&nbsp;area)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#addIntersectedMapArea-nodagumi.ananPJ.NetworkParts.Area.MapArea-">addIntersectedMapArea</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&nbsp;area)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -491,8 +491,8 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#getFrom--">getFrom</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i29" class="rowColor">
-<td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#getIntersectedPollutionAreas--">getIntersectedPollutionAreas</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html#getIntersectedMapAreas--">getIntersectedMapAreas</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i30" class="altColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
@@ -968,13 +968,13 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <pre>protected&nbsp;boolean polluted</pre>
 </li>
 </ul>
-<a name="intersectedPollutionAreas">
+<a name="intersectedMapAreas">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>intersectedPollutionAreas</h4>
-<pre>protected&nbsp;java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&gt; intersectedPollutionAreas</pre>
+<h4>intersectedMapAreas</h4>
+<pre>protected&nbsp;java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt; intersectedMapAreas</pre>
 </li>
 </ul>
 <a name="broad">
@@ -1151,22 +1151,22 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <pre>public&nbsp;boolean&nbsp;isPolluted()</pre>
 </li>
 </ul>
-<a name="addIntersectedPollutionArea-nodagumi.ananPJ.NetworkParts.Pollution.PollutedArea-">
+<a name="addIntersectedMapArea-nodagumi.ananPJ.NetworkParts.Area.MapArea-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>addIntersectedPollutionArea</h4>
-<pre>public&nbsp;void&nbsp;addIntersectedPollutionArea(<a href="../../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&nbsp;area)</pre>
+<h4>addIntersectedMapArea</h4>
+<pre>public&nbsp;void&nbsp;addIntersectedMapArea(<a href="../../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&nbsp;area)</pre>
 </li>
 </ul>
-<a name="getIntersectedPollutionAreas--">
+<a name="getIntersectedMapAreas--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getIntersectedPollutionAreas</h4>
-<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Pollution/PollutedArea.html" title="nodagumi.ananPJ.NetworkParts.Pollution内のクラス">PollutedArea</a>&gt;&nbsp;getIntersectedPollutionAreas()</pre>
+<h4>getIntersectedMapAreas</h4>
+<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;&nbsp;getIntersectedMapAreas()</pre>
 </li>
 </ul>
 <a name="prepareForSimulation-double-int-">

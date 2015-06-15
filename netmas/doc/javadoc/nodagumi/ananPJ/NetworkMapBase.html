@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -246,80 +246,72 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#assignNewId-java.lang.String-int-">assignNewId</a></span>(java.lang.String&nbsp;prefix,
-           int&nbsp;digit)</code>
-<div class="block">ユニークな id の取得</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#assignNewId-java.lang.String-int-java.lang.String-">assignNewId</a></span>(java.lang.String&nbsp;prefix,
-           int&nbsp;digit,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#assignNewId-java.lang.String-java.lang.String-">assignNewId</a></span>(java.lang.String&nbsp;prefix,
            java.lang.String&nbsp;suffix)</code>
 <div class="block">ユニークな id の取得</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPath-java.lang.String-">calcGoalPath</a></span>(java.lang.String&nbsp;goal_tag)</code>
 <div class="block">経路探索</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#calcGoalPathWithSync-java.lang.String-">calcGoalPathWithSync</a></span>(java.lang.String&nbsp;goal_tag)</code>
 <div class="block">synchronized された経路探索</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#checkObjectId-java.lang.String-">checkObjectId</a></span>(java.lang.String&nbsp;id)</code>
 <div class="block">IDテーブルのidの重複チェック</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getLinks--">getLinks</a></span>()</code>
 <div class="block">リンクテーブル取得</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getNodes--">getNodes</a></span>()</code>
 <div class="block">ノードテーブル取得</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getOBCollection--">getOBCollection</a></span>()</code>
 <div class="block">IDテーブルの中身(NetworkParts)を取り出す。</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getOBElements--">getOBElements</a></span>()</code>
 <div class="block">IDテーブルの中身(NetworkParts)を取り出す。</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#getObject-java.lang.String-">getObject</a></span>(java.lang.String&nbsp;id)</code>
 <div class="block">IDテーブルからNetworkPartsの取り出し。</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#isCheckedRouteKey-java.lang.String-">isCheckedRouteKey</a></span>(java.lang.String&nbsp;target)</code>
 <div class="block">経路探索されているかどうかのチェック</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#isValidRouteKey-java.lang.String-">isValidRouteKey</a></span>(java.lang.String&nbsp;target)</code>
 <div class="block">経路探索されているかどうかのチェック</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/NetworkMapBase.html#removeObject-java.lang.String-">removeObject</a></span>(java.lang.String&nbsp;id)</code>
 <div class="block">IDテーブルからのNetworkParts(OBNode)の削除</div>
@@ -440,6 +432,22 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
+<a name="checkObjectId-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkObjectId</h4>
+<pre>public&nbsp;boolean&nbsp;checkObjectId(java.lang.String&nbsp;id)</pre>
+<div class="block">IDテーブルのidの重複チェック</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>id</code> - : part の id.</dd>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>id がすでに登録されていれば true</dd>
+</dl>
+</li>
+</ul>
 <a name="assignNewId--">
 <!--   -->
 </a>
@@ -470,32 +478,13 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 </dl>
 </li>
 </ul>
-<a name="assignNewId-java.lang.String-int-">
+<a name="assignNewId-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>assignNewId</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;assignNewId(java.lang.String&nbsp;prefix,
-                                       int&nbsp;digit)</pre>
-<div class="block">ユニークな id の取得</div>
-<dl>
-<dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>prefix</code> - : id の prefix</dd>
-<dd><code>digit</code> - : id 数値部分の桁数</dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>新しい id</dd>
-</dl>
-</li>
-</ul>
-<a name="assignNewId-java.lang.String-int-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>assignNewId</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;assignNewId(java.lang.String&nbsp;prefix,
-                                       int&nbsp;digit,
                                        java.lang.String&nbsp;suffix)</pre>
 <div class="block">ユニークな id の取得</div>
 <dl>
@@ -505,22 +494,6 @@ extends javax.swing.tree.DefaultTreeModel</pre>
 <dd><code>suffix</code> - : id の suffix</dd>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>新しい id</dd>
-</dl>
-</li>
-</ul>
-<a name="checkObjectId-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkObjectId</h4>
-<pre>public&nbsp;boolean&nbsp;checkObjectId(java.lang.String&nbsp;id)</pre>
-<div class="block">IDテーブルのidの重複チェック</div>
-<dl>
-<dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>id</code> - : part の id.</dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>id がすでに登録されていれば true</dd>
 </dl>
 </li>
 </ul>

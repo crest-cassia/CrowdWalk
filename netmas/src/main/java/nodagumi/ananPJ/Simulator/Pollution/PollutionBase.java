@@ -117,8 +117,6 @@ public abstract class PollutionBase {
          * effect
          */
         public int getTriage() {
-            Itk.dbgVal("agent", agent) ;
-            Itk.dbgVal("pollution", pollution) ;
             return pollution.getTriage(agent) ;
         }
 

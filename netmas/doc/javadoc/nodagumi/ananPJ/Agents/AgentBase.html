@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":6,"i10":6,"i11":10,"i12":10,"i13":10,"i14":9,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":9,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":9,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":6,"i61":10,"i62":10,"i63":10,"i64":10,"i65":10,"i66":10,"i67":10,"i68":10,"i69":9,"i70":10,"i71":10,"i72":10,"i73":10,"i74":6,"i75":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":6,"i10":6,"i11":10,"i12":10,"i13":10,"i14":9,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":9,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":9,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":6,"i61":10,"i62":10,"i63":10,"i64":10,"i65":10,"i66":10,"i67":10,"i68":10,"i69":9,"i70":10,"i71":10,"i72":10,"i73":10,"i74":6,"i75":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -173,14 +173,6 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <th class="colLast" scope="col">フィールドと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#accumulatedExposureAmount">accumulatedExposureAmount</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#agentNumber">agentNumber</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#config">config</a></span></code>
 <div class="block">Agent の詳細設定情報を格納しているもの</div>
@@ -199,89 +191,86 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#currentExposureAmount">currentExposureAmount</a></span></code>
-<div class="block">currentExposuerAmount: 現在の暴露量
- accumulatedExposuerAmount: 暴露量の累積
- pollutionType: 累積するかどうか？</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/misc/Place.html" title="nodagumi.ananPJ.misc内のクラス">Place</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#currentPlace">currentPlace</a></span></code>
 <div class="block">現在地および前回の位置。</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#currentTime">currentTime</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#displayMode">displayMode</a></span></code>
 <div class="block">表示・設定関係</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#dv">dv</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#finishedTime">finishedTime</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#generatedTime">generatedTime</a></span></code>
 <div class="block">generatedTime: 生成された時刻
  finishedTime: ゴールに到達した時刻
  evacuated: ゴールに到達したかどうかのフラグ
- stuck: スタックしたかどうかのフラグ</div>
+ stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)
+ dead: 死亡したかどうかのフラグ(死亡しても evacuated は false のまま)</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#goal">goal</a></span></code>
 <div class="block">goal: 目的地
  routePlan: 目的地までの経路</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/misc/Place.html" title="nodagumi.ananPJ.misc内のクラス">Place</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#lastPlace">lastPlace</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#map">map</a></span></code>
 <div class="block">map: 自分の存在しているマップ。</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase.PollutionEffectInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#pollutionEffect">pollutionEffect</a></span></code>&nbsp;</td>
+</tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#pollution">pollution</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#pollutionType">pollutionType</a></span></code>
+<div class="block">currentExposuerAmount: 現在の暴露量
+ accumulatedExposuerAmount: 暴露量の累積
+ pollutionType: 累積するかどうか？</div>
+</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#pollutionType">pollutionType</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>protected java.util.Random</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#random">random</a></span></code>
 <div class="block">乱数生成器</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/misc/RoutePlan.html" title="nodagumi.ananPJ.misc内のクラス">RoutePlan</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#routePlan">routePlan</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#speed">speed</a></span></code>
 <div class="block">speed: エージェントが単位時間に進む距離
  dv: 加速度</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#swing_width">swing_width</a></span></code>&nbsp;</td>
 </tr>
@@ -320,8 +309,7 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#AgentBase-java.lang.String-java.util.Random-">AgentBase</a></span>(java.lang.String&nbsp;_id,
-         java.util.Random&nbsp;_random)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#AgentBase-java.util.Random-">AgentBase</a></span>(java.util.Random&nbsp;_random)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -414,7 +402,7 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#exposed-double-">exposed</a></span>(double&nbsp;c)</code>
-<div class="block">???</div>
+<div class="block">汚染環境(洪水、ガス等)に暴露する</div>
 </td>
 </tr>
 <tr id="i12" class="altColor">
@@ -428,7 +416,7 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#finished--">finished</a></span>()</code>
-<div class="block">???</div>
+<div class="block">動作が終了(避難完了または死亡)しているか?</div>
 </td>
 </tr>
 <tr id="i14" class="altColor">
@@ -450,205 +438,204 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 </td>
 </tr>
 <tr id="i17" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getAgentNumber--">getAgentNumber</a></span>()</code>
-<div class="block">エージェント id</div>
-</td>
-</tr>
-<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getConfigLine--">getConfigLine</a></span>()</code>
 <div class="block">設定文字列（generation file 中の設定情報の文字列）を取得</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getCurrentLink--">getCurrentLink</a></span>()</code>
 <div class="block">現在のリンクを取得</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getDirection--">getDirection</a></span>()</code>
 <div class="block">現在のリンクに対する向きを取得</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getDoubleFromConfig-java.lang.String-double-">getDoubleFromConfig</a></span>(java.lang.String&nbsp;slot,
                    double&nbsp;fallback)</code>
 <div class="block">Conf からの値の取得(double)</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getGoal--">getGoal</a></span>()</code>
 <div class="block">ゴールを取得</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getHeight--">getHeight</a></span>()</code>
 <div class="block">高さ？</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getIntFromConfig-java.lang.String-int-">getIntFromConfig</a></span>(java.lang.String&nbsp;slot,
                 int&nbsp;fallback)</code>
 <div class="block">Conf からの値の取得(double)</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getLastDirection--">getLastDirection</a></span>()</code>
 <div class="block">現在のリンクに対する向きを取得</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getLastNode--">getLastNode</a></span>()</code>
 <div class="block">ゴール後の最後のノードを取得</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getLastPositionOnLink--">getLastPositionOnLink</a></span>()</code>
 <div class="block">最後のリンク上の絶対位置（リンクから見た位置）を得る</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getNextCandidateString--">getNextCandidateString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getNextNode--">getNextNode</a></span>()</code>
 <div class="block">次のノードを取得</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getNodeTypeString--">getNodeTypeString</a></span>()</code>
 <div class="block">おそらく、OBNode 汎用のルーチン。</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getPlannedRoute--">getPlannedRoute</a></span>()</code>
 <div class="block">全経路を取得</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.awt.geom.Point2D</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getPos--">getPos</a></span>()</code>
 <div class="block">表示上の位置計算</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getPositionOnLink--">getPositionOnLink</a></span>()</code>
 <div class="block">現在のリンク上の絶対位置（リンクから見た位置）を得る</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getPrevNode--">getPrevNode</a></span>()</code>
 <div class="block">直前ノードを取得</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getPrimalTargetPlaceInDirective-nodagumi.Itk.Term-">getPrimalTargetPlaceInDirective</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;directive)</code>
 <div class="block">Directive のなかの代表的目的地の取得</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getRandomDouble--">getRandomDouble</a></span>()</code>
 <div class="block">乱数生成(実数)</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getRandomInt--">getRandomInt</a></span>()</code>
 <div class="block">乱数生成(整数)</div>
 </td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getRandomInt-int-">getRandomInt</a></span>(int&nbsp;n)</code>
 <div class="block">乱数生成(整数) 上限有り</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getRemainingDistance--">getRemainingDistance</a></span>()</code>
 <div class="block">リンク上の残りの距離</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/misc/RoutePlan.html" title="nodagumi.ananPJ.misc内のクラス">RoutePlan</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getRoutePlan--">getRoutePlan</a></span>()</code>
 <div class="block">経路を取得</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getSpeed--">getSpeed</a></span>()</code>
 <div class="block">速度を取得</div>
 </td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>javax.vecmath.Vector3d</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getSwing--">getSwing</a></span>()</code>
 <div class="block">リンク上の表示上の横ずれ幅計算</div>
 </td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getTermFromConfig-java.lang.String-nodagumi.Itk.Term-">getTermFromConfig</a></span>(java.lang.String&nbsp;slot,
                  <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallback)</code>
 <div class="block">Conf からの値の取得(Term)</div>
 </td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getTriage--">getTriage</a></span>()</code>
 <div class="block">???</div>
 </td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#getTypeName--">getTypeName</a></span>()</code>
 <div class="block">エージェントのクラス短縮名を取得。</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#init-java.lang.String-java.util.Random-">init</a></span>(java.lang.String&nbsp;_id,
-    java.util.Random&nbsp;_random)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#init-java.util.Random-">init</a></span>(java.util.Random&nbsp;_random)</code>
 <div class="block">初期化。</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#initByConf-nodagumi.Itk.Term-nodagumi.Itk.Term-">initByConf</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;conf,
           <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallback)</code>
 <div class="block">Conf による初期化。</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#insertRouteTagSafely-nodagumi.Itk.Term-">insertRouteTagSafely</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;tag)</code>
 <div class="block">全経路をセット</div>
 </td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#isBackwardDirection--">isBackwardDirection</a></span>()</code>
 <div class="block">現在のリンクに対して逆向き（リンクの toNode から fromNode）
  に向かっているか？</div>
+</td>
+</tr>
+<tr id="i49" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Agents/AgentBase.html#isDead--">isDead</a></span>()</code>
+<div class="block">死亡したかどうか</div>
 </td>
 </tr>
 <tr id="i50" class="altColor">
@@ -854,15 +841,6 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <!--   -->
 </a>
 <h3>フィールドの詳細</h3>
-<a name="agentNumber">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>agentNumber</h4>
-<pre>public&nbsp;int agentNumber</pre>
-</li>
-</ul>
 <a name="config">
 <!--   -->
 </a>
@@ -897,7 +875,8 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <div class="block">generatedTime: 生成された時刻
  finishedTime: ゴールに到達した時刻
  evacuated: ゴールに到達したかどうかのフラグ
- stuck: スタックしたかどうかのフラグ</div>
+ stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)
+ dead: 死亡したかどうかのフラグ(死亡しても evacuated は false のまま)</div>
 </li>
 </ul>
 <a name="finishedTime">
@@ -987,28 +966,6 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <pre>protected&nbsp;double dv</pre>
 </li>
 </ul>
-<a name="currentExposureAmount">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>currentExposureAmount</h4>
-<pre>public&nbsp;double currentExposureAmount</pre>
-<div class="block">currentExposuerAmount: 現在の暴露量
- accumulatedExposuerAmount: 暴露量の累積
- pollutionType: 累積するかどうか？
- pollution: ???</div>
-</li>
-</ul>
-<a name="accumulatedExposureAmount">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>accumulatedExposureAmount</h4>
-<pre>public&nbsp;double accumulatedExposureAmount</pre>
-</li>
-</ul>
 <a name="pollutionType">
 <!--   -->
 </a>
@@ -1016,15 +973,19 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <li class="blockList">
 <h4>pollutionType</h4>
 <pre>protected static&nbsp;java.lang.String pollutionType</pre>
+<div class="block">currentExposuerAmount: 現在の暴露量
+ accumulatedExposuerAmount: 暴露量の累積
+ pollutionType: 累積するかどうか？
+ pollution: pollutionによる影響の処理を行う部分。</div>
 </li>
 </ul>
-<a name="pollution">
+<a name="pollutionEffect">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>pollution</h4>
-<pre>protected&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/Pollution.html" title="nodagumi.ananPJ.Simulator内のクラス">Pollution</a> pollution</pre>
+<h4>pollutionEffect</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/Pollution/PollutionBase.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase.PollutionEffectInfo</a> pollutionEffect</pre>
 </li>
 </ul>
 <a name="displayMode">
@@ -1085,14 +1046,13 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
  引数なしconstractorはClassFinder.newByName で必要。</div>
 </li>
 </ul>
-<a name="AgentBase-java.lang.String-java.util.Random-">
+<a name="AgentBase-java.util.Random-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>AgentBase</h4>
-<pre>public&nbsp;AgentBase(java.lang.String&nbsp;_id,
-                 java.util.Random&nbsp;_random)</pre>
+<pre>public&nbsp;AgentBase(java.util.Random&nbsp;_random)</pre>
 </li>
 </ul>
 </li>
@@ -1114,14 +1074,13 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
  AgentBase は abstract なので、null</div>
 </li>
 </ul>
-<a name="init-java.lang.String-java.util.Random-">
+<a name="init-java.util.Random-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>init</h4>
-<pre>public&nbsp;void&nbsp;init(java.lang.String&nbsp;_id,
-                 java.util.Random&nbsp;_random)</pre>
+<pre>public&nbsp;void&nbsp;init(java.util.Random&nbsp;_random)</pre>
 <div class="block">初期化。constractorから分離。</div>
 </li>
 </ul>
@@ -1224,16 +1183,6 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
  自動で対応されるようにしてある。</div>
 </li>
 </ul>
-<a name="getAgentNumber--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAgentNumber</h4>
-<pre>public&nbsp;int&nbsp;getAgentNumber()</pre>
-<div class="block">エージェント id</div>
-</li>
-</ul>
 <a name="setMap-nodagumi.ananPJ.NetworkMapBase-">
 <!--   -->
 </a>
@@ -1274,6 +1223,16 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <h4>isStuck</h4>
 <pre>public&nbsp;boolean&nbsp;isStuck()</pre>
 <div class="block">スタックしたかどうか</div>
+</li>
+</ul>
+<a name="isDead--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDead</h4>
+<pre>public&nbsp;boolean&nbsp;isDead()</pre>
+<div class="block">死亡したかどうか</div>
 </li>
 </ul>
 <a name="setGoal-nodagumi.Itk.Term-">
@@ -1580,7 +1539,7 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <li class="blockList">
 <h4>finished</h4>
 <pre>public&nbsp;boolean&nbsp;finished()</pre>
-<div class="block">???</div>
+<div class="block">動作が終了(避難完了または死亡)しているか?</div>
 </li>
 </ul>
 <a name="exposed-double-">
@@ -1590,7 +1549,7 @@ implements java.lang.Comparable&lt;<a href="../../../nodagumi/ananPJ/Agents/Agen
 <li class="blockList">
 <h4>exposed</h4>
 <pre>public&nbsp;void&nbsp;exposed(double&nbsp;c)</pre>
-<div class="block">???</div>
+<div class="block">汚染環境(洪水、ガス等)に暴露する</div>
 </li>
 </ul>
 <a name="getConfigLine--">
