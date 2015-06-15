@@ -2659,9 +2659,6 @@ public class EditorFrame
         case KeyEvent.VK_COMMA:
             editor.setMode(EditorMode.EDIT_LINK);
             break;
-        case KeyEvent.VK_PERIOD:
-            editor.setMode(EditorMode.EDIT_AGENT);
-            break;
         case KeyEvent.VK_P:
             editor.setMode(EditorMode.EDIT_GROUP);
             break;
@@ -2676,9 +2673,6 @@ public class EditorFrame
             break;
         case KeyEvent.VK_B:
             editor.setMode(EditorMode.PLACE_NODE_LINK);
-            break;
-        case KeyEvent.VK_E:
-            editor.setMode(EditorMode.PLACE_AGENT);
             break;
         case KeyEvent.VK_U:
             editor.setMode(EditorMode.PLACE_GROUP);
