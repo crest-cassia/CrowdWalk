@@ -101,7 +101,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
     public gas_display show_gas = gas_display.ORANGE;
     protected double pollutionColorSaturation = 10.0;
 
-    private List<AgentBase> agents;
     private ArrayList<MapArea> pollutions;
     EvacuationSimulator simulator = null;
     NetworkMap networkMap = null;
@@ -115,7 +114,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         super(_simulator.getNodes(), _simulator.getLinks(), _parent, _simulator.getProperties());
         simulator = _simulator;
         networkMap = simulator.getMap();
-        agents = simulator.getAgents();
         pollutions = simulator.getPollutions();
 
         agent_group = new BranchGroup();
@@ -216,7 +214,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         super.setupFrame(_simulator.getNodes(), _simulator.getLinks(), _parent);
         simulator = _simulator;
         networkMap = simulator.getMap();
-        agents = simulator.getAgents();
         pollutions = simulator.getPollutions();
 
         if (agent_group != null)
@@ -956,7 +953,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         simulation_map_objects.addChild(agent_group);
         map_objects.addChild(simulation_map_objects);
 
-        for (AgentBase agent : agents) {
+        for (AgentBase agent : simulator.getAllAgentCollection()) {
             group_from_agent(agent);
         }
 
@@ -1647,16 +1644,13 @@ public class SimulationPanel3D extends NetworkPanel3D {
     }
     /* to use debug */
     public void printAgents() {
-        for (AgentBase ea : agents) {
+        for (AgentBase ea : simulator.getAllAgentCollection()) {
             System.err.println("SimulationPanel3D.printAgents agent id: " +
                     ea.ID + "position: " + ea.getPositionOnLink() + " pos: " + 
                     ea.getPos());
         }
     }
 
-    public List<AgentBase> getAgents() {
-        return agents;
-    }
     public ArrayList<MapArea> getPollutions() {
         return pollutions;
     }

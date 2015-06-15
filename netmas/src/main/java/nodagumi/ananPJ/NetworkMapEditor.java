@@ -47,7 +47,6 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.Editor.EditorPanel3D;
-import nodagumi.ananPJ.Editor.Panel.AgentPanel;
 import nodagumi.ananPJ.Editor.Panel.BrowserPanel;
 import nodagumi.ananPJ.Editor.Panel.ScenarioPanel;
 
@@ -114,7 +113,6 @@ public class NetworkMapEditor extends SimulationLauncher
     transient private JTabbedPane tabbedPane = null;
     transient private NodePanel nodePanel = null;
     transient public LinkPanel linkPanel = null;
-    transient public AgentPanel agentPanel = null;
     transient public PollutionPanel pollutionPanel = null;
     transient public ScenarioPanel scenarioPanel = null;
     transient public BrowserPanel browserPanel = null;
@@ -122,12 +120,12 @@ public class NetworkMapEditor extends SimulationLauncher
 
     /* used in the object browser */
     public enum TabTypes {
-        NODE, LINK, AGENT, POLLUTION, SCENARIO, BROWSER //FRAME 
+        NODE, LINK, POLLUTION, SCENARIO, BROWSER //FRAME
     };
     //TODO edit group and edit pollution are still unimplemented
     public enum EditorMode {
-        EDIT_NODE, EDIT_LINK, EDIT_AGENT, EDIT_GROUP, EDIT_POLLUTION,
-        PLACE_NODE, PLACE_LINK, PLACE_NODE_LINK, PLACE_AGENT, PLACE_GROUP,
+        EDIT_NODE, EDIT_LINK, EDIT_GROUP, EDIT_POLLUTION,
+        PLACE_NODE, PLACE_LINK, PLACE_NODE_LINK, PLACE_GROUP,
         PLACE_POLLUTION, BROWSE
     };
 
@@ -148,9 +146,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
         linkPanel = new LinkPanel(this);
         tabbedPane.add("Links", linkPanel);
-
-        agentPanel = new AgentPanel(this, random);
-        tabbedPane.add("Agents", agentPanel);
 
         pollutionPanel = new PollutionPanel(this);
         tabbedPane.add("Pollution", pollutionPanel);
@@ -186,9 +181,6 @@ public class NetworkMapEditor extends SimulationLauncher
                     } else {
                         mode = EditorMode.EDIT_POLLUTION;
                     }
-                } else if (panelName == "AgentPanel") {
-                    mode = EditorMode.EDIT_AGENT;
-                    agentPanel.refresh();
                 } else if (panelName == "BrowserPanel"){
                     mode = EditorMode.BROWSE;
                 }
@@ -226,7 +218,6 @@ public class NetworkMapEditor extends SimulationLauncher
     public void updateAll() {
         nodePanel.refresh();
         linkPanel.refresh();
-        agentPanel.refresh();
         pollutionPanel.refresh();
         scenarioPanel.refresh();
         browserPanel.refresh();
@@ -267,9 +258,6 @@ public class NetworkMapEditor extends SimulationLauncher
         case LINK:
             tabbedPane.setSelectedComponent(linkPanel);
             break;
-        case AGENT:
-            tabbedPane.setSelectedComponent(agentPanel);
-            break;
         case POLLUTION:
             tabbedPane.setSelectedComponent(pollutionPanel);
             break;
@@ -301,12 +289,6 @@ public class NetworkMapEditor extends SimulationLauncher
             linkPanel.setPlaceCheckBox(true);
             switchTab(TabTypes.LINK);
             break;
-        case EDIT_AGENT:
-            switchTab(TabTypes.AGENT);
-            break;
-        case PLACE_AGENT:
-            switchTab(TabTypes.AGENT);
-            break;
         case EDIT_POLLUTION:
             pollutionPanel.setPlaceCheckBox(false);
             switchTab(TabTypes.POLLUTION);
@@ -328,17 +310,6 @@ public class NetworkMapEditor extends SimulationLauncher
 
     public MapLinkTable getLinks() {
         return networkMap.getLinks();
-    }
-
-    public ArrayList<AgentBase> getAgents() {
-        /* [2015.05.27 I.Noda]
-         * networkMap.getAgents() はもう使わない。
-         * かわりに AgentHandler's getAgents() に統一。
-         * ただ、このNetworkMapEditor の時点で、AgentHandler が存在しない。
-         * なので、ここでは dummy の配列を返すことにする。
-         */
-        //return networkMap.getAgents();
-        return new ArrayList<AgentBase>() ;
     }
 
     public ArrayList<OBNode> getOBElements() {
@@ -1090,8 +1061,6 @@ public class NetworkMapEditor extends SimulationLauncher
     public NodePanel getNodePanel() { return nodePanel; }
 
     public LinkPanel getLinkPanel() { return linkPanel; }
-
-    public AgentPanel getAgentPanel() { return agentPanel; }
 
     public PollutionPanel getPollutionPanel() { return pollutionPanel; }
 

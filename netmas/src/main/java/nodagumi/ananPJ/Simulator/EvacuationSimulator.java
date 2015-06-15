@@ -466,18 +466,6 @@ public class EvacuationSimulator {
         return agentHandler.getWalkingAgentCollection() ;
     }
 
-    //public ArrayList<AgentBase> getAgents() {
-    /* [2015.05.27 I.Noda]
-     * agents 廃止。
-     * いちいち ArrayList を作るので、効率が悪い。
-     * おそらく、AgentPanel からしか呼ばれていない。
-     */
-    public List<AgentBase> getAgents() {
-        //return agentHandler.getAgents();
-        Itk.logWarn("getAgents() is obsolute.") ;
-        return new ArrayList(getAllAgentCollection()) ;
-    }
-
     public AgentHandler getAgentHandler() {
         return agentHandler;
     }
