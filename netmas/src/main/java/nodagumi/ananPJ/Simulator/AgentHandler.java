@@ -141,8 +141,6 @@ public class AgentHandler {
      */
     private HashMap<String, AgentBase> walkingAgentTable ;
 
-    private double totalDamage = 0.0;
-    private double maxDamage = 0.0;
     private double averageSpeed = 0.0;
     private int maxAgentCount = 0;
     private boolean isAllAgentSpeedZeroBreak = false;
@@ -887,17 +885,12 @@ public class AgentHandler {
 
     private void updatePollution() {
         /* pollution */
-        totalDamage = 0.0;
-        maxDamage = 0.0;
-
         for (final AgentBase agent : getWalkingAgentCollection()) {
             if (!agent.isEvacuated()) {
                 // (do nothing)
                 // evacuatedAgentCount++;
             } else {
                 double damage = agent.pollutionEffect.accumulatedValueForLog() ;
-                totalDamage += damage ;
-                if (damage > maxDamage) maxDamage = damage ;
             }
         }
     }
@@ -965,14 +958,6 @@ public class AgentHandler {
 
     public HashMap<MapNode, Integer> getExitNodesMap() {
         return evacuatedAgentCountByExit;
-    }
-
-    public double getTotalDamage() {
-        return totalDamage;
-    }
-
-    public double getMaxDamage() {
-        return maxDamage;
     }
 
     /* [2015.05.27 I.Noda]
