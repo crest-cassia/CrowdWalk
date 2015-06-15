@@ -144,7 +144,6 @@ public class NetworkMap extends NetworkMapBase {
         } else {
             insertOBNode(info.parent, info.node, false);
         }
-        //NetworkMapEditor.getInstance().updateAll();
         editor.updateAll();
     }
 

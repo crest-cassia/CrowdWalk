@@ -131,17 +131,14 @@ public class EditorFrame
 
     private Boolean areaSelection = false;
     private Rectangle2D selectedArea = null;
-    //private Random random = null;
+
     private Point2D startpos = new Point2D.Double(0.0, 0.0);
 
-    //public NetworkMapEditor editor = NetworkMapEditor.getInstance();
     public NetworkMapEditor editor = null;
 
-    //public EditorFrame(MapPartGroup _ob_node, Random _random) {
     public EditorFrame(NetworkMapEditor _editor, MapPartGroup _ob_node) {
         super(_ob_node.getTagString());
-        //random = _random;
-        //editor = NetworkMapEditor.getInstance();
+
         editor = _editor;
         current_group = _ob_node;
 
