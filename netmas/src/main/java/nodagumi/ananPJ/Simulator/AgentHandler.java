@@ -150,9 +150,9 @@ public class AgentHandler {
     private transient JButton pause_button = null;
     private transient JButton step_button = null;
 
-    private int simulation_weight = 0;
-    private transient JScrollBar simulation_weight_control;
-    private transient JLabel simulation_weight_value;
+    private int simulationDeferFactor = 0;
+    private transient JScrollBar simulationDeferFactorControl;
+    private transient JLabel simulationDeferFactorValue;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -690,9 +690,9 @@ public class AgentHandler {
     }
 
     private void updateAgents(double time) {
-        if (simulation_weight > 0) {
+        if (simulationDeferFactor > 0) {
             try {
-                Thread.sleep(simulation_weight);
+                Thread.sleep(simulationDeferFactor);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -1416,18 +1416,18 @@ public class AgentHandler {
         control_button_panel.add(step_button);
         update_buttons();
 
-        control_button_panel.add(new JLabel("weight: "));
-        simulation_weight_control = new JScrollBar(JScrollBar.HORIZONTAL, simulation_weight, 1, 0, 300);
-        simulation_weight_control.addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) { change_simulation_weight(); }
+        control_button_panel.add(new JLabel("wait: "));
+        simulationDeferFactorControl = new JScrollBar(JScrollBar.HORIZONTAL, simulationDeferFactor, 1, 0, 300);
+        simulationDeferFactorControl.addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) { changeSimulationDeferFactor(); }
         });
-        simulation_weight_control.setPreferredSize(new Dimension(150, 20));
-        control_button_panel.add(simulation_weight_control);
-        simulation_weight_value = new JLabel();
-        simulation_weight_value.setHorizontalAlignment(JLabel.RIGHT);
-        simulation_weight_value.setPreferredSize(new Dimension(30, 10));
-        simulation_weight_value.setText("" + simulation_weight);
-        control_button_panel.add(simulation_weight_value);
+        simulationDeferFactorControl.setPreferredSize(new Dimension(150, 20));
+        control_button_panel.add(simulationDeferFactorControl);
+        simulationDeferFactorValue = new JLabel();
+        simulationDeferFactorValue.setHorizontalAlignment(JLabel.RIGHT);
+        simulationDeferFactorValue.setPreferredSize(new Dimension(30, 10));
+        simulationDeferFactorValue.setText("" + simulationDeferFactor);
+        control_button_panel.add(simulationDeferFactorValue);
 
         top_panel.add(control_button_panel, BorderLayout.SOUTH);
         control_panel.add(top_panel, BorderLayout.CENTER);
@@ -1443,14 +1443,14 @@ public class AgentHandler {
         control_panel.add(message_scroller, BorderLayout.SOUTH);
     }
     
-    private void change_simulation_weight() {
-        simulation_weight = simulation_weight_control.getValue();
-        simulation_weight_value.setText("" + simulation_weight);
+    private void changeSimulationDeferFactor() {
+        simulationDeferFactor = simulationDeferFactorControl.getValue();
+        simulationDeferFactorValue.setText("" + simulationDeferFactor);
     }
 
-    public void setSimulationWeight(int weight) {
-        simulation_weight = weight;
-        simulation_weight_control.setValue(simulation_weight);
+    public void setSimulationDeferFactor(int deferFactor) {
+        simulationDeferFactor = deferFactor;
+        simulationDeferFactorControl.setValue(simulationDeferFactor);
     }
 
     public void update_buttons() {

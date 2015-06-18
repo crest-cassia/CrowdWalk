@@ -31,7 +31,7 @@
     clear_screenshot_dir: false,
     //screenshot_image_type: 'png',
 
-//  weight: 0,
+//  defer_factor: 0,
     vertical_scale: 2.0,
     agent_size: 1.0,
     zoom: 1.0,
