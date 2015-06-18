@@ -127,10 +127,6 @@ public class AgentHandler {
     private UniqIdObjectTable<AgentBase> agentTable =
         new UniqIdObjectTable<AgentBase>(DefaultAgentIdPrefix) ;
 
-    /* [2015.05.27 I.Noda]
-     * agents 廃止。
-     */
-    //private List<AgentBase> agents;
     private ArrayList<AgentBase> generatedAgents;
     private ArrayList<AgentBase> evacuatedAgents;
     private ArrayList<AgentBase> stuckAgents;
@@ -414,11 +410,6 @@ public class AgentHandler {
 
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
 
-        /* clone all agents already on board */
-        /* [2015.05.27 I.Noda]
-         * agents 廃止。
-         */
-        //agents = new ArrayList<AgentBase>();
         generatedAgents = new ArrayList<AgentBase>();
         evacuatedAgents = new ArrayList<AgentBase>();
         stuckAgents = new ArrayList<AgentBase>();
@@ -523,10 +514,6 @@ public class AgentHandler {
         }
 
         if (! generatedAgentsInStep.isEmpty()) {
-            /* [2015.05.27 I.Noda]
-             * agents 廃止。
-             */
-            //agents.addAll(generatedAgentsInStep);
             generatedAgents.addAll(generatedAgentsInStep);
             for (AgentBase agent : generatedAgentsInStep) {
                 /* [2015.05.25 I.Noda] 
@@ -731,26 +718,6 @@ public class AgentHandler {
                     stuckAgents.add(agent);
                 }
                 if (agentMovementHistoryLogger != null) {
-                    /* [2015.06.13 I.Noda]
-                     * CsvFormatter の導入により、下記を置き換え。
-                     * 安定動作確認次第、コメントアウト分消去。
-                     */
-                    /*
-                    agentMovementHistoryLogger
-                        .info(String
-                              .format("%s,%s,%s,%d,%s,%d,%s,%d",
-                                      agent.getConfigLine().replaceAll(",", " "),
-                                      agent.ID,
-                                      convertAbsoluteTimeString(agent.generatedTime,
-                                                                true),
-                                      (int)agent.generatedTime,
-                                      convertAbsoluteTimeString(time,
-                                                                true),
-                                      (int)time,
-                                      timeToString(time - agent.generatedTime,
-                                                   true),
-                                      (int)(time - agent.generatedTime)));
-                    */
                     agentMovementHistoryLoggerFormatter
                         .outputValueToLoggerInfo(agentMovementHistoryLogger,
                                                  agent, new Double(time), this);
@@ -778,68 +745,6 @@ public class AgentHandler {
     }
 
     public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
-
-    /* [2015.06.13 I.Noda]
-     * CsvFormatter の導入により、下記を置き換え。
-     * 安定動作確認次第、obsolute分は削除
-     */
-    private void logIndividualPedestrians_obsolute(double time, AgentBase agent) {
-        if (individualPedestriansLogger != null) {
-            StringBuilder buff = new StringBuilder();
-            if (agent.isEvacuated()) {
-                buff.append(agent.ID); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(-1); buff.append(",");
-                buff.append(-1); buff.append(",");
-                buff.append(agent.getLastNode().ID); buff.append(",");
-                buff.append(0.0); buff.append(",");
-                buff.append(0); buff.append(",");
-                buff.append((int)agent.generatedTime); buff.append(",");
-                buff.append((int)time); buff.append(",");
-                buff.append(agent.pollutionEffect.currentValueForLog()); buff.append(",");
-                buff.append(agent.pollutionEffect.accumulatedValueForLog()); buff.append(",");
-                buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
-            } else {
-                buff.append(agent.ID); buff.append(",");
-
-                buff.append(agent.getPos().getX()); buff.append(",");
-                buff.append(agent.getPos().getY()); buff.append(",");
-                buff.append(agent.getHeight()); buff.append(",");
-
-                Vector3d swing = agent.getSwing();
-                double height = agent.getHeight() / ((MapPartGroup)agent.getCurrentLink().getParent()).getScale();
-                buff.append(agent.getPos().getX() + swing.x); buff.append(",");
-                buff.append(agent.getPos().getY() + swing.y); buff.append(",");
-                buff.append(height + swing.z); buff.append(",");
-
-                buff.append(agent.getAcceleration()); buff.append(",");
-                buff.append(agent.getSpeed()); buff.append(",");
-
-                buff.append(agent.getCurrentLink().ID); buff.append(",");
-                buff.append(agent.getNextNode().ID); buff.append(",");
-                buff.append(agent.getPrevNode().ID); buff.append(",");
-                buff.append(agent.getRemainingDistance()); buff.append(",");
-                buff.append((int)agent.getDirection()); buff.append(",");
-
-                buff.append((int)agent.generatedTime); buff.append(",");
-                buff.append((int)time); buff.append(",");
-
-                buff.append(agent.pollutionEffect.currentValueForLog()); buff.append(",");
-                buff.append(agent.pollutionEffect.accumulatedValueForLog()); buff.append(",");
-                buff.append(TRIAGE_LABELS[agent.getTriage()]); buff.append(",");
-
-                buff.append(agent.getNextCandidateString());
-            }
-            individualPedestriansLogger.info(buff.toString());
-        }
-    }
 
     //------------------------------------------------------------
     /**
@@ -895,20 +800,6 @@ public class AgentHandler {
         }
     }
 
-    /* [2015.05.27 I.Noda]
-     * agents を obsolute にするために、以下、使わないようにする。
-     */
-    /*
-    public void dumpAgentResult(PrintStream out) {
-        for (final AgentBase agent : agents) {
-            agent.dumpResult(out);
-        }
-    }
-    */
-
-    /* [2015.05.27 I.Noda]
-     * 上記の代用物
-     */
     public void dumpAgentResult(PrintStream out) {
         for (final AgentBase agent : getAllAgentCollection()) {
             agent.dumpResult(out);
@@ -917,25 +808,6 @@ public class AgentHandler {
 
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
-        /* [2015.05.27 I.Noda]
-         * agents を obsolute にするために、以下、使わないようにする。
-         * この関数を呼ぶ時点（simulation の最初）では、agents は空のはず。
-         * なので、エージェントごとにゴールを集める必要はない。
-         */
-        /*
-        for (AgentBase agent : agents) {
-            Term goal_tag = agent.getGoal();
-            if (goal_tag != null &&
-                !all_goal_tags.contains(goal_tag.getString())) {
-                all_goal_tags.add(goal_tag.getString());
-            }
-            for (Term mid_goal : agent.getPlannedRoute()) {
-                if (!all_goal_tags.contains(mid_goal.getString())) {
-                    all_goal_tags.add(mid_goal.getString());
-                }
-            }
-        }
-        */
 
         for (GenerateAgent factory : generate_agent) {
             Term goal_tag = factory.goal;
@@ -959,15 +831,6 @@ public class AgentHandler {
     public HashMap<MapNode, Integer> getExitNodesMap() {
         return evacuatedAgentCountByExit;
     }
-
-    /* [2015.05.27 I.Noda]
-     * agents 廃止。
-     */
-    /*
-    public final List<AgentBase> getAgents() {
-        return agents;
-    }
-    */
 
     //------------------------------------------------------------
     /**
@@ -1145,13 +1008,6 @@ public class AgentHandler {
             }
         }, filePath);
         agentMovementHistoryLogger.setUseParentHandlers(false); // コンソールには出力しない
-        /* [2015.06.13 I.Noda]
-         * CsvFormatter の導入により、下記を置き換え。
-         * 安定動作確認次第、コメントアウト分消去。
-         */
-        /*
-        agentMovementHistoryLogger.info("GenerationFileの情報,エージェントID,発生時刻1,発生時刻2,到着時刻1,到着時刻2,移動時間1,移動時間2");
-        */
         agentMovementHistoryLoggerFormatter
             .outputHeaderToLoggerInfo(agentMovementHistoryLogger) ;
     }
@@ -1169,13 +1025,6 @@ public class AgentHandler {
             }
         }, dirPath + "/log_individual_pedestrians.csv");
         individualPedestriansLogger.setUseParentHandlers(false); // コンソールには出力しない
-        /* [2015.06.13 I.Noda]
-         * CsvFormatter の導入により、下記を置き換え。
-         * 安定動作確認次第、コメントアウト分消去。
-         */
-        /*
-        individualPedestriansLogger.info("pedestrianID,current_position_in_model_x,current_position_in_model_y,current_position_in_model_z,current_position_for_drawing_x,current_position_for_drawing_y,current_position_for_drawing_z,current_acceleration,current_velocity,current_linkID,current_nodeID_of_forward_movement,current_nodeID_of_backward_movement,current_distance_from_node_of_forward_movement,current_moving_direction,generated_time,current_traveling_period,current_exposure,amount_exposure,current_status_by_exposure,next_assigned_passage_node");
-        */
         individualPedestriansLoggerFormatter
             .outputHeaderToLoggerInfo(individualPedestriansLogger) ;
 
