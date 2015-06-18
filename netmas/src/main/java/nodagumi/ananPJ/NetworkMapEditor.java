@@ -86,7 +86,7 @@ public class NetworkMapEditor extends SimulationLauncher
     // Properties
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
     public static final String[] IMAGE_TYPES = {"bmp", "gif", "jpg", "png"};
-    protected int weight = 0;
+    protected int deferFactor = 0;
     protected double verticalScale = 1.0;
     protected double agentSize = 1.0;
     protected String cameraPath = null;
@@ -839,8 +839,8 @@ public class NetworkMapEditor extends SimulationLauncher
             return;
         }
         boolean successful = true;
-        if (properties.isDefined("weight")) {
-            simulator.getAgentHandler().setSimulationWeight(weight);
+        if (properties.isDefined("defer_factor")) {
+            simulator.getAgentHandler().setSimulationDeferFactor(deferFactor);
         }
         if (cameraPath != null) {
             if (panel.loadCameraworkFromFile(cameraPath)) {
@@ -988,9 +988,9 @@ public class NetworkMapEditor extends SimulationLauncher
      */
     private void setPropertiesForDisplay() {
         try {
-            weight = properties.getInteger("weight", weight);
-            if (weight < 0 || weight > 999) {
-                throw new Exception("Property error - 設定値が範囲(0～999)外です: weight:" + weight);
+            deferFactor = properties.getInteger("defer_factor", deferFactor);
+            if (deferFactor < 0 || deferFactor > 299) {
+                throw new Exception("Property error - 設定値が範囲(0～299)外です: defer_factor:" + deferFactor);
             }
             verticalScale = properties.getDouble("vertical_scale", verticalScale);
             if (verticalScale < 0.1 || verticalScale > 49.9) {

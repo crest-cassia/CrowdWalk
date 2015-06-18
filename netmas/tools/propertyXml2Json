@@ -115,7 +115,7 @@ class PropertyConverter
      {type: :bool,    commentable: true,  default: true,      name: 'clear_screenshot_dir'},
      {type: :text,    commentable: false, default: 'png',     name: 'screenshot_image_type'},
      {type: :emptyLine},
-     {type: :numeric, commentable: true,  default: 0,         name: 'weight'},
+     {type: :numeric, commentable: true,  default: 0,         name: 'defer_factor'},
      {type: :numeric, commentable: true,  default: 2.0,       name: 'vertical_scale'},
      {type: :numeric, commentable: true,  default: 1.0,       name: 'agent_size'},
      {type: :numeric, commentable: true,  default: 1.0,       name: 'zoom'},
