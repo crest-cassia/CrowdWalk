@@ -21,7 +21,7 @@ BASEDIR = ../../../../..
 JARDIR = $(BASEDIR)/libs/jar
 CLASSDIR = $(BASEDIR)/build/classes/main
 #CLASSDIR = $(BASEDIR)/build/libs/netmas.jar
-JARLIST = junit-4.12 hamcrest-core-1.3 jsonic-1.3.7
+JARLIST = junit-4.12 hamcrest-core-1.3 jsonic-1.3.7 jruby
 JARS = $(subst $( ),:,$(foreach jar,$(JARLIST),$(JARDIR)/$(jar).jar))
 CLASSPATH = $(CLASSDIR):$(JARS)
 JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
@@ -65,6 +65,9 @@ test_Term ::
 
 test_CsvFormatter ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).CsvFormatter_Test
+
+test_ItkRuby ::
+	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).ItkRuby_Test
 
 
 test_all ::
