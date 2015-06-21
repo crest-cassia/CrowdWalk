@@ -16,11 +16,16 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 //import junit.framework.TestCase;
 
+import java.util.HashMap;
+import java.util.ArrayList;
+
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.embed.ScriptingContainer;
+import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
 
 import nodagumi.Itk.Itk;
+import nodagumi.Itk.Term;
 
 
 //======================================================================
@@ -85,23 +90,76 @@ public class ItkRuby_Test {
      * description of method initialize
      * @param _baz about argument baz.
      */
-    @Test
+    //@Test
     public void testD() {
-	Ruby ruby = Ruby.newInstance() ;
-	ScriptingContainer container = new ScriptingContainer() ;
+        Ruby ruby = Ruby.newInstance() ;
+        ScriptingContainer container = new ScriptingContainer() ;
 
-	Itk.dbgVal("class", 
-		   container.runScriptlet("class Foo ; attr_accessor :bar ;" +
-				      " def baz() ; p [:bar, @bar] ; 1 ; end ;" +
-				      "end")) ;
-	Itk.dbgVal("new", container.runScriptlet("$x = Foo.new()")) ;
-	Itk.dbgVal("bar", container.runScriptlet("$x.bar = 3")) ;
-	Itk.dbgVal("baz", container.runScriptlet("$x.baz()")) ;
+        // getCurrentDirectory()
+        Itk.dbgVal("currentDir", container.getCurrentDirectory()) ;
 
-	Object foo = container.runScriptlet("Foo.new()") ;
-	Itk.dbgVal("foo", foo) ;
-	Itk.dbgVal("bar", container.callMethod(foo,"bar=", new Integer(100)));
-	Itk.dbgVal("baz", container.callMethod(foo,"baz")) ;
+        // runScriptlet
+        Itk.dbgVal("class",
+                   container.runScriptlet("class Foo ; attr_accessor :bar ;" +
+                                          "def baz() ; p [:bar, @bar] ; 1 ; end ;" +
+                                          "def foo();@bar += 1;end;" +
+                                          "end")) ;
+        Itk.dbgVal("new", container.runScriptlet("$x = Foo.new()")) ;
+        Itk.dbgVal("bar", container.runScriptlet("$x.bar = 3")) ;
+        Itk.dbgVal("baz", container.runScriptlet("$x.baz()")) ;
+
+        // put, get, callMethod
+        Object foo = container.runScriptlet("Foo.new()") ;
+        Itk.dbgVal("foo", foo) ;
+        Itk.dbgVal("put_bar", container.put(foo,"@bar", new Integer(100)));
+        Itk.dbgVal("bar", container.get(foo,"@bar")) ;
+        Itk.dbgVal("baz", container.callMethod(foo,"baz")) ;
+
+        // parse, EvalUnit
+        EvalUnit eunit = container.parse("$x.foo();$x.baz()") ;
+        Itk.dbgVal("eunit",eunit) ;
+        Itk.dbgVal("eunit.run",eunit.run()) ;
+        Itk.dbgVal("eunit.run",eunit.run()) ;
+        Itk.dbgVal("eunit.run",eunit.run()) ;
+
+        // get class
+        Object fooClass = container.runScriptlet("Foo") ;
+        Object foo2 = container.callMethod(fooClass, "new") ;
+        container.put(foo2,"@bar",new Integer(10)) ;
+        Itk.dbgVal("foo2.baz", container.callMethod(foo2,"baz")) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * description of method initialize
+     * @param _baz about argument baz.
+     */
+    //@Test
+    public void testE() {
+        Ruby ruby = Ruby.newInstance() ;
+        ScriptingContainer container = new ScriptingContainer() ;
+
+        Itk.dbgVal("loadPath", container.getLoadPaths()) ;
+
+        Term term = Term.newByJson("{'':'foo', 'bar':3}".replaceAll("'","\"")) ;
+        container.put("@term",term) ;
+        container.runScriptlet("p [:term, @term]") ;
+        container.runScriptlet("p [:term_head, @term.getHead()]") ;
+        container.runScriptlet("p [:term_bar, @term.getArgInt(\"bar\")]") ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * description of method initialize
+     * @param _baz about argument baz.
+     */
+    @Test
+    public void testF() {
+        Ruby ruby = Ruby.newInstance() ;
+        ScriptingContainer container = new ScriptingContainer() ;
+
+        Object strVal = container.runScriptlet(":foo.to_s()") ;
+        Itk.dbgVal("strVal", strVal) ;
     }
 
 } // class ItkRuby_Test
