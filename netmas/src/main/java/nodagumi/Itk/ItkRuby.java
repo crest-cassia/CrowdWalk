@@ -46,16 +46,28 @@ public class ItkRuby {
      * コンストラクタ。
      */
     public ItkRuby() {
-	ensureRubyEngine() ;
-	container = new ScriptingContainer() ;
+        ensureRubyEngine() ;
+        container = new ScriptingContainer() ;
     }
 
     //------------------------------------------------------------
     /**
-     * script 実行
+     * script 実行(1行)
      */
     public Object eval(String script) {
-	return container.runScriptlet(script) ;
+        return container.runScriptlet(script) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * script 実行(複数行)
+     */
+    public Object eval(String script0, String script1, String... scriptList) {
+        String script = "" + script0 + "\n" + script1 ;
+        for(String scriptN : scriptList) {
+            script = script + "\n" + scriptN ;
+        }
+        return eval(script) ;
     }
 
     //------------------------------------------------------------
@@ -63,7 +75,7 @@ public class ItkRuby {
      * 変数設定(トップレベル)
      */
     public Object setVariable(String varName, Object value) {
-	return container.put(varName, value) ;
+        return container.put(varName, value) ;
     }
 
     //------------------------------------------------------------
@@ -71,7 +83,7 @@ public class ItkRuby {
      * 変数設定(オブジェクト内)
      */
     public Object setVariable(Object object, String varName, Object value) {
-	return container.put(object, varName, value) ;
+        return container.put(object, varName, value) ;
     }
 
     //------------------------------------------------------------
@@ -79,7 +91,7 @@ public class ItkRuby {
      * 変数値取得(トップレベル)
      */
     public Object getVariable(String varName){
-	return container.get(varName) ;
+        return container.get(varName) ;
     }
 
     //------------------------------------------------------------
@@ -87,7 +99,7 @@ public class ItkRuby {
      * 変数値取得(オブジェクト内)
      */
     public Object getVariable(Object object, String varName) {
-	return container.get(object, varName) ;
+        return container.get(object, varName) ;
     }
 
     //------------------------------------------------------------
@@ -95,9 +107,9 @@ public class ItkRuby {
      * メソッド呼び出し(トップレベル)
      */
     /*
-    public Object callMethod(String methodName, Object... args) {
-	return container.callMethod(methodName, args) ;
-    }
+      public Object callMethod(String methodName, Object... args) {
+      return container.callMethod(methodName, args) ;
+      }
     */
 
     //------------------------------------------------------------
@@ -105,8 +117,8 @@ public class ItkRuby {
      * メソッド呼び出し(オブジェクト内)
      */
     public Object callMethod(Object object, String methodName,
-			     Object... args) {
-	return container.callMethod(object, methodName, args) ;
+                             Object... args) {
+        return container.callMethod(object, methodName, args) ;
     }
 
     //------------------------------------------------------------
@@ -116,7 +128,7 @@ public class ItkRuby {
      * @return EvalUnit。
      */
     public EvalUnit parseScript(String script) {
-	return container.parse(script) ;
+        return container.parse(script) ;
     }
 
     //------------------------------------------------------------
@@ -125,7 +137,7 @@ public class ItkRuby {
      * @return path のリスト。
      */
     public List<String> getLoadPaths() {
-	return container.getLoadPaths() ;
+        return container.getLoadPaths() ;
     }
 
     //------------------------------------------------------------
@@ -134,7 +146,7 @@ public class ItkRuby {
      * @param pathList path のリスト。
      */
     public void setLoadPaths(List<String> pathList) {
-	container.setLoadPaths(pathList) ;
+        container.setLoadPaths(pathList) ;
     }
 
     //------------------------------------------------------------
@@ -145,14 +157,14 @@ public class ItkRuby {
      * @return 追加されれば true。すでに存在して追加されなかった場合は false。
      */
     public boolean pushLoadPath(String path) {
-	List<String> pathList = this.getLoadPaths() ;
-	if(pathList.contains(path)) {
-	    return false ;
-	} else {
-	    pathList.add(path) ;
-	    this.setLoadPaths(pathList) ;
-	    return true ;
-	}
+        List<String> pathList = this.getLoadPaths() ;
+        if(pathList.contains(path)) {
+            return false ;
+        } else {
+            pathList.add(path) ;
+            this.setLoadPaths(pathList) ;
+            return true ;
+        }
     }
 
     //------------------------------------------------------------
@@ -161,7 +173,7 @@ public class ItkRuby {
      * @return current directory。
      */
     public String getCurrentDirectory() {
-	return container.getCurrentDirectory() ;
+        return container.getCurrentDirectory() ;
     }
 
     //============================================================
@@ -171,22 +183,36 @@ public class ItkRuby {
      * @return 新たにインスタンス生成されたら true。それ以外は false。
      */
     public static boolean ensureRubyEngine() {
-	if(rubyEngine == null) {
-	    rubyEngine = Ruby.newInstance() ;
-	    return true ;
-	} else {
-	    return false ;
-	}
+        if(rubyEngine == null) {
+            rubyEngine = Ruby.newInstance() ;
+            return true ;
+        } else {
+            return false ;
+        }
     }
 
     //============================================================
     //------------------------------------------------------------
     /**
-     * rubyEngine 上で直接実行。
+     * rubyEngine 上で直接実行。(一行)
      */
     public static Object evalOnEngine(String script) {
-	ensureRubyEngine() ;
-	return rubyEngine.evalScriptlet(script) ;
+        ensureRubyEngine() ;
+        return rubyEngine.evalScriptlet(script) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * rubyEngine 上で直接実行。(複数行)
+     */
+    public static Object evalOnEngine(String script0, String script1,
+                                      String... scriptList) {
+        String script = "" + script0 + "\n" + script1 ;
+        for(String scriptN : scriptList) {
+            script = script + "\n" + scriptN ;
+        }
+        return evalOnEngine(script) ;
     }
 
     //============================================================

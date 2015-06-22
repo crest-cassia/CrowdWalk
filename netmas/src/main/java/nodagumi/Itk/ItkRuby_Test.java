@@ -24,6 +24,7 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
 
+import nodagumi.Itk.ItkRuby;
 import nodagumi.Itk.Itk;
 import nodagumi.Itk.Term;
 
@@ -153,7 +154,7 @@ public class ItkRuby_Test {
      * description of method initialize
      * @param _baz about argument baz.
      */
-    @Test
+    //@Test
     public void testF() {
         Ruby ruby = Ruby.newInstance() ;
         ScriptingContainer container = new ScriptingContainer() ;
@@ -161,6 +162,33 @@ public class ItkRuby_Test {
         Object strVal = container.runScriptlet(":foo.to_s()") ;
         Itk.dbgVal("strVal", strVal) ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * description of method initialize
+     * @param _baz about argument baz.
+     */
+    @Test
+    public void testG() {
+        ItkRuby ruby = new ItkRuby() ;
+
+        ruby.evalOnEngine("p ['1+2',1+2]") ;
+        ruby.eval("p ['2+3',2+3]") ;
+        ruby.setVariable("foo","fooString");
+        ruby.eval("p [:foo,foo]") ;
+        ruby.setVariable("foo",4);
+        ruby.eval("p [:foo,foo]") ;
+        Itk.dbgVal("LoadPath",ruby.getLoadPaths()) ;
+        Itk.dbgVal("push Path",ruby.pushLoadPath("/usr/users/noda/lib/ruby")) ;
+        Itk.dbgVal("LoadPath",ruby.getLoadPaths());
+        Itk.dbgVal("def",
+                   ruby.eval("def bar(x)",
+                             "  p [:bar, x, x*x]",
+                             "  return x*x",
+                             "end")) ;
+        Itk.dbgVal("bar(7)",ruby.eval("bar(7)")) ;
+    }
+
 
 } // class ItkRuby_Test
 
