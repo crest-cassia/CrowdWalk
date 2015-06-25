@@ -315,7 +315,7 @@ public class Place {
     /**
      * 進入ノード
      */
-    public MapNode getHeadingNode() { 
+    public MapNode getHeadingNode() {
         if(enteringNode == null) {
             return null ;
         } else {
@@ -333,7 +333,7 @@ public class Place {
     /**
      * 残りの距離
      */
-    public double getRemainingDistance() { 
+    public double getRemainingDistance() {
         return getLinkLength() - getAdvancingDistance() ;
     } ;
 
@@ -701,7 +701,7 @@ public class Place {
      * 進んでいないほど index が小さいとする。
      */
     public int getIndexInLane(AgentBase agent) {
-        return Collections.binarySearch(getLane(), agent) ;
+        return getLane().indexOf(agent) ;
     }
 
     //------------------------------------------------------------

@@ -68,7 +68,7 @@ public class WalkAgent extends AgentBase {
      *
      * <pre>
      * ソーシャルフォースモデルのパラメータ学習 [2010/9/16 23:53 noda]
-     * * 速度誤差最適化 (expF) 
+     * * 速度誤差最適化 (expF)
      * * 9900 回目の学習結果
      *
      * * c0 = 0.962331091566513      // A_0
@@ -134,7 +134,7 @@ public class WalkAgent extends AgentBase {
      * 速度計算関係
 	 * time_scale : シミュレーションステップ
 	 */
-    protected double time_scale = 1.0;//0.5; simulation time step 
+    protected double time_scale = 1.0;//0.5; simulation time step
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -215,7 +215,7 @@ public class WalkAgent extends AgentBase {
      * 引数なしconstractor。 ClassFinder.newByName で必要。
      */
     public WalkAgent() {} ;
-    
+
     //------------------------------------------------------------
     /**
      * 初期化。constractorから分離。
@@ -272,7 +272,7 @@ public class WalkAgent extends AgentBase {
     public NType getNodeType() {
         return NType.AGENT;
     }
-        
+
     //------------------------------------------------------------
     /**
      *
@@ -461,12 +461,10 @@ public class WalkAgent extends AgentBase {
 
         int w = currentPlace.getLaneWidth() ;
         int index = currentPlace.getIndexInLane(this) ;
-        if (isBackwardDirection())
-            index = currentPlace.getLane().size() - index;
 
         if (isForwardDirection()) {
             if (index >= 0) {
-                swing_width = (2.0 * ((currentPlace.getLane().size() - index) % w)) / currentLink.width - 1.0;
+                swing_width = (2.0 * (index % w)) / currentLink.width - 1.0;
             }  else {
                 swing_width = 0.0;
             }
@@ -621,7 +619,7 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-     * 
+     *
      */
     @Override
     public void updateViews() {
@@ -854,7 +852,7 @@ public class WalkAgent extends AgentBase {
                     double force = calcSocialForceToHeading(dx,dy) ;
                     totalForce += force ;
                     if(countOther % laneWidthOther == 0) {
-                        insensitivePos = (agentPos + 
+                        insensitivePos = (agentPos +
                                           insensitiveDistanceInCounterFlow) ;
                     }
                 }
@@ -942,14 +940,14 @@ public class WalkAgent extends AgentBase {
 	 */
     //------------------------------------------------------------
     /**
-     * try to pass a node, and enter next link 
+     * try to pass a node, and enter next link
      * change: navigation_reason, route, prev_node, previous_link,
      * current_link, position, evacuated, link.agentExists
      */
     protected boolean tryToPassNode(double time,
                                     RoutePlan workingRoutePlan,
                                     MapLink nextLink) {
-        /* [2014.12.19 I.Noda] 
+        /* [2014.12.19 I.Noda]
          * NaiveAgent への経路記録の入り口のため,
          * recordTrail を導入。
          */
@@ -1114,7 +1112,7 @@ public class WalkAgent extends AgentBase {
                     workingRoutePlan.shift() ;
                 }
                 break;
-            } 
+            }
 
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
             double cost;
@@ -1199,7 +1197,7 @@ public class WalkAgent extends AgentBase {
      * 今、top の target が現在のノードのタグにある場合、
      * route は１つ進める。
      */
-    protected Term calcNextTarget(MapNode node, 
+    protected Term calcNextTarget(MapNode node,
                                   RoutePlan workingRoutePlan,
                                   boolean on_node) {
         if (on_node && !workingRoutePlan.isEmpty() &&
@@ -1302,10 +1300,10 @@ public class WalkAgent extends AgentBase {
         }
         out.println();
     }
-    
+
     //------------------------------------------------------------
     /**
-     * 
+     *
      */
     private Ellipse2D getCircle(double cx, double cy, double r) {
         return new Ellipse2D.Double(cx -r, cy -r, r * 2, r * 2);
@@ -1313,10 +1311,10 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-     * 
+     *
      */
     @Override
-    public void draw(Graphics2D g, 
+    public void draw(Graphics2D g,
             boolean experiment) {
         if (experiment && ((displayMode & 2) != 2)) return;
         if (currentPlace.getLink() == null) return;
@@ -1332,11 +1330,11 @@ public class WalkAgent extends AgentBase {
         g.setColor(new Color(r, r, r));
         double cx = p.getX();
         double cy = p.getY();
-        
+
         Vector3d vec = getSwing();
         cx += vec.x;
         cy += vec.y;
-        
+
         g.fill(getCircle(cx, cy, 20));
 
         if (selected) {
