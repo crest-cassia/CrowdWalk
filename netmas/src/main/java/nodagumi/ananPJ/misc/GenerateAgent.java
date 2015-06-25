@@ -44,6 +44,7 @@ import nodagumi.Itk.*;
  *  <li> {@link nodagumi.ananPJ.Agents.CapriciousAgent CapriciousAgent} </li>
  *  <li> {@link nodagumi.ananPJ.Agents.BustleAgent BustleAgent} </li>
  *  <li> {@link nodagumi.ananPJ.Agents.RationalAgent RationalAgent} </li>
+ *  <li> {@link nodagumi.ananPJ.Agents.RubyAgent RubyAgent} </li>
  * </ul>
  */
 public abstract class GenerateAgent {
@@ -65,6 +66,7 @@ public abstract class GenerateAgent {
         registerAgentClass(CapriciousAgent.class) ;
         registerAgentClass(BustleAgent.class) ;
         registerAgentClass(RationalAgent.class) ;
+        registerAgentClass(RubyAgent.class) ;
     }
 
     //============================================================
