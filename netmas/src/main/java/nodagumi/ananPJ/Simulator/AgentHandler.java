@@ -506,10 +506,8 @@ public class AgentHandler {
 
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
-                factory.tryUpdateAndGenerate(scenario.calcAbsoluteTime(time),
-                                             simulator.getTimeScale(),
-                                             time, simulator,
-                                             generatedAgentsInStep, networkMap);
+                factory.tryUpdateAndGenerate(simulator, time, networkMap,
+                                             generatedAgentsInStep) ;
             }
         }
 
@@ -1361,5 +1359,21 @@ public class AgentHandler {
 
     public void setLinerGenerateAgentRatio(double _ratio) {
         generate_agent.setLinerGenerateAgentRatio(_ratio);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 相対時刻から絶対時刻への変換。
+     */
+    public double calcAbsoluteTime(double relTime) {
+        return scenario.calcAbsoluteTime(relTime) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 絶対時刻から相対時刻への変換。
+     */
+    public double calcRelativeTime(double absTime) {
+        return scenario.calcRelativeTime(absTime) ;
     }
 }

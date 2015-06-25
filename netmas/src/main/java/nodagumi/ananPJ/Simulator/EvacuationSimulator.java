@@ -779,4 +779,21 @@ public class EvacuationSimulator {
     public void setLinerGenerateAgentRatio(double _ratio) {
         linerGenerateAgentRatio = _ratio;
     }
+
+    //------------------------------------------------------------
+    /**
+     * 相対時刻から絶対時刻への変換。
+     */
+    public double calcAbsoluteTime(double relTime) {
+        return agentHandler.calcAbsoluteTime(relTime) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 絶対時刻から相対時刻への変換。
+     */
+    public double calcRelativeTime(double absTime) {
+        return agentHandler.calcRelativeTime(absTime) ;
+    }
+    
 }

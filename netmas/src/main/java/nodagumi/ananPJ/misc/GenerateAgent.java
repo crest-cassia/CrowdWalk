@@ -316,25 +316,26 @@ public abstract class GenerateAgent {
     /**
      * エージェント生成
      */
-    public void tryUpdateAndGenerate(double time,
-                                     double timeScale,
-                                     double tick,
-                                     EvacuationSimulator simulator,
-                                     List<AgentBase> agents,
-                                     NetworkMapBase map) {
+    public void tryUpdateAndGenerate(EvacuationSimulator simulator,
+                                     double relTime,
+                                     NetworkMapBase map,
+                                     List<AgentBase> agents) {
+        double absTime = simulator.calcAbsoluteTime(relTime) ;
+        double timeScale = simulator.getTimeScale() ;
+
         if (!enabled) return;
 
-        if (finished(time)) {
+        if (finished(absTime)) {
             enabled = false;
             return;
         }
 
-        if (time < start_time) {
+        if (absTime < start_time) {
             /* not yet time to start generating agents */
             return;
         }
 
-        double duration_left = start_time + duration - time;
+        double duration_left = start_time + duration - absTime;
         int agent_to_gen = total - generated;
         if (duration_left > 0) {
             double r = (double)(agent_to_gen) / duration_left * timeScale;
@@ -370,7 +371,7 @@ public abstract class GenerateAgent {
                 System.exit(1) ;
             }
 
-            agent.generatedTime = tick;
+            agent.generatedTime = relTime;
             agent.displayMode = simulator.getDisplayMode();
             ((WalkAgent) agent).setSpeedCalculationModel(
                 speedModel);
