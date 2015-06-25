@@ -210,6 +210,14 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
+     * Conf からの値の取得(String)
+     */
+    public String getStringFromConfig(String slot, String fallback) {
+        return config.fetchArgString(slot, ConfigFallbackSlot, fallback) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * エージェント複製
      */
     public AgentBase copyAndInitialize() {
