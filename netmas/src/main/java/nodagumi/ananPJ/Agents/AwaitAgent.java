@@ -25,6 +25,7 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.misc.RoutePlan;
+import nodagumi.ananPJ.misc.GenerateAgent;
 
 import nodagumi.Itk.*;
 

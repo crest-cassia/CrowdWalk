@@ -22,6 +22,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
+import nodagumi.ananPJ.misc.GenerateAgent;
 
 import nodagumi.Itk.*;
 
@@ -78,8 +79,9 @@ public class RubyAgent extends WalkAgent {
      * 初期化。
      */
     @Override
-    public void init(Random _random, EvacuationSimulator simulator, double time) {
-        super.init(_random, simulator, time);
+    public void init(Random _random, EvacuationSimulator simulator,
+                     GenerateAgent factory, double time) {
+        super.init(_random, simulator, factory, time);
     }
 
     //------------------------------------------------------------

@@ -18,6 +18,7 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.misc.SpecialTerm;
+import nodagumi.ananPJ.misc.GenerateAgent;
 
 import nodagumi.Itk.*;
 
@@ -222,10 +223,12 @@ public class WalkAgent extends AgentBase {
      * 初期化。
      */
     @Override
-    public void init(Random _random, EvacuationSimulator simulator, double time) {
-        super.init(_random, simulator, time);
+    public void init(Random _random, EvacuationSimulator simulator,
+                     GenerateAgent factory, double time) {
+        super.init(_random, simulator, factory, time);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
+        setSpeedCalculationModel(factory.speedModel) ;
     }
 
     //------------------------------------------------------------

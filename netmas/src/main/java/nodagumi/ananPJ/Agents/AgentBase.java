@@ -144,7 +144,8 @@ implements Comparable<AgentBase> {
     /**
      * 初期化。constractorから分離。
      */
-    public void init(Random _random, EvacuationSimulator simulator, double time) {
+    public void init(Random _random, EvacuationSimulator simulator, 
+                     GenerateAgent factory, double time) {
         super.init(null);
         random = _random;
         //swing_width = Math.random() * 2.0 - 1.0;
@@ -156,6 +157,18 @@ implements Comparable<AgentBase> {
         generatedTime = time ;
         displayMode = simulator.getDisplayMode() ;
         setMap(simulator.getMap()) ;
+        setConfigLine(factory.configLine) ;
+        // set route
+        setGoal(new Term(factory.goal));
+        Term planned_route_in_Term =
+            (factory.planned_route == null ?
+             Term.newArrayTerm() :
+             new Term(new ArrayList<Term>(factory.planned_route))) ;
+        setPlannedRoute((List)planned_route_in_Term.getArray());
+        // tag
+        for (final String tag : factory.tags) {
+            addTag(tag);
+        }
     }
 
     //------------------------------------------------------------
@@ -164,7 +177,7 @@ implements Comparable<AgentBase> {
      * 継承しているクラスの設定のため。
      * @param conf json の連想配列形式を scan した Map
      */
-    public void initByConf(Term conf, Term fallback) {
+    public void initByConf(Term conf, Term fallback){
         if(conf != null) {
             config = conf ;
         } else {

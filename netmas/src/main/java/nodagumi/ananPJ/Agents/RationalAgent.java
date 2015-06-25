@@ -22,6 +22,7 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
+import nodagumi.ananPJ.misc.GenerateAgent;
 
 import nodagumi.Itk.*;
 

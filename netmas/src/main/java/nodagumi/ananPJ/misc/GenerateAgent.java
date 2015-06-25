@@ -233,12 +233,12 @@ public abstract class GenerateAgent {
     } // end class Config
 
     public Term goal;
-    List<Term> planned_route;
+    public List<Term> planned_route;
     double start_time, duration;
     int total;
-    SpeedCalculationModel speedModel = null;
+    public SpeedCalculationModel speedModel = null;
     Random random = null;
-    List<String> tags = new ArrayList<String>(); 
+    public List<String> tags = new ArrayList<String>();
 
     public boolean enabled = true;
 
@@ -361,7 +361,7 @@ public abstract class GenerateAgent {
             AgentBase agent = null;
             try {
                 agent = newAgentByName(agentClassName) ;
-                agent.init(random, simulator, relTime);
+                agent.init(random, simulator, this, relTime);
                 agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.logError("class name not found") ;
@@ -370,23 +370,8 @@ public abstract class GenerateAgent {
                 System.exit(1) ;
             }
 
-            ((WalkAgent) agent).setSpeedCalculationModel(
-                speedModel);
-            agent.setConfigLine(configLine);
-
-            agent.setGoal(new Term(goal));
-            Term planned_route_in_Term =
-                (planned_route == null ?
-                 Term.newArrayTerm() :
-                 new Term(new ArrayList<Term>(planned_route))) ;
-            agent.setPlannedRoute((List)planned_route_in_Term.getArray());
-
             agents.add(agent);
             place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
-
-            for (final String tag : tags) {
-                agent.addTag(tag);
-            }
 
             agent.prepareForSimulation(timeScale);
             agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
