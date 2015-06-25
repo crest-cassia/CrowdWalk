@@ -76,14 +76,6 @@ public class BustleAgent extends NaiveAgent {
 
     //------------------------------------------------------------
     /**
-     * constractor。
-     */
-    public BustleAgent(Random _random) {
-        init(_random) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override

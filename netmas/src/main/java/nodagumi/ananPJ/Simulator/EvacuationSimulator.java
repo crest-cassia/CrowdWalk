@@ -185,7 +185,7 @@ public class EvacuationSimulator {
 		pollutionCalculator.updateNodesLinksAgents(poltime, networkMap,
                         getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
-            agentHandler.update(networkMap, getSecond());
+            agentHandler.update(getSecond());
 
             // 描画
             if (panel3d != null) {

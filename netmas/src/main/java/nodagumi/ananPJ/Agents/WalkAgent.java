@@ -11,6 +11,7 @@ import java.util.Random;
 
 import javax.vecmath.Vector3d;
 
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -218,11 +219,11 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-     * 初期化。constractorから分離。
+     * 初期化。
      */
     @Override
-    public void init(Random _random) {
-        super.init(_random);
+    public void init(Random _random, EvacuationSimulator simulator, double time) {
+        super.init(_random, simulator, time);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
     }

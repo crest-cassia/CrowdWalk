@@ -318,7 +318,6 @@ public abstract class GenerateAgent {
      */
     public void tryUpdateAndGenerate(EvacuationSimulator simulator,
                                      double relTime,
-                                     NetworkMapBase map,
                                      List<AgentBase> agents) {
         double absTime = simulator.calcAbsoluteTime(relTime) ;
         double timeScale = simulator.getTimeScale() ;
@@ -356,13 +355,13 @@ public abstract class GenerateAgent {
                                               NetworkMap.FallbackSlot) :
              null) ;
 
-        /* [I.Noda] ここで Agent 生成? */
+        /* [I.Noda] ここで Agent 生成 */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
             AgentBase agent = null;
             try {
                 agent = newAgentByName(agentClassName) ;
-                agent.init(random);
+                agent.init(random, simulator, relTime);
                 agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.logError("class name not found") ;
@@ -371,12 +370,10 @@ public abstract class GenerateAgent {
                 System.exit(1) ;
             }
 
-            agent.generatedTime = relTime;
-            agent.displayMode = simulator.getDisplayMode();
             ((WalkAgent) agent).setSpeedCalculationModel(
                 speedModel);
             agent.setConfigLine(configLine);
-            agents.add(agent);
+
             agent.setGoal(new Term(goal));
             Term planned_route_in_Term =
                 (planned_route == null ?
@@ -384,8 +381,7 @@ public abstract class GenerateAgent {
                  new Term(new ArrayList<Term>(planned_route))) ;
             agent.setPlannedRoute((List)planned_route_in_Term.getArray());
 
-            agent.setMap(map) ;
-            
+            agents.add(agent);
             place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
             for (final String tag : tags) {

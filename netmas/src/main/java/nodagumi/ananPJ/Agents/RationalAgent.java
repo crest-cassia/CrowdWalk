@@ -83,14 +83,6 @@ public class RationalAgent extends BustleAgent {
 
     //------------------------------------------------------------
     /**
-     * constractor。
-     */
-    public RationalAgent(Random _random) {
-        init(_random) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override

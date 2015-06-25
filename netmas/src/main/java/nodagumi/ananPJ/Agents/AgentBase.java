@@ -22,6 +22,7 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.GenerateAgent;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
 
 import nodagumi.Itk.* ;
@@ -131,9 +132,6 @@ implements Comparable<AgentBase> {
      * 引数なしconstractorはClassFinder.newByName で必要。
      */
     public AgentBase() {}
-    public AgentBase(Random _random) {
-        init(_random) ;
-    }
 
     //------------------------------------------------------------
     /**
@@ -146,7 +144,7 @@ implements Comparable<AgentBase> {
     /**
      * 初期化。constractorから分離。
      */
-    public void init(Random _random) {
+    public void init(Random _random, EvacuationSimulator simulator, double time) {
         super.init(null);
         random = _random;
         //swing_width = Math.random() * 2.0 - 1.0;
@@ -154,6 +152,10 @@ implements Comparable<AgentBase> {
         // Pollution のサブクラスのインスタンスを取得
         pollutionEffect =
             PollutionBase.getInstance(pollutionType).newEffectInfo(this) ;
+        //GenerateAgent から移したもの
+        generatedTime = time ;
+        displayMode = simulator.getDisplayMode() ;
+        setMap(simulator.getMap()) ;
     }
 
     //------------------------------------------------------------
@@ -214,28 +216,6 @@ implements Comparable<AgentBase> {
      */
     public String getStringFromConfig(String slot, String fallback) {
         return config.fetchArgString(slot, ConfigFallbackSlot, fallback) ;
-    }
-
-    //============================================================
-    //------------------------------------------------------------
-    /**
-     * クラス名によるエージェントの作成。
-     * [2014.12.30 I.Noda]
-     * これまで決め打ちであったものを、GenerateAgent で登録されたものが
-     * 自動で対応されるようにしてある。
-     */
-    public static AgentBase createEmptyAgent(String type, Random _random) {
-        if (type.equals("NOT SELECTED")) {
-            return null;
-        } else {
-            AgentBase agent = GenerateAgent.newAgentByName(type) ;
-            if(agent != null) {
-                agent.init(_random) ;
-                return agent ;
-            } else {
-                return null ;
-            }
-        }
     }
 
     //############################################################

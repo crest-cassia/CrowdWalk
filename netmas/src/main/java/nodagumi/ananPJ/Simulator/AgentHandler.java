@@ -497,16 +497,16 @@ public class AgentHandler {
         scenario.describe() ;
     }
 
-    public void update(NetworkMapBase map, double time) {
+    public void update(double time) {
         update_buttons();
 
-        scenario.advance(time, map) ;
+        scenario.advance(time, simulator.getMap()) ;
 
         ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
 
         if (generate_agent != null) {
             for (GenerateAgent factory : generate_agent) {
-                factory.tryUpdateAndGenerate(simulator, time, networkMap,
+                factory.tryUpdateAndGenerate(simulator, time,
                                              generatedAgentsInStep) ;
             }
         }

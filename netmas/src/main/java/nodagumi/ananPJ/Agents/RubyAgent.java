@@ -16,6 +16,7 @@ package nodagumi.ananPJ.Agents;
 import java.util.Random;
 import java.util.HashMap;
 
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -74,10 +75,11 @@ public class RubyAgent extends WalkAgent {
 
     //------------------------------------------------------------
     /**
-     * constractor。
+     * 初期化。
      */
-    public RubyAgent(Random _random) {
-        init(_random) ;
+    @Override
+    public void init(Random _random, EvacuationSimulator simulator, double time) {
+        super.init(_random, simulator, time);
     }
 
     //------------------------------------------------------------

@@ -72,23 +72,6 @@ public class AwaitAgent extends WalkAgent {
 
     //------------------------------------------------------------
     /**
-     * constractor。
-     */
-    public AwaitAgent(Random _random) {
-        init(_random) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 初期化。constractorから分離。
-     */
-    @Override
-    public void init(Random _random) {
-        super.init(_random);
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override

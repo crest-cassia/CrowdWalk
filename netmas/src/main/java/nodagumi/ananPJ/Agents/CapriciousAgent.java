@@ -80,14 +80,6 @@ public class CapriciousAgent extends NaiveAgent {
 
     //------------------------------------------------------------
     /**
-     * constractor。
-     */
-    public CapriciousAgent(Random _random) {
-        init(_random) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override
