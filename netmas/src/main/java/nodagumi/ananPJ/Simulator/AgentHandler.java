@@ -73,7 +73,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
-import nodagumi.ananPJ.misc.GenerateAgent;
+import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Scenario.*;
 
 import nodagumi.Itk.CsvFormatter;
@@ -430,7 +430,7 @@ public class AgentHandler {
             System.exit(1);
         }
         if (generate_agent != null) {
-            for (GenerateAgent factory : generate_agent) {
+            for (AgentFactory factory : generate_agent) {
                 maxAgentCount += factory.getMaxGeneration();
             }
         }
@@ -505,7 +505,7 @@ public class AgentHandler {
         ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
 
         if (generate_agent != null) {
-            for (GenerateAgent factory : generate_agent) {
+            for (AgentFactory factory : generate_agent) {
                 factory.tryUpdateAndGenerate(simulator, time,
                                              generatedAgentsInStep) ;
             }
@@ -596,7 +596,7 @@ public class AgentHandler {
             return true;
         }
         if (isAllAgentSpeedZeroBreak) {
-            for (GenerateAgent factory : generate_agent) {
+            for (AgentFactory factory : generate_agent) {
                 if (factory.enabled) return false;
             }
             boolean existNotFinished = false;
@@ -617,7 +617,7 @@ public class AgentHandler {
             for (final AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.finished()) return false;
             }
-            for (GenerateAgent factory : generate_agent) {
+            for (AgentFactory factory : generate_agent) {
                 if (factory.enabled) return false;
             }
         }
@@ -807,7 +807,7 @@ public class AgentHandler {
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
 
-        for (GenerateAgent factory : generate_agent) {
+        for (AgentFactory factory : generate_agent) {
             Term goal_tag = factory.goal;
             if (goal_tag != null &&
                 !all_goal_tags.contains(goal_tag.getString())) {

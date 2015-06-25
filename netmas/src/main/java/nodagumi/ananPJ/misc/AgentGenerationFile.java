@@ -30,7 +30,9 @@ import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
-import nodagumi.ananPJ.misc.GenerateAgent ;
+import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.AgentFactoryFromLink;
+import nodagumi.ananPJ.Agents.AgentFactoryFromNode;
 import nodagumi.Itk.*;
 
 //======================================================================
@@ -144,7 +146,7 @@ import nodagumi.Itk.*;
  *     </dd>
  * </dl>
  * {@code "agentType"} の {@code "className"} および {@code "config"} については、
- * {@link nodagumi.ananPJ.misc.GenerateAgent GenerateAgent} で説明されている
+ * {@link nodagumi.ananPJ.Agents.AgentFactory AgentFactory} で説明されている
  * エージェントクラスとその設定パラメータを参照のこと。
  * <p>
  * Version 0, 1 の形式は以下の通り。
@@ -173,7 +175,7 @@ import nodagumi.Itk.*;
  * example6) TIMEEVERY,NaiveAgent,"{}",LINK_TAG_1,18:00:00,18:00:00,60,60,100,LANE,EXIT_1,EXIT_2,EXIT_3
  * </pre>
  */
-public class AgentGenerationFile extends ArrayList<GenerateAgent> {
+public class AgentGenerationFile extends ArrayList<AgentFactory> {
     private Random random = null;
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
@@ -240,7 +242,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
      * Generation Rule は以下の形式の JSON (version 2 format).
      *   
      */
-    static private class GenerationConfigBase extends GenerateAgent.Config {
+    static private class GenerationConfigBase extends AgentFactory.Config {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * 生成ルールのタイプ
@@ -590,9 +592,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
         } else {
             /* [2014.12.29 I.Noda]
              * agentClassName を埋めておかないと、directive の処理が出来ない。
-             * なので、GenerateAgent に指定する規定値を埋める。
+             * なので、AgentFactory に指定する規定値を埋める。
              */
-            genConfig.agentClassName = GenerateAgent.DefaultAgentClassName ;
+            genConfig.agentClassName = AgentFactory.DefaultAgentClassName ;
         }
 
         // read start link
@@ -699,7 +701,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
      */
     public void setRandom(Random _random) {
         random = _random;
-        for (GenerateAgent ga : this) {
+        for (AgentFactory ga : this) {
             ga.setRandom(_random);
         }
     }
@@ -990,9 +992,9 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
         while (index < planned_route.size()) {
             Term candidate = planned_route.get(index);
 
-            if(GenerateAgent
+            if(AgentFactory
                .isKnownDirectiveInAgentClass(agentClassName, candidate)) {
-                GenerateAgent
+                AgentFactory
                     .pushPlaceTagInDirectiveByAgentClass(agentClassName,
                                                          candidate,
                                                          linkTags) ;
@@ -1090,11 +1092,11 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
                                      GenerationConfigBase genConfig) {
         for (final MapLink start_link : genConfig.startLinks) {
             genConfig.startPlace = start_link ;
-            this.add(new GenerateAgentFromLink(genConfig, random)) ;
+            this.add(new AgentFactoryFromLink(genConfig, random)) ;
         }
         for (final MapNode start_node : genConfig.startNodes) {
             genConfig.startPlace = start_node ;
-            this.add(new GenerateAgentFromNode(genConfig, random)) ;
+            this.add(new AgentFactoryFromNode(genConfig, random)) ;
         }
     }
 
@@ -1123,14 +1125,14 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
             if (chosen_links[i] > 0) {
                 genConfig.startPlace = genConfig.startLinks.get(i) ;
                 genConfig.total = chosen_links[i] ;
-                this.add(new GenerateAgentFromLink(genConfig, random)) ;
+                this.add(new AgentFactoryFromLink(genConfig, random)) ;
             }
         }
         for (int i = 0; i < genConfig.startNodes.size(); i++) {
             if (chosen_nodes[i] > 0) {
                 genConfig.startPlace = genConfig.startNodes.get(i) ;
                 genConfig.total = chosen_nodes[i] ;
-                this.add(new GenerateAgentFromNode(genConfig, random)) ;
+                this.add(new AgentFactoryFromNode(genConfig, random)) ;
             }
         }
     }
@@ -1187,7 +1189,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
             if (chosen_links[i] > 0) {
                 genConfig.startPlace = genConfig.startLinks.get(i) ;
                 genConfig.total = chosen_links[i] ;
-                this.add(new GenerateAgentFromLink(genConfig, random)) ;
+                this.add(new AgentFactoryFromLink(genConfig, random)) ;
             }
 
         }
@@ -1195,7 +1197,7 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
             if (chosen_nodes[i] > 0) {
                 genConfig.startPlace = genConfig.startNodes.get(i) ;
                 genConfig.total = chosen_nodes[i] ;
-                this.add(new GenerateAgentFromNode(genConfig,random)) ;
+                this.add(new AgentFactoryFromNode(genConfig,random)) ;
             }
         }
     }
@@ -1233,12 +1235,12 @@ public class AgentGenerationFile extends ArrayList<GenerateAgent> {
                     MapLink start_link = 
                         genConfig.startLinks.chooseRandom(random) ;
                     genConfig.startPlace = start_link ;
-                    this.add(new GenerateAgentFromLink(genConfig, random)) ;
+                    this.add(new AgentFactoryFromLink(genConfig, random)) ;
                 } else if (genConfig.startNodes.size() > 0) {
                     MapNode start_node = 
                         genConfig.startNodes.chooseRandom(random) ;
                     genConfig.startPlace = start_node ;
-                    this.add(new GenerateAgentFromNode(genConfig, random)) ;
+                    this.add(new AgentFactoryFromNode(genConfig, random)) ;
                 } else {
                     Itk.logError("no starting place for generation.") ;
                     Itk.logError_("config",genConfig) ;

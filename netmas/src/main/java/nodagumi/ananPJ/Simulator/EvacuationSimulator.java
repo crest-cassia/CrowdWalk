@@ -167,7 +167,7 @@ public class EvacuationSimulator {
          * agent には、map は、NetworkMapBase として設定してある。
          * それ以外に必要という事かもしれない。
          * また、ここでないといけないらしい。
-         * GenerateAgent の tryUpdateAndGenerate() で入れてみたが、
+         * AgentFactory の tryUpdateAndGenerate() で入れてみたが、
          * おかしくなる。
          */
         agent.setNetworkMap(getMap()) ;

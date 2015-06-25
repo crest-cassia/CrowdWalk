@@ -8,7 +8,7 @@
  *  <li> {@link nodagumi.ananPJ.misc.NetmasPropertiesHandler 実行properties}</li>
  *  <li> {@link nodagumi.ananPJ.Scenario.Scenario シナリオ記述}</li>
  *  <li> {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}</li>
- *  <li> {@link nodagumi.ananPJ.misc.GenerateAgent エージェント設定 config}</li>
+ *  <li> {@link nodagumi.ananPJ.Agents.AgentFactory エージェント設定 config}</li>
  *  <li> {@link nodagumi.ananPJ.Agents.Think.ThinkEngine エージェント行動ルール}</li>
  *  <li> <a href="#fallback"> 各種設定とFallback</a></li>
  * </ul>
@@ -21,7 +21,7 @@
  *       指定できる。
  *       設定できる項目はエージェントクラスにより異なる。
  *       各クラスでの設定項目は、
- *       {@link nodagumi.ananPJ.misc.GenerateAgent エージェント設定 config} を
+ *       {@link nodagumi.ananPJ.Agents.AgentFactory エージェント設定 config} を
  *       参照。
  *   </li>
  *   <li> 全ての設定項目について、

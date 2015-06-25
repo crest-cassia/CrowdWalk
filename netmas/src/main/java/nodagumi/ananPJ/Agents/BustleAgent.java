@@ -19,7 +19,6 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.NaiveAgent ;
-import nodagumi.ananPJ.misc.GenerateAgent;
 
 import nodagumi.Itk.* ;
 

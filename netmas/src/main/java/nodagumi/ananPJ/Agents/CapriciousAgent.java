@@ -17,7 +17,7 @@
  *   <LI> コンストラクタは、引数なし、2引数、6引数のものを定義しておく <LI>
  *   <LI> calcWayCostTo() を定義する。
  *        ここを工夫すると、経路選択をいろいろいじれる</LI>
- *   <LI> misc/GenerateAgent.java の、GenerateAgent._dummyAgents に、
+ *   <LI> Agents/AgentFactory.java の、AgentFactory._dummyAgents に、
  *        新しいクラスのインスタンスを追加しておく。
  *        これがないと、このクラスが JVM にロードされない。 </LI>
  *   <LI> ジェネレーションファイルのモードライン（先頭行）で、
@@ -36,7 +36,6 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.NaiveAgent;
-import nodagumi.ananPJ.misc.GenerateAgent;
 
 import nodagumi.Itk.* ;
 

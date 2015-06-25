@@ -19,7 +19,7 @@ import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.misc.GenerateAgent;
+import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
@@ -145,7 +145,7 @@ implements Comparable<AgentBase> {
      * 初期化。constractorから分離。
      */
     public void init(Random _random, EvacuationSimulator simulator, 
-                     GenerateAgent factory, double time) {
+                     AgentFactory factory, double time) {
         super.init(null);
         random = _random;
         //swing_width = Math.random() * 2.0 - 1.0;
@@ -153,7 +153,7 @@ implements Comparable<AgentBase> {
         // Pollution のサブクラスのインスタンスを取得
         pollutionEffect =
             PollutionBase.getInstance(pollutionType).newEffectInfo(this) ;
-        //GenerateAgent から移したもの
+        //AgentFactory から移したもの
         generatedTime = time ;
         displayMode = simulator.getDisplayMode() ;
         setMap(simulator.getMap()) ;

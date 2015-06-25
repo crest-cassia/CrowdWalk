@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.misc;
+package nodagumi.ananPJ.Agents;
 
 import java.lang.reflect.Method;
 
@@ -47,7 +47,7 @@ import nodagumi.Itk.*;
  *  <li> {@link nodagumi.ananPJ.Agents.RubyAgent RubyAgent} </li>
  * </ul>
  */
-public abstract class GenerateAgent {
+public abstract class AgentFactory {
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -270,7 +270,7 @@ public abstract class GenerateAgent {
     /**
      *  Config によるコンストラクタ
      */
-    public GenerateAgent(Config config, Random _random) {
+    public AgentFactory(Config config, Random _random) {
         if(config.agentClassName != null && config.agentClassName.length() > 0) {
             agentClassName = config.agentClassName ;
             agentConf = config.agentConf ;
@@ -499,200 +499,6 @@ public abstract class GenerateAgent {
     }
 }
 
-class GenerateAgentFromLink extends GenerateAgent {
-    MapLink start_link;
-
-    //------------------------------------------------------------
-    /**
-     * Config によるコンストラクタ
-     */
-    public GenerateAgentFromLink(Config config, Random random) {
-        super(config, random) ;
-        start_link = (MapLink)config.startPlace ;
-    }
-
-    @Override
-    protected boolean finished(double time) {
-        if (super.finished(time) || start_link.isShutOff()) return true;
-        return false;
-    }
-
-    @Override
-    protected void place_agent(AgentBase agent) {
-        agent.placeAtRandomPosition(start_link) ;
-        //start_link.agentEnters(agent);
-    }
-
-    @Override
-    public String getStart() {
-        return start_link.getTagString() + 
-        "(" +  start_link.ID + ")" +
-        " on " + start_time +
-        " ("  + total +
-        " in " + duration + "s)";
-    }
-    @Override
-    public OBNode getStartObject() { return start_link; }
-
-    @Override
-    public void dumpAgentToGenerate(PrintWriter pw) {
-        pw.print("gen_link");
-
-        pw.print("," + start_link.ID);
-        pw.print("," + start_time);
-        pw.print("," + duration);
-        
-        pw.print("," + generated);
-        pw.print("," + total);
-
-        pw.print("," + goal);
-        pw.print("," + planned_route.size());
-        for (Term checkpoint : planned_route) {
-            pw.print("," + checkpoint);
-        }
-        pw.print("," + tags.size());
-        for (String tag : tags) {
-            pw.print("," + tag);
-        }
-        pw.println();
-    }
-}
-
-
-class GenerateAgentFromNode extends GenerateAgent {
-    MapNode start_node;
-
-    //------------------------------------------------------------
-    /**
-     * Config によるコンストラクタ
-     */
-    public GenerateAgentFromNode(Config config, Random random) {
-        super(config, random) ;
-        start_node = (MapNode)config.startPlace ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * エージェントを初期位置に置く。
-     */
-    @Override
-    protected void place_agent(AgentBase agent) {
-        agent.place(null, start_node, 0.0) ;
-    }
-    //------------------------------------------------------------
-    /**
-     * エージェントを初期位置に置く。 (obsolete)
-     * [2015.01.10 I.Noda]
-     * おそらく、WalkAgent あたりから取ってきた、古いコード。
-     * 効率悪く、意味不明の操作が多い。
-     * 上記の適宜に置き換え
-     */
-    protected void place_agent_obsolete(AgentBase agent) throws Exception {
-        /*
-         */
-        MapLinkTable way_candidates = start_node.getPathways(); 
-        double min_cost = Double.MAX_VALUE;
-        double min_cost_second = Double.MAX_VALUE;
-        MapLink way = null;
-        MapLink way_second = null;
-        MapLinkTable way_samecost = null;
-        final Term next_target;
-        List<Term> plannedRoute = getPlannedRoute();
-        if (plannedRoute.size() == 0)
-            next_target = goal;
-        else
-            next_target = getPlannedRoute().get(0);
-
-        for (MapLink way_candidate : way_candidates) {
-            if (way_candidate.hasTag(goal)){
-                /* finishing up */
-                way = way_candidate;
-                break;
-            } else if (way_candidate.hasTag(next_target)){
-                /* reached mid_goal */
-                way = way_candidate;
-                break;
-            }
-
-            MapNode other = way_candidate.getOther(start_node);
-            double cost = other.getDistance(next_target) ;
-            cost += way_candidate.length;
-
-            if (cost < min_cost) {
-                min_cost = cost;
-                way = way_candidate;
-                way_samecost = null;
-            } else if (cost == min_cost) {
-                if (way_samecost == null)
-                    way_samecost = new MapLinkTable();
-                way_samecost.add(way_candidate);
-                if (cost < min_cost) min_cost = cost;
-            }
-        }
-
-        if (way_samecost != null) {
-            int i = (int)(random.nextDouble() * way_samecost.size());
-            if (i != way_samecost.size()) {
-                way = way_samecost.get(i);
-            }
-        }
-        
-        if (way == null) {
-            way = way_second;
-        }
-
-        MapLink link = null;
-        if (way == null) {
-            link = start_node.getPathways().get(0);
-        } else {
-            link = way;
-        }
-        for (MapLink way_candidate : way_candidates) {
-            if (way != way_candidate) {
-                link = way_candidate;
-                break;
-            }
-        }
-        //MapLink link = start_node.getPathways().get(0);
-        link.setup_lanes();
-        agent.place(link, start_node, 0.0) ;
-        //link.agentEnters(agent);
-    }
-
-    @Override
-    public String getStart() {
-        return start_node.getTagString() +
-        "(" +  start_node.ID + ")" +
-        " from " + start_time +
-        " ("  + total +
-        " in " + duration + "s)";
-    }
-    @Override
-    public OBNode getStartObject() { return start_node; }
-
-    @Override
-    public void dumpAgentToGenerate(PrintWriter pw) {
-        pw.print("gen_node");
-
-        pw.print("," + start_node.ID);
-        pw.print("," + start_time);
-        pw.print("," + duration);
-        
-        pw.print("," + generated);
-        pw.print("," + total);
-
-        pw.print("," + goal);
-        pw.print("," + planned_route.size());
-        for (Term checkpoint : planned_route) {
-            pw.print("," + checkpoint);
-        }
-        pw.print("," + tags.size());
-        for (String tag : tags) {
-            pw.print("," + tag);
-        }
-        pw.println();
-    }
-}
 //;;; Local Variables:
 //;;; mode:java
 //;;; tab-width:4
