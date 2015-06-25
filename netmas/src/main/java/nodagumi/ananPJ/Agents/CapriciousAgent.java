@@ -15,7 +15,6 @@
  *   <LI> typeString を static で定義。これにクラス名(short name)をいれる。
  *   <LI> getTypeName() も定義しておく </LI>
  *   <LI> コンストラクタは、引数なし、2引数、6引数のものを定義しておく <LI>
- *   <LI> copyAndInitializeBody() も定義しておく。</LI> 
  *   <LI> calcWayCostTo() を定義する。
  *        ここを工夫すると、経路選択をいろいろいじれる</LI>
  *   <LI> misc/GenerateAgent.java の、GenerateAgent._dummyAgents に、
@@ -85,18 +84,6 @@ public class CapriciousAgent extends NaiveAgent {
      */
     public CapriciousAgent(Random _random) {
         init(_random) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 複製操作のメイン
-     */
-    @Override
-    public AgentBase copyAndInitializeBody(AgentBase _r) {
-        CapriciousAgent r = (CapriciousAgent)_r ;
-        super.copyAndInitializeBody(r) ;
-        r.capriciousMargin = capriciousMargin ;
-        return r ;
     }
 
     //------------------------------------------------------------

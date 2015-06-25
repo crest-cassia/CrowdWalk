@@ -252,20 +252,6 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-	 * 与えられたエージェントインスタンスに内容をコピーし、初期化。
-     * 差分プログラミングにする。
-	 */
-    @Override
-    public AgentBase copyAndInitializeBody(AgentBase _r) {
-        WalkAgent r = (WalkAgent)_r ;
-        super.copyAndInitializeBody(r) ;
-        r.emptySpeed = emptySpeed;
-
-        return r;
-    }
-
-    //------------------------------------------------------------
-    /**
      *
      */
     @Override

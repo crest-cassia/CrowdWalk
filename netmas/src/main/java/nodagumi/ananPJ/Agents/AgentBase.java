@@ -216,43 +216,6 @@ implements Comparable<AgentBase> {
         return config.fetchArgString(slot, ConfigFallbackSlot, fallback) ;
     }
 
-    //------------------------------------------------------------
-    /**
-     * エージェント複製
-     */
-    public AgentBase copyAndInitialize() {
-        try {
-            AgentBase r = (AgentBase)this.getClass().newInstance() ;
-            return copyAndInitializeBody(r) ;
-        } catch(Exception ex) {
-            ex.printStackTrace() ;
-            Itk.logError("can not make a new instance from an agent.") ;
-            Itk.logError_("agent", this) ;
-            return null ;
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 与えられたエージェントインスタンスに内容をコピーし、初期化。
-     */
-    public AgentBase copyAndInitializeBody(AgentBase r) {
-        r.ID = ID;
-        r.generatedTime = generatedTime;
-        r.currentPlace = currentPlace.duplicate() ;
-        r.speed = 0;
-        r.goal = goal;
-        r.routePlan = routePlan.duplicate() ;
-        r.routePlan.resetIndex() ;
-        
-        r.random = random;
-        for (String tag : tags) {
-            r.addTag(tag);
-        }
-
-        return r ;
-    }
-
     //============================================================
     //------------------------------------------------------------
     /**

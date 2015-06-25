@@ -100,18 +100,6 @@ public class AwaitAgent extends WalkAgent {
                                 minDistanceBetweenAgents) ;
     } ;
 
-    //------------------------------------------------------------
-    /**
-     * 複製操作のメイン
-     */
-    @Override
-    public AgentBase copyAndInitializeBody(AgentBase _r) {
-        AwaitAgent r = (AwaitAgent)_r ;
-        super.copyAndInitializeBody(r) ;
-
-        return r;
-    }
-
     //----------------------------------------------------------------------
     /**
      * WAITING の処理

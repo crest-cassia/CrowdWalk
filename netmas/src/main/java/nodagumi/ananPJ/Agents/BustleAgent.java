@@ -84,18 +84,6 @@ public class BustleAgent extends NaiveAgent {
 
     //------------------------------------------------------------
     /**
-     * 複製操作のメイン
-     */
-    public AgentBase copyAndInitializeBody(AgentBase _r) {
-        BustleAgent r = (BustleAgent)_r ;
-        super.copyAndInitializeBody(r) ;
-	r.bustleWeight = bustleWeight ;
-        r.trailWeight = trailWeight ;
-        return r ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override

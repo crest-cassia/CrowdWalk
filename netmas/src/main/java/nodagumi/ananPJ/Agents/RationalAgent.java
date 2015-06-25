@@ -91,17 +91,6 @@ public class RationalAgent extends BustleAgent {
 
     //------------------------------------------------------------
     /**
-     * 複製操作のメイン
-     */
-    public AgentBase copyAndInitializeBody(AgentBase _r) {
-        RationalAgent r = (RationalAgent)_r ;
-        super.copyAndInitializeBody(r) ;
-        r.capriciousMargin = capriciousMargin ;
-        return r ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override

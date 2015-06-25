@@ -152,16 +152,6 @@ public class NaiveAgent
 
     //------------------------------------------------------------
     /**
-     * 複製操作のメイン
-     */
-    @Override
-    public AgentBase copyAndInitializeBody(AgentBase _r) {
-        NaiveAgent r = (NaiveAgent)_r ;
-        return super.copyAndInitializeBody(r) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override

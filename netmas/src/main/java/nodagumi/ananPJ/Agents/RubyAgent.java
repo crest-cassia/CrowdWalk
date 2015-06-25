@@ -82,18 +82,6 @@ public class RubyAgent extends WalkAgent {
 
     //------------------------------------------------------------
     /**
-     * 複製操作のメイン
-     */
-    public AgentBase copyAndInitializeBody(AgentBase _r) {
-        RubyAgent r = (RubyAgent)_r ;
-        super.copyAndInitializeBody(r) ;
-        rubyEngine = r.rubyEngine ;
-        rubyAgent = r.rubyAgent ;
-        return r ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf による初期化。
      */
     @Override
