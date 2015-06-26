@@ -241,15 +241,6 @@ public class EvacuationSimulator {
         /* evacuation based on goal tags */
         ArrayList<String> all_goal_tags = agentHandler.getAllGoalTags();
 
-	/* [2015.04.14 I.Noda]
-	 * "EXIT" の特別扱いは行わない。
-	 */
-	/*
-        if (!all_goal_tags.contains("EXIT")) {
-            all_goal_tags.add("EXIT");
-        }
-	*/
-
         ArrayList<String> no_goal_list = new ArrayList<String>();
         HashMap<String, CalcGoalPath> workers = new HashMap<String, CalcGoalPath>();
         HashMap<String, Thread> threads = new HashMap<String, Thread>();
@@ -287,24 +278,6 @@ public class EvacuationSimulator {
 		Itk.logWarn_(tag);
             }
         }
-
-        /* emergency evacuation */
-	/* [2015.04.14 I.Noda]
-	 * "EXIT" は特別扱いしないので、以下は要らない。
-	 */
-	/*
-        {
-            CalcPath.Nodes goals = new CalcPath.Nodes();
-	    for (MapNode node : map.getNodes()) {
-                if (node.hasTag("EXIT")) goals.add(node);
-            }
-            if (goals.size() == 0) {
-
-		Itk.logWarn("no goal for Exit!");
-                return;
-            }
-        }
-	*/
 
         // tkokada: node check which no way to goal
         boolean hasGoal = true;
@@ -407,10 +380,6 @@ public class EvacuationSimulator {
 
     public SimulationController getController() {
         return controller;
-    }
-
-    public String getName() {
-        return "Evacuation";
     }
 
     public void setup() {
