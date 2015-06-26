@@ -155,7 +155,7 @@ public class DnDJTree extends JTree implements DragSourceListener, DropTargetLis
             dtde.dropComplete(false);
             return;
         }
-        System.out.println("drop path is " + path);
+        Itk.logInfo("drop path is " + path);
         MutableTreeNode droppedNode       = (MutableTreeNode) droppedObject;
         DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) path.getLastPathComponent();
         DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) targetNode.getParent();
@@ -166,7 +166,7 @@ public class DnDJTree extends JTree implements DragSourceListener, DropTargetLis
         }
         dtde.acceptDrop(DnDConstants.ACTION_MOVE);
         model.removeNodeFromParent(droppedNode);
-        System.out.println("[debug] now targetNode.getAllowsChildren()== " +targetNode.getAllowsChildren()); 
+        Itk.logDebug("now targetNode.getAllowsChildren()== " +targetNode.getAllowsChildren());
         if(parentNode!=null &&!targetNode.getAllowsChildren()) {
         	//parent is 
             model.insertNodeInto(droppedNode, parentNode, parentNode.getIndex(targetNode));
@@ -252,7 +252,6 @@ public class DnDJTree extends JTree implements DragSourceListener, DropTargetLis
             	/* no op */
             }
             String tooltip = ob_node.getHintString();
-            //System.err.println(tooltip);
             setToolTipText(tooltip);
             return this;
         }

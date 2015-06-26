@@ -35,14 +35,6 @@ import nodagumi.Itk.*;
 
 
 public class EvacuationSimulator {
-    public static enum timeSeriesLogTYpe {
-        All,        /* save all agents, map information */
-        Goal        /* save goal times of agents */
-    }
-
-    //private MapNodeTable nodes = null;
-    //private MapLinkTable links = null;
-    //private NetworkMapBase map = null ; // networkMap で代用。
     private ArrayList<AgentBase> agents = null;
     private String pollutionFileName = null;
 
@@ -58,7 +50,6 @@ public class EvacuationSimulator {
     private PollutionCalculator pollutionCalculator = null;
     private AgentHandler agentHandler = null;
 
-    static public boolean debug = false;
     private NetworkMap networkMap = null;
     private double linerGenerateAgentRatio = 1.0;
     private Random random = null;
@@ -77,18 +68,11 @@ public class EvacuationSimulator {
         }
 
         networkMap = _networkMap ;
+        networkMap.checkConsistency() ;
+
         pollutionFileName = networkMap.getPollutionFile();
 
         random = _random;
-        int counter = 0;
-        for (MapLink link : networkMap.getLinks()) {
-	    if (!networkMap.getNodes().contains(link.getFrom()))
-                counter += 1;
-	    else if (!networkMap.getNodes().contains(link.getTo()))
-                counter += 1;
-        }
-        if (counter > 0)
-	    Itk.logWarn("EvacuationSimulator invalid links: ", counter);
     }
 
     public void begin(boolean has_display) {

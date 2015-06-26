@@ -286,5 +286,31 @@ public class NetworkMapBase extends DefaultTreeModel {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * マップに整合性があるかチェック。
+     * @return 整合性がなければ false。
+     */
+    public boolean checkConsistency() {
+        int counter = 0;
+        for (MapLink link : getLinks()) {
+            if (!getNodes().contains(link.getFrom())) {
+                Itk.logWarn("link's fromNode does not exist.",
+                            link, link.getFrom()) ;
+                counter += 1;
+            } else if (!getNodes().contains(link.getTo())) {
+                Itk.logWarn("link's toNode does not exist.",
+                            link, link.getTo()) ;
+                counter += 1;
+            }
+        }
+        if (counter > 0) {
+            Itk.logWarn("EvacuationSimulator invalid links: ", counter);
+            return false ;
+        } else {
+            return true ;
+        }
+    }
+
 } // class NetworkMapBase
 
