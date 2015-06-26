@@ -41,7 +41,6 @@ import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
-import nodagumi.ananPJ.misc.Snapshot;
 import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;

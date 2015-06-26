@@ -42,7 +42,6 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.OBNode.NType;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle;
-import nodagumi.ananPJ.misc.NetMASSnapshot;
 
 import nodagumi.Itk.*;
 
