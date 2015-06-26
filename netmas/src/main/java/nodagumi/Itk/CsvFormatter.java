@@ -14,7 +14,9 @@
 package nodagumi.Itk;
 
 import java.lang.Iterable;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 import java.io.Writer;
 import java.io.PrintStream; 
@@ -33,6 +35,12 @@ public class CsvFormatter<T> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * Column定義テーブル
+     */
+    private HashMap<String, Column> columnTable = new HashMap<String, Column>() ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 区切り記号
      */
     private String columnSeparator = "," ;
@@ -47,16 +55,79 @@ public class CsvFormatter<T> {
 
     //------------------------------------------------------------
     /**
+     * Column情報の定義の登録。
+     * 以下のように記述することを想定。
+     *    csvFormatter.registerColumn(csvFormatter.new Column("foo"){
+     *         public String value(T object) { return object.foo() ; }
+     *         }) ;
+     * @param column:: column 情報
+     */
+    public CsvFormatter registerColumn(Column column) {
+        columnTable.put(column.header,column) ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * Column情報追加。
      * 以下のように記述することを想定。
      *    csvFormatter.addColumn(csvFormatter.new Column("foo"){
      *         public String value(T object) { return object.foo() ; }
      *         }) ;
+     * 同時に、registerColumnも行う。
      * @param column:: column 情報
      */
     public CsvFormatter addColumn(Column column) {
+        registerColumn(column) ;
 	columnList.add(column) ;
 	return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * header名によるColumn情報追加。
+     * 以下のように記述することを想定。
+     *    csvFormatter.addColumn(csvFormatter.new Column("foo"){
+     *         public String value(T object) { return object.foo() ; }
+     *         }) ;
+     * 同時に、registerColumnも行う。
+     * @param column:: column 情報
+     */
+    public CsvFormatter addColumn(String columnName) {
+        Column column = columnTable.get(columnName) ;
+        if(column != null) {
+            columnList.add(column) ;
+            return this ;
+        } else {
+            Itk.logError("unknown header string for column:", columnName) ;
+            return null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * header名のリストによるColumn情報設定。
+     * @param columnNameList:: column の header名のリスト
+     */
+    public CsvFormatter setColumns(List<String> columnNameList) {
+        columnList.clear() ;
+        for(String columnName : columnNameList) {
+            addColumn(columnName) ;
+        }
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * header名のリストによるColumn情報設定。(Termによる指定)
+     * @param columnNameList:: column の header名のリスト
+     */
+    public CsvFormatter setColumnsByTerm(List<Term> columnNameList) {
+        columnList.clear() ;
+        for(Term columnName : columnNameList) {
+            addColumn(columnName.getString()) ;
+        }
+        return this ;
     }
 
     //------------------------------------------------------------
