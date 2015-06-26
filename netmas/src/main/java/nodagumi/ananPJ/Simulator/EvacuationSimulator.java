@@ -96,14 +96,15 @@ public class EvacuationSimulator {
     }
 
     public void begin(boolean has_display) {
-        buildModel (has_display);
+        buildMap() ;
+        buildPollution() ;
+        buildAgentHandler(has_display);
         buildRoutes ();
 
         agentHandler.prepareForSimulation();
     }
 
-    void buildModel(boolean has_display) {
-        buildMap();
+    void buildPollution() {
         try {
             pollutionCalculator = new PollutionCalculator(
                     pollutionFileName,
@@ -114,7 +115,9 @@ public class EvacuationSimulator {
             e.printStackTrace();
             System.exit(1);
         }
+    }
 
+    void buildAgentHandler(boolean has_display) {
         agentHandler = new AgentHandler(networkMap.getGenerationFile(),
                                         networkMap.getScenarioFile(),
                                         networkMap,

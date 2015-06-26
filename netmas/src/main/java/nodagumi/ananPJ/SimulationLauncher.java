@@ -36,14 +36,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
         settings = Settings.load("NetworkMapEditor.ini");
     }
 
-    private transient JLabel directory_label = new JLabel();
-    private transient JButton model_file_button = new JButton();
-    private transient JLabel model_filename_label = new JLabel();
-    private transient JButton generation_file_button = new JButton();
-    private transient JLabel generation_filename_label = new JLabel();
-    private transient JButton scenario_file_button = new JButton();
-    private transient JLabel scenario_filename_label = new JLabel();
-
     private transient Runnable simulationRunnable = null;
 
     protected void simulate() {
