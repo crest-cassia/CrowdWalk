@@ -32,31 +32,131 @@ import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import nodagumi.Itk.*;
 
-
-
+//======================================================================
+/**
+ * シミュレータの実行部。
+ * しかし、実際には、AgentHandler がほとんどのことをしている。
+ */
 public class EvacuationSimulator {
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 共通の乱数生成器。
+     */
+    private Random random = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * マップおよびその他のデータ管理の構造体。
+     */
+    private NetworkMap networkMap = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 全エージェントを保持。
+     */
     private ArrayList<AgentBase> agents = null;
-    private String pollutionFileName = null;
 
-    transient private SimulationPanel3D panel3d = null;
-    protected SimulationController controller = null;
-
-    private int screenshotInterval = 0;
-    /** simulation time step */
-    private double timeScale = 1.0; // original value: 1.0
-
-    protected double tick_count = 0.0;
-
-    private PollutionCalculator pollutionCalculator = null;
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェントの生成管理から、シミュレーションのほとんどの計算を管理。
+     */
     private AgentHandler agentHandler = null;
 
-    private NetworkMap networkMap = null;
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェント生成の倍率。
+     * 今後はできるだけ使わない。
+     */
     private double linerGenerateAgentRatio = 1.0;
-    private Random random = null;
-    // saveTimeSeriesLog() が呼ばれた回数
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * simulation time step
+     */
+    private double timeScale = 1.0; // original value: 1.0
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 何回シミュレーションが回ったかを保持する。
+     */
+    protected double tick_count = 0.0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * start/pause などを制御するもの。
+     */
+    protected SimulationController controller = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * start/pause の排他制御用。
+     * synchronize で使うもの。
+     */
+    Boolean stop_simulation = false;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Pollution を管理。
+     */
+    private PollutionCalculator pollutionCalculator = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Pollution のファイル名。
+     */
+    private String pollutionFileName = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 表示画面
+     */
+    transient private SimulationPanel3D panel3d = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * スクリーンショット取るもの。
+     * どう使うのか謎。見るところ、単に 1 にするかどうかだけに見える。
+     * それならば、int ではなく boolean にすべき。
+     */
+    private int screenshotInterval = 0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * saveTimeSeriesLog() が呼ばれた回数
+     */
     private int logging_count = 0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * シミュレーション設定ファイルを扱う。
+     */
     private NetmasPropertiesHandler properties = null;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェントがゴールに達した時刻情報。
+     * saveGoalLog() 用
+     */
+    private HashMap<String, Double> goalTimes = new HashMap<String, Double>();
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * EXITノード毎の避難完了者数(ログのバッファリング用)
+     * saveGoalLog() 用
+     */
+    private ArrayList<String> evacuatedAgents = new ArrayList<String>();
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * EXITノードリスト。
+     * saveGoalLog() 用
+     */
+    private MapNodeTable exitNodeList = null;
+
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ
+     */
     public EvacuationSimulator(NetworkMap _networkMap,
                                BasicSimulationLauncher _controller,
                                Random _random) {
@@ -75,6 +175,214 @@ public class EvacuationSimulator {
         random = _random;
     }
 
+    //------------------------------------------------------------
+    // メンバ変数アクセス。
+    //------------------------------------------------------------
+    /**
+     * マップ取得。
+     */
+    public NetworkMap getMap() {
+        return networkMap;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンク取得。
+     */
+    public MapLinkTable getLinks() {
+	return networkMap.getLinks();
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ノード取得。
+     */
+    public MapNodeTable getNodes() {
+	return networkMap.getNodes();
+    }
+
+    //------------------------------------------------------------
+    /**
+     * すべてのエージェントのリスト（Collection）を返す。
+     * @return Agent の Collection
+     */
+    public Collection<AgentBase> getAllAgentCollection() {
+        return agentHandler.getAllAgentCollection() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントのリスト（Collection）を返す。
+     * @return Agent の Collection
+     */
+    public Collection<AgentBase> getWalkingAgentCollection() {
+        return agentHandler.getWalkingAgentCollection() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントハンドラ取得。
+     */
+    public AgentHandler getAgentHandler() {
+        return agentHandler;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーションサイクル。
+     */
+    public double getTickCount() {
+        return tick_count;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * time scale 設定。
+     */
+    public void setTimeScale (double d) {
+        timeScale = d;
+    }
+
+    /**
+     * time scale 取得。
+     */
+    public double getTimeScale () {
+        return timeScale;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 相対時刻。
+     */
+    public double getSecond() {
+        return getTickCount() * timeScale;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 相対時刻から絶対時刻への変換。
+     */
+    public double calcAbsoluteTime(double relTime) {
+        return agentHandler.calcAbsoluteTime(relTime) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 絶対時刻から相対時刻への変換。
+     */
+    public double calcRelativeTime(double absTime) {
+        return agentHandler.calcRelativeTime(absTime) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * コントローラ取得。
+     */
+    public SimulationController getController() {
+        return controller;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Pollution ハンドラ取得。
+     */
+    public ArrayList<MapArea> getPollutions() {
+        return pollutionCalculator.getPollutions();
+    }
+
+    //------------------------------------------------------------
+    /**
+     * screen shot インターバルを設定。
+     */
+    public void setScreenshotInterval (int i) {
+        screenshotInterval = i;
+    }
+
+    /**
+     * screen shot インターバル取得。
+     */
+    public int getScreenshotInterval () {
+        return screenshotInterval;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 設定ハンドラ設定。
+     */
+    public void setProperties(NetmasPropertiesHandler _properties) {
+        properties = _properties;
+    }
+
+    /**
+     * 設定ハンドラ取得。
+     */
+    public NetmasPropertiesHandler getProperties() {
+        return properties;
+    }
+
+    public void setRandom(Random _random) {
+        random = _random;
+        if (agentHandler != null)
+            agentHandler.setRandom(_random);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 全エージェントが止まったらシミュレーションを止めるか？
+     */
+    public boolean getIsAllAgentSpeedZeroBreak() {
+        if (agentHandler == null) {
+	    Itk.logWarn("AgentHandler.getIsAllAgentsSpeedZeroBreak",
+			"agentHandler is null object.");
+            return false;
+        } else {
+            return agentHandler.getIsAllAgentSpeedZeroBreak();
+        }
+    }
+
+    /**
+     * 全エージェントが止まったらシミュレーションを止めるかをセット。
+     */
+    public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
+    {
+        if (agentHandler == null) {
+	    Itk.logWarn("AgentHandler.setIsAllAgentsSpeedZeroBreak",
+			"agentHandler is null object.");
+        } else {
+            agentHandler.setIsAllAgentSpeedZeroBreak(
+                    _isAllAgentSpeedZeroBreak);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 全エージェントが止まっているかどうか？
+     */
+    public boolean getIsAllAgentSpeedZero() {
+        if (agentHandler == null) {
+	    Itk.logWarn("AgentHandler.isAllAgentsSpeedZero",
+			"agentHandler is null object.");
+            return false;
+        } else {
+            return agentHandler.getIsAllAgentSpeedZero();
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェント生成の倍率。
+     */
+    public void setLinerGenerateAgentRatio(double _ratio) {
+        linerGenerateAgentRatio = _ratio;
+    }
+
+
+    //------------------------------------------------------------
+    // シミュレーションの準備。
+    //------------------------------------------------------------
+    /**
+     * シミュレーションの準備。（メイン）
+     */
     public void begin(boolean has_display) {
         buildMap() ;
         buildPollution() ;
@@ -84,6 +392,34 @@ public class EvacuationSimulator {
         agentHandler.prepareForSimulation();
     }
 
+    //------------------------------------------------------------
+    /**
+     * マップの準備。
+     */
+    void buildMap () {
+        /* Nodes */
+        for (MapNode node : getNodes()) {
+            // do nothinkg for node
+        }
+        /* Links */
+        for (MapLink link : getLinks()) {
+            link.prepareForSimulation(timeScale) ;
+        }
+        // リンク上にかかるMapAreaのリストをリンクにセットする
+        for (MapArea area : networkMap.getRooms()) {
+	    for (MapLink link : getLinks()) {
+                if (area.intersectsLine(link.getLine2D())) {
+                    link.addIntersectedMapArea(area);
+                }
+            }
+        }
+
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Pollution の準備。
+     */
     void buildPollution() {
         try {
             pollutionCalculator = new PollutionCalculator(
@@ -97,6 +433,10 @@ public class EvacuationSimulator {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * エージェントハンドラの準備。
+     */
     void buildAgentHandler(boolean has_display) {
         agentHandler = new AgentHandler(networkMap.getGenerationFile(),
                                         networkMap.getScenarioFile(),
@@ -108,10 +448,119 @@ public class EvacuationSimulator {
                                         random);
     }
 
+    //------------------------------------------------------------
+    /**
+     * ルート探索の準備
+     */
+    private void buildRoutes() {
+        /* evacuation based on goal tags */
+        ArrayList<String> all_goal_tags = agentHandler.getAllGoalTags();
+
+        ArrayList<String> no_goal_list = new ArrayList<String>();
+        HashMap<String, CalcGoalPath> workers = new HashMap<String, CalcGoalPath>();
+        HashMap<String, Thread> threads = new HashMap<String, Thread>();
+
+        // 経路探索をゴールごとに別スレッドで実行
+        for (String goal_tag : all_goal_tags) {
+            CalcGoalPath worker = new CalcGoalPath(goal_tag);
+            Thread thread = new Thread(worker);
+            workers.put(goal_tag, worker);
+            threads.put(goal_tag, thread);
+            thread.start();
+        }
+        // スレッド終了を待ってno_goal_list更新
+        try {
+            for (String goal_tag : all_goal_tags) {
+                threads.get(goal_tag).join();
+                CalcGoalPath worker = workers.get(goal_tag);
+                if (!worker.goalCalculated) {
+                    no_goal_list.add(worker.goalTag);
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        // 不要なメモリを速やかに解放する(メモリ消費量が多いほど実行速度が遅くなる傾向があるため)
+        workers = null;
+        threads = null;
+        System.gc();
+
+        if (no_goal_list.size() != 0) {
+            Itk.logWarn("no nodes with the following tag was found");
+            for (String tag : no_goal_list) {
+                Itk.logWarn_(tag);
+            }
+        }
+
+        // tkokada: node check which no way to goal
+        boolean hasGoal = true;
+        ArrayList<Integer> numNoGoal = new ArrayList<Integer>();
+        int totalValidNodes = 0;
+        for (String goal : all_goal_tags) {
+            int count = 0;
+            for (MapNode node : networkMap.getNodes()) {
+                MapLinkTable pathways = node.getPathways();
+                boolean notHasAllLinks = false;
+                for (MapLink link : pathways) {
+                    if (!link.hasTag("ALL_LINKS")) {
+                        notHasAllLinks = true;
+                        break;
+                    }
+                }
+                if (notHasAllLinks)
+                    continue;
+                if (goal.equals("EXIT"))
+                    totalValidNodes += 1;
+                if (node.getHint(goal) == null) {
+                    Itk.logWarn("buildRoute",
+                                "node:" + node.ID + " does not have any routes" +
+                                " for " + goal);
+                    hasGoal = false;
+                    count += 1;
+                    if (pathways.size() > 0) {
+                        //((MapLink) pathways.get(0)).addTag("INVALID_ROUTE");
+                        for (MapLink link : pathways) {
+                            link.addTag("INVALID_ROUTE");
+                        }
+                    }
+                }
+            }
+            numNoGoal.add(count);
+        }
+        // check whether all nodes have complete path to goals
+        Itk.logDebug("buildRoute: bug cheking...");
+        for (int i = 0; i < all_goal_tags.size(); i++)
+            Itk.logDebug("buildRoute: goal ",
+                         all_goal_tags.get(i) + " includes " +
+                         numNoGoal.get(i) + " no goal nodes / all nodes" +
+                         totalValidNodes + ".");
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 経路探索再計算。
+     */
+    public void recalculatePaths() {
+        synchronized (stop_simulation) {
+            stop_simulation = true;
+            buildRoutes();
+            stop_simulation = false;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 画面の準備。
+     */
     public void buildDisplay() {
         panel3d = controller.setupFrame(this);
     }
 
+    /**
+     * 画面の準備。
+     */
     public void buildDisplay(SimulationPanel3D _panel3d) {
         if (controller != null) {
             if (_panel3d != null) {
@@ -122,10 +571,93 @@ public class EvacuationSimulator {
         }
     }
 
+    /**
+     * 3D画面の準備。
+     */
     public SimulationPanel3D getPanel3D() {
         return panel3d;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 各値のリセット。
+     */
+    void resetValues() {
+        // System.gc();
+
+        tick_count = 0.0;
+        logging_count = 0;
+
+        for (MapLink link : getLinks()) {
+            link.clear();
+        }
+    }
+
+    //------------------------------------------------------------
+    // シミュレーション関連
+    //------------------------------------------------------------
+    /**
+     * シミュレーション初期化。
+     */
+    public void setup() {
+        MapLink.setupCommonParameters(networkMap.fallbackParameters) ;
+        MapNode.setupCommonParameters(networkMap.fallbackParameters) ;
+        resetValues();
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション開始。
+     */
+    public void start() {
+        if (controller != null) {
+            controller.start();
+            if (panel3d != null && isRunning()) {
+                panel3d.setMenuActionStartEnabled(false);
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション中断。
+     */
+    public void pause() {
+        if (controller != null) {
+            controller.pause();
+            if (panel3d != null && ! isRunning()) {
+                panel3d.setMenuActionStartEnabled(true);
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション1サイクル実行。
+     */
+    public void step() {
+        if (controller != null) {
+            controller.step();
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション実行中かどうかの判定。
+     */
+    public boolean isRunning() {
+        // tkokada
+        if (controller != null) {
+            return controller.isRunning();
+        } else {
+            return false;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェント登録
+     */
     public void registerAgent(AgentBase agent) {
         if (panel3d != null) {
             panel3d.registerAgentOnline(agent);
@@ -143,7 +675,6 @@ public class EvacuationSimulator {
         agent.setNetworkMap(getMap()) ;
     }
 
-    Boolean stop_simulation = false;
     //------------------------------------------------------------
     /**
      * 汎用 updateEveryTick() ;
@@ -186,6 +717,14 @@ public class EvacuationSimulator {
         return agentHandler.isFinished() ;
     }
 
+    //------------------------------------------------------------
+    // ログ関連
+    //------------------------------------------------------------
+    /**
+     * 結果を出力する。
+     * {@code logs/<time>.log} というログと、
+     * {@code macro.log} というログ。
+     */
     protected void output_results() {
         try {
 	    /* [2015.02.10 I.Noda] use timestamp instead of scenario_serial. */
@@ -204,288 +743,7 @@ public class EvacuationSimulator {
         }
     }
 
-    void add_tags_to_nodes_and_links() {
-        for (MapPartGroup group : networkMap.getGroups()) {
-            String tag_header = group.getTagString();
-            int count = 1;
-            for (MapNode node : group.getChildNodes()) {
-                node.addTag(tag_header + "-N" + count);
-                ++count;
-            }
-            count = 1;
-            for (MapLink link : group.getChildLinks()) {
-                link.addTag(tag_header + "-L" + count);
-                ++count;
-            }
-        }
-    }
-    
-    class CalcGoalPath implements Runnable {
-        public boolean goalCalculated = false;
-        public String goalTag;
-        
-        public CalcGoalPath(String _goal_tag) {
-            goalTag = _goal_tag;
-        }
-        
-        public void run() {
-            goalCalculated = calc_goal_path(goalTag);
-        }
-
-        private boolean calc_goal_path(String goal_tag) {
-	    return networkMap.calcGoalPath(goal_tag) ;
-        }
-    }
-
-    private void buildRoutes() {
-        /* evacuation based on goal tags */
-        ArrayList<String> all_goal_tags = agentHandler.getAllGoalTags();
-
-        ArrayList<String> no_goal_list = new ArrayList<String>();
-        HashMap<String, CalcGoalPath> workers = new HashMap<String, CalcGoalPath>();
-        HashMap<String, Thread> threads = new HashMap<String, Thread>();
-
-        // 経路探索をゴールごとに別スレッドで実行
-        for (String goal_tag : all_goal_tags) {
-            CalcGoalPath worker = new CalcGoalPath(goal_tag);
-            Thread thread = new Thread(worker);
-            workers.put(goal_tag, worker);
-            threads.put(goal_tag, thread);
-            thread.start();
-        }
-        // スレッド終了を待ってno_goal_list更新
-        try {
-            for (String goal_tag : all_goal_tags) {
-                threads.get(goal_tag).join();
-                CalcGoalPath worker = workers.get(goal_tag);
-                if (!worker.goalCalculated) {
-                    no_goal_list.add(worker.goalTag);
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        // 不要なメモリを速やかに解放する(メモリ消費量が多いほど実行速度が遅くなる傾向があるため)
-        workers = null;
-        threads = null;
-        System.gc();
-
-        if (no_goal_list.size() != 0) {
-            Itk.logWarn("no nodes with the following tag was found");
-            for (String tag : no_goal_list) {
-		Itk.logWarn_(tag);
-            }
-        }
-
-        // tkokada: node check which no way to goal
-        boolean hasGoal = true;
-        ArrayList<Integer> numNoGoal = new ArrayList<Integer>();
-        int totalValidNodes = 0;
-        for (String goal : all_goal_tags) {
-            int count = 0;
-	    for (MapNode node : networkMap.getNodes()) {
-                MapLinkTable pathways = node.getPathways();
-                boolean notHasAllLinks = false;
-                for (MapLink link : pathways) {
-                    if (!link.hasTag("ALL_LINKS")) {
-                        notHasAllLinks = true;
-                        break;
-                    }
-                }
-                if (notHasAllLinks)
-                    continue;
-                if (goal.equals("EXIT"))
-                    totalValidNodes += 1;
-                if (node.getHint(goal) == null) {
-		    Itk.logWarn("buildRoute",
-				"node:" + node.ID + " does not have any routes" +
-				" for " + goal);
-                    hasGoal = false;
-                    count += 1;
-                    if (pathways.size() > 0) {
-                        //((MapLink) pathways.get(0)).addTag("INVALID_ROUTE");
-                        for (MapLink link : pathways) {
-                            link.addTag("INVALID_ROUTE");
-                        }
-                    }
-                }
-            }
-            numNoGoal.add(count);
-        }
-        // check whether all nodes have complete path to goals
-	Itk.logDebug("buildRoute: bug cheking...");
-        for (int i = 0; i < all_goal_tags.size(); i++)
-	    Itk.logDebug("buildRoute: goal ",
-			 all_goal_tags.get(i) + " includes " +
-			 numNoGoal.get(i) + " no goal nodes / all nodes" +
-			 totalValidNodes + ".");
-    }
-
-    void resetValues() {
-        // System.gc();
-
-        tick_count = 0.0;
-        logging_count = 0;
-
-        for (MapLink link : getLinks()) {
-            link.clear();
-        }
-    }
-
-    void buildMap () {
-        /* Nodes */
-        for (MapNode node : getNodes()) {
-            // do nothinkg for node
-        }
-        /* Links */
-        for (MapLink link : getLinks()) {
-            link.prepareForSimulation(timeScale) ;
-        }
-        // リンク上にかかるMapAreaのリストをリンクにセットする
-        for (MapArea area : networkMap.getRooms()) {
-	    for (MapLink link : getLinks()) {
-                if (area.intersectsLine(link.getLine2D())) {
-                    link.addIntersectedMapArea(area);
-                }
-            }
-        }
-
-    }
-
-    public double getSecond() {
-        return getTickCount() * timeScale;
-    }
-
-    public NetworkMap getMap() {
-        return networkMap;
-    }
-
-    public void setScreenshotInterval (int i) {
-        screenshotInterval = i;
-    }
-
-    public int getScreenshotInterval () {
-        return screenshotInterval;
-    }
-
-    public void setTimeScale (double d) {
-        timeScale = d;
-    }
-
-    public double getTimeScale () {
-        return timeScale;
-    }
-
-    public SimulationController getController() {
-        return controller;
-    }
-
-    public void setup() {
-	MapLink.setupCommonParameters(networkMap.fallbackParameters) ;
-	MapNode.setupCommonParameters(networkMap.fallbackParameters) ;
-        resetValues();
-    }
-
-    public MapLinkTable getLinks() {
-	return networkMap.getLinks();
-    }
-
-    public MapNodeTable getNodes() {
-	return networkMap.getNodes();
-    }
-
     //------------------------------------------------------------
-    /**
-     * すべてのエージェントのリスト（Collection）を返す。
-     * @return Agent の Collection
-     */
-    public Collection<AgentBase> getAllAgentCollection() {
-        return agentHandler.getAllAgentCollection() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 歩いているエージェントのリスト（Collection）を返す。
-     * @return Agent の Collection
-     */
-    public Collection<AgentBase> getWalkingAgentCollection() {
-        return agentHandler.getWalkingAgentCollection() ;
-    }
-
-    public AgentHandler getAgentHandler() {
-        return agentHandler;
-    }
-
-    public ArrayList<MapArea> getPollutions() {
-        return pollutionCalculator.getPollutions();
-    }
-
-    public void recalculatePaths() {
-        synchronized (stop_simulation) {
-            stop_simulation = true;
-            buildRoutes();
-            stop_simulation = false;
-        }
-    }
-
-    public double getTickCount() {
-        return tick_count;
-    }
-
-    public void start() {
-        if (controller != null) {
-            controller.start();
-            if (panel3d != null && isRunning()) {
-                panel3d.setMenuActionStartEnabled(false);
-            }
-        }
-    }
-
-    public void pause() {
-        if (controller != null) {
-            controller.pause();
-            if (panel3d != null && ! isRunning()) {
-                panel3d.setMenuActionStartEnabled(true);
-            }
-        }
-    }
-
-    public void step() {
-        if (controller != null) {
-            controller.step();
-        }
-    }
-
-    public boolean isRunning() {
-        // tkokada
-        if (controller != null) {
-            return controller.isRunning();
-        } else {
-            return false;
-        }
-    }
-
-    public void setProperties(NetmasPropertiesHandler _properties) {
-        properties = _properties;
-    }
-
-    public NetmasPropertiesHandler getProperties() {
-        return properties;
-    }
-
-    public void setRandom(Random _random) {
-        random = _random;
-        if (agentHandler != null)
-            agentHandler.setRandom(_random);
-    }
-
-    /* when agents goal */
-    private HashMap<String, Double> goalTimes = new HashMap<String, Double>();
-    // EXITノード毎の避難完了者数(ログのバッファリング用)
-    private ArrayList<String> evacuatedAgents = new ArrayList<String>();
-    private MapNodeTable exitNodeList = null;
     /** Save the goal log file to result directory.
      * @param resultDirectory: path to the result directory.
      */
@@ -581,6 +839,7 @@ public class EvacuationSimulator {
         logging_count++;
     }
 
+    //------------------------------------------------------------
     /** Save the time series log file to result directory.
      * @param resultDirectory: path to result directory.
      * @return returned value: succeed or not.
@@ -688,56 +947,47 @@ public class EvacuationSimulator {
         return true;
     }
 
-    // tkokada
-    public boolean getIsAllAgentSpeedZero() {
-        if (agentHandler == null) {
-	    Itk.logWarn("AgentHandler.isAllAgentsSpeedZero",
-			"agentHandler is null object.");
-            return false;
-        } else {
-            return agentHandler.getIsAllAgentSpeedZero();
-        }
-    }
-
-    public boolean getIsAllAgentSpeedZeroBreak() {
-        if (agentHandler == null) {
-	    Itk.logWarn("AgentHandler.getIsAllAgentsSpeedZeroBreak",
-			"agentHandler is null object.");
-            return false;
-        } else {
-            return agentHandler.getIsAllAgentSpeedZeroBreak();
-        }
-    }
-
-    public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
-    {
-        if (agentHandler == null) {
-	    Itk.logWarn("AgentHandler.setIsAllAgentsSpeedZeroBreak",
-			"agentHandler is null object.");
-        } else {
-            agentHandler.setIsAllAgentSpeedZeroBreak(
-                    _isAllAgentSpeedZeroBreak);
-        }
-    }
-
-    public void setLinerGenerateAgentRatio(double _ratio) {
-        linerGenerateAgentRatio = _ratio;
-    }
-
-    //------------------------------------------------------------
+    //============================================================
     /**
-     * 相対時刻から絶対時刻への変換。
+     * 経路探索の実行系クラス。
+     * ダイクストラで経路情報を計算。
      */
-    public double calcAbsoluteTime(double relTime) {
-        return agentHandler.calcAbsoluteTime(relTime) ;
+    class CalcGoalPath implements Runnable {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 計算終了したかどうか。
+         */
+        public boolean goalCalculated = false;
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 目標とするゴール。
+         */
+        public String goalTag;
+
+        //----------------------------------------
+        /**
+         * コンストラクタ。
+         */
+        public CalcGoalPath(String _goal_tag) {
+            goalTag = _goal_tag;
+        }
+
+        //----------------------------------------
+        /**
+         * 探索実行。
+         */
+        public void run() {
+            goalCalculated = calc_goal_path(goalTag);
+        }
+
+        //----------------------------------------
+        /**
+         * 探索の本体。
+         */
+        private boolean calc_goal_path(String goal_tag) {
+            return networkMap.calcGoalPath(goal_tag) ;
+        }
     }
 
-    //------------------------------------------------------------
-    /**
-     * 絶対時刻から相対時刻への変換。
-     */
-    public double calcRelativeTime(double absTime) {
-        return agentHandler.calcRelativeTime(absTime) ;
-    }
-    
 }
