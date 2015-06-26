@@ -49,28 +49,6 @@ public class AgentFactoryFromNode extends AgentFactory {
     @Override
     public OBNode getStartObject() { return start_node; }
 
-    @Override
-    public void dumpAgentToGenerate(PrintWriter pw) {
-        pw.print("gen_node");
-
-        pw.print("," + start_node.ID);
-        pw.print("," + start_time);
-        pw.print("," + duration);
-        
-        pw.print("," + generated);
-        pw.print("," + total);
-
-        pw.print("," + goal);
-        pw.print("," + planned_route.size());
-        for (Term checkpoint : planned_route) {
-            pw.print("," + checkpoint);
-        }
-        pw.print("," + tags.size());
-        for (String tag : tags) {
-            pw.print("," + tag);
-        }
-        pw.println();
-    }
 }
 //;;; Local Variables:
 //;;; mode:java

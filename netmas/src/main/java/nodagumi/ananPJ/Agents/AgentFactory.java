@@ -480,8 +480,6 @@ public abstract class AgentFactory {
         return total;
     }
 
-    public abstract void dumpAgentToGenerate(PrintWriter pw);
-
     public void setRandom(Random _random) {
         random = _random;
     }

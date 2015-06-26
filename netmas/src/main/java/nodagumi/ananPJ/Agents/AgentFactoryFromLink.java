@@ -51,28 +51,6 @@ public class AgentFactoryFromLink extends AgentFactory {
     @Override
     public OBNode getStartObject() { return start_link; }
 
-    @Override
-    public void dumpAgentToGenerate(PrintWriter pw) {
-        pw.print("gen_link");
-
-        pw.print("," + start_link.ID);
-        pw.print("," + start_time);
-        pw.print("," + duration);
-        
-        pw.print("," + generated);
-        pw.print("," + total);
-
-        pw.print("," + goal);
-        pw.print("," + planned_route.size());
-        for (Term checkpoint : planned_route) {
-            pw.print("," + checkpoint);
-        }
-        pw.print("," + tags.size());
-        for (String tag : tags) {
-            pw.print("," + tag);
-        }
-        pw.println();
-    }
 }
 
 
