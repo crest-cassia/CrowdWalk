@@ -160,19 +160,7 @@ public class EvacuationSimulator {
     public EvacuationSimulator(NetworkMap _networkMap,
                                BasicSimulationLauncher _controller,
                                Random _random) {
-        // _controller が画面を持つ SimulationControllerなら、セット
-        if(_controller instanceof SimulationController) {
-            controller = (SimulationController)_controller ;
-        } else {
-            controller = null ;
-        }
-
-        networkMap = _networkMap ;
-        networkMap.checkConsistency() ;
-
-        pollutionFileName = networkMap.getPollutionFile();
-
-        random = _random;
+        init(_networkMap, _controller, _random) ;
     }
 
     //------------------------------------------------------------
@@ -381,6 +369,28 @@ public class EvacuationSimulator {
     // シミュレーションの準備。
     //------------------------------------------------------------
     /**
+     * 初期化
+     */
+    private void init(NetworkMap _networkMap,
+                      BasicSimulationLauncher _controller,
+                      Random _random) {
+        // _controller が画面を持つ SimulationControllerなら、セット
+        if(_controller instanceof SimulationController) {
+            controller = (SimulationController)_controller ;
+        } else {
+            controller = null ;
+        }
+
+        networkMap = _networkMap ;
+        networkMap.checkConsistency() ;
+
+        pollutionFileName = networkMap.getPollutionFile();
+
+        random = _random;
+    }
+
+    //------------------------------------------------------------
+    /**
      * シミュレーションの準備。（メイン）
      */
     public void begin(boolean has_display) {
@@ -422,11 +432,14 @@ public class EvacuationSimulator {
      */
     void buildPollution() {
         try {
-            pollutionCalculator = new PollutionCalculator(
-                    pollutionFileName,
-                    networkMap.getRooms(),
-                    timeScale,
-                    properties == null ? 0.0 : properties.getDouble("interpolation_interval", 0.0));
+            double interval = (properties == null ?
+                               0.0 :
+                               properties.getDouble("interpolation_interval", 
+                                                    0.0)) ;
+            pollutionCalculator =
+                new PollutionCalculator(pollutionFileName,
+                                        networkMap.getRooms(),
+                                        timeScale, interval);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -682,39 +695,52 @@ public class EvacuationSimulator {
     public boolean updateEveryTick() {
         synchronized (stop_simulation) {
             double poltime = getSecond();
+
+            // pollution 計算。
             if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
 		pollutionCalculator.updateNodesLinksAgents(poltime, networkMap,
                         getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
+
+            // 実行本体
             agentHandler.update(getSecond());
 
             // 描画
-            if (panel3d != null) {
-                panel3d.updateClock(getSecond());
-                boolean captureScreenShot = (screenshotInterval != 0);
-                if (captureScreenShot) {
-                    panel3d.setScreenShotFileName(String.format("capture%06d", (int)getTickCount()));
-                }
-                while (! panel3d.notifyViewChange("simulation progressed")) {
-                    synchronized (this) {
-                        try {
-                            wait(10);
-                        } catch (InterruptedException e) {}
-                    }
-                }
-                if (captureScreenShot) {
-                    // スクリーンショットを撮り終えるまで待つ
-                    synchronized (this) {
-                        try {
-                            wait();
-                        } catch (InterruptedException e) {}
-                    }
-                }
-            }
+            updateEveryTickDisplay() ;
 
+            // カウンタを進める。
             tick_count += 1.0;
         }
         return agentHandler.isFinished() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * サイクル毎の画面描画
+     */
+    private void updateEveryTickDisplay() {
+        if (panel3d != null) {
+            panel3d.updateClock(getSecond());
+            boolean captureScreenShot = (screenshotInterval != 0);
+            if (captureScreenShot) {
+                panel3d.setScreenShotFileName(String.format("capture%06d", (int)getTickCount()));
+            }
+            while (! panel3d.notifyViewChange("simulation progressed")) {
+                synchronized (this) {
+                    try {
+                        wait(10);
+                    } catch (InterruptedException e) {}
+                }
+            }
+            if (captureScreenShot) {
+                // スクリーンショットを撮り終えるまで待つ
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {}
+                }
+            }
+        }
     }
 
     //------------------------------------------------------------
