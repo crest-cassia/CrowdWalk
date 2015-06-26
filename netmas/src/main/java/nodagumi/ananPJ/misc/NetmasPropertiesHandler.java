@@ -15,7 +15,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
@@ -97,7 +97,7 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>pollution_file</h4>
- *     <pre>  Pollution file へのファイルパス
+ *     <pre>  Obstructer file へのファイルパス
  *
  *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
  *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
@@ -106,8 +106,8 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>interpolation_interval</h4>
- *     <pre>  Pollution データを線形補間する間隔(秒)
- *  pollution file が設定されている時に設定する
+ *     <pre>  Obstructer データを線形補間する間隔(秒)
+ *  Obstructer file が設定されている時に設定する
  *
  *  設定値： 0       補間なし
  *           1～n    この間隔で補間する
@@ -116,19 +116,17 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>pollution_type</h4>
- *     <pre>  pollution type(蓄積型or非蓄積型)の設定
- *  pollution file が設定されている時に設定する
- *  (例) 蓄積型：  ガス
- *       非蓄積型：洪水
+ *     <pre>  Obstructer type の設定
+ *  Obstructer file が設定されている時に設定する
  *
- *  設定値： Accumulated | NonAccumulated
- *  デフォルト値： NonAccumulated</pre>
+ *  設定値： Flood | Pollution
+ *  デフォルト値： Flood</pre>
  *   </li>
  *
  *   <li>
  *     <h4>pollution_color_saturation</h4>
- *     <pre>  pollution level別の色の彩度の設定(図1,2)
- *  pollution file が設定されている時に設定する
+ *     <pre>  Obstructer level別の色の彩度の設定(図1,2)
+ *  Obstructer file が設定されている時に設定する
  *  濃 0.0←--------→100.0 薄
  *
  *  設定値： 有理数
@@ -143,12 +141,12 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>pollution_color</h4>
- *     <pre>  pollution地点の色の設定(図3)
- *  pollution file が設定されている時に設定する
+ *     <pre>  Obstructer地点の色の設定(図3)
+ *  Obstructer file が設定されている時に設定する
  *
  *  設定値： none | hsv | red | blue | orange
  *           none：   なし
- *           hsv：    pollution levelごとに色を変える
+ *           hsv：    Obstructer levelごとに色を変える
  *           red：    赤色
  *           blue：   青色
  *           orange： オレンジ色
@@ -445,7 +443,7 @@ public class NetmasPropertiesHandler {
         return mapPath;
     }
 
-    protected String pollutionPath = null; // path to pollution file
+    protected String pollutionPath = null; // path to Obstructer file
     public String getPollutionPath() {
         return pollutionPath;
     }
@@ -581,10 +579,10 @@ public class NetmasPropertiesHandler {
                                                           "all_agent_speed_zero_break");
 
             // 早い内に設定ミスをユーザーに知らせるための検査
-            String pollutionType = getString("pollution_type", null);
-            if (pollutionType != null) {
-                AgentBase.setPollutionType(pollutionType);
-                PollutionBase.getInstance(pollutionType) ;
+            String obstructerType = getString("pollution_type", null);
+            if (obstructerType != null) {
+                AgentBase.setObstructerType(obstructerType);
+                ObstructerBase.createInstance(obstructerType) ;
             }
             getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);
