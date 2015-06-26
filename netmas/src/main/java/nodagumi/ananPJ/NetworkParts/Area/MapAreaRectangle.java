@@ -250,11 +250,7 @@ public class MapAreaRectangle extends MapArea {
      * 描画。
      */
     @Override
-    public void draw(Graphics2D g, 
-            boolean experiment) {
-                
-        if (experiment) return;
-
+    public void drawInEditor(Graphics2D g) {
         if (selected) {
             g.setColor(Color.YELLOW);
         } else {

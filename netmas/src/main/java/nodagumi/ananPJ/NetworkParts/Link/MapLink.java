@@ -154,7 +154,6 @@ public class MapLink extends OBMapPart {
 
     /* place holder for values used in simulation */
     protected ArrayList<AgentBase> agents;
-    public int displayMode = 0;
     protected double timeScale = 1.0;
     private boolean nodes_are_set = false;
 
@@ -261,9 +260,8 @@ public class MapLink extends OBMapPart {
         return "Link";
     }*/
 
-    public void prepareForSimulation(double _timeScale, int _displayMode) {
+    public void prepareForSimulation(double _timeScale) {
         timeScale = _timeScale;
-        displayMode = _displayMode;
         setup_lanes();
     }
 
@@ -391,19 +389,10 @@ public class MapLink extends OBMapPart {
         return lane_width ;
     }
 
-    public void draw(Graphics2D g,
-            boolean in_simulation,
-            boolean show_label,
-            boolean isSymbolic,
-            boolean showScaling) {
-        if (in_simulation) drawSimulation(g, show_label, showScaling);
-        else drawEdit(g, show_label, isSymbolic, showScaling);
-    }
-
-    private void drawEdit(Graphics2D g,
-            boolean show_label,
-            boolean isSymbolic,
-            boolean showScaling){
+    public void drawInEditor(Graphics2D g,
+                             boolean show_label,
+                             boolean isSymbolic,
+                             boolean showScaling){
         //float fwidth = (float)(width / ((MapPartGroup)(parent)).getScale());
         //g.setStroke(new BasicStroke((float)width));
         double scale = 1.0;
@@ -497,35 +486,6 @@ public class MapLink extends OBMapPart {
         }
         if (d == 0) return Color.WHITE;
         return new Color(Color.HSBtoRGB(f, 0.8f, 0.8f ));
-    }
-
-    private void drawSimulation(Graphics2D g,
-            boolean show_label, boolean showScaling) {
-        double scale = 1.0;
-        if (!showScaling)
-            scale = g.getTransform().getScaleX();
-
-        if (length == 0) return;
-
-        if ((displayMode & 1) == 1) {
-            /* Line changing color with the number of agents */
-            //g.setStroke(new BasicStroke((float)width));
-            Color c = getColorFromDensity();
-            g.setColor(c);
-            if (this.isOneWayForward())
-                g.draw(getArrow(0.0, scale, true));
-            else if (this.isOneWayBackward())
-                g.draw(getArrow(0.0, scale, false));
-            else
-                g.draw(getRect(0.0, scale, true));
-            //g.fill(getRect(0.0));
-
-            if (show_label) {
-                g.drawString("" + agents.size(),
-                         (float)calcAgentPos(0.5).getX(),
-                         (float)calcAgentPos(0.5).getY());
-            }
-        }
     }
 
     public Point2D calcAgentPos(double position) {

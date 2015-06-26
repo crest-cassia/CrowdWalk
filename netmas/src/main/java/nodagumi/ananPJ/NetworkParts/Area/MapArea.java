@@ -123,7 +123,7 @@ public abstract class MapArea extends OBNode {
     /**
      * 描画。
      */
-    public abstract void draw(Graphics2D g, boolean experiment);
+    public abstract void drawInEditor(Graphics2D g);
 
     //------------------------------------------------------------
     /**

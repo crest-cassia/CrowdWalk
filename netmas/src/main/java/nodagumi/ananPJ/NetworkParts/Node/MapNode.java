@@ -96,7 +96,6 @@ public class MapNode extends OBMapPart {
     private MapLinkTable links;
 
     /* used in simulation */
-    public int displayMode = 0;
     private HashMap<String, NavigationHint> hints;
 
     public double getX() { return absolute_coordinates.getX(); }
@@ -357,10 +356,9 @@ public class MapNode extends OBMapPart {
 
     }
 
-    public void draw(Graphics2D g,
-            boolean simulation,
-            boolean showLabel,
-            boolean isSymbolic) {
+    public void drawInEditor(Graphics2D g,
+                             boolean showLabel,
+                             boolean isSymbolic) {
         Color c = null;
 
         if (isSymbolic)
@@ -368,15 +366,13 @@ public class MapNode extends OBMapPart {
         else
             c = Color.BLUE;
 
-        draw(g, simulation, showLabel, isSymbolic, c);
+        drawInEditor(g, showLabel, isSymbolic, c);
     }
 
-    public void draw(Graphics2D g,
-                boolean simulation,
-                boolean showLabel,
-                boolean isSymbolic,
-                Color c) {
-        if (simulation && (displayMode & 2) != 2) return;
+    public void drawInEditor(Graphics2D g,
+                             boolean showLabel,
+                             boolean isSymbolic,
+                             Color c) {
         double scale = g.getTransform().getScaleX();
         double cx = getX();
         double cy = getY();

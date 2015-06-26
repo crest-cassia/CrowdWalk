@@ -37,7 +37,7 @@ public class Itk_Test {
      * 結果として、k=4 の時には、intern すると約2倍、
      * k=13 の時には、intern すると300-400倍の高速化。
      */
-    @Test
+    //@Test
     public void test_StringEqual() {
         String prefix = "a" ;
         //int k = 13 ;
@@ -277,6 +277,19 @@ public class Itk_Test {
         Itk.dbgErr("serious","hogehoge") ;
         Itk.dbgWrn("normal","fugafuga") ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * test bit operation
+     */
+    @Test
+    public void test_bitOperation() {
+        int x = 4 ;
+        Itk.dbgVal("x&1",x & 1) ;
+        Itk.dbgVal("x&2",x & 2) ;
+        Itk.dbgVal("x&4",x & 4) ;
+    }
+
 
 
 } // class Itk_Test

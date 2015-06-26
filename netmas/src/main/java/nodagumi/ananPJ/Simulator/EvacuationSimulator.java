@@ -126,10 +126,6 @@ public class EvacuationSimulator {
                                         linerGenerateAgentRatio,
                                         networkMap.fallbackParameters,
                                         random);
-
-        for (AgentBase agent : getAllAgentCollection()) {
-            agent.displayMode = 4;
-        }
     }
 
     public void buildDisplay() {
@@ -388,11 +384,11 @@ public class EvacuationSimulator {
     void buildMap () {
         /* Nodes */
         for (MapNode node : getNodes()) {
-            node.displayMode = 4;
+            // do nothinkg for node
         }
         /* Links */
         for (MapLink link : getLinks()) {
-            link.prepareForSimulation(timeScale, 4);
+            link.prepareForSimulation(timeScale) ;
         }
         // リンク上にかかるMapAreaのリストをリンクにセットする
         for (MapArea area : networkMap.getRooms()) {
@@ -520,10 +516,6 @@ public class EvacuationSimulator {
         } else {
             return false;
         }
-    }
-
-    public int getDisplayMode() {
-        return 4;
     }
 
     public void setProperties(NetmasPropertiesHandler _properties) {

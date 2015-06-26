@@ -156,9 +156,7 @@ public class MapPartGroup extends OBNode {
                                         this.pSouthEast.getY() - this.pNorthWest.getY()
                                         );
     }
-    public void draw(Graphics2D g, boolean simulation, boolean showInside) {
-        if (simulation) return;
-
+    public void drawInEditor(Graphics2D g, boolean showInside) {
         if (selected) {
             g.setColor(Color.RED);
         } else {

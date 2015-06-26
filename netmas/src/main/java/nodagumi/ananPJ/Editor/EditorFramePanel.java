@@ -287,7 +287,7 @@ public class EditorFramePanel extends JPanel {
                 for (final MapLink link : backgroundGroup.getChildLinks()) {
                     if (viewArea.intersectsLine(link.getLine2D())) {
                         g.setColor(Color.WHITE);
-                        link.draw(g, false, showLinkLabels, false, showScaling);
+                        link.drawInEditor(g, showLinkLabels, false, showScaling);
                     }
                 }
             }
@@ -296,7 +296,7 @@ public class EditorFramePanel extends JPanel {
                 if (backgroundGroup.getChildNodes() != null) {
                     for (MapNode node : backgroundGroup.getChildNodes()) {
                         if (viewArea.contains(node.getX(), node.getY())) {
-                            node.draw(g, false, false, false, Color.LIGHT_GRAY);
+                            node.drawInEditor(g, false, false, Color.LIGHT_GRAY);
                         }
                     }
                 }
@@ -326,10 +326,10 @@ public class EditorFramePanel extends JPanel {
                     //System.out.println("area cx:" + ((Rectangle2D) area.getShape()).getCenterX() + "cy:" + ((Rectangle2D) area.getShape()).getCenterY());
                     //System.out.println("tx:" + tx + ", ty:" + ty + ", obnode tx:" + ob_node.tx + ", ty:" + ob_node.ty + ", sx:" + ob_node.sx + ", sy:" + ob_node.ty
                     //      + ", r:" + ob_node.r + ", scaleX:" + g.getTransform().getScaleX());
-                    area.draw(g,  false);
+                    area.drawInEditor(g) ;
                     g.setTransform(t);
                 } else {
-                    area.draw(g, false);
+                    area.drawInEditor(g) ;
                 }
             }
         }
@@ -338,7 +338,7 @@ public class EditorFramePanel extends JPanel {
             for (final MapLink link : frame.getChildLinks()) {
                 if (viewArea.intersectsLine(link.getLine2D())) {
                     g.setColor(linkColor);
-                    link.draw(g, false, showLinkLabels, false, showScaling);
+                    link.drawInEditor(g, showLinkLabels, false, showScaling);
                 }
             }
         }
@@ -348,7 +348,7 @@ public class EditorFramePanel extends JPanel {
             if (frame.getChildNodes() != null) {
                 for (MapNode node : frame.getChildNodes()) {
                     if (viewArea.contains(node.getX(), node.getY())) {
-                        node.draw(g, false, showNodeLabels, false);
+                        node.drawInEditor(g, showNodeLabels, false);
                     }
                 }
             }
@@ -356,7 +356,7 @@ public class EditorFramePanel extends JPanel {
         
         if (showGroups) {
             for (MapPartGroup group : frame.getChildGroups()) {
-                group.draw(g, false, showSubGroups);
+                group.drawInEditor(g, showSubGroups);
             }
         }
         
@@ -372,7 +372,7 @@ public class EditorFramePanel extends JPanel {
             
                 if (ntype == OBNode.NType.LINK) {
                     MapLink link = (MapLink)orig;
-                    link.draw(g, false, showLinkLabels, true, showScaling);
+                    link.drawInEditor(g, showLinkLabels, true, showScaling);
                 }
             }
         }
@@ -384,7 +384,7 @@ public class EditorFramePanel extends JPanel {
             
                 if (ntype == OBNode.NType.NODE) {
                     MapNode node = (MapNode)orig;
-                    node.draw(g, false, showNodeLabels, true);
+                    node.drawInEditor(g, showNodeLabels, true);
                 }
             }
         }
@@ -392,7 +392,7 @@ public class EditorFramePanel extends JPanel {
         /* temporary objects */
         if (hoverNode != null) {
             if (hoverNode.orig_node != null) {
-                hoverNode.orig_node.draw(g, false, true, true);
+                hoverNode.orig_node.drawInEditor(g, true, true);
             }
             g.setColor(Color.MAGENTA);
             final double scale = g.getTransform().getScaleX();

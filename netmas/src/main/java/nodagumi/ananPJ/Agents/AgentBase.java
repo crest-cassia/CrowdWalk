@@ -106,9 +106,8 @@ implements Comparable<AgentBase> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 表示・設定関係
+     * 設定関係
      */
-    public int displayMode = 0;
     protected double swing_width;
 
     /**
@@ -155,7 +154,6 @@ implements Comparable<AgentBase> {
             PollutionBase.getInstance(pollutionType).newEffectInfo(this) ;
         //AgentFactory から移したもの
         generatedTime = time ;
-        displayMode = simulator.getDisplayMode() ;
         setMap(simulator.getMap()) ;
         setConfigLine(factory.configLine) ;
         // set route
@@ -817,11 +815,12 @@ implements Comparable<AgentBase> {
     /**
      * 入出力関係
      */
+
     //------------------------------------------------------------
     /**
      * 表示用
      */
-    abstract public void draw(Graphics2D g, boolean experiment);
+    abstract public void drawInEditor(Graphics2D g) ;
 
     //------------------------------------------------------------
     /**

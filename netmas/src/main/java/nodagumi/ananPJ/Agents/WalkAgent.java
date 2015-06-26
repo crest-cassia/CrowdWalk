@@ -1304,9 +1304,7 @@ public class WalkAgent extends AgentBase {
      *
      */
     @Override
-    public void draw(Graphics2D g,
-            boolean experiment) {
-        if (experiment && ((displayMode & 2) != 2)) return;
+    public void drawInEditor(Graphics2D g) {
         if (currentPlace.getLink() == null) return;
 
         Point2D p = getPos();
