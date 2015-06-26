@@ -115,15 +115,6 @@ public class EvacuationSimulator {
             System.exit(1);
         }
 
-        // リンク上にかかるMapAreaのリストをリンクにセットする
-        for (MapArea area : networkMap.getRooms()) {
-	    for (MapLink link : getLinks()) {
-                if (area.intersectsLine(link.getLine2D())) {
-                    link.addIntersectedMapArea(area);
-                }
-            }
-        }
-
         agentHandler = new AgentHandler(networkMap.getGenerationFile(),
                                         networkMap.getScenarioFile(),
                                         networkMap,
@@ -400,6 +391,15 @@ public class EvacuationSimulator {
         for (MapLink link : getLinks()) {
             link.prepareForSimulation(timeScale, 4);
         }
+        // リンク上にかかるMapAreaのリストをリンクにセットする
+        for (MapArea area : networkMap.getRooms()) {
+	    for (MapLink link : getLinks()) {
+                if (area.intersectsLine(link.getLine2D())) {
+                    link.addIntersectedMapArea(area);
+                }
+            }
+        }
+
     }
 
     public double getSecond() {
