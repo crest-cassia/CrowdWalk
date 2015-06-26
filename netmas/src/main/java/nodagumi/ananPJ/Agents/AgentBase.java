@@ -179,17 +179,6 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * Conf による初期化。(obsolete)
-     * 継承しているクラスの設定のため。
-     * @param confString json で書かれたAgentのconfigulation。
-     */
-    public void _initByConf(String confString, Term fallback) {
-        Term conf = Term.newByJson(confString) ;
-        initByConf(conf, fallback) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * Conf からの値の取得(double)
      */
     public double getDoubleFromConfig(String slot, double fallback) {

@@ -469,48 +469,6 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-     * 次の位置を計算。(obsolete) [2015.01.10 I.Noda]
-     * [2015.01.10 I.Noda]
-     * ここでの navigate などの処理は、単に流入制限の計算に使うためだけにある。
-     * しかも其の計算やその後の実装には、いろいろ不備がある。
-     * なので、このメソッドは obsolete にしておく。
-     * @param d : speed に相当する大きさ。単位時間に進める長さ。
-     *     [2015.01.10 I.Noda] direction はかかっていないものとする。
-     * @param time : 時間ステップ。1.0 が1秒。
-     * @param will_move_out : 次のリンクに進むかどうか。WaitDirective 用。
-     */
-    protected boolean move_set_obsolete(double d, double time, boolean will_move_out) {
-        nextPlace.set(currentPlace) ;
-        nextPlace.makeAdvance(d * time_scale) ;
-
-        RoutePlan workingRoutePlan = routePlan.duplicate() ;
-        while (!nextPlace.isOnLink()) {
-            if (will_move_out) {
-                /* schedule moving out */
-                MapLink next_link = navigate(time, nextPlace,
-                                             workingRoutePlan, true);
-                if (nextPlace.isRestrictedLink() && next_link == null) {
-                    // 現在の道が一方通行か閉鎖で、
-                    // 先の道路が見つからなかったらアウト
-                    /* [2015.01.10 I.Noda] bug
-                     * おそらく単純に終わるのはおかしい */
-                    break;
-                }
-                nextPlace.transitTo(next_link) ;
-            } else {
-                // WAIT_FOR, WAIT_UNTIL によるエージェントの停止は下記でおこなう
-                /* [2015.01.10 I.Noda]
-                 * 本来なら、headingNode 上なので、リンクを抜けているはずだが、
-                 * 特例として、とどまることにする。
-                 */
-                nextPlace.setAdvancingDistance(nextPlace.getLinkLength()) ;
-                break;
-            }
-        }
-        return false;
-    }
-    //------------------------------------------------------------
-    /**
      * 次の位置を計算。(new) [2015.01.10 I.Noda]
      * @param d : speed に相当する大きさ。単位時間に進める長さ。
      *     [2015.01.10 I.Noda] direction はかかっていないものとする。

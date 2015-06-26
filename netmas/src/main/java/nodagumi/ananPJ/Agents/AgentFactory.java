@@ -211,10 +211,6 @@ public abstract class AgentFactory {
             Term jObject = new Term() ;
             { // agentType
                 Term agentType = new Term() ;
-                /* [2014.12.28 I.Noda] obsolete
-                if(agentConf == null && agentConfString != null)
-                    agentConf = JSON.decode(agentConfString) ;
-                */
                 agentType.setArg("className", agentClassName) ;
                 agentType.setArg("config", agentConf) ;
                 jObject.setArg("agentType", agentType) ;

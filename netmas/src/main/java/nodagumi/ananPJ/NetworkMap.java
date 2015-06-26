@@ -215,7 +215,7 @@ public class NetworkMap extends NetworkMapBase {
         } else if (type == OBNode.NType.LINK) {
             linksCache.add((MapLink)node);
         } else if (type == OBNode.NType.AGENT) {
-            Itk.logWarn("insert Agent OBNode is obsolute.", node) ;
+            Itk.logWarn("insert Agent OBNode is obsolete.", node) ;
         } else if (type == OBNode.NType.GROUP) {
             /* no operation */
         } else if (type == OBNode.NType.ROOM) {
@@ -268,7 +268,7 @@ public class NetworkMap extends NetworkMapBase {
             linkRemoved = true;
             break;
         case AGENT:
-            Itk.logWarn("remove Agent OBNode is obsolute") ;
+            Itk.logWarn("remove Agent OBNode is obsolete") ;
             break;
         case GROUP:
             while (node.getChildCount() > 0) {
