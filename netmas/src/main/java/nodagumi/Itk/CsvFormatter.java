@@ -60,6 +60,8 @@ public class CsvFormatter<T> {
      *    csvFormatter.registerColumn(csvFormatter.new Column("foo"){
      *         public String value(T object) { return object.foo() ; }
      *         }) ;
+     * この定義のあと、csvFormatter.addColumn("foo") や、
+     * csvFormatter.setColumns(["foo", "bar", ...]) などで実際のフォーマと指定。
      * @param column:: column 情報
      */
     public CsvFormatter registerColumn(Column column) {
@@ -71,9 +73,11 @@ public class CsvFormatter<T> {
     /**
      * Column情報追加。
      * 以下のように記述することを想定。
+     * <pre>{@code
      *    csvFormatter.addColumn(csvFormatter.new Column("foo"){
      *         public String value(T object) { return object.foo() ; }
      *         }) ;
+     * }</pre>
      * 同時に、registerColumnも行う。
      * @param column:: column 情報
      */
@@ -87,9 +91,11 @@ public class CsvFormatter<T> {
     /**
      * header名によるColumn情報追加。
      * 以下のように記述することを想定。
+     * <pre>{@code
      *    csvFormatter.addColumn(csvFormatter.new Column("foo"){
      *         public String value(T object) { return object.foo() ; }
      *         }) ;
+     * }</pre>
      * 同時に、registerColumnも行う。
      * @param column:: column 情報
      */
