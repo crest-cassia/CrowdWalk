@@ -91,10 +91,6 @@ public class EvacuationSimulator {
 	    Itk.logWarn("EvacuationSimulator invalid links: ", counter);
     }
 
-    public EvacuationSimulator(NetworkMap networkMap, Random _random) {
-        this(networkMap, null, _random);
-    }
-
     public void begin(boolean has_display) {
         buildMap() ;
         buildPollution() ;
