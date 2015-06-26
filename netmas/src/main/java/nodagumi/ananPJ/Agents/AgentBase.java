@@ -23,7 +23,7 @@ import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Simulator.Pollution.PollutionBase;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.* ;
 
@@ -52,13 +52,11 @@ implements Comparable<AgentBase> {
      * finishedTime: ゴールに到達した時刻
      * evacuated: ゴールに到達したかどうかのフラグ
      * stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)
-     * dead: 死亡したかどうかのフラグ(死亡しても evacuated は false のまま)
      */
     public double generatedTime;
     public double finishedTime;
     private boolean evacuated = false;
     private boolean stuck = false;
-    private boolean dead = false;
     public double currentTime ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -92,17 +90,11 @@ implements Comparable<AgentBase> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * currentExposuerAmount: 現在の暴露量
-     * accumulatedExposuerAmount: 暴露量の累積
-     * pollutionType: 累積するかどうか？
-     * pollution: pollutionによる影響の処理を行う部分。
+     * obstructerType: 使用する Obstructer のクラス名
+     * obstructer: Obstructer による影響の処理を行う部分。
      */
-    protected static String pollutionType = "NonAccumulated";
-    public PollutionBase.PollutionEffectInfo pollutionEffect ;
-
-    //public double currentExposureAmount = 0.0;
-    //public double accumulatedExposureAmount = 0.0;
-    //    protected PollutionBase pollution = null;
+    protected static String obstructerType = "Flood";
+    public ObstructerBase obstructer ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -150,9 +142,8 @@ implements Comparable<AgentBase> {
         random = _random;
         //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
-        // Pollution のサブクラスのインスタンスを取得
-        pollutionEffect =
-            PollutionBase.getInstance(pollutionType).newEffectInfo(this) ;
+        // ObstructerBase のサブクラスのインスタンスを取得
+        obstructer = ObstructerBase.createAndInitialize(obstructerType, this) ;
         //AgentFactory から移したもの
         generatedTime = time ;
         displayMode = simulator.getDisplayMode() ;
@@ -275,7 +266,7 @@ implements Comparable<AgentBase> {
      * 死亡したかどうか
      */
     public boolean isDead() {
-        return dead;
+        return obstructer.isDead() ;
     }
 
     //------------------------------------------------------------
@@ -499,15 +490,15 @@ implements Comparable<AgentBase> {
     /**
      * ???
      */
-    public static void setPollutionType(String s) {
-        pollutionType = s;
+    public static void setObstructerType(String s) {
+        obstructerType = s;
     }
     //------------------------------------------------------------
     /**
-     * ???
+     * トリアージレベル
      */
     public int getTriage() {
-        return pollutionEffect.getTriage() ;
+        return obstructer.getTriage() ;
     }
 
     //------------------------------------------------------------
@@ -523,10 +514,7 @@ implements Comparable<AgentBase> {
      * 汚染環境(洪水、ガス等)に暴露する
      */
     public void exposed(double c) {
-        if (! isDead()) {
-            pollutionEffect.expose(c);
-            dead = pollutionEffect.isDead() ;
-        }
+        obstructer.expose(c);
     }
 
     //------------------------------------------------------------

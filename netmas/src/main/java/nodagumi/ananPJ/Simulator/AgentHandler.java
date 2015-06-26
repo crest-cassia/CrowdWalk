@@ -368,12 +368,12 @@ public class AgentHandler {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         Double time = (Double)timeObj ;
-                        return "" + (agent.pollutionEffect.currentValueForLog()) ;}})
+                        return "" + (agent.obstructer.currentValueForLog()) ;}})
             .addColumn(formatter.new Column("amount_exposure") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         Double time = (Double)timeObj ;
-                        return "" + (agent.pollutionEffect.accumulatedValueForLog()) ;}})
+                        return "" + (agent.obstructer.accumulatedValueForLog()) ;}})
             .addColumn(formatter.new Column("current_status_by_exposure") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -793,7 +793,7 @@ public class AgentHandler {
                 // (do nothing)
                 // evacuatedAgentCount++;
             } else {
-                double damage = agent.pollutionEffect.accumulatedValueForLog() ;
+                double damage = agent.obstructer.accumulatedValueForLog() ;
             }
         }
     }
