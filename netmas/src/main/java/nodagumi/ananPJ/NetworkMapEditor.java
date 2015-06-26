@@ -869,11 +869,6 @@ public class NetworkMapEditor extends SimulationLauncher
         if (properties.isDefined("screenshot_image_type")) {
             panel.setScreenshotImageType(screenshotImageType);
         }
-        if (properties.isDefined("debug")) {
-            if (isDebug != panel.getDebugMode().isSelected()) {
-                panel.getDebugMode().doClick();
-            }
-        }
         if (properties.isDefined("hide_links")) {
             if (hideLinks != panel.getHideNormalLink().isSelected()) {
                 panel.getHideNormalLink().doClick();

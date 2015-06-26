@@ -23,12 +23,6 @@ import nodagumi.Itk.*;
 public abstract class BasicSimulationLauncher {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * デバッグモード
-     */
-    protected static boolean isDebug = false; // debug mode
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * 属性を扱うハンドラ
      */
     protected NetmasPropertiesHandler properties = null;
@@ -441,7 +435,6 @@ public abstract class BasicSimulationLauncher {
     public void setPropertiesFromFile(String _propertiesFile) {
         properties = new NetmasPropertiesHandler(_propertiesFile);
 
-        isDebug = properties.getIsDebug();
         // random
         random = new Random(properties.getRandseed()) ;
         // files

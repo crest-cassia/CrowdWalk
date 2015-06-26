@@ -187,9 +187,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
             if (filename == null) return;
 
-            // tkokada debug
-            //int width = canvas.getSize().width;
-            //int height = canvas.getSize().height;
             int width = canvas_width;
             int height = canvas_height;
 

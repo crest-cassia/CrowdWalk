@@ -281,7 +281,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
     ArrayList<CurrentCameraPosition> camera_position_list = null; 
     private boolean forceUpdateCamerawork = true;
 
-    JCheckBox debug_mode_cb = null;
     JCheckBox hide_normallink_cb = null;
     JCheckBox density_mode_cb = null;
     JCheckBox show_logo_cb = null;
@@ -585,16 +584,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
         });
         checkbox_panel.add(record_snapshots);
 
-        debug_mode_cb = new JCheckBox("Debug mode");
-        debug_mode_cb.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                if (debug_mode_cb.isSelected()) {
-                    //TODO implement
-                }
-            }
-        });
-        checkbox_panel.add(debug_mode_cb);
-        
         /* -- hide normal links, added by bachi */
         hide_normallink_cb = new JCheckBox("Hide links");
         hide_normallink_cb.setSelected(false);
@@ -1643,14 +1632,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
     public void setLinkDrawDensity(boolean b) {
         link_draw_density_mode = b;
     }
-    /* to use debug */
-    public void printAgents() {
-        for (AgentBase ea : simulator.getAllAgentCollection()) {
-            System.err.println("SimulationPanel3D.printAgents agent id: " +
-                    ea.ID + "position: " + ea.getPositionOnLink() + " pos: " + 
-                    ea.getPos());
-        }
-    }
 
     public ArrayList<MapArea> getPollutions() {
         return pollutions;
@@ -1674,10 +1655,6 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
     public JCheckBox getRecordSnapshots() {
         return record_snapshots;
-    }
-
-    public JCheckBox getDebugMode() {
-        return debug_mode_cb;
     }
 
     public JCheckBox getHideNormalLink() {

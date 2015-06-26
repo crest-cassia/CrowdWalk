@@ -54,14 +54,6 @@ import nodagumi.Itk.*;
  * <h3>プロパティファイルの設定項目</h3>
  * <ul>
  *   <li>
- *     <h4>debug</h4>
- *     <pre>  デバッグモードの ON/OFF
- *
- *  設定値： true | false
- *  デフォルト値： false</pre>
- *   </li>
- *
- *   <li>
  *     <h4>map_file (設定必須)</h4>
  *     <pre>  Map file へのファイルパス
  *
@@ -390,7 +382,6 @@ import nodagumi.Itk.*;
 public class NetmasPropertiesHandler {
 
     public static final List cuiPropList = Arrays.asList(
-                                                         "debug",
                                                          "map_file",
                                                          "pollution_file",
                                                          "scenario_file",
@@ -427,15 +418,6 @@ public class NetmasPropertiesHandler {
      */
     public void setPropertiescenarioPath(String _path) {
         propertiescenarioPath = _path;
-    }
-
-    protected boolean isDebug = false; /** debug mode */
-    /**
-     * Get a debug mode.
-     * @return wether debug mode is enable or not
-     */
-    public boolean getIsDebug() {
-        return isDebug;
     }
 
     protected String mapPath = null; // path to map file (required)
@@ -533,7 +515,6 @@ public class NetmasPropertiesHandler {
                 System.err.println("Property file error - 拡張子が不正です: " + _propertiescenarioPath);
                 System.exit(1);
             }
-            isDebug = getBooleanProperty(prop, "debug");
 
             // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
             File propertyFile = new File(_propertiescenarioPath);
