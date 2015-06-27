@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
-<li><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.timeSeriesLogTYpe.html" title="nodagumi.ananPJ.Simulator内の列挙型"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/Simulator/PollutionCalculator.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/Simulator/EvacuationSimulator.html" target="_top">フレーム</a></li>
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>サマリー:&nbsp;</li>
-<li><a href="#nested.class.summary">ネスト</a>&nbsp;|&nbsp;</li>
+<li>ネスト&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">メソッド</a></li>
@@ -110,31 +110,14 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">EvacuationSimulator</span>
 extends java.lang.Object</pre>
+<div class="block">シミュレータの実行部。
+ しかし、実際には、AgentHandler がほとんどのことをしている。</div>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested.class.summary">
-<!--   -->
-</a>
-<h3>ネストされたクラスのサマリー</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="ネストされたクラスのサマリー表、ネストされたクラスのリストおよび説明">
-<caption><span>ネストされたクラス</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">修飾子とタイプ</th>
-<th class="colLast" scope="col">クラスと説明</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.timeSeriesLogTYpe.html" title="nodagumi.ananPJ.Simulator内の列挙型">EvacuationSimulator.timeSeriesLogTYpe</a></span></code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -149,15 +132,27 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#controller">controller</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#controller">controller</a></span></code>
+<div class="block">start/pause などを制御するもの。</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#debug">debug</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#Fallback_rubyInitFile">Fallback_rubyInitFile</a></span></code>
+<div class="block">ruby の初期設定ファイル。</div>
+</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#Fallback_rubyLibDir">Fallback_rubyLibDir</a></span></code>
+<div class="block">CrowdWalk を起動するスクリプトの場所からの相対パス。</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#tick_count">tick_count</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#tick_count">tick_count</a></span></code>
+<div class="block">何回シミュレーションが回ったかを保持する。</div>
+</td>
 </tr>
 </table>
 </li>
@@ -176,11 +171,9 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#EvacuationSimulator-nodagumi.ananPJ.NetworkMap-nodagumi.ananPJ.BasicSimulationLauncher-java.util.Random-">EvacuationSimulator</a></span>(<a href="../../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;_networkMap,
                    <a href="../../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">BasicSimulationLauncher</a>&nbsp;_controller,
-                   java.util.Random&nbsp;_random)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#EvacuationSimulator-nodagumi.ananPJ.NetworkMap-java.util.Random-">EvacuationSimulator</a></span>(<a href="../../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;networkMap,
-                   java.util.Random&nbsp;_random)</code>&nbsp;</td>
+                   java.util.Random&nbsp;_random)</code>
+<div class="block">コンストラクタ</div>
+</td>
 </tr>
 </table>
 </li>
@@ -199,162 +192,232 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#begin-boolean-">begin</a></span>(boolean&nbsp;has_display)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#begin-boolean-">begin</a></span>(boolean&nbsp;has_display)</code>
+<div class="block">シミュレーションの準備。</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#buildDisplay--">buildDisplay</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#buildDisplay--">buildDisplay</a></span>()</code>
+<div class="block">画面の準備。</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#buildDisplay-nodagumi.ananPJ.Simulator.SimulationPanel3D-">buildDisplay</a></span>(<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;_panel3d)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#buildDisplay-nodagumi.ananPJ.Simulator.SimulationPanel3D-">buildDisplay</a></span>(<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;_panel3d)</code>
+<div class="block">画面の準備。</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス">AgentHandler</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getAgentHandler--">getAgentHandler</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#calcAbsoluteTime-double-">calcAbsoluteTime</a></span>(double&nbsp;relTime)</code>
+<div class="block">相対時刻から絶対時刻への変換。</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#calcRelativeTime-double-">calcRelativeTime</a></span>(double&nbsp;absTime)</code>
+<div class="block">絶対時刻から相対時刻への変換。</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス">AgentHandler</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getAgentHandler--">getAgentHandler</a></span>()</code>
+<div class="block">エージェントハンドラ取得。</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getAllAgentCollection--">getAllAgentCollection</a></span>()</code>
 <div class="block">すべてのエージェントのリスト（Collection）を返す。</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getController--">getController</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getDisplayMode--">getDisplayMode</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getIsAllAgentSpeedZero--">getIsAllAgentSpeedZero</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getController--">getController</a></span>()</code>
+<div class="block">コントローラ取得。</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getIsAllAgentSpeedZeroBreak--">getIsAllAgentSpeedZeroBreak</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getIsAllAgentSpeedZero--">getIsAllAgentSpeedZero</a></span>()</code>
+<div class="block">全エージェントが止まっているかどうか？</div>
+</td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getLinks--">getLinks</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getIsAllAgentSpeedZeroBreak--">getIsAllAgentSpeedZeroBreak</a></span>()</code>
+<div class="block">全エージェントが止まったらシミュレーションを止めるか？</div>
+</td>
 </tr>
 <tr id="i10" class="altColor">
-<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getMap--">getMap</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getLinks--">getLinks</a></span>()</code>
+<div class="block">リンク取得。</div>
+</td>
 </tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getName--">getName</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getMap--">getMap</a></span>()</code>
+<div class="block">マップ取得。</div>
+</td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getNodes--">getNodes</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getNodes--">getNodes</a></span>()</code>
+<div class="block">ノード取得。</div>
+</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getPanel3D--">getPanel3D</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getPanel3D--">getPanel3D</a></span>()</code>
+<div class="block">3D画面の準備。</div>
+</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getPollutions--">getPollutions</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getPollutions--">getPollutions</a></span>()</code>
+<div class="block">Pollution ハンドラ取得。</div>
+</td>
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getProperties--">getProperties</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getProperties--">getProperties</a></span>()</code>
+<div class="block">設定ハンドラ取得。</div>
+</td>
 </tr>
 <tr id="i16" class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getScreenshotInterval--">getScreenshotInterval</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../nodagumi/Itk/ItkRuby.html" title="nodagumi.Itk内のクラス">ItkRuby</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getRubyEngine--">getRubyEngine</a></span>()</code>
+<div class="block">全エージェントが止まっているかどうか？</div>
+</td>
 </tr>
 <tr id="i17" class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getSecond--">getSecond</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getScreenshotInterval--">getScreenshotInterval</a></span>()</code>
+<div class="block">screen shot インターバル取得。</div>
+</td>
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getTickCount--">getTickCount</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getSecond--">getSecond</a></span>()</code>
+<div class="block">相対時刻。</div>
+</td>
 </tr>
 <tr id="i19" class="rowColor">
 <td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getTimeScale--">getTimeScale</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getTickCount--">getTickCount</a></span>()</code>
+<div class="block">シミュレーションサイクル。</div>
+</td>
 </tr>
 <tr id="i20" class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getTimeScale--">getTimeScale</a></span>()</code>
+<div class="block">time scale 取得。</div>
+</td>
+</tr>
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getWalkingAgentCollection--">getWalkingAgentCollection</a></span>()</code>
 <div class="block">歩いているエージェントのリスト（Collection）を返す。</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#isRunning--">isRunning</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i22" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#output_results--">output_results</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#isRunning--">isRunning</a></span>()</code>
+<div class="block">シミュレーション実行中かどうかの判定。</div>
+</td>
 </tr>
 <tr id="i23" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#pause--">pause</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#output_results--">output_results</a></span>()</code>
+<div class="block">結果を出力する。</div>
+</td>
 </tr>
 <tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#recalculatePaths--">recalculatePaths</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#pause--">pause</a></span>()</code>
+<div class="block">シミュレーション中断。</div>
+</td>
 </tr>
 <tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#registerAgent-nodagumi.ananPJ.Agents.AgentBase-">registerAgent</a></span>(<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#recalculatePaths--">recalculatePaths</a></span>()</code>
+<div class="block">経路探索再計算。</div>
+</td>
 </tr>
 <tr id="i26" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#registerAgent-nodagumi.ananPJ.Agents.AgentBase-">registerAgent</a></span>(<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>
+<div class="block">エージェント登録</div>
+</td>
+</tr>
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#saveGoalLog-java.lang.String-java.lang.Boolean-">saveGoalLog</a></span>(java.lang.String&nbsp;resultDirectory,
            java.lang.Boolean&nbsp;finished)</code>
 <div class="block">Save the goal log file to result directory.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#saveTimeSeriesLog-java.lang.String-">saveTimeSeriesLog</a></span>(java.lang.String&nbsp;resultDirectory)</code>
 <div class="block">Save the time series log file to result directory.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setIsAllAgentSpeedZeroBreak-boolean-">setIsAllAgentSpeedZeroBreak</a></span>(boolean&nbsp;_isAllAgentSpeedZeroBreak)</code>&nbsp;</td>
-</tr>
 <tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setLinerGenerateAgentRatio-double-">setLinerGenerateAgentRatio</a></span>(double&nbsp;_ratio)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setIsAllAgentSpeedZeroBreak-boolean-">setIsAllAgentSpeedZeroBreak</a></span>(boolean&nbsp;_isAllAgentSpeedZeroBreak)</code>
+<div class="block">全エージェントが止まったらシミュレーションを止めるかをセット。</div>
+</td>
 </tr>
 <tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setProperties-nodagumi.ananPJ.misc.NetmasPropertiesHandler-">setProperties</a></span>(<a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a>&nbsp;_properties)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setLinerGenerateAgentRatio-double-">setLinerGenerateAgentRatio</a></span>(double&nbsp;_ratio)</code>
+<div class="block">エージェント生成の倍率。</div>
+</td>
 </tr>
 <tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setRandom-java.util.Random-">setRandom</a></span>(java.util.Random&nbsp;_random)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setProperties-nodagumi.ananPJ.misc.NetmasPropertiesHandler-">setProperties</a></span>(<a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a>&nbsp;_properties)</code>
+<div class="block">設定ハンドラ設定。</div>
+</td>
 </tr>
 <tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setScreenshotInterval-int-">setScreenshotInterval</a></span>(int&nbsp;i)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setRandom-java.util.Random-">setRandom</a></span>(java.util.Random&nbsp;_random)</code>&nbsp;</td>
 </tr>
 <tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setTimeScale-double-">setTimeScale</a></span>(double&nbsp;d)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setScreenshotInterval-int-">setScreenshotInterval</a></span>(int&nbsp;i)</code>
+<div class="block">screen shot インターバルを設定。</div>
+</td>
 </tr>
 <tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setup--">setup</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setTimeScale-double-">setTimeScale</a></span>(double&nbsp;d)</code>
+<div class="block">time scale 設定。</div>
+</td>
 </tr>
 <tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#start--">start</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setup--">setup</a></span>()</code>
+<div class="block">シミュレーション初期化。</div>
+</td>
 </tr>
 <tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#step--">step</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#start--">start</a></span>()</code>
+<div class="block">シミュレーション開始。</div>
+</td>
 </tr>
 <tr id="i37" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#step--">step</a></span>()</code>
+<div class="block">シミュレーション1サイクル実行。</div>
+</td>
+</tr>
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#updateEveryTick--">updateEveryTick</a></span>()</code>
 <div class="block">汎用 updateEveryTick() ;</div>
@@ -382,15 +445,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>フィールドの詳細</h3>
-<a name="controller">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>controller</h4>
-<pre>protected&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a> controller</pre>
-</li>
-</ul>
 <a name="tick_count">
 <!--   -->
 </a>
@@ -398,15 +452,37 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>tick_count</h4>
 <pre>protected&nbsp;double tick_count</pre>
+<div class="block">何回シミュレーションが回ったかを保持する。</div>
 </li>
 </ul>
-<a name="debug">
+<a name="controller">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>controller</h4>
+<pre>protected&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a> controller</pre>
+<div class="block">start/pause などを制御するもの。</div>
+</li>
+</ul>
+<a name="Fallback_rubyLibDir">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Fallback_rubyLibDir</h4>
+<pre>public static&nbsp;java.lang.String Fallback_rubyLibDir</pre>
+<div class="block">CrowdWalk を起動するスクリプトの場所からの相対パス。</div>
+</li>
+</ul>
+<a name="Fallback_rubyInitFile">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>debug</h4>
-<pre>public static&nbsp;boolean debug</pre>
+<h4>Fallback_rubyInitFile</h4>
+<pre>public static&nbsp;java.lang.String Fallback_rubyInitFile</pre>
+<div class="block">ruby の初期設定ファイル。</div>
 </li>
 </ul>
 </li>
@@ -420,22 +496,13 @@ extends java.lang.Object</pre>
 <a name="EvacuationSimulator-nodagumi.ananPJ.NetworkMap-nodagumi.ananPJ.BasicSimulationLauncher-java.util.Random-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>EvacuationSimulator</h4>
 <pre>public&nbsp;EvacuationSimulator(<a href="../../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;_networkMap,
                            <a href="../../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">BasicSimulationLauncher</a>&nbsp;_controller,
                            java.util.Random&nbsp;_random)</pre>
-</li>
-</ul>
-<a name="EvacuationSimulator-nodagumi.ananPJ.NetworkMap-java.util.Random-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>EvacuationSimulator</h4>
-<pre>public&nbsp;EvacuationSimulator(<a href="../../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;networkMap,
-                           java.util.Random&nbsp;_random)</pre>
+<div class="block">コンストラクタ</div>
 </li>
 </ul>
 </li>
@@ -446,79 +513,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
-<a name="begin-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>begin</h4>
-<pre>public&nbsp;void&nbsp;begin(boolean&nbsp;has_display)</pre>
-</li>
-</ul>
-<a name="buildDisplay--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>buildDisplay</h4>
-<pre>public&nbsp;void&nbsp;buildDisplay()</pre>
-</li>
-</ul>
-<a name="buildDisplay-nodagumi.ananPJ.Simulator.SimulationPanel3D-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>buildDisplay</h4>
-<pre>public&nbsp;void&nbsp;buildDisplay(<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;_panel3d)</pre>
-</li>
-</ul>
-<a name="getPanel3D--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPanel3D</h4>
-<pre>public&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;getPanel3D()</pre>
-</li>
-</ul>
-<a name="registerAgent-nodagumi.ananPJ.Agents.AgentBase-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>registerAgent</h4>
-<pre>public&nbsp;void&nbsp;registerAgent(<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
-</li>
-</ul>
-<a name="updateEveryTick--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>updateEveryTick</h4>
-<pre>public&nbsp;boolean&nbsp;updateEveryTick()</pre>
-<div class="block">汎用 updateEveryTick() ;</div>
-</li>
-</ul>
-<a name="output_results--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>output_results</h4>
-<pre>protected&nbsp;void&nbsp;output_results()</pre>
-</li>
-</ul>
-<a name="getSecond--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSecond</h4>
-<pre>public&nbsp;double&nbsp;getSecond()</pre>
-</li>
-</ul>
 <a name="getMap--">
 <!--   -->
 </a>
@@ -526,69 +520,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getMap</h4>
 <pre>public&nbsp;<a href="../../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;getMap()</pre>
-</li>
-</ul>
-<a name="setScreenshotInterval-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setScreenshotInterval</h4>
-<pre>public&nbsp;void&nbsp;setScreenshotInterval(int&nbsp;i)</pre>
-</li>
-</ul>
-<a name="getScreenshotInterval--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getScreenshotInterval</h4>
-<pre>public&nbsp;int&nbsp;getScreenshotInterval()</pre>
-</li>
-</ul>
-<a name="setTimeScale-double-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setTimeScale</h4>
-<pre>public&nbsp;void&nbsp;setTimeScale(double&nbsp;d)</pre>
-</li>
-</ul>
-<a name="getTimeScale--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getTimeScale</h4>
-<pre>public&nbsp;double&nbsp;getTimeScale()</pre>
-</li>
-</ul>
-<a name="getController--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getController</h4>
-<pre>public&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a>&nbsp;getController()</pre>
-</li>
-</ul>
-<a name="getName--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getName</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
-</li>
-</ul>
-<a name="setup--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setup</h4>
-<pre>public&nbsp;void&nbsp;setup()</pre>
+<div class="block">マップ取得。</div>
 </li>
 </ul>
 <a name="getLinks--">
@@ -598,6 +530,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getLinks</h4>
 <pre>public&nbsp;<a href="../../../nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a>&nbsp;getLinks()</pre>
+<div class="block">リンク取得。</div>
 </li>
 </ul>
 <a name="getNodes--">
@@ -607,6 +540,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getNodes</h4>
 <pre>public&nbsp;<a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a>&nbsp;getNodes()</pre>
+<div class="block">ノード取得。</div>
 </li>
 </ul>
 <a name="getAllAgentCollection--">
@@ -644,24 +578,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getAgentHandler</h4>
 <pre>public&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス">AgentHandler</a>&nbsp;getAgentHandler()</pre>
-</li>
-</ul>
-<a name="getPollutions--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPollutions</h4>
-<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;&nbsp;getPollutions()</pre>
-</li>
-</ul>
-<a name="recalculatePaths--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>recalculatePaths</h4>
-<pre>public&nbsp;void&nbsp;recalculatePaths()</pre>
+<div class="block">エージェントハンドラ取得。</div>
 </li>
 </ul>
 <a name="getTickCount--">
@@ -671,51 +588,97 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getTickCount</h4>
 <pre>public&nbsp;double&nbsp;getTickCount()</pre>
+<div class="block">シミュレーションサイクル。</div>
 </li>
 </ul>
-<a name="start--">
+<a name="setTimeScale-double-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>start</h4>
-<pre>public&nbsp;void&nbsp;start()</pre>
+<h4>setTimeScale</h4>
+<pre>public&nbsp;void&nbsp;setTimeScale(double&nbsp;d)</pre>
+<div class="block">time scale 設定。</div>
 </li>
 </ul>
-<a name="pause--">
+<a name="getTimeScale--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>pause</h4>
-<pre>public&nbsp;void&nbsp;pause()</pre>
+<h4>getTimeScale</h4>
+<pre>public&nbsp;double&nbsp;getTimeScale()</pre>
+<div class="block">time scale 取得。</div>
 </li>
 </ul>
-<a name="step--">
+<a name="getSecond--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>step</h4>
-<pre>public&nbsp;void&nbsp;step()</pre>
+<h4>getSecond</h4>
+<pre>public&nbsp;double&nbsp;getSecond()</pre>
+<div class="block">相対時刻。</div>
 </li>
 </ul>
-<a name="isRunning--">
+<a name="calcAbsoluteTime-double-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isRunning</h4>
-<pre>public&nbsp;boolean&nbsp;isRunning()</pre>
+<h4>calcAbsoluteTime</h4>
+<pre>public&nbsp;double&nbsp;calcAbsoluteTime(double&nbsp;relTime)</pre>
+<div class="block">相対時刻から絶対時刻への変換。</div>
 </li>
 </ul>
-<a name="getDisplayMode--">
+<a name="calcRelativeTime-double-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getDisplayMode</h4>
-<pre>public&nbsp;int&nbsp;getDisplayMode()</pre>
+<h4>calcRelativeTime</h4>
+<pre>public&nbsp;double&nbsp;calcRelativeTime(double&nbsp;absTime)</pre>
+<div class="block">絶対時刻から相対時刻への変換。</div>
+</li>
+</ul>
+<a name="getController--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getController</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a>&nbsp;getController()</pre>
+<div class="block">コントローラ取得。</div>
+</li>
+</ul>
+<a name="getPollutions--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPollutions</h4>
+<pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a>&gt;&nbsp;getPollutions()</pre>
+<div class="block">Pollution ハンドラ取得。</div>
+</li>
+</ul>
+<a name="setScreenshotInterval-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setScreenshotInterval</h4>
+<pre>public&nbsp;void&nbsp;setScreenshotInterval(int&nbsp;i)</pre>
+<div class="block">screen shot インターバルを設定。</div>
+</li>
+</ul>
+<a name="getScreenshotInterval--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getScreenshotInterval</h4>
+<pre>public&nbsp;int&nbsp;getScreenshotInterval()</pre>
+<div class="block">screen shot インターバル取得。</div>
 </li>
 </ul>
 <a name="setProperties-nodagumi.ananPJ.misc.NetmasPropertiesHandler-">
@@ -725,6 +688,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>setProperties</h4>
 <pre>public&nbsp;void&nbsp;setProperties(<a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a>&nbsp;_properties)</pre>
+<div class="block">設定ハンドラ設定。</div>
 </li>
 </ul>
 <a name="getProperties--">
@@ -734,6 +698,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getProperties</h4>
 <pre>public&nbsp;<a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">NetmasPropertiesHandler</a>&nbsp;getProperties()</pre>
+<div class="block">設定ハンドラ取得。</div>
 </li>
 </ul>
 <a name="setRandom-java.util.Random-">
@@ -743,6 +708,188 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>setRandom</h4>
 <pre>public&nbsp;void&nbsp;setRandom(java.util.Random&nbsp;_random)</pre>
+</li>
+</ul>
+<a name="getIsAllAgentSpeedZeroBreak--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIsAllAgentSpeedZeroBreak</h4>
+<pre>public&nbsp;boolean&nbsp;getIsAllAgentSpeedZeroBreak()</pre>
+<div class="block">全エージェントが止まったらシミュレーションを止めるか？</div>
+</li>
+</ul>
+<a name="setIsAllAgentSpeedZeroBreak-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setIsAllAgentSpeedZeroBreak</h4>
+<pre>public&nbsp;void&nbsp;setIsAllAgentSpeedZeroBreak(boolean&nbsp;_isAllAgentSpeedZeroBreak)</pre>
+<div class="block">全エージェントが止まったらシミュレーションを止めるかをセット。</div>
+</li>
+</ul>
+<a name="getIsAllAgentSpeedZero--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIsAllAgentSpeedZero</h4>
+<pre>public&nbsp;boolean&nbsp;getIsAllAgentSpeedZero()</pre>
+<div class="block">全エージェントが止まっているかどうか？</div>
+</li>
+</ul>
+<a name="setLinerGenerateAgentRatio-double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLinerGenerateAgentRatio</h4>
+<pre>public&nbsp;void&nbsp;setLinerGenerateAgentRatio(double&nbsp;_ratio)</pre>
+<div class="block">エージェント生成の倍率。</div>
+</li>
+</ul>
+<a name="getRubyEngine--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRubyEngine</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/Itk/ItkRuby.html" title="nodagumi.Itk内のクラス">ItkRuby</a>&nbsp;getRubyEngine()</pre>
+<div class="block">全エージェントが止まっているかどうか？</div>
+</li>
+</ul>
+<a name="begin-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>begin</h4>
+<pre>public&nbsp;void&nbsp;begin(boolean&nbsp;has_display)</pre>
+<div class="block">シミュレーションの準備。（メイン）</div>
+</li>
+</ul>
+<a name="recalculatePaths--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>recalculatePaths</h4>
+<pre>public&nbsp;void&nbsp;recalculatePaths()</pre>
+<div class="block">経路探索再計算。</div>
+</li>
+</ul>
+<a name="buildDisplay--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildDisplay</h4>
+<pre>public&nbsp;void&nbsp;buildDisplay()</pre>
+<div class="block">画面の準備。</div>
+</li>
+</ul>
+<a name="buildDisplay-nodagumi.ananPJ.Simulator.SimulationPanel3D-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildDisplay</h4>
+<pre>public&nbsp;void&nbsp;buildDisplay(<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;_panel3d)</pre>
+<div class="block">画面の準備。</div>
+</li>
+</ul>
+<a name="getPanel3D--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPanel3D</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;getPanel3D()</pre>
+<div class="block">3D画面の準備。</div>
+</li>
+</ul>
+<a name="setup--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setup</h4>
+<pre>public&nbsp;void&nbsp;setup()</pre>
+<div class="block">シミュレーション初期化。</div>
+</li>
+</ul>
+<a name="start--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>start</h4>
+<pre>public&nbsp;void&nbsp;start()</pre>
+<div class="block">シミュレーション開始。</div>
+</li>
+</ul>
+<a name="pause--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>pause</h4>
+<pre>public&nbsp;void&nbsp;pause()</pre>
+<div class="block">シミュレーション中断。</div>
+</li>
+</ul>
+<a name="step--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>step</h4>
+<pre>public&nbsp;void&nbsp;step()</pre>
+<div class="block">シミュレーション1サイクル実行。</div>
+</li>
+</ul>
+<a name="isRunning--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isRunning</h4>
+<pre>public&nbsp;boolean&nbsp;isRunning()</pre>
+<div class="block">シミュレーション実行中かどうかの判定。</div>
+</li>
+</ul>
+<a name="registerAgent-nodagumi.ananPJ.Agents.AgentBase-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>registerAgent</h4>
+<pre>public&nbsp;void&nbsp;registerAgent(<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
+<div class="block">エージェント登録</div>
+</li>
+</ul>
+<a name="updateEveryTick--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateEveryTick</h4>
+<pre>public&nbsp;boolean&nbsp;updateEveryTick()</pre>
+<div class="block">汎用 updateEveryTick() ;</div>
+</li>
+</ul>
+<a name="output_results--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>output_results</h4>
+<pre>protected&nbsp;void&nbsp;output_results()</pre>
+<div class="block">結果を出力する。
+ <code>logs/&lt;time&gt;.log</code> というログと、
+ <code>macro.log</code> というログ。</div>
 </li>
 </ul>
 <a name="saveGoalLog-java.lang.String-java.lang.Boolean-">
@@ -763,7 +910,7 @@ extends java.lang.Object</pre>
 <a name="saveTimeSeriesLog-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>saveTimeSeriesLog</h4>
 <pre>public&nbsp;boolean&nbsp;saveTimeSeriesLog(java.lang.String&nbsp;resultDirectory)</pre>
@@ -774,42 +921,6 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>returned value: succeed or not.</dd>
 </dl>
-</li>
-</ul>
-<a name="getIsAllAgentSpeedZero--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getIsAllAgentSpeedZero</h4>
-<pre>public&nbsp;boolean&nbsp;getIsAllAgentSpeedZero()</pre>
-</li>
-</ul>
-<a name="getIsAllAgentSpeedZeroBreak--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getIsAllAgentSpeedZeroBreak</h4>
-<pre>public&nbsp;boolean&nbsp;getIsAllAgentSpeedZeroBreak()</pre>
-</li>
-</ul>
-<a name="setIsAllAgentSpeedZeroBreak-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setIsAllAgentSpeedZeroBreak</h4>
-<pre>public&nbsp;void&nbsp;setIsAllAgentSpeedZeroBreak(boolean&nbsp;_isAllAgentSpeedZeroBreak)</pre>
-</li>
-</ul>
-<a name="setLinerGenerateAgentRatio-double-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>setLinerGenerateAgentRatio</h4>
-<pre>public&nbsp;void&nbsp;setLinerGenerateAgentRatio(double&nbsp;_ratio)</pre>
 </li>
 </ul>
 </li>
@@ -840,7 +951,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
-<li><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.timeSeriesLogTYpe.html" title="nodagumi.ananPJ.Simulator内の列挙型"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/Simulator/PollutionCalculator.html" title="nodagumi.ananPJ.Simulator内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/Simulator/EvacuationSimulator.html" target="_top">フレーム</a></li>
@@ -864,7 +975,7 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>サマリー:&nbsp;</li>
-<li><a href="#nested.class.summary">ネスト</a>&nbsp;|&nbsp;</li>
+<li>ネスト&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">メソッド</a></li>

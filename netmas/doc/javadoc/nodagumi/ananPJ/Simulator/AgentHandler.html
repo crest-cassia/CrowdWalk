@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -196,186 +196,197 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#closeAgentMovementHistorLogger--">closeAgentMovementHistorLogger</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#calcAbsoluteTime-double-">calcAbsoluteTime</a></span>(double&nbsp;relTime)</code>
+<div class="block">相対時刻から絶対時刻への変換。</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#closeIndividualPedestriansLogger--">closeIndividualPedestriansLogger</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#calcRelativeTime-double-">calcRelativeTime</a></span>(double&nbsp;absTime)</code>
+<div class="block">絶対時刻から相対時刻への変換。</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#closeLogger-java.util.logging.Logger-">closeLogger</a></span>(java.util.logging.Logger&nbsp;logger)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#closeAgentMovementHistorLogger--">closeAgentMovementHistorLogger</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#closeIndividualPedestriansLogger--">closeIndividualPedestriansLogger</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#closeLogger-java.util.logging.Logger-">closeLogger</a></span>(java.util.logging.Logger&nbsp;logger)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#convertAbsoluteTimeString-double-">convertAbsoluteTimeString</a></span>(double&nbsp;relTime)</code>
 <div class="block">相対時刻の文字列による絶体時刻標記を得る。</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#convertAbsoluteTimeString-double-boolean-">convertAbsoluteTimeString</a></span>(double&nbsp;relTime,
                          boolean&nbsp;trunc)</code>
 <div class="block">相対時刻の文字列による絶体時刻標記を得る。</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#dumpAgentResult-java.io.PrintStream-">dumpAgentResult</a></span>(java.io.PrintStream&nbsp;out)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getAllAgentCollection--">getAllAgentCollection</a></span>()</code>
 <div class="block">生成されたすべてのエージェントの Collection を返す。</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getAllGoalTags--">getAllGoalTags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getAverageSpeed--">getAverageSpeed</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>javax.swing.JPanel</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getControlPanel--">getControlPanel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getEvacuatedCount-nodagumi.ananPJ.NetworkParts.Node.MapNode-">getEvacuatedCount</a></span>(<a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&nbsp;node)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.util.HashMap&lt;<a href="../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>,java.lang.Integer&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getExitNodesMap--">getExitNodesMap</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getIsAllAgentSpeedZero--">getIsAllAgentSpeedZero</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getIsAllAgentSpeedZeroBreak--">getIsAllAgentSpeedZeroBreak</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getMaxAgentCount--">getMaxAgentCount</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>javax.swing.JButton</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getStartButton--">getStartButton</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getStatisticsDescription--">getStatisticsDescription</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#getWalkingAgentCollection--">getWalkingAgentCollection</a></span>()</code>
 <div class="block">歩いているエージェントのCollectionを返す。</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#initAgentMovementHistoryLogger-java.lang.String-java.lang.String-">initAgentMovementHistoryLogger</a></span>(java.lang.String&nbsp;name,
                               java.lang.String&nbsp;filePath)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#initIndividualPedestriansLogger-java.lang.String-java.lang.String-">initIndividualPedestriansLogger</a></span>(java.lang.String&nbsp;name,
                                java.lang.String&nbsp;dirPath)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.util.logging.Logger</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#initLogger-java.lang.String-java.util.logging.Level-java.util.logging.Formatter-java.lang.String-">initLogger</a></span>(java.lang.String&nbsp;name,
           java.util.logging.Level&nbsp;level,
           java.util.logging.Formatter&nbsp;formatter,
           java.lang.String&nbsp;filePath)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#isFinished--">isFinished</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#numOfAllAgents--">numOfAllAgents</a></span>()</code>
 <div class="block">生成されたすべてのエージェントの数</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#numOfEvacuatedAgents--">numOfEvacuatedAgents</a></span>()</code>
 <div class="block">避難完了したエージェントの数</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#numOfStuckAgents--">numOfStuckAgents</a></span>()</code>
 <div class="block">スタック中のエージェントの数</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#numOfWalkingAgents--">numOfWalkingAgents</a></span>()</code>
 <div class="block">歩いているエージェントの数</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#prepareForSimulation--">prepareForSimulation</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#removeWalkingAgent-nodagumi.ananPJ.Agents.AgentBase-">removeWalkingAgent</a></span>(<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>
 <div class="block">歩いているエージェントテーブルより一人取り除く。</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#setIsAllAgentSpeedZeroBreak-boolean-">setIsAllAgentSpeedZeroBreak</a></span>(boolean&nbsp;_isAllAgentSpeedZeroBreak)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#setLinerGenerateAgentRatio-double-">setLinerGenerateAgentRatio</a></span>(double&nbsp;_ratio)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#setRandom-java.util.Random-">setRandom</a></span>(java.util.Random&nbsp;_random)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#setSimulationWeight-int-">setSimulationWeight</a></span>(int&nbsp;weight)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#setSimulationDeferFactor-int-">setSimulationDeferFactor</a></span>(int&nbsp;deferFactor)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#setupFrame-java.lang.String-java.lang.String-nodagumi.ananPJ.NetworkMapBase-">setupFrame</a></span>(java.lang.String&nbsp;generationFile,
           java.lang.String&nbsp;scenarioFile,
           <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#timeToString-double-">timeToString</a></span>(double&nbsp;timeVal)</code>
 <div class="block">実数時刻を文字列時刻に変更</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#timeToString-double-boolean-">timeToString</a></span>(double&nbsp;timeVal,
             boolean&nbsp;trunc)</code>
 <div class="block">実数時刻を文字列時刻に変更</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#update_buttons--">update_buttons</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#update-nodagumi.ananPJ.NetworkMapBase-double-">update</a></span>(<a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
-      double&nbsp;time)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#update-double-">update</a></span>(double&nbsp;time)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html#useFrontFirstOrderQueue-boolean-">useFrontFirstOrderQueue</a></span>(boolean&nbsp;flag)</code>
 <div class="block">switching queue order</div>
@@ -515,14 +526,13 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;prepareForSimulation()</pre>
 </li>
 </ul>
-<a name="update-nodagumi.ananPJ.NetworkMapBase-double-">
+<a name="update-double-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>update</h4>
-<pre>public&nbsp;void&nbsp;update(<a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
-                   double&nbsp;time)</pre>
+<pre>public&nbsp;void&nbsp;update(double&nbsp;time)</pre>
 </li>
 </ul>
 <a name="isFinished--">
@@ -811,13 +821,13 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;javax.swing.JButton&nbsp;getStartButton()</pre>
 </li>
 </ul>
-<a name="setSimulationWeight-int-">
+<a name="setSimulationDeferFactor-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setSimulationWeight</h4>
-<pre>public&nbsp;void&nbsp;setSimulationWeight(int&nbsp;weight)</pre>
+<h4>setSimulationDeferFactor</h4>
+<pre>public&nbsp;void&nbsp;setSimulationDeferFactor(int&nbsp;deferFactor)</pre>
 </li>
 </ul>
 <a name="update_buttons--">
@@ -911,10 +921,30 @@ extends java.lang.Object</pre>
 <a name="setLinerGenerateAgentRatio-double-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setLinerGenerateAgentRatio</h4>
 <pre>public&nbsp;void&nbsp;setLinerGenerateAgentRatio(double&nbsp;_ratio)</pre>
+</li>
+</ul>
+<a name="calcAbsoluteTime-double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>calcAbsoluteTime</h4>
+<pre>public&nbsp;double&nbsp;calcAbsoluteTime(double&nbsp;relTime)</pre>
+<div class="block">相対時刻から絶対時刻への変換。</div>
+</li>
+</ul>
+<a name="calcRelativeTime-double-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>calcRelativeTime</h4>
+<pre>public&nbsp;double&nbsp;calcRelativeTime(double&nbsp;absTime)</pre>
+<div class="block">絶対時刻から相対時刻への変換。</div>
 </li>
 </ul>
 </li>

@@ -11,6 +11,6 @@ nodagumi.ananPJ.NetworkParts.Link
 nodagumi.ananPJ.NetworkParts.Node
 nodagumi.ananPJ.Scenario
 nodagumi.ananPJ.Simulator
-nodagumi.ananPJ.Simulator.Pollution
+nodagumi.ananPJ.Simulator.Obstructer
 nodagumi.ananPJ.misc
 nodagumi.ananPJ.navigation

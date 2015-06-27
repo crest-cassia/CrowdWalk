@@ -28,7 +28,25 @@ import nodagumi.Itk.*;
 
 //======================================================================
 /**
- * 制御に、Ruby の script を呼び出すエージェント
+ * 制御に、Ruby の script を呼び出すエージェント。
+ *
+ * <h3> config, fallbackResources に書ける設定 </h3>
+ * {@link RationalAgent} に加えて、
+ * <pre>
+ *  {
+ *    "rubyAgentClass" : __String__ // Ruby 内でのクラス名
+ * }
+ * </pre>
+ * 上記で指定されたクラスのインスタンスが生成され、java 内で以下のメソッドが
+ * 呼ばれた時に、ruby 側の対応する同名のメソッドに制御が移る。
+ * <UL>
+ *  <LI> {@code preUpdate(double time)} : update cycle の前半。次の位置を決める。
+ *  <LI> {@code update(double time)} : update cycle の後半。実際に動かす。
+ *  <LI> {@code calcWayCostTo(...)} : 分岐点で、各経路の目的地までのコストを計算。
+ *       これを元に、最小コストの経路を選ぶ。
+ * </UL>
+ *
+ * このRubyのクラスは、RubyAgentBase クラスを継承しているべきである。
  */
 public class RubyAgent extends RationalAgent {
     //============================================================

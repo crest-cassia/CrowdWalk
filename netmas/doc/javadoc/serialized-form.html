@@ -463,8 +463,7 @@
 <div class="block">generatedTime: 生成された時刻
  finishedTime: ゴールに到達した時刻
  evacuated: ゴールに到達したかどうかのフラグ
- stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)
- dead: 死亡したかどうかのフラグ(死亡しても evacuated は false のまま)</div>
+ stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)</div>
 </li>
 <li class="blockList">
 <h4>finishedTime</h4>
@@ -477,10 +476,6 @@
 <li class="blockList">
 <h4>stuck</h4>
 <pre>boolean stuck</pre>
-</li>
-<li class="blockList">
-<h4>dead</h4>
-<pre>boolean dead</pre>
 </li>
 <li class="blockList">
 <h4>currentTime</h4>
@@ -521,17 +516,13 @@
 <pre>double dv</pre>
 </li>
 <li class="blockList">
-<h4>pollutionEffect</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/Pollution/PollutionBase.PollutionEffectInfo.html" title="nodagumi.ananPJ.Simulator.Pollution内のクラス">PollutionBase.PollutionEffectInfo</a> pollutionEffect</pre>
-</li>
-<li class="blockList">
-<h4>displayMode</h4>
-<pre>int displayMode</pre>
-<div class="block">表示・設定関係</div>
+<h4>obstructer</h4>
+<pre><a href="nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html" title="nodagumi.ananPJ.Simulator.Obstructer内のクラス">ObstructerBase</a> obstructer</pre>
 </li>
 <li class="blockList">
 <h4>swing_width</h4>
 <pre>double swing_width</pre>
+<div class="block">設定関係</div>
 </li>
 <li class="blockList">
 <h4>configLine</h4>
@@ -659,6 +650,34 @@
 <h4>alertedMessageTable</h4>
 <pre>java.util.HashMap&lt;K,V&gt; alertedMessageTable</pre>
 <div class="block">alert された message</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="nodagumi.ananPJ.Agents.RubyAgent">
+<!--   -->
+</a>
+<h3>Class <a href="nodagumi/ananPJ/Agents/RubyAgent.html" title="nodagumi.ananPJ.Agents内のクラス">nodagumi.ananPJ.Agents.RubyAgent</a> extends <a href="nodagumi/ananPJ/Agents/RationalAgent.html" title="nodagumi.ananPJ.Agents内のクラス">RationalAgent</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>直列化されたフィールド</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>rubyEngine</h4>
+<pre><a href="nodagumi/Itk/ItkRuby.html" title="nodagumi.Itk内のクラス">ItkRuby</a> rubyEngine</pre>
+<div class="block">Ruby 実行系のリンク</div>
+</li>
+<li class="blockList">
+<h4>rubyAgentClass</h4>
+<pre>java.lang.String rubyAgentClass</pre>
+<div class="block">実際のエージェントクラスの名前。
+ Ruby の中でのクラス名。</div>
+</li>
+<li class="blockListLast">
+<h4>rubyAgent</h4>
+<pre>java.lang.Object rubyAgent</pre>
+<div class="block">Ruby エージェントへのリンク</div>
 </li>
 </ul>
 </li>
@@ -1476,7 +1495,7 @@
 <li class="blockList"><a name="nodagumi.ananPJ.misc.AgentGenerationFile">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.AgentGenerationFile</a> extends java.util.ArrayList&lt;<a href="nodagumi/ananPJ/misc/GenerateAgent.html" title="nodagumi.ananPJ.misc内のクラス">GenerateAgent</a>&gt; implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/misc/AgentGenerationFile.html" title="nodagumi.ananPJ.misc内のクラス">nodagumi.ananPJ.misc.AgentGenerationFile</a> extends java.util.ArrayList&lt;<a href="nodagumi/ananPJ/Agents/AgentFactory.html" title="nodagumi.ananPJ.Agents内のクラス">AgentFactory</a>&gt; implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1832,10 +1851,6 @@
 <pre>java.util.ArrayList&lt;E&gt; agents</pre>
 </li>
 <li class="blockList">
-<h4>displayMode</h4>
-<pre>int displayMode</pre>
-</li>
-<li class="blockList">
 <h4>timeScale</h4>
 <pre>double timeScale</pre>
 </li>
@@ -1933,10 +1948,6 @@
 <li class="blockList">
 <h4>links</h4>
 <pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> links</pre>
-</li>
-<li class="blockList">
-<h4>displayMode</h4>
-<pre>int displayMode</pre>
 </li>
 <li class="blockList">
 <h4>hints</h4>
@@ -2120,10 +2131,6 @@
 <li class="blockList">
 <h4>forceUpdateCamerawork</h4>
 <pre>boolean forceUpdateCamerawork</pre>
-</li>
-<li class="blockList">
-<h4>debug_mode_cb</h4>
-<pre>javax.swing.JCheckBox debug_mode_cb</pre>
 </li>
 <li class="blockList">
 <h4>hide_normallink_cb</h4>

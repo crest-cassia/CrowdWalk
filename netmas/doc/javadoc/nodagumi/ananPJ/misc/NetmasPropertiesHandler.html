@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":9,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":9,"i25":10,"i26":10,"i27":10,"i28":10,"i29":9,"i30":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":9,"i21":10,"i22":10,"i23":10,"i24":10,"i25":9,"i26":10,"i27":10,"i28":10,"i29":10,"i30":9,"i31":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../nodagumi/ananPJ/misc/NetMASProperties.html" title="nodagumi.ananPJ.misc内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
-<li><a href="../../../nodagumi/ananPJ/misc/NetMASSnapshot.html" title="nodagumi.ananPJ.misc内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/misc/NetmasTimer.html" title="nodagumi.ananPJ.misc内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" target="_top">フレーム</a></li>
@@ -142,14 +142,6 @@ extends java.lang.Object</pre>
  <h3>プロパティファイルの設定項目</h3>
  <ul>
    <li>
-     <h4>debug</h4>
-     <pre>  デバッグモードの ON/OFF
-
-  設定値： true | false
-  デフォルト値： false</pre>
-   </li>
-
-   <li>
      <h4>map_file (設定必須)</h4>
      <pre>  Map file へのファイルパス
 
@@ -185,7 +177,7 @@ extends java.lang.Object</pre>
 
    <li>
      <h4>pollution_file</h4>
-     <pre>  Pollution file へのファイルパス
+     <pre>  Obstructer file へのファイルパス
 
   設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
            (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
@@ -194,8 +186,8 @@ extends java.lang.Object</pre>
 
    <li>
      <h4>interpolation_interval</h4>
-     <pre>  Pollution データを線形補間する間隔(秒)
-  pollution file が設定されている時に設定する
+     <pre>  Obstructer データを線形補間する間隔(秒)
+  Obstructer file が設定されている時に設定する
 
   設定値： 0       補間なし
            1～n    この間隔で補間する
@@ -204,19 +196,17 @@ extends java.lang.Object</pre>
 
    <li>
      <h4>pollution_type</h4>
-     <pre>  pollution type(蓄積型or非蓄積型)の設定
-  pollution file が設定されている時に設定する
-  (例) 蓄積型：  ガス
-       非蓄積型：洪水
+     <pre>  Obstructer type の設定
+  Obstructer file が設定されている時に設定する
 
-  設定値： Accumulated | NonAccumulated
-  デフォルト値： NonAccumulated</pre>
+  設定値： Flood | Pollution
+  デフォルト値： Flood</pre>
    </li>
 
    <li>
      <h4>pollution_color_saturation</h4>
-     <pre>  pollution level別の色の彩度の設定(図1,2)
-  pollution file が設定されている時に設定する
+     <pre>  Obstructer level別の色の彩度の設定(図1,2)
+  Obstructer file が設定されている時に設定する
   濃 0.0←--------→100.0 薄
 
   設定値： 有理数
@@ -231,12 +221,12 @@ extends java.lang.Object</pre>
 
    <li>
      <h4>pollution_color</h4>
-     <pre>  pollution地点の色の設定(図3)
-  pollution file が設定されている時に設定する
+     <pre>  Obstructer地点の色の設定(図3)
+  Obstructer file が設定されている時に設定する
 
   設定値： none | hsv | red | blue | orange
            none：   なし
-           hsv：    pollution levelごとに色を変える
+           hsv：    Obstructer levelごとに色を変える
            red：    赤色
            blue：   青色
            orange： オレンジ色
@@ -246,6 +236,46 @@ extends java.lang.Object</pre>
      <img src="./doc-files/pollution_color.png"/><br />図3　hsv のとき
    </center>
  </p>
+   </li>
+
+   <li>
+     <h4>use_ruby</h4>
+     <pre>  Ruby Engine を使うかどうか。
+
+  設定値： true | false
+  デフォルト値： false</pre>
+   </li>
+
+   <li>
+     <h4>ruby_load_path</h4>
+     <pre> Ruby の標準の LOAD_PATH に追加するパス。
+  複数のパスを追加する場合には、改行で区切る。
+
+  設定値： 改行区切りの path 文字列。
+  デフォルト値： ""</pre>
+   </li>
+
+   <li>
+     <h4>ruby_init_script</h4>
+     <pre> Ruby Engine 初期化のスクリプト。
+  一般に、"require 'file'" 等を指定するが、基本、ruby の式なら何でもOK。
+
+  設定値： ruby の script の文字列。
+  デフォルト値： ""</pre>
+   </li>
+
+   <li>
+     <h4>ruby_simulation_wrapper_class</h4>
+     <pre> updateEveryTick() などのシミュレーション実行制御用のRubyクラス。
+  CrowdWalkSimulator クラスを継承していることが望ましい。
+  シミュレーションの初期化でインスタンスが作成され、
+  EvacuationSimulatorのインスタンスが @body にセットされる。
+  updateEveryTick() の先頭で preCycle(time) が、
+  終わりに postCycle(time) が呼ばれる。
+  空文字列もしくは null なら、インスタンスは生成しない。
+
+  設定値： ruby クラス名。
+  デフォルト値： null</pre>
    </li>
 
    <li>
@@ -291,18 +321,6 @@ extends java.lang.Object</pre>
 
   設定値： true | false
   デフォルト値： false</pre>
-   </li>
-
-   <li>
-     <h4>speed_model (設定必須)</h4>
-     <pre>  エージェントの歩行モデル
-  現在のところ必ず指定しなければならないが、廃止予定
-
-  設定値： density | expected_density | ???
-           density：エージェントの移動速度を前方の特定範囲のエージェント密度によって決定する。
-           expected_density：各エージェントが1ステップ以内に通過する可能性のあるリンクに対して
-                             重みをつけてエージェントの移動速度を決定する。
-  デフォルト値： なし</pre>
    </li>
 
    <li>
@@ -386,12 +404,12 @@ extends java.lang.Object</pre>
    </li>
 
    <li>
-     <h4>weight</h4>
+     <h4>defer_factor</h4>
      <pre>  1ステップごとの待ち時間(ミリ秒単位)
   この設定値を小さくするとシミュレーションは早く進み、大きくするとシミュレーションは遅く進む。
-  早 0←--------→999 遅
+  早 0←--------→299 遅
 
-  設定値： 0～999
+  設定値： 0～299
   デフォルト値： 0</pre>
    </li>
 
@@ -507,34 +525,26 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">フィールドと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static java.util.List</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#cuiPropList">cuiPropList</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#DEFINITION_FILE_ITEMS">DEFINITION_FILE_ITEMS</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#exitCount">exitCount</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#fallbackPath">fallbackPath</a></span></code>
 <div class="block">fallback file</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#generationPath">generationPath</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#isAllAgentSpeedZeroBreak">isAllAgentSpeedZeroBreak</a></span></code>&nbsp;</td>
-</tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#isDebug">isDebug</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#isAllAgentSpeedZeroBreak">isAllAgentSpeedZeroBreak</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
@@ -558,7 +568,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#propertiescenarioPath">propertiescenarioPath</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#propertiesPath">propertiesPath</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected long</code></td>
@@ -569,18 +579,14 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#scenarioPath">scenarioPath</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected static <a href="../../../nodagumi/ananPJ/Agents/WalkAgent.SpeedCalculationModel.html" title="nodagumi.ananPJ.Agents内の列挙型">WalkAgent.SpeedCalculationModel</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#speedModel">speedModel</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#timerPath">timerPath</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#timeSeriesLogInterval">timeSeriesLogInterval</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#timeSeriesLogPath">timeSeriesLogPath</a></span></code>&nbsp;</td>
 </tr>
@@ -599,7 +605,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#NetmasPropertiesHandler-java.lang.String-">NetmasPropertiesHandler</a></span>(java.lang.String&nbsp;_propertiescenarioPath)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#NetmasPropertiesHandler-java.lang.String-">NetmasPropertiesHandler</a></span>(java.lang.String&nbsp;_propertiesPath)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -677,88 +683,99 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getIsDebug--">getIsDebug</a></span>()</code>
-<div class="block">Get a debug mode.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getIsTimerEnabled--">getIsTimerEnabled</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getIsTimerEnabled--">getIsTimerEnabled</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i14" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getIsTimeSeriesLog--">getIsTimeSeriesLog</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getMapPath--">getMapPath</a></span>()</code>&nbsp;</td>
 </tr>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>java.util.ArrayList&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getPathList-java.lang.String-java.util.ArrayList-">getPathList</a></span>(java.lang.String&nbsp;key,
+           java.util.ArrayList&lt;java.lang.String&gt;&nbsp;defaultValue)</code>
+<div class="block">パスのリストを取得。</div>
+</td>
+</tr>
 <tr id="i16" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getPollutionPath--">getPollutionPath</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.ArrayList&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getPathList-java.lang.String-java.util.ArrayList-java.lang.String-">getPathList</a></span>(java.lang.String&nbsp;key,
+           java.util.ArrayList&lt;java.lang.String&gt;&nbsp;defaultValue,
+           java.lang.String&nbsp;separator)</code>
+<div class="block">パスのリストを取得。</div>
+</td>
 </tr>
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getPropertiescenarioPath--">getPropertiescenarioPath</a></span>()</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getPollutionPath--">getPollutionPath</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getPropertiesDir--">getPropertiesDir</a></span>()</code>
+<div class="block">properties file の directory を返す。</div>
+</td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getPropertiesPath--">getPropertiesPath</a></span>()</code>
 <div class="block">Get a properties file name.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getProperty-java.util.Properties-java.lang.String-">getProperty</a></span>(java.util.Properties&nbsp;prop,
            java.lang.String&nbsp;key)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getRandseed--">getRandseed</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getScenarioPath--">getScenarioPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Agents/WalkAgent.SpeedCalculationModel.html" title="nodagumi.ananPJ.Agents内の列挙型">WalkAgent.SpeedCalculationModel</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getSpeedModel--">getSpeedModel</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getString-java.lang.String-java.lang.String-">getString</a></span>(java.lang.String&nbsp;key,
          java.lang.String&nbsp;defaultValue)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getString-java.lang.String-java.lang.String-java.lang.String:A-">getString</a></span>(java.lang.String&nbsp;key,
          java.lang.String&nbsp;defaultValue,
          java.lang.String[]&nbsp;pattern)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getStringProperty-java.util.Properties-java.lang.String-">getStringProperty</a></span>(java.util.Properties&nbsp;prop,
                  java.lang.String&nbsp;key)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getTimerPath--">getTimerPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getTimeSeriesLogInterval--">getTimeSeriesLogInterval</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#getTimeSeriesLogPath--">getTimeSeriesLogPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#isDefined-java.lang.String-">isDefined</a></span>(java.lang.String&nbsp;key)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#main-java.lang.String:A-">main</a></span>(java.lang.String[]&nbsp;args)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#setPropertiescenarioPath-java.lang.String-">setPropertiescenarioPath</a></span>(java.lang.String&nbsp;_path)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/NetmasPropertiesHandler.html#setPropertiesPath-java.lang.String-">setPropertiesPath</a></span>(java.lang.String&nbsp;_path)</code>
 <div class="block">Set a properties file name.</div>
 </td>
 </tr>
@@ -784,15 +801,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>フィールドの詳細</h3>
-<a name="cuiPropList">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>cuiPropList</h4>
-<pre>public static final&nbsp;java.util.List cuiPropList</pre>
-</li>
-</ul>
 <a name="DEFINITION_FILE_ITEMS">
 <!--   -->
 </a>
@@ -802,13 +810,13 @@ extends java.lang.Object</pre>
 <pre>public static final&nbsp;java.lang.String[] DEFINITION_FILE_ITEMS</pre>
 </li>
 </ul>
-<a name="propertiescenarioPath">
+<a name="propertiesPath">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>propertiescenarioPath</h4>
-<pre>protected&nbsp;java.lang.String propertiescenarioPath</pre>
+<h4>propertiesPath</h4>
+<pre>protected&nbsp;java.lang.String propertiesPath</pre>
 </li>
 </ul>
 <a name="prop">
@@ -818,15 +826,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>prop</h4>
 <pre>protected&nbsp;java.util.Properties prop</pre>
-</li>
-</ul>
-<a name="isDebug">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isDebug</h4>
-<pre>protected&nbsp;boolean isDebug</pre>
 </li>
 </ul>
 <a name="mapPath">
@@ -902,15 +901,6 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;long randseed</pre>
 </li>
 </ul>
-<a name="speedModel">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>speedModel</h4>
-<pre>protected static&nbsp;<a href="../../../nodagumi/ananPJ/Agents/WalkAgent.SpeedCalculationModel.html" title="nodagumi.ananPJ.Agents内の列挙型">WalkAgent.SpeedCalculationModel</a> speedModel</pre>
-</li>
-</ul>
 <a name="isTimeSeriesLog">
 <!--   -->
 </a>
@@ -970,7 +960,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>NetmasPropertiesHandler</h4>
-<pre>public&nbsp;NetmasPropertiesHandler(java.lang.String&nbsp;_propertiescenarioPath)</pre>
+<pre>public&nbsp;NetmasPropertiesHandler(java.lang.String&nbsp;_propertiesPath)</pre>
 </li>
 </ul>
 </li>
@@ -981,13 +971,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
-<a name="getPropertiescenarioPath--">
+<a name="getPropertiesPath--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getPropertiescenarioPath</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getPropertiescenarioPath()</pre>
+<h4>getPropertiesPath</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getPropertiesPath()</pre>
 <div class="block">Get a properties file name.</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
@@ -995,13 +985,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="setPropertiescenarioPath-java.lang.String-">
+<a name="setPropertiesPath-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setPropertiescenarioPath</h4>
-<pre>public&nbsp;void&nbsp;setPropertiescenarioPath(java.lang.String&nbsp;_path)</pre>
+<h4>setPropertiesPath</h4>
+<pre>public&nbsp;void&nbsp;setPropertiesPath(java.lang.String&nbsp;_path)</pre>
 <div class="block">Set a properties file name.</div>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>
@@ -1009,18 +999,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getIsDebug--">
+<a name="getPropertiesDir--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getIsDebug</h4>
-<pre>public&nbsp;boolean&nbsp;getIsDebug()</pre>
-<div class="block">Get a debug mode.</div>
-<dl>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>wether debug mode is enable or not</dd>
-</dl>
+<h4>getPropertiesDir</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getPropertiesDir()</pre>
+<div class="block">properties file の directory を返す。</div>
 </li>
 </ul>
 <a name="getMapPath--">
@@ -1094,15 +1080,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getRandseed</h4>
 <pre>public&nbsp;long&nbsp;getRandseed()</pre>
-</li>
-</ul>
-<a name="getSpeedModel--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSpeedModel</h4>
-<pre>public&nbsp;<a href="../../../nodagumi/ananPJ/Agents/WalkAgent.SpeedCalculationModel.html" title="nodagumi.ananPJ.Agents内の列挙型">WalkAgent.SpeedCalculationModel</a>&nbsp;getSpeedModel()</pre>
 </li>
 </ul>
 <a name="getIsTimeSeriesLog--">
@@ -1271,6 +1248,32 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a name="getPathList-java.lang.String-java.util.ArrayList-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPathList</h4>
+<pre>public&nbsp;java.util.ArrayList&lt;java.lang.String&gt;&nbsp;getPathList(java.lang.String&nbsp;key,
+                                                         java.util.ArrayList&lt;java.lang.String&gt;&nbsp;defaultValue)</pre>
+<div class="block">パスのリストを取得。
+ パスは区切り記号で区切られているとする。
+ 区切り記号のデフォルトは改行。</div>
+</li>
+</ul>
+<a name="getPathList-java.lang.String-java.util.ArrayList-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPathList</h4>
+<pre>public&nbsp;java.util.ArrayList&lt;java.lang.String&gt;&nbsp;getPathList(java.lang.String&nbsp;key,
+                                                         java.util.ArrayList&lt;java.lang.String&gt;&nbsp;defaultValue,
+                                                         java.lang.String&nbsp;separator)</pre>
+<div class="block">パスのリストを取得。
+ パスは区切り記号で区切られているとする。</div>
+</li>
+</ul>
 <a name="getBoolean-java.lang.String-boolean-">
 <!--   -->
 </a>
@@ -1358,7 +1361,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../nodagumi/ananPJ/misc/NetMASProperties.html" title="nodagumi.ananPJ.misc内のクラス"><span class="typeNameLink">前のクラス</span></a></li>
-<li><a href="../../../nodagumi/ananPJ/misc/NetMASSnapshot.html" title="nodagumi.ananPJ.misc内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
+<li><a href="../../../nodagumi/ananPJ/misc/NetmasTimer.html" title="nodagumi.ananPJ.misc内のクラス"><span class="typeNameLink">次のクラス</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?nodagumi/ananPJ/misc/NetmasPropertiesHandler.html" target="_top">フレーム</a></li>

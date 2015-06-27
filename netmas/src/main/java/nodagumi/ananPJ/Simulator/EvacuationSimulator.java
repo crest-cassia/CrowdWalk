@@ -620,6 +620,27 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * Rubyエンジン準備。
+     * properties file の "use_ruby" が true の場合に有効化。
+     * 初期化は以下の順に行われる。
+     * <OL>
+     *   <LI> CrowdWalk を起動したところの directory からの相対で、
+     *        ruby のライブラリのプログラムのあるところ (現状で "src/main/ruby")
+     *        を LOAD_PATH に追加。
+     *   </LI>
+     *   <LI> properties file で指定された load path を追加。
+     *   </LI>
+     *   <LI> init file をロード。デフォルトは、"initForCrowdWalk.rb"。
+     *        "src/main/ruby" に用意してある。
+     *   </LI>
+     *   <LI> current dir を、properties file があるところへ移す。
+     *   </LI>
+     *   <LI> properties file で指定した init script の実行。
+     *   </LI>
+     *   <LI> Ruby の CrowdWalkWrapper のクラスのインスタンスを作る。
+     *        "ruby_simulation_wrapper_class" でクラスを指定できる。
+     *   </LI>
+     * </OL>
+     * RubyAgent については、generation file にて指定する。
      */
     private void buildRubyEngine() {
         try {

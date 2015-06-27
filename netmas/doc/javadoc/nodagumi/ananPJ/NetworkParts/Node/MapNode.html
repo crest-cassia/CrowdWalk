@@ -167,16 +167,12 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <th class="colLast" scope="col">フィールドと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html#displayMode">displayMode</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html#fallbackParameters">fallbackParameters</a></span></code>
 <div class="block">リンク用の fallback パラメータ</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html#speedRestrictRule">speedRestrictRule</a></span></code>
 <div class="block">リンクによる速度の制約計算で用いるルール。</div>
@@ -279,18 +275,16 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html#draw-java.awt.Graphics2D-boolean-boolean-boolean-">draw</a></span>(java.awt.Graphics2D&nbsp;g,
-    boolean&nbsp;simulation,
-    boolean&nbsp;showLabel,
-    boolean&nbsp;isSymbolic)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html#drawInEditor-java.awt.Graphics2D-boolean-boolean-">drawInEditor</a></span>(java.awt.Graphics2D&nbsp;g,
+            boolean&nbsp;showLabel,
+            boolean&nbsp;isSymbolic)</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html#draw-java.awt.Graphics2D-boolean-boolean-boolean-java.awt.Color-">draw</a></span>(java.awt.Graphics2D&nbsp;g,
-    boolean&nbsp;simulation,
-    boolean&nbsp;showLabel,
-    boolean&nbsp;isSymbolic,
-    java.awt.Color&nbsp;c)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html#drawInEditor-java.awt.Graphics2D-boolean-boolean-java.awt.Color-">drawInEditor</a></span>(java.awt.Graphics2D&nbsp;g,
+            boolean&nbsp;showLabel,
+            boolean&nbsp;isSymbolic,
+            java.awt.Color&nbsp;c)</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a></code></td>
@@ -505,7 +499,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 <a name="speedRestrictRule">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>speedRestrictRule</h4>
 <pre>public static&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> speedRestrictRule</pre>
@@ -523,15 +517,6 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
       "tag" : "BAR",
       "factor" : 0.9 } ]
  </pre></div>
-</li>
-</ul>
-<a name="displayMode">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>displayMode</h4>
-<pre>public&nbsp;int displayMode</pre>
 </li>
 </ul>
 </li>
@@ -856,29 +841,27 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkParts/OBMapPart.html" title=
 </dl>
 </li>
 </ul>
-<a name="draw-java.awt.Graphics2D-boolean-boolean-boolean-">
+<a name="drawInEditor-java.awt.Graphics2D-boolean-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>draw</h4>
-<pre>public&nbsp;void&nbsp;draw(java.awt.Graphics2D&nbsp;g,
-                 boolean&nbsp;simulation,
-                 boolean&nbsp;showLabel,
-                 boolean&nbsp;isSymbolic)</pre>
+<h4>drawInEditor</h4>
+<pre>public&nbsp;void&nbsp;drawInEditor(java.awt.Graphics2D&nbsp;g,
+                         boolean&nbsp;showLabel,
+                         boolean&nbsp;isSymbolic)</pre>
 </li>
 </ul>
-<a name="draw-java.awt.Graphics2D-boolean-boolean-boolean-java.awt.Color-">
+<a name="drawInEditor-java.awt.Graphics2D-boolean-boolean-java.awt.Color-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>draw</h4>
-<pre>public&nbsp;void&nbsp;draw(java.awt.Graphics2D&nbsp;g,
-                 boolean&nbsp;simulation,
-                 boolean&nbsp;showLabel,
-                 boolean&nbsp;isSymbolic,
-                 java.awt.Color&nbsp;c)</pre>
+<h4>drawInEditor</h4>
+<pre>public&nbsp;void&nbsp;drawInEditor(java.awt.Graphics2D&nbsp;g,
+                         boolean&nbsp;showLabel,
+                         boolean&nbsp;isSymbolic,
+                         java.awt.Color&nbsp;c)</pre>
 </li>
 </ul>
 <a name="isBetweenHeight-double-double-">
