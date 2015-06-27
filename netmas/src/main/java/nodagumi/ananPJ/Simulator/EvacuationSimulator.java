@@ -153,6 +153,52 @@ public class EvacuationSimulator {
      */
     private MapNodeTable exitNodeList = null;
 
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * CrowdWalk を起動するスクリプトの場所からの相対パス。
+     */
+    static public String Fallback_rubyLibDir = "./src/main/ruby" ;
+
+    /**
+     * ruby の初期設定ファイル。
+     */
+    static public String Fallback_rubyInitFile = "initForCrowdWalk.rb" ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ruby 実行系。
+     */
+    private ItkRuby rubyEngine = null ;
+
+    /**
+     * ruby 用 LOAD_PATH。
+     */
+    private ArrayList<String> rubyLoadPath = null ;
+
+    /**
+     * ruby 用 ライブラリへのパス。
+     */
+    private String rubyLibDir = Fallback_rubyLibDir ;
+
+    /**
+     * ruby 初期化ファイル。
+     */
+    private String rubyInitFile = Fallback_rubyInitFile ;
+
+    /**
+     * ruby 用 simulation wrapper クラス名。
+     */
+    private String rubySimulationWrapperClass = null ;
+
+    /**
+     * ruby 用 simulation wrapper のインスタンス。
+     * シミュレーションの cycle の前後で、
+     * preCycle(relTime), postCycle(relTime) が呼び出される。
+     */
+    private Object rubySimulationWrapper = null ;
+
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -398,6 +444,7 @@ public class EvacuationSimulator {
         buildPollution() ;
         buildAgentHandler(has_display);
         buildRoutes ();
+        buildRubyEngine() ;
 
         agentHandler.prepareForSimulation();
     }
@@ -565,6 +612,60 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
+     * Rubyエンジン準備。
+     */
+    private void buildRubyEngine() {
+        try {
+            if(properties != null && properties.getBoolean("use_ruby", false)) {
+                Itk.logInfo("building Ruby engine...") ;
+                // engine
+                rubyEngine = new ItkRuby() ;
+                // default load path
+                String currentDir = (String)rubyEngine.getCurrentDirectory() ;
+                String libDir = currentDir + "/" + rubyLibDir ;
+                rubyEngine.pushLoadPath(libDir) ;
+                // additional load path
+                rubyLoadPath = properties.getPathList("ruby_load_path", null) ;
+                if(rubyLoadPath != null) {
+                    for(String path : rubyLoadPath) {
+                        rubyEngine.pushLoadPath(path) ;
+                    }
+                }
+                Itk.logInfo("rubyEngine: LOAD_PATH", rubyEngine.getLoadPaths());
+                // load init file
+                if(rubyInitFile != null) {
+                    Itk.logInfo("rubyEngine: load init file", rubyInitFile) ;
+                    rubyEngine.eval(String.format("require '%s'",rubyInitFile)) ;
+                }
+                // current dir を properties の directory へ。
+                rubyEngine.setCurrentDirectory(properties.getPropertiesDir()) ;
+                Itk.logInfo("rubyEngine: current dir.",
+                            rubyEngine.eval("Dir::pwd")) ;
+                // init script
+                String initScript = properties.getString("ruby_init_script", null);
+                if(initScript != null) {
+                    Itk.logInfo("rubyEngine: eval init script", initScript) ;
+                    rubyEngine.eval(initScript) ;
+                }
+                // wrapperの作成
+                rubySimulationWrapperClass =
+                    properties.getString("ruby_simulation_wrapper_class", null);
+                if(rubySimulationWrapperClass != null) {
+                    rubySimulationWrapper =
+                        rubyEngine.newInstanceOfClass(rubySimulationWrapperClass,
+                                                      this) ;
+                }
+                //
+                Itk.logInfo("building Ruby engine. Done.") ;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace() ;
+            Itk.logError("Exception in buildRubyEngine") ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * 画面の準備。
      */
     public void buildDisplay() {
@@ -694,19 +795,31 @@ public class EvacuationSimulator {
      */
     public boolean updateEveryTick() {
         synchronized (stop_simulation) {
-            double poltime = getSecond();
+            double relTime = getSecond();
+
+            // ruby wrapper の preUpdate()
+            if(rubySimulationWrapper != null) {
+                rubyEngine.callMethod(rubySimulationWrapper, "preUpdate",
+                                      relTime) ;
+            }
 
             // pollution 計算。
             if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
-		pollutionCalculator.updateNodesLinksAgents(poltime, networkMap,
+		pollutionCalculator.updateNodesLinksAgents(relTime, networkMap,
                         getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
 
             // 実行本体
-            agentHandler.update(getSecond());
+            agentHandler.update(relTime);
 
             // 描画
             updateEveryTickDisplay() ;
+
+            // ruby wrapper の postUpdate()
+            if(rubySimulationWrapper != null) {
+                rubyEngine.callMethod(rubySimulationWrapper, "postUpdate",
+                                      relTime) ;
+            }
 
             // カウンタを進める。
             tick_count += 1.0;

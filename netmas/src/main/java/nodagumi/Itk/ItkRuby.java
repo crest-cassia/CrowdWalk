@@ -106,11 +106,9 @@ public class ItkRuby {
     /**
      * メソッド呼び出し(トップレベル)
      */
-    /*
-      public Object callMethod(String methodName, Object... args) {
-      return container.callMethod(methodName, args) ;
-      }
-    */
+    public Object callTopMethod(String methodName, Object... args) {
+        return container.callMethod(null, methodName, args) ;
+    }
 
     //------------------------------------------------------------
     /**
@@ -119,6 +117,15 @@ public class ItkRuby {
     public Object callMethod(Object object, String methodName,
                              Object... args) {
         return container.callMethod(object, methodName, args) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * クラスのインスタンス作成
+     */
+    public Object newInstanceOfClass(String className, Object... args) {
+        Object klass = this.eval(className) ;
+        return container.callMethod(klass, "new", args) ;
     }
 
     //------------------------------------------------------------
@@ -135,18 +142,25 @@ public class ItkRuby {
     /**
      * Ruby の LoadPath。
      * @return path のリスト。
+     * Note: container.getLoadPaths() というのがあるが、なぜか正しく動かない。
+     * なので、ruby の環境での値を直接取るようにする。
      */
     public List<String> getLoadPaths() {
-        return container.getLoadPaths() ;
+        return (List<String>)this.eval("$LOAD_PATH") ;
     }
 
     //------------------------------------------------------------
     /**
      * Ruby の LoadPath を設定。
      * @param pathList path のリスト。
+     * Note: container.setLoadPaths() というのがあるが、なぜか正しく動かない。
+     * なので、ruby の環境で値をセットするようにする。
      */
     public void setLoadPaths(List<String> pathList) {
-        container.setLoadPaths(pathList) ;
+        this.eval("$LOAD_PATH=[]");
+        for(String path : pathList) {
+            pushLoadPath(path) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -155,14 +169,15 @@ public class ItkRuby {
      * 追加するかどうかチェックする。
      * @param path 追加するpath。
      * @return 追加されれば true。すでに存在して追加されなかった場合は false。
+     * Note: container.setLoadPaths() というのがあるが、なぜか正しく動かない。
+     * なので、ruby の環境で値をセットするようにする。
      */
     public boolean pushLoadPath(String path) {
         List<String> pathList = this.getLoadPaths() ;
         if(pathList.contains(path)) {
             return false ;
         } else {
-            pathList.add(path) ;
-            this.setLoadPaths(pathList) ;
+            container.callMethod(this.eval("$LOAD_PATH"), "push", path) ;
             return true ;
         }
     }
@@ -174,6 +189,15 @@ public class ItkRuby {
      */
     public String getCurrentDirectory() {
         return container.getCurrentDirectory() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Ruby の current directory を取得。
+     * @return current directory。
+     */
+    public void setCurrentDirectory(String directory) {
+        container.setCurrentDirectory(directory) ;
     }
 
     //============================================================

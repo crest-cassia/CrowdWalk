@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>NetmasCuiSimulator</comment>
+    <entry key="debug">true</entry>
+    <entry key="io_handler_type">none</entry>
+    <entry key="map_file">gridTown00.map.xml</entry>
+    <entry key="generation_file">gridTown00.gen.json</entry>
+    <entry key="scenario_file">gridTown00.scnr.json</entry>
+    <entry key="fallback_file">gridTown00.fb.json</entry>
+    <entry key="timer_enable">true</entry>
+    <entry key="timer_file">/tmp/timer.log</entry>
+    <entry key="interval">0</entry>
+    <entry key="randseed">2524</entry>
+    <entry key="random_navigation">true</entry>
+    <entry key="time_series_log">true</entry>
+    <entry key="time_series_log_path">/tmp</entry>
+    <entry key="time_series_log_interval">1</entry>
+    <entry key="loop_count">1</entry>
+    <entry key="exit_count">0</entry>
+    <entry key="all_agent_speed_zero_break">false</entry>
+    <entry key="use_ruby">true</entry>
+    <entry key="ruby_load_path">a
+b
+c</entry>
+    <entry key="ruby_init_script">p [:foo]</entry>
+    <entry key="ruby_simulation_wrapper_class">CrowdWalkSimulator</entry>
+</properties>

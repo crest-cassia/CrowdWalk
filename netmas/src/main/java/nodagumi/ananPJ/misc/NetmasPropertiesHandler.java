@@ -151,6 +151,46 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>use_ruby</h4>
+ *     <pre>  Ruby Engine を使うかどうか。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>ruby_load_path</h4>
+ *     <pre> Ruby の標準の LOAD_PATH に追加するパス。
+ *  複数のパスを追加する場合には、改行で区切る。
+ *
+ *  設定値： 改行区切りの path 文字列。
+ *  デフォルト値： ""</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>ruby_init_script</h4>
+ *     <pre> Ruby Engine 初期化のスクリプト。
+ *  一般に、"require 'file'" 等を指定するが、基本、ruby の式なら何でもOK。
+ *
+ *  設定値： ruby の script の文字列。
+ *  デフォルト値： ""</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>ruby_simulation_wrapper_class</h4>
+ *     <pre> updateEveryTick() などのシミュレーション実行制御用のRubyクラス。
+ *  CrowdWalkSimulator クラスを継承していることが望ましい。
+ *  シミュレーションの初期化でインスタンスが作成され、
+ *  EvacuationSimulatorのインスタンスが @body にセットされる。
+ *  updateEveryTick() の先頭で preCycle(time) が、
+ *  終わりに postCycle(time) が呼ばれる。
+ *  空文字列もしくは null なら、インスタンスは生成しない。
+ *
+ *  設定値： ruby クラス名。
+ *  デフォルト値： null</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>camera_file</h4>
  *     <pre>  シミュレーション画面で3D表示されている地図を映すカメラの位置情報を含んだ設定ファイル。
  *  シミュレーション・ウィンドウのオープン時に Camera file を読み込んで Replay チェックボックスを ON にする。
@@ -381,44 +421,43 @@ import nodagumi.Itk.*;
  */
 public class NetmasPropertiesHandler {
 
-    public static final List cuiPropList = Arrays.asList(
-                                                         "map_file",
-                                                         "pollution_file",
-                                                         "scenario_file",
-                                                         "generation_file",
-                                                         "timer_enable",
-                                                         "timer_file",
-                                                         "randseed",
-                                                         "time_series_log",
-                                                         "time_series_log_path",
-                                                         "time_series_log_interval",
-                                                         "loop_count",
-                                                         "exit_count",
-                                                         "all_agent_speed_zero_break",
-                                                         /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
-                                                         "queue_order" // "front_first" or "rear_first"
-                                                         );
+    public static final String[] DEFINITION_FILE_ITEMS
+        = {"map_file",
+           "generation_file",
+           "scenario_file",
+           "camera_file",
+           "pollution_file",
+           "link_appearance_file",
+           "node_appearance_file",
+           "fallback_file"};
 
-    public static final String[] DEFINITION_FILE_ITEMS = {"map_file", "generation_file", "scenario_file", "camera_file", "pollution_file", "link_appearance_file", "node_appearance_file", "fallback_file"};
-
-    protected String propertiescenarioPath = null;
+    protected String propertiesPath = null;
     protected Properties prop = null;
 
     /**
      * Get a properties file name.
      * @return Property file name.
      */
-    public String getPropertiescenarioPath() {
-        return propertiescenarioPath;
+    public String getPropertiesPath() {
+        return propertiesPath;
     }
 
     /**
      * Set a properties file name.
      * @param _path a properties file name.
      */
-    public void setPropertiescenarioPath(String _path) {
-        propertiescenarioPath = _path;
+    public void setPropertiesPath(String _path) {
+        propertiesPath = _path;
     }
+
+    /**
+     * properties file の directory を返す。
+     */
+    public String getPropertiesDir() {
+        File file = new File(propertiesPath) ;
+        return file.getAbsoluteFile().getParent() ;
+    }
+
 
     protected String mapPath = null; // path to map file (required)
     public String getMapPath() {
@@ -494,30 +533,30 @@ public class NetmasPropertiesHandler {
         return isAllAgentSpeedZeroBreak;
     }
 
-    public NetmasPropertiesHandler(String _propertiescenarioPath) {
+    public NetmasPropertiesHandler(String _propertiesPath) {
         // load properties
         prop = new Properties();
-        propertiescenarioPath = _propertiescenarioPath;
+        propertiesPath = _propertiesPath;
         try {
-            String path = _propertiescenarioPath.toLowerCase();
+            String path = _propertiesPath.toLowerCase();
             if (path.endsWith(".xml")) {
-                prop.loadFromXML(new FileInputStream(_propertiescenarioPath));
+                prop.loadFromXML(new FileInputStream(_propertiesPath));
                 Itk.logInfo("Load Properties File (XML)",
-                            _propertiescenarioPath);
+                            _propertiesPath);
             } else if (path.endsWith(".json")) {
-                HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiescenarioPath));
+                HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiesPath));
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     prop.setProperty(entry.getKey(), entry.getValue().toString());
                 }
                 Itk.logInfo("Load Properties File (JSON)",
-                            _propertiescenarioPath);
+                            _propertiesPath);
             } else {
-                System.err.println("Property file error - 拡張子が不正です: " + _propertiescenarioPath);
+                System.err.println("Property file error - 拡張子が不正です: " + _propertiesPath);
                 System.exit(1);
             }
 
             // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
-            File propertyFile = new File(_propertiescenarioPath);
+            File propertyFile = new File(_propertiesPath);
             String propertyDirPath = propertyFile.getParent();
             if (propertyDirPath == null) {
                 propertyDirPath = ".";
@@ -710,6 +749,37 @@ public class NetmasPropertiesHandler {
         return value;
     }
 
+    //------------------------------------------------------------
+    /**
+     * パスのリストを取得。
+     * パスは区切り記号で区切られているとする。
+     * 区切り記号のデフォルトは改行。
+     */
+    public ArrayList<String> getPathList(String key,
+                                         ArrayList<String> defaultValue) {
+        return getPathList(key, defaultValue, "\n") ;
+    }
+
+    /**
+     * パスのリストを取得。
+     * パスは区切り記号で区切られているとする。
+     */
+    public ArrayList<String> getPathList(String key,
+                                         ArrayList<String> defaultValue,
+                                         String separator) {
+        String value = prop.getProperty(key) ;
+        if(value == null || value.trim().isEmpty()) {
+            return defaultValue ;
+        } else {
+            ArrayList<String> pathList = new ArrayList<String>();
+            String[] arrayedPath = value.split(separator);
+            for(String path : arrayedPath) {
+                pathList.add(path.trim()) ;
+            }
+            return pathList ;
+        }
+    }
+
     public boolean getBoolean(String key, boolean defaultValue) throws Exception {
         String value = prop.getProperty(key);
         if (value == null || value.trim().isEmpty()) {
@@ -770,9 +840,9 @@ public class NetmasPropertiesHandler {
             e.printStackTrace();
             System.exit(1);
         }
-        String propertiescenarioPath = cli.getOptionValue("p");
+        String propertiesPath = cli.getOptionValue("p");
 
         NetmasPropertiesHandler nph =
-            new NetmasPropertiesHandler(propertiescenarioPath);
+            new NetmasPropertiesHandler(propertiesPath);
     }
 }

@@ -17,4 +17,15 @@
   "loop_count":1,
   "exit_count":0,
   "all_agent_speed_zero_break":false
+  "x_use_ruby":true,
+  "x_ruby_load_path":"a
+b
+c",
+  "x_ruby_init_script":"
+require 'json'
+require 'pp'
+pp JSON.generate({:foo => :bar, :baz => 1})
+pp Dir::pwd
+",
+  "x_ruby_simulation_wrapper_class":"CrowdWalkWrapper"
 }
