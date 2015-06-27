@@ -410,6 +410,13 @@ public class EvacuationSimulator {
         linerGenerateAgentRatio = _ratio;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 全エージェントが止まっているかどうか？
+     */
+    public ItkRuby getRubyEngine() {
+        return rubyEngine ;
+    }
 
     //------------------------------------------------------------
     // シミュレーションの準備。

@@ -27,6 +27,42 @@ class RubyAgentBase
     @javaAgent = agent ;
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## エージェント id
+  def getAgentId()
+    return @javaAgent.getID() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーション各サイクルの前半に呼ばれる。
+  ## _relTime_:: 相対シミュレーション時刻
+  def preUpdate(relTime)
+#    p [:preUpdate, getAgentId(), relTime] ;
+    return @javaAgent.super_preUpdate(relTime) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーション各サイクルの後半に呼ばれる。
+  ## _relTime_:: 相対シミュレーション時刻
+  def update(relTime)
+#    p [:update, getAgentId(), relTime] ;
+    return @javaAgent.super_update(relTime) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## あるwayを選択した場合の目的地(_target)までのコスト。
+  ## _way_:: 現在進もうとしている道
+  ## _node_:: 現在の分岐点
+  ## _target_:: 最終目的地
+  def calcWayCostTo(way, node, target)
+#    p [:calcWayCostTo, getAgentId(), way, node, target] ;
+    return @javaAgent.super_calcWayCostTo(way, node, target);
+  end
+
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

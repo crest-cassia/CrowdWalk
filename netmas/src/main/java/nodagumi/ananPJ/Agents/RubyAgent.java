@@ -30,7 +30,7 @@ import nodagumi.Itk.*;
 /**
  * 制御に、Ruby の script を呼び出すエージェント
  */
-public class RubyAgent extends WalkAgent {
+public class RubyAgent extends RationalAgent {
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -82,6 +82,12 @@ public class RubyAgent extends WalkAgent {
     public void init(Random _random, EvacuationSimulator simulator,
                      AgentFactory factory, double time) {
         super.init(_random, simulator, factory, time);
+        rubyEngine = simulator.getRubyEngine() ;
+        if(rubyEngine == null) {
+            Itk.logError("ruby engine is not available.",
+                         "should specify 'use_ruby' property to be 'true'.") ;
+            System.exit(1) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -93,7 +99,69 @@ public class RubyAgent extends WalkAgent {
         super.initByConf(conf, fallback) ;
 
         rubyAgentClass = getStringFromConfig("rubyAgentClass", rubyAgentClass) ;
+        rubyAgent = rubyEngine.newInstanceOfClass(rubyAgentClass, this) ;
     } ;
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション各サイクルの前半に呼ばれる。
+     */
+    @Override
+    public void preUpdate(double time) {
+        rubyEngine.callMethod(rubyAgent, "preUpdate", time) ;
+    }
+
+    /**
+     * 上位の preUpdate を呼び出す。
+     * ruby からの戻り用。
+     */
+    public void super_preUpdate(double time) {
+        super.preUpdate(time) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション各サイクルの後半に呼ばれる。
+     */
+    @Override
+    public boolean update(double time) {
+        return (boolean)rubyEngine.callMethod(rubyAgent, "update", time) ;
+    }
+
+    /**
+     * 上位の update を呼び出す。
+     * ruby からの戻り用。
+     */
+    public boolean super_update(double time) {
+        return super.update(time) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * あるwayを選択した場合の目的地(_target)までのコスト。
+     */
+    @Override
+    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target)
+        throws TargetNotFoundException {
+        return (double)rubyEngine.callMethod(rubyAgent, "calcWayCostTo",
+                                             _way, _node, _target) ;
+    }
+
+    /**
+     * あるwayを選択した場合の目的地(_target)までのコスト。super を呼ぶ。
+     */
+    public double super_calcWayCostTo(MapLink _way, MapNode _node, Term _target)
+        throws TargetNotFoundException {
+        return super.calcWayCostTo(_way, _node, _target) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントのIDを返す。 Ruby からの呼び出し用。
+     */
+    public String getID() {
+        return ID ;
+    }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

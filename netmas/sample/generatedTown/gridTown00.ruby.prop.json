@@ -3,7 +3,7 @@
   "debug":true,
   "io_handler_type":"none",
   "map_file":"gridTown00.map.xml",
-  "generation_file":"gridTown00.gen.json",
+  "generation_file":"gridTown00.ruby.gen.json",
   "scenario_file":"gridTown00.scnr.json",
   "fallback_file":"gridTown00.fb.json",
   "timer_enable":true,
@@ -17,4 +17,15 @@
   "loop_count":1,
   "exit_count":0,
   "all_agent_speed_zero_break":false
+  "use_ruby":true,
+  "x_ruby_load_path":"a
+b
+c",
+  "ruby_init_script":"
+require 'json'
+require 'pp'
+pp JSON.generate({:foo => :bar, :baz => 1})
+pp Dir::pwd
+",
+  "x_ruby_simulation_wrapper_class":"CrowdWalkWrapper"
 }
