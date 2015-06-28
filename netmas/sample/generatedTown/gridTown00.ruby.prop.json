@@ -18,14 +18,13 @@
   "exit_count":0,
   "all_agent_speed_zero_break":false
   "use_ruby":true,
-  "x_ruby_load_path":"a
-b
-c",
+  "ruby_load_path":"/usr/users/noda/lib/ruby
+/usr/users/noda/work/ruby",
   "ruby_init_script":"
-require 'json'
+require './SampleAgent.rb'
+require './SampleWrapper.rb'
 require 'pp'
-pp JSON.generate({:foo => :bar, :baz => 1})
 pp Dir::pwd
 ",
-  "x_ruby_simulation_wrapper_class":"CrowdWalkWrapper"
+  "ruby_simulation_wrapper_class":"SampleWrapper"
 }

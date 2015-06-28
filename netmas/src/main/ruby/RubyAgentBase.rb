@@ -39,7 +39,6 @@ class RubyAgentBase
   ## シミュレーション各サイクルの前半に呼ばれる。
   ## _relTime_:: 相対シミュレーション時刻
   def preUpdate(relTime)
-#    p [:preUpdate, getAgentId(), relTime] ;
     return @javaAgent.super_preUpdate(relTime) ;
   end
 
@@ -48,7 +47,6 @@ class RubyAgentBase
   ## シミュレーション各サイクルの後半に呼ばれる。
   ## _relTime_:: 相対シミュレーション時刻
   def update(relTime)
-#    p [:update, getAgentId(), relTime] ;
     return @javaAgent.super_update(relTime) ;
   end
 
