@@ -71,23 +71,42 @@ public class RubyAgent extends RationalAgent {
     static final public String FallBack_RubyAgentClass = "RubyAgentBase" ;
 
     //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
-     * 各メソッドに於いてルビー側のメソッドを呼び出すかどうかの
-     * チェックを行うフィルタのテーブル。
-     * ルビー側のクラスごとに定義する。
+     * triggerFilter でチェックするメソッド名の列挙。
      */
-    static protected HashMap<String, HashMap<String, Boolean>> triggerFilterTable
-        = new HashMap<String, HashMap<String, Boolean>>() ;
+    static public enum TriggerEntry {
+        preUpdate,
+        update,
+        calcWayCostTo,
+        thinkCycle,
+    }
 
     /**
      * triggerFilter でチェックするメソッド名リスト。
      */
-    static protected ArrayList<String> triggeredMethodList
-        = new ArrayList<String>(Arrays.asList("preUpdate",
-                                              "update",
-                                              "calcWayCostTo",
-                                              "thinkCycle")) ;
+    static protected ArrayList<TriggerEntry> TriggerEntryList
+        = new ArrayList<TriggerEntry>(Arrays.asList(TriggerEntry.values())) ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 各メソッドに於いてルビー側のメソッドを呼び出すかどうかの
+     * チェックを行うフィルタのテーブル。
+     * フィルタは文字列の配列であり、各要素(triggerに対応)の値は、
+     * trigger される(ruby を呼び出す) 場合には、ruby のメソッド名が入っている。
+     * そうでない場合は、null が入っている。
+     * ルビー側のクラスごとに定義する。
+     * 構造は、(ruby 風に書くと)
+     * <pre>{@code
+     *    triggerFilterTable = { 
+     *              "RubyClassName0" => [null, "update", null, null],
+     *              "RubyClassName1" => ["preUpdate", "update", null, null],
+     *              ... }
+     * }</pre>
+     */
+    static protected HashMap<String, ArrayList<String>> triggerFilterTable
+        = new HashMap<String, ArrayList<String>>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -110,7 +129,7 @@ public class RubyAgent extends RationalAgent {
     /**
      * ruby 側呼び出しのための triggerFilter。
      */
-    private HashMap<String, Boolean> triggerFilter = null ;
+    private ArrayList<String> triggerFilter = null ;
 
     //------------------------------------------------------------
     // コンストラクタ
@@ -170,12 +189,20 @@ public class RubyAgent extends RationalAgent {
      * @param rubyClassName : ruby での AgentClass 名
      * @return 対応する triggerFilter
      */
-    private HashMap<String, Boolean> prepareTriggerFilterFor(String rubyClassName){
-        HashMap<String, Boolean> filter = new HashMap<String, Boolean>() ;
-        for(String methodName : triggeredMethodList) {
+    private ArrayList<String> prepareTriggerFilterFor(String rubyClassName){
+        ArrayList<String> filter = new ArrayList<String>() ;
+        for(TriggerEntry trigger : TriggerEntryList) {
+            // 配列を拡大。
+            while(filter.size() <= trigger.ordinal()) {
+                filter.add(null) ;
+            }
+            String methodName = trigger.toString() ;
             String script = String.format("%s.checkTriggerFilter('%s')",
                                           rubyClassName, methodName) ;
-            filter.put(methodName, rubyEngine.evalBoolean(script)) ;
+            boolean triggered = rubyEngine.evalBoolean(script) ;
+            if(triggered) {
+                filter.set(trigger.ordinal(), methodName) ;
+            }
         }
         return filter ;
     }
@@ -185,8 +212,8 @@ public class RubyAgent extends RationalAgent {
      * @param rubyClassName : ruby での AgentClass 名
      * @return trigger されていれば true
      */
-    protected boolean isTriggered(String methodName) {
-        return triggerFilter.get(methodName) ;
+    protected String triggeredMethod(TriggerEntry trigger) {
+        return triggerFilter.get(trigger.ordinal()) ;
     }
 
     //------------------------------------------------------------
@@ -208,8 +235,9 @@ public class RubyAgent extends RationalAgent {
     @Override
     public void preUpdate(double time) {
         currentTime = time ;
-        if(isTriggered("preUpdate")) {
-            rubyEngine.callMethod(rubyAgent, "preUpdate", time) ;
+        String rubyMethod = triggeredMethod(TriggerEntry.preUpdate) ;
+        if(rubyMethod != null) {
+            rubyEngine.callMethod(rubyAgent, rubyMethod, time) ;
         } else {
             super_preUpdate(time) ;
         }
@@ -230,8 +258,9 @@ public class RubyAgent extends RationalAgent {
     @Override
     public boolean update(double time) {
         currentTime = time ;
-        if(isTriggered("update")){
-            return rubyEngine.callMethodBoolean(rubyAgent, "update", time) ;
+        String rubyMethod = triggeredMethod(TriggerEntry.update) ;
+        if(rubyMethod != null) {
+            return rubyEngine.callMethodBoolean(rubyAgent, rubyMethod, time) ;
         } else {
             return super_update(time) ;
         }
@@ -252,8 +281,9 @@ public class RubyAgent extends RationalAgent {
     @Override
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target)
         throws TargetNotFoundException {
-        if(isTriggered("calcWayCostTo")) {
-            return rubyEngine.callMethodDouble(rubyAgent, "calcWayCostTo",
+        String rubyMethod = triggeredMethod(TriggerEntry.calcWayCostTo) ;
+        if(rubyMethod != null) {
+            return rubyEngine.callMethodDouble(rubyAgent, rubyMethod,
                                                _way, _node, _target) ;
         } else {
             return super_calcWayCostTo(_way, _node, _target) ;
@@ -275,8 +305,9 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public Term thinkCycle() {
-        if(isTriggered("thinkCycle")) {
-            rubyEngine.callMethod(rubyAgent, "thinkCycle") ;
+        String rubyMethod = triggeredMethod(TriggerEntry.thinkCycle) ;
+        if(rubyMethod != null) {
+            rubyEngine.callMethod(rubyAgent, rubyMethod) ;
             return ThinkFormula.Term_Null ;
         } else {
             return super_thinkCycle() ;
