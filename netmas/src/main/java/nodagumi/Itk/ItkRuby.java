@@ -19,6 +19,7 @@ import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
+import org.jruby.RubyInstanceConfig.CompileMode;
 
 import nodagumi.Itk.Itk;
 
@@ -39,7 +40,7 @@ public class ItkRuby {
     /**
      * Ruby Scrupt の評価実行系。
      */
-    private ScriptingContainer container ;
+    public ScriptingContainer container ;
 
     //------------------------------------------------------------
     /**
@@ -48,6 +49,7 @@ public class ItkRuby {
     public ItkRuby() {
         ensureRubyEngine() ;
         container = new ScriptingContainer() ;
+        container.setCompileMode(CompileMode.JIT) ;
     }
 
     //------------------------------------------------------------

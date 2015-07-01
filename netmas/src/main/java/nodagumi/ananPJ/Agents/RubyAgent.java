@@ -211,7 +211,7 @@ public class RubyAgent extends RationalAgent {
         if(isTriggered("preUpdate")) {
             rubyEngine.callMethod(rubyAgent, "preUpdate", time) ;
         } else {
-            super.preUpdate(time) ;
+            super_preUpdate(time) ;
         }
     }
 
@@ -229,10 +229,11 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public boolean update(double time) {
+        currentTime = time ;
         if(isTriggered("update")){
             return rubyEngine.callMethodBoolean(rubyAgent, "update", time) ;
         } else {
-            return super.update(time) ;
+            return super_update(time) ;
         }
     }
 
@@ -255,7 +256,7 @@ public class RubyAgent extends RationalAgent {
             return rubyEngine.callMethodDouble(rubyAgent, "calcWayCostTo",
                                                _way, _node, _target) ;
         } else {
-            return super.calcWayCostTo(_way, _node, _target) ;
+            return super_calcWayCostTo(_way, _node, _target) ;
         }
     }
 
@@ -278,7 +279,7 @@ public class RubyAgent extends RationalAgent {
             rubyEngine.callMethod(rubyAgent, "thinkCycle") ;
             return ThinkFormula.Term_Null ;
         } else {
-            return super.thinkCycle() ;
+            return super_thinkCycle() ;
         }
     }
 
