@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
+import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
@@ -18,7 +19,19 @@ public abstract class ObstructerBase {
     /**
      * Obstructer type とクラス名の対応表
      */
-    public static String OBSTRUCTER_CLASSES = "/obstructer_classes.json";
+    public static final String OBSTRUCTER_CLASSES = "/obstructer_classes.json";
+
+    /**
+     * Obstructer用の fallback パラメータ
+     */
+    public static Term fallbackParameters = null;
+
+    /**
+     * fallback パラメータの準備
+     */
+    public static void setupCommonParameters(Term wholeFallbacks) {
+        fallbackParameters = wholeFallbacks.filterArgTerm("obstructer", NetworkMap.FallbackSlot);
+    }
 
     /**
      * エージェントへのリンク
@@ -40,13 +53,7 @@ public abstract class ObstructerBase {
      */
     protected boolean dead = false;
 
-    /**
-     * 初期化.
-     */
-    public void init(AgentBase agent) {
-        this.agent = agent;
-    }
-
+    public abstract void init(AgentBase agent);
     public abstract void expose(double exposureAmount);
     public abstract void effect();
     protected abstract TriageLevel calcTriage();

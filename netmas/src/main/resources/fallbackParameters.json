@@ -33,5 +33,21 @@
 	"speedRestrictRule" : [],
 	"_" : null
     },
+    "obstructer" : {
+	"Flood" : {
+	    "waterDepthThreshold3" : 1.0,
+	    "waterDepthThreshold2" : 0.8,
+	    "waterDepthThreshold1" : 0.3,
+	    "nonAmbulatoryDepth" : 1.0
+	},
+	"Pollution" : {
+	    "deadlyLevel" : 178560.0,
+	    "unbearableLevel" : 900.0,
+	    "incapacitatedLevel" : 9.0,
+	    "irritantLevel" : 1.3,
+	    "nonAmbulatoryLevel" : 9.0
+	},
+	"_" : null
+    },
     "_" : null
 }

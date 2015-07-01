@@ -1,4 +1,7 @@
 {
     "Flood" : "nodagumi.ananPJ.Simulator.Obstructer.Flood",
-    "Pollution" : "nodagumi.ananPJ.Simulator.Obstructer.Pollution"
+    "Pollution" : "nodagumi.ananPJ.Simulator.Obstructer.Pollution",
+    /* 以下、プロパティファイルの互換性維持のため(不要になったら削除する) */
+    "NonAccumulated" : "nodagumi.ananPJ.Simulator.Obstructer.Flood",
+    "Accumulated" : "nodagumi.ananPJ.Simulator.Obstructer.Pollution"
 }
