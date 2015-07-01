@@ -143,7 +143,7 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public boolean update(double time) {
-        return (boolean)rubyEngine.callMethod(rubyAgent, "update", time) ;
+        return rubyEngine.callMethodBoolean(rubyAgent, "update", time) ;
     }
 
     /**
@@ -161,8 +161,8 @@ public class RubyAgent extends RationalAgent {
     @Override
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target)
         throws TargetNotFoundException {
-        return (double)rubyEngine.callMethod(rubyAgent, "calcWayCostTo",
-                                             _way, _node, _target) ;
+        return rubyEngine.callMethodDouble(rubyAgent, "calcWayCostTo",
+                                           _way, _node, _target) ;
     }
 
     /**

@@ -58,7 +58,6 @@ public class ItkRuby {
         return container.runScriptlet(script) ;
     }
 
-    //------------------------------------------------------------
     /**
      * script 実行(複数行)
      */
@@ -72,13 +71,76 @@ public class ItkRuby {
 
     //------------------------------------------------------------
     /**
+     * script 実行(1行)して Boolean にキャスト
+     */
+    public Boolean evalBoolean(String script) {
+        return (Boolean)eval(script) ;
+    }
+
+    /**
+     * script 実行(複数行)して Boolean にキャスト
+     */
+    public Boolean evalBoolean(String script0, String script1,
+                               String... scriptList) {
+        return (Boolean)eval(script0, script1, scriptList) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * script 実行(1行)して Integer にキャスト
+     */
+    public Integer evalInteger(String script) {
+        return (Integer)eval(script) ;
+    }
+
+    /**
+     * script 実行(複数行)して Integer にキャスト
+     */
+    public Integer evalInteger(String script0, String script1,
+                               String... scriptList) {
+        return (Integer)eval(script0, script1, scriptList) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * script 実行(1行)して Double にキャスト
+     */
+    public Double evalDouble(String script) {
+        return (Double)eval(script) ;
+    }
+
+    /**
+     * script 実行(複数行)して Double にキャスト
+     */
+    public Double evalDouble(String script0, String script1,
+                             String... scriptList) {
+        return (Double)eval(script0, script1, scriptList) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * script 実行(1行)して String にキャスト
+     */
+    public String evalString(String script) {
+        return (String)eval(script) ;
+    }
+
+    /**
+     * script 実行(複数行)して String にキャスト
+     */
+    public String evalString(String script0, String script1,
+                             String... scriptList) {
+        return (String)eval(script0, script1, scriptList) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 変数設定(トップレベル)
      */
     public Object setVariable(String varName, Object value) {
         return container.put(varName, value) ;
     }
 
-    //------------------------------------------------------------
     /**
      * 変数設定(オブジェクト内)
      */
@@ -94,12 +156,71 @@ public class ItkRuby {
         return container.get(varName) ;
     }
 
-    //------------------------------------------------------------
     /**
      * 変数値取得(オブジェクト内)
      */
     public Object getVariable(Object object, String varName) {
         return container.get(object, varName) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 変数値取得(トップレベル)してBooleanにキャスト
+     */
+    public Boolean getVariableBoolean(String varName){
+        return (Boolean)getVariable(varName) ;
+    }
+
+    /**
+     * 変数値取得(オブジェクト内)してBooleanにキャスト
+     */
+    public Boolean getVariableBoolean(Object object, String varName) {
+        return (Boolean)getVariable(object, varName) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 変数値取得(トップレベル)してIntegerにキャスト
+     */
+    public Integer getVariableInteger(String varName){
+        return (Integer)getVariable(varName) ;
+    }
+
+    /**
+     * 変数値取得(オブジェクト内)してIntegerにキャスト
+     */
+    public Integer getVariableInteger(Object object, String varName) {
+        return (Integer)getVariable(object, varName) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 変数値取得(トップレベル)してDoubleにキャスト
+     */
+    public Double getVariableDouble(String varName){
+        return (Double)getVariable(varName) ;
+    }
+
+    /**
+     * 変数値取得(オブジェクト内)してDoubleにキャスト
+     */
+    public Double getVariableDouble(Object object, String varName) {
+        return (Double)getVariable(object, varName) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 変数値取得(トップレベル)してStringにキャスト
+     */
+    public String getVariableString(String varName){
+        return (String)getVariable(varName) ;
+    }
+
+    /**
+     * 変数値取得(オブジェクト内)してStringにキャスト
+     */
+    public String getVariableString(Object object, String varName) {
+        return (String)getVariable(object, varName) ;
     }
 
     //------------------------------------------------------------
@@ -110,13 +231,76 @@ public class ItkRuby {
         return container.callMethod(null, methodName, args) ;
     }
 
-    //------------------------------------------------------------
     /**
      * メソッド呼び出し(オブジェクト内)
      */
     public Object callMethod(Object object, String methodName,
                              Object... args) {
         return container.callMethod(object, methodName, args) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * メソッド呼び出し(トップレベル)してBooleanにキャスト
+     */
+    public Boolean callTopMethodBoolean(String methodName, Object... args) {
+        return (Boolean)callTopMethod(methodName, args) ;
+    }
+
+    /**
+     * メソッド呼び出し(オブジェクト内)してBooleanにキャスト
+     */
+    public Boolean callMethodBoolean(Object object, String methodName,
+                                     Object... args) {
+        return (Boolean)callMethod(object, methodName, args) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * メソッド呼び出し(トップレベル)してIntegerにキャスト
+     */
+    public Integer callTopMethodInteger(String methodName, Object... args) {
+        return (Integer)callTopMethod(methodName, args) ;
+    }
+
+    /**
+     * メソッド呼び出し(オブジェクト内)してIntegerにキャスト
+     */
+    public Integer callMethodInteger(Object object, String methodName,
+                                     Object... args) {
+        return (Integer)callMethod(object, methodName, args) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * メソッド呼び出し(トップレベル)してDoubleにキャスト
+     */
+    public Double callTopMethodDouble(String methodName, Object... args) {
+        return (Double)callTopMethod(methodName, args) ;
+    }
+
+    /**
+     * メソッド呼び出し(オブジェクト内)してDoubleにキャスト
+     */
+    public Double callMethodDouble(Object object, String methodName,
+                                   Object... args) {
+        return (Double)callMethod(object, methodName, args) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * メソッド呼び出し(トップレベル)してStringにキャスト
+     */
+    public String callTopMethodString(String methodName, Object... args) {
+        return (String)callTopMethod(methodName, args) ;
+    }
+
+    /**
+     * メソッド呼び出し(オブジェクト内)してStringにキャスト
+     */
+    public String callMethodString(Object object, String methodName,
+                                   Object... args) {
+        return (String)callMethod(object, methodName, args) ;
     }
 
     //------------------------------------------------------------
@@ -225,8 +409,6 @@ public class ItkRuby {
         return rubyEngine.evalScriptlet(script) ;
     }
 
-    //============================================================
-    //------------------------------------------------------------
     /**
      * rubyEngine 上で直接実行。(複数行)
      */
@@ -237,6 +419,74 @@ public class ItkRuby {
             script = script + "\n" + scriptN ;
         }
         return evalOnEngine(script) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * rubyEngine 上で直接実行(一行)してBooleanにキャスト。
+     */
+    public static Boolean evalBooleanOnEngine(String script) {
+        return (Boolean)evalOnEngine(script) ;
+    }
+
+    /**
+     * rubyEngine 上で直接実行(複数行)してBooleanにキャスト。
+     */
+    public static Boolean evalBooleanOnEngine(String script0, String script1,
+                                              String... scriptList) {
+        return (Boolean)evalOnEngine(script0, script1, scriptList) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * rubyEngine 上で直接実行(一行)してIntegerにキャスト。
+     */
+    public static Integer evalIntegerOnEngine(String script) {
+        return (Integer)evalOnEngine(script) ;
+    }
+
+    /**
+     * rubyEngine 上で直接実行(複数行)してIntegerにキャスト。
+     */
+    public static Integer evalIntegerOnEngine(String script0, String script1,
+                                              String... scriptList) {
+        return (Integer)evalOnEngine(script0, script1, scriptList) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * rubyEngine 上で直接実行(一行)してDoubleにキャスト。
+     */
+    public static Double evalDoubleOnEngine(String script) {
+        return (Double)evalOnEngine(script) ;
+    }
+
+    /**
+     * rubyEngine 上で直接実行(複数行)してDoubleにキャスト。
+     */
+    public static Double evalDoubleOnEngine(String script0, String script1,
+                                              String... scriptList) {
+        return (Double)evalOnEngine(script0, script1, scriptList) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * rubyEngine 上で直接実行(一行)してStringにキャスト。
+     */
+    public static String evalStringOnEngine(String script) {
+        return (String)evalOnEngine(script) ;
+    }
+
+    /**
+     * rubyEngine 上で直接実行(複数行)してStringにキャスト。
+     */
+    public static String evalStringOnEngine(String script0, String script1,
+                                              String... scriptList) {
+        return (String)evalOnEngine(script0, script1, scriptList) ;
     }
 
     //============================================================
