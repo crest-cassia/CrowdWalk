@@ -63,6 +63,46 @@ class RubyAgentBase
 
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## Java から Ruby を呼び出すTriggerでのFilter。
+  ## この配列に Java のメソッド名（キーワード）が入っていると、
+  ## Ruby 側が呼び出される。入っていないと、無視される。
+  ## RubyAgentBase を継承するクラスは、このFilterを持つことが望ましい。
+  ## このFilterは、クラスをさかのぼってチェックされる。
+  TriggerFilter = [
+#                   "preUpdate",
+#                   "update",
+#                   "calcWayCostTo",
+                  ] ;
+
+  #--============================================================
+  #--------------------------------------------------------------
+  #++
+  ## RubyAgentBase を継承するクラスにおいて、TriggerFilter に methodName 
+  ## 含まれているかをチェックする。
+  ## このクラスメソッドが true を返すもののみ、
+  ## java から ruby のメソッドが呼ばれる。
+  ## java と ruby の行き来のオーバーヘッドを軽くするための措置。
+  def self.checkTriggerFilter(methodName)
+    # TriggerFilter が定義されていて、methodName を含めば、true を返す
+    if(self.const_defined?(:TriggerFilter)) then
+      if(self::TriggerFilter.include?(methodName)) then
+        return true ;
+      end
+    end
+    # RubyAgentBase までさかのぼっていれば、探索撃ち切って false を返す。
+    if(self == RubyAgentBase) then
+      return false ;
+    end
+    # それ以外は、親クラスを探しに行く。
+    return self.superclass().checkTriggerFilter(methodName) ;
+  end
+
+
+
+
+  #--============================================================
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #--------------------------------------------------------------
 

@@ -15,6 +15,8 @@ package nodagumi.ananPJ.Agents;
 
 import java.util.Random;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap;
@@ -58,12 +60,6 @@ public class RubyAgent extends RationalAgent {
     public static String typeString = "RubyAgent" ;
     public static String getTypeName() { return typeString ;}
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * Ruby 実行系のリンク
-     */
-    private ItkRuby rubyEngine = null ;
-
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -71,6 +67,30 @@ public class RubyAgent extends RationalAgent {
      * Ruby の中でのクラス名。
      */
     static final public String FallBack_RubyAgentClass = "RubyAgentBase" ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 各メソッドに於いてルビー側のメソッドを呼び出すかどうかの
+     * チェックを行うフィルタのテーブル。
+     * ルビー側のクラスごとに定義する。
+     */
+    static protected HashMap<String, HashMap<String, Boolean>> triggerFilterTable
+        = new HashMap<String, HashMap<String, Boolean>>() ;
+
+    /**
+     * triggerFilter でチェックするメソッド名リスト。
+     */
+    static protected ArrayList<String> triggeredMethodList
+        = new ArrayList<String>(Arrays.asList("preUpdate",
+                                              "update",
+                                              "calcWayCostTo")) ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Ruby 実行系のリンク
+     */
+    private ItkRuby rubyEngine = null ;
 
     /**
      * 実際のエージェントクラスの名前。
@@ -83,6 +103,11 @@ public class RubyAgent extends RationalAgent {
      * Ruby エージェントへのリンク
      */
     private Object rubyAgent = null ;
+
+    /**
+     * ruby 側呼び出しのための triggerFilter。
+     */
+    private HashMap<String, Boolean> triggerFilter = null ;
 
     //------------------------------------------------------------
     // コンストラクタ
@@ -118,7 +143,47 @@ public class RubyAgent extends RationalAgent {
 
         rubyAgentClass = getStringFromConfig("rubyAgentClass", rubyAgentClass) ;
         rubyAgent = rubyEngine.newInstanceOfClass(rubyAgentClass, this) ;
+        setupTriggerFilter(rubyAgentClass) ;
     } ;
+
+    //------------------------------------------------------------
+    /**
+     * 指定した ruby の AgentClass のtriggerFilter を取得。
+     * もし新しいものであれば、新たに作る。
+     * @param rubyClassName : ruby での AgentClass 名
+     * @return 対応する triggerFilter
+     */
+    protected void setupTriggerFilter(String rubyClassName) {
+        if(!triggerFilterTable.containsKey(rubyClassName)) {
+            triggerFilterTable.put(rubyClassName,
+                                   prepareTriggerFilterFor(rubyClassName)) ;
+        }
+        triggerFilter = triggerFilterTable.get(rubyClassName) ;
+    }
+
+    /**
+     * 指定した ruby の AgentClass のtriggerFilter を作成。
+     * @param rubyClassName : ruby での AgentClass 名
+     * @return 対応する triggerFilter
+     */
+    private HashMap<String, Boolean> prepareTriggerFilterFor(String rubyClassName){
+        HashMap<String, Boolean> filter = new HashMap<String, Boolean>() ;
+        for(String methodName : triggeredMethodList) {
+            String script = String.format("%s.checkTriggerFilter('%s')",
+                                          rubyClassName, methodName) ;
+            filter.put(methodName, rubyEngine.evalBoolean(script)) ;
+        }
+        return filter ;
+    }
+
+    /**
+     * トリガされているかのチェック。
+     * @param rubyClassName : ruby での AgentClass 名
+     * @return trigger されていれば true
+     */
+    protected boolean isTriggered(String methodName) {
+        return triggerFilter.get(methodName) ;
+    }
 
     //------------------------------------------------------------
     /**
@@ -126,7 +191,11 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public void preUpdate(double time) {
-        rubyEngine.callMethod(rubyAgent, "preUpdate", time) ;
+        if(isTriggered("preUpdate")) {
+            rubyEngine.callMethod(rubyAgent, "preUpdate", time) ;
+        } else {
+            super.preUpdate(time) ;
+        }
     }
 
     /**
@@ -143,7 +212,11 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public boolean update(double time) {
-        return rubyEngine.callMethodBoolean(rubyAgent, "update", time) ;
+        if(isTriggered("update")){
+            return rubyEngine.callMethodBoolean(rubyAgent, "update", time) ;
+        } else {
+            return super.update(time) ;
+        }
     }
 
     /**
@@ -161,8 +234,12 @@ public class RubyAgent extends RationalAgent {
     @Override
     public double calcWayCostTo(MapLink _way, MapNode _node, Term _target)
         throws TargetNotFoundException {
-        return rubyEngine.callMethodDouble(rubyAgent, "calcWayCostTo",
-                                           _way, _node, _target) ;
+        if(isTriggered("calcWayCostTo")) {
+            return rubyEngine.callMethodDouble(rubyAgent, "calcWayCostTo",
+                                               _way, _node, _target) ;
+        } else {
+            return super.calcWayCostTo(_way, _node, _target) ;
+        }
     }
 
     /**
