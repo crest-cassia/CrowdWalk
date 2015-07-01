@@ -329,6 +329,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     //------------------------------------------------------------
     /**
      * 推論(listenAlert)。
+     * {@code message} という alert を聴いたかどうかのチェック。
      * <pre>
      * { "" : "listenAlert",
      *   "message" : _alertMessage_ }
@@ -351,6 +352,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     //------------------------------------------------------------
     /**
      * 推論(saveAlert)。
+     * 現時刻に、ある {@code message} を聴いたことにする。
      * <pre>
      * { "" : "saveAlert",
      *   "message" : _alertMessage_,
@@ -403,6 +405,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     //------------------------------------------------------------
     /**
      * 推論(clearAlert)。
+     * 現在Agent自身が保持している {@code message} を消去する。
      * <pre>
      * { "" : "clearAlert",
      *   "message" : _alertMessage_ }
@@ -418,6 +421,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     //------------------------------------------------------------
     /**
      * 推論(clearAllAlert)。
+     * 現在Agent自身が保持している全メッセージを消去する。
      * <pre>
      * { "" : "clearAllAlert" }
      * </pre>
@@ -430,6 +434,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     //------------------------------------------------------------
     /**
      * 推論(changeGoal)。
+     * 最終ゴールを変更。
      * <pre>
      * { "" : "changeGoal",
      *   "goal" : _goalTag_ }
@@ -445,6 +450,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     //------------------------------------------------------------
     /**
      * 推論(clear PlannedRoute)。
+     * 現在のルートを全てクリア。
      * <pre>
      * { "" : "clearPlannedRoute" }
      * </pre>
@@ -458,6 +464,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     //------------------------------------------------------------
     /**
      * 推論(insert route)。
+     * これからのルートの先頭にサブゴールを追加。
      * <pre>
      * { "" : "insertRoute",
      *   "route" : _route_ }

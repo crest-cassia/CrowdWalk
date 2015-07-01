@@ -451,12 +451,12 @@ public class Term {
      * <pre>
      * { "a" : { "x" : 1, "y" : 2 },
      *   "b" : { "u" : 3, "v" : 4 },
-     *   "_fallback_" : { "a" : { "y" : 5, "z" : 6 }, 
-     *                    "b" : { "u" : 7, "w" : 8 }}}
+     *   "_fallback" : { "a" : { "y" : 5, "z" : 6 }, 
+     *                   "b" : { "u" : 7, "w" : 8 }}}
      * </pre>
      * から以下を構築する。
      * <pre>
-     * { "x" : 1, "y" : 2, "_fallback_" : { "y" : 5, "z" : 6 } }
+     * { "x" : 1, "y" : 2, "_fallback" : { "y" : 5, "z" : 6 } }
      * </pre>
      * @param slot : filter するスロット
      * @param fallbackSlot : fallback で潜っていくスロット
@@ -840,6 +840,28 @@ public class Term {
         if(deepP){ value = letTermedValue(value, deepP) ; }
 
         array.set(index, value) ;
+
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * array arg 追加
+     */
+    public Term addNth(Object value){
+        return addNth(value, true) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * array arg 追加
+     */
+    public Term addNth(Object value, boolean deepP) {
+        if(isNullArray()) allocArray() ;
+
+        if(deepP){ value = letTermedValue(value, deepP) ; }
+
+        array.add(value) ;
 
         return this ;
     }

@@ -26,6 +26,8 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.AgentFactory;
 
+import nodagumi.ananPJ.Agents.Think.ThinkFormula;
+
 import nodagumi.Itk.*;
 
 //======================================================================
@@ -84,7 +86,8 @@ public class RubyAgent extends RationalAgent {
     static protected ArrayList<String> triggeredMethodList
         = new ArrayList<String>(Arrays.asList("preUpdate",
                                               "update",
-                                              "calcWayCostTo")) ;
+                                              "calcWayCostTo",
+                                              "thinkCycle")) ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -142,7 +145,8 @@ public class RubyAgent extends RationalAgent {
         super.initByConf(conf, fallback) ;
 
         rubyAgentClass = getStringFromConfig("rubyAgentClass", rubyAgentClass) ;
-        rubyAgent = rubyEngine.newInstanceOfClass(rubyAgentClass, this) ;
+        rubyAgent = rubyEngine.newInstanceOfClass(rubyAgentClass, this,
+                                                  conf, fallback) ;
         setupTriggerFilter(rubyAgentClass) ;
     } ;
 
@@ -186,11 +190,24 @@ public class RubyAgent extends RationalAgent {
     }
 
     //------------------------------------------------------------
+    // アクセス関係
+    //------------------------------------------------------------
+    /**
+     * エージェントのIDを返す。 Ruby からの呼び出し用。
+     */
+    public String getID() {
+        return ID ;
+    }
+
+    //------------------------------------------------------------
+    // トリガされている wrapper
+    //------------------------------------------------------------
     /**
      * シミュレーション各サイクルの前半に呼ばれる。
      */
     @Override
     public void preUpdate(double time) {
+        currentTime = time ;
         if(isTriggered("preUpdate")) {
             rubyEngine.callMethod(rubyAgent, "preUpdate", time) ;
         } else {
@@ -252,10 +269,24 @@ public class RubyAgent extends RationalAgent {
 
     //------------------------------------------------------------
     /**
-     * エージェントのIDを返す。 Ruby からの呼び出し用。
+     * 思考ルーチン
+     * 状態が変わる毎に呼ばれるべき。
      */
-    public String getID() {
-        return ID ;
+    @Override
+    public Term thinkCycle() {
+        if(isTriggered("thinkCycle")) {
+            rubyEngine.callMethod(rubyAgent, "thinkCycle") ;
+            return ThinkFormula.Term_Null ;
+        } else {
+            return super.thinkCycle() ;
+        }
+    }
+
+    /**
+     * 思考ルーチン
+     */
+    public Term super_thinkCycle() {
+        return super.thinkCycle() ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

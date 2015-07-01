@@ -14,24 +14,282 @@
 #++
 ## CrowdWalk の RubyAgent に対応する Ruby 側の AgentBase
 class RubyAgentBase
+  #--============================================================
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## Java から Ruby を呼び出すTriggerでのFilter。
+  ## この配列に Java のメソッド名（キーワード）が入っていると、
+  ## Ruby 側が呼び出される。入っていないと、無視される。
+  ## RubyAgentBase を継承するクラスは、このFilterを持つことが望ましい。
+  ## このFilterは、クラスをさかのぼってチェックされる。
+  TriggerFilter = [
+#                   "preUpdate",
+#                   "update",
+#                   "calcWayCostTo",
+#                   "thinkCycle",
+                  ] ;
+
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## Java 側の Agent オブジェクト
   attr_accessor :javaAgent ;
 
+  ## config 情報。generation ファイルでの設定がそのまま渡る。
+  attr_accessor :config ;
+
+  ## fallback 情報。
+  attr_accessor :config ;
+
   #--------------------------------------------------------------
   #++
   ## 初期化
   ## _agent_:: Java の RubyAgent のインスタンス。
-  def initialize(agent)
+  ## _initOption_:: 初期化のためのオプション引数。
+  ##                generation file で指定できる。指定しなければ nil。
+  def initialize(agent, config, fallback)
     @javaAgent = agent ;
+    @config = config ;
+    @fallback = fallback ;
   end
 
+  #--------------------------------------------------------------
+  # 変数アクセス関係
   #--------------------------------------------------------------
   #++
   ## エージェント id
   def getAgentId()
     return @javaAgent.getID() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在時刻
+  def getCurrentTime()
+    return @javaAgent.currentTime ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在地のリンク
+  def getCurrentLink()
+    return @javaAgent.getCurrentLink()
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在地のリンク ID
+  def getCurrentLinkId()
+    return getCurrentLink().ID ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 速度
+  def getCurrentSpeed()
+    return @javaAgent.getSpeed() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 自由速度
+  def getEmptySpeed()
+    return @javaAgent.getEmptySpeed() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 自由速度を設定
+  ## _speed_ :: 新しい自由速度。double に変換可能であること。
+  def setEmptySpeed(speed)
+    return @javaAgent.setEmptySpeed(speed.to_f) ;
+  end
+
+  #--------------------------------------------------------------
+  # 目的地および経路関係
+  #--------------------------------------------------------------
+  #++
+  ## 目的地
+  def getGoal()
+    return ItkTerm.toRuby(@javaAgent.getGoal()) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 目的地設定
+  ## _goalTag_ :: 新しいゴールのタグ（String）
+  def setGoal(goalTag)
+    @javaAgent.changeGoal(ItkTerm.ensureTerm(goalTag)) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## ルート取得
+  ## _future_ :: 今後のルートのみの場合。
+  def getRoute(future = true)
+    routePlan = @javaAgent.routePlan ;
+    baseRoute = routePlan.getRoute() ;
+    beginIndex = (fugure ? routePlan.getIndex() : 0) ;
+    endIndex = baseRoute.size() ;
+
+    route = [] ;
+    (beginIndex ... endIndex).each{|index|
+      route.push(ItkTerm.toRuby(baseRoute[index])) ;
+    }
+    return route ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## ルートへの挿入。
+  ## _newRoute_ :: 挿入する今後のルート。中継点のタグもしくはタグリスト。
+  ## _clearP_ :: 挿入前にクリアするかどうか。
+  ##             true なら、setRoute のような動き。
+  def insertRoute(newRoute, clearP = false)
+    @javaAgent.clearPlannedRoute() if(clearP) ;
+
+    if(newRoute.is_a?(Array)) then
+      newRoute.each{|subgoal|
+        insertRoute(subgoal, false) ;
+      }
+    else
+      @javaAgent.insertRouteTagSafely(ItkTerm.ensureTerm(newRoute)) ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## ルートのクリア
+  def clearRoute()
+    insertRoute([], true) ;
+  end
+
+  #--------------------------------------------------------------
+  # タグ関係
+  #--------------------------------------------------------------
+  #++
+  ## エージェントのタグリスト
+  def getAgentTags()
+    return @javaAgent.getTags() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## エージェントのタグを持つかどうか
+  def hasAgentTag(tag)
+    return @javaAgent.hasTag(tag) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## エージェントのタグを追加
+  def addAgentTag(tag)
+    return @javaAgent.addTag(tag) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## エージェントのタグを削除
+  def removeAgentTag(tag)
+    return @javaAgent.removeTag(tag) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在地のリンクのタグリスト
+  def getPlaceTags()
+    return getCurrentLink().getTags() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在地のリンクのタグをチェック
+  def hasPlaceTag(tag)
+    return getCurrentLink().hasTag(tag) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在地のリンクにタグを追加
+  def addPlaceTag(tag)
+    return getCurrentLink().addTag(tag) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## アラートテーブル
+  def getAlertTable()
+    return @javaAgent.alertedMessageTable ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## アラートを聴いた時刻。
+  ## 聴いていなければ、nilが返る。
+  def listenAlert(message)
+    return getAlertTable().get(ItkTerm.ensureTerm(message)) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## アラートを記憶。
+  def saveAlert(message, redundant = false)
+    messageTerm = ItkTerm.ensureTerm(message);
+    pastTime = getAlertTable().get(messageTerm) ;
+
+    if(redundant || pastTime.nil?) then
+      getAlertTable().put(messageTerm, getCurrentTime()) ;
+      return true ;
+    else
+      return false ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## アラートを現在地にアナウンス。
+  def announceAlert(message)
+    messageTerm = ItkTerm.ensureTerm(message);
+    getCurrentLink.addAlertMessage(messageTerm, getCurrentTime(), true) ;
+    return true ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在Agent自身が保持している message を消去する。
+  def clearAlert(message)
+    getAlertTable().remove(message) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 現在Agent自身が保持している全 message を消去する。
+  def clearAllAlert()
+    getAlertTable().clear() ;
+  end
+
+  #--------------------------------------------------------------
+  # トリガされたメソッド
+  #--============================================================
+  #--------------------------------------------------------------
+  #++
+  ## RubyAgentBase を継承するクラスにおいて、TriggerFilter に methodName 
+  ## 含まれているかをチェックする。
+  ## このクラスメソッドが true を返すもののみ、
+  ## java から ruby のメソッドが呼ばれる。
+  ## java と ruby の行き来のオーバーヘッドを軽くするための措置。
+  def self.checkTriggerFilter(methodName)
+    # TriggerFilter が定義されていて、methodName を含めば、true を返す
+    if(self.const_defined?(:TriggerFilter)) then
+      if(self::TriggerFilter.include?(methodName)) then
+        return true ;
+      end
+    end
+    # RubyAgentBase までさかのぼっていれば、探索撃ち切って false を返す。
+    if(self == RubyAgentBase) then
+      return false ;
+    end
+    # それ以外は、親クラスを探しに行く。
+    return self.superclass().checkTriggerFilter(methodName) ;
   end
 
   #--------------------------------------------------------------
@@ -61,45 +319,12 @@ class RubyAgentBase
     return @javaAgent.super_calcWayCostTo(way, node, target);
   end
 
-  #--============================================================
-  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  #++
-  ## Java から Ruby を呼び出すTriggerでのFilter。
-  ## この配列に Java のメソッド名（キーワード）が入っていると、
-  ## Ruby 側が呼び出される。入っていないと、無視される。
-  ## RubyAgentBase を継承するクラスは、このFilterを持つことが望ましい。
-  ## このFilterは、クラスをさかのぼってチェックされる。
-  TriggerFilter = [
-#                   "preUpdate",
-#                   "update",
-#                   "calcWayCostTo",
-                  ] ;
-
-  #--============================================================
   #--------------------------------------------------------------
   #++
-  ## RubyAgentBase を継承するクラスにおいて、TriggerFilter に methodName 
-  ## 含まれているかをチェックする。
-  ## このクラスメソッドが true を返すもののみ、
-  ## java から ruby のメソッドが呼ばれる。
-  ## java と ruby の行き来のオーバーヘッドを軽くするための措置。
-  def self.checkTriggerFilter(methodName)
-    # TriggerFilter が定義されていて、methodName を含めば、true を返す
-    if(self.const_defined?(:TriggerFilter)) then
-      if(self::TriggerFilter.include?(methodName)) then
-        return true ;
-      end
-    end
-    # RubyAgentBase までさかのぼっていれば、探索撃ち切って false を返す。
-    if(self == RubyAgentBase) then
-      return false ;
-    end
-    # それ以外は、親クラスを探しに行く。
-    return self.superclass().checkTriggerFilter(methodName) ;
+  ## 思考ルーチン
+  def thinkCycle()
+    return @javaAgent.super_thinkCycle() ;
   end
-
-
-
 
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

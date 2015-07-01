@@ -293,11 +293,20 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
+     * 全経路をリセット
+     */
+    public void clearPlannedRoute() {
+        setPlannedRoute(new ArrayList<Term>(), true) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 全経路をセット
      */
     public void setPlannedRoute(List<Term> _planned_route) {
         setPlannedRoute(_planned_route, false) ;
     }
+
     //------------------------------------------------------------
     /**
      * 全経路をセット
