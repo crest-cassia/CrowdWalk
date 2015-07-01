@@ -1,13 +1,14 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Simulator.Obstructer;
 
+import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SpecialTerm;
 
+import nodagumi.Itk.*;
+
 /**
  * ガスによるエージェントへの影響.
- *
- * TODO: ファイルからパラメータを読み込む機能
  */
 public class Pollution extends ObstructerBase {
     // 参考データ: 三井化学アグロ株式会社 / クロルピクリンの物性・分解性 / 気中濃度と人体への影響
@@ -56,11 +57,39 @@ public class Pollution extends ObstructerBase {
      */
     private double accumulatedExposureAmount = 0.0;
 
+    /**
+     * Pollution 用の fallback パラメータ
+     */
+    private static Term config = null;
+
+    /**
+     * fallback パラメータからの値の取得(double)
+     */
+    public static double getConfigParameter(String slot, double fallback) {
+        return config.fetchArgDouble(slot, NetworkMap.FallbackSlot, fallback);
+    }
+
     //--------------------------------------------------
     /**
      * コンストラクタ
      */
     public Pollution() {}
+
+    /**
+     * 初期化.
+     */
+    public void init(AgentBase agent) {
+        this.agent = agent;
+        if (config == null) {
+            config = fallbackParameters.fetchArgTerm(getClass().getSimpleName(), NetworkMap.FallbackSlot,
+                    Term.newArrayTerm());
+        }
+        deadlyLevel = getConfigParameter("deadlyLevel", deadlyLevel);
+        unbearableLevel = getConfigParameter("unbearableLevel", unbearableLevel);
+        incapacitatedLevel = getConfigParameter("incapacitatedLevel", incapacitatedLevel);
+        irritantLevel = getConfigParameter("irritantLevel", irritantLevel);
+        nonAmbulatoryLevel = getConfigParameter("nonAmbulatoryLevel", nonAmbulatoryLevel);
+    }
 
     /**
      * エージェントを暴露させる

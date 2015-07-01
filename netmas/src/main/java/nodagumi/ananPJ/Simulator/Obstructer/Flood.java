@@ -1,12 +1,13 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Simulator.Obstructer;
 
+import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
+
+import nodagumi.Itk.*;
 
 /**
  * 洪水によるエージェントへの影響.
- *
- * TODO: ファイルからパラメータを読み込む機能
  */
 public class Flood extends ObstructerBase {
     // 引用元: 千葉県ホームページ / 浸水深のランク分け
@@ -44,11 +45,38 @@ public class Flood extends ObstructerBase {
      */
     private double currentDepth = 0.0;
 
+    /**
+     * Flood 用の fallback パラメータ
+     */
+    private static Term config = null;
+
+    /**
+     * fallback パラメータからの値の取得(double)
+     */
+    public static double getConfigParameter(String slot, double fallback) {
+        return config.fetchArgDouble(slot, NetworkMap.FallbackSlot, fallback);
+    }
+
     //--------------------------------------------------
     /**
      * コンストラクタ
      */
     public Flood() {}
+
+    /**
+     * 初期化.
+     */
+    public void init(AgentBase agent) {
+        this.agent = agent;
+        if (config == null) {
+            config = fallbackParameters.fetchArgTerm(getClass().getSimpleName(), NetworkMap.FallbackSlot,
+                    Term.newArrayTerm());
+        }
+        waterDepthThreshold3 = getConfigParameter("waterDepthThreshold3", waterDepthThreshold3);
+        waterDepthThreshold2 = getConfigParameter("waterDepthThreshold2", waterDepthThreshold2);
+        waterDepthThreshold1 = getConfigParameter("waterDepthThreshold1", waterDepthThreshold1);
+        nonAmbulatoryDepth = getConfigParameter("nonAmbulatoryDepth", nonAmbulatoryDepth);
+    }
 
     /**
      * エージェントを冠水させる

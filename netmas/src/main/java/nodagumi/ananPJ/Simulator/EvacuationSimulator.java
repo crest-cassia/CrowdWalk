@@ -29,6 +29,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.*;
 
@@ -744,6 +745,7 @@ public class EvacuationSimulator {
     public void setup() {
         MapLink.setupCommonParameters(networkMap.fallbackParameters) ;
         MapNode.setupCommonParameters(networkMap.fallbackParameters) ;
+        ObstructerBase.setupCommonParameters(networkMap.fallbackParameters) ;
         resetValues();
     }
 
