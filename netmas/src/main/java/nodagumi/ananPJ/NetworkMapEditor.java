@@ -643,7 +643,7 @@ public class NetworkMapEditor extends SimulationLauncher
     public boolean buildModel() {
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                simulator.begin(true) ;
+                simulator.begin() ;
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         // ここでダイアログを閉じる

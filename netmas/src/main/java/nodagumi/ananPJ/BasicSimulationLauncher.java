@@ -10,6 +10,7 @@ import java.util.Random;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.misc.NetmasTimer;
@@ -470,19 +471,29 @@ public abstract class BasicSimulationLauncher {
         }
     }
 
+
+    //------------------------------------------------------------
+    /**
+     * ディスプレーを持つかどうか。
+     * これは、SimulationController interface を継承しているかどうかで判断。
+     */
+    public boolean hasDisplay() {
+        return (this instanceof SimulationController) ;
+    }
+
     //------------------------------------------------------------
     /**
      * シミュレーションの初期化。
      */
-    protected void initializeSimulatorEntity(boolean hasDisplay) {
+    protected void initializeSimulatorEntity() {
         simulator = new EvacuationSimulator(networkMap, this, random) ;
 
         simulator.setProperties(properties);
         simulator.setup();
 
         // model.begin set files (pol, gen, sce) to networkMap
-        simulator.begin(hasDisplay) ;
-        if(hasDisplay) simulator.buildDisplay();
+        simulator.begin() ;
+        if(hasDisplay()) simulator.buildDisplay();
 
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 

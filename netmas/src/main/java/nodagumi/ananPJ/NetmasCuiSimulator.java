@@ -44,7 +44,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     }
 
     public void initialize() {
-        initializeSimulatorEntity(false) ;
+        initializeSimulatorEntity() ;
     }
 
     public void start() {

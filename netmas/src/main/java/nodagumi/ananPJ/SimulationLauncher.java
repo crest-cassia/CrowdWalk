@@ -49,7 +49,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
         }
 
         // シミュレータの実体の初期化
-        initializeSimulatorEntity(true) ;
+        initializeSimulatorEntity() ;
 
         // メインループの Runnable 作成。
         simulationRunnable = new Runnable() {

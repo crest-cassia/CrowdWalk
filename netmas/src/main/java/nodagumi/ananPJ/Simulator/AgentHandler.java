@@ -448,11 +448,6 @@ public class AgentHandler {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 画面を持つかどうか
-     */
-    boolean has_display;
-
-    /**
      * 画面パーツ類。
      */
     private transient JButton start_button = null;
@@ -484,12 +479,10 @@ public class AgentHandler {
                          String scenarioFile,
                          NetworkMap map,
                          EvacuationSimulator _simulator,
-                         boolean _has_display,
                          double linerGenerateAgentRatio,
                          Term fallbackParameters,
                          Random _random) {
         simulator = _simulator;
-        has_display = _has_display;
         random = _random;
         networkMap = map ;
 
@@ -505,7 +498,7 @@ public class AgentHandler {
              generate_agent = new AgentGenerationFile(generationFile,
                                                       networkMap,
                                                       fallbackParameters,
-                                                      has_display,
+                                                      hasDisplay(),
                                                       linerGenerateAgentRatio,
                                                       random);
         } catch(Exception ex) {
@@ -521,7 +514,7 @@ public class AgentHandler {
         }
         parseScenarioFile(scenarioFile);
 
-        if (has_display) {
+        if (hasDisplay()) {
             setup_control_panel(generationFile,
                     scenarioFile,
                     map);
@@ -713,7 +706,7 @@ public class AgentHandler {
      * エージェント位置がアップデートされたことを nofity
      */
     private void notifyMovedAgents() {
-        if(!has_display) return ;
+        if(!hasDisplay()) return ;
 
         // 位置が変化したエージェントを通知する
         for (AgentBase agent : getWalkingAgentCollection()) {
@@ -761,7 +754,7 @@ public class AgentHandler {
         int count = 0;
         double speedTotal = 0.0;
 
-        if (has_display) {
+        if (hasDisplay()) {
             String time_string = String.format("Elapsed: %5.2fsec",
                     time);
             time_label.setText(time_string);
@@ -806,7 +799,7 @@ public class AgentHandler {
             }
             logIndividualPedestrians(time, agent);
         }
-        if (has_display) {
+        if (hasDisplay()) {
             updateEvacuatedCount();
         }
         // tkokada
@@ -931,7 +924,15 @@ public class AgentHandler {
     }
 
     //------------------------------------------------------------
-    // アクセス関連
+    // アクセス関連 access
+    //------------------------------------------------------------
+    /**
+     * 画面を持つかどうか
+     */
+    public boolean hasDisplay() {
+        return simulator.hasDisplay() ;
+    }
+
     //------------------------------------------------------------
     /**
      * 乱数シード設定

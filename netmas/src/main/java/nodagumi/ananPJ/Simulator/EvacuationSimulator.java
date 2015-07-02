@@ -29,6 +29,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.*;
@@ -84,9 +85,9 @@ public class EvacuationSimulator {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * start/pause などを制御するもの。
+     * 親launcher
      */
-    protected SimulationController controller = null;
+    protected BasicSimulationLauncher launcher = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -211,9 +212,9 @@ public class EvacuationSimulator {
      * コンストラクタ
      */
     public EvacuationSimulator(NetworkMap _networkMap,
-                               BasicSimulationLauncher _controller,
+                               BasicSimulationLauncher _launcher,
                                Random _random) {
-        init(_networkMap, _controller, _random) ;
+        init(_networkMap, _launcher, _random) ;
     }
 
     //------------------------------------------------------------
@@ -315,14 +316,6 @@ public class EvacuationSimulator {
         return agentHandler.calcRelativeTime(absTime) ;
     }
     
-    //------------------------------------------------------------
-    /**
-     * コントローラ取得。
-     */
-    public SimulationController getController() {
-        return controller;
-    }
-
     //------------------------------------------------------------
     /**
      * Pollution ハンドラ取得。
@@ -427,20 +420,31 @@ public class EvacuationSimulator {
     }
 
     //------------------------------------------------------------
+    /**
+     * 画面を持つかどうかの判定
+     */
+    public boolean hasDisplay() {
+        return launcher.hasDisplay() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 画面制御用 interface
+     */
+    public SimulationController getController() {
+        return (SimulationController)launcher ;
+    }
+
+    //------------------------------------------------------------
     // シミュレーションの準備。
     //------------------------------------------------------------
     /**
      * 初期化
      */
     private void init(NetworkMap _networkMap,
-                      BasicSimulationLauncher _controller,
+                      BasicSimulationLauncher _launcher,
                       Random _random) {
-        // _controller が画面を持つ SimulationControllerなら、セット
-        if(_controller instanceof SimulationController) {
-            controller = (SimulationController)_controller ;
-        } else {
-            controller = null ;
-        }
+        launcher = _launcher ;
 
         networkMap = _networkMap ;
         networkMap.checkConsistency() ;
@@ -454,10 +458,10 @@ public class EvacuationSimulator {
     /**
      * シミュレーションの準備。（メイン）
      */
-    public void begin(boolean has_display) {
+    public void begin() {
         buildMap() ;
         buildPollution() ;
-        buildAgentHandler(has_display);
+        buildAgentHandler() ;
         buildRoutes ();
         buildRubyEngine() ;
 
@@ -512,12 +516,11 @@ public class EvacuationSimulator {
     /**
      * エージェントハンドラの準備。
      */
-    void buildAgentHandler(boolean has_display) {
+    void buildAgentHandler() {
         agentHandler = new AgentHandler(networkMap.getGenerationFile(),
                                         networkMap.getScenarioFile(),
                                         networkMap,
                                         this,
-                                        has_display,
                                         linerGenerateAgentRatio,
                                         networkMap.fallbackParameters,
                                         random);
@@ -705,18 +708,18 @@ public class EvacuationSimulator {
      * 画面の準備。
      */
     public void buildDisplay() {
-        panel3d = controller.setupFrame(this);
+        panel3d = getController().setupFrame(this);
     }
 
     /**
      * 画面の準備。
      */
     public void buildDisplay(SimulationPanel3D _panel3d) {
-        if (controller != null) {
+        if (hasDisplay()) {
             if (_panel3d != null) {
-                panel3d = controller.setupFrame(this, _panel3d);
+                panel3d = getController().setupFrame(this, _panel3d);
             } else {
-                panel3d = controller.setupFrame(this, _panel3d);
+                panel3d = getController().setupFrame(this, _panel3d);
             }
         }
     }
@@ -761,8 +764,8 @@ public class EvacuationSimulator {
      * シミュレーション開始。
      */
     public void start() {
-        if (controller != null) {
-            controller.start();
+        if (hasDisplay()) {
+            getController().start();
             if (panel3d != null && isRunning()) {
                 panel3d.setMenuActionStartEnabled(false);
             }
@@ -774,8 +777,8 @@ public class EvacuationSimulator {
      * シミュレーション中断。
      */
     public void pause() {
-        if (controller != null) {
-            controller.pause();
+        if (hasDisplay()) {
+            getController().pause();
             if (panel3d != null && ! isRunning()) {
                 panel3d.setMenuActionStartEnabled(true);
             }
@@ -787,8 +790,8 @@ public class EvacuationSimulator {
      * シミュレーション1サイクル実行。
      */
     public void step() {
-        if (controller != null) {
-            controller.step();
+        if (hasDisplay()) {
+            getController().step();
         }
     }
 
@@ -798,8 +801,8 @@ public class EvacuationSimulator {
      */
     public boolean isRunning() {
         // tkokada
-        if (controller != null) {
-            return controller.isRunning();
+        if (hasDisplay()) {
+            return getController().isRunning();
         } else {
             return false;
         }
