@@ -284,48 +284,10 @@ public class PollutionCalculator {
                           Collection<AgentBase> agents) {
 
         if (nextInstantTime != -1.0 && nextInstantTime <= time) {
-            // System.out.println("  PC update next event: " + time);
             updatePollution();
-
-            // pollution対象リンクの汚染フラグを更新する(汚染度が0に戻ることも考慮する)
-	    for (MapLink link : map.getLinks()) {
-                if (link.getIntersectedMapAreas().isEmpty()) {
-                    continue;
-                }
-                link.setPolluted(false);
-                for (MapArea area : link.getIntersectedMapAreas()) {
-                    if (area.isPolluted()) {
-                        link.setPolluted(true);
-                        break;
-                    }
-                }
-            }
+            updateLinks(map) ;
         }
-
-        for (AgentBase agent : agents) {
-            if (agent.isEvacuated())
-                continue;
-            if (! agent.getCurrentLink().isPolluted()) {
-                agent.exposed(0.0);
-                continue;
-            }
-
-            Double pollutionLevel = null;
-            Vector3f point = new Vector3f((float)agent.getPos().getX(),
-                    (float)agent.getPos().getY(),
-                    (float)(agent.getHeight() + AGENT_HEIGHT));
-            for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
-                if (area.contains(point)) {
-                    pollutionLevel = area.getPollutionLevel().getCurrentLevel() ;
-                    agent.exposed(pollutionLevel * timeScale);
-                    Itk.logNone("polluted", agent.ID + " " + pollutionLevel) ;
-                    break;
-                }
-            }
-            if (pollutionLevel == null) {
-                agent.exposed(0.0);
-            }
-        }
+        updateAgents(agents) ;
     }
 
     //------------------------------------------------------------
@@ -352,6 +314,58 @@ public class PollutionCalculator {
         }
     }
     
+    //------------------------------------------------------------
+    /**
+     * Link の update。
+     * pollution対象リンクの汚染フラグを更新する(汚染度が0に戻ることも考慮する)
+     */
+    private void updateLinks(NetworkMapBase map) {
+        for (MapLink link : map.getLinks()) {
+            if (link.getIntersectedMapAreas().isEmpty()) {
+                continue;
+            }
+            link.setPolluted(false);
+            for (MapArea area : link.getIntersectedMapAreas()) {
+                if (area.isPolluted()) {
+                    link.setPolluted(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Agent の update。
+     */
+    private void updateAgents(Collection<AgentBase> agents) {
+        for (AgentBase agent : agents) {
+            if (agent.isEvacuated())
+                continue;
+            if (! agent.getCurrentLink().isPolluted()) {
+                agent.exposed(0.0);
+                continue;
+            }
+
+            Double pollutionLevel = null;
+            Vector3f point = new Vector3f((float)agent.getPos().getX(),
+                    (float)agent.getPos().getY(),
+                    (float)(agent.getHeight() + AGENT_HEIGHT));
+
+            for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
+                if (area.contains(point)) {
+                    pollutionLevel = area.getPollutionLevel().getCurrentLevel() ;
+                    agent.exposed(pollutionLevel * timeScale);
+                    Itk.logNone("polluted", agent.ID, pollutionLevel) ;
+                    break;
+                }
+            }
+            if (pollutionLevel == null) {
+                agent.exposed(0.0);
+            }
+        }
+    }
+
     //------------------------------------------------------------
     /**
      * pollution されたエリアを返す。
