@@ -123,6 +123,12 @@ public class EvacuationSimulator {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * シミュレーションのサイクル間のスリープ。
+     */
+    private int simulationDeferFactor = 0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * saveTimeSeriesLog() が呼ばれた回数
      */
     private int logging_count = 0;
@@ -399,10 +405,25 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
-     * 全エージェントが止まっているかどうか？
+     * Ruby 実行系。
      */
     public ItkRuby getRubyEngine() {
         return rubyEngine ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーションのサイクル間のスリープの取得。
+     */
+    public int getSimulationDeferFactor() {
+        return simulationDeferFactor ;
+    }
+
+    /**
+     * シミュレーションのサイクル間のスリープの設定。
+     */
+    public void setSimulationDeferFactor(int factor) {
+        simulationDeferFactor = factor;
     }
 
     //------------------------------------------------------------
@@ -811,6 +832,14 @@ public class EvacuationSimulator {
      */
     public boolean updateEveryTick() {
         synchronized (stop_simulation) {
+            if (simulationDeferFactor > 0) {
+                try {
+                    Thread.sleep(simulationDeferFactor);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             double relTime = getSecond();
 
             // ruby wrapper の preUpdate()

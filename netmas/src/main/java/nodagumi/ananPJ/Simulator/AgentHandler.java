@@ -207,12 +207,6 @@ public class AgentHandler {
      */
     private boolean isAllAgentSpeedZero = false;
 
-    /**
-     * シミュレーションのサイクル間のスリープ。
-     * updateAgents のところで入れる。（変な気がする。）
-     */
-    private int simulationDeferFactor = 0;
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * トリアージタグ
@@ -764,14 +758,6 @@ public class AgentHandler {
      * エージェントの update 処理
      */
     private void updateAgents(double time) {
-        if (simulationDeferFactor > 0) {
-            try {
-                Thread.sleep(simulationDeferFactor);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         int count = 0;
         double speedTotal = 0.0;
 
@@ -1556,7 +1542,10 @@ public class AgentHandler {
         update_buttons();
 
         control_button_panel.add(new JLabel("wait: "));
-        simulationDeferFactorControl = new JScrollBar(JScrollBar.HORIZONTAL, simulationDeferFactor, 1, 0, 300);
+        simulationDeferFactorControl =
+            new JScrollBar(JScrollBar.HORIZONTAL,
+                           simulator.getSimulationDeferFactor(),
+                           1, 0, 300);
         simulationDeferFactorControl.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) { changeSimulationDeferFactor(); }
         });
@@ -1565,7 +1554,7 @@ public class AgentHandler {
         simulationDeferFactorValue = new JLabel();
         simulationDeferFactorValue.setHorizontalAlignment(JLabel.RIGHT);
         simulationDeferFactorValue.setPreferredSize(new Dimension(30, 10));
-        simulationDeferFactorValue.setText("" + simulationDeferFactor);
+        simulationDeferFactorValue.setText("" + simulator.getSimulationDeferFactor());
         control_button_panel.add(simulationDeferFactorValue);
 
         top_panel.add(control_button_panel, BorderLayout.SOUTH);
@@ -1587,8 +1576,8 @@ public class AgentHandler {
      * シミュレーション遅延の制御（画面）
      */
     private void changeSimulationDeferFactor() {
-        simulationDeferFactor = simulationDeferFactorControl.getValue();
-        simulationDeferFactorValue.setText("" + simulationDeferFactor);
+        simulator.setSimulationDeferFactor(simulationDeferFactorControl.getValue());
+        simulationDeferFactorValue.setText("" + simulator.getSimulationDeferFactor());
     }
 
     //------------------------------------------------------------
@@ -1596,8 +1585,8 @@ public class AgentHandler {
      * シミュレーション遅延の制御（画面）
      */
     public void setSimulationDeferFactor(int deferFactor) {
-        simulationDeferFactor = deferFactor;
-        simulationDeferFactorControl.setValue(simulationDeferFactor);
+        simulator.setSimulationDeferFactor(deferFactor);
+        simulationDeferFactorControl.setValue(simulator.getSimulationDeferFactor());
     }
 
     //------------------------------------------------------------
