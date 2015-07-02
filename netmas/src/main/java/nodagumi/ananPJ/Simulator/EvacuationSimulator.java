@@ -31,6 +31,7 @@ import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
+import nodagumi.ananPJ.Scenario.*;
 
 import nodagumi.Itk.*;
 
@@ -107,6 +108,12 @@ public class EvacuationSimulator {
      * Pollution のファイル名。
      */
     private String pollutionFileName = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * シナリオ情報
+     */
+    private Scenario scenario = new Scenario();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -389,6 +396,14 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
+     * scenario へのアクセス。
+     */
+    public Scenario getScenario() {
+        return scenario ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 全エージェントが止まったらシミュレーションを止めるか？
      */
     public boolean getIsAllAgentSpeedZeroBreak() {
@@ -495,6 +510,7 @@ public class EvacuationSimulator {
     public void begin() {
         buildMap() ;
         buildPollution() ;
+        buildScenario() ;
         buildAgentHandler() ;
         buildRoutes ();
         buildRubyEngine() ;
@@ -544,6 +560,37 @@ public class EvacuationSimulator {
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シナリオ読み込み。
+     */
+    private void buildScenario() {
+        String filename = networkMap.getScenarioFile() ;
+        if (filename == null || filename.isEmpty()) {
+            setupDefaultScenario();
+            return;
+        }
+
+        if(filename.endsWith(".json")) {
+            scenario.scanJsonFile(filename) ;
+        } else if (filename.endsWith(".csv")) {
+            scenario.scanCsvFile(filename) ;
+        } else {
+            Itk.logError("Unknown scenario file suffix:", filename) ;
+            System.exit(1) ;
+        }
+        scenario.describe() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * デフォルトシナリオをセット。
+     * 実は何もしない。
+     */
+    private void setupDefaultScenario() {
+        scenario.setOriginTime(0) ;
     }
 
     //------------------------------------------------------------
@@ -875,6 +922,7 @@ public class EvacuationSimulator {
                 pollutionHandler.updateAll(relTime, networkMap,
                                            getWalkingAgentCollection());
 
+            scenario.update(relTime, networkMap) ;
             // 実行本体
             agentHandler.update(relTime);
 
@@ -888,7 +936,7 @@ public class EvacuationSimulator {
             // カウンタを進める。
             tick_count += 1.0;
         }
-        return agentHandler.isFinished() ;
+        return isFinished() ;
     }
 
     //------------------------------------------------------------
@@ -903,6 +951,14 @@ public class EvacuationSimulator {
                 e.printStackTrace();
             }
         }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 終了判定
+     */
+    private boolean isFinished() {
+        return (scenario.isFinished() || agentHandler.isFinished()) ;
     }
 
     //------------------------------------------------------------

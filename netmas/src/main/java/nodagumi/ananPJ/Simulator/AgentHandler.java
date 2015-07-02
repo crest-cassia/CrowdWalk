@@ -124,12 +124,6 @@ public class AgentHandler {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * シナリオ情報
-     */
-    Scenario scenario = new Scenario();
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * エージェント生成ファイル
      */
     private AgentGenerationFile generate_agent = null;
@@ -484,7 +478,6 @@ public class AgentHandler {
 
         // ファイル類の読み込み
         loadAgentGenerationFile(networkMap.getGenerationFile()) ;
-        parseScenarioFile(networkMap.getScenarioFile());
 
         // 各種配列初期化。
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
@@ -530,27 +523,6 @@ public class AgentHandler {
                 maxAgentCount += factory.getMaxGeneration();
             }
         }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * シナリオ読み込み。
-     */
-    private void parseScenarioFile(String filename) {
-        if (filename == null || filename.isEmpty()) {
-            setupDefaultScenario();
-            return;
-        }
-
-        if(filename.endsWith(".json")) {
-            scenario.scanJsonFile(filename) ;
-        } else if (filename.endsWith(".csv")) {
-            scenario.scanCsvFile(filename) ;
-        } else {
-            Itk.logError("Unknown scenario file suffix:", filename) ;
-            System.exit(1) ;
-        }
-        scenario.describe() ;
     }
 
     //------------------------------------------------------------
@@ -622,7 +594,6 @@ public class AgentHandler {
      */
     public void update(double time) {
         update_buttons();
-        scenario.advance(time, simulator.getMap()) ;
 
         ArrayList<AgentBase> generatedAgentsInStep
             = generateAgentsAndSetup(time) ;
@@ -861,23 +832,9 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * デフォルトシナリオをセット。
-     * 実は何もしない。
-     */
-    private void setupDefaultScenario() {
-        scenario.setOriginTime(0) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 終了チェック
      */
     public boolean isFinished() {
-        /* finish when FinishEvent occurs */
-        if (scenario.isFinished()) {
-            Itk.logInfo("finished by the end of scenario.") ;
-            return true;
-        }
         if (isAllAgentSpeedZeroBreak) {
             for (AgentFactory factory : generate_agent) {
                 if (factory.enabled) return false;
@@ -1092,7 +1049,7 @@ public class AgentHandler {
      * @return 絶対時刻文字列
      */
     public String convertAbsoluteTimeString(double relTime) {
-        return timeToString(scenario.calcAbsoluteTime(relTime)) ;
+        return timeToString(simulator.getScenario().calcAbsoluteTime(relTime)) ;
     }
 
     //------------------------------------------------------------
@@ -1103,7 +1060,8 @@ public class AgentHandler {
      * @return 絶対時刻文字列
      */
     public String convertAbsoluteTimeString(double relTime, boolean trunc) {
-        return timeToString(scenario.calcAbsoluteTime(relTime), trunc) ;
+        return timeToString(simulator.getScenario().calcAbsoluteTime(relTime), 
+                            trunc) ;
     }
 
     //------------------------------------------------------------
@@ -1111,7 +1069,7 @@ public class AgentHandler {
      * 相対時刻から絶対時刻への変換。
      */
     public double calcAbsoluteTime(double relTime) {
-        return scenario.calcAbsoluteTime(relTime) ;
+        return simulator.getScenario().calcAbsoluteTime(relTime) ;
     }
 
     //------------------------------------------------------------
@@ -1119,7 +1077,7 @@ public class AgentHandler {
      * 絶対時刻から相対時刻への変換。
      */
     public double calcRelativeTime(double absTime) {
-        return scenario.calcRelativeTime(absTime) ;
+        return simulator.getScenario().calcRelativeTime(absTime) ;
     }
 
     //------------------------------------------------------------
@@ -1339,8 +1297,8 @@ public class AgentHandler {
         evacuatedCount_label = new JLabel("NOT STARTED");
         message = new JTextArea("UNMaps Version 1.9.5\n");
         setup_control_panel(generationFile,
-                scenarioFile,
-                map);
+                            scenarioFile,
+                            map);
     }
 
     //------------------------------------------------------------
@@ -1388,8 +1346,8 @@ public class AgentHandler {
      * 制御パネルの準備
      */
     private void setup_control_panel(String generationFileName,
-            String scenarioFileName,
-            NetworkMapBase map) {
+                                     String scenarioFileName,
+                                     NetworkMapBase map) {
         control_panel = new JPanel();
         control_panel.setName("Control");
         control_panel.setLayout(new BorderLayout());
@@ -1458,7 +1416,7 @@ public class AgentHandler {
         int max_events = 1;
 
         int y = 0;
-        for (EventBase event : scenario.eventList) {
+        for (EventBase event : simulator.getScenario().eventList) {
             c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = y;

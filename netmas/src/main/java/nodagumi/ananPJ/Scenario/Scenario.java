@@ -193,8 +193,11 @@ public class Scenario {
     //------------------------------------------------------------
     /**
      * 終了かどうか
+     * finish when FinishEvent occurs.
      */
     public boolean isFinished() {
+        if(finishP)
+            Itk.logInfo("finished by the end of scenario.") ;
         return finishP ;
     }
 
@@ -292,7 +295,7 @@ public class Scenario {
      * @param map : マップデータ
      * @return 進んだシナリオの数
      */
-    public int advance(double relTime, NetworkMapBase map) {
+    public int update(double relTime, NetworkMapBase map) {
         double absTime = calcAbsoluteTime(relTime) ;
         int count = 0 ;
         for(int i = eventIndex ; i < eventList.size() ; i++) {
