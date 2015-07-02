@@ -247,6 +247,36 @@ public class PollutionCalculator {
 
     //------------------------------------------------------------
     /**
+     * Pollution Area のタグがついた MapArea を探す。
+     * [2015.06.12 I.Noda]
+     * 現状の設定では、数字のみのタグを、Pollution 用のタグと解釈する。
+     * これは、あまりにひどい設計なので、修正が必要。
+     * また、ある Index を示すタグを持つ Area はただひとつであることを
+     * 仮定している。
+     * この設定も、まずいか、あるいは、ただひとつであることをチェックする
+     * 機能が必要。
+     */
+    private void setupPollutedAreas(ArrayList<MapArea> areas) {
+        for (MapArea area : areas) {
+            String matchedTag = null ;
+            for(String tag : tagList) {
+                if(area.hasTag(tag)) {
+                    if(areaIndexTable.containsKey(area)) {
+                        Itk.logWarn("The area matchs with multiple pollution tag",
+                                    area, tag) ;
+                    } else {
+                        Integer index = tagIndexTable.get(tag) ;
+                        areaIndexTable.put(area, index) ;
+                        area.pollutionLevel = newPollutionLevelInfo() ;
+                        area.pollutionIsUpdated() ;
+                    }
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * 毎回呼ばれるメインのサイクル。
      */
     public void updateAll(double time,
@@ -294,36 +324,6 @@ public class PollutionCalculator {
             }
             if (pollutionLevel == null) {
                 agent.exposed(0.0);
-            }
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * Pollution Area のタグがついた MapArea を探す。
-     * [2015.06.12 I.Noda]
-     * 現状の設定では、数字のみのタグを、Pollution 用のタグと解釈する。
-     * これは、あまりにひどい設計なので、修正が必要。
-     * また、ある Index を示すタグを持つ Area はただひとつであることを
-     * 仮定している。
-     * この設定も、まずいか、あるいは、ただひとつであることをチェックする
-     * 機能が必要。
-     */
-    private void setupPollutedAreas(ArrayList<MapArea> areas) {
-        for (MapArea area : areas) {
-            String matchedTag = null ;
-            for(String tag : tagList) {
-                if(area.hasTag(tag)) {
-                    if(areaIndexTable.containsKey(area)) {
-                        Itk.logWarn("The area matchs with multiple pollution tag",
-                                    area, tag) ;
-                    } else {
-                        Integer index = tagIndexTable.get(tag) ;
-                        areaIndexTable.put(area, index) ;
-                        area.pollutionLevel = newPollutionLevelInfo() ;
-                        area.pollutionIsUpdated() ;
-                    }
-                }
             }
         }
     }
