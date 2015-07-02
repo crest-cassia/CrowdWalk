@@ -249,9 +249,9 @@ public class PollutionCalculator {
     /**
      * 毎回呼ばれるメインのサイクル。
      */
-    public void updateNodesLinksAgents(double time,
-                                       NetworkMapBase map,
-                                       Collection<AgentBase> agents) {
+    public void updateAll(double time,
+                          NetworkMapBase map,
+                          Collection<AgentBase> agents) {
 
         if (nextInstantTime != -1.0 && nextInstantTime <= time) {
             // System.out.println("  PC update next event: " + time);

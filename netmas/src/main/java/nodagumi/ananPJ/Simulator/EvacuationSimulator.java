@@ -879,8 +879,8 @@ public class EvacuationSimulator {
 
             // pollution 計算。
             if (usePollution())
-		pollutionCalculator.updateNodesLinksAgents(relTime, networkMap,
-                        getWalkingAgentCollection());
+		pollutionCalculator.updateAll(relTime, networkMap,
+                                              getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
 
             // 実行本体
