@@ -627,30 +627,10 @@ public class AgentHandler {
      */
     public void update(double time) {
         update_buttons();
-
         scenario.advance(time, simulator.getMap()) ;
 
-        ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
-
-        if (generate_agent != null) {
-            for (AgentFactory factory : generate_agent) {
-                factory.tryUpdateAndGenerate(simulator, time,
-                                             generatedAgentsInStep) ;
-            }
-        }
-
-        if (! generatedAgentsInStep.isEmpty()) {
-            generatedAgents.addAll(generatedAgentsInStep);
-            for (AgentBase agent : generatedAgentsInStep) {
-                /* [2015.05.25 I.Noda] 
-                 * registerAgent から切り離して、Agent に ID をふる。
-                 */
-                assignUniqIdForAgent(agent) ;
-                addWalkingAgent(agent) ;
-                if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
-                effectiveLinks.add(agent.getCurrentLink());
-            }
-        }
+        ArrayList<AgentBase> generatedAgentsInStep
+            = generateAgentsAndSetup(time) ;
 
         preprocessLinks(time);
         preprocessAgents(time);
@@ -663,10 +643,59 @@ public class AgentHandler {
          * calculated in the methods call above, such as updateAgents.
          * [2015.05.25 I.Noda] おそらく表示のために、ここにないといけない。
          */
-        for (AgentBase agent : generatedAgentsInStep) {
-            simulator.registerAgent(agent);
+        registerGeneratedAgentsInStep(generatedAgentsInStep) ;
+        updateEffectiveLinksAndRemoveEvacuatedAgents() ;
+        notifyMovedAgents() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * generation 定義による新規エージェントの生成
+     */
+    private ArrayList<AgentBase> generateAgentsAndSetup(double time) {
+        ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
+
+        // generate_agent による生成。
+        if (generate_agent != null) {
+            for (AgentFactory factory : generate_agent) {
+                factory.tryUpdateAndGenerate(simulator, time,
+                                             generatedAgentsInStep) ;
+            }
         }
 
+        // Agent の初期設定。
+        if (! generatedAgentsInStep.isEmpty()) {
+            generatedAgents.addAll(generatedAgentsInStep);
+            for (AgentBase agent : generatedAgentsInStep) {
+                /* [2015.05.25 I.Noda] 
+                 * registerAgent から切り離して、Agent に ID をふる。
+                 */
+                assignUniqIdForAgent(agent) ;
+                addWalkingAgent(agent) ;
+                if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
+                effectiveLinks.add(agent.getCurrentLink());
+            }
+        }
+        return generatedAgentsInStep ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 新規エージェントの登録
+     */
+    private void registerGeneratedAgentsInStep(ArrayList<AgentBase>  agentList) {
+        for (AgentBase agent : agentList) {
+            simulator.registerAgent(agent);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントが存在するリンクのリストを更新。
+     * さらに、
+     * evacuate したエージェントを、walkingAgentTable から除く。
+     */
+    private void updateEffectiveLinksAndRemoveEvacuatedAgents() {
         // エージェントが存在するリンクのリストを更新
         effectiveLinks.clear();
         ArrayList<AgentBase> evacuatedAgentsInStep = new ArrayList<AgentBase>() ;
@@ -680,11 +709,17 @@ public class AgentHandler {
             }
             effectiveLinks.add(agent.getCurrentLink());
         }
-
-        // evacuate したエージェントを、walkingAgentTable から除く。
         for(AgentBase agent : evacuatedAgentsInStep) {
             removeWalkingAgent(agent) ;
         }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェント位置がアップデートされたことを nofity
+     */
+    private void notifyMovedAgents() {
+        if(!has_display) return ;
 
         // 位置が変化したエージェントを通知する
         for (AgentBase agent : getWalkingAgentCollection()) {
@@ -694,16 +729,16 @@ public class AgentHandler {
             boolean agentMoved = false;
 
             Point2D currentPosition = agent.getPos();
-            Point2D lastPosition = lastPositions.get(agent);
+            Point2D lastPosition = agent.lastPosition ;
             if (lastPosition == null || ! currentPosition.equals(lastPosition)) {
-                lastPositions.put(agent, currentPosition);
+                agent.lastPosition = currentPosition ;
                 agentMoved = true;
             }
 
             Vector3d currentSwing = agent.getSwing();
-            Vector3d lastSwing = lastSwings.get(agent);
+            Vector3d lastSwing = agent.lastSwing ;
             if (lastSwing == null || ! currentSwing.equals(lastSwing)) {
-                lastSwings.put(agent, currentSwing);
+                agent.lastSwing = currentSwing ;
                 agentMoved = true;
             }
 
@@ -712,11 +747,6 @@ public class AgentHandler {
             }
         }
     }
-
-    // 更新チェック用
-    private HashMap<AgentBase, Point2D> lastPositions = new HashMap<>();
-    private HashMap<AgentBase, Vector3d> lastSwings = new HashMap<>();
-
     //------------------------------------------------------------
     /**
      * リンクの update 処理

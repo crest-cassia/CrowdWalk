@@ -113,6 +113,19 @@ implements Comparable<AgentBase> {
      */
     protected Random random = null;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 直前の位置。
+     * AgentHandler の表示制御あたりで使用。
+     */
+    public Point2D lastPosition = null ;
+
+    /**
+     * 直前のswing。
+     * AgentHandler の表示制御あたりで使用。
+     */
+    public Vector3d lastSwing = null ;
+
     //############################################################
     /**
      * 初期化関係
