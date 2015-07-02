@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
@@ -160,6 +161,12 @@ public class NetworkMapBase extends DefaultTreeModel {
         }
         editor.updateAll();
     }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 編集用画面関係
+     */
+    private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
 
     //------------------------------------------------------------
     //------------------------------------------------------------
@@ -962,6 +969,53 @@ public class NetworkMapBase extends DefaultTreeModel {
      * NetworkMap の構成要素の状態変化を監視・通知するオブジェクトを返す.
      */
     public NetworkMapPartsNotifier getNotifier() { return notifier; }
+
+    //------------------------------------------------------------
+    /**
+     * Editor Frame
+     */
+    public boolean existNodeEditorFrame(MapPartGroup _obiNode){
+        for (EditorFrame frame : getFrames()) {
+            if (_obiNode.equals(frame)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Editor Frame
+     */
+    public EditorFrame openEditorFrame(NetworkMapEditor editor, MapPartGroup obinode) {
+        EditorFrame frame = new EditorFrame(editor, obinode);
+
+        obinode.setUserObject(frame);
+
+        getFrames().add(frame);
+        frame.setVisible(true);
+
+        return frame;
+    }
+
+    /**
+     * Editor Frame
+     */
+    public void removeEditorFrame(MapPartGroup _obinode){
+        getFrames().remove(_obinode.getUserObject());
+        _obinode.setUserObject(null);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * フレームセット
+     */
+    public void setFrames(ArrayList<EditorFrame> frames) {
+        this.frames = frames;
+    }
+    /**
+     * フレーム取得
+     */
+    public ArrayList<EditorFrame> getFrames() {
+        return frames;
+    }
 
 } // class NetworkMapBase
 
