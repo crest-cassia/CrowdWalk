@@ -35,18 +35,18 @@ class SampleAgent < RubyAgentBase
   #++
   ## シミュレーション各サイクルの前半に呼ばれる。
   ## _relTime_:: 相対シミュレーション時刻
-  def preUpdate(relTime)
-    p ['SampleAgent', :preUpdate, getAgentId(), relTime] ;
-    return super(relTime) ;
+  def preUpdate()
+    p ['SampleAgent', :preUpdate, getAgentId(), currentTime()] ;
+    return super()
   end
 
   #--------------------------------------------------------------
   #++
   ## シミュレーション各サイクルの後半に呼ばれる。
   ## _relTime_:: 相対シミュレーション時刻
-  def update(relTime)
-    p ['SampleAgent', :update, getAgentId(), relTime] ;
-    return super(relTime) ;
+  def update()
+    p ['SampleAgent', :update, getAgentId(), currentTime()] ;
+    return super() ;
   end
 
   #--------------------------------------------------------------
@@ -76,22 +76,24 @@ class SampleAgent < RubyAgentBase
   def thinkCycle()
 
     if(listenAlert(Term_Emergency)) then
-      setGoal("node_09_05") ;
+      setGoal(Term_node_09_05) ;
       clearRoute() ;
-      p [:changeGoal, "node_09_05"] ;
+      p [:changeGoal, ItkTerm.toRuby(Term_node_09_05)] ;
       clearAlert(Term_Emergency) ;
     end
 
     if(listenAlert(Term_FooBarBaz)) then
-      insertRoute("node_02_00") ;
-      p [:insertRoute, "node_02_00"] ;
+      insertRoute(Term_node_02_00) ;
+      p [:insertRoute, ItkTerm.toRuby(Term_node_02_00)] ;
       clearAlert(Term_FooBarBaz) ;
     end
 
   end
 
   Term_Emergency = ItkTerm.ensureTerm("emergency") ;
+  Term_node_09_05 = ItkTerm.ensureTerm("node_09_05") ;
   Term_FooBarBaz = ItkTerm.ensureTerm("foo-bar-baz") ;
+  Term_node_02_00 = ItkTerm.ensureTerm("node_02_00") ;
 
   #--------------------------------------------------------------
   #++

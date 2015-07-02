@@ -1373,5 +1373,17 @@ public class Term {
         return this ;
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * ensure Term object
+     */
+    static public Term ensureTerm(Object object) {
+        if(object instanceof Term) {
+            return (Term)object ;
+        } else {
+            return new Term(object) ;
+        }
+    }
 
 } // class Term

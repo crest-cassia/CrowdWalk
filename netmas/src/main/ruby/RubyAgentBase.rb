@@ -152,7 +152,7 @@ class RubyAgentBase
         insertRoute(subgoal, false) ;
       }
     else
-      @javaAgent.insertRouteTagSafely(ItkTerm.ensureTerm(newRoute)) ;
+      @javaAgent.insertRouteTagSafelyForRuby(newRoute) ;
     end
   end
 
@@ -204,7 +204,9 @@ class RubyAgentBase
   #++
   ## 現在地のリンクのタグをチェック
   def hasPlaceTag(tag)
-    return getCurrentLink().hasTag(tag) ;
+    # return getCurrentLink().hasTag(tag) ;
+    # for speed up
+    return @javaAgent.hasPlaceTagForRuby(tag) ;
   end
 
   #--------------------------------------------------------------
@@ -225,8 +227,12 @@ class RubyAgentBase
   #++
   ## アラートを聴いた時刻。
   ## 聴いていなければ、nilが返る。
+  ## _message_ :: アラートメッセージ。文字列もしくは Itk.Term.
+  ## *return* 時刻もしくは nil
   def listenAlert(message)
-    return getAlertTable().get(ItkTerm.ensureTerm(message)) ;
+#    return getAlertTable().get(ItkTerm.ensureTerm(message)) ;
+    ## 高速化のためのショートカット
+    return @javaAgent.getAlertTimeForRuby(message) ;
   end
 
   #--------------------------------------------------------------

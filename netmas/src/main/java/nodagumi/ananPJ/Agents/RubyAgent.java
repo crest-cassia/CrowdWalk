@@ -227,6 +227,40 @@ public class RubyAgent extends RationalAgent {
     }
 
     //------------------------------------------------------------
+    /**
+     * 現在の RoutePlan の先頭に新しいsubgoalを追加。
+     */
+    public void insertRouteTagSafelyForRuby(Object tag) {
+        super.insertRouteTagSafely(Term.ensureTerm(tag)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * alert を聴いた時刻。
+     * もし聴いていなければ、null が返る。
+     */
+    public Double getAlertTimeForRuby(Object message) {
+        return alertedMessageTable.get(Term.ensureTerm(message)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * alert を聴いた時刻。
+     * もし聴いていなければ、null が返る。
+     */
+    public boolean hasPlaceTagForRuby(Object tag) {
+        String tagString ;
+        if(tag instanceof Term) {
+            tagString = ((Term)tag).getString() ;
+        } else if(tag instanceof String) {
+            tagString = (String)tag ;
+        } else {
+            tagString = tag.toString() ;
+        }
+        return getCurrentLink().hasTag(tagString) ;
+    }
+
+    //------------------------------------------------------------
     // トリガされている wrapper
     //------------------------------------------------------------
     /**
@@ -237,9 +271,9 @@ public class RubyAgent extends RationalAgent {
         currentTime = time ;
         String rubyMethod = triggeredMethod(TriggerEntry.preUpdate) ;
         if(rubyMethod != null) {
-            rubyEngine.callMethod(rubyAgent, rubyMethod, time) ;
+            rubyEngine.callMethod(rubyAgent, rubyMethod) ;
         } else {
-            super_preUpdate(time) ;
+            super_preUpdate() ;
         }
     }
 
@@ -247,8 +281,8 @@ public class RubyAgent extends RationalAgent {
      * 上位の preUpdate を呼び出す。
      * ruby からの戻り用。
      */
-    public void super_preUpdate(double time) {
-        super.preUpdate(time) ;
+    public void super_preUpdate() {
+        super.preUpdate(currentTime) ;
     }
 
     //------------------------------------------------------------
@@ -260,9 +294,9 @@ public class RubyAgent extends RationalAgent {
         currentTime = time ;
         String rubyMethod = triggeredMethod(TriggerEntry.update) ;
         if(rubyMethod != null) {
-            return rubyEngine.callMethodBoolean(rubyAgent, rubyMethod, time) ;
+            return rubyEngine.callMethodBoolean(rubyAgent, rubyMethod) ;
         } else {
-            return super_update(time) ;
+            return super_update() ;
         }
     }
 
@@ -270,8 +304,8 @@ public class RubyAgent extends RationalAgent {
      * 上位の update を呼び出す。
      * ruby からの戻り用。
      */
-    public boolean super_update(double time) {
-        return super.update(time) ;
+    public boolean super_update() {
+        return super.update(currentTime) ;
     }
 
     //------------------------------------------------------------

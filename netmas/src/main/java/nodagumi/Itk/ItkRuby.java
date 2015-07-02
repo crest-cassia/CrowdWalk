@@ -394,7 +394,9 @@ public class ItkRuby {
      */
     public static boolean ensureRubyEngine() {
         if(rubyEngine == null) {
+            //            Itk.timerStart("Ruby.newInstance()") ;
             rubyEngine = Ruby.newInstance() ;
+            //            Itk.timerShowLap("Ruby.newInstance()") ;
             return true ;
         } else {
             return false ;
