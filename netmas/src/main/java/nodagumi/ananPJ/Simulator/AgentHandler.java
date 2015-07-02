@@ -475,36 +475,54 @@ public class AgentHandler {
     /**
      * コンストラクタ
      */
-    public AgentHandler (String generationFile,
-                         String scenarioFile,
-                         NetworkMap map,
-                         EvacuationSimulator _simulator,
-                         double linerGenerateAgentRatio,
-                         Term fallbackParameters,
-                         Random _random) {
+    public AgentHandler (EvacuationSimulator _simulator) {
         simulator = _simulator;
-        random = _random;
-        networkMap = map ;
 
+        // simulatorから必須パラメータ取り出し。
+        random = simulator.getRandom();
+        networkMap = simulator.getMap() ;
+
+        // ファイル類の読み込み
+        loadAgentGenerationFile(networkMap.getGenerationFile()) ;
+        parseScenarioFile(networkMap.getScenarioFile());
+
+        // 各種配列初期化。
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
-
         generatedAgents = new ArrayList<AgentBase>();
         evacuatedAgents = new ArrayList<AgentBase>();
         stuckAgents = new ArrayList<AgentBase>();
         walkingAgentTable = new HashMap<String, AgentBase>() ;
 
+        // 表示初期化。
+        if (hasDisplay()) {
+            setup_control_panel(networkMap.getGenerationFile(),
+                                networkMap.getScenarioFile(),
+                                networkMap);
+        }
+
+    }
+
+    //------------------------------------------------------------
+    // 読み込み関連
+    //------------------------------------------------------------
+    /**
+     * エージェント生成ファイル。
+     */
+    private void loadAgentGenerationFile(String generationFile) {
         try {
             /* [I.Noda] generation file の読み込みはここ */
-             generate_agent = new AgentGenerationFile(generationFile,
-                                                      networkMap,
-                                                      fallbackParameters,
-                                                      hasDisplay(),
-                                                      linerGenerateAgentRatio,
-                                                      random);
+             generate_agent =
+                 new AgentGenerationFile(generationFile,
+                                         networkMap,
+                                         networkMap.fallbackParameters,
+                                         hasDisplay(),
+                                         simulator.getLinerGenerateAgentRatio(),
+                                         random);
         } catch(Exception ex) {
             ex.printStackTrace() ;
             Itk.logError("Illegal AgentGenerationFile",
-                         generationFile, ex.getMessage());
+                         networkMap.getGenerationFile(),
+                         ex.getMessage());
             System.exit(1);
         }
         if (generate_agent != null) {
@@ -512,18 +530,8 @@ public class AgentHandler {
                 maxAgentCount += factory.getMaxGeneration();
             }
         }
-        parseScenarioFile(scenarioFile);
-
-        if (hasDisplay()) {
-            setup_control_panel(generationFile,
-                    scenarioFile,
-                    map);
-        }
-
     }
 
-    //------------------------------------------------------------
-    // 読み込み関連
     //------------------------------------------------------------
     /**
      * シナリオ読み込み。
@@ -751,63 +759,62 @@ public class AgentHandler {
      * エージェントの update 処理
      */
     private void updateAgents(double time) {
+        if (hasDisplay()) displayClock(time) ;
+
         int count = 0;
         double speedTotal = 0.0;
-
-        if (hasDisplay()) {
-            String time_string = String.format("Elapsed: %5.2fsec",
-                    time);
-            time_label.setText(time_string);
-            String clock_string = convertAbsoluteTimeString(time) ;
-            clock_label.setText(clock_string);
-        }
-
-        // tkokada
-        boolean existNonZeroSpeedAgent = false;
+        isAllAgentSpeedZero = true;
 
         for(AgentBase agent : getWalkingAgentCollection()) {
-
-            if (agent.isEvacuated())
-                continue;
-
-            agent.update(time);
-
-            if (agent.isEvacuated()) {
-                final MapNode exit = agent.getLastNode() ;
-                Integer i = evacuatedAgentCountByExit.get(exit);
-                if (i == null)
-                    i = new Integer(0);
-                i += 1;
-                evacuatedAgentCountByExit.put(exit, i);
-                evacuatedAgents.add(agent);
-                if (agent.isStuck()) {
-                    stuckAgents.add(agent);
+            if (!agent.isEvacuated()) {
+                agent.update(time);
+                if (agent.isEvacuated()) {// この回に evacuate した場合。
+                    updateNewlyEvacuatedAgent(agent, time) ;
+                } else { // まだ歩いている場合。
+                    ++count;
+                    speedTotal += agent.getSpeed();
+                    isAllAgentSpeedZero &= (agent.getSpeed() == 0.0) ;
                 }
-                if (agentMovementHistoryLogger != null) {
-                    agentMovementHistoryLoggerFormatter
-                        .outputValueToLoggerInfo(agentMovementHistoryLogger,
-                                                 agent, new Double(time), this);
-                }
-            } else {
-                ++count;
-                speedTotal += agent.getSpeed();
-                // tkokada
-                if (!existNonZeroSpeedAgent) {
-                    if (agent.getSpeed() > 0.0)
-                        existNonZeroSpeedAgent = true;
-                }
+                logIndividualPedestrians(time, agent);
             }
-            logIndividualPedestrians(time, agent);
         }
-        if (hasDisplay()) {
-            updateEvacuatedCount();
-        }
-        // tkokada
-        if (existNonZeroSpeedAgent)
-            isAllAgentSpeedZero = false;
-        else
-            isAllAgentSpeedZero = true;
         averageSpeed = speedTotal / count;
+
+        if (hasDisplay()) updateEvacuatedCount();
+    }
+
+    //------------------------------------------------------------
+    /**
+     * このサイクルで evacuateしたエージェントの処理
+     */
+    private void updateNewlyEvacuatedAgent(AgentBase agent, double time) {
+        final MapNode exit = agent.getLastNode() ;
+        Integer i = evacuatedAgentCountByExit.get(exit);
+        if (i == null)
+            i = new Integer(0);
+        i += 1;
+        evacuatedAgentCountByExit.put(exit, i);
+        evacuatedAgents.add(agent);
+        if (agent.isStuck()) {
+            stuckAgents.add(agent);
+        }
+        if (agentMovementHistoryLogger != null) {
+            agentMovementHistoryLoggerFormatter
+                .outputValueToLoggerInfo(agentMovementHistoryLogger,
+                                         agent, new Double(time), this);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 時計表示
+     */
+    private void displayClock(double time) {
+        String time_string = String.format("Elapsed: %5.2fsec",
+                                           time);
+        time_label.setText(time_string);
+        String clock_string = convertAbsoluteTimeString(time) ;
+        clock_label.setText(clock_string);
     }
 
     //------------------------------------------------------------

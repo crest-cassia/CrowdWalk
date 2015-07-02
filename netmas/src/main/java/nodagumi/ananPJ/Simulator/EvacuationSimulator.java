@@ -354,10 +354,20 @@ public class EvacuationSimulator {
         return properties;
     }
 
+    /**
+     * 乱数生成器
+     */
     public void setRandom(Random _random) {
         random = _random;
         if (agentHandler != null)
             agentHandler.setRandom(_random);
+    }
+
+    /**
+     * 乱数生成器
+     */
+    public Random getRandom() {
+        return random ;
     }
 
     //------------------------------------------------------------
@@ -394,6 +404,13 @@ public class EvacuationSimulator {
      */
     public void setLinerGenerateAgentRatio(double _ratio) {
         linerGenerateAgentRatio = _ratio;
+    }
+
+    /**
+     * エージェント生成の倍率。
+     */
+    public double getLinerGenerateAgentRatio() {
+        return linerGenerateAgentRatio ;
     }
 
     //------------------------------------------------------------
@@ -517,13 +534,7 @@ public class EvacuationSimulator {
      * エージェントハンドラの準備。
      */
     void buildAgentHandler() {
-        agentHandler = new AgentHandler(networkMap.getGenerationFile(),
-                                        networkMap.getScenarioFile(),
-                                        networkMap,
-                                        this,
-                                        linerGenerateAgentRatio,
-                                        networkMap.fallbackParameters,
-                                        random);
+        agentHandler = new AgentHandler(this) ;
     }
 
     //------------------------------------------------------------
