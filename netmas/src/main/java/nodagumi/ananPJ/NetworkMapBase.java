@@ -312,5 +312,26 @@ public class NetworkMapBase extends DefaultTreeModel {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * マップ中の全タグを収集。
+     */
+    public ArrayList<String> getAllTags() {
+        ArrayList<String> all_tags = new ArrayList<String>();
+        for (MapNode node : getNodes()) {
+            for (String tag : node.getTags()) {
+                if (!all_tags.contains(tag))
+                    all_tags.add(tag);
+            }
+        }
+        for (MapLink link : getLinks()) {
+            for (String tag : link.getTags()) {
+                if (!all_tags.contains(tag))
+                    all_tags.add(tag);
+            }
+        }
+        return all_tags;
+    }
+
 } // class NetworkMapBase
 

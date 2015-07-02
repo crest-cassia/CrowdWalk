@@ -108,6 +108,9 @@ public class NetworkMap extends NetworkMapBase {
 	 */
 	public Term fallbackParameters = null ;
 
+	/**
+	 * 画面変更の notifier
+	 */
     private NetworkMapPartsNotifier notifier;
 
     //============================================================
@@ -144,7 +147,7 @@ public class NetworkMap extends NetworkMapBase {
     }
 
     /**
-     * exec updo
+     * exec undo
      */
     public void undo(NetworkMapEditor editor) {
         if (undo_list.size() == 0) return;
@@ -187,6 +190,9 @@ public class NetworkMap extends NetworkMapBase {
     }
 
     //------------------------------------------------------------
+    /**
+     * OBNode の挿入
+     */
     private void insertOBNode (OBNode parent,
                                OBNode node,
                                boolean can_undo) {
@@ -215,14 +221,22 @@ public class NetworkMap extends NetworkMapBase {
         }
     }
 
+    //============================================================
+    /**
+     * tree のクローラ操作クラス
+     */
     abstract class OBTreeCrawlFunctor {
         public abstract void apply(OBNode node,
                 OBNode parent); 
     }
 
+	//------------------------------------------------------------
+	/**
+	 * tree のクローラ操作
+	 */
     private void applyToAllChildrenRec(OBNode node,
-            OBNode parent,
-            OBTreeCrawlFunctor func) {
+                                       OBNode parent,
+                                       OBTreeCrawlFunctor func) {
         func.apply(node, parent);
         for (int i = 0; i < node.getChildCount(); ++i) {
             OBNode child = (OBNode)node.getChildAt(i);
@@ -232,6 +246,10 @@ public class NetworkMap extends NetworkMapBase {
         }
     }
 
+	//------------------------------------------------------------
+	/**
+	 * OBノード削除
+	 */
     public void removeOBNode (OBNode parent,
             OBNode node,
             boolean can_undo) {
@@ -276,6 +294,10 @@ public class NetworkMap extends NetworkMapBase {
         }
     }
 
+	//------------------------------------------------------------
+	/**
+	 * ノード作成
+	 */
     public MapNode createMapNode(
             MapPartGroup parent,
             Point2D _coordinates,
@@ -287,6 +309,10 @@ public class NetworkMap extends NetworkMapBase {
         return node;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * リンク作成
+	 */
     public MapLink createMapLink(
             MapPartGroup parent,
             MapNode _from,
@@ -300,6 +326,10 @@ public class NetworkMap extends NetworkMapBase {
         return link;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * エリア作成
+	 */
     public MapArea createMapAreaRectangle(
             MapPartGroup parent,
             Rectangle2D bounds,
@@ -313,6 +343,10 @@ public class NetworkMap extends NetworkMapBase {
         return area;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * グループノード作成
+	 */
     public MapPartGroup createGroupNode(MapPartGroup parent){
         String id = assignNewId();
         MapPartGroup group = new MapPartGroup(id);
@@ -320,10 +354,17 @@ public class NetworkMap extends NetworkMapBase {
         return group; 
     }
 
+	/**
+	 * グループノード作成
+	 */
     private MapPartGroup createGroupNode(){
         return createGroupNode((MapPartGroup)root);
     }
 
+	//------------------------------------------------------------
+	/**
+	 * SymLink
+	 */
     public OBNodeSymbolicLink createSymLink(MapPartGroup parent,
             OBNode orig){
         String id = assignNewId();
@@ -332,6 +373,9 @@ public class NetworkMap extends NetworkMapBase {
         return symlink; 
     }
 
+	/**
+	 * SymLink
+	 */
     public void clearSymlinks(final OBNode orig) {
         applyToAllChildrenRec((OBNode)root,
                 null,
@@ -350,7 +394,10 @@ public class NetworkMap extends NetworkMapBase {
         });
     }
 
-    /* some stuff related to frames */
+	//------------------------------------------------------------
+	/**
+	 * Editor Frame
+	 */
     public boolean existNodeEditorFrame(MapPartGroup _obiNode){
         for (EditorFrame frame : getFrames()) {
             if (_obiNode.equals(frame)) return true;
@@ -358,6 +405,9 @@ public class NetworkMap extends NetworkMapBase {
         return false;
     }
 
+	/**
+	 * Editor Frame
+	 */
     public EditorFrame openEditorFrame(NetworkMapEditor editor, MapPartGroup obinode) {
         EditorFrame frame = new EditorFrame(editor, obinode);
 
@@ -369,11 +419,18 @@ public class NetworkMap extends NetworkMapBase {
         return frame;
     }
 
+	/**
+	 * Editor Frame
+	 */
     public void removeEditorFrame(MapPartGroup _obinode){
         getFrames().remove(_obinode.getUserObject());
         _obinode.setUserObject(null);
     }
     
+	//------------------------------------------------------------
+	/**
+	 * グループ
+	 */
     public ArrayList<MapPartGroup> getGroups() {
         ArrayList<MapPartGroup> groups = new ArrayList<MapPartGroup>();
         for (OBNode node : getOBCollection()) {
@@ -421,12 +478,19 @@ public class NetworkMap extends NetworkMapBase {
         return groups;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * 領域
+	 */
     public ArrayList<MapArea> getRooms() {
         ArrayList<MapArea> rooms = new ArrayList<MapArea>();
         findRoomRec((OBNode)root, rooms);
         return rooms;
     }
 
+	/**
+	 * 領域
+	 */
     private void findRoomRec(OBNode node, ArrayList<MapArea> rooms) {
         if (node.getNodeType() == NType.ROOM) {
             rooms.add((MapArea)node);
@@ -437,6 +501,10 @@ public class NetworkMap extends NetworkMapBase {
         }
     }
 
+	//------------------------------------------------------------
+	/**
+	 * 階段作成
+	 */
     public void makeStairs() {
         MapNodeTable selected_nodes = new MapNodeTable();
         for (MapNode node : getNodes()) {
@@ -463,14 +531,25 @@ public class NetworkMap extends NetworkMapBase {
 
     }
 
+	//------------------------------------------------------------
+	/**
+	 * ファイル名（？？？）
+	 */
     public String getFileName() {
         return filename;
     }
 
+	/**
+	 * ファイル名（？？？）
+	 */
     public void setFileName(String file_name) {
         filename = file_name;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * pollutionファイル。
+	 */
     public String getPollutionFile() {
         if (pollutionFile == null)
             return null;
@@ -485,32 +564,35 @@ public class NetworkMap extends NetworkMapBase {
         return pollution_file.getPath();
     }
 
+	/**
+	 * pollutionファイル。
+	 */
     public void setPollutionFile(String s) {
         pollutionFile = s;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * エージェント生成ファイル。
+	 */
     public String getGenerationFile() {
         if (generationFile == null)
             return null;
         File generation_file = new File(generationFile);
-        // if (!generation_file.isAbsolute() && (filename != null)) {
-            // File mapfile = new File(filename);
-            // if (mapfile.getParent() != null) {
-        // generation_file = new File(mapfile.getParent()
-                       // + File.separator
-                       // + generationFile);
-            // } else {
-        // return generationFile;
-        // }
-        // }
-        // return generation_file.getAbsolutePath();
         return generation_file.getPath();
     }
 
+	/**
+	 * エージェント生成ファイル。
+	 */
     public void setGenerationFile(String s) {
         generationFile = s;
     }
 
+	//------------------------------------------------------------
+	/**
+	 * シナリオファイル。
+	 */
 	public String getScenarioFile() {
         if (scenarioFile == null)
             return null;
@@ -518,6 +600,9 @@ public class NetworkMap extends NetworkMapBase {
         return _scenarioFile.getPath();
     }
 
+	/**
+	 * シナリオファイル。
+	 */
     public void setScenarioFile(String s) {
         scenarioFile = s;
     }
@@ -530,7 +615,6 @@ public class NetworkMap extends NetworkMapBase {
 		return fallbackFile ;
 	}
 
-	//------------------------------------------------------------
 	/**
 	 * fallback （デフォルトセッティング）のファイルセット
 	 */
@@ -576,7 +660,10 @@ public class NetworkMap extends NetworkMapBase {
 		}
 	}
 
-    /* converting to/from DOM */
+    //------------------------------------------------------------
+    /**
+     * converting to DOM
+     */
     public boolean toDOM(Document doc) {
         Element dom_root =((OBNode)this.root).toDom(doc, "root");
 
@@ -585,6 +672,9 @@ public class NetworkMap extends NetworkMapBase {
         return true;
     }
 
+    /**
+     * converting from DOM
+     */
     public boolean fromDOM(Document doc) {
         NodeList toplevel = doc.getChildNodes();
         if (toplevel.getLength() != 1) {
@@ -602,6 +692,10 @@ public class NetworkMap extends NetworkMapBase {
         return true;
     }
 
+    //------------------------------------------------------------
+    /**
+     * ネットワーク設定。
+     */
     private void setupNetwork(OBNode ob_node) {
         setupNodes(ob_node);
         setupLinks(ob_node);
@@ -610,6 +704,10 @@ public class NetworkMap extends NetworkMapBase {
         checkDanglingSymlinks(ob_node);
     }
 
+    //------------------------------------------------------------
+    /**
+     * ノード設定。
+     */
     @SuppressWarnings("unchecked")
     private void setupNodes(OBNode ob_node) {
         if (OBNode.NType.NODE == ob_node.getNodeType()) {
@@ -625,6 +723,10 @@ public class NetworkMap extends NetworkMapBase {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * リンク設定。
+     */
     @SuppressWarnings("unchecked")
     private void setupLinks(OBNode ob_node) {
         if (OBNode.NType.LINK == ob_node.getNodeType()) {
@@ -662,6 +764,10 @@ public class NetworkMap extends NetworkMapBase {
         }
     }
     
+    //------------------------------------------------------------
+    /**
+     * その他設定。
+     */
     @SuppressWarnings("unchecked")
     private void setupOthers(OBNode ob_node) {
         if (OBNode.NType.GROUP == ob_node.getNodeType()) {
@@ -688,6 +794,10 @@ public class NetworkMap extends NetworkMapBase {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * ???
+     */
     private void checkDanglingSymlinks(OBNode node) {
         class CheckSymlink extends OBTreeCrawlFunctor {
             public int dangling_symlink_count = 0;
@@ -726,30 +836,31 @@ public class NetworkMap extends NetworkMapBase {
 
     }
 
+    //------------------------------------------------------------
+    /**
+     * フレームセット
+     */
     public void setFrames(ArrayList<EditorFrame> frames) {
         this.frames = frames;
     }
+    /**
+     * フレーム取得
+     */
     public ArrayList<EditorFrame> getFrames() {
         return frames;
     }
     
-    public ArrayList<String> getAllTags() {
-        ArrayList<String> all_tags = new ArrayList<String>();
-        for (MapNode node : getNodes()) {
-            for (String tag : node.getTags()) {
-                if (!all_tags.contains(tag))
-                    all_tags.add(tag);
-            }
-        }
-        for (MapLink link : getLinks()) {
-            for (String tag : link.getTags()) {
-                if (!all_tags.contains(tag))
-                    all_tags.add(tag);
-            }
-        }
-        return all_tags;
+    //------------------------------------------------------------
+    /**
+     * DOMへ保存する前の前処理。（トップ）
+     */
+    public void prepareForSave(boolean hasDisplay) {
+        prepareForSaveRec((OBNode)root, hasDisplay);
     }
-    
+
+    /**
+     * DOMへ保存する前の前処理。（本体）
+     */
     private void prepareForSaveRec(OBNode node, boolean hasDisplay) {
         node.prepareForSave(hasDisplay);
         for (int i = 0; i < node.getChildCount(); ++i) {
@@ -758,9 +869,17 @@ public class NetworkMap extends NetworkMapBase {
                 prepareForSaveRec((OBNode)child, hasDisplay);
         }
     }
-    public void prepareForSave(boolean hasDisplay) {
-        prepareForSaveRec((OBNode)root, hasDisplay);
+
+    /**
+     * DOM から読んだ後処理。（トップ）
+     */
+    public void setupAfterLoad(boolean hasDisplay) {
+        setupAfterLoadRec((OBNode)root, hasDisplay);
     }
+
+    /**
+     * DOMから読んだ後処理（実体）
+     */
     private void setupAfterLoadRec(OBNode node, boolean hasDisplay) {
         node.postLoad(hasDisplay);
         for (int i = 0; i < node.getChildCount(); ++i) {
@@ -769,10 +888,8 @@ public class NetworkMap extends NetworkMapBase {
                 setupAfterLoadRec((OBNode)child, hasDisplay);
         }
     }
-    public void setupAfterLoad(boolean hasDisplay) {
-        setupAfterLoadRec((OBNode)root, hasDisplay);
-    }
 
+    //------------------------------------------------------------
     /**
      * NetworkMap の構成要素の状態変化を監視・通知するオブジェクトを返す.
      */
