@@ -110,7 +110,35 @@ public class AgentHandler {
         isUsingFrontFirstOrderQueue = flag ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 乱数生成器。
+     */
+    private Random random = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 所属するSimulator へのリンク。
+     */
     private EvacuationSimulator simulator;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * シナリオ情報
+     */
+    Scenario scenario = new Scenario();
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェント生成ファイル
+     */
+    private AgentGenerationFile generate_agent = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 地図。
+     */
+    private NetworkMap networkMap;
 
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -127,46 +155,79 @@ public class AgentHandler {
     private UniqIdObjectTable<AgentBase> agentTable =
         new UniqIdObjectTable<AgentBase>(DefaultAgentIdPrefix) ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 生成した全エージェントリスト。
+     */
     private ArrayList<AgentBase> generatedAgents;
+
+    /**
+     * 避難完了したエージェントリスト。
+     */
     private ArrayList<AgentBase> evacuatedAgents;
+
+    /**
+     * スタックしたエージェントリスト。
+     */
     private ArrayList<AgentBase> stuckAgents;
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 今動いているエージェントの集まり
      */
     private HashMap<String, AgentBase> walkingAgentTable ;
 
-    private double averageSpeed = 0.0;
-    private int maxAgentCount = 0;
-    private boolean isAllAgentSpeedZeroBreak = false;
-    private boolean isAllAgentSpeedZero = false;
-
-    private transient JButton start_button = null;
-    private transient JButton pause_button = null;
-    private transient JButton step_button = null;
-
-    private int simulationDeferFactor = 0;
-    private transient JScrollBar simulationDeferFactorControl;
-    private transient JLabel simulationDeferFactorValue;
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * EXIT ごとの、避難エージェント数の統計。
+     */
+    private HashMap<MapNode, Integer> evacuatedAgentCountByExit;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * シナリオ情報
+     * エージェントが存在するリンクのリスト
      */
-    Scenario scenario = new Scenario();
-
-    private HashMap<MapNode, Integer> evacuatedAgentCountByExit;
-    private AgentGenerationFile generate_agent = null;
-
-    boolean has_display;
-    private Random random = null;
-    private NetworkMap networkMap;
-
-    // エージェントが存在するリンクのリスト
     private MapLinkTable effectiveLinks = null;
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 平均速度。
+     */
+    private double averageSpeed = 0.0;
+
+    /**
+     * 総エージェント数。generatedAgents.size と同じか？
+     */
+    private int maxAgentCount = 0;
+
+    /**
+     */
+    private boolean isAllAgentSpeedZeroBreak = false;
+
+    /**
+     */
+    private boolean isAllAgentSpeedZero = false;
+
+    /**
+     * シミュレーションのサイクル間のスリープ。
+     * updateAgents のところで入れる。（変な気がする。）
+     */
+    private int simulationDeferFactor = 0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * トリアージタグ
+     */
+    public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // ログ出力定義関連
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * individualPedestriansLog の出力先 dir
+     */
+    private String individualPedestriansLogDir = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * agentMovementHistoryLogger
      */
@@ -391,6 +452,36 @@ public class AgentHandler {
             ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 画面を持つかどうか
+     */
+    boolean has_display;
+
+    /**
+     * 画面パーツ類。
+     */
+    private transient JButton start_button = null;
+    private transient JButton pause_button = null;
+    private transient JButton step_button = null;
+
+    private transient JScrollBar simulationDeferFactorControl;
+    private transient JLabel simulationDeferFactorValue;
+
+    protected transient JPanel control_panel = null;
+    private transient JLabel clock_label = new JLabel("NOT STARTED1");
+    private transient JLabel time_label = new JLabel("NOT STARTED2");
+    private transient JLabel evacuatedCount_label = new JLabel("NOT STARTED3");
+    private ArrayList<ButtonGroup> toggle_scenario_button_groups = new
+        ArrayList<ButtonGroup>();
+    private transient JTextArea message = new JTextArea("UNMaps Version 1.9.5\n") {
+        @Override
+        public void append(String str) {
+            super.append(str);
+            message.setCaretPosition(message.getDocument().getLength());
+        }
+    };
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -445,44 +536,14 @@ public class AgentHandler {
     }
 
     //------------------------------------------------------------
+    // 読み込み関連
+    //------------------------------------------------------------
     /**
-     * エージェントを追加。
-     * @param agent : 追加するエージェント。ID は自動生成。
-     * @return agent がそのまま変える。
+     * シナリオ読み込み。
      */
-    public AgentBase assignUniqIdForAgent(AgentBase agent) {
-        String id = agentTable.putWithUniqId(agent) ;
-        agent.ID = id;
-        return agent ;
-    }
-
-    public void setupFrame(String generationFile, String scenarioFile,
-                           NetworkMapBase map) {
-        control_panel = null;
-        clock_label = new JLabel("NOT STARTED");
-        time_label = new JLabel("NOT STARTED!");
-        evacuatedCount_label = new JLabel("NOT STARTED");
-        message = new JTextArea("UNMaps Version 1.9.5\n");
-        setup_control_panel(generationFile,
-                scenarioFile,
-                map);
-    }
-
-    public void prepareForSimulation() {
-        for (AgentBase agent : getAllAgentCollection()) {
-            agent.prepareForSimulation(simulator.getTimeScale());
-        }
-        // 初回は全リンクを対象とする
-        effectiveLinks = (MapLinkTable)simulator.getLinks().clone();
-    }
-
-    private void setup_default_scenario() {
-        scenario.setOriginTime(0) ;
-    }
-
     private void parseScenarioFile(String filename) {
         if (filename == null || filename.isEmpty()) {
-            setup_default_scenario();
+            setupDefaultScenario();
             return;
         }
 
@@ -497,6 +558,73 @@ public class AgentHandler {
         scenario.describe() ;
     }
 
+    //------------------------------------------------------------
+    // シミュレーション関連
+    //------------------------------------------------------------
+    /**
+     * シミュレーション開始準備
+     */
+    public void prepareForSimulation() {
+        for (AgentBase agent : getAllAgentCollection()) {
+            agent.prepareForSimulation(simulator.getTimeScale());
+        }
+        // 初回は全リンクを対象とする
+        effectiveLinks = (MapLinkTable)simulator.getLinks().clone();
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンクの preprocess 処理
+     */
+    private void preprocessLinks(double time) {
+        synchronized (simulator) {
+            for (MapLink link : simulator.getLinks()) {
+                link.preUpdate(time);
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * エージェントの preprocess 処理
+     */
+    private void preprocessAgents(double time) {
+        int count = 0;
+
+        if (true) {
+            synchronized (simulator) {
+                for (MapLink link : effectiveLinks) {
+                    ArrayList<AgentBase> forwardAgents = link.getLane(1.0);
+                    for(int i = 0 ; i < forwardAgents.size() ; i++) {
+                        AgentBase agent =
+                            (isUsingFrontFirstOrderQueue ?
+                             forwardAgents.get(forwardAgents.size() - i - 1) :
+                             forwardAgents.get(i)) ;
+
+                        agent.preUpdate(time);
+                        count += 1;
+                    }
+                    ArrayList<AgentBase> backwardAgents = link.getLane(-1.0);
+                    for (int i = backwardAgents.size() - 1; i >= 0; --i) {
+                        AgentBase agent = backwardAgents.get(i);
+                        agent.preUpdate(time);
+                        count += 1;
+                    }
+                    /*
+                    for (AgentBase agent : link.getAgents()) {
+                        agent.preUpdate(time);
+                        count += 1;
+                    }
+                    */
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーションサイクル
+     */
     public void update(double time) {
         update_buttons();
 
@@ -589,50 +717,10 @@ public class AgentHandler {
     private HashMap<AgentBase, Point2D> lastPositions = new HashMap<>();
     private HashMap<AgentBase, Vector3d> lastSwings = new HashMap<>();
 
-    public boolean isFinished() {
-        /* finish when FinishEvent occurs */
-        if (scenario.isFinished()) {
-            Itk.logInfo("finished by the end of scenario.") ;
-            return true;
-        }
-        if (isAllAgentSpeedZeroBreak) {
-            for (AgentFactory factory : generate_agent) {
-                if (factory.enabled) return false;
-            }
-            boolean existNotFinished = false;
-            for (final AgentBase agent : getWalkingAgentCollection()) {
-                if (!agent.finished()) {
-                    existNotFinished = true;
-                    break;
-                }
-            }
-            if (existNotFinished) {
-                if (isAllAgentSpeedZero) {
-                    Itk.logInfo("finished", "all agents speed zero");
-                    return true;
-                }
-                return false;
-            }
-        } else {
-            for (final AgentBase agent : getWalkingAgentCollection()) {
-                if (!agent.finished()) return false;
-            }
-            for (AgentFactory factory : generate_agent) {
-                if (factory.enabled) return false;
-            }
-        }
-        Itk.logInfo("finished","no more agents to generate");
-        return true;
-    }
-
-    private void preprocessLinks(double time) {
-        synchronized (simulator) {
-            for (MapLink link : simulator.getLinks()) {
-                link.preUpdate(time);
-            }
-        }
-    }
-
+    //------------------------------------------------------------
+    /**
+     * リンクの update 処理
+     */
     private void updateLinks(double time) {
         synchronized (simulator) {
             for (MapLink link : simulator.getLinks()) {
@@ -641,39 +729,10 @@ public class AgentHandler {
         }
     }
 
-    private void preprocessAgents(double time) {
-        int count = 0;
-
-        if (true) {
-            synchronized (simulator) {
-                for (MapLink link : effectiveLinks) {
-                    ArrayList<AgentBase> forwardAgents = link.getLane(1.0);
-                    for(int i = 0 ; i < forwardAgents.size() ; i++) {
-                        AgentBase agent =
-                            (isUsingFrontFirstOrderQueue ?
-                             forwardAgents.get(forwardAgents.size() - i - 1) :
-                             forwardAgents.get(i)) ;
-
-                        agent.preUpdate(time);
-                        count += 1;
-                    }
-                    ArrayList<AgentBase> backwardAgents = link.getLane(-1.0);
-                    for (int i = backwardAgents.size() - 1; i >= 0; --i) {
-                        AgentBase agent = backwardAgents.get(i);
-                        agent.preUpdate(time);
-                        count += 1;
-                    }
-                    /*
-                    for (AgentBase agent : link.getAgents()) {
-                        agent.preUpdate(time);
-                        count += 1;
-                    }
-                    */
-                }
-            }
-        }
-    }
-
+    //------------------------------------------------------------
+    /**
+     * エージェントの update 処理
+     */
     private void updateAgents(double time) {
         if (simulationDeferFactor > 0) {
             try {
@@ -742,42 +801,10 @@ public class AgentHandler {
         averageSpeed = speedTotal / count;
     }
 
-    public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
-
     //------------------------------------------------------------
     /**
-     * individualPedestriansLogger への出力。
+     * エージェントの見え計算
      */
-    private void logIndividualPedestrians(double time, AgentBase agent) {
-        if (individualPedestriansLogger != null) {
-            individualPedestriansLoggerFormatter
-                .outputValueToLoggerInfo(individualPedestriansLogger,
-                                         agent, new Double(time), this);
-        }
-    }
-
-
-    private void updateEvacuatedCount() {
-        String evacuatedCount_string;
-        if (stuckAgents.isEmpty()) {
-            evacuatedCount_string = String.format(
-                    "Walking: %d  Generated: %d  Evacuated: %d / %d",
-                    numOfWalkingAgents(),
-                    numOfAllAgents(),
-                    numOfEvacuatedAgents(), getMaxAgentCount());
-        } else {
-            evacuatedCount_string = String.format(
-                    "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
-                    numOfWalkingAgents(),
-                    numOfAllAgents(),
-                    numOfEvacuatedAgents() - numOfStuckAgents(),
-                    numOfStuckAgents(),
-                    getMaxAgentCount());
-        }
-        evacuatedCount_label.setText(evacuatedCount_string);
-        SimulationPanel3D.updateEvacuatedCount(evacuatedCount_string);
-    }
-
     private void updateAgentViews() {
         for (AgentBase agent : getWalkingAgentCollection()){
             if (agent.isEvacuated())
@@ -786,6 +813,10 @@ public class AgentHandler {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * Pollution のアップデート
+     */
     private void updatePollution() {
         /* pollution */
         for (final AgentBase agent : getWalkingAgentCollection()) {
@@ -798,12 +829,73 @@ public class AgentHandler {
         }
     }
 
-    public void dumpAgentResult(PrintStream out) {
-        for (final AgentBase agent : getAllAgentCollection()) {
-            agent.dumpResult(out);
-        }
+    //------------------------------------------------------------
+    // シミュレーション周辺
+    //------------------------------------------------------------
+    /**
+     * エージェントを追加。
+     * @param agent : 追加するエージェント。ID は自動生成。
+     * @return agent がそのまま変える。
+     */
+    public AgentBase assignUniqIdForAgent(AgentBase agent) {
+        String id = agentTable.putWithUniqId(agent) ;
+        agent.ID = id;
+        return agent ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * デフォルトシナリオをセット。
+     * 実は何もしない。
+     */
+    private void setupDefaultScenario() {
+        scenario.setOriginTime(0) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 終了チェック
+     */
+    public boolean isFinished() {
+        /* finish when FinishEvent occurs */
+        if (scenario.isFinished()) {
+            Itk.logInfo("finished by the end of scenario.") ;
+            return true;
+        }
+        if (isAllAgentSpeedZeroBreak) {
+            for (AgentFactory factory : generate_agent) {
+                if (factory.enabled) return false;
+            }
+            boolean existNotFinished = false;
+            for (final AgentBase agent : getWalkingAgentCollection()) {
+                if (!agent.finished()) {
+                    existNotFinished = true;
+                    break;
+                }
+            }
+            if (existNotFinished) {
+                if (isAllAgentSpeedZero) {
+                    Itk.logInfo("finished", "all agents speed zero");
+                    return true;
+                }
+                return false;
+            }
+        } else {
+            for (final AgentBase agent : getWalkingAgentCollection()) {
+                if (!agent.finished()) return false;
+            }
+            for (AgentFactory factory : generate_agent) {
+                if (factory.enabled) return false;
+            }
+        }
+        Itk.logInfo("finished","no more agents to generate");
+        return true;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * すべてのゴールタグを集める。
+     */
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
 
@@ -822,10 +914,111 @@ public class AgentHandler {
         return all_goal_tags;
     }
 
+    //------------------------------------------------------------
+    // アクセス関連
+    //------------------------------------------------------------
+    /**
+     * エージェントのカウント取得。
+     */
+    public int getMaxAgentCount() {
+        return maxAgentCount;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 乱数シード設定
+     */
+    public void setRandom(Random _random) {
+        random = _random;
+        if (generate_agent != null)
+            generate_agent.setRandom(_random);
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    public void setLinerGenerateAgentRatio(double _ratio) {
+        generate_agent.setLinerGenerateAgentRatio(_ratio);
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    public boolean getIsAllAgentSpeedZero() {
+        return isAllAgentSpeedZero;
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    public boolean getIsAllAgentSpeedZeroBreak() {
+        return isAllAgentSpeedZeroBreak;
+    }
+
+    //------------------------------------------------------------
+    /**
+     */
+    public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
+    {
+        this.isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントのCollectionを返す。
+     * @return エージェントのCollection。
+     */
+    public Collection<AgentBase> getWalkingAgentCollection() {
+        return walkingAgentTable.values() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 平均速度。
+     */
+    public double getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 歩いているエージェントの数
+     * @return エージェントの数
+     */
+    public int numOfWalkingAgents() {
+        return walkingAgentTable.size() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 避難完了したエージェントの数
+     * @return エージェントの数
+     */
+    public int numOfEvacuatedAgents() {
+        return evacuatedAgents.size() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * スタック中のエージェントの数
+     * @return エージェントの数
+     */
+    public int numOfStuckAgents() {
+        return stuckAgents.size() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 指定した node の evacuation count を取得
+     */
     public int getEvacuatedCount(MapNode node) {
         return evacuatedAgentCountByExit.get(node);
     }
 
+    //------------------------------------------------------------
+    /**
+     * evacuation count のテーブル取得
+     */
     public HashMap<MapNode, Integer> getExitNodesMap() {
         return evacuatedAgentCountByExit;
     }
@@ -860,15 +1053,6 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * 歩いているエージェントのCollectionを返す。
-     * @return エージェントのCollection。
-     */
-    public Collection<AgentBase> getWalkingAgentCollection() {
-        return walkingAgentTable.values() ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 歩いているエージェントテーブルより一人取り除く。
      * @return agent : 取り除くエージェント
      */
@@ -882,35 +1066,43 @@ public class AgentHandler {
         }
     }
 
-    public double getAverageSpeed() {
-        return averageSpeed;
+    //------------------------------------------------------------
+    // 時刻関連
+    //------------------------------------------------------------
+    /**
+     * 相対時刻の文字列による絶体時刻標記を得る。
+     * @param relTime : 相対時刻
+     * @return 絶対時刻文字列
+     */
+    public String convertAbsoluteTimeString(double relTime) {
+        return timeToString(scenario.calcAbsoluteTime(relTime)) ;
     }
 
     //------------------------------------------------------------
     /**
-     * 歩いているエージェントの数
-     * @return エージェントの数
+     * 相対時刻の文字列による絶体時刻標記を得る。
+     * @param relTime : 相対時刻
+     * @param trunc : 24時を0時にもどすか？
+     * @return 絶対時刻文字列
      */
-    public int numOfWalkingAgents() {
-        return walkingAgentTable.size() ;
+    public String convertAbsoluteTimeString(double relTime, boolean trunc) {
+        return timeToString(scenario.calcAbsoluteTime(relTime), trunc) ;
     }
 
     //------------------------------------------------------------
     /**
-     * 避難完了したエージェントの数
-     * @return エージェントの数
+     * 相対時刻から絶対時刻への変換。
      */
-    public int numOfEvacuatedAgents() {
-        return evacuatedAgents.size() ;
+    public double calcAbsoluteTime(double relTime) {
+        return scenario.calcAbsoluteTime(relTime) ;
     }
 
     //------------------------------------------------------------
     /**
-     * スタック中のエージェントの数
-     * @return エージェントの数
+     * 絶対時刻から相対時刻への変換。
      */
-    public int numOfStuckAgents() {
-        return stuckAgents.size() ;
+    public double calcRelativeTime(double absTime) {
+        return scenario.calcRelativeTime(absTime) ;
     }
 
     //------------------------------------------------------------
@@ -941,6 +1133,35 @@ public class AgentHandler {
         return String.format("%02d:%02d:%02.0f", time, min, sec);
     }
 
+    //------------------------------------------------------------
+    // ログ関連
+    //------------------------------------------------------------
+    /**
+     * エージェント状態のダンプ
+     */
+    public void dumpAgentResult(PrintStream out) {
+        for (final AgentBase agent : getAllAgentCollection()) {
+            agent.dumpResult(out);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * individualPedestriansLogger への出力。
+     */
+    private void logIndividualPedestrians(double time, AgentBase agent) {
+        if (individualPedestriansLogger != null) {
+            individualPedestriansLoggerFormatter
+                .outputValueToLoggerInfo(individualPedestriansLogger,
+                                         agent, new Double(time), this);
+        }
+    }
+
+
+    //------------------------------------------------------------
+    /**
+     * 統計的結果説明
+     */
     public String getStatisticsDescription() {
         /* 各被害レベルの人数 (0, 1, 2, 3)
          * 平均避難時間　　
@@ -970,6 +1191,10 @@ public class AgentHandler {
         ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * ロガーの初期化
+     */
     public Logger initLogger(String name, Level level, java.util.logging.Formatter formatter, String filePath) {
         Logger logger = Logger.getLogger(name);
         try {
@@ -991,6 +1216,10 @@ public class AgentHandler {
         return logger;
     }
 
+    //------------------------------------------------------------
+    /**
+     * ロガーの終了処理
+     */
     public void closeLogger(Logger logger) {
         if (logger != null) {
             for (Handler handler : logger.getHandlers()) {
@@ -999,6 +1228,10 @@ public class AgentHandler {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * AgentMovementHistoryLogger の初期化
+     */
     public void initAgentMovementHistoryLogger(String name, String filePath) {
         agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
             public String format(final LogRecord record) {
@@ -1010,11 +1243,18 @@ public class AgentHandler {
             .outputHeaderToLoggerInfo(agentMovementHistoryLogger) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * AgentMovementHistoryLogger の終了
+     */
     public void closeAgentMovementHistorLogger() {
         closeLogger(agentMovementHistoryLogger);
     }
 
-    private String individualPedestriansLogDir = null;
+    //------------------------------------------------------------
+    /**
+     * individualPedestriansLogger の初期化
+     */
     public void initIndividualPedestriansLogger(String name, String dirPath) {
         individualPedestriansLogDir = dirPath;
         individualPedestriansLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
@@ -1028,6 +1268,10 @@ public class AgentHandler {
 
     }
 
+    //------------------------------------------------------------
+    /**
+     * individualPedestriansLogger の終了
+     */
     public void closeIndividualPedestriansLogger() {
         if (individualPedestriansLogger == null) {
             return;
@@ -1062,29 +1306,46 @@ public class AgentHandler {
         }
     }
 
-    protected transient JPanel control_panel = null;
-    private transient JLabel clock_label = new JLabel("NOT STARTED1");
-    private transient JLabel time_label = new JLabel("NOT STARTED2");
-    private transient JLabel evacuatedCount_label = new JLabel("NOT STARTED3");
-    private ArrayList<ButtonGroup> toggle_scenario_button_groups = new
-        ArrayList<ButtonGroup>();
-    private transient JTextArea message = new JTextArea("UNMaps Version 1.9.5\n") {
-        @Override
-        public void append(String str) {
-            super.append(str);
-            message.setCaretPosition(message.getDocument().getLength());
-        }
-    };
+    //------------------------------------------------------------
+    //------------------------------------------------------------
+    // 画面関係
+    //------------------------------------------------------------
+    //------------------------------------------------------------
+    /**
+     * 画面の準備
+     */
+    public void setupFrame(String generationFile, String scenarioFile,
+                           NetworkMapBase map) {
+        control_panel = null;
+        clock_label = new JLabel("NOT STARTED");
+        time_label = new JLabel("NOT STARTED!");
+        evacuatedCount_label = new JLabel("NOT STARTED");
+        message = new JTextArea("UNMaps Version 1.9.5\n");
+        setup_control_panel(generationFile,
+                scenarioFile,
+                map);
+    }
 
+    //------------------------------------------------------------
+    /**
+     * 制御パネル
+     */
     public JPanel getControlPanel() {
         return control_panel;
     }
 
+    //------------------------------------------------------------
+    /**
+     * スタートボタン
+     */
     public JButton getStartButton() {
         return start_button;
     }
 
-    // GridBagLayout のパネルにラベルを追加する
+    //------------------------------------------------------------
+    /**
+     * GridBagLayout のパネルにラベルを追加する
+     */
     private void addJLabel(JPanel panel, int x, int y, int width, int height, int anchor, JLabel label) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = anchor;
@@ -1097,10 +1358,18 @@ public class AgentHandler {
         panel.add(label);
     }
 
+    //------------------------------------------------------------
+    /**
+     * GridBagLayout のパネルにラベルを追加する
+     */
     private void addJLabel(JPanel panel, int x, int y, int width, int height, JLabel label) {
         addJLabel(panel, x, y, width, height, GridBagConstraints.WEST, label);
     }
 
+    //------------------------------------------------------------
+    /**
+     * 制御パネルの準備
+     */
     private void setup_control_panel(String generationFileName,
             String scenarioFileName,
             NetworkMapBase map) {
@@ -1290,16 +1559,28 @@ public class AgentHandler {
         control_panel.add(message_scroller, BorderLayout.SOUTH);
     }
     
+    //------------------------------------------------------------
+    /**
+     * シミュレーション遅延の制御（画面）
+     */
     private void changeSimulationDeferFactor() {
         simulationDeferFactor = simulationDeferFactorControl.getValue();
         simulationDeferFactorValue.setText("" + simulationDeferFactor);
     }
 
+    //------------------------------------------------------------
+    /**
+     * シミュレーション遅延の制御（画面）
+     */
     public void setSimulationDeferFactor(int deferFactor) {
         simulationDeferFactor = deferFactor;
         simulationDeferFactorControl.setValue(simulationDeferFactor);
     }
 
+    //------------------------------------------------------------
+    /**
+     * ボタン類のアップデート
+     */
     public void update_buttons() {
         boolean is_running = simulator.isRunning();
         if (start_button != null) {
@@ -1313,67 +1594,29 @@ public class AgentHandler {
         }
     }
 
-    public int getMaxAgentCount() {
-        return maxAgentCount;
-    }
-
     //------------------------------------------------------------
     /**
-     * 相対時刻の文字列による絶体時刻標記を得る。
-     * @param relTime : 相対時刻
-     * @return 絶対時刻文字列
+     * evacuation count の計算
      */
-    public String convertAbsoluteTimeString(double relTime) {
-        return timeToString(scenario.calcAbsoluteTime(relTime)) ;
+    private void updateEvacuatedCount() {
+        String evacuatedCount_string;
+        if (stuckAgents.isEmpty()) {
+            evacuatedCount_string = String.format(
+                    "Walking: %d  Generated: %d  Evacuated: %d / %d",
+                    numOfWalkingAgents(),
+                    numOfAllAgents(),
+                    numOfEvacuatedAgents(), getMaxAgentCount());
+        } else {
+            evacuatedCount_string = String.format(
+                    "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
+                    numOfWalkingAgents(),
+                    numOfAllAgents(),
+                    numOfEvacuatedAgents() - numOfStuckAgents(),
+                    numOfStuckAgents(),
+                    getMaxAgentCount());
+        }
+        evacuatedCount_label.setText(evacuatedCount_string);
+        SimulationPanel3D.updateEvacuatedCount(evacuatedCount_string);
     }
 
-    //------------------------------------------------------------
-    /**
-     * 相対時刻の文字列による絶体時刻標記を得る。
-     * @param relTime : 相対時刻
-     * @param trunc : 24時を0時にもどすか？
-     * @return 絶対時刻文字列
-     */
-    public String convertAbsoluteTimeString(double relTime, boolean trunc) {
-        return timeToString(scenario.calcAbsoluteTime(relTime), trunc) ;
-    }
-
-    public void setRandom(Random _random) {
-        random = _random;
-        if (generate_agent != null)
-            generate_agent.setRandom(_random);
-    }
-
-    public boolean getIsAllAgentSpeedZero() {
-        return isAllAgentSpeedZero;
-    }
-
-    public boolean getIsAllAgentSpeedZeroBreak() {
-        return isAllAgentSpeedZeroBreak;
-    }
-
-    public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
-    {
-        this.isAllAgentSpeedZeroBreak = _isAllAgentSpeedZeroBreak;
-    }
-
-    public void setLinerGenerateAgentRatio(double _ratio) {
-        generate_agent.setLinerGenerateAgentRatio(_ratio);
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 相対時刻から絶対時刻への変換。
-     */
-    public double calcAbsoluteTime(double relTime) {
-        return scenario.calcAbsoluteTime(relTime) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 絶対時刻から相対時刻への変換。
-     */
-    public double calcRelativeTime(double absTime) {
-        return scenario.calcRelativeTime(absTime) ;
-    }
 }
