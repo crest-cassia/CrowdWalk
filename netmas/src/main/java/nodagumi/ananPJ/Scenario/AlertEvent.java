@@ -111,16 +111,9 @@ public class AlertEvent extends PlacedEvent {
     public boolean occur(double time, NetworkMapBase map, boolean inverse) {
         for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
-                if(message == null) { 
-                    /* [2015.02.15 I.Noda] should be obsolete.
-                     * for backward compatibility
-                     */
-                    link.setEmergency(!inverse) ;
-                } else {
-                    double relativeTime = scenario.calcRelativeTime(time) ;
-                    link.addAlertMessage(message, relativeTime, !inverse) ;
-                    Itk.logInfo("AlertEvent",onoff,link,message,relativeTime) ;
-                }
+                double relativeTime = scenario.calcRelativeTime(time) ;
+                link.addAlertMessage(message, relativeTime, !inverse) ;
+                Itk.logInfo("AlertEvent",onoff,link,message,relativeTime) ;
             }
         }
         return true ;

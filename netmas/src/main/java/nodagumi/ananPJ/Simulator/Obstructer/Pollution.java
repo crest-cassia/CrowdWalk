@@ -3,7 +3,6 @@ package nodagumi.ananPJ.Simulator.Obstructer;
 
 import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.misc.SpecialTerm;
 
 import nodagumi.Itk.*;
 
@@ -104,9 +103,17 @@ public class Pollution extends ObstructerBase {
         currentTriageLevel = calcTriage();
         dead = calcDead();
 
+        /* [2015.07.02 I.Noda]
+         * Emergency は obsolete なので、使わない。
+         * ここの部分は、なにか別の方策が必要。
+         * 一番適切なのは、RationalAgent か RubyAgent で処理する。
+         */
+        /*
         if (currentTriageLevel != TriageLevel.GREEN) {
-	    agent.setGoal(SpecialTerm.Emergency) ;
+            agent.setGoal(SpecialTerm.Emergency) ;
         }
+        */
+
         if (currentTriageLevel != lastTriageLevel) {
             agent.getNetworkMap().getNotifier().agentTriageChanged(agent);
             lastTriageLevel = currentTriageLevel;

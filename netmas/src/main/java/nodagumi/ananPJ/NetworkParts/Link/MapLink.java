@@ -47,7 +47,6 @@ import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
-import nodagumi.ananPJ.misc.SpecialTerm;
 
 import nodagumi.Itk.*;
 
@@ -156,34 +155,6 @@ public class MapLink extends OBMapPart {
     protected ArrayList<AgentBase> agents;
     protected double timeScale = 1.0;
     private boolean nodes_are_set = false;
-
-    /* for simulation*/
-    private boolean emergency = false;
-    public void setEmergency(boolean b) { 
-        emergency = b;
-        if (!b) return;
-
-        informEmergencyToAllAgent() ;
-    }
-    public boolean getEmergency() { return emergency; }
-
-    //------------------------------------------------------------
-    /**
-     * エージェントに Emergency を伝える。
-     */
-    public void informEmergencyToAgent(AgentBase agent) {
-        agent.changeGoal(SpecialTerm.Emergency) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 全エージェントに Emergency を伝える。
-     */
-    public void informEmergencyToAllAgent() {
-        for(AgentBase agent : getAgents()) {
-            informEmergencyToAgent(agent) ;
-        }
-    }
 
     //------------------------------------------------------------
     /**
@@ -511,11 +482,6 @@ public class MapLink extends OBMapPart {
             add_agent_to_lane(agent);
         }
         */
-
-        /* 新しいリンクが emergency mode かどうかをチェック */
-        if (getEmergency()) {
-            informEmergencyToAgent(agent) ;
-        }
 
         /* alert message を新しいエージェントに伝える */
         for(HashMap.Entry<Term, Double> entry : alertMessageTable.entrySet()) {

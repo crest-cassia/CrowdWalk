@@ -762,8 +762,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
             return linkAppearances.get("FLOOR").color;
         } else if (link_draw_density_mode) {
             return new Color3f(link.getColorFromDensity());
-        } else if (link.getEmergency()) {
-            return Colors.GREEN;
         } else if (link.isShutOff()) {
             return Colors.YELLOW;
         } else if (link.hasTag("RED")) {

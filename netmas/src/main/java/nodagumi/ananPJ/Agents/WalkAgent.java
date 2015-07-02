@@ -17,7 +17,6 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
-import nodagumi.ananPJ.misc.SpecialTerm;
 import nodagumi.ananPJ.Agents.AgentFactory;
 
 import nodagumi.Itk.*;
@@ -275,22 +274,6 @@ public class WalkAgent extends AgentBase {
 	/**
 	 * 変数アクセス関連
 	 */
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public void setEmergency() {
-        setGoal(SpecialTerm.Emergency) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public boolean isEmergency() {
-        return goal.equals(SpecialTerm.Emergency) ;
-    }
-
     //------------------------------------------------------------
     /**
      *
