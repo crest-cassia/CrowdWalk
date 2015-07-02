@@ -32,7 +32,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
      *  a base class for classes launching simulations */
     public SimulationLauncher(Random _random) {
         super(_random) ;
-        networkMap = new NetworkMap(_random);
+        networkMap = new NetworkMap() ;
         settings = Settings.load("NetworkMapEditor.ini");
     }
 

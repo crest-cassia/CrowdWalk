@@ -171,9 +171,6 @@ public abstract class BasicSimulationLauncher {
      */
     public void setRandom(Random _random) {
         random = _random;
-        if(networkMap != null) {
-            networkMap.setRandom(_random);
-        }
         if(simulator != null) {
             simulator.setRandom(_random);
         }
@@ -409,7 +406,7 @@ public abstract class BasicSimulationLauncher {
             return null;
         }
         // NetMAS based map
-        NetworkMap network_map = new NetworkMap(random);
+        NetworkMap network_map = new NetworkMap() ;
         if (false == network_map.fromDOM(doc))
             return null;
         Itk.logInfo("Load Map File", file_name) ;

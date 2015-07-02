@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.regex.Matcher;
 
 import javax.swing.JOptionPane;
@@ -109,7 +108,6 @@ public class NetworkMap extends NetworkMapBase {
 	 */
 	public Term fallbackParameters = null ;
 
-    private Random random = null;
     private NetworkMapPartsNotifier notifier;
 
     //============================================================
@@ -164,9 +162,8 @@ public class NetworkMap extends NetworkMapBase {
     /**
      * constructor
      */
-    public NetworkMap(Random _random) {
+    public NetworkMap() {
 		super() ;
-        random = _random;
         String id = assignNewId();
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
@@ -361,9 +358,7 @@ public class NetworkMap extends NetworkMapBase {
         return false;
     }
 
-    //public EditorFrame openEditorFrame(MapPartGroup obinode){
     public EditorFrame openEditorFrame(NetworkMapEditor editor, MapPartGroup obinode) {
-        //EditorFrame frame = new EditorFrame(obinode, random);
         EditorFrame frame = new EditorFrame(editor, obinode);
 
         obinode.setUserObject(frame);
@@ -776,10 +771,6 @@ public class NetworkMap extends NetworkMapBase {
     }
     public void setupAfterLoad(boolean hasDisplay) {
         setupAfterLoadRec((OBNode)root, hasDisplay);
-    }
-
-    public void setRandom(Random _random) {
-        random = _random;
     }
 
     /**
