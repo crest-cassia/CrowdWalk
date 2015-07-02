@@ -29,7 +29,7 @@ import javax.vecmath.Vector3f;
 
 import nodagumi.ananPJ.NetworkParts.OBNode;
 //import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
-import nodagumi.ananPJ.Simulator.PollutionCalculator.*;
+import nodagumi.ananPJ.Simulator.PollutionHandler.*;
 
 //======================================================================
 /**

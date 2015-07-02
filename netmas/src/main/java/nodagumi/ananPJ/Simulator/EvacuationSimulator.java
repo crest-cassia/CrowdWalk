@@ -100,7 +100,7 @@ public class EvacuationSimulator {
     /**
      * Pollution を管理。
      */
-    private PollutionCalculator pollutionCalculator = null;
+    private PollutionHandler pollutionHandler = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -321,7 +321,7 @@ public class EvacuationSimulator {
      * Pollution ハンドラ取得。
      */
     public ArrayList<MapArea> getPollutions() {
-        return pollutionCalculator.getPollutions();
+        return pollutionHandler.getPollutions();
     }
 
     //------------------------------------------------------------
@@ -536,10 +536,10 @@ public class EvacuationSimulator {
                                0.0 :
                                properties.getDouble("interpolation_interval", 
                                                     0.0)) ;
-            pollutionCalculator =
-                new PollutionCalculator(pollutionFileName,
-                                        networkMap.getRooms(),
-                                        timeScale, interval);
+            pollutionHandler =
+                new PollutionHandler(pollutionFileName,
+                                     networkMap.getRooms(),
+                                     timeScale, interval);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -862,26 +862,18 @@ public class EvacuationSimulator {
      */
     public boolean updateEveryTick() {
         synchronized (stop_simulation) {
-            if (simulationDeferFactor > 0) {
-                try {
-                    Thread.sleep(simulationDeferFactor);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            deferSimulation() ;
 
             double relTime = getSecond();
 
             // ruby wrapper の preUpdate()
-            if(useRubyWrapper()) {
+            if(useRubyWrapper())
                 rubyEngine.callMethod(rubyWrapper, "preUpdate", relTime) ;
-            }
 
             // pollution 計算。
             if (usePollution())
-		pollutionCalculator.updateAll(relTime, networkMap,
-                                              getWalkingAgentCollection());
-            // Runtime.getRuntime().gc();
+                pollutionHandler.updateAll(relTime, networkMap,
+                                           getWalkingAgentCollection());
 
             // 実行本体
             agentHandler.update(relTime);
@@ -890,14 +882,27 @@ public class EvacuationSimulator {
             updateEveryTickDisplay() ;
 
             // ruby wrapper の postUpdate()
-            if(useRubyWrapper()) {
+            if(useRubyWrapper())
                 rubyEngine.callMethod(rubyWrapper, "postUpdate", relTime) ;
-            }
 
             // カウンタを進める。
             tick_count += 1.0;
         }
         return agentHandler.isFinished() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーション遅延
+     */
+    private void deferSimulation() {
+        if (simulationDeferFactor > 0) {
+            try {
+                Thread.sleep(simulationDeferFactor);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     //------------------------------------------------------------

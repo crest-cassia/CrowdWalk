@@ -38,7 +38,7 @@ import nodagumi.Itk.*;
 /**
  * Pollution による影響を計算する部分。
  */
-public class PollutionCalculator {
+public class PollutionHandler {
 
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -101,7 +101,7 @@ public class PollutionCalculator {
     /**
      * コンストラクタ。
      */
-    public PollutionCalculator(String scheduleFileName,
+    public PollutionHandler(String scheduleFileName,
             ArrayList<MapArea> _areaList, double _timeScale, double interpolationInterval) {
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
 	    Itk.logInfo("Load Pollution File", "(none)") ;
@@ -455,9 +455,9 @@ public class PollutionCalculator {
     public static class PollutionLevelInfo {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
-         * PollutionCalculator へのリンク。
+         * PollutionHandler へのリンク。
          */
-        private PollutionCalculator calculator = null ;
+        private PollutionHandler handler = null ;
 
         /**
          * 現在の効果。
@@ -473,8 +473,8 @@ public class PollutionCalculator {
         /**
          * コンストラクタ。
          */
-        public PollutionLevelInfo(PollutionCalculator _calculator) {
-            calculator = _calculator ;
+        public PollutionLevelInfo(PollutionHandler _handler) {
+            handler = _handler ;
             currentLevel = 0.0 ;
             lastLevel = 0.0 ;
         }
@@ -500,7 +500,7 @@ public class PollutionCalculator {
          * 正規化レベルを取得。
          */
         public double getNormalizedLevel() {
-            return currentLevel / calculator.getMaxPollutionLevel() ;
+            return currentLevel / handler.getMaxPollutionLevel() ;
         }
 
         //--------------------------------------------------
