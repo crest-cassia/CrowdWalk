@@ -496,7 +496,7 @@ public class NetworkMapEditor extends SimulationLauncher
         // tkokada
         setupNetworkMap() ;
 
-        networkMap.setupAfterLoad();
+        networkMap.setupAfterLoad(true);
         updateAll();
         return true;
     }
@@ -535,7 +535,7 @@ public class NetworkMapEditor extends SimulationLauncher
         }
 
         update_dirname();
-        networkMap.prepareForSave();
+        networkMap.prepareForSave(true);
 
         try {
             FileOutputStream fos = new FileOutputStream(mapPath);

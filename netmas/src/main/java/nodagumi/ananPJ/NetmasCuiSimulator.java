@@ -35,7 +35,6 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         }
         try {
             networkMap = readMapWithName(mapPath) ;
-            networkMap.setHasDisplay(false);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

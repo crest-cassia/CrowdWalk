@@ -109,11 +109,13 @@ public class NetworkMap extends NetworkMapBase {
 	 */
 	public Term fallbackParameters = null ;
 
-    private boolean hasDisplay = true;
     private Random random = null;
     private NetworkMapPartsNotifier notifier;
 
-    /* undo related stuff */
+    //============================================================
+    /**
+     * class for undo related stuff
+     */
     class UndoInformation {
         public boolean addition;
         public OBNode parent;
@@ -127,13 +129,25 @@ public class NetworkMap extends NetworkMapBase {
             addition = _addition;
         }
     }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * updo stack
+     */
     private ArrayList<UndoInformation> undo_list =
         new ArrayList<UndoInformation>();
 
+    /**
+     * check updo stack
+     */
     public boolean canUndo() {
         return undo_list.size() > 0;
 
     }
+
+    /**
+     * exec updo
+     */
     public void undo(NetworkMapEditor editor) {
         if (undo_list.size() == 0) return;
         int i = undo_list.size() - 1;
@@ -146,19 +160,10 @@ public class NetworkMap extends NetworkMapBase {
         editor.updateAll();
     }
 
-    /* constructor */
-    public NetworkMap() {
-		super() ;
-        random = new Random();
-        String id = assignNewId();
-        root = new MapPartGroup(id);
-        ((MapPartGroup)root).addTag("root");
-		addObject(id, (OBNode)root);
-
-        setRoot((DefaultMutableTreeNode)root);
-        notifier = new NetworkMapPartsNotifier(this);
-    }
-
+    //------------------------------------------------------------
+    /**
+     * constructor
+     */
     public NetworkMap(Random _random) {
 		super() ;
         random = _random;
@@ -166,23 +171,6 @@ public class NetworkMap extends NetworkMapBase {
         root = new MapPartGroup(id);
         ((MapPartGroup)root).addTag("root");
         addObject(id, (OBNode)root);
-
-        setRoot((DefaultMutableTreeNode)root);
-        notifier = new NetworkMapPartsNotifier(this);
-    }
-
-    public NetworkMap(Random _random, boolean _hasDisplay) {
-        this(_random);
-        setHasDisplay(_hasDisplay);
-    }
-
-    /* to restore from DOM */
-    public NetworkMap(String id, Random _random) {
-		super();
-        random = _random;
-        root = new MapPartGroup(id);
-        ((MapPartGroup)root).addTag("root");
-		addObject(id, (OBNode)root);
 
         setRoot((DefaultMutableTreeNode)root);
         notifier = new NetworkMapPartsNotifier(this);
@@ -767,33 +755,27 @@ public class NetworkMap extends NetworkMapBase {
         return all_tags;
     }
     
-    private void prepare_for_save_rec(OBNode node) {
+    private void prepareForSaveRec(OBNode node, boolean hasDisplay) {
         node.prepareForSave(hasDisplay);
         for (int i = 0; i < node.getChildCount(); ++i) {
             TreeNode child = node.getChildAt(i);
-            if (child instanceof OBNode) prepare_for_save_rec((OBNode)child);
+            if (child instanceof OBNode)
+                prepareForSaveRec((OBNode)child, hasDisplay);
         }
     }
-    public void prepareForSave() {
-        prepare_for_save_rec((OBNode)root);
+    public void prepareForSave(boolean hasDisplay) {
+        prepareForSaveRec((OBNode)root, hasDisplay);
     }
-    private void setup_after_load_rec(OBNode node) {
+    private void setupAfterLoadRec(OBNode node, boolean hasDisplay) {
         node.postLoad(hasDisplay);
         for (int i = 0; i < node.getChildCount(); ++i) {
             TreeNode child = node.getChildAt(i);
-            if (child instanceof OBNode) setup_after_load_rec((OBNode)child);
+            if (child instanceof OBNode)
+                setupAfterLoadRec((OBNode)child, hasDisplay);
         }
     }
-    public void setupAfterLoad() {
-        setup_after_load_rec((OBNode)root);
-    }
-
-    public void setHasDisplay(boolean _hasDisplay) {
-        hasDisplay = _hasDisplay;
-    }
-
-    public boolean getHasDisplay() {
-        return hasDisplay;
+    public void setupAfterLoad(boolean hasDisplay) {
+        setupAfterLoadRec((OBNode)root, hasDisplay);
     }
 
     public void setRandom(Random _random) {
