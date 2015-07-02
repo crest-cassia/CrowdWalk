@@ -4,25 +4,25 @@ package nodagumi.ananPJ.NetworkParts;
 import java.util.ArrayList;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 
 /**
- * NetworkMap の構成要素の状態変化を通知する.
+ * NetworkMapBase の構成要素の状態変化を通知する.
  *
  * イベントは使用せず、通知用のメソッドから直接リスナのメソッドを呼び出している。
  */
 public class NetworkMapPartsNotifier {
-    private NetworkMap map;
+    private NetworkMapBase map;
     private ArrayList<NetworkMapPartsListener> listeners = new ArrayList();
 
-    public NetworkMapPartsNotifier(NetworkMap map) {
+    public NetworkMapPartsNotifier(NetworkMapBase map) {
         this.map = map;
     }
 
-    public NetworkMap getNetworkMap() {
+    public NetworkMapBase getNetworkMap() {
         return map;
     }
 

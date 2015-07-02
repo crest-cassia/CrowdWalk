@@ -32,7 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Link.MapLink;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle;
@@ -55,7 +55,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     public String ID;
     protected ArrayList<String> tags;
     public boolean selected = false;
-    protected NetworkMap networkMap;
+    protected NetworkMapBase networkMap;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -212,14 +212,14 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * NetworkMap をセットする.
      */
-    public void setNetworkMap(NetworkMap networkMap) {
+    public void setNetworkMap(NetworkMapBase networkMap) {
         this.networkMap = networkMap;
     }
 
     /**
      * NetworkMap を返す.
      */
-    public NetworkMap getNetworkMap() {
+    public NetworkMapBase getNetworkMap() {
         return networkMap;
     }
 
