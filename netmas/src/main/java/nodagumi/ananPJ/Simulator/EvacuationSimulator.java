@@ -197,14 +197,14 @@ public class EvacuationSimulator {
     /**
      * ruby 用 simulation wrapper クラス名。
      */
-    private String rubySimulationWrapperClass = null ;
+    private String rubyWrapperClass = null ;
 
     /**
      * ruby 用 simulation wrapper のインスタンス。
      * シミュレーションの cycle の前後で、
      * preCycle(relTime), postCycle(relTime) が呼び出される。
      */
-    private Object rubySimulationWrapper = null ;
+    private Object rubyWrapper = null ;
 
 
     //------------------------------------------------------------
@@ -354,6 +354,7 @@ public class EvacuationSimulator {
         return properties;
     }
 
+    //------------------------------------------------------------
     /**
      * 乱数生成器
      */
@@ -368,6 +369,22 @@ public class EvacuationSimulator {
      */
     public Random getRandom() {
         return random ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ruby Wrapper を呼ぶべきかどうか
+     */
+    private boolean useRubyWrapper() {
+        return rubyWrapper != null ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * pollution を使うかどうか
+     */
+    private boolean usePollution() {
+        return !(pollutionFileName == null || pollutionFileName.isEmpty()) ;
     }
 
     //------------------------------------------------------------
@@ -698,12 +715,11 @@ public class EvacuationSimulator {
                     rubyEngine.eval(initScript) ;
                 }
                 // wrapperの作成
-                rubySimulationWrapperClass =
+                rubyWrapperClass =
                     properties.getString("ruby_simulation_wrapper_class", null);
-                if(rubySimulationWrapperClass != null) {
-                    rubySimulationWrapper =
-                        rubyEngine.newInstanceOfClass(rubySimulationWrapperClass,
-                                                      this) ;
+                if(rubyWrapperClass != null) {
+                    rubyWrapper =
+                        rubyEngine.newInstanceOfClass(rubyWrapperClass, this) ;
                 }
                 //
                 Itk.logInfo("building Ruby engine. Done.") ;
@@ -857,13 +873,12 @@ public class EvacuationSimulator {
             double relTime = getSecond();
 
             // ruby wrapper の preUpdate()
-            if(rubySimulationWrapper != null) {
-                rubyEngine.callMethod(rubySimulationWrapper, "preUpdate",
-                                      relTime) ;
+            if(useRubyWrapper()) {
+                rubyEngine.callMethod(rubyWrapper, "preUpdate", relTime) ;
             }
 
             // pollution 計算。
-            if (!(pollutionFileName == null || pollutionFileName.isEmpty()))
+            if (usePollution())
 		pollutionCalculator.updateNodesLinksAgents(relTime, networkMap,
                         getWalkingAgentCollection());
             // Runtime.getRuntime().gc();
@@ -875,9 +890,8 @@ public class EvacuationSimulator {
             updateEveryTickDisplay() ;
 
             // ruby wrapper の postUpdate()
-            if(rubySimulationWrapper != null) {
-                rubyEngine.callMethod(rubySimulationWrapper, "postUpdate",
-                                      relTime) ;
+            if(useRubyWrapper()) {
+                rubyEngine.callMethod(rubyWrapper, "postUpdate", relTime) ;
             }
 
             // カウンタを進める。
