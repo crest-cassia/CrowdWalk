@@ -391,20 +391,6 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
-     * 全エージェントが止まっているかどうか？
-     */
-    public boolean getIsAllAgentSpeedZero() {
-        if (agentHandler == null) {
-	    Itk.logWarn("AgentHandler.isAllAgentsSpeedZero",
-			"agentHandler is null object.");
-            return false;
-        } else {
-            return agentHandler.getIsAllAgentSpeedZero();
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
      * エージェント生成の倍率。
      */
     public void setLinerGenerateAgentRatio(double _ratio) {

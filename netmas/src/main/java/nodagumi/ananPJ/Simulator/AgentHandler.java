@@ -195,7 +195,7 @@ public class AgentHandler {
     private double averageSpeed = 0.0;
 
     /**
-     * 総エージェント数。generatedAgents.size と同じか？
+     * 生成されるはずの全エージェント数。
      */
     private int maxAgentCount = 0;
 
@@ -918,14 +918,6 @@ public class AgentHandler {
     // アクセス関連
     //------------------------------------------------------------
     /**
-     * エージェントのカウント取得。
-     */
-    public int getMaxAgentCount() {
-        return maxAgentCount;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 乱数シード設定
      */
     public void setRandom(Random _random) {
@@ -939,13 +931,6 @@ public class AgentHandler {
      */
     public void setLinerGenerateAgentRatio(double _ratio) {
         generate_agent.setLinerGenerateAgentRatio(_ratio);
-    }
-
-    //------------------------------------------------------------
-    /**
-     */
-    public boolean getIsAllAgentSpeedZero() {
-        return isAllAgentSpeedZero;
     }
 
     //------------------------------------------------------------
@@ -970,6 +955,14 @@ public class AgentHandler {
      */
     public Collection<AgentBase> getWalkingAgentCollection() {
         return walkingAgentTable.values() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 生成されるはずの全エージェント数。
+     */
+    public int getMaxAgentCount() {
+        return maxAgentCount;
     }
 
     //------------------------------------------------------------
