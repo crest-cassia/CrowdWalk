@@ -29,7 +29,6 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import nodagumi.Itk.*;
 

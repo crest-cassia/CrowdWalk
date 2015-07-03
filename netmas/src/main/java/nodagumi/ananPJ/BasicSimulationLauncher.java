@@ -13,7 +13,7 @@ import org.w3c.dom.NodeList;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.NetmasTimer;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 
@@ -28,7 +28,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * 属性を扱うハンドラ
      */
-    protected NetmasPropertiesHandler properties = null;
+    protected CrowdWalkPropertiesHandler properties = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -353,7 +353,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * プロパティへの橋渡し。
      */
-    public NetmasPropertiesHandler getProperties() {
+    public CrowdWalkPropertiesHandler getProperties() {
         return properties;
     }
 
@@ -389,7 +389,7 @@ public abstract class BasicSimulationLauncher {
      * ファイルからプロパティの読み込み。
      */
     public void setPropertiesFromFile(String _propertiesFile) {
-        properties = new NetmasPropertiesHandler(_propertiesFile);
+        properties = new CrowdWalkPropertiesHandler(_propertiesFile);
 
         // random
         random = new Random(properties.getRandseed()) ;

@@ -5,7 +5,7 @@
  * <hr>
  * <h3>設定ファイルの書き方</h3>
  * <ul>
- *  <li> {@link nodagumi.ananPJ.misc.NetmasPropertiesHandler 実行properties}</li>
+ *  <li> {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties}</li>
  *  <li> {@link nodagumi.ananPJ.Scenario.Scenario シナリオ記述}</li>
  *  <li> {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}</li>
  *  <li> {@link nodagumi.ananPJ.Agents.AgentFactory エージェント設定 config}</li>

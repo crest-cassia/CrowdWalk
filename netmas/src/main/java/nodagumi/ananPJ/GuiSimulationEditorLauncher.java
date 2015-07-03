@@ -65,7 +65,6 @@ import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.MapChecker;
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
@@ -420,7 +419,7 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
     public static String getVersion() {
         Properties prop = new Properties();
         try {
-            prop.load(GuiSimulationEditorLauncher.class.getResourceAsStream("/netmas.properties"));
+            prop.load(GuiSimulationEditorLauncher.class.getResourceAsStream("/CrowdWalk.properties"));
             return String.format("%s.%s.%s-%s", prop.getProperty("version"), prop.getProperty("branch"), prop.getProperty("revision"), prop.getProperty("commit_hash"));
         } catch(IOException e) {
             return "";

@@ -418,7 +418,7 @@ import nodagumi.Itk.*;
  *   </li>
  * </ul>
  */
-public class NetmasPropertiesHandler {
+public class CrowdWalkPropertiesHandler {
 
     public static final String[] DEFINITION_FILE_ITEMS
         = {"map_file",
@@ -532,7 +532,7 @@ public class NetmasPropertiesHandler {
         return isAllAgentSpeedZeroBreak;
     }
 
-    public NetmasPropertiesHandler(String _propertiesFile) {
+    public CrowdWalkPropertiesHandler(String _propertiesFile) {
         // load properties
         prop = new Properties();
         propertiesFile = _propertiesFile;
@@ -833,7 +833,7 @@ public class NetmasPropertiesHandler {
         } catch (MissingOptionException moe) {
             moe.printStackTrace();
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("NetmasPropertiesHandler", options, true);
+            formatter.printHelp("CrowdWalkPropertiesHandler", options, true);
             System.exit(1);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -841,7 +841,7 @@ public class NetmasPropertiesHandler {
         }
         String propertiesFile = cli.getOptionValue("p");
 
-        NetmasPropertiesHandler nph =
-            new NetmasPropertiesHandler(propertiesFile);
+        CrowdWalkPropertiesHandler nph =
+            new CrowdWalkPropertiesHandler(propertiesFile);
     }
 }

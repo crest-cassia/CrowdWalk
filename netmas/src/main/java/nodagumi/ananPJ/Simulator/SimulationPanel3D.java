@@ -78,7 +78,7 @@ import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 import nodagumi.Itk.*;
 
@@ -198,7 +198,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     }
 
     public void readProperties() {
-        NetmasPropertiesHandler properties = simulator.getProperties();
+        CrowdWalkPropertiesHandler properties = simulator.getProperties();
         if (properties != null) {
             try {
                 show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE",

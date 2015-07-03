@@ -72,7 +72,7 @@ import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 
 import nodagumi.Itk.*;
 
@@ -284,9 +284,9 @@ public abstract class NetworkPanel3DBase extends JPanel {
     protected LinkedHashMap<String, NodeAppearance> nodeAppearances = new LinkedHashMap<String, NodeAppearance>();
 
     protected NetworkPanel3DBase(MapNodeTable _nodes,
-            MapLinkTable _links,
-            JFrame _parent,
-            NetmasPropertiesHandler _properties) {
+                                 MapLinkTable _links,
+                                 JFrame _parent,
+                                 CrowdWalkPropertiesHandler _properties) {
         nodes = _nodes;
         links = _links;
         parent = _parent;

@@ -27,7 +27,7 @@ import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
@@ -145,7 +145,7 @@ public class EvacuationSimulator {
     /**
      * シミュレーション設定ファイルを扱う。
      */
-    private NetmasPropertiesHandler properties = null;
+    private CrowdWalkPropertiesHandler properties = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -350,14 +350,14 @@ public class EvacuationSimulator {
     /**
      * 設定ハンドラ設定。
      */
-    public void setProperties(NetmasPropertiesHandler _properties) {
+    public void setProperties(CrowdWalkPropertiesHandler _properties) {
         properties = _properties;
     }
 
     /**
      * 設定ハンドラ取得。
      */
-    public NetmasPropertiesHandler getProperties() {
+    public CrowdWalkPropertiesHandler getProperties() {
         return properties;
     }
 

@@ -13,7 +13,7 @@ import java.awt.geom.Point2D;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 
 import javax.swing.JFrame;
 
@@ -28,7 +28,8 @@ public abstract class NetworkPanel3D extends NetworkPanel3DBase {
      * - View control by mouse dragging
      */
     protected NetworkPanel3D(MapNodeTable _nodes,
-            MapLinkTable _links, JFrame _parent, NetmasPropertiesHandler _properties) {
+                             MapLinkTable _links, JFrame _parent,
+                             CrowdWalkPropertiesHandler _properties) {
         super(_nodes, _links, _parent, _properties);
 
         addViewChangeListener("viewpoint changed", new ViewChangeListener() {

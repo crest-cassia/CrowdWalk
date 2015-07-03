@@ -14,7 +14,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.Itk.Itk;
 
 /**
