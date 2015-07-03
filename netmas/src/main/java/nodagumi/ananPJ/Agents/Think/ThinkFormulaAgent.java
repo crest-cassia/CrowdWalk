@@ -169,7 +169,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *   "name" : _nameOfValue_,
      * }
      *  _nameOfValue_ ::= "currentTime" | "agentId" | "linkId" |
-     *                    "speed" | "emptySpeed" | "goal"
+     *                    "speed" | "emptySpeed" | "goal" |
+     *                    "triageLevelInt" | "triageLevelName"
      * </pre>
      */
     public Term call_getParam(String head, Term expr, ThinkEngine engine) {
@@ -188,6 +189,10 @@ public class ThinkFormulaAgent extends ThinkFormula {
 	    return new Term(agent.getEmptySpeed()) ;
         } else if(name.equals("goal")) {
 	    return agent.getGoal() ;
+        } else if(name.equals("triageLevelInt")) {
+            return new Term(agent.getTriageInt()) ;
+        } else if(name.equals("triageLevelName")) {
+            return new Term(agent.getTriageName()) ;
         } else {
             Itk.logError("unknown parameter name for getParam.", "name=",name) ;
             return Term_Null ;
