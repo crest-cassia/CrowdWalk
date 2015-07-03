@@ -23,10 +23,9 @@ import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Agents.AwaitAgent;
 import nodagumi.ananPJ.Agents.*;
 
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkMapBase;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;

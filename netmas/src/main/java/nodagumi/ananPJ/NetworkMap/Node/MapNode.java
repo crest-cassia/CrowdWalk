@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts.Node;
+package nodagumi.ananPJ.NetworkMap.Node;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,12 +33,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBMapPart;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBMapPart;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SetupFileInfo;
@@ -75,7 +75,7 @@ public class MapNode extends OBMapPart {
      * Array 型 Term の形で格納される。
      * Array の要素は、ルールを示す ObjectTerm。
      * 以下は例。詳細は、
-     * {@link nodagumi.ananPJ.NetworkParts.OBMapPart#applyRestrictionRule applyRestrictionRule} 
+     * {@link nodagumi.ananPJ.NetworkMap.OBMapPart#applyRestrictionRule applyRestrictionRule} 
      * を参照。
      * <pre>
      *  [ { "type" : "multiply",

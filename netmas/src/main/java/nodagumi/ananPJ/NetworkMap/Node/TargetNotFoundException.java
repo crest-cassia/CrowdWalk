@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts.Node;
+package nodagumi.ananPJ.NetworkMap.Node;
 
 /**
  * MapNode クラスの getDistance() で target の情報が見つからない場合に発生する例外

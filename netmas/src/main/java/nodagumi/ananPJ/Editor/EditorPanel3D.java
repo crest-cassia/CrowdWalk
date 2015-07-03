@@ -18,8 +18,8 @@ import javax.vecmath.Vector3f;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkPanel3D;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 
 import com.sun.j3d.utils.universe.ViewingPlatform;
 

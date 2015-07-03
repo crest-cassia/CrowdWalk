@@ -19,8 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.ProgressMonitor;
 
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 
 
 

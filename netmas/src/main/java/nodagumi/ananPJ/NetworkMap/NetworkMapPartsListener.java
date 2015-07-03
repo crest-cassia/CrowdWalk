@@ -1,10 +1,10 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts;
+package nodagumi.ananPJ.NetworkMap;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 
 /**
  * NetworkMap の構成要素の状態変化を監視するリスナ用インターフェイス.

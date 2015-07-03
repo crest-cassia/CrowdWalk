@@ -11,8 +11,8 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 
 import nodagumi.ananPJ.Gui.ViewChangeListener;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import javax.swing.JFrame;

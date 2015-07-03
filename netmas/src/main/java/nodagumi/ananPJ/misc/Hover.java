@@ -11,8 +11,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 
 
 public class Hover {

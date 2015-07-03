@@ -21,12 +21,12 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.navigation.NavigationHint;
 

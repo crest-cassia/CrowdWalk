@@ -10,14 +10,14 @@
  * ...
  */
 
-package nodagumi.ananPJ.NetworkParts.Node;
+package nodagumi.ananPJ.NetworkMap.Node;
 
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import nodagumi.ananPJ.NetworkParts.OBNodeTable ;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode ;
+import nodagumi.ananPJ.NetworkMap.OBNodeTable ;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode ;
 
 import nodagumi.Itk.*;
 

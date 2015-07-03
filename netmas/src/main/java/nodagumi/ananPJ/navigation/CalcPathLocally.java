@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;

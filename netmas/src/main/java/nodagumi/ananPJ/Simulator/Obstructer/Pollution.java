@@ -1,7 +1,6 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Simulator.Obstructer;
 
-import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 

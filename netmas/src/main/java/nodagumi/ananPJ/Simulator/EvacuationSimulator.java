@@ -20,13 +20,13 @@ import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import nodagumi.ananPJ.NetworkMapBase;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Simulator.SimulationController;
@@ -51,7 +51,7 @@ public class EvacuationSimulator {
     /**
      * マップおよびその他のデータ管理の構造体。
      */
-    private NetworkMapBase networkMap = null;
+    private NetworkMap networkMap = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -218,7 +218,7 @@ public class EvacuationSimulator {
     /**
      * コンストラクタ
      */
-    public EvacuationSimulator(NetworkMapBase _networkMap,
+    public EvacuationSimulator(NetworkMap _networkMap,
                                BasicSimulationLauncher _launcher,
                                Random _random) {
         init(_networkMap, _launcher, _random) ;
@@ -230,7 +230,7 @@ public class EvacuationSimulator {
     /**
      * マップ取得。
      */
-    public NetworkMapBase getMap() {
+    public NetworkMap getMap() {
         return networkMap;
     }
 
@@ -505,7 +505,7 @@ public class EvacuationSimulator {
     /**
      * 初期化
      */
-    private void init(NetworkMapBase _networkMap,
+    private void init(NetworkMap _networkMap,
                       BasicSimulationLauncher _launcher,
                       Random _random) {
         launcher = _launcher ;
@@ -909,7 +909,7 @@ public class EvacuationSimulator {
          * 以下のコード、commit b5c5c85e で一旦消したものの、
          * 渋滞するはずのコードが渋滞しなくなり、おかしい。
          * なので、復活。しかしなぜ必要なのかわからない。
-         * agent には、map は、NetworkMapBase として設定してある。
+         * agent には、map は、NetworkMap として設定してある。
          * それ以外に必要という事かもしれない。
          * また、ここでないといけないらしい。
          * AgentFactory の tryUpdateAndGenerate() で入れてみたが、

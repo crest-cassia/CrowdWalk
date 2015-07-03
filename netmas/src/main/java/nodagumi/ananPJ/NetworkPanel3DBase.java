@@ -68,10 +68,10 @@ import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.Colors.*;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.Gui.ViewChangeManager;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import nodagumi.Itk.*;

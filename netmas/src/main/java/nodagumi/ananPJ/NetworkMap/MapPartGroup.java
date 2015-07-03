@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts;
+package nodagumi.ananPJ.NetworkMap;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -19,9 +19,9 @@ import org.w3c.dom.NodeList;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Editor.EditorFrame;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 
 import nodagumi.Itk.*;

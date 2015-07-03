@@ -4,9 +4,9 @@ package nodagumi.ananPJ.navigation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
@@ -40,20 +40,20 @@ public class Flooding extends Dijkstra {
     
     //private MapNodeTable nodes = null;
     //private MapLinkTable links = null;
-    private NetworkMapBase map = null ;
+    private NetworkMap map = null ;
 
     private ArrayList<String> goalTags = null;
     // routing table
     private ArrayList<FloodingRoutingTable> tables = null;
 
-    public Flooding(NetworkMapBase _map,
+    public Flooding(NetworkMap _map,
             ArrayList<String> _goalTags) {
 	map = _map ;
         goalTags = _goalTags;
     }
 
     // update flooding routing table with updated node list
-    public void update(NetworkMapBase _map,
+    public void update(NetworkMap _map,
             ArrayList<String> _goalTags) {
         if (_map != null)
 	    map = _map;

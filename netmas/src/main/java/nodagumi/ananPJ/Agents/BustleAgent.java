@@ -15,9 +15,9 @@ package nodagumi.ananPJ.Agents;
 import java.util.Random;
 import java.util.Map;
 
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.NaiveAgent ;
 
 import nodagumi.Itk.* ;

@@ -12,9 +12,9 @@
 
 package nodagumi.ananPJ.Scenario;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
 
 import nodagumi.Itk.* ;
@@ -124,7 +124,7 @@ abstract public class EventBase {
      * @param time : 現在の絶対時刻
      * @return 実施したら true
      */
-    public boolean tryOccur(double time, NetworkMapBase map) {
+    public boolean tryOccur(double time, NetworkMap map) {
 	if(shouldOccurAt(time)) {
 	    isCompleted = occur(time, map) ;
 	    return true ;
@@ -150,7 +150,7 @@ abstract public class EventBase {
      * @param map : 地図データ
      * @return : 完了したら true を返す。false を返すと、延々呼び出される。
      */
-    abstract public boolean occur(double time, NetworkMapBase map) ;
+    abstract public boolean occur(double time, NetworkMap map) ;
 
     //----------------------------------------
     /**
@@ -159,7 +159,7 @@ abstract public class EventBase {
      * @param map : 地図データ
      * @return : 完了したら true を返す。
      */
-    abstract public boolean unoccur(double time, NetworkMapBase map) ;
+    abstract public boolean unoccur(double time, NetworkMap map) ;
 
     //----------------------------------------
     /**

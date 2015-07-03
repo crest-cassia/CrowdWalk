@@ -23,7 +23,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RationalAgent;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 
 import nodagumi.Itk.* ;
 

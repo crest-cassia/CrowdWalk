@@ -31,8 +31,8 @@ import javax.swing.table.AbstractTableModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.*;
 
 public class LinkPanel extends PanelWithTable
 	implements MapLink.AttributePanel.Listener {

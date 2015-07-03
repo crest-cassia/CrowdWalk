@@ -12,9 +12,9 @@
 
 package nodagumi.ananPJ.Scenario;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
 
 import nodagumi.Itk.* ;

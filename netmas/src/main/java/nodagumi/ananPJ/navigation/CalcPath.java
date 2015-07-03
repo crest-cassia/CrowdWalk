@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 
 public class CalcPath {
     /* calculate evacuation paths

@@ -36,7 +36,7 @@ import javax.swing.table.TableColumnModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 
 public class PollutionPanel extends JPanel 
 	implements ActionListener, ListSelectionListener {

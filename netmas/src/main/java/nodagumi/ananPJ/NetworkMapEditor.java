@@ -53,11 +53,12 @@ import nodagumi.ananPJ.Editor.Panel.ScenarioPanel;
 import nodagumi.ananPJ.Editor.Panel.LinkPanel;
 import nodagumi.ananPJ.Editor.Panel.NodePanel;
 import nodagumi.ananPJ.Editor.Panel.PollutionPanel;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
@@ -452,7 +453,7 @@ public class NetworkMapEditor extends SimulationLauncher
             // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
             random.setSeed(properties.getRandseed());
         }
-        networkMap = new NetworkMapBase() ;
+        networkMap = new NetworkMap() ;
         mapPath = null;
         updateAll();
         setModified(false);

@@ -31,8 +31,8 @@ import javax.swing.table.AbstractTableModel;
 
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 
 public class NodePanel extends PanelWithTable {
     NetworkMapEditor editor = null;

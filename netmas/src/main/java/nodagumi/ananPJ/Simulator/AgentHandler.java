@@ -66,11 +66,11 @@ import org.w3c.dom.Document;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Scenario.*;
@@ -131,12 +131,12 @@ public class AgentHandler {
     /**
      * 地図。
      */
-    private NetworkMapBase networkMap;
+    private NetworkMap networkMap;
 
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * NetworkParts の prefix の規定値
+     * NetworkMapParts の prefix の規定値
      */
     public static String DefaultAgentIdPrefix = "ag" ;
 
@@ -1289,7 +1289,7 @@ public class AgentHandler {
      * 画面の準備
      */
     public void setupFrame(String generationFile, String scenarioFile,
-                           NetworkMapBase map) {
+                           NetworkMap map) {
         control_panel = null;
         clock_label = new JLabel("NOT STARTED");
         time_label = new JLabel("NOT STARTED!");
@@ -1346,7 +1346,7 @@ public class AgentHandler {
      */
     private void setup_control_panel(String generationFileName,
                                      String scenarioFileName,
-                                     NetworkMapBase map) {
+                                     NetworkMap map) {
         control_panel = new JPanel();
         control_panel.setName("Control");
         control_panel.setLayout(new BorderLayout());
@@ -1432,10 +1432,10 @@ public class AgentHandler {
             class RadioButtonListener implements ActionListener {
                 int index;
                 EventBase event ;
-                NetworkMapBase map ;
+                NetworkMap map ;
                 public RadioButtonListener(EventBase _event,
                         int _index,
-                        NetworkMapBase _map) {
+                        NetworkMap _map) {
                     event = _event;
                     index = _index;
                     map = _map;

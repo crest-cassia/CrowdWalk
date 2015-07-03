@@ -25,10 +25,10 @@ import javax.vecmath.Vector3f;
 import com.opencsv.CSVParser ;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 
 import nodagumi.Itk.*;
@@ -280,7 +280,7 @@ public class PollutionHandler {
      * 毎回呼ばれるメインのサイクル。
      */
     public void updateAll(double time,
-                          NetworkMapBase map,
+                          NetworkMap map,
                           Collection<AgentBase> agents) {
 
         if (nextInstantTime != -1.0 && nextInstantTime <= time) {
@@ -319,7 +319,7 @@ public class PollutionHandler {
      * Link の update。
      * pollution対象リンクの汚染フラグを更新する(汚染度が0に戻ることも考慮する)
      */
-    private void updateLinks(NetworkMapBase map) {
+    private void updateLinks(NetworkMap map) {
         for (MapLink link : map.getLinks()) {
             if (link.getIntersectedMapAreas().isEmpty()) {
                 continue;

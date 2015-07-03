@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts.Area;
+package nodagumi.ananPJ.NetworkMap.Area;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -23,7 +23,7 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import javax.vecmath.AxisAngle4d;   // tkokada
 
-import nodagumi.ananPJ.NetworkParts.OBNode;
+import nodagumi.ananPJ.NetworkMap.OBNode;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

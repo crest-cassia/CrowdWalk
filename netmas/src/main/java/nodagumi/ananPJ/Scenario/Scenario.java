@@ -25,9 +25,9 @@ import java.io.IOException;
 
 import net.arnx.jsonic.JSON ;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.*;
 
 import nodagumi.Itk.* ;
@@ -295,7 +295,7 @@ public class Scenario {
      * @param map : マップデータ
      * @return 進んだシナリオの数
      */
-    public int update(double relTime, NetworkMapBase map) {
+    public int update(double relTime, NetworkMap map) {
         double absTime = calcAbsoluteTime(relTime) ;
         int count = 0 ;
         for(int i = eventIndex ; i < eventList.size() ; i++) {

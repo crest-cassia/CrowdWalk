@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.HashMap;
 
 import nodagumi.ananPJ.misc.Place;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.AwaitAgent ;
 
 import nodagumi.Itk.* ;

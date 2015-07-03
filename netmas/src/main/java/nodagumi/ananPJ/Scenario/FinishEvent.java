@@ -12,9 +12,9 @@
 
 package nodagumi.ananPJ.Scenario;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
 
 import nodagumi.Itk.* ;
@@ -39,7 +39,7 @@ public class FinishEvent extends EventBase {
      * @return : true を返す。
      */
     @Override
-    public boolean occur(double time, NetworkMapBase map) {
+    public boolean occur(double time, NetworkMap map) {
 	scenario.letFinished() ;
 	return true ;
     }
@@ -52,7 +52,7 @@ public class FinishEvent extends EventBase {
      * @return : true を返す。
      */
     @Override
-    public boolean unoccur(double time, NetworkMapBase map) {
+    public boolean unoccur(double time, NetworkMap map) {
 	scenario.letFinished(false) ;
 	return true ;
     }

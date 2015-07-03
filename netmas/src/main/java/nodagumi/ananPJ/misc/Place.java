@@ -19,8 +19,8 @@ import java.util.Random;
 
 import java.awt.geom.Point2D;
 
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;

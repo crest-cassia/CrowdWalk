@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
@@ -32,7 +33,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
      *  a base class for classes launching simulations */
     public SimulationLauncher(Random _random) {
         super(_random) ;
-        networkMap = new NetworkMapBase() ;
+        networkMap = new NetworkMap() ;
         settings = Settings.load("NetworkMapEditor.ini");
     }
 

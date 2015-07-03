@@ -12,6 +12,7 @@ import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.misc.NetmasTimer;
 import nodagumi.ananPJ.misc.SetupFileInfo;
@@ -45,7 +46,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * 地図データ。
      */
-    protected NetworkMapBase networkMap;
+    protected NetworkMap networkMap;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -207,7 +208,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * マップ取得
      */
-    public NetworkMapBase getMap() { return networkMap; }
+    public NetworkMap getMap() { return networkMap; }
 
     /**
      * マップ取得
@@ -395,7 +396,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * 地図の読み込み
      */
-    protected NetworkMapBase readMapWithName(String file_name)
+    protected NetworkMap readMapWithName(String file_name)
             throws IOException {
         FileInputStream fis = new FileInputStream(file_name);
         Document doc = ItkXmlUtility.singleton.streamToDoc(fis);
@@ -410,7 +411,7 @@ public abstract class BasicSimulationLauncher {
             return null;
         }
         // NetMAS based map
-        NetworkMapBase network_map = new NetworkMapBase() ;
+        NetworkMap network_map = new NetworkMap() ;
         if (false == network_map.fromDOM(doc))
             return null;
         Itk.logInfo("Load Map File", file_name) ;

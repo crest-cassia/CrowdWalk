@@ -6,9 +6,9 @@ import java.util.Random;
 import java.util.List;
 
 import nodagumi.ananPJ.Agents.AgentFactory;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Link.*;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.Link.*;
 
 import nodagumi.Itk.*;
 

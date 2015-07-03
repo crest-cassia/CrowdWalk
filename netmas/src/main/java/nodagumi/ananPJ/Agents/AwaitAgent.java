@@ -20,10 +20,9 @@ import org.w3c.dom.Text;
 
 import net.arnx.jsonic.JSON ;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.misc.RoutePlan;
 
 import nodagumi.Itk.*;

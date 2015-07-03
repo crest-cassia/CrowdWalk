@@ -24,7 +24,7 @@ import java.awt.dnd.*;
 import java.io.*;
 import javax.swing.tree.*;
 
-import nodagumi.ananPJ.NetworkParts.OBNode;
+import nodagumi.ananPJ.NetworkMap.OBNode;
 
 import nodagumi.Itk.Itk;
 

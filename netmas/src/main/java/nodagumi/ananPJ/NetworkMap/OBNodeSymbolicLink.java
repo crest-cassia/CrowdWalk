@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts;
+package nodagumi.ananPJ.NetworkMap;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

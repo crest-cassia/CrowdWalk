@@ -38,11 +38,10 @@ import javax.swing.tree.TreePath;
 import nodagumi.ananPJ.misc.*;
 
 
-import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Editor.EditorFrame;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBNode;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBNode;
 
 public class BrowserPanel
 extends JPanel

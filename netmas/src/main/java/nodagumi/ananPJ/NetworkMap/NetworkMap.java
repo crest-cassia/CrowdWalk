@@ -10,7 +10,7 @@
  * ...
  */
 
-package nodagumi.ananPJ;
+package nodagumi.ananPJ.NetworkMap;
 
 import java.util.ArrayList;
 import java.util.HashMap ;
@@ -33,17 +33,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Editor.EditorFrame;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
-import nodagumi.ananPJ.NetworkParts.OBNode.NType;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
-import nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle;
-import nodagumi.ananPJ.NetworkParts.NetworkMapPartsNotifier;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
+import nodagumi.ananPJ.NetworkMap.OBNode.NType;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
+import nodagumi.ananPJ.NetworkMap.NetworkMapPartsNotifier;
 import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
@@ -58,32 +59,32 @@ import nodagumi.Itk.*;
  * links と nodes をセットで受け渡すメソッドが非常に多い。
  * なので、まとめておくものを作っておく。
  */
-public class NetworkMapBase extends DefaultTreeModel {
+public class NetworkMap extends DefaultTreeModel {
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * NetworkParts の prefix の規定値
+     * NetworkMapParts の prefix の規定値
      */
     public static String DefaultPartIdPrefix = "_p" ;
 
     /**
-     * NetworkParts の id 部の桁数の規定値
+     * NetworkMapParts の id 部の桁数の規定値
      */
     public static int DefaultPartIdDigit = 5 ;
 
     /**
-     * NetworkParts の suffix の規定値
+     * NetworkMapParts の suffix の規定値
      */
     public static String DefaultPartIdSuffix = "" ;
 
     /**
-     * NetworkParts の id counter
+     * NetworkMapParts の id counter
      */
     public static int PartIdCounter = 0 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * ID から NetworkParts を取り出すための table.
+     * ID から NetworkMapParts を取り出すための table.
      */
     private UniqIdObjectTable<OBNode> partTable =
         new UniqIdObjectTable<OBNode>(DefaultPartIdPrefix,
@@ -173,7 +174,7 @@ public class NetworkMapBase extends DefaultTreeModel {
     /**
      * コンストラクタ
      */
-    public NetworkMapBase() {
+    public NetworkMap() {
         super(null, true);
         String id = assignNewId();
         root = new MapPartGroup(id);
@@ -230,8 +231,8 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
-     * IDテーブルへのNetworkParts(OBNode)の登録
-     * NetworkMapBase での処理に加え、part に NetworkMap 自身を登録する。
+     * IDテーブルへのNetworkMapParts(OBNode)の登録
+     * NetworkMap での処理に加え、part に NetworkMap 自身を登録する。
      * @param id : part の id.
      * @param part : 登録するpart.
      */
@@ -242,7 +243,7 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
-     * IDテーブルからのNetworkParts(OBNode)の削除
+     * IDテーブルからのNetworkMapParts(OBNode)の削除
      * @param id : 削除するpart の id.
      */
     public void removeObject(String id) {
@@ -251,7 +252,7 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
-     * IDテーブルからNetworkPartsの取り出し。
+     * IDテーブルからNetworkMapPartsの取り出し。
      * @param id : 取り出す part の id.
      * @return 取り出した part. もしなければ、null。
      */
@@ -478,9 +479,9 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
-     * IDテーブルの中身(NetworkParts)を取り出す。
+     * IDテーブルの中身(NetworkMapParts)を取り出す。
      * NetworkMap から移動。
-     * @return NetworkParts の ArrayList。
+     * @return NetworkMapParts の ArrayList。
      */
     public ArrayList<OBNode> getOBElements() {
         return new ArrayList<OBNode>(partTable.values());
@@ -488,8 +489,8 @@ public class NetworkMapBase extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
-     * IDテーブルの中身(NetworkParts)を取り出す。Collectionとして返す。
-     * @return NetworkParts の Collection
+     * IDテーブルの中身(NetworkMapParts)を取り出す。Collectionとして返す。
+     * @return NetworkMapParts の Collection
      */
     public Collection<OBNode> getOBCollection() {
         return partTable.values() ;
@@ -1017,5 +1018,5 @@ public class NetworkMapBase extends DefaultTreeModel {
         return frames;
     }
 
-} // class NetworkMapBase
+} // class NetworkMap
 

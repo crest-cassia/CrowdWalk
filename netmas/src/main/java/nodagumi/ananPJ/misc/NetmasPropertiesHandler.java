@@ -10,7 +10,6 @@ import org.w3c.dom.Document;
 import org.apache.commons.cli.*;
 import net.arnx.jsonic.JSON;
 
-import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;

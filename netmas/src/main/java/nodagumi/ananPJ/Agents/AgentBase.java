@@ -12,12 +12,12 @@ import javax.vecmath.Vector3d;
 
 import org.w3c.dom.Element;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBMapPart;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBMapPart;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
@@ -63,7 +63,7 @@ implements Comparable<AgentBase> {
     /**
      * map: 自分の存在しているマップ。
      */
-    protected NetworkMapBase map = null ;
+    protected NetworkMap map = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -231,7 +231,7 @@ implements Comparable<AgentBase> {
     /**
      * マップをセット
      */
-    public void setMap(NetworkMapBase _map) {
+    public void setMap(NetworkMap _map) {
         map = _map ;
     }
 

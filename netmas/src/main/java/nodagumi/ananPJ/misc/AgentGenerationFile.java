@@ -23,11 +23,11 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON ;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Link.MapLinkTable;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Node.MapNodeTable;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Link.MapLinkTable;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
 import nodagumi.ananPJ.Agents.AgentFactory;
@@ -354,7 +354,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * コンストラクタ
      */
     public AgentGenerationFile(final String filename,
-                               NetworkMapBase map,
+                               NetworkMap map,
                                Term fallbackParameters,
                                boolean display,
                                double linerGenerateAgentRatio,
@@ -375,7 +375,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 設定解析ルーチン
      */
     public void scanFile(final String filename,
-                         NetworkMapBase map,
+                         NetworkMap map,
                          Term fallbackParameters,
                          boolean display)
         throws Exception
@@ -484,7 +484,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 設定解析ルーチン (CSV file) (Ver.0, Ver.1 file format)
      */
     public void scanCsvFile(BufferedReader br,
-                            NetworkMapBase map,
+                            NetworkMap map,
                             Term fallbackParameters)
         throws Exception
     {
@@ -525,7 +525,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * scan one line of CSV file
      */
     private GenerationConfigBase scanCsvFileOneLine(String line,
-                                                    NetworkMapBase map)
+                                                    NetworkMap map)
         throws IOException
     {
         //コメント行読み飛ばし
@@ -720,7 +720,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * という形式らしい。
      */
     private boolean scanStartLinkTag(String start_link_tag,
-                                     NetworkMapBase map,
+                                     NetworkMap map,
                                      GenerationConfigBase genConfig) {
         Matcher tag_match = startpat.matcher(start_link_tag);
         if (tag_match.matches()) {
@@ -750,7 +750,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 残りの column の読み込み
      */
     private boolean scanRestColumns(ShiftingStringList columns,
-                                    NetworkMapBase map,
+                                    NetworkMap map,
                                     GenerationConfigBase genConfig) {
         //ArrayList<String> planned_route = new ArrayList<String>();
         genConfig.plannedRoute = new ArrayList<Term>();
@@ -837,7 +837,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 設定解析ルーチン (JSON file) (Ver.2 file format)
      */
     public void scanJsonFile(BufferedReader br,
-                             NetworkMapBase map,
+                             NetworkMap map,
                              Term fallbackParameters)
         throws Exception
     {
@@ -872,7 +872,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 設定解析ルーチン (JSON one line) (Ver.2 file format)
      */
     public GenerationConfigBase scanJsonFileOneItem(Term json,
-                                                    NetworkMapBase map)
+                                                    NetworkMap map)
     {
         // ignore が true なら、項目を無視する。
         if(json.getArgBoolean("ignore")) { return null ; }
@@ -968,7 +968,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     /**
      * 経路情報に未定義のタグが使用されていないかチェックする
      */
-    private void checkPlannedRouteInConfig(NetworkMapBase map,
+    private void checkPlannedRouteInConfig(NetworkMap map,
                                            GenerationConfigBase genConfig,
                                            String where) {
         ArrayList<String> routeErrors =
@@ -984,7 +984,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 経路情報に未定義のタグが使用されていたらその内容を返す
      */
     public ArrayList<String> checkPlannedRoute(String agentClassName,
-                                               NetworkMapBase map,
+                                               NetworkMap map,
                                                List<Term> planned_route) {
         ArrayList<Term> linkTags = new ArrayList();
         ArrayList<Term> nodeTags = new ArrayList();
@@ -1056,7 +1056,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     /**
      * エージェント生成
      */
-    private void doGenerationByConfig(NetworkMapBase map,
+    private void doGenerationByConfig(NetworkMap map,
                                       GenerationConfigBase genConfig,
                                       Term fallbackParameters) {
         genConfig.fallbackParameters = fallbackParameters ;
@@ -1088,7 +1088,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * EACH 用生成ルーチン
      * 各々の link, node で total 個ずつのエージェントが生成。
      */
-    private void doGenerationForEach(NetworkMapBase map,
+    private void doGenerationForEach(NetworkMap map,
                                      GenerationConfigBase genConfig) {
         for (final MapLink start_link : genConfig.startLinks) {
             genConfig.startPlace = start_link ;
@@ -1106,7 +1106,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 指定された link, node において、
      * 合計で total 個のエージェントが生成。
      */
-    private void doGenerationForRandom(NetworkMapBase map,
+    private void doGenerationForRandom(NetworkMap map,
                                        GenerationConfigBase genConfig) {
         int total = genConfig.total ;
 
@@ -1143,7 +1143,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * RANDOM に、1箇所での生成数の上限を入れたもの。
      * 合計で total 個のエージェントが生成。
      */
-    private void doGenerationForEachRandom(NetworkMapBase map,
+    private void doGenerationForEachRandom(NetworkMap map,
                                            GenerationConfigForEachRandom genConfig) {
         int maxFromEachPlace = genConfig.maxFromEachPlace ;
         int total = genConfig.total ;
@@ -1210,7 +1210,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 特別な処理をしないようにする。
      * 合計で (total * 生成回数) 個のエージェントが生成。
      */
-    private void doGenerationForTimeEvery(NetworkMapBase map,
+    private void doGenerationForTimeEvery(NetworkMap map,
                                           GenerationConfigForTimeEvery genConfig) {
         int every_end_time = genConfig.everyEndTime ;
         int every_seconds = genConfig.everySeconds ;

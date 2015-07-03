@@ -56,12 +56,12 @@ import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Editor.EditorFramePanel.TextPosition;
 import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
-import nodagumi.ananPJ.NetworkParts.OBNode; // tkokada
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
+import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
+import nodagumi.ananPJ.NetworkMap.OBNode; // tkokada
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
 import nodagumi.ananPJ.misc.GridMapAreaDialog;    // tkokada
 import nodagumi.ananPJ.misc.Hover;

@@ -23,9 +23,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
-import nodagumi.ananPJ.NetworkMapBase;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.NetworkParts.OBNode;
+import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 
 import nodagumi.Itk.*;

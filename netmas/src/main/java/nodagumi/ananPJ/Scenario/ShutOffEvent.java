@@ -12,9 +12,9 @@
 
 package nodagumi.ananPJ.Scenario;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
 
 import nodagumi.Itk.* ;
@@ -47,7 +47,7 @@ public class ShutOffEvent extends PlacedEvent {
      * @return : true を返す。
      */
     @Override
-    public boolean occur(double time, NetworkMapBase map) {
+    public boolean occur(double time, NetworkMap map) {
 	return occur(time, map, false) ;
     }
 
@@ -59,7 +59,7 @@ public class ShutOffEvent extends PlacedEvent {
      * @return : true を返す。
      */
     @Override
-    public boolean unoccur(double time, NetworkMapBase map) {
+    public boolean unoccur(double time, NetworkMap map) {
 	return occur(time, map, true) ;
     }
 
@@ -70,7 +70,7 @@ public class ShutOffEvent extends PlacedEvent {
      * @param map : 地図データ
      * @return : true を返す。
      */
-    public boolean occur(double time, NetworkMapBase map, boolean inverse) {
+    public boolean occur(double time, NetworkMap map, boolean inverse) {
 	for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
 		link.letShutOff(!inverse) ;

@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts.Area;
+package nodagumi.ananPJ.NetworkMap.Area;
 
 //import java.awt.BorderLayout;
 import java.awt.Container;
@@ -27,8 +27,8 @@ import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.vecmath.Vector3f;
 
-import nodagumi.ananPJ.NetworkParts.OBNode;
-//import nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink;
+import nodagumi.ananPJ.NetworkMap.OBNode;
+//import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
 import nodagumi.ananPJ.Simulator.PollutionHandler.*;
 
 //======================================================================

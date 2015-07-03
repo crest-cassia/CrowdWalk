@@ -1,28 +1,27 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts;
+package nodagumi.ananPJ.NetworkMap;
 
 import java.util.ArrayList;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 
 /**
- * NetworkMapBase の構成要素の状態変化を通知する.
+ * NetworkMap の構成要素の状態変化を通知する.
  *
  * イベントは使用せず、通知用のメソッドから直接リスナのメソッドを呼び出している。
  */
 public class NetworkMapPartsNotifier {
-    private NetworkMapBase map;
+    private NetworkMap map;
     private ArrayList<NetworkMapPartsListener> listeners = new ArrayList();
 
-    public NetworkMapPartsNotifier(NetworkMapBase map) {
+    public NetworkMapPartsNotifier(NetworkMap map) {
         this.map = map;
     }
 
-    public NetworkMapBase getNetworkMap() {
+    public NetworkMap getNetworkMap() {
         return map;
     }
 

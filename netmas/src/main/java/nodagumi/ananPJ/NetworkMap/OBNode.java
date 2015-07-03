@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.NetworkParts;
+package nodagumi.ananPJ.NetworkMap;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -32,10 +32,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkParts.Link.MapLink;
-import nodagumi.ananPJ.NetworkParts.Node.MapNode;
-import nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.Agents.AgentBase;
 
 import nodagumi.Itk.*;
@@ -55,7 +54,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     public String ID;
     protected ArrayList<String> tags;
     public boolean selected = false;
-    protected NetworkMapBase networkMap;
+    protected NetworkMap networkMap;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -212,14 +211,14 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * NetworkMap をセットする.
      */
-    public void setNetworkMap(NetworkMapBase networkMap) {
+    public void setNetworkMap(NetworkMap networkMap) {
         this.networkMap = networkMap;
     }
 
     /**
      * NetworkMap を返す.
      */
-    public NetworkMapBase getNetworkMap() {
+    public NetworkMap getNetworkMap() {
         return networkMap;
     }
 
