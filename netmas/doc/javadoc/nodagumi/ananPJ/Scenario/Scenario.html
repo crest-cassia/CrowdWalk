@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":9,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":9,"i18":9,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":9,"i7":10,"i8":10,"i9":9,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":9,"i17":9,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -203,44 +203,37 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#advance-double-nodagumi.ananPJ.NetworkMapBase-">advance</a></span>(double&nbsp;relTime,
-       <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map)</code>
-<div class="block">シナリオを時間まで進める。</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#calcAbsoluteTime-double-">calcAbsoluteTime</a></span>(double&nbsp;relTime)</code>
 <div class="block">絶対時刻取得</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#calcAbsoluteTimeFromTimeString-java.lang.String-">calcAbsoluteTimeFromTimeString</a></span>(java.lang.String&nbsp;timeString)</code>
 <div class="block">文字列からの絶対時刻取得</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#calcRelativeTime-double-">calcRelativeTime</a></span>(double&nbsp;absTime)</code>
 <div class="block">相対時刻取得</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#calcRelativeTimeFromTimeString-java.lang.String-">calcRelativeTimeFromTimeString</a></span>(java.lang.String&nbsp;timeString)</code>
 <div class="block">文字列からの相対時刻取得</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#convertToTimeString-double-">convertToTimeString</a></span>(double&nbsp;timeVal)</code>
 <div class="block">数値から文字列へ変換
  秒から "HH:MM:SS" へ。</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#convertToTimeValue-java.lang.String-">convertToTimeValue</a></span>(java.lang.String&nbsp;timeString)</code>
 <div class="block">文字列から数値へ変換
@@ -248,113 +241,121 @@ extends java.lang.Object</pre>
  返す値の単位は、秒。</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#describe--">describe</a></span>()</code>
 <div class="block">describe</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#finalizeSetup--">finalizeSetup</a></span>()</code>
 <div class="block">セットアップ最終処理</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>static java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#getEventClass-java.lang.String-">getEventClass</a></span>(java.lang.String&nbsp;className)</code>
 <div class="block">イベントクラスを得る。</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#getOriginTime--">getOriginTime</a></span>()</code>
 <div class="block">起点時刻取得</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#getOriginTimeString--">getOriginTimeString</a></span>()</code>
 <div class="block">起点時刻文字列取得</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#isFinished--">isFinished</a></span>()</code>
-<div class="block">終了かどうか</div>
+<div class="block">終了かどうか
+ finish when FinishEvent occurs.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#letFinished--">letFinished</a></span>()</code>
 <div class="block">終了セット</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#letFinished-boolean-">letFinished</a></span>(boolean&nbsp;flag)</code>
 <div class="block">終了セット</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagumi.ananPJ.Scenario内のクラス">EventBase</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#newEventByName-java.lang.String-">newEventByName</a></span>(java.lang.String&nbsp;className)</code>
 <div class="block">イベントクラスを見つけて、インスタンスを生成する。</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#registerEventClass-java.lang.Class-">registerEventClass</a></span>(java.lang.Class&lt;?&gt;&nbsp;eventClass)</code>
 <div class="block">使用出来るイベントタイプの登録</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#registerEventClass-java.lang.String-java.lang.Class-">registerEventClass</a></span>(java.lang.String&nbsp;aliasName,
                   java.lang.Class&lt;?&gt;&nbsp;eventClass)</code>
 <div class="block">使用出来るイベントタイプの登録</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#scanCsvFile-java.lang.String-">scanCsvFile</a></span>(java.lang.String&nbsp;filename)</code>
 <div class="block">CSV ファイル読み込み</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagumi.ananPJ.Scenario内のクラス">EventBase</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#scanCsvOneLine-java.lang.String-">scanCsvOneLine</a></span>(java.lang.String&nbsp;line)</code>
 <div class="block">CSV 一行読み込み</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#scanJsonFile-java.lang.String-">scanJsonFile</a></span>(java.lang.String&nbsp;filename)</code>
 <div class="block">JSON ファイル読み込み</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Scenario/EventBase.html" title="nodagumi.ananPJ.Scenario内のクラス">EventBase</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#scanJsonFileOneItem-nodagumi.Itk.Term-">scanJsonFileOneItem</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;eventDef)</code>
 <div class="block">JSON による定義の1イベント分の読み込み</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#setOriginTime-double-">setOriginTime</a></span>(double&nbsp;_originTime)</code>
 <div class="block">起点時刻セット</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#setOriginTimeByTimeString-java.lang.String-">setOriginTimeByTimeString</a></span>(java.lang.String&nbsp;_originTimeInStr)</code>
 <div class="block">文字列による起点時刻セット</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#sortEvents--">sortEvents</a></span>()</code>
 <div class="block">イベントの整列</div>
+</td>
+</tr>
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html#update-double-nodagumi.ananPJ.NetworkMap.NetworkMap-">update</a></span>(double&nbsp;relTime,
+      <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map)</code>
+<div class="block">シナリオを時間まで進める。</div>
 </td>
 </tr>
 </table>
@@ -537,7 +538,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>isFinished</h4>
 <pre>public&nbsp;boolean&nbsp;isFinished()</pre>
-<div class="block">終了かどうか</div>
+<div class="block">終了かどうか
+ finish when FinishEvent occurs.</div>
 </li>
 </ul>
 <a name="letFinished--">
@@ -591,14 +593,14 @@ extends java.lang.Object</pre>
 <div class="block">セットアップ最終処理</div>
 </li>
 </ul>
-<a name="advance-double-nodagumi.ananPJ.NetworkMapBase-">
+<a name="update-double-nodagumi.ananPJ.NetworkMap.NetworkMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>advance</h4>
-<pre>public&nbsp;int&nbsp;advance(double&nbsp;relTime,
-                   <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map)</pre>
+<h4>update</h4>
+<pre>public&nbsp;int&nbsp;update(double&nbsp;relTime,
+                  <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map)</pre>
 <div class="block">シナリオを時間まで進める。</div>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>

@@ -76,101 +76,6 @@
 <li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetworkMap</a> extends <a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>frames</h4>
-<pre>java.util.ArrayList&lt;E&gt; frames</pre>
-<div class="block">???</div>
-</li>
-<li class="blockList">
-<h4>filename</h4>
-<pre>java.lang.String filename</pre>
-<div class="block">???</div>
-</li>
-<li class="blockList">
-<h4>pollutionFile</h4>
-<pre>java.lang.String pollutionFile</pre>
-<div class="block">汚染地域データのファイル</div>
-</li>
-<li class="blockList">
-<h4>generationFile</h4>
-<pre>java.lang.String generationFile</pre>
-<div class="block">エージェント生成ルールのファイル</div>
-</li>
-<li class="blockList">
-<h4>scenarioFile</h4>
-<pre>java.lang.String scenarioFile</pre>
-<div class="block">シナリオファイル</div>
-</li>
-<li class="blockList">
-<h4>fallbackFile</h4>
-<pre>java.lang.String fallbackFile</pre>
-<div class="block">fallback file</div>
-</li>
-<li class="blockList">
-<h4>fallbackParameters</h4>
-<pre><a href="nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> fallbackParameters</pre>
-<div class="block">fallback parameter</div>
-</li>
-<li class="blockList">
-<h4>hasDisplay</h4>
-<pre>boolean hasDisplay</pre>
-</li>
-<li class="blockList">
-<h4>random</h4>
-<pre>java.util.Random random</pre>
-</li>
-<li class="blockList">
-<h4>notifier</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/NetworkMapPartsNotifier.html" title="nodagumi.ananPJ.NetworkParts内のクラス">NetworkMapPartsNotifier</a> notifier</pre>
-</li>
-<li class="blockListLast">
-<h4>undo_list</h4>
-<pre>java.util.ArrayList&lt;E&gt; undo_list</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkMapBase">
-<!--   -->
-</a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.NetworkMapBase</a> extends javax.swing.tree.DefaultTreeModel implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>直列化されたフィールド</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>partTable</h4>
-<pre><a href="nodagumi/Itk/UniqIdObjectTable.html" title="nodagumi.Itk内のクラス">UniqIdObjectTable</a>&lt;<a href="nodagumi/Itk/UniqIdObjectTable.html" title="UniqIdObjectTable内の型パラメータ">Klass</a>&gt; partTable</pre>
-<div class="block">ID から NetworkParts を取り出すための table.</div>
-</li>
-<li class="blockList">
-<h4>nodesCache</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> nodesCache</pre>
-<div class="block">ノードテーブル</div>
-</li>
-<li class="blockList">
-<h4>linksCache</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> linksCache</pre>
-<div class="block">リンクテーブル</div>
-</li>
-<li class="blockListLast">
-<h4>validRouteKeys</h4>
-<pre>java.util.HashMap&lt;K,V&gt; validRouteKeys</pre>
-<div class="block">経路探索されているかどうかのテーブル。</div>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="nodagumi.ananPJ.NetworkPanel3D">
 <!--   -->
 </a>
@@ -221,11 +126,11 @@
 </li>
 <li class="blockList">
 <h4>nodes</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> nodes</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNodeTable</a> nodes</pre>
 </li>
 <li class="blockList">
 <h4>links</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> links</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a> links</pre>
 </li>
 <li class="blockList">
 <h4>isInitialized</h4>
@@ -447,7 +352,7 @@
 <li class="blockList"><a name="nodagumi.ananPJ.Agents.AgentBase">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">nodagumi.ananPJ.Agents.AgentBase</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">nodagumi.ananPJ.Agents.AgentBase</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBMapPart</a> implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -483,7 +388,7 @@
 </li>
 <li class="blockList">
 <h4>map</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a> map</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a> map</pre>
 <div class="block">map: 自分の存在しているマップ。</div>
 </li>
 <li class="blockList">
@@ -529,10 +434,22 @@
 <pre>java.lang.String configLine</pre>
 <div class="block">設定文字列（generation file 中の設定情報の文字列）</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>random</h4>
 <pre>java.util.Random random</pre>
 <div class="block">乱数生成器</div>
+</li>
+<li class="blockList">
+<h4>lastPosition</h4>
+<pre>java.awt.geom.Point2D lastPosition</pre>
+<div class="block">直前の位置。
+ AgentHandler の表示制御あたりで使用。</div>
+</li>
+<li class="blockListLast">
+<h4>lastSwing</h4>
+<pre>javax.vecmath.Vector3d lastSwing</pre>
+<div class="block">直前のswing。
+ AgentHandler の表示制御あたりで使用。</div>
 </li>
 </ul>
 </li>
@@ -674,10 +591,15 @@
 <div class="block">実際のエージェントクラスの名前。
  Ruby の中でのクラス名。</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>rubyAgent</h4>
 <pre>java.lang.Object rubyAgent</pre>
 <div class="block">Ruby エージェントへのリンク</div>
+</li>
+<li class="blockListLast">
+<h4>triggerFilter</h4>
+<pre>java.util.ArrayList&lt;E&gt; triggerFilter</pre>
+<div class="block">ruby 側呼び出しのための triggerFilter。</div>
 </li>
 </ul>
 </li>
@@ -763,19 +685,19 @@
 </li>
 <li class="blockList">
 <h4>sane_navigation_from_node_current_link</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> sane_navigation_from_node_current_link</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a> sane_navigation_from_node_current_link</pre>
 </li>
 <li class="blockList">
 <h4>sane_navigation_from_node_link</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> sane_navigation_from_node_link</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a> sane_navigation_from_node_link</pre>
 </li>
 <li class="blockList">
 <h4>sane_navigation_from_node_node</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> sane_navigation_from_node_node</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> sane_navigation_from_node_node</pre>
 </li>
 <li class="blockList">
 <h4>sane_navigation_from_node_result</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> sane_navigation_from_node_result</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a> sane_navigation_from_node_result</pre>
 </li>
 <li class="blockListLast">
 <h4>navigation_reason</h4>
@@ -883,7 +805,7 @@
 </li>
 <li class="blockList">
 <h4>current_group</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">MapPartGroup</a> current_group</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/MapPartGroup.html" title="nodagumi.ananPJ.NetworkMap内のクラス">MapPartGroup</a> current_group</pre>
 </li>
 <li class="blockList">
 <h4>menuBar</h4>
@@ -911,11 +833,11 @@
 </li>
 <li class="blockList">
 <h4>selectedNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> selectedNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> selectedNode</pre>
 </li>
 <li class="blockList">
 <h4>currentNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> currentNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> currentNode</pre>
 </li>
 <li class="blockList">
 <h4>draggingNode</h4>
@@ -927,19 +849,19 @@
 </li>
 <li class="blockList">
 <h4>hoverLinkFromCandidate</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> hoverLinkFromCandidate</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> hoverLinkFromCandidate</pre>
 </li>
 <li class="blockList">
 <h4>hoverPollution</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a> hoverPollution</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Area/MapArea.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">MapArea</a> hoverPollution</pre>
 </li>
 <li class="blockList">
 <h4>initialNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> initialNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> initialNode</pre>
 </li>
 <li class="blockList">
 <h4>prevNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> prevNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> prevNode</pre>
 </li>
 <li class="blockList">
 <h4>localscrolling</h4>
@@ -1015,7 +937,7 @@
 </li>
 <li class="blockList">
 <h4>ob_node</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">MapPartGroup</a> ob_node</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/MapPartGroup.html" title="nodagumi.ananPJ.NetworkMap内のクラス">MapPartGroup</a> ob_node</pre>
 </li>
 <li class="blockList">
 <h4>hoverNode</h4>
@@ -1027,7 +949,7 @@
 </li>
 <li class="blockList">
 <h4>hoverArea</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a> hoverArea</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Area/MapArea.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">MapArea</a> hoverArea</pre>
 </li>
 <li class="blockList">
 <h4>selectedArea</h4>
@@ -1063,7 +985,7 @@
 </li>
 <li class="blockList">
 <h4>backgroundGroup</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">MapPartGroup</a> backgroundGroup</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/MapPartGroup.html" title="nodagumi.ananPJ.NetworkMap内のクラス">MapPartGroup</a> backgroundGroup</pre>
 </li>
 <li class="blockList">
 <h4>imageStrength</h4>
@@ -1119,11 +1041,11 @@
 </li>
 <li class="blockList">
 <h4>oneWayfirstNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> oneWayfirstNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> oneWayfirstNode</pre>
 </li>
 <li class="blockList">
 <h4>oneWaylastNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> oneWaylastNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> oneWaylastNode</pre>
 </li>
 <li class="blockList">
 <h4>oneWayLabelPositionA</h4>
@@ -1151,11 +1073,11 @@
 </li>
 <li class="blockList">
 <h4>hoverNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> hoverNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> hoverNode</pre>
 </li>
 <li class="blockList">
 <h4>hoverLink</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> hoverLink</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a> hoverLink</pre>
 </li>
 <li class="blockList">
 <h4>hoverAgent</h4>
@@ -1288,7 +1210,7 @@
 </li>
 <li class="blockList">
 <h4>shownLinks</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> shownLinks</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a> shownLinks</pre>
 </li>
 <li class="blockList">
 <h4>dataModel</h4>
@@ -1316,7 +1238,7 @@
 </li>
 <li class="blockList">
 <h4>attributePanel</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink.AttributePanel</a> attributePanel</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink.AttributePanel</a> attributePanel</pre>
 </li>
 <li class="blockList">
 <h4>lockRefresh</h4>
@@ -1344,7 +1266,7 @@
 </li>
 <li class="blockList">
 <h4>sortedNodes</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> sortedNodes</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNodeTable</a> sortedNodes</pre>
 </li>
 <li class="blockList">
 <h4>dataModel</h4>
@@ -1599,22 +1521,22 @@
 <li class="blockList"><a name="nodagumi.ananPJ.navigation.CalcPath.Nodes">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/navigation/CalcPath.Nodes.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.CalcPath.Nodes</a> extends <a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNodeTable</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/navigation/CalcPath.Nodes.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.CalcPath.Nodes</a> extends <a href="nodagumi/ananPJ/NetworkMap/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNodeTable</a> implements Serializable</h3>
 </li>
 <li class="blockList"><a name="nodagumi.ananPJ.navigation.Dijkstra.Result">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/navigation/Dijkstra.Result.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.Dijkstra.Result</a> extends java.util.HashMap&lt;<a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>,<a href="nodagumi/ananPJ/navigation/CalcPath.NodeLinkLen.html" title="nodagumi.ananPJ.navigation内のクラス">CalcPath.NodeLinkLen</a>&gt; implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/navigation/Dijkstra.Result.html" title="nodagumi.ananPJ.navigation内のクラス">nodagumi.ananPJ.navigation.Dijkstra.Result</a> extends java.util.HashMap&lt;<a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>,<a href="nodagumi/ananPJ/navigation/CalcPath.NodeLinkLen.html" title="nodagumi.ananPJ.navigation内のクラス">CalcPath.NodeLinkLen</a>&gt; implements Serializable</h3>
 </li>
 </ul>
 </li>
 <li class="blockList">
-<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts</h2>
+<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkMap</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.MapPartGroup">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.MapPartGroup">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/MapPartGroup.html" title="nodagumi.ananPJ.NetworkParts内のクラス">nodagumi.ananPJ.NetworkParts.MapPartGroup</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/MapPartGroup.html" title="nodagumi.ananPJ.NetworkMap内のクラス">nodagumi.ananPJ.NetworkMap.MapPartGroup</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a> implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1691,15 +1613,62 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.OBMapPart">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.NetworkMap">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">nodagumi.ananPJ.NetworkParts.OBMapPart</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">nodagumi.ananPJ.NetworkMap.NetworkMap</a> extends javax.swing.tree.DefaultTreeModel implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>直列化されたフィールド</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>partTable</h4>
+<pre><a href="nodagumi/Itk/UniqIdObjectTable.html" title="nodagumi.Itk内のクラス">UniqIdObjectTable</a>&lt;<a href="nodagumi/Itk/UniqIdObjectTable.html" title="UniqIdObjectTable内の型パラメータ">Klass</a>&gt; partTable</pre>
+<div class="block">ID から NetworkMapParts を取り出すための table.</div>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.OBNode">
+<li class="blockList">
+<h4>nodesCache</h4>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNodeTable</a> nodesCache</pre>
+<div class="block">ノードテーブル</div>
+</li>
+<li class="blockList">
+<h4>linksCache</h4>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a> linksCache</pre>
+<div class="block">リンクテーブル</div>
+</li>
+<li class="blockList">
+<h4>validRouteKeys</h4>
+<pre>java.util.HashMap&lt;K,V&gt; validRouteKeys</pre>
+<div class="block">経路探索されているかどうかのテーブル。</div>
+</li>
+<li class="blockList">
+<h4>notifier</h4>
+<pre><a href="nodagumi/ananPJ/NetworkMap/NetworkMapPartsNotifier.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMapPartsNotifier</a> notifier</pre>
+<div class="block">画面変更の notifier</div>
+</li>
+<li class="blockList">
+<h4>undo_list</h4>
+<pre>java.util.ArrayList&lt;E&gt; undo_list</pre>
+<div class="block">updo stack</div>
+</li>
+<li class="blockListLast">
+<h4>frames</h4>
+<pre>java.util.ArrayList&lt;E&gt; frames</pre>
+<div class="block">編集用画面関係</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.OBMapPart">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">nodagumi.ananPJ.NetworkParts.OBNode</a> extends javax.swing.tree.DefaultMutableTreeNode implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="nodagumi.ananPJ.NetworkMap内のクラス">nodagumi.ananPJ.NetworkMap.OBMapPart</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a> implements Serializable</h3>
+</li>
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.OBNode">
+<!--   -->
+</a>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">nodagumi.ananPJ.NetworkMap.OBNode</a> extends javax.swing.tree.DefaultMutableTreeNode implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1718,7 +1687,7 @@
 </li>
 <li class="blockList">
 <h4>networkMap</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a> networkMap</pre>
 </li>
 <li class="blockList">
 <h4>alertMessageTable</h4>
@@ -1736,54 +1705,54 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/OBNodeSymbolicLink.html" title="nodagumi.ananPJ.NetworkParts内のクラス">nodagumi.ananPJ.NetworkParts.OBNodeSymbolicLink</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/OBNodeSymbolicLink.html" title="nodagumi.ananPJ.NetworkMap内のクラス">nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBMapPart</a> implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
 <li class="blockListLast">
 <h4>original</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> original</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a> original</pre>
 <div class="block">エディタ上で別のグループに存在するノードを表示するためのシンボリックリンク．</div>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.OBNodeTable">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.OBNodeTable">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/OBNodeTable.html" title="nodagumi.ananPJ.NetworkParts内のクラス">nodagumi.ananPJ.NetworkParts.OBNodeTable</a> extends java.util.ArrayList&lt;<a href="nodagumi/ananPJ/NetworkParts/OBNodeTable.html" title="OBNodeTable内の型パラメータ">T</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a>&gt; implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/OBNodeTable.html" title="nodagumi.ananPJ.NetworkMap内のクラス">nodagumi.ananPJ.NetworkMap.OBNodeTable</a> extends java.util.ArrayList&lt;<a href="nodagumi/ananPJ/NetworkMap/OBNodeTable.html" title="OBNodeTable内の型パラメータ">T</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a>&gt; implements Serializable</h3>
 </li>
 </ul>
 </li>
 <li class="blockList">
-<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts.Area</h2>
+<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkMap.Area</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Area.MapArea">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Area.MapArea">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">nodagumi.ananPJ.NetworkParts.Area.MapArea</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNode.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNode</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Area/MapArea.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">nodagumi.ananPJ.NetworkMap.Area.MapArea</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a> implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
 <ul class="blockList">
 <li class="blockListLast">
 <h4>pollutionLevel</h4>
-<pre><a href="nodagumi/ananPJ/Simulator/PollutionCalculator.PollutionLevelInfo.html" title="nodagumi.ananPJ.Simulator内のクラス">PollutionCalculator.PollutionLevelInfo</a> pollutionLevel</pre>
+<pre><a href="nodagumi/ananPJ/Simulator/PollutionHandler.PollutionLevelInfo.html" title="nodagumi.ananPJ.Simulator内のクラス">PollutionHandler.PollutionLevelInfo</a> pollutionLevel</pre>
 <div class="block">現在の Pollution 情報</div>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Area/MapAreaRectangle.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">nodagumi.ananPJ.NetworkParts.Area.MapAreaRectangle</a> extends <a href="nodagumi/ananPJ/NetworkParts/Area/MapArea.html" title="nodagumi.ananPJ.NetworkParts.Area内のクラス">MapArea</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Area/MapAreaRectangle.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle</a> extends <a href="nodagumi/ananPJ/NetworkMap/Area/MapArea.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">MapArea</a> implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1820,12 +1789,12 @@
 </ul>
 </li>
 <li class="blockList">
-<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts.Link</h2>
+<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkMap.Link</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.MapLink">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Link.MapLink">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.MapLink</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">nodagumi.ananPJ.NetworkMap.Link.MapLink</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBMapPart</a> implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1840,11 +1809,11 @@
 </li>
 <li class="blockList">
 <h4>fromNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> fromNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> fromNode</pre>
 </li>
 <li class="blockList">
 <h4>toNode</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a> toNode</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> toNode</pre>
 </li>
 <li class="blockList">
 <h4>agents</h4>
@@ -1857,10 +1826,6 @@
 <li class="blockList">
 <h4>nodes_are_set</h4>
 <pre>boolean nodes_are_set</pre>
-</li>
-<li class="blockList">
-<h4>emergency</h4>
-<pre>boolean emergency</pre>
 </li>
 <li class="blockList">
 <h4>shutOffP</h4>
@@ -1891,10 +1856,10 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.MapLink.AttributePanel">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Link.MapLink.AttributePanel">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.MapLink.AttributePanel</a> extends javax.swing.JPanel implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">nodagumi.ananPJ.NetworkMap.Link.MapLink.AttributePanel</a> extends javax.swing.JPanel implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1919,20 +1884,20 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Link.MapLinkTable">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Link.MapLinkTable">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">nodagumi.ananPJ.NetworkParts.Link.MapLinkTable</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNodeTable.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNodeTable</a>&lt;<a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a>&gt; implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">nodagumi.ananPJ.NetworkMap.Link.MapLinkTable</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBNodeTable.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNodeTable</a>&lt;<a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&gt; implements Serializable</h3>
 </li>
 </ul>
 </li>
 <li class="blockList">
-<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkParts.Node</h2>
+<h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ.NetworkMap.Node</h2>
 <ul class="blockList">
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Node.MapNode">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Node.MapNode">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">nodagumi.ananPJ.NetworkParts.Node.MapNode</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBMapPart.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBMapPart</a> implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">nodagumi.ananPJ.NetworkMap.Node.MapNode</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBMapPart</a> implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -1947,7 +1912,7 @@
 </li>
 <li class="blockList">
 <h4>links</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> links</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a> links</pre>
 </li>
 <li class="blockList">
 <h4>hints</h4>
@@ -1955,7 +1920,7 @@
 </li>
 <li class="blockList">
 <h4>cachePathways</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> cachePathways</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a> cachePathways</pre>
 <div class="block">getPathways を効率化するための cache
  Node とそれに繋がるリンクのタグなどが変化すれば、
  reset されなければならない。
@@ -1963,7 +1928,7 @@
 </li>
 <li class="blockListLast">
 <h4>cachePathwaysReverse</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLinkTable</a> cachePathwaysReverse</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a> cachePathwaysReverse</pre>
 <div class="block">getPathwaysReverse を効率化するための cache
  Node とそれに繋がるリンクのタグなどが変化すれば、
  reset されなければならない。
@@ -1973,15 +1938,15 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Node.MapNodeTable">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Node.MapNodeTable">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">nodagumi.ananPJ.NetworkParts.Node.MapNodeTable</a> extends <a href="nodagumi/ananPJ/NetworkParts/OBNodeTable.html" title="nodagumi.ananPJ.NetworkParts内のクラス">OBNodeTable</a>&lt;<a href="nodagumi/ananPJ/NetworkParts/Node/MapNode.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">MapNode</a>&gt; implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">nodagumi.ananPJ.NetworkMap.Node.MapNodeTable</a> extends <a href="nodagumi/ananPJ/NetworkMap/OBNodeTable.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNodeTable</a>&lt;<a href="nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&gt; implements Serializable</h3>
 </li>
-<li class="blockList"><a name="nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException">
+<li class="blockList"><a name="nodagumi.ananPJ.NetworkMap.Node.TargetNotFoundException">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/NetworkParts/Node/TargetNotFoundException.html" title="nodagumi.ananPJ.NetworkParts.Node内のクラス">nodagumi.ananPJ.NetworkParts.Node.TargetNotFoundException</a> extends java.lang.Exception implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/NetworkMap/Node/TargetNotFoundException.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">nodagumi.ananPJ.NetworkMap.Node.TargetNotFoundException</a> extends java.lang.Exception implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -2014,7 +1979,7 @@
 </li>
 <li class="blockList">
 <h4>networkMap</h4>
-<pre><a href="nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a> networkMap</pre>
 </li>
 <li class="blockList">
 <h4>firstStep</h4>
@@ -2222,7 +2187,7 @@
 </li>
 <li class="blockListLast">
 <h4>selected_link</h4>
-<pre><a href="nodagumi/ananPJ/NetworkParts/Link/MapLink.html" title="nodagumi.ananPJ.NetworkParts.Link内のクラス">MapLink</a> selected_link</pre>
+<pre><a href="nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a> selected_link</pre>
 </li>
 </ul>
 </li>

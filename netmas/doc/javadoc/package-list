@@ -5,10 +5,10 @@ nodagumi.ananPJ.Agents.Think
 nodagumi.ananPJ.Editor
 nodagumi.ananPJ.Editor.Panel
 nodagumi.ananPJ.Gui
-nodagumi.ananPJ.NetworkParts
-nodagumi.ananPJ.NetworkParts.Area
-nodagumi.ananPJ.NetworkParts.Link
-nodagumi.ananPJ.NetworkParts.Node
+nodagumi.ananPJ.NetworkMap
+nodagumi.ananPJ.NetworkMap.Area
+nodagumi.ananPJ.NetworkMap.Link
+nodagumi.ananPJ.NetworkMap.Node
 nodagumi.ananPJ.Scenario
 nodagumi.ananPJ.Simulator
 nodagumi.ananPJ.Simulator.Obstructer

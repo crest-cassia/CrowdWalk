@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":9,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":9,"i16":9,"i17":10,"i18":10,"i19":9,"i20":9,"i21":10,"i22":10,"i23":9,"i24":9,"i25":9,"i26":9,"i27":10,"i28":10,"i29":9,"i30":9,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -74,13 +74,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>サマリー:&nbsp;</li>
 <li>ネスト&nbsp;|&nbsp;</li>
-<li>フィールド&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">メソッド</a></li>
 </ul>
 <ul class="subNavList">
 <li>詳細:&nbsp;</li>
-<li>フィールド&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">メソッド</a></li>
 </ul>
@@ -117,6 +117,27 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>フィールドのサマリー</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="フィールドのサマリー表、フィールドのリストおよび説明">
+<caption><span>フィールド</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">修飾子とタイプ</th>
+<th class="colLast" scope="col">フィールドと説明</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>org.jruby.embed.ScriptingContainer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#container">container</a></span></code>
+<div class="block">Ruby Scrupt の評価実行系。</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -157,25 +178,85 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callMethodBoolean-java.lang.Object-java.lang.String-java.lang.Object...-">callMethodBoolean</a></span>(java.lang.Object&nbsp;object,
+                 java.lang.String&nbsp;methodName,
+                 java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(オブジェクト内)してBooleanにキャスト</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callMethodDouble-java.lang.Object-java.lang.String-java.lang.Object...-">callMethodDouble</a></span>(java.lang.Object&nbsp;object,
+                java.lang.String&nbsp;methodName,
+                java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(オブジェクト内)してDoubleにキャスト</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callMethodInteger-java.lang.Object-java.lang.String-java.lang.Object...-">callMethodInteger</a></span>(java.lang.Object&nbsp;object,
+                 java.lang.String&nbsp;methodName,
+                 java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(オブジェクト内)してIntegerにキャスト</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callMethodString-java.lang.Object-java.lang.String-java.lang.Object...-">callMethodString</a></span>(java.lang.Object&nbsp;object,
+                java.lang.String&nbsp;methodName,
+                java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(オブジェクト内)してStringにキャスト</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callTopMethod-java.lang.String-java.lang.Object...-">callTopMethod</a></span>(java.lang.String&nbsp;methodName,
              java.lang.Object...&nbsp;args)</code>
 <div class="block">メソッド呼び出し(トップレベル)</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callTopMethodBoolean-java.lang.String-java.lang.Object...-">callTopMethodBoolean</a></span>(java.lang.String&nbsp;methodName,
+                    java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(トップレベル)してBooleanにキャスト</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callTopMethodDouble-java.lang.String-java.lang.Object...-">callTopMethodDouble</a></span>(java.lang.String&nbsp;methodName,
+                   java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(トップレベル)してDoubleにキャスト</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callTopMethodInteger-java.lang.String-java.lang.Object...-">callTopMethodInteger</a></span>(java.lang.String&nbsp;methodName,
+                    java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(トップレベル)してIntegerにキャスト</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#callTopMethodString-java.lang.String-java.lang.Object...-">callTopMethodString</a></span>(java.lang.String&nbsp;methodName,
+                   java.lang.Object...&nbsp;args)</code>
+<div class="block">メソッド呼び出し(トップレベル)してStringにキャスト</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#ensureRubyEngine--">ensureRubyEngine</a></span>()</code>
 <div class="block">rubyEngine がインスタンスを持つか確認。</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#eval-java.lang.String-">eval</a></span>(java.lang.String&nbsp;script)</code>
 <div class="block">script 実行(1行)</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#eval-java.lang.String-java.lang.String-java.lang.String...-">eval</a></span>(java.lang.String&nbsp;script0,
     java.lang.String&nbsp;script1,
@@ -183,13 +264,97 @@ extends java.lang.Object</pre>
 <div class="block">script 実行(複数行)</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalBoolean-java.lang.String-">evalBoolean</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">script 実行(1行)して Boolean にキャスト</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalBoolean-java.lang.String-java.lang.String-java.lang.String...-">evalBoolean</a></span>(java.lang.String&nbsp;script0,
+           java.lang.String&nbsp;script1,
+           java.lang.String...&nbsp;scriptList)</code>
+<div class="block">script 実行(複数行)して Boolean にキャスト</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>static java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalBooleanOnEngine-java.lang.String-">evalBooleanOnEngine</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">rubyEngine 上で直接実行(一行)してBooleanにキャスト。</div>
+</td>
+</tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>static java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalBooleanOnEngine-java.lang.String-java.lang.String-java.lang.String...-">evalBooleanOnEngine</a></span>(java.lang.String&nbsp;script0,
+                   java.lang.String&nbsp;script1,
+                   java.lang.String...&nbsp;scriptList)</code>
+<div class="block">rubyEngine 上で直接実行(複数行)してBooleanにキャスト。</div>
+</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalDouble-java.lang.String-">evalDouble</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">script 実行(1行)して Double にキャスト</div>
+</td>
+</tr>
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalDouble-java.lang.String-java.lang.String-java.lang.String...-">evalDouble</a></span>(java.lang.String&nbsp;script0,
+          java.lang.String&nbsp;script1,
+          java.lang.String...&nbsp;scriptList)</code>
+<div class="block">script 実行(複数行)して Double にキャスト</div>
+</td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>static java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalDoubleOnEngine-java.lang.String-">evalDoubleOnEngine</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">rubyEngine 上で直接実行(一行)してDoubleにキャスト。</div>
+</td>
+</tr>
+<tr id="i20" class="altColor">
+<td class="colFirst"><code>static java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalDoubleOnEngine-java.lang.String-java.lang.String-java.lang.String...-">evalDoubleOnEngine</a></span>(java.lang.String&nbsp;script0,
+                  java.lang.String&nbsp;script1,
+                  java.lang.String...&nbsp;scriptList)</code>
+<div class="block">rubyEngine 上で直接実行(複数行)してDoubleにキャスト。</div>
+</td>
+</tr>
+<tr id="i21" class="rowColor">
+<td class="colFirst"><code>java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalInteger-java.lang.String-">evalInteger</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">script 実行(1行)して Integer にキャスト</div>
+</td>
+</tr>
+<tr id="i22" class="altColor">
+<td class="colFirst"><code>java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalInteger-java.lang.String-java.lang.String-java.lang.String...-">evalInteger</a></span>(java.lang.String&nbsp;script0,
+           java.lang.String&nbsp;script1,
+           java.lang.String...&nbsp;scriptList)</code>
+<div class="block">script 実行(複数行)して Integer にキャスト</div>
+</td>
+</tr>
+<tr id="i23" class="rowColor">
+<td class="colFirst"><code>static java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalIntegerOnEngine-java.lang.String-">evalIntegerOnEngine</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">rubyEngine 上で直接実行(一行)してIntegerにキャスト。</div>
+</td>
+</tr>
+<tr id="i24" class="altColor">
+<td class="colFirst"><code>static java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalIntegerOnEngine-java.lang.String-java.lang.String-java.lang.String...-">evalIntegerOnEngine</a></span>(java.lang.String&nbsp;script0,
+                   java.lang.String&nbsp;script1,
+                   java.lang.String...&nbsp;scriptList)</code>
+<div class="block">rubyEngine 上で直接実行(複数行)してIntegerにキャスト。</div>
+</td>
+</tr>
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalOnEngine-java.lang.String-">evalOnEngine</a></span>(java.lang.String&nbsp;script)</code>
 <div class="block">rubyEngine 上で直接実行。</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalOnEngine-java.lang.String-java.lang.String-java.lang.String...-">evalOnEngine</a></span>(java.lang.String&nbsp;script0,
             java.lang.String&nbsp;script1,
@@ -197,63 +362,143 @@ extends java.lang.Object</pre>
 <div class="block">rubyEngine 上で直接実行。</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i27" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalString-java.lang.String-">evalString</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">script 実行(1行)して String にキャスト</div>
+</td>
+</tr>
+<tr id="i28" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalString-java.lang.String-java.lang.String-java.lang.String...-">evalString</a></span>(java.lang.String&nbsp;script0,
+          java.lang.String&nbsp;script1,
+          java.lang.String...&nbsp;scriptList)</code>
+<div class="block">script 実行(複数行)して String にキャスト</div>
+</td>
+</tr>
+<tr id="i29" class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalStringOnEngine-java.lang.String-">evalStringOnEngine</a></span>(java.lang.String&nbsp;script)</code>
+<div class="block">rubyEngine 上で直接実行(一行)してStringにキャスト。</div>
+</td>
+</tr>
+<tr id="i30" class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#evalStringOnEngine-java.lang.String-java.lang.String-java.lang.String...-">evalStringOnEngine</a></span>(java.lang.String&nbsp;script0,
+                  java.lang.String&nbsp;script1,
+                  java.lang.String...&nbsp;scriptList)</code>
+<div class="block">rubyEngine 上で直接実行(複数行)してStringにキャスト。</div>
+</td>
+</tr>
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getCurrentDirectory--">getCurrentDirectory</a></span>()</code>
 <div class="block">Ruby の current directory を取得。</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getLoadPaths--">getLoadPaths</a></span>()</code>
 <div class="block">Ruby の LoadPath。</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariable-java.lang.Object-java.lang.String-">getVariable</a></span>(java.lang.Object&nbsp;object,
            java.lang.String&nbsp;varName)</code>
 <div class="block">変数値取得(オブジェクト内)</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariable-java.lang.String-">getVariable</a></span>(java.lang.String&nbsp;varName)</code>
 <div class="block">変数値取得(トップレベル)</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i35" class="rowColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableBoolean-java.lang.Object-java.lang.String-">getVariableBoolean</a></span>(java.lang.Object&nbsp;object,
+                  java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(オブジェクト内)してBooleanにキャスト</div>
+</td>
+</tr>
+<tr id="i36" class="altColor">
+<td class="colFirst"><code>java.lang.Boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableBoolean-java.lang.String-">getVariableBoolean</a></span>(java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(トップレベル)してBooleanにキャスト</div>
+</td>
+</tr>
+<tr id="i37" class="rowColor">
+<td class="colFirst"><code>java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableDouble-java.lang.Object-java.lang.String-">getVariableDouble</a></span>(java.lang.Object&nbsp;object,
+                 java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(オブジェクト内)してDoubleにキャスト</div>
+</td>
+</tr>
+<tr id="i38" class="altColor">
+<td class="colFirst"><code>java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableDouble-java.lang.String-">getVariableDouble</a></span>(java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(トップレベル)してDoubleにキャスト</div>
+</td>
+</tr>
+<tr id="i39" class="rowColor">
+<td class="colFirst"><code>java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableInteger-java.lang.Object-java.lang.String-">getVariableInteger</a></span>(java.lang.Object&nbsp;object,
+                  java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(オブジェクト内)してIntegerにキャスト</div>
+</td>
+</tr>
+<tr id="i40" class="altColor">
+<td class="colFirst"><code>java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableInteger-java.lang.String-">getVariableInteger</a></span>(java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(トップレベル)してIntegerにキャスト</div>
+</td>
+</tr>
+<tr id="i41" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableString-java.lang.Object-java.lang.String-">getVariableString</a></span>(java.lang.Object&nbsp;object,
+                 java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(オブジェクト内)してStringにキャスト</div>
+</td>
+</tr>
+<tr id="i42" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#getVariableString-java.lang.String-">getVariableString</a></span>(java.lang.String&nbsp;varName)</code>
+<div class="block">変数値取得(トップレベル)してStringにキャスト</div>
+</td>
+</tr>
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#newInstanceOfClass-java.lang.String-java.lang.Object...-">newInstanceOfClass</a></span>(java.lang.String&nbsp;className,
                   java.lang.Object...&nbsp;args)</code>
 <div class="block">クラスのインスタンス作成</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>org.jruby.javasupport.JavaEmbedUtils.EvalUnit</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#parseScript-java.lang.String-">parseScript</a></span>(java.lang.String&nbsp;script)</code>
 <div class="block">script のパース。</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#pushLoadPath-java.lang.String-">pushLoadPath</a></span>(java.lang.String&nbsp;path)</code>
 <div class="block">Ruby の LoadPath の末尾に追加。</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#setCurrentDirectory-java.lang.String-">setCurrentDirectory</a></span>(java.lang.String&nbsp;directory)</code>
 <div class="block">Ruby の current directory を取得。</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#setLoadPaths-java.util.List-">setLoadPaths</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;pathList)</code>
 <div class="block">Ruby の LoadPath を設定。</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#setVariable-java.lang.Object-java.lang.String-java.lang.Object-">setVariable</a></span>(java.lang.Object&nbsp;object,
            java.lang.String&nbsp;varName,
@@ -261,7 +506,7 @@ extends java.lang.Object</pre>
 <div class="block">変数設定(オブジェクト内)</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/Itk/ItkRuby.html#setVariable-java.lang.String-java.lang.Object-">setVariable</a></span>(java.lang.String&nbsp;varName,
            java.lang.Object&nbsp;value)</code>
@@ -284,6 +529,24 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>フィールドの詳細</h3>
+<a name="container">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>container</h4>
+<pre>public&nbsp;org.jruby.embed.ScriptingContainer container</pre>
+<div class="block">Ruby Scrupt の評価実行系。</div>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -330,6 +593,94 @@ extends java.lang.Object</pre>
 <div class="block">script 実行(複数行)</div>
 </li>
 </ul>
+<a name="evalBoolean-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalBoolean</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;evalBoolean(java.lang.String&nbsp;script)</pre>
+<div class="block">script 実行(1行)して Boolean にキャスト</div>
+</li>
+</ul>
+<a name="evalBoolean-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalBoolean</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;evalBoolean(java.lang.String&nbsp;script0,
+                                     java.lang.String&nbsp;script1,
+                                     java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">script 実行(複数行)して Boolean にキャスト</div>
+</li>
+</ul>
+<a name="evalInteger-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalInteger</h4>
+<pre>public&nbsp;java.lang.Integer&nbsp;evalInteger(java.lang.String&nbsp;script)</pre>
+<div class="block">script 実行(1行)して Integer にキャスト</div>
+</li>
+</ul>
+<a name="evalInteger-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalInteger</h4>
+<pre>public&nbsp;java.lang.Integer&nbsp;evalInteger(java.lang.String&nbsp;script0,
+                                     java.lang.String&nbsp;script1,
+                                     java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">script 実行(複数行)して Integer にキャスト</div>
+</li>
+</ul>
+<a name="evalDouble-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalDouble</h4>
+<pre>public&nbsp;java.lang.Double&nbsp;evalDouble(java.lang.String&nbsp;script)</pre>
+<div class="block">script 実行(1行)して Double にキャスト</div>
+</li>
+</ul>
+<a name="evalDouble-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalDouble</h4>
+<pre>public&nbsp;java.lang.Double&nbsp;evalDouble(java.lang.String&nbsp;script0,
+                                   java.lang.String&nbsp;script1,
+                                   java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">script 実行(複数行)して Double にキャスト</div>
+</li>
+</ul>
+<a name="evalString-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;evalString(java.lang.String&nbsp;script)</pre>
+<div class="block">script 実行(1行)して String にキャスト</div>
+</li>
+</ul>
+<a name="evalString-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;evalString(java.lang.String&nbsp;script0,
+                                   java.lang.String&nbsp;script1,
+                                   java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">script 実行(複数行)して String にキャスト</div>
+</li>
+</ul>
 <a name="setVariable-java.lang.String-java.lang.Object-">
 <!--   -->
 </a>
@@ -374,6 +725,90 @@ extends java.lang.Object</pre>
 <div class="block">変数値取得(オブジェクト内)</div>
 </li>
 </ul>
+<a name="getVariableBoolean-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableBoolean</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;getVariableBoolean(java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(トップレベル)してBooleanにキャスト</div>
+</li>
+</ul>
+<a name="getVariableBoolean-java.lang.Object-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableBoolean</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;getVariableBoolean(java.lang.Object&nbsp;object,
+                                            java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(オブジェクト内)してBooleanにキャスト</div>
+</li>
+</ul>
+<a name="getVariableInteger-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableInteger</h4>
+<pre>public&nbsp;java.lang.Integer&nbsp;getVariableInteger(java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(トップレベル)してIntegerにキャスト</div>
+</li>
+</ul>
+<a name="getVariableInteger-java.lang.Object-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableInteger</h4>
+<pre>public&nbsp;java.lang.Integer&nbsp;getVariableInteger(java.lang.Object&nbsp;object,
+                                            java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(オブジェクト内)してIntegerにキャスト</div>
+</li>
+</ul>
+<a name="getVariableDouble-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableDouble</h4>
+<pre>public&nbsp;java.lang.Double&nbsp;getVariableDouble(java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(トップレベル)してDoubleにキャスト</div>
+</li>
+</ul>
+<a name="getVariableDouble-java.lang.Object-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableDouble</h4>
+<pre>public&nbsp;java.lang.Double&nbsp;getVariableDouble(java.lang.Object&nbsp;object,
+                                          java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(オブジェクト内)してDoubleにキャスト</div>
+</li>
+</ul>
+<a name="getVariableString-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getVariableString(java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(トップレベル)してStringにキャスト</div>
+</li>
+</ul>
+<a name="getVariableString-java.lang.Object-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariableString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getVariableString(java.lang.Object&nbsp;object,
+                                          java.lang.String&nbsp;varName)</pre>
+<div class="block">変数値取得(オブジェクト内)してStringにキャスト</div>
+</li>
+</ul>
 <a name="callTopMethod-java.lang.String-java.lang.Object...-">
 <!--   -->
 </a>
@@ -395,6 +830,98 @@ extends java.lang.Object</pre>
                                    java.lang.String&nbsp;methodName,
                                    java.lang.Object...&nbsp;args)</pre>
 <div class="block">メソッド呼び出し(オブジェクト内)</div>
+</li>
+</ul>
+<a name="callTopMethodBoolean-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callTopMethodBoolean</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;callTopMethodBoolean(java.lang.String&nbsp;methodName,
+                                              java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(トップレベル)してBooleanにキャスト</div>
+</li>
+</ul>
+<a name="callMethodBoolean-java.lang.Object-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callMethodBoolean</h4>
+<pre>public&nbsp;java.lang.Boolean&nbsp;callMethodBoolean(java.lang.Object&nbsp;object,
+                                           java.lang.String&nbsp;methodName,
+                                           java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(オブジェクト内)してBooleanにキャスト</div>
+</li>
+</ul>
+<a name="callTopMethodInteger-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callTopMethodInteger</h4>
+<pre>public&nbsp;java.lang.Integer&nbsp;callTopMethodInteger(java.lang.String&nbsp;methodName,
+                                              java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(トップレベル)してIntegerにキャスト</div>
+</li>
+</ul>
+<a name="callMethodInteger-java.lang.Object-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callMethodInteger</h4>
+<pre>public&nbsp;java.lang.Integer&nbsp;callMethodInteger(java.lang.Object&nbsp;object,
+                                           java.lang.String&nbsp;methodName,
+                                           java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(オブジェクト内)してIntegerにキャスト</div>
+</li>
+</ul>
+<a name="callTopMethodDouble-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callTopMethodDouble</h4>
+<pre>public&nbsp;java.lang.Double&nbsp;callTopMethodDouble(java.lang.String&nbsp;methodName,
+                                            java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(トップレベル)してDoubleにキャスト</div>
+</li>
+</ul>
+<a name="callMethodDouble-java.lang.Object-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callMethodDouble</h4>
+<pre>public&nbsp;java.lang.Double&nbsp;callMethodDouble(java.lang.Object&nbsp;object,
+                                         java.lang.String&nbsp;methodName,
+                                         java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(オブジェクト内)してDoubleにキャスト</div>
+</li>
+</ul>
+<a name="callTopMethodString-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callTopMethodString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;callTopMethodString(java.lang.String&nbsp;methodName,
+                                            java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(トップレベル)してStringにキャスト</div>
+</li>
+</ul>
+<a name="callMethodString-java.lang.Object-java.lang.String-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>callMethodString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;callMethodString(java.lang.Object&nbsp;object,
+                                         java.lang.String&nbsp;methodName,
+                                         java.lang.Object...&nbsp;args)</pre>
+<div class="block">メソッド呼び出し(オブジェクト内)してStringにキャスト</div>
 </li>
 </ul>
 <a name="newInstanceOfClass-java.lang.String-java.lang.Object...-">
@@ -525,13 +1052,101 @@ extends java.lang.Object</pre>
 <a name="evalOnEngine-java.lang.String-java.lang.String-java.lang.String...-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>evalOnEngine</h4>
 <pre>public static&nbsp;java.lang.Object&nbsp;evalOnEngine(java.lang.String&nbsp;script0,
                                             java.lang.String&nbsp;script1,
                                             java.lang.String...&nbsp;scriptList)</pre>
 <div class="block">rubyEngine 上で直接実行。(複数行)</div>
+</li>
+</ul>
+<a name="evalBooleanOnEngine-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalBooleanOnEngine</h4>
+<pre>public static&nbsp;java.lang.Boolean&nbsp;evalBooleanOnEngine(java.lang.String&nbsp;script)</pre>
+<div class="block">rubyEngine 上で直接実行(一行)してBooleanにキャスト。</div>
+</li>
+</ul>
+<a name="evalBooleanOnEngine-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalBooleanOnEngine</h4>
+<pre>public static&nbsp;java.lang.Boolean&nbsp;evalBooleanOnEngine(java.lang.String&nbsp;script0,
+                                                    java.lang.String&nbsp;script1,
+                                                    java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">rubyEngine 上で直接実行(複数行)してBooleanにキャスト。</div>
+</li>
+</ul>
+<a name="evalIntegerOnEngine-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalIntegerOnEngine</h4>
+<pre>public static&nbsp;java.lang.Integer&nbsp;evalIntegerOnEngine(java.lang.String&nbsp;script)</pre>
+<div class="block">rubyEngine 上で直接実行(一行)してIntegerにキャスト。</div>
+</li>
+</ul>
+<a name="evalIntegerOnEngine-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalIntegerOnEngine</h4>
+<pre>public static&nbsp;java.lang.Integer&nbsp;evalIntegerOnEngine(java.lang.String&nbsp;script0,
+                                                    java.lang.String&nbsp;script1,
+                                                    java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">rubyEngine 上で直接実行(複数行)してIntegerにキャスト。</div>
+</li>
+</ul>
+<a name="evalDoubleOnEngine-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalDoubleOnEngine</h4>
+<pre>public static&nbsp;java.lang.Double&nbsp;evalDoubleOnEngine(java.lang.String&nbsp;script)</pre>
+<div class="block">rubyEngine 上で直接実行(一行)してDoubleにキャスト。</div>
+</li>
+</ul>
+<a name="evalDoubleOnEngine-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalDoubleOnEngine</h4>
+<pre>public static&nbsp;java.lang.Double&nbsp;evalDoubleOnEngine(java.lang.String&nbsp;script0,
+                                                  java.lang.String&nbsp;script1,
+                                                  java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">rubyEngine 上で直接実行(複数行)してDoubleにキャスト。</div>
+</li>
+</ul>
+<a name="evalStringOnEngine-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>evalStringOnEngine</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;evalStringOnEngine(java.lang.String&nbsp;script)</pre>
+<div class="block">rubyEngine 上で直接実行(一行)してStringにキャスト。</div>
+</li>
+</ul>
+<a name="evalStringOnEngine-java.lang.String-java.lang.String-java.lang.String...-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>evalStringOnEngine</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;evalStringOnEngine(java.lang.String&nbsp;script0,
+                                                  java.lang.String&nbsp;script1,
+                                                  java.lang.String...&nbsp;scriptList)</pre>
+<div class="block">rubyEngine 上で直接実行(複数行)してStringにキャスト。</div>
 </li>
 </ul>
 </li>
@@ -587,13 +1202,13 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>サマリー:&nbsp;</li>
 <li>ネスト&nbsp;|&nbsp;</li>
-<li>フィールド&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">メソッド</a></li>
 </ul>
 <ul class="subNavList">
 <li>詳細:&nbsp;</li>
-<li>フィールド&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">フィールド</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">コンストラクタ</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">メソッド</a></li>
 </ul>

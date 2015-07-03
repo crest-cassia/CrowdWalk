@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -200,9 +200,9 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a></code></td>
+<td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#networkMap">networkMap</a></span></code>
-<div class="block">地図およびエージェント格納体</div>
+<div class="block">地図データ。</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -338,7 +338,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a></code></td>
+<td class="colFirst"><code><a href="../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getMap--">getMap</a></span>()</code>
 <div class="block">マップ取得</div>
 </td>
@@ -368,128 +368,140 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getScenarioPath--">getScenarioPath</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i12" class="altColor">
+<td class="colFirst"><code><a href="../../nodagumi/ananPJ/misc/SetupFileInfo.html" title="nodagumi.ananPJ.misc内のクラス">SetupFileInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getSetupFileInfo--">getSetupFileInfo</a></span>()</code>
+<div class="block">マップ取得</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html" title="nodagumi.ananPJ.Simulator内のクラス">EvacuationSimulator</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getSimulator--">getSimulator</a></span>()</code>
 <div class="block">シミュレータ実体の取り出し</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getTimerPath--">getTimerPath</a></span>()</code>
 <div class="block">タイマーファイルパス取得。</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getTimeSeriesLogInterval--">getTimeSeriesLogInterval</a></span>()</code>
 <div class="block">Get timeSeriesLogInterval.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getTimeSeriesLogPath--">getTimeSeriesLogPath</a></span>()</code>
 <div class="block">Get timeSeriesLogPath.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#hasDisplay--">hasDisplay</a></span>()</code>
+<div class="block">ディスプレーを持つかどうか。</div>
+</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#initializeSimulatorEntity-boolean-">initializeSimulatorEntity</a></span>(boolean&nbsp;hasDisplay)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#initializeSimulatorEntity--">initializeSimulatorEntity</a></span>()</code>
 <div class="block">シミュレーションの初期化。</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
-<td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a></code></td>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>protected <a href="../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#readMapWithName-java.lang.String-">readMapWithName</a></span>(java.lang.String&nbsp;file_name)</code>
 <div class="block">地図の読み込み</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setExitCount-int-">setExitCount</a></span>(int&nbsp;_exitCount)</code>
 <div class="block">終了カウント設定。</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setFallbackPath-java.lang.String-">setFallbackPath</a></span>(java.lang.String&nbsp;_fallbackPath)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setGenerationPath-java.lang.String-">setGenerationPath</a></span>(java.lang.String&nbsp;_generationPath)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setIsAllAgentSpeedZeroBreak-boolean-">setIsAllAgentSpeedZeroBreak</a></span>(boolean&nbsp;_isAllAgentSpeedZeroBreak)</code>
 <div class="block">終了条件１のセット</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setIsTimerEnabled-boolean-">setIsTimerEnabled</a></span>(boolean&nbsp;_isTimerEnabled)</code>
 <div class="block">タイマー有効化。</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setIsTimeSeriesLog-boolean-">setIsTimeSeriesLog</a></span>(boolean&nbsp;_isTimeSeriesLog)</code>
 <div class="block">Set isTimeSeriesLog.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setMapPath-java.lang.String-">setMapPath</a></span>(java.lang.String&nbsp;_mapPath)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setPollutionPath-java.lang.String-">setPollutionPath</a></span>(java.lang.String&nbsp;_pollutionPath)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setPropertiesFromFile-java.lang.String-">setPropertiesFromFile</a></span>(java.lang.String&nbsp;_propertiesFile)</code>
 <div class="block">ファイルからプロパティの読み込み。</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setRandom-java.util.Random-">setRandom</a></span>(java.util.Random&nbsp;_random)</code>
 <div class="block">乱数生成器セット。</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setScenarioPath-java.lang.String-">setScenarioPath</a></span>(java.lang.String&nbsp;_scenarioPath)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setTimerPath-java.lang.String-">setTimerPath</a></span>(java.lang.String&nbsp;_timerPath)</code>
 <div class="block">タイマーファイルパス設定。</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setTimeSeriesLogInterval-int-">setTimeSeriesLogInterval</a></span>(int&nbsp;_timeSeriesLogInterval)</code>
 <div class="block">Set timeSeriesLogInterval.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setTimeSeriesLogPath-java.lang.String-">setTimeSeriesLogPath</a></span>(java.lang.String&nbsp;_timeSeriesLogPath)</code>
 <div class="block">Set timeSeriesLogPath.</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setupNetworkMap--">setupNetworkMap</a></span>()</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setupSetupFileInfo--">setupSetupFileInfo</a></span>()</code>
 <div class="block">地図の初期設定を、Launcher から渡す。</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulateMainLoop--">simulateMainLoop</a></span>()</code>
 <div class="block">シミュレーションのメインループ。</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulateOneStepBare--">simulateOneStepBare</a></span>()</code>
 <div class="block">シミュレーションのステップ（synchronize していない）</div>
@@ -543,8 +555,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>networkMap</h4>
-<pre>protected&nbsp;<a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a> networkMap</pre>
-<div class="block">地図およびエージェント格納体</div>
+<pre>protected&nbsp;<a href="../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a> networkMap</pre>
+<div class="block">地図データ。</div>
 </li>
 </ul>
 <a name="random">
@@ -832,7 +844,17 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getMap</h4>
-<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;getMap()</pre>
+<pre>public&nbsp;<a href="../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;getMap()</pre>
+<div class="block">マップ取得</div>
+</li>
+</ul>
+<a name="getSetupFileInfo--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSetupFileInfo</h4>
+<pre>public&nbsp;<a href="../../nodagumi/ananPJ/misc/SetupFileInfo.html" title="nodagumi.ananPJ.misc内のクラス">SetupFileInfo</a>&nbsp;getSetupFileInfo()</pre>
 <div class="block">マップ取得</div>
 </li>
 </ul>
@@ -1086,7 +1108,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>readMapWithName</h4>
-<pre>protected&nbsp;<a href="../../nodagumi/ananPJ/NetworkMap.html" title="nodagumi.ananPJ内のクラス">NetworkMap</a>&nbsp;readMapWithName(java.lang.String&nbsp;file_name)
+<pre>protected&nbsp;<a href="../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;readMapWithName(java.lang.String&nbsp;file_name)
                               throws java.io.IOException</pre>
 <div class="block">地図の読み込み</div>
 <dl>
@@ -1095,13 +1117,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="setupNetworkMap--">
+<a name="setupSetupFileInfo--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setupNetworkMap</h4>
-<pre>protected&nbsp;void&nbsp;setupNetworkMap()</pre>
+<h4>setupSetupFileInfo</h4>
+<pre>protected&nbsp;void&nbsp;setupSetupFileInfo()</pre>
 <div class="block">地図の初期設定を、Launcher から渡す。</div>
 </li>
 </ul>
@@ -1115,13 +1137,24 @@ extends java.lang.Object</pre>
 <div class="block">ファイルからプロパティの読み込み。</div>
 </li>
 </ul>
-<a name="initializeSimulatorEntity-boolean-">
+<a name="hasDisplay--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hasDisplay</h4>
+<pre>public&nbsp;boolean&nbsp;hasDisplay()</pre>
+<div class="block">ディスプレーを持つかどうか。
+ これは、SimulationController interface を継承しているかどうかで判断。</div>
+</li>
+</ul>
+<a name="initializeSimulatorEntity--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>initializeSimulatorEntity</h4>
-<pre>protected&nbsp;void&nbsp;initializeSimulatorEntity(boolean&nbsp;hasDisplay)</pre>
+<pre>protected&nbsp;void&nbsp;initializeSimulatorEntity()</pre>
 <div class="block">シミュレーションの初期化。</div>
 </li>
 </ul>

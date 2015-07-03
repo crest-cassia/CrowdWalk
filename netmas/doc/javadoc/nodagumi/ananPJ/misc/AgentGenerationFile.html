@@ -361,8 +361,8 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#AgentGenerationFile-java.lang.String-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-boolean-double-java.util.Random-">AgentGenerationFile</a></span>(java.lang.String&nbsp;filename,
-                   <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#AgentGenerationFile-java.lang.String-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-boolean-double-java.util.Random-">AgentGenerationFile</a></span>(java.lang.String&nbsp;filename,
+                   <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
                    <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters,
                    boolean&nbsp;display,
                    double&nbsp;linerGenerateAgentRatio,
@@ -387,24 +387,24 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#checkPlannedRoute-java.lang.String-nodagumi.ananPJ.NetworkMapBase-java.util.List-">checkPlannedRoute</a></span>(java.lang.String&nbsp;agentClassName,
-                 <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#checkPlannedRoute-java.lang.String-nodagumi.ananPJ.NetworkMap.NetworkMap-java.util.List-">checkPlannedRoute</a></span>(java.lang.String&nbsp;agentClassName,
+                 <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
                  java.util.List&lt;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&gt;&nbsp;planned_route)</code>
 <div class="block">経路情報に未定義のタグが使用されていたらその内容を返す</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanCsvFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-">scanCsvFile</a></span>(java.io.BufferedReader&nbsp;br,
-           <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanCsvFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-">scanCsvFile</a></span>(java.io.BufferedReader&nbsp;br,
+           <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
            <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters)</code>
 <div class="block">設定解析ルーチン (CSV file) (Ver.0, Ver.1 file format)</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanFile-java.lang.String-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-boolean-">scanFile</a></span>(java.lang.String&nbsp;filename,
-        <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanFile-java.lang.String-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-boolean-">scanFile</a></span>(java.lang.String&nbsp;filename,
+        <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
         <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters,
         boolean&nbsp;display)</code>
 <div class="block">設定解析ルーチン</div>
@@ -412,16 +412,16 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanJsonFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-">scanJsonFile</a></span>(java.io.BufferedReader&nbsp;br,
-            <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanJsonFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-">scanJsonFile</a></span>(java.io.BufferedReader&nbsp;br,
+            <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
             <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters)</code>
 <div class="block">設定解析ルーチン (JSON file) (Ver.2 file format)</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>nodagumi.ananPJ.misc.AgentGenerationFile.GenerationConfigBase</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanJsonFileOneItem-nodagumi.Itk.Term-nodagumi.ananPJ.NetworkMapBase-">scanJsonFileOneItem</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;json,
-                   <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/AgentGenerationFile.html#scanJsonFileOneItem-nodagumi.Itk.Term-nodagumi.ananPJ.NetworkMap.NetworkMap-">scanJsonFileOneItem</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;json,
+                   <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map)</code>
 <div class="block">設定解析ルーチン (JSON one line) (Ver.2 file format)</div>
 </td>
 </tr>
@@ -554,14 +554,14 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 <!--   -->
 </a>
 <h3>コンストラクタの詳細</h3>
-<a name="AgentGenerationFile-java.lang.String-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-boolean-double-java.util.Random-">
+<a name="AgentGenerationFile-java.lang.String-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-boolean-double-java.util.Random-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>AgentGenerationFile</h4>
 <pre>public&nbsp;AgentGenerationFile(java.lang.String&nbsp;filename,
-                           <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+                           <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
                            <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters,
                            boolean&nbsp;display,
                            double&nbsp;linerGenerateAgentRatio,
@@ -582,14 +582,14 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
-<a name="scanFile-java.lang.String-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-boolean-">
+<a name="scanFile-java.lang.String-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>scanFile</h4>
 <pre>public&nbsp;void&nbsp;scanFile(java.lang.String&nbsp;filename,
-                     <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+                     <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
                      <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters,
                      boolean&nbsp;display)
               throws java.lang.Exception</pre>
@@ -636,14 +636,14 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 </dl>
 </li>
 </ul>
-<a name="scanCsvFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-">
+<a name="scanCsvFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>scanCsvFile</h4>
 <pre>public&nbsp;void&nbsp;scanCsvFile(java.io.BufferedReader&nbsp;br,
-                        <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+                        <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
                         <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters)
                  throws java.lang.Exception</pre>
 <div class="block">設定解析ルーチン (CSV file) (Ver.0, Ver.1 file format)</div>
@@ -671,14 +671,14 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 <pre>public&nbsp;void&nbsp;setRandom(java.util.Random&nbsp;_random)</pre>
 </li>
 </ul>
-<a name="scanJsonFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMapBase-nodagumi.Itk.Term-">
+<a name="scanJsonFile-java.io.BufferedReader-nodagumi.ananPJ.NetworkMap.NetworkMap-nodagumi.Itk.Term-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>scanJsonFile</h4>
 <pre>public&nbsp;void&nbsp;scanJsonFile(java.io.BufferedReader&nbsp;br,
-                         <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+                         <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
                          <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackParameters)
                   throws java.lang.Exception</pre>
 <div class="block">設定解析ルーチン (JSON file) (Ver.2 file format)</div>
@@ -688,25 +688,25 @@ extends java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentFac
 </dl>
 </li>
 </ul>
-<a name="scanJsonFileOneItem-nodagumi.Itk.Term-nodagumi.ananPJ.NetworkMapBase-">
+<a name="scanJsonFileOneItem-nodagumi.Itk.Term-nodagumi.ananPJ.NetworkMap.NetworkMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>scanJsonFileOneItem</h4>
 <pre>public&nbsp;nodagumi.ananPJ.misc.AgentGenerationFile.GenerationConfigBase&nbsp;scanJsonFileOneItem(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;json,
-                                                                                         <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map)</pre>
+                                                                                         <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map)</pre>
 <div class="block">設定解析ルーチン (JSON one line) (Ver.2 file format)</div>
 </li>
 </ul>
-<a name="checkPlannedRoute-java.lang.String-nodagumi.ananPJ.NetworkMapBase-java.util.List-">
+<a name="checkPlannedRoute-java.lang.String-nodagumi.ananPJ.NetworkMap.NetworkMap-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>checkPlannedRoute</h4>
 <pre>public&nbsp;java.util.ArrayList&lt;java.lang.String&gt;&nbsp;checkPlannedRoute(java.lang.String&nbsp;agentClassName,
-                                                               <a href="../../../nodagumi/ananPJ/NetworkMapBase.html" title="nodagumi.ananPJ内のクラス">NetworkMapBase</a>&nbsp;map,
+                                                               <a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;map,
                                                                java.util.List&lt;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&gt;&nbsp;planned_route)</pre>
 <div class="block">経路情報に未定義のタグが使用されていたらその内容を返す</div>
 </li>

@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":10,"i2":6,"i3":9,"i4":9,"i5":6,"i6":6,"i7":6,"i8":10,"i9":10,"i10":10,"i11":9};
+var methods = {"i0":6,"i1":10,"i2":6,"i3":9,"i4":9,"i5":6,"i6":6,"i7":6,"i8":10,"i9":6,"i10":10,"i11":9,"i12":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -171,12 +171,18 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#fallbackParameters">fallbackParameters</a></span></code>
+<div class="block">Obstructer用の fallback パラメータ</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.TriageLevel.html" title="nodagumi.ananPJ.Simulator.Obstructer内の列挙型">ObstructerBase.TriageLevel</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#lastTriageLevel">lastTriageLevel</a></span></code>
 <div class="block">前回のトリアージレベル(更新チェック用)</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#OBSTRUCTER_CLASSES">OBSTRUCTER_CLASSES</a></span></code>
 <div class="block">Obstructer type とクラス名の対応表</div>
@@ -262,10 +268,8 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#getTriage--">getTriage</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#init-nodagumi.ananPJ.Agents.AgentBase-">init</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>
-<div class="block">初期化.</div>
-</td>
+<td class="colFirst"><code>abstract void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#init-nodagumi.ananPJ.Agents.AgentBase-">init</a></span>(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -277,6 +281,12 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#resourceToString-java.lang.String-">resourceToString</a></span>(java.lang.String&nbsp;resourceName)</code>
 <div class="block">リソースファイルを文字列に変換する</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html#setupCommonParameters-nodagumi.Itk.Term-">setupCommonParameters</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;wholeFallbacks)</code>
+<div class="block">fallback パラメータの準備</div>
 </td>
 </tr>
 </table>
@@ -307,8 +317,22 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>OBSTRUCTER_CLASSES</h4>
-<pre>public static&nbsp;java.lang.String OBSTRUCTER_CLASSES</pre>
+<pre>public static final&nbsp;java.lang.String OBSTRUCTER_CLASSES</pre>
 <div class="block">Obstructer type とクラス名の対応表</div>
+<dl>
+<dt><span class="seeLabel">関連項目:</span></dt>
+<dd><a href="../../../../constant-values.html#nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.OBSTRUCTER_CLASSES">定数フィールド値</a></dd>
+</dl>
+</li>
+</ul>
+<a name="fallbackParameters">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fallbackParameters</h4>
+<pre>public static&nbsp;<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a> fallbackParameters</pre>
+<div class="block">Obstructer用の fallback パラメータ</div>
 </li>
 </ul>
 <a name="agent">
@@ -376,14 +400,23 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>メソッドの詳細</h3>
+<a name="setupCommonParameters-nodagumi.Itk.Term-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setupCommonParameters</h4>
+<pre>public static&nbsp;void&nbsp;setupCommonParameters(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;wholeFallbacks)</pre>
+<div class="block">fallback パラメータの準備</div>
+</li>
+</ul>
 <a name="init-nodagumi.ananPJ.Agents.AgentBase-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>init</h4>
-<pre>public&nbsp;void&nbsp;init(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
-<div class="block">初期化.</div>
+<pre>public abstract&nbsp;void&nbsp;init(<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</pre>
 </li>
 </ul>
 <a name="expose-double-">
