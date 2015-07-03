@@ -82,7 +82,7 @@ import org.w3c.dom.NodeList;
 public class NetworkMapEditor extends SimulationLauncher
     implements ActionListener, WindowListener, SimulationController {
 
-    private String dir_name = null;
+    private String dir_name = "";
 
     // Properties
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
@@ -236,6 +236,12 @@ public class NetworkMapEditor extends SimulationLauncher
             dir_name = "";
         }
     }
+
+    /**
+     * マップファイルのディレクトリパス
+     *
+     * マップファイルの入出力以前なら "" を返す。
+     */
     public String getDirName() {
         update_dirname();
         return dir_name;
@@ -497,7 +503,6 @@ public class NetworkMapEditor extends SimulationLauncher
         // tkokada
         setupSetupFileInfo() ;
 
-        networkMap.setupAfterLoad(true);
         updateAll();
         return true;
     }
@@ -536,7 +541,6 @@ public class NetworkMapEditor extends SimulationLauncher
         }
 
         update_dirname();
-        networkMap.prepareForSave(true);
 
         try {
             FileOutputStream fos = new FileOutputStream(mapPath);
@@ -1044,14 +1048,6 @@ public class NetworkMapEditor extends SimulationLauncher
             return false;
         }
     };
-
-    private static NetworkMapEditor instance = null;
-    public static NetworkMapEditor getInstance() {
-        if (instance == null) {
-            instance = new NetworkMapEditor(new Random());
-        }
-        return instance;
-    }
 
     public NodePanel getNodePanel() { return nodePanel; }
 

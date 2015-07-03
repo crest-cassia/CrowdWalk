@@ -928,45 +928,6 @@ public class NetworkMap extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
-     * DOMへ保存する前の前処理。（トップ）
-     */
-    public void prepareForSave(boolean hasDisplay) {
-        prepareForSaveRec((OBNode)root, hasDisplay);
-    }
-
-    /**
-     * DOMへ保存する前の前処理。（本体）
-     */
-    private void prepareForSaveRec(OBNode node, boolean hasDisplay) {
-        node.prepareForSave(hasDisplay);
-        for (int i = 0; i < node.getChildCount(); ++i) {
-            TreeNode child = node.getChildAt(i);
-            if (child instanceof OBNode)
-                prepareForSaveRec((OBNode)child, hasDisplay);
-        }
-    }
-
-    /**
-     * DOM から読んだ後処理。（トップ）
-     */
-    public void setupAfterLoad(boolean hasDisplay) {
-        setupAfterLoadRec((OBNode)root, hasDisplay);
-    }
-
-    /**
-     * DOMから読んだ後処理（実体）
-     */
-    private void setupAfterLoadRec(OBNode node, boolean hasDisplay) {
-        node.postLoad(hasDisplay);
-        for (int i = 0; i < node.getChildCount(); ++i) {
-            TreeNode child = node.getChildAt(i);
-            if (child instanceof OBNode)
-                setupAfterLoadRec((OBNode)child, hasDisplay);
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
      * NetworkMap の構成要素の状態変化を監視・通知するオブジェクトを返す.
      */
     public NetworkMapPartsNotifier getNotifier() { return notifier; }

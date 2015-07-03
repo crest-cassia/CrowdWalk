@@ -196,11 +196,6 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         return "(default OBNode hint)";
     }
 
-    public void prepareForSave(boolean hasDisplay) {
-    }
-    public void postLoad(boolean hasDisplay) {
-    }
-
     public boolean isOffspring(OBNode node) {
         OBNode parent = (OBNode)getParent();
         if (parent == null) return false;

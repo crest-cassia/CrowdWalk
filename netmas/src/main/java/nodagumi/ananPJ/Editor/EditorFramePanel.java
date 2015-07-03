@@ -571,7 +571,6 @@ public class EditorFramePanel extends JPanel {
     /* -- Methods to set how drawn 
      */
     public void addBackground(Image img) {
-        assert (img != null);
         backgroundImage = img;
     }
     

@@ -166,6 +166,10 @@ public class EditorFrame
         mi.addActionListener(this);
         fileMenu.add(mi);
 
+        mi = new MenuItem("Remove background file");
+        mi.addActionListener(this);
+        fileMenu.add(mi);
+
         fileMenu.addSeparator();
 
         MenuShortcut ms = new MenuShortcut (java.awt.event.KeyEvent.VK_W);
@@ -590,23 +594,59 @@ public class EditorFrame
         if (fd.getFile() == null) return false;
 
         editor.setDirName(fd.getDirectory());
-        current_group.setImageFileName(fd.getDirectory() + fd.getFile());
+        current_group.setImageFileName(fd.getFile());
         return readBackgroundWithName();
     }
 
-    private void refreshBackground() {
-        if (current_group.getImageFileName() != null) {
-            readBackgroundWithName();
+    /*
+     * カレントグループの背景画像をマップデータから削除する。
+     *
+     * sx, sy 値は利便性のため残しておく。
+     */
+    private boolean removeBackgroundFile() {
+        String imageFileName = current_group.getImageFileName();
+        if (imageFileName == null || imageFileName.isEmpty()) {
+            return false;
         }
+
+        int res = JOptionPane.showConfirmDialog(this, "Remove background file: " + imageFileName,
+                "", JOptionPane.OK_CANCEL_OPTION);
+        if (res == JOptionPane.CANCEL_OPTION) {
+            return false;
+        }
+
+        current_group.setImageFileName("");
+        panel.addBackground(null);
+        background_read = false;
+        backgroundImageScaleMenu.setEnabled(false);
+
+        repaint();
+        return true;
     }
+
+    private void refreshBackground() {
+        readBackgroundWithName();
+    }
+
+    /*
+     * カレントグループの背景画像を読み込んで画面に表示する。
+     *
+     * 画像ファイルはマップファイルと同じディレクトリに存在しなければならない。
+     */
     private boolean readBackgroundWithName() {
-        File imageFile = new File(current_group.getImageFileName());
+        String imageFileName = current_group.getImageFileName();
+        if (imageFileName == null || imageFileName.isEmpty()) {
+            return false;
+        }
+
+        String imageFilePath = editor.getDirName() + imageFileName;
+        File imageFile = new File(imageFilePath);
         if (!imageFile.exists()) {
             status.setText("Failed to load " + imageFile + ".");
             return false;
         }
         
-        Image image = getToolkit().getImage(current_group.getImageFileName());
+        Image image = getToolkit().getImage(imageFilePath);
         panel.addBackground(image);
         background_read = true;
         backgroundImageScaleMenu.setEnabled(true);
@@ -2183,8 +2223,9 @@ public class EditorFrame
 
     /* Listeners */
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand () == "Set background file") setBackgroundFile ();       
-        else if (e.getActionCommand () == "Close") setVisible(false);       
+        if (e.getActionCommand () == "Set background file") setBackgroundFile();
+        else if (e.getActionCommand () == "Remove background file") removeBackgroundFile();
+        else if (e.getActionCommand () == "Close") setVisible(false);
 
         else if (e.getActionCommand() == "Align Nodes Horizontally") {
             editor._setModified(true);
@@ -2725,45 +2766,6 @@ public class EditorFrame
         return label;
     }
     
-    public String getImageFileName() {
-        if (current_group.getImageFileName() == null) return null;
-
-        String mainDirName = editor.getDirName();
-        String[] mainPathList = mainDirName.split(Pattern.quote(File.separator));
-        String[] pathList = current_group.getImageFileName().split(Pattern.quote(File.separator));
-
-        int index = 0;
-        StringBuffer relPath = new StringBuffer();
-        while(mainPathList[index].equals(pathList[index])) {
-            ++index;
-            if (index == mainPathList.length) {
-                break;
-            } else if (index == pathList.length) {
-                /* this should not happen!! */
-                System.err.println("funny path:" + current_group.getImageFileName() 
-                        + "\t" + mainDirName);
-                return current_group.getImageFileName();
-            }
-        }
-        if (index == 0) return current_group.getImageFileName();
-
-        for (int i = 0; i + index < mainPathList.length; ++i) {
-            relPath.append(".." + File.separator);
-        }
-        
-        for (int i = 0; i + index < mainPathList.length; ++i) {
-            relPath.append(".." + File.separator);
-        }
-        while (true) {
-            relPath.append(pathList[index]);
-            ++index;
-            if (index == pathList.length) {
-                return relPath.toString();
-            }
-            relPath.append(File.separator);
-        }
-    }
-
     @Override
     public void windowActivated(WindowEvent e) {}
     @Override

@@ -439,23 +439,6 @@ public class MapPartGroup extends OBNode {
         }
         return children;
     }
-
-
-    @Override
-    public void prepareForSave(boolean hasDisplay) {
-        if (hasDisplay)
-            if (imageFileName != null) {
-                imageFileName =
-                    FilePathManipulation.getRelativePath(NetworkMapEditor.getInstance().getDirName(),
-                            imageFileName);
-            }
-    }
-    @Override
-    public void postLoad(boolean hasDisplay) {
-        if (hasDisplay)
-            imageFileName = FilePathManipulation.setAbsolutePath(
-                    NetworkMapEditor.getInstance().getDirName(), imageFileName);
-    }
 }
 //;;; Local Variables:
 //;;; mode:java
