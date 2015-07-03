@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ;
+package nodagumi.ananPJ.Gui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

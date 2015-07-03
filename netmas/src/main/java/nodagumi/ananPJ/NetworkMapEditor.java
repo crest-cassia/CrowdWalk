@@ -43,13 +43,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+
+import nodagumi.ananPJ.Gui.NetworkPanel3D;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.Editor.EditorPanel3D;
 import nodagumi.ananPJ.Editor.Panel.BrowserPanel;
 import nodagumi.ananPJ.Editor.Panel.ScenarioPanel;
-
 import nodagumi.ananPJ.Editor.Panel.LinkPanel;
 import nodagumi.ananPJ.Editor.Panel.NodePanel;
 import nodagumi.ananPJ.Editor.Panel.PollutionPanel;

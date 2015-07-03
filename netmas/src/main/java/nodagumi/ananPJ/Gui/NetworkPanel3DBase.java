@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ;
+package nodagumi.ananPJ.Gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -279,7 +279,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
     protected MenuBar menu_bar = null;
     protected transient CaptureCanvas3D canvas = null;
-    protected JFrame parent = null;
+    public JFrame parent = null;
     protected LinkedHashMap<String, LinkAppearance> linkAppearances = new LinkedHashMap<String, LinkAppearance>();
     protected LinkedHashMap<String, NodeAppearance> nodeAppearances = new LinkedHashMap<String, NodeAppearance>();
 

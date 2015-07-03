@@ -69,7 +69,7 @@ import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
-import nodagumi.ananPJ.NetworkPanel3D;
+import nodagumi.ananPJ.Gui.NetworkPanel3D;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;

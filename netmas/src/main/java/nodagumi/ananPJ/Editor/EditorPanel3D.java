@@ -16,7 +16,7 @@ import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Vector3f;
 
 import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.NetworkPanel3D;
+import nodagumi.ananPJ.Gui.NetworkPanel3D;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
