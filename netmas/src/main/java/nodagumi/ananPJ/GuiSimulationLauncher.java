@@ -23,7 +23,7 @@ import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
 import nodagumi.Itk.*;
 
-public class SimulationLauncher extends BasicSimulationLauncher
+public class GuiSimulationLauncher extends BasicSimulationLauncher
     implements SimulationController {
 
     protected transient Settings settings;
@@ -31,7 +31,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     /* the constructor without arguments are for to be used as
      *  a base class for classes launching simulations */
-    public SimulationLauncher(Random _random) {
+    public GuiSimulationLauncher(Random _random) {
         super(_random) ;
         networkMap = new NetworkMap() ;
         settings = Settings.load("NetworkMapEditor.ini");
@@ -77,7 +77,6 @@ public class SimulationLauncher extends BasicSimulationLauncher
         System.exit(0);
     }
 
-    /* @override */
     public void windowClosing(WindowEvent e) {
         quit();
     }
@@ -155,7 +154,7 @@ public class SimulationLauncher extends BasicSimulationLauncher
 
     @Override
     public SimulationPanel3D setupFrame(final EvacuationSimulator simulator,
-            SimulationPanel3D _panel) {
+                                        SimulationPanel3D _panel) {
         if (simulator == null)
             return null;
         if (_panel == null) {

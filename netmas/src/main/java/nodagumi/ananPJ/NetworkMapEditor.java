@@ -80,7 +80,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class NetworkMapEditor extends SimulationLauncher
+public class NetworkMapEditor extends GuiSimulationLauncher
     implements ActionListener, WindowListener, SimulationController {
 
     private String dir_name = "";
