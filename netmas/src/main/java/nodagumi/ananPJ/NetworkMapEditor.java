@@ -90,7 +90,7 @@ public class NetworkMapEditor extends SimulationLauncher
     protected int deferFactor = 0;
     protected double verticalScale = 1.0;
     protected double agentSize = 1.0;
-    protected String cameraPath = null;
+    protected String cameraFile = null;
     protected double zoom = 1.0;
     protected boolean recordSimulationScreen = false;
     protected String screenshotDir = "screenshots";
@@ -229,8 +229,8 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     private void update_dirname() {
-        if (mapPath != null) {
-            File file = new File(mapPath);
+        if (getNetworkMapFile() != null) {
+            File file = new File(getNetworkMapFile());
             dir_name = file.getParent() + File.separator;
         } else {
             dir_name = "";
@@ -252,8 +252,8 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     @Override
-    public void setMapPath(String _mapPath) {
-        super.setMapPath(_mapPath) ;
+    public void setNetworkMapFile(String _mapPath) {
+        super.setNetworkMapFile(_mapPath) ;
         openMapWithName();
     }
 
@@ -383,12 +383,6 @@ public class NetworkMapEditor extends SimulationLauncher
         mi.addActionListener(this);
         actionMenu.add(mi);
 
-        /*
-        calcExitPathMenu = new MenuItem("Calculate exit paths");
-        calcExitPathMenu.addActionListener(this);
-        actionMenu.add(calcExitPathMenu);
-        */
-
         calcTagPathMenu = new MenuItem("Calculate tag paths");
         calcTagPathMenu.addActionListener(this);
         actionMenu.add(calcTagPathMenu);
@@ -460,7 +454,7 @@ public class NetworkMapEditor extends SimulationLauncher
             random.setSeed(properties.getRandseed());
         }
         networkMap = new NetworkMap() ;
-        mapPath = null;
+        setNetworkMapFile(null);
         updateAll();
         setModified(false);
         // System.gc();
@@ -476,7 +470,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
         if (fd.getFile() == null) return false;
 
-        mapPath = fd.getDirectory() + fd.getFile();
+        setNetworkMapFile(fd.getDirectory() + fd.getFile());
         dir_name = fd.getDirectory();
         settings.put ("mapfile", fd.getFile ());
         settings.put ("inputdir", fd.getDirectory ());
@@ -485,13 +479,13 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     private boolean openMapWithName() {
-        if (mapPath == null)
+        if (getNetworkMapFile() == null)
             return false;
-        String tmp = mapPath;
+        String tmp = getNetworkMapFile();
         clearAll();
-        mapPath = tmp;
+        super.setNetworkMapFile(tmp); // 無限再帰を避けるために、super を呼ぶ。
         try {
-            networkMap = readMapWithName(mapPath) ;
+            networkMap = (readMapWithName(getNetworkMapFile())) ;
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, e.getStackTrace(),
                     "ファイルを開けません",
@@ -499,9 +493,6 @@ public class NetworkMapEditor extends SimulationLauncher
             return false;
         }
         if (networkMap == null) return false;
-
-        // tkokada
-        setupSetupFileInfo() ;
 
         updateAll();
         return true;
@@ -515,7 +506,7 @@ public class NetworkMapEditor extends SimulationLauncher
 
         if (fd.getFile() == null) return false;
 
-        mapPath = fd.getDirectory() + fd.getFile();
+        setNetworkMapFile(fd.getDirectory() + fd.getFile());
         settings.put ("mapfile", fd.getFile ());
         settings.put ("inputdir", fd.getDirectory ());
 
@@ -523,7 +514,7 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     private boolean saveMap() {
-        if (mapPath == null) {
+        if (getNetworkMapFile() == null) {
             return saveMapAs();
         } else {
             return saveMapWithName();
@@ -531,11 +522,12 @@ public class NetworkMapEditor extends SimulationLauncher
     }
 
     private boolean saveMapWithName() {
-        if (mapPath == null) {
+        if (getNetworkMapFile() == null) {
             JOptionPane.showMessageDialog(frame,
-                    "Could no save to:\n" + mapPath,
-                    "Save failed",
-                    JOptionPane.ERROR_MESSAGE);
+                                          "Could no save to:\n"
+                                          + getNetworkMapFile(),
+                                          "Save failed",
+                                          JOptionPane.ERROR_MESSAGE);
 
             return false;
         }
@@ -543,7 +535,8 @@ public class NetworkMapEditor extends SimulationLauncher
         update_dirname();
 
         try {
-            FileOutputStream fos = new FileOutputStream(mapPath);
+            FileOutputStream fos =
+                new FileOutputStream(getNetworkMapFile());
 
             Document doc = ItkXmlUtility.singleton.newDocument() ;
             networkMap.toDOM(doc);
@@ -551,21 +544,23 @@ public class NetworkMapEditor extends SimulationLauncher
                 ItkXmlUtility.singleton.docToStream(doc, fos);
             if (false == result) {
                 JOptionPane.showMessageDialog(frame,
-                        "Could no save to:\n" + mapPath
-                        + "\nAn error occured while actually writing to file.",
-                        "Save failed",
-                        JOptionPane.ERROR_MESSAGE);
+                                              "Could no save to:\n"
+                                              + getNetworkMapFile()
+                                              + "\nAn error occured while actually writing to file.",
+                                              "Save failed",
+                                              JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame,
-                    "Could no save to:\n" + mapPath,
-                    "Save failed",
-                    JOptionPane.ERROR_MESSAGE);
+                                          "Could no save to:\n"
+                                          + getNetworkMapFile(),
+                                          "Save failed",
+                                          JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        System.err.println("saved to:" + mapPath);
+        System.err.println("saved to:" + getNetworkMapFile());
         setModified(false);
         return true;
 
@@ -829,7 +824,8 @@ public class NetworkMapEditor extends SimulationLauncher
     public void windowOpened(WindowEvent arg0) {
         if (simulationWindowOpen || autoSimulationStart) {
             // TODO: ファイルが正常に読み込まれたかどうかのチェックも必要
-            if (networkMap == null || mapPath == null || generationPath == null || scenarioPath == null) {
+            if (networkMap == null || getNetworkMapFile() == null ||
+                getGenerationFile() == null || getScenarioFile() == null) {
                 System.err.println("プロパティファイルの設定が足りないためシミュレーションを開始することが出来ません。");
                 return;
             }
@@ -847,11 +843,11 @@ public class NetworkMapEditor extends SimulationLauncher
         if (properties.isDefined("defer_factor")) {
             simulator.getAgentHandler().setSimulationDeferFactor(deferFactor);
         }
-        if (cameraPath != null) {
-            if (panel.loadCameraworkFromFile(cameraPath)) {
+        if (cameraFile != null) {
+            if (panel.loadCameraworkFromFile(cameraFile)) {
                 panel.setReplay(true);
             } else {
-                System.err.println("Camera file の読み込みに失敗しました: " + cameraPath);
+                System.err.println("Camera file の読み込みに失敗しました: " + cameraFile);
                 successful = false;
             }
         }
@@ -1004,7 +1000,7 @@ public class NetworkMapEditor extends SimulationLauncher
             if (zoom < 0.0 || zoom > 9.9) {
                 throw new Exception("Property error - 設定値が範囲(0.0～9.9)外です: zoom:" + zoom);
             }
-            cameraPath = properties.getFilePath("camera_file", null);
+            cameraFile = properties.getFilePath("camera_file", null);
             recordSimulationScreen = properties.getBoolean("record_simulation_screen", recordSimulationScreen);
             screenshotDir = properties.getDirectoryPath("screenshot_dir", screenshotDir).replaceFirst("[/\\\\]+$", "");
             clearScreenshotDir = properties.getBoolean("clear_screenshot_dir", clearScreenshotDir);

@@ -8,6 +8,16 @@ import nodagumi.Itk.*;
 
 /**
  * ガスによるエージェントへの影響.
+ * (WalkAgent.java に書かれていた情報。[2015.07.03 I.Noda]
+ * <pre>
+ * effect of damage, for Chloropicrin (minutes):
+ *  20000, BLACK,  STOP #100% Dead
+ *  2000,  BLACK,  STOP #50% Dead
+ *  1000,  RED,    STOP #Cannot breathe
+ *  200,   YELLOW, 25%  #Cannot walk, can breath
+ *  1,     GREEN,  50%  #Can walk, cannot open eyes
+ *  0,     GREEN,  100% #Normal
+ * </pre>
  */
 public class Pollution extends ObstructerBase {
     // 参考データ: 三井化学アグロ株式会社 / クロルピクリンの物性・分解性 / 気中濃度と人体への影響

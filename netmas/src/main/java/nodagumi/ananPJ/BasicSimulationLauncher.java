@@ -127,37 +127,6 @@ public abstract class BasicSimulationLauncher {
      */
     protected boolean isAllAgentSpeedZeroBreak = false;
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 実験設定ファイル。
-     */
-    protected static String propertiesPath = null;
-
-    /**
-     * マップファイル。
-     */
-    protected static String mapPath = null;
-
-    /**
-     * 障害設定ファイル。
-     */
-    protected static String pollutionPath = null; // path to pollution file
-
-    /**
-     * エージェント生成ルールファイル。
-     */
-    protected static String generationPath = null; // path to generation file
-
-    /**
-     * イベントシナリオファイル。
-     */
-    protected static String scenarioPath = null; // path to scenario file
-
-    /**
-     * 規定値ファイル。
-     */
-    protected static String fallbackPath = null; // path to fallback file
-
     //------------------------------------------------------------
     /**
      * constructor
@@ -313,76 +282,72 @@ public abstract class BasicSimulationLauncher {
     /**
      *
      */
-    public void setMapPath(String _mapPath) {
-        mapPath = _mapPath;
+    public void setNetworkMapFile(String _file) {
+        setupFileInfo.setNetworkMapFile(_file) ;
     }
 
     /**
      *
      */
-    public String getMapPath() {
-        return mapPath;
+    public String getNetworkMapFile() {
+        return setupFileInfo.getNetworkMapFile() ;
     }
 
     /**
      *
      */
-    public void setPollutionPath(String _pollutionPath) {
-        pollutionPath = _pollutionPath;
-        setupFileInfo.setPollutionFile(pollutionPath);
+    public void setPollutionFile(String _pollutionFile) {
+        setupFileInfo.setPollutionFile(_pollutionFile);
     }
 
     /**
      *
      */
-    public String getPollutionPath() {
-        return pollutionPath;
+    public String getPollutionFile() {
+        return setupFileInfo.getPollutionFile();
     }
 
     /**
      *
      */
-    public void setGenerationPath(String _generationPath) {
-        generationPath = _generationPath;
-        setupFileInfo.setGenerationFile(generationPath);
+    public void setGenerationFile(String _generationFile) {
+        setupFileInfo.setGenerationFile(_generationFile);
     }
 
     /**
      *
      */
-    public String getGenerationPath() {
-        return generationPath;
+    public String getGenerationFile() {
+        return setupFileInfo.getGenerationFile();
     }
 
     /**
      *
      */
-    public void setScenarioPath(String _scenarioPath) {
-        scenarioPath = _scenarioPath;
-        setupFileInfo.setScenarioFile(scenarioPath);
+    public void setScenarioFile(String _scenarioFile) {
+        setupFileInfo.setScenarioFile(_scenarioFile);
     }
 
     /**
      *
      */
-    public String getScenarioPath() {
-        return scenarioPath;
+    public String getScenarioFile() {
+        return setupFileInfo.getScenarioFile() ;
     }
 
     /**
      *
      */
-    public void setFallbackPath(String _fallbackPath) {
-        fallbackPath = _fallbackPath;
-        setupFileInfo.setFallbackFile(fallbackPath) ;
+    public void setFallbackFile(String _fallbackFile) {
+        setupFileInfo.setFallbackFile(_fallbackFile) ;
         setupFileInfo.scanFallbackFile(true) ;
     }
 
     /**
      *
      */
-    public String getFallbackPath() {
-            return fallbackPath ;
+    public String getFallbackFile() {
+        return setupFileInfo.getFallbackFile() ;
     }
 
     /**
@@ -421,18 +386,6 @@ public abstract class BasicSimulationLauncher {
 
     //------------------------------------------------------------
     /**
-     * 地図の初期設定を、Launcher から渡す。
-     */
-    protected void setupSetupFileInfo() {
-        setupFileInfo.setPollutionFile(pollutionPath);
-        setupFileInfo.setGenerationFile(generationPath);
-        setupFileInfo.setScenarioFile(scenarioPath);
-        setupFileInfo.setFallbackFile(fallbackPath);
-        setupFileInfo.scanFallbackFile(true) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * ファイルからプロパティの読み込み。
      */
     public void setPropertiesFromFile(String _propertiesFile) {
@@ -441,11 +394,11 @@ public abstract class BasicSimulationLauncher {
         // random
         random = new Random(properties.getRandseed()) ;
         // files
-        setMapPath(properties.getMapPath());
-        setPollutionPath(properties.getPollutionPath());
-        setGenerationPath(properties.getGenerationPath());
-        setScenarioPath(properties.getScenarioPath());
-        setFallbackPath(properties.getFallbackPath()) ;
+        setNetworkMapFile(properties.getNetworkMapFile());
+        setPollutionFile(properties.getPollutionFile());
+        setGenerationFile(properties.getGenerationFile());
+        setScenarioFile(properties.getScenarioFile());
+        setFallbackFile(properties.getFallbackFile()) ;
         // timer & time series
         setIsTimerEnabled(properties.getIsTimerEnabled());
         setTimerPath(properties.getTimerPath());

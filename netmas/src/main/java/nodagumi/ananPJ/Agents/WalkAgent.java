@@ -27,15 +27,6 @@ import nodagumi.Itk.*;
  * - agents should not go back to the same path many times
  */
 
-/* effect of damage, for Chloropicrin (minutes):
- *  20000, BLACK,  STOP #100% Dead
- *  2000,  BLACK,  STOP #50% Dead
- *  1000,  RED,    STOP #Cannot breathe
- *  200,   YELLOW, 25%  #Cannot walk, can breath
- *  1,     GREEN,  50%  #Can walk, cannot open eyes
- *  0,     GREEN,  100% #Normal
- */
-
 //======================================================================
 /**
  * ソーシャルフォースモデルにより歩行するエージェント。

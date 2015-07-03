@@ -24,22 +24,21 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
         setPropertiesFromFile(_propertiesPath) ;
 
         // check property options
-        if (mapPath == null) {
+        if (getNetworkMapFile() == null) {
             System.err.println("NetmasCuiSimulator: map file is " +
                     "required.");
             return;
-        } else if (!((File) new File(mapPath)).exists()) {
+        } else if (!((File) new File(getNetworkMapFile())).exists()) {
             System.err.println("NetmasCuiSimulator: specified map file does " +
                     "not exist.");
             return;
         }
         try {
-            networkMap = readMapWithName(mapPath) ;
+            networkMap = readMapWithName(getNetworkMapFile()) ;
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
         // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
-        setupSetupFileInfo() ;
     }
 
     public void initialize() {

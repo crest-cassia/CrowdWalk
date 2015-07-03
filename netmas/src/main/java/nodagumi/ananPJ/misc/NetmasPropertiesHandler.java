@@ -430,66 +430,66 @@ public class NetmasPropertiesHandler {
            "node_appearance_file",
            "fallback_file"};
 
-    protected String propertiesPath = null;
+    protected String propertiesFile = null;
     protected Properties prop = null;
 
     /**
      * Get a properties file name.
      * @return Property file name.
      */
-    public String getPropertiesPath() {
-        return propertiesPath;
+    public String getPropertiesFile() {
+        return propertiesFile;
     }
 
     /**
      * Set a properties file name.
      * @param _path a properties file name.
      */
-    public void setPropertiesPath(String _path) {
-        propertiesPath = _path;
+    public void setPropertiesFile(String _path) {
+        propertiesFile = _path;
     }
 
     /**
      * properties file の directory を返す。
      */
     public String getPropertiesDir() {
-        File file = new File(propertiesPath) ;
+        File file = new File(propertiesFile) ;
         return file.getAbsoluteFile().getParent() ;
     }
 
 
-    protected String mapPath = null; // path to map file (required)
-    public String getMapPath() {
-        return mapPath;
+    protected String networkMapFile = null; // path to map file (required)
+    public String getNetworkMapFile() {
+        return networkMapFile;
     }
 
-    protected String pollutionPath = null; // path to Obstructer file
-    public String getPollutionPath() {
-        return pollutionPath;
+    protected String pollutionFile = null; // path to Obstructer file
+    public String getPollutionFile() {
+        return pollutionFile;
     }
 
-    protected String generationPath = null; // path to generation file
-    public String getGenerationPath() {
-        return generationPath;
+    protected String generationFile = null; // path to generation file
+    public String getGenerationFile() {
+        return generationFile;
     }
 
-    protected String scenarioPath = null; // path to scenario file
-    public String getScenarioPath() {
-        return scenarioPath;
+    protected String scenarioFile = null; // path to scenario file
+    public String getScenarioFile() {
+        return scenarioFile;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * fallback file
      */
-    protected String fallbackPath = null;
+    protected String fallbackFile = null;
 
     //------------------------------------------------------------
     /**
      * fallback file を取得
      */
-    public String getFallbackPath() {
-        return fallbackPath ;
+    public String getFallbackFile() {
+        return fallbackFile ;
     }
 
     protected boolean isTimerEnabled = false;
@@ -532,30 +532,30 @@ public class NetmasPropertiesHandler {
         return isAllAgentSpeedZeroBreak;
     }
 
-    public NetmasPropertiesHandler(String _propertiesPath) {
+    public NetmasPropertiesHandler(String _propertiesFile) {
         // load properties
         prop = new Properties();
-        propertiesPath = _propertiesPath;
+        propertiesFile = _propertiesFile;
         try {
-            String path = _propertiesPath.toLowerCase();
+            String path = _propertiesFile.toLowerCase();
             if (path.endsWith(".xml")) {
-                prop.loadFromXML(new FileInputStream(_propertiesPath));
+                prop.loadFromXML(new FileInputStream(_propertiesFile));
                 Itk.logInfo("Load Properties File (XML)",
-                            _propertiesPath);
+                            _propertiesFile);
             } else if (path.endsWith(".json")) {
-                HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiesPath));
+                HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiesFile));
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     prop.setProperty(entry.getKey(), entry.getValue().toString());
                 }
                 Itk.logInfo("Load Properties File (JSON)",
-                            _propertiesPath);
+                            _propertiesFile);
             } else {
-                System.err.println("Property file error - 拡張子が不正です: " + _propertiesPath);
+                System.err.println("Property file error - 拡張子が不正です: " + _propertiesFile);
                 System.exit(1);
             }
 
             // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
-            File propertyFile = new File(_propertiesPath);
+            File propertyFile = new File(_propertiesFile);
             String propertyDirPath = propertyFile.getParent();
             if (propertyDirPath == null) {
                 propertyDirPath = ".";
@@ -571,11 +571,11 @@ public class NetmasPropertiesHandler {
             }
 
             // input files
-            mapPath = getStringProperty(prop, "map_file");
-            pollutionPath = getStringProperty(prop, "pollution_file");
-            generationPath = getStringProperty(prop, "generation_file");
-            scenarioPath = getProperty(prop, "scenario_file");
-            fallbackPath = getProperty(prop, "fallback_file") ;
+            networkMapFile = getStringProperty(prop, "map_file");
+            pollutionFile = getStringProperty(prop, "pollution_file");
+            generationFile = getStringProperty(prop, "generation_file");
+            scenarioFile = getProperty(prop, "scenario_file");
+            fallbackFile = getProperty(prop, "fallback_file") ;
 
             // timer enabled or not
             isTimerEnabled = getBooleanProperty(prop, "timer_enable");
@@ -628,11 +628,11 @@ public class NetmasPropertiesHandler {
             System.exit(1);
         }
         // check property options
-        if (mapPath == null) {
+        if (networkMapFile == null) {
             System.err.println("NetmasCuiSimulator: map file is " +
                                "required.");
             return;
-        } else if (!((File) new File(mapPath)).exists()) {
+        } else if (!((File) new File(networkMapFile)).exists()) {
             System.err.println("NetmasCuiSimulator: specified map file does " +
                                "not exist.");
             return;
@@ -839,9 +839,9 @@ public class NetmasPropertiesHandler {
             e.printStackTrace();
             System.exit(1);
         }
-        String propertiesPath = cli.getOptionValue("p");
+        String propertiesFile = cli.getOptionValue("p");
 
         NetmasPropertiesHandler nph =
-            new NetmasPropertiesHandler(propertiesPath);
+            new NetmasPropertiesHandler(propertiesFile);
     }
 }

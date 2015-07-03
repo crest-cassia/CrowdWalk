@@ -25,7 +25,13 @@ import nodagumi.Itk.Term;
 public class SetupFileInfo {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * ???
+     * 実験設定ファイル。
+     */
+    private static String propertiesFile = null;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * マップファイル
      */
     private String networkMapFile = null;
 
@@ -80,14 +86,26 @@ public class SetupFileInfo {
 
     //------------------------------------------------------------
     /**
-     * ファイル名（？？？）
+     * 実験設定ファイル
+     */
+    public void setPropertiesFile(String filename) {
+        propertiesFile = filename ;
+    }
+
+    public String getPropertiesFile() {
+        return propertiesFile ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * マップファイル名
      */
     public String getNetworkMapFile() {
         return networkMapFile;
     }
 
     /**
-     * ファイル名（？？？）
+     * マップファイル名
      */
     public void setNetworkMapFile(String file_name) {
         networkMapFile = file_name;
