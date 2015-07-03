@@ -1212,7 +1212,7 @@ public class WalkAgent extends AgentBase {
     public void dumpResult(PrintStream out) {
         out.print("" + generatedTime + ",");
         out.print("" + finishedTime + ",");/* 0.0 if not evacuated */
-        out.print("" + getTriage() + ",");
+        out.print("" + getTriageInt() + ",");
         out.print("" + obstructer.accumulatedValueForLog()) ;
         for (final CheckPoint cp : route) {
             if (cp.node.getTags().size() != 0) {

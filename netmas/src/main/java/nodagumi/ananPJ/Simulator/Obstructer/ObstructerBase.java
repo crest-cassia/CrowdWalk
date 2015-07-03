@@ -61,15 +61,25 @@ public abstract class ObstructerBase {
     protected abstract TriageLevel calcTriage();
 
     /* the state of the agent */
-    public int getTriage() {
-        return currentTriageLevel.ordinal();
+    public TriageLevel getTriage() {
+        return currentTriageLevel ;
+    }
+
+    /* the state of the agent */
+    public int getTriageInt() {
+        return getTriage().ordinal() ;
+    }
+
+    /* the state of the agent */
+    public String getTriageName() {
+        return getTriage().name() ;
     }
 
     /**
      * 現状の暴露量によるエージェントの死亡判定
      */
     protected boolean calcDead() {
-        return getTriage() >= TriageLevel.BLACK.ordinal();
+        return getTriage().ordinal() >= TriageLevel.BLACK.ordinal();
     }
 
     /**

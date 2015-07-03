@@ -24,6 +24,8 @@ import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
+
 
 import nodagumi.Itk.* ;
 
@@ -506,8 +508,24 @@ implements Comparable<AgentBase> {
     /**
      * トリアージレベル
      */
-    public int getTriage() {
+    public TriageLevel getTriage() {
         return obstructer.getTriage() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * トリアージレベル（数値）
+     */
+    public int getTriageInt() {
+        return obstructer.getTriageInt() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * トリアージレベル（文字列）
+     */
+    public String getTriageName() {
+        return obstructer.getTriageName() ;
     }
 
     //------------------------------------------------------------

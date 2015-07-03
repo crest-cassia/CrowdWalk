@@ -255,25 +255,14 @@ public class MapLink extends OBMapPart {
         return (fromNode.getHeight() + toNode.getHeight()) / 2.0;
     }
 
-    private int total_agent_triage_level;
     public void preUpdate(double time) {
         if(agents.isEmpty()) return ;
 
         Collections.sort(agents) ;
         setup_lanes();
-
-        /* calculate the  total triage level */
-        total_agent_triage_level = 0; 
-        for (AgentBase agent : agents) {
-            total_agent_triage_level += agent.getTriage();
-        }
     }
 
     public void update(double time) {
-    }
-
-    public int getTotalTriageLevel() {
-        return total_agent_triage_level;
     }
 
     /**

@@ -79,6 +79,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 import nodagumi.Itk.*;
 
 import com.sun.j3d.utils.geometry.Sphere;
@@ -1319,7 +1320,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             /* determine color based on triage */
             Color3f color = agent_color;
             switch (agent.getTriage()) {
-            case 0://GREEN
+            case GREEN:
                 if (menu_item_agent_color_speed.getState()) {
                     color = Colors.speedToColor3f(agent.getSpeed());
                 } else if (agent.hasTag("BLUE")){
@@ -1330,13 +1331,13 @@ public class SimulationPanel3D extends NetworkPanel3D {
                     color = Colors.YELLOW;
                 }
                 break;
-            case 1://YELLOW -> agent_color
+            case YELLOW://YELLOW -> agent_color
                 color = Colors.YELLOW;
                 break;
-            case 2://RED    -> PINK (Any damaged person ) -> Poisonus red
+            case RED://RED    -> PINK (Any damaged person ) -> Poisonus red
                 color = Colors.PRED;
                 break;
-            case 3://PURPLE -> Deeply RED ( Dead )           Poisonus red
+            case BLACK://PURPLE -> Deeply RED ( Dead )  Poisonus red
                 color = Colors.BLACK2;
                 break;
             }

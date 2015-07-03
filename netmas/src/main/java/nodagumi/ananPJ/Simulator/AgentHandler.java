@@ -201,12 +201,6 @@ public class AgentHandler {
     private boolean isAllAgentSpeedZero = false;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * トリアージタグ
-     */
-    public static String[] TRIAGE_LABELS = {"GREEN", "YELLOW", "RED", "BLACK"};
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // ログ出力定義関連
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -427,7 +421,7 @@ public class AgentHandler {
                                         Object agentHandlerObj) {
                         Double time = (Double)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj ;
-                        return TRIAGE_LABELS[agent.getTriage()] ;}})
+                        return agent.getTriageName();}})
             .addColumn(formatter.new Column("next_assigned_passage_node") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -1146,7 +1140,7 @@ public class AgentHandler {
         int count_all = 0, count_evacuated = 0;
         for (AgentBase agent : getAllAgentCollection()) {
             count_all++;
-            each_level[agent.getTriage()]++;
+            each_level[agent.getTriageInt()]++;
             double t = agent.finishedTime;
             if (t == 0.0) continue;
             count_evacuated++;
