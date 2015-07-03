@@ -49,7 +49,7 @@ import org.w3c.dom.Text;
  *  OBNode.fromDom(Element element)
  */
 public abstract class OBNode extends DefaultMutableTreeNode {
-    public enum NType{NODE,LINK,AGENT,GROUP,ROOM,SYMLINK}
+    public enum NType{NODE,LINK,AGENT,GROUP,AREA,SYMLINK}
 
     public String ID;
     protected ArrayList<String> tags;

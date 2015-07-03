@@ -288,7 +288,7 @@ public class NetworkMap extends DefaultTreeModel {
             Itk.logWarn("insert Agent OBNode is obsolete.", node) ;
         } else if (type == OBNode.NType.GROUP) {
             /* no operation */
-        } else if (type == OBNode.NType.ROOM) {
+        } else if (type == OBNode.NType.AREA) {
             /* no operation */
         } else if (type == OBNode.NType.SYMLINK) {
             /* no operation */
@@ -569,22 +569,22 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * 領域
      */
-    public ArrayList<MapArea> getRooms() {
-        ArrayList<MapArea> rooms = new ArrayList<MapArea>();
-        findRoomRec((OBNode)root, rooms);
-        return rooms;
+    public ArrayList<MapArea> getAreas() {
+        ArrayList<MapArea> areas = new ArrayList<MapArea>();
+        findAreaRec((OBNode)root, areas);
+        return areas;
     }
 
     /**
      * 領域
      */
-    private void findRoomRec(OBNode node, ArrayList<MapArea> rooms) {
-        if (node.getNodeType() == NType.ROOM) {
-            rooms.add((MapArea)node);
+    private void findAreaRec(OBNode node, ArrayList<MapArea> areas) {
+        if (node.getNodeType() == NType.AREA) {
+            areas.add((MapArea)node);
         }
         for (int i = 0; i < node.getChildCount(); ++i) {
             TreeNode child = node.getChildAt(i);
-            if (child instanceof OBNode) findRoomRec((OBNode)child, rooms);
+            if (child instanceof OBNode) findAreaRec((OBNode)child, areas);
         }
     }
 
@@ -873,7 +873,7 @@ public class NetworkMap extends DefaultTreeModel {
 
             OBNodeSymbolicLink symlink = (OBNodeSymbolicLink)ob_node;
             symlink.setOriginal(original);
-        } else if (ob_node.getNodeType() == OBNode.NType.ROOM){
+        } else if (ob_node.getNodeType() == OBNode.NType.AREA){
             addObject(ob_node.ID, ob_node);
         } else if (ob_node.getNodeType() == OBNode.NType.NODE ||
                    ob_node.getNodeType() == OBNode.NType.LINK ||

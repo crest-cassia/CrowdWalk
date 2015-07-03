@@ -38,7 +38,7 @@
   <Link from="4" id="104" length="150.0" to="5" width="10.0">
     <tag>L4</tag>
   </Link>
-  <Room angle="0.0" id="1033096058" maxHeight="5.0" minHeight="-5.0" pEastX="374.5" pNorthY="253.5" pSouthY="-52.749999999999986" pWestX="39.50000000000003">
+  <Area angle="0.0" id="1033096058" maxHeight="5.0" minHeight="-5.0" pEastX="374.5" pNorthY="253.5" pSouthY="-52.749999999999986" pWestX="39.50000000000003">
     <tag>1</tag>
-  </Room>
+  </Area>
 </Group>

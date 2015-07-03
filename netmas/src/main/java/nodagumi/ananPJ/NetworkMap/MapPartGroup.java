@@ -420,7 +420,7 @@ public class MapPartGroup extends OBNode {
         Enumeration<OBNode> all_children = children();
         while (all_children.hasMoreElements()) {
             OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.ROOM) {
+            if (node.getNodeType() == OBNode.NType.AREA) {
                 children.add((MapArea)node);
             }
         }

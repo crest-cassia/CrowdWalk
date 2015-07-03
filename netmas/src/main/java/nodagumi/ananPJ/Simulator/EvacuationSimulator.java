@@ -547,7 +547,7 @@ public class EvacuationSimulator {
             link.prepareForSimulation(timeScale) ;
         }
         // リンク上にかかるMapAreaのリストをリンクにセットする
-        for (MapArea area : networkMap.getRooms()) {
+        for (MapArea area : networkMap.getAreas()) {
 	    for (MapLink link : getLinks()) {
                 if (area.intersectsLine(link.getLine2D())) {
                     link.addIntersectedMapArea(area);
@@ -569,7 +569,7 @@ public class EvacuationSimulator {
                                                     0.0)) ;
             pollutionHandler =
                 new PollutionHandler(pollutionFileName,
-                                     networkMap.getRooms(),
+                                     networkMap.getAreas(),
                                      timeScale, interval);
         } catch (Exception e) {
             e.printStackTrace();

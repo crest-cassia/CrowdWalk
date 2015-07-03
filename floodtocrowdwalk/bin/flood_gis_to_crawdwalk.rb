@@ -427,7 +427,7 @@ File.open(output_map_file, "w") do |file|
       south, west, north, east = sw[:y], sw[:x], ne[:y], ne[:x]
     end
     file.puts <<-EOS
-    <Room angle="0.0" id="#{id}" maxHeight="#{max_height}" minHeight="#{min_height}" pWestX="#{west}" pNorthY="#{north}" pEastX="#{east}" pSouthY="#{south}">
+    <Area angle="0.0" id="#{id}" maxHeight="#{max_height}" minHeight="#{min_height}" pWestX="#{west}" pNorthY="#{north}" pEastX="#{east}" pSouthY="#{south}">
       <tag>#{tagcode[:tag]}</tag>
     EOS
     if meshcode_tag
@@ -437,7 +437,7 @@ File.open(output_map_file, "w") do |file|
       # <tag>#{tagcode[:code][4, 7]}</tag>
     end
     file.puts <<-EOS
-    </Room>
+    </Area>
     EOS
   end
   file.puts tail_lines

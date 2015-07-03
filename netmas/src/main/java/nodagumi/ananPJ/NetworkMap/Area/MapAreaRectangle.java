@@ -310,10 +310,10 @@ public class MapAreaRectangle extends MapArea {
      * DOM
      */
     public static OBNode fromDom(Element element) {
-        MapAreaRectangle room = new MapAreaRectangle(null);
-        room.getAttributesFromDom(element);
-        //System.err.println(room.toString());
-        return room;
+        MapAreaRectangle area = new MapAreaRectangle(null);
+        area.getAttributesFromDom(element);
+        //System.err.println(area.toString());
+        return area;
 
     }
 

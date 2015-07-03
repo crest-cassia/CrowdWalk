@@ -213,7 +213,7 @@ public abstract class MapArea extends OBNode {
      * to/from DOM codes
      */
     static public String getNodeTypeString() {
-        return "Room";
+        return "Area";
     }
 
     //------------------------------------------------------------
@@ -222,7 +222,7 @@ public abstract class MapArea extends OBNode {
      */
     @Override
     public NType getNodeType() {
-        return NType.ROOM;
+        return NType.AREA;
     }
 
     //------------------------------------------------------------

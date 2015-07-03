@@ -43,31 +43,31 @@ public class PollutionPanel extends JPanel
 	NetworkMapEditor editor = null;
 	JLabel pollutionFileLabel = null;
 
-	RoomDataModel dataModel = null;
-	JTable roomTable = null;
-	JCheckBox placeRoom = null;
+	AreaDataModel dataModel = null;
+	JTable areaTable = null;
+	JCheckBox placeArea = null;
 
 	final static String[] COLUMN_NAMES = { "ID", "Area",
 		"Tags"};
 
-	private class RoomDataModel extends AbstractTableModel {
+	private class AreaDataModel extends AbstractTableModel {
 		
-		public RoomDataModel() {
+		public AreaDataModel() {
 		}
 
 		public int getColumnCount() { return 3; }
-		public int getRowCount() { return editor.getMap().getRooms().size();}
+		public int getRowCount() { return editor.getMap().getAreas().size();}
 
 		public String getColumnName(final int col) {
 			return COLUMN_NAMES[col].toString();
 		}
 
 		public Object getValueAt(final int row, final int col) {
-			ArrayList<MapArea> rooms = editor.getMap().getRooms();
-			if (rooms.isEmpty()) {
+			ArrayList<MapArea> areas = editor.getMap().getAreas();
+			if (areas.isEmpty()) {
 				return "ERR(" + row + ", " + col + ")";
 			}
-			MapArea area = rooms.get(row);
+			MapArea area = areas.get(row);
 			switch(col) {
 			case 0:
 			{
@@ -103,8 +103,8 @@ public class PollutionPanel extends JPanel
 		pollutionFilePanel.add(openButton);
 		add(pollutionFilePanel, BorderLayout.NORTH);
 
-		placeRoom = new JCheckBox("place room");
-		placeRoom.addItemListener(new ItemListener() {
+		placeArea = new JCheckBox("place area");
+		placeArea.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == 2) {
@@ -114,17 +114,17 @@ public class PollutionPanel extends JPanel
 				}
 			}
 		});
-		add(placeRoom, BorderLayout.CENTER);
+		add(placeArea, BorderLayout.CENTER);
 		
-		dataModel = new RoomDataModel();
-		roomTable = new JTable(dataModel);
+		dataModel = new AreaDataModel();
+		areaTable = new JTable(dataModel);
 		
-		JScrollPane scrollpane = new JScrollPane(roomTable,
+		JScrollPane scrollpane = new JScrollPane(areaTable,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollpane.setPreferredSize(new Dimension(300, 480));
 
-		roomTable.getSelectionModel().addListSelectionListener(this);
+		areaTable.getSelectionModel().addListSelectionListener(this);
 		add(scrollpane, BorderLayout.SOUTH);
 	}
 
@@ -141,11 +141,11 @@ public class PollutionPanel extends JPanel
 
 		lockValueChanged = true;
 		dataModel.fireTableDataChanged();
-		updateSelectionFromRooms();
+		updateSelectionFromAreas();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				adjustColumnPreferredWidth(roomTable);
-				roomTable.revalidate();
+				adjustColumnPreferredWidth(areaTable);
+				areaTable.revalidate();
 			}
 		});
 		lockValueChanged = false;
@@ -194,20 +194,20 @@ public class PollutionPanel extends JPanel
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if (lockValueChanged) return;
-		ListSelectionModel lsm = roomTable.getSelectionModel();
-		for (int r = 0; r < roomTable.getRowCount(); ++r) {
-			editor.getMap().getRooms().get(r).selected = lsm.isSelectedIndex(r);
+		ListSelectionModel lsm = areaTable.getSelectionModel();
+		for (int r = 0; r < areaTable.getRowCount(); ++r) {
+			editor.getMap().getAreas().get(r).selected = lsm.isSelectedIndex(r);
 		}
 		lockRefresh = true;
 		if (!e.getValueIsAdjusting())editor.updateAll();
 		lockRefresh = false;
 	}
 
-	public void updateSelectionFromRooms() {
-		ListSelectionModel lsm = roomTable.getSelectionModel();
+	public void updateSelectionFromAreas() {
+		ListSelectionModel lsm = areaTable.getSelectionModel();
 		lsm.clearSelection();
-		for (int r = 0; r < roomTable.getRowCount(); ++r) {
-			if (editor.getMap().getRooms().get(r).selected) {
+		for (int r = 0; r < areaTable.getRowCount(); ++r) {
+			if (editor.getMap().getAreas().get(r).selected) {
 				lsm.addSelectionInterval(r, r);
 			}
 		}
@@ -232,11 +232,11 @@ public class PollutionPanel extends JPanel
 
 	/* checkbox */
 	public void setPlaceCheckBox(boolean b) {
-		placeRoom.setSelected(b);
+		placeArea.setSelected(b);
 	}
 	
 	public boolean getPlaceCheckBox() {
-		return placeRoom.getSelectedObjects() != null;
+		return placeArea.getSelectedObjects() != null;
 	}
 }
 // ;;; Local Variables:
