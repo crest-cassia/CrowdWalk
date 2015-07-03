@@ -12,24 +12,24 @@ import nodagumi.ananPJ.misc.*;
 
 import nodagumi.Itk.*;
 
-public class NetmasCuiSimulator extends BasicSimulationLauncher {
+public class CuiSimulationLauncher extends BasicSimulationLauncher {
 
-    public NetmasCuiSimulator(Random _random) {
+    public CuiSimulationLauncher(Random _random) {
         super(_random);
     }
 
-    public NetmasCuiSimulator(String _propertiesPath) {
+    public CuiSimulationLauncher(String _propertiesPath) {
         super(null) ;
         // load properties
         setPropertiesFromFile(_propertiesPath) ;
 
         // check property options
         if (getNetworkMapFile() == null) {
-            System.err.println("NetmasCuiSimulator: map file is " +
+            System.err.println("CuiSimulationLauncher: map file is " +
                     "required.");
             return;
         } else if (!((File) new File(getNetworkMapFile())).exists()) {
-            System.err.println("NetmasCuiSimulator: specified map file does " +
+            System.err.println("CuiSimulationLauncher: specified map file does " +
                     "not exist.");
             return;
         }
@@ -46,7 +46,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
     }
 
     public void start() {
-        Itk.logDebug("NetmasCuiSimulator start!");
+        Itk.logDebug("CuiSimulationLauncher start!");
         paused = false ;
         simulateMainLoop() ;
     }

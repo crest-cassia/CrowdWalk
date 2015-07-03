@@ -629,11 +629,11 @@ public class NetmasPropertiesHandler {
         }
         // check property options
         if (networkMapFile == null) {
-            System.err.println("NetmasCuiSimulator: map file is " +
+            System.err.println("CuiSimulationLauncher: map file is " +
                                "required.");
             return;
         } else if (!((File) new File(networkMapFile)).exists()) {
-            System.err.println("NetmasCuiSimulator: specified map file does " +
+            System.err.println("CuiSimulationLauncher: specified map file does " +
                                "not exist.");
             return;
         }

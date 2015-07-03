@@ -76,7 +76,7 @@ public class SystemLauncher {
                     printHelp(options);
                     System.exit(1);
                 }
-                NetmasCuiSimulator simulator = launchCuiSimulator(propertiesFilePath);
+                CuiSimulationLauncher simulator = launchCuiSimulator(propertiesFilePath);
                 // tick 情報の出力
                 if (commandLine.hasOption("tick")) {
                     String tickFilePath = commandLine.getOptionValue("tick");
@@ -113,10 +113,11 @@ public class SystemLauncher {
     /**
      * CUI シミュレータを開始する
      */
-    public static NetmasCuiSimulator
+    public static CuiSimulationLauncher
         launchCuiSimulator(String propertiesFilePath) 
     {
-        NetmasCuiSimulator simulator = new NetmasCuiSimulator(propertiesFilePath);
+        CuiSimulationLauncher simulator =
+            new CuiSimulationLauncher(propertiesFilePath);
         simulator.initialize();
         simulator.start();
         return simulator;
