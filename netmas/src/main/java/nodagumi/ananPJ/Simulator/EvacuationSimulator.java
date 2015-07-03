@@ -21,7 +21,6 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
@@ -29,6 +28,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Scenario.*;
@@ -51,7 +51,7 @@ public class EvacuationSimulator {
     /**
      * マップおよびその他のデータ管理の構造体。
      */
-    private NetworkMap networkMap = null;
+    private NetworkMapBase networkMap = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -218,7 +218,7 @@ public class EvacuationSimulator {
     /**
      * コンストラクタ
      */
-    public EvacuationSimulator(NetworkMap _networkMap,
+    public EvacuationSimulator(NetworkMapBase _networkMap,
                                BasicSimulationLauncher _launcher,
                                Random _random) {
         init(_networkMap, _launcher, _random) ;
@@ -230,7 +230,7 @@ public class EvacuationSimulator {
     /**
      * マップ取得。
      */
-    public NetworkMap getMap() {
+    public NetworkMapBase getMap() {
         return networkMap;
     }
 
@@ -485,12 +485,27 @@ public class EvacuationSimulator {
     }
 
     //------------------------------------------------------------
+    /**
+     * 設定ファイル情報
+     */
+    public SetupFileInfo getSetupFileInfo() {
+        return launcher.getSetupFileInfo() ;
+    }
+
+    /**
+     * fallback parameter
+     */
+    public Term getFallbackParameters() {
+        return getSetupFileInfo().fallbackParameters ;
+    }
+
+    //------------------------------------------------------------
     // シミュレーションの準備。
     //------------------------------------------------------------
     /**
      * 初期化
      */
-    private void init(NetworkMap _networkMap,
+    private void init(NetworkMapBase _networkMap,
                       BasicSimulationLauncher _launcher,
                       Random _random) {
         launcher = _launcher ;
@@ -498,7 +513,7 @@ public class EvacuationSimulator {
         networkMap = _networkMap ;
         networkMap.checkConsistency() ;
 
-        pollutionFileName = networkMap.getPollutionFile();
+        pollutionFileName = getSetupFileInfo().getPollutionFile();
 
         random = _random;
     }
@@ -567,7 +582,7 @@ public class EvacuationSimulator {
      * シナリオ読み込み。
      */
     private void buildScenario() {
-        String filename = networkMap.getScenarioFile() ;
+        String filename = getSetupFileInfo().getScenarioFile() ;
         if (filename == null || filename.isEmpty()) {
             setupDefaultScenario();
             return;
@@ -827,9 +842,9 @@ public class EvacuationSimulator {
      * シミュレーション初期化。
      */
     public void setup() {
-        MapLink.setupCommonParameters(networkMap.fallbackParameters) ;
-        MapNode.setupCommonParameters(networkMap.fallbackParameters) ;
-        ObstructerBase.setupCommonParameters(networkMap.fallbackParameters) ;
+        MapLink.setupCommonParameters(getFallbackParameters()) ;
+        MapNode.setupCommonParameters(getFallbackParameters()) ;
+        ObstructerBase.setupCommonParameters(getFallbackParameters()) ;
         resetValues();
     }
 

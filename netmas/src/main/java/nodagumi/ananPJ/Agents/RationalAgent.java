@@ -16,7 +16,7 @@ package nodagumi.ananPJ.Agents;
 import java.util.Random;
 import java.util.HashMap;
 
-import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;

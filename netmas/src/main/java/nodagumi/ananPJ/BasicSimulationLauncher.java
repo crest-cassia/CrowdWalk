@@ -14,6 +14,7 @@ import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.misc.NetmasPropertiesHandler;
 import nodagumi.ananPJ.misc.NetmasTimer;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
 
@@ -30,15 +31,21 @@ public abstract class BasicSimulationLauncher {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * 設定ファイルの取りまとめ。
+     */
+    private SetupFileInfo setupFileInfo = new SetupFileInfo();
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * simulator の実体
      */
     protected EvacuationSimulator simulator = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 地図およびエージェント格納体
+     * 地図データ。
      */
-    protected NetworkMap networkMap;
+    protected NetworkMapBase networkMap;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -200,7 +207,12 @@ public abstract class BasicSimulationLauncher {
     /**
      * マップ取得
      */
-    public NetworkMap getMap() { return networkMap; }
+    public NetworkMapBase getMap() { return networkMap; }
+
+    /**
+     * マップ取得
+     */
+    public SetupFileInfo getSetupFileInfo() { return setupFileInfo; }
 
     /**
      * 終了条件１のセット
@@ -316,9 +328,7 @@ public abstract class BasicSimulationLauncher {
      */
     public void setPollutionPath(String _pollutionPath) {
         pollutionPath = _pollutionPath;
-        if (networkMap != null) {
-            networkMap.setPollutionFile(pollutionPath);
-        }
+        setupFileInfo.setPollutionFile(pollutionPath);
     }
 
     /**
@@ -333,9 +343,7 @@ public abstract class BasicSimulationLauncher {
      */
     public void setGenerationPath(String _generationPath) {
         generationPath = _generationPath;
-        if (networkMap != null) {
-            networkMap.setGenerationFile(generationPath);
-        }
+        setupFileInfo.setGenerationFile(generationPath);
     }
 
     /**
@@ -350,9 +358,7 @@ public abstract class BasicSimulationLauncher {
      */
     public void setScenarioPath(String _scenarioPath) {
         scenarioPath = _scenarioPath;
-        if (networkMap != null) {
-            networkMap.setScenarioFile(scenarioPath);
-        }
+        setupFileInfo.setScenarioFile(scenarioPath);
     }
 
     /**
@@ -367,10 +373,8 @@ public abstract class BasicSimulationLauncher {
      */
     public void setFallbackPath(String _fallbackPath) {
         fallbackPath = _fallbackPath;
-        if (networkMap != null) {
-            networkMap.setFallbackFile(fallbackPath) ;
-            networkMap.scanFallbackFile(true) ;
-        }
+        setupFileInfo.setFallbackFile(fallbackPath) ;
+        setupFileInfo.scanFallbackFile(true) ;
     }
 
     /**
@@ -391,7 +395,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * 地図の読み込み
      */
-    protected NetworkMap readMapWithName(String file_name)
+    protected NetworkMapBase readMapWithName(String file_name)
             throws IOException {
         FileInputStream fis = new FileInputStream(file_name);
         Document doc = ItkXmlUtility.singleton.streamToDoc(fis);
@@ -406,11 +410,11 @@ public abstract class BasicSimulationLauncher {
             return null;
         }
         // NetMAS based map
-        NetworkMap network_map = new NetworkMap() ;
+        NetworkMapBase network_map = new NetworkMapBase() ;
         if (false == network_map.fromDOM(doc))
             return null;
         Itk.logInfo("Load Map File", file_name) ;
-        network_map.setNetworkMapFile(file_name);
+        setupFileInfo.setNetworkMapFile(file_name);
         return network_map;
     }
 
@@ -418,12 +422,12 @@ public abstract class BasicSimulationLauncher {
     /**
      * 地図の初期設定を、Launcher から渡す。
      */
-    protected void setupNetworkMap() {
-        networkMap.setPollutionFile(pollutionPath);
-        networkMap.setGenerationFile(generationPath);
-        networkMap.setScenarioFile(scenarioPath);
-        networkMap.setFallbackFile(fallbackPath);
-        networkMap.scanFallbackFile(true) ;
+    protected void setupSetupFileInfo() {
+        setupFileInfo.setPollutionFile(pollutionPath);
+        setupFileInfo.setGenerationFile(generationPath);
+        setupFileInfo.setScenarioFile(scenarioPath);
+        setupFileInfo.setFallbackFile(fallbackPath);
+        setupFileInfo.scanFallbackFile(true) ;
     }
 
     //------------------------------------------------------------

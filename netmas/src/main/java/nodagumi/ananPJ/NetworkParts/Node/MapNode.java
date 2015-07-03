@@ -33,7 +33,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
@@ -42,6 +41,7 @@ import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
 
@@ -54,10 +54,10 @@ public class MapNode extends OBMapPart {
     public static void setupCommonParameters(Term wholeFallbacks) {
         fallbackParameters =
             wholeFallbacks.filterArgTerm("link",
-                                         NetworkMap.FallbackSlot) ;
+                                         SetupFileInfo.FallbackSlot) ;
         speedRestrictRule =
             fallbackParameters.fetchArgTerm("speedRestrictRule",
-                                            NetworkMap.FallbackSlot,
+                                            SetupFileInfo.FallbackSlot,
                                             Term.newArrayTerm()) ;
     } ;
 

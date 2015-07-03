@@ -5,8 +5,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
-import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
 
@@ -30,7 +31,9 @@ public abstract class ObstructerBase {
      * fallback パラメータの準備
      */
     public static void setupCommonParameters(Term wholeFallbacks) {
-        fallbackParameters = wholeFallbacks.filterArgTerm("obstructer", NetworkMap.FallbackSlot);
+        fallbackParameters =
+            wholeFallbacks.filterArgTerm("obstructer",
+                                         SetupFileInfo.FallbackSlot);
     }
 
     /**

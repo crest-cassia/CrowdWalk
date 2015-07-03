@@ -40,13 +40,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Node.MapNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Area.MapArea;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
 
@@ -85,14 +85,14 @@ public class MapLink extends OBMapPart {
     public static void setupCommonParameters(Term wholeFallbacks) {
         fallbackParameters =
             wholeFallbacks.filterArgTerm("link",
-                                         NetworkMap.FallbackSlot) ;
+                                         SetupFileInfo.FallbackSlot) ;
         speedRestrictRule =
             fallbackParameters.fetchArgTerm("speedRestrictRule",
-                                            NetworkMap.FallbackSlot,
+                                            SetupFileInfo.FallbackSlot,
                                             Term.newArrayTerm()) ;
         emptySpeedRestrictRule =
             fallbackParameters.fetchArgTerm("emptySpeedRestrictRule",
-                                            NetworkMap.FallbackSlot,
+                                            SetupFileInfo.FallbackSlot,
                                             Term.newArrayTerm()) ;
     } ;
 

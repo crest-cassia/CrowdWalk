@@ -66,7 +66,6 @@ import org.w3c.dom.Document;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
@@ -132,7 +131,7 @@ public class AgentHandler {
     /**
      * 地図。
      */
-    private NetworkMap networkMap;
+    private NetworkMapBase networkMap;
 
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -477,7 +476,7 @@ public class AgentHandler {
         networkMap = simulator.getMap() ;
 
         // ファイル類の読み込み
-        loadAgentGenerationFile(networkMap.getGenerationFile()) ;
+        loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
 
         // 各種配列初期化。
         evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
@@ -488,8 +487,8 @@ public class AgentHandler {
 
         // 表示初期化。
         if (hasDisplay()) {
-            setup_control_panel(networkMap.getGenerationFile(),
-                                networkMap.getScenarioFile(),
+            setup_control_panel(simulator.getSetupFileInfo().getGenerationFile(),
+                                simulator.getSetupFileInfo().getScenarioFile(),
                                 networkMap);
         }
 
@@ -507,14 +506,14 @@ public class AgentHandler {
              generate_agent =
                  new AgentGenerationFile(generationFile,
                                          networkMap,
-                                         networkMap.fallbackParameters,
+                                         simulator.getFallbackParameters(),
                                          hasDisplay(),
                                          simulator.getLinerGenerateAgentRatio(),
                                          random);
         } catch(Exception ex) {
             ex.printStackTrace() ;
             Itk.logError("Illegal AgentGenerationFile",
-                         networkMap.getGenerationFile(),
+                         simulator.getSetupFileInfo().getGenerationFile(),
                          ex.getMessage());
             System.exit(1);
         }
@@ -1358,8 +1357,9 @@ public class AgentHandler {
         /* title & clock */
         JPanel titlepanel = new JPanel(new GridBagLayout());
         addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, new JLabel("Map"));
-        if (simulator.getMap().getNetworkMapFile() != null) {
-            File map_file = new File(simulator.getMap().getNetworkMapFile());
+        if (simulator.getSetupFileInfo().getNetworkMapFile() != null) {
+            File map_file =
+                new File(simulator.getSetupFileInfo().getNetworkMapFile());
             addJLabel(titlepanel, 1, 0, 1, 1, new JLabel(map_file.getName()));
         } else {
             addJLabel(titlepanel, 1, 0, 1, 1, new JLabel("No map file"));
@@ -1373,7 +1373,8 @@ public class AgentHandler {
             addJLabel(titlepanel, 1, 1, 1, 1, new JLabel("No generation file"));
         }
 
-        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, new JLabel("Scenario"));
+        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST,
+                  new JLabel("Scenario"));
         if (scenarioFileName != null) {
             File scenario_file = new File(scenarioFileName);
             addJLabel(titlepanel, 1, 2, 1, 1, new JLabel(scenario_file.getName()));
@@ -1381,15 +1382,19 @@ public class AgentHandler {
             addJLabel(titlepanel, 1, 2, 1, 1, new JLabel("No scenario file"));
         }
 
-        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST, new JLabel("Pollution"));
-        if (simulator.getMap().getPollutionFile() != null) {
-            File pollution_file = new File(simulator.getMap().getPollutionFile());
-            addJLabel(titlepanel, 1, 3, 1, 1, new JLabel(pollution_file.getName()));
+        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST,
+                  new JLabel("Pollution"));
+        if (simulator.getSetupFileInfo().getPollutionFile() != null) {
+            File pollution_file =
+                new File(simulator.getSetupFileInfo().getPollutionFile());
+            addJLabel(titlepanel, 1, 3, 1, 1,
+                      new JLabel(pollution_file.getName()));
         } else {
             addJLabel(titlepanel, 1, 3, 1, 1, new JLabel("No pollution file"));
         }
 
-        addJLabel(titlepanel, 0, 4, 1, 1, GridBagConstraints.EAST, new JLabel("ID"));
+        addJLabel(titlepanel, 0, 4, 1, 1, GridBagConstraints.EAST,
+                  new JLabel("ID"));
         /* [2015.02.10 I.Noda] remove scenario_numbers */
         JLabel sl = new JLabel("(NOT DEFINED)");
         sl.setFont(new Font(null, Font.ITALIC, 9));

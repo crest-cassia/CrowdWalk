@@ -38,7 +38,7 @@ import javax.swing.tree.TreePath;
 import nodagumi.ananPJ.misc.*;
 
 
-import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;

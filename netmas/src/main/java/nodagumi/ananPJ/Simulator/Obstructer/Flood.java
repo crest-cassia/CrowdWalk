@@ -1,8 +1,9 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Simulator.Obstructer;
 
-import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
 
@@ -54,7 +55,7 @@ public class Flood extends ObstructerBase {
      * fallback パラメータからの値の取得(double)
      */
     public static double getConfigParameter(String slot, double fallback) {
-        return config.fetchArgDouble(slot, NetworkMap.FallbackSlot, fallback);
+        return config.fetchArgDouble(slot, SetupFileInfo.FallbackSlot, fallback);
     }
 
     //--------------------------------------------------
@@ -69,13 +70,19 @@ public class Flood extends ObstructerBase {
     public void init(AgentBase agent) {
         this.agent = agent;
         if (config == null) {
-            config = fallbackParameters.fetchArgTerm(getClass().getSimpleName(), NetworkMap.FallbackSlot,
-                    Term.newArrayTerm());
+            config =
+                fallbackParameters.fetchArgTerm(getClass().getSimpleName(),
+                                                SetupFileInfo.FallbackSlot,
+                                                Term.newArrayTerm());
         }
-        waterDepthThreshold3 = getConfigParameter("waterDepthThreshold3", waterDepthThreshold3);
-        waterDepthThreshold2 = getConfigParameter("waterDepthThreshold2", waterDepthThreshold2);
-        waterDepthThreshold1 = getConfigParameter("waterDepthThreshold1", waterDepthThreshold1);
-        nonAmbulatoryDepth = getConfigParameter("nonAmbulatoryDepth", nonAmbulatoryDepth);
+        waterDepthThreshold3 =
+            getConfigParameter("waterDepthThreshold3", waterDepthThreshold3);
+        waterDepthThreshold2 =
+            getConfigParameter("waterDepthThreshold2", waterDepthThreshold2);
+        waterDepthThreshold1 =
+            getConfigParameter("waterDepthThreshold1", waterDepthThreshold1);
+        nonAmbulatoryDepth =
+            getConfigParameter("nonAmbulatoryDepth", nonAmbulatoryDepth);
     }
 
     /**

@@ -452,7 +452,7 @@ public class NetworkMapEditor extends SimulationLauncher
             // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
             random.setSeed(properties.getRandseed());
         }
-        networkMap = new NetworkMap() ;
+        networkMap = new NetworkMapBase() ;
         mapPath = null;
         updateAll();
         setModified(false);
@@ -494,7 +494,7 @@ public class NetworkMapEditor extends SimulationLauncher
         if (networkMap == null) return false;
 
         // tkokada
-        setupNetworkMap() ;
+        setupSetupFileInfo() ;
 
         networkMap.setupAfterLoad(true);
         updateAll();

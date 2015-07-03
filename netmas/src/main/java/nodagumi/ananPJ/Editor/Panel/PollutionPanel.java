@@ -95,7 +95,7 @@ public class PollutionPanel extends JPanel
 		/* pollution file */
 		pollutionFilePanel = new JPanel(new GridLayout(2, 1));
 		pollutionFileLabel = new JLabel("Pollution Settings: " +
-				editor.getMap().getPollutionFile());
+				editor.getSetupFileInfo().getPollutionFile());
 
 		pollutionFilePanel.add(pollutionFileLabel);
 		JButton openButton = new JButton("Open");
@@ -149,8 +149,9 @@ public class PollutionPanel extends JPanel
 			}
 		});
 		lockValueChanged = false;
-		if (editor.getMap().getPollutionFile() != null) {
-			File pollution_file = new File(editor.getMap().getPollutionFile());
+		if (editor.getSetupFileInfo().getPollutionFile() != null) {
+			File pollution_file =
+                new File(editor.getSetupFileInfo().getPollutionFile());
 			String message = "";
 			if (!pollution_file.exists()) {
 				message += " (error: does not exist)";
@@ -184,7 +185,7 @@ public class PollutionPanel extends JPanel
 	    	if (fd.getFile() == null) return;
 	    	String filename = fd.getDirectory() + fd.getFile();
 	    	pollutionFileLabel.setText("Pollution Settings: " + filename);
-	    	editor.getMap().setPollutionFile(filename);
+	    	editor.getSetupFileInfo().setPollutionFile(filename);
 
 	    	repaint();
 		}

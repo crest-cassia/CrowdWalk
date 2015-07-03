@@ -23,7 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
-import nodagumi.ananPJ.NetworkMap;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkMapEditor;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
@@ -48,10 +48,10 @@ public class ScenarioPanel extends PanelWithTable {
         }
 
         public void setFile(File _file) {
-            if (_file != null) { 
+            if (_file != null) {
                 try {
 					Term fallbackParameters =
-						editor.getMap().fallbackParameters ;
+						editor.getSetupFileInfo().fallbackParameters ;
                     file = new AgentGenerationFile(_file.getPath(),
 												   editor.getMap(),
 												   fallbackParameters,
@@ -157,7 +157,7 @@ public class ScenarioPanel extends PanelWithTable {
         if (fd.getFile() == null) return;
 
         String filename = fd.getDirectory() + fd.getFile();
-        editor.getMap().setGenerationFile(filename);
+        editor.getSetupFileInfo().setGenerationFile(filename);
 
         refresh();
     }
@@ -172,7 +172,7 @@ public class ScenarioPanel extends PanelWithTable {
         if (fd.getFile() == null) return;
 
         String filename = fd.getDirectory() + fd.getFile();
-        editor.getMap().setScenarioFile(filename);
+        editor.getSetupFileInfo().setScenarioFile(filename);
 
         refresh();
     }
@@ -191,8 +191,8 @@ public class ScenarioPanel extends PanelWithTable {
         if (fd.getFile() == null) return;
 
         String filename = fd.getDirectory() + fd.getFile();
-        editor.getMap().setFallbackFile(filename);
-		editor.getMap().scanFallbackFile(true) ;
+        editor.getSetupFileInfo().setFallbackFile(filename);
+		editor.getSetupFileInfo().scanFallbackFile(true) ;
 
         refresh();
     }
@@ -203,8 +203,9 @@ public class ScenarioPanel extends PanelWithTable {
     }
 
     public void refresh() {
-        if (editor.getMap().getGenerationFile() != null) {
-            File generation_file = new File(editor.getMap().getGenerationFile());
+        if (editor.getSetupFileInfo().getGenerationFile() != null) {
+            File generation_file =
+                new File(editor.getSetupFileInfo().getGenerationFile());
             String message = "";
             if (!generation_file.exists()) {
                 message += " (error: does not exist)";
@@ -224,8 +225,9 @@ public class ScenarioPanel extends PanelWithTable {
             generationDataModel.setFile(null);
         }
 
-        if (editor.getMap().getScenarioFile() != null) {
-            File scenario_file = new File(editor.getMap().getScenarioFile());
+        if (editor.getSetupFileInfo().getScenarioFile() != null) {
+            File scenario_file =
+                new File(editor.getSetupFileInfo().getScenarioFile());
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     adjustColumnPreferredWidth(generationTable);

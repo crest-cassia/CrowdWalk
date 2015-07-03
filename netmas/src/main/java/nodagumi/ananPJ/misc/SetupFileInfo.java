@@ -1,8 +1,6 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ;
+package nodagumi.ananPJ.misc;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.InputStream;
 import java.io.File;
 import java.io.FileReader;
@@ -15,27 +13,16 @@ import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.vecmath.Vector3d;
-
 import net.arnx.jsonic.JSON ;
 
-import nodagumi.ananPJ.NetworkMapBase;
-import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.WalkAgent;
-import nodagumi.ananPJ.NetworkParts.OBNode;
-import nodagumi.ananPJ.NetworkParts.Link.*;
-import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkParts.MapPartGroup;
-
-import nodagumi.Itk.*;
+import nodagumi.Itk.Itk;
+import nodagumi.Itk.Term;
 
 //======================================================================
 /**
  * シミュレーションで用いるデータをまとめて保持するクラス。
  */
-public class NetworkMap extends NetworkMapBase {
+public class SetupFileInfo {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ???
@@ -88,8 +75,7 @@ public class NetworkMap extends NetworkMapBase {
     /**
      * constructor
      */
-    public NetworkMap() {
-        super() ;
+    public SetupFileInfo() {
     }
 
     //------------------------------------------------------------

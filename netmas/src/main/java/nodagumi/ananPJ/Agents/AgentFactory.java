@@ -26,8 +26,8 @@ import nodagumi.ananPJ.Agents.*;
 import nodagumi.ananPJ.NetworkParts.OBNode;
 import nodagumi.ananPJ.NetworkParts.Link.*;
 import nodagumi.ananPJ.NetworkParts.Node.*;
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkMapBase;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
 
@@ -348,7 +348,7 @@ public abstract class AgentFactory {
         Term fallbackForAgent =
             ((fallbackParameters != null) ?
              fallbackParameters.filterArgTerm("agent",
-                                              NetworkMap.FallbackSlot) :
+                                              SetupFileInfo.FallbackSlot) :
              null) ;
 
         /* [I.Noda] ここで Agent 生成 */

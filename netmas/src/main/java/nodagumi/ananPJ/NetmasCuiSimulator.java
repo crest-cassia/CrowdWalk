@@ -39,7 +39,7 @@ public class NetmasCuiSimulator extends BasicSimulationLauncher {
             ioe.printStackTrace();
         }
         // プロパティファイルで指定されたパスを使用する(以下が無いとマップファイルの設定が使われる)
-        setupNetworkMap() ;
+        setupSetupFileInfo() ;
     }
 
     public void initialize() {

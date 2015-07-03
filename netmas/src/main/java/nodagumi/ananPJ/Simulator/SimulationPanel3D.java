@@ -69,8 +69,8 @@ import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkPanel3D;
+import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.NetworkMapPartsListener;
@@ -103,7 +103,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
     private ArrayList<MapArea> pollutions;
     EvacuationSimulator simulator = null;
-    NetworkMap networkMap = null;
+    NetworkMapBase networkMap = null;
     private static String evacuatedCount_string = "";
     private boolean firstStep = true;
     private ArrayList<String> screenShotFileNames = new ArrayList();

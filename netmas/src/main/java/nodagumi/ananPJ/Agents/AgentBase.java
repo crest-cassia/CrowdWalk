@@ -12,7 +12,6 @@ import javax.vecmath.Vector3d;
 
 import org.w3c.dom.Element;
 
-import nodagumi.ananPJ.NetworkMap;
 import nodagumi.ananPJ.NetworkMapBase;
 import nodagumi.ananPJ.NetworkParts.MapPartGroup;
 import nodagumi.ananPJ.NetworkParts.OBMapPart;
@@ -22,6 +21,7 @@ import nodagumi.ananPJ.NetworkParts.Node.*;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
@@ -44,7 +44,7 @@ implements Comparable<AgentBase> {
     /**
      * Agent の詳細設定情報を格納しているもの
      */
-    static public final String ConfigFallbackSlot = NetworkMap.FallbackSlot ;
+    static public final String ConfigFallbackSlot = SetupFileInfo.FallbackSlot ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
