@@ -40,7 +40,7 @@ public class NetworkMap extends NetworkMapBase {
     /**
      * ???
      */
-    private String filename = null;
+    private String networkMapFile = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -96,15 +96,15 @@ public class NetworkMap extends NetworkMapBase {
     /**
      * ファイル名（？？？）
      */
-    public String getFileName() {
-        return filename;
+    public String getNetworkMapFile() {
+        return networkMapFile;
     }
 
     /**
      * ファイル名（？？？）
      */
-    public void setFileName(String file_name) {
-        filename = file_name;
+    public void setNetworkMapFile(String file_name) {
+        networkMapFile = file_name;
     }
 
     //------------------------------------------------------------

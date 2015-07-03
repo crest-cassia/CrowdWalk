@@ -410,7 +410,7 @@ public abstract class BasicSimulationLauncher {
         if (false == network_map.fromDOM(doc))
             return null;
         Itk.logInfo("Load Map File", file_name) ;
-        network_map.setFileName(file_name);
+        network_map.setNetworkMapFile(file_name);
         return network_map;
     }
 

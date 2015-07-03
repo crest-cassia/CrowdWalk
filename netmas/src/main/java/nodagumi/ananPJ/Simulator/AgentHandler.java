@@ -1358,8 +1358,8 @@ public class AgentHandler {
         /* title & clock */
         JPanel titlepanel = new JPanel(new GridBagLayout());
         addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, new JLabel("Map"));
-        if (simulator.getMap().getFileName() != null) {
-            File map_file = new File(simulator.getMap().getFileName());
+        if (simulator.getMap().getNetworkMapFile() != null) {
+            File map_file = new File(simulator.getMap().getNetworkMapFile());
             addJLabel(titlepanel, 1, 0, 1, 1, new JLabel(map_file.getName()));
         } else {
             addJLabel(titlepanel, 1, 0, 1, 1, new JLabel("No map file"));
