@@ -64,7 +64,7 @@ processResources {
 }
 
 jar {
-    manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.SystemLauncher")
+    manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CrowdWalkLauncher")
     doFirst {
         from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
             exclude 'META-INF/MANIFEST.MF'
