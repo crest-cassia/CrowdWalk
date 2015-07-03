@@ -24,14 +24,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
-import nodagumi.ananPJ.NetworkMapEditor;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 
 import nodagumi.Itk.*;
 
 public class ScenarioPanel extends PanelWithTable { 
-    NetworkMapEditor editor = null;
+    GuiSimulationEditorLauncher editor = null;
     JLabel generateFileLabel = null;
     JButton generateFileButton = null;
     JLabel scenarioFileLabel = null;
@@ -95,7 +95,7 @@ public class ScenarioPanel extends PanelWithTable {
     AgentGenerationDataModel generationDataModel = null;
 
     JPanel button_panel;
-    public ScenarioPanel(NetworkMapEditor _editor, Random _random) {
+    public ScenarioPanel(GuiSimulationEditorLauncher _editor, Random _random) {
         editor = _editor;
         random = _random;
         setLayout(new BorderLayout());

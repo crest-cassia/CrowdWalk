@@ -38,7 +38,7 @@ import javax.swing.tree.TreePath;
 import nodagumi.ananPJ.misc.*;
 
 
-import nodagumi.ananPJ.NetworkMapEditor;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -47,7 +47,7 @@ public class BrowserPanel
 extends JPanel
 	implements MouseListener, TreeSelectionListener {
 
-	private NetworkMapEditor editor = null;
+	private GuiSimulationEditorLauncher editor = null;
 	DnDJTree tree;
 	private static int groupCount = 0;
 	private enum OP{ADD,SHOW,CLEAR,ALLCLEAR,SEARCH};
@@ -62,7 +62,7 @@ extends JPanel
 	private JMenuItem jmiClearTagRec;
 	private JMenuItem jmiDeleteItem;
 
-	public BrowserPanel (NetworkMapEditor _editor){
+	public BrowserPanel (GuiSimulationEditorLauncher _editor){
 		editor = _editor;
 
 		tree = new DnDJTree(editor.getMap());

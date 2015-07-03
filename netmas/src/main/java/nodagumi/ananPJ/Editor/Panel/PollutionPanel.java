@@ -34,13 +34,13 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher.EditorMode;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 
 public class PollutionPanel extends JPanel 
 	implements ActionListener, ListSelectionListener {
-	NetworkMapEditor editor = null;
+	GuiSimulationEditorLauncher editor = null;
 	JLabel pollutionFileLabel = null;
 
 	AreaDataModel dataModel = null;
@@ -88,7 +88,7 @@ public class PollutionPanel extends JPanel
 	}
 
 	private JPanel pollutionFilePanel;
-	public PollutionPanel(NetworkMapEditor _editor) {
+	public PollutionPanel(GuiSimulationEditorLauncher _editor) {
 		editor = _editor;
 		setLayout(new BorderLayout());
 		

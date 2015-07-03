@@ -16,7 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import nodagumi.ananPJ.NetworkMapEditor;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.Link.*;

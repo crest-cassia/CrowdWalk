@@ -52,10 +52,10 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import nodagumi.ananPJ.NetworkMapEditor;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Editor.EditorFramePanel.TextPosition;
-import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher.EditorMode;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
 import nodagumi.ananPJ.NetworkMap.OBNode; // tkokada
@@ -134,9 +134,10 @@ public class EditorFrame
 
     private Point2D startpos = new Point2D.Double(0.0, 0.0);
 
-    public NetworkMapEditor editor = null;
+    public GuiSimulationEditorLauncher editor = null;
 
-    public EditorFrame(NetworkMapEditor _editor, MapPartGroup _ob_node) {
+    public EditorFrame(GuiSimulationEditorLauncher _editor,
+                       MapPartGroup _ob_node) {
         super(_ob_node.getTagString());
 
         editor = _editor;

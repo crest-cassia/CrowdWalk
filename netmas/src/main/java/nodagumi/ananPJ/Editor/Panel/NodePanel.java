@@ -29,13 +29,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
-import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher.EditorMode;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 
 public class NodePanel extends PanelWithTable {
-    NetworkMapEditor editor = null;
+    GuiSimulationEditorLauncher editor = null;
     MapNodeTable sortedNodes = null;
     NodesDataModel dataModel = null;
     JTable nodeTable = null;
@@ -88,7 +88,7 @@ public class NodePanel extends PanelWithTable {
         }
     }
     
-    public NodePanel (NetworkMapEditor _editor) {
+    public NodePanel (GuiSimulationEditorLauncher _editor) {
         editor = _editor;
         sortedNodes = editor.getMap().getNodes();
         dataModel = new NodesDataModel();

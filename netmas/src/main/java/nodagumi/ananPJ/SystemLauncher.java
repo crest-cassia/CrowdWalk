@@ -56,7 +56,7 @@ public class SystemLauncher {
             }
             // バージョン表示
             if (commandLine.hasOption("version")) {
-                System.err.println("CrowdWalk Version " + NetworkMapEditor.getVersion());
+                System.err.println("CrowdWalk Version " + GuiSimulationEditorLauncher.getVersion());
                 System.exit(0);
             }
 
@@ -84,7 +84,7 @@ public class SystemLauncher {
                     saveTick(tickFilePath, tick);
                 }
             } else {
-                launchNetworkMapEditor(propertiesFilePath);
+                launchGuiSimulationEditorLauncher(propertiesFilePath);
             }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
@@ -106,13 +106,16 @@ public class SystemLauncher {
                 return;
             }
         }
-        throw new Exception("Option error - ログレベル名が間違っています: " + logLevelName);
+        throw new Exception("Option error - ログレベル名が間違っています: "
+                            + logLevelName);
     }
 
     /**
      * CUI シミュレータを開始する
      */
-    public static NetmasCuiSimulator launchCuiSimulator(String propertiesFilePath) {
+    public static NetmasCuiSimulator
+        launchCuiSimulator(String propertiesFilePath) 
+    {
         NetmasCuiSimulator simulator = new NetmasCuiSimulator(propertiesFilePath);
         simulator.initialize();
         simulator.start();
@@ -122,22 +125,13 @@ public class SystemLauncher {
     /**
      * マップエディタを開始する
      */
-    public static NetworkMapEditor launchNetworkMapEditor(String propertiesFilePath) throws Exception {
+    public static GuiSimulationEditorLauncher
+        launchGuiSimulationEditorLauncher(String propertiesFilePath)
+        throws Exception
+    {
         Random random = new Random();
-        /* [2015.06.15 I.Noda] 
-         * 以下は、無駄な処理。
-         * 混乱回避のため、削除しておく。
-         */
-        /*
-        if (propertiesFilePath != null) {
-            NetmasPropertiesHandler properties = new NetmasPropertiesHandler(propertiesFilePath);
-            int randseed = properties.getInteger("randseed", -1);
-            if (randseed != -1) {
-                random.setSeed(randseed);
-            }
-        }
-        */
-        NetworkMapEditor mapEditor = new NetworkMapEditor(random);
+        GuiSimulationEditorLauncher mapEditor
+            = new GuiSimulationEditorLauncher(random);
         if (propertiesFilePath != null) {
             mapEditor.setPropertiesFromFile(propertiesFilePath);
         }

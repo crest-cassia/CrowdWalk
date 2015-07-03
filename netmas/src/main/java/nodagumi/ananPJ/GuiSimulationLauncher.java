@@ -34,7 +34,7 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
     public GuiSimulationLauncher(Random _random) {
         super(_random) ;
         networkMap = new NetworkMap() ;
-        settings = Settings.load("NetworkMapEditor.ini");
+        settings = Settings.load("GuiSimulationLauncher.ini");
     }
 
     private transient Runnable simulationRunnable = null;
@@ -180,11 +180,11 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
 
     public void simulationWindowOpenedOperation(SimulationPanel3D panel, 
 						final EvacuationSimulator simulator) {
-        // NetworkMapEditor で定義する
+        // GuiSimulationEditorLauncher で定義する
     }
 
     public void initSimulationPanel3D(SimulationPanel3D panel) {
-        // NetworkMapEditor で定義する
+        // GuiSimulationEditorLauncher で定義する
     }
 
 }

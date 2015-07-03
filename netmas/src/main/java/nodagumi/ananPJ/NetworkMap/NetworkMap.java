@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import nodagumi.ananPJ.NetworkMapEditor;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -151,7 +151,7 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * exec undo
      */
-    public void undo(NetworkMapEditor editor) {
+    public void undo(GuiSimulationEditorLauncher editor) {
         if (undo_list.size() == 0) return;
         int i = undo_list.size() - 1;
         UndoInformation info = undo_list.remove(i);
@@ -946,7 +946,8 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * Editor Frame
      */
-    public EditorFrame openEditorFrame(NetworkMapEditor editor, MapPartGroup obinode) {
+    public EditorFrame openEditorFrame(GuiSimulationEditorLauncher editor,
+                                       MapPartGroup obinode) {
         EditorFrame frame = new EditorFrame(editor, obinode);
 
         obinode.setUserObject(frame);

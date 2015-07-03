@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Vector3f;
 
-import nodagumi.ananPJ.NetworkMapEditor;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.Gui.NetworkPanel3D;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
@@ -25,18 +25,18 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class EditorPanel3D extends NetworkPanel3D {
 
-    private NetworkMapEditor editor;
+    private GuiSimulationEditorLauncher editor;
 
     private MapNode hoverNode = null;
     private MapLink hoverLink = null;
     private AgentBase hoverAgent = null;
     private Rectangle2D selectedArea = null;
 
-    private EditorPanel3D(NetworkMapEditor editor, JFrame _parent) {
+    private EditorPanel3D(GuiSimulationEditorLauncher editor, JFrame _parent) {
         super(editor.getNodes(), editor.getLinks(), _parent, editor.getProperties());
     }
 
-    public static NetworkPanel3D createPanel(NetworkMapEditor editor,
+    public static NetworkPanel3D createPanel(GuiSimulationEditorLauncher editor,
             JFrame parent) {
         if (editor.getNodes().size() == 0) {
             JOptionPane.showMessageDialog(null,

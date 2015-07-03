@@ -29,14 +29,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
-import nodagumi.ananPJ.NetworkMapEditor;
-import nodagumi.ananPJ.NetworkMapEditor.EditorMode;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher.EditorMode;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 
 public class LinkPanel extends PanelWithTable
 	implements MapLink.AttributePanel.Listener {
-    NetworkMapEditor editor = null;
+    GuiSimulationEditorLauncher editor = null;
     MapLinkTable shownLinks = null;
     LinksDataModel dataModel = null;
     JTable linkTable = null;
@@ -82,7 +82,7 @@ public class LinkPanel extends PanelWithTable
         }
     }
 
-    public LinkPanel (NetworkMapEditor _editor) {
+    public LinkPanel (GuiSimulationEditorLauncher _editor) {
         editor = _editor;
         shownLinks = editor.getLinks();
         synchronized(shownLinks){

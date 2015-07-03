@@ -80,7 +80,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class NetworkMapEditor extends GuiSimulationLauncher
+public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
     implements ActionListener, WindowListener, SimulationController {
 
     private String dir_name = "";
@@ -135,7 +135,7 @@ public class NetworkMapEditor extends GuiSimulationLauncher
     transient protected JFrame frame;
     private JButton runButton = null;
 
-    protected NetworkMapEditor(Random _random) {
+    protected GuiSimulationEditorLauncher(Random _random) {
         super(_random);
 
         frame = new JFrame("Network Map Editor");
@@ -420,7 +420,7 @@ public class NetworkMapEditor extends GuiSimulationLauncher
     public static String getVersion() {
         Properties prop = new Properties();
         try {
-            prop.load(NetworkMapEditor.class.getResourceAsStream("/netmas.properties"));
+            prop.load(GuiSimulationEditorLauncher.class.getResourceAsStream("/netmas.properties"));
             return String.format("%s.%s.%s-%s", prop.getProperty("version"), prop.getProperty("branch"), prop.getProperty("revision"), prop.getProperty("commit_hash"));
         } catch(IOException e) {
             return "";

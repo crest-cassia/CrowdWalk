@@ -666,7 +666,7 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
     private Vector3d point_min, point_max, point_center;
 
-    /* scale to transform NetworkMapEditor coordinates to
+    /* scale to transform GuiSimulationEditorLauncher coordinates to
      * 3D view coordinates */
     protected double calcObjectScale(TransformGroup objects) {
         point_center = new Vector3d(0.0, 0.0, 0.0);

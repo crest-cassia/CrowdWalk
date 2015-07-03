@@ -34,13 +34,13 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import nodagumi.ananPJ.NetworkMapEditor;
+import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.Editor.EditorFrame;
 
 public class FramePanel extends JPanel
 	implements ListSelectionListener, ActionListener {
 
-	NetworkMapEditor editor = null;
+	GuiSimulationEditorLauncher editor = null;
 	ArrayList<EditorFrame> sortedFrames = null;
 	JTable frameTable = null;
 	JButton updateButton = null;
@@ -83,7 +83,7 @@ public class FramePanel extends JPanel
 	class FrameSettings extends JPanel 
 	implements ChangeListener {
 
-		NetworkMapEditor editor = null;
+		GuiSimulationEditorLauncher editor = null;
 		FramePanel frame_panel = null;
 		//JTextField frameName = new JTextField();
 		JSpinner minHeight = new JSpinner(new SpinnerNumberModel(0.0, -10000.0, 10000.0, 0.1));
@@ -97,7 +97,7 @@ public class FramePanel extends JPanel
 
 		EditorFrame frameInInterest = null; 
 
-		public FrameSettings(NetworkMapEditor _editor,
+		public FrameSettings(GuiSimulationEditorLauncher _editor,
 				FramePanel _frame_panel) {
 			editor = _editor;
 			frame_panel = _frame_panel;
@@ -229,7 +229,7 @@ public class FramePanel extends JPanel
 
 	private FrameSettings settings = null;
 
-	public FramePanel(NetworkMapEditor _editor) {
+	public FramePanel(GuiSimulationEditorLauncher _editor) {
 		editor = _editor;
 		//sortedFrames = editor.getLayers();
 		setLayout(new BorderLayout());
