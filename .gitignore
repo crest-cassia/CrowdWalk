@@ -20,6 +20,7 @@ GTAGS
 
 # local setting data
 NetworkMapEditor.ini
+GuiSimulationLauncher.ini
 
 # execution result data
 tick.txt

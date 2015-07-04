@@ -53,7 +53,7 @@ processResources {
         "git rev-list HEAD".execute().in.eachLine { revision++ }
         def commit_hash = "git rev-parse --short HEAD".execute().text.trim()
 
-        filesMatching("netmas.properties") {
+        filesMatching("CrowdWalk.properties") {
             filter(ReplaceTokens, tokens: ['version': version])
             filter(ReplaceTokens, tokens: ['branch': branch])
             filter(ReplaceTokens, tokens: ['revision': "" + revision])
