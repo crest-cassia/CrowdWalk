@@ -421,7 +421,12 @@ public class WalkAgent extends AgentBase {
         /* agent drawing */
         //TODO should no call here, as lane should be set up properly
         MapLink currentLink = currentPlace.getLink() ;
-        currentLink.setup_lanes();
+
+        /* [2015.07.04 I.Noda]
+         * おそらくここでいちいち setup_lanes() を呼ぶのはおかしい。
+         * MapLink の update() で処理することにする。
+         */
+        //currentLink.setup_lanes();
 
         int w = currentPlace.getLaneWidth() ;
         int index = currentPlace.getIndexInLane(this) ;

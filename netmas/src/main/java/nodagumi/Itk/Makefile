@@ -130,11 +130,15 @@ run0smp_cui ::
 SAMPLE0sg2 = sample/simpleGrid2/properties.xml		#kawaguchi's sample
 run0sg2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2))
+run0sg2_cui ::
+	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE0sg2))
 
 ##-----
 SAMPLE0sg2p = sample/simpleGrid2/properties-plain.xml	#kawaguchi's sample
 run0sg2p ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2p))
+run0sg2p_cui ::
+	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE0sg2p))
 
 ##-----
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1

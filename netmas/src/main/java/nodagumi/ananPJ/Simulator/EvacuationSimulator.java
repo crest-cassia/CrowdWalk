@@ -1069,20 +1069,17 @@ public class EvacuationSimulator {
                             new Double((getTickCount() + 1) * timeScale));
                 }
             }
-            List<Map.Entry> entries = new ArrayList<Map.Entry>(goalTimes.entrySet());
+            List<String> agentIdList = new ArrayList<String>(goalTimes.keySet()) ;
             // 避難完了時刻順にソート
-            Collections.sort(entries, new Comparator<Map.Entry>() {
-                public int compare(Map.Entry ent1, Map.Entry ent2) {
-                    //return (Double)ent1.getValue() > (Double)ent2.getValue() ? 1 : 0;
-                    if ((Double)ent1.getValue() == (Double)ent2.getValue()) {
-                        return 0;
-                    } else if ((Double)ent1.getValue() > (Double)ent2.getValue()) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-            });
+            Collections
+                .sort(agentIdList,
+                      new Comparator<String>() {
+                          public int compare(String id0, String id1) {
+                              Double time0 = goalTimes.get(id0) ;
+                              Double time1 = goalTimes.get(id1) ;
+                              return time0.compareTo(time1) ;
+                          }
+                      });
 
             // Goal log を出力
             File fileLog = new File(resultDirectory + "/goalLog.log");
@@ -1098,8 +1095,8 @@ public class EvacuationSimulator {
                 // for (Integer id : goalTimes.keySet()) {
                     // writer.write(id + "," + goalTimes.get(id) + "\n");
                 // }
-                for (Map.Entry entry : entries) {
-                    writer.write(entry.getKey() + "," + entry.getValue() + "\n");
+                for (String agentId : agentIdList) {
+                    writer.write(agentId + "," + goalTimes.get(agentId) + "\n");
                 }
                 writer.close();
             } catch (IOException ioe) {

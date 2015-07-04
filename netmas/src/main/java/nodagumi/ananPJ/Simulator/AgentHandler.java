@@ -536,7 +536,7 @@ public class AgentHandler {
     /**
      * リンクの preprocess 処理
      */
-    private void preprocessLinks(double time) {
+    private void preUpdateLinks(double time) {
         synchronized (simulator) {
             for (MapLink link : simulator.getLinks()) {
                 link.preUpdate(time);
@@ -548,7 +548,7 @@ public class AgentHandler {
     /**
      * エージェントの preprocess 処理
      */
-    private void preprocessAgents(double time) {
+    private void preUpdateAgents(double time) {
         int count = 0;
 
         if (true) {
@@ -570,12 +570,6 @@ public class AgentHandler {
                         agent.preUpdate(time);
                         count += 1;
                     }
-                    /*
-                    for (AgentBase agent : link.getAgents()) {
-                        agent.preUpdate(time);
-                        count += 1;
-                    }
-                    */
                 }
             }
         }
@@ -591,11 +585,12 @@ public class AgentHandler {
         ArrayList<AgentBase> generatedAgentsInStep
             = generateAgentsAndSetup(time) ;
 
-        preprocessLinks(time);
-        preprocessAgents(time);
-        updateLinks(time);
+        preUpdateLinks(time);
+        preUpdateAgents(time);
         updateAgents(time);
         updatePollution();
+        updateLinks(time);
+
         updateAgentViews();
 
         /* the following must be here, as direction etc. are
@@ -706,17 +701,6 @@ public class AgentHandler {
             }
         }
     }
-    //------------------------------------------------------------
-    /**
-     * リンクの update 処理
-     */
-    private void updateLinks(double time) {
-        synchronized (simulator) {
-            for (MapLink link : simulator.getLinks()) {
-                link.update(time);
-            }
-        }
-    }
 
     //------------------------------------------------------------
     /**
@@ -786,10 +770,12 @@ public class AgentHandler {
      * エージェントの見え計算
      */
     private void updateAgentViews() {
-        for (AgentBase agent : getWalkingAgentCollection()){
-            if (agent.isEvacuated())
-                continue;
-            agent.updateViews();
+        if(hasDisplay()) {
+            for (AgentBase agent : getWalkingAgentCollection()){
+                if (agent.isEvacuated())
+                    continue;
+                agent.updateViews();
+            }
         }
     }
 
@@ -805,6 +791,24 @@ public class AgentHandler {
                 // evacuatedAgentCount++;
             } else {
                 double damage = agent.obstructer.accumulatedValueForLog() ;
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンクの update 処理。
+     */
+    private void updateLinks(double time) {
+        /* [2015.07.04 I.Noda]
+         * 現状で、表示関係の処理しかしていないので、
+         * Display を持っている場合のみ、処理。
+         */
+        if(hasDisplay()) {
+            synchronized (simulator) {
+                for (MapLink link : simulator.getLinks()) {
+                    link.update(time);
+                }
             }
         }
     }

@@ -262,7 +262,19 @@ public class MapLink extends OBMapPart {
         setup_lanes();
     }
 
+    /**
+     * リンクの処理。
+     * [2015.07.04 I.Noda]
+     * preUpdate と同じだが、表示のためにここでもやらないといけない。
+     * これまでは、agent ごとに setup_lanes を呼んでしまっていた。
+     * これを避けるためにここでまとめて処理してみる。
+     * 本来は、sort すべきか？
+     */
     public void update(double time) {
+        if(agents.isEmpty()) return ;
+
+        // Collections.sort(agents) ;
+        setup_lanes();
     }
 
     /**
