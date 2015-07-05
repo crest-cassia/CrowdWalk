@@ -650,55 +650,74 @@ public class EvacuationSimulator {
             System.exit(1);
         }
 
-        // 不要なメモリを速やかに解放する(メモリ消費量が多いほど実行速度が遅くなる傾向があるため)
+        // チェック
+        checkMapDefectiveness(all_goal_tags, no_goal_list) ;
+
+        // 不要なメモリを速やかに解放する
+        // (メモリ消費量が多いほど実行速度が遅くなる傾向があるため)
         workers = null;
         threads = null;
         System.gc();
 
-        if (no_goal_list.size() != 0) {
-            Itk.logWarn("no nodes with the following tag was found");
-            for (String tag : no_goal_list) {
-                Itk.logWarn_(tag);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 地図とゴールの完全性チェック。
+     * 初期ゴールまで辿り着かないノード・リンクのチェック。
+     * 「初期ゴール」とは、開始時点でゴールと認定されているタグのこと。
+     * @return ゴールに到達できないノードがあれば true。
+     */
+    private boolean checkMapDefectiveness(List<String> goalTagList,
+                                          List<String> phantomGoalTagList) {
+        boolean isDefective = false ;
+        // 目的地のないゴールのリスト。
+        if (phantomGoalTagList.size() > 0) {
+            Itk.logInfo("Found goal tags without places:", 
+                        phantomGoalTagList) ;
+            isDefective |= true ;
+        }
+
+        // ゴールにたどり着かないノードとリンクの数え上げ
+        ArrayList<String> unreachableGoalList = new ArrayList<String>() ;
+        ArrayList<Integer> unreachableNodeCount = new ArrayList<Integer>() ;
+        ArrayList<Integer> unreachableLinkCount = new ArrayList<Integer>() ;
+        for (String goal : goalTagList) {
+            int nodeCount = 0 ;
+            int linkCount = 0 ;
+            for (MapNode node : networkMap.getNodes()) {
+                if (node.getHint(goal) == null) {
+                    nodeCount += 1 ;
+                    for (MapLink link : node.getUsableLinkTable()) {
+                        //  link.addTag("INVALID_ROUTE");
+                        linkCount += 1 ;
+                    }
+                }
+            }
+            if(nodeCount + linkCount > 0) {
+                unreachableGoalList.add(goal) ;
+                unreachableNodeCount.add(nodeCount) ;
+                unreachableLinkCount.add(linkCount) ;
+                isDefective |= true ;
             }
         }
 
-        // tkokada: node check which no way to goal
-        boolean hasGoal = true;
-        ArrayList<Integer> numNoGoal = new ArrayList<Integer>();
-        for (String goal : all_goal_tags) {
-            int count = 0;
-            for (MapNode node : networkMap.getNodes()) {
-                MapLinkTable validLinks = node.getValidLinkTable();
-                boolean notHasAllLinks = false;
-                for (MapLink link : validLinks) {
-                    if (!link.hasTag("ALL_LINKS")) {
-                        notHasAllLinks = true;
-                        break;
-                    }
-                }
-                if (notHasAllLinks)
-                    continue;
-                if (node.getHint(goal) == null) {
-                    Itk.logWarn("buildRoute",
-                                "node:" + node.ID + " does not have any routes" +
-                                " for " + goal);
-                    hasGoal = false;
-                    count += 1;
-                    if (validLinks.size() > 0) {
-                        for (MapLink link : validLinks) {
-                            link.addTag("INVALID_ROUTE");
-                        }
-                    }
-                }
+        // 数え上げ結果報告
+        if(unreachableGoalList.size() > 0) {
+            for (int i = 0; i < unreachableGoalList.size(); i++) {
+                Itk.logInfo("Unreachable",
+                            "no route to",
+                            unreachableGoalList.get(i),
+                            "from",
+                            unreachableNodeCount.get(i), "nodes and",
+                            unreachableLinkCount.get(i), "links.") ;
             }
-            numNoGoal.add(count);
+        } else {
+            Itk.logInfo("Map Check",
+                        "all goals can be reachable from whole map.");
         }
-        // check whether all nodes have complete path to goals
-        Itk.logDebug("buildRoute: bug cheking...");
-        for (int i = 0; i < all_goal_tags.size(); i++)
-            Itk.logDebug("buildRoute: goal ",
-                         all_goal_tags.get(i) + " includes " +
-                         numNoGoal.get(i) + " no goal nodes.");
+
+        return isDefective ;
     }
 
     //------------------------------------------------------------
@@ -741,7 +760,7 @@ public class EvacuationSimulator {
     private void buildRubyEngine() {
         try {
             if(properties != null && properties.getBoolean("use_ruby", false)) {
-                Itk.logInfo("building Ruby engine...") ;
+                Itk.logInfo("Ruby Engine", "loading...") ;
                 // engine
                 rubyEngine = new ItkRuby() ;
                 // default load path
@@ -755,20 +774,23 @@ public class EvacuationSimulator {
                         rubyEngine.pushLoadPath(path) ;
                     }
                 }
-                Itk.logInfo("rubyEngine: LOAD_PATH", rubyEngine.getLoadPaths());
+                Itk.logInfo("Ruby Engine",
+                            "LOAD_PATH=", rubyEngine.getLoadPaths());
                 // load init file
                 if(rubyInitFile != null) {
-                    Itk.logInfo("rubyEngine: load init file", rubyInitFile) ;
+                    Itk.logInfo("Ruby Engine",
+                                "load init_file:", rubyInitFile) ;
                     rubyEngine.eval(String.format("require '%s'",rubyInitFile)) ;
                 }
                 // current dir を properties の directory へ。
                 rubyEngine.setCurrentDirectory(properties.getPropertiesDir()) ;
-                Itk.logInfo("rubyEngine: current dir.",
-                            rubyEngine.eval("Dir::pwd")) ;
+                Itk.logInfo("Ruby Engine",
+                            "current dir=", rubyEngine.eval("Dir::pwd")) ;
                 // init script
                 String initScript = properties.getString("ruby_init_script", null);
                 if(initScript != null) {
-                    Itk.logInfo("rubyEngine: eval init script", initScript) ;
+                    Itk.logInfo("Ruby Engine", 
+                                "eval init script=", initScript) ;
                     rubyEngine.eval(initScript) ;
                 }
                 // wrapperの作成
@@ -779,7 +801,7 @@ public class EvacuationSimulator {
                         rubyEngine.newInstanceOfClass(rubyWrapperClass, this) ;
                 }
                 //
-                Itk.logInfo("building Ruby engine. Done.") ;
+                Itk.logInfo("Ruby Engine", "loading... Done.") ;
             }
         } catch (Exception ex) {
             ex.printStackTrace() ;

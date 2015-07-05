@@ -110,8 +110,8 @@ public class Hover {
     public String getTagString() {
         return dummyHoverNode.getTagString();
     }
-    public MapLinkTable getPathways() {
-        return dummyHoverNode.getPathways();
+    public MapLinkTable getUsableLinkTable() {
+        return dummyHoverNode.getUsableLinkTable();
     }
 }
 // ;;; Local Variables:

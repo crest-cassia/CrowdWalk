@@ -12,6 +12,8 @@ import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
+import nodagumi.Itk.Itk;
+
 public class Dijkstra {
     static public class Result extends HashMap<MapNode, NodeLinkLen> {}
 
@@ -34,21 +36,17 @@ public class Dijkstra {
             MapNode pred = null;
             MapLink bestNext = null;
             for (MapNode frontierNode : frontier.keySet()) {
-                // System.err.println("Dijkstra frontierNode: " +
-                        // frontierNode.getTags());
-                for (MapLink nextLink : frontierNode.getPathwaysReverse()) {
-                //for (MapLink nextLink : frontierNode.getPathways()) {
+                synchronized(frontierNode) { /* [2015.07.05 I.Noda]
+                                              * thread並列探索での衝突を避ける
+                                              * ために、一旦cache作っておく。
+                                              */
+                    frontierNode.getValidReverseLinkTable() ; 
+                }
+                for (MapLink nextLink : frontierNode.getValidReverseLinkTable()) {
                     MapNode other_node = nextLink.getOther(frontierNode);
-                    // System.err.println("Dijkstra nextLink " + nextLink.ID +
-                            // " other: " + other_node.getTags() +
-                            // " frontierNode: " + frontierNode.getTags());
                     if (frontier.containsKey(other_node)) continue;
                     double len = frontier.get(frontierNode).len + 
                         nextLink.length * chooser.evacuationRouteCost(nextLink);
-                    // System.err.println("Dijkstra nextLink " + nextLink.ID +
-                            // " other: " + other_node.getTags() +
-                            // " frontierNode: " + frontierNode.getTags() +
-                            // " len: " + len);
                     if (len < minLength) {
                         minLength = len;
                         bestNode =  other_node;

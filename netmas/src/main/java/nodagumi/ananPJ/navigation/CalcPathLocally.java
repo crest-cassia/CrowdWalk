@@ -43,7 +43,7 @@ public class CalcPathLocally extends Thread {
 		Nodes subgoals = new Nodes();
 		//TODO: exits and other stairs are treated equally, but should not be
 		for (MapNode node : nodes) {
-			for (MapLink link : node.getPathways()) {
+			for (MapLink link : node.getUsableLinkTable()) {
 				if (chooser.isExit(link)) {
 					subgoals.add(node);
 					break;

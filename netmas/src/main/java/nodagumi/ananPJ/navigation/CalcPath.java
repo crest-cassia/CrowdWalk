@@ -63,7 +63,7 @@ public class CalcPath {
         Nodes subgoals = new Nodes();
         for (MapNode node : nodes) {
             PathChooser chooser = factory.generate(node.getHeight());           
-            for (MapLink link : node.getPathways()) {
+            for (MapLink link : node.getUsableLinkTable()) {
                 if (chooser.isExit(link)) {
                     subgoals.add(node);
                 }
@@ -92,7 +92,7 @@ public class CalcPath {
         for (MapNode node : subgoals) {
             boolean added = false;
             PathChooser chooser = factory.generate(node.getHeight());
-            for (MapLink link : node.getPathways()) {
+            for (MapLink link : node.getUsableLinkTable()) {
                 if (!chooser.isExit(link)) continue;
 
                 MapNode other = link.getOther(node);

@@ -936,8 +936,8 @@ public class MapLink extends OBMapPart {
      * ノードのcacheをクリア。
      */
     private void clearCacheInNodes() {
-        if(fromNode != null) fromNode.clearCache() ;
-        if(toNode != null) toNode.clearCache() ;
+        if(fromNode != null) fromNode.clearUsableLinkTableCache() ;
+        if(toNode != null) toNode.clearUsableLinkTableCache() ;
     }
 
     public String toString() {

@@ -626,12 +626,11 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // total number of generated agents
         genConfig.total = Integer.parseInt(columns.get());
-        if (liner_generate_agent_ratio > 0) {
+        if (liner_generate_agent_ratio != 1) {
             Itk.logInfo("use liner_generate_agent_ratio",
                         "genConfig.total:", genConfig.total,
                         "ratio:", liner_generate_agent_ratio);
             genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
-            Itk.logInfo("Agent Population (CSV)",genConfig.total);
         }
 
         // speed model

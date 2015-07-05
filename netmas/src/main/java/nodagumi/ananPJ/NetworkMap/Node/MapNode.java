@@ -147,14 +147,14 @@ public class MapNode extends OBMapPart {
     public boolean addLink(MapLink link) {
         if (links.contains(link)) return false;
         links.add(link);
-        clearCache() ;
+        clearUsableLinkTableCache() ;
         return true;
     }
 
     public boolean removeLink(MapLink link) {
         if (!links.contains(link)) return false;
         links.remove(link);
-        clearCache() ;
+        clearUsableLinkTableCache() ;
         return true;
     }
 
@@ -166,34 +166,52 @@ public class MapNode extends OBMapPart {
     /**
      * 一方通行を考慮して、つながっているリンクを集める。
      */
-    public MapLinkTable getValidLinkTable () {
-        if(validLinkTableCache == null) { // cacheがクリアされていれば作成。
-            validLinkTableCache = new MapLinkTable();
+    public MapLinkTable getUsableLinkTable() {
+        if(usableLinkTableCache == null) { // cacheがクリアされていれば作成。
+            usableLinkTableCache = new MapLinkTable();
             for (MapLink link : links) {
                 if (!((link.isOneWayForward() && link.getTo() == this) ||
                       (link.isOneWayBackward() && link.getFrom() == this) ||
                       (link.isRoadClosed()))) {
-                    validLinkTableCache.add(link);
+                    usableLinkTableCache.add(link);
                 }
             }
         }
-        return validLinkTableCache ;
+        return usableLinkTableCache ;
     }
+
     /**
-     * getValidLinkTable を効率化するための cache
+     * getUsableLinkTable を効率化するための cache
      * Node とそれに繋がるリンクのタグなどが変化すれば、
      * reset されなければならない。
-     * その際には、resetValidLinkTable() を呼ぶこと。
+     * その際には、resetUsableLinkTable() を呼ぶこと。
      */
-    private MapLinkTable validLinkTableCache = null ;
+    private MapLinkTable usableLinkTableCache = null ;
 
+    //------------------------------------------------------------
     /**
-     * getValidLinkTable を効率化するための cache を開放する。
+     * 一方通行を考慮して、つながっているリンクを集める。
+     * Dijkstra で使われるだけなので、cache しない。
      */
-    public void clearValidLinkTable() {
-        validLinkTableCache = null ;
+    public MapLinkTable getValidReverseLinkTable () {
+        MapLinkTable usableReverseLinkTable = new MapLinkTable();
+        for (MapLink link : links) {
+            if (!((link.isOneWayForward() && link.getFrom() == this) ||
+                  (link.isOneWayBackward() && link.getTo() == this) ||
+                  (link.isRoadClosed()))) {
+                usableReverseLinkTable.add(link);
+            }
+        }
+        return usableReverseLinkTable ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * getUsableLinkTable を効率化するための cache を開放する。
+     */
+    public void clearUsableLinkTableCache() {
+        usableLinkTableCache = null ;
+    }
 
     public MapLink connectedTo(MapNode node) {
         for (MapLink link : links) {

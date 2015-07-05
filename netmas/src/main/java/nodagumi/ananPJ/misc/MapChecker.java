@@ -131,13 +131,13 @@ public class MapChecker {
                 MapNode node = path.peek();
                 Integer index = selection.pop();
 
-                final MapLinkTable paths  = node.getPathways();
-                if (index == paths.size()) {
+                final MapLinkTable linkList  = node.getUsableLinkTable();
+                if (index == linkList.size()) {
                     path.pop();
                     continue;
                 }
 
-                final MapLink link = paths.get(index);
+                final MapLink link = linkList.get(index);
                 ++index;
                 selection.push(index);
 

@@ -511,8 +511,7 @@ public class EditorFramePanel extends JPanel {
         g.drawString(hoverNode.getTagString(),
                 (int)hoverNode.getX(), (int)hoverNode.getY());
 
-        MapLinkTable paths = hoverNode.getPathways();
-        for (MapLink path : paths) {
+        for (MapLink path : hoverNode.getUsableLinkTable()) {
             MapNode otherNode = path.getOther(hoverNode.getDummyHoverNode());
             HashMap<String, NavigationHint> hints = otherNode.getHints();
             float dy = 0;
@@ -520,9 +519,8 @@ public class EditorFramePanel extends JPanel {
                 dy += 10 / scale;
                 NavigationHint hint = hints.get(key);
                 g.drawString(key + " " + hint.distance,
-                        (float)otherNode.getAbsoluteX(),
-                        (float)otherNode.getAbsoluteY() + dy);
-                
+                             (float)otherNode.getAbsoluteX(),
+                             (float)otherNode.getAbsoluteY() + dy);
             }
         }
     }

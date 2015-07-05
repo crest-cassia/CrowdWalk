@@ -508,7 +508,7 @@ public class WalkAgent extends AgentBase {
 
         // 進行可能なリンクが見つからず停止している状態ならばスタックさせる
         if (speed == 0.0) {
-            MapLinkTable way_candidates = currentPlace.getHeadingNode().getValidLinkTable();
+            MapLinkTable way_candidates = currentPlace.getHeadingNode().getUsableLinkTable();
             if (way_candidates.size() == 0) {
                 Itk.logInfo("Agent stuck", String.format("%s ID: %s, time: %.1f, linkID: %s",
                             getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
@@ -897,7 +897,7 @@ public class WalkAgent extends AgentBase {
          * この修正によって、swing_width が更新されないため、不自然な描画の発生は防がれています。
          */
         if (currentPlace.getLink().width == previousLink.width &&
-            passingNode.getValidLinkTable().size() == 2) {
+            passingNode.getUsableLinkTable().size() == 2) {
             if (direction_orig != getDirection()) { swing_width *= -1; }
             update_swing_flag = false;
         } else {
@@ -931,7 +931,7 @@ public class WalkAgent extends AgentBase {
                                RoutePlan workingRoutePlan,
                                boolean on_node) {
         final MapLinkTable way_candidates
-            = passingPlace.getHeadingNode().getValidLinkTable();
+            = passingPlace.getHeadingNode().getUsableLinkTable();
 
         /* trapped? */
         if (way_candidates.size() == 0) {
@@ -999,7 +999,7 @@ public class WalkAgent extends AgentBase {
         backupSituationForSaneNavigationFromNodeBefore(passingPlace);
 
         MapLinkTable way_candidates =
-            passingPlace.getHeadingNode().getValidLinkTable();
+            passingPlace.getHeadingNode().getUsableLinkTable();
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
         MapLink way = null;

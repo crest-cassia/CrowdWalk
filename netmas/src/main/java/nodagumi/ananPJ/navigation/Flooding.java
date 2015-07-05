@@ -25,7 +25,7 @@ public class Flooding extends Dijkstra {
         }
         while (terminals.size() > 0) {
             for (MapNode terminal : terminals.keySet()) {
-                for (MapLink nextLink : terminal.getPathwaysReverse()) {
+                for (MapLink nextLink : terminal.getValidReverseLinkTable()) {
                     MapNode other_node = nextLink.getOther(terminal);
                     if (frontier.containsKey(other_node))
                         continue;
@@ -38,8 +38,6 @@ public class Flooding extends Dijkstra {
     }
 
     
-    //private MapNodeTable nodes = null;
-    //private MapLinkTable links = null;
     private NetworkMap map = null ;
 
     private ArrayList<String> goalTags = null;
@@ -82,32 +80,32 @@ public class Flooding extends Dijkstra {
                 // goal node already has the goal
                 determinedNodes.add(node);
                 // set first terminal nodes
-                for (MapLink pathWay : node.getPathways()) {
+                for (MapLink link : node.getUsableLinkTable()) {
                     // one of the linked node with node variable (of goalNodes)
-                    MapNode otherNode = pathWay.getOther(node);
+                    MapNode otherNode = link.getOther(node);
                     terminalNodes.add(otherNode);
                     determinedNodes.add(otherNode);
                     for (FloodingRoutingTable table : tables) {
                         if (table.getEntryNode() == otherNode)
                             table.addFloodingRouteEntry(new
                                 FloodingRouteEntry(otherNode, goalTag,
-                                    pathWay, pathWay.length));;
+                                    link, link.length));;
                     }
                 }
                 while (terminalNodes.size() > 0) {
                     MapNodeTable oldTerminalNodes = terminalNodes;
                     terminalNodes.clear();
                     for (MapNode terminalNode : oldTerminalNodes) {
-                        for (MapLink pathWay : terminalNode.getPathways()) {
-                            MapNode otherNode = pathWay.getOther(node);
+                        for (MapLink link : terminalNode.getUsableLinkTable()) {
+                            MapNode otherNode = link.getOther(node);
                             if (!determinedNodes.contains(otherNode)) {
                                 terminalNodes.add(otherNode);
                                 for (FloodingRoutingTable table : tables) {
                                     if (table.getEntryNode() == otherNode) {
                                         table.addFloodingRouteEntry(new
                                             FloodingRouteEntry(otherNode,
-                                                goalTag, pathWay,
-                                                pathWay.length));;
+                                                goalTag, link,
+                                                link.length));;
                                         break;
                                     }
                                 }
