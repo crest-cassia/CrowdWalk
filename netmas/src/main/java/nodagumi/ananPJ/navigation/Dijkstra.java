@@ -36,12 +36,6 @@ public class Dijkstra {
             MapNode pred = null;
             MapLink bestNext = null;
             for (MapNode frontierNode : frontier.keySet()) {
-                synchronized(frontierNode) { /* [2015.07.05 I.Noda]
-                                              * thread並列探索での衝突を避ける
-                                              * ために、一旦cache作っておく。
-                                              */
-                    frontierNode.getValidReverseLinkTable() ; 
-                }
                 for (MapLink nextLink : frontierNode.getValidReverseLinkTable()) {
                     MapNode other_node = nextLink.getOther(frontierNode);
                     if (frontier.containsKey(other_node)) continue;
