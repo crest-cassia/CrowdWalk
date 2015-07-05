@@ -325,7 +325,7 @@ public class WalkAgent extends AgentBase {
         super.setGoal(_goal) ;
 
         if(!oldGoal.equals(_goal))
-            renavigate() ;
+            prepareRoutePlan() ;
     }
 
 	//############################################################
@@ -346,7 +346,7 @@ public class WalkAgent extends AgentBase {
             }
             speed = 0;
 
-            renavigate(routePlan);
+            prepareRoutePlan() ;
         }
     }
 
@@ -969,19 +969,15 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-     * for call outside
+     * 新しい routePlan の準備。
+     * 一度 calcNextTarget を呼び出しておいて、
+     * ゴール・サブゴールなどのチェックを行う。
+     * すでに達成しているサブゴールなどはスキップ。
      */
-    public void renavigate() {
-        renavigate(routePlan) ;
-    }
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public void renavigate(RoutePlan workingRoutePlan) {
+    protected void prepareRoutePlan() {
         if (goal != null){
             calcNextTarget(currentPlace.getHeadingNode(),
-                           workingRoutePlan, false);
+                           routePlan, false);
         }
     }
 
