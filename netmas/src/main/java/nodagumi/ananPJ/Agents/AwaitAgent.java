@@ -126,12 +126,12 @@ public class AwaitAgent extends WalkAgent {
         if (d < 0.0) {
             d = 0.0;
         }
-        calc_speed(time);
+        calcSpeed(time);
         if (d > speed) {
             d = speed;
         }
         // scatter 制御を破綻させないため move_set() 内の d * time_scale を無効化する
-        return move_set(d / time_scale, time, false);
+        return advanceNextPlace(d / time_scale, time, true) ;
     }
     
     //----------------------------------------------------------------------
@@ -139,9 +139,9 @@ public class AwaitAgent extends WalkAgent {
      * できるだけ過密に並ぶ
      */
     protected boolean pack(double time) {
-        calc_speed(time);
+        calcSpeed(time);
 
-        return move_set(speed, time, false);
+        return advanceNextPlace(speed, time, true) ;
     }
 
     static final double NOT_WAITING = -100.0;

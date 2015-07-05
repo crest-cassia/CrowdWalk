@@ -132,8 +132,8 @@ public class WalkAgent extends AgentBase {
     /**
      * リンク上の次の位置。
      * 0 以下あるいはリンク長より大きい場合、次のリンクに移っていることになる。
-     * move_set() でセット。
-     * move_commit() のなかで、setPosition() される。
+     * advanceNextPlace() でセット。
+     * moveToNextPlace() のなかで、setPosition() される。
      */
     protected Place nextPlace = new Place();
 
@@ -207,11 +207,14 @@ public class WalkAgent extends AgentBase {
 
             Place currentPlace = agent.currentPlace ;
 
-            return (!isForced &&
-                    currentLink == currentPlace.getLink() &&
-                    link == passingPlace.getLink() &&
-                    node == passingPlace.getHeadingNode() &&
-                    agent.emptySpeed < currentPlace.getRemainingDistance()) ;
+            boolean result =
+                (!isForced &&
+                 currentLink == currentPlace.getLink() &&
+                 link == passingPlace.getLink() &&
+                 node == passingPlace.getHeadingNode() &&
+                 agent.emptySpeed < currentPlace.getRemainingDistance()) ;
+
+            return result ;
         }
 
         //----------------------------------------
@@ -468,8 +471,8 @@ public class WalkAgent extends AgentBase {
     @Override
     public void preUpdate(double time) {
         super.preUpdate(time) ;
-        calc_speed(time);
-        move_set(speed, time, true);
+        calcSpeed(time);
+        advanceNextPlace(speed, time, false);
     }
 
     //------------------------------------------------------------
@@ -508,23 +511,26 @@ public class WalkAgent extends AgentBase {
     //------------------------------------------------------------
     /**
      * 次の位置を計算。(new) [2015.01.10 I.Noda]
+     * ただし、nextPlace での距離を進めるだけ。
+     * 次のリンクへは移らず、はみ出した距離ははみ出したまま。
      * @param d : speed に相当する大きさ。単位時間に進める長さ。
      *     [2015.01.10 I.Noda] direction はかかっていないものとする。
      * @param time : 時間ステップ。1.0 が1秒。
-     * @param will_move_out : 次のリンクに進むかどうか。WaitDirective 用。
+     * @param stayOnLink : 現在のリンクにとどまるかどうか。WaitDirective 用。
+     *    true なら、link をはみ出す場合、はみ出さない距離に調整する。
      */
-    protected boolean move_set(double d, double time, boolean will_move_out) {
+    protected boolean advanceNextPlace(double d, double time, boolean stayOnLink) {
         nextPlace.set(currentPlace) ;
         double distToMove = d * time_scale ;
-        nextPlace.makeAdvance(d * time_scale, !will_move_out) ;
+        nextPlace.makeAdvance(distToMove, stayOnLink) ;
         return false ;
     }
 
     //------------------------------------------------------------
     /**
-     * move_commit
+     * moveToNextPlace
      */
-    protected boolean move_commit(double time) {
+    protected boolean moveToNextPlace(double time) {
         currentPlace.set(nextPlace) ;
         while (!currentPlace.isOnLink()) {
 
@@ -567,10 +573,13 @@ public class WalkAgent extends AgentBase {
 
         // 進行可能なリンクが見つからず停止している状態ならばスタックさせる
         if (speed == 0.0) {
-            MapLinkTable way_candidates = currentPlace.getHeadingNode().getUsableLinkTable();
-            if (way_candidates.size() == 0) {
-                Itk.logInfo("Agent stuck", String.format("%s ID: %s, time: %.1f, linkID: %s",
-                            getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
+            MapLinkTable nextLinkList
+                = currentPlace.getHeadingNode().getUsableLinkTable();
+            if (nextLinkList.size() == 0) {
+                Itk.logInfo("Agent stuck", 
+                            String.format("%s ID: %s, time: %.1f, linkID: %s",
+                                          getTypeName(), this.ID, time,
+                                          currentPlace.getLink().ID)) ;
                 finalizeEvacuation(time, false, true) ;
 
                 return true;
@@ -597,7 +606,7 @@ public class WalkAgent extends AgentBase {
             return true;
         }
 
-        boolean ret = move_commit(time);
+        boolean ret = moveToNextPlace(time);
         if(currentPlace.isWalking()) lastPlace.set(currentPlace) ;
 
         return ret ;
@@ -623,13 +632,13 @@ public class WalkAgent extends AgentBase {
     /**
      * 速度計算
      */
-    protected void calc_speed(double time) {
+    protected void calcSpeed(double time) {
         switch (calculation_model) {
         case LaneModel:
-            calc_speed_lane_generic(time,calculation_model) ;
+            calcSpeedLaneGeneric(time,calculation_model) ;
             break;
         case PlainModel:
-            calc_speed_lane_generic(time,calculation_model);
+            calcSpeedLaneGeneric(time,calculation_model);
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
@@ -719,8 +728,8 @@ public class WalkAgent extends AgentBase {
     /**
      * lane および plain による速度計算
      */
-    private void calc_speed_lane_generic(double time,
-                                         SpeedCalculationModel model) {
+    private void calcSpeedLaneGeneric(double time,
+                                      SpeedCalculationModel model) {
         /* base speed */
         double baseSpeed =
             currentPlace.getLink().calcEmptySpeedForAgent(emptySpeed,
