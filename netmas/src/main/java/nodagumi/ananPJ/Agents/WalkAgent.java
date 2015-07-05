@@ -359,12 +359,12 @@ public class WalkAgent extends AgentBase {
         MapNode fromNode = currentPlace.getFromNode();
         currentPlace.setEnteringNode(fromNode) ;
         double costOfForwardDirection =
-            calcCostFromPlaceTo(currentPlace, routePlan) ;
+            calcCostFromPlace(currentPlace, routePlan) ;
 
         // backwardDirection に変更。
         currentPlace.turnAround() ;
         double costOfBackwardDirection =
-            calcCostFromPlaceTo(currentPlace, routePlan) ;
+            calcCostFromPlace(currentPlace, routePlan) ;
 
         //もし forward の方が低コストなら、再度 turnAround
         if(costOfForwardDirection < costOfBackwardDirection) {
@@ -385,7 +385,7 @@ public class WalkAgent extends AgentBase {
         MapLink bestLink = null ;
         for(MapLink link : startNode.getLinks()) {
             currentPlace.setLink(link) ;
-            double dist = calcCostFromPlaceTo(currentPlace, routePlan) ;
+            double dist = calcCostFromPlace(currentPlace, routePlan) ;
             if(dist < bestDist) {
                 bestLink = link ;
                 bestDist = dist ;
@@ -1173,8 +1173,8 @@ public class WalkAgent extends AgentBase {
      * @param _routePlan : 現在の経路計画。保存される。
      * @return コスト<br>次の目的地へのルートが見つからない場合は Double.MAX_VALUE を返す
      */
-    public double calcCostFromPlaceTo(Place _place,
-                                      final RoutePlan _routePlan) {
+    protected double calcCostFromPlace(Place _place,
+                                       final RoutePlan _routePlan) {
         RoutePlan workingRoutePlan = _routePlan.duplicate() ;
         Term target = calcNextTarget(_place.getHeadingNode(),
                                      workingRoutePlan,false) ;
