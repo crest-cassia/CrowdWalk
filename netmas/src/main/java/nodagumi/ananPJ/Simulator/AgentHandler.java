@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -181,7 +182,7 @@ public class AgentHandler {
     /**
      * エージェントが存在するリンクのリスト
      */
-    private HashSet<MapLink> effectiveLinks = new HashSet<MapLink>() ;
+    private HashSet<MapLink> effectiveLinkSet = new HashSet<MapLink>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -531,7 +532,7 @@ public class AgentHandler {
             agent.prepareForSimulation(simulator.getTimeScale());
         }
         // 初回は全リンクを対象とする
-        clearEffectiveLinks() ;
+        clearEffectiveLinkSet() ;
         for(MapLink link : simulator.getLinks()) {
             addEffectiveLink(link) ;
         }
@@ -543,8 +544,18 @@ public class AgentHandler {
      */
     private void preUpdateLinks(double time) {
         synchronized (simulator) {
-            for (MapLink link : simulator.getLinks()) {
-                link.preUpdate(time);
+            //            for (MapLink link : simulator.getLinks()) {
+            // Iterator をちゃんと動かすために、remove は別のところへ退避。
+            ArrayList<MapLink> emptyLinkList = new ArrayList<MapLink>() ;
+            for(MapLink link : getEffectiveLinkSet()) {
+                if(link.agents.isEmpty()) {
+                    emptyLinkList.add(link) ;
+                } else {
+                    link.preUpdate(time);
+                }
+            }
+            for(MapLink link : emptyLinkList) {
+                removeEffectiveLink(link) ;
             }
         }
     }
@@ -554,11 +565,9 @@ public class AgentHandler {
      * エージェントの preprocess 処理
      */
     private void preUpdateAgents(double time) {
-        int count = 0;
-
         if (true) {
             synchronized (simulator) {
-                for (MapLink link : effectiveLinks) {
+                for (MapLink link : getEffectiveLinkSet()) {
                     ArrayList<AgentBase> forwardAgents = link.getLane(1.0);
                     for(int i = 0 ; i < forwardAgents.size() ; i++) {
                         AgentBase agent =
@@ -567,13 +576,11 @@ public class AgentHandler {
                              forwardAgents.get(i)) ;
 
                         agent.preUpdate(time);
-                        count += 1;
                     }
                     ArrayList<AgentBase> backwardAgents = link.getLane(-1.0);
                     for (int i = backwardAgents.size() - 1; i >= 0; --i) {
                         AgentBase agent = backwardAgents.get(i);
                         agent.preUpdate(time);
-                        count += 1;
                     }
                 }
             }
@@ -603,7 +610,7 @@ public class AgentHandler {
          * [2015.05.25 I.Noda] おそらく表示のために、ここにないといけない。
          */
         registerGeneratedAgentsInStep(generatedAgentsInStep) ;
-        updateEffectiveLinksAndRemoveEvacuatedAgents() ;
+        updateEffectiveLinkSetAndRemoveEvacuatedAgents() ;
         notifyMovedAgents() ;
     }
 
@@ -654,9 +661,14 @@ public class AgentHandler {
      * さらに、
      * evacuate したエージェントを、walkingAgentTable から除く。
      */
-    private void updateEffectiveLinksAndRemoveEvacuatedAgents() {
+    private void updateEffectiveLinkSetAndRemoveEvacuatedAgents() {
         // エージェントが存在するリンクのリストを更新
-        clearEffectiveLinks() ;
+        /** [2015.07.05 I.Noda]
+         * effectiveLinkSet を、HashSet としたので、
+         * いちいちクリアする必要はない。
+         * エージェントがいなくなったリンクは、preUpdateLinks() で削除される。
+         */
+        //clearEffectiveLinkSet() ;
         ArrayList<AgentBase> evacuatedAgentsInStep = new ArrayList<AgentBase>() ;
         for (AgentBase agent : getWalkingAgentCollection()) {
             if(agent.isEvacuated()) {
@@ -1041,19 +1053,36 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * effective link の登録
-     * @param link : 追加するリンク。
+     * effective link のクリア
      */
-    private void addEffectiveLink(MapLink link) {
-        effectiveLinks.add(link) ;
+    private void clearEffectiveLinkSet() {
+        effectiveLinkSet.clear() ;
     }
 
     //------------------------------------------------------------
     /**
      * effective link のクリア
      */
-    private void clearEffectiveLinks() {
-        effectiveLinks.clear() ;
+    private Set<MapLink> getEffectiveLinkSet() {
+        return effectiveLinkSet ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective link の登録
+     * @param link : 追加するリンク。
+     */
+    private void addEffectiveLink(MapLink link) {
+        effectiveLinkSet.add(link) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective link の削除
+     * @param link : 削除するリンク。
+     */
+    private void removeEffectiveLink(MapLink link) {
+        effectiveLinkSet.remove(link) ;
     }
 
     //------------------------------------------------------------

@@ -162,84 +162,38 @@ public class MapNode extends OBMapPart {
         return links;
     }
 
-    /**
-     * getPathways などを効率化するための cache を開放する。
-     */
-    public void clearCache() {
-        cachePathways = null ;
-        cachePathwaysReverse = null ;
-    }
-
-    /**
-     * getPathways を効率化するための cache
-     * Node とそれに繋がるリンクのタグなどが変化すれば、
-     * reset されなければならない。
-     * その際には、resetCache() を呼ぶこと。
-     */
-    private MapLinkTable cachePathways = null ;
-
+    //------------------------------------------------------------
     /**
      * 一方通行を考慮して、つながっているリンクを集める。
      */
-    public MapLinkTable getPathways () {
-        // もしすでに cache があれば、それを返す。
-		if(cachePathways != null) return cachePathways ;
-
-        /* modification to apply One-way link */
-        cachePathways = new MapLinkTable();
-        for (MapLink link : links) {
-            if (link.isOneWayForward() &&
-                    (link.getTo() == this)) {
-                continue;
+    public MapLinkTable getValidLinkTable () {
+        if(validLinkTableCache == null) { // cacheがクリアされていれば作成。
+            validLinkTableCache = new MapLinkTable();
+            for (MapLink link : links) {
+                if (!((link.isOneWayForward() && link.getTo() == this) ||
+                      (link.isOneWayBackward() && link.getFrom() == this) ||
+                      (link.isRoadClosed()))) {
+                    validLinkTableCache.add(link);
+                }
             }
-            if (link.isOneWayBackward() &&
-                    link.getFrom() == this) {
-                continue;
-            }
-            if (link.isRoadClosed()) {
-                continue;
-            }
-            cachePathways.add(link);
         }
-
-        /* original: return links */
-        return cachePathways;
+        return validLinkTableCache ;
     }
-
     /**
-     * getPathwaysReverse を効率化するための cache
+     * getValidLinkTable を効率化するための cache
      * Node とそれに繋がるリンクのタグなどが変化すれば、
      * reset されなければならない。
-     * その際には、resetCache() を呼ぶこと。
+     * その際には、resetValidLinkTable() を呼ぶこと。
      */
-    private MapLinkTable cachePathwaysReverse = null ;
+    private MapLinkTable validLinkTableCache = null ;
 
     /**
-     * 一方通行を考慮して、つながっているリンクを集める。
+     * getValidLinkTable を効率化するための cache を開放する。
      */
-    public MapLinkTable getPathwaysReverse () {
-		if(cachePathwaysReverse != null) return cachePathwaysReverse ;
-
-        /* modification to apply One-way link */
-        MapLinkTable availableLinks = new MapLinkTable();
-        for (MapLink link : links) {
-            if (link.isOneWayForward() &&
-                    (link.getFrom() == this)) {
-                continue;
-            }
-            if (link.isOneWayBackward() &&
-                    link.getTo() == this) {
-                continue;
-            }
-            if (link.isRoadClosed()) {
-                continue;
-            }
-            availableLinks.add(link);
-        }
-
-        /* original: return links */
-        return availableLinks;
+    public void clearValidLinkTable() {
+        validLinkTableCache = null ;
     }
+
 
     public MapLink connectedTo(MapNode node) {
         for (MapLink link : links) {

@@ -23,7 +23,7 @@ import nodagumi.Itk.*;
 
 /* TODOs:
  * - make each junction a waiting queue
- * - agents change their directions in pathway
+ * - agents change their directions in valid links
  * - agents should not go back to the same path many times
  */
 
@@ -508,7 +508,7 @@ public class WalkAgent extends AgentBase {
 
         // 進行可能なリンクが見つからず停止している状態ならばスタックさせる
         if (speed == 0.0) {
-            MapLinkTable way_candidates = currentPlace.getHeadingNode().getPathways();
+            MapLinkTable way_candidates = currentPlace.getHeadingNode().getValidLinkTable();
             if (way_candidates.size() == 0) {
                 Itk.logInfo("Agent stuck", String.format("%s ID: %s, time: %.1f, linkID: %s",
                             getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
@@ -821,16 +821,6 @@ public class WalkAgent extends AgentBase {
             workingPlace.transitTo(nextLink) ;
         }
 
-        /* [2015.05.27 I.Noda]
-         * スピードダウンの原因追及のためのチェック。
-         */
-        if(false && totalForce < lowerBound) {
-            Itk.dbgVal("WalkAgent:count", count) ;
-            Itk.dbgVal("WalkAgent:countOther", countOther) ;
-            Itk.dbgVal("WalkAgent:totalForce", totalForce) ;
-            Itk.dbgVal("WalkAgent:lowerBound", lowerBound) ;
-        }
-
         return totalForce ;
     }
 
@@ -907,7 +897,7 @@ public class WalkAgent extends AgentBase {
          * この修正によって、swing_width が更新されないため、不自然な描画の発生は防がれています。
          */
         if (currentPlace.getLink().width == previousLink.width &&
-            passingNode.getPathways().size() == 2) {
+            passingNode.getValidLinkTable().size() == 2) {
             if (direction_orig != getDirection()) { swing_width *= -1; }
             update_swing_flag = false;
         } else {
@@ -941,7 +931,7 @@ public class WalkAgent extends AgentBase {
                                RoutePlan workingRoutePlan,
                                boolean on_node) {
         final MapLinkTable way_candidates
-            = passingPlace.getHeadingNode().getPathways();
+            = passingPlace.getHeadingNode().getValidLinkTable();
 
         /* trapped? */
         if (way_candidates.size() == 0) {
@@ -1009,7 +999,7 @@ public class WalkAgent extends AgentBase {
         backupSituationForSaneNavigationFromNodeBefore(passingPlace);
 
         MapLinkTable way_candidates =
-            passingPlace.getHeadingNode().getPathways();
+            passingPlace.getHeadingNode().getValidLinkTable();
         double min_cost = Double.MAX_VALUE;
         double min_cost_second = Double.MAX_VALUE;
         MapLink way = null;

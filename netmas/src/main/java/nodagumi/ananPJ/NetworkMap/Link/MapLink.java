@@ -152,7 +152,7 @@ public class MapLink extends OBMapPart {
     static protected double MAX_INPUT = 1.47; 
 
     /* place holder for values used in simulation */
-    protected ArrayList<AgentBase> agents;
+    public ArrayList<AgentBase> agents;
     protected double timeScale = 1.0;
     private boolean nodes_are_set = false;
 

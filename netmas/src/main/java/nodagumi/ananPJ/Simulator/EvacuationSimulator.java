@@ -665,13 +665,12 @@ public class EvacuationSimulator {
         // tkokada: node check which no way to goal
         boolean hasGoal = true;
         ArrayList<Integer> numNoGoal = new ArrayList<Integer>();
-        int totalValidNodes = 0;
         for (String goal : all_goal_tags) {
             int count = 0;
             for (MapNode node : networkMap.getNodes()) {
-                MapLinkTable pathways = node.getPathways();
+                MapLinkTable validLinks = node.getValidLinkTable();
                 boolean notHasAllLinks = false;
-                for (MapLink link : pathways) {
+                for (MapLink link : validLinks) {
                     if (!link.hasTag("ALL_LINKS")) {
                         notHasAllLinks = true;
                         break;
@@ -679,17 +678,14 @@ public class EvacuationSimulator {
                 }
                 if (notHasAllLinks)
                     continue;
-                if (goal.equals("EXIT"))
-                    totalValidNodes += 1;
                 if (node.getHint(goal) == null) {
                     Itk.logWarn("buildRoute",
                                 "node:" + node.ID + " does not have any routes" +
                                 " for " + goal);
                     hasGoal = false;
                     count += 1;
-                    if (pathways.size() > 0) {
-                        //((MapLink) pathways.get(0)).addTag("INVALID_ROUTE");
-                        for (MapLink link : pathways) {
+                    if (validLinks.size() > 0) {
+                        for (MapLink link : validLinks) {
                             link.addTag("INVALID_ROUTE");
                         }
                     }
@@ -702,8 +698,7 @@ public class EvacuationSimulator {
         for (int i = 0; i < all_goal_tags.size(); i++)
             Itk.logDebug("buildRoute: goal ",
                          all_goal_tags.get(i) + " includes " +
-                         numNoGoal.get(i) + " no goal nodes / all nodes" +
-                         totalValidNodes + ".");
+                         numNoGoal.get(i) + " no goal nodes.");
     }
 
     //------------------------------------------------------------
