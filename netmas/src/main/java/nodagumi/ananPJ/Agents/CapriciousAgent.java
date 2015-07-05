@@ -15,7 +15,7 @@
  *   <LI> typeString を static で定義。これにクラス名(short name)をいれる。
  *   <LI> getTypeName() も定義しておく </LI>
  *   <LI> コンストラクタは、引数なし、2引数、6引数のものを定義しておく <LI>
- *   <LI> calcWayCostTo() を定義する。
+ *   <LI> calcCostFromNodeViaLink() を定義する。
  *        ここを工夫すると、経路選択をいろいろいじれる</LI>
  *   <LI> Agents/AgentFactory.java の、AgentFactory._dummyAgents に、
  *        新しいクラスのインスタンスを追加しておく。
@@ -95,8 +95,8 @@ public class CapriciousAgent extends NaiveAgent {
      * 正規のコストに、ランダム要素を加味する。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
-        double cost = super.calcWayCostTo(_way, _node, _target) ;
+    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node, Term _target) throws TargetNotFoundException {
+        double cost = super.calcCostFromNodeViaLink(_link, _node, _target) ;
         double noise = capriciousMargin * random.nextDouble() ;
         return cost + noise;
     }

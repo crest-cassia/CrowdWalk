@@ -393,7 +393,7 @@ public class WalkAgent extends AgentBase {
         }
         // 進行可能なリンクが一つも見つからない場合はエージェントをスタックさせる
         if(bestLink == null) {
-            Itk.logError("currentPlace has no way for routePlan.") ;
+            Itk.logError("currentPlace has no link for routePlan.") ;
             Itk.logError_("currentPlace", currentPlace) ;
             Itk.logError_("routePlan", routePlan) ;
             finalizeEvacuation(0, false, true) ;
@@ -1030,9 +1030,9 @@ public class WalkAgent extends AgentBase {
             // 現在の way_candidate を選択した場合の next_target までのコスト計算
             double cost;
             try {
-                cost = calcWayCostTo(way_candidate,
-                                        passingPlace.getHeadingNode(),
-                                        next_target) ;
+                cost = calcCostFromNodeViaLink(way_candidate,
+                                               passingPlace.getHeadingNode(),
+                                               next_target) ;
             } catch(TargetNotFoundException e) {
                 // この way_candidate からは next_target にたどり着けない
                 Itk.logTrace(e.getMessage());
@@ -1148,7 +1148,8 @@ public class WalkAgent extends AgentBase {
      * ある _node においてあるwayを選択した場合の目的地(_target)までのコスト。
      * ここを変えると、経路選択の方法が変えられる。
      */
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target)
+    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node,
+                                          Term _target)
         throws TargetNotFoundException
     {
         /* [2015.04.14 I.Noda]
@@ -1160,9 +1161,9 @@ public class WalkAgent extends AgentBase {
             map.calcGoalPathWithSync(targetTag) ;
         }
 
-        MapNode other = _way.getOther(_node);
+        MapNode other = _link.getOther(_node);
         double cost = other.getDistance(_target) ;
-        cost += _way.length;
+        cost += _link.length;
         return cost ;
     }
 
@@ -1181,7 +1182,8 @@ public class WalkAgent extends AgentBase {
         double costFromEnteringNode;
         try {
             costFromEnteringNode =
-                calcWayCostTo(_place.getLink(), _place.getEnteringNode(), target) ;
+                calcCostFromNodeViaLink(_place.getLink(),
+                                        _place.getEnteringNode(), target) ;
         } catch(TargetNotFoundException e) {
             Itk.logTrace(e.getMessage());
             return Double.MAX_VALUE;

@@ -88,14 +88,14 @@ public class BustleAgent extends NaiveAgent {
 
     //------------------------------------------------------------
     /**
-     * あるwayを選択した場合の目的地(_target)までのコスト。
+     * あるlinkを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、混雑度合いと既知道路回避ファクタを加える。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
-        double cost = super.calcWayCostTo(_way, _node, _target) ;
-        double crowdness= bustleWeight * _way.realCrowdness() ;
-        double trailCount = trailWeight * trailCountTable.get(_node, _way) ;
+    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node, Term _target) throws TargetNotFoundException {
+        double cost = super.calcCostFromNodeViaLink(_link, _node, _target) ;
+        double crowdness= bustleWeight * _link.realCrowdness() ;
+        double trailCount = trailWeight * trailCountTable.get(_node, _link) ;
         return cost + crowdness + trailCount;
     }
 

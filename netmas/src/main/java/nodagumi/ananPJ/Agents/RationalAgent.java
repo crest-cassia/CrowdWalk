@@ -100,8 +100,8 @@ public class RationalAgent extends BustleAgent {
      * 正規のコストに、ランダム要素を加味する。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
-        double cost = super.calcWayCostTo(_way, _node, _target) ;
+    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node, Term _target) throws TargetNotFoundException {
+        double cost = super.calcCostFromNodeViaLink(_link, _node, _target) ;
         double noise = capriciousMargin * random.nextDouble() ;
         return cost + noise;
     }

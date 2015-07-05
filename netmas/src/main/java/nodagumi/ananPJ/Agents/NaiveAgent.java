@@ -156,12 +156,14 @@ public class NaiveAgent
 
     //------------------------------------------------------------
     /**
-     * あるwayを選択した場合の目的地(_target)までのコスト。
+     * あるlinkを選択した場合の目的地(_target)までのコスト。
      * 正規のコストに、ランダム要素を加味する。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target) throws TargetNotFoundException {
-        return super.calcWayCostTo(_way, _node, _target) ;
+    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node,
+                                          Term _target) 
+        throws TargetNotFoundException {
+        return super.calcCostFromNodeViaLink(_link, _node, _target) ;
     }
 
     //------------------------------------------------------------

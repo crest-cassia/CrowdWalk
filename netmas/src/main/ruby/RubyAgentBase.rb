@@ -25,7 +25,7 @@ class RubyAgentBase
   TriggerFilter = [
 #                   "preUpdate",
 #                   "update",
-#                   "calcWayCostTo",
+#                   "calcCostFromNodeViaLink",
 #                   "thinkCycle",
                   ] ;
 
@@ -320,9 +320,9 @@ class RubyAgentBase
   ## _way_:: 現在進もうとしている道
   ## _node_:: 現在の分岐点
   ## _target_:: 最終目的地
-  def calcWayCostTo(way, node, target)
-#    p [:calcWayCostTo, getAgentId(), way, node, target] ;
-    return @javaAgent.super_calcWayCostTo(way, node, target);
+  def calcCostFromNodeViaLink(way, node, target)
+#    p [:calcCostFromNodeViaLink, getAgentId(), way, node, target] ;
+    return @javaAgent.super_calcCostFromNodeViaLink(way, node, target);
   end
 
   #--------------------------------------------------------------

@@ -45,7 +45,7 @@ import nodagumi.Itk.*;
  * <UL>
  *  <LI> {@code preUpdate(double time)} : update cycle の前半。次の位置を決める。
  *  <LI> {@code update(double time)} : update cycle の後半。実際に動かす。
- *  <LI> {@code calcWayCostTo(...)} : 分岐点で、各経路の目的地までのコストを計算。
+ *  <LI> {@code calcCostFromNodeViaLink(...)} : 分岐点で、各経路の目的地までのコストを計算。
  *       これを元に、最小コストの経路を選ぶ。
  * </UL>
  *
@@ -77,7 +77,7 @@ public class RubyAgent extends RationalAgent {
     static public enum TriggerEntry {
         preUpdate,
         update,
-        calcWayCostTo,
+        calcCostFromNodeViaLink,
         thinkCycle,
     }
 
@@ -309,26 +309,28 @@ public class RubyAgent extends RationalAgent {
 
     //------------------------------------------------------------
     /**
-     * あるwayを選択した場合の目的地(_target)までのコスト。
+     * あるlinkを選択した場合の目的地(_target)までのコスト。
      */
     @Override
-    public double calcWayCostTo(MapLink _way, MapNode _node, Term _target)
+    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node, Term _target)
         throws TargetNotFoundException {
-        String rubyMethod = triggeredMethod(TriggerEntry.calcWayCostTo) ;
+        String rubyMethod =
+            triggeredMethod(TriggerEntry.calcCostFromNodeViaLink) ;
         if(rubyMethod != null) {
             return rubyEngine.callMethodDouble(rubyAgent, rubyMethod,
-                                               _way, _node, _target) ;
+                                               _link, _node, _target) ;
         } else {
-            return super_calcWayCostTo(_way, _node, _target) ;
+            return super_calcCostFromNodeViaLink(_link, _node, _target) ;
         }
     }
 
     /**
-     * あるwayを選択した場合の目的地(_target)までのコスト。super を呼ぶ。
+     * あるlinkを選択した場合の目的地(_target)までのコスト。super を呼ぶ。
      */
-    public double super_calcWayCostTo(MapLink _way, MapNode _node, Term _target)
+    public double super_calcCostFromNodeViaLink(MapLink _link, MapNode _node,
+                                                Term _target)
         throws TargetNotFoundException {
-        return super.calcWayCostTo(_way, _node, _target) ;
+        return super.calcCostFromNodeViaLink(_link, _node, _target) ;
     }
 
     //------------------------------------------------------------

@@ -27,7 +27,7 @@ class SampleAgent < RubyAgentBase
   TriggerFilter = [
 #                   "preUpdate",
 #                   "update",
-#                   "calcWayCostTo",
+#                   "calcCostFromNodeViaLink",
                    "thinkCycle",
                   ] ;
 
@@ -55,19 +55,19 @@ class SampleAgent < RubyAgentBase
   ## _way_:: 現在進もうとしている道
   ## _node_:: 現在の分岐点
   ## _target_:: 最終目的地
-  def calcWayCostTo(way, node, target)
+  def calcCostFromNodeViaLink(link, node, target)
     ## Term の中身の書き換えテスト。
     v = ItkTerm.getArg(@fallback, "xA_0").getDouble() + 1.0 ;
     ItkTerm.setArg(@fallback, "xA_0", v) ;
 
     ## 結果出力。
-    pp ['SampleAgent', :calcWayCostTo, getAgentId(),
-        way, node,
+    pp ['SampleAgent', :calcCostFromNodeViaLink, getAgentId(),
+        link, node,
         ItkTerm.getHead(target),
         ItkTerm.toRuby(@fallback)] ;
 
     ## 元のものを呼び出す。
-    return super(way, node, target) ;
+    return super(link, node, target) ;
   end
 
   #--------------------------------------------------------------
