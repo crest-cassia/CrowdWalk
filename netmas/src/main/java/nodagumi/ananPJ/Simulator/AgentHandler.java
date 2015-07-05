@@ -31,7 +31,9 @@ import java.lang.ClassNotFoundException;
 import java.text.*;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Collection;
@@ -179,7 +181,7 @@ public class AgentHandler {
     /**
      * エージェントが存在するリンクのリスト
      */
-    private MapLinkTable effectiveLinks = null;
+    private HashSet<MapLink> effectiveLinks = new HashSet<MapLink>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -529,7 +531,10 @@ public class AgentHandler {
             agent.prepareForSimulation(simulator.getTimeScale());
         }
         // 初回は全リンクを対象とする
-        effectiveLinks = (MapLinkTable)simulator.getLinks().clone();
+        clearEffectiveLinks() ;
+        for(MapLink link : simulator.getLinks()) {
+            addEffectiveLink(link) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -626,8 +631,8 @@ public class AgentHandler {
                  */
                 assignUniqIdForAgent(agent) ;
                 addWalkingAgent(agent) ;
-                if (agent.isEvacuated() || effectiveLinks.contains(agent.getCurrentLink())) continue;
-                effectiveLinks.add(agent.getCurrentLink());
+                if(!agent.isEvacuated())
+                    addEffectiveLink(agent.getCurrentLink()) ;
             }
         }
         return generatedAgentsInStep ;
@@ -651,17 +656,14 @@ public class AgentHandler {
      */
     private void updateEffectiveLinksAndRemoveEvacuatedAgents() {
         // エージェントが存在するリンクのリストを更新
-        effectiveLinks.clear();
+        clearEffectiveLinks() ;
         ArrayList<AgentBase> evacuatedAgentsInStep = new ArrayList<AgentBase>() ;
         for (AgentBase agent : getWalkingAgentCollection()) {
             if(agent.isEvacuated()) {
                 evacuatedAgentsInStep.add(agent) ;
                 continue ;
             } 
-            if(effectiveLinks.contains(agent.getCurrentLink())) {
-                continue;
-            }
-            effectiveLinks.add(agent.getCurrentLink());
+            addEffectiveLink(agent.getCurrentLink()) ;
         }
         for(AgentBase agent : evacuatedAgentsInStep) {
             removeWalkingAgent(agent) ;
@@ -1035,6 +1037,23 @@ public class AgentHandler {
             Itk.logWarn("agent is not in walkingTable:", agent) ;
             return false ;
         }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective link の登録
+     * @param link : 追加するリンク。
+     */
+    private void addEffectiveLink(MapLink link) {
+        effectiveLinks.add(link) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective link のクリア
+     */
+    private void clearEffectiveLinks() {
+        effectiveLinks.clear() ;
     }
 
     //------------------------------------------------------------
