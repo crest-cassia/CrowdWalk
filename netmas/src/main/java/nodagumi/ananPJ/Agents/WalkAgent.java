@@ -180,15 +180,74 @@ public class WalkAgent extends AgentBase {
      */
     protected ArrayList<CheckPoint> route;
 
+
+	//============================================================
+    static private class ChooseNextLinkCache {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /** キャッシュを無視するかどうか */
+        public boolean forced = true ;
+        /** 現在地のリンク */
+        public MapLink currentLink = null ;
+        /** 超えようとしているノードの直前のリンク */
+        public MapLink link = null ;
+        /** 今、超えようとしているノード */
+        public MapNode node = null ;
+
+        /* [2015.07.05 I.Noda] 現在のサブゴールを記録しておくべきではないか？*/
+
+        /** 候補となった次のリンク */
+        public MapLink resultLink = null ;
+
+        //----------------------------------------
+        /** 前回と同じ条件かチェック。 */
+        public boolean isSameAsPrevious(WalkAgent agent,
+                                        Place passingPlace) {
+            boolean isForced = forced ;
+            forced = false ;
+
+            Place currentPlace = agent.currentPlace ;
+
+            return (!isForced &&
+                    currentLink == currentPlace.getLink() &&
+                    link == passingPlace.getLink() &&
+                    node == passingPlace.getHeadingNode() &&
+                    agent.emptySpeed < currentPlace.getRemainingDistance()) ;
+        }
+
+        //----------------------------------------
+        /** 前回と同じ条件なら前回の結果を使う。 */
+        public MapLink getResultInCache(WalkAgent agent,
+                                        Place passingPlace) {
+            if(isSameAsPrevious(agent, passingPlace)) {
+                return resultLink ;
+            } else {
+                return null ;
+            }
+        }
+
+        //----------------------------------------
+        /** 条件の記録。 */
+        public void recordSituation(WalkAgent agent,
+                                    Place passingPlace) {
+            Place currentPlace = agent.currentPlace ;
+            currentLink = currentPlace.getLink() ;
+            link = passingPlace.getLink();
+            node = passingPlace.getHeadingNode() ;
+        }
+
+        //----------------------------------------
+        /** 結果の記録。 */
+        public void recordResult(MapLink nextLink) {
+            resultLink = nextLink ;
+        }
+
+    }
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * chooseNextLinkBody の不要な呼び出し回避用
+	/**
+     * chooseNextLink のキャッシュ
      */
-    private boolean chooseNextLinkBody_forced = true;
-    private MapLink chooseNextLinkBody_current_link;
-    private MapLink chooseNextLinkBody_link;
-    private MapNode chooseNextLinkBody_node;
-    private MapLink chooseNextLinkBody_result;
+    private ChooseNextLinkCache chooseNextLinkCache
+        = new ChooseNextLinkCache() ;
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	/**
@@ -196,7 +255,7 @@ public class WalkAgent extends AgentBase {
 	 * [I.Noda]
 	 * 効率のため、あまりメモリを消費しない方法に切り替え。
 	 */
-	ReasonTray navigation_reason = new ReasonTray() ;
+	ReasonTray navigationReason = new ReasonTray() ;
 
 	//############################################################
 	/**
@@ -480,9 +539,9 @@ public class WalkAgent extends AgentBase {
                 return true;
             }
 
-            chooseNextLinkBody_forced = true;
+            chooseNextLinkCache.forced = true;
             MapLink nextLink = chooseNextLink(time, currentPlace, routePlan, true) ;
-            chooseNextLinkBody_forced = true;
+            chooseNextLinkCache.forced = true;
 
             // 進行可能なリンクが見つからなければスタックさせる
             if (nextLink == null) {
@@ -641,7 +700,7 @@ public class WalkAgent extends AgentBase {
                 indexInLane -= agents.size() ;
                 MapLink nextLink =
                     chooseNextLinkBody(time, workingPlace,
-                                              workingRoutePlan, true) ;
+                                       workingRoutePlan, true) ;
                 if (nextLink == null) {
                     break;
                 }
@@ -812,7 +871,7 @@ public class WalkAgent extends AgentBase {
             relativePos -= workingPlace.getLinkLength() ;
             MapLink nextLink =
                 chooseNextLinkBody(time, workingPlace,
-                                          workingRoutePlan, true) ;
+                                   workingRoutePlan, true) ;
             if (nextLink == null) {
                 break;
             }
@@ -856,7 +915,7 @@ public class WalkAgent extends AgentBase {
     //------------------------------------------------------------
     /**
      * try to pass a node, and enter next link
-     * change: navigation_reason, route, prev_node, previous_link,
+     * change: navigationReason, route, prev_node, previous_link,
      * current_link, position, evacuated, link.agentExists
      */
     protected boolean tryToPassNode(double time,
@@ -913,7 +972,7 @@ public class WalkAgent extends AgentBase {
     protected void recordTrail(double time, Place passingPlace,
                                MapLink nextLink) {
         route.add(new CheckPoint(passingPlace.getHeadingNode(),
-                                 time, navigation_reason.toString()));
+                                 time, navigationReason.toString()));
     }
 
 	//############################################################
@@ -931,18 +990,18 @@ public class WalkAgent extends AgentBase {
                                      Place passingPlace,
                                      RoutePlan workingRoutePlan,
                                      boolean on_node) {
-        final MapLinkTable way_candidates
+        final MapLinkTable candidateLinkList
             = passingPlace.getHeadingNode().getUsableLinkTable();
 
         /* trapped? */
-        if (way_candidates.size() == 0) {
+        if (candidateLinkList.size() == 0) {
             Itk.logTrace("Agent trapped!");
             return null;
         }
 
         /* only one way to choose */
-        if (way_candidates.size() == 1) {
-            return way_candidates.get(0);
+        if (candidateLinkList.size() == 1) {
+            return candidateLinkList.get(0);
         }
 
         /* if not in navigation mode, go back to path */
@@ -956,16 +1015,18 @@ public class WalkAgent extends AgentBase {
             System.exit(1) ;
         }
 
-        MapLink target =
+        MapLink nextLink =
             chooseNextLinkBody(time, passingPlace,
-                                      workingRoutePlan, on_node) ;
+                               workingRoutePlan, on_node) ;
 
         // もし target が見つかっていなかったら、ランダムに選ぶ。
-        if(target == null) {
-            target = way_candidates.get(random.nextInt(way_candidates.size())) ;
+        if(nextLink == null) {
+            nextLink =
+                candidateLinkList.get(random
+                                      .nextInt(candidateLinkList.size())) ;
         }
 
-        return target ;
+        return nextLink ;
     }
 
     //------------------------------------------------------------
@@ -991,35 +1052,35 @@ public class WalkAgent extends AgentBase {
                                          RoutePlan workingRoutePlan,
                                          boolean on_node) {
         // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
-        if (isSameSituationForSaneNavigationFromNode(passingPlace))
-            return chooseNextLinkBody_result;
-        backupSituationForSaneNavigationFromNodeBefore(passingPlace);
+        MapLink nextLink
+            = chooseNextLinkCache.getResultInCache(this, passingPlace) ;
+        if(nextLink != null) { return nextLink ; }
 
-        MapLinkTable way_candidates =
-            passingPlace.getHeadingNode().getUsableLinkTable();
-        double min_cost = Double.MAX_VALUE;
-        double min_cost_second = Double.MAX_VALUE;
-        MapLink way = null;
+        chooseNextLinkCache.recordSituation(this, passingPlace) ;
 
-        MapLinkTable way_samecost = null;
-
-        final Term next_target =
+        final Term nextTarget =
             calcNextTarget(passingPlace.getHeadingNode(),
                            workingRoutePlan, on_node) ;
+        navigationReason.clear().add("for").add(nextTarget).add("\n");
 
-		navigation_reason.clear().add("for").add(next_target).add("\n");
-        for (MapLink way_candidate : way_candidates) {
-            // tkokada
+        MapLinkTable candidateLinkList =
+            passingPlace.getHeadingNode().getUsableLinkTable();
+        double nextLinkCost = Double.MAX_VALUE;
+        MapLinkTable nextLinksWithSameCost = null;
+
+        for (MapLink link : candidateLinkList) {
             /* ゴールもしくは経由点のチェック。あるいは、同じ道を戻らない */
-            if (workingRoutePlan.isEmpty() && way_candidate.hasTag(goal)) {
+            if (workingRoutePlan.isEmpty() && link.hasTag(goal)) {
                 /* finishing up */
-                way = way_candidate;
-				navigation_reason.add("found goal").add(goal);
+                nextLink = link ;
+                nextLinkCost = 0.0 ;
+                navigationReason.add("found goal").add(goal);
                 break;
-            } else if (way_candidate.hasTag(next_target)) {
-                /* reached mid_goal */
-                way = way_candidate;
-				navigation_reason.add("found mid-goal in").add(way_candidate) ;
+            } else if (link.hasTag(nextTarget)) {
+                /* reached sub goal */
+                nextLink = link ;
+                nextLinkCost = 0.0 ;
+                navigationReason.add("found mid-goal in").add(link) ;
                 if(!isKnownDirective(workingRoutePlan.top())) {
                     // directive でない場合のみ shiftする。
                     // そうでなければ、directive の操作待ち。
@@ -1028,76 +1089,45 @@ public class WalkAgent extends AgentBase {
                 break;
             }
 
-            // 現在の way_candidate を選択した場合の next_target までのコスト計算
-            double cost;
+            // 現在の link を選択した場合の nextTarget までのコスト計算
             try {
-                cost = calcCostFromNodeViaLink(way_candidate,
-                                               passingPlace.getHeadingNode(),
-                                               next_target) ;
+                double cost =
+                    calcCostFromNodeViaLink(link,
+                                            passingPlace.getHeadingNode(),
+                                            nextTarget) ;
+                if (cost < nextLinkCost) { // 最小cost置き換え
+                    nextLink = link ;
+                    nextLinkCost = cost;
+                    nextLinksWithSameCost = null ;
+                } else if (cost == nextLinkCost) { // 最小コストが同じ時の処理
+                    if (nextLinksWithSameCost == null) {
+                        nextLinksWithSameCost = new MapLinkTable();
+                        nextLinksWithSameCost.add(nextLink) ;
+                    }
+                    nextLinksWithSameCost.add(link) ;
+                }
             } catch(TargetNotFoundException e) {
                 // この way_candidate からは next_target にたどり着けない
                 Itk.logTrace(e.getMessage());
                 continue;
             }
-
-            if (cost < min_cost) { // 最小cost置き換え
-                min_cost = cost;
-                way = way_candidate;
-                way_samecost = null;
-            } else if (cost == min_cost) { // 最小コストが同じ時の処理
-                if (way_samecost == null) {
-                    way_samecost = new MapLinkTable();
-                    way_samecost.add(way) ;
-                }
-                way_samecost.add(way_candidate);
-            }
         }
 
-        if (way_samecost != null && way_samecost.size()>0) {
-            way = way_samecost.get(random.nextInt(way_samecost.size())) ;
+        if (nextLinksWithSameCost != null && nextLinksWithSameCost.size()>0) {
+            nextLink
+                = nextLinksWithSameCost.get(random.
+                                           nextInt(nextLinksWithSameCost.size())) ;
         }
 
-        backupSituationForSaneNavigationFromNodeAfter(way) ;
-
-        if (way != null) {
-            navigation_reason
+        if (nextLink != null) {
+            navigationReason
                 .add("\n -> chose")
-                .add(way.getOther(passingPlace.getHeadingNode())) ;
+                .add(nextLink.getOther(passingPlace.getHeadingNode())) ;
         }
 
-        return way;
-    }
+        chooseNextLinkCache.recordResult(nextLink) ;
 
-    //------------------------------------------------------------
-    /**
-     * 前回の呼び出し時と同じ条件かどうかのチェック
-     */
-    private boolean isSameSituationForSaneNavigationFromNode(Place passingPlace) {
-        boolean forced = chooseNextLinkBody_forced ;
-        chooseNextLinkBody_forced = false ;
-        return (!forced &&
-                chooseNextLinkBody_current_link == currentPlace.getLink() &&
-                chooseNextLinkBody_link == passingPlace.getLink() &&
-                chooseNextLinkBody_node == passingPlace.getHeadingNode() &&
-                emptySpeed < currentPlace.getRemainingDistance()) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 上記のチェックのための状態バックアップ(before)
-     */
-    private void backupSituationForSaneNavigationFromNodeBefore(Place passingPlace) {
-        chooseNextLinkBody_current_link = currentPlace.getLink() ;
-        chooseNextLinkBody_link = passingPlace.getLink();
-        chooseNextLinkBody_node = passingPlace.getHeadingNode() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 上記のチェックのための状態バックアップ(after)
-     */
-    private void backupSituationForSaneNavigationFromNodeAfter(MapLink result) {
-        chooseNextLinkBody_result = result ;
+        return nextLink;
     }
 
     //------------------------------------------------------------
