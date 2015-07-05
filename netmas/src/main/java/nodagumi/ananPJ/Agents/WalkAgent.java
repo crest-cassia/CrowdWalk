@@ -182,13 +182,13 @@ public class WalkAgent extends AgentBase {
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * sane_navigation_from_node の不要な呼び出し回避用
+     * chooseNextLinkBody の不要な呼び出し回避用
      */
-    private boolean sane_navigation_from_node_forced = true;
-    private MapLink sane_navigation_from_node_current_link;
-    private MapLink sane_navigation_from_node_link;
-    private MapNode sane_navigation_from_node_node;
-    private MapLink sane_navigation_from_node_result;
+    private boolean chooseNextLinkBody_forced = true;
+    private MapLink chooseNextLinkBody_current_link;
+    private MapLink chooseNextLinkBody_link;
+    private MapNode chooseNextLinkBody_node;
+    private MapLink chooseNextLinkBody_result;
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	/**
@@ -480,9 +480,9 @@ public class WalkAgent extends AgentBase {
                 return true;
             }
 
-            sane_navigation_from_node_forced = true;
-            MapLink nextLink = navigate(time, currentPlace, routePlan, true) ;
-            sane_navigation_from_node_forced = true;
+            chooseNextLinkBody_forced = true;
+            MapLink nextLink = chooseNextLink(time, currentPlace, routePlan, true) ;
+            chooseNextLinkBody_forced = true;
 
             // 進行可能なリンクが見つからなければスタックさせる
             if (nextLink == null) {
@@ -619,8 +619,6 @@ public class WalkAgent extends AgentBase {
         Place workingPlace = currentPlace.duplicate() ;
         workingPlace.makeAdvance(maxDistance) ;
 
-        //???
-        //MapNode node_to_navigate = currentPlace.getHeadingNode() ;
         // 現在のリンク中での相対位置
         int indexInLane = workingPlace.getIndexInLane(this) ;
         //作業用の routePlan
@@ -642,7 +640,7 @@ public class WalkAgent extends AgentBase {
                 distToPredecessor += workingPlace.getLinkLength() ;
                 indexInLane -= agents.size() ;
                 MapLink nextLink =
-                    sane_navigation_from_node(time, workingPlace,
+                    chooseNextLinkBody(time, workingPlace,
                                               workingRoutePlan, true) ;
                 if (nextLink == null) {
                     break;
@@ -813,7 +811,7 @@ public class WalkAgent extends AgentBase {
             //次のリンクへ進む
             relativePos -= workingPlace.getLinkLength() ;
             MapLink nextLink =
-                sane_navigation_from_node(time, workingPlace,
+                chooseNextLinkBody(time, workingPlace,
                                           workingRoutePlan, true) ;
             if (nextLink == null) {
                 break;
@@ -924,12 +922,15 @@ public class WalkAgent extends AgentBase {
 	 */
     //------------------------------------------------------------
     /**
-     * ノード上で、次の道を探す。
+     * ノード上で、次の道を選ぶ。
+     * 実体は chooseNextLinkBody() だが、
+     * 候補が1つしか無い場合などのショートカットと、
+     * エラー処理・例外処理を行う。
      */
-    protected MapLink navigate(double time,
-                               Place passingPlace,
-                               RoutePlan workingRoutePlan,
-                               boolean on_node) {
+    protected MapLink chooseNextLink(double time,
+                                     Place passingPlace,
+                                     RoutePlan workingRoutePlan,
+                                     boolean on_node) {
         final MapLinkTable way_candidates
             = passingPlace.getHeadingNode().getUsableLinkTable();
 
@@ -956,7 +957,7 @@ public class WalkAgent extends AgentBase {
         }
 
         MapLink target =
-            sane_navigation_from_node(time, passingPlace,
+            chooseNextLinkBody(time, passingPlace,
                                       workingRoutePlan, on_node) ;
 
         // もし target が見つかっていなかったら、ランダムに選ぶ。
@@ -985,13 +986,13 @@ public class WalkAgent extends AgentBase {
     /**
      * ノードにおいて、次の道を選択するルーチン
      */
-    protected MapLink sane_navigation_from_node(double time,
-                                                Place passingPlace,
-                                                RoutePlan workingRoutePlan,
-                                                boolean on_node) {
+    protected MapLink chooseNextLinkBody(double time,
+                                         Place passingPlace,
+                                         RoutePlan workingRoutePlan,
+                                         boolean on_node) {
         // 前回の呼び出し時と同じ結果になる場合は不要な処理を回避する
         if (isSameSituationForSaneNavigationFromNode(passingPlace))
-            return sane_navigation_from_node_result;
+            return chooseNextLinkBody_result;
         backupSituationForSaneNavigationFromNodeBefore(passingPlace);
 
         MapLinkTable way_candidates =
@@ -1072,12 +1073,12 @@ public class WalkAgent extends AgentBase {
      * 前回の呼び出し時と同じ条件かどうかのチェック
      */
     private boolean isSameSituationForSaneNavigationFromNode(Place passingPlace) {
-        boolean forced = sane_navigation_from_node_forced ;
-        sane_navigation_from_node_forced = false ;
+        boolean forced = chooseNextLinkBody_forced ;
+        chooseNextLinkBody_forced = false ;
         return (!forced &&
-                sane_navigation_from_node_current_link == currentPlace.getLink() &&
-                sane_navigation_from_node_link == passingPlace.getLink() &&
-                sane_navigation_from_node_node == passingPlace.getHeadingNode() &&
+                chooseNextLinkBody_current_link == currentPlace.getLink() &&
+                chooseNextLinkBody_link == passingPlace.getLink() &&
+                chooseNextLinkBody_node == passingPlace.getHeadingNode() &&
                 emptySpeed < currentPlace.getRemainingDistance()) ;
     }
 
@@ -1086,9 +1087,9 @@ public class WalkAgent extends AgentBase {
      * 上記のチェックのための状態バックアップ(before)
      */
     private void backupSituationForSaneNavigationFromNodeBefore(Place passingPlace) {
-        sane_navigation_from_node_current_link = currentPlace.getLink() ;
-        sane_navigation_from_node_link = passingPlace.getLink();
-        sane_navigation_from_node_node = passingPlace.getHeadingNode() ;
+        chooseNextLinkBody_current_link = currentPlace.getLink() ;
+        chooseNextLinkBody_link = passingPlace.getLink();
+        chooseNextLinkBody_node = passingPlace.getHeadingNode() ;
     }
 
     //------------------------------------------------------------
@@ -1096,7 +1097,7 @@ public class WalkAgent extends AgentBase {
      * 上記のチェックのための状態バックアップ(after)
      */
     private void backupSituationForSaneNavigationFromNodeAfter(MapLink result) {
-        sane_navigation_from_node_result = result ;
+        chooseNextLinkBody_result = result ;
     }
 
     //------------------------------------------------------------
