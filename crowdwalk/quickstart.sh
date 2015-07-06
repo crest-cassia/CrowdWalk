@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# export CROWDWALK=/path/to/CrowdWalk/netmas
+# export CROWDWALK=/path/to/CrowdWalk/crowdwalk
 if test "$CROWDWALK" = "" ; then
 	CROWDWALK='.'
 fi
@@ -15,7 +15,7 @@ fi
 JAVA='java'
 JAVAOPT='-Dfile.encoding=UTF-8'
 DYLD=$DIR/libs
-JAR=$DIR/build/libs/netmas.jar
+JAR=$DIR/build/libs/crowdwalk.jar
 
 OS=`uname -a`
 case "$OS" in
