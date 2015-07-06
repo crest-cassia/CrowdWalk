@@ -53,7 +53,7 @@ import nodagumi.ananPJ.Editor.Panel.BrowserPanel;
 import nodagumi.ananPJ.Editor.Panel.ScenarioPanel;
 import nodagumi.ananPJ.Editor.Panel.LinkPanel;
 import nodagumi.ananPJ.Editor.Panel.NodePanel;
-import nodagumi.ananPJ.Editor.Panel.PollutionPanel;
+import nodagumi.ananPJ.Editor.Panel.AreaPanel;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -114,20 +114,20 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
     transient private JTabbedPane tabbedPane = null;
     transient private NodePanel nodePanel = null;
     transient public LinkPanel linkPanel = null;
-    transient public PollutionPanel pollutionPanel = null;
+    transient public AreaPanel areaPanel = null;
     transient public ScenarioPanel scenarioPanel = null;
     transient public BrowserPanel browserPanel = null;
 
 
     /* used in the object browser */
     public enum TabTypes {
-        NODE, LINK, POLLUTION, SCENARIO, BROWSER //FRAME
+        NODE, LINK, AREA, SCENARIO, BROWSER //FRAME
     };
-    //TODO edit group and edit pollution are still unimplemented
+    //TODO edit group and edit area are still unimplemented
     public enum EditorMode {
-        EDIT_NODE, EDIT_LINK, EDIT_GROUP, EDIT_POLLUTION,
+        EDIT_NODE, EDIT_LINK, EDIT_GROUP, EDIT_AREA,
         PLACE_NODE, PLACE_LINK, PLACE_NODE_LINK, PLACE_GROUP,
-        PLACE_POLLUTION, BROWSE
+        PLACE_AREA, BROWSE
     };
 
     private EditorMode mode = EditorMode.EDIT_NODE;
@@ -148,8 +148,8 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
         linkPanel = new LinkPanel(this);
         tabbedPane.add("Links", linkPanel);
 
-        pollutionPanel = new PollutionPanel(this);
-        tabbedPane.add("Pollution", pollutionPanel);
+        areaPanel = new AreaPanel(this);
+        tabbedPane.add("Area", areaPanel);
 
         scenarioPanel = new ScenarioPanel(this, random);
         tabbedPane.add("Scenario", scenarioPanel);
@@ -176,11 +176,11 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
                     } else {
                         mode = EditorMode.EDIT_LINK;
                     }
-                } else if (panelName == "PollutionPanel") {
-                    if (((PollutionPanel)selectedTab).getPlaceCheckBox()) {
-                        mode = EditorMode.PLACE_POLLUTION;
+                } else if (panelName == "AreaPanel") {
+                    if (((AreaPanel)selectedTab).getPlaceCheckBox()) {
+                        mode = EditorMode.PLACE_AREA;
                     } else {
-                        mode = EditorMode.EDIT_POLLUTION;
+                        mode = EditorMode.EDIT_AREA;
                     }
                 } else if (panelName == "BrowserPanel"){
                     mode = EditorMode.BROWSE;
@@ -219,7 +219,7 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
     public void updateAll() {
         nodePanel.refresh();
         linkPanel.refresh();
-        pollutionPanel.refresh();
+        areaPanel.refresh();
         scenarioPanel.refresh();
         browserPanel.refresh();
         for (EditorFrame frame : networkMap.getFrames()) {
@@ -265,8 +265,8 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
         case LINK:
             tabbedPane.setSelectedComponent(linkPanel);
             break;
-        case POLLUTION:
-            tabbedPane.setSelectedComponent(pollutionPanel);
+        case AREA:
+            tabbedPane.setSelectedComponent(areaPanel);
             break;
         case BROWSER:
             tabbedPane.setSelectedComponent(browserPanel);
@@ -296,13 +296,13 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
             linkPanel.setPlaceCheckBox(true);
             switchTab(TabTypes.LINK);
             break;
-        case EDIT_POLLUTION:
-            pollutionPanel.setPlaceCheckBox(false);
-            switchTab(TabTypes.POLLUTION);
+        case EDIT_AREA:
+            areaPanel.setPlaceCheckBox(false);
+            switchTab(TabTypes.AREA);
             break;
-        case PLACE_POLLUTION:
-            pollutionPanel.setPlaceCheckBox(true);
-            switchTab(TabTypes.POLLUTION);
+        case PLACE_AREA:
+            areaPanel.setPlaceCheckBox(true);
+            switchTab(TabTypes.AREA);
             break;
         }
     }
@@ -1049,7 +1049,7 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
 
     public LinkPanel getLinkPanel() { return linkPanel; }
 
-    public PollutionPanel getPollutionPanel() { return pollutionPanel; }
+    public AreaPanel getAreaPanel() { return areaPanel; }
 
     public ScenarioPanel getScenarioPanel() { return scenarioPanel; }
 

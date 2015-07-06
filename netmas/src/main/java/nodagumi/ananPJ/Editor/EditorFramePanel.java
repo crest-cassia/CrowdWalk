@@ -69,7 +69,7 @@ public class EditorFramePanel extends JPanel {
     //private boolean showGroups = true;
     private boolean showGroups = false;
     private boolean showSubGroups = false;
-    private boolean showPollution = true;
+    private boolean showArea = true;
     // show objects with scaling mode or not. scaling mode zoomes up or down 
     // objects as wheel control.
     private boolean showScaling = false;
@@ -304,7 +304,7 @@ public class EditorFramePanel extends JPanel {
         }
         
         /* actual objects */
-        if (showPollution) {
+        if (showArea) {
             for (final MapArea area : frame.getChildMapAreas()) {
                 // tkokada
                 // apply a rotation rectangle, here.
@@ -446,7 +446,7 @@ public class EditorFramePanel extends JPanel {
                 g.draw(hoverArea.getShape());
             }
         }
-        // draw selected MapArea by using EDIT_POLLUTION multi selection
+        // draw selected MapArea by using EDIT_AREA multi selection
         for (MapArea area: frame.getChildMapAreas()) {
             if (area.selected) {
                 double angle = area.getAngle();
@@ -616,8 +616,8 @@ public class EditorFramePanel extends JPanel {
         this.showGroups = showGroups;
     }
     
-    public void setShowPollution(boolean showPollution) {
-        this.showPollution = showPollution;
+    public void setShowArea(boolean showArea) {
+        this.showArea = showArea;
     }
 
     public void setShowScaling(boolean showScaling) {

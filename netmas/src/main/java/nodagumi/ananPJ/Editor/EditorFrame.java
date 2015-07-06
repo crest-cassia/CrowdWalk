@@ -80,18 +80,18 @@ public class EditorFrame
     CheckboxMenuItem showLinkLabels = null;
     CheckboxMenuItem showGroups = null;
     //CheckboxMenuItem showSubGroups = null;
-    CheckboxMenuItem showPollution = null;
+    CheckboxMenuItem showArea = null;
     CheckboxMenuItem showScaling = null;
     MenuItem backgroundImageScaleMenu = null;
     Menu background_group = null;
     MenuItem editNodeMode = null;
     MenuItem editLinkMode = null;
-    MenuItem editPollutionMode = null;
+    MenuItem editAreaMode = null;
     MenuItem placeNodeMode = null;
     MenuItem placeLinkMode = null;
     MenuItem placeNodeLinkMode = null;
     MenuItem placeAgentMode = null;
-    MenuItem placePollutionMode = null;
+    MenuItem placeAreaMode = null;
     boolean background_read = false;
 
     JPanel menuPanel;
@@ -115,7 +115,7 @@ public class EditorFrame
     private boolean draggingNode = false;
     private Hover hoverLink = null;
     private MapNode hoverLinkFromCandidate = null;
-    private MapArea hoverPollution = null;
+    private MapArea hoverArea = null;
     // used on placeNodeLink method
     private MapNode initialNode = null;     // first placed node
     private MapNode prevNode = null;        // to make link from
@@ -125,7 +125,7 @@ public class EditorFrame
     private boolean scrolling = false;
     private boolean zooming = false;
     
-    private int maxPollutionTag = 0;    // tkokada
+    private int maxAreaTag = 0;    // tkokada
  
     private int dragStartX = 0, dragStartY = 0;
 
@@ -278,7 +278,7 @@ public class EditorFrame
                 panel.setShowLinkNames(showLinkLabels.getState());
                 panel.setShowGroups(showGroups.getState());
                 //panel.setShowSubGroups(showSubGroups.getState());
-                panel.setShowPollution(showPollution.getState());
+                panel.setShowArea(showArea.getState());
                 panel.setShowScaling(showScaling.getState());
                 editor_frame.clearSelection();
                 editor_frame.repaint();
@@ -389,10 +389,10 @@ public class EditorFrame
         //showSubGroups.setState(true);
         //showSubGroups.addItemListener(vo);
         //viewMenu.add(showSubGroups);
-        showPollution = new CheckboxMenuItem("Show pollution area");
-        showPollution.setState(true);
-        showPollution.addItemListener(vo);
-        viewMenu.add(showPollution);
+        showArea = new CheckboxMenuItem("Show map area");
+        showArea.setState(true);
+        showArea.addItemListener(vo);
+        viewMenu.add(showArea);
 
         showScaling = new CheckboxMenuItem("Show objects with scaling mode");
         showScaling.setState(false);
@@ -442,15 +442,15 @@ public class EditorFrame
         });
         modeMenu.add(placeNodeLinkMode);
         
-        placePollutionMode = new MenuItem ("Place Map Areas");
-        placePollutionMode.addActionListener(new ActionListener() {
+        placeAreaMode = new MenuItem ("Place Map Areas");
+        placeAreaMode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editor.setMode(EditorMode.PLACE_POLLUTION);
+                editor.setMode(EditorMode.PLACE_AREA);
                 setStatus();
             }
         });
-        modeMenu.add(placePollutionMode);
+        modeMenu.add(placeAreaMode);
 
         ms = new MenuShortcut (java.awt.event.KeyEvent.VK_E);
         editNodeMode = new MenuItem ("Edit Nodes", ms);
@@ -474,15 +474,15 @@ public class EditorFrame
         });
         modeMenu.add(editLinkMode);
 
-        editPollutionMode = new MenuItem ("Edit Pollution Area");
-        editPollutionMode.addActionListener(new ActionListener() {
+        editAreaMode = new MenuItem ("Edit Map Area");
+        editAreaMode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editor.setMode(EditorMode.EDIT_POLLUTION);
+                editor.setMode(EditorMode.EDIT_AREA);
                 setStatus();
             }
         });
-        modeMenu.add(editPollutionMode);
+        modeMenu.add(editAreaMode);
 
         menuBar.add(modeMenu);
         
@@ -675,7 +675,7 @@ public class EditorFrame
         }
         hoverNode = null;
         hoverLink = null;
-        hoverPollution = null;
+        hoverArea = null;
         panel.updateHoverNode(null);
         panel.updateHoverLink(null);
         panel.updateHoverArea(null);
@@ -1118,18 +1118,18 @@ public class EditorFrame
         /* Find an existing agent */
         for (MapArea area : getChildMapAreas()) {
             if (area.contains(p)) {
-                final boolean updated = (!area.equals(hoverPollution));
-                hoverPollution = area;
+                final boolean updated = (!area.equals(hoverArea));
+                hoverArea = area;
                 return updated;
             }
         }
-        final boolean updated = (hoverPollution != null);
-        hoverPollution = null;
+        final boolean updated = (hoverArea != null);
+        hoverArea = null;
         return updated;
     }
 
     private void selectArea(MouseEvent e) {
-        MapArea a = hoverPollution;
+        MapArea a = hoverArea;
         if ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) {
             clearSelection();
         }
@@ -1137,7 +1137,7 @@ public class EditorFrame
             return;
         }
         a.selected ^= true;
-        editor.getPollutionPanel().refresh();
+        editor.getAreaPanel().refresh();
     }
  
     // reviced by tkokada
@@ -1174,7 +1174,7 @@ public class EditorFrame
         }
         updateMapAreaTag();
         editor._setModified(true);
-        editor.getPollutionPanel().refresh();
+        editor.getAreaPanel().refresh();
         clearSelection();
         panel.repaint();
     }
@@ -1198,11 +1198,11 @@ public class EditorFrame
         return rotatedRect;
     }
     
-    private void manipulatePollution(MouseEvent e) {
-        class ManipulatePollutionListener implements ActionListener {
+    private void manipulateArea(MouseEvent e) {
+        class ManipulateAreaListener implements ActionListener {
             int x,y;
             EditorFrame editor = null;
-            ManipulatePollutionListener(EditorFrame _editor, int _x, int _y) {
+            ManipulateAreaListener(EditorFrame _editor, int _x, int _y) {
                 editor = _editor;
                 x = _x;
                 y = _y;
@@ -1210,27 +1210,27 @@ public class EditorFrame
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("Set pollution attribute")) {
-                    editor.setPollutionAttribute(x, y);
-                } else if (e.getActionCommand().equals("Remove pollution")) {
-                    editor.removeSelectedPollution();
+                if (e.getActionCommand().equals("Set area attribute")) {
+                    editor.setAreaAttribute(x, y);
+                } else if (e.getActionCommand().equals("Remove area")) {
+                    editor.removeSelectedArea();
                 }
             }
         };
 
-        if (hoverPollution != null) hoverPollution.selected = true;
-        ManipulatePollutionListener listner = new ManipulatePollutionListener(this,
+        if (hoverArea != null) hoverArea.selected = true;
+        ManipulateAreaListener listner = new ManipulateAreaListener(this,
                 e.getXOnScreen(), e.getYOnScreen());
         PopupMenu menu = new PopupMenu ("Manipulate");
         MenuItem mi = null;
             
-        mi = new MenuItem ("Remove pollution");
+        mi = new MenuItem ("Remove area");
         mi.addActionListener (listner);
         menu.add (mi);
 
         menu.addSeparator();
         
-        mi = new MenuItem ("Set pollution attribute");
+        mi = new MenuItem ("Set area attribute");
         mi.addActionListener (listner);
         menu.add (mi);
 
@@ -1243,13 +1243,13 @@ public class EditorFrame
     }
 
     // tkokada
-    // this method should be called when pollution area tag is added/removed/modified.
-    // currently, pollution area has initial index as a tag with int number.
+    // this method should be called when map area tag is added/removed/modified.
+    // currently, map area has initial index as a tag with int number.
     // if you want to modify this tag, following "" + i, this becomes the tag.
     public void updateMapAreaTag() {
         int i = 1;
         ArrayList<String> tagToRemove = new ArrayList<String>();
-        for (i = 1; i < maxPollutionTag; i++) {
+        for (i = 1; i < maxAreaTag; i++) {
             tagToRemove.add("" + i);
         }
         i = 1;
@@ -1259,7 +1259,7 @@ public class EditorFrame
             area.addTag("" + i);
             i++;
         }
-        maxPollutionTag = i;
+        maxAreaTag = i;
     }
 
     private void calcLinkLength() {
@@ -1479,7 +1479,7 @@ public class EditorFrame
         repaint();
     }
 
-    private void setPollutionAttribute(int x, int y) {
+    private void setAreaAttribute(int x, int y) {
         MapArea.showAttributeDialog(getChildMapAreas(), x, y);
         updateMapAreaTag();
         clearSelection();
@@ -1543,7 +1543,7 @@ public class EditorFrame
         repaint();
     }
 
-    private void removeSelectedPollution() {
+    private void removeSelectedArea() {
         editor._setModified(true);
         ArrayList<MapArea> areasToRemove = new ArrayList<MapArea>();
         for (final MapArea area : getChildMapAreas()) {
@@ -1555,7 +1555,7 @@ public class EditorFrame
             editor.getMap().removeOBNode(current_group, area, true);
         }
         updateMapAreaTag();
-        editor.getPollutionPanel().refresh();
+        editor.getAreaPanel().refresh();
         repaint();
     }
 
@@ -2215,9 +2215,9 @@ public class EditorFrame
             removeSelectedNodes();
             removeSelectedLinks();
             break;
-        case EDIT_POLLUTION:
-        case PLACE_POLLUTION:
-            removeSelectedPollution();
+        case EDIT_AREA:
+        case PLACE_AREA:
+            removeSelectedArea();
             break;
         }
     }
@@ -2357,7 +2357,7 @@ public class EditorFrame
             case PLACE_NODE_LINK:
                 placeNodeLink(e);
                 return;
-            case EDIT_POLLUTION:
+            case EDIT_AREA:
                 selectArea(e);
                 break;
             }
@@ -2374,9 +2374,9 @@ public class EditorFrame
             case PLACE_NODE_LINK:
                 placeNodeLink(e);
                 return;
-            case EDIT_POLLUTION:
-            case PLACE_POLLUTION:
-                manipulatePollution(e);
+            case EDIT_AREA:
+            case PLACE_AREA:
+                manipulateArea(e);
                 break;
             }
         }
@@ -2419,8 +2419,8 @@ public class EditorFrame
                 draggingNode = true;
             } else if (editor.getMode() == EditorMode.EDIT_NODE ||
                     editor.getMode() == EditorMode.EDIT_LINK ||
-                    editor.getMode() == EditorMode.PLACE_POLLUTION ||
-                    editor.getMode() == EditorMode.EDIT_POLLUTION   // tkokada
+                    editor.getMode() == EditorMode.PLACE_AREA ||
+                    editor.getMode() == EditorMode.EDIT_AREA   // tkokada
                     ) {
                 areaSelection = true;
                 startpos = panel.revCalcPos(e.getX(), e.getY());
@@ -2481,7 +2481,7 @@ public class EditorFrame
                 }
                 editor.getLinkPanel().refresh();
                 break;
-            case EDIT_POLLUTION:
+            case EDIT_AREA:
                 for (MapArea area : getChildMapAreas()) {
                     // tkokada
                     // add an angle parameter to MapAreaRectangle,
@@ -2503,9 +2503,9 @@ public class EditorFrame
                         }
                     }
                 }
-                editor.getPollutionPanel().refresh();
+                editor.getAreaPanel().refresh();
                 break;
-            case PLACE_POLLUTION:
+            case PLACE_AREA:
                 placeMapArea();
                 break;
             default:
@@ -2654,9 +2654,9 @@ public class EditorFrame
                 panel.repaint();
             }
             break;
-        case EDIT_POLLUTION:
+        case EDIT_AREA:
             if (updateHoverArea(p)) {
-                panel.updateHoverArea(hoverPollution);
+                panel.updateHoverArea(hoverArea);
                 panel.repaint();
             }
             break;
@@ -2702,7 +2702,7 @@ public class EditorFrame
             editor.setMode(EditorMode.EDIT_GROUP);
             break;
         case KeyEvent.VK_Y:
-            editor.setMode(EditorMode.EDIT_POLLUTION);
+            editor.setMode(EditorMode.EDIT_AREA);
             break;
         case KeyEvent.VK_A:
             editor.setMode(EditorMode.PLACE_NODE);
@@ -2717,7 +2717,7 @@ public class EditorFrame
             editor.setMode(EditorMode.PLACE_GROUP);
             break;
         case KeyEvent.VK_I:
-            editor.setMode(EditorMode.PLACE_POLLUTION);
+            editor.setMode(EditorMode.PLACE_AREA);
             break;
 
             /* toggle showing */
@@ -2735,8 +2735,8 @@ public class EditorFrame
             status.setText("Showing groups: " + showGroups.getState());
             break;
         case KeyEvent.VK_X:
-            showPollution.setState(!showPollution.getState());
-            status.setText("Showing pollution: " + showPollution.getState());
+            showArea.setState(!showArea.getState());
+            status.setText("Showing area: " + showArea.getState());
             break;
         case KeyEvent.VK_S:
             showScaling.setState(!showScaling.getState());

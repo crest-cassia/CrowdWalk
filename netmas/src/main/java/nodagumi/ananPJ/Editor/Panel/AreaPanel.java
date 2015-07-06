@@ -38,10 +38,10 @@ import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.GuiSimulationEditorLauncher.EditorMode;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 
-public class PollutionPanel extends JPanel 
+public class AreaPanel extends JPanel
 	implements ActionListener, ListSelectionListener {
 	GuiSimulationEditorLauncher editor = null;
-	JLabel pollutionFileLabel = null;
+	JLabel obstructerFileLabel = null;
 
 	AreaDataModel dataModel = null;
 	JTable areaTable = null;
@@ -87,30 +87,30 @@ public class PollutionPanel extends JPanel
 		}
 	}
 
-	private JPanel pollutionFilePanel;
-	public PollutionPanel(GuiSimulationEditorLauncher _editor) {
+	private JPanel obstructerFilePanel;
+	public AreaPanel(GuiSimulationEditorLauncher _editor) {
 		editor = _editor;
 		setLayout(new BorderLayout());
 		
-		/* pollution file */
-		pollutionFilePanel = new JPanel(new GridLayout(2, 1));
-		pollutionFileLabel = new JLabel("Pollution Settings: " +
+		/* obstructer file */
+		obstructerFilePanel = new JPanel(new GridLayout(2, 1));
+		obstructerFileLabel = new JLabel("Obstructer Settings: " +
 				editor.getSetupFileInfo().getPollutionFile());
 
-		pollutionFilePanel.add(pollutionFileLabel);
+		obstructerFilePanel.add(obstructerFileLabel);
 		JButton openButton = new JButton("Open");
 		openButton.addActionListener(this);
-		pollutionFilePanel.add(openButton);
-		add(pollutionFilePanel, BorderLayout.NORTH);
+		obstructerFilePanel.add(openButton);
+		add(obstructerFilePanel, BorderLayout.NORTH);
 
 		placeArea = new JCheckBox("place area");
 		placeArea.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == 2) {
-					editor.setMode(EditorMode.EDIT_POLLUTION);
+					editor.setMode(EditorMode.EDIT_AREA);
 				} else {
-					editor.setMode(EditorMode.PLACE_POLLUTION);
+					editor.setMode(EditorMode.PLACE_AREA);
 				}
 			}
 		});
@@ -133,7 +133,7 @@ public class PollutionPanel extends JPanel
 
 	@Override
 	public String getName() {
-		return "PollutionPanel";
+		return "AreaPanel";
 	}
 
 	public void refresh() {
@@ -150,21 +150,21 @@ public class PollutionPanel extends JPanel
 		});
 		lockValueChanged = false;
 		if (editor.getSetupFileInfo().getPollutionFile() != null) {
-			File pollution_file =
+			File obstructerFile =
                 new File(editor.getSetupFileInfo().getPollutionFile());
 			String message = "";
-			if (!pollution_file.exists()) {
+			if (!obstructerFile.exists()) {
 				message += " (error: does not exist)";
-			} else if (pollution_file.isDirectory()) {
+			} else if (obstructerFile.isDirectory()) {
 				message += " (error: is directory)";
-			} else if (!pollution_file.canRead()) {
+			} else if (!obstructerFile.canRead()) {
 				message += " (error: unreadable)";
 			}
-			pollutionFileLabel.setText("Pollution Settings: " +
-					pollution_file.getName() +
+			obstructerFileLabel.setText("Obstructer Settings: " +
+					obstructerFile.getName() +
 					message);
 		} else {		
-			pollutionFileLabel.setText("Pollution Settings: file not set");
+			obstructerFileLabel.setText("Obstructer Settings: file not set");
 		}
 	}
 
@@ -172,7 +172,7 @@ public class PollutionPanel extends JPanel
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Open")) {
 			FileDialog fd = new FileDialog(editor.getFrame(), 
-					"Set pollution scenario", FileDialog.LOAD);
+					"Set obstructer scenario", FileDialog.LOAD);
 
 	    	String dirName = null, fileName = null; 
 	    	dirName = editor.getDirName();
@@ -184,7 +184,7 @@ public class PollutionPanel extends JPanel
 	        
 	    	if (fd.getFile() == null) return;
 	    	String filename = fd.getDirectory() + fd.getFile();
-	    	pollutionFileLabel.setText("Pollution Settings: " + filename);
+	    	obstructerFileLabel.setText("Obstructer Settings: " + filename);
 	    	editor.getSetupFileInfo().setPollutionFile(filename);
 
 	    	repaint();

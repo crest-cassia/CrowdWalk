@@ -339,6 +339,8 @@ public class NetworkMap extends DefaultTreeModel {
                 removeOBNode(node, (OBNode)node.getChildAt(0), true);
             }
             break;
+        case AREA:
+            break;
         case SYMLINK:
             break;
         default:
