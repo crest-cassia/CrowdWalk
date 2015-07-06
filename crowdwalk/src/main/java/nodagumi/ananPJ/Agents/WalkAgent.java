@@ -529,45 +529,42 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-     * moveToNextPlace
+     * currentPlace を nextPlace まで進める。
+     * @return 避難完了もしくはスタックした場合に true。それ以外はfalse。
      */
     protected boolean moveToNextPlace(double time) {
         currentPlace.set(nextPlace) ;
         while (!currentPlace.isOnLink()) {
 
-            /* [2015.01.14 I.Noda]
-             * もし、リンクを通り過ぎていて、そのリンクの終点が goal なら
-             * 避難完了
-             */
+            /* もし、リンクを通り過ぎていて、そのリンクの終点が goal なら
+             * 避難完了 */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getHeadingNode().hasTag(goal)){
                 finalizeEvacuation(time, true, false) ;
-
                 return true;
             }
 
             chooseNextLinkCache.forced = true;
-            MapLink nextLink = chooseNextLink(time, currentPlace, routePlan, true) ;
+            MapLink nextLink
+                = chooseNextLink(time, currentPlace, routePlan, true) ;
             chooseNextLinkCache.forced = true;
 
             // 進行可能なリンクが見つからなければスタックさせる
             if (nextLink == null) {
-                Itk.logInfo("Agent stuck", String.format("%s ID: %s, time: %.1f, linkID: %s",
-                            getTypeName(), this.ID, time, currentPlace.getLink().ID)) ;
+                Itk.logInfo("Agent stuck",
+                            String.format("%s ID: %s, time: %.1f, linkID: %s",
+                                          getTypeName(), this.ID, time,
+                                          currentPlace.getLink().ID)) ;
                 finalizeEvacuation(time, false, true) ;
-
                 return true;
             }
 
             tryToPassNode(time, routePlan, nextLink) ;
 
-            /* [2015.01.14 I.Noda]
-             * もし、渡った先のリンクがゴールなら、避難完了
-             */
+            /* もし、渡った先のリンクがゴールなら、避難完了 */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getLink().hasTag(goal)){
                 finalizeEvacuation(time, true, false) ;
-
                 return true ;
             }
         }
@@ -582,7 +579,6 @@ public class WalkAgent extends AgentBase {
                                           getTypeName(), this.ID, time,
                                           currentPlace.getLink().ID)) ;
                 finalizeEvacuation(time, false, true) ;
-
                 return true;
             }
         }
@@ -736,16 +732,16 @@ public class WalkAgent extends AgentBase {
             currentPlace.getLink().calcEmptySpeedForAgent(emptySpeed,
                                                           this, time) ;
         //自由速度に向けた加速
-        dv = A_0 * (baseSpeed - speed) ;
+        accel = A_0 * (baseSpeed - speed) ;
         //social force による減速
         switch (model) {
         case LaneModel:
             double distToPredecessor = calcDistanceToPredecessor(time) ;
-            dv += calcSocialForce(distToPredecessor) ;
+            accel += calcSocialForce(distToPredecessor) ;
             break;
         case PlainModel:
-            double lowerBound = -((baseSpeed / time_scale) + dv) ;
-            dv += accumulateSocialForces(time, lowerBound) ;
+            double lowerBound = -((baseSpeed / time_scale) + accel) ;
+            accel += accumulateSocialForces(time, lowerBound) ;
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
@@ -754,8 +750,8 @@ public class WalkAgent extends AgentBase {
         }
 
         //時間積分
-        dv *= time_scale;
-        speed += dv;
+        accel *= time_scale;
+        speed += accel;
 
         //速度幅制限
         if (speed > baseSpeed) {

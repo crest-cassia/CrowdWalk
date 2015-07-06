@@ -86,10 +86,10 @@ implements Comparable<AgentBase> {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * speed: エージェントが単位時間に進む距離
-     * dv: 加速度
+     * accel: 加速度
      */
     protected double speed;
-    protected double dv = 0.0;
+    protected double accel = 0.0;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -495,7 +495,7 @@ implements Comparable<AgentBase> {
      * 加速度を取得
      */
     public double getAcceleration() {
-        return dv;
+        return accel;
     }
 
     //------------------------------------------------------------
