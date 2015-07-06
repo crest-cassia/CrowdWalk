@@ -20,7 +20,7 @@ import nodagumi.ananPJ.Scenario.Scenario;
 import nodagumi.Itk.* ;
 
 //============================================================
-/** 
+/**
  * Set Tag Event (SET/REMOVE)。
  * タグをリンクに追加/除去する。
  * <pre>
@@ -75,26 +75,26 @@ public class SetTagEvent extends PlacedEvent {
      */
     @Override
     public void setupByCsvColumns(Scenario _scenario,
-				  ShiftingStringList columns) {
-	super.setupByCsvColumns(_scenario, columns) ;
+                                  ShiftingStringList columns) {
+        super.setupByCsvColumns(_scenario, columns) ;
 
-	String command = columns.nth(3) ;
-	String subcoms[] = command.split(":") ;
-	if(subcoms.length < 2 || subcoms.length > 2 ||
-	   subcoms[1].length() == 0) {
-	    Itk.logWarn("Strange commands for SetTag event.") ;
-	    Itk.logWarn_("columns", columns) ;
-	} else {
-	    noticeTag = new Term(subcoms[1]) ;
-	}
-	if(subcoms[0].equals("SET")) {
-	    onoff = true ;
-	} else if(subcoms[0].equals("REMOVE")) {
-	    onoff = false ;
-	} else {
-	    Itk.logWarn("Strange commands for SetTag event.") ;
-	    Itk.logWarn_("columns", columns) ;
-	}
+        String command = columns.nth(3) ;
+        String subcoms[] = command.split(":") ;
+        if(subcoms.length < 2 || subcoms.length > 2 ||
+           subcoms[1].length() == 0) {
+            Itk.logWarn("Strange commands for SetTag event.") ;
+            Itk.logWarn_("columns", columns) ;
+        } else {
+            noticeTag = new Term(subcoms[1]) ;
+        }
+        if(subcoms[0].equals("SET")) {
+            onoff = true ;
+        } else if(subcoms[0].equals("REMOVE")) {
+            onoff = false ;
+        } else {
+            Itk.logWarn("Strange commands for SetTag event.") ;
+            Itk.logWarn_("columns", columns) ;
+        }
     }
 
     //----------------------------------------
@@ -106,7 +106,7 @@ public class SetTagEvent extends PlacedEvent {
      */
     @Override
     public boolean occur(double time, NetworkMap map) {
-	return occur(time, map, false) ;
+        return occur(time, map, false) ;
     }
 
     //----------------------------------------
@@ -118,7 +118,7 @@ public class SetTagEvent extends PlacedEvent {
      */
     @Override
     public boolean unoccur(double time, NetworkMap map) {
-	return occur(time, map, true) ;
+        return occur(time, map, true) ;
     }
     //----------------------------------------
     /**
@@ -129,25 +129,25 @@ public class SetTagEvent extends PlacedEvent {
      * @return : true を返す。
      */
     public boolean occur(double time, NetworkMap map, boolean inverse) {
-	for(MapLink link : map.getLinks()) {
+        for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
-		if(onoff ^ inverse) {
-		    link.addTag(noticeTag.getString()) ;
-		} else {
-		    link.removeTag(noticeTag.getString()) ;
-		}
-	    }
-	}
-	for(MapNode node : map.getNodes()) {
+                if(onoff ^ inverse) {
+                    link.addTag(noticeTag.getString()) ;
+                } else {
+                    link.removeTag(noticeTag.getString()) ;
+                }
+            }
+        }
+        for(MapNode node : map.getNodes()) {
             if(checkTagOrId(node)) {
-		if(onoff ^ inverse) {
-		    node.addTag(noticeTag.getString()) ;
-		} else {
-		    node.removeTag(noticeTag.getString()) ;
-		}
-	    }
-	}
-	return true ;
+                if(onoff ^ inverse) {
+                    node.addTag(noticeTag.getString()) ;
+                } else {
+                    node.removeTag(noticeTag.getString()) ;
+                }
+            }
+        }
+        return true ;
     }
 
     //----------------------------------------
@@ -155,9 +155,9 @@ public class SetTagEvent extends PlacedEvent {
      * 文字列化 後半
      */
     public String toStringTail() {
-	return (super.toStringTail() +
-		"," + "notice=" + noticeTag +
-		"," + "on=" + onoff);
+        return (super.toStringTail() +
+                "," + "notice=" + noticeTag +
+                "," + "on=" + onoff);
     }
 } // class SetTagEvent
 

@@ -72,6 +72,7 @@ import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink.*;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
@@ -399,7 +400,7 @@ public class AgentHandler {
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0 :
-                                "" + ((int)agent.getDirection())) ;}})
+                                "" + ((int)agent.getDirection().value())) ;}})
             .addColumn(formatter.new Column("generated_time") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -568,7 +569,8 @@ public class AgentHandler {
         if (true) {
             synchronized (simulator) {
                 for (MapLink link : getEffectiveLinkSet()) {
-                    ArrayList<AgentBase> forwardAgents = link.getLane(1.0);
+                    ArrayList<AgentBase> forwardAgents
+                        = link.getLane(Direction.Forward);
                     for(int i = 0 ; i < forwardAgents.size() ; i++) {
                         AgentBase agent =
                             (isUsingFrontFirstOrderQueue ?
@@ -577,7 +579,8 @@ public class AgentHandler {
 
                         agent.preUpdate(time);
                     }
-                    ArrayList<AgentBase> backwardAgents = link.getLane(-1.0);
+                    ArrayList<AgentBase> backwardAgents =
+                        link.getLane(Direction.Backward);
                     for (int i = backwardAgents.size() - 1; i >= 0; --i) {
                         AgentBase agent = backwardAgents.get(i);
                         agent.preUpdate(time);

@@ -20,6 +20,7 @@ import java.util.Random;
 import java.awt.geom.Point2D;
 
 import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;
 
@@ -30,14 +31,6 @@ import nodagumi.Itk.*;
  * エージェントの存在位置を示すクラス
  */
 public class Place {
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    /**
-     * forward/backword direction の場合の direction の値
-     */
-    final static public double DirectionValue_Forward = 1.0 ;
-    final static public double DirectionValue_Backward = -1.0 ;
-    final static public double DirectionValue_None = 0.0 ;
-
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * リンクを抜け出る直前を計算するための係数
@@ -423,13 +416,13 @@ public class Place {
     /**
      * リンクの from-to と進行方向が逆か?
      */
-    public double getDirectionValue() {
+    public Direction getDirection() {
         if(isForwardDirection()) {
-            return DirectionValue_Forward ;
+            return Direction.Forward ;
         } else if(isBackwardDirection()) {
-            return DirectionValue_Backward ;
+            return Direction.Backward ;
         } else {
-            return DirectionValue_None ;
+            return Direction.None ;
         }
     }
 
@@ -668,7 +661,7 @@ public class Place {
      * レーン取得
      */
     public ArrayList<AgentBase> getLane() {
-        return getLink().getLane(getDirectionValue()) ;
+        return getLink().getLane(getDirection()) ;
     }
 
     //------------------------------------------------------------
@@ -676,7 +669,7 @@ public class Place {
      * 対向レーン取得
      */
     public ArrayList<AgentBase> getOtherLane() {
-        return getLink().getLane(-getDirectionValue()) ;
+        return getLink().getLane(getDirection().opposite()) ;
     }
 
     //------------------------------------------------------------
@@ -684,7 +677,7 @@ public class Place {
      * レーン幅取得
      */
     public int getLaneWidth() {
-        return getLink().getLaneWidth(getDirectionValue()) ;
+        return getLink().getLaneWidth(getDirection()) ;
     }
 
     //------------------------------------------------------------
@@ -692,7 +685,7 @@ public class Place {
      * レーン幅取得(対向レーン)
      */
     public int getOtherLaneWidth() {
-        return getLink().getLaneWidth(-getDirectionValue()) ;
+        return getLink().getLaneWidth(getDirection().opposite()) ;
     }
 
     //------------------------------------------------------------

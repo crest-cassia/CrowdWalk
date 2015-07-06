@@ -17,6 +17,7 @@ import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBMapPart;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.misc.RoutePlan ;
@@ -418,16 +419,16 @@ implements Comparable<AgentBase> {
     /**
      * 現在のリンクに対する向きを取得
      */
-    public double getDirection() {
-        return currentPlace.getDirectionValue() ;
+    public Direction getDirection() {
+        return currentPlace.getDirection() ;
     }
 
     //------------------------------------------------------------
     /**
      * 現在のリンクに対する向きを取得
      */
-    public double getLastDirection() {
-        return lastPlace.getDirectionValue() ;
+    public Direction getLastDirection() {
+        return lastPlace.getDirection() ;
     }
 
     //------------------------------------------------------------
@@ -676,28 +677,6 @@ implements Comparable<AgentBase> {
     /**
      * エージェントのソート関係
      */
-    //------------------------------------------------------------
-    /**
-     * sort, binarySearch 用比較関数(古くて間違っている)
-     */
-    public int compareTo_orig(AgentBase rhs) {
-        double h1 = this.currentPlace.getPositionOnLink() ;
-        double h2 = rhs.currentPlace.getPositionOnLink() ;
-
-        // tkokada modified
-        if (h1 == h2) {
-            // m.saito modified
-            // i.noda modified [2015.06.04]
-            return ID.compareTo(rhs.ID) ;
-        } else if (h1 > h2) {
-            return (int)(1 * getDirection());
-            //return 1;
-        } else {
-            return (int)(-1 * getDirection());
-            //return -1;
-        }
-    }
-
     //------------------------------------------------------------
     /**
      * sort, binarySearch 用比較関数

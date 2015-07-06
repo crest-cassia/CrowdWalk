@@ -25,6 +25,7 @@ import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
@@ -1182,12 +1183,12 @@ public class EvacuationSimulator {
 	    for (MapLink link : getLinks()) {
                 // link log format:
                 // link,ID,forward_agents,backward_agents,density
-                double linkDensity = (link.getLane(1.0).size() +
-                        link.getLane(-1.0).size()) /
+                double linkDensity = (link.getLane(Direction.Forward).size() +
+                        link.getLane(Direction.Backward).size()) /
                     (link.length * link.width);
                 writer.write("link," + link.ID + "," +
-                        link.getLane(1.0).size() + "," +
-                        link.getLane(-1.0).size() + "," +
+                        link.getLane(Direction.Forward).size() + "," +
+                        link.getLane(Direction.Backward).size() + "," +
                         linkDensity + "\n");
                 totalLinkDensity += linkDensity;
             }

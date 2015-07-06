@@ -14,6 +14,7 @@ import javax.vecmath.Vector3d;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
@@ -938,7 +939,7 @@ public class WalkAgent extends AgentBase {
 
         MapNode passingNode = currentPlace.getHeadingNode();
         MapLink previousLink = currentPlace.getLink() ;
-        double direction_orig = currentPlace.getDirectionValue() ;
+        Direction direction_orig = currentPlace.getDirection() ;
 
         /* agent exits the previous link */
         currentPlace.getLink().agentExits(this);

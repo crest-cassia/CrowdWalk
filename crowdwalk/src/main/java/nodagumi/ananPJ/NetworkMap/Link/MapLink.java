@@ -56,6 +56,44 @@ public class MapLink extends OBMapPart {
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
+     * 順・逆方向を示すもの
+     */
+    static public enum Direction {
+        Forward(1.0),
+        Backward(-1.0),
+        None(0.0);
+
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /** 方向の値 */
+        private final double _value ;
+
+        //------------------------------
+        /** コンストラクタ */
+        private Direction(final double value) {
+            this._value = value ;
+        }
+
+        //------------------------------
+        /** 値の取得 */
+        public double value() {
+            return _value ;
+        }
+
+        //------------------------------
+        /** 逆方向 */
+        public Direction opposite() {
+            switch(this) {
+            case Forward : return Direction.Backward ;
+            case Backward : return Direction.Forward ;
+            default : return Direction.None ;
+            }
+
+        }
+    }
+
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
      * Special Tags
      */
     static public final String Tag_OneWayForward = "ONE-WAY-FORWARD" ;
@@ -208,7 +246,7 @@ public class MapLink extends OBMapPart {
 
     /* Constructors */
     public MapLink(String _id,
-            double _length, double _width) {
+                   double _length, double _width) {
         super(_id);
 
         agents = new ArrayList<AgentBase>();
@@ -333,30 +371,20 @@ public class MapLink extends OBMapPart {
         }
     }
 
-
-    public ArrayList<AgentBase> getLane(double speed) {
-        if (speed > 0) return forwardLane;
-        else return backwardLane;
+    public ArrayList<AgentBase> getLane(Direction dir) {
+        switch(dir) {
+        case Forward : return forwardLane;
+        case Backward : return backwardLane ;
+        default : return null ;
+        }
     }
 
-    public int getLaneWidth(double speed) {
-        int d;
-        if (speed > 0) d = forwardLane.size();
-        else d = backwardLane.size();
-
+    public int getLaneWidth(Direction dir) {
+        int d = getLane(dir).size() ;
         int lane_width = (int)(d * width / (forwardLane.size() +
                     backwardLane.size()));
         if (lane_width == 0) {
             lane_width = 1;
-            /*
-            System.err.print("WARNING: lane width 0 on " + getTagString());
-            System.err.println(" (" + width + "*" + d + " / ("
-                    + forwardLane.size() + " + "
-                    + backwardLane.size() + ")");
-            if (width < 2.0) {
-                System.err.println("ERROR: path width " + width);
-            }
-            */
         }
         return lane_width ;
     }
@@ -983,46 +1011,24 @@ public class MapLink extends OBMapPart {
     /**
      * リンクが指定されたノードから見た時の direction の値
      * @param originNode エージェントが入る側のノード
-     * @return 順方向なら 1.0。逆なら -1.0。
+     * @return 順方向なら Direction.Forward。逆なら Direction.Backward。
      */
-    public double directionValueFrom(MapNode originNode) {
-        return directionValueFrom(originNode, 1.0) ;
-    }
-    //------------------------------------------------------------
-    /**
-     * リンクが指定されたノードから見た時の direction の値
-     * @param originNode エージェントが入る側のノード
-     * @param baseValue direction の元になる値
-     * @return 順方向なら baseValue。逆なら -baseValue。
-     */
-    public double directionValueFrom(MapNode originNode,
-                                     double baseValue) {
+    public Direction directionValueFrom(MapNode originNode) {
         return (isForwardDirectionFrom(originNode) ?
-                baseValue :
-                -baseValue) ;
+                Direction.Forward :
+                Direction.Backward) ;
     }
 
     //------------------------------------------------------------
     /**
      * リンクが指定されたノードの方を見て正方向かどうかのチェック
      * @param destinationNode エージェントが向かう方のノード
-     * @return 順方向なら 1.0。逆なら -1.0。
+     * @return 順方向なら Direction.Forward。逆なら Direction.Backward。
      */
-    public double directionValueTo(MapNode destinationNode) {
-        return directionValueTo(destinationNode, 1.0) ;
-    }
-    //------------------------------------------------------------
-    /**
-     * リンクが指定されたノードの方を見て正方向かどうかのチェック
-     * @param destinationNode エージェントが向かう方のノード
-     * @param baseValue direction の元になる値
-     * @return 順方向なら baseValue。逆なら -baseValue。
-     */
-    public double directionValueTo(MapNode destinationNode,
-                                   double baseValue) {
+    public Direction directionValueTo(MapNode destinationNode) {
         return (isForwardDirectionTo(destinationNode) ?
-                baseValue :
-                -baseValue) ;
+                Direction.Forward :
+                Direction.Backward) ;
     }
 
     //------------------------------------------------------------
