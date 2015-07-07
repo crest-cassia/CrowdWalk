@@ -47,6 +47,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.SetupFileInfo;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.*;
 
@@ -191,7 +192,6 @@ public class MapLink extends OBMapPart {
 
     /* place holder for values used in simulation */
     public ArrayList<AgentBase> agents;
-    protected double timeScale = 1.0;
     private boolean nodes_are_set = false;
 
     //------------------------------------------------------------
@@ -199,11 +199,12 @@ public class MapLink extends OBMapPart {
      * alert message
      */
 
-    public void addAlertMessage(Term message, double time, boolean onoff) {
+    public void addAlertMessage(Term message, SimClock currentTime,
+                                boolean onoff) {
         if(onoff) {
-            alertMessageTable.put(message, time) ;
+            alertMessageTable.put(message, currentTime) ;
             for(AgentBase agent : getAgents()) {
-                agent.alertMessage(message, time) ;
+                agent.alertMessage(message, currentTime) ;
             }
         } else {
             alertMessageTable.remove(message) ;
@@ -269,8 +270,7 @@ public class MapLink extends OBMapPart {
         return "Link";
     }*/
 
-    public void prepareForSimulation(double _timeScale) {
-        timeScale = _timeScale;
+    public void prepareForSimulation() {
         setup_lanes();
     }
 
@@ -293,7 +293,7 @@ public class MapLink extends OBMapPart {
         return (fromNode.getHeight() + toNode.getHeight()) / 2.0;
     }
 
-    public void preUpdate(double time) {
+    public void preUpdate(SimClock clock) {
         if(agents.isEmpty()) return ;
 
         Collections.sort(agents) ;
@@ -308,7 +308,7 @@ public class MapLink extends OBMapPart {
      * これを避けるためにここでまとめて処理してみる。
      * 本来は、sort すべきか？
      */
-    public void update(double time) {
+    public void update(SimClock clock) {
         if(agents.isEmpty()) return ;
 
         // Collections.sort(agents) ;
@@ -513,7 +513,7 @@ public class MapLink extends OBMapPart {
         */
 
         /* alert message を新しいエージェントに伝える */
-        for(HashMap.Entry<Term, Double> entry : alertMessageTable.entrySet()) {
+        for(HashMap.Entry<Term, SimClock> entry : alertMessageTable.entrySet()) {
             agent.alertMessage(entry.getKey(), entry.getValue()) ;
         }
     }
@@ -1166,20 +1166,20 @@ public class MapLink extends OBMapPart {
     /**
      * 交通規制処理
      * @param agent: 規制を加えるエージェント。リンク上にいる。
-     * @param time: 現在時刻
+     * @param clock: 現在時刻
      * @return 規制が適用されたら true
      */
     public double calcRestrictedSpeed(double speed, AgentBase agent,
-                                      double time) {
+                                      SimClock clock) {
         /* 分断制御 */
-        if(isGateClosed(agent, time)) {
+        if(isGateClosed(agent, clock)) {
             speed = 0 ;
         }
 
         /* 制約ルール適用 */
         for(int i = 0 ; i < speedRestrictRule.getArraySize() ; i++) {
             Term rule = speedRestrictRule.getNthTerm(i) ;
-            speed = applyRestrictionRule(speed, rule, agent, time) ;
+            speed = applyRestrictionRule(speed, rule, agent, clock) ;
         }
 
         return speed ;
@@ -1190,16 +1190,16 @@ public class MapLink extends OBMapPart {
      * そのリンクにおける自由速度
      * @param emptySpeed: 元になるスピード
      * @param agent: 対象となるエージェント。リンク上にいる。
-     * @param time: 現在時刻
+     * @param clock: 現在時刻
      * @return 自由速度
      */
     public double calcEmptySpeedForAgent(double emptySpeed,
                                          AgentBase agent,
-                                         double time) {
+                                         SimClock clock) {
         /* 制約ルール適用 */
         for(int i = 0 ; i < emptySpeedRestrictRule.getArraySize() ; i++) {
             Term rule = emptySpeedRestrictRule.getNthTerm(i) ;
-            emptySpeed = applyRestrictionRule(emptySpeed, rule, agent, time) ;
+            emptySpeed = applyRestrictionRule(emptySpeed, rule, agent, clock) ;
         }
 
         return emptySpeed ;

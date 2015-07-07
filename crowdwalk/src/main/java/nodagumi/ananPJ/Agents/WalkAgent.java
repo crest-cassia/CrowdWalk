@@ -18,6 +18,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
+import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.Agents.AgentFactory;
 
 import nodagumi.Itk.*;
@@ -124,13 +125,6 @@ public class WalkAgent extends AgentBase {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 速度計算関係
-	 * time_scale : シミュレーションステップ
-	 */
-    protected double time_scale = 1.0;//0.5; simulation time step
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * リンク上の次の位置。
      * 0 以下あるいはリンク長より大きい場合、次のリンクに移っていることになる。
      * advanceNextPlace() でセット。
@@ -168,10 +162,10 @@ public class WalkAgent extends AgentBase {
      */
     class CheckPoint {
         public MapNode node;
-        public double time;
+        public SimClock passTime;
         public String reason;
-        public CheckPoint(MapNode _node, double _time, String _reason) {
-            node = _node; time = _time; reason = _reason;
+        public CheckPoint(MapNode _node, SimClock _time, String _reason) {
+            node = _node; passTime = _time; reason = _reason;
         }
     }
 
@@ -277,8 +271,8 @@ public class WalkAgent extends AgentBase {
      */
     @Override
     public void init(Random _random, EvacuationSimulator simulator,
-                     AgentFactory factory, double time) {
-        super.init(_random, simulator, factory, time);
+                     AgentFactory factory, SimClock currentTime) {
+        super.init(_random, simulator, factory, currentTime);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
         setSpeedCalculationModel(factory.speedModel) ;
@@ -348,22 +342,6 @@ public class WalkAgent extends AgentBase {
     /**
      *
      */
-    public void setTimeScale(double _time_scale) {
-        time_scale = _time_scale;
-    }
-
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public double getTimeScale() {
-        return time_scale;
-    }
-
-    //------------------------------------------------------------
-    /**
-     *
-     */
     public double getEmptySpeed() {
         return emptySpeed;
     }
@@ -400,7 +378,7 @@ public class WalkAgent extends AgentBase {
      * シミュレーション準備
      */
     @Override
-    public void prepareForSimulation(double _timeScale) {
+    public void prepareForSimulation() {
         if (!isEvacuated()) {
             if(currentPlace.isBeforeStartFromLink()) { // リンクが初期位置
                 prepareForSimulation_FromLink() ;
@@ -459,7 +437,7 @@ public class WalkAgent extends AgentBase {
             Itk.logError("currentPlace has no link for routePlan.") ;
             Itk.logError_("currentPlace", currentPlace) ;
             Itk.logError_("routePlan", routePlan) ;
-            finalizeEvacuation(0, false, true) ;
+            finalizeEvacuation(new SimClock(), false, true) ;
         }
         currentPlace.setLink(bestLink) ;
     }
@@ -470,10 +448,10 @@ public class WalkAgent extends AgentBase {
      * preUpdate
      */
     @Override
-    public void preUpdate(double time) {
-        super.preUpdate(time) ;
-        calcSpeed(time);
-        advanceNextPlace(speed, time, false);
+    public void preUpdate(SimClock clock) {
+        super.preUpdate(clock) ;
+        calcSpeed(clock);
+        advanceNextPlace(speed, clock, false);
     }
 
     //------------------------------------------------------------
@@ -516,13 +494,13 @@ public class WalkAgent extends AgentBase {
      * 次のリンクへは移らず、はみ出した距離ははみ出したまま。
      * @param d : speed に相当する大きさ。単位時間に進める長さ。
      *     [2015.01.10 I.Noda] direction はかかっていないものとする。
-     * @param time : 時間ステップ。1.0 が1秒。
+     * @param clock : 現在時刻
      * @param stayOnLink : 現在のリンクにとどまるかどうか。WaitDirective 用。
      *    true なら、link をはみ出す場合、はみ出さない距離に調整する。
      */
-    protected boolean advanceNextPlace(double d, double time, boolean stayOnLink) {
+    protected boolean advanceNextPlace(double d, SimClock clock, boolean stayOnLink) {
         nextPlace.set(currentPlace) ;
-        double distToMove = d * time_scale ;
+        double distToMove = d * clock.getTickUnit() ;
         nextPlace.makeAdvance(distToMove, stayOnLink) ;
         return false ;
     }
@@ -532,7 +510,7 @@ public class WalkAgent extends AgentBase {
      * currentPlace を nextPlace まで進める。
      * @return 避難完了もしくはスタックした場合に true。それ以外はfalse。
      */
-    protected boolean moveToNextPlace(double time) {
+    protected boolean moveToNextPlace(SimClock clock) {
         currentPlace.set(nextPlace) ;
         while (!currentPlace.isOnLink()) {
 
@@ -540,31 +518,32 @@ public class WalkAgent extends AgentBase {
              * 避難完了 */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getHeadingNode().hasTag(goal)){
-                finalizeEvacuation(time, true, false) ;
+                finalizeEvacuation(clock, true, false) ;
                 return true;
             }
 
             chooseNextLinkCache.forced = true;
             MapLink nextLink
-                = chooseNextLink(time, currentPlace, routePlan, true) ;
+                = chooseNextLink(clock, currentPlace, routePlan, true) ;
             chooseNextLinkCache.forced = true;
 
             // 進行可能なリンクが見つからなければスタックさせる
             if (nextLink == null) {
                 Itk.logInfo("Agent stuck",
                             String.format("%s ID: %s, time: %.1f, linkID: %s",
-                                          getTypeName(), this.ID, time,
+                                          getTypeName(), this.ID,
+                                          clock.getRelativeTime(),
                                           currentPlace.getLink().ID)) ;
-                finalizeEvacuation(time, false, true) ;
+                finalizeEvacuation(clock, false, true) ;
                 return true;
             }
 
-            tryToPassNode(time, routePlan, nextLink) ;
+            tryToPassNode(clock, routePlan, nextLink) ;
 
             /* もし、渡った先のリンクがゴールなら、避難完了 */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getLink().hasTag(goal)){
-                finalizeEvacuation(time, true, false) ;
+                finalizeEvacuation(clock, true, false) ;
                 return true ;
             }
         }
@@ -576,9 +555,10 @@ public class WalkAgent extends AgentBase {
             if (nextLinkList.size() == 0) {
                 Itk.logInfo("Agent stuck", 
                             String.format("%s ID: %s, time: %.1f, linkID: %s",
-                                          getTypeName(), this.ID, time,
+                                          getTypeName(), this.ID,
+                                          clock.getRelativeTime(),
                                           currentPlace.getLink().ID)) ;
-                finalizeEvacuation(time, false, true) ;
+                finalizeEvacuation(clock, false, true) ;
                 return true;
             }
         }
@@ -591,19 +571,19 @@ public class WalkAgent extends AgentBase {
      * update
      */
     @Override
-    public boolean update(double time) {
+    public boolean update(SimClock clock) {
         /* [2015.01.10 I.Noda] 生成前なら処理しない */
-        if (time < generatedTime) {
+        if (clock.isBefore(generatedTime)) {
             return false;
         }
 
         if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
             getPrevNode().hasTag(goal)){
-            finalizeEvacuation(time, true, false) ;
+            finalizeEvacuation(clock, true, false) ;
             return true;
         }
 
-        boolean ret = moveToNextPlace(time);
+        boolean ret = moveToNextPlace(clock);
         if(currentPlace.isWalking()) lastPlace.set(currentPlace) ;
 
         return ret ;
@@ -629,13 +609,13 @@ public class WalkAgent extends AgentBase {
     /**
      * 速度計算
      */
-    protected void calcSpeed(double time) {
+    protected void calcSpeed(SimClock clock) {
         switch (calculation_model) {
         case LaneModel:
-            calcSpeedLaneGeneric(time,calculation_model) ;
+            calcSpeedLaneGeneric(clock, calculation_model) ;
             break;
         case PlainModel:
-            calcSpeedLaneGeneric(time,calculation_model);
+            calcSpeedLaneGeneric(clock, calculation_model);
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
@@ -646,7 +626,7 @@ public class WalkAgent extends AgentBase {
         /* [2015.01.09 I.Noda]
          * リンクの交通規制など (Gate)
          */
-        speed = currentPlace.getLink().calcRestrictedSpeed(speed, this, time) ;
+        speed = currentPlace.getLink().calcRestrictedSpeed(speed, this, clock) ;
 
         /* [2015.01.09 I.Noda]
          * リンクを踏破しているなら、headingNode での規制
@@ -655,7 +635,7 @@ public class WalkAgent extends AgentBase {
         if (!currentPlace.isBeyondLinkWithAdvance(speed)) {
             speed = currentPlace.getHeadingNode().calcRestrictedSpeed(speed,
                                                                       this,
-                                                                      time) ;
+                                                                      clock) ;
         }
 
         obstructer.effect() ;
@@ -672,13 +652,14 @@ public class WalkAgent extends AgentBase {
     /**
      * 前方にいるエージェントまでの距離計算
      */
-    private double calcDistanceToPredecessor(double time) {
+    private double calcDistanceToPredecessor(SimClock clock) {
         //前方のエージェントまでの距離の作業変数
         double distToPredecessor = -currentPlace.getAdvancingDistance();
         /* [2015.01.10 I.Noda]
          * 余裕を持って探索するため、長めにとってみる。
          */
-        double maxDistance = (personalSpace + emptySpeed) * (time_scale + 1.0) ;
+        double maxDistance
+            = (personalSpace + emptySpeed) * (clock.getTickUnit() + 1.0) ;
 
         //前方のエージェントを探している場所
         Place workingPlace = currentPlace.duplicate() ;
@@ -705,7 +686,7 @@ public class WalkAgent extends AgentBase {
                 distToPredecessor += workingPlace.getLinkLength() ;
                 indexInLane -= agents.size() ;
                 MapLink nextLink =
-                    chooseNextLinkBody(time, workingPlace,
+                    chooseNextLinkBody(clock, workingPlace,
                                        workingRoutePlan, true) ;
                 if (nextLink == null) {
                     break;
@@ -725,23 +706,23 @@ public class WalkAgent extends AgentBase {
     /**
      * lane および plain による速度計算
      */
-    private void calcSpeedLaneGeneric(double time,
+    private void calcSpeedLaneGeneric(SimClock clock,
                                       SpeedCalculationModel model) {
         /* base speed */
         double baseSpeed =
             currentPlace.getLink().calcEmptySpeedForAgent(emptySpeed,
-                                                          this, time) ;
+                                                          this, clock) ;
         //自由速度に向けた加速
         accel = A_0 * (baseSpeed - speed) ;
         //social force による減速
         switch (model) {
         case LaneModel:
-            double distToPredecessor = calcDistanceToPredecessor(time) ;
+            double distToPredecessor = calcDistanceToPredecessor(clock) ;
             accel += calcSocialForce(distToPredecessor) ;
             break;
         case PlainModel:
-            double lowerBound = -((baseSpeed / time_scale) + accel) ;
-            accel += accumulateSocialForces(time, lowerBound) ;
+            double lowerBound = -((baseSpeed / clock.getTickUnit()) + accel) ;
+            accel += accumulateSocialForces(clock, lowerBound) ;
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
@@ -750,7 +731,7 @@ public class WalkAgent extends AgentBase {
         }
 
         //時間積分
-        accel *= time_scale;
+        accel *= clock.getTickUnit();
         speed += accel;
 
         //速度幅制限
@@ -785,16 +766,17 @@ public class WalkAgent extends AgentBase {
      *          つまり、w(レーン幅) = 3 の時、
      *          1,2,3,4,5 番目のエージェントの横ずれ幅は、
      *          3u, 2u, 1u, 3u, 2u となる。
-     * @param time : 時刻
+     * @param clock : 時刻
      * @param lowerBound : 計算上の力の下限。余計な計算しないために。
      * @return 力
      */
-    private double accumulateSocialForces(double time, double lowerBound) {
+    private double accumulateSocialForces(SimClock clock, double lowerBound) {
         //求める力
         double totalForce = 0.0 ;
 
         //探す範囲
-        double maxDistance = (personalSpace + emptySpeed) * (time_scale + 1.0) ;
+        double maxDistance
+            = (personalSpace + emptySpeed) * (clock.getTickUnit() + 1.0) ;
 
         //作業用の場所と経路計画
         Place workingPlace = currentPlace.duplicate() ;
@@ -876,7 +858,7 @@ public class WalkAgent extends AgentBase {
             //次のリンクへ進む
             relativePos -= workingPlace.getLinkLength() ;
             MapLink nextLink =
-                chooseNextLinkBody(time, workingPlace,
+                chooseNextLinkBody(clock, workingPlace,
                                    workingRoutePlan, true) ;
             if (nextLink == null) {
                 break;
@@ -924,14 +906,14 @@ public class WalkAgent extends AgentBase {
      * change: navigationReason, route, prev_node, previous_link,
      * current_link, position, evacuated, link.agentExists
      */
-    protected boolean tryToPassNode(double time,
+    protected boolean tryToPassNode(SimClock clock,
                                     RoutePlan workingRoutePlan,
                                     MapLink nextLink) {
         /* [2014.12.19 I.Noda]
          * NaiveAgent への経路記録の入り口のため,
          * recordTrail を導入。
          */
-        recordTrail(time, currentPlace, nextLink) ;
+        recordTrail(clock, currentPlace, nextLink) ;
 
         MapNode passingNode = currentPlace.getHeadingNode();
         MapLink previousLink = currentPlace.getLink() ;
@@ -975,10 +957,11 @@ public class WalkAgent extends AgentBase {
      * 最終決定したルート、足跡情報の記録
      * [2014.12.19 I.Noda] tryToPassNode() より移動
      */
-    protected void recordTrail(double time, Place passingPlace,
+    protected void recordTrail(SimClock clock, Place passingPlace,
                                MapLink nextLink) {
         route.add(new CheckPoint(passingPlace.getHeadingNode(),
-                                 time, navigationReason.toString()));
+                                 clock.duplicate(),
+                                 navigationReason.toString()));
     }
 
 	//############################################################
@@ -992,7 +975,7 @@ public class WalkAgent extends AgentBase {
      * 候補が1つしか無い場合などのショートカットと、
      * エラー処理・例外処理を行う。
      */
-    protected MapLink chooseNextLink(double time,
+    protected MapLink chooseNextLink(SimClock clock,
                                      Place passingPlace,
                                      RoutePlan workingRoutePlan,
                                      boolean on_node) {
@@ -1022,7 +1005,7 @@ public class WalkAgent extends AgentBase {
         }
 
         MapLink nextLink =
-            chooseNextLinkBody(time, passingPlace,
+            chooseNextLinkBody(clock, passingPlace,
                                workingRoutePlan, on_node) ;
 
         // もし target が見つかっていなかったら、ランダムに選ぶ。
@@ -1053,7 +1036,7 @@ public class WalkAgent extends AgentBase {
     /**
      * ノードにおいて、次の道を選択するルーチン
      */
-    protected MapLink chooseNextLinkBody(double time,
+    protected MapLink chooseNextLinkBody(SimClock clock,
                                          Place passingPlace,
                                          RoutePlan workingRoutePlan,
                                          boolean on_node) {
@@ -1240,14 +1223,14 @@ public class WalkAgent extends AgentBase {
      */
     @Override
     public void dumpResult(PrintStream out) {
-        out.print("" + generatedTime + ",");
-        out.print("" + finishedTime + ",");/* 0.0 if not evacuated */
+        out.print("" + generatedTime.getRelativeTime() + ",");
+        out.print("" + finishedTime.getRelativeTime() + ",");/* 0.0 if not evacuated */
         out.print("" + getTriageInt() + ",");
         out.print("" + obstructer.accumulatedValueForLog()) ;
         for (final CheckPoint cp : route) {
             if (cp.node.getTags().size() != 0) {
                 out.print("," + cp.node.getTagString().replace(',', '-'));
-                out.print("("+ String.format("%1.3f", cp.time) +")");
+                out.print("("+ String.format("%1.3f", cp.passTime) +")");
             }
         }
         out.println();

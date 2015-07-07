@@ -29,6 +29,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.*;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.* ;
 
@@ -63,7 +64,14 @@ public class Scenario {
     /**
      * 起点となる時刻(絶対時刻)
      */
-    private double originTime = 0.0 ;
+    private double originTime_obsolete = 0.0 ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * シミュレーション内クロック。
+     * 本体は、EvacuationSimulation の中の clock ;
+     */
+    private SimClock clock = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -100,29 +108,11 @@ public class Scenario {
     // 時刻処理
     //------------------------------------------------------------
     /**
-     * 文字列から数値へ変換
-     * 可能なフォーマットは、"HH:MM:SS" もしくは "HH:MM"
-     * 返す値の単位は、秒。
+     * クロックをセット。
+     * 主として、EvacuationSimulator からセットされるはず。
      */
-    static public double convertToTimeValue(String timeString) {
-        try {
-            return Itk.scanTimeStringToInt(timeString) ;
-        } catch(Exception ex) {
-            ex.printStackTrace() ;
-            Itk.logError("Exception",ex) ;
-            System.exit(1) ;
-        }
-        return 0 ; // never reach here.
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 数値から文字列へ変換
-     * 秒から "HH:MM:SS" へ。
-     * 少数以下は切り捨て。
-     */
-    static public String convertToTimeString(double timeVal) {
-        return Itk.formatSecTime((int)timeVal) ;
+    public void setClock(SimClock clock) {
+        this.clock = clock ;
     }
 
     //------------------------------------------------------------
@@ -131,14 +121,6 @@ public class Scenario {
      */
     public double getOriginTime() {
         return originTime ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 起点時刻文字列取得
-     */
-    public String getOriginTimeString() {
-        return convertToTimeString(getOriginTime()) ;
     }
 
     //------------------------------------------------------------
@@ -152,14 +134,6 @@ public class Scenario {
 
     //------------------------------------------------------------
     /**
-     * 文字列による起点時刻セット
-     */
-    public double setOriginTimeByTimeString(String _originTimeInStr) {
-        return setOriginTime(convertToTimeValue(_originTimeInStr)) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 相対時刻取得
      */
     public double calcRelativeTime(double absTime) {
@@ -168,26 +142,10 @@ public class Scenario {
 
     //------------------------------------------------------------
     /**
-     * 文字列からの相対時刻取得
-     */
-    public double calcRelativeTimeFromTimeString(String timeString) {
-        return calcRelativeTime(convertToTimeValue(timeString)) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 絶対時刻取得
      */
     public double calcAbsoluteTime(double relTime) {
         return relTime + getOriginTime() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 文字列からの絶対時刻取得
-     */
-    public double calcAbsoluteTimeFromTimeString(String timeString) {
-        return calcAbsoluteTime(convertToTimeValue(timeString)) ;
     }
 
     //------------------------------------------------------------
@@ -277,12 +235,17 @@ public class Scenario {
         for(EventBase event : eventList) {
             if(event instanceof InitiateEvent) {
                 findInitiate = true ;
-                setOriginTime(event.atTime) ;
+                clock.setOriginTimeString(event.atTimeString, true) ;
                 break ;
             }
         }
+        // clock を元に、イベントの発生時刻を再設定。
+        for(EventBase event : eventList) {
+            event.setupAtTime(clock) ;
+        }
+
         if(! findInitiate) {
-            Itk.logWarn("No Initiate Event.") ;
+            Itk.logWarn("No Initiate Event", "use default event.") ;
         }
     }
 
@@ -295,12 +258,11 @@ public class Scenario {
      * @param map : マップデータ
      * @return 進んだシナリオの数
      */
-    public int update(double relTime, NetworkMap map) {
-        double absTime = calcAbsoluteTime(relTime) ;
+    public int update(SimClock clock, NetworkMap map) {
         int count = 0 ;
         for(int i = eventIndex ; i < eventList.size() ; i++) {
             EventBase event = eventList.get(i) ;
-            if(eventList.get(i).tryOccur(absTime, map)) {
+            if(eventList.get(i).tryOccur(clock, map)) {
                 count++ ;
             } else {
                 break ;

@@ -16,6 +16,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.* ;
 
@@ -38,35 +39,35 @@ public class CloseGateEvent extends GateEvent {
     //----------------------------------------
     /**
      * ゲート開放イベント発生処理
-     * @param time : 現在の絶対時刻
+     * @param clock : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean occur(double time, NetworkMap map) {
-	return occur(time, map, false) ;
+    public boolean occur(SimClock clock, NetworkMap map) {
+	return occur(clock, map, false) ;
     }
 
     //----------------------------------------
     /**
      * ゲート開放イベント発生逆処理
-     * @param time : 現在の絶対時刻
+     * @param clock : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean unoccur(double time, NetworkMap map) {
-	return occur(time, map, true) ;
+    public boolean unoccur(SimClock clock, NetworkMap map) {
+	return occur(clock, map, true) ;
     }
 
     //----------------------------------------
     /**
      * ゲート開放イベント発生処理
-     * @param time : 現在の絶対時刻
+     * @param clock : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
-    public boolean occur(double time, NetworkMap map, boolean inverse) {
+    public boolean occur(SimClock clock, NetworkMap map, boolean inverse) {
 	for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
 		if(!inverse) {

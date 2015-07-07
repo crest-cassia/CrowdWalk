@@ -27,6 +27,7 @@ import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.SetupFileInfo;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.*;
 
@@ -229,7 +230,8 @@ public abstract class AgentFactory {
 
     public Term goal;
     public List<Term> planned_route;
-    double start_time, duration;
+    SimClock start_time ;
+    double duration;
     int total;
     public SpeedCalculationModel speedModel = null;
     Random random = null;
@@ -312,27 +314,26 @@ public abstract class AgentFactory {
      * エージェント生成
      */
     public void tryUpdateAndGenerate(EvacuationSimulator simulator,
-                                     double relTime,
+                                     SimClock clock,
                                      List<AgentBase> agents) {
-        double absTime = simulator.calcAbsoluteTime(relTime) ;
-        double timeScale = simulator.getTimeScale() ;
-
         if (!enabled) return;
 
-        if (finished(absTime)) {
+        if (finished(clock)) {
             enabled = false;
             return;
         }
 
-        if (absTime < start_time) {
+        if (clock.isBefore(start_time)) {
             /* not yet time to start generating agents */
             return;
         }
 
-        double duration_left = start_time + duration - absTime;
+        double duration_left =
+            start_time.getRelativeTime() + duration - clock.getRelativeTime() ;
         int agent_to_gen = total - generated;
         if (duration_left > 0) {
-            double r = (double)(agent_to_gen) / duration_left * timeScale;
+            double r
+                = (double)(agent_to_gen) / duration_left * clock.getTickUnit() ;
             // tkokada: free timeScale update
             if (((int) r) > agent_to_gen)
                 r = agent_to_gen;
@@ -351,12 +352,13 @@ public abstract class AgentFactory {
              null) ;
 
         /* [I.Noda] ここで Agent 生成 */
+        SimClock generatedTime = clock.duplicate() ;
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
             AgentBase agent = null;
             try {
                 agent = newAgentByName(agentClassName) ;
-                agent.init(random, simulator, this, relTime);
+                agent.init(random, simulator, this, generatedTime) ;
                 agent.initByConf(agentConf, fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.logError("class name not found") ;
@@ -368,7 +370,7 @@ public abstract class AgentFactory {
             agents.add(agent);
             place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
-            agent.prepareForSimulation(timeScale);
+            agent.prepareForSimulation() ;
             agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
         }
     }

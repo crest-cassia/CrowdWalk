@@ -82,18 +82,6 @@ public class EvacuationSimulator {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * simulation time step
-     */
-    private double timeScale = 1.0; // original value: 1.0
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 何回シミュレーションが回ったかを保持する。
-     */
-    protected double tick_count = 0.0;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * 親launcher
      */
     protected BasicSimulationLauncher launcher = null ;
@@ -160,7 +148,7 @@ public class EvacuationSimulator {
      * エージェントがゴールに達した時刻情報。
      * saveGoalLog() 用
      */
-    private HashMap<String, Double> goalTimes = new HashMap<String, Double>();
+    private HashMap<String, SimClock> goalTimes = new HashMap<String, SimClock>();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -217,7 +205,7 @@ public class EvacuationSimulator {
     /**
      * ruby 用 simulation wrapper のインスタンス。
      * シミュレーションの cycle の前後で、
-     * preCycle(relTime), postCycle(relTime) が呼び出される。
+     * preCycle(clock), postCycle(clock) が呼び出される。
      */
     private Object rubyWrapper = null ;
 
@@ -284,53 +272,6 @@ public class EvacuationSimulator {
         return agentHandler;
     }
 
-    //------------------------------------------------------------
-    /**
-     * シミュレーションサイクル。
-     */
-    public double getTickCount() {
-        return tick_count;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * time scale 設定。
-     */
-    public void setTimeScale (double d) {
-        timeScale = d;
-    }
-
-    /**
-     * time scale 取得。
-     */
-    public double getTimeScale () {
-        return timeScale;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 相対時刻。
-     */
-    public double getSecond() {
-        return getTickCount() * timeScale;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 相対時刻から絶対時刻への変換。
-     */
-    public double calcAbsoluteTime(double relTime) {
-        return agentHandler.calcAbsoluteTime(relTime) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 絶対時刻から相対時刻への変換。
-     */
-    public double calcRelativeTime(double absTime) {
-        return agentHandler.calcRelativeTime(absTime) ;
-    }
-    
     //------------------------------------------------------------
     /**
      * Pollution ハンドラ取得。
@@ -552,7 +493,7 @@ public class EvacuationSimulator {
         }
         /* Links */
         for (MapLink link : getLinks()) {
-            link.prepareForSimulation(timeScale) ;
+            link.prepareForSimulation() ;
         }
         // リンク上にかかるMapAreaのリストをリンクにセットする
         for (MapArea area : networkMap.getAreas()) {
@@ -578,7 +519,7 @@ public class EvacuationSimulator {
             pollutionHandler =
                 new PollutionHandler(pollutionFileName,
                                      networkMap.getAreas(),
-                                     timeScale, interval);
+                                     clock, interval);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -590,6 +531,7 @@ public class EvacuationSimulator {
      * シナリオ読み込み。
      */
     private void buildScenario() {
+        scenario.setClock(clock) ;
         String filename = getSetupFileInfo().getScenarioFile() ;
         if (filename == null || filename.isEmpty()) {
             setupDefaultScenario();
@@ -852,7 +794,7 @@ public class EvacuationSimulator {
     void resetValues() {
         // System.gc();
 
-        tick_count = 0.0;
+        clock.reset() ;
         logging_count = 0;
 
         for (MapLink link : getLinks()) {
@@ -951,30 +893,28 @@ public class EvacuationSimulator {
         synchronized (stop_simulation) {
             deferSimulation() ;
 
-            double relTime = getSecond();
-
             // ruby wrapper の preUpdate()
             if(useRubyWrapper())
-                rubyEngine.callMethod(rubyWrapper, "preUpdate", relTime) ;
+                rubyEngine.callMethod(rubyWrapper, "preUpdate", clock) ;
 
             // pollution 計算。
             if (usePollution())
-                pollutionHandler.updateAll(relTime, networkMap,
+                pollutionHandler.updateAll(clock, networkMap,
                                            getWalkingAgentCollection());
 
-            scenario.update(relTime, networkMap) ;
+            scenario.update(clock, networkMap) ;
             // 実行本体
-            agentHandler.update(relTime);
+            agentHandler.update(clock);
 
             // 描画
             updateEveryTickDisplay() ;
 
             // ruby wrapper の postUpdate()
             if(useRubyWrapper())
-                rubyEngine.callMethod(rubyWrapper, "postUpdate", relTime) ;
+                rubyEngine.callMethod(rubyWrapper, "postUpdate", clock) ;
 
             // カウンタを進める。
-            tick_count += 1.0;
+            clock.advance() ;
         }
         return isFinished() ;
     }
@@ -1007,10 +947,11 @@ public class EvacuationSimulator {
      */
     private void updateEveryTickDisplay() {
         if (panel3d != null) {
-            panel3d.updateClock(getSecond());
+            panel3d.updateClock(clock.getRelativeTime()) ;
             boolean captureScreenShot = (screenshotInterval != 0);
             if (captureScreenShot) {
-                panel3d.setScreenShotFileName(String.format("capture%06d", (int)getTickCount()));
+                panel3d.setScreenShotFileName(String.format("capture%06d",
+                                                            (int)clock.getTickCount()));
             }
             while (! panel3d.notifyViewChange("simulation progressed")) {
                 synchronized (this) {
@@ -1066,9 +1007,10 @@ public class EvacuationSimulator {
          * ここで、AllAgent を使うべきか、WalkingAgent だけでよいか、
          * 不明。
          */
+        SimClock currentTime = clock.duplicate() ;
         for (AgentBase agent: getAllAgentCollection()) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
-                goalTimes.put(agent.ID, new Double(getSecond()));
+                goalTimes.put(agent.ID, currentTime) ;
             }
         }
 
@@ -1088,10 +1030,10 @@ public class EvacuationSimulator {
             }
             evacuatedAgents.add(buff.toString());
         } else {  // finalize process
+            SimClock nextTime = clock.newClockWithAdvanceTick(1) ;
             for (AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.isEvacuated()) {
-                    goalTimes.put(agent.ID,
-                            new Double((getTickCount() + 1) * timeScale));
+                    goalTimes.put(agent.ID, nextTime) ;
                 }
             }
             List<String> agentIdList = new ArrayList<String>(goalTimes.keySet()) ;
@@ -1100,8 +1042,8 @@ public class EvacuationSimulator {
                 .sort(agentIdList,
                       new Comparator<String>() {
                           public int compare(String id0, String id1) {
-                              Double time0 = goalTimes.get(id0) ;
-                              Double time1 = goalTimes.get(id1) ;
+                              SimClock time0 = goalTimes.get(id0) ;
+                              SimClock time1 = goalTimes.get(id1) ;
                               return time0.compareTo(time1) ;
                           }
                       });
@@ -1117,11 +1059,10 @@ public class EvacuationSimulator {
                         new OutputStreamWriter(new FileOutputStream(fileLog,
                                 false) , "utf-8")), true);
                 writer.write("# agent_id,goal_time\n");
-                // for (Integer id : goalTimes.keySet()) {
-                    // writer.write(id + "," + goalTimes.get(id) + "\n");
-                // }
                 for (String agentId : agentIdList) {
-                    writer.write(agentId + "," + goalTimes.get(agentId) + "\n");
+                    writer.write(agentId + "," +
+                                 goalTimes.get(agentId).getRelativeTime() +
+                                 "\n");
                 }
                 writer.close();
             } catch (IOException ioe) {
@@ -1155,7 +1096,7 @@ public class EvacuationSimulator {
      * @return returned value: succeed or not.
      */
     public boolean saveTimeSeriesLog(String resultDirectory) {
-        int count = (int) getSecond();      // loop counter
+        int count = (int) clock.getRelativeTime();      // loop counter
         double totalLinkDensity = 0.0;
         double totalAgentDensity = 0.0;
         double totalAgentSpeed = 0.0;

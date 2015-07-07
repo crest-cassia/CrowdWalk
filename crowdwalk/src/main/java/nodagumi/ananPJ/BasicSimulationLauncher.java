@@ -477,15 +477,16 @@ public abstract class BasicSimulationLauncher {
      */
     protected void simulateOneStepBare() {
         finished = simulator.updateEveryTick();
+        int relativeTime = (int)simulator.clock.getRelativeTime() ;
         if (isTimeSeriesLog) {
-            if (((int) simulator.getSecond()) % timeSeriesLogInterval == 0)
+            if ((relativeTime % timeSeriesLogInterval) == 0)
                 simulator.saveGoalLog(timeSeriesLogPath, false);
                 simulator.saveTimeSeriesLog(timeSeriesLogPath);
         }
         if (isTimerEnabled) {
             timer.tick();
             timer.writeInterval();
-            if ((simulator.getSecond() % 60) == 0)
+            if ((relativeTime % 60) == 0)
                 timer.writeElapsed();
         }
         counter++ ;

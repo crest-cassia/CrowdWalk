@@ -16,6 +16,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.* ;
 
@@ -35,24 +36,24 @@ public class InitiateEvent extends EventBase {
     /**
      * Start イベント発生処理
      * 実は何もしない
-     * @param time : 現在の絶対時刻
+     * @param clock : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean occur(double time, NetworkMap map) {
+    public boolean occur(SimClock clock, NetworkMap map) {
 	return true ;
     }
 
     //----------------------------------------
     /**
      * Start イベント発生逆処理
-     * @param time : 現在の絶対時刻
+     * @param clock : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean unoccur(double time, NetworkMap map) {
+    public boolean unoccur(SimClock clock, NetworkMap map) {
 	return true ;
     }
 } // class InitiateEvent

@@ -805,7 +805,8 @@ public class SimulationPanel3D extends NetworkPanel3D {
     private void record_current_camera_position() {
         view_trans.getTransform(viewTrans3D);
         viewTrans3D.get(viewMatrix);
-        CurrentCameraPosition view = new CurrentCameraPosition(simulator.getTickCount(),
+        CurrentCameraPosition view =
+            new CurrentCameraPosition(simulator.clock.getTickCount(),
                 vertical_zoom, agent_size,
                 (Matrix4d)viewMatrix.clone());
         

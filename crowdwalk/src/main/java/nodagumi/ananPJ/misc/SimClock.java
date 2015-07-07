@@ -13,6 +13,8 @@
 
 package nodagumi.ananPJ.misc;
 
+import java.lang.Math;
+
 import nodagumi.Itk.Itk;
 
 //======================================================================
@@ -52,21 +54,21 @@ public class SimClock {
      * コンストラクタ
      */
     public SimClock() {
-	this(null) ;
+        this(null) ;
     }
 
     /**
      * コンストラクタ
      */
     public SimClock(String originTimeString) {
-	this(originTimeString, 1.0) ;
+        this(originTimeString, 1.0) ;
     }
 
     /**
      * コンストラクタ
      */
     public SimClock(String originTimeString, double tickUnit) {
-	init(originTimeString, tickUnit) ;
+        init(originTimeString, tickUnit) ;
     }
 
     //------------------------------------------------------------
@@ -75,52 +77,59 @@ public class SimClock {
     /**
      * 初期化。
      */
-    public void init(String originTimeString, double tickUnit) {
-	if(originTimeString != null) {
-	    setupOriginByString(originTimeString) ;
-	}
-	this.tickUnit = tickUnit ;
-	reset() ;
+    public SimClock init(String originTimeString, double tickUnit) {
+        if(originTimeString != null) {
+            setupOriginByString(originTimeString, false) ;
+        }
+        this.tickUnit = tickUnit ;
+        reset() ;
+        return this ;
     }
 
     //------------------------------------------------------------
     /**
      * 文字列による基準時刻設定。
+     * @param originTimeString : "HH:MM:SS" の形式。
+     * @param setZeroIfNull : true であれば、originTimeString が null の時、
+     *                        int を 0 とする。
+     *                        false の時は、-1。
      */
-    public int setupOriginByString(String originTimeString) {
-	if(originTimeString != null) {
-	    this.originTimeString = originTimeString ;
-	    try {
-		this.originTimeInt
-		    = Itk.scanTimeStringToInt(this.originTimeString) ;
-	    } catch(Exception ex) {
-		ex.printStackTrace() ;
-		Itk.logError("Wrong Time Format", originTimeString) ;
-		this.originTimeInt = -1 ;
-	    }
-	} else {
-	    this.originTimeString = null ;
-	    this.originTimeInt = -1 ;
-	}
-	return this.originTimeInt ;
+    public SimClock setupOriginByString(String originTimeString,
+                                        boolean setZeroIfNull) {
+        if(originTimeString != null) {
+            this.originTimeString = originTimeString ;
+            try {
+                this.originTimeInt
+                    = Itk.scanTimeStringToInt(this.originTimeString) ;
+            } catch(Exception ex) {
+                ex.printStackTrace() ;
+                Itk.logError("Wrong Time Format", originTimeString) ;
+                this.originTimeInt = -1 ;
+            }
+        } else {
+            this.originTimeString = null ;
+            this.originTimeInt = (setZeroIfNull ? 0 : -1) ;
+        }
+        return this ;
     }
 
     //------------------------------------------------------------
     /**
      * 整数値による基準時刻設定。
      */
-    public int setupOriginByInt(int originTimeInt) {
-	this.originTimeInt = originTimeInt ;
-	this.originTimeString = null ;
-	return this.originTimeInt ;
+    public SimClock setupOriginByInt(int originTimeInt) {
+        this.originTimeInt = originTimeInt ;
+        this.originTimeString = null ;
+        return this ;
     }
 
     //------------------------------------------------------------
     /**
      * 相対時刻のリセット
      */
-    public void reset() {
-	this.tickCount = 0 ;
+    public SimClock reset() {
+        this.tickCount = 0 ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -128,13 +137,60 @@ public class SimClock {
      * 時刻のコピー。
      */
     public SimClock duplicate() {
-	SimClock newClock = new SimClock() ;
-	newClock.originTimeString = this.originTimeString ;
-	newClock.originTimeInt = this.originTimeInt ;
-	newClock.tickCount = this.tickCount ;
-	newClock.tickUnit = this.tickUnit ;
+        SimClock newClock = new SimClock() ;
+        newClock.originTimeString = this.originTimeString ;
+        newClock.originTimeInt = this.originTimeInt ;
+        newClock.tickCount = this.tickCount ;
+        newClock.tickUnit = this.tickUnit ;
+        return newClock ;
+    }
 
-	return newClock ;
+    //------------------------------------------------------------
+    /**
+     * 指定時間進んだ時刻。
+     */
+    public SimClock newClockWithAdvance(double advanceTime) {
+        return newClockWithAdvanceTick((int)Math.round(advanceTime / tickUnit)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 指定時間進んだ時刻。
+     */
+    public SimClock newClockWithAdvanceTick(int advanceTick){
+        SimClock newClock = duplicate() ;
+        newClock.tickCount += advanceTick ;
+        return newClock ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 同じ基準時刻・tickUnitを使って、指定の時刻を作成。
+     */
+    public SimClock newClockByString(String timeString) {
+        SimClock newClock = duplicate() ;
+        int absTime = 0 ;
+        if(timeString != null) {
+            try {
+                absTime = Itk.scanTimeStringToInt(timeString) ;
+            } catch(Exception ex) {
+                ex.printStackTrace() ;
+                Itk.logError("Wrong Time Format", timeString) ;
+                this.originTimeInt = -1 ;
+            }
+        }
+        newClock.tickCount =
+            Math.round(((double)(absTime - originTimeInt)) / tickUnit) ;
+        return newClock ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 同じ基準時刻・tickUnitを使って、指定の時刻を作成。
+     */
+    public SimClock newClockByRelativeTime(double relativeTime) {
+        SimClock newClock = duplicate() ;
+        newClock.setRelativeTime(relativeTime) ;
     }
 
     //------------------------------------------------------------
@@ -144,20 +200,24 @@ public class SimClock {
      * 基準時刻(文字列)。
      */
     public String getOriginTimeString() {
-	if(originTimeString != null) {
-	    return originTimeString ;
-	} else if(originTimeInt >= 0) {
-	    return Itk.formatSecTime(originTimeInt) ;
-	} else {
-	    return "(not_a_time)" ;
-	}
+        if(originTimeString != null) {
+            return originTimeString ;
+        } else if(originTimeInt >= 0) {
+            return Itk.formatSecTime(originTimeInt) ;
+        } else {
+            return "(not_a_time)" ;
+        }
     }
 
     /**
      * 基準時刻(文字列)。
+     * @param timeString : "HH:MM:SS" の形式。
+     * @param setZeroIfNull : もし timeString が null の場合、0 と扱う。
      */
-    public void setOriginTimeString(String timeString) {
-	setupOriginByString(timeString) ;
+    public SimClock setOriginTimeString(String timeString,
+                                    boolean setZeroIfNull) {
+        setupOriginByString(timeString, setZeroIfNull) ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -165,14 +225,15 @@ public class SimClock {
      * 基準時刻(整数値)。
      */
     public int getOriginTimeInt() {
-	return originTimeInt ;
+        return originTimeInt ;
     }
 
     /**
      * 基準時刻(整数値)。
      */
-    public void setOriginTimeInt(int timeInSec) {
-	setupOriginByInt(timeInSec) ;
+    public SimClock setOriginTimeInt(int timeInSec) {
+        setupOriginByInt(timeInSec) ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -180,14 +241,14 @@ public class SimClock {
      * 刻み回数。
      */
     public int getTickCount() {
-	return tickCount ;
+        return tickCount ;
     }
 
     /**
      * 刻み回数。
      */
     public void getTickCount(int count) {
-	tickCount = count ;
+        tickCount = count ;
     }
 
     //------------------------------------------------------------
@@ -195,14 +256,15 @@ public class SimClock {
      * 時刻刻み幅。
      */
     public double getTickUnit() {
-	return tickUnit ;
+        return tickUnit ;
     }
 
     /**
      * 時刻刻み幅。
      */
-    public void setTickUnit(double tick) {
-	tickUnit = tick ;
+    public SimClock setTickUnit(double tick) {
+        tickUnit = tick ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -210,7 +272,15 @@ public class SimClock {
      * 相対時刻(実数)。
      */
     public double getRelativeTime() {
-	return (double)tickCount * tickUnit ;
+        return (double)tickCount * tickUnit ;
+    }
+
+    /**
+     * 相対時刻(実数)。
+     */
+    public SimClock setRelativeTime(double relativeTime) {
+        tickCount = Math.round(relativeTime / tickUnit) ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -218,7 +288,7 @@ public class SimClock {
      * 絶対時刻(実数)。
      */
     public double getAbsoluteTime() {
-	return (double)originTimeInt + getRelativeTime() ;
+        return (double)originTimeInt + getRelativeTime() ;
     }
 
     //------------------------------------------------------------
@@ -227,7 +297,7 @@ public class SimClock {
      * 1秒以下は切り捨て。
      */
     public String getAbsoluteTimeString() {
-	return Itk.formatSecTime(originTimeInt + (int)getRelativeTime()) ;
+        return Itk.formatSecTime(originTimeInt + (int)getRelativeTime()) ;
     }
 
     //------------------------------------------------------------
@@ -235,8 +305,8 @@ public class SimClock {
      * 文字列化
      */
     public String toString() {
-	return ("#SimClock[" + getOriginTimeString() + "+"
-		+ getRelativeTime() + "s]") ;
+        return ("#SimClock[" + getOriginTimeString() + "+"
+                + getRelativeTime() + "s]") ;
     }
 
     //------------------------------------------------------------
@@ -246,8 +316,8 @@ public class SimClock {
      * 時刻前進。
      */
     public int advance() {
-	tickCount += 1 ;
-	return tickCount ;
+        tickCount += 1 ;
+        return tickCount ;
     }
 
     //------------------------------------------------------------
@@ -257,11 +327,11 @@ public class SimClock {
      * @return 基準からの経過時間。time より後であれば正。
      */
     public double calcDifferenceFrom(SimClock time) {
-	if(this.originTimeInt == time.originTimeInt) {
-	    return this.getRelativeTime() - time.getRelativeTime() ;
-	} else {
-	    return this.getAbsoluteTime() - time.getAbsoluteTime() ;
-	}
+        if(this.originTimeInt == time.originTimeInt) {
+            return this.getRelativeTime() - time.getRelativeTime() ;
+        } else {
+            return this.getAbsoluteTime() - time.getAbsoluteTime() ;
+        }
     }
 
     /**
@@ -270,7 +340,7 @@ public class SimClock {
      * @return 基準までの経過時間。time より前であれば正。
      */
     public double calcDifferenceTo(SimClock time) {
-	return -calcDifferenceFrom(time) ;
+        return -calcDifferenceFrom(time) ;
     }
 
     //------------------------------------------------------------
@@ -280,8 +350,8 @@ public class SimClock {
      * 基準と単位が同じかどうか。
      */
     public boolean isSameBaseWith(SimClock time) {
-	return (this.originTimeInt == time.originTimeInt &&
-		this.tickUnit == time.tickUnit) ;
+        return (this.originTimeInt == time.originTimeInt &&
+                this.tickUnit == time.tickUnit) ;
     }
 
     //------------------------------------------------------------
@@ -291,11 +361,11 @@ public class SimClock {
      * @return 丁度であればtrue。
      */
     public boolean isAt(SimClock time) {
-	if(isSameBaseWith(time)) {
-	    return this.tickCount == time.tickCount ;
-	} else {
-	    return calcDifferenceFrom(time) == 0.0 ;
-	}
+        if(isSameBaseWith(time)) {
+            return this.tickCount == time.tickCount ;
+        } else {
+            return calcDifferenceFrom(time) == 0.0 ;
+        }
     }
 
     /**
@@ -304,11 +374,11 @@ public class SimClock {
      * @return time より前であれば true。
      */
     public boolean isBefore(SimClock time) {
-	if(isSameBaseWith(time)) {
-	    return this.tickCount < time.tickCount ;
-	} else {
-	    return calcDifferenceFrom(time) < 0.0 ;
-	}
+        if(isSameBaseWith(time)) {
+            return this.tickCount < time.tickCount ;
+        } else {
+            return calcDifferenceFrom(time) < 0.0 ;
+        }
     }
 
     /**
@@ -317,11 +387,11 @@ public class SimClock {
      * @return time より前かちょうどであれば true。
      */
     public boolean isBeforeOrAt(SimClock time) {
-	if(isSameBaseWith(time)) {
-	    return this.tickCount <= time.tickCount ;
-	} else {
-	    return calcDifferenceFrom(time) <= 0.0 ;
-	}
+        if(isSameBaseWith(time)) {
+            return this.tickCount <= time.tickCount ;
+        } else {
+            return calcDifferenceFrom(time) <= 0.0 ;
+        }
     }
 
     /**
@@ -330,11 +400,11 @@ public class SimClock {
      * @return time より後であれば true。
      */
     public boolean isAfter(SimClock time) {
-	if(isSameBaseWith(time)) {
-	    return this.tickCount > time.tickCount ;
-	} else {
-	    return calcDifferenceFrom(time) > 0.0 ;
-	}
+        if(isSameBaseWith(time)) {
+            return this.tickCount > time.tickCount ;
+        } else {
+            return calcDifferenceFrom(time) > 0.0 ;
+        }
     }
 
     /**
@@ -343,11 +413,22 @@ public class SimClock {
      * @return time より後かちょうどであれば true。
      */
     public boolean isAfterOrAt(SimClock time) {
-	if(isSameBaseWith(time)) {
-	    return this.tickCount >= time.tickCount ;
-	} else {
-	    return calcDifferenceFrom(time) >= 0.0 ;
-	}
+        if(isSameBaseWith(time)) {
+            return this.tickCount >= time.tickCount ;
+        } else {
+            return calcDifferenceFrom(time) >= 0.0 ;
+        }
+    }
+
+    /**
+     * Sort 用比較。
+     * @param time : 基準になる時刻。
+     * @return time より後なら 1, 前なら -1, 同じなら 0
+     */
+    public int compareTo(SimClock time) {
+        if(isAt(time)) return 0 ;
+        else if(isAfter(time)) return 1 ;
+        else return -1 ;
     }
 
     //============================================================

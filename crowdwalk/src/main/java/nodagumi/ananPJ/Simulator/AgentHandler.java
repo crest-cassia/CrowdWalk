@@ -247,36 +247,36 @@ public class AgentHandler {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return handler.convertAbsoluteTimeString(agent.generatedTime, true);}})
+                        return agent.generatedTime.getAbsoluteTimeString() ;}})
             .addColumn(formatter.new Column("発生時刻2") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        return "" + (int)agent.generatedTime ;}})
+                        return "" + (int)agent.generatedTime.getRelativeTime() ;}})
             .addColumn(formatter.new Column("到着時刻1") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return handler.convertAbsoluteTimeString(time,true) ;}})
+                        return clock.getAbsoluteTimeString();}})
             .addColumn(formatter.new Column("到着時刻2") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return "" + time.intValue() ;}})
+                        return "" + (int)clock.getRelativeTime();}})
             .addColumn(formatter.new Column("移動時間1") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (Double)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return handler.timeToString(time - agent.generatedTime,
-                                                    true) ;}})
+                        return 
+                            Itk.formatSecTime(clock.calcDifferenceFrom(agent.generatedTime)) ;}})
             .addColumn(formatter.new Column("移動時間2") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return "" + (int)(time - agent.generatedTime) ;}})
+                        return "" + (int)(clock.calcDifferenceFrom(agent.generatedTime)) ;}})
             ;
     }
 
@@ -408,28 +408,28 @@ public class AgentHandler {
             .addColumn(formatter.new Column("current_traveling_period") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         return "" + (time.intValue()) ;}})
             .addColumn(formatter.new Column("current_exposure") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         return "" + (agent.obstructer.currentValueForLog()) ;}})
             .addColumn(formatter.new Column("amount_exposure") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         return "" + (agent.obstructer.accumulatedValueForLog()) ;}})
             .addColumn(formatter.new Column("current_status_by_exposure") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj ;
                         return agent.getTriageName();}})
             .addColumn(formatter.new Column("next_assigned_passage_node") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Double time = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj ;
                         return (agent.isEvacuated() ?
                                 "" :
@@ -543,7 +543,7 @@ public class AgentHandler {
     /**
      * リンクの preprocess 処理
      */
-    private void preUpdateLinks(double time) {
+    private void preUpdateLinks(SimClock clock) {
         synchronized (simulator) {
             //            for (MapLink link : simulator.getLinks()) {
             // Iterator をちゃんと動かすために、remove は別のところへ退避。
@@ -552,7 +552,7 @@ public class AgentHandler {
                 if(link.agents.isEmpty()) {
                     emptyLinkList.add(link) ;
                 } else {
-                    link.preUpdate(time);
+                    link.preUpdate(clock);
                 }
             }
             for(MapLink link : emptyLinkList) {
@@ -565,7 +565,7 @@ public class AgentHandler {
     /**
      * エージェントの preprocess 処理
      */
-    private void preUpdateAgents(double time) {
+    private void preUpdateAgents(SimClock clock) {
         if (true) {
             synchronized (simulator) {
                 for (MapLink link : getEffectiveLinkSet()) {
@@ -577,13 +577,13 @@ public class AgentHandler {
                              forwardAgents.get(forwardAgents.size() - i - 1) :
                              forwardAgents.get(i)) ;
 
-                        agent.preUpdate(time);
+                        agent.preUpdate(clock);
                     }
                     ArrayList<AgentBase> backwardAgents =
                         link.getLane(Direction.Backward);
                     for (int i = backwardAgents.size() - 1; i >= 0; --i) {
                         AgentBase agent = backwardAgents.get(i);
-                        agent.preUpdate(time);
+                        agent.preUpdate(clock);
                     }
                 }
             }
@@ -594,17 +594,17 @@ public class AgentHandler {
     /**
      * シミュレーションサイクル
      */
-    public void update(double time) {
+    public void update(SimClock clock) {
         update_buttons();
 
         ArrayList<AgentBase> generatedAgentsInStep
-            = generateAgentsAndSetup(time) ;
+            = generateAgentsAndSetup(clock) ;
 
-        preUpdateLinks(time);
-        preUpdateAgents(time);
-        updateAgents(time);
+        preUpdateLinks(clock);
+        preUpdateAgents(clock);
+        updateAgents(clock);
         updatePollution();
-        updateLinks(time);
+        updateLinks(clock);
 
         updateAgentViews();
 
@@ -621,13 +621,13 @@ public class AgentHandler {
     /**
      * generation 定義による新規エージェントの生成
      */
-    private ArrayList<AgentBase> generateAgentsAndSetup(double time) {
+    private ArrayList<AgentBase> generateAgentsAndSetup(SimClock clock) {
         ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
 
         // generate_agent による生成。
         if (generate_agent != null) {
             for (AgentFactory factory : generate_agent) {
-                factory.tryUpdateAndGenerate(simulator, time,
+                factory.tryUpdateAndGenerate(simulator, clock,
                                              generatedAgentsInStep) ;
             }
         }
@@ -723,8 +723,8 @@ public class AgentHandler {
     /**
      * エージェントの update 処理
      */
-    private void updateAgents(double time) {
-        if (hasDisplay()) displayClock(time) ;
+    private void updateAgents(SimClock clock) {
+        if (hasDisplay()) displayClock(clock) ;
 
         int count = 0;
         double speedTotal = 0.0;
@@ -732,15 +732,15 @@ public class AgentHandler {
 
         for(AgentBase agent : getWalkingAgentCollection()) {
             if (!agent.isEvacuated()) {
-                agent.update(time);
+                agent.update(clock);
                 if (agent.isEvacuated()) {// この回に evacuate した場合。
-                    updateNewlyEvacuatedAgent(agent, time) ;
+                    updateNewlyEvacuatedAgent(agent, clock) ;
                 } else { // まだ歩いている場合。
                     ++count;
                     speedTotal += agent.getSpeed();
                     isAllAgentSpeedZero &= (agent.getSpeed() == 0.0) ;
                 }
-                logIndividualPedestrians(time, agent);
+                logIndividualPedestrians(clock, agent);
             }
         }
         averageSpeed = speedTotal / count;
@@ -752,7 +752,7 @@ public class AgentHandler {
     /**
      * このサイクルで evacuateしたエージェントの処理
      */
-    private void updateNewlyEvacuatedAgent(AgentBase agent, double time) {
+    private void updateNewlyEvacuatedAgent(AgentBase agent, SimClock clock) {
         final MapNode exit = agent.getLastNode() ;
         Integer i = evacuatedAgentCountByExit.get(exit);
         if (i == null)
@@ -766,7 +766,7 @@ public class AgentHandler {
         if (agentMovementHistoryLogger != null) {
             agentMovementHistoryLoggerFormatter
                 .outputValueToLoggerInfo(agentMovementHistoryLogger,
-                                         agent, new Double(time), this);
+                                         agent, clock, this);
         }
     }
 
@@ -774,11 +774,11 @@ public class AgentHandler {
     /**
      * 時計表示
      */
-    private void displayClock(double time) {
+    private void displayClock(double clock) {
         String time_string = String.format("Elapsed: %5.2fsec",
-                                           time);
+                                           clock.getRelativeTime());
         time_label.setText(time_string);
-        String clock_string = convertAbsoluteTimeString(time) ;
+        String clock_string = clock.getAbsoluteTimeString(time) ;
         clock_label.setText(clock_string);
     }
 
@@ -816,7 +816,7 @@ public class AgentHandler {
     /**
      * リンクの update 処理。
      */
-    private void updateLinks(double time) {
+    private void updateLinks(SimClock clock) {
         /* [2015.07.04 I.Noda]
          * 現状で、表示関係の処理しかしていないので、
          * Display を持っている場合のみ、処理。
@@ -824,7 +824,7 @@ public class AgentHandler {
         if(hasDisplay()) {
             synchronized (simulator) {
                 for (MapLink link : simulator.getLinks()) {
-                    link.update(time);
+                    link.update(clock);
                 }
             }
         }
@@ -1089,74 +1089,6 @@ public class AgentHandler {
     }
 
     //------------------------------------------------------------
-    // 時刻関連
-    //------------------------------------------------------------
-    /**
-     * 相対時刻の文字列による絶体時刻標記を得る。
-     * @param relTime : 相対時刻
-     * @return 絶対時刻文字列
-     */
-    public String convertAbsoluteTimeString(double relTime) {
-        return timeToString(simulator.getScenario().calcAbsoluteTime(relTime)) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 相対時刻の文字列による絶体時刻標記を得る。
-     * @param relTime : 相対時刻
-     * @param trunc : 24時を0時にもどすか？
-     * @return 絶対時刻文字列
-     */
-    public String convertAbsoluteTimeString(double relTime, boolean trunc) {
-        return timeToString(simulator.getScenario().calcAbsoluteTime(relTime), 
-                            trunc) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 相対時刻から絶対時刻への変換。
-     */
-    public double calcAbsoluteTime(double relTime) {
-        return simulator.getScenario().calcAbsoluteTime(relTime) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 絶対時刻から相対時刻への変換。
-     */
-    public double calcRelativeTime(double absTime) {
-        return simulator.getScenario().calcRelativeTime(absTime) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 実数時刻を文字列時刻に変更
-     * @param clock_time : 時刻を表す実数
-     * @return 時刻の文字列。時間は24時間を超える場合がある。
-     */
-    public String timeToString(double timeVal) {
-        return timeToString(timeVal, false) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 実数時刻を文字列時刻に変更
-     * @param clock_time : 時刻を表す実数
-     * @param trunc : 24時を0時の戻すかどうか。trueで戻す。
-     * @return 時刻の文字列。時間は24時間を超える場合がある。
-     */
-    public String timeToString(double timeVal, boolean trunc) {
-        double sec = timeVal % 60;
-        int time = (int)timeVal / 60;
-        int min = time % 60;
-        time /= 60;
-        if (trunc) {
-            time %= 24;
-        }
-        return String.format("%02d:%02d:%02.0f", time, min, sec);
-    }
-
-    //------------------------------------------------------------
     // ログ関連
     //------------------------------------------------------------
     /**
@@ -1172,11 +1104,11 @@ public class AgentHandler {
     /**
      * individualPedestriansLogger への出力。
      */
-    private void logIndividualPedestrians(double time, AgentBase agent) {
+    private void logIndividualPedestrians(SimClock clock, AgentBase agent) {
         if (individualPedestriansLogger != null) {
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
-                                         agent, new Double(time), this);
+                                         agent, clock, this);
         }
     }
 
@@ -1191,26 +1123,27 @@ public class AgentHandler {
          * 避難終了時間
          */
         int[] each_level = new int[4];
-        double finish_total = 0.0, finish_max = Double.NEGATIVE_INFINITY;
+        double finish_total = 0.0 ;
+        SimClock finish_max = null ;
         int count_all = 0, count_evacuated = 0;
         for (AgentBase agent : getAllAgentCollection()) {
             count_all++;
             each_level[agent.getTriageInt()]++;
-            double t = agent.finishedTime;
-            if (t == 0.0) continue;
+            SimClock t = agent.finishedTime;
+            if (t == null) continue;
             count_evacuated++;
-            finish_total += t;
-            if (t > finish_max) finish_max = t;
+            finish_total += t.getRelativeTime();
+            if (finish_max == null || t.isAfter(finish_max)) finish_max = t;
         }
         return ""
-        + each_level[0] + ","
-        + each_level[1] + ","
-        + each_level[2] + ","
-        + each_level[3] + ","
-        + count_evacuated + ","
-        + count_all + ","
-        + finish_total / count_evacuated + ","
-        + finish_max
+            + each_level[0] + ","
+            + each_level[1] + ","
+            + each_level[2] + ","
+            + each_level[3] + ","
+            + count_evacuated + ","
+            + count_all + ","
+            + finish_total / count_evacuated + ","
+            + finish_max.getRelativeTime() ;
         ;
     }
 

@@ -29,6 +29,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.*;
 
@@ -51,14 +52,14 @@ public class PollutionHandler {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 次に pollution を更新する時刻。
+     * 現在時刻の保持など。
      */
-    double nextInstantTime = 0;
+    SimClock baseClock = null ;
 
     /**
-     * タイムスケール。被曝量を計算するときに用いる。
+     * 次に pollution を更新する時刻。
      */
-    double timeScale;
+    SimClock nextInstantTime = null ;
 
     /**
      * 最大の pollution level。
@@ -101,26 +102,27 @@ public class PollutionHandler {
      * コンストラクタ。
      */
     public PollutionHandler(String scheduleFileName,
-            ArrayList<MapArea> _areaList, double _timeScale, double interpolationInterval) {
+                            ArrayList<MapArea> _areaList,
+                            SimClock _clock, double interpolationInterval) {
+        baseClock = _clock ;
         if (scheduleFileName == null || scheduleFileName.isEmpty()) {
-	    Itk.logInfo("Load Pollution File", "(none)") ;
-            nextInstantTime = -1.0;
+            Itk.logInfo("Load Pollution File", "(none)") ;
+            nextInstantTime = null ;
         } else {
             readData(scheduleFileName);
-	    Itk.logInfo("Load Pollution File", scheduleFileName);
-	    Itk.logInfo("MAX Pollution Level", maxPollutionLevel) ;
+            Itk.logInfo("Load Pollution File", scheduleFileName);
+            Itk.logInfo("MAX Pollution Level", maxPollutionLevel) ;
             linearInterpolation(interpolationInterval);
             pollutionInstantIterator = pollutionInstantList.iterator();
             if (pollutionInstantIterator.hasNext()) {
                 currentInstant = pollutionInstantIterator.next();
-                nextInstantTime = currentInstant.relativeTime ;
+                nextInstantTime = currentInstant.atTime ;
             } else {
-                nextInstantTime = -1.0;
+                nextInstantTime = null ;
             }
         }
         
         setupPollutedAreas(_areaList);
-        timeScale = _timeScale;
     }
 
     //------------------------------------------------------------
@@ -160,7 +162,8 @@ public class PollutionHandler {
                 if (! line.trim().startsWith("#")) {
                     String[] strItems = csvParser.parseLine(line) ;
                     PollutionInstant instant = new PollutionInstant() ;
-                    instant.relativeTime = Double.parseDouble(strItems[0]) ;
+                    instant.atTime = baseClock.duplicate() ;
+                    instant.atTime.setRelativeTime(Double.parseDouble(strItems[0])) ;
                     for (int index = 1; index < strItems.length; index++) {
                         double value = Double.parseDouble(strItems[index]) ;
                         // 先頭は time なので、１つずらす。
@@ -218,14 +221,17 @@ public class PollutionHandler {
         PollutionInstant lastInstant = null;
         for (PollutionInstant instant : pollutionInstantList) {
             if (lastInstant != null) {
-                double lastEventTime = lastInstant.relativeTime ;
-                double eventTime = instant.relativeTime ;
+                double lastEventTime = lastInstant.atTime.getRelativeTime() ;
+                double eventTime = instant.atTime.getRelativeTime() ;
                 if ((eventTime - lastEventTime) > interval) {
                     // 線形補間
-                    for (double time = lastEventTime + interval; time < eventTime; time += interval) {
+                    for (double time = lastEventTime + interval;
+                         time < eventTime;
+                         time += interval) {
                         PollutionInstant interpolatedInstant
                             = new PollutionInstant() ;
-                        interpolatedInstant.relativeTime = time;
+                        interpolatedInstant.atTime =
+                            baseClock.duplicate().setRelativeTime(time);
                         for (int index = 0; index < instant.valueSize(); index++) {
                             double a = (time - lastEventTime) / (eventTime - lastEventTime);    // 補間係数
                             double v = (lastInstant.getValue(index) +
@@ -278,11 +284,11 @@ public class PollutionHandler {
     /**
      * 毎回呼ばれるメインのサイクル。
      */
-    public void updateAll(double time,
+    public void updateAll(SimClock clock,
                           NetworkMap map,
                           Collection<AgentBase> agents) {
 
-        if (nextInstantTime != -1.0 && nextInstantTime <= time) {
+        if (nextInstantTime != null && clock.isAfter(nextInstantTime)) {
             updatePollution();
             updateLinks(map) ;
         }
@@ -307,9 +313,9 @@ public class PollutionHandler {
 
         if (pollutionInstantIterator.hasNext()) {
             currentInstant = pollutionInstantIterator.next();
-            nextInstantTime = currentInstant.relativeTime ;
+            nextInstantTime = currentInstant.atTime ;
         } else {
-            nextInstantTime = -1.0;
+            nextInstantTime = null ;
         }
     }
     
@@ -354,7 +360,7 @@ public class PollutionHandler {
             for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
                 if (area.contains(point)) {
                     pollutionLevel = area.getPollutionLevel().getCurrentLevel() ;
-                    agent.exposed(pollutionLevel * timeScale);
+                    agent.exposed(pollutionLevel * baseClock.getTickUnit());
                     Itk.logNone("polluted", agent.ID, pollutionLevel) ;
                     break;
                 }
@@ -413,7 +419,7 @@ public class PollutionHandler {
          * タイムスライスの時刻。
          * 実際には、このタイムスライスが終わる時刻。
          */
-        public double relativeTime = 0.0 ;
+        public SimClock atTime = null ;
 
         /**
          * Pollution の値

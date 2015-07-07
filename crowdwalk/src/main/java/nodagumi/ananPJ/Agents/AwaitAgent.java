@@ -24,6 +24,7 @@ import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.misc.RoutePlan;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.*;
 
@@ -87,14 +88,14 @@ public class AwaitAgent extends WalkAgent {
      * WAITING の処理
      * @return もしここで preUpdate から return するなら true。
      */
-    protected boolean doWait(Term how, double time) {
+    protected boolean doWait(Term how, SimClock clock) {
         if (how.equals("SCATTER")) {
             waiting = true;
-            scatter(time);
+            scatter(clock);
             return true;
         } else if (how.equals("PACK")) {
             waiting = true;
-            pack(time);
+            pack(clock);
             return true;
         } else {
             Itk.logWarn("how to move not stated!", this);
@@ -109,14 +110,14 @@ public class AwaitAgent extends WalkAgent {
      * ・同じレーン上に scatter 以外のエージェントが存在すると間隔が詰まり均等にならなくなる。
      * ・対向流が発生すると laneWidth が変化するため均等な間隔にならない事がある。
      */
-    protected boolean scatter(double time) {
+    protected boolean scatter(SimClock clock) {
         ArrayList<AgentBase> agents = currentPlace.getLane();
         int laneWidth = currentPlace.getLaneWidth();
         double space = currentPlace.getLinkLength() / ((agents.size() - 1) / laneWidth + 2);
 
         // scatter メソッドが適用できないほど超過密状態の場合には pack を使用する
         if (space <= minDistanceBetweenAgents) {
-            return pack(time);
+            return pack(clock);
         }
 
         int index = currentPlace.getIndexFromHeadingInLane(this) ;
@@ -126,22 +127,22 @@ public class AwaitAgent extends WalkAgent {
         if (d < 0.0) {
             d = 0.0;
         }
-        calcSpeed(time);
+        calcSpeed(clock);
         if (d > speed) {
             d = speed;
         }
-        // scatter 制御を破綻させないため move_set() 内の d * time_scale を無効化する
-        return advanceNextPlace(d / time_scale, time, true) ;
+        // scatter 制御を破綻させないため move_set() 内の d * tickUnit_scale を無効化する
+        return advanceNextPlace(d / clock.getTickUnit(), clock, true) ;
     }
     
     //----------------------------------------------------------------------
     /**
      * できるだけ過密に並ぶ
      */
-    protected boolean pack(double time) {
-        calcSpeed(time);
+    protected boolean pack(SimClock clock) {
+        calcSpeed(clock);
 
-        return advanceNextPlace(speed, time, true) ;
+        return advanceNextPlace(speed, clock, true) ;
     }
 
     static final double NOT_WAITING = -100.0;
@@ -154,9 +155,9 @@ public class AwaitAgent extends WalkAgent {
      * Wait directive の処理を呼び出す。
      */
     @Override
-    public void preUpdate(double time) {
+    public void preUpdate(SimClock clock) {
         waiting = false;
-        if (time <= generatedTime || routePlan.isEmpty()) {
+        if (clock.isBeforeOrAt(generatedTime) || routePlan.isEmpty()) {
             //生成前かroutePlanがすでに空なら
             // do nothing
         } else {
@@ -171,10 +172,10 @@ public class AwaitAgent extends WalkAgent {
                 try {
                     switch(waitType) {
                     case WAIT_UNTIL:
-                        if(doWaitUntil(target, how, until, time)) return ;
+                        if(doWaitUntil(target, how, until, clock)) return ;
                         break ;
                     case WAIT_FOR:
-                        if(doWaitFor(target, how, until, time)) return ;
+                        if(doWaitFor(target, how, until, clock)) return ;
                         break ;
                     }
                 } catch (Exception ex) {
@@ -182,7 +183,7 @@ public class AwaitAgent extends WalkAgent {
                 }
             }
         }
-        super.preUpdate(time);
+        super.preUpdate(clock);
     }
 
     //------------------------------------------------------------
@@ -191,7 +192,8 @@ public class AwaitAgent extends WalkAgent {
      * @return 処理が終わればすぐに return すべきかどうか。
      *         (true なら super のpreUpdateを呼ばない)
      */
-    protected boolean doWaitUntil(Term target, Term how, Term until, double time) {
+    protected boolean doWaitUntil(Term target, Term how, Term until,
+                                  SimClock clock) {
         if (currentPlace.getLink().hasTag(target)) {
             // until は、待っているリンクで生じるイベント
             // until イベントが生じていたら、WAIT解除
@@ -199,7 +201,7 @@ public class AwaitAgent extends WalkAgent {
                 routePlan.shift() ;
                 return false ;
             } else {
-                return doWait(how, time) ;
+                return doWait(how, clock) ;
             }
         } else {
             return false ;
@@ -212,21 +214,22 @@ public class AwaitAgent extends WalkAgent {
      * @return 処理が終わればすぐに return すべきかどうか。
      *         (super のpreUpdateがいらないかどうか)
      */
-    protected boolean doWaitFor(Term target, Term how, Term until, double time) {
+    protected boolean doWaitFor(Term target, Term how, Term until,
+                                SimClock clock) {
         // until は待つ時間(?)
         if (currentPlace.getLink().hasTag(target)) {
             // 待ち始めた時刻と待ち時間を記録(初回のみ)
             if (wait_time == NOT_WAITING) {
                 wait_time = until.getDouble() ;
-                wait_time_start = time;
+                wait_time_start = clock.getRelativeTime() ;
             }
 
             // wait_time (untilに記録) 時間過ぎたらWAIT解除
-            if (time - wait_time_start > wait_time) {
+            if (clock.getRelativeTime() - wait_time_start > wait_time) {
                 wait_time = NOT_WAITING;
                 routePlan.shift() ;
             } else {
-                boolean returnP = doWait(how, time) ;
+                boolean returnP = doWait(how, clock) ;
                 if(returnP) return true;
             }
         } else if (wait_time != NOT_WAITING) {
@@ -241,8 +244,8 @@ public class AwaitAgent extends WalkAgent {
     /**
      */
     @Override
-    public boolean update(double time) {
-        return super.update(time);
+    public boolean update(SimClock clock) {
+        return super.update(clock);
     }
 
     //------------------------------------------------------------
