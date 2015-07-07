@@ -30,6 +30,7 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
+import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Scenario.*;
@@ -72,6 +73,12 @@ public class EvacuationSimulator {
      * 今後はできるだけ使わない。
      */
     private double linerGenerateAgentRatio = 1.0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * シミュレーション内の時刻管理。
+     */
+    public SimClock clock = new SimClock() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -603,10 +610,10 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * デフォルトシナリオをセット。
-     * 実は何もしない。
+     * initiateEvent だけ入れる。
      */
     private void setupDefaultScenario() {
-        scenario.setOriginTime(0) ;
+        scenario.finalizeSetup() ;
     }
 
     //------------------------------------------------------------
