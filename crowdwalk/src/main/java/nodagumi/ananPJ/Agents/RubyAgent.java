@@ -24,8 +24,8 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.AgentFactory;
-
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.*;
 
@@ -144,8 +144,8 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public void init(Random _random, EvacuationSimulator simulator,
-                     AgentFactory factory, double time) {
-        super.init(_random, simulator, factory, time);
+                     AgentFactory factory, SimClock currentTime) {
+        super.init(_random, simulator, factory, currentTime);
         rubyEngine = simulator.getRubyEngine() ;
         if(rubyEngine == null) {
             Itk.logError("ruby engine is not available.",
@@ -238,7 +238,7 @@ public class RubyAgent extends RationalAgent {
      * alert を聴いた時刻。
      * もし聴いていなければ、null が返る。
      */
-    public Double getAlertTimeForRuby(Object message) {
+    public SimClock getAlertTimeForRuby(Object message) {
         return alertedMessageTable.get(Term.ensureTerm(message)) ;
     }
 
@@ -266,8 +266,8 @@ public class RubyAgent extends RationalAgent {
      * シミュレーション各サイクルの前半に呼ばれる。
      */
     @Override
-    public void preUpdate(double time) {
-        currentTime = time ;
+    public void preUpdate(SimClock clock) {
+        currentTime = clock ;
         String rubyMethod = triggeredMethod(TriggerEntry.preUpdate) ;
         if(rubyMethod != null) {
             rubyEngine.callMethod(rubyAgent, rubyMethod) ;
@@ -289,8 +289,8 @@ public class RubyAgent extends RationalAgent {
      * シミュレーション各サイクルの後半に呼ばれる。
      */
     @Override
-    public boolean update(double time) {
-        currentTime = time ;
+    public boolean update(SimClock clock) {
+        currentTime = clock ;
         String rubyMethod = triggeredMethod(TriggerEntry.update) ;
         if(rubyMethod != null) {
             return rubyEngine.callMethodBoolean(rubyAgent, rubyMethod) ;

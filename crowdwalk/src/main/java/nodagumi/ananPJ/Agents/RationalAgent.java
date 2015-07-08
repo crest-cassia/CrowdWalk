@@ -70,8 +70,8 @@ public class RationalAgent extends BustleAgent {
     /**
      * alert された message
      */
-    public HashMap<Term, Double> alertedMessageTable =
-        new HashMap<Term, Double>() ;
+    public HashMap<Term, SimClock> alertedMessageTable =
+        new HashMap<Term, SimClock>() ;
 
     //------------------------------------------------------------
     // コンストラクタ

@@ -8,6 +8,7 @@ import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.*;
 
@@ -29,8 +30,8 @@ public class AgentFactoryFromLink extends AgentFactory {
     }
 
     @Override
-    protected boolean finished(double time) {
-        if (super.finished(time) || start_link.isShutOff()) return true;
+    protected boolean finished(SimClock clock) {
+        if (super.finished(clock) || start_link.isShutOff()) return true;
         return false;
     }
 
@@ -42,11 +43,11 @@ public class AgentFactoryFromLink extends AgentFactory {
 
     @Override
     public String getStart() {
-        return start_link.getTagString() + 
-        "(" +  start_link.ID + ")" +
-        " on " + start_time +
-        " ("  + total +
-        " in " + duration + "s)";
+        return (start_link.getTagString() +
+                "(" +  start_link.ID + ")" +
+                " on " + startTime.getAbsoluteTime() +
+                " ("  + total +
+                " in " + duration + " sec)");
     }
     @Override
     public OBNode getStartObject() { return start_link; }

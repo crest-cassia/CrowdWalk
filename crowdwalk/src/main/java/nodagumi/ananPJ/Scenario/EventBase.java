@@ -109,24 +109,6 @@ abstract public class EventBase {
 
     //----------------------------------------
     /**
-     * 相対時刻
-     * @return scenario の origin time からの相対時刻
-     */
-    public double getRelativeTime() {
-        return atTime.getRelativeTime() ;
-    }
-
-    //----------------------------------------
-    /**
-     * 相対時刻
-     * @return scenario の origin time からの相対時刻
-     */
-    public double getAbsoluteTime_obsolete() {
-        return atTime ;
-    }
-
-    //----------------------------------------
-    /**
      * 発生チェックと実行(以前の checkIfHappend)
      * @param clock : 現在の絶対時刻
      * @return 実施したら true

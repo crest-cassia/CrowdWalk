@@ -327,7 +327,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * 生成の終了時刻
          */
-        public int everyEndTime = 0 ;
+        public SimClock everyEndTime = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -342,7 +342,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         public Term toTerm(){
             Term jObject = super.toTerm() ;
 
-            jObject.setArg("everyEndTime",Itk.formatSecTime(everyEndTime)) ;
+            jObject.setArg("everyEndTime",everyEndTime.getAbsoluteTimeString());
             jObject.setArg("everySeconds",everySeconds) ;
 
             return jObject ;
@@ -604,7 +604,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // 出発時刻
         try {
-            genConfig.startTime = Itk.scanTimeStringToInt(columns.get()) ;
+            genConfig.startTime = new SimClock(columns.get()) ;
         } catch(Exception ex) {
             return null ;
         }
@@ -613,7 +613,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         if (rule_tag == Rule.TIMEEVERY) {
             try {
                 ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                    Itk.scanTimeStringToInt(columns.get()) ;
+                    new SimClock(columns.get()) ;
             } catch(Exception ex) {
                 return null ;
             }
@@ -909,8 +909,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // startTime
         try {
-            genConfig.startTime =
-                Itk.scanTimeStringToInt(json.getArgString("startTime")) ;
+            genConfig.startTime = new SimClock(json.getArgString("startTime")) ;
         } catch(Exception ex) {
             return null ;
         }
@@ -920,7 +919,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             try {
                 String endTimeStr = json.getArgString("everyEndTime") ;
                 ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                    Itk.scanTimeStringToInt(endTimeStr) ;
+                    new SimClock(endTimeStr) ;
             } catch(Exception ex) {
                 return null ;
             }
@@ -1211,27 +1210,27 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      */
     private void doGenerationForTimeEvery(NetworkMap map,
                                           GenerationConfigForTimeEvery genConfig) {
-        int every_end_time = genConfig.everyEndTime ;
-        int every_seconds = genConfig.everySeconds ;
+        SimClock every_end_time = genConfig.everyEndTime ;
+        double every_seconds = (double)genConfig.everySeconds ;
         int total = genConfig.total ;
 
         // [I.Noda] startPlace は下で指定。
         genConfig.startPlace = null ;
         // [I.Noda] startTime も特別な意味
-        int start_time = (int)genConfig.startTime ;
-        genConfig.startTime = 0.0 ;
+        SimClock start_time = genConfig.startTime ;
+        genConfig.startTime = null ;
 
-        int step_time = start_time;
+        SimClock step_time = start_time.duplicate() ;
         /* let's assume start & goal & planned_route candidates
          * are all MapLink!
          */
 
-        while (step_time <= every_end_time) {
+        while (step_time.isBeforeOrAt(every_end_time)) {
             for (int i = 0; i < total; i++) {
-                genConfig.startTime = step_time ;
+                genConfig.startTime = step_time.duplicate() ;
                 genConfig.total = 1 ;
                 if(genConfig.startLinks.size() > 0) {
-                    MapLink start_link = 
+                    MapLink start_link =
                         genConfig.startLinks.chooseRandom(random) ;
                     genConfig.startPlace = start_link ;
                     this.add(new AgentFactoryFromLink(genConfig, random)) ;
@@ -1245,7 +1244,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                     Itk.logError_("config",genConfig) ;
                 }
             }
-            step_time += every_seconds;
+            step_time.advanceSec(every_seconds) ;
         }
     }
 

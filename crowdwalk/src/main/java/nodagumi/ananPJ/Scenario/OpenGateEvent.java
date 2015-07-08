@@ -57,7 +57,7 @@ public class OpenGateEvent extends GateEvent {
      */
     @Override
     public boolean unoccur(SimClock clock, NetworkMap map) {
-	return occur(lock, map, true) ;
+	return occur(clock, map, true) ;
     }
 
     //----------------------------------------

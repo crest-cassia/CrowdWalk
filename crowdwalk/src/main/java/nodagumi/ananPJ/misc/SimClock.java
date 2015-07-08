@@ -14,6 +14,7 @@
 package nodagumi.ananPJ.misc;
 
 import java.lang.Math;
+import java.lang.Integer;
 
 import nodagumi.Itk.Itk;
 
@@ -22,6 +23,28 @@ import nodagumi.Itk.Itk;
  * シミュレーション内での時刻を様々な形で表す。
  */
 public class SimClock {
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * ゼロ時刻インスタンス。
+     */
+    static public SimClock TimeZero =
+        new SimClock("00:00:00") ;
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * 無限大未来時刻インスタンス。
+     */
+    static public SimClock TimeEnding =
+        new SimClock("00:00:00").setTickCount(Integer.MAX_VALUE) ;
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * 無限大過去時刻インスタンス。
+     */
+    static public SimClock TimeBeginning =
+        new SimClock("00:00:00").setTickCount(Integer.MIN_VALUE) ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 基準となる絶対時刻の文字列標記。
@@ -150,7 +173,7 @@ public class SimClock {
      * 指定時間進んだ時刻。
      */
     public SimClock newClockWithAdvance(double advanceTime) {
-        return newClockWithAdvanceTick((int)Math.round(advanceTime / tickUnit)) ;
+        return duplicate().advanceSec(advanceTime) ;
     }
 
     //------------------------------------------------------------
@@ -158,9 +181,7 @@ public class SimClock {
      * 指定時間進んだ時刻。
      */
     public SimClock newClockWithAdvanceTick(int advanceTick){
-        SimClock newClock = duplicate() ;
-        newClock.tickCount += advanceTick ;
-        return newClock ;
+        return duplicate().advanceTick(advanceTick) ;
     }
 
     //------------------------------------------------------------
@@ -180,7 +201,7 @@ public class SimClock {
             }
         }
         newClock.tickCount =
-            Math.round(((double)(absTime - originTimeInt)) / tickUnit) ;
+            (int)Math.round(((double)(absTime - originTimeInt)) / tickUnit) ;
         return newClock ;
     }
 
@@ -191,6 +212,7 @@ public class SimClock {
     public SimClock newClockByRelativeTime(double relativeTime) {
         SimClock newClock = duplicate() ;
         newClock.setRelativeTime(relativeTime) ;
+        return newClock ;
     }
 
     //------------------------------------------------------------
@@ -247,8 +269,9 @@ public class SimClock {
     /**
      * 刻み回数。
      */
-    public void getTickCount(int count) {
+    public SimClock setTickCount(int count) {
         tickCount = count ;
+        return this ;
     }
 
     //------------------------------------------------------------
@@ -279,7 +302,7 @@ public class SimClock {
      * 相対時刻(実数)。
      */
     public SimClock setRelativeTime(double relativeTime) {
-        tickCount = Math.round(relativeTime / tickUnit) ;
+        tickCount = (int)Math.round(relativeTime / tickUnit) ;
         return this ;
     }
 
@@ -313,11 +336,25 @@ public class SimClock {
     // 操作
     //------------------------------------------------------------
     /**
-     * 時刻前進。
+     * 時刻前進。１tick。
      */
-    public int advance() {
-        tickCount += 1 ;
-        return tickCount ;
+    public SimClock advance() {
+        return advanceTick(1) ;
+    }
+
+    /**
+     * 時刻前進。N tick。
+     */
+    public SimClock advanceTick(int delta) {
+        tickCount += delta ;
+        return this ;
+    }
+
+    /**
+     * 時刻前進。N seconds。
+     */
+    public SimClock advanceSec(double sec) {
+        return advanceTick((int)Math.round(sec / tickUnit)) ;
     }
 
     //------------------------------------------------------------

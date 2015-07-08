@@ -23,6 +23,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.AwaitAgent ;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.* ;
 
@@ -172,9 +173,9 @@ public class NaiveAgent
      * [2014.12.19 I.Noda] tryToPassNode() より移動
      */
     @Override
-    protected void recordTrail(double time, Place passingPlace, 
+    protected void recordTrail(SimClock clock, Place passingPlace, 
                                MapLink nextLink) {
-        super.recordTrail(time, passingPlace, nextLink) ;
+        super.recordTrail(clock, passingPlace, nextLink) ;
 
         trailCountTable.add(passingPlace.getHeadingNode(),
                             nextLink, trailCountStep) ;

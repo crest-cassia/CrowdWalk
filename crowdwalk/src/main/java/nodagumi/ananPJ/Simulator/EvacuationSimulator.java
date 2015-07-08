@@ -947,7 +947,7 @@ public class EvacuationSimulator {
      */
     private void updateEveryTickDisplay() {
         if (panel3d != null) {
-            panel3d.updateClock(clock.getRelativeTime()) ;
+            panel3d.updateClock(clock) ;
             boolean captureScreenShot = (screenshotInterval != 0);
             if (captureScreenShot) {
                 panel3d.setScreenShotFileName(String.format("capture%06d",

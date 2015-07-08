@@ -117,39 +117,6 @@ public class Scenario {
 
     //------------------------------------------------------------
     /**
-     * 起点時刻取得
-     */
-    public double getOriginTime() {
-        return originTime ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 起点時刻セット
-     */
-    public double setOriginTime(double _originTime) {
-        originTime = _originTime ;
-        return originTime ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 相対時刻取得
-     */
-    public double calcRelativeTime(double absTime) {
-        return absTime - getOriginTime() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 絶対時刻取得
-     */
-    public double calcAbsoluteTime(double relTime) {
-        return relTime + getOriginTime() ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 終了かどうか
      * finish when FinishEvent occurs.
      */
@@ -205,15 +172,9 @@ public class Scenario {
                          new Comparator<EventBase>() {
                              public int compare(EventBase event0,
                                                 EventBase event1) {
-                                 double time0 = event0.getRelativeTime() ;
-                                 double time1 = event1.getRelativeTime() ;
-                                 if(time0 > time1) {
-                                     return 1 ;
-                                 } else if(time0 < time1) {
-                                     return -1 ;
-                                 } else {
-                                     return 0 ;
-                                 }
+                                 SimClock time0 = event0.atTime ;
+                                 SimClock time1 = event1.atTime ;
+                                 return time0.compareTo(time1) ;
                              }
                          }) ;
     }
@@ -228,25 +189,29 @@ public class Scenario {
             EventBase defaultEvent = new InitiateEvent() ;
             addEvent(defaultEvent) ;
         }
-        //イベントの整列
-        sortEvents() ;
         // 最初の InitiateEvent からシミュレーション開始時刻を取り出す。
-        boolean findInitiate = false ;
+        int countInitiate = 0 ;
+        String initiateTimeString = null ;
         for(EventBase event : eventList) {
             if(event instanceof InitiateEvent) {
-                findInitiate = true ;
-                clock.setOriginTimeString(event.atTimeString, true) ;
-                break ;
+                countInitiate += 1 ;
+                initiateTimeString = event.atTimeString ;
             }
         }
+        if(countInitiate != 1) {
+            // Initiate Event はちょうど１回のみでないといけな。
+            Itk.logError("No or multiple Initiate Event",
+                         "count=", countInitiate,
+                         "time=", initiateTimeString) ;
+            System.exit(1) ;
+        }
         // clock を元に、イベントの発生時刻を再設定。
+        clock.setOriginTimeString(initiateTimeString, true) ;
         for(EventBase event : eventList) {
             event.setupAtTime(clock) ;
         }
-
-        if(! findInitiate) {
-            Itk.logWarn("No Initiate Event", "use default event.") ;
-        }
+        //イベントの整列
+        sortEvents() ;
     }
 
     //------------------------------------------------------------

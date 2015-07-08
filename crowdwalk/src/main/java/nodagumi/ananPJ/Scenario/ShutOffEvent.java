@@ -71,7 +71,7 @@ public class ShutOffEvent extends PlacedEvent {
      * @param map : 地図データ
      * @return : true を返す。
      */
-    public boolean occur(double clock, NetworkMap map, boolean inverse) {
+    public boolean occur(SimClock clock, NetworkMap map, boolean inverse) {
 	for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
 		link.letShutOff(!inverse) ;

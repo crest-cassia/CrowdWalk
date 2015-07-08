@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RationalAgent;
+import nodagumi.ananPJ.misc.SimClock;
+
 import nodagumi.Itk.* ;
 
 //======================================================================
@@ -131,7 +133,7 @@ public class ThinkEngine {
     /**
      * get agent's alerted message table.
      */
-    public HashMap<Term, Double> getAlertedMessageTable() {
+    public HashMap<Term, SimClock> getAlertedMessageTable() {
         RationalAgent agent = (RationalAgent)getAgent() ;
         return agent.alertedMessageTable ;
     }

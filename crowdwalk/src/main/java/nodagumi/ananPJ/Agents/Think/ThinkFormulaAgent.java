@@ -24,6 +24,7 @@ import nodagumi.ananPJ.Agents.RationalAgent;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.* ;
 
@@ -346,8 +347,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      */
     public Term call_listenAlert(String head, Term expr, ThinkEngine engine) {
         Term message = expr.getArgTerm("message") ;
-        Double time = engine.getAlertedMessageTable().get(message) ;
-        if(time != null) {
+        SimClock alertTime = engine.getAlertedMessageTable().get(message) ;
+        if(alertTime != null) {
             return Term_True ;
         } else {
             return Term_False ;
@@ -372,10 +373,10 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_saveAlert(String head, Term expr, ThinkEngine engine) {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
-        Double time = engine.getAlertedMessageTable().get(message) ;
-        if(redundant || (time == null)) {
+        SimClock alertTime = engine.getAlertedMessageTable().get(message) ;
+        if(redundant || (alertTime == null)) {
             engine.getAlertedMessageTable().put(message,
-                                                engine.getAgent().currentTime) ;
+                                                engine.getAgent().currentTime.duplicate()) ;
             return ThinkFormula.Term_True ;
         } else {
             return ThinkFormula.Term_False ;
@@ -401,9 +402,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
         MapLink currentLink = engine.getAgent().getCurrentLink() ;
-        Double time = engine.getAgent().currentTime ;
+        SimClock alertTime = engine.getAgent().currentTime.duplicate() ;
 
-        currentLink.addAlertMessage(message, time, true) ;
+        currentLink.addAlertMessage(message, alertTime, true) ;
         return ThinkFormula.Term_True ;
     }
 

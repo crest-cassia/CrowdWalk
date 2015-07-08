@@ -45,7 +45,10 @@ build_q :
 
 ## verbose
 build_v :
-	( cd $(BASEDIR) ; gradle )
+	( cd $(BASEDIR) ; gradle)
+
+build_vv :
+	( cd $(BASEDIR) ; gradle --info -Xdiag:verbose)
 
 ##------------------------------------------------------------
 #test : test_ClassFinder

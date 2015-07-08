@@ -78,6 +78,7 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Scenario.*;
+import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.CsvFormatter;
 import nodagumi.Itk.*;
@@ -267,10 +268,10 @@ public class AgentHandler {
             .addColumn(formatter.new Column("移動時間1") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (Double)timeObj ;
+                        SimClock clock = (SimClock)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
                         return 
-                            Itk.formatSecTime(clock.calcDifferenceFrom(agent.generatedTime)) ;}})
+                            Itk.formatSecTime((int)clock.calcDifferenceFrom(agent.generatedTime)) ;}})
             .addColumn(formatter.new Column("移動時間2") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -404,12 +405,12 @@ public class AgentHandler {
             .addColumn(formatter.new Column("generated_time") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        return "" + ((int)agent.generatedTime) ;}})
+                        return "" + ((int)agent.generatedTime.getRelativeTime()) ;}})
             .addColumn(formatter.new Column("current_traveling_period") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         SimClock clock = (SimClock)timeObj ;
-                        return "" + (time.intValue()) ;}})
+                        return "" + ((int)clock.getRelativeTime()) ;}})
             .addColumn(formatter.new Column("current_exposure") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -530,7 +531,7 @@ public class AgentHandler {
      */
     public void prepareForSimulation() {
         for (AgentBase agent : getAllAgentCollection()) {
-            agent.prepareForSimulation(simulator.getTimeScale());
+            agent.prepareForSimulation() ;
         }
         // 初回は全リンクを対象とする
         clearEffectiveLinkSet() ;
@@ -774,11 +775,11 @@ public class AgentHandler {
     /**
      * 時計表示
      */
-    private void displayClock(double clock) {
+    private void displayClock(SimClock clock) {
         String time_string = String.format("Elapsed: %5.2fsec",
                                            clock.getRelativeTime());
         time_label.setText(time_string);
-        String clock_string = clock.getAbsoluteTimeString(time) ;
+        String clock_string = clock.getAbsoluteTimeString() ;
         clock_label.setText(clock_string);
     }
 
@@ -1135,16 +1136,16 @@ public class AgentHandler {
             finish_total += t.getRelativeTime();
             if (finish_max == null || t.isAfter(finish_max)) finish_max = t;
         }
-        return ""
-            + each_level[0] + ","
-            + each_level[1] + ","
-            + each_level[2] + ","
-            + each_level[3] + ","
-            + count_evacuated + ","
-            + count_all + ","
-            + finish_total / count_evacuated + ","
-            + finish_max.getRelativeTime() ;
-        ;
+        return (""
+                + each_level[0] + ","
+                + each_level[1] + ","
+                + each_level[2] + ","
+                + each_level[3] + ","
+                + count_evacuated + ","
+                + count_all + ","
+                + finish_total / count_evacuated + ","
+                + finish_max.getRelativeTime()
+                );
     }
 
     //------------------------------------------------------------
@@ -1242,8 +1243,8 @@ public class AgentHandler {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
-                buff.append((int)agent.generatedTime); buff.append(",");
-                buff.append(simulator.getTimeScale()); buff.append(",");
+                buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
+                buff.append(simulator.clock.getTickUnit()); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {
@@ -1416,17 +1417,17 @@ public class AgentHandler {
                 EventBase event ;
                 NetworkMap map ;
                 public RadioButtonListener(EventBase _event,
-                        int _index,
-                        NetworkMap _map) {
+                                           int _index,
+                                           NetworkMap _map) {
                     event = _event;
                     index = _index;
                     map = _map;
                 }
                 public void actionPerformed(ActionEvent e) {
                     if (index == -2) {
-                        event.occur(0, map) ;
+                        event.occur(SimClock.TimeEnding, map) ;
                     } else if (index == -1) {
-                        event.unoccur(0, map) ;
+                        event.unoccur(SimClock.TimeEnding, map) ;
                     } else {
                         Itk.logError("wrong index") ;
                     }
@@ -1439,7 +1440,7 @@ public class AgentHandler {
                 c.gridy = y;
                 c.gridwidth = max_events + 3;
                 c.fill = GridBagConstraints.EAST;
-                label_toggle_panel.add(new JLabel(timeToString(event.getAbsoluteTime())), c);
+                label_toggle_panel.add(new JLabel(event.atTime.getAbsoluteTimeString()), c);
             } else {
                 JRadioButton radio_button;
                 radio_button = new JRadioButton("enabled");
@@ -1456,7 +1457,7 @@ public class AgentHandler {
                 c.gridx = 2;
                 c.gridy = y;
                 label_toggle_panel.add(radio_button, c);
-                radio_button = new JRadioButton(timeToString(event.getAbsoluteTime())) ;
+                radio_button = new JRadioButton(event.atTime.getAbsoluteTimeString()) ;
                 radio_button.addActionListener(new RadioButtonListener(event, 0, map));
                 bgroup.add(radio_button);
                 c = new GridBagConstraints();

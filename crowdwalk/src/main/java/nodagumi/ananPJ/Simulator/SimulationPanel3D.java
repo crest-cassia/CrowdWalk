@@ -79,6 +79,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
+import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 import nodagumi.Itk.*;
 
@@ -108,9 +109,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
     private static String evacuatedCount_string = "";
     private boolean firstStep = true;
     private ArrayList<String> screenShotFileNames = new ArrayList();
-    private ArrayList<Double> simulationTimes = new ArrayList();
+    private ArrayList<SimClock> simulationTimes = new ArrayList<SimClock>();
     
     protected BranchGroup agent_group = null;
+
     public SimulationPanel3D(EvacuationSimulator _simulator, JFrame _parent) {
         super(_simulator.getNodes(), _simulator.getLinks(), _parent, _simulator.getProperties());
         simulator = _simulator;
@@ -129,9 +131,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
         addViewChangeListener("simulation progressed", new ViewChangeListener() {
             public void update() {
                 synchronized (simulationTimes) {
-                    double time = simulationTimes.remove(0);
-                    update_camerawork(time);
-                    update_clockstring(time);
+                    SimClock updateTime = simulationTimes.remove(0);
+                    update_camerawork(updateTime);
+                    update_clockstring(updateTime);
                 }
                 updateLinks();
                 updateNodes();
@@ -233,9 +235,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
         return control_panel;
     }
 
-    public void updateClock(double time) {
+    public void updateClock(SimClock clock) {
         synchronized (simulationTimes) {
-            simulationTimes.add(new Double(time));
+            simulationTimes.add(clock.duplicate()) ;
         }
     }
 
@@ -1483,12 +1485,11 @@ public class SimulationPanel3D extends NetworkPanel3D {
     protected void registerOtherObjects() {
     }
     
-    protected void update_clockstring(double time) {
+    protected void update_clockstring(SimClock clock) {
         String time_string =
             String.format("        Elapsed: %5.2fsec        ",
-                time);
-        String clock_string =
-			simulator.getAgentHandler().convertAbsoluteTimeString(time);
+                          clock.getRelativeTime());
+        String clock_string = clock.getAbsoluteTimeString() ;
         simulation_status.setText("  "+ clock_string + time_string + evacuatedCount_string);
         canvas.message = "Time: " + clock_string + time_string + evacuatedCount_string;
     }
@@ -1513,7 +1514,8 @@ public class SimulationPanel3D extends NetworkPanel3D {
         return forceUpdateCamerawork;
     }
 
-    protected void update_camerawork(double time) {
+    protected void update_camerawork(SimClock updateTime) {
+        double time = updateTime.getRelativeTime() ;
         if (replay_recorded_camera_position.isSelected() &&
                 camera_position_list.size() > 0) {
             CurrentCameraPosition last_camera = null;

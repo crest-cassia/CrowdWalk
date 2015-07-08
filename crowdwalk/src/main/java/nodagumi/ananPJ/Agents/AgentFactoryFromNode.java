@@ -40,11 +40,11 @@ public class AgentFactoryFromNode extends AgentFactory {
 
     @Override
     public String getStart() {
-        return start_node.getTagString() +
-        "(" +  start_node.ID + ")" +
-        " from " + start_time +
-        " ("  + total +
-        " in " + duration + "s)";
+        return (start_node.getTagString() +
+                "(" +  start_node.ID + ")" +
+                " from " + startTime.getAbsoluteTime() +
+                " ("  + total +
+                " in " + duration + " sec)");
     }
     @Override
     public OBNode getStartObject() { return start_node; }

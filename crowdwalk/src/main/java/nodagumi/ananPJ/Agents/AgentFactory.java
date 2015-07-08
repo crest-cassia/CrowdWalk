@@ -171,7 +171,7 @@ public abstract class AgentFactory {
         /**
          * 開始時刻
          */
-        public double startTime = 0.0 ;
+        public SimClock startTime = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -219,7 +219,7 @@ public abstract class AgentFactory {
             jObject.setArg("conditions",conditions);
             jObject.setArg("goal",goal);
             jObject.setArg("plannedRoute",plannedRoute) ;
-            jObject.setArg("startTime",Itk.formatSecTime((int)startTime)) ;
+            jObject.setArg("startTime",startTime.getAbsoluteTimeString()) ;
             jObject.setArg("duration",duration) ;
             jObject.setArg("total",total) ;
             jObject.setArg("speedModel", speedModel) ;
@@ -230,7 +230,7 @@ public abstract class AgentFactory {
 
     public Term goal;
     public List<Term> planned_route;
-    SimClock start_time ;
+    SimClock startTime ;
     double duration;
     int total;
     public SpeedCalculationModel speedModel = null;
@@ -274,7 +274,7 @@ public abstract class AgentFactory {
         }
         goal = config.goal ;
         planned_route = config.plannedRoute ;
-        start_time = config.startTime ;
+        startTime = config.startTime ;
         duration = config.duration ;
         total = config.total ;
         speedModel = config.speedModel ;
@@ -293,8 +293,9 @@ public abstract class AgentFactory {
         }
     }
 
-    protected boolean finished(double time) {
-        return time > start_time + duration && generated >= total;
+    protected boolean finished(SimClock clock) {
+        return (clock.calcDifferenceFrom(startTime) > duration &&
+                generated >= total);
     }
 
     abstract protected void place_agent(AgentBase agent);
@@ -323,13 +324,13 @@ public abstract class AgentFactory {
             return;
         }
 
-        if (clock.isBefore(start_time)) {
+        if (clock.isBefore(startTime)) {
             /* not yet time to start generating agents */
             return;
         }
 
         double duration_left =
-            start_time.getRelativeTime() + duration - clock.getRelativeTime() ;
+            startTime.getRelativeTime() + duration - clock.getRelativeTime() ;
         int agent_to_gen = total - generated;
         if (duration_left > 0) {
             double r

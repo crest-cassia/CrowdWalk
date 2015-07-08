@@ -42,6 +42,8 @@ def defaultEncoding = 'UTF-8'
 
 compileJava {
     options.encoding = defaultEncoding
+//    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose'] 
+    options.compilerArgs = ['-Xdiags:verbose'] 
 }
 
 processResources {
