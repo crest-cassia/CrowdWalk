@@ -19,6 +19,7 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.ananPJ.Agents.AgentFactory;
 
 import nodagumi.Itk.*;
@@ -162,9 +163,9 @@ public class WalkAgent extends AgentBase {
      */
     class CheckPoint {
         public MapNode node;
-        public SimClock passTime;
+        public SimTime passTime;
         public String reason;
-        public CheckPoint(MapNode _node, SimClock _time, String _reason) {
+        public CheckPoint(MapNode _node, SimTime _time, String _reason) {
             node = _node; passTime = _time; reason = _reason;
         }
     }
@@ -271,7 +272,7 @@ public class WalkAgent extends AgentBase {
      */
     @Override
     public void init(Random _random, EvacuationSimulator simulator,
-                     AgentFactory factory, SimClock currentTime) {
+                     AgentFactory factory, SimTime currentTime) {
         super.init(_random, simulator, factory, currentTime);
         update_swing_flag = true;
         route = new ArrayList<CheckPoint>();
@@ -437,7 +438,7 @@ public class WalkAgent extends AgentBase {
             Itk.logError("currentPlace has no link for routePlan.") ;
             Itk.logError_("currentPlace", currentPlace) ;
             Itk.logError_("routePlan", routePlan) ;
-            finalizeEvacuation(new SimClock(), false, true) ;
+            finalizeEvacuation(SimTime.Zero, false, true) ;
         }
         currentPlace.setLink(bestLink) ;
     }
@@ -960,7 +961,7 @@ public class WalkAgent extends AgentBase {
     protected void recordTrail(SimClock clock, Place passingPlace,
                                MapLink nextLink) {
         route.add(new CheckPoint(passingPlace.getHeadingNode(),
-                                 clock.duplicate(),
+                                 clock.newSimTime(),
                                  navigationReason.toString()));
     }
 

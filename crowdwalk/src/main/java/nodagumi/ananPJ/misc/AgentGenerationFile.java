@@ -33,6 +33,8 @@ import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Agents.AgentFactoryFromLink;
 import nodagumi.ananPJ.Agents.AgentFactoryFromNode;
+import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.Itk.*;
 
 //======================================================================
@@ -327,7 +329,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * 生成の終了時刻
          */
-        public SimClock everyEndTime = null ;
+        public SimTime everyEndTime = null ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -604,7 +606,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // 出発時刻
         try {
-            genConfig.startTime = new SimClock(columns.get()) ;
+            genConfig.startTime = new SimTime(columns.get()) ;
         } catch(Exception ex) {
             return null ;
         }
@@ -613,7 +615,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         if (rule_tag == Rule.TIMEEVERY) {
             try {
                 ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                    new SimClock(columns.get()) ;
+                    new SimTime(columns.get()) ;
             } catch(Exception ex) {
                 return null ;
             }
@@ -909,7 +911,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // startTime
         try {
-            genConfig.startTime = new SimClock(json.getArgString("startTime")) ;
+            genConfig.startTime = new SimTime(json.getArgString("startTime")) ;
         } catch(Exception ex) {
             return null ;
         }
@@ -919,7 +921,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             try {
                 String endTimeStr = json.getArgString("everyEndTime") ;
                 ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                    new SimClock(endTimeStr) ;
+                    new SimTime(endTimeStr) ;
             } catch(Exception ex) {
                 return null ;
             }
@@ -1210,24 +1212,24 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      */
     private void doGenerationForTimeEvery(NetworkMap map,
                                           GenerationConfigForTimeEvery genConfig) {
-        SimClock every_end_time = genConfig.everyEndTime ;
+        SimTime every_end_time = genConfig.everyEndTime ;
         double every_seconds = (double)genConfig.everySeconds ;
         int total = genConfig.total ;
 
         // [I.Noda] startPlace は下で指定。
         genConfig.startPlace = null ;
         // [I.Noda] startTime も特別な意味
-        SimClock start_time = genConfig.startTime ;
+        SimTime start_time = genConfig.startTime ;
         genConfig.startTime = null ;
 
-        SimClock step_time = start_time.duplicate() ;
+        SimTime step_time = start_time.newSimTime() ;
         /* let's assume start & goal & planned_route candidates
          * are all MapLink!
          */
 
         while (step_time.isBeforeOrAt(every_end_time)) {
             for (int i = 0; i < total; i++) {
-                genConfig.startTime = step_time.duplicate() ;
+                genConfig.startTime = step_time.newSimTime() ;
                 genConfig.total = 1 ;
                 if(genConfig.startLinks.size() > 0) {
                     MapLink start_link =

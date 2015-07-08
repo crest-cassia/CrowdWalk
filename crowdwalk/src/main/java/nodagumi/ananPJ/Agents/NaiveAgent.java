@@ -24,6 +24,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.TargetNotFoundException;
 import nodagumi.ananPJ.Agents.AwaitAgent ;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 

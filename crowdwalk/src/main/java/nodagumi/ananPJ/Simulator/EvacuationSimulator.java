@@ -31,6 +31,7 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Scenario.*;
@@ -148,7 +149,7 @@ public class EvacuationSimulator {
      * エージェントがゴールに達した時刻情報。
      * saveGoalLog() 用
      */
-    private HashMap<String, SimClock> goalTimes = new HashMap<String, SimClock>();
+    private HashMap<String, SimTime> goalTimes = new HashMap<String, SimTime>();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -1007,7 +1008,7 @@ public class EvacuationSimulator {
          * ここで、AllAgent を使うべきか、WalkingAgent だけでよいか、
          * 不明。
          */
-        SimClock currentTime = clock.duplicate() ;
+        SimTime currentTime = clock.newSimTime() ;
         for (AgentBase agent: getAllAgentCollection()) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
                 goalTimes.put(agent.ID, currentTime) ;
@@ -1030,7 +1031,7 @@ public class EvacuationSimulator {
             }
             evacuatedAgents.add(buff.toString());
         } else {  // finalize process
-            SimClock nextTime = clock.newClockWithAdvanceTick(1) ;
+            SimTime nextTime = clock.newSimTimeWithAdvanceTick(1) ;
             for (AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.isEvacuated()) {
                     goalTimes.put(agent.ID, nextTime) ;
@@ -1042,8 +1043,8 @@ public class EvacuationSimulator {
                 .sort(agentIdList,
                       new Comparator<String>() {
                           public int compare(String id0, String id1) {
-                              SimClock time0 = goalTimes.get(id0) ;
-                              SimClock time1 = goalTimes.get(id1) ;
+                              SimTime time0 = goalTimes.get(id0) ;
+                              SimTime time1 = goalTimes.get(id1) ;
                               return time0.compareTo(time1) ;
                           }
                       });

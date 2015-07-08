@@ -24,6 +24,7 @@ import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
@@ -57,11 +58,11 @@ implements Comparable<AgentBase> {
      * evacuated: ゴールに到達したかどうかのフラグ
      * stuck: スタックしたかどうかのフラグ(スタックしたら evacuated も true となる)
      */
-    public SimClock generatedTime = null;
-    public SimClock finishedTime = null;
+    public SimTime generatedTime = null;
+    public SimTime finishedTime = null;
     private boolean evacuated = false;
     private boolean stuck = false;
-    public SimClock currentTime = null ;
+    public SimClock clock = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -153,7 +154,7 @@ implements Comparable<AgentBase> {
      * 初期化。constractorから分離。
      */
     public void init(Random _random, EvacuationSimulator simulator, 
-                     AgentFactory factory, SimClock currentTime) {
+                     AgentFactory factory, SimTime currentTime) {
         super.init(null);
         random = _random;
         //swing_width = Math.random() * 2.0 - 1.0;
@@ -243,9 +244,10 @@ implements Comparable<AgentBase> {
     /**
      * 避難完了をセット
      */
-    public void setEvacuated(boolean evacuated, SimClock clock, boolean stuck) {
+    public void setEvacuated(boolean evacuated, SimTime evacuateTime,
+                             boolean stuck) {
         this.evacuated = evacuated;
-        this.finishedTime = clock.duplicate() ;
+        this.finishedTime = evacuateTime ;
         this.stuck = stuck;
     }
 
@@ -634,7 +636,7 @@ implements Comparable<AgentBase> {
     protected void finalizeEvacuation(SimClock clock,
                                       boolean onNode, boolean stuck) {
         consumePlannedRoute() ;
-        setEvacuated(true, clock, stuck) ;
+        setEvacuated(true, clock.newSimTime(), stuck) ;
         if(currentPlace.isWalking()) {
             lastPlace.set(currentPlace) ;
             currentPlace.getLink().agentExits(this) ;
@@ -660,7 +662,7 @@ implements Comparable<AgentBase> {
      * シミュレーション各サイクルの前半に呼ばれる。
      */
     public void preUpdate(SimClock clock) {
-        currentTime = clock ;
+        this.clock = clock ;
     }
 
     //------------------------------------------------------------
@@ -806,7 +808,7 @@ implements Comparable<AgentBase> {
      * Alert 関係
      * RationalAgent 以下でないと意味がない
      */
-    public void alertMessage(Term message, SimClock currentTime) {
+    public void alertMessage(Term message, SimTime currentTime) {
         // do nothing ;
     }
     //############################################################

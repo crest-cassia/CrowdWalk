@@ -17,6 +17,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 
@@ -112,7 +113,7 @@ public class AlertEvent extends PlacedEvent {
     public boolean occur(SimClock clock, NetworkMap map, boolean inverse) {
         for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
-                SimClock currentTime = clock.duplicate() ;
+                SimTime currentTime = clock.newSimTime() ;
                 link.addAlertMessage(message, currentTime, !inverse) ;
                 Itk.logInfo("AlertEvent",onoff,link,message, currentTime) ;
             }

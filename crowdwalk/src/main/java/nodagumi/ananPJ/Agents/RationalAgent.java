@@ -22,6 +22,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -70,8 +71,8 @@ public class RationalAgent extends BustleAgent {
     /**
      * alert された message
      */
-    public HashMap<Term, SimClock> alertedMessageTable =
-        new HashMap<Term, SimClock>() ;
+    public HashMap<Term, SimTime> alertedMessageTable =
+        new HashMap<Term, SimTime>() ;
 
     //------------------------------------------------------------
     // コンストラクタ
@@ -113,7 +114,7 @@ public class RationalAgent extends BustleAgent {
     /**
      * Alert 関係
      */
-    public void alertMessage(Term message, SimClock alertTime) {
+    public void alertMessage(Term message, SimTime alertTime) {
         alertedMessageTable.put(message, alertTime) ;
         Itk.logInfo("hear Alert Message", this, message, alertTime,
                     currentPlace) ;
@@ -127,7 +128,7 @@ public class RationalAgent extends BustleAgent {
      */
     @Override
     public void preUpdate(SimClock clock) {
-        currentTime = clock ;
+        this.clock = clock ;
         thinkCycle() ;
         super.preUpdate(clock) ;
     }

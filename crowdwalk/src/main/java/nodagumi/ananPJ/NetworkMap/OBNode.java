@@ -37,6 +37,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -61,7 +62,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * alert message
      */
-    public HashMap<Term, SimClock> alertMessageTable ;
+    public HashMap<Term, SimTime> alertMessageTable ;
 
     //------------------------------------------------------------
     /**
@@ -79,7 +80,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     public void init(String _ID){
         ID = _ID;
         tags = new ArrayList<String>();
-        alertMessageTable = new HashMap<Term, SimClock>() ;
+        alertMessageTable = new HashMap<Term, SimTime>() ;
     }
 
     public abstract boolean isLeaf();

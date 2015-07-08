@@ -24,6 +24,7 @@ import nodagumi.ananPJ.Agents.RationalAgent;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 
@@ -152,11 +153,11 @@ public class ThinkFormulaMisc extends ThinkFormula {
             Itk.logInfo(engine.logTag(), "no agent") ;
         } else {
             Itk.logInfo(engine.logTag(), "alertMessages",
-                        "time=", engine.getAgent().currentTime) ;
-            for(Map.Entry<Term, SimClock> entry :
+                        "time=", engine.getAgent().clock) ;
+            for(Map.Entry<Term, SimTime> entry :
                     engine.getAlertedMessageTable().entrySet()) {
                 Term message = entry.getKey() ;
-                SimClock alertTime = entry.getValue() ;
+                SimTime alertTime = entry.getValue() ;
                 Itk.logInfo(engine.LogTagPrefix, message, alertTime) ;
             }
             Itk.logInfo(engine.LogTagPrefix, "-----------------") ;

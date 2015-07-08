@@ -48,6 +48,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -199,7 +200,7 @@ public class MapLink extends OBMapPart {
      * alert message
      */
 
-    public void addAlertMessage(Term message, SimClock currentTime,
+    public void addAlertMessage(Term message, SimTime currentTime,
                                 boolean onoff) {
         if(onoff) {
             alertMessageTable.put(message, currentTime) ;
@@ -513,7 +514,7 @@ public class MapLink extends OBMapPart {
         */
 
         /* alert message を新しいエージェントに伝える */
-        for(HashMap.Entry<Term, SimClock> entry : alertMessageTable.entrySet()) {
+        for(HashMap.Entry<Term, SimTime> entry : alertMessageTable.entrySet()) {
             agent.alertMessage(entry.getKey(), entry.getValue()) ;
         }
     }

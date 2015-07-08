@@ -30,6 +30,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 
@@ -172,8 +173,8 @@ public class Scenario {
                          new Comparator<EventBase>() {
                              public int compare(EventBase event0,
                                                 EventBase event1) {
-                                 SimClock time0 = event0.atTime ;
-                                 SimClock time1 = event1.atTime ;
+                                 SimTime time0 = event0.atTime ;
+                                 SimTime time1 = event1.atTime ;
                                  return time0.compareTo(time1) ;
                              }
                          }) ;

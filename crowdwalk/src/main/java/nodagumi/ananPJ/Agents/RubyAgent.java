@@ -26,6 +26,7 @@ import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -144,7 +145,7 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public void init(Random _random, EvacuationSimulator simulator,
-                     AgentFactory factory, SimClock currentTime) {
+                     AgentFactory factory, SimTime currentTime) {
         super.init(_random, simulator, factory, currentTime);
         rubyEngine = simulator.getRubyEngine() ;
         if(rubyEngine == null) {
@@ -238,7 +239,7 @@ public class RubyAgent extends RationalAgent {
      * alert を聴いた時刻。
      * もし聴いていなければ、null が返る。
      */
-    public SimClock getAlertTimeForRuby(Object message) {
+    public SimTime getAlertTimeForRuby(Object message) {
         return alertedMessageTable.get(Term.ensureTerm(message)) ;
     }
 
@@ -267,7 +268,7 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public void preUpdate(SimClock clock) {
-        currentTime = clock ;
+        this.clock = clock ;
         String rubyMethod = triggeredMethod(TriggerEntry.preUpdate) ;
         if(rubyMethod != null) {
             rubyEngine.callMethod(rubyAgent, rubyMethod) ;
@@ -281,7 +282,7 @@ public class RubyAgent extends RationalAgent {
      * ruby からの戻り用。
      */
     public void super_preUpdate() {
-        super.preUpdate(currentTime) ;
+        super.preUpdate(this.clock) ;
     }
 
     //------------------------------------------------------------
@@ -290,7 +291,7 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public boolean update(SimClock clock) {
-        currentTime = clock ;
+        this.clock = clock ;
         String rubyMethod = triggeredMethod(TriggerEntry.update) ;
         if(rubyMethod != null) {
             return rubyEngine.callMethodBoolean(rubyAgent, rubyMethod) ;
@@ -304,7 +305,7 @@ public class RubyAgent extends RationalAgent {
      * ruby からの戻り用。
      */
     public boolean super_update() {
-        return super.update(currentTime) ;
+        return super.update(this.clock) ;
     }
 
     //------------------------------------------------------------

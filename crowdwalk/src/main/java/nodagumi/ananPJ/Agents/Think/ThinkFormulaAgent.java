@@ -25,6 +25,7 @@ import nodagumi.ananPJ.Agents.Think.ThinkEngine;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 
@@ -179,7 +180,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         RationalAgent agent = (RationalAgent)engine.getAgent() ;
 
         if(name.equals("currentTime")) {
-            return new Term(agent.currentTime) ;
+            return new Term(agent.clock.getRelativeTime()) ;
         } else if(name.equals("agentId")) {
             return new Term(agent.ID) ;
         } else if(name.equals("linkId")) {
@@ -347,7 +348,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
      */
     public Term call_listenAlert(String head, Term expr, ThinkEngine engine) {
         Term message = expr.getArgTerm("message") ;
-        SimClock alertTime = engine.getAlertedMessageTable().get(message) ;
+        SimTime alertTime = engine.getAlertedMessageTable().get(message) ;
         if(alertTime != null) {
             return Term_True ;
         } else {
@@ -373,10 +374,11 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_saveAlert(String head, Term expr, ThinkEngine engine) {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
-        SimClock alertTime = engine.getAlertedMessageTable().get(message) ;
+        SimTime alertTime = engine.getAlertedMessageTable().get(message) ;
         if(redundant || (alertTime == null)) {
             engine.getAlertedMessageTable().put(message,
-                                                engine.getAgent().currentTime.duplicate()) ;
+                                                engine.getAgent()
+                                                .clock.newSimTime()) ;
             return ThinkFormula.Term_True ;
         } else {
             return ThinkFormula.Term_False ;
@@ -402,7 +404,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
         MapLink currentLink = engine.getAgent().getCurrentLink() ;
-        SimClock alertTime = engine.getAgent().currentTime.duplicate() ;
+        SimTime alertTime = engine.getAgent().clock.newSimTime() ;
 
         currentLink.addAlertMessage(message, alertTime, true) ;
         return ThinkFormula.Term_True ;

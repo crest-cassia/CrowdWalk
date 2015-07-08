@@ -17,6 +17,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 
@@ -49,7 +50,7 @@ abstract public class EventBase {
     /**
      * イベント発生時刻 (絶対時刻)
      */
-    public SimClock atTime = null ;
+    public SimTime atTime = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -95,7 +96,7 @@ abstract public class EventBase {
      * originClock によるイベント発生時刻の設定。
      */
     public void setupAtTime(SimClock originClock) {
-        atTime = originClock.newClockByString(atTimeString) ;
+        atTime = originClock.newSimTimeByString(atTimeString) ;
     }
 
     //----------------------------------------

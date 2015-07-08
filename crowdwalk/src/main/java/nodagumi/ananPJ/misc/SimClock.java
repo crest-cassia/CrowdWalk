@@ -26,58 +26,48 @@ public class SimClock {
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
-     * ゼロ時刻インスタンス。
+     * ゼロ時刻文字列
      */
-    static public SimClock TimeZero =
-        new SimClock("00:00:00") ;
+    static public String TimeZeroString = "00:00:00" ;
 
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
-     * 無限大未来時刻インスタンス。
+     * 無指定時刻文字列
      */
-    static public SimClock TimeEnding =
-        new SimClock("00:00:00").setTickCount(Integer.MAX_VALUE) ;
-
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    /**
-     * 無限大過去時刻インスタンス。
-     */
-    static public SimClock TimeBeginning =
-        new SimClock("00:00:00").setTickCount(Integer.MIN_VALUE) ;
+    final static public String TimeNoneString = "__:__:__" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 基準となる絶対時刻の文字列標記。
      * "HH:MM:SS" もしくは、"HH:MM" でなければならない。
      */
-    private String originTimeString = null ;
+    protected String originTimeString = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 基準となる絶対時刻の整数値。
      * 未定値は -1。
      */
-    private int originTimeInt = -1 ;
+    protected int originTimeInt = -1 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 刻み回数。
      */
-    private int tickCount = 0 ;
+    protected int tickCount = 0 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 時刻の刻み幅。
      * advance() で進む幅。
      */
-    private double tickUnit = 1.0 ;
+    protected double tickUnit = 1.0 ;
 
     //------------------------------------------------------------
     /**
      * コンストラクタ
      */
     public SimClock() {
-        this(null) ;
+        this((String)null) ;
     }
 
     /**
@@ -94,6 +84,13 @@ public class SimClock {
         init(originTimeString, tickUnit) ;
     }
 
+    /**
+     * コンストラクタ
+     */
+    public SimClock(SimClock origin) {
+        copyFrom(origin) ;
+    }
+
     //------------------------------------------------------------
     // 初期化関連。
     //------------------------------------------------------------
@@ -106,6 +103,18 @@ public class SimClock {
         }
         this.tickUnit = tickUnit ;
         reset() ;
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 他の SimClock からのコピー。
+     */
+    public SimClock copyFrom(SimClock origin) {
+        this.originTimeString = origin.originTimeString ;
+        this.originTimeInt = origin.originTimeInt ;
+        this.tickCount = origin.tickCount ;
+        this.tickUnit = origin.tickUnit ;
         return this ;
     }
 
@@ -159,39 +168,36 @@ public class SimClock {
     /**
      * 時刻のコピー。
      */
-    public SimClock duplicate() {
-        //Itk.dbgMsg("SimClock.duplicate", this) ;
+    public SimTime newSimTime() {
+        //Itk.dbgMsg("SimClock.newSimTime", this) ;
         //Itk.dumpStackTraceN(2,1) ;
-        SimClock newClock = new SimClock() ;
-        newClock.originTimeString = this.originTimeString ;
-        newClock.originTimeInt = this.originTimeInt ;
-        newClock.tickCount = this.tickCount ;
-        newClock.tickUnit = this.tickUnit ;
-        return newClock ;
+        SimTime simTime = new SimTime() ;
+        simTime.copyFrom(this);
+        return simTime ;
     }
 
     //------------------------------------------------------------
     /**
      * 指定時間進んだ時刻。
      */
-    public SimClock newClockWithAdvance(double advanceTime) {
-        return duplicate().advanceSec(advanceTime) ;
+    public SimTime newSimTimeWithAdvance(double advanceTime) {
+        return (SimTime)newSimTime().advanceSec(advanceTime) ;
     }
 
     //------------------------------------------------------------
     /**
      * 指定時間進んだ時刻。
      */
-    public SimClock newClockWithAdvanceTick(int advanceTick){
-        return duplicate().advanceTick(advanceTick) ;
+    public SimTime newSimTimeWithAdvanceTick(int advanceTick){
+        return (SimTime)newSimTime().advanceTick(advanceTick) ;
     }
 
     //------------------------------------------------------------
     /**
      * 同じ基準時刻・tickUnitを使って、指定の時刻を作成。
      */
-    public SimClock newClockByString(String timeString) {
-        SimClock newClock = duplicate() ;
+    public SimTime newSimTimeByString(String timeString) {
+        SimTime simTime = newSimTime() ;
         int absTime = 0 ;
         if(timeString != null) {
             try {
@@ -202,19 +208,17 @@ public class SimClock {
                 this.originTimeInt = -1 ;
             }
         }
-        newClock.tickCount =
+        simTime.tickCount =
             (int)Math.round(((double)(absTime - originTimeInt)) / tickUnit) ;
-        return newClock ;
+        return simTime ;
     }
 
     //------------------------------------------------------------
     /**
      * 同じ基準時刻・tickUnitを使って、指定の時刻を作成。
      */
-    public SimClock newClockByRelativeTime(double relativeTime) {
-        SimClock newClock = duplicate() ;
-        newClock.setRelativeTime(relativeTime) ;
-        return newClock ;
+    public SimTime newSimTimeByRelativeTime(double relativeTime) {
+        return (SimTime)newSimTime().setRelativeTime(relativeTime) ;
     }
 
     //------------------------------------------------------------
@@ -229,7 +233,7 @@ public class SimClock {
         } else if(originTimeInt >= 0) {
             return Itk.formatSecTime(originTimeInt) ;
         } else {
-            return "__:__:__" ;
+            return TimeNoneString ;
         }
     }
 
@@ -468,6 +472,59 @@ public class SimClock {
         if(isAt(time)) return 0 ;
         else if(isAfter(time)) return 1 ;
         else return -1 ;
+    }
+
+    //============================================================
+    //============================================================
+    /**
+     * 時間を停められた SimClock を表す。
+     */
+    static public class SimTime extends SimClock {
+        //========================================
+        //::::::::::::::::::::::::::::::::::::::::
+        /**
+         * ゼロ時刻インスタンス。
+         */
+        static public SimTime Zero =
+            new SimTime(TimeZeroString) ;
+
+        /**
+         * 無限大未来時刻インスタンス。
+         */
+        static public SimTime Ending =
+            (SimTime)(new SimTime(TimeZeroString).setTickCount(Integer.MAX_VALUE));
+
+        /**
+         * 無限大過去時刻インスタンス。
+         */
+        static public SimTime Beginning =
+            (SimTime)(new SimTime(TimeZeroString).setTickCount(Integer.MIN_VALUE));
+
+        //----------------------------------------
+        /**
+         * コンストラクタ
+         */
+        public SimTime() { super() ; }
+        /** */
+        public SimTime(String originTimeString) { super(originTimeString) ; }
+        /** */
+        public SimTime(String originTimeString, double tickUnit) {
+            super(originTimeString, tickUnit) ;
+        }
+        /** */
+        public SimTime(SimClock origin) { super(origin) ; }
+
+        //----------------------------------------
+        /**
+         * advance() は使えない。
+         */
+        @Override
+        public SimTime advance() {
+            Itk.logError("can not call SimTime#advance()", this) ;
+            System.exit(1) ;
+            return this ; // never reach here
+        }
+
     }
 
     //============================================================

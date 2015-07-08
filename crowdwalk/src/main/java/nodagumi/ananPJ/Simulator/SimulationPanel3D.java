@@ -80,6 +80,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 import nodagumi.Itk.*;
 
@@ -109,7 +110,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     private static String evacuatedCount_string = "";
     private boolean firstStep = true;
     private ArrayList<String> screenShotFileNames = new ArrayList();
-    private ArrayList<SimClock> simulationTimes = new ArrayList<SimClock>();
+    private ArrayList<SimTime> simulationTimes = new ArrayList<SimTime>();
     
     protected BranchGroup agent_group = null;
 
@@ -131,7 +132,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         addViewChangeListener("simulation progressed", new ViewChangeListener() {
             public void update() {
                 synchronized (simulationTimes) {
-                    SimClock updateTime = simulationTimes.remove(0);
+                    SimTime updateTime = simulationTimes.remove(0);
                     update_camerawork(updateTime);
                     update_clockstring(updateTime);
                 }
@@ -237,7 +238,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
     public void updateClock(SimClock clock) {
         synchronized (simulationTimes) {
-            simulationTimes.add(clock.duplicate()) ;
+            simulationTimes.add(clock.newSimTime()) ;
         }
     }
 
@@ -1514,7 +1515,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         return forceUpdateCamerawork;
     }
 
-    protected void update_camerawork(SimClock updateTime) {
+    protected void update_camerawork(SimTime updateTime) {
         double time = updateTime.getRelativeTime() ;
         if (replay_recorded_camera_position.isSelected() &&
                 camera_position_list.size() > 0) {

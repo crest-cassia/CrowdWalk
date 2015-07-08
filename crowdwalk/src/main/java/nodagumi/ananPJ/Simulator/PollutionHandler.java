@@ -30,6 +30,7 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -59,7 +60,7 @@ public class PollutionHandler {
     /**
      * 次に pollution を更新する時刻。
      */
-    SimClock nextInstantTime = null ;
+    SimTime nextInstantTime = null ;
 
     /**
      * 最大の pollution level。
@@ -162,7 +163,7 @@ public class PollutionHandler {
                 if (! line.trim().startsWith("#")) {
                     String[] strItems = csvParser.parseLine(line) ;
                     PollutionInstant instant = new PollutionInstant() ;
-                    instant.atTime = baseClock.duplicate() ;
+                    instant.atTime = baseClock.newSimTime() ;
                     instant.atTime.setRelativeTime(Double.parseDouble(strItems[0])) ;
                     for (int index = 1; index < strItems.length; index++) {
                         double value = Double.parseDouble(strItems[index]) ;
@@ -231,7 +232,7 @@ public class PollutionHandler {
                         PollutionInstant interpolatedInstant
                             = new PollutionInstant() ;
                         interpolatedInstant.atTime =
-                            baseClock.duplicate().setRelativeTime(time);
+                            (SimTime)baseClock.newSimTime().setRelativeTime(time);
                         for (int index = 0; index < instant.valueSize(); index++) {
                             double a = (time - lastEventTime) / (eventTime - lastEventTime);    // 補間係数
                             double v = (lastInstant.getValue(index) +
@@ -419,7 +420,7 @@ public class PollutionHandler {
          * タイムスライスの時刻。
          * 実際には、このタイムスライスが終わる時刻。
          */
-        public SimClock atTime = null ;
+        public SimTime atTime = null ;
 
         /**
          * Pollution の値
