@@ -643,6 +643,29 @@ public class Itk {
 
     //------------------------------------------------------------
     /**
+     * 現在実行中のメソッド情報（直近N段)
+     */
+    static public void dumpStackTraceN(int n) {
+        dumpStackTraceN(n, 1) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在実行中のメソッド情報（直近N段)
+     */
+    static public void dumpStackTraceN(int n, int offset) {
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace() ;
+        int from = 2 + offset ;
+        int to = from + n ;
+        if(trace.length < to) to = trace.length ;
+
+        for(int i = from ; i < to ; i++) {
+            dbgGeneric(StackTraceTag, trace[i]) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * 現在実行中のメソッド情報
      */
     static public StackTraceElement currentCall() {

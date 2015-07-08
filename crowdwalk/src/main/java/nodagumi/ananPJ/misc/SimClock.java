@@ -160,6 +160,8 @@ public class SimClock {
      * 時刻のコピー。
      */
     public SimClock duplicate() {
+        //Itk.dbgMsg("SimClock.duplicate", this) ;
+        //Itk.dumpStackTraceN(2,1) ;
         SimClock newClock = new SimClock() ;
         newClock.originTimeString = this.originTimeString ;
         newClock.originTimeInt = this.originTimeInt ;
@@ -227,7 +229,7 @@ public class SimClock {
         } else if(originTimeInt >= 0) {
             return Itk.formatSecTime(originTimeInt) ;
         } else {
-            return "(not_a_time)" ;
+            return "__:__:__" ;
         }
     }
 

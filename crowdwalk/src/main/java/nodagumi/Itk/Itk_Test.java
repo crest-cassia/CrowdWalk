@@ -33,6 +33,25 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * dumpStackTraceN
+     */
+    @Test
+    public void test_dumpStackTraceN() {
+        Itk.dbgMsg("all dump") ;
+        Itk.dumpStackTrace() ;
+
+        Itk.dbgMsg("3 dump") ;
+        Itk.dumpStackTraceN(3) ;
+
+        Itk.dbgMsg("5 dump") ;
+        Itk.dumpStackTraceN(5) ;
+
+        Itk.dbgMsg("10 dump") ;
+        Itk.dumpStackTraceN(10) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * String test
      * 結果として、k=4 の時には、intern すると約2倍、
      * k=13 の時には、intern すると300-400倍の高速化。
@@ -282,7 +301,7 @@ public class Itk_Test {
     /**
      * test bit operation
      */
-    @Test
+    //@Test
     public void test_bitOperation() {
         int x = 4 ;
         Itk.dbgVal("x&1",x & 1) ;
