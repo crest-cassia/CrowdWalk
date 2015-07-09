@@ -36,7 +36,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.misc.SimClock.SimTime;
+import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
 

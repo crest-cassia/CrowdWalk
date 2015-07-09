@@ -14,7 +14,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import nodagumi.ananPJ.misc.SimClock.SimTime;
+import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.Itk;
 

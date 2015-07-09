@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.misc.SimClock.SimTime;
+import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
 

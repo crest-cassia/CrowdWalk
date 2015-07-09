@@ -29,7 +29,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
-import nodagumi.ananPJ.misc.SimClock.SimTime;
+import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -163,7 +163,7 @@ public class PollutionHandler {
                     String[] strItems = csvParser.parseLine(line) ;
                     PollutionInstant instant = new PollutionInstant() ;
                     instant.atTime =
-                        (SimTime)baseTime.newSimTime()
+                        baseTime.newSimTime()
                         .setRelativeTime(Double.parseDouble(strItems[0])) ;
 
                     for (int index = 1; index < strItems.length; index++) {
@@ -233,7 +233,7 @@ public class PollutionHandler {
                         PollutionInstant interpolatedInstant
                             = new PollutionInstant() ;
                         interpolatedInstant.atTime =
-                            (SimTime)baseTime.newSimTime().setRelativeTime(time);
+                            baseTime.newSimTime().setRelativeTime(time);
 
                         for (int index = 0; index < instant.valueSize(); index++) {
                             double a = (time - lastEventTime) / (eventTime - lastEventTime);    // 補間係数

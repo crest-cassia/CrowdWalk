@@ -25,7 +25,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
-import nodagumi.ananPJ.misc.SimClock.SimTime;
+import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
 

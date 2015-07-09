@@ -23,8 +23,8 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.RationalAgent;
 import nodagumi.ananPJ.Agents.Think.ThinkEngine;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
+import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
-import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 

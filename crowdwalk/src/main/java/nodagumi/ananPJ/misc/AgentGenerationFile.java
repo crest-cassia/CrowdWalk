@@ -33,8 +33,8 @@ import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Agents.AgentFactoryFromLink;
 import nodagumi.ananPJ.Agents.AgentFactoryFromNode;
+import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
-import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.Itk.*;
 
 //======================================================================
