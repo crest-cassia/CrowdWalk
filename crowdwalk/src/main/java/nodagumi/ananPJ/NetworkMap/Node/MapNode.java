@@ -42,7 +42,6 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SetupFileInfo;
-import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
@@ -613,16 +612,16 @@ public class MapNode extends OBMapPart {
      * @return 規制が適用されたら true
      */
     public double calcRestrictedSpeed(double speed, AgentBase agent,
-                                      SimClock clock) {
+                                      SimTime currentTime) {
         /* 分担制御 */
-        if(isGateClosed(agent, clock)) {
+        if(isGateClosed(agent, currentTime)) {
             speed = 0.0 ;
         }
 
         /* 制約ルール適用 */
         for(int i = 0 ; i < speedRestrictRule.getArraySize() ; i++) {
             Term rule = speedRestrictRule.getNthTerm(i) ;
-            speed = applyRestrictionRule(speed, rule, agent, clock) ;
+            speed = applyRestrictionRule(speed, rule, agent, currentTime) ;
         }
 
         return speed ;

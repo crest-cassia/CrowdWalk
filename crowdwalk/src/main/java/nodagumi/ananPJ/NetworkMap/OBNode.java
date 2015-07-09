@@ -36,7 +36,6 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
@@ -373,10 +372,10 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * ゲート（分断制御用交通規制）のチェック
      */
-    public boolean isGateClosed(AgentBase agent, SimClock clock) {
+    public boolean isGateClosed(AgentBase agent, SimTime currentTime) {
         for(String gateTag: gateTable.keySet()) {
             GateBase gate = gateTable.get(gateTag) ;
-            if(gate.isClosed(agent, clock)) return true ;
+            if(gate.isClosed(agent, currentTime)) return true ;
         }
         return false ;
     }
@@ -442,11 +441,11 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         /**
          * 閉じているかどうか？
          * 拡張のために、時刻とエージェントを受け取る。
-         * @param clock : シミュレーション時刻
+         * @param currnetTime : シミュレーション時刻
          * @param agent: 対象となるエージェント
          * @return デフォルトでは、単にこのゲートが閉じているかどうか
          */
-        public boolean isClosed(AgentBase agent, SimClock clock) {
+        public boolean isClosed(AgentBase agent, SimTime currentTime) {
             return isClosed() ;
         }
 
@@ -454,12 +453,12 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         /**
          * 閉じているかどうか？
          * 拡張のために、時刻とエージェントを受け取る。
-         * @param clock : シミュレーション時刻
+         * @param currentTime : シミュレーション時刻
          * @param agent: 対象となるエージェント
          * @return デフォルトでは、単にこのゲートが閉じているかどうか
          */
-        public boolean isOpened(AgentBase agent, SimClock clock) {
-            return !isClosed(agent, clock) ;
+        public boolean isOpened(AgentBase agent, SimTime currentTime) {
+            return !isClosed(agent, currentTime) ;
         }
 
         //----------------------------------------

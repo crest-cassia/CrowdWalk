@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -57,11 +57,11 @@ public abstract class OBMapPart extends OBNode {
      * @param value: 元になる値
      * @param rule: ルール
      * @param agent: 対象となるエージェント。リンク上にいる。
-     * @param clock: 現在時刻
+     * @param currnetTime: 現在時刻
      * @return 変更された値
      */
     public double applyRestrictionRule(double value, Term rule,
-                                       AgentBase agent, SimClock clock) {
+                                       AgentBase agent, SimTime currnetTime) {
         String tag = rule.getArgString("tag") ;
         if(hasTag(tag)) {
             String type = rule.getArgString("type") ;

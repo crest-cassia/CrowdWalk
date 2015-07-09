@@ -153,7 +153,7 @@ public class ThinkFormulaMisc extends ThinkFormula {
             Itk.logInfo(engine.logTag(), "no agent") ;
         } else {
             Itk.logInfo(engine.logTag(), "alertMessages",
-                        "time=", engine.getAgent().clock) ;
+                        "time=", engine.getAgent().currentTime) ;
             for(Map.Entry<Term, SimTime> entry :
                     engine.getAlertedMessageTable().entrySet()) {
                 Term message = entry.getKey() ;

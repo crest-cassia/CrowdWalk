@@ -180,7 +180,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         RationalAgent agent = (RationalAgent)engine.getAgent() ;
 
         if(name.equals("currentTime")) {
-            return new Term(agent.clock.getRelativeTime()) ;
+            return new Term(agent.currentTime.getRelativeTime()) ;
         } else if(name.equals("agentId")) {
             return new Term(agent.ID) ;
         } else if(name.equals("linkId")) {
@@ -377,8 +377,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         SimTime alertTime = engine.getAlertedMessageTable().get(message) ;
         if(redundant || (alertTime == null)) {
             engine.getAlertedMessageTable().put(message,
-                                                engine.getAgent()
-                                                .clock.newSimTime()) ;
+                                                engine.getAgent().currentTime) ;
             return ThinkFormula.Term_True ;
         } else {
             return ThinkFormula.Term_False ;
@@ -404,7 +403,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
         MapLink currentLink = engine.getAgent().getCurrentLink() ;
-        SimTime alertTime = engine.getAgent().clock.newSimTime() ;
+        SimTime alertTime = engine.getAgent().currentTime ;
 
         currentLink.addAlertMessage(message, alertTime, true) ;
         return ThinkFormula.Term_True ;

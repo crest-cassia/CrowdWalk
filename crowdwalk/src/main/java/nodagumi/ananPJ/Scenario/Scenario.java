@@ -70,9 +70,9 @@ public class Scenario {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * シミュレーション内クロック。
-     * 本体は、EvacuationSimulation の中の clock ;
+     * 本体は、EvacuationSimulation の中の clock。
      */
-    private SimClock clock = null ;
+    private SimTime baseTime = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -112,8 +112,8 @@ public class Scenario {
      * クロックをセット。
      * 主として、EvacuationSimulator からセットされるはず。
      */
-    public void setClock(SimClock clock) {
-        this.clock = clock ;
+    public void setBaseTime(SimTime baseTime) {
+        this.baseTime = baseTime ;
     }
 
     //------------------------------------------------------------
@@ -184,7 +184,7 @@ public class Scenario {
     /**
      * セットアップ最終処理
      */
-    public void finalizeSetup() {
+    public void finalizeSetup(SimClock clock) {
         // イベントが登録されて居ない場合のデフォルト
         if(eventList.size() == 0) {
             EventBase defaultEvent = new InitiateEvent() ;
@@ -224,11 +224,11 @@ public class Scenario {
      * @param map : マップデータ
      * @return 進んだシナリオの数
      */
-    public int update(SimClock clock, NetworkMap map) {
+    public int update(SimTime currentTime, NetworkMap map) {
         int count = 0 ;
         for(int i = eventIndex ; i < eventList.size() ; i++) {
             EventBase event = eventList.get(i) ;
-            if(eventList.get(i).tryOccur(clock, map)) {
+            if(eventList.get(i).tryOccur(currentTime, map)) {
                 count++ ;
             } else {
                 break ;
@@ -246,7 +246,7 @@ public class Scenario {
      * @param filename : JSON file name
      * @return 読み込んだイベント数
      */
-    public int scanJsonFile(String filename) {
+    public int scanJsonFile(String filename, SimClock clock) {
         try {
             int nEvent = 0 ;
             BufferedReader reader = new BufferedReader(new FileReader(filename)) ;
@@ -263,7 +263,7 @@ public class Scenario {
                         }
                     }
                 }
-                finalizeSetup() ;
+                finalizeSetup(clock) ;
                 Itk.logInfo("Load Scenario File", filename) ;
             } else {
                 Itk.logError("Wrong scenario format in the file", filename) ;
@@ -309,7 +309,7 @@ public class Scenario {
      * @param filename : CSV file name
      * @return 読み込んだイベント数
      */
-    public int scanCsvFile(String filename) {
+    public int scanCsvFile(String filename, SimClock clock) {
         try {
             int nEvent = 0 ;
             BufferedReader reader = new BufferedReader(new FileReader(filename)) ;
@@ -323,7 +323,7 @@ public class Scenario {
                 }
             }
 
-            finalizeSetup() ;
+            finalizeSetup(clock) ;
 
             return nEvent ;
         } catch(Exception ex) {

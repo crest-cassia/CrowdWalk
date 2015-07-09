@@ -14,7 +14,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.Itk;
 
@@ -81,7 +81,7 @@ public class CrowdWalkLauncher {
                 // tick 情報の出力
                 if (commandLine.hasOption("tick")) {
                     String tickFilePath = commandLine.getOptionValue("tick");
-                    saveTick(tickFilePath, launcher.simulator.clock);
+                    saveTick(tickFilePath, launcher.simulator.currentTime);
                 }
             } else {
                 launchGuiSimulationEditorLauncher(propertiesFilePath);
@@ -143,12 +143,12 @@ public class CrowdWalkLauncher {
     /**
      * tick 情報をファイルに出力する
      */
-    public static void saveTick(String filePath, SimClock clock) throws IOException {
+    public static void saveTick(String filePath, SimTime currentTime) throws IOException {
         PrintWriter writer = new PrintWriter(filePath);
         if (filePath.toLowerCase().endsWith(".json")) {
-            writer.write("{\"tick\" : " + clock.getRelativeTime() + "}");
+            writer.write("{\"tick\" : " + currentTime.getRelativeTime() + "}");
         } else {
-            writer.println(clock.getRelativeTime());
+            writer.println(currentTime.getRelativeTime());
         }
         writer.close();
     }

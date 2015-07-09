@@ -25,7 +25,6 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
-import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
@@ -267,8 +266,8 @@ public class RubyAgent extends RationalAgent {
      * シミュレーション各サイクルの前半に呼ばれる。
      */
     @Override
-    public void preUpdate(SimClock clock) {
-        this.clock = clock ;
+    public void preUpdate(SimTime currentTime) {
+        this.currentTime = currentTime ;
         String rubyMethod = triggeredMethod(TriggerEntry.preUpdate) ;
         if(rubyMethod != null) {
             rubyEngine.callMethod(rubyAgent, rubyMethod) ;
@@ -282,7 +281,7 @@ public class RubyAgent extends RationalAgent {
      * ruby からの戻り用。
      */
     public void super_preUpdate() {
-        super.preUpdate(this.clock) ;
+        super.preUpdate(this.currentTime) ;
     }
 
     //------------------------------------------------------------
@@ -290,8 +289,8 @@ public class RubyAgent extends RationalAgent {
      * シミュレーション各サイクルの後半に呼ばれる。
      */
     @Override
-    public boolean update(SimClock clock) {
-        this.clock = clock ;
+    public boolean update(SimTime currentTime) {
+        this.currentTime = currentTime ;
         String rubyMethod = triggeredMethod(TriggerEntry.update) ;
         if(rubyMethod != null) {
             return rubyEngine.callMethodBoolean(rubyAgent, rubyMethod) ;
@@ -305,7 +304,7 @@ public class RubyAgent extends RationalAgent {
      * ruby からの戻り用。
      */
     public boolean super_update() {
-        return super.update(this.clock) ;
+        return super.update(this.currentTime) ;
     }
 
     //------------------------------------------------------------

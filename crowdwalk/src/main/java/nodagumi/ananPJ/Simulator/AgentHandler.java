@@ -78,7 +78,6 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Scenario.*;
-import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.CsvFormatter;
@@ -238,47 +237,47 @@ public class AgentHandler {
         CsvFormatter<AgentBase> formatter = agentMovementHistoryLoggerFormatter ;
         formatter
             .addColumn(formatter.new Column("GenerationFileの情報") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return agent.getConfigLine().replaceAll(",", " ") ;}})
             .addColumn(formatter.new Column("エージェントID") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return agent.ID ;}})
             .addColumn(formatter.new Column("発生時刻1") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
                         return agent.generatedTime.getAbsoluteTimeString() ;}})
             .addColumn(formatter.new Column("発生時刻2") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return "" + (int)agent.generatedTime.getRelativeTime() ;}})
             .addColumn(formatter.new Column("到着時刻1") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return clock.getAbsoluteTimeString();}})
+                        return currentTime.getAbsoluteTimeString();}})
             .addColumn(formatter.new Column("到着時刻2") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return "" + (int)clock.getRelativeTime();}})
+                        return "" + (int)currentTime.getRelativeTime();}})
             .addColumn(formatter.new Column("移動時間1") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
                         return
-                            Itk.formatSecTime((int)clock.calcDifferenceFrom(agent.generatedTime)) ;}})
+                            Itk.formatSecTime((int)currentTime.calcDifferenceFrom(agent.generatedTime)) ;}})
             .addColumn(formatter.new Column("移動時間2") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj;
-                        return "" + (int)(clock.calcDifferenceFrom(agent.generatedTime)) ;}})
+                        return "" + (int)(currentTime.calcDifferenceFrom(agent.generatedTime)) ;}})
             ;
     }
 
@@ -318,43 +317,43 @@ public class AgentHandler {
         CsvFormatter<AgentBase> formatter = individualPedestriansLoggerFormatter ;
         formatter
             .addColumn(formatter.new Column("pedestrianID") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return agent.ID ;}})
             .addColumn(formatter.new Column("current_position_in_model_x") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getPos().getX())) ;}})
             .addColumn(formatter.new Column("current_position_in_model_y") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getPos().getY())) ;}})
             .addColumn(formatter.new Column("current_position_in_model_z") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getHeight())) ;}})
             .addColumn(formatter.new Column("current_position_for_drawing_x") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getPos().getX() 
                                       + agent.getSwing().x)) ;}})
             .addColumn(formatter.new Column("current_position_for_drawing_y") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getPos().getY() 
                                       + agent.getSwing().y)) ;}})
             .addColumn(formatter.new Column("current_position_for_drawing_z") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
@@ -362,76 +361,76 @@ public class AgentHandler {
                                        ((MapPartGroup)agent.getCurrentLink().getParent()).getScale())
                                       + agent.getSwing().z)) ;}})
             .addColumn(formatter.new Column("current_acceleration") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getAcceleration())) ;}})
             .addColumn(formatter.new Column("current_velocity") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getSpeed())) ;}})
             .addColumn(formatter.new Column("current_linkID") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + -1 :
                                 agent.getCurrentLink().ID ) ;}})
             .addColumn(formatter.new Column("current_nodeID_of_forward_movement") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + -1 :
                                 agent.getNextNode().ID ) ;}})
             .addColumn(formatter.new Column("current_nodeID_of_backward_movement") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 agent.getLastNode().ID :
                                 agent.getPrevNode().ID ) ;}})
             .addColumn(formatter.new Column("current_distance_from_node_of_forward_movement") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getRemainingDistance())) ;}})
             .addColumn(formatter.new Column("current_moving_direction") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0 :
                                 "" + ((int)agent.getDirection().value())) ;}})
             .addColumn(formatter.new Column("generated_time") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return "" + ((int)agent.generatedTime.getRelativeTime()) ;}})
             .addColumn(formatter.new Column("current_traveling_period") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
-                        return "" + ((int)clock.getRelativeTime()) ;}})
+                        SimTime currentTime = (SimTime)timeObj ;
+                        return "" + ((int)currentTime.getRelativeTime()) ;}})
             .addColumn(formatter.new Column("current_exposure") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         return "" + (agent.obstructer.currentValueForLog()) ;}})
             .addColumn(formatter.new Column("amount_exposure") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         return "" + (agent.obstructer.accumulatedValueForLog()) ;}})
             .addColumn(formatter.new Column("current_status_by_exposure") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj ;
                         return agent.getTriageName();}})
             .addColumn(formatter.new Column("next_assigned_passage_node") {
-                    public String value(AgentBase agent, Object clockObj,
+                    public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        SimClock clock = (SimClock)clockObj ;
+                        SimTime currentTime = (SimTime)timeObj ;
                         AgentHandler handler = (AgentHandler)agentHandlerObj ;
                         return (agent.isEvacuated() ?
                                 "" :
@@ -545,7 +544,7 @@ public class AgentHandler {
     /**
      * リンクの preprocess 処理
      */
-    private void preUpdateLinks(SimClock clock) {
+    private void preUpdateLinks(SimTime currentTime) {
         synchronized (simulator) {
             //            for (MapLink link : simulator.getLinks()) {
             // Iterator をちゃんと動かすために、remove は別のところへ退避。
@@ -554,7 +553,7 @@ public class AgentHandler {
                 if(link.agents.isEmpty()) {
                     emptyLinkList.add(link) ;
                 } else {
-                    link.preUpdate(clock);
+                    link.preUpdate(currentTime);
                 }
             }
             for(MapLink link : emptyLinkList) {
@@ -567,7 +566,7 @@ public class AgentHandler {
     /**
      * エージェントの preprocess 処理
      */
-    private void preUpdateAgents(SimClock clock) {
+    private void preUpdateAgents(SimTime currentTime) {
         if (true) {
             synchronized (simulator) {
                 for (MapLink link : getEffectiveLinkSet()) {
@@ -579,13 +578,13 @@ public class AgentHandler {
                              forwardAgents.get(forwardAgents.size() - i - 1) :
                              forwardAgents.get(i)) ;
 
-                        agent.preUpdate(clock);
+                        agent.preUpdate(currentTime);
                     }
                     ArrayList<AgentBase> backwardAgents =
                         link.getLane(Direction.Backward);
                     for (int i = backwardAgents.size() - 1; i >= 0; --i) {
                         AgentBase agent = backwardAgents.get(i);
-                        agent.preUpdate(clock);
+                        agent.preUpdate(currentTime);
                     }
                 }
             }
@@ -596,17 +595,17 @@ public class AgentHandler {
     /**
      * シミュレーションサイクル
      */
-    public void update(SimClock clock) {
+    public void update(SimTime currentTime) {
         update_buttons();
 
         ArrayList<AgentBase> generatedAgentsInStep
-            = generateAgentsAndSetup(clock) ;
+            = generateAgentsAndSetup(currentTime) ;
 
-        preUpdateLinks(clock);
-        preUpdateAgents(clock);
-        updateAgents(clock);
+        preUpdateLinks(currentTime);
+        preUpdateAgents(currentTime);
+        updateAgents(currentTime);
         updatePollution();
-        updateLinks(clock);
+        updateLinks(currentTime);
 
         updateAgentViews();
 
@@ -623,12 +622,11 @@ public class AgentHandler {
     /**
      * generation 定義による新規エージェントの生成
      */
-    private ArrayList<AgentBase> generateAgentsAndSetup(SimClock clock) {
+    private ArrayList<AgentBase> generateAgentsAndSetup(SimTime currentTime) {
         ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
 
         // generate_agent による生成。
         if (generate_agent != null) {
-            SimTime currentTime = clock.newSimTime() ;
             for (AgentFactory factory : generate_agent) {
                 factory.tryUpdateAndGenerate(simulator, currentTime,
                                              generatedAgentsInStep) ;
@@ -726,8 +724,8 @@ public class AgentHandler {
     /**
      * エージェントの update 処理
      */
-    private void updateAgents(SimClock clock) {
-        if (hasDisplay()) displayClock(clock) ;
+    private void updateAgents(SimTime currentTime) {
+        if (hasDisplay()) displayClock(currentTime) ;
 
         int count = 0;
         double speedTotal = 0.0;
@@ -735,15 +733,15 @@ public class AgentHandler {
 
         for(AgentBase agent : getWalkingAgentCollection()) {
             if (!agent.isEvacuated()) {
-                agent.update(clock);
+                agent.update(currentTime);
                 if (agent.isEvacuated()) {// この回に evacuate した場合。
-                    updateNewlyEvacuatedAgent(agent, clock) ;
+                    updateNewlyEvacuatedAgent(agent, currentTime) ;
                 } else { // まだ歩いている場合。
                     ++count;
                     speedTotal += agent.getSpeed();
                     isAllAgentSpeedZero &= (agent.getSpeed() == 0.0) ;
                 }
-                logIndividualPedestrians(clock, agent);
+                logIndividualPedestrians(currentTime, agent);
             }
         }
         averageSpeed = speedTotal / count;
@@ -755,7 +753,7 @@ public class AgentHandler {
     /**
      * このサイクルで evacuateしたエージェントの処理
      */
-    private void updateNewlyEvacuatedAgent(AgentBase agent, SimClock clock) {
+    private void updateNewlyEvacuatedAgent(AgentBase agent, SimTime currentTime) {
         final MapNode exit = agent.getLastNode() ;
         Integer i = evacuatedAgentCountByExit.get(exit);
         if (i == null)
@@ -769,7 +767,7 @@ public class AgentHandler {
         if (agentMovementHistoryLogger != null) {
             agentMovementHistoryLoggerFormatter
                 .outputValueToLoggerInfo(agentMovementHistoryLogger,
-                                         agent, clock, this);
+                                         agent, currentTime, this);
         }
     }
 
@@ -777,11 +775,11 @@ public class AgentHandler {
     /**
      * 時計表示
      */
-    private void displayClock(SimClock clock) {
+    private void displayClock(SimTime currentTime) {
         String time_string = String.format("Elapsed: %5.2fsec",
-                                           clock.getRelativeTime());
+                                           currentTime.getRelativeTime());
         time_label.setText(time_string);
-        String clock_string = clock.getAbsoluteTimeString() ;
+        String clock_string = currentTime.getAbsoluteTimeString() ;
         clock_label.setText(clock_string);
     }
 
@@ -819,7 +817,7 @@ public class AgentHandler {
     /**
      * リンクの update 処理。
      */
-    private void updateLinks(SimClock clock) {
+    private void updateLinks(SimTime currentTime) {
         /* [2015.07.04 I.Noda]
          * 現状で、表示関係の処理しかしていないので、
          * Display を持っている場合のみ、処理。
@@ -827,7 +825,7 @@ public class AgentHandler {
         if(hasDisplay()) {
             synchronized (simulator) {
                 for (MapLink link : simulator.getLinks()) {
-                    link.update(clock);
+                    link.update(currentTime);
                 }
             }
         }
@@ -1107,11 +1105,11 @@ public class AgentHandler {
     /**
      * individualPedestriansLogger への出力。
      */
-    private void logIndividualPedestrians(SimClock clock, AgentBase agent) {
+    private void logIndividualPedestrians(SimTime currentTime, AgentBase agent) {
         if (individualPedestriansLogger != null) {
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
-                                         agent, clock, this);
+                                         agent, currentTime, this);
         }
     }
 
@@ -1246,7 +1244,7 @@ public class AgentHandler {
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
-                buff.append(simulator.clock.getTickUnit()); buff.append(",");
+                buff.append(simulator.currentTime.getTickUnit()); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {

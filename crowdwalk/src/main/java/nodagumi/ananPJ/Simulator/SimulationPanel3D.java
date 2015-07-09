@@ -79,7 +79,6 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 import nodagumi.Itk.*;
@@ -236,9 +235,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
         return control_panel;
     }
 
-    public void updateClock(SimClock clock) {
+    public void updateClock(SimTime currentTime) {
         synchronized (simulationTimes) {
-            simulationTimes.add(clock.newSimTime()) ;
+            simulationTimes.add(currentTime) ;
         }
     }
 
@@ -809,7 +808,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         view_trans.getTransform(viewTrans3D);
         viewTrans3D.get(viewMatrix);
         CurrentCameraPosition view =
-            new CurrentCameraPosition(simulator.clock.getTickCount(),
+            new CurrentCameraPosition(simulator.currentTime.getTickCount(),
                 vertical_zoom, agent_size,
                 (Matrix4d)viewMatrix.clone());
         
@@ -1486,11 +1485,11 @@ public class SimulationPanel3D extends NetworkPanel3D {
     protected void registerOtherObjects() {
     }
     
-    protected void update_clockstring(SimClock clock) {
+    protected void update_clockstring(SimTime currentTime) {
         String time_string =
             String.format("        Elapsed: %5.2fsec        ",
-                          clock.getRelativeTime());
-        String clock_string = clock.getAbsoluteTimeString() ;
+                          currentTime.getRelativeTime());
+        String clock_string = currentTime.getAbsoluteTimeString() ;
         simulation_status.setText("  "+ clock_string + time_string + evacuatedCount_string);
         canvas.message = "Time: " + clock_string + time_string + evacuatedCount_string;
     }

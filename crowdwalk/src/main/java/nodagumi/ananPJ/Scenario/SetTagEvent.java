@@ -16,7 +16,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
-import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 
@@ -101,35 +101,35 @@ public class SetTagEvent extends PlacedEvent {
     //----------------------------------------
     /**
      * タグ操作イベント発生処理
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean occur(SimClock clock, NetworkMap map) {
-        return occur(clock, map, false) ;
+    public boolean occur(SimTime currentTime, NetworkMap map) {
+        return occur(currentTime, map, false) ;
     }
 
     //----------------------------------------
     /**
      * タグ操作イベント発生逆処理
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean unoccur(SimClock clock, NetworkMap map) {
-        return occur(clock, map, true) ;
+    public boolean unoccur(SimTime currentTime, NetworkMap map) {
+        return occur(currentTime, map, true) ;
     }
     //----------------------------------------
     /**
      * タグ操作イベント発生処理(generic)
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @param inverse : 逆操作かどうか
      * @return : true を返す。
      */
-    public boolean occur(SimClock clock, NetworkMap map, boolean inverse) {
+    public boolean occur(SimTime currentTime, NetworkMap map, boolean inverse) {
         for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
                 if(onoff ^ inverse) {

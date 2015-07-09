@@ -47,7 +47,6 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.SetupFileInfo;
-import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.*;
@@ -294,7 +293,7 @@ public class MapLink extends OBMapPart {
         return (fromNode.getHeight() + toNode.getHeight()) / 2.0;
     }
 
-    public void preUpdate(SimClock clock) {
+    public void preUpdate(SimTime currentTime) {
         if(agents.isEmpty()) return ;
 
         Collections.sort(agents) ;
@@ -309,7 +308,7 @@ public class MapLink extends OBMapPart {
      * これを避けるためにここでまとめて処理してみる。
      * 本来は、sort すべきか？
      */
-    public void update(SimClock clock) {
+    public void update(SimTime currentTime) {
         if(agents.isEmpty()) return ;
 
         // Collections.sort(agents) ;
@@ -1167,20 +1166,20 @@ public class MapLink extends OBMapPart {
     /**
      * 交通規制処理
      * @param agent: 規制を加えるエージェント。リンク上にいる。
-     * @param clock: 現在時刻
+     * @param currentTime: 現在時刻
      * @return 規制が適用されたら true
      */
     public double calcRestrictedSpeed(double speed, AgentBase agent,
-                                      SimClock clock) {
+                                      SimTime currentTime) {
         /* 分断制御 */
-        if(isGateClosed(agent, clock)) {
+        if(isGateClosed(agent, currentTime)) {
             speed = 0 ;
         }
 
         /* 制約ルール適用 */
         for(int i = 0 ; i < speedRestrictRule.getArraySize() ; i++) {
             Term rule = speedRestrictRule.getNthTerm(i) ;
-            speed = applyRestrictionRule(speed, rule, agent, clock) ;
+            speed = applyRestrictionRule(speed, rule, agent, currentTime) ;
         }
 
         return speed ;
@@ -1191,16 +1190,17 @@ public class MapLink extends OBMapPart {
      * そのリンクにおける自由速度
      * @param emptySpeed: 元になるスピード
      * @param agent: 対象となるエージェント。リンク上にいる。
-     * @param clock: 現在時刻
+     * @param currentTime: 現在時刻
      * @return 自由速度
      */
     public double calcEmptySpeedForAgent(double emptySpeed,
                                          AgentBase agent,
-                                         SimClock clock) {
+                                         SimTime currentTime) {
         /* 制約ルール適用 */
         for(int i = 0 ; i < emptySpeedRestrictRule.getArraySize() ; i++) {
             Term rule = emptySpeedRestrictRule.getNthTerm(i) ;
-            emptySpeed = applyRestrictionRule(emptySpeed, rule, agent, clock) ;
+            emptySpeed = applyRestrictionRule(emptySpeed, rule, agent,
+                                              currentTime) ;
         }
 
         return emptySpeed ;

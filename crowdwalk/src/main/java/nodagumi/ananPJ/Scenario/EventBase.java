@@ -111,12 +111,12 @@ abstract public class EventBase {
     //----------------------------------------
     /**
      * 発生チェックと実行(以前の checkIfHappend)
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @return 実施したら true
      */
-    public boolean tryOccur(SimClock clock, NetworkMap map) {
-        if(shouldOccurAt(clock)) {
-            isCompleted = occur(clock, map) ;
+    public boolean tryOccur(SimTime currentTime, NetworkMap map) {
+        if(shouldOccurAt(currentTime)) {
+            isCompleted = occur(currentTime, map) ;
             return true ;
         } else {
             return false ;
@@ -126,30 +126,30 @@ abstract public class EventBase {
     //----------------------------------------
     /**
      * 発生時刻チェック
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @return 発生時刻なら true
      */
-    public boolean shouldOccurAt(SimClock clock) {
-        return !isCompleted && clock.isAfterOrAt(atTime) ;
+    public boolean shouldOccurAt(SimTime currentTime) {
+        return !isCompleted && currentTime.isAfterOrAt(atTime) ;
     }
 
     //----------------------------------------
     /**
      * イベント発生処理 (以前の setEnabled(true))
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @return : 完了したら true を返す。false を返すと、延々呼び出される。
      */
-    abstract public boolean occur(SimClock clock, NetworkMap map) ;
+    abstract public boolean occur(SimTime currentTime, NetworkMap map) ;
 
     //----------------------------------------
     /**
      * イベント発生逆処理 (以前の setEnabled(false))
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @return : 完了したら true を返す。
      */
-    abstract public boolean unoccur(SimClock clock, NetworkMap map) ;
+    abstract public boolean unoccur(SimTime currentTime, NetworkMap map) ;
 
     //----------------------------------------
     /**

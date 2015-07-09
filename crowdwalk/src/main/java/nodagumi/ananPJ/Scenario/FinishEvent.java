@@ -16,7 +16,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
-import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SimClock.SimTime;
 
 import nodagumi.Itk.* ;
 
@@ -35,12 +35,12 @@ public class FinishEvent extends EventBase {
     //----------------------------------------
     /**
      * 終了イベント発生処理
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean occur(SimClock clock, NetworkMap map) {
+    public boolean occur(SimTime currentTime, NetworkMap map) {
 	scenario.letFinished() ;
 	return true ;
     }
@@ -48,12 +48,12 @@ public class FinishEvent extends EventBase {
     //----------------------------------------
     /**
      * 終了イベント発生逆処理
-     * @param clock : 現在の絶対時刻
+     * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
-    public boolean unoccur(SimClock clock, NetworkMap map) {
+    public boolean unoccur(SimTime currentTime, NetworkMap map) {
 	scenario.letFinished(false) ;
 	return true ;
     }

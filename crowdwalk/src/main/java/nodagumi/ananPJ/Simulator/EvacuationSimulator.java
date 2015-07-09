@@ -77,9 +77,15 @@ public class EvacuationSimulator {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * シミュレーション内の時刻管理。
+     * シミュレーション内の時計
      */
     public SimClock clock = new SimClock() ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 最新時刻（clock によるタイムスタンプ）
+     */
+    public SimTime currentTime = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -206,7 +212,7 @@ public class EvacuationSimulator {
     /**
      * ruby 用 simulation wrapper のインスタンス。
      * シミュレーションの cycle の前後で、
-     * preCycle(clock), postCycle(clock) が呼び出される。
+     * preCycle(currentTime), postCycle(currentTime) が呼び出される。
      */
     private Object rubyWrapper = null ;
 
@@ -474,8 +480,8 @@ public class EvacuationSimulator {
      */
     public void begin() {
         buildMap() ;
-        buildPollution() ;
         buildScenario() ;
+        buildPollution() ;
         buildAgentHandler() ;
         buildRoutes ();
         buildRubyEngine() ;
@@ -520,7 +526,7 @@ public class EvacuationSimulator {
             pollutionHandler =
                 new PollutionHandler(pollutionFileName,
                                      networkMap.getAreas(),
-                                     clock, interval);
+                                     currentTime, interval);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -530,9 +536,9 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * シナリオ読み込み。
+     * この中で、clock の originTime がセットされる。
      */
     private void buildScenario() {
-        scenario.setClock(clock) ;
         String filename = getSetupFileInfo().getScenarioFile() ;
         if (filename == null || filename.isEmpty()) {
             setupDefaultScenario();
@@ -540,13 +546,16 @@ public class EvacuationSimulator {
         }
 
         if(filename.endsWith(".json")) {
-            scenario.scanJsonFile(filename) ;
+            scenario.scanJsonFile(filename, clock) ;
         } else if (filename.endsWith(".csv")) {
-            scenario.scanCsvFile(filename) ;
+            scenario.scanCsvFile(filename, clock) ;
         } else {
             Itk.logError("Unknown scenario file suffix:", filename) ;
             System.exit(1) ;
         }
+        // クロックがセットされたので、最新時刻のタイムスタンプを撮る。
+        currentTime = clock.newSimTime() ;
+
         scenario.describe() ;
     }
 
@@ -556,7 +565,7 @@ public class EvacuationSimulator {
      * initiateEvent だけ入れる。
      */
     private void setupDefaultScenario() {
-        scenario.finalizeSetup() ;
+        scenario.finalizeSetup(clock) ;
     }
 
     //------------------------------------------------------------
@@ -796,6 +805,8 @@ public class EvacuationSimulator {
         // System.gc();
 
         clock.reset() ;
+        currentTime = clock.newSimTime() ;
+
         logging_count = 0;
 
         for (MapLink link : getLinks()) {
@@ -896,26 +907,27 @@ public class EvacuationSimulator {
 
             // ruby wrapper の preUpdate()
             if(useRubyWrapper())
-                rubyEngine.callMethod(rubyWrapper, "preUpdate", clock) ;
+                rubyEngine.callMethod(rubyWrapper, "preUpdate", currentTime) ;
 
             // pollution 計算。
             if (usePollution())
-                pollutionHandler.updateAll(clock, networkMap,
+                pollutionHandler.updateAll(currentTime, networkMap,
                                            getWalkingAgentCollection());
 
-            scenario.update(clock, networkMap) ;
+            scenario.update(currentTime, networkMap) ;
             // 実行本体
-            agentHandler.update(clock);
+            agentHandler.update(currentTime);
 
             // 描画
             updateEveryTickDisplay() ;
 
             // ruby wrapper の postUpdate()
             if(useRubyWrapper())
-                rubyEngine.callMethod(rubyWrapper, "postUpdate", clock) ;
+                rubyEngine.callMethod(rubyWrapper, "postUpdate", currentTime) ;
 
             // カウンタを進める。
             clock.advance() ;
+            currentTime = clock.newSimTime() ;
         }
         return isFinished() ;
     }
@@ -948,11 +960,11 @@ public class EvacuationSimulator {
      */
     private void updateEveryTickDisplay() {
         if (panel3d != null) {
-            panel3d.updateClock(clock) ;
+            panel3d.updateClock(currentTime) ;
             boolean captureScreenShot = (screenshotInterval != 0);
             if (captureScreenShot) {
                 panel3d.setScreenShotFileName(String.format("capture%06d",
-                                                            (int)clock.getTickCount()));
+                                                            (int)currentTime.getTickCount()));
             }
             while (! panel3d.notifyViewChange("simulation progressed")) {
                 synchronized (this) {
@@ -1008,7 +1020,6 @@ public class EvacuationSimulator {
          * ここで、AllAgent を使うべきか、WalkingAgent だけでよいか、
          * 不明。
          */
-        SimTime currentTime = clock.newSimTime() ;
         for (AgentBase agent: getAllAgentCollection()) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
                 goalTimes.put(agent.ID, currentTime) ;
@@ -1031,7 +1042,7 @@ public class EvacuationSimulator {
             }
             evacuatedAgents.add(buff.toString());
         } else {  // finalize process
-            SimTime nextTime = clock.newSimTimeWithAdvanceTick(1) ;
+            SimTime nextTime = currentTime.newSimTimeWithAdvanceTick(1) ;
             for (AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.isEvacuated()) {
                     goalTimes.put(agent.ID, nextTime) ;
@@ -1097,7 +1108,7 @@ public class EvacuationSimulator {
      * @return returned value: succeed or not.
      */
     public boolean saveTimeSeriesLog(String resultDirectory) {
-        int count = (int) clock.getRelativeTime();      // loop counter
+        int count = (int) currentTime.getRelativeTime();      // loop counter
         double totalLinkDensity = 0.0;
         double totalAgentDensity = 0.0;
         double totalAgentSpeed = 0.0;

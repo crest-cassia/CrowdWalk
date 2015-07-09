@@ -23,7 +23,6 @@ import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.misc.SetupFileInfo;
-import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimClock.SimTime;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
@@ -62,7 +61,7 @@ implements Comparable<AgentBase> {
     public SimTime finishedTime = null;
     private boolean evacuated = false;
     private boolean stuck = false;
-    public SimClock clock = null ;
+    public SimTime currentTime = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -633,10 +632,10 @@ implements Comparable<AgentBase> {
      *                 false なら currentPlace.getLink() 上
      * @param stuck : スタックかどうか
      */
-    protected void finalizeEvacuation(SimClock clock,
+    protected void finalizeEvacuation(SimTime currentTime,
                                       boolean onNode, boolean stuck) {
         consumePlannedRoute() ;
-        setEvacuated(true, clock.newSimTime(), stuck) ;
+        setEvacuated(true, currentTime, stuck) ;
         if(currentPlace.isWalking()) {
             lastPlace.set(currentPlace) ;
             currentPlace.getLink().agentExits(this) ;
@@ -661,15 +660,15 @@ implements Comparable<AgentBase> {
     /**
      * シミュレーション各サイクルの前半に呼ばれる。
      */
-    public void preUpdate(SimClock clock) {
-        this.clock = clock ;
+    public void preUpdate(SimTime currentTime) {
+        this.currentTime = currentTime ;
     }
 
     //------------------------------------------------------------
     /**
      * シミュレーション各サイクルの後半に呼ばれる。
      */
-    abstract public boolean update(SimClock clock) ;
+    abstract public boolean update(SimTime currentTime) ;
 
     //------------------------------------------------------------
     /**
