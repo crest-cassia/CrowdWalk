@@ -540,32 +540,14 @@ public class EvacuationSimulator {
      */
     private void buildScenario() {
         String filename = getSetupFileInfo().getScenarioFile() ;
-        if (filename == null || filename.isEmpty()) {
-            setupDefaultScenario();
-            return;
-        }
 
-        if(filename.endsWith(".json")) {
-            scenario.scanJsonFile(filename, clock) ;
-        } else if (filename.endsWith(".csv")) {
-            scenario.scanCsvFile(filename, clock) ;
-        } else {
-            Itk.logError("Unknown scenario file suffix:", filename) ;
-            System.exit(1) ;
-        }
+        // ファイル読み込み。
+        scenario.scanFile(filename, clock) ;
+
         // クロックがセットされたので、最新時刻のタイムスタンプを撮る。
         currentTime = clock.newSimTime() ;
 
         scenario.describe() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * デフォルトシナリオをセット。
-     * initiateEvent だけ入れる。
-     */
-    private void setupDefaultScenario() {
-        scenario.finalizeSetup(clock) ;
     }
 
     //------------------------------------------------------------

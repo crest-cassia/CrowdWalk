@@ -239,6 +239,29 @@ public class Scenario {
     }
 
     //------------------------------------------------------------
+    // ファイル読み込み
+    //------------------------------------------------------------
+    /**
+     * ファイル読み込み（トップレベル）
+     */
+    public int scanFile(String filename, SimClock clock) {
+        if (filename == null || filename.isEmpty()) {
+            finalizeSetup(clock) ;
+            return 0;
+        }
+
+        if(filename.endsWith(".json")) {
+            return scanJsonFile(filename, clock) ;
+        } else if (filename.endsWith(".csv")) {
+            return scanCsvFile(filename, clock) ;
+        } else {
+            Itk.logError("Unknown scenario file suffix:", filename) ;
+            System.exit(1) ;
+        }
+        return 0 ; // never reach here.
+    }
+
+    //------------------------------------------------------------
     // JSON ファイル関連
     //------------------------------------------------------------
     /**
