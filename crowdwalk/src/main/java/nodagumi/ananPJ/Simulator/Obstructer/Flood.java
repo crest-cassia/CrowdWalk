@@ -103,18 +103,20 @@ public class Flood extends ObstructerBase {
     }
 
     /* effect of flood, this damage does not increase */
-    // 呼び出し元で speed を更新した後に呼ばれる
-    public void effect() {
+    // 呼び出し元でもとめた speed に影響を加える。
+    public double calcAffectedSpeed(double originalSpeed) {
         if (dead) {
-            agent.setSpeed(0.0);
-            return;
+            return 0.0 ;
         }
 
         // 歩行速度への影響
         // ※スピードがマイナスになるのを避ける
-        agent.setSpeed(agent.getSpeed() *
-                (nonAmbulatoryDepth - Math.min(currentDepth, nonAmbulatoryDepth))
-                / nonAmbulatoryDepth);
+        double speed =
+            (originalSpeed *
+             (nonAmbulatoryDepth - Math.min(currentDepth, nonAmbulatoryDepth))
+             / nonAmbulatoryDepth);
+
+        return speed ;
     }
 
     /**

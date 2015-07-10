@@ -127,7 +127,7 @@ public class AwaitAgent extends WalkAgent {
         if (d < 0.0) {
             d = 0.0;
         }
-        calcSpeed(currentTime);
+        speed = calcSpeed(currentTime);
         if (d > speed) {
             d = speed;
         }
@@ -140,7 +140,7 @@ public class AwaitAgent extends WalkAgent {
      * できるだけ過密に並ぶ
      */
     protected boolean pack(SimTime currentTime) {
-        calcSpeed(currentTime);
+        speed = calcSpeed(currentTime);
 
         return advanceNextPlace(speed, currentTime, true) ;
     }

@@ -450,7 +450,7 @@ public class WalkAgent extends AgentBase {
     @Override
     public void preUpdate(SimTime currentTime) {
         super.preUpdate(currentTime) ;
-        calcSpeed(currentTime);
+        speed = calcSpeed(currentTime);
         advanceNextPlace(speed, currentTime, false);
     }
 
@@ -609,43 +609,37 @@ public class WalkAgent extends AgentBase {
     /**
      * 速度計算
      */
-    protected void calcSpeed(SimTime currentTime) {
-        switch (calculation_model) {
-        case LaneModel:
-            calcSpeedLaneGeneric(currentTime, calculation_model) ;
-            break;
-        case PlainModel:
-            calcSpeedLaneGeneric(currentTime, calculation_model);
-            break;
-        default:
-            Itk.logError("Unknown Speed Model") ;
-            Itk.logError_("calculation_model",calculation_model) ;
-            break;
-        }
+    protected double calcSpeed(SimTime currentTime) {
+        double _speed = calcSpeedBody(currentTime) ;
 
         /* [2015.01.09 I.Noda]
          * リンクの交通規制など (Gate)
          */
-        speed = currentPlace.getLink().calcRestrictedSpeed(speed, this, currentTime) ;
+        _speed =
+            currentPlace.getLink().calcRestrictedSpeed(_speed, this, currentTime) ;
 
         /* [2015.01.09 I.Noda]
          * リンクを踏破しているなら、headingNode での規制
          * ノードの交通規制など (STOP)
          */
-        if (!currentPlace.isBeyondLinkWithAdvance(speed)) {
-            speed = currentPlace.getHeadingNode().calcRestrictedSpeed(speed,
-                                                                      this,
-                                                                      currentTime) ;
+        double deltaDistance = _speed * currentTime.getTickUnit() ;
+        if (!currentPlace.isBeyondLinkWithAdvance(deltaDistance)) {
+            _speed =
+                currentPlace.getHeadingNode().calcRestrictedSpeed(_speed,
+                                                                  this,
+                                                                  currentTime) ;
         }
 
-        obstructer.effect() ;
+        _speed = obstructer.calcAffectedSpeed(_speed) ;
 
-        if (networkMap != null && speed != lastSpeed) {
+        if (networkMap != null && _speed != lastSpeed) {
             if (! isEvacuated()) {
                 networkMap.getNotifier().agentSpeedChanged(this);
             }
-            lastSpeed = speed;
+            lastSpeed = _speed;
         }
+
+        return _speed ;
     }
 
     //------------------------------------------------------------
@@ -706,47 +700,60 @@ public class WalkAgent extends AgentBase {
     /**
      * lane および plain による速度計算
      */
-    private void calcSpeedLaneGeneric(SimTime currentTime,
-                                      SpeedCalculationModel model) {
-        /* base speed */
+    private double calcAccel(double baseSpeed, SimTime currentTime) {
+        // 自由速度に向けた加速
+        double _accel = A_0 * (baseSpeed - speed) ;
+
+        // social force による減速
+        switch (calculation_model) {
+        case LaneModel:
+            double distToPredecessor = calcDistanceToPredecessor(currentTime) ;
+            _accel += calcSocialForce(distToPredecessor) ;
+            break;
+        case PlainModel:
+            double lowerBound =
+                -((baseSpeed / currentTime.getTickUnit()) + _accel) ;
+            _accel += accumulateSocialForces(currentTime, lowerBound) ;
+            break;
+        default:
+            Itk.logError("Unknown Speed Model") ;
+            Itk.logError_("calculation_model",calculation_model) ;
+            break;
+        }
+        return _accel ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * lane および plain による速度計算
+     */
+    private double calcSpeedBody(SimTime currentTime) {
+            /* base speed */
         double baseSpeed =
             currentPlace.getLink().calcEmptySpeedForAgent(emptySpeed,
                                                           this, currentTime) ;
         //自由速度に向けた加速
-        accel = A_0 * (baseSpeed - speed) ;
-        //social force による減速
-        switch (model) {
-        case LaneModel:
-            double distToPredecessor = calcDistanceToPredecessor(currentTime) ;
-            accel += calcSocialForce(distToPredecessor) ;
-            break;
-        case PlainModel:
-            double lowerBound = -((baseSpeed / currentTime.getTickUnit()) + accel) ;
-            accel += accumulateSocialForces(currentTime, lowerBound) ;
-            break;
-        default:
-            Itk.logError("Unknown Speed Model") ;
-            Itk.logError_("calculation_model",model) ;
-            break;
-        }
+        accel = calcAccel(baseSpeed, currentTime) ;
 
         //時間積分
-        accel *= currentTime.getTickUnit();
-        speed += accel;
+        double deltaSpeed = accel * currentTime.getTickUnit();
+        double _speed = speed + deltaSpeed ;
 
         //速度幅制限
-        if (speed > baseSpeed) {
-            speed = baseSpeed ;
+        if (_speed > baseSpeed) {
+            _speed = baseSpeed ;
         } else if (speed < 0) {
-            speed = 0;
+            _speed = 0;
         }
 
         //出口直前の場合で最前列の場合は、最大速にしておく。
         int w = currentPlace.getLaneWidth() ;
         int indexInLane = currentPlace.getIndexFromHeadingInLane(this) ;
         if (indexInLane < w && currentPlace.getHeadingNode().hasTag(goal)) {
-            speed = baseSpeed;
+            _speed = baseSpeed;
         }
+
+        return _speed ;
     }
 
 

@@ -137,11 +137,16 @@ public class Pollution extends ObstructerBase {
      *
      * ※呼び出し元で speed を更新した後に呼ばれる
      */
-    public void effect() {
+    public double calcAffectedSpeed(double originalSpeed) {
         if (accumulatedExposureAmount >= nonAmbulatoryLevel) {
-            agent.setSpeed(0.0);
+            return 0.0 ;
         } else if (accumulatedExposureAmount >= irritantLevel) {
-            agent.setSpeed(agent.getSpeed() * (nonAmbulatoryLevel - accumulatedExposureAmount) / nonAmbulatoryLevel);
+            double speed =(agent.getSpeed()
+                           * (nonAmbulatoryLevel - accumulatedExposureAmount)
+                           / nonAmbulatoryLevel);
+            return speed ;
+        } else {
+            return originalSpeed ;
         }
     }
 

@@ -57,7 +57,7 @@ public abstract class ObstructerBase {
 
     public abstract void init(AgentBase agent);
     public abstract void expose(double exposureAmount);
-    public abstract void effect();
+    public abstract double calcAffectedSpeed(double speed) ;
     protected abstract TriageLevel calcTriage();
 
     /* the state of the agent */
