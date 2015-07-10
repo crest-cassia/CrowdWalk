@@ -78,6 +78,8 @@ public class RubyAgent extends RationalAgent {
         preUpdate,
         update,
         calcCostFromNodeViaLink,
+        calcSpeed,
+        calcAccel,
         thinkCycle,
     }
 
@@ -331,6 +333,55 @@ public class RubyAgent extends RationalAgent {
                                                 Term _target)
         throws TargetNotFoundException {
         return super.calcCostFromNodeViaLink(_link, _node, _target) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 速度計産
+     */
+    @Override
+    public double calcSpeed(double previousSpeed, SimTime _currentTime) {
+        this.currentTime = currentTime ;
+        String rubyMethod =
+            triggeredMethod(TriggerEntry.calcSpeed) ;
+        if(rubyMethod != null) {
+            return rubyEngine.callMethodDouble(rubyAgent, rubyMethod,
+                                               previousSpeed) ;
+        } else {
+            return super_calcSpeed(previousSpeed) ;
+        }
+    }
+
+    /**
+     * 速度計産
+     */
+    public double super_calcSpeed(double previousSpeed) {
+        return super.calcSpeed(previousSpeed, currentTime) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 速度計産
+     */
+    @Override
+    public double calcAccel(double baseSpeed, double previousSpeed,
+                             SimTime currentTime) {
+        this.currentTime = currentTime ;
+        String rubyMethod =
+            triggeredMethod(TriggerEntry.calcAccel) ;
+        if(rubyMethod != null) {
+            return rubyEngine.callMethodDouble(rubyAgent, rubyMethod,
+                                               baseSpeed, previousSpeed) ;
+        } else {
+            return super_calcAccel(baseSpeed, previousSpeed) ;
+        }
+    }
+
+    /**
+     * 速度計産
+     */
+    public double super_calcAccel(double baseSpeed, double previousSpeed) {
+        return super.calcAccel(baseSpeed, previousSpeed, currentTime) ;
     }
 
     //------------------------------------------------------------

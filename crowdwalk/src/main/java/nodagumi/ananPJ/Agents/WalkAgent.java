@@ -751,7 +751,7 @@ public class WalkAgent extends AgentBase {
     /**
      * lane および plain による速度計算
      */
-    private double calcAccel(double baseSpeed, double previousSpeed,
+    protected double calcAccel(double baseSpeed, double previousSpeed,
                              SimTime currentTime) {
         // 自由速度に向けた加速
         double _accel = A_0 * (baseSpeed - previousSpeed) ;

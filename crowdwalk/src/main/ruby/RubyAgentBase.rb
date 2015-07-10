@@ -26,6 +26,8 @@ class RubyAgentBase
 #                   "preUpdate",
 #                   "update",
 #                   "calcCostFromNodeViaLink",
+#                   "calcSpeed",
+#                   "calcAccel",
 #                   "thinkCycle",
                   ] ;
 
@@ -323,6 +325,27 @@ class RubyAgentBase
   def calcCostFromNodeViaLink(way, node, target)
 #    p [:calcCostFromNodeViaLink, getAgentId(), way, node, target] ;
     return @javaAgent.super_calcCostFromNodeViaLink(way, node, target);
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 速度を計算する。
+  ## _previousSpeed_:: 前のサイクルの速度。
+  ## *return* 速度。
+  def calcSpeed(previousSpeed)
+#    p [:calcSpeed, getAgentId(), previousSpeed] ;
+    return @javaAgent.super_calcSpeed(previousSpeed) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 加速度を計算する。
+  ## _baseSpeed_:: 自由速度。
+  ## _previousSpeed_:: 前のサイクルの速度。
+  ## *return* 加速度。
+  def calcAccel(baseSpeed, previousSpeed)
+#    p [:calcAccel, getAgentId(), baseSpeed, previousSpeed] ;
+    return @javaAgent.super_calcAccel(baseSpeed, previousSpeed) ;
   end
 
   #--------------------------------------------------------------

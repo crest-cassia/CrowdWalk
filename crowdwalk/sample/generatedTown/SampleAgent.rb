@@ -28,6 +28,8 @@ class SampleAgent < RubyAgentBase
 #                   "preUpdate",
 #                   "update",
 #                   "calcCostFromNodeViaLink",
+                   "calcSpeed",
+#                   "calcAccel",
                    "thinkCycle",
                   ] ;
 
@@ -72,7 +74,35 @@ class SampleAgent < RubyAgentBase
 
   #--------------------------------------------------------------
   #++
-  ## 思考ルーチン
+  ## 速度を計算する。
+  ## たまに減速させてみる。
+  ## _previousSpeed_:: 前のサイクルの速度。
+  ## *return* 速度。
+  def calcSpeed(previousSpeed)
+    speed = super(previousSpeed) ;
+    if(rand(5) == 0) then
+      origSpeed = speed ;
+      speed *= 0.01 ;
+      p [:speedDown, getAgentId(), origSpeed, speed] ;
+    end
+    return speed ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 加速度を計算する。
+  ## _baseSpeed_:: 自由速度。
+  ## _previousSpeed_:: 前のサイクルの速度。
+  ## *return* 加速度。
+  def calcAccel(baseSpeed, previousSpeed)
+    p [:calcAccel, getAgentId(), baseSpeed, previousSpeed] ;
+    return super(baseSpeed, previousSpeed) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 思考ルーチン。
+  ## ThinkAgent のサンプルと同じ動作をさせている。
   def thinkCycle()
 
     if(listenAlert(Term_Emergency)) then
