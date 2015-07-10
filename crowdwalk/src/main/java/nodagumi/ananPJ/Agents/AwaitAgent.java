@@ -123,16 +123,19 @@ public class AwaitAgent extends WalkAgent {
         int index = currentPlace.getIndexFromHeadingInLane(this) ;
         double stopPosition = currentPlace.getLinkLength() - space * ((index / laneWidth) + 1);
         double d = stopPosition - getAdvancingDistance();
+
         // エージェントが停止予定位置より先にいた場合はその位置に留まらせる
-        if (d < 0.0) {
-            d = 0.0;
+        if (d < 0.0) d = 0.0; 
+
+        // d が speed より小さい時、d に基づきスピードを決める。 
+        double previousSpeed = speed ;
+        speed = calcSpeed(speed, currentTime);
+        if (d < speed * currentTime.getTickUnit()) {
+            speed = d / currentTime.getTickUnit() ;
         }
-        speed = calcSpeed(currentTime);
-        if (d > speed) {
-            d = speed;
-        }
-        // scatter 制御を破綻させないため move_set() 内の d * tickUnit_scale を無効化する
-        return advanceNextPlace(d / currentTime.getTickUnit(), currentTime, true) ;
+        checkSpeedChange(previousSpeed, speed) ;
+
+        return advanceNextPlace(speed, currentTime, true) ;
     }
     
     //----------------------------------------------------------------------
@@ -140,7 +143,7 @@ public class AwaitAgent extends WalkAgent {
      * できるだけ過密に並ぶ
      */
     protected boolean pack(SimTime currentTime) {
-        speed = calcSpeed(currentTime);
+        updateSpeed(currentTime) ;
 
         return advanceNextPlace(speed, currentTime, true) ;
     }

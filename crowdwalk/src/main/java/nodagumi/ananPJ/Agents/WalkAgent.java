@@ -138,8 +138,6 @@ public class WalkAgent extends AgentBase {
      */
     boolean update_swing_flag = true;//false;
 
-    private double lastSpeed = 0.0;     // 更新チェック用
-
     //============================================================
     /**
      * 速度モデル
@@ -450,8 +448,32 @@ public class WalkAgent extends AgentBase {
     @Override
     public void preUpdate(SimTime currentTime) {
         super.preUpdate(currentTime) ;
-        speed = calcSpeed(currentTime);
+
+        updateSpeed(currentTime) ;
+
         advanceNextPlace(speed, currentTime, false);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * speed を更新する。同時に、再描画必要かのチェック。
+     */
+    protected void updateSpeed(SimTime currentTime) {
+        double previousSpeed = speed ;
+        speed = calcSpeed(previousSpeed, currentTime) ;
+        checkSpeedChange(previousSpeed, speed) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * speed 変化による再描画必要かのチェック。
+     */
+    protected void checkSpeedChange(double previousSpeed, double currentSpeed) {
+        if (networkMap != null &&
+            currentSpeed != previousSpeed &&
+            !isEvacuated()) {
+            networkMap.getNotifier().agentSpeedChanged(this);
+        }
     }
 
     //------------------------------------------------------------
@@ -498,10 +520,13 @@ public class WalkAgent extends AgentBase {
      * @param stayOnLink : 現在のリンクにとどまるかどうか。WaitDirective 用。
      *    true なら、link をはみ出す場合、はみ出さない距離に調整する。
      */
-    protected boolean advanceNextPlace(double d, SimTime currentTime, boolean stayOnLink) {
+    protected boolean advanceNextPlace(double _speed, SimTime currentTime,
+                                       boolean stayOnLink) {
         nextPlace.set(currentPlace) ;
-        double distToMove = d * currentTime.getTickUnit() ;
+
+        double distToMove = _speed * currentTime.getTickUnit() ;
         nextPlace.makeAdvance(distToMove, stayOnLink) ;
+
         return false ;
     }
 
@@ -609,8 +634,8 @@ public class WalkAgent extends AgentBase {
     /**
      * 速度計算
      */
-    protected double calcSpeed(SimTime currentTime) {
-        double _speed = calcSpeedBody(currentTime) ;
+    protected double calcSpeed(double previousSpeed, SimTime currentTime) {
+        double _speed = calcSpeedBody(previousSpeed, currentTime) ;
 
         /* [2015.01.09 I.Noda]
          * リンクの交通規制など (Gate)
@@ -631,13 +656,6 @@ public class WalkAgent extends AgentBase {
         }
 
         _speed = obstructer.calcAffectedSpeed(_speed) ;
-
-        if (networkMap != null && _speed != lastSpeed) {
-            if (! isEvacuated()) {
-                networkMap.getNotifier().agentSpeedChanged(this);
-            }
-            lastSpeed = _speed;
-        }
 
         return _speed ;
     }
@@ -700,9 +718,43 @@ public class WalkAgent extends AgentBase {
     /**
      * lane および plain による速度計算
      */
-    private double calcAccel(double baseSpeed, SimTime currentTime) {
+    private double calcSpeedBody(double previousSpeed, SimTime currentTime) {
+            /* base speed */
+        double baseSpeed =
+            currentPlace.getLink().calcEmptySpeedForAgent(emptySpeed,
+                                                          this, currentTime) ;
+        //自由速度に向けた加速
+        accel = calcAccel(baseSpeed, previousSpeed, currentTime) ;
+
+        //時間積分
+        double deltaSpeed = accel * currentTime.getTickUnit();
+        double _speed = previousSpeed + deltaSpeed ;
+
+        //速度幅制限
+        if (_speed > baseSpeed) {
+            _speed = baseSpeed ;
+        } else if (_speed < 0) {
+            _speed = 0;
+        }
+
+        //出口直前の場合で最前列の場合は、最大速にしておく。
+        int w = currentPlace.getLaneWidth() ;
+        int indexInLane = currentPlace.getIndexFromHeadingInLane(this) ;
+        if (indexInLane < w && currentPlace.getHeadingNode().hasTag(goal)) {
+            _speed = baseSpeed;
+        }
+
+        return _speed ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * lane および plain による速度計算
+     */
+    private double calcAccel(double baseSpeed, double previousSpeed,
+                             SimTime currentTime) {
         // 自由速度に向けた加速
-        double _accel = A_0 * (baseSpeed - speed) ;
+        double _accel = A_0 * (baseSpeed - previousSpeed) ;
 
         // social force による減速
         switch (calculation_model) {
@@ -722,40 +774,6 @@ public class WalkAgent extends AgentBase {
         }
         return _accel ;
     }
-
-    //------------------------------------------------------------
-    /**
-     * lane および plain による速度計算
-     */
-    private double calcSpeedBody(SimTime currentTime) {
-            /* base speed */
-        double baseSpeed =
-            currentPlace.getLink().calcEmptySpeedForAgent(emptySpeed,
-                                                          this, currentTime) ;
-        //自由速度に向けた加速
-        accel = calcAccel(baseSpeed, currentTime) ;
-
-        //時間積分
-        double deltaSpeed = accel * currentTime.getTickUnit();
-        double _speed = speed + deltaSpeed ;
-
-        //速度幅制限
-        if (_speed > baseSpeed) {
-            _speed = baseSpeed ;
-        } else if (speed < 0) {
-            _speed = 0;
-        }
-
-        //出口直前の場合で最前列の場合は、最大速にしておく。
-        int w = currentPlace.getLaneWidth() ;
-        int indexInLane = currentPlace.getIndexFromHeadingInLane(this) ;
-        if (indexInLane < w && currentPlace.getHeadingNode().hasTag(goal)) {
-            _speed = baseSpeed;
-        }
-
-        return _speed ;
-    }
-
 
     //------------------------------------------------------------
     /**
