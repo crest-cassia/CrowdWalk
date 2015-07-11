@@ -14,7 +14,6 @@ import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.NetmasTimer;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
@@ -69,22 +68,6 @@ public abstract class BasicSimulationLauncher {
      * TimeSeriesLog のインターバル
      */
     protected int timeSeriesLogInterval = -1;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * Timer の Log を取るかどうか
-     */
-    protected boolean isTimerEnabled = false;
-
-    /**
-     * Timer そのもの
-     */
-    protected NetmasTimer timer = null;
-
-    /**
-     * Timer ログへのパス
-     */
-    protected String timerPath = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -248,34 +231,6 @@ public abstract class BasicSimulationLauncher {
         return timeSeriesLogInterval;
     }
 
-    /**
-     * タイマー有効化。
-     */
-    public void setIsTimerEnabled(boolean _isTimerEnabled) {
-        isTimerEnabled = _isTimerEnabled;
-    }
-
-    /**
-     * タイマー有効・無効チェック。
-     */
-    public boolean getIsTimerEnabled() {
-        return isTimerEnabled;
-    }
-
-    /**
-     * タイマーファイルパス設定。
-     */
-    public void setTimerPath(String _timerPath) {
-        timerPath = _timerPath;
-    }
-
-    /**
-     * タイマーファイルパス取得。
-     */
-    public String getTimerPath() {
-        return timerPath;
-    }
-
     //------------------------------------------------------------
     // Pathへのアクセスメソッド
     //------------------------------------------------------------
@@ -399,9 +354,6 @@ public abstract class BasicSimulationLauncher {
         setGenerationFile(properties.getGenerationFile());
         setScenarioFile(properties.getScenarioFile());
         setFallbackFile(properties.getFallbackFile()) ;
-        // timer & time series
-        setIsTimerEnabled(properties.getIsTimerEnabled());
-        setTimerPath(properties.getTimerPath());
         setIsTimeSeriesLog(properties.getIsTimeSeriesLog());
         setTimeSeriesLogPath(properties.getTimeSeriesLogPath());
         setTimeSeriesLogInterval(properties.getTimeSeriesLogInterval());
@@ -462,11 +414,6 @@ public abstract class BasicSimulationLauncher {
         // rand seed setup
         random.setSeed(properties.getRandseed());
 
-        // this method just set 0 to model.tick_count
-        if (isTimerEnabled) {
-            timer = new NetmasTimer(10, timerPath);
-            timer.start();
-        }
         counter = 0;
         finished = false;
     }
@@ -482,12 +429,6 @@ public abstract class BasicSimulationLauncher {
             if ((relativeTime % timeSeriesLogInterval) == 0)
                 simulator.saveGoalLog(timeSeriesLogPath, false);
                 simulator.saveTimeSeriesLog(timeSeriesLogPath);
-        }
-        if (isTimerEnabled) {
-            timer.tick();
-            timer.writeInterval();
-            if ((relativeTime % 60) == 0)
-                timer.writeElapsed();
         }
         counter++ ;
         if ((counter % 100) == 0)
@@ -522,11 +463,6 @@ public abstract class BasicSimulationLauncher {
                 simulator.getAgentHandler().closeIndividualPedestriansLogger();
                 simulator.getAgentHandler().closeAgentMovementHistorLogger();
             }
-        }
-        // 経過時間の表示。
-        if (isTimerEnabled) {
-            timer.writeElapsed();
-            timer.stop();
         }
     }
 }

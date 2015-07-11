@@ -492,16 +492,6 @@ public class CrowdWalkPropertiesHandler {
         return fallbackFile ;
     }
 
-    protected boolean isTimerEnabled = false;
-    public boolean getIsTimerEnabled() {
-        return isTimerEnabled;
-    }
-
-    protected String timerPath = null;         // path to timer log file
-    public String getTimerPath() {
-        return timerPath;
-    }
-
     protected long randseed = 0;
     public long getRandseed() {
         return randseed;
@@ -576,11 +566,6 @@ public class CrowdWalkPropertiesHandler {
             generationFile = getStringProperty(prop, "generation_file");
             scenarioFile = getProperty(prop, "scenario_file");
             fallbackFile = getProperty(prop, "fallback_file") ;
-
-            // timer enabled or not
-            isTimerEnabled = getBooleanProperty(prop, "timer_enable");
-            if (isTimerEnabled)
-                timerPath = getStringProperty(prop, "timer_file");
 
             // create random with seed
             randseed = getIntegerProperty(prop, "randseed");

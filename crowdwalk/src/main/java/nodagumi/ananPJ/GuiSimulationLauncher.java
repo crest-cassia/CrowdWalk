@@ -18,7 +18,6 @@ import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.FilePathManipulation;
-import nodagumi.ananPJ.misc.NetmasTimer;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
 import nodagumi.Itk.*;
