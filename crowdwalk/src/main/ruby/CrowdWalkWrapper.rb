@@ -10,6 +10,8 @@
 ## == Usage
 ## * ...
 
+require 'NetworkMap.rb' ;
+
 #--======================================================================
 #++
 ## CrowdWalk の EvacuationSimulator の制御のwrapper
@@ -19,12 +21,16 @@ class CrowdWalkWrapper
   ## Java 側の EvacuationSimulator
   attr_accessor :simulator ;
 
+  ## NetworkMap
+  attr_accessor :networkMap ;
+
   #--------------------------------------------------------------
   #++
   ## 初期化
   ## _simulator_:: Java の EvacuationSimulator のインスタンス。
   def initialize(simulator)
     @simulator = simulator ;
+    @networkMap = NetworkMap.new(simulator.getMap()) ;
   end
 
   #--------------------------------------------------------------

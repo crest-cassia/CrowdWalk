@@ -26,5 +26,5 @@ require './SampleWrapper.rb'
 require 'pp'
 pp Dir::pwd
 ",
-  "x_ruby_simulation_wrapper_class":"SampleWrapper"
+  "ruby_simulation_wrapper_class":"SampleWrapper"
 }
