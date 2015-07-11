@@ -657,9 +657,6 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 Integer.parseInt(columns.get()) ;
         }
 
-        // 次はおそらく使われていない。
-        //ArrayList<String> planned_route_key = new ArrayList<String>();
-
         // goal を scan
         genConfig.goal = new Term(columns.top()) ;
 
@@ -753,7 +750,6 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     private boolean scanRestColumns(ShiftingStringList columns,
                                     NetworkMap map,
                                     GenerationConfigBase genConfig) {
-        //ArrayList<String> planned_route = new ArrayList<String>();
         genConfig.plannedRoute = new ArrayList<Term>();
 
         // goal and route plan

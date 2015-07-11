@@ -840,12 +840,6 @@ implements Comparable<AgentBase> {
     
     //------------------------------------------------------------
     /**
-     * 現状をダンプ
-     */
-    abstract public void dumpResult(PrintStream out);
-    
-    //------------------------------------------------------------
-    /**
      * 文字列化
      */
     public String toString() {

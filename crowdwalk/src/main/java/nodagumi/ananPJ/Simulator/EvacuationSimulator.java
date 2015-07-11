@@ -969,30 +969,6 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     // ログ関連
     //------------------------------------------------------------
-    /**
-     * 結果を出力する。
-     * {@code logs/<time>.log} というログと、
-     * {@code macro.log} というログ。
-     */
-    protected void output_results() {
-        try {
-	    /* [2015.02.10 I.Noda] use timestamp instead of scenario_serial. */
-	    String timestamp = Itk.getCurrentTimeStr() ;
-            PrintStream ps = new PrintStream("logs/" + timestamp + ".log");
-            agentHandler.dumpAgentResult(ps);
-            ps.close();
-
-            File macro = new File("logs/macro.log");
-            PrintWriter pw = new PrintWriter(new FileWriter(macro, true));
-            pw.print(timestamp + ",");
-            pw.println(agentHandler.getStatisticsDescription());
-            pw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //------------------------------------------------------------
     /** Save the goal log file to result directory.
      * @param resultDirectory: path to the result directory.
      */

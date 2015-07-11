@@ -1093,16 +1093,6 @@ public class AgentHandler {
     // ログ関連
     //------------------------------------------------------------
     /**
-     * エージェント状態のダンプ
-     */
-    public void dumpAgentResult(PrintStream out) {
-        for (final AgentBase agent : getAllAgentCollection()) {
-            agent.dumpResult(out);
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
      * individualPedestriansLogger への出力。
      */
     private void logIndividualPedestrians(SimTime currentTime, AgentBase agent) {
