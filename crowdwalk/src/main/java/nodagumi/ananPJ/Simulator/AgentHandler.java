@@ -78,6 +78,7 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Scenario.*;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.CsvFormatter;
@@ -1113,28 +1114,35 @@ public class AgentHandler {
          * 平均避難時間　　
          * 避難終了時間
          */
-        int[] each_level = new int[4];
-        double finish_total = 0.0 ;
-        SimTime finish_max = null ;
-        int count_all = 0, count_evacuated = 0;
+        int[] numOfAgentInTriageLevel = new int[TriageLevel.allListSize];
+        double sumOfFinishTime = 0.0 ;
+        SimTime latestFinishTime = null ;
+        int countAll = 0 ;
+        int countEvacuated = 0;
+
         for (AgentBase agent : getAllAgentCollection()) {
-            count_all++;
-            each_level[agent.getTriageInt()]++;
-            SimTime t = agent.finishedTime;
-            if (t == null) continue;
-            count_evacuated++;
-            finish_total += t.getRelativeTime();
-            if (finish_max == null || t.isAfter(finish_max)) finish_max = t;
+            countAll++;
+            numOfAgentInTriageLevel[agent.getTriageInt()]++;
+            SimTime finishTime = agent.finishedTime;
+            if (finishTime != null) {
+                countEvacuated++;
+                sumOfFinishTime += finishTime.getRelativeTime();
+                if (latestFinishTime == null ||
+                    finishTime.isAfter(latestFinishTime)) {
+                    latestFinishTime = finishTime ;
+                }
+            }
         }
+        double averageFinishTime = sumOfFinishTime / countEvacuated ;
         return (""
-                + each_level[0] + ","
-                + each_level[1] + ","
-                + each_level[2] + ","
-                + each_level[3] + ","
-                + count_evacuated + ","
-                + count_all + ","
-                + finish_total / count_evacuated + ","
-                + finish_max.getRelativeTime()
+                + numOfAgentInTriageLevel[0] + ","
+                + numOfAgentInTriageLevel[1] + ","
+                + numOfAgentInTriageLevel[2] + ","
+                + numOfAgentInTriageLevel[3] + ","
+                + countEvacuated + ","
+                + countAll + ","
+                + averageFinishTime + ","
+                + latestFinishTime.getRelativeTime()
                 );
     }
 

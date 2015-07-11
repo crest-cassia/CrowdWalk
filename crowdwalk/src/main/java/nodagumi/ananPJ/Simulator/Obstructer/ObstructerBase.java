@@ -10,11 +10,36 @@ import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
 
+//======================================================================
 /**
  * エージェントの歩行及び生命維持を妨害する要素.
  */
 public abstract class ObstructerBase {
-    public static enum TriageLevel { GREEN, YELLOW, RED, BLACK }
+    //============================================================
+    //============================================================
+    /**
+     * トリアージレベルを表す enum。
+     */
+    public static enum TriageLevel { 
+        //========================================
+        //::::::::::::::::::::::::::::::::::::::::
+        GREEN, YELLOW, RED, BLACK ;
+
+        //========================================
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /** 全Level のリスト */
+        static public TriageLevel[] allList ;
+
+        /** 全Level の数 */
+        static public int allListSize ;
+
+        // 初期設定
+        static {
+            allList = TriageLevel.values() ;
+            allListSize = allList.length ;
+        }
+
+    }
 
     /**
      * Obstructer type とクラス名の対応表

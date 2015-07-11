@@ -970,13 +970,26 @@ public class EvacuationSimulator {
     // ログ関連
     //------------------------------------------------------------
     /** Save the goal log file to result directory.
+     * 終わりでない時には、goal に辿り着いが時刻を goalTimes に記録する。
+     * シミュレーション終了時には、後始末をして、ファイルに書き出している。
      * @param resultDirectory: path to the result directory.
+     * [2015.07.11 I.Noda]
+     * この処理、あきらかにおかしい。
+     * 少なくとも、シミュレーション途中の処理と、
+     * 終了時の処理は全く異なるので、別々に書くべき。
      */
     public void saveGoalLog(String resultDirectory, Boolean finished) {
         // Goal log を記憶
         /* [2015.05.27 I.Noda]
          * ここで、AllAgent を使うべきか、WalkingAgent だけでよいか、
          * 不明。
+         * [2015.07.11 I.Noda]
+         * この saveGoalLog() は、ある一定サイクルごとにしか呼ばれない。
+         * なので、前回からどれだけのエージェントが抜け出たかを調べるためには、
+         * AllAgent でなければならない。
+         * しかし、一方で、ここで currentTime で記録してしまうと、
+         * サイクル内に抜け出たエージェントが全て同じ時刻に出たことになる。
+         * これは明らかにおかしい。
          */
         for (AgentBase agent: getAllAgentCollection()) {
             if (agent.isEvacuated() && !goalTimes.containsKey(agent.ID)) {
