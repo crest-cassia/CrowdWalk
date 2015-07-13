@@ -158,34 +158,40 @@ public class AgentHandler {
     /**
      * 生成した全エージェントリスト。
      */
-    private ArrayList<AgentBase> generatedAgents;
+    private ArrayList<AgentBase> generatedAgents =
+        new ArrayList<AgentBase>() ;
 
     /**
      * 避難完了したエージェントリスト。
      */
-    private ArrayList<AgentBase> evacuatedAgents;
+    private ArrayList<AgentBase> evacuatedAgents =
+        new ArrayList<AgentBase>() ;
 
     /**
      * スタックしたエージェントリスト。
      */
-    private ArrayList<AgentBase> stuckAgents;
+    private ArrayList<AgentBase> stuckAgents =
+        new ArrayList<AgentBase>() ;
 
     /**
      * 今動いているエージェントの集まり
      */
-    private HashMap<String, AgentBase> walkingAgentTable ;
+    private HashMap<String, AgentBase> walkingAgentTable =
+        new HashMap<String, AgentBase>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * EXIT ごとの、避難エージェント数の統計。
      */
-    private HashMap<MapNode, Integer> evacuatedAgentCountByExit;
+    private HashMap<MapNode, Integer> evacuatedAgentCountByExit =
+        new HashMap<MapNode, Integer>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェントが存在するリンクのリスト
      */
-    private HashSet<MapLink> effectiveLinkSet = new HashSet<MapLink>() ;
+    private HashSet<MapLink> effectiveLinkSet =
+        new HashSet<MapLink>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -478,13 +484,6 @@ public class AgentHandler {
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
 
-        // 各種配列初期化。
-        evacuatedAgentCountByExit = new LinkedHashMap<MapNode, Integer>();
-        generatedAgents = new ArrayList<AgentBase>();
-        evacuatedAgents = new ArrayList<AgentBase>();
-        stuckAgents = new ArrayList<AgentBase>();
-        walkingAgentTable = new HashMap<String, AgentBase>() ;
-
         // 表示初期化。
         if (hasDisplay()) {
             setup_control_panel(simulator.getSetupFileInfo().getGenerationFile(),
@@ -755,12 +754,12 @@ public class AgentHandler {
      * このサイクルで evacuateしたエージェントの処理
      */
     private void updateNewlyEvacuatedAgent(AgentBase agent, SimTime currentTime) {
-        final MapNode exit = agent.getLastNode() ;
-        Integer i = evacuatedAgentCountByExit.get(exit);
-        if (i == null)
-            i = new Integer(0);
-        i += 1;
-        evacuatedAgentCountByExit.put(exit, i);
+        final MapNode exitNode = agent.getLastNode() ;
+        Integer agentCount = evacuatedAgentCountByExit.get(exitNode);
+        if (agentCount == null)
+            agentCount = new Integer(0);
+        agentCount += 1;
+        evacuatedAgentCountByExit.put(exitNode, agentCount);
         evacuatedAgents.add(agent);
         if (agent.isStuck()) {
             stuckAgents.add(agent);
@@ -1003,14 +1002,6 @@ public class AgentHandler {
      */
     public int getEvacuatedCount(MapNode node) {
         return evacuatedAgentCountByExit.get(node);
-    }
-
-    //------------------------------------------------------------
-    /**
-     * evacuation count のテーブル取得
-     */
-    public HashMap<MapNode, Integer> getExitNodesMap() {
-        return evacuatedAgentCountByExit;
     }
 
     //------------------------------------------------------------

@@ -55,22 +55,6 @@ public abstract class BasicSimulationLauncher {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * TimeSeriesLog を取るかどうか
-     */
-    protected boolean isTimeSeriesLog = false;
-
-    /**
-     * TimeSeriesLog へのパス
-     */
-    protected String timeSeriesLogPath = null;
-
-    /**
-     * TimeSeriesLog のインターバル
-     */
-    protected int timeSeriesLogInterval = -1;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * Agent Movement History Log 関係
      */
     protected String agentMovementHistoryPath = null;
@@ -180,55 +164,6 @@ public abstract class BasicSimulationLauncher {
      */
     public boolean getIsAllAgentSpeedZeroBreak() {
         return isAllAgentSpeedZeroBreak;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * Set isTimeSeriesLog.
-     * @param _isTimeSeriesLog the value to set.
-     */
-    public void setIsTimeSeriesLog(boolean _isTimeSeriesLog) {
-        isTimeSeriesLog = _isTimeSeriesLog;
-    }
-
-    /**
-     * Get isTimeSeriesLog.
-     * @return isTimeSeriesLog as boolean.
-     */
-    public boolean getIsTimeSeriesLog() {
-        return isTimeSeriesLog;
-    }
-
-    /**
-     * Set timeSeriesLogPath.
-     * @param _timeSeriesLogPath the value to set.
-     */
-    public void setTimeSeriesLogPath(String _timeSeriesLogPath) {
-        timeSeriesLogPath = _timeSeriesLogPath;
-    }
-
-    /**
-     * Get timeSeriesLogPath.
-     * @return timeSeriesLogPath as String.
-     */
-    public String getTimeSeriesLogPath() {
-        return timeSeriesLogPath;
-    }
-
-    /**
-     * Set timeSeriesLogInterval.
-     * @param _timeSeriesLogInterval the value to set.
-     */
-    public void setTimeSeriesLogInterval(int _timeSeriesLogInterval) {
-        timeSeriesLogInterval = _timeSeriesLogInterval;
-    }
-
-    /**
-     * Get timeSeriesLogInterval.
-     * @return timeSeriesLogInterval as int.
-     */
-    public int getTimeSeriesLogInterval() {
-        return timeSeriesLogInterval;
     }
 
     //------------------------------------------------------------
@@ -354,9 +289,6 @@ public abstract class BasicSimulationLauncher {
         setGenerationFile(properties.getGenerationFile());
         setScenarioFile(properties.getScenarioFile());
         setFallbackFile(properties.getFallbackFile()) ;
-        setIsTimeSeriesLog(properties.getIsTimeSeriesLog());
-        setTimeSeriesLogPath(properties.getTimeSeriesLogPath());
-        setTimeSeriesLogInterval(properties.getTimeSeriesLogInterval());
         // ending condition
         setExitCount(properties.getExitCount()) ;
         setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
@@ -425,11 +357,6 @@ public abstract class BasicSimulationLauncher {
     protected void simulateOneStepBare() {
         finished = simulator.updateEveryTick();
         int relativeTime = (int)simulator.clock.getRelativeTime() ;
-        if (isTimeSeriesLog) {
-            if ((relativeTime % timeSeriesLogInterval) == 0)
-                simulator.saveGoalLog(timeSeriesLogPath, false);
-                simulator.saveTimeSeriesLog(timeSeriesLogPath);
-        }
         counter++ ;
         if ((counter % 100) == 0)
             Itk.logDebug("Cycle",
@@ -455,10 +382,6 @@ public abstract class BasicSimulationLauncher {
         }
         // ログの書き出し。ログは、最後に出力。
         if(finished) {
-            if(isTimeSeriesLog) {
-                // flush log file
-                simulator.saveGoalLog(timeSeriesLogPath, true);
-            }
             if (individualPedestriansLogDir != null) {
                 simulator.getAgentHandler().closeIndividualPedestriansLogger();
                 simulator.getAgentHandler().closeAgentMovementHistorLogger();

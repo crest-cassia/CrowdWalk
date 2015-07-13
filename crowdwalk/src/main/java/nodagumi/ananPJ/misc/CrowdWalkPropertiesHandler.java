@@ -497,20 +497,6 @@ public class CrowdWalkPropertiesHandler {
         return randseed;
     }
 
-    // whether call NetworkMap.saveTimeSeriesLog in loop
-    protected boolean isTimeSeriesLog = false;
-    public boolean getIsTimeSeriesLog() {
-        return isTimeSeriesLog;
-    }
-    protected String timeSeriesLogPath = null;
-    public String getTimeSeriesLogPath() {
-        return timeSeriesLogPath;
-    }
-    protected int timeSeriesLogInterval = -1;
-    public int getTimeSeriesLogInterval() {
-        return timeSeriesLogInterval;
-    }
-
     // End condition of simulation
     protected int exitCount = 0;
     public int getExitCount() {
@@ -569,14 +555,6 @@ public class CrowdWalkPropertiesHandler {
 
             // create random with seed
             randseed = getIntegerProperty(prop, "randseed");
-            // time series log
-            isTimeSeriesLog = getBooleanProperty(prop, "time_series_log");
-            if (isTimeSeriesLog) {
-                timeSeriesLogPath = getStringProperty(prop,
-                                                      "time_series_log_path");
-                timeSeriesLogInterval = getIntegerProperty(prop,
-                                                           "time_series_log_interval");
-            }
             // exit count
             exitCount = getIntegerProperty(prop, "exit_count");
             isAllAgentSpeedZeroBreak = getBooleanProperty(prop,
