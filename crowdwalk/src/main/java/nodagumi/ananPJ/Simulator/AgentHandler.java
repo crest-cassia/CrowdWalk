@@ -181,13 +181,6 @@ public class AgentHandler {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * EXIT ごとの、避難エージェント数の統計。
-     */
-    private HashMap<MapNode, Integer> evacuatedAgentCountByExit =
-        new HashMap<MapNode, Integer>() ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * エージェントが存在するリンクのリスト
      */
     private HashSet<MapLink> effectiveLinkSet =
@@ -754,12 +747,6 @@ public class AgentHandler {
      * このサイクルで evacuateしたエージェントの処理
      */
     private void updateNewlyEvacuatedAgent(AgentBase agent, SimTime currentTime) {
-        final MapNode exitNode = agent.getLastNode() ;
-        Integer agentCount = evacuatedAgentCountByExit.get(exitNode);
-        if (agentCount == null)
-            agentCount = new Integer(0);
-        agentCount += 1;
-        evacuatedAgentCountByExit.put(exitNode, agentCount);
         evacuatedAgents.add(agent);
         if (agent.isStuck()) {
             stuckAgents.add(agent);
@@ -994,14 +981,6 @@ public class AgentHandler {
      */
     public int numOfStuckAgents() {
         return stuckAgents.size() ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 指定した node の evacuation count を取得
-     */
-    public int getEvacuatedCount(MapNode node) {
-        return evacuatedAgentCountByExit.get(node);
     }
 
     //------------------------------------------------------------
