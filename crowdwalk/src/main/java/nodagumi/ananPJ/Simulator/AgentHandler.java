@@ -1095,48 +1095,6 @@ public class AgentHandler {
         }
     }
 
-
-    //------------------------------------------------------------
-    /**
-     * 統計的結果説明
-     */
-    public String getStatisticsDescription() {
-        /* 各被害レベルの人数 (0, 1, 2, 3)
-         * 平均避難時間　　
-         * 避難終了時間
-         */
-        int[] numOfAgentInTriageLevel = new int[TriageLevel.allListSize];
-        double sumOfFinishTime = 0.0 ;
-        SimTime latestFinishTime = null ;
-        int countAll = 0 ;
-        int countEvacuated = 0;
-
-        for (AgentBase agent : getAllAgentCollection()) {
-            countAll++;
-            numOfAgentInTriageLevel[agent.getTriageInt()]++;
-            SimTime finishTime = agent.finishedTime;
-            if (finishTime != null) {
-                countEvacuated++;
-                sumOfFinishTime += finishTime.getRelativeTime();
-                if (latestFinishTime == null ||
-                    finishTime.isAfter(latestFinishTime)) {
-                    latestFinishTime = finishTime ;
-                }
-            }
-        }
-        double averageFinishTime = sumOfFinishTime / countEvacuated ;
-        return (""
-                + numOfAgentInTriageLevel[0] + ","
-                + numOfAgentInTriageLevel[1] + ","
-                + numOfAgentInTriageLevel[2] + ","
-                + numOfAgentInTriageLevel[3] + ","
-                + countEvacuated + ","
-                + countAll + ","
-                + averageFinishTime + ","
-                + latestFinishTime.getRelativeTime()
-                );
-    }
-
     //------------------------------------------------------------
     /**
      * ロガーの初期化
