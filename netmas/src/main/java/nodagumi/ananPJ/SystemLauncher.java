@@ -23,6 +23,7 @@ import nodagumi.Itk.Itk;
 public class SystemLauncher {
     public static String optionsFormat = "[-c] [-h] [-l <LEVEL>] [-t <FILE>] [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
+    public static double temporaryGatheringWidth = 0.0;
 
     /**
      * コマンドラインオプションの定義
@@ -30,6 +31,9 @@ public class SystemLauncher {
     public static void defineOptions(Options options) {
         options.addOption("c", "cui", false, "CUI モードで実行する\nproperties-file の指定が必須");
         options.addOption("h", "help", false, "この使い方を表示して終了する");
+        options.addOption(OptionBuilder.withLongOpt("temporary-gathering-width")
+            .withDescription("TEMPORARY_GATHERING_LOCATION_LINK の幅(m)を指定する")
+            .hasArg().withArgName("WIDTH").create("w"));
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
             .hasArg().withArgName("LEVEL").create("l"));
@@ -68,6 +72,15 @@ public class SystemLauncher {
             // ログレベルの指定
             if (commandLine.hasOption("log-level")) {
                 setLogLevel(commandLine.getOptionValue("log-level"));
+            }
+
+            if (commandLine.hasOption("temporary-gathering-width")) {
+                try {
+                    temporaryGatheringWidth = Double.parseDouble(commandLine.getOptionValue("temporary-gathering-width"));
+                } catch(NumberFormatException e) {
+                    printHelp(options);
+                    System.exit(0);
+                }
             }
 
             // CUI モードまたはGUIモード(マップエディタ)で実行

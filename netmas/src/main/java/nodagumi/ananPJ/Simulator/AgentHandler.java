@@ -506,20 +506,16 @@ public class AgentHandler {
                     stuckAgents.add(agent);
                 }
                 if (agentMovementHistoryLogger != null) {
-                    agentMovementHistoryLogger
-                        .info(String
-                              .format("%s,%s,%s,%d,%s,%d,%s,%d",
-                                      agent.getConfigLine().replaceAll(",", " "),
-                                      agent.ID,
-                                      convertAbsoluteTimeString(agent.generatedTime,
-                                                                true),
-                                      (int)agent.generatedTime,
-                                      convertAbsoluteTimeString(time,
-                                                                true),
-                                      (int)time,
-                                      timeToString(time - agent.generatedTime,
-                                                   true),
-                                      (int)(time - agent.generatedTime)));
+                    agentMovementHistoryLogger.info(
+                        String.format("%s,%s,%s,%d,%s,%d,%s,%d",
+                            agent.getConfigLine().replaceAll(",", " "),
+                            agent.ID,
+                            convertAbsoluteTimeString(agent.generatedTime, true),
+                            (int)agent.generatedTime,
+                            convertAbsoluteTimeString(time, true),
+                            (int)time,
+                            timeToString(time - agent.generatedTime, true),
+                            (int)(time - agent.generatedTime)));
                 }
             } else {
                 ++count;
@@ -565,7 +561,8 @@ public class AgentHandler {
                 buff.append(agent.ID); buff.append(",");
                 buff.append(0.0); buff.append(",");
                 buff.append(-1); buff.append(",");
-                buff.append(0);
+                buff.append(0); buff.append(",");
+                buff.append(false);
             } else {
                 buff.append(agent.ID); buff.append(",");
 
@@ -577,7 +574,8 @@ public class AgentHandler {
                 }
 
                 buff.append(agent.getCurrentLink().ID); buff.append(",");
-                buff.append((int)agent.getDirection());
+                buff.append((int)agent.getDirection()); buff.append(",");
+                buff.append(agent.getCurrentLink().hasTag("TEMPORARY_GATHERING_LOCATION_LINK"));
             }
             individualPedestriansLogger.info(buff.toString());
         }
