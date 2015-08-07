@@ -52,7 +52,7 @@ import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.Itk.*;
 
 
-public class MapLink extends OBMapPart {
+public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1206,4 +1206,7 @@ public class MapLink extends OBMapPart {
         return emptySpeed ;
     }
 
+    public int compareTo(MapLink link) {
+        return ID.compareTo(link.ID);
+    }
 }

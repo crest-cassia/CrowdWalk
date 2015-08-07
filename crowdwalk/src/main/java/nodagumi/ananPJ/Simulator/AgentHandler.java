@@ -34,7 +34,7 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Collection;
@@ -183,8 +183,8 @@ public class AgentHandler {
     /**
      * エージェントが存在するリンクのリスト
      */
-    private HashSet<MapLink> effectiveLinkSet =
-        new HashSet<MapLink>() ;
+    private TreeSet<MapLink> effectiveLinkSet =
+        new TreeSet<MapLink>() ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -661,7 +661,7 @@ public class AgentHandler {
     private void updateEffectiveLinkSetAndRemoveEvacuatedAgents() {
         // エージェントが存在するリンクのリストを更新
         /** [2015.07.05 I.Noda]
-         * effectiveLinkSet を、HashSet としたので、
+         * effectiveLinkSet を、TreeSet としたので、
          * いちいちクリアする必要はない。
          * エージェントがいなくなったリンクは、preUpdateLinks() で削除される。
          */
