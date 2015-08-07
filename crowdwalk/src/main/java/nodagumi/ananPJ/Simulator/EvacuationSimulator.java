@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
+import nodagumi.ananPJ.GuiSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -733,19 +734,6 @@ public class EvacuationSimulator {
     }
 
     /**
-     * 画面の準備。
-     */
-    public void buildDisplay(SimulationPanel3D _panel3d) {
-        if (hasDisplay()) {
-            if (_panel3d != null) {
-                panel3d = getController().setupFrame(this, _panel3d);
-            } else {
-                panel3d = getController().setupFrame(this, _panel3d);
-            }
-        }
-    }
-
-    /**
      * 3D画面の準備。
      */
     public SimulationPanel3D getPanel3D() {
@@ -913,6 +901,11 @@ public class EvacuationSimulator {
      */
     private void updateEveryTickDisplay() {
         if (panel3d != null) {
+            GuiSimulationLauncher gui = (GuiSimulationLauncher)launcher;
+            gui.update_buttons();
+            gui.displayClock(currentTime);
+            gui.updateEvacuatedCount(agentHandler);
+
             panel3d.updateClock(currentTime) ;
             boolean captureScreenShot = (screenshotInterval != 0);
             if (captureScreenShot) {

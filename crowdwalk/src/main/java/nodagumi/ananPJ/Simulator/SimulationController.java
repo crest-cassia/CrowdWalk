@@ -9,8 +9,6 @@ public interface SimulationController {
 	
 	/* callback from the simulator */
 	public SimulationPanel3D setupFrame(EvacuationSimulator simulator);
-    public SimulationPanel3D setupFrame(EvacuationSimulator simulator,
-            SimulationPanel3D panel);
 }
 //;;; Local Variables:
 //;;; mode:java

@@ -70,6 +70,7 @@ import javax.vecmath.Vector3d;
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.Gui.NetworkPanel3D;
+import nodagumi.ananPJ.GuiSimulationLauncher;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -112,12 +113,14 @@ public class SimulationPanel3D extends NetworkPanel3D {
     private ArrayList<SimTime> simulationTimes = new ArrayList<SimTime>();
     
     protected BranchGroup agent_group = null;
+    private GuiSimulationLauncher simulationLauncher;
 
     public SimulationPanel3D(EvacuationSimulator _simulator, JFrame _parent) {
         super(_simulator.getNodes(), _simulator.getLinks(), _parent, _simulator.getProperties());
         simulator = _simulator;
         networkMap = simulator.getMap();
         pollutions = simulator.getPollutions();
+        simulationLauncher = (GuiSimulationLauncher)simulator.getController();
 
         agent_group = new BranchGroup();
         agent_group.setCapability(BranchGroup.ALLOW_DETACH);
@@ -365,7 +368,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             public void actionPerformed(ActionEvent e) {
                 setMenuActionStartEnabled(false);
                 simulator.start();
-				simulator.getAgentHandler().update_buttons();
+                simulationLauncher.update_buttons();
             }
         });
         menu_action.add(menu_item_start);
@@ -376,7 +379,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
             public void actionPerformed(ActionEvent e) {
                 setMenuActionStartEnabled(true);
                 simulator.pause();
-                simulator.getAgentHandler().update_buttons();
+                simulationLauncher.update_buttons();
             }
         });
         menu_action.add(menu_item_pause);

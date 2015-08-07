@@ -841,7 +841,7 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
         }
         boolean successful = true;
         if (properties.isDefined("defer_factor")) {
-            simulator.getAgentHandler().setSimulationDeferFactor(deferFactor);
+            setSimulationDeferFactor(deferFactor);
         }
         if (cameraFile != null) {
             if (panel.loadCameraworkFromFile(cameraFile)) {
@@ -920,7 +920,7 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
 								Itk.logInfo("auto simulation start");
-                                simulator.getAgentHandler().getStartButton().doClick();
+                                getStartButton().doClick();
                             }
                         });
                     }
