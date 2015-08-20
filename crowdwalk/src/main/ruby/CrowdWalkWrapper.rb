@@ -24,6 +24,12 @@ class CrowdWalkWrapper
   ## NetworkMap
   attr_accessor :networkMap ;
 
+  ## NetworkMap
+  attr_accessor :networkMap ;
+
+  ## Fallback Parameters ;
+  attr_accessor :fallbackParameters ;
+
   #--------------------------------------------------------------
   #++
   ## 初期化
@@ -31,6 +37,7 @@ class CrowdWalkWrapper
   def initialize(simulator)
     @simulator = simulator ;
     @networkMap = NetworkMap.new(simulator.getMap()) ;
+    @fallbackParameters = simulator.getFallbackParameters() ;
   end
 
   #--------------------------------------------------------------

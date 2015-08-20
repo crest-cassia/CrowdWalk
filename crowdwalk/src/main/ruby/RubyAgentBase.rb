@@ -40,7 +40,7 @@ class RubyAgentBase
   attr_accessor :config ;
 
   ## fallback 情報。
-  attr_accessor :config ;
+  attr_accessor :fallback ;
 
   #--------------------------------------------------------------
   #++
