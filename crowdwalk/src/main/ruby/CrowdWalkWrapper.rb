@@ -42,6 +42,13 @@ class CrowdWalkWrapper
 
   #--------------------------------------------------------------
   #++
+  ## AgentHandler の prepareForSimulation の後で呼び出される。
+  def prepareForSimulation()
+    p [:prepareForSimulation, :notImplemented] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## update の先頭で呼び出される。
   ## _relTime_:: シミュレーション内相対時刻
   def preUpdate(relTime)

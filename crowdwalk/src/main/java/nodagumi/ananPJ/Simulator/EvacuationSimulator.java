@@ -460,7 +460,11 @@ public class EvacuationSimulator {
         buildRoutes ();
         buildRubyEngine() ;
 
+        //prepare for simulation
         agentHandler.prepareForSimulation();
+
+        if(useRubyWrapper())
+            rubyEngine.callMethod(rubyWrapper, "prepareForSimulation") ;
     }
 
     //------------------------------------------------------------
