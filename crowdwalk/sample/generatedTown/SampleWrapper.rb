@@ -18,11 +18,23 @@ class SampleWrapper < CrowdWalkWrapper
   attr_accessor :taggedNodeList ;
   #--------------------------------------------------------------
   #++
-  ## update の先頭で呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def initialize(mapObject)
-    super(mapObject) ;
+  ## 初期化
+  ## _simulator_:: java のシミュレータ(EvacuationSimulator)
+  def initialize(simulator)
+    super(simulator) ;
     @taggedNodeList = [] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 初期化
+  ## _simulator_:: java のシミュレータ(EvacuationSimulator)
+  def prepareForSimulation()
+    p ['SampleWrapper', :prepareForSimulation]
+    @networkMap.eachLinkWithTag("TEMPORARY_GATHERING_LOCATION_LINK"){|link|
+      link.setWidth(40.0) ;
+      p ['link.setWidth', link.getID(), link.getTagString(), link.getWidth()] ;
+    }
   end
 
   #--------------------------------------------------------------

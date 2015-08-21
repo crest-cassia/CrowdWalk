@@ -698,6 +698,7 @@
   </Link>
   <Link id='113' from='3' to='13' length='99.37580754649723' width='1.0'>
     <tag>link_node_00_02__node_01_02</tag>
+    <tag>TEMPORARY_GATHERING_LOCATION_LINK</tag>
   </Link>
   <Link id='114' from='12' to='13' length='99.66915938140721' width='1.0'>
     <tag>link_node_01_01__node_01_02</tag>
@@ -815,6 +816,7 @@
   </Link>
   <Link id='152' from='32' to='33' length='99.24274111587734' width='1.0'>
     <tag>link_node_03_01__node_03_02</tag>
+    <tag>TEMPORARY_GATHERING_LOCATION_LINK</tag>
   </Link>
   <Link id='153' from='24' to='34' length='99.43513128982559' width='1.0'>
     <tag>link_node_02_03__node_03_03</tag>
