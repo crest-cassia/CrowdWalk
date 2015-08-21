@@ -435,13 +435,13 @@ public class AgentHandler {
         networkMap = simulator.getMap() ;
 
         // パラメータ設定
-        Term fallback = 
-            simulator.getFallbackParameters()
-            .filterArgTerm("agentHandler", SetupFileInfo.FallbackSlot) ;
+        Term wholeFallback = simulator.getFallbackParameters();
+        Term fallback =
+            SetupFileInfo.filterFallbackTerm(wholeFallback, "agentHandler") ;
         zeroSpeedThreshold =
-            fallback.fetchArgDouble("zeroSpeedThreshold",
-                                    SetupFileInfo.FallbackSlot,
-                                    zeroSpeedThreshold) ;
+            SetupFileInfo.fetchFallbackDouble(fallback,
+                                              "zeroSpeedThreshold",
+                                              zeroSpeedThreshold) ;
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;

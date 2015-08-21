@@ -31,8 +31,11 @@ class SampleWrapper < CrowdWalkWrapper
   ## _simulator_:: java のシミュレータ(EvacuationSimulator)
   def prepareForSimulation()
     p ['SampleWrapper', :prepareForSimulation]
+    width = @simulator.filterFetchFallbackDouble("link",
+                                                 "gathering_location_width",
+                                                 40.0) ;
     @networkMap.eachLinkWithTag("TEMPORARY_GATHERING_LOCATION_LINK"){|link|
-      link.setWidth(40.0) ;
+      link.setWidth(width) ;
       p ['link.setWidth', link.getID(), link.getTagString(), link.getWidth()] ;
     }
   end

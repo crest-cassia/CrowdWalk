@@ -75,7 +75,7 @@ public class Pollution extends ObstructerBase {
      * fallback パラメータからの値の取得(double)
      */
     public static double getConfigParameter(String slot, double fallback) {
-        return config.fetchArgDouble(slot, SetupFileInfo.FallbackSlot, fallback);
+        return SetupFileInfo.fetchFallbackDouble(config, slot, fallback);
     }
 
     //--------------------------------------------------
@@ -91,9 +91,8 @@ public class Pollution extends ObstructerBase {
         this.agent = agent;
         if (config == null) {
             config =
-                fallbackParameters.fetchArgTerm(getClass().getSimpleName(),
-                                                SetupFileInfo.FallbackSlot,
-                                                Term.newArrayTerm());
+                SetupFileInfo.filterFallbackTerm(fallbackParameters,
+                                                 getClass().getSimpleName()) ;
         }
         deadlyLevel = getConfigParameter("deadlyLevel", deadlyLevel);
         unbearableLevel = getConfigParameter("unbearableLevel", unbearableLevel);

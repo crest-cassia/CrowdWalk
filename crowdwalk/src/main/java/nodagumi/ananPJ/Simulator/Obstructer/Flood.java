@@ -54,7 +54,7 @@ public class Flood extends ObstructerBase {
      * fallback パラメータからの値の取得(double)
      */
     public static double getConfigParameter(String slot, double fallback) {
-        return config.fetchArgDouble(slot, SetupFileInfo.FallbackSlot, fallback);
+        return SetupFileInfo.fetchFallbackDouble(config, slot, fallback);
     }
 
     //--------------------------------------------------
@@ -70,9 +70,8 @@ public class Flood extends ObstructerBase {
         this.agent = agent;
         if (config == null) {
             config =
-                fallbackParameters.fetchArgTerm(getClass().getSimpleName(),
-                                                SetupFileInfo.FallbackSlot,
-                                                Term.newArrayTerm());
+                SetupFileInfo.filterFallbackTerm(fallbackParameters,
+                                                 getClass().getSimpleName()) ;
         }
         waterDepthThreshold3 =
             getConfigParameter("waterDepthThreshold3", waterDepthThreshold3);

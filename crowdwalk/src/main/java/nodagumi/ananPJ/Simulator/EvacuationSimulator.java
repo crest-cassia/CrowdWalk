@@ -429,6 +429,103 @@ public class EvacuationSimulator {
         return getSetupFileInfo().fallbackParameters ;
     }
 
+    /**
+     * fallback parameter を filter する。
+     */
+    public Term filterFallbackTerm(String tag) {
+        return SetupFileInfo.filterFallbackTerm(getFallbackParameters(), tag) ;
+    }
+
+    /**
+     * fallback parameter から fetch する。
+     */
+    public Term fetchFallbackTerm(Term fallbacks, String tag,
+                                  Term fallbackValue) {
+        return SetupFileInfo.fetchFallbackTerm(fallbacks, tag, fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から fetch する。
+     */
+    public String fetchFallbackString(Term fallbacks, String tag,
+                                      String fallbackValue) {
+        return SetupFileInfo.fetchFallbackString(fallbacks, tag, fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から fetch する。
+     */
+    public double fetchFallbackDouble(Term fallbacks, String tag,
+                                      Double fallbackValue) {
+        return SetupFileInfo.fetchFallbackDouble(fallbacks, tag, fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から fetch する。
+     */
+    public int fetchFallbackInt(Term fallbacks, String tag,
+                                int fallbackValue) {
+        return SetupFileInfo.fetchFallbackInt(fallbacks, tag, fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から fetch する。
+     */
+    public boolean fetchFallbackBoolean(Term fallbacks, String tag,
+                                        boolean fallbackValue) {
+        return SetupFileInfo.fetchFallbackBoolean(fallbacks, tag, fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から filter して fetch する。
+     */
+    public Term filterFetchFallbackTerm(String filterTag, String fetchTag,
+                                        Term fallbackValue) {
+        return fetchFallbackTerm(filterFallbackTerm(filterTag),
+                                 fetchTag,
+                                 fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から filter して fetch する。
+     */
+    public String filterFetchFallbackString(String filterTag, String fetchTag,
+                                            String fallbackValue) {
+        return fetchFallbackString(filterFallbackTerm(filterTag),
+                                   fetchTag,
+                                   fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から filter して fetch する。
+     */
+    public Double filterFetchFallbackDouble(String filterTag, String fetchTag,
+                                            Double fallbackValue) {
+        return fetchFallbackDouble(filterFallbackTerm(filterTag),
+                                   fetchTag,
+                                   fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から filter して fetch する。
+     */
+    public int filterFetchFallbackInt(String filterTag, String fetchTag,
+                                      int fallbackValue) {
+        return fetchFallbackInt(filterFallbackTerm(filterTag),
+                                fetchTag,
+                                fallbackValue) ;
+    }
+
+    /**
+     * fallback parameter から filter して fetch する。
+     */
+    public boolean filterFetchFallbackBoolean(String filterTag, String fetchTag,
+                                              boolean fallbackValue) {
+        return fetchFallbackBoolean(filterFallbackTerm(filterTag),
+                                    fetchTag,
+                                    fallbackValue) ;
+    }
+
     //------------------------------------------------------------
     // シミュレーションの準備。
     //------------------------------------------------------------

@@ -218,6 +218,83 @@ public class SetupFileInfo {
         }
     }
 
+    //============================================================
+    // fallback 関係
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback のフィルタリング
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     */
+    static public Term filterFallbackTerm(Term fallbacks, String tag) {
+        return fallbacks.filterArgTerm(tag, FallbackSlot) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (Term)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public Term fetchFallbackTerm(Term fallbacks, String tag,
+                                         Term finalFallbackValue) {
+        return fallbacks.fetchArgTerm(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (String)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public String fetchFallbackString(Term fallbacks, String tag,
+                                             String finalFallbackValue) {
+        return fallbacks.fetchArgString(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (double)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public double fetchFallbackDouble(Term fallbacks, String tag,
+                                             double finalFallbackValue) {
+        return fallbacks.fetchArgDouble(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (int)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public int fetchFallbackInt(Term fallbacks, String tag,
+                                       int finalFallbackValue) {
+        return fallbacks.fetchArgInt(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (boolean)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public boolean fetchFallbackBoolean(Term fallbacks, String tag,
+                                               boolean finalFallbackValue) {
+        return fallbacks.fetchArgBoolean(tag, FallbackSlot, finalFallbackValue) ;
+    }
 }
 //;;; Local Variables:
 //;;; mode:java

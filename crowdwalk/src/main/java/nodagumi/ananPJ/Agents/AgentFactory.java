@@ -349,8 +349,7 @@ public abstract class AgentFactory {
         // fallbacks
         Term fallbackForAgent =
             ((fallbackParameters != null) ?
-             fallbackParameters.filterArgTerm("agent",
-                                              SetupFileInfo.FallbackSlot) :
+             SetupFileInfo.filterFallbackTerm(fallbackParameters, "agent") :
              null) ;
 
         /* [I.Noda] ここで Agent 生成 */

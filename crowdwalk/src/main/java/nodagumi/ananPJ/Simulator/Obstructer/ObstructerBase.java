@@ -56,8 +56,7 @@ public abstract class ObstructerBase {
      */
     public static void setupCommonParameters(Term wholeFallbacks) {
         fallbackParameters =
-            wholeFallbacks.filterArgTerm("obstructer",
-                                         SetupFileInfo.FallbackSlot);
+            SetupFileInfo.filterFallbackTerm(wholeFallbacks, "obstructer") ;
     }
 
     /**

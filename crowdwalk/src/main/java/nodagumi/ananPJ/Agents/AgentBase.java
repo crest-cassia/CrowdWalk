@@ -199,7 +199,7 @@ implements Comparable<AgentBase> {
      * Conf からの値の取得(double)
      */
     public double getDoubleFromConfig(String slot, double fallback) {
-        return config.fetchArgDouble(slot, ConfigFallbackSlot, fallback) ;
+        return SetupFileInfo.fetchFallbackDouble(config, slot, fallback) ;
     }
 
     //------------------------------------------------------------
@@ -207,7 +207,7 @@ implements Comparable<AgentBase> {
      * Conf からの値の取得(double)
      */
     public double getIntFromConfig(String slot, int fallback) {
-        return config.fetchArgInt(slot, ConfigFallbackSlot, fallback) ;
+        return SetupFileInfo.fetchFallbackInt(config, slot, fallback) ;
     }
 
     //------------------------------------------------------------
@@ -215,7 +215,7 @@ implements Comparable<AgentBase> {
      * Conf からの値の取得(Term)
      */
     public Term getTermFromConfig(String slot, Term fallback) {
-        return config.fetchArgTerm(slot, ConfigFallbackSlot, fallback) ;
+        return SetupFileInfo.fetchFallbackTerm(config, slot, fallback) ;
     }
 
     //------------------------------------------------------------
@@ -223,7 +223,7 @@ implements Comparable<AgentBase> {
      * Conf からの値の取得(String)
      */
     public String getStringFromConfig(String slot, String fallback) {
-        return config.fetchArgString(slot, ConfigFallbackSlot, fallback) ;
+        return SetupFileInfo.fetchFallbackString(config, slot, fallback) ;
     }
 
     //############################################################

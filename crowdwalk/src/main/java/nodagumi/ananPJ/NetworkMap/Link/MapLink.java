@@ -123,15 +123,14 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      */
     public static void setupCommonParameters(Term wholeFallbacks) {
         fallbackParameters =
-            wholeFallbacks.filterArgTerm("link",
-                                         SetupFileInfo.FallbackSlot) ;
+            SetupFileInfo.filterFallbackTerm(wholeFallbacks,"link") ;
         speedRestrictRule =
-            fallbackParameters.fetchArgTerm("speedRestrictRule",
-                                            SetupFileInfo.FallbackSlot,
+            SetupFileInfo.fetchFallbackTerm(fallbackParameters,
+                                            "speedRestrictRule",
                                             Term.newArrayTerm()) ;
         emptySpeedRestrictRule =
-            fallbackParameters.fetchArgTerm("emptySpeedRestrictRule",
-                                            SetupFileInfo.FallbackSlot,
+            SetupFileInfo.fetchFallbackTerm(fallbackParameters,
+                                            "emptySpeedRestrictRule",
                                             Term.newArrayTerm()) ;
     } ;
 
