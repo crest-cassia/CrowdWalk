@@ -245,7 +245,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public static final Color LINK_RED = new Color(1.0f, 0.3f, 0.3f);
     public static final Color LIGHT_BLUE = new Color(0.4f, 0.4f, 1.0f);
 
-    /* Constructors */
+    //------------------------------------------------------------
+    // Constructors
+    //------------------------------------------------------------
+    /**
+     */
     public MapLink(String _id,
                    double _length, double _width) {
         super(_id);
@@ -256,6 +260,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
         selected = false;
     }
+    /**
+     */
     public MapLink(String _id, 
             MapNode _from, MapNode _to,
             double _length, double _width
@@ -264,6 +270,39 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         nodes_are_set = true;
         fromNode = _from;
         toNode = _to;
+    }
+
+    //------------------------------------------------------------
+    // accessor
+    //------------------------------------------------------------
+    /**
+     * 長さの取得
+     */
+    public double getLength() {
+        return length ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 長さの設定
+     */
+    public void setLength(double _length) {
+        length = _length ;
+    }
+    //------------------------------------------------------------
+    /**
+     * 幅の取得
+     */
+    public double getWidth() {
+        return width ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 幅の設定
+     */
+    public void setWidth(double _width) {
+        width = _width ;
     }
 
     /*public String getType() {
