@@ -188,8 +188,6 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public double width;
     protected MapNode fromNode, toNode;
 
-    static protected double MAX_INPUT = 1.47; 
-
     /* place holder for values used in simulation */
     public ArrayList<AgentBase> agents;
     private boolean nodes_are_set = false;
