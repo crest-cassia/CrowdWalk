@@ -36,3 +36,6 @@ netmas/tmp/*
 
 # vim plugin
 .vimsessions/
+
+# log files/dirs
+/crowdwalk/sample/kawaguchi-S2B/log-S2B

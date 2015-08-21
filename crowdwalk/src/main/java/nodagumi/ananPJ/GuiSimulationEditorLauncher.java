@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -487,9 +488,12 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
         try {
             networkMap = (readMapWithName(mapFileName)) ;
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, e.getStackTrace(),
-                    "ファイルを開けません",
-                    JOptionPane.ERROR_MESSAGE);
+            Itk.logError("Can't Open Map File", mapFileName) ;
+            e.printStackTrace() ;
+            JOptionPane.showMessageDialog(frame, 
+                                          ("Can't Open Map File: " + mapFileName),
+                                          "Can't Open Map File",
+                                          JOptionPane.ERROR_MESSAGE);
             return false;
         }
         if (networkMap == null) return false;
