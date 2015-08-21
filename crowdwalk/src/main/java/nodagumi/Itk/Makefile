@@ -219,6 +219,13 @@ run3gt00r ::
 run3gt00r_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00r))
 
+##-----
+SAMPLE3kw01 = sample/kawaguchi-S2B/property-S2B.xml # kawaguchi
+run3kw01 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3kw01))
+run3kw01_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3kw01))
+
 
 ##------------------------------------------------------------
 FOO = a b c

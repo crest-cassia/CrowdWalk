@@ -50,6 +50,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink.*;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
@@ -178,6 +179,16 @@ public class AgentHandler {
     /**
      */
     private boolean isAllAgentSpeedZero = false;
+
+    /**
+     * エージェントのスピードをゼロと見做す上限。
+     */
+    static private double FallBack_zeroSpeedThreshold = 0.0 ;
+
+    /**
+     * エージェントのスピードをゼロと見做す上限。
+     */
+    private double zeroSpeedThreshold = FallBack_zeroSpeedThreshold ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // ログ出力定義関連
@@ -422,6 +433,15 @@ public class AgentHandler {
         // simulatorから必須パラメータ取り出し。
         random = simulator.getRandom();
         networkMap = simulator.getMap() ;
+
+        // パラメータ設定
+        Term fallback = 
+            simulator.getFallbackParameters()
+            .filterArgTerm("agentHandler", SetupFileInfo.FallbackSlot) ;
+        zeroSpeedThreshold =
+            fallback.fetchArgDouble("zeroSpeedThreshold",
+                                    SetupFileInfo.FallbackSlot,
+                                    zeroSpeedThreshold) ;
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -669,7 +689,7 @@ public class AgentHandler {
                 } else { // まだ歩いている場合。
                     ++count;
                     speedTotal += agent.getSpeed();
-                    isAllAgentSpeedZero &= (agent.getSpeed() == 0.0) ;
+                    isAllAgentSpeedZero &= (agent.getSpeed() <= zeroSpeedThreshold) ;
                 }
                 logIndividualPedestrians(currentTime, agent);
             }

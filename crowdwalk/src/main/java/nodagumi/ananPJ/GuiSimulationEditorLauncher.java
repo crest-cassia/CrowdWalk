@@ -479,13 +479,13 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
     }
 
     private boolean openMapWithName() {
-        if (getNetworkMapFile() == null)
+        String mapFileName = getNetworkMapFile();
+        if (mapFileName == null)
             return false;
-        String tmp = getNetworkMapFile();
         clearAll();
-        super.setNetworkMapFile(tmp); // 無限再帰を避けるために、super を呼ぶ。
+        super.setNetworkMapFile(mapFileName); // 無限再帰を避けるために、super を呼ぶ。
         try {
-            networkMap = (readMapWithName(getNetworkMapFile())) ;
+            networkMap = (readMapWithName(mapFileName)) ;
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, e.getStackTrace(),
                     "ファイルを開けません",
