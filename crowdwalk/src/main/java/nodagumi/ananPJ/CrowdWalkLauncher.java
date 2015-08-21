@@ -22,14 +22,21 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-h] [-l <LEVEL>] [-t <FILE>] [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-g] [-h] [-l <LEVEL>] [-t <FILE>] [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
+    public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
+
+    /**
+     * GUI の設定情報
+     */
+    private static Settings settings = null;
 
     /**
      * コマンドラインオプションの定義
      */
     public static void defineOptions(Options options) {
-        options.addOption("c", "cui", false, "CUI モードで実行する\nproperties-file の指定が必須");
+        options.addOption("c", "cui", false, "CUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
+        options.addOption("g", "gui", false, "GUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
         options.addOption("h", "help", false, "この使い方を表示して終了する");
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
@@ -71,7 +78,7 @@ public class CrowdWalkLauncher {
                 setLogLevel(commandLine.getOptionValue("log-level"));
             }
 
-            // CUI モードまたはGUIモード(マップエディタ)で実行
+            // CUI モードの実行
             if (commandLine.hasOption("cui")) {
                 if (propertiesFilePath == null) {
                     printHelp(options);
@@ -83,7 +90,17 @@ public class CrowdWalkLauncher {
                     String tickFilePath = commandLine.getOptionValue("tick");
                     saveTick(tickFilePath, launcher.simulator.currentTime);
                 }
-            } else {
+            }
+            // GUI モードの実行
+            else if (commandLine.hasOption("gui")) {
+                if (propertiesFilePath == null) {
+                    printHelp(options);
+                    System.exit(1);
+                }
+                launchGuiSimulator(propertiesFilePath);
+            }
+            // マップエディタの実行
+            else {
                 launchGuiSimulationEditorLauncher(propertiesFilePath);
             }
         } catch (ParseException e) {
@@ -111,31 +128,47 @@ public class CrowdWalkLauncher {
     }
 
     /**
-     * CUI シミュレータを開始する
+     * CUI シミュレータを実行する
      */
     public static CuiSimulationLauncher
-        launchCuiSimulator(String propertiesFilePath) 
+        launchCuiSimulator(String propertiesFilePath)
     {
-        CuiSimulationLauncher simulator =
+        CuiSimulationLauncher launcher =
             new CuiSimulationLauncher(propertiesFilePath);
-        simulator.initialize();
-        simulator.start();
-        return simulator;
+        launcher.initialize();
+        launcher.start();
+        return launcher;
     }
 
     /**
-     * マップエディタを開始する
+     * GUI シミュレータを実行する
+     */
+    public static GuiSimulationLauncher
+        launchGuiSimulator(String propertiesFilePath)
+    {
+        settings = Settings.load(SETTINGS_FILE_NAME);
+        GuiSimulationLauncher launcher =
+            new GuiSimulationLauncher(propertiesFilePath, settings);
+        launcher.simulate();
+        return launcher;
+    }
+
+    /**
+     * マップエディタを実行する
      */
     public static GuiSimulationEditorLauncher
         launchGuiSimulationEditorLauncher(String propertiesFilePath)
         throws Exception
     {
         Random random = new Random();
+        settings = Settings.load(SETTINGS_FILE_NAME);
         GuiSimulationEditorLauncher mapEditor
-            = new GuiSimulationEditorLauncher(random);
+            = new GuiSimulationEditorLauncher(random, settings);
         if (propertiesFilePath != null) {
             mapEditor.setPropertiesFromFile(propertiesFilePath);
+            mapEditor.setPropertiesForDisplay();
         }
+        mapEditor.updateAll();
         mapEditor.setVisible(true);
         return mapEditor;
     }
@@ -167,5 +200,14 @@ public class CrowdWalkLauncher {
         Options options = new Options();
         defineOptions(options);
         parseCommandLine(args, options);
+
+        // Settings の保存
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                if (settings != null) {
+                    Settings.save();
+                }
+            }
+        });
     }
 }

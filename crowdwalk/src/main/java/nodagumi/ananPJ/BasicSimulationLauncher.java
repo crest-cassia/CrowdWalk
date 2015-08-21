@@ -33,7 +33,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * 設定ファイルの取りまとめ。
      */
-    private SetupFileInfo setupFileInfo = new SetupFileInfo();
+    protected SetupFileInfo setupFileInfo = new SetupFileInfo();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**

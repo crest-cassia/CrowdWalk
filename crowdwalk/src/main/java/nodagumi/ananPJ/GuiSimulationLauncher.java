@@ -2,20 +2,23 @@
 package nodagumi.ananPJ;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.WindowAdapter;
 import java.awt.Insets;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -23,6 +26,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
@@ -42,6 +47,7 @@ import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.FilePathManipulation;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
@@ -50,14 +56,106 @@ import nodagumi.Itk.*;
 public class GuiSimulationLauncher extends BasicSimulationLauncher
     implements SimulationController {
 
-    protected transient Settings settings;
+    /**
+     * GUI の設定情報
+     */
+    private Settings settings;
 
-    /* the constructor without arguments are for to be used as
-     *  a base class for classes launching simulations */
-    public GuiSimulationLauncher(Random _random) {
-        super(_random) ;
-        networkMap = new NetworkMap() ;
-        settings = Settings.load("GuiSimulationLauncher.ini");
+    /**
+     * ウィンドウクローズと共にアプリケーションを終了するか?
+     */
+    private boolean exitOnClose = false;
+
+    /**
+     * Properties
+     */
+    public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
+    public static final String[] IMAGE_TYPES = {"bmp", "gif", "jpg", "png"};
+    private int deferFactor = 0;
+    private double verticalScale = 1.0;
+    private double agentSize = 1.0;
+    private String cameraFile = null;
+    private double zoom = 1.0;
+    private boolean recordSimulationScreen = false;
+    private String screenshotDir = "screenshots";
+    private boolean clearScreenshotDir = false;
+    private String screenshotImageType = "png";
+    private boolean simulationWindowOpen = false;
+    private boolean autoSimulationStart = false;
+    private boolean hideLinks = false;
+    private boolean densityMode = false;
+    private boolean changeAgentColorDependingOnSpeed = true;
+    private boolean showStatus = false;
+    private String showStatusPosition = "top";
+    private boolean showLogo = false;
+    private boolean show3dPolygon = true;
+
+    /**
+     * 画面パーツ類。
+     */
+    private transient JButton start_button = null;
+    private transient JButton pause_button = null;
+    private transient JButton step_button = null;
+
+    private transient JScrollBar simulationDeferFactorControl;
+    private transient JLabel simulationDeferFactorValue;
+
+    private transient JPanel control_panel = null;
+    private transient JLabel clock_label = new JLabel("NOT STARTED1");
+    private transient JLabel time_label = new JLabel("NOT STARTED2");
+    private transient JLabel evacuatedCount_label = new JLabel("NOT STARTED3");
+    private ArrayList<ButtonGroup> toggle_scenario_button_groups = new
+        ArrayList<ButtonGroup>();
+    private transient JTextArea message = new JTextArea("UNMaps Version 1.9.5\n") {
+        @Override
+        public void append(String str) {
+            super.append(str);
+            message.setCaretPosition(message.getDocument().getLength());
+        }
+    };
+
+    /**
+     * アプリ起動時にシミュレーションを開始する時に用いるコンストラクタ.
+     */
+    public GuiSimulationLauncher(String _propertiesPath, Settings _settings) {
+        super(null) ;
+        // load properties
+        setPropertiesFromFile(_propertiesPath);
+        setPropertiesForDisplay();
+
+        // check property options
+        if (getNetworkMapFile() == null) {
+            System.err.println("GuiSimulationLauncher: map file is " +
+                    "required.");
+            return;
+        } else if (!((File) new File(getNetworkMapFile())).exists()) {
+            System.err.println("GuiSimulationLauncher: specified map file does " +
+                    "not exist.");
+            return;
+        }
+        try {
+            networkMap = readMapWithName(getNetworkMapFile()) ;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        settings = _settings;
+        exitOnClose = true;
+    }
+
+    /**
+     * マップエディタからシミュレーションを開始する時に用いるコンストラクタ.
+     */
+    public GuiSimulationLauncher(String _propertiesPath, SetupFileInfo _setupFileInfo,
+            NetworkMap _networkMap, Settings _settings) {
+        super(null) ;
+        // load properties
+        setPropertiesFromFile(_propertiesPath);
+        setPropertiesForDisplay();
+
+        setupFileInfo = _setupFileInfo;
+        networkMap = _networkMap;
+        settings = _settings;
     }
 
     private transient Runnable simulationRunnable = null;
@@ -72,8 +170,12 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
             return;
         }
 
+        System.gc();
+
         // シミュレータの実体の初期化
         initializeSimulatorEntity() ;
+
+        System.gc();
 
         // メインループの Runnable 作成。
         simulationRunnable = new Runnable() {
@@ -86,22 +188,18 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         };
     }
 
-
     private void quit() {
-        settings.put("launcher_width", simulation_frame.getWidth());
-        settings.put("launcher_height", simulation_frame.getHeight());
-        if (panel != null) {
-            settings.put("3dpanel_width", panel.getWidth());
-            settings.put("3dpanel_height", panel.getHeight());
+        Itk.logInfo("Simulation window closed.") ;
+        // TODO: 
+        // settings.put("launcher_width", simulation_frame.getWidth());
+        // settings.put("launcher_height", simulation_frame.getHeight());
+        // if (panel != null) {
+        //     settings.put("3dpanel_width", panel.getWidth());
+        //     settings.put("3dpanel_height", panel.getHeight());
+        // }
+        if (exitOnClose) {
+            System.exit(0);
         }
-        Settings.save();
-        simulation_frame.dispose();
-
-        System.exit(0);
-    }
-
-    public void windowClosing(WindowEvent e) {
-        quit();
     }
 
     @Override
@@ -149,10 +247,12 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
             public void windowDeiconified(WindowEvent e) {          }
             public void windowDeactivated(WindowEvent e) {          }
             public void windowClosing(WindowEvent e) {
-                finished = true;
+                simulation_frame.dispose();
             }
             public void windowActivated(WindowEvent e) {            }
-            public void windowClosed(WindowEvent e) {           }
+            public void windowClosed(WindowEvent e) {
+                quit();
+            }
         });
 
         setup_control_panel(getGenerationFile(), getScenarioFile(), networkMap);
@@ -175,15 +275,6 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         simulation_frame.pack();
         simulation_frame.setVisible(true);
         return panel;
-    }
-
-    public void simulationWindowOpenedOperation(SimulationPanel3D panel, 
-						final EvacuationSimulator simulator) {
-        // GuiSimulationEditorLauncher で定義する
-    }
-
-    public void initSimulationPanel3D(SimulationPanel3D panel) {
-        // GuiSimulationEditorLauncher で定義する
     }
 
     //------------------------------------------------------------
@@ -210,34 +301,9 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         addJLabel(panel, x, y, width, height, GridBagConstraints.WEST, label);
     }
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 画面パーツ類。
-     */
-    private transient JButton start_button = null;
-    private transient JButton pause_button = null;
-    private transient JButton step_button = null;
-
-    private transient JScrollBar simulationDeferFactorControl;
-    private transient JLabel simulationDeferFactorValue;
-
-    private transient JPanel control_panel = null;
-    private transient JLabel clock_label = new JLabel("NOT STARTED1");
-    private transient JLabel time_label = new JLabel("NOT STARTED2");
-    private transient JLabel evacuatedCount_label = new JLabel("NOT STARTED3");
-    private ArrayList<ButtonGroup> toggle_scenario_button_groups = new
-        ArrayList<ButtonGroup>();
-    private transient JTextArea message = new JTextArea("UNMaps Version 1.9.5\n") {
-        @Override
-        public void append(String str) {
-            super.append(str);
-            message.setCaretPosition(message.getDocument().getLength());
-        }
-    };
-
     //------------------------------------------------------------
     /**
-     * 制御パネルの準備
+     * シミュレーションウィンドウの Control タブの準備
      */
     private void setup_control_panel(String generationFileName,
                                      String scenarioFileName,
@@ -513,5 +579,256 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         }
         evacuatedCount_label.setText(evacuatedCount_string);
         SimulationPanel3D.updateEvacuatedCount(evacuatedCount_string);
+    }
+
+    // シミュレーションウィンドウが最初に表示された時に呼び出される
+    public void simulationWindowOpenedOperation(SimulationPanel3D panel, final EvacuationSimulator simulator) {
+        // プロパティファイルに設定された情報に従ってシミュレーションウィンドウの各コントロールの初期設定をおこなう
+        if (properties == null) {
+            return;
+        }
+        boolean successful = true;
+        if (properties.isDefined("defer_factor")) {
+            setSimulationDeferFactor(deferFactor);
+        }
+        if (cameraFile != null) {
+            if (panel.loadCameraworkFromFile(cameraFile)) {
+                panel.setReplay(true);
+            } else {
+                System.err.println("Camera file の読み込みに失敗しました: " + cameraFile);
+                successful = false;
+            }
+        }
+        if (properties.isDefined("vertical_scale")) {
+            panel.setVerticalScale(verticalScale);
+        }
+        if (properties.isDefined("record_simulation_screen")) {
+            if (recordSimulationScreen != panel.getRecordSnapshots().isSelected()) {
+                panel.getRecordSnapshots().doClick();
+            }
+        }
+        if (properties.isDefined("screenshot_dir")) {
+            panel.setScreenshotDir(screenshotDir);
+        }
+        if (properties.isDefined("clear_screenshot_dir")) {
+            if (recordSimulationScreen && clearScreenshotDir) {
+                FilePathManipulation.deleteFiles(screenshotDir, imageFileFilter);
+            }
+        }
+        if (properties.isDefined("screenshot_image_type")) {
+            panel.setScreenshotImageType(screenshotImageType);
+        }
+        if (properties.isDefined("hide_links")) {
+            if (hideLinks != panel.getHideNormalLink().isSelected()) {
+                panel.getHideNormalLink().doClick();
+            }
+        }
+        if (properties.isDefined("density_mode")) {
+            if (densityMode != panel.getDensityMode().isSelected()) {
+                panel.getDensityMode().doClick();
+            }
+        }
+        if (properties.isDefined("change_agent_color_depending_on_speed")) {
+            if (changeAgentColorDependingOnSpeed != panel.getChangeAgentColorDependingOnSpeed().isSelected()) {
+                panel.getChangeAgentColorDependingOnSpeed().doClick();
+            }
+        }
+        if (properties.isDefined("show_status")) {
+            if (showStatus != panel.getShowStatus().isSelected()) {
+                panel.getShowStatus().doClick();
+            }
+            if (showStatusPosition.equals("top") && panel.getBottom().isSelected()) {
+                panel.getTop().doClick();
+            }
+            if (showStatusPosition.equals("bottom") && panel.getTop().isSelected()) {
+                panel.getBottom().doClick();
+            }
+        }
+        if (properties.isDefined("show_logo")) {
+            if (showLogo != panel.getShowLogo().isSelected()) {
+                panel.getShowLogo().doClick();
+            }
+        }
+        if (properties.isDefined("show_3D_polygon")) {
+            if (show3dPolygon != panel.getShow3dPolygon().isSelected()) {
+                panel.getShow3dPolygon().doClick();
+            }
+        }
+        if (properties.isDefined("auto_simulation_start")) {
+            if (successful && autoSimulationStart) {
+                // ※スクリーンショットの1枚目が真っ黒になるのを防ぐため
+                Thread thread = new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            // シミュレーション画面が表示されるのを待つ
+                            Thread.sleep(1000);
+                        } catch(InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                Itk.logInfo("auto simulation start");
+                                getStartButton().doClick();
+                            }
+                        });
+                    }
+                });
+                thread.start();
+            }
+        }
+    }
+
+    // SimulationPanel3D を生成した直後に呼び出される(simulationWindowOpenedOperation ではうまく対処できない分の処理)
+    public void initSimulationPanel3D(SimulationPanel3D panel) {
+        if (properties == null) {
+            return;
+        }
+        if (properties.isDefined("agent_size")) {
+            panel.setAgentSize(agentSize);
+        }
+        if (properties.isDefined("zoom")) {
+            panel.setScaleOnReplay(zoom);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 画面出力用properties設定
+     */
+    private void setPropertiesForDisplay() {
+        try {
+            deferFactor = properties.getInteger("defer_factor", deferFactor);
+            if (deferFactor < 0 || deferFactor > 299) {
+                throw new Exception("Property error - 設定値が範囲(0～299)外です: defer_factor:" + deferFactor);
+            }
+            verticalScale = properties.getDouble("vertical_scale", verticalScale);
+            if (verticalScale < 0.1 || verticalScale > 49.9) {
+                throw new Exception("Property error - 設定値が範囲(0.1～49.9)外です: vertical_scale:" + verticalScale);
+            }
+            agentSize = properties.getDouble("agent_size", agentSize);
+            if (agentSize < 0.1 || agentSize > 9.9) {
+                throw new Exception("Property error - 設定値が範囲(0.1～9.9)外です: agent_size:" + agentSize);
+            }
+            zoom = properties.getDouble("zoom", zoom);
+            if (zoom < 0.0 || zoom > 9.9) {
+                throw new Exception("Property error - 設定値が範囲(0.0～9.9)外です: zoom:" + zoom);
+            }
+            cameraFile = properties.getFilePath("camera_file", null);
+            recordSimulationScreen = properties.getBoolean("record_simulation_screen", recordSimulationScreen);
+            screenshotDir = properties.getDirectoryPath("screenshot_dir", screenshotDir).replaceFirst("[/\\\\]+$", "");
+            clearScreenshotDir = properties.getBoolean("clear_screenshot_dir", clearScreenshotDir);
+            if (clearScreenshotDir && ! properties.isDefined("screenshot_dir")) {
+                throw new Exception("Property error - clear_screenshot_dir を有効にするためには screenshot_dir の設定が必要です。");
+            }
+            if (recordSimulationScreen && ! clearScreenshotDir && new File(screenshotDir).list(imageFileFilter).length > 0) {
+                throw new Exception("Property error - スクリーンショットディレクトリに画像ファイルが残っています: screenshot_dir:" + screenshotDir);
+            }
+            screenshotImageType = properties.getString("screenshot_image_type", screenshotImageType, IMAGE_TYPES);
+            hideLinks = properties.getBoolean("hide_links", hideLinks);
+            densityMode = properties.getBoolean("density_mode", densityMode);
+            changeAgentColorDependingOnSpeed =
+                properties.getBoolean("change_agent_color_depending_on_speed", changeAgentColorDependingOnSpeed);
+            String show_status = properties.getString("show_status", "none", SHOW_STATUS_VALUES);
+            if (show_status.equals("none")) {
+                showStatus = false;
+            } else {
+                showStatus = true;
+                showStatusPosition = show_status;
+            }
+            showLogo = properties.getBoolean("show_logo", showLogo);
+            show3dPolygon = properties.getBoolean("show_3D_polygon", show3dPolygon);
+            simulationWindowOpen = properties.getBoolean("simulation_window_open", simulationWindowOpen);
+            autoSimulationStart = properties.getBoolean("auto_simulation_start", autoSimulationStart);
+        } catch(Exception e) {
+            //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    // 画像ファイルか?
+    private FilenameFilter imageFileFilter = new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+            for (String suffix : IMAGE_TYPES) {
+                if (name.endsWith("." + suffix)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
+
+    /**
+     * simulator.begin() をバックグラウンドで実行するためのモーダルダイアログ
+     */
+    private class WaitDialog extends JDialog {
+        public boolean canceled = false;
+
+        public WaitDialog(Frame owner, String title, String message, final Thread thread) {
+            super(owner, title, true);
+
+            JPanel panel = new JPanel(new FlowLayout());
+            final JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    cancelButton.setEnabled(false);
+                    canceled = true;
+                    threadCancel(thread);
+                }
+            });
+            panel.add(cancelButton);
+
+            Container c = getContentPane();
+            c.add(new JLabel(message), BorderLayout.CENTER);
+            c.add(panel, BorderLayout.PAGE_END);
+
+            setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+                public void windowOpened(WindowEvent e) {
+                    thread.start();
+                }
+
+                public void windowClosing(WindowEvent e) {
+                    if (canceled) {
+                        return;
+                    }
+                    canceled = true;
+                    cancelButton.setEnabled(false);
+                    threadCancel(thread);
+                }
+            });
+
+            setSize(300, 128);
+            setLocationRelativeTo(owner);
+        }
+
+        public void threadCancel(Thread thread) {
+            // ※ビルドの中断機能は未実装のため、現状では処理終了を待つだけ
+            try {
+                thread.join();
+            } catch(InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private WaitDialog waitDialog;
+
+    public boolean buildModel() {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                simulator.begin() ;
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        // ここでダイアログを閉じる
+                        waitDialog.setVisible(false);
+                        waitDialog.dispose();
+                    }
+                });
+            }
+        });
+        waitDialog = new WaitDialog(simulation_frame, "Information", " Simulation model building...", thread);
+        waitDialog.setVisible(true);
+        return ! waitDialog.canceled;
     }
 }

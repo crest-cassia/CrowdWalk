@@ -594,7 +594,6 @@ public class EditorFrame
 
         if (fd.getFile() == null) return false;
 
-        editor.setDirName(fd.getDirectory());
         current_group.setImageFileName(fd.getFile());
         return readBackgroundWithName();
     }
@@ -690,7 +689,7 @@ public class EditorFrame
         Point2D p = panel.revCalcPos(e.getX(), e.getY());
         editor.getMap().createMapNode(current_group,
                 p, getDefaultHeight());
-        editor._setModified(true);
+        editor.setModified(true);
         editor.getNodePanel().refresh();
         clearSelection();
     }
@@ -918,7 +917,7 @@ public class EditorFrame
             
             clearSelection();
             link.selected =true;
-            editor._setModified(true);
+            editor.setModified(true);
             editor.getLinkPanel().refresh();
         }
     }
@@ -1049,7 +1048,7 @@ public class EditorFrame
                     initialNode = editor.getMap().createMapNode(current_group,
                             p, getDefaultHeight());
                     prevNode = initialNode;
-                    editor._setModified(true);
+                    editor.setModified(true);
                     editor.getNodePanel().refresh();
                     clearSelection();
                     panel.repaint();
@@ -1105,7 +1104,7 @@ public class EditorFrame
                         prevNode = node;
                         clearSelection();
                     }
-                    editor._setModified(true);
+                    editor.setModified(true);
                     editor.getNodePanel().refresh();
                     editor.getLinkPanel().refresh();
                     panel.repaint();
@@ -1173,7 +1172,7 @@ public class EditorFrame
             }
         }
         updateMapAreaTag();
-        editor._setModified(true);
+        editor.setModified(true);
         editor.getAreaPanel().refresh();
         clearSelection();
         panel.repaint();
@@ -1403,7 +1402,7 @@ public class EditorFrame
      */
     private void setOneWayLinks() {
         panel.updateHoverLink(null);
-        editor._setModified(true);
+        editor.setModified(true);
 
         MapLinkTable seriesLinks = null;
         MapNode firstNode = null;
@@ -1466,7 +1465,7 @@ public class EditorFrame
 
     private void setRoadClosedLinks() {
         panel.updateHoverLink(null);
-        editor._setModified(true);
+        editor.setModified(true);
         for (MapLink link : getChildLinks()) {
             if (link.selected) {
                 link.setRoadClosed() ;
@@ -1488,7 +1487,7 @@ public class EditorFrame
 
     private void removeSelectedNodes() {
         panel.updateHoverNode(null);
-        editor._setModified(true);
+        editor.setModified(true);
         MapNodeTable nodesToRemove = new MapNodeTable();
         for (final MapNode node : getChildNodes()) {
             if (node.selected) nodesToRemove.add(node);
@@ -1513,7 +1512,7 @@ public class EditorFrame
     
     private void removeSelectedLinks() {
         panel.updateHoverLink(null);
-        editor._setModified(true);
+        editor.setModified(true);
         MapLinkTable linksToRemove = new MapLinkTable();
         for (final MapLink link : getChildLinks()) {
             if (link.selected) {
@@ -1531,7 +1530,7 @@ public class EditorFrame
     
     private void removeSelectedOneWayTag() {
         panel.updateHoverLink(null);
-        editor._setModified(true);
+        editor.setModified(true);
         for (MapLink link : getChildLinks()) {
                 if (link.selected) {
                     link.setOneWayForward(false) ;
@@ -1544,7 +1543,7 @@ public class EditorFrame
     }
 
     private void removeSelectedArea() {
-        editor._setModified(true);
+        editor.setModified(true);
         ArrayList<MapArea> areasToRemove = new ArrayList<MapArea>();
         for (final MapArea area : getChildMapAreas()) {
             if (area.selected) {
@@ -2229,7 +2228,7 @@ public class EditorFrame
         else if (e.getActionCommand () == "Close") setVisible(false);
 
         else if (e.getActionCommand() == "Align Nodes Horizontally") {
-            editor._setModified(true);
+            editor.setModified(true);
             for (MapNode node : getChildNodes()) {
                 if (node.selected && node != currentNode) {
                     node.setAbsoluteCoordinates(new Point2D.Double(node.getLocalX(), currentNode.getLocalY()));
@@ -2240,7 +2239,7 @@ public class EditorFrame
             repaint();
         }
         else if (e.getActionCommand () == "Align Nodes Vertically") {
-            editor._setModified(true);
+            editor.setModified(true);
             for (MapNode node : getChildNodes()) {
                 if (node.selected && node != currentNode) {
                     node.setAbsoluteCoordinates(new Point2D.Double(currentNode.getLocalX(), node.getLocalY()));
@@ -2583,7 +2582,7 @@ public class EditorFrame
             hoverNode.setPos(panel.revCalcPos(e.getX(), e.getY()));
             selectedNode.setAbsoluteCoordinates(panel.revCalcPos(e.getX(), e.getY()));
             panel.updateHoverNode(hoverNode);
-            editor._setModified(true);
+            editor.setModified(true);
             editor.getNodePanel().refresh();
         } else if (areaSelection &&
                 ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK)
