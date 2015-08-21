@@ -150,12 +150,12 @@ public class EvacuationSimulator {
     /**
      * CrowdWalk を起動するスクリプトの場所からの相対パス。
      */
-    static public String FallBack_rubyLibDir = "./src/main/ruby" ;
+    static public String Fallback_rubyLibDir = "./src/main/ruby" ;
 
     /**
      * ruby の初期設定ファイル。
      */
-    static public String FallBack_rubyInitFile = "initForCrowdWalk.rb" ;
+    static public String Fallback_rubyInitFile = "initForCrowdWalk.rb" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -171,12 +171,12 @@ public class EvacuationSimulator {
     /**
      * ruby 用 ライブラリへのパス。
      */
-    private String rubyLibDir = FallBack_rubyLibDir ;
+    private String rubyLibDir = Fallback_rubyLibDir ;
 
     /**
      * ruby 初期化ファイル。
      */
-    private String rubyInitFile = FallBack_rubyInitFile ;
+    private String rubyInitFile = Fallback_rubyInitFile ;
 
     /**
      * ruby 用 simulation wrapper クラス名。

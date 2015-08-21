@@ -64,13 +64,13 @@ public class CapriciousAgent extends NaiveAgent {
     /**
      * 気まぐれ度合い（cost への random の度合い）の規定値
      */
-    static final public double FallBack_CapriciousMargin = 200.0 ;
+    static final public double Fallback_CapriciousMargin = 200.0 ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 気まぐれ度合い（cost への random の度合い）
      */
-    public double capriciousMargin = FallBack_CapriciousMargin ;
+    public double capriciousMargin = Fallback_CapriciousMargin ;
 
     //------------------------------------------------------------
     /**

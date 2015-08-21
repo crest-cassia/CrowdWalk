@@ -183,12 +183,12 @@ public class AgentHandler {
     /**
      * エージェントのスピードをゼロと見做す上限。
      */
-    static private double FallBack_zeroSpeedThreshold = 0.0 ;
+    static private double Fallback_zeroSpeedThreshold = 0.0 ;
 
     /**
      * エージェントのスピードをゼロと見做す上限。
      */
-    private double zeroSpeedThreshold = FallBack_zeroSpeedThreshold ;
+    private double zeroSpeedThreshold = Fallback_zeroSpeedThreshold ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // ログ出力定義関連
