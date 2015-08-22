@@ -185,7 +185,8 @@ public class SetupFileInfo {
      * fallback （デフォルトセッティング）の読み込み
      * @param scanResourceP : resource の fallback も読み込むかどうか
      */
-    public void scanFallbackFile(boolean scanResourceP) {
+    public void scanFallbackFile(ArrayList<String> commandLineFallbacks,
+                                 boolean scanResourceP) {
         if(fallbackFile != null) {
             try {
                 BufferedReader buffer =
@@ -216,6 +217,18 @@ public class SetupFileInfo {
                 Itk.logError_("Exception",ex) ;
             }
         }
+
+        // コマンドラインで指定した fallback を先頭に追加していく。
+        // コマンドラインでは、後から追加したものほど優先。
+        if(commandLineFallbacks != null) {
+            for(String fallbackString : commandLineFallbacks) {
+                Term newFallback =
+                    Term.newByScannedJson(JSON.decode(fallbackString), true) ;
+                attachFallback(newFallback, fallbackParameters) ;
+                fallbackParameters = newFallback ;
+            }
+        }
+
     }
 
     //============================================================

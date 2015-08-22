@@ -30,10 +30,11 @@ public class CuiSimulationLauncher extends BasicSimulationLauncher {
     /**
      * constructor
      */
-    public CuiSimulationLauncher(String _propertiesPath) {
+    public CuiSimulationLauncher(String _propertiesPath,
+                                 ArrayList<String> commandLineFallbacks) {
         super(null) ;
         // load properties
-        setPropertiesFromFile(_propertiesPath) ;
+        setPropertiesFromFile(_propertiesPath, commandLineFallbacks) ;
 
         if(!setupNetworkMap()) {
             Itk.logFatal("can not read map file.") ;

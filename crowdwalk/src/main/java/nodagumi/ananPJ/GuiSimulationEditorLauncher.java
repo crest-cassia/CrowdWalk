@@ -976,8 +976,10 @@ public class GuiSimulationEditorLauncher extends GuiSimulationLauncher
     }
 
     @Override
-    public void setPropertiesFromFile(String _propertiesFile) {
-        super.setPropertiesFromFile(_propertiesFile) ;
+    public void setPropertiesFromFile(String _propertiesFile,
+                                      ArrayList<String> commandLineFallbacks) {
+        super.setPropertiesFromFile(_propertiesFile,
+                                    commandLineFallbacks) ;
 
         setPropertiesForDisplay() ;
     }

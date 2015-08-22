@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Random;
+import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -228,9 +229,10 @@ public abstract class BasicSimulationLauncher {
     /**
      *
      */
-    public void setFallbackFile(String _fallbackFile) {
+    public void setFallbackFile(String _fallbackFile,
+                                ArrayList<String> commandLineFallbacks) {
         setupFileInfo.setFallbackFile(_fallbackFile) ;
-        setupFileInfo.scanFallbackFile(true) ;
+        setupFileInfo.scanFallbackFile(commandLineFallbacks, true) ;
     }
 
     /**
@@ -278,7 +280,8 @@ public abstract class BasicSimulationLauncher {
     /**
      * ファイルからプロパティの読み込み。
      */
-    public void setPropertiesFromFile(String _propertiesFile) {
+    public void setPropertiesFromFile(String _propertiesFile,
+                                      ArrayList<String> commandLineFallbacks) {
         properties = new CrowdWalkPropertiesHandler(_propertiesFile);
 
         // random
@@ -288,7 +291,8 @@ public abstract class BasicSimulationLauncher {
         setPollutionFile(properties.getPollutionFile());
         setGenerationFile(properties.getGenerationFile());
         setScenarioFile(properties.getScenarioFile());
-        setFallbackFile(properties.getFallbackFile()) ;
+        setFallbackFile(properties.getFallbackFile(),
+                        commandLineFallbacks) ;
         // ending condition
         setExitCount(properties.getExitCount()) ;
         setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());

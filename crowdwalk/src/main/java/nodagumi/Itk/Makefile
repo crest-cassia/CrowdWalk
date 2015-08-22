@@ -218,6 +218,8 @@ run3gt00r ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r))
 run3gt00r_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00r))
+run3gt00r_fb ::
+	(cd $(BASEDIR) ; bash quickstart.sh --fallback '{"aho":1.0}' --fallback '{"link":{"gathering_location_width":12.345}}' $(SAMPLE3gt00r))
 
 ##-----
 SAMPLE3kw01 = sample/kawaguchi-S2B/property-S2B.xml # kawaguchi
