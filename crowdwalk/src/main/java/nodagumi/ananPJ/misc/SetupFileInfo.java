@@ -63,7 +63,7 @@ public class SetupFileInfo {
     /**
      * fallback parameter slot name
      */
-    static public final String FallbackSlot = "_fallback" ;
+    static private final String FallbackSlot = "_fallback" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -209,7 +209,7 @@ public class SetupFileInfo {
                     getClass().getResourceAsStream(FallbackResource) ;
                 Term finalFallback =
                     Term.newByScannedJson(JSON.decode(istrm),true) ;
-                fallbackParameters.setArg(FallbackSlot, finalFallback) ;
+                attachFallback(fallbackParameters, finalFallback) ;
             } catch (Exception ex) {
                 ex.printStackTrace() ;
                 Itk.logError("Can not scan a fallback resource file.") ;
@@ -295,6 +295,19 @@ public class SetupFileInfo {
                                                boolean finalFallbackValue) {
         return fallbacks.fetchArgBoolean(tag, FallbackSlot, finalFallbackValue) ;
     }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * パラメータ設定に fallback を追加する。
+     * @param params : もとになる parameter 設定用 Term
+     * @param fallback : params の後に追加する fallback
+     */
+    static public Term attachFallback(Term params, Term fallback) {
+        params.setArg(FallbackSlot, fallback) ;
+        return params ;
+    }
+
 }
 //;;; Local Variables:
 //;;; mode:java

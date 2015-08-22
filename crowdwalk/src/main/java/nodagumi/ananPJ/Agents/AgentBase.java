@@ -46,12 +46,6 @@ implements Comparable<AgentBase> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * Agent の詳細設定情報を格納しているもの
-     */
-    static public final String ConfigFallbackSlot = SetupFileInfo.FallbackSlot ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * generatedTime: 生成された時刻
      * finishedTime: ゴールに到達した時刻
      * evacuated: ゴールに到達したかどうかのフラグ
@@ -190,7 +184,7 @@ implements Comparable<AgentBase> {
             config = new Term() ;
         }
         if(fallback != null) {
-            config.setArg(ConfigFallbackSlot, fallback) ;
+            SetupFileInfo.attachFallback(config, fallback) ;
         }
     } ;
 
