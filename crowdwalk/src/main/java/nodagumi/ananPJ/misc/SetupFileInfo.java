@@ -61,19 +61,20 @@ public class SetupFileInfo {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * fallback parameter slot name
+     * fallback parameter slot name.
      */
     static private final String FallbackSlot = "_fallback" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * fallback parameter resource name
+     * resource 中の fallback parameter を収めた JSON ファイル。
+     * @see
      */
     static public final String FallbackResource = "/fallbackParameters.json" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * fallback parameter
+     * fallback parameter 格納用変数。
      */
     public Term fallbackParameters = null ;
 
@@ -236,6 +237,35 @@ public class SetupFileInfo {
     //============================================================
     //------------------------------------------------------------
     /**
+     * パラメータ設定に fallback を追加する。
+     * 内部的には、fallback は、以下のように格納される。
+     * {@code params} の内容が {@literal { "foo" : { "bar" : 1 }, "baz" : 2}}
+     * {@code fallback} の内容が {@literal { "foo" : { "bar2" : 2}}}
+     * の場合、{@code attachFallback} された結果は、
+     * {@literal { "foo" : { "bar" : 1 }, "baz" : 2, "_fallback" : { "foo" : { "bar2" : 2}}}} となる。
+     * <br>
+     * 最終的に、fallback 情報は、以下の形式となる。
+     * <pre>
+     * {@literal
+     * { ...<コマンドラインの--fallbackで指定したJSON>... ,
+     *   "_fallback" : { ...<propertiesの"fallback_file"で指定したファイルのJSON>...,
+           "_fallback" : { ..."src/main/resources/fallbackParameters.json"のJSON>...}
+         }
+     * }
+     * }
+     * </pre>
+     * @see {@link nodagumi.ananPJ.package-info#fallback}
+     * @param params : もとになる parameter 設定用 Term
+     * @param fallback : params の後に追加する fallback
+     */
+    static public Term attachFallback(Term params, Term fallback) {
+        params.setArg(FallbackSlot, fallback) ;
+        return params ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
      * fallback のフィルタリング
      * @param fallbacks : filter する fallback
      * @param tag : fallbacks の中から、tag をたどって filter する。
@@ -307,18 +337,6 @@ public class SetupFileInfo {
     static public boolean fetchFallbackBoolean(Term fallbacks, String tag,
                                                boolean finalFallbackValue) {
         return fallbacks.fetchArgBoolean(tag, FallbackSlot, finalFallbackValue) ;
-    }
-
-    //============================================================
-    //------------------------------------------------------------
-    /**
-     * パラメータ設定に fallback を追加する。
-     * @param params : もとになる parameter 設定用 Term
-     * @param fallback : params の後に追加する fallback
-     */
-    static public Term attachFallback(Term params, Term fallback) {
-        params.setArg(FallbackSlot, fallback) ;
-        return params ;
     }
 
 }

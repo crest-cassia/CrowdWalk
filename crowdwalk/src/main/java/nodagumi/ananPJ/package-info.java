@@ -25,23 +25,40 @@
  *       参照。
  *   </li>
  *   <li> 全ての設定項目について、
- *        シミュレーション実行のための properties ファイルの
- *        "fallback_file" で指定した JSON ファイルにおいて規定値を指定できる。
- *        記載例は、"sample/simpleGrid/fallbackParameters.json" を参照。
- *   </li>
- *   <li> 全ての設定項目について、
- *        開発レポジトリの "src/main/resources/fallbackParameters.json" に
- *        おいて規定値を指定できる。
- *        このファイルは、buildする段階で jar ファイルに取り込まれる。
- *   </li>
- *   <li> 上記のいずれにも指定されなかった設定項目については、プログラム中で、
- *        指定した定数が規定値として指定される。
+ *        以下の優先順序で値の設定が行われる。
+ *     <ol>
+ *       <li> 起動時のコマンドラインオプションで "--fallback <JSON文字列>" 
+ *            と指定した値。
+ *            JSON文字列の記載方法は、以下の properties ファイルの形式に準じる。
+ *            --fallback のオプションは、複数個指定できる。
+ *            重複して指定された場合、コマンドラインで後で指定したものが
+ *            優先される。
+ *       </li>
+ *       <li> properties ファイルの "fallback_file" で指定した JSON ファイルに
+ *            おいて規定値を指定できる。
+ *            記載例は、"sample/simpleGrid/fallbackParameters.json" を参照。
+ *      </li>
+ *       <li> 開発レポジトリの "src/main/resources/fallbackParameters.json" に
+ *            おいて規定値を指定できる。
+ *            このファイルは、buildする段階で jar ファイルに取り込まれる。
+ *      </li>
+ *      <li> 上記のいずれにも指定されなかった設定項目については、プログラム中で、
+ *           指定した定数が規定値として指定される。
+ *      </li>
+ *     </ol>
  *   </li>
  * </ol>
- * 上記の優先順位に則ったパラメータの設定は、できるだけ、標準的なメソッドとして
- * 用意されるべきである。
+ * プログラム中では、上記の優先順位に則ったパラメータの設定は、
+ * {@link nodagumi.ananPJ.misc.SetupFileInfo SetupFileInfo クラス} の
+ * {@link nodagumi.ananPJ.misc.SetupFileInfo#filterFallbackTerm filterFallbackTerm()}, 
+ * {@link nodagumi.ananPJ.misc.SetupFileInfo#fetchFallbackTerm fetchFallbackTerm()},
+ * {@link nodagumi.ananPJ.misc.SetupFileInfo#fetchFallbackString fetchFallbackString()},
+ * {@link nodagumi.ananPJ.misc.SetupFileInfo#fetchFallbackDouble fetchFallbackDouble()},
+ * {@link nodagumi.ananPJ.misc.SetupFileInfo#fetchFallbackInt fetchFallbackInt()},
+ * {@link nodagumi.ananPJ.misc.SetupFileInfo#fetchFallbackBoolean fetchFallbackBoolean()}
+ * を使うべきである。
  * 例えば、{@link nodagumi.ananPJ.Agents.AgentBase AgentBase クラス}の
- * getDoubleFromConfig(), getIntFromConfig(), getTermFromConfig() などの
- * メソッドである。
+ * {@code getDoubleFromConfig()}, {@code getIntFromConfig()}, 
+ * {@code getTermFromConfig()} などの定義を参考にすべきである。
  */
 package nodagumi.ananPJ;

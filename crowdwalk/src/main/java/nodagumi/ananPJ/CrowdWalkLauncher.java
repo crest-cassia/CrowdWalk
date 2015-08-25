@@ -23,7 +23,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
 
     /**

@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -209,229 +209,290 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#buildDisplay-nodagumi.ananPJ.Simulator.SimulationPanel3D-">buildDisplay</a></span>(<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;_panel3d)</code>
-<div class="block">画面の準備。</div>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#fetchFallbackBoolean-nodagumi.Itk.Term-java.lang.String-boolean-">fetchFallbackBoolean</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                    java.lang.String&nbsp;tag,
+                    boolean&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から fetch する。</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#fetchFallbackDouble-nodagumi.Itk.Term-java.lang.String-java.lang.Double-">fetchFallbackDouble</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                   java.lang.String&nbsp;tag,
+                   java.lang.Double&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から fetch する。</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#fetchFallbackInt-nodagumi.Itk.Term-java.lang.String-int-">fetchFallbackInt</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                java.lang.String&nbsp;tag,
+                int&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から fetch する。</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#fetchFallbackString-nodagumi.Itk.Term-java.lang.String-java.lang.String-">fetchFallbackString</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                   java.lang.String&nbsp;tag,
+                   java.lang.String&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から fetch する。</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#fetchFallbackTerm-nodagumi.Itk.Term-java.lang.String-nodagumi.Itk.Term-">fetchFallbackTerm</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                 java.lang.String&nbsp;tag,
+                 <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から fetch する。</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#filterFallbackTerm-java.lang.String-">filterFallbackTerm</a></span>(java.lang.String&nbsp;tag)</code>
+<div class="block">fallback parameter を filter する。</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#filterFetchFallbackBoolean-java.lang.String-java.lang.String-boolean-">filterFetchFallbackBoolean</a></span>(java.lang.String&nbsp;filterTag,
+                          java.lang.String&nbsp;fetchTag,
+                          boolean&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>java.lang.Double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#filterFetchFallbackDouble-java.lang.String-java.lang.String-java.lang.Double-">filterFetchFallbackDouble</a></span>(java.lang.String&nbsp;filterTag,
+                         java.lang.String&nbsp;fetchTag,
+                         java.lang.Double&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#filterFetchFallbackInt-java.lang.String-java.lang.String-int-">filterFetchFallbackInt</a></span>(java.lang.String&nbsp;filterTag,
+                      java.lang.String&nbsp;fetchTag,
+                      int&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#filterFetchFallbackString-java.lang.String-java.lang.String-java.lang.String-">filterFetchFallbackString</a></span>(java.lang.String&nbsp;filterTag,
+                         java.lang.String&nbsp;fetchTag,
+                         java.lang.String&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#filterFetchFallbackTerm-java.lang.String-java.lang.String-nodagumi.Itk.Term-">filterFetchFallbackTerm</a></span>(java.lang.String&nbsp;filterTag,
+                       java.lang.String&nbsp;fetchTag,
+                       <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackValue)</code>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/AgentHandler.html" title="nodagumi.ananPJ.Simulator内のクラス">AgentHandler</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getAgentHandler--">getAgentHandler</a></span>()</code>
 <div class="block">エージェントハンドラ取得。</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getAllAgentCollection--">getAllAgentCollection</a></span>()</code>
 <div class="block">すべてのエージェントのリスト（Collection）を返す。</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/SimulationController.html" title="nodagumi.ananPJ.Simulator内のインタフェース">SimulationController</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getController--">getController</a></span>()</code>
 <div class="block">画面制御用 interface</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getFallbackParameters--">getFallbackParameters</a></span>()</code>
 <div class="block">fallback parameter</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getIsAllAgentSpeedZeroBreak--">getIsAllAgentSpeedZeroBreak</a></span>()</code>
 <div class="block">全エージェントが止まったらシミュレーションを止めるか？</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getLinerGenerateAgentRatio--">getLinerGenerateAgentRatio</a></span>()</code>
 <div class="block">エージェント生成の倍率。</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getLinks--">getLinks</a></span>()</code>
 <div class="block">リンク取得。</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getMap--">getMap</a></span>()</code>
 <div class="block">マップ取得。</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkMap/Node/MapNodeTable.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNodeTable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getNodes--">getNodes</a></span>()</code>
 <div class="block">ノード取得。</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getPanel3D--">getPanel3D</a></span>()</code>
 <div class="block">3D画面の準備。</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../nodagumi/ananPJ/NetworkMap/Area/MapArea.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">MapArea</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getPollutions--">getPollutions</a></span>()</code>
 <div class="block">Pollution ハンドラ取得。</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">CrowdWalkPropertiesHandler</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getProperties--">getProperties</a></span>()</code>
 <div class="block">設定ハンドラ取得。</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>java.util.Random</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getRandom--">getRandom</a></span>()</code>
 <div class="block">乱数生成器</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code><a href="../../../nodagumi/Itk/ItkRuby.html" title="nodagumi.Itk内のクラス">ItkRuby</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getRubyEngine--">getRubyEngine</a></span>()</code>
 <div class="block">Ruby 実行系。</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/Scenario/Scenario.html" title="nodagumi.ananPJ.Scenario内のクラス">Scenario</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getScenario--">getScenario</a></span>()</code>
 <div class="block">scenario へのアクセス。</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getScreenshotInterval--">getScreenshotInterval</a></span>()</code>
 <div class="block">screen shot インターバル取得。</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/misc/SetupFileInfo.html" title="nodagumi.ananPJ.misc内のクラス">SetupFileInfo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getSetupFileInfo--">getSetupFileInfo</a></span>()</code>
 <div class="block">設定ファイル情報</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getSimulationDeferFactor--">getSimulationDeferFactor</a></span>()</code>
 <div class="block">シミュレーションのサイクル間のスリープの取得。</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#getWalkingAgentCollection--">getWalkingAgentCollection</a></span>()</code>
 <div class="block">歩いているエージェントのリスト（Collection）を返す。</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#hasDisplay--">hasDisplay</a></span>()</code>
 <div class="block">画面を持つかどうかの判定</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#isRunning--">isRunning</a></span>()</code>
 <div class="block">シミュレーション実行中かどうかの判定。</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#output_results--">output_results</a></span>()</code>
-<div class="block">結果を出力する。</div>
-</td>
-</tr>
-<tr id="i25" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#pause--">pause</a></span>()</code>
 <div class="block">シミュレーション中断。</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#recalculatePaths--">recalculatePaths</a></span>()</code>
 <div class="block">経路探索再計算。</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#registerAgent-nodagumi.ananPJ.Agents.AgentBase-">registerAgent</a></span>(<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent)</code>
 <div class="block">エージェント登録</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#saveGoalLog-java.lang.String-java.lang.Boolean-">saveGoalLog</a></span>(java.lang.String&nbsp;resultDirectory,
-           java.lang.Boolean&nbsp;finished)</code>
-<div class="block">Save the goal log file to result directory.</div>
-</td>
-</tr>
-<tr id="i29" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#saveTimeSeriesLog-java.lang.String-">saveTimeSeriesLog</a></span>(java.lang.String&nbsp;resultDirectory)</code>
-<div class="block">Save the time series log file to result directory.</div>
-</td>
-</tr>
-<tr id="i30" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setIsAllAgentSpeedZeroBreak-boolean-">setIsAllAgentSpeedZeroBreak</a></span>(boolean&nbsp;_isAllAgentSpeedZeroBreak)</code>
 <div class="block">全エージェントが止まったらシミュレーションを止めるかをセット。</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setLinerGenerateAgentRatio-double-">setLinerGenerateAgentRatio</a></span>(double&nbsp;_ratio)</code>
 <div class="block">エージェント生成の倍率。</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setProperties-nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler-">setProperties</a></span>(<a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html" title="nodagumi.ananPJ.misc内のクラス">CrowdWalkPropertiesHandler</a>&nbsp;_properties)</code>
 <div class="block">設定ハンドラ設定。</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setRandom-java.util.Random-">setRandom</a></span>(java.util.Random&nbsp;_random)</code>
 <div class="block">乱数生成器</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setScreenshotInterval-int-">setScreenshotInterval</a></span>(int&nbsp;i)</code>
 <div class="block">screen shot インターバルを設定。</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setSimulationDeferFactor-int-">setSimulationDeferFactor</a></span>(int&nbsp;factor)</code>
 <div class="block">シミュレーションのサイクル間のスリープの設定。</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#setup--">setup</a></span>()</code>
 <div class="block">シミュレーション初期化。</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#start--">start</a></span>()</code>
 <div class="block">シミュレーション開始。</div>
 </td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#step--">step</a></span>()</code>
 <div class="block">シミュレーション1サイクル実行。</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/Simulator/EvacuationSimulator.html#updateEveryTick--">updateEveryTick</a></span>()</code>
 <div class="block">汎用 updateEveryTick() ;</div>
@@ -795,6 +856,136 @@ extends java.lang.Object</pre>
 <div class="block">fallback parameter</div>
 </li>
 </ul>
+<a name="filterFallbackTerm-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>filterFallbackTerm</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;filterFallbackTerm(java.lang.String&nbsp;tag)</pre>
+<div class="block">fallback parameter を filter する。</div>
+</li>
+</ul>
+<a name="fetchFallbackTerm-nodagumi.Itk.Term-java.lang.String-nodagumi.Itk.Term-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fetchFallbackTerm</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fetchFallbackTerm(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                              java.lang.String&nbsp;tag,
+                              <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から fetch する。</div>
+</li>
+</ul>
+<a name="fetchFallbackString-nodagumi.Itk.Term-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fetchFallbackString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;fetchFallbackString(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                                            java.lang.String&nbsp;tag,
+                                            java.lang.String&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から fetch する。</div>
+</li>
+</ul>
+<a name="fetchFallbackDouble-nodagumi.Itk.Term-java.lang.String-java.lang.Double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fetchFallbackDouble</h4>
+<pre>public&nbsp;double&nbsp;fetchFallbackDouble(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                                  java.lang.String&nbsp;tag,
+                                  java.lang.Double&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から fetch する。</div>
+</li>
+</ul>
+<a name="fetchFallbackInt-nodagumi.Itk.Term-java.lang.String-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fetchFallbackInt</h4>
+<pre>public&nbsp;int&nbsp;fetchFallbackInt(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                            java.lang.String&nbsp;tag,
+                            int&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から fetch する。</div>
+</li>
+</ul>
+<a name="fetchFallbackBoolean-nodagumi.Itk.Term-java.lang.String-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fetchFallbackBoolean</h4>
+<pre>public&nbsp;boolean&nbsp;fetchFallbackBoolean(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
+                                    java.lang.String&nbsp;tag,
+                                    boolean&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から fetch する。</div>
+</li>
+</ul>
+<a name="filterFetchFallbackTerm-java.lang.String-java.lang.String-nodagumi.Itk.Term-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>filterFetchFallbackTerm</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;filterFetchFallbackTerm(java.lang.String&nbsp;filterTag,
+                                    java.lang.String&nbsp;fetchTag,
+                                    <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</li>
+</ul>
+<a name="filterFetchFallbackString-java.lang.String-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>filterFetchFallbackString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;filterFetchFallbackString(java.lang.String&nbsp;filterTag,
+                                                  java.lang.String&nbsp;fetchTag,
+                                                  java.lang.String&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</li>
+</ul>
+<a name="filterFetchFallbackDouble-java.lang.String-java.lang.String-java.lang.Double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>filterFetchFallbackDouble</h4>
+<pre>public&nbsp;java.lang.Double&nbsp;filterFetchFallbackDouble(java.lang.String&nbsp;filterTag,
+                                                  java.lang.String&nbsp;fetchTag,
+                                                  java.lang.Double&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</li>
+</ul>
+<a name="filterFetchFallbackInt-java.lang.String-java.lang.String-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>filterFetchFallbackInt</h4>
+<pre>public&nbsp;int&nbsp;filterFetchFallbackInt(java.lang.String&nbsp;filterTag,
+                                  java.lang.String&nbsp;fetchTag,
+                                  int&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</li>
+</ul>
+<a name="filterFetchFallbackBoolean-java.lang.String-java.lang.String-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>filterFetchFallbackBoolean</h4>
+<pre>public&nbsp;boolean&nbsp;filterFetchFallbackBoolean(java.lang.String&nbsp;filterTag,
+                                          java.lang.String&nbsp;fetchTag,
+                                          boolean&nbsp;fallbackValue)</pre>
+<div class="block">fallback parameter から filter して fetch する。</div>
+</li>
+</ul>
 <a name="begin--">
 <!--   -->
 </a>
@@ -822,16 +1013,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>buildDisplay</h4>
 <pre>public&nbsp;void&nbsp;buildDisplay()</pre>
-<div class="block">画面の準備。</div>
-</li>
-</ul>
-<a name="buildDisplay-nodagumi.ananPJ.Simulator.SimulationPanel3D-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>buildDisplay</h4>
-<pre>public&nbsp;void&nbsp;buildDisplay(<a href="../../../nodagumi/ananPJ/Simulator/SimulationPanel3D.html" title="nodagumi.ananPJ.Simulator内のクラス">SimulationPanel3D</a>&nbsp;_panel3d)</pre>
 <div class="block">画面の準備。</div>
 </li>
 </ul>
@@ -908,54 +1089,11 @@ extends java.lang.Object</pre>
 <a name="updateEveryTick--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>updateEveryTick</h4>
 <pre>public&nbsp;boolean&nbsp;updateEveryTick()</pre>
 <div class="block">汎用 updateEveryTick() ;</div>
-</li>
-</ul>
-<a name="output_results--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>output_results</h4>
-<pre>protected&nbsp;void&nbsp;output_results()</pre>
-<div class="block">結果を出力する。
- <code>logs/&lt;time&gt;.log</code> というログと、
- <code>macro.log</code> というログ。</div>
-</li>
-</ul>
-<a name="saveGoalLog-java.lang.String-java.lang.Boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>saveGoalLog</h4>
-<pre>public&nbsp;void&nbsp;saveGoalLog(java.lang.String&nbsp;resultDirectory,
-                        java.lang.Boolean&nbsp;finished)</pre>
-<div class="block">Save the goal log file to result directory.</div>
-<dl>
-<dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>resultDirectory:</code> - path to the result directory.</dd>
-</dl>
-</li>
-</ul>
-<a name="saveTimeSeriesLog-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>saveTimeSeriesLog</h4>
-<pre>public&nbsp;boolean&nbsp;saveTimeSeriesLog(java.lang.String&nbsp;resultDirectory)</pre>
-<div class="block">Save the time series log file to result directory.</div>
-<dl>
-<dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>resultDirectory:</code> - path to result directory.</dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>returned value: succeed or not.</dd>
-</dl>
 </li>
 </ul>
 </li>
