@@ -228,6 +228,13 @@ run3kw01 ::
 run3kw01_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3kw01))
 
+##-----
+SAMPLE3mj00 = sample/stop-sample/properties_24-ruby.json # moji, ruby
+run3mj00 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3mj00))
+run3mj00_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3mj00))
+
 
 ##------------------------------------------------------------
 FOO = a b c

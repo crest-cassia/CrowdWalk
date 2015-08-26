@@ -49,9 +49,9 @@ class SampleWrapper < CrowdWalkWrapper
   #--------------------------------------------------------------
   #++
   ## update の先頭で呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def preUpdate(relTime)
-    p ['SampleWrapper', :preUpdate, relTime] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def preUpdate(simTime)
+    p ['SampleWrapper', :preUpdate, simTime] ;
 #    @networkMap.eachLink(){|link| p [:link, link]} ;
 #    @networkMap.eachNode(){|node| p [:node, node]} ;
     @networkMap.eachNode(){|node|
@@ -69,9 +69,9 @@ class SampleWrapper < CrowdWalkWrapper
   #--------------------------------------------------------------
   #++
   ## update の最後に呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def postUpdate(relTime)
-    p ['SampleWrapper', :postUpdate, relTime] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def postUpdate(simTime)
+    p ['SampleWrapper', :postUpdate, simTime] ;
   end
 
   #--============================================================

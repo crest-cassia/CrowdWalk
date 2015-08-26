@@ -59,17 +59,17 @@ class CrowdWalkWrapper
   #--------------------------------------------------------------
   #++
   ## update の先頭で呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def preUpdate(relTime)
-    p [:preUpdate, relTime, :doNothing] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def preUpdate(simTime)
+    p [:preUpdate, simTime, :doNothing] ;
   end
 
   #--------------------------------------------------------------
   #++
   ## update の最後に呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def postUpdate(relTime)
-    p [:postUpdate, relTime, :notImplemented] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def postUpdate(simTime)
+    p [:postUpdate, simTime, :doNothing] ;
   end
 
   #--============================================================

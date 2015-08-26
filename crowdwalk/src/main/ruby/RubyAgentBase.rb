@@ -303,17 +303,17 @@ class RubyAgentBase
   #--------------------------------------------------------------
   #++
   ## シミュレーション各サイクルの前半に呼ばれる。
-  ## _relTime_:: 相対シミュレーション時刻
-  def preUpdate(relTime)
-    return @javaAgent.super_preUpdate(relTime) ;
+  ## _simTime_:: 相対シミュレーション時刻
+  def preUpdate(simTime)
+    return @javaAgent.super_preUpdate(simTime) ;
   end
 
   #--------------------------------------------------------------
   #++
   ## シミュレーション各サイクルの後半に呼ばれる。
-  ## _relTime_:: 相対シミュレーション時刻
-  def update(relTime)
-    return @javaAgent.super_update(relTime) ;
+  ## _simTime_:: 相対シミュレーション時刻
+  def update(simTime)
+    return @javaAgent.super_update(simTime) ;
   end
 
   #--------------------------------------------------------------
