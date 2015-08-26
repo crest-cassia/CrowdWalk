@@ -56,18 +56,6 @@ public abstract class BasicSimulationLauncher {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * Agent Movement History Log 関係
-     */
-    protected String agentMovementHistoryPath = null;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * Individual Pedestrians Log 関係
-     */
-    protected String individualPedestriansLogDir = null;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * 実行が終了しているかどうかのフラグ。
      * simulation を走らせて終了条件を迎えた時に true となる。
      */
@@ -297,23 +285,7 @@ public abstract class BasicSimulationLauncher {
         setExitCount(properties.getExitCount()) ;
         setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
 
-        //log files
-        try {
-            agentMovementHistoryPath =
-                properties.getFilePath("agent_movement_history_file", null, false);
-            individualPedestriansLogDir =
-                properties.getDirectoryPath("individual_pedestrians_log_dir",
-                                            null);
-            if (individualPedestriansLogDir != null) {
-                individualPedestriansLogDir =
-                    individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
-            }
-        } catch(Exception e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
     }
-
 
     //------------------------------------------------------------
     /**
@@ -340,13 +312,6 @@ public abstract class BasicSimulationLauncher {
 
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
-        // log setup
-        if (agentMovementHistoryPath != null) {
-            simulator.getAgentHandler().initAgentMovementHistoryLogger("agent_movement_history", agentMovementHistoryPath);
-        }
-        if (individualPedestriansLogDir != null) {
-            simulator.getAgentHandler().initIndividualPedestriansLogger("individual_pedestrians_log", individualPedestriansLogDir);
-        }
         // rand seed setup
         random.setSeed(properties.getRandseed());
 
@@ -373,7 +338,7 @@ public abstract class BasicSimulationLauncher {
     //------------------------------------------------------------
     /**
      * シミュレーションのメインループ。
-     * 初期化などは住んでいるものとする。
+     * 初期化などは済んでいるものとする。
      * また、pause で止まった後の再開もこれで行う。
      */
     protected void simulateMainLoop() {
@@ -386,10 +351,7 @@ public abstract class BasicSimulationLauncher {
         }
         // ログの書き出し。ログは、最後に出力。
         if(finished) {
-            if (individualPedestriansLogDir != null) {
-                simulator.getAgentHandler().closeIndividualPedestriansLogger();
-                simulator.getAgentHandler().closeAgentMovementHistorLogger();
-            }
+            simulator.finalize() ;
         }
     }
 }

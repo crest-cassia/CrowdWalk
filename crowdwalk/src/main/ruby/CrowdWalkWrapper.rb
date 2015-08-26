@@ -42,9 +42,18 @@ class CrowdWalkWrapper
 
   #--------------------------------------------------------------
   #++
+  ## シミュレーション開始前の処理
   ## AgentHandler の prepareForSimulation の後で呼び出される。
   def prepareForSimulation()
     p [:prepareForSimulation, :doNothing] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーション終了後の処理
+  ## EvacuationSimulator の finalize() で呼び出される。
+  def finalizeSimulation()
+    p [:finalizeSimulation, :doNothing] ;
   end
 
   #--------------------------------------------------------------

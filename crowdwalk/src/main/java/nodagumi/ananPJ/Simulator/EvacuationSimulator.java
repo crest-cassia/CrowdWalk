@@ -547,6 +547,49 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
+     * ロガーのセットアップ
+     */
+    public void setupLogger() {
+        try {
+            String agentMovementHistoryPath =
+                properties.getFilePath("agent_movement_history_file",
+                                       null, false);
+            String individualPedestriansLogDir =
+                properties.getDirectoryPath("individual_pedestrians_log_dir",
+                                            null);
+            if (individualPedestriansLogDir != null) {
+                individualPedestriansLogDir =
+                    individualPedestriansLogDir.replaceFirst("[/\\\\]+$", "");
+            }
+            // log setup
+            if (agentMovementHistoryPath != null) {
+                getAgentHandler()
+                    .initAgentMovementHistoryLogger("agent_movement_history",
+                                                    agentMovementHistoryPath);
+            }
+            if (individualPedestriansLogDir != null) {
+                getAgentHandler()
+                    .initIndividualPedestriansLogger("individual_pedestrians_log",
+                                                     individualPedestriansLogDir);
+            }
+        } catch(Exception e) {
+            Itk.logError("can not setup Logger",e.getMessage()) ;
+            e.printStackTrace() ;
+            System.exit(1);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ロガーの finalize
+     */
+    public void finalizeLogger() {
+        getAgentHandler().closeIndividualPedestriansLogger();
+        getAgentHandler().closeAgentMovementHistorLogger();
+    }
+
+    //------------------------------------------------------------
+    /**
      * シミュレーションの準備。（メイン）
      */
     public void begin() {
@@ -560,8 +603,21 @@ public class EvacuationSimulator {
         //prepare for simulation
         agentHandler.prepareForSimulation();
 
+        //logger
+        setupLogger() ;
+
         if(useRubyWrapper())
             rubyEngine.callMethod(rubyWrapper, "prepareForSimulation") ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * シミュレーションの終了処理。（メイン）
+     */
+    public void finalize() {
+        finalizeLogger() ;
+        if(useRubyWrapper())
+            rubyEngine.callMethod(rubyWrapper, "finalizeSimulation") ;
     }
 
     //------------------------------------------------------------

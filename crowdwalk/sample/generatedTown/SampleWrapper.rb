@@ -27,8 +27,7 @@ class SampleWrapper < CrowdWalkWrapper
 
   #--------------------------------------------------------------
   #++
-  ## 初期化
-  ## _simulator_:: java のシミュレータ(EvacuationSimulator)
+  ## シミュレーション前処理
   def prepareForSimulation()
     p ['SampleWrapper', :prepareForSimulation]
     width = @simulator.filterFetchFallbackDouble("link",
@@ -38,6 +37,13 @@ class SampleWrapper < CrowdWalkWrapper
       link.setWidth(width) ;
       p ['link.setWidth', link.getID(), link.getTagString(), link.getWidth()] ;
     }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーション後処理
+  def finalizeSimulation()
+    super
   end
 
   #--------------------------------------------------------------
