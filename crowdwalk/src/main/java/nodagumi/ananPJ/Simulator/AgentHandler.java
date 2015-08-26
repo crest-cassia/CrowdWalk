@@ -49,6 +49,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink.*;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Agents.AgentFactory;
@@ -1005,6 +1006,49 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     // ログ関連
+    //------------------------------------------------------------
+    /**
+     * ロガーの設定
+     */
+    public void setupSimulationLoggers() {
+        try {
+            String agentHistoryPath =
+                simulator.getProperties()
+                .getFilePath("agent_movement_history_file", null, false);
+
+            String individualLogDir =
+                simulator.getProperties()
+                .getDirectoryPath("individual_pedestrians_log_dir", null);
+            if (individualLogDir != null) {
+                individualLogDir =
+                    individualLogDir.replaceFirst("[/\\\\]+$", "");
+            }
+
+            // log setup
+            if (agentHistoryPath != null) {
+                initAgentMovementHistoryLogger("agent_movement_history",
+                                               agentHistoryPath);
+            }
+            if (individualLogDir != null) {
+                initIndividualPedestriansLogger("individual_pedestrians_log",
+                                                individualLogDir);
+            }
+        } catch(Exception e) {
+            Itk.logError("can not setup Logger",e.getMessage()) ;
+            e.printStackTrace() ;
+            System.exit(1);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ロガーの終了処理
+     */
+    public void finalizeSimulationLoggers() {
+        closeIndividualPedestriansLogger();
+        closeAgentMovementHistorLogger();
+    }
+
     //------------------------------------------------------------
     /**
      * individualPedestriansLogger への出力。
