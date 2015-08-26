@@ -202,7 +202,7 @@ public class SetupFileInfo {
                 Itk.logError_("Exception",ex) ;
             }
         } else {
-            fallbackParameters = new Term() ;
+            fallbackParameters = Term.newObjectTerm() ;
         }
 
         if(scanResourceP) {
@@ -230,6 +230,8 @@ public class SetupFileInfo {
             }
         }
 
+        Itk.logInfo("fallbackParameters",
+                    unifiedFallbackParameters().toJson(true)) ;
     }
 
     //============================================================
@@ -337,6 +339,24 @@ public class SetupFileInfo {
     static public boolean fetchFallbackBoolean(Term fallbacks, String tag,
                                                boolean finalFallbackValue) {
         return fallbacks.fetchArgBoolean(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の単一化
+     * @param fallbacks : 単一化する fallback
+     */
+    static public Term unifyFallbacks(Term fallbacks) {
+        return fallbacks.unifyFallbacks(FallbackSlot) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 単一化された fallbackParametes を返す。
+     */
+    public Term unifiedFallbackParameters() {
+        return unifyFallbacks(fallbackParameters) ;
     }
 
 }
