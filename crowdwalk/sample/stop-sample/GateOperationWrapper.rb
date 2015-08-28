@@ -28,12 +28,7 @@ class GateOperationWrapper < CrowdWalkWrapper
   #++
   ## シミュレーション前処理
   def prepareForSimulation()
-    @offset = 300 ;
-    @phaseLen0 = 120 ;
-    @phaseLen1 = 100 ;
-    @phaseLen2 = 110 ;
-    @cycleLen = @phaseLen0 + @phaseLen1 + @phaseLen2 ;
-    @phase = nil ;
+    setupGatePhaseInfo() ;
   end
 
   #--------------------------------------------------------------
@@ -50,62 +45,15 @@ class GateOperationWrapper < CrowdWalkWrapper
   def preUpdate(simTime)
     relTime = simTime.getRelativeTime() ;
 
-    return if(relTime - @offset < 0) ;
-
     prePhase = @phase ;
+    @phase = getPhase(relTime) ;
 
-    remain = (relTime - @offset) % @cycleLen ;
-    if((remain -= @phaseLen0) < 0) then
-      # open route 1
-      if(@phase != :route1) then
-        @phase = :route1 ;
-        @networkMap.eachLink() {|link|
-          openCloseGate(link, "R1_CHECK3", ["R2_CHECK3", "R3_CHECK2"]) ;
-        }
-        @networkMap.eachNode() {|node|
-          openCloseGate(node, "R1_CHECK3", ["R2_CHECK3", "R3_CHECK2"]) ;
-        }
-      end
-    elsif((remain -= @phaseLen1) < 0) then
-      # open route 2
-      if(@phase != :route2) then
-        @phase = :route2 ;
-        @networkMap.eachLink() {|link|
-          openCloseGate(link, "R2_CHECK3", ["R3_CHECK2", "R1_CHECK3"]) ;
-        }
-        @networkMap.eachNode() {|node|
-          openCloseGate(node, "R2_CHECK3", ["R3_CHECK2", "R1_CHECK3"]) ;
-        }
-      end
-    else
-      # open route 3
-      if(@phase != :route3) then
-        @phase = :route3 ;
-        @networkMap.eachLink() {|link|
-          openCloseGate(link, "R3_CHECK2", ["R1_CHECK3", "R2_CHECK3"]) ;
-        }
-        @networkMap.eachNode() {|node|
-          openCloseGate(node, "R3_CHECK2", ["R1_CHECK3", "R2_CHECK3"]) ;
-        }
+    if(!@phase.nil?) then
+      if(@phase != prePhase) then
+        openCloseGate(@phase) ;
+        p ['GateOperationWrapper', :phaseChange, @phase[:name], relTime] ;
       end
     end
-
-    if(@phase != prePhase) then
-      p ['GateOperationWrapper', :phaseChange, @phase, relTime] ;
-    end
-  end
-
-  #--------------------------------------------------------------
-  #++
-  ## open close gate
-  ## _object_:: 対象となる link, node
-  ## _openGate_:: 開けるゲート
-  ## _closeGateList_:: 閉めるゲートリスト
-  def openCloseGate(object, openGate, closeGateList)
-    object.openGate(openGate) if(object.hasTag(openGate)) ;
-    closeGateList.each{|closeGate|
-      object.closeGate(closeGate) if(object.hasTag(closeGate)) ;
-    }
   end
 
   #--------------------------------------------------------------
@@ -114,6 +62,82 @@ class GateOperationWrapper < CrowdWalkWrapper
   ## _relTime_:: シミュレーション内相対時刻
   def postUpdate(simTime)
     # do nothing
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## phase および gate の情報の設定。
+  ## @gateTagList は、gate のタグ（文字列）のリスト。
+  ## @gateObjectList は、gateTag => [MapObject...] というマップ
+  ## @phaseInfo は、{ :name => <phase の名前>,
+  ##                  :duration => <phase の長さ>,
+  ##                  :openGateTag => <gate のタグ> } というハッシュのリスト。
+  def setupGatePhaseInfo()
+    @gateTagList = ["R1_CHECK3", "R2_CHECK3", "R3_CHECK2"] ;
+    ## gateTag を持つ MapObject をリストアップ。
+    @gateObjectList = {} ;
+    @gateTagList.each{|gateTag|
+      @gateObjectList[gateTag] = [] ;
+      @networkMap.eachLinkWithTag(gateTag){|link|
+        @gateObjectList[gateTag].push(link) ;
+      }
+      @networkMap.eachNodeWithTag(gateTag){|node|
+        @gateObjectList[gateTag].push(node) ;
+      }
+    }
+    ## 切り替えタイミング設定
+    @offset = 300 ;
+    @phaseInfo = ([
+                   { :name => :route1,
+                     :duration => 120,
+                     :openGateTag => @gateTagList[0],
+                   },
+                   { :name => :route2,
+                     :duration => 100,
+                     :openGateTag => @gateTagList[1],
+                   },
+                   { :name => :route3,
+                     :duration => 110,
+                     :openGateTag => @gateTagList[2],
+                   },
+                  ]) ;
+    @cycleLen = 0 ;
+    @phaseInfo.each{|phase|
+      @cycleLen += phase[:duration] ;
+    }
+    @phase = nil ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 相対時刻から phase を取得
+  def getPhase(relTime)
+    if(relTime - @offset < 0) then
+      return nil ;
+    else
+      remain = ((relTime - @offset) % @cycleLen) ;
+      @phaseInfo.each{|phase|
+        remain -= phase[:duration] ;
+        if(remain < 0)
+          return phase ;
+        end
+      }
+      return @phaseInfo.last ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## open close gate
+  ## _phase_:: phase の情報。
+  def openCloseGate(phase)
+    @gateObjectList.each{|tag, objList|
+      if(tag == phase[:openGateTag]) then
+        objList.each{|obj| obj.openGate(tag)} ;
+      else
+        objList.each{|obj| obj.closeGate(tag)} ;
+      end
+    }
   end
 
   #--============================================================
