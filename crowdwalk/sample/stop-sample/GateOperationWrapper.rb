@@ -61,6 +61,15 @@ class GateOperationWrapper < CrowdWalkWrapper
   ## update の最後に呼び出される。
   ## _relTime_:: シミュレーション内相対時刻
   def postUpdate(simTime)
+    @gateNodeList.each{|tag, nodeList|
+      nodeList.each{|node|
+        node.getLinks().each{|link|
+          p [:waiting, link,
+             link.countSlowAgentRelative_Forward(0.1),
+             link.countSlowAgentRelative_Backward(0.1)] ;
+        }
+      }
+    }
     # do nothing
   end
 
@@ -68,21 +77,18 @@ class GateOperationWrapper < CrowdWalkWrapper
   #++
   ## phase および gate の情報の設定。
   ## @gateTagList は、gate のタグ（文字列）のリスト。
-  ## @gateObjectList は、gateTag => [MapObject...] というマップ
+  ## @gateNodeList は、gateTag => [MapObject...] というマップ
   ## @phaseInfo は、{ :name => <phase の名前>,
   ##                  :duration => <phase の長さ>,
   ##                  :openGateTag => <gate のタグ> } というハッシュのリスト。
   def setupGatePhaseInfo()
     @gateTagList = ["R1_CHECK3", "R2_CHECK3", "R3_CHECK2"] ;
     ## gateTag を持つ MapObject をリストアップ。
-    @gateObjectList = {} ;
+    @gateNodeList = {} ;
     @gateTagList.each{|gateTag|
-      @gateObjectList[gateTag] = [] ;
-      @networkMap.eachLinkWithTag(gateTag){|link|
-        @gateObjectList[gateTag].push(link) ;
-      }
+      @gateNodeList[gateTag] = [] ;
       @networkMap.eachNodeWithTag(gateTag){|node|
-        @gateObjectList[gateTag].push(node) ;
+        @gateNodeList[gateTag].push(node) ;
       }
     }
     ## 切り替えタイミング設定
@@ -131,11 +137,11 @@ class GateOperationWrapper < CrowdWalkWrapper
   ## open close gate
   ## _phase_:: phase の情報。
   def openCloseGate(phase)
-    @gateObjectList.each{|tag, objList|
+    @gateNodeList.each{|tag, nodeList|
       if(tag == phase[:openGateTag]) then
-        objList.each{|obj| obj.openGate(tag)} ;
+        nodeList.each{|node| node.openGate(tag)} ;
       else
-        objList.each{|obj| obj.closeGate(tag)} ;
+        nodeList.each{|node| node.closeGate(tag)} ;
       end
     }
   end

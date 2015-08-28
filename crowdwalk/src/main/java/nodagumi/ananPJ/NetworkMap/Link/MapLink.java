@@ -40,6 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBMapPart;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -425,6 +426,18 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return lane_width ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * リンクの比較演算子。
+     * Hash や BinaryTree、sort 用。
+     */
+    public int compareTo(MapLink link) {
+        return ID.compareTo(link.ID);
+    }
+
+    //------------------------------------------------------------
+    // 画面関係
+    //------------------------------------------------------------
     public void drawInEditor(Graphics2D g,
                              boolean show_label,
                              boolean isSymbolic,
@@ -1242,7 +1255,64 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return emptySpeed ;
     }
 
-    public int compareTo(MapLink link) {
-        return ID.compareTo(link.ID);
+    //------------------------------------------------------------
+    /**
+     * そのリンク上の forward 向きのエージェントで、一定速度以下の
+     * 人数。絶対スピードで比較。
+     * @param upperSpeed: 基準となるスピード。
+     * @return 人数
+     */
+    public int countSlowAgentAbsolute_Forward(double upperSpeed) {
+        int count = 0 ;
+        for(AgentBase agent : forwardLane) {
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
+    }
+
+    /**
+     * そのリンク上の forward 向きのエージェントで、一定速度以下の
+     * 人数。自由速度からの相対スピードで比較。
+     * @param upperRatio: 基準となるスピード比率。
+     * @return 人数
+     */
+    public int countSlowAgentRelative_Forward(double upperRatio) {
+        int count = 0 ;
+        for(AgentBase agent : forwardLane) {
+            double upperSpeed =
+                ((WalkAgent)agent).getEmptySpeed() * upperRatio ;
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
+    }
+
+    /**
+     * そのリンク上の backward 向きのエージェントで、一定速度以下の
+     * 人数。
+     * @param upperSpeed: 基準となるスピード。
+     * @return 人数
+     */
+    public int countSlowAgentAbsolute_Backward(double upperSpeed) {
+        int count = 0 ;
+        for(AgentBase agent : backwardLane) {
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
+    }
+
+    /**
+     * そのリンク上の backward 向きのエージェントで、一定速度以下の
+     * 人数。自由速度からの相対スピードで比較。
+     * @param upperRatio: 基準となるスピード比率。
+     * @return 人数
+     */
+    public int countSlowAgentRelative_Backward(double upperRatio){
+        int count = 0 ;
+        for(AgentBase agent : backwardLane) {
+            double upperSpeed =
+                ((WalkAgent)agent).getEmptySpeed() * upperRatio ;
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
     }
 }
