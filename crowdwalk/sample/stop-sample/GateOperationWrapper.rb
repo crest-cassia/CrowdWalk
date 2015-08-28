@@ -14,8 +14,6 @@
 #++
 ## CrowdWalk の EvacuationSimulator の制御のwrapper
 class GateOperationWrapper < CrowdWalkWrapper
-  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  attr_accessor :taggedNodeList ;
   #--------------------------------------------------------------
   #++
   ## 初期化
@@ -61,15 +59,6 @@ class GateOperationWrapper < CrowdWalkWrapper
   ## update の最後に呼び出される。
   ## _relTime_:: シミュレーション内相対時刻
   def postUpdate(simTime)
-    @gateNodeList.each{|tag, nodeList|
-      nodeList.each{|node|
-        node.getLinks().each{|link|
-          p [:waiting, link,
-             link.countSlowAgentRelative_Forward(0.1),
-             link.countSlowAgentRelative_Backward(0.1)] ;
-        }
-      }
-    }
     # do nothing
   end
 

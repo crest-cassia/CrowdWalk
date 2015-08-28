@@ -235,6 +235,13 @@ run3mj00 ::
 run3mj00_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3mj00))
 
+##-----
+SAMPLE3mj00a = sample/stop-sample/properties_24-ruby-adaptive.json # moji, ruby
+run3mj00a ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3mj00a))
+run3mj00a_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3mj00a))
+
 
 ##------------------------------------------------------------
 FOO = a b c
