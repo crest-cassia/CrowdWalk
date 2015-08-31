@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Random;
+import java.util.ArrayList;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -22,7 +23,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-g] [-h] [-l <LEVEL>] [-t <FILE>] [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-g] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -44,6 +45,9 @@ public class CrowdWalkLauncher {
         options.addOption(OptionBuilder.withLongOpt("tick")
             .withDescription("tick 情報を FILE に出力する\nCUI モード時のみ有効")
             .hasArg().withArgName("FILE").create("t"));
+        options.addOption(OptionBuilder.withLongOpt("fallback")
+                          .withDescription("fallback の先頭に追加する")
+                          .hasArg().withArgName("JSON").create("f"));
         options.addOption("v", "version", false, "バージョン情報を表示して終了する");
     }
 
@@ -54,6 +58,7 @@ public class CrowdWalkLauncher {
     public static void parseCommandLine(String[] args, Options options) {
         CommandLineParser parser = new BasicParser();
         String propertiesFilePath = null;
+        ArrayList<String> fallbackStringList = new ArrayList<String>() ;
 
         try {
             CommandLine commandLine = parser.parse(options, args);
@@ -68,6 +73,13 @@ public class CrowdWalkLauncher {
                 System.exit(0);
             }
 
+            // fallback への追加
+            if (commandLine.hasOption("fallback")) {
+                for(String fallback : commandLine.getOptionValues("fallback")) {
+                    fallbackStringList.add(fallback) ;
+                }
+            }
+
             // プロパティファイルの指定あり
             if (commandLine.getArgs().length == 1) {
                 propertiesFilePath = commandLine.getArgs()[0];
@@ -78,30 +90,32 @@ public class CrowdWalkLauncher {
                 setLogLevel(commandLine.getOptionValue("log-level"));
             }
 
-            // CUI モードの実行
+            // CUI モードで実行
             if (commandLine.hasOption("cui")) {
                 if (propertiesFilePath == null) {
                     printHelp(options);
                     System.exit(1);
                 }
-                CuiSimulationLauncher launcher = launchCuiSimulator(propertiesFilePath);
+                CuiSimulationLauncher launcher
+                    = launchCuiSimulator(propertiesFilePath, fallbackStringList);
                 // tick 情報の出力
                 if (commandLine.hasOption("tick")) {
                     String tickFilePath = commandLine.getOptionValue("tick");
                     saveTick(tickFilePath, launcher.simulator.currentTime);
                 }
             }
-            // GUI モードの実行
+            // GUI モードで実行
             else if (commandLine.hasOption("gui")) {
                 if (propertiesFilePath == null) {
                     printHelp(options);
                     System.exit(1);
                 }
-                launchGuiSimulator(propertiesFilePath);
+                launchGuiSimulator(propertiesFilePath, fallbackStringList);
             }
             // マップエディタの実行
             else {
-                launchGuiSimulationEditorLauncher(propertiesFilePath);
+                launchGuiSimulationEditorLauncher(propertiesFilePath,
+                                                  fallbackStringList);
             }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
@@ -131,10 +145,12 @@ public class CrowdWalkLauncher {
      * CUI シミュレータを実行する
      */
     public static CuiSimulationLauncher
-        launchCuiSimulator(String propertiesFilePath)
+        launchCuiSimulator(String propertiesFilePath,
+                           ArrayList<String> commandLineFallbacks)
     {
         CuiSimulationLauncher launcher =
-            new CuiSimulationLauncher(propertiesFilePath);
+            new CuiSimulationLauncher(propertiesFilePath,
+                                      commandLineFallbacks);
         launcher.initialize();
         launcher.start();
         return launcher;
@@ -144,11 +160,13 @@ public class CrowdWalkLauncher {
      * GUI シミュレータを実行する
      */
     public static GuiSimulationLauncher
-        launchGuiSimulator(String propertiesFilePath)
+        launchGuiSimulator(String propertiesFilePath,
+                           ArrayList<String> commandLineFallbacks)
     {
         settings = Settings.load(SETTINGS_FILE_NAME);
         GuiSimulationLauncher launcher =
-            new GuiSimulationLauncher(propertiesFilePath, settings);
+            new GuiSimulationLauncher(propertiesFilePath,
+                    settings, commandLineFallbacks);
         launcher.simulate();
         return launcher;
     }
@@ -157,7 +175,8 @@ public class CrowdWalkLauncher {
      * マップエディタを実行する
      */
     public static GuiSimulationEditorLauncher
-        launchGuiSimulationEditorLauncher(String propertiesFilePath)
+        launchGuiSimulationEditorLauncher(String propertiesFilePath,
+                                          ArrayList<String> commandLineFallbacks)
         throws Exception
     {
         Random random = new Random();
@@ -165,7 +184,8 @@ public class CrowdWalkLauncher {
         GuiSimulationEditorLauncher mapEditor
             = new GuiSimulationEditorLauncher(random, settings);
         if (propertiesFilePath != null) {
-            mapEditor.setPropertiesFromFile(propertiesFilePath);
+            mapEditor.setPropertiesFromFile(propertiesFilePath,
+                                            commandLineFallbacks);
             mapEditor.setPropertiesForDisplay();
         }
         mapEditor.updateAll();

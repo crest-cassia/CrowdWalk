@@ -18,19 +18,40 @@ class SampleWrapper < CrowdWalkWrapper
   attr_accessor :taggedNodeList ;
   #--------------------------------------------------------------
   #++
-  ## update の先頭で呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def initialize(mapObject)
-    super(mapObject) ;
+  ## 初期化
+  ## _simulator_:: java のシミュレータ(EvacuationSimulator)
+  def initialize(simulator)
+    super(simulator) ;
     @taggedNodeList = [] ;
   end
 
   #--------------------------------------------------------------
   #++
+  ## シミュレーション前処理
+  def prepareForSimulation()
+    p ['SampleWrapper', :prepareForSimulation]
+    width = @simulator.filterFetchFallbackDouble("link",
+                                                 "gathering_location_width",
+                                                 40.0) ;
+    @networkMap.eachLinkWithTag("TEMPORARY_GATHERING_LOCATION_LINK"){|link|
+      link.setWidth(width) ;
+      p ['link.setWidth', link.getID(), link.getTagString(), link.getWidth()] ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーション後処理
+  def finalizeSimulation()
+    super
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## update の先頭で呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def preUpdate(relTime)
-    p ['SampleWrapper', :preUpdate, relTime] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def preUpdate(simTime)
+    p ['SampleWrapper', :preUpdate, simTime] ;
 #    @networkMap.eachLink(){|link| p [:link, link]} ;
 #    @networkMap.eachNode(){|node| p [:node, node]} ;
     @networkMap.eachNode(){|node|
@@ -48,9 +69,9 @@ class SampleWrapper < CrowdWalkWrapper
   #--------------------------------------------------------------
   #++
   ## update の最後に呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def postUpdate(relTime)
-    p ['SampleWrapper', :postUpdate, relTime] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def postUpdate(simTime)
+    p ['SampleWrapper', :postUpdate, simTime] ;
   end
 
   #--============================================================

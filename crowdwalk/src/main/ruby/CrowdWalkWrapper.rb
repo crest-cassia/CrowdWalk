@@ -24,6 +24,12 @@ class CrowdWalkWrapper
   ## NetworkMap
   attr_accessor :networkMap ;
 
+  ## NetworkMap
+  attr_accessor :networkMap ;
+
+  ## Fallback Parameters ;
+  attr_accessor :fallbackParameters ;
+
   #--------------------------------------------------------------
   #++
   ## 初期化
@@ -31,22 +37,39 @@ class CrowdWalkWrapper
   def initialize(simulator)
     @simulator = simulator ;
     @networkMap = NetworkMap.new(simulator.getMap()) ;
+    @fallbackParameters = simulator.getFallbackParameters() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーション開始前の処理
+  ## AgentHandler の prepareForSimulation の後で呼び出される。
+  def prepareForSimulation()
+    p [:prepareForSimulation, :doNothing] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーション終了後の処理
+  ## EvacuationSimulator の finalize() で呼び出される。
+  def finalizeSimulation()
+    p [:finalizeSimulation, :doNothing] ;
   end
 
   #--------------------------------------------------------------
   #++
   ## update の先頭で呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def preUpdate(relTime)
-    p [:preUpdate, relTime, :notImplemented] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def preUpdate(simTime)
+    p [:preUpdate, simTime, :doNothing] ;
   end
 
   #--------------------------------------------------------------
   #++
   ## update の最後に呼び出される。
-  ## _relTime_:: シミュレーション内相対時刻
-  def postUpdate(relTime)
-    p [:postUpdate, relTime, :notImplemented] ;
+  ## _simTime_:: シミュレーション内相対時刻
+  def postUpdate(simTime)
+    p [:postUpdate, simTime, :doNothing] ;
   end
 
   #--============================================================

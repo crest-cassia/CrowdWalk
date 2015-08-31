@@ -218,6 +218,29 @@ run3gt00r ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r))
 run3gt00r_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00r))
+run3gt00r_fb ::
+	(cd $(BASEDIR) ; bash quickstart.sh --fallback '{"aho":1.0}' --fallback '{"link":{"gathering_location_width":12.345}}' $(SAMPLE3gt00r))
+
+##-----
+SAMPLE3kw01 = sample/kawaguchi-S2B/property-S2B.xml # kawaguchi
+run3kw01 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3kw01))
+run3kw01_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3kw01))
+
+##-----
+SAMPLE3mj00 = sample/stop-sample/properties_24-ruby.json # moji, ruby
+run3mj00 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3mj00))
+run3mj00_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3mj00))
+
+##-----
+SAMPLE3mj00a = sample/stop-sample/properties_24-ruby-adaptive.json # moji, ruby
+run3mj00a ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3mj00a))
+run3mj00a_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3mj00a))
 
 
 ##------------------------------------------------------------

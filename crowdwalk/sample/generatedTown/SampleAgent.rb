@@ -36,7 +36,6 @@ class SampleAgent < RubyAgentBase
   #--------------------------------------------------------------
   #++
   ## シミュレーション各サイクルの前半に呼ばれる。
-  ## _relTime_:: 相対シミュレーション時刻
   def preUpdate()
     p ['SampleAgent', :preUpdate, getAgentId(), currentTime()] ;
     return super()
@@ -45,7 +44,6 @@ class SampleAgent < RubyAgentBase
   #--------------------------------------------------------------
   #++
   ## シミュレーション各サイクルの後半に呼ばれる。
-  ## _relTime_:: 相対シミュレーション時刻
   def update()
     p ['SampleAgent', :update, getAgentId(), currentTime()] ;
     return super() ;

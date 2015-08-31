@@ -191,8 +191,7 @@ public class ScenarioPanel extends PanelWithTable {
         if (fd.getFile() == null) return;
 
         String filename = fd.getDirectory() + fd.getFile();
-        editor.getSetupFileInfo().setFallbackFile(filename);
-		editor.getSetupFileInfo().scanFallbackFile(true) ;
+        editor.setFallbackFile(filename, null) ;
 
         refresh();
     }

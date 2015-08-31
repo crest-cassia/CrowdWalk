@@ -117,10 +117,11 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
     /**
      * アプリ起動時にシミュレーションを開始する時に用いるコンストラクタ.
      */
-    public GuiSimulationLauncher(String _propertiesPath, Settings _settings) {
+    public GuiSimulationLauncher(String _propertiesPath, Settings _settings,
+            ArrayList<String> commandLineFallbacks) {
         super(null) ;
         // load properties
-        setPropertiesFromFile(_propertiesPath);
+        setPropertiesFromFile(_propertiesPath, commandLineFallbacks) ;
         setPropertiesForDisplay();
 
         // check property options
@@ -147,10 +148,10 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
      * マップエディタからシミュレーションを開始する時に用いるコンストラクタ.
      */
     public GuiSimulationLauncher(String _propertiesPath, SetupFileInfo _setupFileInfo,
-            NetworkMap _networkMap, Settings _settings) {
+            NetworkMap _networkMap, Settings _settings, ArrayList<String> commandLineFallbacks) {
         super(null) ;
         // load properties
-        setPropertiesFromFile(_propertiesPath);
+        setPropertiesFromFile(_propertiesPath, commandLineFallbacks) ;
         setPropertiesForDisplay();
 
         setupFileInfo = _setupFileInfo;

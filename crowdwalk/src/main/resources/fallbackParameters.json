@@ -21,6 +21,10 @@
 	"speedModel" : "PLAIN",
 	"_" : null
     },
+    "agentHandler" : {
+	"zeroSpeedThreshold" : 0.0,
+	"_" : null
+    },
     "link" : {
 	"speedRestrictRule" : [],
 	"emptySpeedRestrictRule" : [

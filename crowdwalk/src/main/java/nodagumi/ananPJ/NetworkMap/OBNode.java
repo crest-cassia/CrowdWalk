@@ -128,6 +128,17 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     }
 
 
+    //------------------------------------------------------------
+    // アクセサ
+    //------------------------------------------------------------
+    /**
+     * ID 取得
+     */
+    public String getID() {
+        return ID ;
+    }
+
+
     /* tag related methods */
     public boolean hasTag (Term _tag) {
         if(_tag.isAtom())

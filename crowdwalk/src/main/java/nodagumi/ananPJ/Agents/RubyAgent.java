@@ -67,7 +67,7 @@ public class RubyAgent extends RationalAgent {
      * デフォルトのRuby エージェントクラスの名前。
      * Ruby の中でのクラス名。
      */
-    static final public String FallBack_RubyAgentClass = "RubyAgentBase" ;
+    static final public String Fallback_RubyAgentClass = "RubyAgentBase" ;
 
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -119,7 +119,7 @@ public class RubyAgent extends RationalAgent {
      * 実際のエージェントクラスの名前。
      * Ruby の中でのクラス名。
      */
-    public String rubyAgentClass = FallBack_RubyAgentClass ;
+    public String rubyAgentClass = Fallback_RubyAgentClass ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**

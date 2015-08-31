@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":6,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":6,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":9,"i22":10,"i23":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":6,"i9":9,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":6,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":9,"i23":10,"i24":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -257,89 +257,95 @@ extends javax.swing.tree.DefaultMutableTreeNode</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getHintString--">getHintString</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getID--">getID</a></span>()</code>
+<div class="block">ID 取得</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getNetworkMap--">getNetworkMap</a></span>()</code>
 <div class="block">NetworkMap を返す.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.NType.html" title="nodagumi.ananPJ.NetworkMap内の列挙型">OBNode.NType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getNodeType--">getNodeType</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getNodeTypeString--">getNodeTypeString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getTags--">getTags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getTagString--">getTagString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#hasTag-java.lang.String-">hasTag</a></span>(java.lang.String&nbsp;_tag)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;_tag)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#init-java.lang.String-">init</a></span>(java.lang.String&nbsp;_ID)</code>
 <div class="block">初期化。</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-nodagumi.ananPJ.misc.SimTime-">isGateClosed</a></span>(<a href="../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&nbsp;agent,
             <a href="../../../nodagumi/ananPJ/misc/SimTime.html" title="nodagumi.ananPJ.misc内のクラス">SimTime</a>&nbsp;currentTime)</code>
 <div class="block">ゲート（分断制御用交通規制）のチェック</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#isLeaf--">isLeaf</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkMap.OBNode-">isOffspring</a></span>(<a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a>&nbsp;node)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.util.regex.Matcher</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#matchTag-java.lang.String-">matchTag</a></span>(java.lang.String&nbsp;pattern_str)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>nodagumi.ananPJ.NetworkMap.OBNode.GateBase</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#openGate-java.lang.String-">openGate</a></span>(java.lang.String&nbsp;tag)</code>
 <div class="block">ゲート開放</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#removeTag-java.lang.String-">removeTag</a></span>(java.lang.String&nbsp;_tag)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#setNetworkMap-nodagumi.ananPJ.NetworkMap.NetworkMap-">setNetworkMap</a></span>(<a href="../../../nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a>&nbsp;networkMap)</code>
 <div class="block">NetworkMap をセットする.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>static javax.swing.JPanel</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a></span>(java.util.ArrayList&nbsp;nodes,
              javax.swing.JDialog&nbsp;parent)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>nodagumi.ananPJ.NetworkMap.OBNode.GateBase</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a></span>(java.lang.String&nbsp;gateTag,
           boolean&nbsp;closed)</code>
 <div class="block">ゲート操作</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>org.w3c.dom.Element</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html#toDom-org.w3c.dom.Document-java.lang.String-">toDom</a></span>(org.w3c.dom.Document&nbsp;dom,
      java.lang.String&nbsp;tagname)</code>&nbsp;</td>
@@ -523,6 +529,16 @@ extends javax.swing.tree.DefaultMutableTreeNode</pre>
 <li class="blockList">
 <h4>fromDom</h4>
 <pre>public static&nbsp;<a href="../../../nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a>&nbsp;fromDom(org.w3c.dom.Element&nbsp;element)</pre>
+</li>
+</ul>
+<a name="getID--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getID</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
+<div class="block">ID 取得</div>
 </li>
 </ul>
 <a name="hasTag-nodagumi.Itk.Term-">

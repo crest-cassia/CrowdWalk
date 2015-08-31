@@ -508,6 +508,10 @@ public class CrowdWalkPropertiesHandler {
         return isAllAgentSpeedZeroBreak;
     }
 
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ
+     */
     public CrowdWalkPropertiesHandler(String _propertiesFile) {
         // load properties
         prop = new Properties();
@@ -589,16 +593,6 @@ public class CrowdWalkPropertiesHandler {
         } catch(Exception e) {
             System.err.println(e.getMessage());
             System.exit(1);
-        }
-        // check property options
-        if (networkMapFile == null) {
-            System.err.println("CuiSimulationLauncher: map file is " +
-                               "required.");
-            return;
-        } else if (!((File) new File(networkMapFile)).exists()) {
-            System.err.println("CuiSimulationLauncher: specified map file does " +
-                               "not exist.");
-            return;
         }
     }
 

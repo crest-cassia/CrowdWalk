@@ -61,19 +61,20 @@ public class SetupFileInfo {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * fallback parameter slot name
+     * fallback parameter slot name.
      */
-    static public final String FallbackSlot = "_fallback" ;
+    static private final String FallbackSlot = "_fallback" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * fallback parameter resource name
+     * resource 中の fallback parameter を収めた JSON ファイル。
+     * @see
      */
     static public final String FallbackResource = "/fallbackParameters.json" ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * fallback parameter
+     * fallback parameter 格納用変数。
      */
     public Term fallbackParameters = null ;
 
@@ -185,7 +186,8 @@ public class SetupFileInfo {
      * fallback （デフォルトセッティング）の読み込み
      * @param scanResourceP : resource の fallback も読み込むかどうか
      */
-    public void scanFallbackFile(boolean scanResourceP) {
+    public void scanFallbackFile(ArrayList<String> commandLineFallbacks,
+                                 boolean scanResourceP) {
         if(fallbackFile != null) {
             try {
                 BufferedReader buffer =
@@ -200,7 +202,7 @@ public class SetupFileInfo {
                 Itk.logError_("Exception",ex) ;
             }
         } else {
-            fallbackParameters = new Term() ;
+            fallbackParameters = Term.newObjectTerm() ;
         }
 
         if(scanResourceP) {
@@ -209,13 +211,152 @@ public class SetupFileInfo {
                     getClass().getResourceAsStream(FallbackResource) ;
                 Term finalFallback =
                     Term.newByScannedJson(JSON.decode(istrm),true) ;
-                fallbackParameters.setArg(FallbackSlot, finalFallback) ;
+                attachFallback(fallbackParameters, finalFallback) ;
             } catch (Exception ex) {
                 ex.printStackTrace() ;
                 Itk.logError("Can not scan a fallback resource file.") ;
                 Itk.logError_("Exception",ex) ;
             }
         }
+
+        // コマンドラインで指定した fallback を先頭に追加していく。
+        // コマンドラインでは、後から追加したものほど優先。
+        if(commandLineFallbacks != null) {
+            for(String fallbackString : commandLineFallbacks) {
+                Term newFallback =
+                    Term.newByScannedJson(JSON.decode(fallbackString), true) ;
+                attachFallback(newFallback, fallbackParameters) ;
+                fallbackParameters = newFallback ;
+            }
+        }
+
+        Itk.logInfo("fallbackParameters",
+                    unifiedFallbackParameters().toJson(true)) ;
+    }
+
+    //============================================================
+    // fallback 関係
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * パラメータ設定に fallback を追加する。
+     * 内部的には、fallback は、以下のように格納される。
+     * {@code params} の内容が {@literal { "foo" : { "bar" : 1 }, "baz" : 2}}
+     * {@code fallback} の内容が {@literal { "foo" : { "bar2" : 2}}}
+     * の場合、{@code attachFallback} された結果は、
+     * {@literal { "foo" : { "bar" : 1 }, "baz" : 2, "_fallback" : { "foo" : { "bar2" : 2}}}} となる。
+     * <br>
+     * 最終的に、fallback 情報は、以下の形式となる。
+     * <pre>
+     * {@literal
+     * { ...<コマンドラインの--fallbackで指定したJSON>... ,
+     *   "_fallback" : { ...<propertiesの"fallback_file"で指定したファイルのJSON>...,
+           "_fallback" : { ..."src/main/resources/fallbackParameters.json"のJSON>...}
+         }
+     * }
+     * }
+     * </pre>
+     * @see {@link nodagumi.ananPJ.package-info#fallback}
+     * @param params : もとになる parameter 設定用 Term
+     * @param fallback : params の後に追加する fallback
+     */
+    static public Term attachFallback(Term params, Term fallback) {
+        params.setArg(FallbackSlot, fallback) ;
+        return params ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback のフィルタリング
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     */
+    static public Term filterFallbackTerm(Term fallbacks, String tag) {
+        return fallbacks.filterArgTerm(tag, FallbackSlot) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (Term)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public Term fetchFallbackTerm(Term fallbacks, String tag,
+                                         Term finalFallbackValue) {
+        return fallbacks.fetchArgTerm(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (String)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public String fetchFallbackString(Term fallbacks, String tag,
+                                             String finalFallbackValue) {
+        return fallbacks.fetchArgString(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (double)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public double fetchFallbackDouble(Term fallbacks, String tag,
+                                             double finalFallbackValue) {
+        return fallbacks.fetchArgDouble(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (int)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public int fetchFallbackInt(Term fallbacks, String tag,
+                                       int finalFallbackValue) {
+        return fallbacks.fetchArgInt(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (boolean)
+     * @param fallbacks : filter する fallback
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public boolean fetchFallbackBoolean(Term fallbacks, String tag,
+                                               boolean finalFallbackValue) {
+        return fallbacks.fetchArgBoolean(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の単一化
+     * @param fallbacks : 単一化する fallback
+     */
+    static public Term unifyFallbacks(Term fallbacks) {
+        return fallbacks.unifyFallbacks(FallbackSlot) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 単一化された fallbackParametes を返す。
+     */
+    public Term unifiedFallbackParameters() {
+        return unifyFallbacks(fallbackParameters) ;
     }
 
 }

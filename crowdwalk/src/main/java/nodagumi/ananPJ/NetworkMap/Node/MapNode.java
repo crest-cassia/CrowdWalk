@@ -54,11 +54,10 @@ public class MapNode extends OBMapPart {
      */
     public static void setupCommonParameters(Term wholeFallbacks) {
         fallbackParameters =
-            wholeFallbacks.filterArgTerm("link",
-                                         SetupFileInfo.FallbackSlot) ;
+            SetupFileInfo.filterFallbackTerm(wholeFallbacks, "link") ;
         speedRestrictRule =
-            fallbackParameters.fetchArgTerm("speedRestrictRule",
-                                            SetupFileInfo.FallbackSlot,
+            SetupFileInfo.fetchFallbackTerm(fallbackParameters,
+                                            "speedRestrictRule",
                                             Term.newArrayTerm()) ;
     } ;
 

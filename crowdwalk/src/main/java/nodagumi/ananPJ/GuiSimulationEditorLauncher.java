@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -107,6 +108,11 @@ public class GuiSimulationEditorLauncher
      * 設定ファイルの取りまとめ。
      */
     private SetupFileInfo setupFileInfo = new SetupFileInfo();
+
+    /**
+     * コマンドラインで指定された fallback 設定
+     */
+    private ArrayList<String> commandLineFallbacks = null;
 
     /**
      * 地図データ。
@@ -495,17 +501,20 @@ public class GuiSimulationEditorLauncher
     }
 
     private boolean openMapWithName() {
-        if (getNetworkMapFile() == null)
+        String mapFileName = getNetworkMapFile();
+        if (mapFileName == null)
             return false;
-        String tmp = getNetworkMapFile();
         clearAll();
-        setNetworkMapFile(tmp);
+        setNetworkMapFile(mapFileName);
         try {
-            networkMap = readMapWithName(getNetworkMapFile()) ;
+            networkMap = readMapWithName(mapFileName) ;
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, e.getStackTrace(),
-                    "ファイルを開けません",
-                    JOptionPane.ERROR_MESSAGE);
+            Itk.logError("Can't Open Map File", mapFileName) ;
+            e.printStackTrace() ;
+            JOptionPane.showMessageDialog(frame, 
+                                          ("Can't Open Map File: " + mapFileName),
+                                          "Can't Open Map File",
+                                          JOptionPane.ERROR_MESSAGE);
             return false;
         }
         if (networkMap == null) return false;
@@ -747,8 +756,8 @@ public class GuiSimulationEditorLauncher
         if (propertiesFile == null) {
             return;
         }
-        GuiSimulationLauncher launcher;
-        launcher = new GuiSimulationLauncher(propertiesFile, setupFileInfo, networkMap, settings);
+        GuiSimulationLauncher launcher = new GuiSimulationLauncher(propertiesFile,
+                setupFileInfo, networkMap, settings, commandLineFallbacks);
         launcher.simulate();
     }
 
@@ -892,9 +901,10 @@ public class GuiSimulationEditorLauncher
     /**
      *
      */
-    public void setFallbackFile(String _fallbackFile) {
+    public void setFallbackFile(String _fallbackFile,
+                                ArrayList<String> _commandLineFallbacks) {
         setupFileInfo.setFallbackFile(_fallbackFile) ;
-        setupFileInfo.scanFallbackFile(true) ;
+        setupFileInfo.scanFallbackFile(_commandLineFallbacks, true) ;
     }
 
     /**
@@ -915,9 +925,11 @@ public class GuiSimulationEditorLauncher
     /**
      * ファイルからプロパティの読み込み。
      */
-    public void setPropertiesFromFile(String _propertiesFile) {
+    public void setPropertiesFromFile(String _propertiesFile,
+                                      ArrayList<String> _commandLineFallbacks) {
         properties = new CrowdWalkPropertiesHandler(_propertiesFile);
         propertiesFile = _propertiesFile;
+        commandLineFallbacks = _commandLineFallbacks;
 
         // random
         random = new Random(properties.getRandseed()) ;
@@ -927,7 +939,8 @@ public class GuiSimulationEditorLauncher
         setPollutionFile(properties.getPollutionFile());
         setGenerationFile(properties.getGenerationFile());
         setScenarioFile(properties.getScenarioFile());
-        setFallbackFile(properties.getFallbackFile()) ;
+        setFallbackFile(properties.getFallbackFile(),
+                        commandLineFallbacks) ;
     }
 
     /**

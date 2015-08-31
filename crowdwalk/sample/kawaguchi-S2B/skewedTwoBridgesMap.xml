@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group defaultHeight="0.0" id="4021009" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0" >
+<Node height="0.0" id="Node_1" x="0.0" y="0.0">
+  <tag>Entrance_And_Exit-A</tag>
+  <link id="Link_1"/>
+  <link id="Link_OD-A"/>
+</Node>
+<Node height="0.0" id="Node_2" x="50.0" y="0.0">
+  <tag>Corner</tag>
+  <link id="Link_1"/>
+  <link id="Link_3"/>
+</Node>
+<Node height="0.0" id="Node_3" x="100.0" y="0.0">
+  <tag>Corner</tag>
+  <link id="Link_2"/>
+  <link id="Link_4"/>
+</Node>
+<Node height="0.0" id="Node_4" x="150.0" y="0.0">
+  <tag>Entrance_And_Exit-D</tag>
+  <link id="Link_2"/>
+  <link id="Link_OD-D"/>
+</Node>
+<Node height="0.0" id="Node_5" x="50.0" y="25.0">
+  <tag>BRIDGE</tag>
+  <link id="Link_3"/>
+  <link id="Link_Bridge1"/>
+  <link id="Link_5"/>
+</Node>
+<Node height="0.0" id="Node_6" x="100.0" y="25.0">
+  <tag>BRIDGE</tag>
+  <link id="Link_4"/>
+  <link id="Link_Bridge1"/>
+  <link id="Link_6"/>
+</Node>
+<Node height="0.0" id="Node_7" x="0.0" y="50.0">
+  <tag>Entrance_And_Exit-B</tag>
+  <link id="Link_7"/>
+  <link id="Link_OD-B"/>
+</Node>
+<Node height="0.0" id="Node_8" x="50.0" y="50.0">
+  <tag>T-Junction</tag>
+  <link id="Link_5"/>
+  <link id="Link_7"/>
+  <link id="Link_9"/>
+</Node>
+<Node height="0.0" id="Node_9" x="100.0" y="50.0">
+  <tag>T-Junction</tag>
+  <link id="Link_6"/>
+  <link id="Link_8"/>
+  <link id="Link_Bridge2"/>
+</Node>
+<Node height="0.0" id="Node_10" x="150.0" y="50.0">
+  <tag>Entrance_And_Exit-E</tag>
+  <link id="Link_8"/>
+  <link id="Link_OD-E"/>
+</Node>
+<Node height="0.0" id="Node_11" x="50.0" y="62.5">
+  <tag>BRIDGE</tag>
+  <link id="Link_9"/>
+  <link id="Link_10"/>
+  <link id="Link_11"/>
+</Node>
+<Node height="0.0" id="Node_12" x="100.0" y="62.5">
+  <tag>BRIDGE</tag>
+  <link id="Link_Bridge2"/>
+  <link id="Link_10"/>
+  <link id="Link_12"/>
+</Node>
+<Node height="0.0" id="Node_13" x="0.0" y="100.0">
+  <tag>Entrance_And_Exit-C</tag>
+  <link id="Link_13"/>
+  <link id="Link_OD-C"/>
+</Node>
+<Node height="0.0" id="Node_14" x="50.0" y="100.0">
+  <tag>Corner</tag>
+  <link id="Link_11"/>
+  <link id="Link_13"/>
+</Node>
+<Node height="0.0" id="Node_15" x="100.0" y="100.0">
+  <tag>Corner</tag>
+  <link id="Link_12"/>
+  <link id="Link_14"/>
+</Node>
+<Node height="0.0" id="Node_16" x="150.0" y="100.0">
+  <tag>Entrance_And_Exit-F</tag>
+  <link id="Link_14"/>
+  <link id="Link_OD-F"/>
+</Node>
+<Node height="0.0" id="Node_OD-A" x="-50.0" y="0.0">
+  <tag>Outside-A</tag>
+  <link id="Link_OD-A"/>
+</Node>
+<Node height="0.0" id="Node_OD-B" x="-50.0" y="50.0">
+  <tag>Outside-B</tag>
+  <link id="Link_OD-B"/>
+</Node>
+<Node height="0.0" id="Node_OD-C" x="-50.0" y="100.0">
+  <tag>Outside-C</tag>
+  <link id="Link_OD-C"/>
+</Node>
+<Node height="0.0" id="Node_OD-D" x="200.0" y="0.0">
+  <tag>Outside-D</tag>
+  <link id="Link_OD-D"/>
+</Node>
+<Node height="0.0" id="Node_OD-E" x="200.0" y="50.0">
+  <tag>Outside-E</tag>
+  <link id="Link_OD-E"/>
+</Node>
+<Node height="0.0" id="Node_OD-F" x="200.0" y="100.0">
+  <tag>Outside-F</tag>
+  <link id="Link_OD-F"/>
+</Node>
+<Link from="Node_1" id="Link_1" length="50.0" to="Node_2" width="5.0">
+</Link>
+<Link from="Node_3" id="Link_2" length="50.0" to="Node_4" width="5.0">
+</Link>
+<Link from="Node_2" id="Link_3" length="25.0" to="Node_5" width="5.0">
+</Link>
+<Link from="Node_3" id="Link_4" length="25.0" to="Node_6" width="5.0">
+</Link>
+<Link from="Node_5" id="Link_Bridge1" length="50.0" to="Node_6" width="5.0">
+  <tag>BRIDGE</tag>
+</Link>
+<Link from="Node_5" id="Link_5" length="25.0" to="Node_8" width="5.0">
+</Link>
+<Link from="Node_6" id="Link_6" length="25.0" to="Node_9" width="5.0">
+</Link>
+<Link from="Node_7" id="Link_7" length="50.0" to="Node_8" width="5.0">
+</Link>
+<Link from="Node_9" id="Link_8" length="50.0" to="Node_10" width="5.0">
+</Link>
+<Link from="Node_8" id="Link_9" length="12.5" to="Node_11" width="5.0">
+</Link>
+<Link from="Node_9" id="Link_Bridge2" length="12.5" to="Node_12" width="5.0">
+</Link>
+<Link from="Node_11" id="Link_10" length="50.0" to="Node_12" width="5.0">
+  <tag>BRIDGE</tag>
+</Link>
+<Link from="Node_11" id="Link_11" length="37.5" to="Node_14" width="5.0">
+</Link>
+<Link from="Node_12" id="Link_12" length="37.5" to="Node_15" width="5.0">
+</Link>
+<Link from="Node_13" id="Link_13" length="50.0" to="Node_14" width="5.0">
+</Link>
+<Link from="Node_15" id="Link_14" length="50.0" to="Node_16" width="5.0">
+</Link>
+<Link from="Node_OD-A" id="Link_OD-A" length="50.0" to="Node_1" width="5.0">
+  <tag>OD-A</tag>
+  <tag>OD-LEFT</tag>
+</Link>
+<Link from="Node_OD-B" id="Link_OD-B" length="50.0" to="Node_7" width="5.0">
+  <tag>OD-B</tag>
+  <tag>OD-LEFT</tag>
+</Link>
+<Link from="Node_OD-C" id="Link_OD-C" length="50.0" to="Node_13" width="5.0">
+  <tag>OD-C</tag>
+  <tag>OD-LEFT</tag>
+</Link>
+<Link from="Node_OD-D" id="Link_OD-D" length="50.0" to="Node_4" width="5.0">
+  <tag>OD-D</tag>
+  <tag>OD-RIGHT</tag>
+</Link>
+<Link from="Node_OD-E" id="Link_OD-E" length="50.0" to="Node_10" width="5.0">
+  <tag>OD-E</tag>
+  <tag>OD-RIGHT</tag>
+</Link>
+<Link from="Node_OD-F" id="Link_OD-F" length="50.0" to="Node_16" width="5.0">
+  <tag>OD-F</tag>
+  <tag>OD-RIGHT</tag>
+</Link>
+</Group>

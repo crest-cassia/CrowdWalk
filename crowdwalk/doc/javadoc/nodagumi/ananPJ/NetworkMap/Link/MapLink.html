@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":9,"i20":10,"i21":10,"i22":9,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":9,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":9,"i63":9,"i64":10,"i65":10,"i66":10,"i67":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":9,"i21":10,"i22":10,"i23":9,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":9,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":10,"i64":10,"i65":10,"i66":9,"i67":10,"i68":9,"i69":10,"i70":10,"i71":10,"i72":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -123,12 +123,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>すべての実装されたインタフェース:</dt>
-<dd>java.io.Serializable, java.lang.Cloneable, javax.swing.tree.MutableTreeNode, javax.swing.tree.TreeNode</dd>
+<dd>java.io.Serializable, java.lang.Cloneable, java.lang.Comparable&lt;<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&gt;, javax.swing.tree.MutableTreeNode, javax.swing.tree.TreeNode</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">MapLink</span>
-extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBMapPart</a></pre>
+extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBMapPart</a>
+implements java.lang.Comparable&lt;<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&gt;</pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
 <dd><a href="../../../../serialized-form.html#nodagumi.ananPJ.NetworkMap.Link.MapLink">直列化された形式</a></dd>
@@ -229,50 +230,46 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="n
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#LINK_RED">LINK_RED</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected static double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#MAX_INPUT">MAX_INPUT</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>static java.awt.BasicStroke</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#narrow">narrow</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#polluted">polluted</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#speedRestrictRule">speedRestrictRule</a></span></code>
 <div class="block">リンクによる速度の制約計算で用いるルール。</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#Tag_OneWayBackward">Tag_OneWayBackward</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#Tag_OneWayForward">Tag_OneWayForward</a></span></code>
 <div class="block">Special Tags</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#Tag_RoadClosed">Tag_RoadClosed</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#Tag_Stair">Tag_Stair</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/Itk/Lexicon.html" title="nodagumi.Itk内のクラス">Lexicon</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#tagLexicon">tagLexicon</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#toNode">toNode</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#width">width</a></span></code>&nbsp;</td>
 </tr>
@@ -406,281 +403,309 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="n
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#clear--">clear</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#compareTo-nodagumi.ananPJ.NetworkMap.Link.MapLink-">compareTo</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&nbsp;link)</code>&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#crowdness--">crowdness</a></span>()</code>
 <div class="block">混雑度の元の定義 [2014.12.15 I.Noda]</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.Direction.html" title="nodagumi.ananPJ.NetworkMap.Link内の列挙型">MapLink.Direction</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#directionValueFrom-nodagumi.ananPJ.NetworkMap.Node.MapNode-">directionValueFrom</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&nbsp;originNode)</code>
 <div class="block">リンクが指定されたノードから見た時の direction の値</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.Direction.html" title="nodagumi.ananPJ.NetworkMap.Link内の列挙型">MapLink.Direction</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#directionValueTo-nodagumi.ananPJ.NetworkMap.Node.MapNode-">directionValueTo</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&nbsp;destinationNode)</code>
 <div class="block">リンクが指定されたノードの方を見て正方向かどうかのチェック</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#drawInEditor-java.awt.Graphics2D-boolean-boolean-boolean-">drawInEditor</a></span>(java.awt.Graphics2D&nbsp;g,
             boolean&nbsp;show_label,
             boolean&nbsp;isSymbolic,
             boolean&nbsp;showScaling)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#drawLabel-java.awt.Graphics2D-boolean-">drawLabel</a></span>(java.awt.Graphics2D&nbsp;g,
          boolean&nbsp;showScaling)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>java.lang.Boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#equals-nodagumi.ananPJ.NetworkMap.Link.MapLink-">equals</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&nbsp;rhs)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#fromDom-org.w3c.dom.Element-">fromDom</a></span>(org.w3c.dom.Element&nbsp;element)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getAgents--">getAgents</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>java.awt.geom.GeneralPath</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getArrow-double-double-boolean-">getArrow</a></span>(double&nbsp;border,
         double&nbsp;scale,
         boolean&nbsp;forward)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.AttributePanel.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink.AttributePanel</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getAttributePanel--">getAttributePanel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getAverageHeight--">getAverageHeight</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>java.awt.Color</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getColorFromDensity--">getColorFromDensity</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getFrom--">getFrom</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkMap/Area/MapArea.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">MapArea</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getIntersectedMapAreas--">getIntersectedMapAreas</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/Agents/AgentBase.html" title="nodagumi.ananPJ.Agents内のクラス">AgentBase</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getLane-nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction-">getLane</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.Direction.html" title="nodagumi.ananPJ.NetworkMap.Link内の列挙型">MapLink.Direction</a>&nbsp;dir)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getLaneWidth-nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction-">getLaneWidth</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.Direction.html" title="nodagumi.ananPJ.NetworkMap.Link内の列挙型">MapLink.Direction</a>&nbsp;dir)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getLength--">getLength</a></span>()</code>
+<div class="block">長さの取得</div>
+</td>
+</tr>
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.awt.geom.Line2D</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getLine2D--">getLine2D</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.NType.html" title="nodagumi.ananPJ.NetworkMap内の列挙型">OBNode.NType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getNodeType--">getNodeType</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getNodeTypeString--">getNodeTypeString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getOther-nodagumi.ananPJ.NetworkMap.Node.MapNode-">getOther</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&nbsp;node)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>java.awt.geom.GeneralPath</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getRect-double-double-boolean-">getRect</a></span>(double&nbsp;border,
        double&nbsp;scale,
        boolean&nbsp;in_simulation)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code><a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getTo--">getTo</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i37" class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#getWidth--">getWidth</a></span>()</code>
+<div class="block">幅の取得</div>
+</td>
+</tr>
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#hasSameEndsBackward-nodagumi.ananPJ.NetworkMap.Link.MapLink-">hasSameEndsBackward</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&nbsp;otherLink)</code>
 <div class="block">同じ終端ノードを持っているか (backward)</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#hasSameEndsForward-nodagumi.ananPJ.NetworkMap.Link.MapLink-">hasSameEndsForward</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&nbsp;otherLink)</code>
 <div class="block">同じ終端ノードを持っているか (forward)</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isBetweenHeight-double-double-">isBetweenHeight</a></span>(double&nbsp;min_h,
                double&nbsp;max_h)</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isForwardDirectionFrom-nodagumi.ananPJ.NetworkMap.Node.MapNode-">isForwardDirectionFrom</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&nbsp;originNode)</code>
 <div class="block">リンクが指定されたノードから見て正方向かどうかのチェック</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isForwardDirectionTo-nodagumi.ananPJ.NetworkMap.Node.MapNode-">isForwardDirectionTo</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&nbsp;destinationNode)</code>
 <div class="block">リンクが指定されたノードの方を見て正方向かどうかのチェック</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isOneWayBackward--">isOneWayBackward</a></span>()</code>
 <div class="block">OneWay (backward) のチェック</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isOneWayForward--">isOneWayForward</a></span>()</code>
 <div class="block">OneWay (forward) のチェック</div>
 </td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isPolluted--">isPolluted</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isRoadClosed--">isRoadClosed</a></span>()</code>
 <div class="block">RoadClosed のチェック</div>
 </td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#isShutOff--">isShutOff</a></span>()</code>
 <div class="block">生成禁止かどうかのチェック。</div>
 </td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#letShutOff-boolean-">letShutOff</a></span>(boolean&nbsp;onoff)</code>
 <div class="block">生成禁止フラグの操作</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#prepareAdd--">prepareAdd</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#prepareForSimulation--">prepareForSimulation</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#prepareRemove--">prepareRemove</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#preUpdate-nodagumi.ananPJ.misc.SimTime-">preUpdate</a></span>(<a href="../../../../nodagumi/ananPJ/misc/SimTime.html" title="nodagumi.ananPJ.misc内のクラス">SimTime</a>&nbsp;currentTime)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#realCrowdness--">realCrowdness</a></span>()</code>
 <div class="block">真の混雑度 [2014.12.15 I.Noda]
  たいがい 1.0 以下。</div>
 </td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#removeTag-java.lang.String-">removeTag</a></span>(java.lang.String&nbsp;_tag)</code>
 <div class="block">タグを削除。</div>
 </td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setFromTo-nodagumi.ananPJ.NetworkMap.Node.MapNode-nodagumi.ananPJ.NetworkMap.Node.MapNode-">setFromTo</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&nbsp;from,
          <a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a>&nbsp;to)</code>&nbsp;</td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i56" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setLength-double-">setLength</a></span>(double&nbsp;_length)</code>
+<div class="block">長さの設定</div>
+</td>
+</tr>
+<tr id="i57" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setOneWayBackward--">setOneWayBackward</a></span>()</code>
 <div class="block">OneWay (backward) にする。</div>
 </td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i58" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setOneWayBackward-boolean-">setOneWayBackward</a></span>(boolean&nbsp;flag)</code>
 <div class="block">OneWay (backward) にする。</div>
 </td>
 </tr>
-<tr id="i55" class="rowColor">
+<tr id="i59" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setOneWayForward--">setOneWayForward</a></span>()</code>
 <div class="block">OneWay (forward) にする。</div>
 </td>
 </tr>
-<tr id="i56" class="altColor">
+<tr id="i60" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setOneWayForward-boolean-">setOneWayForward</a></span>(boolean&nbsp;flag)</code>
 <div class="block">OneWay (forward) にする。</div>
 </td>
 </tr>
-<tr id="i57" class="rowColor">
+<tr id="i61" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setPolluted-boolean-">setPolluted</a></span>(boolean&nbsp;b)</code>&nbsp;</td>
 </tr>
-<tr id="i58" class="altColor">
+<tr id="i62" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setRoadClosed--">setRoadClosed</a></span>()</code>
 <div class="block">RoadClosed にする。</div>
 </td>
 </tr>
-<tr id="i59" class="rowColor">
+<tr id="i63" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setRoadClosed-boolean-">setRoadClosed</a></span>(boolean&nbsp;flag)</code>
 <div class="block">RoadClosed にする。</div>
 </td>
 </tr>
-<tr id="i60" class="altColor">
+<tr id="i64" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setSpecialTag-java.lang.String-boolean-">setSpecialTag</a></span>(java.lang.String&nbsp;specialTag,
              boolean&nbsp;flag)</code>
 <div class="block">Special Tag の set/reset</div>
 </td>
 </tr>
-<tr id="i61" class="rowColor">
+<tr id="i65" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setup_lanes--">setup_lanes</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i62" class="altColor">
+<tr id="i66" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setupCommonParameters-nodagumi.Itk.Term-">setupCommonParameters</a></span>(<a href="../../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;wholeFallbacks)</code>
 <div class="block">共通パラメータを、fallbackParameterから設定。</div>
 </td>
 </tr>
-<tr id="i63" class="rowColor">
+<tr id="i67" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#setWidth-double-">setWidth</a></span>(double&nbsp;_width)</code>
+<div class="block">幅の設定</div>
+</td>
+</tr>
+<tr id="i68" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#showAttributeDialog-nodagumi.ananPJ.NetworkMap.Link.MapLinkTable-">showAttributeDialog</a></span>(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLinkTable.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLinkTable</a>&nbsp;links)</code>&nbsp;</td>
 </tr>
-<tr id="i64" class="altColor">
+<tr id="i69" class="rowColor">
 <td class="colFirst"><code>org.w3c.dom.Element</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#toDom-org.w3c.dom.Document-java.lang.String-">toDom</a></span>(org.w3c.dom.Document&nbsp;dom,
      java.lang.String&nbsp;tagname)</code>&nbsp;</td>
 </tr>
-<tr id="i65" class="rowColor">
+<tr id="i70" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#toShortInfo--">toShortInfo</a></span>()</code>
 <div class="block">リンクの情報を短く示す文字列。</div>
 </td>
 </tr>
-<tr id="i66" class="altColor">
+<tr id="i71" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i67" class="rowColor">
+<tr id="i72" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html#update-nodagumi.ananPJ.misc.SimTime-">update</a></span>(<a href="../../../../nodagumi/ananPJ/misc/SimTime.html" title="nodagumi.ananPJ.misc内のクラス">SimTime</a>&nbsp;currentTime)</code>
 <div class="block">リンクの処理。</div>
@@ -699,7 +724,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="n
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.NetworkMap.<a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html" title="nodagumi.ananPJ.NetworkMap内のクラス">OBNode</a></h3>
-<code><a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getHintString--">getHintString</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getNetworkMap--">getNetworkMap</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getTags--">getTags</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getTagString--">getTagString</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-nodagumi.ananPJ.misc.SimTime-">isGateClosed</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkMap.OBNode-">isOffspring</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#setNetworkMap-nodagumi.ananPJ.NetworkMap.NetworkMap-">setNetworkMap</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a></code></li>
+<code><a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#closeGate-java.lang.String-">closeGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getAttributesFromDom-org.w3c.dom.Element-">getAttributesFromDom</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getHintString--">getHintString</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getID--">getID</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getNetworkMap--">getNetworkMap</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getTags--">getTags</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#getTagString--">getTagString</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#hasTag-java.lang.String-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#hasTag-nodagumi.Itk.Term-">hasTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#isGateClosed-nodagumi.ananPJ.Agents.AgentBase-nodagumi.ananPJ.misc.SimTime-">isGateClosed</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#isOffspring-nodagumi.ananPJ.NetworkMap.OBNode-">isOffspring</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#matchTag-java.lang.String-">matchTag</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#openGate-java.lang.String-">openGate</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#setNetworkMap-nodagumi.ananPJ.NetworkMap.NetworkMap-">setNetworkMap</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#setupTagPanel-java.util.ArrayList-javax.swing.JDialog-">setupTagPanel</a>, <a href="../../../../nodagumi/ananPJ/NetworkMap/OBNode.html#switchGate-java.lang.String-boolean-">switchGate</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.swing.tree.DefaultMutableTreeNode">
@@ -883,15 +908,6 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="n
 <pre>protected&nbsp;<a href="../../../../nodagumi/ananPJ/NetworkMap/Node/MapNode.html" title="nodagumi.ananPJ.NetworkMap.Node内のクラス">MapNode</a> toNode</pre>
 </li>
 </ul>
-<a name="MAX_INPUT">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MAX_INPUT</h4>
-<pre>protected static&nbsp;double MAX_INPUT</pre>
-</li>
-</ul>
 <a name="agents">
 <!--   -->
 </a>
@@ -1071,6 +1087,46 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="n
 <li class="blockList">
 <h4>getIntersectedMapAreas</h4>
 <pre>public&nbsp;java.util.ArrayList&lt;<a href="../../../../nodagumi/ananPJ/NetworkMap/Area/MapArea.html" title="nodagumi.ananPJ.NetworkMap.Area内のクラス">MapArea</a>&gt;&nbsp;getIntersectedMapAreas()</pre>
+</li>
+</ul>
+<a name="getLength--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLength</h4>
+<pre>public&nbsp;double&nbsp;getLength()</pre>
+<div class="block">長さの取得</div>
+</li>
+</ul>
+<a name="setLength-double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLength</h4>
+<pre>public&nbsp;void&nbsp;setLength(double&nbsp;_length)</pre>
+<div class="block">長さの設定</div>
+</li>
+</ul>
+<a name="getWidth--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWidth</h4>
+<pre>public&nbsp;double&nbsp;getWidth()</pre>
+<div class="block">幅の取得</div>
+</li>
+</ul>
+<a name="setWidth-double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setWidth</h4>
+<pre>public&nbsp;void&nbsp;setWidth(double&nbsp;_width)</pre>
+<div class="block">幅の設定</div>
 </li>
 </ul>
 <a name="prepareForSimulation--">
@@ -1781,7 +1837,7 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="n
 <a name="calcEmptySpeedForAgent-double-nodagumi.ananPJ.Agents.AgentBase-nodagumi.ananPJ.misc.SimTime-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>calcEmptySpeedForAgent</h4>
 <pre>public&nbsp;double&nbsp;calcEmptySpeedForAgent(double&nbsp;emptySpeed,
@@ -1795,6 +1851,19 @@ extends <a href="../../../../nodagumi/ananPJ/NetworkMap/OBMapPart.html" title="n
 <dd><code>currentTime:</code> - 現在時刻</dd>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>自由速度</dd>
+</dl>
+</li>
+</ul>
+<a name="compareTo-nodagumi.ananPJ.NetworkMap.Link.MapLink-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>compareTo</h4>
+<pre>public&nbsp;int&nbsp;compareTo(<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&nbsp;link)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">定義:</span></dt>
+<dd><code>compareTo</code>&nbsp;インタフェース内&nbsp;<code>java.lang.Comparable&lt;<a href="../../../../nodagumi/ananPJ/NetworkMap/Link/MapLink.html" title="nodagumi.ananPJ.NetworkMap.Link内のクラス">MapLink</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>

@@ -31,7 +31,7 @@ class NetworkMap
 
   #--------------------------------------------------------------
   #++
-  ## あるタグを持つリンクに対し、ある処理を行う。
+  ## 全リンクに対し、ある処理を行う。
   def eachLink(&block)
     @mapObject.getLinks().each{|link|
       block.call(link) ;
@@ -40,11 +40,31 @@ class NetworkMap
 
   #--------------------------------------------------------------
   #++
-  ## あるタグを持つリンクに対し、ある処理を行う。
+  ## 全ノードに対し、ある処理を行う。
   def eachNode(&block)
     @mapObject.getNodes().each{|node|
       block.call(node) ;
     }
   end
 
-end # class Foo
+  #--------------------------------------------------------------
+  #++
+  ## あるタグを持つリンクに対し、ある処理を行う。
+  def eachLinkWithTag(tag, &block)
+    tagString = tag.to_s ;
+    @mapObject.getLinks().each{|link|
+      block.call(link) if(link.hasTag(tagString)) ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## あるタグを持つノードに対し、ある処理を行う。
+  def eachNodeWithTag(tag, &block)
+    tagString = tag.to_s ;
+    @mapObject.getNodes().each{|node|
+      block.call(node) if(node.hasTag(tagString)) ;
+    }
+  end
+
+end # class NetworkMap

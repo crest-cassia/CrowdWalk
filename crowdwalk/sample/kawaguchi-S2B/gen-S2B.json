@@ -1,0 +1,1947 @@
+#{ "version" : 2} 
+[
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-A",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-B",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-C",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-D",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-E",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-A",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-B",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-C",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-D",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-E",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "NaiveAgent"
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "BustleAgent",
+      "weight": 0,
+      "trial": 0
+    },
+    "total": 20,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  },
+  {
+    "rule": "RANDOM",
+    "ignore": "xtrue",
+    "agentType": {
+      "className": "CapriciousAgent",
+      "margin": 200
+    },
+    "total": 25,
+    "speedModel": "PLAIN",
+    "startPlace": "OD-F",
+    "conditions": null,
+    "startTime": "18:00:00",
+    "duration": 60.0,
+    "goal": "OD-F",
+    "plannedRoute": [
+
+    ]
+  }
+]

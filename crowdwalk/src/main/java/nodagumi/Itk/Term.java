@@ -446,7 +446,7 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * arg を filter(fallback 付き)。
+     * arg を filter(fallback 付き) して取り出す。
      * 例えば、
      * <pre>
      * { "a" : { "x" : 1, "y" : 2 },
@@ -454,7 +454,7 @@ public class Term {
      *   "_fallback" : { "a" : { "y" : 5, "z" : 6 }, 
      *                   "b" : { "u" : 7, "w" : 8 }}}
      * </pre>
-     * から以下を構築する。
+     * から、"a" で filter すると、以下を構築して返す。
      * <pre>
      * { "x" : 1, "y" : 2, "_fallback" : { "y" : 5, "z" : 6 } }
      * </pre>
@@ -476,6 +476,49 @@ public class Term {
         return filteredTerm ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * fallback 部分について、Term を単一化（フラット化）する。
+     * 例えば、
+     * <pre>
+     * { "a" : { "x" : 1, "y" : 2 },
+     *   "b" : { "u" : 3, "v" : 4 },
+     *   "_fallback" : { "a" : { "y" : 5, "z" : 6 }, 
+     *                   "b" : { "u" : 7, "w" : 8 }}}
+     * </pre>
+     * を、"_fallback" を fallbackSlot として単一化すると、
+     * <pre>
+     * { "a" : { "x" : 1, "y" : 2, "z" : 6 },
+     *   "b" : { "u" : 3, "v" : 4, "w" : 8 }}
+     * </pre>
+     * となる。
+     * @param fallbackSlot : fallback で潜っていくスロット。
+     * @return 作成された Term。
+     */
+    public Term unifyFallbacks(String fallbackSlot) {
+        Term unifiedTerm = Term.newObjectTerm() ;
+        unifyFallbacks_Body(unifiedTerm, this, fallbackSlot) ;
+        return unifiedTerm ;
+    }
+
+    /**
+     * fallback 部分について、Term を単一化（フラット化）する。
+     * 再帰されるメイン処理。
+     * @param unifiedTerm : 単一化の受け皿の Term。
+     * @param originalTerm : 単一化の元になる Term。
+     * @param fallbackSlot : fallback として潜っていくスロット名。
+     */
+    private void unifyFallbacks_Body(Term unifiedTerm,
+                                     Term originalTerm,
+                                     String fallbackSlot) {
+        if(originalTerm.hasArg(fallbackSlot)) {
+            unifyFallbacks_Body(unifiedTerm,
+                                originalTerm.getArgTerm(fallbackSlot),
+                                fallbackSlot) ;
+        }
+        unifiedTerm.updateObjectFacile(originalTerm, true) ;
+        unifiedTerm.clearArg(fallbackSlot) ;
+    }
 
     //------------------------------------------------------------
     /**
@@ -710,6 +753,17 @@ public class Term {
 
         body.put(slot, value) ;
 
+        return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * arg クリア
+     */
+    public Term clearArg(String slot) {
+        if(hasArg(slot)) {
+            body.remove(slot) ;
+        }
         return this ;
     }
 

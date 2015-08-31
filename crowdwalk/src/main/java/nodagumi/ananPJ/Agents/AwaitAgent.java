@@ -58,9 +58,9 @@ public class AwaitAgent extends WalkAgent {
      * エージェント同士の最小の距離。
      * scatter での適用範囲を定めるのに使用。
      */
-    protected static final double FallBack_minDistanceBetweenAgents = 0.3;
+    protected static final double Fallback_minDistanceBetweenAgents = 0.3;
     protected double minDistanceBetweenAgents
-        = FallBack_minDistanceBetweenAgents ;
+        = Fallback_minDistanceBetweenAgents ;
 
     protected boolean waiting = false;
 

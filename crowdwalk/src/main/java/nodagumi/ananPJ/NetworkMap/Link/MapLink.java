@@ -40,6 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBMapPart;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -123,15 +124,14 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      */
     public static void setupCommonParameters(Term wholeFallbacks) {
         fallbackParameters =
-            wholeFallbacks.filterArgTerm("link",
-                                         SetupFileInfo.FallbackSlot) ;
+            SetupFileInfo.filterFallbackTerm(wholeFallbacks,"link") ;
         speedRestrictRule =
-            fallbackParameters.fetchArgTerm("speedRestrictRule",
-                                            SetupFileInfo.FallbackSlot,
+            SetupFileInfo.fetchFallbackTerm(fallbackParameters,
+                                            "speedRestrictRule",
                                             Term.newArrayTerm()) ;
         emptySpeedRestrictRule =
-            fallbackParameters.fetchArgTerm("emptySpeedRestrictRule",
-                                            SetupFileInfo.FallbackSlot,
+            SetupFileInfo.fetchFallbackTerm(fallbackParameters,
+                                            "emptySpeedRestrictRule",
                                             Term.newArrayTerm()) ;
     } ;
 
@@ -188,8 +188,6 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public double width;
     protected MapNode fromNode, toNode;
 
-    static protected double MAX_INPUT = 1.47; 
-
     /* place holder for values used in simulation */
     public ArrayList<AgentBase> agents;
     private boolean nodes_are_set = false;
@@ -245,7 +243,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public static final Color LINK_RED = new Color(1.0f, 0.3f, 0.3f);
     public static final Color LIGHT_BLUE = new Color(0.4f, 0.4f, 1.0f);
 
-    /* Constructors */
+    //------------------------------------------------------------
+    // Constructors
+    //------------------------------------------------------------
+    /**
+     */
     public MapLink(String _id,
                    double _length, double _width) {
         super(_id);
@@ -256,6 +258,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
         selected = false;
     }
+    /**
+     */
     public MapLink(String _id, 
             MapNode _from, MapNode _to,
             double _length, double _width
@@ -264,6 +268,39 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         nodes_are_set = true;
         fromNode = _from;
         toNode = _to;
+    }
+
+    //------------------------------------------------------------
+    // accessor
+    //------------------------------------------------------------
+    /**
+     * 長さの取得
+     */
+    public double getLength() {
+        return length ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 長さの設定
+     */
+    public void setLength(double _length) {
+        length = _length ;
+    }
+    //------------------------------------------------------------
+    /**
+     * 幅の取得
+     */
+    public double getWidth() {
+        return width ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 幅の設定
+     */
+    public void setWidth(double _width) {
+        width = _width ;
     }
 
     /*public String getType() {
@@ -389,6 +426,18 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return lane_width ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * リンクの比較演算子。
+     * Hash や BinaryTree、sort 用。
+     */
+    public int compareTo(MapLink link) {
+        return ID.compareTo(link.ID);
+    }
+
+    //------------------------------------------------------------
+    // 画面関係
+    //------------------------------------------------------------
     public void drawInEditor(Graphics2D g,
                              boolean show_label,
                              boolean isSymbolic,
@@ -1206,7 +1255,64 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return emptySpeed ;
     }
 
-    public int compareTo(MapLink link) {
-        return ID.compareTo(link.ID);
+    //------------------------------------------------------------
+    /**
+     * そのリンク上の forward 向きのエージェントで、一定速度以下の
+     * 人数。絶対スピードで比較。
+     * @param upperSpeed: 基準となるスピード。
+     * @return 人数
+     */
+    public int countSlowAgentAbsolute_Forward(double upperSpeed) {
+        int count = 0 ;
+        for(AgentBase agent : forwardLane) {
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
+    }
+
+    /**
+     * そのリンク上の forward 向きのエージェントで、一定速度以下の
+     * 人数。自由速度からの相対スピードで比較。
+     * @param upperRatio: 基準となるスピード比率。
+     * @return 人数
+     */
+    public int countSlowAgentRelative_Forward(double upperRatio) {
+        int count = 0 ;
+        for(AgentBase agent : forwardLane) {
+            double upperSpeed =
+                ((WalkAgent)agent).getEmptySpeed() * upperRatio ;
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
+    }
+
+    /**
+     * そのリンク上の backward 向きのエージェントで、一定速度以下の
+     * 人数。
+     * @param upperSpeed: 基準となるスピード。
+     * @return 人数
+     */
+    public int countSlowAgentAbsolute_Backward(double upperSpeed) {
+        int count = 0 ;
+        for(AgentBase agent : backwardLane) {
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
+    }
+
+    /**
+     * そのリンク上の backward 向きのエージェントで、一定速度以下の
+     * 人数。自由速度からの相対スピードで比較。
+     * @param upperRatio: 基準となるスピード比率。
+     * @return 人数
+     */
+    public int countSlowAgentRelative_Backward(double upperRatio){
+        int count = 0 ;
+        for(AgentBase agent : backwardLane) {
+            double upperSpeed =
+                ((WalkAgent)agent).getEmptySpeed() * upperRatio ;
+            if(agent.getSpeed() <= upperSpeed) count++ ;
+        }
+        return count ;
     }
 }

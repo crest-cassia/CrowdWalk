@@ -85,27 +85,27 @@ public class WalkAgent extends AgentBase {
      *   rStar = 0.805446866507348
      * </pre>
      */
-    protected static double FallBack_A_0 = 0.962;//1.05;//0.5;
-    protected static double FallBack_A_1 = 0.869;//1.25;//0.97;//2.0;
-    protected static double FallBack_A_2 = 4.682;//0.81;//1.5;
-    protected static double FallBack_EmptySpeed = 1.02265769054586;
-    protected static double FallBack_PersonalSpace = 2.0 * 0.522;//0.75;//0.8;
+    protected static double Fallback_A_0 = 0.962;//1.05;//0.5;
+    protected static double Fallback_A_1 = 0.869;//1.25;//0.97;//2.0;
+    protected static double Fallback_A_2 = 4.682;//0.81;//1.5;
+    protected static double Fallback_EmptySpeed = 1.02265769054586;
+    protected static double Fallback_PersonalSpace = 2.0 * 0.522;//0.75;//0.8;
 
-    protected double A_0 = FallBack_A_0 ;
-    protected double A_1 = FallBack_A_1 ;
-    protected double A_2 = FallBack_A_2 ;
-    protected double emptySpeed = FallBack_EmptySpeed;
-    protected double personalSpace = FallBack_PersonalSpace ;
+    protected double A_0 = Fallback_A_0 ;
+    protected double A_1 = Fallback_A_1 ;
+    protected double A_2 = Fallback_A_2 ;
+    protected double emptySpeed = Fallback_EmptySpeed;
+    protected double personalSpace = Fallback_PersonalSpace ;
 
     /* 同方向/逆方向のレーンでの単位距離
      * 0.7 だとほとんど進まなくなる。
      * 1.0 あたりか？
      */
-    protected static double FallBack_WidthUnit_SameLane = 0.9 ; //0.7;
-    protected static double FallBack_WidthUnit_OtherLane = 0.9 ; //0.7;
+    protected static double Fallback_WidthUnit_SameLane = 0.9 ; //0.7;
+    protected static double Fallback_WidthUnit_OtherLane = 0.9 ; //0.7;
 
-    protected double widthUnit_SameLane = FallBack_WidthUnit_SameLane ;
-    protected double widthUnit_OtherLane = FallBack_WidthUnit_OtherLane ;
+    protected double widthUnit_SameLane = Fallback_WidthUnit_SameLane ;
+    protected double widthUnit_OtherLane = Fallback_WidthUnit_OtherLane ;
 
     /* [2015.01.29 I.Noda]
      *以下は、plain model で使われる。
@@ -117,11 +117,11 @@ public class WalkAgent extends AgentBase {
      * これをある程度大きくしておかないと、
      * 対抗流から過大な力を受け、全く抜け出せなくなる。
      */
-    protected static double FallBack_insensitiveDistanceInCounterFlow =
-        FallBack_PersonalSpace * 0.5 ;
+    protected static double Fallback_insensitiveDistanceInCounterFlow =
+        Fallback_PersonalSpace * 0.5 ;
 
     protected double insensitiveDistanceInCounterFlow =
-        FallBack_insensitiveDistanceInCounterFlow ;
+        Fallback_insensitiveDistanceInCounterFlow ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**

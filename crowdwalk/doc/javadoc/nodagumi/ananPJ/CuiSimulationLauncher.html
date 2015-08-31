@@ -115,6 +115,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">CuiSimulationLauncher</span>
 extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">BasicSimulationLauncher</a></pre>
+<div class="block">コマンドライン用シミュレーションランチャー</div>
 </li>
 </ul>
 </div>
@@ -132,7 +133,7 @@ extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="noda
 <!--   -->
 </a>
 <h3>クラスから継承されたフィールド&nbsp;nodagumi.ananPJ.<a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">BasicSimulationLauncher</a></h3>
-<code><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#agentMovementHistoryPath">agentMovementHistoryPath</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#counter">counter</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#exitCount">exitCount</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#finished">finished</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#individualPedestriansLogDir">individualPedestriansLogDir</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#isAllAgentSpeedZeroBreak">isAllAgentSpeedZeroBreak</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#isTimerEnabled">isTimerEnabled</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#isTimeSeriesLog">isTimeSeriesLog</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#networkMap">networkMap</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#paused">paused</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#properties">properties</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#random">random</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulator">simulator</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#timer">timer</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#timerPath">timerPath</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#timeSeriesLogInterval">timeSeriesLogInterval</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#timeSeriesLogPath">timeSeriesLogPath</a></code></li>
+<code><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#agentMovementHistoryPath">agentMovementHistoryPath</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#counter">counter</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#exitCount">exitCount</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#finished">finished</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#individualPedestriansLogDir">individualPedestriansLogDir</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#isAllAgentSpeedZeroBreak">isAllAgentSpeedZeroBreak</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#networkMap">networkMap</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#paused">paused</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#properties">properties</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#random">random</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulator">simulator</a></code></li>
 </ul>
 </li>
 </ul>
@@ -148,10 +149,15 @@ extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="noda
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#CuiSimulationLauncher-java.util.Random-">CuiSimulationLauncher</a></span>(java.util.Random&nbsp;_random)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#CuiSimulationLauncher-java.util.Random-">CuiSimulationLauncher</a></span>(java.util.Random&nbsp;_random)</code>
+<div class="block">constructor</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#CuiSimulationLauncher-java.lang.String-">CuiSimulationLauncher</a></span>(java.lang.String&nbsp;_propertiesPath)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#CuiSimulationLauncher-java.lang.String-java.util.ArrayList-">CuiSimulationLauncher</a></span>(java.lang.String&nbsp;_propertiesPath,
+                     java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)</code>
+<div class="block">constructor</div>
+</td>
 </tr>
 </table>
 </li>
@@ -170,11 +176,15 @@ extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="noda
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#initialize--">initialize</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#initialize--">initialize</a></span>()</code>
+<div class="block">初期化</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#start--">start</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html#start--">start</a></span>()</code>
+<div class="block">シミュレータ開始</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -182,7 +192,7 @@ extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="noda
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;nodagumi.ananPJ.<a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">BasicSimulationLauncher</a></h3>
-<code><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getExitCount--">getExitCount</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getFallbackFile--">getFallbackFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getGenerationFile--">getGenerationFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getIsAllAgentSpeedZeroBreak--">getIsAllAgentSpeedZeroBreak</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getIsTimerEnabled--">getIsTimerEnabled</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getIsTimeSeriesLog--">getIsTimeSeriesLog</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getMap--">getMap</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getNetworkMapFile--">getNetworkMapFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getPollutionFile--">getPollutionFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getProperties--">getProperties</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getRandom--">getRandom</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getScenarioFile--">getScenarioFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getSetupFileInfo--">getSetupFileInfo</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getSimulator--">getSimulator</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getTimerPath--">getTimerPath</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getTimeSeriesLogInterval--">getTimeSeriesLogInterval</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getTimeSeriesLogPath--">getTimeSeriesLogPath</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#hasDisplay--">hasDisplay</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#initializeSimulatorEntity--">initializeSimulatorEntity</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#readMapWithName-java.lang.String-">readMapWithName</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setExitCount-int-">setExitCount</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setFallbackFile-java.lang.String-">setFallbackFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setGenerationFile-java.lang.String-">setGenerationFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setIsAllAgentSpeedZeroBreak-boolean-">setIsAllAgentSpeedZeroBreak</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setIsTimerEnabled-boolean-">setIsTimerEnabled</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setIsTimeSeriesLog-boolean-">setIsTimeSeriesLog</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setNetworkMapFile-java.lang.String-">setNetworkMapFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setPollutionFile-java.lang.String-">setPollutionFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setPropertiesFromFile-java.lang.String-">setPropertiesFromFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setRandom-java.util.Random-">setRandom</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setScenarioFile-java.lang.String-">setScenarioFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setTimerPath-java.lang.String-">setTimerPath</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setTimeSeriesLogInterval-int-">setTimeSeriesLogInterval</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setTimeSeriesLogPath-java.lang.String-">setTimeSeriesLogPath</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulateMainLoop--">simulateMainLoop</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulateOneStepBare--">simulateOneStepBare</a></code></li>
+<code><a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getExitCount--">getExitCount</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getFallbackFile--">getFallbackFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getGenerationFile--">getGenerationFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getIsAllAgentSpeedZeroBreak--">getIsAllAgentSpeedZeroBreak</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getMap--">getMap</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getNetworkMapFile--">getNetworkMapFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getPollutionFile--">getPollutionFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getProperties--">getProperties</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getRandom--">getRandom</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getScenarioFile--">getScenarioFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getSetupFileInfo--">getSetupFileInfo</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#getSimulator--">getSimulator</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#hasDisplay--">hasDisplay</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#initializeSimulatorEntity--">initializeSimulatorEntity</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#readMapWithName-java.lang.String-">readMapWithName</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setExitCount-int-">setExitCount</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setFallbackFile-java.lang.String-java.util.ArrayList-">setFallbackFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setGenerationFile-java.lang.String-">setGenerationFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setIsAllAgentSpeedZeroBreak-boolean-">setIsAllAgentSpeedZeroBreak</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setNetworkMapFile-java.lang.String-">setNetworkMapFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setPollutionFile-java.lang.String-">setPollutionFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setPropertiesFromFile-java.lang.String-java.util.ArrayList-">setPropertiesFromFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setRandom-java.util.Random-">setRandom</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#setScenarioFile-java.lang.String-">setScenarioFile</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulateMainLoop--">simulateMainLoop</a>, <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html#simulateOneStepBare--">simulateOneStepBare</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -212,15 +222,18 @@ extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="noda
 <li class="blockList">
 <h4>CuiSimulationLauncher</h4>
 <pre>public&nbsp;CuiSimulationLauncher(java.util.Random&nbsp;_random)</pre>
+<div class="block">constructor</div>
 </li>
 </ul>
-<a name="CuiSimulationLauncher-java.lang.String-">
+<a name="CuiSimulationLauncher-java.lang.String-java.util.ArrayList-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>CuiSimulationLauncher</h4>
-<pre>public&nbsp;CuiSimulationLauncher(java.lang.String&nbsp;_propertiesPath)</pre>
+<pre>public&nbsp;CuiSimulationLauncher(java.lang.String&nbsp;_propertiesPath,
+                             java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)</pre>
+<div class="block">constructor</div>
 </li>
 </ul>
 </li>
@@ -238,6 +251,7 @@ extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="noda
 <li class="blockList">
 <h4>initialize</h4>
 <pre>public&nbsp;void&nbsp;initialize()</pre>
+<div class="block">初期化</div>
 </li>
 </ul>
 <a name="start--">
@@ -247,6 +261,7 @@ extends <a href="../../nodagumi/ananPJ/BasicSimulationLauncher.html" title="noda
 <li class="blockList">
 <h4>start</h4>
 <pre>public&nbsp;void&nbsp;start()</pre>
+<div class="block">シミュレータ開始</div>
 </li>
 </ul>
 </li>
