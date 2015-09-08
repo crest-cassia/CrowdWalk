@@ -98,7 +98,6 @@ implements Comparable<AgentBase> {
     /**
      * 設定関係
      */
-    protected double swing_width;
 
     /**
      * 設定文字列（generation file 中の設定情報の文字列）
@@ -112,17 +111,28 @@ implements Comparable<AgentBase> {
     protected Random random = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    /**
+     * リンク上の表示上の横ずれ幅の量
+     */
+    protected double swing_width;
+
+    /**
+     * リンク上の表示上の横ずれ幅の座標差分
+     */
+    protected Vector3d swing = new Vector3d(0, 0, 0);
+
     /**
      * 直前の位置。
      * AgentHandler の表示制御あたりで使用。
      */
-    public Point2D lastPosition = null ;
+    protected Point2D lastPosition = null ;
 
     /**
      * 直前のswing。
      * AgentHandler の表示制御あたりで使用。
      */
-    public Vector3d lastSwing = null ;
+    protected Vector3d lastSwing = null ;
 
     //############################################################
     /**
@@ -152,6 +162,7 @@ implements Comparable<AgentBase> {
         random = _random;
         //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
+        calcSwing();
         // ObstructerBase のサブクラスのインスタンスを取得
         obstructer = ObstructerBase.createAndInitialize(obstructerType, this) ;
         //AgentFactory から移したもの
@@ -849,10 +860,11 @@ implements Comparable<AgentBase> {
     /**
      * リンク上の表示上の横ずれ幅計算
      */
-    public Vector3d getSwing() {
+    protected void calcSwing() {
         MapLink currentLink = currentPlace.getLink() ;
         if (null == currentLink) {
-            return new Vector3d(0, 0, 0);
+            swing = new Vector3d(0, 0, 0);
+            return;
         }
 
         double scale = ((MapPartGroup)(currentLink.getParent())).getScale();
@@ -865,9 +877,15 @@ implements Comparable<AgentBase> {
         Vector3d v1 = new Vector3d(x2 - x1, y2-y1, 0);
         v1.normalize();
         Vector3d v2 = new Vector3d(0, 0, fwidth * swing_width);
-        Vector3d v3 = new Vector3d();
-        v3.cross(v1, v2);
-        return v3;
+        swing = new Vector3d();     // TODO: この行は不要かもしれない
+        swing.cross(v1, v2);
+    }
+
+    /**
+     * swing 値の取得
+     */
+    public Vector3d getSwing() {
+        return swing;
     }
 
     //------------------------------------------------------------
@@ -884,6 +902,33 @@ implements Comparable<AgentBase> {
      */
     public double getHeight() {
         return currentPlace.getHeightForDisplay() ;
+    }
+
+    /**
+     * lastPosition を更新する
+     *
+     * @return 値が変化したら true、変わらなければ false
+     */
+    public boolean updateLastPosition() {
+        Point2D currentPosition = getPos();
+        if (lastPosition == null || ! currentPosition.equals(lastPosition)) {
+            lastPosition = currentPosition;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * lastSwing を更新する
+     *
+     * @return 値が変化したら true、変わらなければ false
+     */
+    public boolean updateLastSwing() {
+        if (lastSwing == null || ! swing.equals(lastSwing)) {
+            lastSwing = swing;
+            return true;
+        }
+        return false;
     }
 }
 // ;;; Local Variables:

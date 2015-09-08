@@ -501,9 +501,9 @@ public class WalkAgent extends AgentBase {
 
     //------------------------------------------------------------
     /**
-     * set_swing
+     * リンク上の表示上の横ずれ幅の量を計算する。
      */
-    private void set_swing() {
+    private void calcSwingWidth() {
         /* agent drawing */
         //TODO should no call here, as lane should be set up properly
         MapLink currentLink = currentPlace.getLink() ;
@@ -516,10 +516,12 @@ public class WalkAgent extends AgentBase {
 
         int w = currentPlace.getLaneWidth() ;
         int index = currentPlace.getIndexInLane(this) ;
+        if (isBackwardDirection())
+            index = currentPlace.getLane().size() - index;
 
         if (isForwardDirection()) {
             if (index >= 0) {
-                swing_width = (2.0 * (index % w)) / currentLink.width - 1.0;
+                swing_width = (2.0 * ((currentPlace.getLane().size() - index) % w)) / currentLink.width - 1.0;
             }  else {
                 swing_width = 0.0;
             }
@@ -645,8 +647,9 @@ public class WalkAgent extends AgentBase {
     public void updateViews() {
         if (update_swing_flag) {
             update_swing_flag = false;
-            set_swing();
+            calcSwingWidth();
         }
+        calcSwing();
     }
 
 	//############################################################

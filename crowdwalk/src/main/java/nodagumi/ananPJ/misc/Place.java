@@ -694,7 +694,7 @@ public class Place {
      * 進んでいないほど index が小さいとする。
      */
     public int getIndexInLane(AgentBase agent) {
-        return getLane().indexOf(agent) ;
+        return Collections.binarySearch(getLane(), agent) ;
     }
 
     //------------------------------------------------------------

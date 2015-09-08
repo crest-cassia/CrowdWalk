@@ -560,7 +560,7 @@ public class AgentHandler {
         updatePollution();
         updateLinks(currentTime);
 
-        updateAgentViews();
+        updateAgentViews(currentTime);
 
         /* the following must be here, as direction etc. are
          * calculated in the methods call above, such as updateAgents.
@@ -651,23 +651,9 @@ public class AgentHandler {
             if (agent.isEvacuated()) {
                 continue;
             }
-            boolean agentMoved = false;
-
-            Point2D currentPosition = agent.getPos();
-            Point2D lastPosition = agent.lastPosition ;
-            if (lastPosition == null || ! currentPosition.equals(lastPosition)) {
-                agent.lastPosition = currentPosition ;
-                agentMoved = true;
-            }
-
-            Vector3d currentSwing = agent.getSwing();
-            Vector3d lastSwing = agent.lastSwing ;
-            if (lastSwing == null || ! currentSwing.equals(lastSwing)) {
-                agent.lastSwing = currentSwing ;
-                agentMoved = true;
-            }
-
-            if (agentMoved) {
+            boolean agentMoved = agent.updateLastPosition();
+            boolean swingChanged = agent.updateLastSwing();
+            if (agentMoved || swingChanged) {
                 networkMap.getNotifier().agentMoved(agent);
             }
         }
@@ -692,7 +678,6 @@ public class AgentHandler {
                     speedTotal += agent.getSpeed();
                     isAllAgentSpeedZero &= (agent.getSpeed() <= zeroSpeedThreshold) ;
                 }
-                logIndividualPedestrians(currentTime, agent);
             }
         }
         averageSpeed = speedTotal / count;
@@ -717,13 +702,17 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * エージェントの見え計算
+     *
+     * ※individual_pedestrians ログは swing 値を使用しているためここで出力する
      */
-    private void updateAgentViews() {
-        if(hasDisplay()) {
+    private void updateAgentViews(SimTime currentTime) {
+        if (hasDisplay() || individualPedestriansLogger != null) {
             for (AgentBase agent : getWalkingAgentCollection()){
-                if (agent.isEvacuated())
-                    continue;
-                agent.updateViews();
+                if (! agent.isEvacuated()) {
+                    // swing 値の計算
+                    agent.updateViews();
+                }
+                logIndividualPedestrians(currentTime, agent);
             }
         }
     }
@@ -747,13 +736,12 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * リンクの update 処理。
+     *
+     * リンク上の agents のソートと各レーンへの振り分け。
+     * swing 値を計算する場合は前処理として必要。
      */
     private void updateLinks(SimTime currentTime) {
-        /* [2015.07.04 I.Noda]
-         * 現状で、表示関係の処理しかしていないので、
-         * Display を持っている場合のみ、処理。
-         */
-        if(hasDisplay()) {
+        if (hasDisplay() || individualPedestriansLogger != null) {
             synchronized (simulator) {
                 for (MapLink link : simulator.getLinks()) {
                     link.update(currentTime);

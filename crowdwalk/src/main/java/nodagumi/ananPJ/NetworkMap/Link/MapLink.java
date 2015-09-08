@@ -331,9 +331,6 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     }
 
     public void preUpdate(SimTime currentTime) {
-        if(agents.isEmpty()) return ;
-
-        Collections.sort(agents) ;
         setup_lanes();
     }
 
@@ -344,11 +341,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * これまでは、agent ごとに setup_lanes を呼んでしまっていた。
      * これを避けるためにここでまとめて処理してみる。
      * 本来は、sort すべきか？
+     * [2015.09.07 斉藤]
+     * preUpdate 後に agent が移動するため再ソートが必要。
+     * ソートは setup_lanes の中でおこなう様にした。
      */
     public void update(SimTime currentTime) {
-        if(agents.isEmpty()) return ;
-
-        // Collections.sort(agents) ;
         setup_lanes();
     }
 
@@ -376,11 +373,16 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return true;
     }
 
-    private ArrayList<AgentBase> forwardLane =
-        new ArrayList<AgentBase>() ;
-    private ArrayList<AgentBase> backwardLane =
-        new ArrayList<AgentBase>() ;
-    public void setup_lanes() {
+    private ArrayList<AgentBase> forwardLane  = new ArrayList<AgentBase>() ;
+    private ArrayList<AgentBase> backwardLane = new ArrayList<AgentBase>() ;
+
+    /**
+     * リンク上の agents のソートと各レーンへの振り分け。
+     */
+    private void setup_lanes() {
+        if (! agents.isEmpty()) {
+            Collections.sort(agents) ;
+        }
         forwardLane.clear() ;
         backwardLane.clear() ;
         for (AgentBase agent : agents) {
