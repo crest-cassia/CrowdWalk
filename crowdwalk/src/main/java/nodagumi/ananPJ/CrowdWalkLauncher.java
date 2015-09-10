@@ -187,6 +187,8 @@ public class CrowdWalkLauncher {
             mapEditor.setPropertiesFromFile(propertiesFilePath,
                                             commandLineFallbacks);
             mapEditor.setPropertiesForDisplay();
+        } else {
+            mapEditor.initProperties(commandLineFallbacks);
         }
         mapEditor.updateAll();
         mapEditor.setVisible(true);

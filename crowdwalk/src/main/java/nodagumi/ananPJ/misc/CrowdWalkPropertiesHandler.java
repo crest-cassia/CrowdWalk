@@ -512,6 +512,13 @@ public class CrowdWalkPropertiesHandler {
     /**
      * コンストラクタ
      */
+    public CrowdWalkPropertiesHandler() {
+        prop = new Properties();
+    }
+
+    /**
+     * コンストラクタ
+     */
     public CrowdWalkPropertiesHandler(String _propertiesFile) {
         // load properties
         prop = new Properties();

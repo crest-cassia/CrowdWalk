@@ -46,6 +46,7 @@ import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
@@ -147,16 +148,17 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
     /**
      * マップエディタからシミュレーションを開始する時に用いるコンストラクタ.
      */
-    public GuiSimulationLauncher(String _propertiesPath, SetupFileInfo _setupFileInfo,
-            NetworkMap _networkMap, Settings _settings, ArrayList<String> commandLineFallbacks) {
-        super(null) ;
-        // load properties
-        setPropertiesFromFile(_propertiesPath, commandLineFallbacks) ;
+    public GuiSimulationLauncher(Random random, CrowdWalkPropertiesHandler _properties,
+            SetupFileInfo _setupFileInfo, NetworkMap _networkMap, Settings _settings) {
+        super(random) ;
+        properties = _properties;
         setPropertiesForDisplay();
-
         setupFileInfo = _setupFileInfo;
         networkMap = _networkMap;
         settings = _settings;
+        // ending condition
+        setExitCount(properties.getExitCount()) ;
+        setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
     }
 
     private transient Runnable simulationRunnable = null;

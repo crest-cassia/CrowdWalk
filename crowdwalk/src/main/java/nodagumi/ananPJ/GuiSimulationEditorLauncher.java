@@ -147,6 +147,10 @@ public class GuiSimulationEditorLauncher
 
     private EditorMode mode = EditorMode.EDIT_NODE;
     transient private JFrame frame;
+
+    /**
+     * シミュレーション開始ボタン
+     */
     private JButton runButton = null;
 
     public GuiSimulationEditorLauncher(Random _random, Settings _settings) {
@@ -212,6 +216,7 @@ public class GuiSimulationEditorLauncher
         buttonPanel.add(new JLabel());
         runButton = new JButton("Simulate");
         runButton.addActionListener(this);
+        runButton.setEnabled(false);
         buttonPanel.add(runButton);
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -750,14 +755,28 @@ public class GuiSimulationEditorLauncher
     }
 
     /**
+     * シミュレーション開始ボタンの状態を更新する
+     *
+     * シミュレーションの実行に必要なファイル名が全てセットされていればボタンを有効にする。
+     */
+    public void updateRunButton() {
+        if (getNetworkMapFile() == null || getGenerationFile() == null || getScenarioFile() == null) {
+            if (runButton.isEnabled()) {
+                runButton.setEnabled(false);
+            }
+        } else {
+            if (! runButton.isEnabled()) {
+                runButton.setEnabled(true);
+            }
+        }
+    }
+
+    /**
      * GUI シミュレータを起動する
      */
     public void simulate() {
-        if (propertiesFile == null) {
-            return;
-        }
-        GuiSimulationLauncher launcher = new GuiSimulationLauncher(propertiesFile,
-                setupFileInfo, networkMap, settings, commandLineFallbacks);
+        GuiSimulationLauncher launcher = new GuiSimulationLauncher(random,
+                properties, setupFileInfo, networkMap, settings);
         launcher.simulate();
     }
 
@@ -847,6 +866,7 @@ public class GuiSimulationEditorLauncher
      */
     public void setNetworkMapFile(String _mapPath) {
         setupFileInfo.setNetworkMapFile(_mapPath) ;
+        updateRunButton();
     }
 
     /**
@@ -875,6 +895,7 @@ public class GuiSimulationEditorLauncher
      */
     public void setGenerationFile(String _generationFile) {
         setupFileInfo.setGenerationFile(_generationFile);
+        updateRunButton();
     }
 
     /**
@@ -889,6 +910,7 @@ public class GuiSimulationEditorLauncher
      */
     public void setScenarioFile(String _scenarioFile) {
         setupFileInfo.setScenarioFile(_scenarioFile);
+        updateRunButton();
     }
 
     /**
@@ -939,6 +961,20 @@ public class GuiSimulationEditorLauncher
         setPollutionFile(properties.getPollutionFile());
         setGenerationFile(properties.getGenerationFile());
         setScenarioFile(properties.getScenarioFile());
+        setFallbackFile(properties.getFallbackFile(),
+                        commandLineFallbacks) ;
+    }
+
+    /**
+     * プロパティの初期化。
+     */
+    public void initProperties(ArrayList<String> _commandLineFallbacks) {
+        properties = new CrowdWalkPropertiesHandler();
+        commandLineFallbacks = _commandLineFallbacks;
+
+        // random
+        random = new Random(properties.getRandseed()) ;
+        // files
         setFallbackFile(properties.getFallbackFile(),
                         commandLineFallbacks) ;
     }

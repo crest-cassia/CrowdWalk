@@ -157,7 +157,7 @@ public class ScenarioPanel extends PanelWithTable {
         if (fd.getFile() == null) return;
 
         String filename = fd.getDirectory() + fd.getFile();
-        editor.getSetupFileInfo().setGenerationFile(filename);
+        editor.setGenerationFile(filename);
 
         refresh();
     }
@@ -172,7 +172,7 @@ public class ScenarioPanel extends PanelWithTable {
         if (fd.getFile() == null) return;
 
         String filename = fd.getDirectory() + fd.getFile();
-        editor.getSetupFileInfo().setScenarioFile(filename);
+        editor.setScenarioFile(filename);
 
         refresh();
     }
