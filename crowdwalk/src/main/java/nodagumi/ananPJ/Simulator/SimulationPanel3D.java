@@ -138,28 +138,37 @@ public class SimulationPanel3D extends NetworkPanel3D {
                     update_camerawork(updateTime);
                     update_clockstring(updateTime);
                 }
-                updateLinks();
-                updateNodes();
+                boolean canvasUpdated = updateLinks();
+                if (updateNodes()) {
+                    canvasUpdated = true;
+                }
                 if (firstStep) {
                     // MapArea の初期色は灰色なので全て塗り替える
-                    updateAllMapAreas();
+                    if (updateAllMapAreas()) {
+                        canvasUpdated = true;
+                    }
                     firstStep = false;
                 } else {
-                    updateMapAreas();
+                    if (updateMapAreas()) {
+                        canvasUpdated = true;
+                    }
                 }
-                updateAgents();
+                if (updateAgents()) {
+                    canvasUpdated = true;
+                }
                 synchronized (screenShotFileNames) {
                     if (! screenShotFileNames.isEmpty()) {
-                        // Canvas3D の更新が全くないと postSwap() が呼び出されずスクリーンショットが
-                        // 撮れないため、ダミーの更新を入れておく。
-                        synchronized (changedLinks) {
-                            if (changedLinks.isEmpty()) {
-                                changedLinks.add(links.get(0));
-                            }
-                        }
                         canvas.catpureNextFrame(screenShotFileNames.remove(0));
-                        updateLinks();
                     }
+                }
+
+                // Canvas3D が全く更新されないと postRender/postSwap が呼び出されず、
+                // ステータスが更新されない/スクリーンショットが撮れないためダミーの更新をおこなう。
+                if (! canvasUpdated) {
+                    synchronized (changedLinks) {
+                        changedLinks.add(links.get(0));
+                    }
+                    updateLinks();
                 }
             }
         });
@@ -1092,9 +1101,14 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
     /**
      * タグが更新されたリンクを再表示する.
+     *
+     * @return 更新があれば true、なければ false を返す。
      */
-    public void updateLinks() {
+    public boolean updateLinks() {
         synchronized (changedLinks) {
+            if (changedLinks.isEmpty()) {
+                return false;
+            }
             for (MapLink link : changedLinks) {
                 for (Map.Entry<Shape3D, OBNode> entry : canvasobj_to_obnode.entrySet()) {
                     if (entry.getValue() == link) {
@@ -1125,15 +1139,20 @@ public class SimulationPanel3D extends NetworkPanel3D {
             }
             changedLinks.clear();
         }
+        return true;
     }
 
     /**
      * タグが更新されたノードを再表示する.
      *
      * ※NodeAppearance が定義されたタグ付きのノードのみ表示される。
+     * @return 更新があれば true、なければ false を返す。
      */
-    public void updateNodes() {
+    public boolean updateNodes() {
         synchronized (changedNodes) {
+            if (changedNodes.isEmpty()) {
+                return false;
+            }
             for (MapNode node : changedNodes) {
                 BranchGroup nodeGroup = displayedNodeGroups.get(node);
                 if (nodeGroup != null) {
@@ -1150,25 +1169,35 @@ public class SimulationPanel3D extends NetworkPanel3D {
             }
             changedNodes.clear();
         }
+        return true;
     }
 
     /**
      * Pollution レベルが変化した MapArea を再表示する.
+     *
+     * @return 更新があれば true、なければ false を返す。
      */
-    public void updateMapAreas() {
+    public boolean updateMapAreas() {
         synchronized (changedMapAreas) {
+            if (changedMapAreas.isEmpty()) {
+                return false;
+            }
             for (MapArea area : changedMapAreas) {
                 MapArea3D area3D = displayedMapAreas.get(area) ;
                 area3D.updateColor();
             }
             changedMapAreas.clear();
         }
+        return true;
     }
 
     /**
      * 追加・移動・スピード変化・トリアージレベル変化・避難完了したエージェントの表示を更新する.
+     *
+     * @return 更新があれば true、なければ false を返す。
      */
-    public void updateAgents() {
+    public boolean updateAgents() {
+        boolean updated = false;
         // 追加 - エージェントを新規に表示する
         synchronized (addedAgents) {
             synchronized (movedAgents) {
@@ -1180,6 +1209,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
                                 agent3d = new Agent3D(agent);
                                 agent_group.addChild(agent3d.getBranchGroup());
                                 displayedAgents.put(agent, agent3d);
+                                updated = true;
                                 // updatePosition/updateColor する必要はないため対象から外す
                                 movedAgents.remove(agent);
                                 colorChangedAgents.remove(agent);
@@ -1192,41 +1222,51 @@ public class SimulationPanel3D extends NetworkPanel3D {
         }
         // 避難完了 - エージェントを表示対象から外す
         synchronized (evacuatedAgents) {
-            synchronized (displayedAgents) {
-                for (AgentBase agent : evacuatedAgents) {
-                    Agent3D agent3d = displayedAgents.get(agent);
-                    agent3d.detach();
-                    displayedAgents.remove(agent);
+            if (! evacuatedAgents.isEmpty()) {
+                synchronized (displayedAgents) {
+                    for (AgentBase agent : evacuatedAgents) {
+                        Agent3D agent3d = displayedAgents.get(agent);
+                        agent3d.detach();
+                        displayedAgents.remove(agent);
+                    }
                 }
+                evacuatedAgents.clear();
+                updated = true;
             }
-            evacuatedAgents.clear();
         }
         // 移動 - エージェントの表示位置を更新する
         synchronized (movedAgents) {
-            synchronized (displayedAgents) {
-                for (AgentBase agent : movedAgents) {
-                    if (agent.isEvacuated()) {
-                        continue;
+            if (! movedAgents.isEmpty()) {
+                synchronized (displayedAgents) {
+                    for (AgentBase agent : movedAgents) {
+                        if (agent.isEvacuated()) {
+                            continue;
+                        }
+                        Agent3D agent3d = displayedAgents.get(agent);
+                        agent3d.updatePosition();
                     }
-                    Agent3D agent3d = displayedAgents.get(agent);
-                    agent3d.updatePosition();
                 }
+                movedAgents.clear();
+                updated = true;
             }
-            movedAgents.clear();
         }
         // スピード変化・トリアージレベル変化 - エージェントの表示色を更新する
         synchronized (colorChangedAgents) {
-            synchronized (displayedAgents) {
-                for (AgentBase agent : colorChangedAgents) {
-                    if (agent.isEvacuated()) {
-                        continue;
+            if (! colorChangedAgents.isEmpty()) {
+                synchronized (displayedAgents) {
+                    for (AgentBase agent : colorChangedAgents) {
+                        if (agent.isEvacuated()) {
+                            continue;
+                        }
+                        Agent3D agent3d = displayedAgents.get(agent);
+                        agent3d.updateColor();
                     }
-                    Agent3D agent3d = displayedAgents.get(agent);
-                    agent3d.updateColor();
                 }
+                colorChangedAgents.clear();
+                updated = true;
             }
-            colorChangedAgents.clear();
         }
+        return updated;
     }
 
     /**
@@ -1476,11 +1516,17 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
     /**
      * 全 MapArea の表示を更新する.
+     *
+     * @return 更新があれば true、なければ false を返す。
      */
-    public void updateAllMapAreas() {
+    public boolean updateAllMapAreas() {
+        if (pollutions.isEmpty()) {
+            return false;
+        }
         for (MapArea area : pollutions) {
             displayedMapAreas.get(area).updateColor();
         }
+        return true;
     }
 
     @Override
