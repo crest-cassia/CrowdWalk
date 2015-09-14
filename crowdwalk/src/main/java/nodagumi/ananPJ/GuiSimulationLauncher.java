@@ -267,9 +267,9 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         panel.setCanvasSize(w, h);
         panel.initialize();
         simulation_frame.setLayout(new BorderLayout());
-        simulation_frame.add(panel, BorderLayout.CENTER);
+        simulation_frame.add(panel, BorderLayout.WEST);
         JTabbedPane tabs = new JTabbedPane();
-        simulation_frame.add(tabs, BorderLayout.EAST);
+        simulation_frame.add(tabs, BorderLayout.CENTER);
 
         tabs.add(control_panel);
         tabs.add(panel.getControlPanel());
