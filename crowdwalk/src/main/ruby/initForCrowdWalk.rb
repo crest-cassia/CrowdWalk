@@ -7,8 +7,6 @@
 ## * [2015/06/27]: Create This File.
 ## * [YYYY/MM/DD]: add more
 
-require 'pp' ;
-
 #------------------------------------------------------------------------
 
 require 'ItkTerm.rb' ;

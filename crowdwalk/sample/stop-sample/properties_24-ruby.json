@@ -50,7 +50,7 @@
     use_ruby: true,
     ruby_init_script:"
 require './GateOperationWrapper.rb'
-require 'pp'
+#require 'pp'
 ",
   "ruby_simulation_wrapper_class":"GateOperationWrapper"
 }
