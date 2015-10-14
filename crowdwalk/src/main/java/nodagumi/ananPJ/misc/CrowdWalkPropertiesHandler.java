@@ -235,29 +235,11 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>time_series_log</h4>
- *     <pre>  時系列ログをとるかどうかの設定
+ *     <h4>evacuated_agents_log_file</h4>
+ *     <pre>  ゴールノード別の脱出エージェント数をステップごとに記録するログ
  *
- *  設定値： true | false
- *  デフォルト値： false</pre>
- *   </li>
- *
- *   <li>
- *     <h4>time_series_log_path</h4>
- *     <pre>  時系列ログを保管するディレクトリの指定
- *  time_series_log が true の時に設定する
- *
- *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
+ *  設定値： evacuated_agents_log file へのファイルパス
  *  デフォルト値： なし</pre>
- *   </li>
- *
- *   <li>
- *     <h4>time_series_log_interval</h4>
- *     <pre>  ログを収集する時間の間隔の設定
- *  time_series_log が true の時に設定する
- *
- *  設定値： 自然数
- *  デフォルト値： 1</pre>
  *   </li>
  *
  *   <li>

@@ -424,6 +424,20 @@ public class AgentHandler {
             ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * EvacuatedAgentsLogger
+     */
+    private Logger evacuatedAgentsLogger = null;
+    private CsvFormatter<HashMap<MapNode, Integer>> evacuatedAgentsLoggerFormatter =
+        new CsvFormatter<HashMap<MapNode, Integer>>() ;
+
+    /**
+     * ゴールノードごとの脱出したエージェント数(カウントアップする)
+     */
+    private HashMap<MapNode, Integer> evacuatedAgentCountByExit =
+        new LinkedHashMap<MapNode, Integer>();
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -681,6 +695,11 @@ public class AgentHandler {
             }
         }
         averageSpeed = speedTotal / count;
+
+        if (evacuatedAgentsLogger != null) {
+            evacuatedAgentsLoggerFormatter.outputValueToLoggerInfo(
+                    evacuatedAgentsLogger, evacuatedAgentCountByExit);
+        }
     }
 
     //------------------------------------------------------------
@@ -696,6 +715,16 @@ public class AgentHandler {
             agentMovementHistoryLoggerFormatter
                 .outputValueToLoggerInfo(agentMovementHistoryLogger,
                                          agent, currentTime, this);
+        }
+        if (evacuatedAgentsLogger != null) {
+            MapNode exitNode = agent.getPrevNode();
+            Integer counter = evacuatedAgentCountByExit.get(exitNode);
+            if (counter == null) {
+                Itk.logWarn("Evacuated from unregistered goal", exitNode.toShortInfo());
+                return;
+            }
+            counter += 1;
+            evacuatedAgentCountByExit.put(exitNode, counter);
         }
     }
 
@@ -819,6 +848,23 @@ public class AgentHandler {
             }
         }
         return all_goal_tags;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * mid_goal を含まないすべてのゴールタグを集める。
+     */
+    public ArrayList<String> getGoalTags() {
+        ArrayList<String> goal_tags = new ArrayList<String>();
+
+        for (AgentFactory factory : generate_agent) {
+            Term goal_tag = factory.goal;
+            if (goal_tag != null &&
+                !goal_tags.contains(goal_tag.getString())) {
+                goal_tags.add(goal_tag.getString());
+            }
+        }
+        return goal_tags;
     }
 
     //------------------------------------------------------------
@@ -1012,6 +1058,10 @@ public class AgentHandler {
                     individualLogDir.replaceFirst("[/\\\\]+$", "");
             }
 
+            String evacuatedAgentsPath =
+                simulator.getProperties()
+                .getFilePath("evacuated_agents_log_file", null, false);
+
             // log setup
             if (agentHistoryPath != null) {
                 initAgentMovementHistoryLogger("agent_movement_history",
@@ -1020,6 +1070,10 @@ public class AgentHandler {
             if (individualLogDir != null) {
                 initIndividualPedestriansLogger("individual_pedestrians_log",
                                                 individualLogDir);
+            }
+            if (evacuatedAgentsPath != null) {
+                initEvacuatedAgentsLogger("evacuated_agents_log",
+                                               evacuatedAgentsPath);
             }
         } catch(Exception e) {
             Itk.logError("can not setup Logger",e.getMessage()) ;
@@ -1035,6 +1089,7 @@ public class AgentHandler {
     public void finalizeSimulationLoggers() {
         closeIndividualPedestriansLogger();
         closeAgentMovementHistorLogger();
+        closeEvacuatedAgentsLogger();
     }
 
     //------------------------------------------------------------
@@ -1162,5 +1217,42 @@ public class AgentHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * EvacuatedAgentsLogger の初期化
+     */
+    public void initEvacuatedAgentsLogger(String name, String filePath) {
+        evacuatedAgentsLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
+            public String format(final LogRecord record) {
+                return formatMessage(record) + "\n";
+            }
+        }, filePath);
+        evacuatedAgentsLogger.setUseParentHandlers(false); // コンソールには出力しない
+
+        // 出力カラムと初期値をセットする
+        for (final MapNode node : simulator.getNodes()) {
+            for (String goalTag : getGoalTags()) {
+                if (node.hasTag(goalTag)) {
+                    evacuatedAgentsLoggerFormatter
+                        .addColumn(evacuatedAgentsLoggerFormatter.new Column(node.getTagLabel()) {
+                            public String value(HashMap<MapNode, Integer> agentCounter) {
+                                return agentCounter.get(node).toString();
+                            }
+                        });
+                    evacuatedAgentCountByExit.put(node, 0);
+                    break;
+                }
+            }
+        }
+        evacuatedAgentsLoggerFormatter
+            .outputHeaderToLoggerInfo(evacuatedAgentsLogger) ;
+    }
+
+    /**
+     * EvacuatedAgentsLogger の終了
+     */
+    public void closeEvacuatedAgentsLogger() {
+        closeLogger(evacuatedAgentsLogger);
     }
 }
