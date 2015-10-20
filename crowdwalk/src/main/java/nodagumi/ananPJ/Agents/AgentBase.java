@@ -905,6 +905,13 @@ implements Comparable<AgentBase> {
     }
 
     /**
+     * WAIT_FOR/WAIT_UNTIL 処理中か?
+     */
+    public boolean isWaiting() {
+        return false;
+    }
+
+    /**
      * lastPosition を更新する
      *
      * @return 値が変化したら true、変わらなければ false

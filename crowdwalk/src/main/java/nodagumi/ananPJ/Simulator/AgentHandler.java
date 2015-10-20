@@ -690,7 +690,12 @@ public class AgentHandler {
                 } else { // まだ歩いている場合。
                     ++count;
                     speedTotal += agent.getSpeed();
-                    isAllAgentSpeedZero &= (agent.getSpeed() <= zeroSpeedThreshold) ;
+                    if (agent.isWaiting()) {
+                        // WAIT 中で停止しているエージェントは all_agent_speed_zero_break の対象外とするため
+                        isAllAgentSpeedZero = false;
+                    } else {
+                        isAllAgentSpeedZero &= (agent.getSpeed() <= zeroSpeedThreshold) ;
+                    }
                 }
             }
         }

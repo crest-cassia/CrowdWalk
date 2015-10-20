@@ -23,6 +23,7 @@ import net.arnx.jsonic.JSON ;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.misc.RoutePlan;
 import nodagumi.ananPJ.misc.SimTime;
 
@@ -103,6 +104,13 @@ public class AwaitAgent extends WalkAgent {
         }
     }
 
+    /**
+     * WAIT_FOR/WAIT_UNTIL 処理中か?
+     */
+    public boolean isWaiting() {
+        return waiting;
+    }
+
     //----------------------------------------------------------------------
     /**
      * WAIT_FOR/WAIT_UNTIL 中のエージェントをレーンごとに均等な間隔で配置する。
@@ -143,7 +151,18 @@ public class AwaitAgent extends WalkAgent {
      * できるだけ過密に並ぶ
      */
     protected boolean pack(SimTime currentTime) {
-        updateSpeed(currentTime) ;
+        double previousSpeed = speed;
+        speed = calcSpeed(speed, currentTime);
+
+        // currentLink 内に収まるスピードにする
+        double deltaDistance = speed * currentTime.getTickUnit() ;
+        if (currentPlace.isBeyondLinkWithAdvance(deltaDistance)) {
+            double distance = currentPlace.getLinkLength() * Place.AlmostOne
+                - currentPlace.getAdvancingDistance();
+            speed = distance / currentTime.getTickUnit();
+        }
+
+        checkSpeedChange(previousSpeed, speed);
 
         return advanceNextPlace(speed, currentTime, true) ;
     }
