@@ -398,6 +398,14 @@ import nodagumi.Itk.*;
  *  設定値： true | false
  *  デフォルト値： false</pre>
  *   </li>
+ *
+ *   <li>
+ *     <h4>exit_with_simulation_finished</h4>
+ *     <pre>  GUI モード時にシミュレーション終了と同時にプログラムを終了する
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
  * </ul>
  */
 public class CrowdWalkPropertiesHandler {

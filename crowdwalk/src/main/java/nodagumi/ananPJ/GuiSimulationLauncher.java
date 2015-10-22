@@ -90,6 +90,7 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
     private String showStatusPosition = "top";
     private boolean showLogo = false;
     private boolean show3dPolygon = true;
+    private boolean exitWithSimulationFinished = false;
 
     /**
      * 画面パーツ類。
@@ -184,9 +185,7 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         simulationRunnable = new Runnable() {
             public void run() {
                 simulateMainLoop() ;
-                synchronized (simulationRunnable) {
-                    paused = true ;
-                }
+                paused = true ;
             }
         };
     }
@@ -227,12 +226,30 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
     public void step() {
         synchronized (simulationRunnable) {
             simulateOneStepBare() ;
+            if (exitCount > 0 && counter > exitCount) {
+                finished = true;
+            }
+            if (finished) {
+                finalize() ;
+            }
         }
     }
 
     @Override
     public boolean isRunning() {
         return !paused;
+    }
+
+    /**
+     * シミュレーションの終了処理。
+     */
+    @Override
+    protected void finalize() {
+        super.finalize() ;
+        if (panel.getExitWithSimulationFinished().isSelected()) {
+            exitOnClose = true;
+            quit();
+        }
     }
 
     protected transient SimulationPanel3D panel = null;
@@ -469,7 +486,14 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         control_button_panel.add(pause_button);
         step_button = new JButton(step_icon);
         step_button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { simulator.step(); update_buttons(); }
+            public void actionPerformed(ActionEvent e) {
+                if (panel.getExitWithSimulationFinished().isSelected()) {
+                    // ボタンクリックでいきなりプログラムが終了することがないようにするため
+                    panel.getExitWithSimulationFinished().doClick();
+                }
+                simulator.step();
+                update_buttons();
+            }
         });
         control_button_panel.add(step_button);
         update_buttons();
@@ -563,23 +587,8 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
     /**
      * evacuation count の計算
      */
-    public void updateEvacuatedCount(AgentHandler agentHandler) {
-        String evacuatedCount_string;
-        if (agentHandler.numOfStuckAgents() == 0) {
-            evacuatedCount_string = String.format(
-                    "Walking: %d  Generated: %d  Evacuated: %d / %d",
-                    agentHandler.numOfWalkingAgents(),
-                    agentHandler.numOfAllAgents(),
-                    agentHandler.numOfEvacuatedAgents(), agentHandler.getMaxAgentCount());
-        } else {
-            evacuatedCount_string = String.format(
-                    "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
-                    agentHandler.numOfWalkingAgents(),
-                    agentHandler.numOfAllAgents(),
-                    agentHandler.numOfEvacuatedAgents() - agentHandler.numOfStuckAgents(),
-                    agentHandler.numOfStuckAgents(),
-                    agentHandler.getMaxAgentCount());
-        }
+    public void updateEvacuatedCount() {
+        String evacuatedCount_string = simulator.getEvacuatedCountStatus();
         evacuatedCount_label.setText(evacuatedCount_string);
         SimulationPanel3D.updateEvacuatedCount(evacuatedCount_string);
     }
@@ -679,6 +688,11 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
                 thread.start();
             }
         }
+        if (properties.isDefined("exit_with_simulation_finished")) {
+            if (exitWithSimulationFinished != panel.getExitWithSimulationFinished().isSelected()) {
+                panel.getExitWithSimulationFinished().doClick();
+            }
+        }
     }
 
     // SimulationPanel3D を生成した直後に呼び出される(simulationWindowOpenedOperation ではうまく対処できない分の処理)
@@ -742,6 +756,8 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
             show3dPolygon = properties.getBoolean("show_3D_polygon", show3dPolygon);
             simulationWindowOpen = properties.getBoolean("simulation_window_open", simulationWindowOpen);
             autoSimulationStart = properties.getBoolean("auto_simulation_start", autoSimulationStart);
+            exitWithSimulationFinished = properties.getBoolean("exit_with_simulation_finished",
+                    exitWithSimulationFinished);
         } catch(Exception e) {
             //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
             System.err.println(e.getMessage());
