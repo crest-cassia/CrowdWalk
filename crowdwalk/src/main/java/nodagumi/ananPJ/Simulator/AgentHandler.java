@@ -191,6 +191,11 @@ public class AgentHandler {
      */
     private double zeroSpeedThreshold = Fallback_zeroSpeedThreshold ;
 
+    /**
+     * CurrentLink が該当するリンクか判別するためのリンクタグ(individualPedestriansLog用)
+     */
+    private String searchTargetLinkTag = null;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // ログ出力定義関連
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -198,6 +203,11 @@ public class AgentHandler {
      * individualPedestriansLog の出力先 dir
      */
     private String individualPedestriansLogDir = null;
+
+    /**
+     * individualPedestriansLog の出力対象カラム
+     */
+    private List<String> logColumnsOfIndividualPedestrians = new ArrayList<String>();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -296,6 +306,11 @@ public class AgentHandler {
      *		"amount_exposure"
      *		"current_status_by_exposure"
      *		"next_assigned_passage_node"
+     * ※ "waiting", "in_search_target_link", "current_time" は標準では出力されない。
+     *
+     * 標準の出力カラムはリソースデータ "fallbackParameters.json" の
+     * agentHandler/logColumnsOfIndividualPedestrians で定義されている。
+     * プロパティファイルに指定する Fallback file で再定義する事により出力カラムが変更できる。
      */
     private static CsvFormatter<AgentBase> individualPedestriansLoggerFormatter =
         new CsvFormatter<AgentBase>() ;
@@ -421,6 +436,22 @@ public class AgentHandler {
                         return (agent.isEvacuated() ?
                                 "" :
                                 agent.getNextCandidateString()) ;}})
+            .addColumn(formatter.new Column("waiting") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return "" + agent.isWaiting() ;}})
+            .addColumn(formatter.new Column("in_search_target_link") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        AgentHandler handler = (AgentHandler)agentHandlerObj ;
+                        return ((handler.searchTargetLinkTag == null || agent.isEvacuated()) ?
+                                "false" :
+                                "" + agent.getCurrentLink().hasTag(handler.searchTargetLinkTag)) ;}})
+            .addColumn(formatter.new Column("current_time") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        SimTime currentTime = (SimTime)timeObj ;
+                        return currentTime.getAbsoluteTimeString();}})
             ;
     }
 
@@ -457,6 +488,15 @@ public class AgentHandler {
             SetupFileInfo.fetchFallbackDouble(fallback,
                                               "zeroSpeedThreshold",
                                               zeroSpeedThreshold) ;
+        searchTargetLinkTag = SetupFileInfo.fetchFallbackString(fallback,
+                "searchTargetLinkTag", searchTargetLinkTag);
+
+        Term logColumns = SetupFileInfo.fetchFallbackTerm(fallback,
+                "logColumnsOfIndividualPedestrians", Term.newArrayTerm());
+        for (int i = 0; i < logColumns.getArraySize(); i++) {
+            Term columnName = logColumns.getNthTerm(i);
+            logColumnsOfIndividualPedestrians.add(columnName.getString());
+        }
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -1102,7 +1142,7 @@ public class AgentHandler {
      * individualPedestriansLogger への出力。
      */
     private void logIndividualPedestrians(SimTime currentTime, AgentBase agent) {
-        if (individualPedestriansLogger != null) {
+        if (individualPedestriansLogger != null && ! agent.isDead()) {
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
                                          agent, currentTime, this);
@@ -1181,6 +1221,7 @@ public class AgentHandler {
             }
         }, dirPath + "/log_individual_pedestrians.csv");
         individualPedestriansLogger.setUseParentHandlers(false); // コンソールには出力しない
+        individualPedestriansLoggerFormatter.setColumns(logColumnsOfIndividualPedestrians);
         individualPedestriansLoggerFormatter
             .outputHeaderToLoggerInfo(individualPedestriansLogger) ;
 
@@ -1199,13 +1240,15 @@ public class AgentHandler {
         // log_individual_pedestrians_initial.csv
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
-            writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
+            writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,generated_position,died_position,distnation_nodeID,assigned_passage_nodes,status\n");
             for (AgentBase agent : getAllAgentCollection()) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
                 buff.append(simulator.currentTime.getTickUnit()); buff.append(",");
+                buff.append(agent.generatedPosition); buff.append(",");
+                buff.append(agent.diedPosition); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {
@@ -1215,6 +1258,8 @@ public class AgentHandler {
                     idx++;
                     buff.append(route);
                 }
+                buff.append(",");
+                buff.append(agent.isEvacuated() ? "evacuated" : "dead");
                 buff.append("\n");
                 writer.write(buff.toString());
             }
