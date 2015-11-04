@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.GuiSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -570,7 +571,14 @@ public class EvacuationSimulator {
         buildScenario() ;
         buildPollution() ;
         buildAgentHandler() ;
-        buildRoutes ();
+        if (properties != null && properties.isRoutesLoading()) {
+            networkMap.loadRoutes(properties);
+        } else {
+            buildRoutes() ;
+            if (CrowdWalkLauncher.routesSaving) {
+                networkMap.saveRoutes(properties);
+            }
+        }
         buildRubyEngine() ;
 
         //prepare for simulation

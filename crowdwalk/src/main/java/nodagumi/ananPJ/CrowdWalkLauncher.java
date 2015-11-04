@@ -1,6 +1,7 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -23,7 +24,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-g] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-g] [-h] [-l <LEVEL>] [-s] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -33,15 +34,21 @@ public class CrowdWalkLauncher {
     private static Settings settings = null;
 
     /**
+     * 経路探索結果の保存フラグ
+     */
+    public static boolean routesSaving = false;
+
+    /**
      * コマンドラインオプションの定義
      */
     public static void defineOptions(Options options) {
         options.addOption("c", "cui", false, "CUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
-        options.addOption("g", "gui", false, "GUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
+        options.addOption("g", "gui", false, "マップエディタウィンドウを開かずに GUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
         options.addOption("h", "help", false, "この使い方を表示して終了する");
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
             .hasArg().withArgName("LEVEL").create("l"));
+        options.addOption("s", "save-routes", false, "経路探索の結果をファイルに保存する\nproperties-file の指定が必須");
         options.addOption(OptionBuilder.withLongOpt("tick")
             .withDescription("tick 情報を FILE に出力する\nCUI モード時のみ有効")
             .hasArg().withArgName("FILE").create("t"));
@@ -88,6 +95,15 @@ public class CrowdWalkLauncher {
             // ログレベルの指定
             if (commandLine.hasOption("log-level")) {
                 setLogLevel(commandLine.getOptionValue("log-level"));
+            }
+
+            // 経路探索結果の保存
+            if (commandLine.hasOption("save-routes")) {
+                if (propertiesFilePath == null) {
+                    printHelp(options);
+                    System.exit(1);
+                }
+                routesSaving = true;
             }
 
             // CUI モードで実行
