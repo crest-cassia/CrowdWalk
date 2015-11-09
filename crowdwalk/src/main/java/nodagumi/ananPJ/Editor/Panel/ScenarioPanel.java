@@ -151,8 +151,7 @@ public class ScenarioPanel extends PanelWithTable {
         FileDialog fd = new FileDialog(editor.getFrame(), 
                 "Set agent generation scenario", FileDialog.LOAD);
 
-        fd.setFile("");
-        fd.setDirectory(editor.getDirName());
+        editor.setFileDialogPath(fd, editor.getGenerationFile(), "generation");
         fd.setVisible (true);
         if (fd.getFile() == null) return;
 
@@ -166,8 +165,7 @@ public class ScenarioPanel extends PanelWithTable {
         FileDialog fd = new FileDialog(editor.getFrame(), 
                 "Set emergency scenario", FileDialog.LOAD);
 
-        fd.setFile("");
-        fd.setDirectory(editor.getDirName());
+        editor.setFileDialogPath(fd, editor.getScenarioFile(), "scenario");
         fd.setVisible (true);
         if (fd.getFile() == null) return;
 
@@ -185,8 +183,7 @@ public class ScenarioPanel extends PanelWithTable {
         FileDialog fd = new FileDialog(editor.getFrame(), 
                 "Set emergency scenario", FileDialog.LOAD);
 
-        fd.setFile("");
-        fd.setDirectory(editor.getDirName());
+        editor.setFileDialogPath(fd, editor.getFallbackFile(), "fallback");
         fd.setVisible (true);
         if (fd.getFile() == null) return;
 

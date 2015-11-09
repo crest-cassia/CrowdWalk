@@ -174,18 +174,13 @@ public class AreaPanel extends JPanel
 			FileDialog fd = new FileDialog(editor.getFrame(), 
 					"Set obstructer scenario", FileDialog.LOAD);
 
-	    	String dirName = null, fileName = null; 
-	    	dirName = editor.getDirName();
-	    	fileName = "";
-
-	    	fd.setFile(fileName);
-	    	fd.setDirectory(dirName);
+            editor.setFileDialogPath(fd, editor.getPollutionFile(), "obstructer");
 	    	fd.setVisible (true);
 	        
 	    	if (fd.getFile() == null) return;
 	    	String filename = fd.getDirectory() + fd.getFile();
 	    	obstructerFileLabel.setText("Obstructer Settings: " + filename);
-	    	editor.getSetupFileInfo().setPollutionFile(filename);
+	    	editor.setPollutionFile(filename);
 
 	    	repaint();
 		}

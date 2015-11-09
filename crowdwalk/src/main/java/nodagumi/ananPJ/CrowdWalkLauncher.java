@@ -29,6 +29,11 @@ public class CrowdWalkLauncher {
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
     /**
+     * GUI 設定情報のパス設定項目(マップファイル以外)
+     */
+    private static String[] SETTING_PATH_ITEMS = {"generation", "scenario", "fallback", "obstructer"};
+
+    /**
      * GUI の設定情報
      */
     private static Settings settings = null;
@@ -243,6 +248,15 @@ public class CrowdWalkLauncher {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 if (settings != null) {
+                    // ディレクトリがマップファイルと異なる場合は危険なので保存しない
+                    String mapDir = settings.get("mapDir", "");
+                    for (String item : SETTING_PATH_ITEMS) {
+                        if (! settings.get(item + "Dir", "").equals(mapDir)) {
+                            settings.put(item + "Dir", "");
+                            settings.put(item + "File", "");
+                        }
+                    }
+
                     Settings.save();
                 }
             }

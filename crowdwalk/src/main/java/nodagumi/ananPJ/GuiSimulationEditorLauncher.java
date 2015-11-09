@@ -222,7 +222,11 @@ public class GuiSimulationEditorLauncher
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
         setup_menu();
-        frame.setSize(800, 700);
+        int x = settings.get("editorPositionX", 0);
+        int y = settings.get("editorPositionY", 0);
+        int width = settings.get("editorWidth", 800);
+        int height = settings.get("editorHeight", 700);
+        frame.setBounds(x, y, width, height);
 
         frame.repaint();
     }
@@ -434,6 +438,39 @@ public class GuiSimulationEditorLauncher
     }
 
     private boolean clearAll() {
+        if (! checkModified()) {
+            return false;
+        }
+        if (properties != null) {
+            // NetworkMap の生成時に random オブジェクトを初期化する
+            // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
+            random.setSeed(properties.getRandseed());
+        }
+        networkMap = new NetworkMap() ;
+        setNetworkMapFile(null);
+        updateAll();
+        // System.gc();
+
+        return true;
+    }
+
+    private boolean openMap() {
+        FileDialog fd = new FileDialog(frame, "Open map", FileDialog.LOAD);
+        fd.setFile(settings.get("mapFile", ""));
+        fd.setDirectory(settings.get("mapDir", ""));
+        fd.setVisible (true);
+
+        if (fd.getFile() == null) return false;
+
+        setNetworkMapFile(fd.getDirectory() + fd.getFile());
+
+        return openMapWithName();
+    }
+
+    /**
+     * マップデータのセーブし忘れを防ぐためのチェック
+     */
+    private boolean checkModified() {
         Object[] options = {"Save", "Don't save", "Cancel"};
         if (modified) {
             int n = JOptionPane.showOptionDialog(frame,
@@ -455,33 +492,9 @@ public class GuiSimulationEditorLauncher
                 return false;
             }
         }
-        if (properties != null) {
-            // NetworkMap の生成時に random オブジェクトを初期化する
-            // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
-            random.setSeed(properties.getRandseed());
-        }
-        networkMap = new NetworkMap() ;
-        setNetworkMapFile(null);
-        updateAll();
         setModified(false);
-        // System.gc();
 
         return true;
-    }
-
-    private boolean openMap() {
-        FileDialog fd = new FileDialog(frame, "Open map", FileDialog.LOAD);
-        fd.setFile(settings.get("mapfile", ""));
-        fd.setDirectory(settings.get("inputdir", ""));
-        fd.setVisible (true);
-
-        if (fd.getFile() == null) return false;
-
-        setNetworkMapFile(fd.getDirectory() + fd.getFile());
-        settings.put ("mapfile", fd.getFile ());
-        settings.put ("inputdir", fd.getDirectory ());
-
-        return openMapWithName();
     }
 
     private NetworkMap readMapWithName(String file_name)
@@ -530,15 +543,13 @@ public class GuiSimulationEditorLauncher
 
     private boolean saveMapAs() {
         FileDialog fd = new FileDialog(frame, "Export map", FileDialog.SAVE);
-        fd.setFile(settings.get("mapfile", ""));
-        fd.setDirectory(settings.get("inputdir", ""));
+        fd.setFile(settings.get("mapFile", ""));
+        fd.setDirectory(settings.get("mapDir", ""));
         fd.setVisible (true);
 
         if (fd.getFile() == null) return false;
 
         setNetworkMapFile(fd.getDirectory() + fd.getFile());
-        settings.put ("mapfile", fd.getFile ());
-        settings.put ("inputdir", fd.getDirectory ());
 
         return saveMapWithName();
     }
@@ -595,11 +606,13 @@ public class GuiSimulationEditorLauncher
     }
 
     private void quit () {
-        if (!clearAll())
+        if (! checkModified()) {
             return;
-
-        settings.put("width", frame.getWidth());
-        settings.put("height", frame.getHeight());
+        }
+        settings.put("editorPositionX", frame.getLocationOnScreen().x);
+        settings.put("editorPositionY", frame.getLocationOnScreen().y);
+        settings.put("editorWidth", frame.getWidth());
+        settings.put("editorHeight", frame.getHeight());
         frame.dispose ();
     }
 
@@ -760,7 +773,9 @@ public class GuiSimulationEditorLauncher
      * シミュレーションの実行に必要なファイル名が全てセットされていればボタンを有効にする。
      */
     public void updateRunButton() {
-        if (getNetworkMapFile() == null || getGenerationFile() == null || getScenarioFile() == null) {
+        if (getNetworkMapFile() == null || getNetworkMapFile().isEmpty()
+                || getGenerationFile() == null || getGenerationFile().isEmpty()
+                || getScenarioFile() == null || getScenarioFile().isEmpty()) {
             if (runButton.isEnabled()) {
                 runButton.setEnabled(false);
             }
@@ -852,6 +867,26 @@ public class GuiSimulationEditorLauncher
     public BrowserPanel getBrowserPanel() { return browserPanel; }
 
     /**
+     * ファイル選択ダイアログの初期値を最適な値にセットする
+     */
+    public void setFileDialogPath(FileDialog fd, String path, String item) {
+        if (path == null || path.isEmpty()) {
+            String dir = settings.get(item + "Dir", "");
+            String fileName = settings.get(item + "File", "");
+            if (dir.isEmpty()) {
+                dir = getDirName();
+                fileName = "";
+            }
+            fd.setDirectory(dir);
+            fd.setFile(fileName);
+        } else {
+            File file = new File(path);
+            fd.setDirectory(file.getParent());
+            fd.setFile(file.getName());
+        }
+    }
+
+    /**
      * マップ取得
      */
     public NetworkMap getMap() { return networkMap; }
@@ -866,6 +901,14 @@ public class GuiSimulationEditorLauncher
      */
     public void setNetworkMapFile(String _mapPath) {
         setupFileInfo.setNetworkMapFile(_mapPath) ;
+        if (_mapPath == null || _mapPath.isEmpty()) {
+            settings.put("mapDir", "");
+            settings.put("mapFile", "");
+        } else {
+            File file = new File(_mapPath);
+            settings.put("mapDir", file.getParent() + File.separator);
+            settings.put("mapFile", file.getName());
+        }
         updateRunButton();
     }
 
@@ -881,6 +924,14 @@ public class GuiSimulationEditorLauncher
      */
     public void setPollutionFile(String _pollutionFile) {
         setupFileInfo.setPollutionFile(_pollutionFile);
+        if (_pollutionFile == null || _pollutionFile.isEmpty()) {
+            settings.put("obstructerDir", "");
+            settings.put("obstructerFile", "");
+        } else {
+            File file = new File(_pollutionFile);
+            settings.put("obstructerDir", file.getParent() + File.separator);
+            settings.put("obstructerFile", file.getName());
+        }
     }
 
     /**
@@ -895,6 +946,14 @@ public class GuiSimulationEditorLauncher
      */
     public void setGenerationFile(String _generationFile) {
         setupFileInfo.setGenerationFile(_generationFile);
+        if (_generationFile == null || _generationFile.isEmpty()) {
+            settings.put("generationDir", "");
+            settings.put("generationFile", "");
+        } else {
+            File file = new File(_generationFile);
+            settings.put("generationDir", file.getParent() + File.separator);
+            settings.put("generationFile", file.getName());
+        }
         updateRunButton();
     }
 
@@ -910,6 +969,14 @@ public class GuiSimulationEditorLauncher
      */
     public void setScenarioFile(String _scenarioFile) {
         setupFileInfo.setScenarioFile(_scenarioFile);
+        if (_scenarioFile == null || _scenarioFile.isEmpty()) {
+            settings.put("scenarioDir", "");
+            settings.put("scenarioFile", "");
+        } else {
+            File file = new File(_scenarioFile);
+            settings.put("scenarioDir", file.getParent() + File.separator);
+            settings.put("scenarioFile", file.getName());
+        }
         updateRunButton();
     }
 
@@ -927,6 +994,14 @@ public class GuiSimulationEditorLauncher
                                 ArrayList<String> _commandLineFallbacks) {
         setupFileInfo.setFallbackFile(_fallbackFile) ;
         setupFileInfo.scanFallbackFile(_commandLineFallbacks, true) ;
+        if (_fallbackFile == null || _fallbackFile.isEmpty()) {
+            settings.put("fallbackDir", "");
+            settings.put("fallbackFile", "");
+        } else {
+            File file = new File(_fallbackFile);
+            settings.put("fallbackDir", file.getParent() + File.separator);
+            settings.put("fallbackFile", file.getName());
+        }
     }
 
     /**
@@ -975,8 +1050,7 @@ public class GuiSimulationEditorLauncher
         // random
         random = new Random(properties.getRandseed()) ;
         // files
-        setFallbackFile(properties.getFallbackFile(),
-                        commandLineFallbacks) ;
+        setupFileInfo.scanFallbackFile(commandLineFallbacks, true) ;
     }
 
     /**

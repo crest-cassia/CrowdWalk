@@ -9,11 +9,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 import nodagumi.Itk.*;
 
-public class Settings extends HashMap<String, String> {
+public class Settings extends TreeMap<String, String> {
 	String settingsFilename = "settings.ini";
 	static Settings settings = null;	
 
@@ -56,6 +56,7 @@ public class Settings extends HashMap<String, String> {
 	}
 	
 	public static void save () {
+                Itk.logInfo("Save Settings File", settings.settingsFilename) ;
 		try {
 			FileWriter fw = new FileWriter (settings.settingsFilename);
 			BufferedWriter bw = new BufferedWriter (fw);

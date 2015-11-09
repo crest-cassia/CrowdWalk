@@ -13,7 +13,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
+import java.awt.IllegalComponentStateException;
 import java.awt.Insets;
 
 import java.awt.event.WindowEvent;
@@ -56,6 +59,15 @@ import nodagumi.Itk.*;
 
 public class GuiSimulationLauncher extends BasicSimulationLauncher
     implements SimulationController {
+    /**
+     * 3Dシミュレーションパネルの幅
+     */
+    private int simulationPanelWidth = 800;
+
+    /**
+     * 3Dシミュレーションパネルの高さ
+     */
+    private int simulationPanelHeight = 600;
 
     /**
      * GUI の設定情報
@@ -192,13 +204,6 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
 
     private void quit() {
         Itk.logInfo("Simulation window closed.") ;
-        // TODO: 
-        // settings.put("launcher_width", simulation_frame.getWidth());
-        // settings.put("launcher_height", simulation_frame.getHeight());
-        // if (panel != null) {
-        //     settings.put("3dpanel_width", panel.getWidth());
-        //     settings.put("3dpanel_height", panel.getHeight());
-        // }
         if (exitOnClose) {
             System.exit(0);
         }
@@ -263,25 +268,36 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
             public void windowOpened(WindowEvent e) {
                 simulationWindowOpenedOperation(panel, simulator);
             }
-            public void windowIconified(WindowEvent e) {            }
-            public void windowDeiconified(WindowEvent e) {          }
-            public void windowDeactivated(WindowEvent e) {          }
+            public void windowIconified(WindowEvent e) {}
+            public void windowDeiconified(WindowEvent e) {}
+            public void windowDeactivated(WindowEvent e) {}
             public void windowClosing(WindowEvent e) {
+                settings.put("simulatorPositionX", simulation_frame.getLocationOnScreen().x);
+                settings.put("simulatorPositionY", simulation_frame.getLocationOnScreen().y);
                 simulation_frame.dispose();
             }
-            public void windowActivated(WindowEvent e) {            }
+            public void windowActivated(WindowEvent e) {}
             public void windowClosed(WindowEvent e) {
                 quit();
             }
+        });
+        simulation_frame.addComponentListener(new ComponentListener() {
+            public void componentResized(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {
+                try {
+                    settings.put("simulatorPositionX", simulation_frame.getLocationOnScreen().x);
+                    settings.put("simulatorPositionY", simulation_frame.getLocationOnScreen().y);
+                } catch(IllegalComponentStateException ex) {}
+            }
+            public void componentShown(ComponentEvent e) {}
+            public void componentHidden(ComponentEvent e) {}
         });
 
         setup_control_panel(getGenerationFile(), getScenarioFile(), networkMap);
 
         panel = new SimulationPanel3D(simulator, simulation_frame);
         initSimulationPanel3D(panel);
-        int w = settings.get("3dpanel_width", 800);
-        int h = settings.get("3dpanel_height", 600);
-        panel.setCanvasSize(w, h);
+        panel.setCanvasSize(simulationPanelWidth, simulationPanelHeight);
         panel.initialize();
         simulation_frame.setLayout(new BorderLayout());
         simulation_frame.add(panel, BorderLayout.WEST);
@@ -293,6 +309,9 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         simulation_frame.setMenuBar(panel.getMenuBar());
         simulation_frame.setResizable(false);   // ※setResizable は pack の前に置かないとサイズがおかしくなる。
         simulation_frame.pack();
+        int x = settings.get("simulatorPositionX", 0);
+        int y = settings.get("simulatorPositionY", 0);
+        simulation_frame.setLocation(x, y);
         simulation_frame.setVisible(true);
         return panel;
     }
