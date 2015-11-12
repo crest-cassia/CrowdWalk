@@ -95,11 +95,10 @@ public class EditorFramePanel extends JPanel {
         ob_node = _ob_node;
     }
 
+    /**
+     * マウスカーソル位置を基準にしてズームイン/ズームアウトする.
+     */
     public void zoom(int z) {
-        int cx = getWidth() / 2;
-        int cy = getHeight() / 2;
-
-        Point2D cp = revCalcPos(cx, cy);
         double scaleOld = scale;
 
         double r;
@@ -118,8 +117,8 @@ public class EditorFramePanel extends JPanel {
         if (scale < 0.01) scale = 0.01;
 
         //TODO: needs calculation for rotation
-        tx += cp.getX() * (scaleOld - scale); 
-        ty += cp.getY() * (scaleOld - scale); 
+        tx += frame.mousePoint.getX() * (scaleOld - scale);
+        ty += frame.mousePoint.getY() * (scaleOld - scale);
     }
     
     public double getDrawingScale() {
@@ -172,16 +171,13 @@ public class EditorFramePanel extends JPanel {
     
     public void centering(boolean withScaling) {
         double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+        // ※Double.MIN_VALUE が何故か正の値と判定されることがあるため Long.MIN_VALUE で代用した
+        double maxX = (double)Long.MIN_VALUE, maxY = (double)Long.MIN_VALUE;
         for (MapNode node : frame.getChildNodes()) {
-            if(node.isBetweenHeight(
-                    frame.getMinHeight(),
-                    frame.getMaxHeight())) {
-                minX = Math.min(minX, node.getX());
-                maxX = Math.max(maxX, node.getX());
-                minY = Math.min(minY, node.getY());
-                maxY = Math.max(maxY, node.getY());
-            }
+            minX = Math.min(minX, node.getX());
+            maxX = Math.max(maxX, node.getX());
+            minY = Math.min(minY, node.getY());
+            maxY = Math.max(maxY, node.getY());
         }
         if (minX == Double.MAX_VALUE) {
             tx = 0.0;

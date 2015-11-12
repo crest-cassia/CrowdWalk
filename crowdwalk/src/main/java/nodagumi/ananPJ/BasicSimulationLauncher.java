@@ -342,6 +342,9 @@ public abstract class BasicSimulationLauncher {
      * また、pause で止まった後の再開もこれで行う。
      */
     protected void simulateMainLoop() {
+        if (finished || paused) {
+            return;
+        }
         while (!finished && !paused) {
             simulateOneStepBare() ;
             if (exitCount > 0 && counter > exitCount) {
@@ -349,9 +352,24 @@ public abstract class BasicSimulationLauncher {
                 break;
             }
         }
-        // ログの書き出し。ログは、最後に出力。
-        if(finished) {
-            simulator.finalize() ;
+        if (finished) {
+            finalize() ;
         }
+    }
+
+    /**
+     * シミュレーションの終了処理。
+     */
+    protected void finalize() {
+        // ログの書き出し。ログは、最後に出力。
+        simulator.finalize() ;
+
+        // 終了時ステータスの表示
+        // ※注意) Time がプラス1余計にされている
+        String status = String.format("Time: %s  Elapsed: %5.2fsec  %s",
+                simulator.currentTime.getAbsoluteTimeString(),
+                simulator.currentTime.getRelativeTime(),
+                simulator.getEvacuatedCountStatus());
+        Itk.logInfo("Status", status);
     }
 }

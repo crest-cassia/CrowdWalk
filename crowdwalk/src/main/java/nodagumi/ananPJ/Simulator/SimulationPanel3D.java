@@ -300,6 +300,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
     JCheckBox density_mode_cb = null;
     JCheckBox show_logo_cb = null;
     JCheckBox show_3d_polygon_cb = null;
+    JCheckBox exit_with_simulation_finished_cb = null;
     protected JCheckBox change_agent_color_depending_on_speed_cb = null;
     protected JCheckBox show_status_cb = null;
     protected JRadioButton top_rb = null;
@@ -368,7 +369,14 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
         menu_item_step = new MenuItem("Step");
         menu_item_step.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { simulator.step(); }
+            public void actionPerformed(ActionEvent e) {
+                if (getExitWithSimulationFinished().isSelected()) {
+                    // ボタンクリックでいきなりプログラムが終了することがないようにするため
+                    getExitWithSimulationFinished().doClick();
+                }
+                simulator.step();
+                simulationLauncher.update_buttons();
+            }
         });
         menu_action.add(menu_item_step);
 
@@ -704,6 +712,11 @@ public class SimulationPanel3D extends NetworkPanel3D {
             }
         });
         checkbox_panel.add(show_3d_polygon_cb);
+
+        // シミュレーション終了と同時にプログラムを終了する
+        exit_with_simulation_finished_cb = new JCheckBox("Exit with simulation finished");
+        exit_with_simulation_finished_cb.setSelected(false);
+        checkbox_panel.add(exit_with_simulation_finished_cb);
 
         JButton set_view_home_button = new JButton("Set view to original");
         set_view_home_button.addActionListener(new ActionListener() {
@@ -1739,6 +1752,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
 
     public JCheckBox getShow3dPolygon() {
         return show_3d_polygon_cb;
+    }
+
+    public JCheckBox getExitWithSimulationFinished() {
+        return exit_with_simulation_finished_cb;
     }
 }
 //;;; Local Variables:

@@ -12,11 +12,18 @@
 
 package nodagumi.ananPJ.NetworkMap;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap ;
+import java.util.LinkedHashMap ;
 import java.util.Collection ;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.Enumeration;
 
@@ -28,10 +35,12 @@ import javax.swing.JOptionPane;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.Editor.EditorFrame;
@@ -45,6 +54,7 @@ import nodagumi.ananPJ.NetworkMap.OBNode.NType;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.NetworkMapPartsNotifier;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
@@ -703,6 +713,190 @@ public class NetworkMap extends DefaultTreeModel {
                 return calcGoalPath(goal_tag) ;
             }
         }
+    }
+
+    /**
+     * 経路探索結果を JSON 形式でファイルに保存する.
+     *
+     * <pre>
+     * 保存ファイル名: "routes_<ジェネレーションファイル名>@<マップファイル名>.json"
+     * 書式:
+     * {
+     *     "mapFile": {
+     *         "fileName": 経路探索時に使用したマップファイル名,
+     *         "md5": ファイルの MD5(Hex形式)
+     *     },
+     *     "generationFile": {
+     *         "fileName": 経路探索時に使用したジェネレーションファイル名,
+     *         "md5": ファイルの MD5(Hex形式)
+     *     },
+     *     "validRouteKeys": {
+     *         ノードタグ/リンクタグ: true/false, ...
+     *     },
+     *     "nodeHints": [
+     *         {
+     *             "ID": ノードID,
+     *             "hints": {
+     *                 ノードタグ/リンクタグ: {
+     *                     "exit": ノードID,
+     *                     "way": リンクID,
+     *                     "distance": 距離(m)
+     *                 }, ...
+     *             }
+     *         }, ...
+     *     ]
+     * }
+     * </pre>
+     */
+    public void saveRoutes(CrowdWalkPropertiesHandler properties) {
+        LinkedHashMap routes = new LinkedHashMap();
+        String mapFileName = new File(properties.getNetworkMapFile()).getName();
+        String generationFileName = new File(properties.getGenerationFile()).getName();
+
+        HashMap mapFile = new HashMap();
+        mapFile.put("fileName", mapFileName);
+        mapFile.put("md5", md5Hex(properties.getNetworkMapFile()));
+        routes.put("mapFile", mapFile);
+
+        HashMap generationFile = new HashMap();
+        generationFile.put("fileName", generationFileName);
+        generationFile.put("md5", md5Hex(properties.getGenerationFile()));
+        routes.put("generationFile", generationFile);
+
+        routes.put("validRouteKeys", validRouteKeys);
+
+        ArrayList<LinkedHashMap> nodeHints = new ArrayList();
+        for (MapNode node : getNodes()) {
+            LinkedHashMap nodeHint = new LinkedHashMap();
+            nodeHint.put("ID", node.ID);
+            LinkedHashMap hints = new LinkedHashMap();
+            for (String goal_tag : node.getHints().keySet()) {
+                LinkedHashMap navigationHint = new LinkedHashMap();
+                NavigationHint hint = node.getHints().get(goal_tag);
+                if (hint.exit == null) {
+                    navigationHint.put("exit", null);
+                    navigationHint.put("way", null);
+                    navigationHint.put("distance", 0.0);
+                } else {
+                    navigationHint.put("exit", hint.exit.ID);
+                    navigationHint.put("way", hint.way.ID);
+                    navigationHint.put("distance", hint.distance);
+                }
+                hints.put(goal_tag, navigationHint);
+            }
+            nodeHint.put("hints", hints);
+            nodeHints.add(nodeHint);
+        }
+        routes.put("nodeHints", nodeHints);
+
+        String dirPath = properties.getPropertiesDir().replaceAll("\\\\", "/");
+        String filePath = dirPath + "/routes_" + generationFileName + "@" + mapFileName + ".json";
+        Itk.logInfo("Save Routes File", filePath) ;
+        try {
+            JSON.encode(routes, new FileWriter(filePath), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    /**
+     * ファイルに保存された経路探索結果を読み込んでセットする
+     */
+    public void loadRoutes(CrowdWalkPropertiesHandler properties) {
+        String routesFilePath = properties.getRoutesFilePath();
+        Itk.logInfo("Load Routes", routesFilePath) ;
+        HashMap routes = null;
+        try {
+            routes = JSON.decode(new FileReader(routesFilePath), HashMap.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        // マップファイル、ジェネレーションファイルの内容が一致しない場合は警告を出す
+        HashMap<String, Object> fileElement = (HashMap<String, Object>)routes.get("mapFile");
+        checkModified(fileElement, properties.getNetworkMapFile());
+        fileElement = (HashMap<String, Object>)routes.get("generationFile");
+        checkModified(fileElement, properties.getGenerationFile());
+
+        validRouteKeys.clear();
+        HashMap<String, Boolean> _validRouteKeys = (HashMap<String, Boolean>)routes.get("validRouteKeys");
+        for (Map.Entry<String, Boolean> entry : _validRouteKeys.entrySet()) {
+            validRouteKeys.put(entry.getKey(), entry.getValue());
+        }
+
+        // アクセス高速化のため
+        HashMap<String, MapNode> nodes = new HashMap();
+        for (MapNode node : getNodes()) {
+            nodes.put(node.ID, node);
+        }
+        HashMap<String, MapLink> links = new HashMap();
+        for (MapLink link : getLinks()) {
+            links.put(link.ID, link);
+        }
+
+        ArrayList<HashMap<String, Object>> nodeHints = (ArrayList<HashMap<String, Object>>)routes.get("nodeHints");
+        for (HashMap<String, Object> nodeHint : nodeHints) {
+            String id = (String)nodeHint.get("ID");
+            MapNode node = nodes.get(id);
+            if (node == null) {
+                Itk.logError("Load Routes", "Unknown node ID: " + id);
+                System.exit(1);
+            }
+            node.clearHints();
+            HashMap<String, Object> hints = (HashMap<String, Object>)nodeHint.get("hints");
+            for (Map.Entry<String, Object> entry : hints.entrySet()) {
+                String goal_tag = entry.getKey();
+                HashMap<String, Object> hint = (HashMap<String, Object>)entry.getValue();
+                MapNode exitNode = null;
+                MapLink wayLink = null;
+                double distance = 0.0;
+                if (hint.get("exit") != null) {
+                    exitNode = nodes.get(hint.get("exit"));
+                    wayLink = links.get(hint.get("way"));
+                    distance = ((java.math.BigDecimal)hint.get("distance")).doubleValue();
+                }
+                node.addNavigationHint(goal_tag, new NavigationHint(exitNode, wayLink, distance));
+            }
+        }
+    }
+
+    /**
+     * ファイルの MD5 を Hex 形式で返す
+     */
+    public String md5Hex(String filePath) {
+        String md5 = null;
+        try {
+            FileInputStream is = new FileInputStream(filePath);
+            md5 = DigestUtils.md5Hex(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return md5;
+    }
+
+    /**
+     * 経路探索で使用したファイルが同じものであるかどうかのチェック
+     */
+    public boolean checkModified(HashMap<String, Object> element, String filePath) {
+        if (! md5Hex(filePath).equals((String)element.get("md5"))) {
+            Itk.logWarn_(
+                    coloration("Load Routes", 31),
+                    coloration("file modified: " + element.get("fileName") + ", " + filePath, 31));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * コンソール出力用の文字列に色を付ける(ANSI escape code)
+     * @param colorCode 30:Black, 31:Red, 32:Green, 33:Yellow, 34:Blue, 35:Magenta, 36:Cyan, 37:White
+     */
+    public String coloration(String text, int colorCode) {
+        return String.format("\033[1;%dm%s\033[00m", colorCode, text);
     }
 
     //------------------------------------------------------------

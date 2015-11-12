@@ -191,6 +191,11 @@ public class AgentHandler {
      */
     private double zeroSpeedThreshold = Fallback_zeroSpeedThreshold ;
 
+    /**
+     * CurrentLink が該当するリンクか判別するためのリンクタグ(individualPedestriansLog用)
+     */
+    private String searchTargetLinkTag = null;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // ログ出力定義関連
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -198,6 +203,11 @@ public class AgentHandler {
      * individualPedestriansLog の出力先 dir
      */
     private String individualPedestriansLogDir = null;
+
+    /**
+     * individualPedestriansLog の出力対象カラム
+     */
+    private List<String> logColumnsOfIndividualPedestrians = new ArrayList<String>();
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -296,6 +306,11 @@ public class AgentHandler {
      *		"amount_exposure"
      *		"current_status_by_exposure"
      *		"next_assigned_passage_node"
+     * ※ "waiting", "in_search_target_link", "current_time" は標準では出力されない。
+     *
+     * 標準の出力カラムはリソースデータ "fallbackParameters.json" の
+     * agentHandler/logColumnsOfIndividualPedestrians で定義されている。
+     * プロパティファイルに指定する Fallback file で再定義する事により出力カラムが変更できる。
      */
     private static CsvFormatter<AgentBase> individualPedestriansLoggerFormatter =
         new CsvFormatter<AgentBase>() ;
@@ -421,8 +436,38 @@ public class AgentHandler {
                         return (agent.isEvacuated() ?
                                 "" :
                                 agent.getNextCandidateString()) ;}})
+            .addColumn(formatter.new Column("waiting") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return "" + agent.isWaiting() ;}})
+            .addColumn(formatter.new Column("in_search_target_link") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        AgentHandler handler = (AgentHandler)agentHandlerObj ;
+                        return ((handler.searchTargetLinkTag == null || agent.isEvacuated()) ?
+                                "false" :
+                                "" + agent.getCurrentLink().hasTag(handler.searchTargetLinkTag)) ;}})
+            .addColumn(formatter.new Column("current_time") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        SimTime currentTime = (SimTime)timeObj ;
+                        return currentTime.getAbsoluteTimeString();}})
             ;
     }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * EvacuatedAgentsLogger
+     */
+    private Logger evacuatedAgentsLogger = null;
+    private CsvFormatter<HashMap<MapNode, Integer>> evacuatedAgentsLoggerFormatter =
+        new CsvFormatter<HashMap<MapNode, Integer>>() ;
+
+    /**
+     * ゴールノードごとの脱出したエージェント数(カウントアップする)
+     */
+    private HashMap<MapNode, Integer> evacuatedAgentCountByExit =
+        new LinkedHashMap<MapNode, Integer>();
 
     //------------------------------------------------------------
     /**
@@ -443,6 +488,15 @@ public class AgentHandler {
             SetupFileInfo.fetchFallbackDouble(fallback,
                                               "zeroSpeedThreshold",
                                               zeroSpeedThreshold) ;
+        searchTargetLinkTag = SetupFileInfo.fetchFallbackString(fallback,
+                "searchTargetLinkTag", searchTargetLinkTag);
+
+        Term logColumns = SetupFileInfo.fetchFallbackTerm(fallback,
+                "logColumnsOfIndividualPedestrians", Term.newArrayTerm());
+        for (int i = 0; i < logColumns.getArraySize(); i++) {
+            Term columnName = logColumns.getNthTerm(i);
+            logColumnsOfIndividualPedestrians.add(columnName.getString());
+        }
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -676,11 +730,21 @@ public class AgentHandler {
                 } else { // まだ歩いている場合。
                     ++count;
                     speedTotal += agent.getSpeed();
-                    isAllAgentSpeedZero &= (agent.getSpeed() <= zeroSpeedThreshold) ;
+                    if (agent.isWaiting()) {
+                        // WAIT 中で停止しているエージェントは all_agent_speed_zero_break の対象外とするため
+                        isAllAgentSpeedZero = false;
+                    } else {
+                        isAllAgentSpeedZero &= (agent.getSpeed() <= zeroSpeedThreshold) ;
+                    }
                 }
             }
         }
         averageSpeed = speedTotal / count;
+
+        if (evacuatedAgentsLogger != null) {
+            evacuatedAgentsLoggerFormatter.outputValueToLoggerInfo(
+                    evacuatedAgentsLogger, evacuatedAgentCountByExit);
+        }
     }
 
     //------------------------------------------------------------
@@ -696,6 +760,16 @@ public class AgentHandler {
             agentMovementHistoryLoggerFormatter
                 .outputValueToLoggerInfo(agentMovementHistoryLogger,
                                          agent, currentTime, this);
+        }
+        if (evacuatedAgentsLogger != null) {
+            MapNode exitNode = agent.getPrevNode();
+            Integer counter = evacuatedAgentCountByExit.get(exitNode);
+            if (counter == null) {
+                Itk.logWarn("Evacuated from unregistered goal", exitNode.toShortInfo());
+                return;
+            }
+            counter += 1;
+            evacuatedAgentCountByExit.put(exitNode, counter);
         }
     }
 
@@ -819,6 +893,23 @@ public class AgentHandler {
             }
         }
         return all_goal_tags;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * mid_goal を含まないすべてのゴールタグを集める。
+     */
+    public ArrayList<String> getGoalTags() {
+        ArrayList<String> goal_tags = new ArrayList<String>();
+
+        for (AgentFactory factory : generate_agent) {
+            Term goal_tag = factory.goal;
+            if (goal_tag != null &&
+                !goal_tags.contains(goal_tag.getString())) {
+                goal_tags.add(goal_tag.getString());
+            }
+        }
+        return goal_tags;
     }
 
     //------------------------------------------------------------
@@ -1012,6 +1103,10 @@ public class AgentHandler {
                     individualLogDir.replaceFirst("[/\\\\]+$", "");
             }
 
+            String evacuatedAgentsPath =
+                simulator.getProperties()
+                .getFilePath("evacuated_agents_log_file", null, false);
+
             // log setup
             if (agentHistoryPath != null) {
                 initAgentMovementHistoryLogger("agent_movement_history",
@@ -1020,6 +1115,10 @@ public class AgentHandler {
             if (individualLogDir != null) {
                 initIndividualPedestriansLogger("individual_pedestrians_log",
                                                 individualLogDir);
+            }
+            if (evacuatedAgentsPath != null) {
+                initEvacuatedAgentsLogger("evacuated_agents_log",
+                                               evacuatedAgentsPath);
             }
         } catch(Exception e) {
             Itk.logError("can not setup Logger",e.getMessage()) ;
@@ -1035,6 +1134,7 @@ public class AgentHandler {
     public void finalizeSimulationLoggers() {
         closeIndividualPedestriansLogger();
         closeAgentMovementHistorLogger();
+        closeEvacuatedAgentsLogger();
     }
 
     //------------------------------------------------------------
@@ -1042,7 +1142,7 @@ public class AgentHandler {
      * individualPedestriansLogger への出力。
      */
     private void logIndividualPedestrians(SimTime currentTime, AgentBase agent) {
-        if (individualPedestriansLogger != null) {
+        if (individualPedestriansLogger != null && ! agent.isDead()) {
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
                                          agent, currentTime, this);
@@ -1121,6 +1221,7 @@ public class AgentHandler {
             }
         }, dirPath + "/log_individual_pedestrians.csv");
         individualPedestriansLogger.setUseParentHandlers(false); // コンソールには出力しない
+        individualPedestriansLoggerFormatter.setColumns(logColumnsOfIndividualPedestrians);
         individualPedestriansLoggerFormatter
             .outputHeaderToLoggerInfo(individualPedestriansLogger) ;
 
@@ -1139,13 +1240,15 @@ public class AgentHandler {
         // log_individual_pedestrians_initial.csv
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
-            writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,distnation_nodeID,assigned_passage_nodes\n");
+            writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,generated_position,died_position,distnation_nodeID,assigned_passage_nodes,status\n");
             for (AgentBase agent : getAllAgentCollection()) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
                 buff.append(simulator.currentTime.getTickUnit()); buff.append(",");
+                buff.append(agent.generatedPosition); buff.append(",");
+                buff.append(agent.diedPosition); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {
@@ -1155,6 +1258,8 @@ public class AgentHandler {
                     idx++;
                     buff.append(route);
                 }
+                buff.append(",");
+                buff.append(agent.isEvacuated() ? "evacuated" : "dead");
                 buff.append("\n");
                 writer.write(buff.toString());
             }
@@ -1162,5 +1267,42 @@ public class AgentHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * EvacuatedAgentsLogger の初期化
+     */
+    public void initEvacuatedAgentsLogger(String name, String filePath) {
+        evacuatedAgentsLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
+            public String format(final LogRecord record) {
+                return formatMessage(record) + "\n";
+            }
+        }, filePath);
+        evacuatedAgentsLogger.setUseParentHandlers(false); // コンソールには出力しない
+
+        // 出力カラムと初期値をセットする
+        for (final MapNode node : simulator.getNodes()) {
+            for (String goalTag : getGoalTags()) {
+                if (node.hasTag(goalTag)) {
+                    evacuatedAgentsLoggerFormatter
+                        .addColumn(evacuatedAgentsLoggerFormatter.new Column(node.getTagLabel()) {
+                            public String value(HashMap<MapNode, Integer> agentCounter) {
+                                return agentCounter.get(node).toString();
+                            }
+                        });
+                    evacuatedAgentCountByExit.put(node, 0);
+                    break;
+                }
+            }
+        }
+        evacuatedAgentsLoggerFormatter
+            .outputHeaderToLoggerInfo(evacuatedAgentsLogger) ;
+    }
+
+    /**
+     * EvacuatedAgentsLogger の終了
+     */
+    public void closeEvacuatedAgentsLogger() {
+        closeLogger(evacuatedAgentsLogger);
     }
 }

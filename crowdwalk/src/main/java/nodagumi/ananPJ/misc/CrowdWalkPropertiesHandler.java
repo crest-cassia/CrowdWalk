@@ -13,6 +13,7 @@ import net.arnx.jsonic.JSON;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
@@ -84,6 +85,15 @@ import nodagumi.Itk.*;
  *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
  *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
  *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>routes_file</h4>
+ *     <pre>  経路探索結果ファイルへのファイルパス
+ *  指定すると経路探索を実行する代わりに、このファイルに保存された探索結果を使用する。
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)</pre>
  *   </li>
  *
  *   <li>
@@ -235,29 +245,11 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>time_series_log</h4>
- *     <pre>  時系列ログをとるかどうかの設定
+ *     <h4>evacuated_agents_log_file</h4>
+ *     <pre>  ゴールノード別の脱出エージェント数をステップごとに記録するログ
  *
- *  設定値： true | false
- *  デフォルト値： false</pre>
- *   </li>
- *
- *   <li>
- *     <h4>time_series_log_path</h4>
- *     <pre>  時系列ログを保管するディレクトリの指定
- *  time_series_log が true の時に設定する
- *
- *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
+ *  設定値： evacuated_agents_log file へのファイルパス
  *  デフォルト値： なし</pre>
- *   </li>
- *
- *   <li>
- *     <h4>time_series_log_interval</h4>
- *     <pre>  ログを収集する時間の間隔の設定
- *  time_series_log が true の時に設定する
- *
- *  設定値： 自然数
- *  デフォルト値： 1</pre>
  *   </li>
  *
  *   <li>
@@ -416,6 +408,14 @@ import nodagumi.Itk.*;
  *  設定値： true | false
  *  デフォルト値： false</pre>
  *   </li>
+ *
+ *   <li>
+ *     <h4>exit_with_simulation_finished</h4>
+ *     <pre>  GUI モード時にシミュレーション終了と同時にプログラムを終了する
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
  * </ul>
  */
 public class CrowdWalkPropertiesHandler {
@@ -428,7 +428,9 @@ public class CrowdWalkPropertiesHandler {
            "pollution_file",
            "link_appearance_file",
            "node_appearance_file",
-           "fallback_file"};
+           "fallback_file",
+           "routes_file"
+        };
 
     protected String propertiesFile = null;
     protected Properties prop = null;
@@ -492,6 +494,30 @@ public class CrowdWalkPropertiesHandler {
         return fallbackFile ;
     }
 
+    /**
+     * 経路探索結果のファイルパス
+     */
+    protected String routesFilePath = null;
+
+    /**
+     * 経路探索結果のファイルパスを取得
+     */
+    public String getRoutesFilePath() {
+        return routesFilePath ;
+    }
+
+    /**
+     * 経路探索結果の読み込みフラグ
+     */
+    protected boolean routesLoading = false;
+
+    /**
+     * 経路探索結果を読み込むか?
+     */
+    public boolean isRoutesLoading() {
+        return routesLoading ;
+    }
+
     protected long randseed = 0;
     public long getRandseed() {
         return randseed;
@@ -537,8 +563,7 @@ public class CrowdWalkPropertiesHandler {
                 Itk.logInfo("Load Properties File (JSON)",
                             _propertiesFile);
             } else {
-                System.err.println("Property file error - 拡張子が不正です: " + _propertiesFile);
-                System.exit(1);
+                throw new Exception("Property file error - 拡張子が不正です: " + _propertiesFile);
             }
 
             // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
@@ -563,6 +588,17 @@ public class CrowdWalkPropertiesHandler {
             generationFile = getStringProperty(prop, "generation_file");
             scenarioFile = getProperty(prop, "scenario_file");
             fallbackFile = getProperty(prop, "fallback_file") ;
+            routesFilePath = getProperty(prop, "routes_file");
+
+            // 経路探索結果の読み込み関連
+            if (routesFilePath != null) {
+                routesLoading = true;
+            }
+            if (CrowdWalkLauncher.routesSaving) {
+                if (routesLoading) {
+                    throw new Exception("Property file error - 経路探索結果の Load/Save を同時に実行することは出来ません。");
+                }
+            }
 
             // create random with seed
             randseed = getIntegerProperty(prop, "randseed");

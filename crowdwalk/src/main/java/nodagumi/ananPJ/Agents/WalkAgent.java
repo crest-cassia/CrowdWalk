@@ -407,6 +407,7 @@ public class WalkAgent extends AgentBase {
                 prepareForSimulation_FromNode() ;
             }
             speed = 0;
+            generatedPosition = getRemainingDistance();
 
             prepareRoutePlan() ;
         }

@@ -57,6 +57,16 @@ implements Comparable<AgentBase> {
     private boolean stuck = false;
     public SimTime currentTime = null ;
 
+    /**
+     * 生成された時のリンク上の位置
+     */
+    public double generatedPosition = 0.0;
+
+    /**
+     * 死亡した時のリンク上の位置
+     */
+    public double diedPosition = 0.0;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * map: 自分の存在しているマップ。
@@ -549,7 +559,13 @@ implements Comparable<AgentBase> {
      * 汚染環境(洪水、ガス等)に暴露する
      */
     public void exposed(double c) {
+        if (isDead()) {
+            return;
+        }
         obstructer.expose(c);
+        if (isDead()) {
+            diedPosition = getAdvancingDistance();
+        }
     }
 
     //------------------------------------------------------------
@@ -902,6 +918,13 @@ implements Comparable<AgentBase> {
      */
     public double getHeight() {
         return currentPlace.getHeightForDisplay() ;
+    }
+
+    /**
+     * WAIT_FOR/WAIT_UNTIL 処理中か?
+     */
+    public boolean isWaiting() {
+        return false;
     }
 
     /**

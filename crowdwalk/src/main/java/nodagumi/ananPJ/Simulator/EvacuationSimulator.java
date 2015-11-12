@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.GuiSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -570,7 +571,14 @@ public class EvacuationSimulator {
         buildScenario() ;
         buildPollution() ;
         buildAgentHandler() ;
-        buildRoutes ();
+        if (properties != null && properties.isRoutesLoading()) {
+            networkMap.loadRoutes(properties);
+        } else {
+            buildRoutes() ;
+            if (CrowdWalkLauncher.routesSaving) {
+                networkMap.saveRoutes(properties);
+            }
+        }
         buildRubyEngine() ;
 
         //prepare for simulation
@@ -1027,6 +1035,28 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
+     * evacuation count 表示用の文字列を生成して返す
+     */
+    public String getEvacuatedCountStatus() {
+        if (agentHandler.numOfStuckAgents() == 0) {
+            return String.format(
+                    "Walking: %d  Generated: %d  Evacuated: %d / %d",
+                    agentHandler.numOfWalkingAgents(),
+                    agentHandler.numOfAllAgents(),
+                    agentHandler.numOfEvacuatedAgents(), agentHandler.getMaxAgentCount());
+        } else {
+            return String.format(
+                    "Walking: %d  Generated: %d  Evacuated(Stuck): %d(%d) / %d",
+                    agentHandler.numOfWalkingAgents(),
+                    agentHandler.numOfAllAgents(),
+                    agentHandler.numOfEvacuatedAgents() - agentHandler.numOfStuckAgents(),
+                    agentHandler.numOfStuckAgents(),
+                    agentHandler.getMaxAgentCount());
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * サイクル毎の画面描画
      */
     private void updateEveryTickDisplay() {
@@ -1034,7 +1064,7 @@ public class EvacuationSimulator {
             GuiSimulationLauncher gui = (GuiSimulationLauncher)launcher;
             gui.update_buttons();
             gui.displayClock(currentTime);
-            gui.updateEvacuatedCount(agentHandler);
+            gui.updateEvacuatedCount();
 
             panel3d.updateClock(currentTime) ;
             boolean captureScreenShot = (screenshotInterval != 0);
