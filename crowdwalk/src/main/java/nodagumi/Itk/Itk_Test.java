@@ -35,7 +35,7 @@ public class Itk_Test {
     /**
      * dumpStackTraceN
      */
-    @Test
+    //@Test
     public void test_dumpStackTraceN() {
         Itk.dbgMsg("all dump") ;
         Itk.dumpStackTrace() ;
@@ -309,7 +309,66 @@ public class Itk_Test {
         Itk.dbgVal("x&4",x & 4) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * test bit String intern
+     */
+    @Test
+    public void test_stringIntern() {
+        int n = 100000000 ;
+        //int m = 10 ;
+        int m = 3 ;
+        String data0 = "foobarbaz" ;
+        for(int i = 0 ; i < m ; i++) {
+            data0 = data0 + data0 ;
+        }
+        String data = data0.intern() ;
 
+        Itk.dbgVal("data",data) ;
+
+        ArrayList<String> listCopy = new ArrayList<String>() ;
+        ArrayList<String> listSame = new ArrayList<String>() ;
+        ArrayList<String> listIntern = new ArrayList<String>() ;
+
+        for(int i = 0 ; i < m ; i++) {
+            String newData = "" + data0 ;
+            listCopy.add(newData) ;
+            listSame.add(data) ;
+            listIntern.add(newData.intern()) ;
+        }
+        int c ;
+        // copy
+        Itk.timerStart("copy") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            if(listCopy.get(i % m).equals(data)) {
+                c += 1 ;
+            } ;
+        }
+        Itk.timerShowLap("copy") ;
+        Itk.dbgVal("c",c) ;
+        // intern
+        Itk.timerStart("intern") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            if(listIntern.get(i % m).equals(data)) {
+            //if(listIntern.get(i % m) == data) {
+                c += 1 ;
+            } ;
+        }
+        Itk.timerShowLap("intern") ;
+        Itk.dbgVal("c",c) ;
+        // same
+        Itk.timerStart("same") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            if(listSame.get(i % m).equals(data)) {
+                c += 1 ;
+            } ;
+        }
+        Itk.timerShowLap("same") ;
+        Itk.dbgVal("c",c) ;
+    }
 
 } // class Itk_Test
 
