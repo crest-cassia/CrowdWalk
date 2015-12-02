@@ -30,7 +30,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
+import org.apache.xml.serializer.OutputPropertiesFactory;
 
 
 public class DaRuMaClient implements Serializable {

@@ -156,7 +156,7 @@ public class ImportGis  {
                 System.exit(1);
             }
             String fileName = source_file.getName();
-            if (!(fileName.endsWith("A.shp") || fileName.endsWith("B.shp") || fileName.endsWith("C.shp") || fileName.endsWith("_32.shp"))) {
+            if (!(fileName.endsWith("A.shp") || fileName.endsWith("B.shp") || fileName.endsWith("C.shp") || fileName.endsWith("_32.shp") || fileName.endsWith("_l.shp"))) {
                 System.err.println("WRNING! irregular file name: " + fileName);
             }
             SimpleFeatureSource featureSource;
@@ -398,6 +398,10 @@ public class ImportGis  {
                     if (lengthObject == null) {
                         // 拡張版全国デジタル道路地図データベース (shape版) 2013 住友電工の場合
                         lengthObject = feature.getAttribute("length");
+                        if (lengthObject == null) {
+                            // MAPPLEルーティングデータ（SHAPE版） 昭文社の場合
+                            lengthObject = feature.getAttribute("link_len");
+                        }
                     }
                     double length = 0.0;
                     if (lengthObject instanceof Double) {
@@ -414,14 +418,21 @@ public class ImportGis  {
                     }
 
                     // ナビゲーション道路地図2004 (shape版) アルプス社の場合
+                    double width;
                     Object rdwdcdObject = feature.getAttribute("WIDTH_TPCD");
                     if (rdwdcdObject == null) {
                         // 拡張版全国デジタル道路地図データベース (shape版) 2013 住友電工の場合
                         rdwdcdObject = feature.getAttribute("rdwdcd");
                     }
-                    int tpcd = Integer.parseInt((String)rdwdcdObject);
+                    if (rdwdcdObject == null) {
+                        // MAPPLEルーティングデータ（SHAPE版） 昭文社の場合
+                        rdwdcdObject = feature.getAttribute("width");
+                        width = (double)(Long)rdwdcdObject / 10.0;
+                    } else {
+                        int tpcd = Integer.parseInt((String)rdwdcdObject);
+                        width = width_array[tpcd];
+                    }
 
-                    double width = width_array[tpcd];
                     if (make_precise == JOptionPane.YES_OPTION) {
                         make_nodes_precise(the_geom, feature, group, nodes,
                             length, width, base_x, base_y, scale_x, scale_y,
