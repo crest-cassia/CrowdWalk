@@ -3,12 +3,9 @@
  *  generates executable jar using Gradle.
  */
 
-
 defaultTasks 'clean', 'build'
 
 apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'application'
 apply plugin: 'eclipse'
 
 repositories {
@@ -29,8 +26,6 @@ sourceSets {
         java {
             srcDirs = ["src"];
         }
-        compileClasspath = configurations.compile
-        runtimeClasspath = configurations.runtime
     }
 }
 
