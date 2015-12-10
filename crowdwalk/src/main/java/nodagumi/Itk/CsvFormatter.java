@@ -97,7 +97,7 @@ public class CsvFormatter<T> {
      *         }) ;
      * }</pre>
      * 同時に、registerColumnも行う。
-     * @param column:: column 情報
+     * @param columnName:: column 情報
      */
     public CsvFormatter addColumn(String columnName) {
         Column column = columnTable.get(columnName) ;

@@ -76,10 +76,15 @@
 <li class="blockList">
 <h2 title="パッケージ">パッケージ&nbsp;nodagumi.ananPJ</h2>
 <ul class="blockList">
+<li class="blockList"><a name="nodagumi.ananPJ.GuiSimulationEditorLauncher:D4:D1">
+<!--   -->
+</a>
+<h3>Class nodagumi.ananPJ.GuiSimulationEditorLauncher$4$1 extends java.lang.Object implements Serializable</h3>
+</li>
 <li class="blockList"><a name="nodagumi.ananPJ.Settings">
 <!--   -->
 </a>
-<h3>Class <a href="nodagumi/ananPJ/Settings.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.Settings</a> extends java.util.HashMap&lt;java.lang.String,java.lang.String&gt; implements Serializable</h3>
+<h3>Class <a href="nodagumi/ananPJ/Settings.html" title="nodagumi.ananPJ内のクラス">nodagumi.ananPJ.Settings</a> extends java.util.TreeMap&lt;java.lang.String,java.lang.String&gt; implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>直列化されたフィールド</h3>
@@ -135,6 +140,16 @@
 <pre><a href="nodagumi/ananPJ/misc/SimTime.html" title="nodagumi.ananPJ.misc内のクラス">SimTime</a> currentTime</pre>
 </li>
 <li class="blockList">
+<h4>generatedPosition</h4>
+<pre>double generatedPosition</pre>
+<div class="block">生成された時のリンク上の位置</div>
+</li>
+<li class="blockList">
+<h4>diedPosition</h4>
+<pre>double diedPosition</pre>
+<div class="block">死亡した時のリンク上の位置</div>
+</li>
+<li class="blockList">
 <h4>map</h4>
 <pre><a href="nodagumi/ananPJ/NetworkMap/NetworkMap.html" title="nodagumi.ananPJ.NetworkMap内のクラス">NetworkMap</a> map</pre>
 <div class="block">map: 自分の存在しているマップ。</div>
@@ -173,11 +188,6 @@
 <pre><a href="nodagumi/ananPJ/Simulator/Obstructer/ObstructerBase.html" title="nodagumi.ananPJ.Simulator.Obstructer内のクラス">ObstructerBase</a> obstructer</pre>
 </li>
 <li class="blockList">
-<h4>swing_width</h4>
-<pre>double swing_width</pre>
-<div class="block">設定関係</div>
-</li>
-<li class="blockList">
 <h4>configLine</h4>
 <pre>java.lang.String configLine</pre>
 <div class="block">設定文字列（generation file 中の設定情報の文字列）</div>
@@ -186,6 +196,16 @@
 <h4>random</h4>
 <pre>java.util.Random random</pre>
 <div class="block">乱数生成器</div>
+</li>
+<li class="blockList">
+<h4>swing_width</h4>
+<pre>double swing_width</pre>
+<div class="block">リンク上の表示上の横ずれ幅の量</div>
+</li>
+<li class="blockList">
+<h4>swing</h4>
+<pre>javax.vecmath.Vector3d swing</pre>
+<div class="block">リンク上の表示上の横ずれ幅の座標差分</div>
 </li>
 <li class="blockList">
 <h4>lastPosition</h4>
@@ -2093,6 +2113,10 @@
 <li class="blockList">
 <h4>show_3d_polygon_cb</h4>
 <pre>javax.swing.JCheckBox show_3d_polygon_cb</pre>
+</li>
+<li class="blockList">
+<h4>exit_with_simulation_finished_cb</h4>
+<pre>javax.swing.JCheckBox exit_with_simulation_finished_cb</pre>
 </li>
 <li class="blockList">
 <h4>change_agent_color_depending_on_speed_cb</h4>

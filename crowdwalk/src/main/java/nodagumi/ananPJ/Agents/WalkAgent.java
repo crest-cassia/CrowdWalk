@@ -540,7 +540,7 @@ public class WalkAgent extends AgentBase {
      * 次の位置を計算。(new) [2015.01.10 I.Noda]
      * ただし、nextPlace での距離を進めるだけ。
      * 次のリンクへは移らず、はみ出した距離ははみ出したまま。
-     * @param d : speed に相当する大きさ。単位時間に進める長さ。
+     * @param _speed : 速度に相当する大きさ。単位時間に進める長さ。
      *     [2015.01.10 I.Noda] direction はかかっていないものとする。
      * @param currentTime : 現在時刻
      * @param stayOnLink : 現在のリンクにとどまるかどうか。WaitDirective 用。

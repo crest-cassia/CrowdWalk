@@ -24,7 +24,7 @@ import nodagumi.Itk.*;
 //======================================================================
 /**
  * MapNode のテーブル。 
- * ArrayList<MapNode> を置き換え、各種機能を提供する。
+ * {@code ArrayList<MapNode>} を置き換え、各種機能を提供する。
  */
 public class MapNodeTable extends OBNodeTable<MapNode> {
     //------------------------------------------------------------

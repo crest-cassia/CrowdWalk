@@ -37,7 +37,6 @@ public class ItkRuby_Test {
     //------------------------------------------------------------
     /**
      * description of method initialize
-     * @param _baz about argument baz.
      */
     //@Test
     public void testA() {
@@ -52,7 +51,6 @@ public class ItkRuby_Test {
     //------------------------------------------------------------
     /**
      * description of method initialize
-     * @param _baz about argument baz.
      */
     //@Test
     public void testB() {
@@ -72,7 +70,6 @@ public class ItkRuby_Test {
     //------------------------------------------------------------
     /**
      * description of method initialize
-     * @param _baz about argument baz.
      */
     //@Test
     public void testC() {
@@ -89,7 +86,6 @@ public class ItkRuby_Test {
     //------------------------------------------------------------
     /**
      * description of method initialize
-     * @param _baz about argument baz.
      */
     //@Test
     public void testD() {
@@ -133,7 +129,6 @@ public class ItkRuby_Test {
     //------------------------------------------------------------
     /**
      * description of method initialize
-     * @param _baz about argument baz.
      */
     //@Test
     public void testE() {
@@ -152,7 +147,6 @@ public class ItkRuby_Test {
     //------------------------------------------------------------
     /**
      * description of method initialize
-     * @param _baz about argument baz.
      */
     //@Test
     public void testF() {
@@ -166,7 +160,6 @@ public class ItkRuby_Test {
     //------------------------------------------------------------
     /**
      * description of method initialize
-     * @param _baz about argument baz.
      */
     @Test
     public void testG() {

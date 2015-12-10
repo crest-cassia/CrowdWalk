@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -306,6 +306,18 @@ extends java.lang.Object</pre>
 <div class="block">シナリオファイル。</div>
 </td>
 </tr>
+<tr id="i20" class="altColor">
+<td class="colFirst"><code><a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/SetupFileInfo.html#unifiedFallbackParameters--">unifiedFallbackParameters</a></span>()</code>
+<div class="block">単一化された fallbackParametes を返す。</div>
+</td>
+</tr>
+<tr id="i21" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/SetupFileInfo.html#unifyFallbacks-nodagumi.Itk.Term-">unifyFallbacks</a></span>(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks)</code>
+<div class="block">fallback の単一化</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -529,20 +541,19 @@ extends java.lang.Object</pre>
  <br>
  最終的に、fallback 情報は、以下の形式となる。
  <pre>
- 
  { ...&lt;コマンドラインの--fallbackで指定したJSON&gt;... ,
    "_fallback" : { ...&lt;propertiesの"fallback_file"で指定したファイルのJSON&gt;...,
-           "_fallback" : { ..."src/main/resources/fallbackParameters.json"のJSON&gt;...}
-         }
+                   "_fallback" : { ..."src/main/resources/fallbackParameters.json"のJSON&gt;...} }
  }
- 
  </pre></div>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>
 <dd><code>params</code> - : もとになる parameter 設定用 Term</dd>
 <dd><code>fallback</code> - : params の後に追加する fallback</dd>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>fallbackを含んだ 設定Term。</dd>
 <dt><span class="seeLabel">関連項目:</span></dt>
-<dd><code>nodagumi.ananPJ.package-info#fallback}</code></dd>
+<dd><code>package-info</code></dd>
 </dl>
 </li>
 </ul>
@@ -637,7 +648,7 @@ extends java.lang.Object</pre>
 <a name="fetchFallbackBoolean-nodagumi.Itk.Term-java.lang.String-boolean-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>fetchFallbackBoolean</h4>
 <pre>public static&nbsp;boolean&nbsp;fetchFallbackBoolean(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks,
@@ -650,6 +661,30 @@ extends java.lang.Object</pre>
 <dd><code>tag</code> - : fallbacks の中から、tag をたどって filter する。</dd>
 <dd><code>finalFallbackValue</code> - : 最後の値</dd>
 </dl>
+</li>
+</ul>
+<a name="unifyFallbacks-nodagumi.Itk.Term-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unifyFallbacks</h4>
+<pre>public static&nbsp;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;unifyFallbacks(<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;fallbacks)</pre>
+<div class="block">fallback の単一化</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>fallbacks</code> - : 単一化する fallback</dd>
+</dl>
+</li>
+</ul>
+<a name="unifiedFallbackParameters--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>unifiedFallbackParameters</h4>
+<pre>public&nbsp;<a href="../../../nodagumi/Itk/Term.html" title="nodagumi.Itk内のクラス">Term</a>&nbsp;unifiedFallbackParameters()</pre>
+<div class="block">単一化された fallbackParametes を返す。</div>
 </li>
 </ul>
 </li>

@@ -471,7 +471,8 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * コンストラクタ
+     * コンストラクタ。
+     * @param _simulator : 親になるシミュレータ。
      */
     public AgentHandler (EvacuationSimulator _simulator) {
         simulator = _simulator;
@@ -602,7 +603,8 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * シミュレーションサイクル
+     * シミュレーションサイクル。
+     * @param currentTime : シミュレーションの現在時刻。
      */
     public void update(SimTime currentTime) {
         ArrayList<AgentBase> generatedAgentsInStep
@@ -840,7 +842,8 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * 終了チェック
+     * 終了チェック。
+     * @return 全エージェントが終了していれば true を返す。
      */
     public boolean isFinished() {
         if (isAllAgentSpeedZeroBreak) {
@@ -876,6 +879,7 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * すべてのゴールタグを集める。
+     * @return ゴールタグのリスト。
      */
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
@@ -898,6 +902,7 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * mid_goal を含まないすべてのゴールタグを集める。
+     * @return: ゴールタグのリスト。
      */
     public ArrayList<String> getGoalTags() {
         ArrayList<String> goal_tags = new ArrayList<String>();
@@ -916,7 +921,8 @@ public class AgentHandler {
     // アクセス関連 access
     //------------------------------------------------------------
     /**
-     * 画面を持つかどうか
+     * 画面を持つかどうか。
+     * @return 画面表示モードであれば true。
      */
     public boolean hasDisplay() {
         return simulator.hasDisplay() ;
@@ -925,6 +931,7 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * 乱数シード設定
+     * @param _random : セットする乱数発生器。
      */
     public void setRandom(Random _random) {
         random = _random;
@@ -934,6 +941,8 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
+     * エージェント発生頻度の割合を設定。（線形）
+     * @param _ratio : 設定する割合。
      */
     public void setLinerGenerateAgentRatio(double _ratio) {
         generate_agent.setLinerGenerateAgentRatio(_ratio);
@@ -941,6 +950,8 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
+     * 全エージェントが速度ゼロになると終了するかのフラグ。
+     * @return フラグの値。
      */
     public boolean getIsAllAgentSpeedZeroBreak() {
         return isAllAgentSpeedZeroBreak;
@@ -948,6 +959,8 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
+     * 全エージェントが速度ゼロになると終了するかのフラグのセット。
+     * @param _isAllAgentSpeedZeroBreak : フラグの値。
      */
     public void setIsAllAgentSpeedZeroBreak(boolean _isAllAgentSpeedZeroBreak)
     {
@@ -966,6 +979,7 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * 生成されるはずの全エージェント数。
+     * @return エージェント数。
      */
     public int getMaxAgentCount() {
         return maxAgentCount;
@@ -974,6 +988,7 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * 平均速度。
+     * @return 全エージェントの平均速度。（既に求めてある値。）
      */
     public double getAverageSpeed() {
         return averageSpeed;
@@ -1037,7 +1052,8 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * 歩いているエージェントテーブルより一人取り除く。
-     * @return agent : 取り除くエージェント
+     * @param agent : 取り除くエージェント。
+     * @return 取り除きに成功すれば true ;
      */
     public boolean removeWalkingAgent(AgentBase agent) {
         if(walkingAgentTable.containsKey(agent.ID)) {
@@ -1151,7 +1167,12 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * ロガーの初期化
+     * ロガーの初期化。
+     * @param name : ロガーを表すタグ。
+     * @param level : ロギングレベル。
+     * @param formatter : ログフォーマット。
+     * @param filePath : ログファイル名。
+     * @return ロガーを返す。
      */
     public Logger initLogger(String name, Level level, java.util.logging.Formatter formatter, String filePath) {
         Logger logger = Logger.getLogger(name);
@@ -1176,7 +1197,8 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * ロガーの終了処理
+     * ロガーの終了処理。
+     * @param logger : 終了するロガー。
      */
     public void closeLogger(Logger logger) {
         if (logger != null) {
@@ -1188,7 +1210,9 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * AgentMovementHistoryLogger の初期化
+     * AgentMovementHistoryLogger の初期化。
+     * @param name : ロガーの名前。
+     * @param filePath : ログファイル名。
      */
     public void initAgentMovementHistoryLogger(String name, String filePath) {
         agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
@@ -1211,7 +1235,9 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * individualPedestriansLogger の初期化
+     * individualPedestriansLogger の初期化。
+     * @param name : ロガーの名前。
+     * @param dirPath : ログファイルを格納するディレクトリ名。
      */
     public void initIndividualPedestriansLogger(String name, String dirPath) {
         individualPedestriansLogDir = dirPath;
@@ -1269,8 +1295,11 @@ public class AgentHandler {
         }
     }
 
+    //------------------------------------------------------------
     /**
-     * EvacuatedAgentsLogger の初期化
+     * EvacuatedAgentsLogger の初期化。
+     * @param name : ロガーのタグ。
+     * @param filePath : ログファイル名。
      */
     public void initEvacuatedAgentsLogger(String name, String filePath) {
         evacuatedAgentsLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {

@@ -231,7 +231,6 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * ユニークな id の取得
      * @param prefix : id の prefix
-     * @param digit : id 数値部分の桁数
      * @param suffix : id の suffix
      * @return 新しい id
      */
@@ -719,7 +718,7 @@ public class NetworkMap extends DefaultTreeModel {
      * 経路探索結果を JSON 形式でファイルに保存する.
      *
      * <pre>
-     * 保存ファイル名: "routes_<ジェネレーションファイル名>@<マップファイル名>.json"
+     * 保存ファイル名: {@code "routes_<ジェネレーションファイル名>@<マップファイル名>.json"}
      * 書式:
      * {
      *     "mapFile": {

@@ -606,8 +606,9 @@ public class MapNode extends OBMapPart {
     //------------------------------------------------------------
     /**
      * 交通規制処理
+     * @param speed: 速度。
      * @param agent: 規制を加えるエージェント。この単位時間にノードにたどり着く。
-     * @param clock: 現在時刻
+     * @param currentTime: 現在時刻
      * @return 規制が適用されたら true
      */
     public double calcRestrictedSpeed(double speed, AgentBase agent,

@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -137,6 +137,16 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#optionsFormat">optionsFormat</a></span></code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#routesSaving">routesSaving</a></span></code>
+<div class="block">経路探索結果の保存フラグ</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#SETTINGS_FILE_NAME">SETTINGS_FILE_NAME</a></span></code>&nbsp;</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -179,41 +189,48 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>static <a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">CuiSimulationLauncher</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#launchCuiSimulator-java.lang.String-java.util.ArrayList-">launchCuiSimulator</a></span>(java.lang.String&nbsp;propertiesFilePath,
                   java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)</code>
-<div class="block">CUI シミュレータを開始する</div>
+<div class="block">CUI シミュレータを実行する</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../nodagumi/ananPJ/GuiSimulationEditorLauncher.html" title="nodagumi.ananPJ内のクラス">GuiSimulationEditorLauncher</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#launchGuiSimulationEditorLauncher-java.lang.String-java.util.ArrayList-">launchGuiSimulationEditorLauncher</a></span>(java.lang.String&nbsp;propertiesFilePath,
                                  java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)</code>
-<div class="block">マップエディタを開始する</div>
+<div class="block">マップエディタを実行する</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>static <a href="../../nodagumi/ananPJ/GuiSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">GuiSimulationLauncher</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#launchGuiSimulator-java.lang.String-java.util.ArrayList-">launchGuiSimulator</a></span>(java.lang.String&nbsp;propertiesFilePath,
+                  java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)</code>
+<div class="block">GUI シミュレータを実行する</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#main-java.lang.String:A-">main</a></span>(java.lang.String[]&nbsp;args)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#parseCommandLine-java.lang.String:A-org.apache.commons.cli.Options-">parseCommandLine</a></span>(java.lang.String[]&nbsp;args,
                 org.apache.commons.cli.Options&nbsp;options)</code>
 <div class="block">コマンドラインオプションを解析して指定された処理を実行する</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#printHelp-org.apache.commons.cli.Options-">printHelp</a></span>(org.apache.commons.cli.Options&nbsp;options)</code>
 <div class="block">コマンドラインヘルプを標準出力に表示する</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#saveTick-java.lang.String-nodagumi.ananPJ.misc.SimTime-">saveTick</a></span>(java.lang.String&nbsp;filePath,
         <a href="../../nodagumi/ananPJ/misc/SimTime.html" title="nodagumi.ananPJ.misc内のクラス">SimTime</a>&nbsp;currentTime)</code>
 <div class="block">tick 情報をファイルに出力する</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../nodagumi/ananPJ/CrowdWalkLauncher.html#setLogLevel-java.lang.String-">setLogLevel</a></span>(java.lang.String&nbsp;logLevelName)</code>
 <div class="block">ログレベルを設定する</div>
@@ -253,10 +270,29 @@ extends java.lang.Object</pre>
 <a name="commandLineSyntax">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>commandLineSyntax</h4>
 <pre>public static&nbsp;java.lang.String commandLineSyntax</pre>
+</li>
+</ul>
+<a name="SETTINGS_FILE_NAME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SETTINGS_FILE_NAME</h4>
+<pre>public static&nbsp;java.lang.String SETTINGS_FILE_NAME</pre>
+</li>
+</ul>
+<a name="routesSaving">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>routesSaving</h4>
+<pre>public static&nbsp;boolean routesSaving</pre>
+<div class="block">経路探索結果の保存フラグ</div>
 </li>
 </ul>
 </li>
@@ -332,7 +368,18 @@ extends java.lang.Object</pre>
 <h4>launchCuiSimulator</h4>
 <pre>public static&nbsp;<a href="../../nodagumi/ananPJ/CuiSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">CuiSimulationLauncher</a>&nbsp;launchCuiSimulator(java.lang.String&nbsp;propertiesFilePath,
                                                        java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)</pre>
-<div class="block">CUI シミュレータを開始する</div>
+<div class="block">CUI シミュレータを実行する</div>
+</li>
+</ul>
+<a name="launchGuiSimulator-java.lang.String-java.util.ArrayList-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>launchGuiSimulator</h4>
+<pre>public static&nbsp;<a href="../../nodagumi/ananPJ/GuiSimulationLauncher.html" title="nodagumi.ananPJ内のクラス">GuiSimulationLauncher</a>&nbsp;launchGuiSimulator(java.lang.String&nbsp;propertiesFilePath,
+                                                       java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)</pre>
+<div class="block">GUI シミュレータを実行する</div>
 </li>
 </ul>
 <a name="launchGuiSimulationEditorLauncher-java.lang.String-java.util.ArrayList-">
@@ -344,7 +391,7 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;<a href="../../nodagumi/ananPJ/GuiSimulationEditorLauncher.html" title="nodagumi.ananPJ内のクラス">GuiSimulationEditorLauncher</a>&nbsp;launchGuiSimulationEditorLauncher(java.lang.String&nbsp;propertiesFilePath,
                                                                             java.util.ArrayList&lt;java.lang.String&gt;&nbsp;commandLineFallbacks)
                                                                      throws java.lang.Exception</pre>
-<div class="block">マップエディタを開始する</div>
+<div class="block">マップエディタを実行する</div>
 <dl>
 <dt><span class="throwsLabel">例外:</span></dt>
 <dd><code>java.lang.Exception</code></dd>

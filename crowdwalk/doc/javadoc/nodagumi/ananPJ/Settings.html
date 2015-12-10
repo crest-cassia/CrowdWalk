@@ -102,7 +102,7 @@ var activeTableTab = "activeTableTab";
 <li>java.util.AbstractMap&lt;K,V&gt;</li>
 <li>
 <ul class="inheritance">
-<li>java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</li>
+<li>java.util.TreeMap&lt;java.lang.String,java.lang.String&gt;</li>
 <li>
 <ul class="inheritance">
 <li>nodagumi.ananPJ.Settings</li>
@@ -118,12 +118,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>すべての実装されたインタフェース:</dt>
-<dd>java.io.Serializable, java.lang.Cloneable, java.util.Map&lt;java.lang.String,java.lang.String&gt;</dd>
+<dd>java.io.Serializable, java.lang.Cloneable, java.util.Map&lt;java.lang.String,java.lang.String&gt;, java.util.NavigableMap&lt;java.lang.String,java.lang.String&gt;, java.util.SortedMap&lt;java.lang.String,java.lang.String&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">Settings</span>
-extends java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</pre>
+extends java.util.TreeMap&lt;java.lang.String,java.lang.String&gt;</pre>
 <dl>
 <dt><span class="seeLabel">関連項目:</span></dt>
 <dd><a href="../../serialized-form.html#nodagumi.ananPJ.Settings">直列化された形式</a></dd>
@@ -146,13 +146,6 @@ extends java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</pre>
 </a>
 <h3>クラスから継承されたネストされたクラス/インタフェース&nbsp;java.util.AbstractMap</h3>
 <code>java.util.AbstractMap.SimpleEntry&lt;K,V&gt;, java.util.AbstractMap.SimpleImmutableEntry&lt;K,V&gt;</code></li>
-</ul>
-<ul class="blockList">
-<li class="blockList"><a name="nested.classes.inherited.from.class.java.util.Map">
-<!--   -->
-</a>
-<h3>インタフェースから継承されたネストされたクラス/インタフェース&nbsp;java.util.Map</h3>
-<code>java.util.Map.Entry&lt;K,V&gt;</code></li>
 </ul>
 </li>
 </ul>
@@ -197,18 +190,18 @@ extends java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</pre>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.java.util.HashMap">
+<li class="blockList"><a name="methods.inherited.from.class.java.util.TreeMap">
 <!--   -->
 </a>
-<h3>クラスから継承されたメソッド&nbsp;java.util.HashMap</h3>
-<code>clear, clone, compute, computeIfAbsent, computeIfPresent, containsKey, containsValue, entrySet, forEach, get, getOrDefault, isEmpty, keySet, merge, put, putAll, putIfAbsent, remove, remove, replace, replace, replaceAll, size, values</code></li>
+<h3>クラスから継承されたメソッド&nbsp;java.util.TreeMap</h3>
+<code>ceilingEntry, ceilingKey, clear, clone, comparator, containsKey, containsValue, descendingKeySet, descendingMap, entrySet, firstEntry, firstKey, floorEntry, floorKey, forEach, get, headMap, headMap, higherEntry, higherKey, keySet, lastEntry, lastKey, lowerEntry, lowerKey, navigableKeySet, pollFirstEntry, pollLastEntry, put, putAll, remove, replace, replace, replaceAll, size, subMap, subMap, tailMap, tailMap, values</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.util.AbstractMap">
 <!--   -->
 </a>
 <h3>クラスから継承されたメソッド&nbsp;java.util.AbstractMap</h3>
-<code>equals, hashCode, toString</code></li>
+<code>equals, hashCode, isEmpty, toString</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -222,7 +215,7 @@ extends java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</pre>
 <!--   -->
 </a>
 <h3>インタフェースから継承されたメソッド&nbsp;java.util.Map</h3>
-<code>equals, hashCode</code></li>
+<code>compute, computeIfAbsent, computeIfPresent, equals, getOrDefault, hashCode, isEmpty, merge, putIfAbsent, remove</code></li>
 </ul>
 </li>
 </ul>

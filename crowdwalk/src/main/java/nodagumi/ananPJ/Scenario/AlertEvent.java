@@ -37,7 +37,7 @@ import nodagumi.Itk.* ;
  * "placeTag" もしくは "placeId" のいずれかを指定する。
  * {@code "message"} の利用は、
  * {@link nodagumi.ananPJ.Agents.RationalAgent RationalAgent} の
- * {@link nodagumi.ananPJ.Agents.Think.ThinkEngine#think_listenAlert listenAlert} を
+ * {@link nodagumi.ananPJ.Agents.Think.ThinkFormulaAgent#call_listenAlert listenAlert} を
  * 参照。
  * <p>
  * [2015.01.21 I.Noda] 現状では避難だけだが、

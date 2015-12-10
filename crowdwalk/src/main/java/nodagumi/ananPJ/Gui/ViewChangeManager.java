@@ -11,7 +11,7 @@ import javax.media.j3d.WakeupOnElapsedTime;
 /**
  * シミュレーション画面の描画更新イベントを処理する.
  *
- * イベントにはイベント名を表す文字列を使用する。<br />
+ * イベントにはイベント名を表す文字列を使用する。<br>
  * イベントソースやパラメータ等は特に使用しないためこれで問題ない。
  */
 public class ViewChangeManager extends Behavior {

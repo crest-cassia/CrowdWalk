@@ -220,7 +220,7 @@ public class Scenario {
     //------------------------------------------------------------
     /**
      * シナリオを時間まで進める。
-     * @param relTime : 相対時刻
+     * @param currentTime : 相対時刻
      * @param map : マップデータ
      * @return 進んだシナリオの数
      */
@@ -306,7 +306,7 @@ public class Scenario {
     //------------------------------------------------------------
     /**
      * JSON による定義の1イベント分の読み込み
-     * @param json : JSON 文字列 (Term で)
+     * @param eventDef : JSON 文字列 (Term で)
      * @return 生成したイベント
      */
     public EventBase scanJsonFileOneItem(Term eventDef) {

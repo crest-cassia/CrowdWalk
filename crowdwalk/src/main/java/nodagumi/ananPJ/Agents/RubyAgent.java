@@ -175,7 +175,6 @@ public class RubyAgent extends RationalAgent {
      * 指定した ruby の AgentClass のtriggerFilter を取得。
      * もし新しいものであれば、新たに作る。
      * @param rubyClassName : ruby での AgentClass 名
-     * @return 対応する triggerFilter
      */
     protected void setupTriggerFilter(String rubyClassName) {
         if(!triggerFilterTable.containsKey(rubyClassName)) {
@@ -210,7 +209,7 @@ public class RubyAgent extends RationalAgent {
 
     /**
      * トリガされているかのチェック。
-     * @param rubyClassName : ruby での AgentClass 名
+     * @param trigger : ruby での トリガ。
      * @return trigger されていれば true
      */
     protected String triggeredMethod(TriggerEntry trigger) {

@@ -380,7 +380,7 @@ public class ItkRuby {
     //------------------------------------------------------------
     /**
      * Ruby の current directory を取得。
-     * @return current directory。
+     * @param directory:: current directory。
      */
     public void setCurrentDirectory(String directory) {
         container.setCurrentDirectory(directory) ;

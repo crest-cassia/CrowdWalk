@@ -9,7 +9,7 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 /**
  * NetworkMap の構成要素の状態変化を監視するリスナ用インターフェイス.
  *
- * シミュレーション画面の描画更新用。<br />
+ * シミュレーション画面の描画更新用。<br>
  * 通知元のスレッドから直接呼ばれるため、時間の掛かる処理はしないこと。
  */
 public interface NetworkMapPartsListener {

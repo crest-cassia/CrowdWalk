@@ -648,7 +648,7 @@ implements Comparable<AgentBase> {
     //------------------------------------------------------------
     /**
      * evacuation の完了
-     * @param time : 時刻
+     * @param currentTime : 時刻
      * @param onNode : true なら currentPlace.getHeadingNode() 上
      *                 false なら currentPlace.getLink() 上
      * @param stuck : スタックかどうか
@@ -760,9 +760,9 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * Directive のなかの代表的目的地の取得
-     * @param directive : 調べる directive。通常の place tag の場合もある。
-     *    もし directive が isKnownDirective() なら、なにか返すべき。
+     * ルート のなかの代表的目的地の取得
+     * @param workingRoutePlan : 調べるルート。通常の place tag の場合もある。
+     *    もし directive が isKnownDirective() なら、なにか返すべき。(???)
      * @return もし directive なら代表的目的地。そうでないなら null
      */
     public Term nakedTargetFromRoutePlan(RoutePlan workingRoutePlan) {

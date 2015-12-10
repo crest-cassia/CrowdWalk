@@ -247,18 +247,17 @@ public class SetupFileInfo {
      * {@literal { "foo" : { "bar" : 1 }, "baz" : 2, "_fallback" : { "foo" : { "bar2" : 2}}}} となる。
      * <br>
      * 最終的に、fallback 情報は、以下の形式となる。
-     * <pre>
-     * {@literal
+     * <pre>{@literal
      * { ...<コマンドラインの--fallbackで指定したJSON>... ,
      *   "_fallback" : { ...<propertiesの"fallback_file"で指定したファイルのJSON>...,
-           "_fallback" : { ..."src/main/resources/fallbackParameters.json"のJSON>...}
-         }
+     *                   "_fallback" : { ..."src/main/resources/fallbackParameters.json"のJSON>...} }
      * }
-     * }
-     * </pre>
-     * @see {@link nodagumi.ananPJ.package-info#fallback}
+     * }</pre>
+     *
      * @param params : もとになる parameter 設定用 Term
      * @param fallback : params の後に追加する fallback
+     * @return fallbackを含んだ 設定Term。
+     * @see nodagumi.ananPJ.package-info
      */
     static public Term attachFallback(Term params, Term fallback) {
         params.setArg(FallbackSlot, fallback) ;

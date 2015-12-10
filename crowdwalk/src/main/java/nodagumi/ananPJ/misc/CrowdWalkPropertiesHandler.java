@@ -48,6 +48,7 @@ import nodagumi.Itk.*;
  *                      ・
  *                      ・
  * {@literal </properties></pre>}
+ *     </pre>
  *   </li>
  * </ul>
  *
@@ -134,8 +135,8 @@ import nodagumi.Itk.*;
  *  デフォルト値： 0.0</pre>
  * <p>
  *   <center>
- *     <img src="./doc-files/pollution_color_saturation_1.png"/><br />図1　10.0のとき<br /><br />
- *     <img src="./doc-files/pollution_color_saturation_2.png"/><br />図2　1.0のとき
+ *     <img src="./doc-files/pollution_color_saturation_1.png" alt="./doc-files/pollution_color_saturation_1.png"><br>図1　10.0のとき<br><br>
+ *     <img src="./doc-files/pollution_color_saturation_2.png" alt="./doc-files/pollution_color_saturation_2.png"><br>図2　1.0のとき
  *   </center>
  * </p>
  *   </li>
@@ -154,7 +155,7 @@ import nodagumi.Itk.*;
  *  デフォルト値： orange</pre>
  * <p>
  *   <center>
- *     <img src="./doc-files/pollution_color.png"/><br />図3　hsv のとき
+ *     <img src="./doc-files/pollution_color.png" alt="./doc-files/pollution_color.png"><br>図3　hsv のとき
  *   </center>
  * </p>
  *   </li>
@@ -332,8 +333,8 @@ import nodagumi.Itk.*;
  *  デフォルト値： 1.0</pre>
  * <p>
  *   <center>
- *     <img src="./doc-files/agent_size_1.png"/><br />図6　1.0のとき<br /><br />
- *     <img src="./doc-files/agent_size_2.png"/><br />図7　2.0のとき
+ *     <img src="./doc-files/agent_size_1.png" alt="./doc-files/agent_size_1.png"><br>図6　1.0のとき<br><br>
+ *     <img src="./doc-files/agent_size_2.png" alt="./doc-files/agent_size_2.png"><br>図7　2.0のとき
  *   </center>
  * </p>
  *   </li>
@@ -355,8 +356,8 @@ import nodagumi.Itk.*;
  *  デフォルト値： true</pre>
  * <p>
  *   <center>
- *     <img src="./doc-files/change_agent_color_depending_on_speed_1.png"/><br />図8　true のとき<br /><br />
- *     <img src="./doc-files/change_agent_color_depending_on_speed_2.png"/><br />図9　false のとき
+ *     <img src="./doc-files/change_agent_color_depending_on_speed_1.png" alt="./doc-files/change_agent_color_depending_on_speed_1.png"><br>図8　true のとき<br><br>
+ *     <img src="./doc-files/change_agent_color_depending_on_speed_2.png" alt="./doc-files/change_agent_color_depending_on_speed_2.png"><br>図9　false のとき
  *   </center>
  * </p>
  *   </li>
@@ -374,8 +375,8 @@ import nodagumi.Itk.*;
  *  デフォルト値： none</pre>
  * <p>
  *   <center>
- *     <img src="./doc-files/show_status_1.png"/><br />図10　show_status を有効にしなかった場合のスクリーンショット<br /><br />
- *     <img src="./doc-files/show_status_2.png"/><br />図11　show_status を top に設定した場合のスクリーンショット
+ *     <img src="./doc-files/show_status_1.png" alt="./doc-files/show_status_1.png"><br>図10　show_status を有効にしなかった場合のスクリーンショット<br><br>
+ *     <img src="./doc-files/show_status_2.png" alt="./doc-files/show_status_2.png"><br>図11　show_status を top に設定した場合のスクリーンショット
  *   </center>
  * </p>
  *   </li>
@@ -388,7 +389,7 @@ import nodagumi.Itk.*;
  *  デフォルト値： false</pre>
  * <p>
  *   <center>
- *     <img src="./doc-files/show_logo.png"/><br />図12
+ *     <img src="./doc-files/show_logo.png" alt="./doc-files/show_logo.png"><br>図12
  *   </center>
  * </p>
  *   </li>

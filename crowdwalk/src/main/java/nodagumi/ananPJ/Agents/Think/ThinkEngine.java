@@ -32,9 +32,11 @@ import nodagumi.Itk.* ;
  *   _rule_ ::= _expr_
  *   _expr_ ::= _null_ | [_expr_,_expr_,...] | _headedTerm_
  *   _null_ ::= null | {}
- *   _headedTerm_ ::= {"" : _head_, (_argKey_ : _expr_)*}
+ *   _headedTerm_ ::= {"" : _head_, (_argKey_ : _value_)*}
  *   _head_ ::= _String_
  *   _argKey_ ::= _String_
+ *   _value_ ::= _expr_ | _literal_
+ *   _literal_ ::= _String_ | _Number_ | _null_ | true | false
  * </pre>
  *
  * <h3> 組み込み Forms </h3>

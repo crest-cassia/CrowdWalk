@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":9,"i19":10,"i20":10,"i21":10,"i22":10,"i23":9,"i24":10,"i25":9,"i26":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":9,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":9,"i25":10,"i26":10,"i27":9,"i28":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -136,6 +136,7 @@ extends java.lang.Object</pre>
                       ・
                       ・
   &lt;/properties&gt;&lt;/pre&gt;
+     </pre>
    </li>
  </ul>
 
@@ -176,6 +177,15 @@ extends java.lang.Object</pre>
    </li>
 
    <li>
+     <h4>routes_file</h4>
+     <pre>  経路探索結果ファイルへのファイルパス
+  指定すると経路探索を実行する代わりに、このファイルに保存された探索結果を使用する。
+
+  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)</pre>
+   </li>
+
+   <li>
      <h4>pollution_file</h4>
      <pre>  Obstructer file へのファイルパス
 
@@ -213,8 +223,8 @@ extends java.lang.Object</pre>
   デフォルト値： 0.0</pre>
  <p>
    <center>
-     <img src="./doc-files/pollution_color_saturation_1.png"/><br />図1　10.0のとき<br /><br />
-     <img src="./doc-files/pollution_color_saturation_2.png"/><br />図2　1.0のとき
+     <img src="./doc-files/pollution_color_saturation_1.png" alt="./doc-files/pollution_color_saturation_1.png"><br>図1　10.0のとき<br><br>
+     <img src="./doc-files/pollution_color_saturation_2.png" alt="./doc-files/pollution_color_saturation_2.png"><br>図2　1.0のとき
    </center>
  </p>
    </li>
@@ -233,7 +243,7 @@ extends java.lang.Object</pre>
   デフォルト値： orange</pre>
  <p>
    <center>
-     <img src="./doc-files/pollution_color.png"/><br />図3　hsv のとき
+     <img src="./doc-files/pollution_color.png" alt="./doc-files/pollution_color.png"><br>図3　hsv のとき
    </center>
  </p>
    </li>
@@ -324,29 +334,11 @@ extends java.lang.Object</pre>
    </li>
 
    <li>
-     <h4>time_series_log</h4>
-     <pre>  時系列ログをとるかどうかの設定
+     <h4>evacuated_agents_log_file</h4>
+     <pre>  ゴールノード別の脱出エージェント数をステップごとに記録するログ
 
-  設定値： true | false
-  デフォルト値： false</pre>
-   </li>
-
-   <li>
-     <h4>time_series_log_path</h4>
-     <pre>  時系列ログを保管するディレクトリの指定
-  time_series_log が true の時に設定する
-
-  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
+  設定値： evacuated_agents_log file へのファイルパス
   デフォルト値： なし</pre>
-   </li>
-
-   <li>
-     <h4>time_series_log_interval</h4>
-     <pre>  ログを収集する時間の間隔の設定
-  time_series_log が true の時に設定する
-
-  設定値： 自然数
-  デフォルト値： 1</pre>
    </li>
 
    <li>
@@ -429,8 +421,8 @@ extends java.lang.Object</pre>
   デフォルト値： 1.0</pre>
  <p>
    <center>
-     <img src="./doc-files/agent_size_1.png"/><br />図6　1.0のとき<br /><br />
-     <img src="./doc-files/agent_size_2.png"/><br />図7　2.0のとき
+     <img src="./doc-files/agent_size_1.png" alt="./doc-files/agent_size_1.png"><br>図6　1.0のとき<br><br>
+     <img src="./doc-files/agent_size_2.png" alt="./doc-files/agent_size_2.png"><br>図7　2.0のとき
    </center>
  </p>
    </li>
@@ -452,8 +444,8 @@ extends java.lang.Object</pre>
   デフォルト値： true</pre>
  <p>
    <center>
-     <img src="./doc-files/change_agent_color_depending_on_speed_1.png"/><br />図8　true のとき<br /><br />
-     <img src="./doc-files/change_agent_color_depending_on_speed_2.png"/><br />図9　false のとき
+     <img src="./doc-files/change_agent_color_depending_on_speed_1.png" alt="./doc-files/change_agent_color_depending_on_speed_1.png"><br>図8　true のとき<br><br>
+     <img src="./doc-files/change_agent_color_depending_on_speed_2.png" alt="./doc-files/change_agent_color_depending_on_speed_2.png"><br>図9　false のとき
    </center>
  </p>
    </li>
@@ -471,8 +463,8 @@ extends java.lang.Object</pre>
   デフォルト値： none</pre>
  <p>
    <center>
-     <img src="./doc-files/show_status_1.png"/><br />図10　show_status を有効にしなかった場合のスクリーンショット<br /><br />
-     <img src="./doc-files/show_status_2.png"/><br />図11　show_status を top に設定した場合のスクリーンショット
+     <img src="./doc-files/show_status_1.png" alt="./doc-files/show_status_1.png"><br>図10　show_status を有効にしなかった場合のスクリーンショット<br><br>
+     <img src="./doc-files/show_status_2.png" alt="./doc-files/show_status_2.png"><br>図11　show_status を top に設定した場合のスクリーンショット
    </center>
  </p>
    </li>
@@ -485,7 +477,7 @@ extends java.lang.Object</pre>
   デフォルト値： false</pre>
  <p>
    <center>
-     <img src="./doc-files/show_logo.png"/><br />図12
+     <img src="./doc-files/show_logo.png" alt="./doc-files/show_logo.png"><br>図12
    </center>
  </p>
    </li>
@@ -501,6 +493,14 @@ extends java.lang.Object</pre>
    <li>
      <h4>auto_simulation_start</h4>
      <pre>  自動的に Simulation ウィンドウを開いて自動的にシミュレーションを開始する
+
+  設定値： true | false
+  デフォルト値： false</pre>
+   </li>
+
+   <li>
+     <h4>exit_with_simulation_finished</h4>
+     <pre>  GUI モード時にシミュレーション終了と同時にプログラムを終了する
 
   設定値： true | false
   デフォルト値： false</pre>
@@ -568,6 +568,18 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#routesFilePath">routesFilePath</a></span></code>
+<div class="block">経路探索結果のファイルパス</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#routesLoading">routesLoading</a></span></code>
+<div class="block">経路探索結果の読み込みフラグ</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#scenarioFile">scenarioFile</a></span></code>&nbsp;</td>
 </tr>
 </table>
@@ -585,6 +597,11 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">コンストラクタと説明</th>
 </tr>
 <tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#CrowdWalkPropertiesHandler--">CrowdWalkPropertiesHandler</a></span>()</code>
+<div class="block">コンストラクタ</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#CrowdWalkPropertiesHandler-java.lang.String-">CrowdWalkPropertiesHandler</a></span>(java.lang.String&nbsp;_propertiesFile)</code>
 <div class="block">コンストラクタ</div>
 </td>
@@ -709,33 +726,45 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i20" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#getScenarioFile--">getScenarioFile</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#getRoutesFilePath--">getRoutesFilePath</a></span>()</code>
+<div class="block">経路探索結果のファイルパスを取得</div>
+</td>
 </tr>
 <tr id="i21" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#getScenarioFile--">getScenarioFile</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#getString-java.lang.String-java.lang.String-">getString</a></span>(java.lang.String&nbsp;key,
          java.lang.String&nbsp;defaultValue)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#getString-java.lang.String-java.lang.String-java.lang.String:A-">getString</a></span>(java.lang.String&nbsp;key,
          java.lang.String&nbsp;defaultValue,
          java.lang.String[]&nbsp;pattern)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#getStringProperty-java.util.Properties-java.lang.String-">getStringProperty</a></span>(java.util.Properties&nbsp;prop,
                  java.lang.String&nbsp;key)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#isDefined-java.lang.String-">isDefined</a></span>(java.lang.String&nbsp;key)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#isRoutesLoading--">isRoutesLoading</a></span>()</code>
+<div class="block">経路探索結果を読み込むか?</div>
+</td>
+</tr>
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#main-java.lang.String:A-">main</a></span>(java.lang.String[]&nbsp;args)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html#setPropertiesFile-java.lang.String-">setPropertiesFile</a></span>(java.lang.String&nbsp;_path)</code>
 <div class="block">Set a properties file name.</div>
@@ -836,6 +865,26 @@ extends java.lang.Object</pre>
 <div class="block">fallback file</div>
 </li>
 </ul>
+<a name="routesFilePath">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>routesFilePath</h4>
+<pre>protected&nbsp;java.lang.String routesFilePath</pre>
+<div class="block">経路探索結果のファイルパス</div>
+</li>
+</ul>
+<a name="routesLoading">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>routesLoading</h4>
+<pre>protected&nbsp;boolean routesLoading</pre>
+<div class="block">経路探索結果の読み込みフラグ</div>
+</li>
+</ul>
 <a name="randseed">
 <!--   -->
 </a>
@@ -871,6 +920,16 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>コンストラクタの詳細</h3>
+<a name="CrowdWalkPropertiesHandler--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CrowdWalkPropertiesHandler</h4>
+<pre>public&nbsp;CrowdWalkPropertiesHandler()</pre>
+<div class="block">コンストラクタ</div>
+</li>
+</ul>
 <a name="CrowdWalkPropertiesHandler-java.lang.String-">
 <!--   -->
 </a>
@@ -971,6 +1030,26 @@ extends java.lang.Object</pre>
 <h4>getFallbackFile</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getFallbackFile()</pre>
 <div class="block">fallback file を取得</div>
+</li>
+</ul>
+<a name="getRoutesFilePath--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRoutesFilePath</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getRoutesFilePath()</pre>
+<div class="block">経路探索結果のファイルパスを取得</div>
+</li>
+</ul>
+<a name="isRoutesLoading--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isRoutesLoading</h4>
+<pre>public&nbsp;boolean&nbsp;isRoutesLoading()</pre>
+<div class="block">経路探索結果を読み込むか?</div>
 </li>
 </ul>
 <a name="getRandseed--">

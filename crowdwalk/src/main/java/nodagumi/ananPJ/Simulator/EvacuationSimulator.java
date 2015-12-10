@@ -207,6 +207,7 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * マップ取得。
+     * @return ネットワークマップ。
      */
     public NetworkMap getMap() {
         return networkMap;
@@ -215,6 +216,7 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * リンク取得。
+     * @return リンクのテーブル。
      */
     public MapLinkTable getLinks() {
 	return networkMap.getLinks();
@@ -223,6 +225,7 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * ノード取得。
+     * @return ノードのテーブル。
      */
     public MapNodeTable getNodes() {
 	return networkMap.getNodes();
@@ -249,6 +252,7 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * エージェントハンドラ取得。
+     * @return エージェントハンドラ。
      */
     public AgentHandler getAgentHandler() {
         return agentHandler;
@@ -257,6 +261,7 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * Pollution ハンドラ取得。
+     * @return 汚染エリアのリスト。
      */
     public ArrayList<MapArea> getPollutions() {
         return pollutionHandler.getPollutions();
@@ -265,6 +270,7 @@ public class EvacuationSimulator {
     //------------------------------------------------------------
     /**
      * screen shot インターバルを設定。
+     * @param i : screen short のインターバル。
      */
     public void setScreenshotInterval (int i) {
         screenshotInterval = i;
@@ -272,6 +278,7 @@ public class EvacuationSimulator {
 
     /**
      * screen shot インターバル取得。
+     * @return : 現在のスクリーのショットのインターバル。
      */
     public int getScreenshotInterval () {
         return screenshotInterval;
