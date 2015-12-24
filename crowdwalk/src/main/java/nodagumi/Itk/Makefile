@@ -242,6 +242,28 @@ run3mj00a ::
 run3mj00a_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3mj00a))
 
+##-----
+SAMPLE3bench00naive = sample/generatedTown/gridTown00_bench.naive.prop.json   # bench, ruby wrapper
+run3bc00n ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00naive))
+
+##-----
+SAMPLE3bench00rational = sample/generatedTown/gridTown00_bench.rational.prop.json   # bench, ruby wrapper
+run3bc00ra ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00rational))
+
+##-----
+SAMPLE3bench00rubyWrapper = sample/generatedTown/gridTown00_bench.ruby.wr.prop.json   # bench, ruby wrapper
+run3bc00rbw ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00rubyWrapper))
+
+##-----
+SAMPLE3bench00rubyAgent = sample/generatedTown/gridTown00_bench.ruby.ag.prop.json   # bench, ruby agent
+run3bc00rba ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00rubyAgent))
+
+
+
 
 ##------------------------------------------------------------
 FOO = a b c
