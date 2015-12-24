@@ -3,12 +3,9 @@
  *  generates executable jar using Gradle.
  */
 
-
 defaultTasks 'clean', 'build'
 
 apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'application'
 apply plugin: 'eclipse'
 
 repositories {
@@ -16,8 +13,9 @@ repositories {
 }
 
 dependencies {
-    groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.0'
-    groovy group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    compile localGroovy()   // Gradleに同梱されているGroovyを使う
+    compile 'commons-cli:commons-cli:1.2'
+    compile 'xalan:xalan:2.7.0'
     compile fileTree(dir: 'lib', include: '*.jar')
     compile fileTree(dir: 'gis/geotools-2.7-M3', include: '*.jar')
     runtime fileTree(dir: 'gis/geotools-2.7-M3', include: '*.jar')
@@ -28,8 +26,6 @@ sourceSets {
         java {
             srcDirs = ["src"];
         }
-        compileClasspath = configurations.compile
-        runtimeClasspath = configurations.runtime
     }
 }
 
@@ -40,7 +36,5 @@ compileJava {
 }
 
 jar {
+    manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.Editor.ImportGis")
 }
-
-mainClassName = 'nodagumi.ananPJ.Editor.ImportGis'
-manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.Editor.ImportGis")
