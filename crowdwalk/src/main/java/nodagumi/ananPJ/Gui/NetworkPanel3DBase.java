@@ -66,6 +66,8 @@ import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.Colors.*;
+import nodagumi.ananPJ.Gui.LinkAppearance;
+import nodagumi.ananPJ.Gui.NodeAppearance;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.Gui.ViewChangeManager;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -219,64 +221,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
      */
     protected void screenShotCaptured() {}
 
-    // リンクの表示スタイル(幅, 色, 透明度)をタグ別に指定するために使用するクラス
-    protected class LinkAppearance {
-        public boolean widthFixed = false;
-        public double widthRatio = 1.0;
-        public Color3f color = Colors.DEFAULT_LINK_COLOR;
-        public float transparency = 0.75f;
-        public Appearance appearance = new Appearance();
-
-        public LinkAppearance(Boolean _widthFixed, BigDecimal _widthRatio, String colorName, BigDecimal _transparency, LinkAppearance defaultValue) {
-            if (defaultValue != null) {
-                widthFixed = defaultValue.widthFixed;
-                widthRatio = defaultValue.widthRatio;
-                color = defaultValue.color;
-                transparency = defaultValue.transparency;
-            }
-            if (_widthFixed != null) {
-                widthFixed = _widthFixed;
-            }
-            if (_widthRatio != null) {
-                widthRatio = _widthRatio.doubleValue();
-            }
-            if (colorName != null) {
-                color = Colors.getColor(colorName);
-            }
-            if (_transparency != null) {
-                transparency = _transparency.floatValue();
-            }
-            appearance.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST, transparency));
-        }
-    }
-
-    // ノードの表示スタイル(直径, 色, 透明度)をタグ別に指定するために使用するクラス
-    protected class NodeAppearance {
-        public double diameter = 1.5;
-        public Color3f color = Colors.BLACK2;
-        public float transparency = 0.75f;
-        public Appearance appearance = new Appearance();
-
-        public NodeAppearance(BigDecimal _diameter, String colorName, BigDecimal _transparency, NodeAppearance defaultValue) {
-            if (defaultValue != null) {
-                diameter = defaultValue.diameter;
-                color = defaultValue.color;
-                transparency = defaultValue.transparency;
-            }
-            if (_diameter != null) {
-                diameter = _diameter.doubleValue();
-            }
-            if (colorName != null) {
-                color = Colors.getColor(colorName);
-            }
-            if (_transparency != null) {
-                transparency = _transparency.floatValue();
-            }
-            appearance.setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.FASTEST));
-            appearance.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST, transparency));
-        }
-    }
-
     protected MenuBar menu_bar = null;
     protected transient CaptureCanvas3D canvas = null;
     public JFrame parent = null;
@@ -296,20 +240,25 @@ public abstract class NetworkPanel3DBase extends JPanel {
 
         try {
             // 再ロードしているのは、該当するタグが複数あった場合の適用ルールを設定ファイルに記述した順(上が優先)にするため
+            String filePath = null;
             if (_properties != null && _properties.isDefined("link_appearance_file")) {
-                loadLinkAppearances(new FileInputStream(_properties.getFilePath("link_appearance_file", null)));
+                filePath = _properties.getFilePath("link_appearance_file", null);
+                LinkAppearance.loadLinkAppearances(new FileInputStream(filePath), linkAppearances);
             }
-            loadLinkAppearances(getClass().getResourceAsStream("/link_appearance.json"));
+            LinkAppearance.loadLinkAppearances(
+                    getClass().getResourceAsStream("/link_appearance.json"), linkAppearances);
             if (_properties != null && _properties.isDefined("link_appearance_file")) {
-                loadLinkAppearances(new FileInputStream(_properties.getFilePath("link_appearance_file", null)));
+                LinkAppearance.loadLinkAppearances(new FileInputStream(filePath), linkAppearances);
             }
 
             if (_properties != null && _properties.isDefined("node_appearance_file")) {
-                loadNodeAppearances(new FileInputStream(_properties.getFilePath("node_appearance_file", null)));
+                filePath = _properties.getFilePath("node_appearance_file", null);
+                NodeAppearance.loadNodeAppearances(new FileInputStream(filePath), nodeAppearances);
             }
-            loadNodeAppearances(getClass().getResourceAsStream("/node_appearance.json"));
+            NodeAppearance.loadNodeAppearances(
+                    getClass().getResourceAsStream("/node_appearance.json"), nodeAppearances);
             if (_properties != null && _properties.isDefined("node_appearance_file")) {
-                loadNodeAppearances(new FileInputStream(_properties.getFilePath("node_appearance_file", null)));
+                NodeAppearance.loadNodeAppearances(new FileInputStream(filePath), nodeAppearances);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -335,45 +284,6 @@ public abstract class NetworkPanel3DBase extends JPanel {
                 updateLinkWidth();
             }
         });
-    }
-
-    protected void loadLinkAppearances(InputStream is) throws Exception {
-	/* [2014.12.27] I.Noda. to adapt new version os JSONIC. */
-	//Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
-	JSON json = new JSON(JSON.Mode.TRADITIONAL);
-	Map<String, Object> map = (Map<String, Object>)json.parse(is);
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String tag = entry.getKey();
-            Map<String, Object> items = (Map<String, Object>)entry.getValue();
-            BigDecimal widthRatio = (BigDecimal)items.get("width_ratio");
-            if (widthRatio == null) {
-                widthRatio = (BigDecimal)items.get("width");
-            }
-            linkAppearances.put(tag, new LinkAppearance(
-                (Boolean)items.get("width_fixed"),
-                widthRatio,
-                (String)items.get("color"),
-                (BigDecimal)items.get("transparency"),
-                linkAppearances.get(tag)
-            ));
-        }
-    }
-
-    protected void loadNodeAppearances(InputStream is) throws Exception {
-	/* [2014.12.27] I.Noda. to adapt new version os JSONIC. */
-	//Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
-	JSON json = new JSON(JSON.Mode.TRADITIONAL);
-	Map<String, Object> map = (Map<String, Object>)json.parse(is);
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String tag = entry.getKey();
-            Map<String, Object> items = (Map<String, Object>)entry.getValue();
-            nodeAppearances.put(tag, new NodeAppearance(
-                (BigDecimal)items.get("diameter"),
-                (String)items.get("color"),
-                (BigDecimal)items.get("transparency"),
-                nodeAppearances.get(tag)
-            ));
-        }
     }
 
     protected void setupFrame(MapNodeTable _nodes,

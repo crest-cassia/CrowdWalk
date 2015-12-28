@@ -366,10 +366,13 @@ public abstract class BasicSimulationLauncher {
 
         // 終了時ステータスの表示
         // ※注意) Time がプラス1余計にされている
-        String status = String.format("Time: %s  Elapsed: %5.2fsec  %s",
-                simulator.currentTime.getAbsoluteTimeString(),
-                simulator.currentTime.getRelativeTime(),
-                simulator.getEvacuatedCountStatus());
-        Itk.logInfo("Status", status);
+        Itk.logInfo("Status", getStatusLine());
+    }
+
+    /**
+     * ステータスライン表示用の文字列
+     */
+    public String getStatusLine() {
+        return simulator.getStatusLine();
     }
 }

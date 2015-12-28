@@ -68,6 +68,8 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.Gui.Colors;
+import nodagumi.ananPJ.Gui.LinkAppearance;
+import nodagumi.ananPJ.Gui.NodeAppearance;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.Gui.NetworkPanel3D;
 import nodagumi.ananPJ.GuiSimulationLauncher;

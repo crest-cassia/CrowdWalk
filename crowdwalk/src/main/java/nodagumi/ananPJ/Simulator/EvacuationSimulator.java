@@ -1062,6 +1062,16 @@ public class EvacuationSimulator {
         }
     }
 
+    /**
+     * ステータスライン表示用の文字列を生成して返す
+     */
+    public String getStatusLine() {
+        return String.format("Time: %s  Elapsed: %5.2fsec  %s",
+                currentTime.getAbsoluteTimeString(),
+                currentTime.getRelativeTime(),
+                getEvacuatedCountStatus());
+    }
+
     //------------------------------------------------------------
     /**
      * サイクル毎の画面描画

@@ -155,6 +155,20 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         return false;
     }
 
+    /**
+     * 部分文字列 _tag を含んでいるタグがあるか?
+     */
+    public boolean containsTag(String _tag) {
+        if (_tag == null || _tag.isEmpty())
+            return false;
+
+        for (String tag : tags) {
+            if (tag.contains(_tag))
+                return true;
+        }
+        return false;
+    }
+
     public Matcher matchTag (String pattern_str) {
         Pattern pattern = Pattern.compile(pattern_str);
         for (final String tag : tags) {
