@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.CrowdWalkLauncher;
-import nodagumi.ananPJ.GuiSimulationLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -34,7 +33,6 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
-import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Scenario.*;
 
@@ -119,20 +117,6 @@ public class EvacuationSimulator {
      * シナリオ情報
      */
     private Scenario scenario = new Scenario();
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 表示画面
-     */
-    transient private SimulationPanel3D panel3d = null;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * スクリーンショット取るもの。
-     * どう使うのか謎。見るところ、単に 1 にするかどうかだけに見える。
-     * それならば、int ではなく boolean にすべき。
-     */
-    private int screenshotInterval = 0;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -269,23 +253,6 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
-     * screen shot インターバルを設定。
-     * @param i : screen short のインターバル。
-     */
-    public void setScreenshotInterval (int i) {
-        screenshotInterval = i;
-    }
-
-    /**
-     * screen shot インターバル取得。
-     * @return : 現在のスクリーのショットのインターバル。
-     */
-    public int getScreenshotInterval () {
-        return screenshotInterval;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 設定ハンドラ設定。
      */
     public void setProperties(CrowdWalkPropertiesHandler _properties) {
@@ -416,10 +383,10 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
-     * 画面制御用 interface
+     * SimulationLauncher を取得する。
      */
-    public SimulationController getController() {
-        return (SimulationController)launcher ;
+    public BasicSimulationLauncher getSimulationLauncher() {
+        return launcher;
     }
 
     //------------------------------------------------------------
@@ -872,21 +839,6 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
-     * 画面の準備。
-     */
-    public void buildDisplay() {
-        panel3d = getController().setupFrame(this);
-    }
-
-    /**
-     * 3D画面の準備。
-     */
-    public SimulationPanel3D getPanel3D() {
-        return panel3d;
-    }
-
-    //------------------------------------------------------------
-    /**
      * 各値のリセット。
      */
     void resetValues() {
@@ -915,61 +867,11 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
-     * シミュレーション開始。
-     */
-    public void start() {
-        if (hasDisplay()) {
-            getController().start();
-            if (panel3d != null && isRunning()) {
-                panel3d.setMenuActionStartEnabled(false);
-            }
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * シミュレーション中断。
-     */
-    public void pause() {
-        if (hasDisplay()) {
-            getController().pause();
-            if (panel3d != null && ! isRunning()) {
-                panel3d.setMenuActionStartEnabled(true);
-            }
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * シミュレーション1サイクル実行。
-     */
-    public void step() {
-        if (hasDisplay()) {
-            getController().step();
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * シミュレーション実行中かどうかの判定。
-     */
-    public boolean isRunning() {
-        // tkokada
-        if (hasDisplay()) {
-            return getController().isRunning();
-        } else {
-            return false;
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
      * エージェント登録
      */
     public void registerAgent(AgentBase agent) {
-        if (panel3d != null) {
-            panel3d.registerAgentOnline(agent);
-        }
+        launcher.registerAgent(agent);
+
         /* [2015.05.29 I.Noda]
          * 以下のコード、commit b5c5c85e で一旦消したものの、
          * 渋滞するはずのコードが渋滞しなくなり、おかしい。
@@ -1004,12 +906,12 @@ public class EvacuationSimulator {
             // 実行本体
             agentHandler.update(currentTime);
 
-            // 描画
-            updateEveryTickDisplay() ;
-
             // ruby wrapper の postUpdate()
             if(useRubyWrapper())
                 rubyEngine.callMethod(rubyWrapper, "postUpdate", currentTime) ;
+
+            // 描画のための呼び出し
+            launcher.updateEveryTick(currentTime);
 
             // カウンタを進める。
             clock.advance() ;
@@ -1070,41 +972,6 @@ public class EvacuationSimulator {
                 currentTime.getAbsoluteTimeString(),
                 currentTime.getRelativeTime(),
                 getEvacuatedCountStatus());
-    }
-
-    //------------------------------------------------------------
-    /**
-     * サイクル毎の画面描画
-     */
-    private void updateEveryTickDisplay() {
-        if (panel3d != null) {
-            GuiSimulationLauncher gui = (GuiSimulationLauncher)launcher;
-            gui.update_buttons();
-            gui.displayClock(currentTime);
-            gui.updateEvacuatedCount();
-
-            panel3d.updateClock(currentTime) ;
-            boolean captureScreenShot = (screenshotInterval != 0);
-            if (captureScreenShot) {
-                panel3d.setScreenShotFileName(String.format("capture%06d",
-                                                            (int)currentTime.getTickCount()));
-            }
-            while (! panel3d.notifyViewChange("simulation progressed")) {
-                synchronized (this) {
-                    try {
-                        wait(10);
-                    } catch (InterruptedException e) {}
-                }
-            }
-            if (captureScreenShot) {
-                // スクリーンショットを撮り終えるまで待つ
-                synchronized (this) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {}
-                }
-            }
-        }
     }
 
     //============================================================

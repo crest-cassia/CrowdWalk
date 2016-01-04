@@ -11,11 +11,12 @@ import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import nodagumi.ananPJ.Simulator.SimulationController;
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
+import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
 
@@ -290,11 +291,8 @@ public abstract class BasicSimulationLauncher {
     //------------------------------------------------------------
     /**
      * ディスプレーを持つかどうか。
-     * これは、SimulationController interface を継承しているかどうかで判断。
      */
-    public boolean hasDisplay() {
-        return (this instanceof SimulationController) ;
-    }
+    public abstract boolean hasDisplay();
 
     //------------------------------------------------------------
     /**
@@ -308,7 +306,6 @@ public abstract class BasicSimulationLauncher {
 
         // model.begin set files (pol, gen, sce) to networkMap
         simulator.begin() ;
-        if(hasDisplay()) simulator.buildDisplay();
 
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);
 
@@ -334,6 +331,11 @@ public abstract class BasicSimulationLauncher {
                          "walking:",
                          simulator.getAgentHandler().numOfWalkingAgents()) ;
     }
+
+    /**
+     * EvacuationSimulator のステップ処理が終了してカウントアップされる直前に呼び出される。
+     */
+    public abstract void updateEveryTick(SimTime currentTime);
 
     //------------------------------------------------------------
     /**
@@ -368,6 +370,11 @@ public abstract class BasicSimulationLauncher {
         // ※注意) Time がプラス1余計にされている
         Itk.logInfo("Status", getStatusLine());
     }
+
+    /**
+     * エージェント登録
+     */
+    public abstract void registerAgent(AgentBase agent);
 
     /**
      * ステータスライン表示用の文字列

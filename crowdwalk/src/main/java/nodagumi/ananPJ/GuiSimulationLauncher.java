@@ -43,22 +43,20 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
+import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
-import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
 import nodagumi.Itk.*;
 
-public class GuiSimulationLauncher extends BasicSimulationLauncher
-    implements SimulationController {
+public class GuiSimulationLauncher extends BasicSimulationLauncher {
     /**
      * 3Dシミュレーションパネルの幅
      */
@@ -191,6 +189,9 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         // シミュレータの実体の初期化
         initializeSimulatorEntity() ;
 
+        // ウィンドウとGUIの構築
+        setupFrame();
+
         System.gc();
 
         // メインループの Runnable 作成。
@@ -209,7 +210,6 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         }
     }
 
-    @Override
     public void start() {
         synchronized (simulationRunnable) {
             if (paused) {
@@ -220,14 +220,12 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         }
     }
 
-    @Override
     public void pause() {
         synchronized (simulationRunnable) {
             paused = true ;
         }
     }
 
-    @Override
     public void step() {
         synchronized (simulationRunnable) {
             simulateOneStepBare() ;
@@ -240,7 +238,6 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         }
     }
 
-    @Override
     public boolean isRunning() {
         return !paused;
     }
@@ -257,11 +254,55 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
         }
     }
 
+    /**
+     * ディスプレーを持つかどうか。
+     */
+    public boolean hasDisplay() {
+        return true;
+    }
+
+    /**
+     * サイクル毎の画面描画
+     */
+    public void updateEveryTick(SimTime currentTime) {
+        update_buttons();
+        displayClock(currentTime);
+        updateEvacuatedCount();
+
+        panel.updateClock(currentTime) ;
+        boolean recordSimulationScreen = isRecordSimulationScreen();
+        if (recordSimulationScreen) {
+            panel.setScreenShotFileName(String.format("capture%06d",
+                                                        (int)currentTime.getTickCount()));
+        }
+        while (! panel.notifyViewChange("simulation progressed")) {
+            synchronized (simulator) {
+                try {
+                    simulator.wait(10);
+                } catch (InterruptedException e) {}
+            }
+        }
+        if (recordSimulationScreen) {
+            // スクリーンショットを撮り終えるまで待つ
+            synchronized (simulator) {
+                try {
+                    simulator.wait();
+                } catch (InterruptedException e) {}
+            }
+        }
+    }
+
+    /**
+     * エージェント登録
+     */
+    public void registerAgent(AgentBase agent) {
+        panel.registerAgentOnline(agent);
+    }
+
     protected transient SimulationPanel3D panel = null;
     protected transient JFrame simulation_frame = null;
 
-    @Override
-    public SimulationPanel3D setupFrame(final EvacuationSimulator simulator) {
+    public SimulationPanel3D setupFrame() {
         simulation_frame = new JFrame("Simulation Preview");
 
         simulation_frame.addWindowListener(new WindowListener() {
@@ -495,12 +536,20 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
 
         start_button = new JButton(start_icon);
         start_button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { simulator.start(); update_buttons(); }
+            public void actionPerformed(ActionEvent e) {
+                start();
+                update_buttons();
+                panel.setMenuActionStartEnabled(false);
+            }
         });
         control_button_panel.add(start_button);
         pause_button = new JButton(pause_icon);
         pause_button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { simulator.pause(); update_buttons(); }
+            public void actionPerformed(ActionEvent e) {
+                pause();
+                update_buttons();
+                panel.setMenuActionStartEnabled(true);
+            }
         });
         control_button_panel.add(pause_button);
         step_button = new JButton(step_icon);
@@ -510,7 +559,7 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
                     // ボタンクリックでいきなりプログラムが終了することがないようにするため
                     panel.getExitWithSimulationFinished().doClick();
                 }
-                simulator.step();
+                step();
                 update_buttons();
             }
         });
@@ -578,15 +627,14 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
      * ボタン類のアップデート
      */
     public void update_buttons() {
-        boolean is_running = simulator.isRunning();
         if (start_button != null) {
-            start_button.setEnabled(!is_running);
+            start_button.setEnabled(! isRunning());
         }
         if (pause_button != null) {
-            pause_button.setEnabled(is_running);
+            pause_button.setEnabled(isRunning());
         }
         if (step_button != null) {
-            step_button.setEnabled(!is_running);
+            step_button.setEnabled(! isRunning());
         }
     }
 
@@ -782,6 +830,14 @@ public class GuiSimulationLauncher extends BasicSimulationLauncher
             System.err.println(e.getMessage());
             System.exit(1);
         }
+    }
+
+    public void setRecordSimulationScreen(boolean b) {
+        recordSimulationScreen = b;
+    }
+
+    public boolean isRecordSimulationScreen() {
+        return recordSimulationScreen;
     }
 
     // 画像ファイルか?

@@ -57,7 +57,6 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;

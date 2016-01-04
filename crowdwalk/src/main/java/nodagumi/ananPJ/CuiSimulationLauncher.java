@@ -83,5 +83,24 @@ public class CuiSimulationLauncher extends BasicSimulationLauncher {
         simulateMainLoop() ;
     }
 
-}
+    /**
+     * ディスプレーを持つかどうか。
+     */
+    public boolean hasDisplay() {
+        return false;
+    }
 
+    /**
+     * EvacuationSimulator のステップ処理が終了してカウントアップされる直前に呼び出される。
+     */
+    public void updateEveryTick(SimTime currentTime) {
+        // 何もしない
+    }
+
+    /**
+     * エージェント登録
+     */
+    public void registerAgent(AgentBase agent) {
+        // 何もしない
+    }
+}
