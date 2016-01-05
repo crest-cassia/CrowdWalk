@@ -23,8 +23,8 @@
   "ruby_init_script":"
 require './SampleAgent.rb'
 require './SampleWrapper.rb'
-require 'pp'
-pp Dir::pwd
+#require 'pp'
+p Dir::pwd
 ",
   "ruby_simulation_wrapper_class":"SampleWrapper"
 }
