@@ -186,7 +186,7 @@ public class CrowdWalkLauncher {
     {
         settings = Settings.load(SETTINGS_FILE_NAME);
         GuiSimulationLauncher launcher =
-            new GuiSimulationLauncher(propertiesFilePath,
+            new GuiSimulationLauncher3D(propertiesFilePath,
                     settings, commandLineFallbacks);
         launcher.simulate();
         return launcher;

@@ -789,7 +789,7 @@ public class GuiSimulationEditorLauncher
      * GUI シミュレータを起動する
      */
     public void simulate() {
-        GuiSimulationLauncher launcher = new GuiSimulationLauncher(random,
+        GuiSimulationLauncher launcher = new GuiSimulationLauncher3D(random,
                 properties, setupFileInfo, networkMap, settings);
         launcher.simulate();
     }
