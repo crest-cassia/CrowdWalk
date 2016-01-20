@@ -1,0 +1,30 @@
+{
+  "__0":"NetmasCuiSimulator",
+  "debug":true,
+  "io_handler_type":"none",
+  "map_file":"gridTown00.map.xml",
+  "generation_file":"gridTown00.ruby.gen.json",
+  "scenario_file":"gridTown00.scnr.json",
+  "fallback_file":"gridTown00.fb.json",
+  "timer_enable":true,
+  "timer_file":"/tmp/timer.log",
+  "interval":0,
+  "randseed":2524,
+  "random_navigation":true,
+  "time_series_log":true,
+  "time_series_log_path":"/tmp",
+  "time_series_log_interval":1,
+  "loop_count":1,
+  "exit_count":0,
+  "all_agent_speed_zero_break":false
+  "use_ruby":true,
+  "ruby_load_path":"/usr/users/noda/lib/ruby
+/usr/users/noda/work/ruby",
+  "ruby_init_script":"
+require './SampleAgent2.rb'
+require './SampleWrapper.rb'
+#require 'pp'
+p Dir::pwd
+",
+  "ruby_simulation_wrapper_class":"SampleWrapper"
+}

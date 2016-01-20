@@ -222,6 +222,11 @@ run3gt00r_fb ::
 	(cd $(BASEDIR) ; bash quickstart.sh --fallback '{"aho":1.0}' --fallback '{"link":{"gathering_location_width":12.345}}' $(SAMPLE3gt00r))
 
 ##-----
+SAMPLE3gt00r2 = sample/generatedTown/gridTown00.ruby2.prop.json   # ruby agent
+run3gt00r2 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r2))
+
+##-----
 SAMPLE3kw01 = sample/kawaguchi-S2B/property-S2B.xml # kawaguchi
 run3kw01 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3kw01))

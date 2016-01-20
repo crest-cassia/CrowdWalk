@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = Sample Agent for CrowdWalk
 ## Author:: Itsuki Noda
@@ -32,7 +33,23 @@ class SampleAgent < RubyAgentBase
 #                   "calcAccel",
                    "thinkCycle",
                   ] ;
-
+  
+  AgentList = [] ;
+  
+  #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## id counter
+  attr_accessor :idInClass ;
+  
+  #--------------------------------------------------------------
+  #++
+  ## 初期化
+  def initialize(*arg)
+    super(*arg) ;
+    AgentList.push(self) ;
+    @idInClass = AgentList.length ;
+  end
+  
   #--------------------------------------------------------------
   #++
   ## シミュレーション各サイクルの前半に呼ばれる。
@@ -73,16 +90,20 @@ class SampleAgent < RubyAgentBase
   #--------------------------------------------------------------
   #++
   ## 速度を計算する。
-  ## たまに減速させてみる。
+  ## 波を持たせて減速させてみる。
   ## _previousSpeed_:: 前のサイクルの速度。
   ## *return* 速度。
   def calcSpeed(previousSpeed)
     speed = super(previousSpeed) ;
-    if(rand(5) == 0) then
-      origSpeed = speed ;
-      speed *= 0.01 ;
-      p [:speedDown, getAgentId(), origSpeed, speed] ;
-    end
+
+    phase = (getCurrentTime().getRelativeTime() + @idInClass)/ 30.0 ;
+    offset = 0.1 ;
+    ratio = (1.0 + offset + Math::sin(phase)) / (2.0 + offset) ;
+    
+    origSpeed = speed ;
+    speed *= ratio ;
+    p [:speedDown, @idInClass, getAgentId(), origSpeed, speed] ;
+
     return speed ;
   end
 
