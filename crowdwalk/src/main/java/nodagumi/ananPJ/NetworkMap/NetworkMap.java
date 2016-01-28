@@ -674,18 +674,7 @@ public class NetworkMap extends DefaultTreeModel {
 
         Dijkstra.Result result =
             Dijkstra.calc(goals,
-                          new PathChooser() {
-                              public double evacuationRouteCost(MapLink link) {
-                                  //if (link.isStair()) return 5.0;
-                                  return 1.0;
-                              }
-                              public boolean isExit(MapLink link) {
-                                  return false;
-                              }
-                              public double initialCost(MapNode node) {
-                                  return 0.0;
-                              }
-                          });
+                          Dijkstra.DefaultPathChooser) ;
 
         synchronized(getNodes()) {
             validRouteKeys.put(goal_tag, true);

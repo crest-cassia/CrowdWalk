@@ -671,20 +671,10 @@ public class GuiSimulationEditorLauncher
             return;
         }
 
-        Dijkstra.Result result = Dijkstra.calc(goals,
-                new PathChooser() {
-            public double evacuationRouteCost(MapLink link) {
-                //if (link.isStair()) return 5.0;
-                return 1.0;
-            }
-            public boolean isExit(MapLink link) {
-                return false;
-            }
-            public double initialCost(MapNode node) {
-                return 0.0;
-            }
-        });
-
+        Dijkstra.Result result =
+            Dijkstra.calc(goals,
+                          Dijkstra.DefaultPathChooser) ;
+        
         for (MapNode node : result.keySet()) {
             NodeLinkLen nll = result.get(node);
             node.addTag(tag + ":" + String.format("%10.3f",nll.len));
