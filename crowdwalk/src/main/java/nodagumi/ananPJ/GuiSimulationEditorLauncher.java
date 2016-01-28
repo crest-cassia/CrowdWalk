@@ -123,7 +123,6 @@ public class GuiSimulationEditorLauncher
 
     transient private MenuBar menuBar;
     private boolean modified = false;
-    transient private MenuItem calcExitPathMenu;
     transient private MenuItem calcTagPathMenu;
 
     transient private JTabbedPane tabbedPane = null;
@@ -644,55 +643,6 @@ public class GuiSimulationEditorLauncher
         frame.setVisible(true);
     }
 
-    private void calcExitPaths() {
-        calcExitPathMenu.setEnabled(false);
-        for (MapNode node : getNodes()) {
-            node.clearHints();
-        }
-
-        class DownStairsFactory implements PathChooserFactory {
-            class DownStairs implements CalcPath.PathChooser {
-                double height;
-                public DownStairs(double _height) {
-                    super();
-                    height = _height;
-                }
-                @Override
-                public double evacuationRouteCost(MapLink link) {
-                    if (link.getAverageHeight() == height) return 1.0;
-                    return 1000000.0;
-                }
-
-                @Override
-                public boolean isExit(MapLink link) {
-                    return link.getAverageHeight() < height;  
-                }
-
-                @Override
-                public double initialCost(MapNode node) {
-                    return 0.0;
-                }
-            }
-
-            @Override
-            public PathChooser generate(double height) {
-                return new DownStairs(height);
-            }
-
-            @Override
-            public String hintName() {
-                return "Down stairs";
-            }
-        }
-
-        CalcPath.calc(getNodes(), new DownStairsFactory());
-        JOptionPane.showMessageDialog(frame,
-                "Calculation of paths finished.",
-                "Success",
-                JOptionPane.INFORMATION_MESSAGE);
-        calcExitPathMenu.setEnabled(true);
-    }
-
     private void calcTagPaths() {
         calcTagPathMenu.setEnabled(false);
         String tag = JOptionPane.showInputDialog("tag name");
@@ -860,13 +810,6 @@ public class GuiSimulationEditorLauncher
         else if (e.getActionCommand() == "Open map") openMap();
         else if (e.getActionCommand() == "Save map") saveMap();
         else if (e.getActionCommand() == "Save map as") saveMapAs();
-        //else if (e.getActionCommand() == "Merge map") mergeMap();
-        // else if (e.getActionCommand() == "Import nodes from file")
-        //     importFromFv();
-        // else if (e.getActionCommand() == "Make rooms from FV-based nodes")
-        //     make_fv_rooms();
-        else if (e.getActionCommand() == "Calculate exit paths")
-            calcExitPaths();
         else if (e.getActionCommand() == "Calculate tag paths")
             calcTagPaths();
 		else if (e.getActionCommand() == "Check for node in same position")
