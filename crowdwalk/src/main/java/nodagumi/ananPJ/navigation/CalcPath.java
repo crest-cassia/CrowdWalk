@@ -42,48 +42,6 @@ public class CalcPath {
     }
     
     
-    public static void calc(MapNodeTable nodes,
-            PathChooserFactory factory) {
-        /* first, partition by height */
-        NodeByHeight nbh = new NodeByHeight();
-        for (MapNode node : nodes) {
-            final double height = node.getHeight();
-            Nodes nodesThisHeight = nbh.get(height);
-            if (nodesThisHeight == null) {
-                nodesThisHeight = new Nodes();
-                nbh.put(height, nodesThisHeight);
-            }
-            nodesThisHeight.add(node);
-        }
-        
-        /* then, calculate the path for each floor */
-        CalcPathLocally.calc(nbh, factory);
-        
-        /* connect each floor */
-        Nodes subgoals = new Nodes();
-        for (MapNode node : nodes) {
-            PathChooser chooser = factory.generate(node.getHeight());           
-            for (MapLink link : node.getUsableLinkTable()) {
-                if (chooser.isExit(link)) {
-                    subgoals.add(node);
-                }
-            }
-        }
-
-        connectFloors(subgoals, factory, new Comparator<MapNode>() {
-            @Override
-            public int compare(MapNode lhs, MapNode rhs) {
-                return (int)((lhs.getHeight() - rhs.getHeight()) * 100);
-            }
-        });
-        /*connectFloors(subgoals, factory, new Comparator<MapNode>() {
-            @Override
-            public int compare(MapNode lhs, MapNode rhs) {
-                return (int)((rhs.height - lhs.height) * 100);
-            }
-        });*/
-    }
-    
     private static void connectFloors(MapNodeTable subgoals,
             PathChooserFactory factory,
             Comparator<MapNode> comp) {
