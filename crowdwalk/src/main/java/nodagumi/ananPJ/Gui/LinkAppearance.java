@@ -1,5 +1,6 @@
 package nodagumi.ananPJ.Gui;
 
+import java.awt.Color;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -18,8 +19,13 @@ public class LinkAppearance {
     public boolean widthFixed = false;
     public double widthRatio = 1.0;
     public Color3f color = Colors.DEFAULT_LINK_COLOR;
+    public Color awtColor = null;
     public float transparency = 0.75f;
     public Appearance appearance = new Appearance();
+
+    public LinkAppearance() {
+        awtColor = new Color(color.x, color.y, color.z, transparency);
+    }
 
     public LinkAppearance(Boolean _widthFixed, BigDecimal _widthRatio,
             String colorName, BigDecimal _transparency, LinkAppearance defaultValue) {
@@ -43,6 +49,7 @@ public class LinkAppearance {
         }
         appearance.setTransparencyAttributes(
                 new TransparencyAttributes(TransparencyAttributes.FASTEST, transparency));
+        awtColor = new Color(color.x, color.y, color.z, transparency);
     }
 
     public static void loadLinkAppearances(InputStream is,

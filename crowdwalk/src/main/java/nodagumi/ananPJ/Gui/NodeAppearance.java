@@ -1,5 +1,6 @@
 package nodagumi.ananPJ.Gui;
 
+import java.awt.Color;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -20,6 +21,7 @@ public class NodeAppearance {
     public Color3f color = Colors.BLACK2;
     public float transparency = 0.75f;
     public Appearance appearance = new Appearance();
+    public Color awtColor = null;
 
     public NodeAppearance(BigDecimal _diameter, String colorName,
             BigDecimal _transparency, NodeAppearance defaultValue) {
@@ -39,6 +41,7 @@ public class NodeAppearance {
         }
         appearance.setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.FASTEST));
         appearance.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.FASTEST, transparency));
+        awtColor = new Color(color.x, color.y, color.z, transparency);
     }
 
     public static void loadNodeAppearances(InputStream is,

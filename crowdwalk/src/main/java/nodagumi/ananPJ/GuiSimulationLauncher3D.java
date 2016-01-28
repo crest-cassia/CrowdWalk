@@ -43,7 +43,6 @@ import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 
@@ -533,11 +532,6 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
         }
         if (properties.isDefined("screenshot_dir")) {
             panel.setScreenshotDir(screenshotDir);
-        }
-        if (properties.isDefined("clear_screenshot_dir")) {
-            if (recordSimulationScreen && clearScreenshotDir) {
-                FilePathManipulation.deleteFiles(screenshotDir, imageFileFilter);
-            }
         }
         if (properties.isDefined("screenshot_image_type")) {
             panel.setScreenshotImageType(screenshotImageType);

@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
+import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 
 import nodagumi.Itk.*;
@@ -57,6 +58,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected boolean hideLinks = false;
     protected boolean densityMode = false;
     protected boolean changeAgentColorDependingOnSpeed = true;
+    protected boolean drawingAgentByTriageAndSpeedOrder = true;
     protected boolean showStatus = false;
     protected String showStatusPosition = "top";
     protected boolean showLogo = false;
@@ -135,6 +137,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         }
 
         System.gc();
+
+        // スクリーンショットディレクトリのクリア
+        if (recordSimulationScreen && clearScreenshotDir) {
+            FilePathManipulation.deleteFiles(screenshotDir, imageFileFilter);
+        }
 
         // シミュレータの実体の初期化
         initializeSimulatorEntity() ;
@@ -262,6 +269,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             densityMode = properties.getBoolean("density_mode", densityMode);
             changeAgentColorDependingOnSpeed =
                 properties.getBoolean("change_agent_color_depending_on_speed", changeAgentColorDependingOnSpeed);
+            drawingAgentByTriageAndSpeedOrder = properties.getBoolean("drawing_agent_by_triage_and_speed_order", drawingAgentByTriageAndSpeedOrder);
             String show_status = properties.getString("show_status", "none", SHOW_STATUS_VALUES);
             if (show_status.equals("none")) {
                 showStatus = false;
