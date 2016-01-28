@@ -172,9 +172,6 @@ public class Dijkstra {
                 //if (link.isStair()) return 5.0;
                 return 1.0;
             }
-            public boolean isExit(MapLink link) {
-                return false;
-            }
             public double initialCost(MapNode node) {
                 return 0.0;
             }

@@ -28,16 +28,10 @@ public class CalcPath {
     }
 
     public interface PathChooser {
-        abstract public boolean isExit(MapLink link); 
         abstract public double evacuationRouteCost(MapLink link);
         abstract public double initialCost(MapNode node);
     }
 
-    public interface PathChooserFactory {
-        abstract public PathChooser generate(double height);
-        abstract public String hintName();
-    }
-    
 }
 // ;;; Local Variables:
 // ;;; mode:java
