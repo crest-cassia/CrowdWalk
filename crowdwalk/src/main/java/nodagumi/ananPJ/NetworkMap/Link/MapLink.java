@@ -204,7 +204,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     /**
      * まだ定義されていない主観的距離の値
      */
-    final static double UndefinedSubjectiveLength = -1.0 ;
+    final static double UndefinedSubjectiveLength = Double.NEGATIVE_INFINITY ;
 
     /* place holder for values used in simulation */
     public ArrayList<AgentBase> agents;
