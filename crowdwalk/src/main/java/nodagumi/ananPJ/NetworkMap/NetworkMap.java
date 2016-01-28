@@ -59,7 +59,6 @@ import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
-import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
 import nodagumi.Itk.*;
 
@@ -655,7 +654,7 @@ public class NetworkMap extends DefaultTreeModel {
      * @return 探索成功かどうか
      */
     public boolean calcGoalPath(String goal_tag) {
-        CalcPath.Nodes goals = new CalcPath.Nodes();
+        MapNodeTable goals = new MapNodeTable();
         for (MapNode node : getNodes()) {
             if (node.hasTag(goal_tag)) goals.add(node);
         }

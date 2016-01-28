@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
-import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
 import nodagumi.Itk.Itk;
@@ -17,7 +17,7 @@ import nodagumi.Itk.Itk;
 public class Dijkstra {
     static public class Result extends LinkedHashMap<MapNode, NodeLinkLen> {}
 
-    static public Result calc(Nodes subgoals,
+    static public Result calc(MapNodeTable subgoals,
             PathChooser chooser) {
         Result frontier = new Result();
 

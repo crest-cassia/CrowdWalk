@@ -65,7 +65,6 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.GetDoublesDialog;
 import nodagumi.ananPJ.misc.GridMapAreaDialog;    // tkokada
 import nodagumi.ananPJ.misc.Hover;
-import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 
 public class EditorFrame
     extends JFrame

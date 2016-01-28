@@ -649,7 +649,7 @@ public class GuiSimulationEditorLauncher
 
             return;
         }
-        CalcPath.Nodes goals = new CalcPath.Nodes();
+        MapNodeTable goals = new MapNodeTable();
         for (MapNode node : networkMap.getNodes()) {
             if (node.hasTag(tag)) goals.add(node);
         }

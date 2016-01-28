@@ -75,7 +75,6 @@ import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.misc.SimTime;
-import nodagumi.ananPJ.navigation.CalcPath.Nodes;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;

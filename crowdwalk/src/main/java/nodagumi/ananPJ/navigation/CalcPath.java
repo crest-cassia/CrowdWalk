@@ -15,9 +15,6 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 public class CalcPath {
     /* calculate evacuation paths
      */
-    public static class Nodes extends MapNodeTable {};
-    public static class NodeByHeight extends HashMap<Double, Nodes> {};
-
     public static class NodeLinkLen {
         public MapNode node;
         public MapLink link;
