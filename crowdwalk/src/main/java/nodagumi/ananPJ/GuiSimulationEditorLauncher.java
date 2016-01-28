@@ -65,8 +65,6 @@ import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
-import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
-import nodagumi.ananPJ.navigation.CalcPath.PathChooserFactory;
 
 import nodagumi.Itk.Itk;
 import nodagumi.Itk.ItkXmlUtility;
