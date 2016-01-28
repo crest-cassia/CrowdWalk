@@ -62,7 +62,6 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.MapChecker;
 import nodagumi.ananPJ.misc.SetupFileInfo;
-import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
 
@@ -649,38 +648,24 @@ public class GuiSimulationEditorLauncher
 
             return;
         }
-        MapNodeTable goals = new MapNodeTable();
-        for (MapNode node : networkMap.getNodes()) {
-            if (node.hasTag(tag)) goals.add(node);
-        }
-        for (MapLink link : networkMap.getLinks()) {
-            if (link.hasTag(tag)) {
-                goals.add(link.getFrom());
-                goals.add(link.getTo());
-            }
-        }
 
-        if (goals.size() == 0) {
+        Dijkstra.Result result = networkMap.calcGoalPath(tag) ;
+
+        if(result != null) {
+            for (MapNode node : result.keySet()) {
+                NodeLinkLen nll = result.get(node);
+                node.addTag(tag + ":" + String.format("%10.3f",nll.len));
+            }
+            JOptionPane.showMessageDialog(frame,
+                                          "Calculation of paths finished.",
+                                          "Success",
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } else {
             JOptionPane.showMessageDialog(frame,
                     "no goal with tag " + tag,
                     "Failed",
                     JOptionPane.INFORMATION_MESSAGE);
-            calcTagPathMenu.setEnabled(true);
-            return;
         }
-
-        Dijkstra.Result result =
-            Dijkstra.calc(goals,
-                          Dijkstra.DefaultPathChooser) ;
-        
-        for (MapNode node : result.keySet()) {
-            NodeLinkLen nll = result.get(node);
-            node.addTag(tag + ":" + String.format("%10.3f",nll.len));
-        }
-        JOptionPane.showMessageDialog(frame,
-                "Calculation of paths finished.",
-                "Success",
-                JOptionPane.INFORMATION_MESSAGE);
         calcTagPathMenu.setEnabled(true);
     }
 

@@ -55,7 +55,6 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.NetworkMapPartsNotifier;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.navigation.CalcPath;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
@@ -651,9 +650,9 @@ public class NetworkMap extends DefaultTreeModel {
     //------------------------------------------------------------
     /**
      * 経路探索
-     * @return 探索成功かどうか
+     * @return 探索成功した結果。すでにノードには情報は格納されている。
      */
-    public boolean calcGoalPath(String goal_tag) {
+    public Dijkstra.Result calcGoalPath(String goal_tag) {
         MapNodeTable goals = new MapNodeTable();
         for (MapNode node : getNodes()) {
             if (node.hasTag(goal_tag)) goals.add(node);
@@ -667,7 +666,7 @@ public class NetworkMap extends DefaultTreeModel {
         if (goals.size() == 0) {
             Itk.logWarn("No Goal", goal_tag) ;
             validRouteKeys.put(goal_tag, false) ;
-            return false;
+            return null ;
         }
         Itk.logInfo("Found Goal", goal_tag) ;
 
@@ -684,7 +683,7 @@ public class NetworkMap extends DefaultTreeModel {
                                                           nll.link, nll.len));
             }
         }
-        return true;
+        return result ;
     }
 
     //------------------------------------------------------------
@@ -697,7 +696,7 @@ public class NetworkMap extends DefaultTreeModel {
             if(isValidRouteKey(goal_tag)) {
                 return true ;
             } else {
-                return calcGoalPath(goal_tag) ;
+                return (null != calcGoalPath(goal_tag)) ;
             }
         }
     }

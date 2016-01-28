@@ -1015,15 +1015,15 @@ public class EvacuationSimulator {
          * 探索実行。
          */
         public void run() {
-            goalCalculated = calc_goal_path(goalTag);
+            goalCalculated = calcGoalPath(goalTag);
         }
 
         //----------------------------------------
         /**
          * 探索の本体。
          */
-        private boolean calc_goal_path(String goal_tag) {
-            return networkMap.calcGoalPath(goal_tag) ;
+        private boolean calcGoalPath(String goal_tag) {
+            return (null != networkMap.calcGoalPath(goal_tag)) ;
         }
     }
 
