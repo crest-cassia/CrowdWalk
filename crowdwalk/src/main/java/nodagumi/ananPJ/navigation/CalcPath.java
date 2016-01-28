@@ -41,40 +41,6 @@ public class CalcPath {
         abstract public String hintName();
     }
     
-    
-    private static void connectFloors(MapNodeTable subgoals,
-            PathChooserFactory factory,
-            Comparator<MapNode> comp) {
-        Collections.sort(subgoals, comp);
-
-        for (MapNode node : subgoals) {
-            boolean added = false;
-            PathChooser chooser = factory.generate(node.getHeight());
-            for (MapLink link : node.getUsableLinkTable()) {
-                if (!chooser.isExit(link)) continue;
-
-                MapNode other = link.getOther(node);
-                System.err.println(other.getAbsoluteCoordinates());
-                NavigationHint hint = other.getHint(factory.hintName());
-                if (hint == null) continue;/* might be higher/lower than the exits */
-                final double len =
-                    hint.distance
-                    + link.getLength();
-                NavigationHint myhint = new NavigationHint(hint.exit,
-                        link, len);
-                node.addNavigationHint(factory.hintName(), myhint);
-                System.out.println("CalcPath call " +
-                        "addNavigationHint node:" + node.ID + ", " + 
-                        factory.hintName());
-                System.err.println(node.getHeight() + "\t" +    len);
-                added = true;
-                break;
-            }
-            if (!added) {
-                node.addTag(" NO_EXIT_ADDED");
-            }
-        }
-    }
 }
 // ;;; Local Variables:
 // ;;; mode:java
