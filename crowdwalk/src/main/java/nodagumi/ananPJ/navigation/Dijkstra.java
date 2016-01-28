@@ -36,6 +36,8 @@ public class Dijkstra {
      */
     static public Result calc0(MapNodeTable subgoals,
                               PathChooser chooser) {
+        //Itk.timerStart("calc") ;
+
         Result frontier = new Result();
 
         // ゴールノードは、initial cost で。
@@ -75,6 +77,9 @@ public class Dijkstra {
             frontier.put(bestNode, new NodeLinkLen(pred, bestNext, minLength));
             ++count;
         }
+
+        //Itk.timerShowLap("calc") ;
+        
         return frontier;
     }
 
@@ -90,6 +95,8 @@ public class Dijkstra {
      */
     static public Result calc(MapNodeTable subgoals,
                               PathChooser chooser) {
+        //Itk.timerStart("calc") ;
+
         Result frontier = new Result();
         ArrayList<MapNode> closedList = new ArrayList<MapNode>() ;
         Result result = new Result() ;
@@ -148,6 +155,9 @@ public class Dijkstra {
             result.put(bestNode, nll) ;
             ++count;
         }
+
+        //Itk.timerShowLap("calc") ;
+
         return result ;
     }
 
