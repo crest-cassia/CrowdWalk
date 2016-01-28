@@ -642,7 +642,23 @@ implements Comparable<AgentBase> {
      *
      */
     public String getNextCandidateString() {
-        return isPlannedRouteCompleted() ? "" : routePlan.top().getString() ;
+        if (isPlannedRouteCompleted()) {
+            return "";
+        } else {
+            Term term = routePlan.top();
+            if (term.isString()) {
+                return term.getHeadString();
+            } else if (term.isNull()) {
+                return "";
+            } else {
+                Term target = (Term)term.getArg("target");
+                if (target == null) {
+                    return "";
+                } else {
+                    return target.getHeadString();
+                }
+            }
+        }
     }
 
     //------------------------------------------------------------

@@ -235,6 +235,16 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
+     * 最後のサイクルに避難完了したエージェントリストを返す.
+     *
+     * ※更新タイミングに注意
+     */
+    public ArrayList<AgentBase> getEvacuatedAgentsInStep() {
+        return agentHandler.getEvacuatedAgentsInStep() ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * エージェントハンドラ取得。
      * @return エージェントハンドラ。
      */

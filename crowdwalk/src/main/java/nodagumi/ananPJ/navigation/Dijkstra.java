@@ -4,7 +4,7 @@ package nodagumi.ananPJ.navigation;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
@@ -15,7 +15,7 @@ import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 import nodagumi.Itk.Itk;
 
 public class Dijkstra {
-    static public class Result extends HashMap<MapNode, NodeLinkLen> {}
+    static public class Result extends LinkedHashMap<MapNode, NodeLinkLen> {}
 
     static public Result calc(Nodes subgoals,
             PathChooser chooser) {
