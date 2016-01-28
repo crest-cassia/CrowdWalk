@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Random;
 import java.util.ArrayList;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 import nodagumi.ananPJ.misc.SimTime;
 
@@ -24,7 +24,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-g] [-h] [-l <LEVEL>] [-s] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-s] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -44,11 +44,17 @@ public class CrowdWalkLauncher {
     public static boolean routesSaving = false;
 
     /**
+     * 2D GUI シミュレータを使用する
+     */
+    public static boolean use2dSimulator = false;
+
+    /**
      * コマンドラインオプションの定義
      */
     public static void defineOptions(Options options) {
         options.addOption("c", "cui", false, "CUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
         options.addOption("g", "gui", false, "マップエディタウィンドウを開かずに GUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
+        options.addOption("2", "use-2d-simulator", false, "2D GUI シミュレータを使用する");
         options.addOption("h", "help", false, "この使い方を表示して終了する");
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
@@ -68,12 +74,11 @@ public class CrowdWalkLauncher {
      * @param args : main メソッドの args 引数
      */
     public static void parseCommandLine(String[] args, Options options) {
-        CommandLineParser parser = new BasicParser();
         String propertiesFilePath = null;
         ArrayList<String> fallbackStringList = new ArrayList<String>() ;
 
         try {
-            CommandLine commandLine = parser.parse(options, args);
+            CommandLine commandLine = new PosixParser().parse(options, args);
             // ヘルプ表示オプションもしくはコマンドライン引数エラー
             if (commandLine.hasOption("help") || commandLine.getArgs().length > 1) {
                 printHelp(options);
@@ -110,6 +115,9 @@ public class CrowdWalkLauncher {
                 }
                 routesSaving = true;
             }
+
+            // 2D GUI シミュレータを使用する
+            use2dSimulator = commandLine.hasOption("use-2d-simulator");
 
             // CUI モードで実行
             if (commandLine.hasOption("cui")) {
@@ -185,9 +193,14 @@ public class CrowdWalkLauncher {
                            ArrayList<String> commandLineFallbacks)
     {
         settings = Settings.load(SETTINGS_FILE_NAME);
-        GuiSimulationLauncher launcher =
-            new GuiSimulationLauncher(propertiesFilePath,
+        GuiSimulationLauncher launcher;
+        if (use2dSimulator) {
+            launcher = new GuiSimulationLauncher2D(propertiesFilePath,
                     settings, commandLineFallbacks);
+        } else {
+            launcher = new GuiSimulationLauncher3D(propertiesFilePath,
+                    settings, commandLineFallbacks);
+        }
         launcher.simulate();
         return launcher;
     }

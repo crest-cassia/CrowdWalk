@@ -243,6 +243,12 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public static final Color LINK_RED = new Color(1.0f, 0.3f, 0.3f);
     public static final Color LIGHT_BLUE = new Color(0.4f, 0.4f, 1.0f);
 
+    /**
+     * このリンクがポリゴン描画用のリンクかどうか
+     */
+    private boolean polygon = false;
+    public boolean isPolygon() { return polygon; }
+
     //------------------------------------------------------------
     // Constructors
     //------------------------------------------------------------
@@ -990,6 +996,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         boolean result = super.addTag(_tag) ;
         if (result) {
             clearCacheInNodes() ;
+            polygon = containsTag("POLYGON");
             if (networkMap != null) {
                 networkMap.getNotifier().linkTagAdded(this, _tag);
             }
@@ -1006,6 +1013,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         int tagsSize = tags.size();
         super.removeTag(_tag) ;
         clearCacheInNodes() ;
+        polygon = containsTag("POLYGON");
         if (networkMap != null && tags.size() < tagsSize) {
             networkMap.getNotifier().linkTagRemoved(this);
         }

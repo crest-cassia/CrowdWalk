@@ -57,7 +57,6 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Simulator.SimulationController;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
@@ -149,9 +148,14 @@ public class GuiSimulationEditorLauncher
     transient private JFrame frame;
 
     /**
-     * シミュレーション開始ボタン
+     * シミュレーション開始ボタン(2D シミュレータ用)
      */
-    private JButton runButton = null;
+    private JButton runButton2d = null;
+
+    /**
+     * シミュレーション開始ボタン(3D シミュレータ用)
+     */
+    private JButton runButton3d = null;
 
     public GuiSimulationEditorLauncher(Random _random, Settings _settings) {
         random = _random ;
@@ -212,12 +216,26 @@ public class GuiSimulationEditorLauncher
         frame.add(tabbedPane, BorderLayout.CENTER);
         frame.addWindowListener(this);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
-        buttonPanel.add(new JLabel());
-        runButton = new JButton("Simulate");
-        runButton.addActionListener(this);
-        runButton.setEnabled(false);
-        buttonPanel.add(runButton);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        runButton2d = new JButton("2D Simulate");
+        runButton2d.setEnabled(false);
+        runButton2d.addActionListener(e -> {
+            runButton2d.setEnabled(false);
+            runButton3d.setEnabled(false);
+            new GuiSimulationLauncher2D(random, properties, setupFileInfo,
+                    networkMap, settings).simulate();
+        });
+        buttonPanel.add(runButton2d);
+
+        runButton3d = new JButton("3D Simulate");
+        runButton3d.setEnabled(false);
+        runButton3d.addActionListener(e -> {
+            runButton2d.setEnabled(false);
+            runButton3d.setEnabled(false);
+            new GuiSimulationLauncher3D(random, properties, setupFileInfo,
+                    networkMap, settings).simulate();
+        });
+        buttonPanel.add(runButton3d);
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -776,13 +794,11 @@ public class GuiSimulationEditorLauncher
         if (getNetworkMapFile() == null || getNetworkMapFile().isEmpty()
                 || getGenerationFile() == null || getGenerationFile().isEmpty()
                 || getScenarioFile() == null || getScenarioFile().isEmpty()) {
-            if (runButton.isEnabled()) {
-                runButton.setEnabled(false);
-            }
+            runButton2d.setEnabled(false);
+            runButton3d.setEnabled(false);
         } else {
-            if (! runButton.isEnabled()) {
-                runButton.setEnabled(true);
-            }
+            runButton2d.setEnabled(true);
+            runButton3d.setEnabled(true);
         }
     }
 
@@ -790,8 +806,14 @@ public class GuiSimulationEditorLauncher
      * GUI シミュレータを起動する
      */
     public void simulate() {
-        GuiSimulationLauncher launcher = new GuiSimulationLauncher(random,
-                properties, setupFileInfo, networkMap, settings);
+        GuiSimulationLauncher launcher;
+        if (CrowdWalkLauncher.use2dSimulator) {
+            launcher = new GuiSimulationLauncher2D(random, properties,
+                    setupFileInfo, networkMap, settings);
+        } else {
+            launcher = new GuiSimulationLauncher3D(random, properties,
+                    setupFileInfo, networkMap, settings);
+        }
         launcher.simulate();
     }
 
@@ -824,7 +846,11 @@ public class GuiSimulationEditorLauncher
                 System.err.println("プロパティファイルの設定が足りないためシミュレーションを開始することが出来ません。");
                 return;
             }
-            runButton.doClick();
+            if (CrowdWalkLauncher.use2dSimulator) {
+                runButton2d.doClick();
+            } else {
+                runButton3d.doClick();
+            }
         }
     }
 

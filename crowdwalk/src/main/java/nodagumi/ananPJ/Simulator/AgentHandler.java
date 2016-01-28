@@ -155,6 +155,12 @@ public class AgentHandler {
     private HashMap<String, AgentBase> walkingAgentTable =
         new HashMap<String, AgentBase>() ;
 
+    /**
+     * 最後のサイクルに避難完了したエージェントリスト。
+     */
+    private ArrayList<AgentBase> evacuatedAgentsInStep =
+        new ArrayList<AgentBase>() ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェントが存在するリンクのリスト
@@ -682,7 +688,7 @@ public class AgentHandler {
          * エージェントがいなくなったリンクは、preUpdateLinks() で削除される。
          */
         //clearEffectiveLinkSet() ;
-        ArrayList<AgentBase> evacuatedAgentsInStep = new ArrayList<AgentBase>() ;
+        evacuatedAgentsInStep.clear();
         for (AgentBase agent : getWalkingAgentCollection()) {
             if(agent.isEvacuated()) {
                 evacuatedAgentsInStep.add(agent) ;
@@ -1063,6 +1069,15 @@ public class AgentHandler {
             Itk.logWarn("agent is not in walkingTable:", agent) ;
             return false ;
         }
+    }
+
+    /**
+     * 最後のサイクルに避難完了したエージェントリストを返す.
+     *
+     * ※更新タイミングに注意
+     */
+    public ArrayList<AgentBase> getEvacuatedAgentsInStep() {
+        return evacuatedAgentsInStep;
     }
 
     //------------------------------------------------------------

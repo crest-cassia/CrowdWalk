@@ -68,6 +68,8 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.Gui.Colors;
+import nodagumi.ananPJ.Gui.LinkAppearance;
+import nodagumi.ananPJ.Gui.NodeAppearance;
 import nodagumi.ananPJ.Gui.ViewChangeListener;
 import nodagumi.ananPJ.Gui.NetworkPanel3D;
 import nodagumi.ananPJ.GuiSimulationLauncher;
@@ -120,7 +122,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         simulator = _simulator;
         networkMap = simulator.getMap();
         pollutions = simulator.getPollutions();
-        simulationLauncher = (GuiSimulationLauncher)simulator.getController();
+        simulationLauncher = (GuiSimulationLauncher)simulator.getSimulationLauncher();
 
         agent_group = new BranchGroup();
         agent_group.setCapability(BranchGroup.ALLOW_DETACH);
@@ -374,7 +376,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
                     // ボタンクリックでいきなりプログラムが終了することがないようにするため
                     getExitWithSimulationFinished().doClick();
                 }
-                simulator.step();
+                simulationLauncher.step();
                 simulationLauncher.update_buttons();
             }
         });
@@ -384,7 +386,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         menu_item_start.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setMenuActionStartEnabled(false);
-                simulator.start();
+                simulationLauncher.start();
                 simulationLauncher.update_buttons();
             }
         });
@@ -395,7 +397,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         menu_item_pause.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setMenuActionStartEnabled(true);
-                simulator.pause();
+                simulationLauncher.pause();
                 simulationLauncher.update_buttons();
             }
         });
@@ -595,14 +597,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
         checkbox_panel.setBorder(new CompoundBorder(checkbox_panel.getBorder(), new EmptyBorder(0, 4, 0, 0)));
         checkbox_panel.setLayout(new BoxLayout(checkbox_panel, BoxLayout.Y_AXIS));
         record_snapshots = new JCheckBox("Record simulation screen");
-        record_snapshots.setSelected(simulator.getScreenshotInterval() != 0);
+        record_snapshots.setSelected(simulationLauncher.isRecordSimulationScreen());
         record_snapshots.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                if (record_snapshots.isSelected()) {
-                    simulator.setScreenshotInterval(1);
-                } else {
-                    simulator.setScreenshotInterval(0);
-                }
+                simulationLauncher.setRecordSimulationScreen(record_snapshots.isSelected());
             }
         });
         checkbox_panel.add(record_snapshots);
