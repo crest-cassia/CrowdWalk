@@ -40,7 +40,7 @@ public class Dijkstra {
                     MapNode other_node = nextLink.getOther(frontierNode);
                     if (frontier.containsKey(other_node)) continue;
                     double len = frontier.get(frontierNode).len + 
-                        nextLink.length * chooser.evacuationRouteCost(nextLink);
+                        nextLink.getLength() * chooser.evacuationRouteCost(nextLink);
                     if (len < minLength) {
                         minLength = len;
                         bestNode =  other_node;

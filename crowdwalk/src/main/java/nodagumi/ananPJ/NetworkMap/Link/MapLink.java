@@ -183,10 +183,28 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public static Term emptySpeedRestrictRule = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-    public double length;
-    public double width;
+    /**
+     * リンクの長さ
+     */
+    protected double length;
+    /**
+     * リンクの福音
+     */
+    protected double width;
+    /**
+     * 始点・終点。リンクの両端。
+     */
     protected MapNode fromNode, toNode;
+
+    /**
+     * 主観的距離のテーブル。
+     * ルールによって可変。
+     */
+    protected HashMap<String, Double> subjectiveLengthTable ;
+    /**
+     * まだ定義されていない主観的距離の値
+     */
+    final static double UndefinedSubjectiveLength = -1.0 ;
 
     /* place holder for values used in simulation */
     public ArrayList<AgentBase> agents;
@@ -263,6 +281,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         width = _width;
 
         selected = false;
+
+        subjectiveLengthTable = new HashMap<String, Double>() ;
     }
     /**
      */
@@ -293,6 +313,34 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public void setLength(double _length) {
         length = _length ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * 主観的距離の取得。
+     * 指定された tag の距離が定義されていない時は、
+     * @param tag 主観距離の指定タグ。tag が null なら、もとの length。
+     * @return 距離が定義されていればその値。定義されていなければ、
+     * UndefinedSubjectiveLength を返す。
+     */
+    public double getSubjectiveLength(String tag) {
+        if(tag == null) {
+            return length ;
+        } else if(subjectiveLengthTable.containsKey(tag)) {
+            return subjectiveLengthTable.get(tag) ;
+        } else {
+            return UndefinedSubjectiveLength ;
+        }
+    }
+    //------------------------------------------------------------
+    /**
+     * 主観的距離の設定。
+     * @param tag 主観距離の指定タグ。tag が null なら、もとの length。
+     * @param _length 主観距離。
+     */
+    public void setSubjectiveLength(String tag, double _length) {
+        subjectiveLengthTable.put(tag, _length) ;
+    }
+    
     //------------------------------------------------------------
     /**
      * 幅の取得

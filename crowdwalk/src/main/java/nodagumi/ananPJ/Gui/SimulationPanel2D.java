@@ -595,7 +595,9 @@ public class SimulationPanel2D extends JPanel {
         Color color = defaultLinkColor;
         LinkAppearance linkAppearance = getLinkAppearance(link);
         if (linkAppearance != null) {
-            width = (float)(linkAppearance.widthFixed ? linkAppearance.widthRatio : link.width * linkAppearance.widthRatio);
+            width = (float)(linkAppearance.widthFixed ?
+                            linkAppearance.widthRatio :
+                            link.getWidth() * linkAppearance.widthRatio);
             color = linkAppearance.awtColor;
         }
         g.setStroke(new BasicStroke(width / (float)scale, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));

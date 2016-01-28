@@ -1361,7 +1361,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 System.err.println(l.getTagString());
                 System.err.println(" " + l.getFrom().getAbsoluteCoordinates());
                 System.err.println(" " + l.getTo().getAbsoluteCoordinates());
-                System.err.println(" " + l.length);
+                System.err.println(" " + l.getLength());
                 System.err.println(pos.getX() + "\t" + pos.getY() + "\t" + agent.getHeight());
             }
         }

@@ -29,8 +29,9 @@ public class Flooding extends Dijkstra {
                     MapNode other_node = nextLink.getOther(terminal);
                     if (frontier.containsKey(other_node))
                         continue;
-                    double len = frontier.get(terminal).len + nextLink.length *
-                        chooser.evacuationRouteCost(nextLink);
+                    double len = (frontier.get(terminal).len
+                                  + nextLink.getLength()
+                                  * chooser.evacuationRouteCost(nextLink));
                 }
             }
         }
@@ -89,7 +90,7 @@ public class Flooding extends Dijkstra {
                         if (table.getEntryNode() == otherNode)
                             table.addFloodingRouteEntry(new
                                 FloodingRouteEntry(otherNode, goalTag,
-                                    link, link.length));;
+                                                   link, link.getLength()));;
                     }
                 }
                 while (terminalNodes.size() > 0) {
@@ -104,8 +105,8 @@ public class Flooding extends Dijkstra {
                                     if (table.getEntryNode() == otherNode) {
                                         table.addFloodingRouteEntry(new
                                             FloodingRouteEntry(otherNode,
-                                                goalTag, link,
-                                                link.length));;
+                                                               goalTag, link,
+                                                               link.getLength()));;
                                         break;
                                     }
                                 }

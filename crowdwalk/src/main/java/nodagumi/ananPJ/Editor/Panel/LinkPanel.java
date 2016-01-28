@@ -70,9 +70,9 @@ public class LinkPanel extends PanelWithTable
                 case 0:
                     return shownLinks.get(row).getTagString();
                 case 1:
-                    return shownLinks.get(row).length;
+                    return shownLinks.get(row).getLength();
                 case 2:
-                    return shownLinks.get(row).width;
+                    return shownLinks.get(row).getWidth();
                 case 3:
                     return ((OBNode)shownLinks.get(row).getParent()).getTagString();
                 default:
@@ -281,8 +281,8 @@ public class LinkPanel extends PanelWithTable
                 link.selected = lsm.isSelectedIndex(r);
                 if (link.selected) {
                     count++;
-                    length += link.length;
-                    width += link.width;
+                    length += link.getLength();
+                    width += link.getWidth();
                     for (final String tag : link.getTags()) {
                         if (!label.contains(tag)){
                             label += ", " + tag;
@@ -327,9 +327,9 @@ public class LinkPanel extends PanelWithTable
                 MapLink link = shownLinks.get(r);
                 link.selected = lsm.isSelectedIndex(r);
                 if (link.selected) {
-                    link.width = attributePanel.getLinkWidth();
+                    link.setWidth(attributePanel.getLinkWidth());
                     if (single) {
-                        link.length = attributePanel.getLinkLength();
+                        link.setLength(attributePanel.getLinkLength());
                         return;
                     }
                 }

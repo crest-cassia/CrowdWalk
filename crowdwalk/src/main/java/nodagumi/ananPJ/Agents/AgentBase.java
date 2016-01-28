@@ -900,7 +900,7 @@ implements Comparable<AgentBase> {
         }
 
         double scale = ((MapPartGroup)(currentLink.getParent())).getScale();
-        double fwidth = currentLink.width / 2 / scale;
+        double fwidth = currentLink.getWidth() / 2 / scale;
         double x1 = currentLink.getFrom().getX();
         double x2 = currentLink.getTo().getX();
         double y1 = currentLink.getFrom().getY();

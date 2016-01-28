@@ -522,13 +522,13 @@ public class WalkAgent extends AgentBase {
 
         if (isForwardDirection()) {
             if (index >= 0) {
-                swing_width = (2.0 * ((currentPlace.getLane().size() - index) % w)) / currentLink.width - 1.0;
+                swing_width = (2.0 * ((currentPlace.getLane().size() - index) % w)) / currentLink.getWidth() - 1.0;
             }  else {
                 swing_width = 0.0;
             }
         } else {
             if (index >= 0) {
-                swing_width = 1.0 - (2.0 * (index % w)) / currentLink.width;
+                swing_width = 1.0 - (2.0 * (index % w)) / currentLink.getWidth();
             }  else {
                 swing_width = 0.0;
             }
@@ -993,7 +993,7 @@ public class WalkAgent extends AgentBase {
          * という二つの条件を満たした場合、swing_width の更新をおこないません。
          * この修正によって、swing_width が更新されないため、不自然な描画の発生は防がれています。
          */
-        if (currentPlace.getLink().width == previousLink.width &&
+        if (currentPlace.getLink().getWidth() == previousLink.getWidth() &&
             passingNode.getUsableLinkTable().size() == 2) {
             if (direction_orig != getDirection()) { swing_width *= -1; }
             update_swing_flag = false;
@@ -1237,7 +1237,7 @@ public class WalkAgent extends AgentBase {
 
         MapNode other = _link.getOther(_node);
         double cost = other.getDistance(_target) ;
-        cost += _link.length;
+        cost += _link.getLength();
         return cost ;
     }
 

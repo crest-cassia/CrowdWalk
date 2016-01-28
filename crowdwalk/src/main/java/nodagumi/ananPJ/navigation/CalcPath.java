@@ -101,7 +101,7 @@ public class CalcPath {
                 if (hint == null) continue;/* might be higher/lower than the exits */
                 final double len =
                     hint.distance
-                    + link.length;
+                    + link.getLength();
                 NavigationHint myhint = new NavigationHint(hint.exit,
                         link, len);
                 node.addNavigationHint(factory.hintName(), myhint);

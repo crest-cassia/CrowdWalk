@@ -1275,10 +1275,12 @@ public class EditorFrame
             return;
         }
         for (MapLink link : getChildLinks()) {
-            if (link.width == 0) continue;
+            if (link.getWidth() == 0) continue;
             MapNode from = (MapNode)link.getFrom();
             MapNode to = (MapNode)link.getTo();
-            link.length = from.getLocalCoordinates().distance(to.getLocalCoordinates()) * current_group.getScale();
+            link.setLength(from.getLocalCoordinates()
+                           .distance(to.getLocalCoordinates())
+                           * current_group.getScale());
         }
     }
 
@@ -1939,9 +1941,11 @@ public class EditorFrame
                     group.getChildNodes().contains(link.getTo())) {
                 MapNode fromNode = nodeToNode.get(link.getFrom());
                 MapNode toNode = nodeToNode.get(link.getTo());
-                MapLink newLink = editor.getMap().createMapLink(next_group,
-                        fromNode, toNode,
-                        link.length, link.width);
+                MapLink newLink =
+                    editor.getMap()
+                    .createMapLink(next_group,
+                                   fromNode, toNode,
+                                   link.getLength(), link.getWidth());
                 for (String tag : link.getTags()) {
                     tag = tag.replaceFirst(floor_string, next_floor_string);
                     newLink.addTag(tag);
@@ -2019,9 +2023,10 @@ public class EditorFrame
             if (link.getFrom().selected && link.getTo().selected) {
                 MapNode fromNode = nodeToNode.get(link.getFrom());
                 MapNode toNode = nodeToNode.get(link.getTo());
-                editor.getMap().createMapLink(dst_group,
-                        fromNode, toNode,
-                        link.length, link.width);
+                editor.getMap()
+                    .createMapLink(dst_group,
+                                   fromNode, toNode,
+                                   link.getLength(), link.getWidth());
             }
         }
 
@@ -2144,14 +2149,18 @@ public class EditorFrame
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
         if (ret == JOptionPane.YES_OPTION) {
             for (MapLink link : current_group.getChildLinks()) {
-                link.length = link.getFrom().getLocalCoordinates().distance(link.getTo().getLocalCoordinates()) * current_group.getScale();
+                link.setLength(link.getFrom().getLocalCoordinates()
+                               .distance(link.getTo().getLocalCoordinates())
+                               * current_group.getScale());
             }
             for (MapPartGroup group : editor.getMap().getGroups()) {
                 group.setScale(current_group.getScale());
             }
         } else if (ret == JOptionPane.NO_OPTION) {
             for (MapLink link : getChildLinks()) {
-                link.length = link.getFrom().getLocalCoordinates().distance(link.getTo().getLocalCoordinates()) * current_group.getScale();
+                link.setLength(link.getFrom().getLocalCoordinates()
+                               .distance(link.getTo().getLocalCoordinates())
+                               * current_group.getScale());
             }
         }
     }

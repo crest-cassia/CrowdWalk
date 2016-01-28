@@ -248,7 +248,7 @@ public class Place {
     /**
      * リンク幅
      */
-    public double getLinkWidth() { return getLink().width ; } ;
+    public double getLinkWidth() { return getLink().getWidth() ; } ;
 
     //------------------------------------------------------------
     /**
@@ -435,7 +435,7 @@ public class Place {
      * リンクの長さ
      */
     public double getLinkLength() {
-        return getLink().length ;
+        return getLink().getLength() ;
     }
 
     //------------------------------------------------------------

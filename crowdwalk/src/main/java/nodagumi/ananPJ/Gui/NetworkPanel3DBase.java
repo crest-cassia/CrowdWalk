@@ -937,7 +937,8 @@ public abstract class NetworkPanel3DBase extends JPanel {
         Vector3d v1 = new Vector3d(x2 - x1, y2 - y1, 0);
         v1.normalize();
         Vector3d v2 = new Vector3d(0, 0, linkAppearance.widthFixed ?
-                linkAppearance.widthRatio : link.width * linkAppearance.widthRatio);
+                                   linkAppearance.widthRatio :
+                                   link.getWidth() * linkAppearance.widthRatio);
         if (v2.z == 0)
             v2.z = 1.0;
         Vector3d v3 = new Vector3d();
