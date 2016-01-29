@@ -29,64 +29,6 @@ public class Dijkstra {
     //============================================================
     //------------------------------------------------------------
     /**
-     * 探索メインルーチン。(obsolete)
-     * @param subgoals 目標とするゴール集合。
-     * @param chooser パスを選ぶ際の距離の調整ツール。
-     * @return 探索結果。Resule class のインスタンス。
-     */
-    static public Result calc0(MapNodeTable subgoals,
-                              PathChooser chooser) {
-        //Itk.timerStart("calc") ;
-
-        Result frontier = new Result();
-
-        // ゴールノードは、initial cost で。
-        int count = 0;
-        for (MapNode subgoal : subgoals) {
-            double cost = chooser.initialCost(subgoal);
-            frontier.put(subgoal, new PathGuideInfo(null, null, null, cost));
-            ++count;
-        }
-
-        // 探索ループ。
-        while (true) {
-            double minLength = Double.POSITIVE_INFINITY;
-            MapNode bestNode = null;
-            MapNode pred = null;
-            MapLink bestNext = null;
-            for (MapNode frontierNode : frontier.keySet()) {
-                for (MapLink nextLink :
-                         frontierNode.getValidReverseLinkTable()) {
-                    MapNode other_node = nextLink.getOther(frontierNode);
-                    if (frontier.containsKey(other_node)) continue;
-                    double len =
-                        frontier.get(frontierNode).distance
-                        + chooser.evacuationPathCost(nextLink) ;
-                    if (len < minLength) {
-                        minLength = len;
-                        bestNode =  other_node;
-                        bestNext = nextLink;
-                        pred = frontierNode;
-                    }
-                }
-            }
-            if (null == bestNode) {
-                break;
-            }
-            frontier.put(bestNode,
-                         new PathGuideInfo(bestNode, bestNext, pred,
-                                           minLength));
-            ++count;
-        }
-
-        //Itk.timerShowLap("calc") ;
-        
-        return frontier;
-    }
-
-    //============================================================
-    //------------------------------------------------------------
-    /**
      * 探索メインルーチン。by I.Noda
      * 上記の calc は、無駄が多いと思われる。何度も同じノードを展開している。
      * 下記はそれを避ける。
