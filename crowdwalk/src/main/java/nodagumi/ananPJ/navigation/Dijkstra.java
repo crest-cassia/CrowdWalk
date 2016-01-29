@@ -61,8 +61,7 @@ public class Dijkstra {
                     if (frontier.containsKey(other_node)) continue;
                     double len =
                         frontier.get(frontierNode).len
-                        + (nextLink.getLength()
-                           * chooser.evacuationRouteCost(nextLink));
+                        + chooser.evacuationRouteCost(nextLink) ;
                     if (len < minLength) {
                         minLength = len;
                         bestNode =  other_node;
@@ -114,26 +113,25 @@ public class Dijkstra {
         // 探索ループ。
         while (true) {
             double minLength = Double.POSITIVE_INFINITY;
-            MapNode bestNode = null;
-            MapNode pred = null;
-            MapLink bestNext = null;
+            MapNode newFrontierNode = null;
+            MapNode oldFrontierNode = null;
+            MapLink newFrontierLink = null;
             closedList.clear() ;
             for (MapNode frontierNode : frontier.keySet()) {
                 int countPerNode = 0 ;
-                for (MapLink nextLink :
+                for (MapLink preLink :
                          frontierNode.getValidReverseLinkTable()) {
-                    MapNode other_node = nextLink.getOther(frontierNode);
-                    if (result.containsKey(other_node)) continue;
+                    MapNode preNode = preLink.getOther(frontierNode);
+                    if (result.containsKey(preNode)) continue;
                     countPerNode ++ ;
                     double len =
                         result.get(frontierNode).len
-                        + (nextLink.getLength()
-                           * chooser.evacuationRouteCost(nextLink));
+                        + chooser.evacuationRouteCost(preLink) ;
                     if (len < minLength) {
                         minLength = len;
-                        bestNode =  other_node;
-                        bestNext = nextLink;
-                        pred = frontierNode;
+                        newFrontierNode = preNode ;
+                        newFrontierLink = preLink ;
+                        oldFrontierNode = frontierNode;
                     }
                 }
                 // すべてのリンク先がすでに探査済みであれば、そのノードは close
@@ -146,13 +144,15 @@ public class Dijkstra {
                 frontier.remove(node) ;
             }
             // 新たに付け加えるものがなければ、探査終わり。
-            if (null == bestNode) {
+            if (null == newFrontierNode) {
                 break;
             }
             // 新しノードを frontier に追加。
-            NodeLinkLen nll = new NodeLinkLen(pred, bestNext, minLength) ;
-            frontier.put(bestNode, nll) ;
-            result.put(bestNode, nll) ;
+            NodeLinkLen nll = new NodeLinkLen(oldFrontierNode,
+                                              newFrontierLink,
+                                              minLength) ;
+            frontier.put(newFrontierNode, nll) ;
+            result.put(newFrontierNode, nll) ;
             ++count;
         }
 
@@ -170,7 +170,7 @@ public class Dijkstra {
         new PathChooser() {
             public double evacuationRouteCost(MapLink link) {
                 //if (link.isStair()) return 5.0;
-                return 1.0;
+                return 1.0 * link.getLength() ;
             }
             public double initialCost(MapNode node) {
                 return 0.0;
