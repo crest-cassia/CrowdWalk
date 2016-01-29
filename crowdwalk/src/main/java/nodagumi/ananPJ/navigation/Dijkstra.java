@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
-import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
+import nodagumi.ananPJ.navigation.CalcPath.PathGuideInfo;
 import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
 
 import nodagumi.Itk.Itk;
@@ -24,7 +24,7 @@ public class Dijkstra {
     /**
      * 探索結果の格納用クラス。
      */
-    static public class Result extends LinkedHashMap<MapNode, NodeLinkLen> {}
+    static public class Result extends LinkedHashMap<MapNode, PathGuideInfo> {}
 
     //============================================================
     //------------------------------------------------------------
@@ -44,7 +44,7 @@ public class Dijkstra {
         int count = 0;
         for (MapNode subgoal : subgoals) {
             double cost = chooser.initialCost(subgoal);
-            frontier.put(subgoal, new NodeLinkLen(null, null, cost));
+            frontier.put(subgoal, new PathGuideInfo(null, null, null, cost));
             ++count;
         }
 
@@ -60,8 +60,8 @@ public class Dijkstra {
                     MapNode other_node = nextLink.getOther(frontierNode);
                     if (frontier.containsKey(other_node)) continue;
                     double len =
-                        frontier.get(frontierNode).len
-                        + chooser.evacuationRouteCost(nextLink) ;
+                        frontier.get(frontierNode).distance
+                        + chooser.evacuationPathCost(nextLink) ;
                     if (len < minLength) {
                         minLength = len;
                         bestNode =  other_node;
@@ -73,7 +73,9 @@ public class Dijkstra {
             if (null == bestNode) {
                 break;
             }
-            frontier.put(bestNode, new NodeLinkLen(pred, bestNext, minLength));
+            frontier.put(bestNode,
+                         new PathGuideInfo(bestNode, bestNext, pred,
+                                           minLength));
             ++count;
         }
 
@@ -101,21 +103,18 @@ public class Dijkstra {
         Result result = new Result() ;
 
         // ゴールノードは、initial cost で。
-        int count = 0;
         for (MapNode subgoal : subgoals) {
             double cost = chooser.initialCost(subgoal);
-            NodeLinkLen nll = new NodeLinkLen(null, null, cost) ;
-            frontier.put(subgoal, nll) ;
-            result.put(subgoal, nll) ;
-            ++count;
+            PathGuideInfo pgInfo =
+                new PathGuideInfo(subgoal, null, null, cost) ;
+            frontier.put(subgoal, pgInfo) ;
+            result.put(subgoal, pgInfo) ;
         }
 
         // 探索ループ。
         while (true) {
-            double minLength = Double.POSITIVE_INFINITY;
-            MapNode newFrontierNode = null;
-            MapNode oldFrontierNode = null;
-            MapLink newFrontierLink = null;
+            PathGuideInfo bestPgInfo =
+                new PathGuideInfo(null, null, null, Double.POSITIVE_INFINITY) ;
             closedList.clear() ;
             for (MapNode frontierNode : frontier.keySet()) {
                 int countPerNode = 0 ;
@@ -124,14 +123,11 @@ public class Dijkstra {
                     MapNode preNode = preLink.getOther(frontierNode);
                     if (result.containsKey(preNode)) continue;
                     countPerNode ++ ;
-                    double len =
-                        result.get(frontierNode).len
-                        + chooser.evacuationRouteCost(preLink) ;
-                    if (len < minLength) {
-                        minLength = len;
-                        newFrontierNode = preNode ;
-                        newFrontierLink = preLink ;
-                        oldFrontierNode = frontierNode;
+                    double dist =
+                        result.get(frontierNode).distance
+                        + chooser.evacuationPathCost(preLink) ;
+                    if (dist < bestPgInfo.distance) {
+                        bestPgInfo.set(preNode, preLink, frontierNode, dist) ;
                     }
                 }
                 // すべてのリンク先がすでに探査済みであれば、そのノードは close
@@ -144,16 +140,12 @@ public class Dijkstra {
                 frontier.remove(node) ;
             }
             // 新たに付け加えるものがなければ、探査終わり。
-            if (null == newFrontierNode) {
+            if (bestPgInfo.fromNode == null) {
                 break;
             }
             // 新しノードを frontier に追加。
-            NodeLinkLen nll = new NodeLinkLen(oldFrontierNode,
-                                              newFrontierLink,
-                                              minLength) ;
-            frontier.put(newFrontierNode, nll) ;
-            result.put(newFrontierNode, nll) ;
-            ++count;
+            frontier.put(bestPgInfo.fromNode, bestPgInfo) ;
+            result.put(bestPgInfo.fromNode, bestPgInfo) ;
         }
 
         //Itk.timerShowLap("calc") ;
@@ -168,7 +160,7 @@ public class Dijkstra {
      */
     public static PathChooser DefaultPathChooser =
         new PathChooser() {
-            public double evacuationRouteCost(MapLink link) {
+            public double evacuationPathCost(MapLink link) {
                 //if (link.isStair()) return 5.0;
                 return 1.0 * link.getLength() ;
             }

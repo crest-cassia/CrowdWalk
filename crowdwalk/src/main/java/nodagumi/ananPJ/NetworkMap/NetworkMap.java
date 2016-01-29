@@ -57,7 +57,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMapPartsNotifier;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
-import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
+import nodagumi.ananPJ.navigation.CalcPath.PathGuideInfo;
 
 import nodagumi.Itk.*;
 
@@ -677,10 +677,11 @@ public class NetworkMap extends DefaultTreeModel {
         synchronized(getNodes()) {
             validRouteKeys.put(goal_tag, true);
             for (MapNode node : result.keySet()) {
-                NodeLinkLen nll = result.get(node);
+                PathGuideInfo pgInfo = result.get(node);
                 node.addNavigationHint(goal_tag,
-                                       new NavigationHint(nll.node,
-                                                          nll.link, nll.len));
+                                       new NavigationHint(pgInfo.toNode,
+                                                          pgInfo.traceLink,
+                                                          pgInfo.distance)) ;
             }
         }
         return result ;

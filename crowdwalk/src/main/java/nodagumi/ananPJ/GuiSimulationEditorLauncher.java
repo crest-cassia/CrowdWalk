@@ -63,7 +63,7 @@ import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.MapChecker;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.navigation.Dijkstra;
-import nodagumi.ananPJ.navigation.CalcPath.NodeLinkLen;
+import nodagumi.ananPJ.navigation.CalcPath.PathGuideInfo;
 
 import nodagumi.Itk.Itk;
 import nodagumi.Itk.ItkXmlUtility;
@@ -653,8 +653,8 @@ public class GuiSimulationEditorLauncher
 
         if(result != null) {
             for (MapNode node : result.keySet()) {
-                NodeLinkLen nll = result.get(node);
-                node.addTag(tag + ":" + String.format("%10.3f",nll.len));
+                PathGuideInfo pgInfo = result.get(node);
+                node.addTag(tag + ":" + String.format("%10.3f",pgInfo.distance));
             }
             JOptionPane.showMessageDialog(frame,
                                           "Calculation of paths finished.",
