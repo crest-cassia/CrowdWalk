@@ -15,8 +15,12 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
  */
 public class NavigationHint implements Comparable<NavigationHint> {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /** 主観モード */
+    public String subjectiveMode ;
     /** 最終目標ゴールタグ */
+    public String goalTag ;
     /** 起点ノード */
+    public MapNode fromNode ;
     /** 向かう方向のノード */
     public MapNode toNode;
     /** 辿るリンク */
@@ -28,10 +32,28 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /**
      * constructor.
      */
-    public NavigationHint(MapLink _viaLink, MapNode _toNode, double _distance) {
+    public NavigationHint(String _subjectiveMode, String _goalTag,
+                          MapNode _fromNode, MapLink _viaLink, MapNode _toNode,
+                          double _distance) {
+        set(_subjectiveMode, _goalTag,
+            _fromNode, _viaLink, _toNode, _distance) ;
+    }
+    
+    //--------------------------------------------------
+    /**
+     * 値設定
+     */
+    public NavigationHint set(String _subjectiveMode, String _goalTag,
+                              MapNode _fromNode, MapLink _viaLink,
+                              MapNode _toNode, double _distance) {
+        subjectiveMode = _subjectiveMode ;
+        goalTag = _goalTag ;
+        fromNode = _fromNode ;
         toNode = _toNode ;
         viaLink = _viaLink ;
         distance = _distance;
+
+        return this ;
     }
 
     //--------------------------------------------------
