@@ -33,6 +33,21 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * String のハッシュと null
+     */
+    @Test
+    public void test_permitNullAsString(){
+        HashMap<String, Object> map = new HashMap<String, Object>() ;
+        map.put("hoge",new Integer(2)) ;
+        Itk.dbgVal("map.get('hoge')",map.get("hoge")) ;
+        map.put(null, new Integer(3)) ;
+        Itk.dbgVal("map.get(null)",map.get(null)) ;
+        map.put("foo", null) ;
+        Itk.dbgVal("map.get('foo')",map.get("foo")) ;
+    }
+        
+    //------------------------------------------------------------
+    /**
      * dumpStackTraceN
      */
     //@Test
@@ -313,7 +328,7 @@ public class Itk_Test {
     /**
      * test bit String intern
      */
-    @Test
+    //@Test
     public void test_stringIntern() {
         int n = 100000000 ;
         //int m = 10 ;

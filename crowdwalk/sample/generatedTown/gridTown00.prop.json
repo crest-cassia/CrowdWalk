@@ -17,4 +17,16 @@
   "loop_count":1,
   "exit_count":0,
   "all_agent_speed_zero_break":false
+
+  "subjective_map_rules" :
+    {
+      "major" :
+        {"":"if",
+    	 "cond":{"":"hasTag","tag":"major"},
+	 "then":":length",
+	 "else":{"":"*", "values":[":length", 10.0]}}
+      "normal" : ":length"
+    },
+
+  "___":null
 }

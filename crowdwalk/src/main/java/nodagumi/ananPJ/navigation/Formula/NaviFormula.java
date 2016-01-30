@@ -1,0 +1,108 @@
+// -*- mode: java; indent-tabs-mode: nil -*-
+/** Navigation Formula
+ * @author:: Itsuki Noda
+ * @version:: 0.0 2016/01/30 I.Noda
+ * <B>History:</B>
+ * <UL>
+ *   <LI> [2016/01/30]: Create This File. </LI>
+ *   <LI> [YYYY/MM/DD]: add more </LI>
+ * </UL>
+ * <B>Usage:</B>
+ * ...
+ */
+
+package nodagumi.ananPJ.navigation.Formula;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import nodagumi.ananPJ.Agents.Think.*;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.Itk.* ;
+
+//======================================================================
+/**
+ * 主観によるMapの距離計算を表す式の処理系。
+ * 組み込まれている Formula リスト
+ * <ul>
+ *  <li>{@link nodagumi.ananPJ.Agent.Think.ThinkFormulaLogical#call Logical: 論理形式および実行制御}</li>
+ *  <li>{@link nodagumi.ananPJ.Agent.Think.ThinkFormulaArithmetic#call Arithmetic: 数値処理など}</li>
+ *  <li>{@link NaviFormulaMap#call Map: マップパラメータ関係}</li>
+ *  <li>{@link nodagumi.ananPJ.Agent.Think.ThinkFormulaMisc#call Misc: その他}</li>
+ * </ul>
+ *
+ * <h3>新しい Formula の作成方法 </h3>
+ * <a name="addToExistingThinkFormula"></a>
+ * {@link nodagumi.ananPJ.Agent.Think.ThinkFormula#addToExistingThinkFormulacall Agent ThinkFormula} 参照
+ */
+abstract public class NaviFormula extends ThinkFormula {
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Formula Lexicon
+     */
+    static public Lexicon lexicon = new Lexicon() ;
+    static {
+        ThinkFormulaMisc.registerFormulas(NaviFormula.lexicon) ;
+        ThinkFormulaLogical.registerFormulas(NaviFormula.lexicon) ;
+        ThinkFormulaArithmetic.registerFormulas(NaviFormula.lexicon) ;
+        NaviFormulaMap.registerFormulas(NaviFormula.lexicon) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * Formula を登録
+     */
+    static public void register(String name, ThinkFormula formula) {
+	lexicon.register(name, formula) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * Formula を検索
+     */
+    static public ThinkFormula findFormula(String head) {
+	return (ThinkFormula)(lexicon.lookUp(head)) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * Formula を検索
+     */
+    static public ThinkFormula findFormula(Term head) {
+	return (ThinkFormula)(lexicon.lookUp(head.getString())) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ
+     */
+    public NaviFormula(){}
+
+    //------------------------------------------------------------
+    /**
+     * engine から link の取り出し。
+     */
+    public MapLink getLink(ThinkEngine engine) {
+	return ((NaviEngine)engine).getLink() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * engine から fromNode の取り出し。
+     */
+    public MapNode getFromNode(ThinkEngine engine) {
+	return ((NaviEngine)engine).getFromNode() ;
+    }
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //------------------------------------------------------------
+    //============================================================
+} // class ThinkFormula
+

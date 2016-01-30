@@ -153,6 +153,16 @@ abstract public class ThinkFormula {
      */
     static public Term Term_False = new Term(false) ;
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * boolean term.
+     */
+    static public Term booleanTerm(boolean v) {
+        return (v ? Term_True : Term_False) ;
+    }
+
+
     //------------------------------------------------------------
     /**
      * コンストラクタ

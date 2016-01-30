@@ -426,6 +426,13 @@ import nodagumi.Itk.*;
  *  設定値： true | false
  *  デフォルト値： false</pre>
  *   </li>
+ *
+ *   <li>
+ *     <h4>subjective_map_rules</h4>
+ *     <pre>   * 探索において、各リンクの主観的距離の変更ルールを記述。
+ *  設定値： ルールを表す JSON 形式の式。
+ *  デフォルト値： null
+ *   </li>
  * </ul>
  */
 public class CrowdWalkPropertiesHandler {
@@ -444,6 +451,7 @@ public class CrowdWalkPropertiesHandler {
 
     protected String propertiesFile = null;
     protected Properties prop = null;
+    protected Term propTerm = null;
 
     /**
      * Get a properties file name.
@@ -567,8 +575,13 @@ public class CrowdWalkPropertiesHandler {
                             _propertiesFile);
             } else if (path.endsWith(".json")) {
                 HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiesFile));
+                propTerm = new Term().setScannedJson(map, true) ;
+                
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    prop.setProperty(entry.getKey(), entry.getValue().toString());
+                    Object value = entry.getValue() ;
+                    prop.setProperty(entry.getKey(),
+                                     (value == null ?
+                                      "null" : value.toString()));
                 }
                 Itk.logInfo("Load Properties File (JSON)",
                             _propertiesFile);
@@ -640,15 +653,37 @@ public class CrowdWalkPropertiesHandler {
                     Itk.logError_("use default order (rear_first)") ;
                 }
             }
+            // [2016.01.30 I.Noda] subjectiveMode check
+            Itk.dbgVal("subjectiveRule", getTerm("subjective_map_rules",null)) ;
         } catch (IOException ioe) {
+            Itk.logError("IO exception") ;
             ioe.printStackTrace();
             System.exit(1);
         } catch(Exception e) {
+            e.printStackTrace() ;
             System.err.println(e.getMessage());
+            Itk.logError("unknown exception") ;
             System.exit(1);
         }
     }
 
+    //--------------------------------------------------
+    /**
+     * check defined
+     */
+    public boolean isDefined(String key) {
+        String value = prop.getProperty(key);
+        return ! (value == null || value.trim().isEmpty());
+    }
+
+    //--------------------------------------------------
+    /**
+     * get property (raw)
+     */
+    public String getProperty(String key) {
+        return getProperty(prop, key) ;
+    }
+    /** */
     public static String getProperty(Properties prop, String key) {
         if (prop.containsKey(key)) {
             return prop.getProperty(key);
@@ -657,40 +692,10 @@ public class CrowdWalkPropertiesHandler {
         }
     }
 
-    public static String getStringProperty(Properties prop, String key) {
-        String stringProp = getProperty(prop, key);
-        if (stringProp != null && !stringProp.equals(""))
-            return stringProp;
-        else {
-            //System.err.println("string prop null: " + key);
-            return null;
-        }
-    }
-
-    public static boolean getBooleanProperty(Properties prop, String key) {
-        String stringProp = getStringProperty(prop, key);
-        if (stringProp == null) {
-            //System.err.println("null: ");
-            return false;
-        } else if (stringProp.toLowerCase().equals("true") || stringProp.toLowerCase().equals("on"))
-            return true;
-        else
-            return false;
-    }
-
-    public static int getIntegerProperty(Properties prop, String key) {
-        String stringProp = getStringProperty(prop, key);
-        if (stringProp == null)
-            return -1;
-        else
-            return Integer.parseInt(stringProp);
-    }
-
-    public boolean isDefined(String key) {
-        String value = prop.getProperty(key);
-        return ! (value == null || value.trim().isEmpty());
-    }
-
+    //--------------------------------------------------
+    /**
+     * get String property
+     */
     public String getString(String key, String defaultValue) {
         String value = prop.getProperty(key);
         if (value == null || value.trim().isEmpty()) {
@@ -698,7 +703,7 @@ public class CrowdWalkPropertiesHandler {
         }
         return value;
     }
-
+    /** */
     public String getString(String key, String defaultValue, String pattern[]) throws Exception {
         String value = prop.getProperty(key);
         if (value == null || value.trim().isEmpty()) {
@@ -712,7 +717,106 @@ public class CrowdWalkPropertiesHandler {
         }
         throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
     }
+    /** */
+    public static String getStringProperty(Properties prop, String key) {
+        String stringProp = getProperty(prop, key);
+        if (stringProp != null && !stringProp.equals(""))
+            return stringProp;
+        else {
+            return null;
+        }
+    }
 
+    //--------------------------------------------------
+    /**
+     * get Boolean property
+     */
+    public boolean getBoolean(String key, boolean defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        value = value.toLowerCase();
+        if (value.equals("true") || value.equals("on")) {
+            return true;
+        } else if (value.equals("false") || value.equals("off")) {
+            return false;
+        } else {
+            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+        }
+    }
+    /** */
+    public static boolean getBooleanProperty(Properties prop, String key) {
+        String stringProp = getStringProperty(prop, key);
+        if (stringProp == null) {
+            //System.err.println("null: ");
+            return false;
+        } else if (stringProp.toLowerCase().equals("true") || stringProp.toLowerCase().equals("on"))
+            return true;
+        else
+            return false;
+    }
+
+    //--------------------------------------------------
+    /**
+     * get Integer property
+     */
+    public int getInteger(String key, int defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch(NumberFormatException e) {
+            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+        }
+    }
+    /** */
+    public static int getIntegerProperty(Properties prop, String key) {
+        String stringProp = getStringProperty(prop, key);
+        if (stringProp == null)
+            return -1;
+        else
+            return Integer.parseInt(stringProp);
+    }
+
+    //--------------------------------------------------
+    /**
+     * get Double property
+     */
+    public double getDouble(String key, double defaultValue) throws Exception {
+        String value = prop.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(value);
+        } catch(NumberFormatException e) {
+            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+        }
+    }
+
+    //--------------------------------------------------
+    /**
+     * get Term property
+     */
+    public Term getTerm(String key, Term defaultValue) throws Exception {
+        if(propTerm != null) {
+            if(propTerm.hasArg(key)) {
+                return propTerm.getArgTerm(key) ;
+            } else {
+                return defaultValue ;
+            }
+        } else {
+            throw new Exception("propTerm が設定されていません。") ;
+        }
+    }
+
+    //--------------------------------------------------
+    /**
+     * 
+     */
     public String getDirectoryPath(String key, String defaultValue) throws Exception {
         String value = prop.getProperty(key);
         if (value == null || value.trim().isEmpty()) {
@@ -789,45 +893,6 @@ public class CrowdWalkPropertiesHandler {
         }
     }
 
-    public boolean getBoolean(String key, boolean defaultValue) throws Exception {
-        String value = prop.getProperty(key);
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        value = value.toLowerCase();
-        if (value.equals("true") || value.equals("on")) {
-            return true;
-        } else if (value.equals("false") || value.equals("off")) {
-            return false;
-        } else {
-            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
-        }
-    }
-
-    public int getInteger(String key, int defaultValue) throws Exception {
-        String value = prop.getProperty(key);
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch(NumberFormatException e) {
-            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
-        }
-    }
-
-    public double getDouble(String key, double defaultValue) throws Exception {
-        String value = prop.getProperty(key);
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        try {
-            return Double.parseDouble(value);
-        } catch(NumberFormatException e) {
-            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
-        }
-    }
-
     public static void main(String[] args) throws IOException {
 
         Options options = new Options();
@@ -844,9 +909,11 @@ public class CrowdWalkPropertiesHandler {
             moe.printStackTrace();
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("CrowdWalkPropertiesHandler", options, true);
+            Itk.logError("Missing Opetion Exception") ;
             System.exit(1);
         } catch (ParseException e) {
             e.printStackTrace();
+            Itk.logError("Parse Exception") ;
             System.exit(1);
         }
         String propertiesFile = cli.getOptionValue("p");

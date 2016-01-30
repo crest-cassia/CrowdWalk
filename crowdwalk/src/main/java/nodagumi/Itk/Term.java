@@ -125,6 +125,24 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * コンストラクタ（int の headのみ）
+     * うまく行かない場合があるので、タイプにより分類。
+     */
+    public Term(int _head) {
+        setHead(new Integer(_head)) ;
+    } ;
+
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ（double の headのみ）
+     * うまく行かない場合があるので、タイプにより分類。
+     */
+    public Term(double _head) {
+        setHead(new Double(_head)) ;
+    } ;
+
+    //------------------------------------------------------------
+    /**
      * コンストラクタ（bodyのみ）
      */
     public Term(HashMap<String, Object> _body) {
@@ -293,7 +311,7 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * head 取得
+     * head 取得(String)
      */
     public String getHeadString() {
         return (String)getHead() ;

@@ -20,48 +20,12 @@ import nodagumi.Itk.Term;
  * 変更ルールの記述は、property.json の中で以下のように行う。
  * <pre>
  *   { ...
- *     "subjective_mode_rules" : { "modeName1" : __Rule__,
- *                                 "modeName2" : __Rule__,
- *                                 ... },
+ *     "subjective_map_rules" : { "modeName1" : __Rule__,
+ *                                "modeName2" : __Rule__,
+ *                                ... },
  *   ...}
- *
- *   __Rule__ ::= __Expr__
- *   __Expr__ ::= __Value__ | __Func__
- *   __Value__ ::= __Number__ | __Boolean__ | __String__
- *   __Func__ ::= { "" : "funcName", ...(args) }
- *
- *   __Func__ categories
- *     [parameter accessor]
- *       {"":"length"}			         	// length of the link
- *       {"":"theLink", "value":"length"} 	// length of the link
- *       {"":"width"}                    	// width of the link
- *       {"":"theLink", "value":"width"}	// width of the link
- *       {"":"hasTag", "tag":__Value__}		// check the link has tag
- *     [logical forms]
- *       {"":"true"}							// true
- *       {"":"false"}							// false
- *       {"":"not", "body":__Expr__}			// negation
- *       {"":"and", "body":[__Expr__, __Expr__,...]}	// and
- *       {"":"or", "body":[__Expr__, __Expr__,...]}	// or
- *       {"":"if", "cond":__Expr__, "then":__Expr__, "else":__Expr__} // if
- *     [arithmetic functions]
- *       {"":"add", "left":__Expr__, "right":__Expr__}
- *       {"":"+", "left":__Expr__, "right":__Expr__}
- *       {"":"sub", "left":__Expr__, "right":__Expr__}
- *       {"":"-", "left":__Expr__, "right":__Expr__}
- *       {"":"mul", "left":__Expr__, "right":__Expr__}
- *       {"":"*", "left":__Expr__, "right":__Expr__}
- *       {"":"div", "left":__Expr__, "right":__Expr__}
- *       {"":"/", "left":__Expr__, "right":__Expr__}
- *     [comparison functions]
- *       {"":"==", "left":__Expr__, "right":__Expr__}
- *       {"":">", "left":__Expr__, "right":__Expr__}
- *       {"":">=", "left":__Expr__, "right":__Expr__}
- *       {"":"=>", "left":__Expr__, "right":__Expr__}
- *       {"":"<", "left":__Expr__, "right":__Expr__}
- *       {"":"<=", "left":__Expr__, "right":__Expr__}
- *       {"":"=<", "left":__Expr__, "right":__Expr__}
  * </pre>
+ *   __Rule__ は、Agent の ThinkEngine の ThinkFormula に準拠。
  */
 public class PathChooser {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

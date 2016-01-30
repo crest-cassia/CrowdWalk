@@ -62,7 +62,7 @@ public class ThinkEngine {
     /**
      * ルールセット
      */
-    private Term rule = null ;
+    protected Term rule = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
