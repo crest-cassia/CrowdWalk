@@ -45,7 +45,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     /**
      * 登録
      */
-    static public boolean registerFormulas() {
+    static public boolean registerFormulas(Lexicon lexicon)
+    {
         try {
             Class currentClass =
                 new Object(){}.getClass().getEnclosingClass() ;
@@ -56,27 +57,27 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
             ex.printStackTrace() ;
         }
 
-        ThinkFormula.register("add", singleton) ;
-        ThinkFormula.register("+", singleton) ;
-        ThinkFormula.register("sub", singleton) ;
-        ThinkFormula.register("-", singleton) ;
-        ThinkFormula.register("mul", singleton) ;
-        ThinkFormula.register("*", singleton) ;
-        ThinkFormula.register("div", singleton) ;
-        ThinkFormula.register("/", singleton) ;
-        ThinkFormula.register("mod", singleton) ;
-        ThinkFormula.register("%", singleton) ;
+        lexicon.register("add", singleton) ;
+        lexicon.register("+", singleton) ;
+        lexicon.register("sub", singleton) ;
+        lexicon.register("-", singleton) ;
+        lexicon.register("mul", singleton) ;
+        lexicon.register("*", singleton) ;
+        lexicon.register("div", singleton) ;
+        lexicon.register("/", singleton) ;
+        lexicon.register("mod", singleton) ;
+        lexicon.register("%", singleton) ;
 
-        ThinkFormula.register("equal", singleton) ;
-        ThinkFormula.register("==", singleton) ;
-        ThinkFormula.register(">", singleton) ;
-        ThinkFormula.register(">=", singleton) ;
-        ThinkFormula.register("=>", singleton) ;
-        ThinkFormula.register("<", singleton) ;
-        ThinkFormula.register("<=", singleton) ;
-        ThinkFormula.register("=<", singleton) ;
+        lexicon.register("equal", singleton) ;
+        lexicon.register("==", singleton) ;
+        lexicon.register(">", singleton) ;
+        lexicon.register(">=", singleton) ;
+        lexicon.register("=>", singleton) ;
+        lexicon.register("<", singleton) ;
+        lexicon.register("<=", singleton) ;
+        lexicon.register("=<", singleton) ;
 
-        ThinkFormula.register("random", singleton) ;
+        lexicon.register("random", singleton) ;
 
         return true ;
     }

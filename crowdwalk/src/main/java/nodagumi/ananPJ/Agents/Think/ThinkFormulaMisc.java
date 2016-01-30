@@ -47,7 +47,8 @@ public class ThinkFormulaMisc extends ThinkFormula {
     /**
      * 登録
      */
-    static public boolean registerFormulas() {
+    static public boolean registerFormulas(Lexicon lexicon)
+    {
         try {
             Class currentClass =
                 new Object(){}.getClass().getEnclosingClass() ;
@@ -58,9 +59,9 @@ public class ThinkFormulaMisc extends ThinkFormula {
             ex.printStackTrace() ;
         }
 
-        ThinkFormula.register("null", singleton) ;
-        ThinkFormula.register("quote", singleton) ;
-        ThinkFormula.register("log", singleton) ;
+        lexicon.register("null", singleton) ;
+        lexicon.register("quote", singleton) ;
+        lexicon.register("log", singleton) ;
 
         return true ;
     }

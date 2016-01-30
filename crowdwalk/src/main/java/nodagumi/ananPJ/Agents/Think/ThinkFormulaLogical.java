@@ -44,7 +44,8 @@ public class ThinkFormulaLogical extends ThinkFormula {
     /**
      * 登録
      */
-    static public boolean registerFormulas() {
+    static public boolean registerFormulas(Lexicon lexicon)
+    {
 	try {
 	    Class currentClass =
 		new Object(){}.getClass().getEnclosingClass() ;
@@ -54,14 +55,14 @@ public class ThinkFormulaLogical extends ThinkFormula {
 	    Itk.logError("wrong class definition") ;
 	    ex.printStackTrace() ;
 	}
-
-	ThinkFormula.register("true", singleton) ;
-	ThinkFormula.register("false", singleton) ;
-	ThinkFormula.register("not", singleton) ;
-	ThinkFormula.register("and", singleton) ;
-	ThinkFormula.register("or", singleton) ;
-	ThinkFormula.register("proc", singleton) ;
-	ThinkFormula.register("if", singleton) ;
+        
+	lexicon.register("true", singleton) ;
+	lexicon.register("false", singleton) ;
+	lexicon.register("not", singleton) ;
+	lexicon.register("and", singleton) ;
+	lexicon.register("or", singleton) ;
+	lexicon.register("proc", singleton) ;
+	lexicon.register("if", singleton) ;
 
 	return true ;
     }

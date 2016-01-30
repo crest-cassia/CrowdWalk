@@ -48,7 +48,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
     /**
      * 登録
      */
-    static public boolean registerFormulas() {
+    static public boolean registerFormulas(Lexicon lexicon)
+    {
         try {
             Class currentClass =
                 new Object(){}.getClass().getEnclosingClass() ;
@@ -59,23 +60,23 @@ public class ThinkFormulaAgent extends ThinkFormula {
             ex.printStackTrace() ;
         }
 
-        ThinkFormula.register("getFallback", singleton) ;
-        ThinkFormula.register("getParam", singleton) ;
-        ThinkFormula.register("setParam", singleton) ;
-        ThinkFormula.register("agentHasTag", singleton) ;
-        ThinkFormula.register("placeHasTag", singleton) ;
-        ThinkFormula.register("addAgentTag", singleton) ;
-        ThinkFormula.register("addPlaceTag", singleton) ;
-        ThinkFormula.register("removeAgentTag", singleton) ;
-        ThinkFormula.register("removePlaceTag", singleton) ;
-        ThinkFormula.register("listenAlert", singleton) ;
-        ThinkFormula.register("saveAlert", singleton) ;
-        ThinkFormula.register("announceAlert", singleton) ;
-        ThinkFormula.register("clearAlert", singleton) ;
-        ThinkFormula.register("clearAlertAll", singleton) ;
-        ThinkFormula.register("changeGoal", singleton) ;
-        ThinkFormula.register("clearPlannedRoute", singleton) ;
-        ThinkFormula.register("insertRoute", singleton) ;
+        lexicon.register("getFallback", singleton) ;
+        lexicon.register("getParam", singleton) ;
+        lexicon.register("setParam", singleton) ;
+        lexicon.register("agentHasTag", singleton) ;
+        lexicon.register("placeHasTag", singleton) ;
+        lexicon.register("addAgentTag", singleton) ;
+        lexicon.register("addPlaceTag", singleton) ;
+        lexicon.register("removeAgentTag", singleton) ;
+        lexicon.register("removePlaceTag", singleton) ;
+        lexicon.register("listenAlert", singleton) ;
+        lexicon.register("saveAlert", singleton) ;
+        lexicon.register("announceAlert", singleton) ;
+        lexicon.register("clearAlert", singleton) ;
+        lexicon.register("clearAlertAll", singleton) ;
+        lexicon.register("changeGoal", singleton) ;
+        lexicon.register("clearPlannedRoute", singleton) ;
+        lexicon.register("insertRoute", singleton) ;
 
         return true ;
     }

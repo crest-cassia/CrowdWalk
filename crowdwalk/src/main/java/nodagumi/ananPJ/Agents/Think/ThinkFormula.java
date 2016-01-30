@@ -100,10 +100,10 @@ abstract public class ThinkFormula {
      */
     static public Lexicon lexicon = new Lexicon() ;
     static {
-        ThinkFormulaMisc.registerFormulas() ;
-        ThinkFormulaLogical.registerFormulas() ;
-        ThinkFormulaArithmetic.registerFormulas() ;
-        ThinkFormulaAgent.registerFormulas() ;
+        ThinkFormulaMisc.registerFormulas(ThinkFormula.lexicon) ;
+        ThinkFormulaLogical.registerFormulas(ThinkFormula.lexicon) ;
+        ThinkFormulaArithmetic.registerFormulas(ThinkFormula.lexicon) ;
+        ThinkFormulaAgent.registerFormulas(ThinkFormula.lexicon) ;
     }
 
     //============================================================
