@@ -170,9 +170,7 @@ public class MapNode extends OBMapPart {
         if(usableLinkTableCache == null) { // cacheがクリアされていれば作成。
             usableLinkTableCache = new MapLinkTable();
             for (MapLink link : links) {
-                if (!((link.isOneWayForward() && link.getTo() == this) ||
-                      (link.isOneWayBackward() && link.getFrom() == this) ||
-                      (link.isRoadClosed()))) {
+                if (link.isAvailableFrom(this)) {
                     usableLinkTableCache.add(link);
                 }
             }

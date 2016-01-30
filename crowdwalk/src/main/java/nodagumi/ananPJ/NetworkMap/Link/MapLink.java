@@ -1116,6 +1116,26 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     //------------------------------------------------------------
     /**
+     * リンクが指定されたノードから見て逆方向かどうかのチェック
+     * @param originNode エージェントが入る側のノード
+     * @return originNode が fromNode と同じなら true
+     */
+    public boolean isBackwardDirectionFrom(MapNode originNode) {
+        return originNode == getTo() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンクが指定されたノードの方を見て逆方向かどうかのチェック
+     * @param destinationNode エージェントが向かう方のノード
+     * @return destinationNode が toNode と同じなら true
+     */
+    public boolean isBackwardDirectionTo(MapNode destinationNode) {
+        return destinationNode == getFrom() ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * リンクが指定されたノードから見た時の direction の値
      * @param originNode エージェントが入る側のノード
      * @return 順方向なら Direction.Forward。逆なら Direction.Backward。
