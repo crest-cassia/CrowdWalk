@@ -20,6 +20,7 @@ import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.navigation.NavigationHint;
 
 import nodagumi.Itk.*;
 
@@ -276,6 +277,15 @@ public class WalkAgent extends AgentBase {
 	 * 効率のため、あまりメモリを消費しない方法に切り替え。
 	 */
 	ReasonTray navigationReason = new ReasonTray() ;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+	 * 主観モード。
+	 * 地図の探索の際の、知識や選好性を表すのに用いる。
+	 */
+	public Term subjectiveMode = Fallback_SubjectiveMode ;
+    protected static Term Fallback_SubjectiveMode =
+        NavigationHint.DefaultSubjectiveMode ;
 
 	//############################################################
 	/**
@@ -1206,8 +1216,7 @@ public class WalkAgent extends AgentBase {
                 Term subgoal = nakedTargetFromRoutePlan(workingRoutePlan) ;
                 if (node.hasTag(subgoal)) {
                     workingRoutePlan.shift() ;
-                } else if (node.getHint(null /* subjectiveMode */, subgoal)
-                           != null) {
+                } else if (node.getHint(subjectiveMode, subgoal) != null) {
                     return subgoal;
                 } else {
                     Itk.logWarn("no sub-goal hint for " + subgoal);
@@ -1233,12 +1242,12 @@ public class WalkAgent extends AgentBase {
         String targetTag = _target.getString() ;
         if(!map.isCheckedRouteKey(targetTag)) {
             Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
-            map.calcGoalPathWithSync(null /* subjectiveMode */, targetTag) ;
+            map.calcGoalPathWithSync(subjectiveMode, targetTag) ;
         }
 
         MapNode other = _link.getOther(_node);
-        double cost = other.getDistance(_target) ;
-        cost += _link.getLength();
+        double cost = other.getDistance(subjectiveMode, _target) ;
+        cost += _link.getSubjectiveLength(subjectiveMode, _node);
         return cost ;
     }
 

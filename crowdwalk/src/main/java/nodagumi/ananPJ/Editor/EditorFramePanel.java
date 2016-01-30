@@ -510,7 +510,7 @@ public class EditorFramePanel extends JPanel {
         for (MapLink path : hoverNode.getUsableLinkTable()) {
             MapNode otherNode = path.getOther(hoverNode.getDummyHoverNode());
             HashMap<String, NavigationHint> hints
-                = otherNode.getHints(null /* subjectiveMode */);
+                = otherNode.getHints(NavigationHint.DefaultSubjectiveMode);
             float dy = 0;
             for (String key : hints.keySet()) {
                 dy += 10 / scale;

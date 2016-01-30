@@ -15,6 +15,10 @@ import nodagumi.Itk.Term;
  * 最適ルーティングの情報。
  */
 public class NavigationHint implements Comparable<NavigationHint> {
+    //::::::::::::::::::::::::::::::::::::::::::::::::::
+    /** デフォルトの主観モード */
+    static public final Term DefaultSubjectiveMode = null ;
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** 主観モード */
     public Term subjectiveMode ;

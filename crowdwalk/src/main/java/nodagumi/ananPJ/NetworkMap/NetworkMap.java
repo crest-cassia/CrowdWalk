@@ -757,9 +757,13 @@ public class NetworkMap extends DefaultTreeModel {
             LinkedHashMap nodeHint = new LinkedHashMap();
             nodeHint.put("ID", node.ID);
             LinkedHashMap hints = new LinkedHashMap();
-            for (String goal_tag : node.getHints(null /* subjectiveMode */).keySet()) {
+            for (String goal_tag :
+                     node.getHints(NavigationHint.DefaultSubjectiveMode)
+                     .keySet()) {
                 LinkedHashMap navigationHint = new LinkedHashMap();
-                NavigationHint hint = node.getHints(null /* subjectiveMode */).get(goal_tag);
+                NavigationHint hint =
+                    node.getHints(NavigationHint.DefaultSubjectiveMode)
+                    .get(goal_tag);
                 if (hint.toNode == null) {
                     navigationHint.put("exit", null);
                     navigationHint.put("way", null);
@@ -831,7 +835,7 @@ public class NetworkMap extends DefaultTreeModel {
                 Itk.logError("Load Routes", "Unknown node ID: " + id);
                 System.exit(1);
             }
-            node.clearHints(null /* subjectiveMode */);
+            node.clearHints(NavigationHint.DefaultSubjectiveMode);
             HashMap<String, Object> hints = (HashMap<String, Object>)nodeHint.get("hints");
             for (Map.Entry<String, Object> entry : hints.entrySet()) {
                 String goal_tag = entry.getKey();
@@ -844,10 +848,11 @@ public class NetworkMap extends DefaultTreeModel {
                     wayLink = links.get(hint.get("way"));
                     distance = ((java.math.BigDecimal)hint.get("distance")).doubleValue();
                 }
-                node.addNavigationHint(null /* subjectiveMode */,
+                node.addNavigationHint(NavigationHint.DefaultSubjectiveMode,
                                        goal_tag,
                                        new NavigationHint(null, null, null,
-                                                          wayLink, exitNode, distance));
+                                                          wayLink, exitNode,
+                                                          distance));
             }
         }
     }

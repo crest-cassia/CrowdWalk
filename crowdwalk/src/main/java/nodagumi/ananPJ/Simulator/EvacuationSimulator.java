@@ -35,6 +35,7 @@ import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Scenario.*;
+import nodagumi.ananPJ.navigation.NavigationHint;
 
 import nodagumi.Itk.*;
 
@@ -724,7 +725,8 @@ public class EvacuationSimulator {
             int nodeCount = 0 ;
             int linkCount = 0 ;
             for (MapNode node : networkMap.getNodes()) {
-                if (node.getHint(null /* subjectiveMode */, goal) == null) {
+                if (node.getHint(NavigationHint.DefaultSubjectiveMode, goal)
+                    == null) {
                     nodeCount += 1 ;
                     for (MapLink link : node.getUsableLinkTable()) {
                         //  link.addTag("INVALID_ROUTE");
@@ -1015,7 +1017,8 @@ public class EvacuationSimulator {
          * 探索実行。
          */
         public void run() {
-            goalCalculated = calcGoalPath(null /* subjectiveMode */, goalTag);
+            goalCalculated =
+                calcGoalPath(NavigationHint.DefaultSubjectiveMode, goalTag);
         }
 
         //----------------------------------------

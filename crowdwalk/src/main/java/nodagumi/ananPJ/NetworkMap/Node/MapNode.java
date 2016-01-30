@@ -259,9 +259,10 @@ public class MapNode extends OBMapPart {
         return hint.viaLink;
     }
 
-    public double getDistance(Term target) throws TargetNotFoundException {
+    public double getDistance(Term subjectiveMode, Term target)
+        throws TargetNotFoundException {
         String goalTag = target.getString() ;
-        NavigationHint hint = getHint(null /* subjectiveMode*/, goalTag);
+        NavigationHint hint = getHint(subjectiveMode, goalTag);
         if (hint == null) {
             if(hasTag(goalTag)) { // 自分自身がターゲットの場合
                 // do nothing
@@ -273,17 +274,6 @@ public class MapNode extends OBMapPart {
         } else {
             return hint.distance;
         }
-    }
-
-    // tkokada:
-    // to avoid nullpo when agent is placed on invalid link
-    public double getDistanceNullAvoid(Term target) {
-        String goalTag = target.getString() ;
-        NavigationHint hint = getHint(null /* subjectiveMode */, goalTag);
-        if (hint == null)
-            return -1.0;
-        else
-            return hint.distance;
     }
 
     /**

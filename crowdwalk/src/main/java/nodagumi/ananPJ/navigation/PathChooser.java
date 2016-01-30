@@ -11,6 +11,8 @@ import java.util.HashMap;
 
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.Itk.Term;
+
 
 //======================================================================
 /**
@@ -19,7 +21,7 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 public class PathChooser {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** 主観モードのタグ。デフォルトは null */
-    String subjectiveMode ;
+    Term subjectiveMode ;
     /** ルールオブジェクト (これから拡張するため)*/
     Object modifyRule ;
 

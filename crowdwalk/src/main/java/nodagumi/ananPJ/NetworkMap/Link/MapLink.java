@@ -49,6 +49,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.navigation.NavigationHint;
 
 import nodagumi.Itk.*;
 
@@ -318,27 +319,37 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     /**
      * 主観的距離の取得。
      * 指定された tag の距離が定義されていない時は、
-     * @param tag 主観距離の指定タグ。tag が null なら、もとの length。
+     * @param subjectiveMode 主観距離の指定タグ。
+     *        subjectiveMode が null (NavigationHint.DefaultSubjectiveMode)
+     *        なら、もとの length。
+     * @param fromNode リンクに侵入するノード。
+     *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
      * @return 距離が定義されていればその値。定義されていなければ、
      * UndefinedSubjectiveLength を返す。
      */
-    public double getSubjectiveLength(String tag) {
-        if(tag == null) {
+    public double getSubjectiveLength(Term subjectiveMode, MapNode fromNode) {
+        if(subjectiveMode == NavigationHint.DefaultSubjectiveMode) {
             return length ;
-        } else if(subjectiveLengthTable.containsKey(tag)) {
-            return subjectiveLengthTable.get(tag) ;
+        } else if(subjectiveLengthTable.containsKey(subjectiveMode.getString())) {
+            return subjectiveLengthTable.get(subjectiveMode.getString()) ;
         } else {
+            Itk.logWarn("undefined subjective length", "link ID", this.ID) ;
             return UndefinedSubjectiveLength ;
         }
     }
+
     //------------------------------------------------------------
     /**
      * 主観的距離の設定。
      * @param tag 主観距離の指定タグ。tag が null なら、もとの length。
+     * @param fromNode リンクに侵入するノード。
+     *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
      * @param _length 主観距離。
      */
-    public void setSubjectiveLength(String tag, double _length) {
-        subjectiveLengthTable.put(tag, _length) ;
+    public void setSubjectiveLength(Term subjectiveMode,
+                                    MapNode fromNode,
+                                    double _length) {
+        subjectiveLengthTable.put(subjectiveMode.getString(), _length) ;
     }
     
     //------------------------------------------------------------
