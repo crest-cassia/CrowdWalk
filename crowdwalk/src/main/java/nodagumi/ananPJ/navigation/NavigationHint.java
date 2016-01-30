@@ -8,6 +8,7 @@ import java.lang.ClassNotFoundException;
 
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
+import nodagumi.Itk.Term;
 
 //======================================================================
 /**
@@ -16,7 +17,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 public class NavigationHint implements Comparable<NavigationHint> {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** 主観モード */
-    public String subjectiveMode ;
+    public Term subjectiveMode ;
     /** 最終目標ゴールタグ */
     public String goalTag ;
     /** 起点ノード */
@@ -32,7 +33,7 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /**
      * constructor.
      */
-    public NavigationHint(String _subjectiveMode, String _goalTag,
+    public NavigationHint(Term _subjectiveMode, String _goalTag,
                           MapNode _fromNode, MapLink _viaLink, MapNode _toNode,
                           double _distance) {
         set(_subjectiveMode, _goalTag,
@@ -43,7 +44,7 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /**
      * 値設定
      */
-    public NavigationHint set(String _subjectiveMode, String _goalTag,
+    public NavigationHint set(Term _subjectiveMode, String _goalTag,
                               MapNode _fromNode, MapLink _viaLink,
                               MapNode _toNode, double _distance) {
         subjectiveMode = _subjectiveMode ;

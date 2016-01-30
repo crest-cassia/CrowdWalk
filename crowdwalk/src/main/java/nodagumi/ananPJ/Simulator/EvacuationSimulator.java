@@ -724,7 +724,7 @@ public class EvacuationSimulator {
             int nodeCount = 0 ;
             int linkCount = 0 ;
             for (MapNode node : networkMap.getNodes()) {
-                if (node.getHint(goal) == null) {
+                if (node.getHint(null /* subjectiveMode */, goal) == null) {
                     nodeCount += 1 ;
                     for (MapLink link : node.getUsableLinkTable()) {
                         //  link.addTag("INVALID_ROUTE");
@@ -1015,15 +1015,15 @@ public class EvacuationSimulator {
          * 探索実行。
          */
         public void run() {
-            goalCalculated = calcGoalPath(goalTag);
+            goalCalculated = calcGoalPath(null /* subjectiveMode */, goalTag);
         }
 
         //----------------------------------------
         /**
          * 探索の本体。
          */
-        private boolean calcGoalPath(String goal_tag) {
-            return (null != networkMap.calcGoalPath(goal_tag)) ;
+        private boolean calcGoalPath(Term subjectiveMode, String goalTag) {
+            return (null != networkMap.calcGoalPath(subjectiveMode, goalTag)) ;
         }
     }
 

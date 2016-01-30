@@ -1206,7 +1206,8 @@ public class WalkAgent extends AgentBase {
                 Term subgoal = nakedTargetFromRoutePlan(workingRoutePlan) ;
                 if (node.hasTag(subgoal)) {
                     workingRoutePlan.shift() ;
-                } else if (node.getHint(subgoal) != null) {
+                } else if (node.getHint(null /* subjectiveMode */, subgoal)
+                           != null) {
                     return subgoal;
                 } else {
                     Itk.logWarn("no sub-goal hint for " + subgoal);
@@ -1232,7 +1233,7 @@ public class WalkAgent extends AgentBase {
         String targetTag = _target.getString() ;
         if(!map.isCheckedRouteKey(targetTag)) {
             Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
-            map.calcGoalPathWithSync(targetTag) ;
+            map.calcGoalPathWithSync(null /* subjectiveMode */, targetTag) ;
         }
 
         MapNode other = _link.getOther(_node);

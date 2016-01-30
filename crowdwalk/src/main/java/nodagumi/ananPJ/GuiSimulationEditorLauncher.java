@@ -649,7 +649,8 @@ public class GuiSimulationEditorLauncher
             return;
         }
 
-        Dijkstra.Result result = networkMap.calcGoalPath(tag) ;
+        Dijkstra.Result result =
+            networkMap.calcGoalPath(null /* subjectiveMode */, tag) ;
 
         if(result != null) {
             for (MapNode node : result.keySet()) {

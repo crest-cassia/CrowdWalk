@@ -14,6 +14,7 @@ import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.navigation.PathChooser;
 
 import nodagumi.Itk.Itk;
+import nodagumi.Itk.Term;
 
 //======================================================================
 /**
@@ -37,7 +38,9 @@ public class Dijkstra {
      * @param chooser パスを選ぶ際の距離の調整ツール。
      * @return 探索結果。Resule class のインスタンス。
      */
-    static public Result calc(MapNodeTable subgoals,
+    static public Result calc(Term subjectiveMode,
+                              String goalTag,
+                              MapNodeTable subgoals,
                               PathChooser chooser) {
         //Itk.timerStart("calc") ;
         
@@ -49,7 +52,8 @@ public class Dijkstra {
         for (MapNode subgoal : subgoals) {
             double cost = chooser.calcGoalNodeCost(subgoal);
             NavigationHint hint =
-                new NavigationHint(null, null, subgoal, null, null, cost) ;
+                new NavigationHint(subjectiveMode,
+                                   goalTag, subgoal, null, null, cost) ;
             frontier.put(subgoal, hint) ;
             result.put(subgoal, hint) ;
         }
@@ -71,7 +75,7 @@ public class Dijkstra {
                         result.get(frontierNode).distance
                         + chooser.calcLinkCost(preLink, preNode) ;
                     if (dist < bestHint.distance) {
-                        bestHint.set(null, null,
+                        bestHint.set(subjectiveMode, goalTag,
                                      preNode, preLink, frontierNode, dist) ;
                     }
                 }

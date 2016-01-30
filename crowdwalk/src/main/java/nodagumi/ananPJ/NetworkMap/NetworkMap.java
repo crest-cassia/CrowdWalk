@@ -651,33 +651,36 @@ public class NetworkMap extends DefaultTreeModel {
      * 経路探索
      * @return 探索成功した結果。すでにノードには情報は格納されている。
      */
-    public Dijkstra.Result calcGoalPath(String goal_tag) {
+    public Dijkstra.Result calcGoalPath(Term subjectiveMode,
+                                        String goalTag) {
         MapNodeTable goals = new MapNodeTable();
         for (MapNode node : getNodes()) {
-            if (node.hasTag(goal_tag)) goals.add(node);
+            if (node.hasTag(goalTag)) goals.add(node);
         }
         for (MapLink link : getLinks()) {
-            if (link.hasTag(goal_tag)) {
+            if (link.hasTag(goalTag)) {
                 goals.add(link.getFrom());
                 goals.add(link.getTo());
             }
         }
         if (goals.size() == 0) {
-            Itk.logWarn("No Goal", goal_tag) ;
-            validRouteKeys.put(goal_tag, false) ;
+            Itk.logWarn("No Goal", goalTag) ;
+            validRouteKeys.put(goalTag, false) ;
             return null ;
         }
-        Itk.logInfo("Found Goal", goal_tag) ;
+        Itk.logInfo("Found Goal", goalTag) ;
 
         Dijkstra.Result result =
-            Dijkstra.calc(goals,
+            Dijkstra.calc(subjectiveMode,
+                          goalTag,
+                          goals,
                           Dijkstra.DefaultPathChooser) ;
 
         synchronized(getNodes()) {
-            validRouteKeys.put(goal_tag, true);
+            validRouteKeys.put(goalTag, true);
             for (MapNode node : result.keySet()) {
                 NavigationHint hint = result.get(node);
-                node.addNavigationHint(goal_tag, hint) ;
+                node.addNavigationHint(subjectiveMode, goalTag, hint) ;
             }
         }
         return result ;
@@ -688,12 +691,13 @@ public class NetworkMap extends DefaultTreeModel {
      * synchronized された経路探索
      * @return 探索成功かどうか。goal_tag が探索済みでも true を返す。
      */
-    public boolean calcGoalPathWithSync(String goal_tag) {
+    public boolean calcGoalPathWithSync(Term subjectiveMode,
+                                        String goalTag) {
         synchronized(validRouteKeys) {
-            if(isValidRouteKey(goal_tag)) {
+            if(isValidRouteKey(goalTag)) {
                 return true ;
             } else {
-                return (null != calcGoalPath(goal_tag)) ;
+                return (null != calcGoalPath(subjectiveMode, goalTag)) ;
             }
         }
     }
@@ -753,9 +757,9 @@ public class NetworkMap extends DefaultTreeModel {
             LinkedHashMap nodeHint = new LinkedHashMap();
             nodeHint.put("ID", node.ID);
             LinkedHashMap hints = new LinkedHashMap();
-            for (String goal_tag : node.getHints().keySet()) {
+            for (String goal_tag : node.getHints(null /* subjectiveMode */).keySet()) {
                 LinkedHashMap navigationHint = new LinkedHashMap();
-                NavigationHint hint = node.getHints().get(goal_tag);
+                NavigationHint hint = node.getHints(null /* subjectiveMode */).get(goal_tag);
                 if (hint.toNode == null) {
                     navigationHint.put("exit", null);
                     navigationHint.put("way", null);
@@ -827,7 +831,7 @@ public class NetworkMap extends DefaultTreeModel {
                 Itk.logError("Load Routes", "Unknown node ID: " + id);
                 System.exit(1);
             }
-            node.clearHints();
+            node.clearHints(null /* subjectiveMode */);
             HashMap<String, Object> hints = (HashMap<String, Object>)nodeHint.get("hints");
             for (Map.Entry<String, Object> entry : hints.entrySet()) {
                 String goal_tag = entry.getKey();
@@ -840,7 +844,8 @@ public class NetworkMap extends DefaultTreeModel {
                     wayLink = links.get(hint.get("way"));
                     distance = ((java.math.BigDecimal)hint.get("distance")).doubleValue();
                 }
-                node.addNavigationHint(goal_tag,
+                node.addNavigationHint(null /* subjectiveMode */,
+                                       goal_tag,
                                        new NavigationHint(null, null, null,
                                                           wayLink, exitNode, distance));
             }

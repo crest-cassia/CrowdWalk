@@ -222,47 +222,52 @@ public class MapNode extends OBMapPart {
         return null;
     }
     
-    public void addNavigationHint(String key,
-            NavigationHint hint) {
-        hints.put(key, hint);
+    public void addNavigationHint(Term subjectiveMode,
+                                  String goalTag,
+                                  NavigationHint hint) {
+        getHints(subjectiveMode).put(goalTag, hint);
     }
     
-    public void clearHints() {
-        hints.clear();
+    public void clearHints(Term subjectiveMode) {
+        getHints(subjectiveMode).clear();
     }
     
-    public NavigationHint getHint(Term key) {
-        return getHint(key.getString()) ;
+    public NavigationHint getHint(Term subjectiveMode, Term goalTag) {
+        return getHint(subjectiveMode, goalTag.getString()) ;
     }
 
-    public NavigationHint getHint(final String key) {
-        NavigationHint hint = hints.get(key);
+    public NavigationHint getHint(Term subjectiveMode, String goalTag) {
+        NavigationHint hint = getHints(subjectiveMode).get(goalTag);
         if (hint == null) {
-            for (String _key : hints.keySet()) {
-                NavigationHint _hint = hints.get(_key);
+            //[2016.01.30 I.Noda] ここで何をやっているか不明。
+            for (String _goalTag : getHints(subjectiveMode).keySet()) {
+                NavigationHint _hint = getHints(subjectiveMode).get(_goalTag);
             }
         }
         return hint;
     }
 
-    public HashMap<String, NavigationHint> getHints() {
+    public HashMap<String, NavigationHint> getHints(Term subjectiveMode) {
+        /* [2016.01.30 I.Noda] 
+         * 正しくは、subjectiveMode ごとに別の hints を返す必要がある。
+         */
         return hints;
     }
 
-    public MapLink getViaLink(String key) {
-        NavigationHint hint = getHint(key);
+    public MapLink getViaLink(Term subjectiveMode, String goalTag) {
+        NavigationHint hint = getHint(subjectiveMode, goalTag);
         return hint.viaLink;
     }
 
     public double getDistance(Term target) throws TargetNotFoundException {
-        String key = target.getString() ;
-        NavigationHint hint = getHint(key);
+        String goalTag = target.getString() ;
+        NavigationHint hint = getHint(null /* subjectiveMode*/, goalTag);
         if (hint == null) {
-            if(hasTag(key)) { // 自分自身がターゲットの場合
+            if(hasTag(goalTag)) { // 自分自身がターゲットの場合
                 // do nothing
             } else { // target の情報が見つからない場合。
-                Itk.logWarn("Target Not Found", "target:", key) ;
-                throw new TargetNotFoundException(key + " not found for id=" + ID + "(" + getTagString() + ")");
+                Itk.logWarn("Target Not Found", "target:", goalTag) ;
+                throw new TargetNotFoundException(goalTag + " not found for id=" + ID + "(" + getTagString() + ")");
             }
             return 0.0 ;
         } else {
@@ -273,8 +278,8 @@ public class MapNode extends OBMapPart {
     // tkokada:
     // to avoid nullpo when agent is placed on invalid link
     public double getDistanceNullAvoid(Term target) {
-        String key = target.getString() ;
-        NavigationHint hint = getHint(key);
+        String goalTag = target.getString() ;
+        NavigationHint hint = getHint(null /* subjectiveMode */, goalTag);
         if (hint == null)
             return -1.0;
         else
