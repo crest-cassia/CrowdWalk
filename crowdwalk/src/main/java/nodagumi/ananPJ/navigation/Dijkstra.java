@@ -11,7 +11,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.navigation.NavigationHint;
-import nodagumi.ananPJ.navigation.CalcPath.PathChooser;
+import nodagumi.ananPJ.navigation.PathChooser;
 
 import nodagumi.Itk.Itk;
 
@@ -47,7 +47,7 @@ public class Dijkstra {
 
         // ゴールノードは、initial cost で。
         for (MapNode subgoal : subgoals) {
-            double cost = chooser.initialCost(subgoal);
+            double cost = chooser.calcGoalNodeCost(subgoal);
             NavigationHint hint =
                 new NavigationHint(null, null, subgoal, null, null, cost) ;
             frontier.put(subgoal, hint) ;
@@ -69,7 +69,7 @@ public class Dijkstra {
                     countPerNode ++ ;
                     double dist =
                         result.get(frontierNode).distance
-                        + chooser.evacuationPathCost(preLink) ;
+                        + chooser.calcLinkCost(preLink) ;
                     if (dist < bestHint.distance) {
                         bestHint.set(null, null,
                                      preNode, preLink, frontierNode, dist) ;
@@ -104,15 +104,7 @@ public class Dijkstra {
      * これ以外の Chooser を使う機会があるのか、不明。
      */
     public static PathChooser DefaultPathChooser =
-        new PathChooser() {
-            public double evacuationPathCost(MapLink link) {
-                //if (link.isStair()) return 5.0;
-                return 1.0 * link.getLength() ;
-            }
-            public double initialCost(MapNode node) {
-                return 0.0;
-            }
-        } ;
+        new PathChooser();
 }
 //;;; Local Variables:
 //;;; mode:java
