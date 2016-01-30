@@ -239,10 +239,8 @@ public class MapNode extends OBMapPart {
     public NavigationHint getHint(Term subjectiveMode, String goalTag) {
         NavigationHint hint = getHints(subjectiveMode).get(goalTag);
         if (hint == null) {
-            //[2016.01.30 I.Noda] ここで何をやっているか不明。
-            for (String _goalTag : getHints(subjectiveMode).keySet()) {
-                NavigationHint _hint = getHints(subjectiveMode).get(_goalTag);
-            }
+            Itk.logWarn("No hint for goal=", goalTag,
+                        " in mode=", subjectiveMode, ".") ;
         }
         return hint;
     }
