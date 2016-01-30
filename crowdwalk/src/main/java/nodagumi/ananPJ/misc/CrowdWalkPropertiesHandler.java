@@ -586,10 +586,12 @@ public class CrowdWalkPropertiesHandler {
                 Itk.logInfo("Load Properties File (JSON)",
                             _propertiesFile);
             } else {
-                throw new Exception("Property file error - 拡張子が不正です: " + _propertiesFile);
+                throw new Exception("Property file error - 拡張子が不正です: "
+                                    + _propertiesFile);
             }
 
-            // パス指定がファイル名のみならばプロパティファイルのディレクトリパスを付加する
+            // パス指定がファイル名のみならば
+            // プロパティファイルのディレクトリパスを付加する
             File propertyFile = new File(_propertiesFile);
             String propertyDirPath = propertyFile.getParent();
             if (propertyDirPath == null) {
@@ -606,12 +608,12 @@ public class CrowdWalkPropertiesHandler {
             }
 
             // input files
-            networkMapFile = getStringProperty(prop, "map_file");
-            pollutionFile = getStringProperty(prop, "pollution_file");
-            generationFile = getStringProperty(prop, "generation_file");
-            scenarioFile = getProperty(prop, "scenario_file");
-            fallbackFile = getProperty(prop, "fallback_file") ;
-            routesFilePath = getProperty(prop, "routes_file");
+            networkMapFile = getString("map_file", null);
+            pollutionFile = getString("pollution_file", null);
+            generationFile = getString("generation_file", null);
+            scenarioFile = getString("scenario_file", null);
+            fallbackFile = getString("fallback_file", null) ;
+            routesFilePath = getString("routes_file", null);
 
             // 経路探索結果の読み込み関連
             if (routesFilePath != null) {
@@ -624,11 +626,11 @@ public class CrowdWalkPropertiesHandler {
             }
 
             // create random with seed
-            randseed = getIntegerProperty(prop, "randseed");
+            randseed = getInteger("randseed", 0);
             // exit count
-            exitCount = getIntegerProperty(prop, "exit_count");
-            isAllAgentSpeedZeroBreak = getBooleanProperty(prop,
-                                                          "all_agent_speed_zero_break");
+            exitCount = getInteger("exit_count", 0);
+            isAllAgentSpeedZeroBreak = getBoolean("all_agent_speed_zero_break",
+                                                  true);
 
             // 早い内に設定ミスをユーザーに知らせるための検査
             String obstructerType = getString("pollution_type", null);
@@ -636,11 +638,12 @@ public class CrowdWalkPropertiesHandler {
                 AgentBase.setObstructerType(obstructerType);
                 ObstructerBase.createInstance(obstructerType) ;
             }
-            getString("pollution_color", "RED", SimulationPanel3D.gas_display.getNames());
+            getString("pollution_color", "RED",
+                      SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);
 
             /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/
-            String queueOrderStr = getProperty(prop, "queue_order") ;
+            String queueOrderStr = getString("queue_order", null) ;
             if(queueOrderStr != null) {
                 if(queueOrderStr.equals("front_first")) {
                     AgentHandler.useFrontFirstOrderQueue(true) ;
@@ -680,10 +683,6 @@ public class CrowdWalkPropertiesHandler {
     /**
      * get property (raw)
      */
-    public String getProperty(String key) {
-        return getProperty(prop, key) ;
-    }
-    /** */
     public static String getProperty(Properties prop, String key) {
         if (prop.containsKey(key)) {
             return prop.getProperty(key);
@@ -719,7 +718,7 @@ public class CrowdWalkPropertiesHandler {
     }
     /** */
     public static String getStringProperty(Properties prop, String key) {
-        String stringProp = getProperty(prop, key);
+        String stringProp = prop.getProperty(key);
         if (stringProp != null && !stringProp.equals(""))
             return stringProp;
         else {
