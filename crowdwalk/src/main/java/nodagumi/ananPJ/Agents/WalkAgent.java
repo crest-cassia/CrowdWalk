@@ -40,11 +40,12 @@ import nodagumi.Itk.*;
  *    "A_0" : __double__, // social force の A_0
  *    "A_1" : __double__, // social force の A_1
  *    "A_2" : __double__, // social force の A_2
- *    "emptySpeed" : __double__, // ??
+ *    "emptySpeed" : __double__, // 自由速度
  *    "personalSpace" : __double__, // 個人スペース。排他領域。
  *    "widthUnit_SameLane" : __double__, // 同方向流の隣レーンの間隔
  *    "widthUnit_OtehrLane" : __double__, // 対向流のレーンまでの距離
- *    "insensitiveDistanceInCounterFlow" : __double__ // 対向流の影響範囲
+ *    "insensitiveDistanceInCounterFlow" : __double__, // 対向流の影響範囲
+ *    "subjectiveMode" : __string__ // マップの主観的距離の主観モード
  * }
  * </pre>
  */
@@ -330,6 +331,8 @@ public class WalkAgent extends AgentBase {
         insensitiveDistanceInCounterFlow =
             getDoubleFromConfig("insensitiveDistanceInCounterFlow",
                                 insensitiveDistanceInCounterFlow) ;
+        subjectiveMode =
+            getTermFromConfig("subjectiveMode", subjectiveMode) ;
     } ;
 
     //------------------------------------------------------------

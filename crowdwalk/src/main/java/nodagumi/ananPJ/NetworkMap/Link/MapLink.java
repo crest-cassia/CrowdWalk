@@ -349,7 +349,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public void setSubjectiveLength(Term subjectiveMode,
                                     MapNode fromNode,
                                     double _length) {
-        subjectiveLengthTable.put(subjectiveMode.getString(), _length) ;
+        if(subjectiveMode == NavigationHint.DefaultSubjectiveMode) {
+            setLength(_length) ;
+        } else {
+            subjectiveLengthTable.put(subjectiveMode.getString(), _length) ;
+        }
     }
     
     //------------------------------------------------------------
