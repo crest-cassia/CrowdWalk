@@ -251,9 +251,9 @@ public class MapNode extends OBMapPart {
         return hints;
     }
 
-    public MapLink getWay(String key) {
+    public MapLink getViaLink(String key) {
         NavigationHint hint = getHint(key);
-        return hint.way;
+        return hint.viaLink;
     }
 
     public double getDistance(Term target) throws TargetNotFoundException {

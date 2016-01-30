@@ -18,9 +18,9 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /** 最終目標ゴールタグ */
     /** 起点ノード */
     /** 向かう方向のノード */
-    public MapNode exit;
+    public MapNode toNode;
     /** 辿るリンク */
-    public MapLink way;
+    public MapLink viaLink;
     /** ゴールまでの距離 */
     public double distance;
 
@@ -28,10 +28,10 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /**
      * constructor.
      */
-    public NavigationHint(MapNode e, MapLink w, double d) {
-        exit = e;
-        way = w;
-        distance = d;
+    public NavigationHint(MapLink _viaLink, MapNode _toNode, double _distance) {
+        toNode = _toNode ;
+        viaLink = _viaLink ;
+        distance = _distance;
     }
 
     //--------------------------------------------------

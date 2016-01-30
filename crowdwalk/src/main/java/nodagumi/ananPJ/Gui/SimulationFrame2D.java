@@ -1242,15 +1242,15 @@ public class SimulationFrame2D extends JFrame
             for (String key : hintKeys) {
                 NavigationHint hint = hints.get(key);
                 buff.append(" key: ").append(key).append("\n");
-                if (hint.exit == null) {
-                    buff.append("     exit: null\n");
+                if (hint.toNode == null) {
+                    buff.append("     toNode: null\n");
                 } else {
-                    buff.append("     exit: ").append(hint.exit.ID).append("(").append(hint.exit.getTagString()).append(")\n");
+                    buff.append("     toNode: ").append(hint.toNode.ID).append("(").append(hint.toNode.getTagString()).append(")\n");
                 }
-                if (hint.way == null) {
-                    buff.append("     way: null\n");
+                if (hint.viaLink == null) {
+                    buff.append("     viaLink: null\n");
                 } else {
-                    buff.append("     way: ").append(hint.way.ID).append("\n");
+                    buff.append("     viaLink: ").append(hint.viaLink.ID).append("\n");
                 }
                 buff.append("     distance: ").append(hint.distance).append("\n");
             }

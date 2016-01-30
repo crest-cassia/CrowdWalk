@@ -679,8 +679,8 @@ public class NetworkMap extends DefaultTreeModel {
             for (MapNode node : result.keySet()) {
                 PathGuideInfo pgInfo = result.get(node);
                 node.addNavigationHint(goal_tag,
-                                       new NavigationHint(pgInfo.toNode,
-                                                          pgInfo.traceLink,
+                                       new NavigationHint(pgInfo.traceLink,
+                                                          pgInfo.toNode,
                                                           pgInfo.distance)) ;
             }
         }
@@ -760,13 +760,13 @@ public class NetworkMap extends DefaultTreeModel {
             for (String goal_tag : node.getHints().keySet()) {
                 LinkedHashMap navigationHint = new LinkedHashMap();
                 NavigationHint hint = node.getHints().get(goal_tag);
-                if (hint.exit == null) {
+                if (hint.toNode == null) {
                     navigationHint.put("exit", null);
                     navigationHint.put("way", null);
                     navigationHint.put("distance", 0.0);
                 } else {
-                    navigationHint.put("exit", hint.exit.ID);
-                    navigationHint.put("way", hint.way.ID);
+                    navigationHint.put("exit", hint.toNode.ID);
+                    navigationHint.put("way", hint.viaLink.ID);
                     navigationHint.put("distance", hint.distance);
                 }
                 hints.put(goal_tag, navigationHint);
@@ -844,7 +844,7 @@ public class NetworkMap extends DefaultTreeModel {
                     wayLink = links.get(hint.get("way"));
                     distance = ((java.math.BigDecimal)hint.get("distance")).doubleValue();
                 }
-                node.addNavigationHint(goal_tag, new NavigationHint(exitNode, wayLink, distance));
+                node.addNavigationHint(goal_tag, new NavigationHint(wayLink, exitNode, distance));
             }
         }
     }
