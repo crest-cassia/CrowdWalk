@@ -69,7 +69,7 @@ public class Dijkstra {
                     countPerNode ++ ;
                     double dist =
                         result.get(frontierNode).distance
-                        + chooser.calcLinkCost(preLink) ;
+                        + chooser.calcLinkCost(preLink, preNode) ;
                     if (dist < bestHint.distance) {
                         bestHint.set(null, null,
                                      preNode, preLink, frontierNode, dist) ;

@@ -1221,6 +1221,40 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     //------------------------------------------------------------
     /**
+     * ある方向に利用可能かチェック。(from側から)
+     * @param fromNode リンクに侵入する側のノード
+     * @return 利用可能なら true
+     */
+    public boolean isAvailableFrom(MapNode fromNode) {
+        if(isRoadClosed() ||
+           (isOneWayForward() && isBackwardDirectionFrom(fromNode)) ||
+           (isOneWayBackward() && isForwardDirectionFrom(fromNode))) {
+            /* 進入禁止の場合 */
+            return false ;
+        } else {
+            return true ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ある方向に利用可能かチェック。(to側から)
+     * @param toNode リンクで向かう側のノード
+     * @return 利用可能なら true
+     */
+    public boolean isAvailableTo(MapNode toNode) {
+        if(isRoadClosed() ||
+           (isOneWayForward() && isBackwardDirectionTo(toNode)) ||
+           (isOneWayBackward() && isForwardDirectionTo(toNode))) {
+            /* 進入禁止の場合 */
+            return false ;
+        } else {
+            return true ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * RoadClosed のチェック
      * @return RoadClosed なら true
      */

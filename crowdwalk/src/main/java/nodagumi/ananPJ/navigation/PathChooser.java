@@ -36,8 +36,12 @@ public class PathChooser {
     /**
      * リンクコストの計算。
      */
-    public double calcLinkCost(MapLink link) {
-        return 1.0 * link.getLength() ;
+    public double calcLinkCost(MapLink link, MapNode fromNode) {
+        if(!link.isAvailableFrom(fromNode)) {
+            return Double.POSITIVE_INFINITY ;
+        } else {
+            return 1.0 * link.getLength() ;
+        }
     }
 
     //----------------------------------------------------------------------
