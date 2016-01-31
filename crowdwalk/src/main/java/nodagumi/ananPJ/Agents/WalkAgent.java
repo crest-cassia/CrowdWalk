@@ -1241,11 +1241,14 @@ public class WalkAgent extends AgentBase {
     {
         /* [2015.04.14 I.Noda]
          * もし新しい target なら、経路探査する。
+         * [2016.01.31 I.Noda]
+         * 本来なら、subjectiveMode ごとに探査すべきかもしれない。
+         * そのためには、isCheckedRouteKey の拡張が必要。
          */
         String targetTag = _target.getString() ;
         if(!map.isCheckedRouteKey(targetTag)) {
             Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
-            map.calcGoalPathWithSync(subjectiveMode, targetTag) ;
+            map.calcGoalPathAllWithSync(targetTag) ;
         }
 
         MapNode other = _link.getOther(_node);

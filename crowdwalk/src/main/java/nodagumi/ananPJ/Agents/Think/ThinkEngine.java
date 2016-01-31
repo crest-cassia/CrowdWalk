@@ -162,7 +162,7 @@ public class ThinkEngine {
      * 推論(top)
      */
     public Term think() {
-        return think(rule) ;
+        return think(rule, null) ;
     }
 
     //------------------------------------------------------------
@@ -170,11 +170,19 @@ public class ThinkEngine {
      * 推論(本体)
      */
     public Term think(Term expr) {
+        return think(expr, null) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * 推論(本体)
+     */
+    public Term think(Term expr, Object env) {
         if(expr == null || expr.isNull()) {
             return ThinkFormula.Term_Null ;
         } else if(expr.isArray()) {
             return (((ThinkFormulaLogical)(ThinkFormulaLogical.singleton))
-                    .call_procBody(expr, this)) ;
+                    .call_procBody(expr, this, env)) ;
         } else if(!(expr.getHead() instanceof String)) {
             // maybe, true or false or numbers
             return expr ;
@@ -182,7 +190,7 @@ public class ThinkEngine {
             String head = expr.getHeadString() ;
             ThinkFormula formula = ThinkFormula.findFormula(head) ;
             if(formula != null) {
-                return formula.call(head, expr, this) ;
+                return formula.call(head, expr, this, env) ;
             } else if(expr.isAtom()) {
                 // expr がアトムで、かつ予約語でなければ、そのまま返す。
                 return expr ;

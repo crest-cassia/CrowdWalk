@@ -106,41 +106,42 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * </ul>
      */
     @Override
-    public Term call(String head, Term expr, ThinkEngine engine) {
+    public Term call(String head, Term expr,
+                     ThinkEngine engine, Object env) {
 	if(head.equals("getFallback")) {
-            return call_getFallback(head, expr, engine) ;
+            return call_getFallback(head, expr, engine, env) ;
         } else if(head.equals("getParam")) {
-            return call_getParam(head, expr, engine) ;
+            return call_getParam(head, expr, engine, env) ;
         } else if(head.equals("setParam")) {
-            return call_setParam(head, expr, engine) ;
+            return call_setParam(head, expr, engine, env) ;
         } else if(head.equals("agentHasTag")) {
-            return call_agentHasTag(head, expr, engine) ;
+            return call_agentHasTag(head, expr, engine, env) ;
         } else if(head.equals("placeHasTag")) {
-            return call_placeHasTag(head, expr, engine) ;
+            return call_placeHasTag(head, expr, engine, env) ;
         } else if(head.equals("addAgentTag")) {
-            return call_addAgentTag(head, expr, engine) ;
+            return call_addAgentTag(head, expr, engine, env) ;
         } else if(head.equals("addPlaceTag")) {
-            return call_addPlaceTag(head, expr, engine) ;
+            return call_addPlaceTag(head, expr, engine, env) ;
         } else if(head.equals("removeAgentTag")) {
-            return call_removeAgentTag(head, expr, engine) ;
+            return call_removeAgentTag(head, expr, engine, env) ;
         } else if(head.equals("removePlaceTag")) {
-            return call_removePlaceTag(head, expr, engine) ;
+            return call_removePlaceTag(head, expr, engine, env) ;
         } else if(head.equals("listenAlert")) {
-            return call_listenAlert(head, expr, engine) ;
+            return call_listenAlert(head, expr, engine, env) ;
         } else if(head.equals("saveAlert")) {
-            return call_saveAlert(head, expr, engine) ;
+            return call_saveAlert(head, expr, engine, env) ;
         } else if(head.equals("announceAlert")) {
-            return call_announceAlert(head, expr, engine) ;
+            return call_announceAlert(head, expr, engine, env) ;
         } else if(head.equals("clearAlert")) {
-            return call_clearAlert(head, expr, engine) ;
+            return call_clearAlert(head, expr, engine, env) ;
         } else if(head.equals("clearAllAlert")) {
-            return call_clearAllAlert(head, expr, engine) ;
+            return call_clearAllAlert(head, expr, engine, env) ;
         } else if(head.equals("changeGoal")) {
-            return call_changeGoal(head, expr, engine) ;
+            return call_changeGoal(head, expr, engine, env) ;
         } else if(head.equals("clearPlannedRoute")) {
-            return call_clearPlannedRoute(head, expr, engine) ;
+            return call_clearPlannedRoute(head, expr, engine, env) ;
         } else if(head.equals("insertRoute")) {
-            return call_insertRoute(head, expr, engine) ;
+            return call_insertRoute(head, expr, engine, env) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -157,7 +158,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *  _nameOfValue_ ::= any Fallback Parameters
      * </pre>
      */
-    public Term call_getFallback(String head, Term expr, ThinkEngine engine) {
+    public Term call_getFallback(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
         String name = expr.getArgString("name") ;
         RationalAgent agent = (RationalAgent)engine.getAgent() ;
 
@@ -176,7 +178,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *                    "triageLevelInt" | "triageLevelName"
      * </pre>
      */
-    public Term call_getParam(String head, Term expr, ThinkEngine engine) {
+    public Term call_getParam(String head, Term expr,
+                              ThinkEngine engine, Object env) {
         String name = expr.getArgString("name") ;
         RationalAgent agent = (RationalAgent)engine.getAgent() ;
 
@@ -213,7 +216,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *  _nameOfValue_ ::= "emptySpeed" 
      * </pre>
      */
-    public Term call_setParam(String head, Term expr, ThinkEngine engine) {
+    public Term call_setParam(String head, Term expr,
+                              ThinkEngine engine, Object env) {
         String name = expr.getArgString("name") ;
         Term value = engine.think(expr.getArgTerm("value")) ;
         RationalAgent agent = (RationalAgent)engine.getAgent() ;
@@ -236,7 +240,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _tag ::= _String_
      * </pre>
      */
-    public Term call_agentHasTag(String head, Term expr, ThinkEngine engine) {
+    public Term call_agentHasTag(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
         if(engine.getAgent().hasTag(tag)) {
             return Term_True ;
@@ -255,7 +260,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _tag ::= _String_
      * </pre>
      */
-    public Term call_placeHasTag(String head, Term expr, ThinkEngine engine) {
+    public Term call_placeHasTag(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
         if(engine.getAgent().getCurrentLink().hasTag(tag)) {
             return Term_True ;
@@ -274,7 +280,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _tag ::= _String_
      * </pre>
      */
-    public Term call_addAgentTag(String head, Term expr, ThinkEngine engine) {
+    public Term call_addAgentTag(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
         if(engine.getAgent().addTag(tag)) {
             return Term_True ;
@@ -293,7 +300,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _tag ::= _String_
      * </pre>
      */
-    public Term call_addPlaceTag(String head, Term expr, ThinkEngine engine) {
+    public Term call_addPlaceTag(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
         if(engine.getAgent().getCurrentLink().addTag(tag)) {
             return Term_True ;
@@ -312,7 +320,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _tag ::= _String_
      * </pre>
      */
-    public Term call_removeAgentTag(String head, Term expr, ThinkEngine engine) {
+    public Term call_removeAgentTag(String head, Term expr,
+                                    ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
         engine.getAgent().removeTag(tag) ;
         return Term_True ;
@@ -328,7 +337,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _tag ::= _String_
      * </pre>
      */
-    public Term call_removePlaceTag(String head, Term expr, ThinkEngine engine) {
+    public Term call_removePlaceTag(String head, Term expr,
+                                    ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
         engine.getAgent().getCurrentLink().removeTag(tag) ;
         return Term_True ;
@@ -347,7 +357,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * {@link nodagumi.ananPJ.Scenario.Scenario Scenario} の中の
      * {@link nodagumi.ananPJ.Scenario.AlertEvent AlertEvent} 参照。
      */
-    public Term call_listenAlert(String head, Term expr, ThinkEngine engine) {
+    public Term call_listenAlert(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
         SimTime alertTime = engine.getAlertedMessageTable().get(message) ;
         if(alertTime != null) {
@@ -372,7 +383,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *
      * @return Alert 追加に成功したら Term_True を返す。
      */
-    public Term call_saveAlert(String head, Term expr, ThinkEngine engine) {
+    public Term call_saveAlert(String head, Term expr,
+                               ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
         SimTime alertTime = engine.getAlertedMessageTable().get(message) ;
@@ -400,7 +412,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *
      * @return Alert 追加に成功したら Term_True を返す。
      */
-    public Term call_announceAlert(String head, Term expr, ThinkEngine engine) {
+    public Term call_announceAlert(String head, Term expr,
+                                   ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
         MapLink currentLink = engine.getAgent().getCurrentLink() ;
@@ -420,7 +433,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _alertMessage_ ::= _String_
      * </pre>
      */
-    public Term call_clearAlert(String head, Term expr, ThinkEngine engine) {
+    public Term call_clearAlert(String head, Term expr,
+                                ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
         engine.getAlertedMessageTable().remove(message) ;
         return ThinkFormula.Term_True ;
@@ -434,7 +448,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * { "" : "clearAllAlert" }
      * </pre>
      */
-    public Term call_clearAllAlert(String head, Term expr, ThinkEngine engine) {
+    public Term call_clearAllAlert(String head, Term expr,
+                                   ThinkEngine engine, Object env) {
         engine.getAlertedMessageTable().clear() ;
         return ThinkFormula.Term_True ;
     }
@@ -449,7 +464,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _goalTag_ ::= _String_
      * </pre>
      */
-    public Term call_changeGoal(String head, Term expr, ThinkEngine engine) {
+    public Term call_changeGoal(String head, Term expr,
+                                ThinkEngine engine, Object env) {
         Term goalTag = expr.getArgTerm("goal") ;
         engine.getAgent().changeGoal(goalTag) ;
         return ThinkFormula.Term_True ;
@@ -464,7 +480,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * </pre>
      */
     public Term call_clearPlannedRoute(String head, Term expr,
-                                       ThinkEngine engine) {
+                                       ThinkEngine engine, Object env) {
         engine.getAgent().setPlannedRoute(new ArrayList<Term>(), true) ;
         return Term_True ;
     }
@@ -479,7 +495,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * _route_ ::= _tag_ || [_tag_, _tag_, ...]
      * </pre>
      */
-    public Term call_insertRoute(String head, Term expr, ThinkEngine engine) {
+    public Term call_insertRoute(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
         Term route = expr.getArgTerm("route") ;
         if(route.isArray()) {
             for(int i = route.getArray().size() ; i > 0 ; i--) {

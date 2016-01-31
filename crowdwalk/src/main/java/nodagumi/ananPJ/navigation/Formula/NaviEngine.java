@@ -35,26 +35,11 @@ import nodagumi.Itk.* ;
 public class NaviEngine extends ThinkEngine {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 対象リンク。
-     */
-    private MapLink link = null ;
-
-    /**
-     * 侵入友ノード
-     */
-    private MapNode fromNode = null ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
      * log tag
      */
     static public String LogTagPrefix = "Navi:" ;
     public String logTag() {
-        if(isNullLink()) {
-            return LogTagPrefix + "(null)" ;
-        } else {
-            return LogTagPrefix + link.toString() ;
-        }
+        return LogTagPrefix ;
     }
 
     //------------------------------------------------------------
@@ -62,63 +47,6 @@ public class NaviEngine extends ThinkEngine {
      * コンストラクタ
      */
     public NaviEngine(){
-        setLink(null) ;
-	setFromNode(null) ;
-        setRule(null) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * コンストラクタ
-     */
-    public NaviEngine(Term _rule){
-        setLink(null) ;
-	setFromNode(null) ;
-        setRule(_rule) ;
-    }
-
-    //------------------------------------------------------------
-    // アクセス
-    //------------------------------------------------------------
-    /**
-     * set link
-     */
-    public MapLink setLink(MapLink _link) {
-        link = _link ;
-        return link ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * get link
-     */
-    public MapLink getLink() {
-        return link ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * check agent is null
-     */
-    public boolean isNullLink() {
-        return link == null;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * set link
-     */
-    public MapNode setFromNode(MapNode _fromNode) {
-        fromNode = _fromNode ;
-        return fromNode ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * get link
-     */
-    public MapNode getFromNode() {
-        return fromNode ;
     }
 
     //------------------------------------------------------------
@@ -126,9 +54,9 @@ public class NaviEngine extends ThinkEngine {
      * 推論(top)
      */
     public double calc(MapLink _link, MapNode _fromNode, Term _rule) {
-	setLink(_link) ;
-	setFromNode(_fromNode) ;
-	Term result = think(_rule) ;
+        NaviFormula.NaviFormulaEnv env =
+            new NaviFormula.NaviFormulaEnv(_link, _fromNode) ;
+	Term result = think(_rule, env) ;
         return result.getDouble() ;
     }
 

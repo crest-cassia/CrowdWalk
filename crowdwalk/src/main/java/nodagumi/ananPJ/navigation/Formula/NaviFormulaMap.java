@@ -74,13 +74,14 @@ public class NaviFormulaMap extends NaviFormula {
      * </ul>
      */
     @Override
-    public Term call(String head, Term expr, ThinkEngine engine) {
+    public Term call(String head, Term expr,
+                     ThinkEngine engine, Object env) {
 	if(head.equals(":length")) {
-	    return call_length(head, expr, engine) ;
+	    return call_length(head, expr, engine, env) ;
         } else if(head.equals(":width")) {
-            return call_width(head, expr, engine) ;
+            return call_width(head, expr, engine, env) ;
         } else if(head.equals("hasTag")) {
-            return call_hasTag(head, expr, engine) ;
+            return call_hasTag(head, expr, engine, env) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -95,8 +96,10 @@ public class NaviFormulaMap extends NaviFormula {
      * </pre>
      * 対象リンクの長さを返す。
      */
-    public Term call_length(String head, Term expr, ThinkEngine engine) {
-	return new Term(getLink(engine).getLength()) ;
+    public Term call_length(String head, Term expr,
+                            ThinkEngine engine, Object _env) {
+        NaviFormulaEnv env = (NaviFormulaEnv)_env ;
+	return new Term(getLink(env).getLength()) ;
     }
 
     //------------------------------------------------------------
@@ -106,8 +109,9 @@ public class NaviFormulaMap extends NaviFormula {
      *   {"":":width"} | ":width"
      * </pre>
      */
-    public Term call_width(String head, Term expr, ThinkEngine engine) {
-	return new Term(getLink(engine).getWidth()) ;
+    public Term call_width(String head, Term expr,
+                           ThinkEngine engine, Object env) {
+	return new Term(getLink(env).getWidth()) ;
     }
 
     //------------------------------------------------------------
@@ -118,11 +122,12 @@ public class NaviFormulaMap extends NaviFormula {
      *    "tag": __TagString__}
      * </pre>
      */
-    public Term call_hasTag(String head, Term expr, ThinkEngine engine) {
+    public Term call_hasTag(String head, Term expr,
+                            ThinkEngine engine, Object env) {
 	boolean result = false ;
 	if(expr.hasArg("tag")) {
 	    Term tag = expr.getArgTerm("tag") ;
-	    result = getLink(engine).hasTag(tag) ;
+	    result = getLink(env).hasTag(tag) ;
 	} else {
 	    Itk.logError("hasTag formula should have 'tag' slot.") ;
 	    Itk.logError_("expr=", expr) ;

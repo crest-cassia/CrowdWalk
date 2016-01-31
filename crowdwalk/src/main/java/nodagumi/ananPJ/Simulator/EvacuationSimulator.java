@@ -607,7 +607,8 @@ public class EvacuationSimulator {
                 }
             }
         }
-
+        /* 主観的距離計さんルールの設定 */
+        networkMap.setSubjectiveMapRules(properties.getSubjectiveMapRules()) ;
     }
 
     //------------------------------------------------------------
@@ -1018,15 +1019,15 @@ public class EvacuationSimulator {
          */
         public void run() {
             goalCalculated =
-                calcGoalPath(NavigationHint.DefaultSubjectiveMode, goalTag);
+                calcGoalPath(goalTag);
         }
 
         //----------------------------------------
         /**
          * 探索の本体。
          */
-        private boolean calcGoalPath(Term subjectiveMode, String goalTag) {
-            return (null != networkMap.calcGoalPath(subjectiveMode, goalTag)) ;
+        private boolean calcGoalPath(String goalTag) {
+            return networkMap.calcGoalPathAll(goalTag) ;
         }
     }
 

@@ -648,6 +648,11 @@ public class GuiSimulationEditorLauncher
         frame.setVisible(true);
     }
 
+    //------------------------------------------------------------
+    /**
+     * 試しに NavigationHint を作成してみる。
+     * GUI 用の actionPerformed からのみ呼ばれる。 
+     */
     private void calcTagPaths() {
         calcTagPathMenu.setEnabled(false);
         String tag = JOptionPane.showInputDialog("tag name");

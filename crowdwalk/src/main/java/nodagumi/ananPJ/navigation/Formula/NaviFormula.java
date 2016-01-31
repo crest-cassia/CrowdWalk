@@ -78,6 +78,19 @@ abstract public class NaviFormula extends ThinkFormula {
 	return (ThinkFormula)(lexicon.lookUp(head.getString())) ;
     }
 
+    //============================================================
+    /** 
+     * NaviFormula の計算のための環境情報. 
+     */
+    public static class NaviFormulaEnv {
+        public MapLink link ;
+        public MapNode fromNode ;
+        public NaviFormulaEnv(MapLink _link, MapNode _fromNode) {
+            link = _link ;
+            fromNode = _fromNode ;
+        }
+    }
+    
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -88,16 +101,18 @@ abstract public class NaviFormula extends ThinkFormula {
     /**
      * engine から link の取り出し。
      */
-    public MapLink getLink(ThinkEngine engine) {
-	return ((NaviEngine)engine).getLink() ;
+    public MapLink getLink(Object _env) {
+        NaviFormulaEnv env = (NaviFormulaEnv)_env ;
+	return env.link ;
     }
 
     //------------------------------------------------------------
     /**
      * engine から fromNode の取り出し。
      */
-    public MapNode getFromNode(ThinkEngine engine) {
-	return ((NaviEngine)engine).getFromNode() ;
+    public MapNode getFromNode(Object _env) {
+        NaviFormulaEnv env = (NaviFormulaEnv)_env ;
+	return env.fromNode ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

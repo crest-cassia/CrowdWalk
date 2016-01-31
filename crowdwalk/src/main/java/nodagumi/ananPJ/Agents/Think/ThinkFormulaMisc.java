@@ -79,13 +79,14 @@ public class ThinkFormulaMisc extends ThinkFormula {
      * </ul>
      */
     @Override
-    public Term call(String head, Term expr, ThinkEngine engine) {
+    public Term call(String head, Term expr,
+                     ThinkEngine engine, Object env) {
 	if(head.equals("null")) {
 	    return Term_Null ;
         } else if(head.equals("quote")) {
-            return call_quote(head, expr, engine) ;
+            return call_quote(head, expr, engine, env) ;
         } else if(head.equals("log")) {
-            return call_log(head, expr, engine) ;
+            return call_log(head, expr, engine, env) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -101,7 +102,8 @@ public class ThinkFormulaMisc extends ThinkFormula {
      * </pre>
      * _Term_ を評価せずに返す。
      */
-    public Term call_quote(String head, Term expr, ThinkEngine engine) {
+    public Term call_quote(String head, Term expr,
+                           ThinkEngine engine, Object env) {
             return expr.getArgTerm("value") ;
     }
 
@@ -121,13 +123,14 @@ public class ThinkFormulaMisc extends ThinkFormula {
      * "special":"tags" の場合は、
      * エージェントが保持している tag のリストが表示される。
      */
-    public Term call_log(String head, Term expr, ThinkEngine engine) {
+    public Term call_log(String head, Term expr,
+                         ThinkEngine engine, Object env) {
         Term special = expr.getArgTerm("special") ;
         if(special != null) {
             if(special.equals("alertMessages")) {
-                call_logAlertMessages(engine) ;
+                call_logAlertMessages(engine, env) ;
             } else if(special.equals("tags")) {
-                call_logTags(engine) ;
+                call_logTags(engine, env) ;
             } else {
                 Itk.logError("unknown log special:", expr) ;
             }
@@ -149,7 +152,7 @@ public class ThinkFormulaMisc extends ThinkFormula {
     /**
      * 推論(log alertMessages)。
      */
-    public void call_logAlertMessages(ThinkEngine engine) {
+    public void call_logAlertMessages(ThinkEngine engine, Object env) {
         if(engine.isNullAgent()) {
             Itk.logInfo(engine.logTag(), "no agent") ;
         } else {
@@ -169,7 +172,7 @@ public class ThinkFormulaMisc extends ThinkFormula {
     /**
      * 推論(log tags)。
      */
-    public void call_logTags(ThinkEngine engine) {
+    public void call_logTags(ThinkEngine engine, Object env) {
         if(engine.isNullAgent()) {
             Itk.logInfo(engine.logTag(), "(null agent)") ;
         } else {

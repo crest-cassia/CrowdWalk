@@ -84,21 +84,22 @@ public class ThinkFormulaLogical extends ThinkFormula {
      * </ul>
      */
     @Override
-    public Term call(String head, Term expr, ThinkEngine engine) {
+    public Term call(String head, Term expr,
+                     ThinkEngine engine, Object env) {
 	if(head.equals("true")) {
 	    return Term_True ;
 	} else if(head.equals("false")) {
 	    return Term_False ;
 	} else if(head.equals("not")) {
-	    return call_not(expr, engine) ;
+	    return call_not(expr, engine, env) ;
 	} else if(head.equals("and")) {
-	    return call_and(expr, engine) ;
+	    return call_and(expr, engine, env) ;
 	} else if(head.equals("or")) {
-	    return call_or(expr, engine) ;
+	    return call_or(expr, engine, env) ;
 	} else if(head.equals("proc")) {
-	    return call_proc(expr, engine) ;
+	    return call_proc(expr, engine, env) ;
 	} else if(head.equals("if")) {
-	    return call_if(expr, engine) ;
+	    return call_if(expr, engine, env) ;
 	} else {
 	    Itk.logError("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -113,7 +114,8 @@ public class ThinkFormulaLogical extends ThinkFormula {
      *   "body" : _expr_ }
      * </pre>
      */
-    public Term call_not(Term expr, ThinkEngine engine) {
+    public Term call_not(Term expr,
+                         ThinkEngine engine, Object env) {
         Term result = engine.think(expr.getArgTerm("body")) ;
         if(checkFalse(result)) {
             return Term_True ;
@@ -130,7 +132,8 @@ public class ThinkFormulaLogical extends ThinkFormula {
      *   "body" : [_expr_, _expr_, ...] }
      * </pre>
      */
-    public Term call_and(Term expr, ThinkEngine engine) {
+    public Term call_and(Term expr,
+                         ThinkEngine engine, Object env) {
         Term body = expr.getArgTerm("body") ;
         if(!body.isArray()) {
 	    Itk.logError("Illegal and body",
@@ -155,7 +158,8 @@ public class ThinkFormulaLogical extends ThinkFormula {
      *   "body" : [ _expr_, _expr_, ...] }
      * </pre>
      */
-    public Term call_or(Term expr, ThinkEngine engine) {
+    public Term call_or(Term expr,
+                        ThinkEngine engine, Object env) {
         Term body = expr.getArgTerm("body") ;
         if(!body.isArray()) {
             Itk.logError("Illegal proc body") ;
@@ -182,16 +186,18 @@ public class ThinkFormulaLogical extends ThinkFormula {
      * [ _expr, _expr_, ...]
      * </pre>
      */
-    public Term call_proc(Term expr, ThinkEngine engine) {
+    public Term call_proc(Term expr,
+                          ThinkEngine engine, Object env) {
         Term body = expr.getArgTerm("body") ;
-	return call_procBody(body, engine) ;
+	return call_procBody(body, engine, env) ;
     }
 
     //------------------------------------------------------------
     /**
      * 推論(proc)の本体。
      */
-    public Term call_procBody(Term body, ThinkEngine engine) {
+    public Term call_procBody(Term body,
+                              ThinkEngine engine, Object env) {
         if(!body.isArray()) {
             Itk.logError("Illegal proc body") ;
             Itk.logError_("body:", body) ;
@@ -211,13 +217,17 @@ public class ThinkFormulaLogical extends ThinkFormula {
      * 推論(if)。
      * <pre>
      * { "" : "if",
-     *   "condition" : _expr_,
+     *   ("condition" | "cond") : _expr_, 
      *   "then" : _expr_,
      *   "else" : _expr_ }
      * </pre>
      */
-    public Term call_if(Term expr, ThinkEngine engine) {
+    public Term call_if(Term expr,
+                        ThinkEngine engine, Object env) {
         Term condition = expr.getArgTerm("condition") ;
+        if(condition == null) {
+            condition = expr.getArgTerm("cond") ;
+        }
         Term thenExpr = expr.getArgTerm("then") ;
         Term elseExpr = expr.getArgTerm("else") ;
 

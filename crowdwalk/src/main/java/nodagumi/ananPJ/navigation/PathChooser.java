@@ -11,6 +11,8 @@ import java.util.HashMap;
 
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.navigation.Formula.*;
+
 import nodagumi.Itk.Term;
 
 
@@ -32,8 +34,11 @@ public class PathChooser {
     /** 主観モードのタグ。デフォルトは null */
     Term subjectiveMode ;
     /** ルールオブジェクト (これから拡張するため)*/
-    Object modifyRule ;
+    Term modifyRule ;
 
+    /** ルールオブジェクト (これから拡張するため)*/
+    NaviEngine engine ; 
+    
     //----------------------------------------------------------------------
     /**
      * constractor.
@@ -41,8 +46,25 @@ public class PathChooser {
     public PathChooser() {
         subjectiveMode = null ;
         modifyRule = null ;
+        engine = null ;
     }
 
+    /**
+     * constractor.
+     */
+    public PathChooser(String _subjectiveMode, Term _modifyRule) {
+        this(new Term(_subjectiveMode), _modifyRule) ;
+    }
+    
+    /**
+     * constractor.
+     */
+    public PathChooser(Term _subjectiveMode, Term _modifyRule) {
+        subjectiveMode = _subjectiveMode ;
+        modifyRule = _modifyRule ;
+        engine = new NaviEngine() ;
+    }
+    
     //----------------------------------------------------------------------
     /**
      * リンクコストの計算。
@@ -50,8 +72,18 @@ public class PathChooser {
     public double calcLinkCost(MapLink link, MapNode fromNode) {
         if(!link.isAvailableFrom(fromNode)) {
             return Double.POSITIVE_INFINITY ;
-        } else {
+        } else if(subjectiveMode == null) {
             return 1.0 * link.getLength() ;
+        } else {
+            synchronized(link){
+                if(link.hasSubjectiveLength(subjectiveMode, fromNode)) {
+                    return link.getSubjectiveLength(subjectiveMode, fromNode) ;
+                } else {
+                    double cost = engine.calc(link, fromNode, modifyRule) ;
+                    link.setSubjectiveLength(subjectiveMode, fromNode, cost) ;
+                    return cost ;
+                }
+            }
         }
     }
 

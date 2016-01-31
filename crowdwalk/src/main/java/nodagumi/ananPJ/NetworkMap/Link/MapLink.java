@@ -317,20 +317,32 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     //------------------------------------------------------------
     /**
+     * 主観的距離を持っているかのチェック。
+     * @param subjectiveMode 主観距離の指定タグ。
+     * @param fromNode リンクに侵入するノード。
+     *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
+     * @return 距離が定義されていればtrue。
+     */
+    public boolean hasSubjectiveLength(Term subjectiveMode, MapNode fromNode) {
+        return subjectiveLengthTable.containsKey(subjectiveMode.getString()) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
      * 主観的距離の取得。
      * 指定された tag の距離が定義されていない時は、
+     * UndefinedSubjectiveLength を返す。
      * @param subjectiveMode 主観距離の指定タグ。
      *        subjectiveMode が null (NavigationHint.DefaultSubjectiveMode)
      *        なら、もとの length。
      * @param fromNode リンクに侵入するノード。
      *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
      * @return 距離が定義されていればその値。定義されていなければ、
-     * UndefinedSubjectiveLength を返す。
      */
     public double getSubjectiveLength(Term subjectiveMode, MapNode fromNode) {
         if(subjectiveMode == NavigationHint.DefaultSubjectiveMode) {
             return length ;
-        } else if(subjectiveLengthTable.containsKey(subjectiveMode.getString())) {
+        } else if(hasSubjectiveLength(subjectiveMode, fromNode)) {
             return subjectiveLengthTable.get(subjectiveMode.getString()) ;
         } else {
             Itk.logWarn("undefined subjective length", "link ID", this.ID) ;

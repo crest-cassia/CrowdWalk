@@ -18,7 +18,7 @@
   "exit_count":0,
   "all_agent_speed_zero_break":false
 
-  "subjective_map_rules" :
+  "_subjective_map_rules" :
     {
       "major" :
         {"":"if",

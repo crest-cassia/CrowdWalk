@@ -173,7 +173,8 @@ abstract public class ThinkFormula {
     /**
      * 呼び出し
      */
-    abstract public Term call(String head, Term expr, ThinkEngine engine) ;
+    abstract public Term call(String head, Term expr,
+                              ThinkEngine engine, Object env) ;
 
     //------------------------------------------------------------
     /**

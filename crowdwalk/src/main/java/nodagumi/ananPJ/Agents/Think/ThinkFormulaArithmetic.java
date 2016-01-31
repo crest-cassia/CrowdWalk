@@ -100,29 +100,30 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </ul>
      */
     @Override
-    public Term call(String head, Term expr, ThinkEngine engine) {
+    public Term call(String head, Term expr,
+                     ThinkEngine engine, Object env) {
 	if(head.equals("add") || head.equals("+")) {
-            return call_add(head, expr, engine) ;
+            return call_add(head, expr, engine, env) ;
 	} else if(head.equals("sub") || head.equals("-")) {
-            return call_sub(head, expr, engine) ;
+            return call_sub(head, expr, engine, env) ;
 	} else if(head.equals("mul") || head.equals("*")) {
-            return call_mul(head, expr, engine) ;
+            return call_mul(head, expr, engine, env) ;
 	} else if(head.equals("div") || head.equals("/")) {
-            return call_div(head, expr, engine) ;
+            return call_div(head, expr, engine, env) ;
 	} else if(head.equals("mod") || head.equals("%")) {
-            return call_mod(head, expr, engine) ;
+            return call_mod(head, expr, engine, env) ;
 	} else if(head.equals("equal") || head.equals("==")) {
-            return call_equal(head, expr, engine) ;
+            return call_equal(head, expr, engine, env) ;
 	} else if(head.equals(">")) {
-	    return call_greaterThan(head, expr, engine) ;
+	    return call_greaterThan(head, expr, engine, env) ;
 	} else if(head.equals(">=") || head.equals("=>")) {
-	    return call_greaterOrEqual(head, expr, engine) ;
+	    return call_greaterOrEqual(head, expr, engine, env) ;
 	} else if(head.equals("<")) {
-	    return call_lessThan(head, expr, engine) ;
+	    return call_lessThan(head, expr, engine, env) ;
 	} else if(head.equals("<=") || head.equals("=<")) {
-	    return call_lessOrEqual(head, expr, engine) ;
+	    return call_lessOrEqual(head, expr, engine, env) ;
         } else if(head.equals("random")) {
-	    return call_random(head, expr, engine) ;
+	    return call_random(head, expr, engine, env) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -144,7 +145,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の和を返す。
      */
-    public Term call_add(String head, Term expr, ThinkEngine engine) {
+    public Term call_add(String head, Term expr,
+                         ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("values")) {
 	    Term values = expr.getArgTerm("values") ;
@@ -182,7 +184,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の差を返す。
      */
-    public Term call_sub(String head, Term expr, ThinkEngine engine) {
+    public Term call_sub(String head, Term expr,
+                         ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
 	    Term left = engine.think(expr.getArgTerm("left")) ;
@@ -212,7 +215,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の和を返す。
      */
-    public Term call_mul(String head, Term expr, ThinkEngine engine) {
+    public Term call_mul(String head, Term expr,
+                         ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("values")) {
 	    Term values = expr.getArgTerm("values") ;
@@ -250,7 +254,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の差を返す。
      */
-    public Term call_div(String head, Term expr, ThinkEngine engine) {
+    public Term call_div(String head, Term expr,
+                         ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
 	    Term left = engine.think(expr.getArgTerm("left")) ;
@@ -275,7 +280,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の差を返す。
      */
-    public Term call_mod(String head, Term expr, ThinkEngine engine) {
+    public Term call_mod(String head, Term expr,
+                         ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
 	    Term left = engine.think(expr.getArgTerm("left")) ;
@@ -300,7 +306,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の等価チェック。
      */
-    public Term call_equal(String head, Term expr, ThinkEngine engine) {
+    public Term call_equal(String head, Term expr,
+                           ThinkEngine engine, Object env) {
 	Term result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
 	    Term left = engine.think(expr.getArgTerm("left")) ;
@@ -329,8 +336,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の等価チェック。
      */
-    public Term call_greaterThan(String head, Term expr, ThinkEngine engine) {
-	int comp = compareLeftRightValues(expr, engine) ;
+    public Term call_greaterThan(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
+	int comp = compareLeftRightValues(expr, engine, env) ;
 	if(comp > 0) {
 	    return Term_True ;
 	} else {
@@ -348,8 +356,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の等価チェック。
      */
-    public Term call_greaterOrEqual(String head, Term expr, ThinkEngine engine) {
-	int comp = compareLeftRightValues(expr, engine) ;
+    public Term call_greaterOrEqual(String head, Term expr,
+                                    ThinkEngine engine, Object env) {
+	int comp = compareLeftRightValues(expr, engine, env) ;
 	if(comp >= 0) {
 	    return Term_True ;
 	} else {
@@ -367,8 +376,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の等価チェック。
      */
-    public Term call_lessThan(String head, Term expr, ThinkEngine engine) {
-	int comp = compareLeftRightValues(expr, engine) ;
+    public Term call_lessThan(String head, Term expr,
+                              ThinkEngine engine, Object env) {
+	int comp = compareLeftRightValues(expr, engine, env) ;
 	if(comp < 0) {
 	    return Term_True ;
 	} else {
@@ -386,8 +396,9 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * </pre>
      * _Term_ の等価チェック。
      */
-    public Term call_lessOrEqual(String head, Term expr, ThinkEngine engine) {
-	int comp = compareLeftRightValues(expr, engine) ;
+    public Term call_lessOrEqual(String head, Term expr,
+                                 ThinkEngine engine, Object env) {
+	int comp = compareLeftRightValues(expr, engine, env) ;
 	if(comp <= 0) {
 	    return Term_True ;
 	} else {
@@ -399,7 +410,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     /**
      * 比較一般.
      */
-    public int compareLeftRightValues(Term expr, ThinkEngine engine) {
+    public int compareLeftRightValues(Term expr,
+                                      ThinkEngine engine, Object env) {
 	if(expr.hasArg("left") && expr.hasArg("right")) {
 	    Term left = engine.think(expr.getArgTerm("left")) ;
 	    Term right = engine.think(expr.getArgTerm("right")) ;
@@ -425,7 +437,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *  _RandomType_ ::= "int" | "double"
      * </pre>
      */
-    public Term call_random(String head, Term expr, ThinkEngine engine) {
+    public Term call_random(String head, Term expr,
+                            ThinkEngine engine, Object env) {
         String type = expr.getArgString("type") ;
         if(type == null || type.equals("int")) {
             if(expr.hasArg("max")) {

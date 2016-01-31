@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.ArrayList;
 
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.navigation.PathChooser;
+import nodagumi.ananPJ.navigation.Formula.*;
 
 import nodagumi.Itk.Itk;
 import nodagumi.Itk.Term;
@@ -29,21 +32,54 @@ public class Dijkstra {
         extends LinkedHashMap<MapNode, NavigationHint> {}
 
     //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 標準の PathChooser。
+     * これ以外の Chooser を使う機会があるのか、不明。
+     */
+    public static PathChooser DefaultPathChooser =
+        new PathChooser();
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Chooser テーブル。
+     */
+    static public HashMap<String, PathChooser> pathChooserTable =
+        new HashMap<String, PathChooser>() ;
+        
+    //============================================================
     //------------------------------------------------------------
     /**
-     * 探索メインルーチン。by I.Noda
+     * 探索メインルーチン。
      * 上記の calc は、無駄が多いと思われる。何度も同じノードを展開している。
      * 下記はそれを避ける。
+     * @param subjectiveMode 主観的モード
+     * @param goalTag 探索するゴールのタグ。
      * @param subgoals 目標とするゴール集合。
-     * @param chooser パスを選ぶ際の距離の調整ツール。
+     * @param networkMap 地図。
      * @return 探索結果。Resule class のインスタンス。
      */
     static public Result calc(Term subjectiveMode,
                               String goalTag,
                               MapNodeTable subgoals,
-                              PathChooser chooser) {
-        //Itk.timerStart("calc") ;
-        
+                              NetworkMap networkMap) {
+        Itk.timerStart("calc") ;
+
+        PathChooser chooser = Dijkstra.DefaultPathChooser ;
+        if(subjectiveMode != null) {
+            synchronized(pathChooserTable) {
+                chooser = pathChooserTable.get(subjectiveMode.getString()) ;
+                if(chooser == null) {
+                    chooser =
+                        new PathChooser(subjectiveMode,
+                                        networkMap
+                                        .getSubjectiveMapRule(subjectiveMode)) ;
+                    pathChooserTable.put(subjectiveMode.getString(), chooser) ;
+                }
+            }
+        }
+            
         Result frontier = new Result();
         ArrayList<MapNode> closedList = new ArrayList<MapNode>() ;
         Result result = new Result() ;
@@ -97,18 +133,12 @@ public class Dijkstra {
             result.put(bestHint.fromNode, bestHint) ;
         }
 
-        //Itk.timerShowLap("calc") ;
+        Itk.logWarn("Dijkstra.calc() for ", subjectiveMode, ":", goalTag) ;
+        Itk.timerShowLap("calc") ;
 
         return result ;
     }
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 標準の PathChooser。
-     * これ以外の Chooser を使う機会があるのか、不明。
-     */
-    public static PathChooser DefaultPathChooser =
-        new PathChooser();
 }
 //;;; Local Variables:
 //;;; mode:java

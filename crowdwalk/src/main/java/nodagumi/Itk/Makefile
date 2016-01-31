@@ -208,7 +208,7 @@ run2it_cui ::
 ##-----
 SAMPLE3gt00 = sample/generatedTown/gridTown00.prop.json   # fallback
 run3gt00 ::
-	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00))
+	(cd $(BASEDIR) ; bash quickstart.sh -l Warn $(SAMPLE3gt00))
 run3gt00_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00))
 

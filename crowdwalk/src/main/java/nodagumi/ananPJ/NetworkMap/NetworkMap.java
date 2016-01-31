@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap ;
 import java.util.LinkedHashMap ;
+import java.util.LinkedHashSet ;
 import java.util.Collection ;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.Enumeration;
 
@@ -115,6 +117,12 @@ public class NetworkMap extends DefaultTreeModel {
      * 経路探索されているかどうかのテーブル。
      */
     private HashMap<String, Boolean> validRouteKeys;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 主観的距離計算用のルール集合。
+     */
+    protected Term subjectiveMapRules = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -648,6 +656,72 @@ public class NetworkMap extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
+     * 主観的距離計算ルールのセット
+     * @param _subjectiveMapRules ルール
+     */
+    public void setSubjectiveMapRules(Term _subjectiveMapRules) {
+        subjectiveMapRules = _subjectiveMapRules ;
+    }
+
+    /**
+     * 主観的距離計算ルールの取得
+     * @return ルール集合を返す。
+     */
+    public Term getSubjectiveMapRules() {
+        return subjectiveMapRules ;
+    }
+    
+    /**
+     * 主観的距離計算ルールを持っているかどうか。
+     * @return ルール集合を持っていれば true
+     */
+    public boolean hasSubjectiveMapRules() {
+        return subjectiveMapRules != null;
+    }
+
+    /**
+     * 主観的モードのセットを返す。
+     * @return モードのSetを返す。
+     */
+    public Set<Term> getSubjectiveModeSet() {
+        if(hasSubjectiveMapRules()) {
+            if(subjectiveModeSet == null) {
+                subjectiveModeSet = new LinkedHashSet<Term>() ;
+                for(String mode : subjectiveMapRules.getArgSlotSet()) {
+                    subjectiveModeSet.add(new Term(mode)) ;
+                }
+            }
+            return subjectiveModeSet ;
+        } else {
+            return null ;
+        }
+    }
+        private LinkedHashSet<Term> subjectiveModeSet = null;
+    
+    /**
+     * 主観的距離計算ルールの取得。
+     * @param subjectiveMode 主観モード。
+     * @return ルールを返す。
+     */
+    public Term getSubjectiveMapRule(Term subjectiveMode) {
+        return getSubjectiveMapRule(subjectiveMode.toString()) ;
+    }
+    
+    /**
+     * 主観的距離計算ルールの取得。
+     * @param subjectiveMode 主観モード。
+     * @return ルールを返す。
+     */
+    public Term getSubjectiveMapRule(String subjectiveMode) {
+        if(hasSubjectiveMapRules()) {
+            return subjectiveMapRules.getArgTerm(subjectiveMode) ;
+        } else {
+            return null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
      * 経路探索
      * @return 探索成功した結果。すでにノードには情報は格納されている。
      */
@@ -674,7 +748,7 @@ public class NetworkMap extends DefaultTreeModel {
             Dijkstra.calc(subjectiveMode,
                           goalTag,
                           goals,
-                          Dijkstra.DefaultPathChooser) ;
+                          this) ;
 
         synchronized(getNodes()) {
             validRouteKeys.put(goalTag, true);
@@ -691,17 +765,39 @@ public class NetworkMap extends DefaultTreeModel {
      * synchronized された経路探索
      * @return 探索成功かどうか。goal_tag が探索済みでも true を返す。
      */
-    public boolean calcGoalPathWithSync(Term subjectiveMode,
-                                        String goalTag) {
+    public boolean calcGoalPathAllWithSync(String goalTag) {
         synchronized(validRouteKeys) {
             if(isValidRouteKey(goalTag)) {
                 return true ;
             } else {
-                return (null != calcGoalPath(subjectiveMode, goalTag)) ;
+                return calcGoalPathAll(goalTag) ;
             }
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * 経路探索
+     * @return 探索成功した結果。すでにノードには情報は格納されている。
+     */
+    public boolean calcGoalPathAll(String goalTag) {
+        boolean isSuccess = true ;
+
+        Dijkstra.Result result =
+            calcGoalPath(NavigationHint.DefaultSubjectiveMode, goalTag) ;
+        isSuccess = (isSuccess && (result != null)) ;
+
+        if(hasSubjectiveMapRules()) {
+            /* [2016.01.31 I.Noda] ここは並列化したほうが良いかもしれない。 */
+            for(Term subjectiveMode : getSubjectiveModeSet()) {
+                result = calcGoalPath(subjectiveMode, goalTag) ;
+                isSuccess = (isSuccess && (result != null)) ;
+            }
+        }
+
+        return isSuccess ;
+    }
+    
     /**
      * 経路探索結果を JSON 形式でファイルに保存する.
      *

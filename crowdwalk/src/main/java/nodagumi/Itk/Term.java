@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -402,6 +403,29 @@ public class Term {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * arg のslot名集合の取得。
+     */
+    public Set<String> getArgSlotSet() {
+        if(isObject()) {
+            return getBody().keySet() ;
+        } else {
+            return null ;
+        }
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * arg 集合の取得。
+     */
+    public Set<Map.Entry<String,Object>> getArgSet() {
+        if(isObject()) {
+            return getBody().entrySet() ;
+        } else {
+            return null ;
+        }
+    }
 
     //------------------------------------------------------------
     /**
