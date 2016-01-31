@@ -552,6 +552,14 @@ public class CrowdWalkPropertiesHandler {
         return isAllAgentSpeedZeroBreak;
     }
 
+    /**
+     * 経路探索結果を読み込むか?
+     */
+    protected Term subjectiveMapRules = null ;
+    public Term getSubjectiveMapRules() {
+        return subjectiveMapRules ;
+    }
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -656,8 +664,10 @@ public class CrowdWalkPropertiesHandler {
                     Itk.logError_("use default order (rear_first)") ;
                 }
             }
-            // [2016.01.30 I.Noda] subjectiveMode check
-            Itk.dbgVal("subjectiveRule", getTerm("subjective_map_rules",null)) ;
+
+            // [2016.01.30 I.Noda] subjectiveRule check
+            subjectiveMapRules = getTerm("subjective_map_rules",null) ;
+
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;
             ioe.printStackTrace();
@@ -800,7 +810,7 @@ public class CrowdWalkPropertiesHandler {
     /**
      * get Term property
      */
-    public Term getTerm(String key, Term defaultValue) throws Exception {
+    public Term getTerm(String key, Term defaultValue) {
         if(propTerm != null) {
             if(propTerm.hasArg(key)) {
                 return propTerm.getArgTerm(key) ;
@@ -808,7 +818,7 @@ public class CrowdWalkPropertiesHandler {
                 return defaultValue ;
             }
         } else {
-            throw new Exception("propTerm が設定されていません。") ;
+            return null ;
         }
     }
 

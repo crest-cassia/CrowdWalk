@@ -25,17 +25,33 @@ import nodagumi.Itk.*;
  * GUI/CUI 共通の部分を記述する。
  */
 public abstract class BasicSimulationLauncher {
+    /*****/
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 属性を扱うハンドラ
      */
     protected CrowdWalkPropertiesHandler properties = null;
 
+    /*****/
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 読み込んだ属性情報のファイル名
+     */
+    private String propertiesFile = null;
+
+    /*****/
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 設定ファイルの取りまとめ。
      */
     protected SetupFileInfo setupFileInfo = new SetupFileInfo();
+
+    /*****/
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * コマンドラインのfallback
+     */
+    protected ArrayList<String> commandLineFallbacks = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -43,12 +59,14 @@ public abstract class BasicSimulationLauncher {
      */
     protected EvacuationSimulator simulator = null;
 
+    /*****/
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 地図データ。
      */
     protected NetworkMap networkMap;
 
+    /*****/
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 乱数生成器。
@@ -131,11 +149,13 @@ public abstract class BasicSimulationLauncher {
         return exitCount;
     }
 
+    /*****/
     /**
      * マップ取得
      */
     public NetworkMap getMap() { return networkMap; }
 
+    /*****/
     /**
      * マップ取得
      */
@@ -159,6 +179,7 @@ public abstract class BasicSimulationLauncher {
     //------------------------------------------------------------
     // Pathへのアクセスメソッド
     //------------------------------------------------------------
+    /*****/
     /**
      *
      */
@@ -166,6 +187,7 @@ public abstract class BasicSimulationLauncher {
         setupFileInfo.setNetworkMapFile(_file) ;
     }
 
+    /*****/
     /**
      *
      */
@@ -173,6 +195,7 @@ public abstract class BasicSimulationLauncher {
         return setupFileInfo.getNetworkMapFile() ;
     }
 
+    /*****/
     /**
      *
      */
@@ -180,6 +203,7 @@ public abstract class BasicSimulationLauncher {
         setupFileInfo.setPollutionFile(_pollutionFile);
     }
 
+    /*****/
     /**
      *
      */
@@ -187,6 +211,7 @@ public abstract class BasicSimulationLauncher {
         return setupFileInfo.getPollutionFile();
     }
 
+    /*****/
     /**
      *
      */
@@ -194,6 +219,7 @@ public abstract class BasicSimulationLauncher {
         setupFileInfo.setGenerationFile(_generationFile);
     }
 
+    /*****/
     /**
      *
      */
@@ -201,6 +227,7 @@ public abstract class BasicSimulationLauncher {
         return setupFileInfo.getGenerationFile();
     }
 
+    /*****/
     /**
      *
      */
@@ -208,6 +235,7 @@ public abstract class BasicSimulationLauncher {
         setupFileInfo.setScenarioFile(_scenarioFile);
     }
 
+    /*****/
     /**
      *
      */
@@ -215,6 +243,7 @@ public abstract class BasicSimulationLauncher {
         return setupFileInfo.getScenarioFile() ;
     }
 
+    /*****/
     /**
      *
      */
@@ -224,6 +253,7 @@ public abstract class BasicSimulationLauncher {
         setupFileInfo.scanFallbackFile(commandLineFallbacks, true) ;
     }
 
+    /*****/
     /**
      *
      */
@@ -231,6 +261,7 @@ public abstract class BasicSimulationLauncher {
         return setupFileInfo.getFallbackFile() ;
     }
 
+    /*****/
     /**
      * プロパティへの橋渡し。
      */
@@ -238,6 +269,7 @@ public abstract class BasicSimulationLauncher {
         return properties;
     }
 
+    /*****/
     //------------------------------------------------------------
     /**
      * 地図の読み込み
@@ -265,13 +297,16 @@ public abstract class BasicSimulationLauncher {
         return network_map;
     }
 
+    /*****//*微妙に違う*/
     //------------------------------------------------------------
     /**
      * ファイルからプロパティの読み込み。
      */
     public void setPropertiesFromFile(String _propertiesFile,
-                                      ArrayList<String> commandLineFallbacks) {
+                                      ArrayList<String> _commandLineFallbacks) {
         properties = new CrowdWalkPropertiesHandler(_propertiesFile);
+        propertiesFile = _propertiesFile;
+        commandLineFallbacks = _commandLineFallbacks;
 
         // random
         random = new Random(properties.getRandseed()) ;

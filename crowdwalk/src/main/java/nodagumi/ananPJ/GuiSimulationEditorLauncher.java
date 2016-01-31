@@ -85,31 +85,37 @@ public class GuiSimulationEditorLauncher
      */
     private Settings settings;
 
+    /*****/
     /**
      * 属性を扱うハンドラ
      */
     private CrowdWalkPropertiesHandler properties = null;
 
+    /*****/
     /**
      * 読み込んだ属性情報のファイル名
      */
     private String propertiesFile = null;
 
+    /*****/
     /**
      * 乱数生成器。
      */
     private Random random = null;
 
+    /*****/
     /**
      * 設定ファイルの取りまとめ。
      */
     private SetupFileInfo setupFileInfo = new SetupFileInfo();
 
+    /*****/
     /**
      * コマンドラインで指定された fallback 設定
      */
     private ArrayList<String> commandLineFallbacks = null;
 
+    /*****/
     /**
      * 地図データ。
      */
@@ -511,6 +517,7 @@ public class GuiSimulationEditorLauncher
         return true;
     }
 
+    /*****/
     private NetworkMap readMapWithName(String file_name)
             throws IOException {
         FileInputStream fis = new FileInputStream(file_name);
@@ -529,6 +536,7 @@ public class GuiSimulationEditorLauncher
         if (false == network_map.fromDOM(doc))
             return null;
         Itk.logInfo("Load Map File", file_name) ;
+        setupFileInfo.setNetworkMapFile(file_name);
         return network_map;
     }
 
@@ -829,16 +837,19 @@ public class GuiSimulationEditorLauncher
         }
     }
 
+    /*****/
     /**
      * マップ取得
      */
     public NetworkMap getMap() { return networkMap; }
 
+    /*****/
     public SetupFileInfo getSetupFileInfo() { return setupFileInfo; }
 
     //------------------------------------------------------------
     // Pathへのアクセスメソッド
     //------------------------------------------------------------
+    /*****//*override*/
     /**
      *
      */
@@ -855,6 +866,7 @@ public class GuiSimulationEditorLauncher
         updateRunButton();
     }
 
+    /*****/
     /**
      *
      */
@@ -862,6 +874,7 @@ public class GuiSimulationEditorLauncher
         return setupFileInfo.getNetworkMapFile() ;
     }
 
+    /*****//*override*/
     /**
      *
      */
@@ -877,6 +890,7 @@ public class GuiSimulationEditorLauncher
         }
     }
 
+    /*****/
     /**
      *
      */
@@ -884,6 +898,7 @@ public class GuiSimulationEditorLauncher
         return setupFileInfo.getPollutionFile();
     }
 
+    /*****//*override*/
     /**
      *
      */
@@ -900,6 +915,7 @@ public class GuiSimulationEditorLauncher
         updateRunButton();
     }
 
+    /*****/
     /**
      *
      */
@@ -907,6 +923,7 @@ public class GuiSimulationEditorLauncher
         return setupFileInfo.getGenerationFile();
     }
 
+    /*****//*override*/
     /**
      *
      */
@@ -923,6 +940,7 @@ public class GuiSimulationEditorLauncher
         updateRunButton();
     }
 
+    /*****/
     /**
      *
      */
@@ -930,6 +948,7 @@ public class GuiSimulationEditorLauncher
         return setupFileInfo.getScenarioFile() ;
     }
 
+    /*****//*override*/
     /**
      *
      */
@@ -947,6 +966,7 @@ public class GuiSimulationEditorLauncher
         }
     }
 
+    /*****/
     /**
      *
      */
@@ -954,6 +974,7 @@ public class GuiSimulationEditorLauncher
         return setupFileInfo.getFallbackFile() ;
     }
 
+    /*****/
     /**
      * プロパティへの橋渡し。
      */
@@ -961,6 +982,7 @@ public class GuiSimulationEditorLauncher
         return properties;
     }
 
+    /*****//*微妙に違う*/
     //------------------------------------------------------------
     /**
      * ファイルからプロパティの読み込み。
