@@ -45,7 +45,7 @@ import nodagumi.Itk.*;
  *    "widthUnit_SameLane" : __double__, // 同方向流の隣レーンの間隔
  *    "widthUnit_OtehrLane" : __double__, // 対向流のレーンまでの距離
  *    "insensitiveDistanceInCounterFlow" : __double__, // 対向流の影響範囲
- *    "subjectiveMode" : __string__ // マップの主観的距離の主観モード
+ *    "mentalMode" : __string__ // マップの主観的距離の主観モード
  * }
  * </pre>
  */
@@ -284,9 +284,9 @@ public class WalkAgent extends AgentBase {
 	 * 主観モード。
 	 * 地図の探索の際の、知識や選好性を表すのに用いる。
 	 */
-	public Term subjectiveMode = Fallback_SubjectiveMode ;
-    protected static Term Fallback_SubjectiveMode =
-        NavigationHint.DefaultSubjectiveMode ;
+	public Term mentalMode = Fallback_MentalMode ;
+    protected static Term Fallback_MentalMode =
+        NavigationHint.DefaultMentalMode ;
 
 	//############################################################
 	/**
@@ -331,8 +331,8 @@ public class WalkAgent extends AgentBase {
         insensitiveDistanceInCounterFlow =
             getDoubleFromConfig("insensitiveDistanceInCounterFlow",
                                 insensitiveDistanceInCounterFlow) ;
-        subjectiveMode =
-            getTermFromConfig("subjectiveMode", subjectiveMode) ;
+        mentalMode =
+            getTermFromConfig("mentalMode", mentalMode) ;
     } ;
 
     //------------------------------------------------------------
@@ -1219,7 +1219,7 @@ public class WalkAgent extends AgentBase {
                 Term subgoal = nakedTargetFromRoutePlan(workingRoutePlan) ;
                 if (node.hasTag(subgoal)) {
                     workingRoutePlan.shift() ;
-                } else if (node.getHint(subjectiveMode, subgoal) != null) {
+                } else if (node.getHint(mentalMode, subgoal) != null) {
                     return subgoal;
                 } else {
                     Itk.logWarn("no sub-goal hint for " + subgoal);
@@ -1242,7 +1242,7 @@ public class WalkAgent extends AgentBase {
         /* [2015.04.14 I.Noda]
          * もし新しい target なら、経路探査する。
          * [2016.01.31 I.Noda]
-         * 本来なら、subjectiveMode ごとに探査すべきかもしれない。
+         * 本来なら、mentalMode ごとに探査すべきかもしれない。
          * そのためには、isCheckedRouteKey の拡張が必要。
          */
         String targetTag = _target.getString() ;
@@ -1252,8 +1252,8 @@ public class WalkAgent extends AgentBase {
         }
 
         MapNode other = _link.getOther(_node);
-        double cost = other.getDistance(subjectiveMode, _target) ;
-        cost += _link.getSubjectiveLength(subjectiveMode, _node);
+        double cost = other.getDistance(mentalMode, _target) ;
+        cost += _link.getMentalLength(mentalMode, _node);
         return cost ;
     }
 

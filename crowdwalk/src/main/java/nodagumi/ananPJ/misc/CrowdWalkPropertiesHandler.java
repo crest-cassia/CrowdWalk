@@ -428,7 +428,7 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>subjective_map_rules</h4>
+ *     <h4>mental_map_rules</h4>
  *     <pre>   * 探索において、各リンクの主観的距離の変更ルールを記述。
  *  設定値： ルールを表す JSON 形式の式。
  *  デフォルト値： null
@@ -555,9 +555,9 @@ public class CrowdWalkPropertiesHandler {
     /**
      * 経路探索結果を読み込むか?
      */
-    protected Term subjectiveMapRules = null ;
-    public Term getSubjectiveMapRules() {
-        return subjectiveMapRules ;
+    protected Term mentalMapRules = null ;
+    public Term getMentalMapRules() {
+        return mentalMapRules ;
     }
 
     //------------------------------------------------------------
@@ -665,8 +665,8 @@ public class CrowdWalkPropertiesHandler {
                 }
             }
 
-            // [2016.01.30 I.Noda] subjectiveRule check
-            subjectiveMapRules = getTerm("subjective_map_rules",null) ;
+            // [2016.01.30 I.Noda] mentalRule check
+            mentalMapRules = getTerm("mental_map_rules",null) ;
 
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;

@@ -608,7 +608,7 @@ public class EvacuationSimulator {
             }
         }
         /* 主観的距離計さんルールの設定 */
-        networkMap.setSubjectiveMapRules(properties.getSubjectiveMapRules()) ;
+        networkMap.setMentalMapRules(properties.getMentalMapRules()) ;
     }
 
     //------------------------------------------------------------
@@ -726,7 +726,7 @@ public class EvacuationSimulator {
             int nodeCount = 0 ;
             int linkCount = 0 ;
             for (MapNode node : networkMap.getNodes()) {
-                if (node.getHint(NavigationHint.DefaultSubjectiveMode, goal)
+                if (node.getHint(NavigationHint.DefaultMentalMode, goal)
                     == null) {
                     nodeCount += 1 ;
                     for (MapLink link : node.getUsableLinkTable()) {

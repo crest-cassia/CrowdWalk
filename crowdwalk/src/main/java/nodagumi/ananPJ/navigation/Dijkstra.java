@@ -53,38 +53,38 @@ public class Dijkstra {
     /**
      * 主観的距離計算機を取得。
      */
-    static public PathChooser getPathChooser(Term subjectiveMode) {
-        return getPathChooser((subjectiveMode == null ?
+    static public PathChooser getPathChooser(Term mentalMode) {
+        return getPathChooser((mentalMode == null ?
                                (String)null :
-                               subjectiveMode.getString())) ;
+                               mentalMode.getString())) ;
     }
     /** */
-    static public PathChooser getPathChooser(String subjectiveMode) {
-        if(subjectiveMode == null) {
+    static public PathChooser getPathChooser(String mentalMode) {
+        if(mentalMode == null) {
             return DefaultPathChooser ;
         } else {
-            return pathChooserTable.get(subjectiveMode) ;
+            return pathChooserTable.get(mentalMode) ;
         }
     }
         
     /**
      * 主観的距離計算機を新規登録。
      */
-    static public PathChooser newPathChooser(Term subjectiveMode,
+    static public PathChooser newPathChooser(Term mentalMode,
                                              NetworkMap networkMap) {
         PathChooser chooser =
-            new PathChooser(subjectiveMode,
-                            networkMap.getSubjectiveMapRule(subjectiveMode)) ;
-        pathChooserTable.put(subjectiveMode.getString(), chooser) ;
+            new PathChooser(mentalMode,
+                            networkMap.getMentalMapRule(mentalMode)) ;
+        pathChooserTable.put(mentalMode.getString(), chooser) ;
 
         return chooser ;
     }
     /** */
-    static public PathChooser newPathChooser(String subjectiveMode,
+    static public PathChooser newPathChooser(String mentalMode,
                                              NetworkMap networkMap) {
-        return newPathChooser((subjectiveMode == null ?
+        return newPathChooser((mentalMode == null ?
                                (Term)null :
-                               new Term(subjectiveMode)),
+                               new Term(mentalMode)),
                               networkMap) ;
     }
 
@@ -94,23 +94,23 @@ public class Dijkstra {
      * 探索メインルーチン。
      * 上記の calc は、無駄が多いと思われる。何度も同じノードを展開している。
      * 下記はそれを避ける。
-     * @param subjectiveMode 主観的モード
+     * @param mentalMode 主観的モード
      * @param goalTag 探索するゴールのタグ。
      * @param subgoals 目標とするゴール集合。
      * @param networkMap 地図。
      * @return 探索結果。Resule class のインスタンス。
      */
-    static public Result calc(Term subjectiveMode,
+    static public Result calc(Term mentalMode,
                               String goalTag,
                               MapNodeTable subgoals,
                               NetworkMap networkMap) {
         //Itk.timerStart("calc") ;
 
         PathChooser chooser = Dijkstra.DefaultPathChooser ;
-        if(subjectiveMode != null) {
-            chooser = getPathChooser(subjectiveMode) ;
+        if(mentalMode != null) {
+            chooser = getPathChooser(mentalMode) ;
             if(chooser == null) {
-                chooser = newPathChooser(subjectiveMode, networkMap) ;
+                chooser = newPathChooser(mentalMode, networkMap) ;
             }
         }
             
@@ -122,7 +122,7 @@ public class Dijkstra {
         for (MapNode subgoal : subgoals) {
             double cost = chooser.calcGoalNodeCost(subgoal);
             NavigationHint hint =
-                new NavigationHint(subjectiveMode,
+                new NavigationHint(mentalMode,
                                    goalTag, subgoal, null, null, cost) ;
             frontier.put(subgoal, hint) ;
             result.put(subgoal, hint) ;
@@ -145,7 +145,7 @@ public class Dijkstra {
                         result.get(frontierNode).distance
                         + chooser.calcLinkCost(preLink, preNode) ;
                     if (dist < bestHint.distance) {
-                        bestHint.set(subjectiveMode, goalTag,
+                        bestHint.set(mentalMode, goalTag,
                                      preNode, preLink, frontierNode, dist) ;
                     }
                 }
@@ -167,7 +167,7 @@ public class Dijkstra {
             result.put(bestHint.fromNode, bestHint) ;
         }
 
-        //Itk.logWarn("Dijkstra.calc() for ", subjectiveMode, ":", goalTag) ;
+        //Itk.logWarn("Dijkstra.calc() for ", mentalMode, ":", goalTag) ;
         //Itk.timerShowLap("calc") ;
 
         return result ;

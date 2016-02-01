@@ -203,11 +203,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * 主観的距離のテーブル。
      * ルールによって可変。
      */
-    protected HashMap<String, Double> subjectiveLengthTable ;
+    protected HashMap<String, Double> mentalLengthTable ;
     /**
      * まだ定義されていない主観的距離の値
      */
-    final static double UndefinedSubjectiveLength = Double.NEGATIVE_INFINITY ;
+    final static double UndefinedMentalLength = Double.NEGATIVE_INFINITY ;
 
     /* place holder for values used in simulation */
     public ArrayList<AgentBase> agents;
@@ -285,7 +285,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
         selected = false;
 
-        subjectiveLengthTable = new HashMap<String, Double>() ;
+        mentalLengthTable = new HashMap<String, Double>() ;
     }
     /**
      */
@@ -320,40 +320,40 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     //------------------------------------------------------------
     /**
      * 主観的距離を持っているかのチェック。
-     * @param subjectiveMode 主観距離の指定タグ。
+     * @param mentalMode 主観距離の指定タグ。
      * @param fromNode リンクに侵入するノード。
      *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
      * @return 距離が定義されていればtrue。
      */
-    public boolean hasSubjectiveLength(Term subjectiveMode, MapNode fromNode) {
-        return subjectiveLengthTable.containsKey(subjectiveMode.getString()) ;
+    public boolean hasMentalLength(Term mentalMode, MapNode fromNode) {
+        return mentalLengthTable.containsKey(mentalMode.getString()) ;
     }
     
     //------------------------------------------------------------
     /**
      * 主観的距離の取得。
      * 指定された tag の距離が定義されていない時は、
-     * UndefinedSubjectiveLength を返す。
-     * @param subjectiveMode 主観距離の指定タグ。
-     *        subjectiveMode が null (NavigationHint.DefaultSubjectiveMode)
+     * UndefinedMentalLength を返す。
+     * @param mentalMode 主観距離の指定タグ。
+     *        mentalMode が null (NavigationHint.DefaultMentalMode)
      *        なら、もとの length。
      * @param fromNode リンクに侵入するノード。
      *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
      * @return 距離が定義されていればその値。定義されていなければ、
      */
-    public double getSubjectiveLength(Term subjectiveMode, MapNode fromNode) {
-        if(subjectiveMode == NavigationHint.DefaultSubjectiveMode) {
+    public double getMentalLength(Term mentalMode, MapNode fromNode) {
+        if(mentalMode == NavigationHint.DefaultMentalMode) {
             return length ;
-        } else if(hasSubjectiveLength(subjectiveMode, fromNode)) {
-            return subjectiveLengthTable.get(subjectiveMode.getString()) ;
+        } else if(hasMentalLength(mentalMode, fromNode)) {
+            return mentalLengthTable.get(mentalMode.getString()) ;
         } else {
-            Itk.logWarn("undefined subjective length",
+            Itk.logWarn("undefined mental length",
                         "[link ID=", this.ID, "] ",
                         "calc on-the-fly.") ;
-            PathChooser chooser = Dijkstra.getPathChooser(subjectiveMode) ;
+            PathChooser chooser = Dijkstra.getPathChooser(mentalMode) ;
             if(chooser == null) {
-                Itk.logError("unknown subjectiveMode. ",
-                             "mode=", subjectiveMode) ;
+                Itk.logError("unknown mentalMode. ",
+                             "mode=", mentalMode) ;
                 System.exit(1) ;
             } 
             return chooser.calcLinkCost(this, fromNode) ;
@@ -368,13 +368,13 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
      * @param _length 主観距離。
      */
-    public void setSubjectiveLength(Term subjectiveMode,
+    public void setMentalLength(Term mentalMode,
                                     MapNode fromNode,
                                     double _length) {
-        if(subjectiveMode == NavigationHint.DefaultSubjectiveMode) {
+        if(mentalMode == NavigationHint.DefaultMentalMode) {
             setLength(_length) ;
         } else {
-            subjectiveLengthTable.put(subjectiveMode.getString(), _length) ;
+            mentalLengthTable.put(mentalMode.getString(), _length) ;
         }
     }
     

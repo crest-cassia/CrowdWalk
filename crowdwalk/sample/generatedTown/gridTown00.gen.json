@@ -30,7 +30,7 @@
   "plannedRoute":["node_02_09","node_04_00","node_06_09","node_08_00"]},
  {"rule":"EACH",
   "agentType":{"className":"RationalAgent",
-	       "subjectiveMode":"major",
+	       "mentalMode":"major",
                "weight": -0.0, 
 	       "trail":0.0,
 	       "margin":0.0,

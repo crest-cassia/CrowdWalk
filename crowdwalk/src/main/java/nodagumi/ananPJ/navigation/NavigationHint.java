@@ -17,11 +17,11 @@ import nodagumi.Itk.Term;
 public class NavigationHint implements Comparable<NavigationHint> {
     //::::::::::::::::::::::::::::::::::::::::::::::::::
     /** デフォルトの主観モード */
-    static public final Term DefaultSubjectiveMode = null ;
+    static public final Term DefaultMentalMode = null ;
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** 主観モード */
-    public Term subjectiveMode ;
+    public Term mentalMode ;
     /** 最終目標ゴールタグ */
     public String goalTag ;
     /** 起点ノード */
@@ -37,10 +37,10 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /**
      * constructor.
      */
-    public NavigationHint(Term _subjectiveMode, String _goalTag,
+    public NavigationHint(Term _mentalMode, String _goalTag,
                           MapNode _fromNode, MapLink _viaLink, MapNode _toNode,
                           double _distance) {
-        set(_subjectiveMode, _goalTag,
+        set(_mentalMode, _goalTag,
             _fromNode, _viaLink, _toNode, _distance) ;
     }
     
@@ -48,10 +48,10 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /**
      * 値設定
      */
-    public NavigationHint set(Term _subjectiveMode, String _goalTag,
+    public NavigationHint set(Term _mentalMode, String _goalTag,
                               MapNode _fromNode, MapLink _viaLink,
                               MapNode _toNode, double _distance) {
-        subjectiveMode = _subjectiveMode ;
+        mentalMode = _mentalMode ;
         goalTag = _goalTag ;
         fromNode = _fromNode ;
         toNode = _toNode ;

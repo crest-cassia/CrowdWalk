@@ -22,7 +22,7 @@ import nodagumi.Itk.Term;
  * 変更ルールの記述は、property.json の中で以下のように行う。
  * <pre>
  *   { ...
- *     "subjective_map_rules" : { "modeName1" : __Rule__,
+ *     "mental_map_rules" : { "modeName1" : __Rule__,
  *                                "modeName2" : __Rule__,
  *                                ... },
  *   ...}
@@ -32,7 +32,7 @@ import nodagumi.Itk.Term;
 public class PathChooser {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** 主観モードのタグ。デフォルトは null */
-    Term subjectiveMode ;
+    Term mentalMode ;
     /** ルールオブジェクト (これから拡張するため)*/
     Term modifyRule ;
 
@@ -44,7 +44,7 @@ public class PathChooser {
      * constractor.
      */
     public PathChooser() {
-        subjectiveMode = null ;
+        mentalMode = null ;
         modifyRule = null ;
         engine = null ;
     }
@@ -52,15 +52,15 @@ public class PathChooser {
     /**
      * constractor.
      */
-    public PathChooser(String _subjectiveMode, Term _modifyRule) {
-        this(new Term(_subjectiveMode), _modifyRule) ;
+    public PathChooser(String _mentalMode, Term _modifyRule) {
+        this(new Term(_mentalMode), _modifyRule) ;
     }
     
     /**
      * constractor.
      */
-    public PathChooser(Term _subjectiveMode, Term _modifyRule) {
-        subjectiveMode = _subjectiveMode ;
+    public PathChooser(Term _mentalMode, Term _modifyRule) {
+        mentalMode = _mentalMode ;
         modifyRule = _modifyRule ;
         engine = new NaviEngine() ;
     }
@@ -72,15 +72,15 @@ public class PathChooser {
     public double calcLinkCost(MapLink link, MapNode fromNode) {
         if(!link.isAvailableFrom(fromNode)) {
             return Double.POSITIVE_INFINITY ;
-        } else if(subjectiveMode == null) {
+        } else if(mentalMode == null) {
             return 1.0 * link.getLength() ;
         } else {
             synchronized(link){
-                if(link.hasSubjectiveLength(subjectiveMode, fromNode)) {
-                    return link.getSubjectiveLength(subjectiveMode, fromNode) ;
+                if(link.hasMentalLength(mentalMode, fromNode)) {
+                    return link.getMentalLength(mentalMode, fromNode) ;
                 } else {
                     double cost = engine.calc(link, fromNode, modifyRule) ;
-                    link.setSubjectiveLength(subjectiveMode, fromNode, cost) ;
+                    link.setMentalLength(mentalMode, fromNode, cost) ;
                     return cost ;
                 }
             }

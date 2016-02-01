@@ -1235,7 +1235,7 @@ public class SimulationFrame2D extends JFrame
         buff.append(" height: ").append(node.getHeight()).append("\n");
         buff.append(" tags: ").append(node.getTagString()).append("\n");
         HashMap<String, NavigationHint> hints
-            = node.getHints(NavigationHint.DefaultSubjectiveMode) ;
+            = node.getHints(NavigationHint.DefaultMentalMode) ;
         if (! hints.isEmpty()) {
             buff.append(" ---- Navigation hints ----\n");
             ArrayList<String> hintKeys = new ArrayList(hints.keySet());

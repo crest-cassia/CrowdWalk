@@ -104,7 +104,7 @@ public class MapNode extends OBMapPart {
      * ゴールタグ毎の最短経路情報。（主観的距離）
      */
     private HashMap<String, HashMap<String, NavigationHint>>
-        subjectiveHintsTable;
+        mentalHintsTable;
 
     public double getX() { return absolute_coordinates.getX(); }
     public double getY() { return absolute_coordinates.getY(); }
@@ -128,7 +128,7 @@ public class MapNode extends OBMapPart {
 
         selected = false;
         physicalHints = new HashMap<String, NavigationHint>();
-        subjectiveHintsTable =
+        mentalHintsTable =
             new HashMap<String, HashMap<String, NavigationHint>>() ;
         
         links = new MapLinkTable();
@@ -234,60 +234,60 @@ public class MapNode extends OBMapPart {
         return null;
     }
     
-    public void addNavigationHint(Term subjectiveMode,
+    public void addNavigationHint(Term mentalMode,
                                   String goalTag,
                                   NavigationHint hint) {
-        getHints(subjectiveMode).put(goalTag, hint);
+        getHints(mentalMode).put(goalTag, hint);
     }
     
-    public void clearHints(Term subjectiveMode) {
-        getHints(subjectiveMode).clear();
+    public void clearHints(Term mentalMode) {
+        getHints(mentalMode).clear();
     }
     
-    public NavigationHint getHint(Term subjectiveMode, Term goalTag) {
-        return getHint(subjectiveMode, goalTag.getString()) ;
+    public NavigationHint getHint(Term mentalMode, Term goalTag) {
+        return getHint(mentalMode, goalTag.getString()) ;
     }
 
-    public NavigationHint getHint(Term subjectiveMode, String goalTag) {
-        NavigationHint hint = getHints(subjectiveMode).get(goalTag);
+    public NavigationHint getHint(Term mentalMode, String goalTag) {
+        NavigationHint hint = getHints(mentalMode).get(goalTag);
         if (hint == null) {
             Itk.logWarn("No hint for goal=", goalTag,
-                        " in mode=", subjectiveMode, ".") ;
+                        " in mode=", mentalMode, ".") ;
         }
         return hint;
     }
 
-    public HashMap<String, NavigationHint> getHints(Term subjectiveMode) {
-        if(subjectiveMode == null) {
+    public HashMap<String, NavigationHint> getHints(Term mentalMode) {
+        if(mentalMode == null) {
             return getHints((String)null) ;
         } else {
-            return getHints(subjectiveMode.getString()) ;
+            return getHints(mentalMode.getString()) ;
         }
     }
 
-    public HashMap<String, NavigationHint> getHints(String subjectiveMode) {
-        if(subjectiveMode == null) {
+    public HashMap<String, NavigationHint> getHints(String mentalMode) {
+        if(mentalMode == null) {
             return physicalHints ;
         } else {
             HashMap<String, NavigationHint> hints =
-                subjectiveHintsTable.get(subjectiveMode) ;
+                mentalHintsTable.get(mentalMode) ;
             if(hints == null) {
                 hints = new HashMap<String, NavigationHint>() ;
-                subjectiveHintsTable.put(subjectiveMode, hints) ;
+                mentalHintsTable.put(mentalMode, hints) ;
             }
             return hints;
         }
     }
 
-    public MapLink getViaLink(Term subjectiveMode, String goalTag) {
-        NavigationHint hint = getHint(subjectiveMode, goalTag);
+    public MapLink getViaLink(Term mentalMode, String goalTag) {
+        NavigationHint hint = getHint(mentalMode, goalTag);
         return hint.viaLink;
     }
 
-    public double getDistance(Term subjectiveMode, Term target)
+    public double getDistance(Term mentalMode, Term target)
         throws TargetNotFoundException {
         String goalTag = target.getString() ;
-        NavigationHint hint = getHint(subjectiveMode, goalTag);
+        NavigationHint hint = getHint(mentalMode, goalTag);
         if (hint == null) {
             if(hasTag(goalTag)) { // 自分自身がターゲットの場合
                 // do nothing

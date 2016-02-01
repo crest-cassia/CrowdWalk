@@ -122,7 +122,7 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * 主観的距離計算用のルール集合。
      */
-    protected Term subjectiveMapRules = null;
+    protected Term mentalMapRules = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -657,64 +657,64 @@ public class NetworkMap extends DefaultTreeModel {
     //------------------------------------------------------------
     /**
      * 主観的距離計算ルールのセット
-     * @param _subjectiveMapRules ルール
+     * @param _mentalMapRules ルール
      */
-    public void setSubjectiveMapRules(Term _subjectiveMapRules) {
-        subjectiveMapRules = _subjectiveMapRules ;
+    public void setMentalMapRules(Term _mentalMapRules) {
+        mentalMapRules = _mentalMapRules ;
     }
 
     /**
      * 主観的距離計算ルールの取得
      * @return ルール集合を返す。
      */
-    public Term getSubjectiveMapRules() {
-        return subjectiveMapRules ;
+    public Term getMentalMapRules() {
+        return mentalMapRules ;
     }
     
     /**
      * 主観的距離計算ルールを持っているかどうか。
      * @return ルール集合を持っていれば true
      */
-    public boolean hasSubjectiveMapRules() {
-        return subjectiveMapRules != null;
+    public boolean hasMentalMapRules() {
+        return mentalMapRules != null;
     }
 
     /**
      * 主観的モードのセットを返す。
      * @return モードのSetを返す。
      */
-    public Set<Term> getSubjectiveModeSet() {
-        if(hasSubjectiveMapRules()) {
-            if(subjectiveModeSet == null) {
-                subjectiveModeSet = new LinkedHashSet<Term>() ;
-                for(String mode : subjectiveMapRules.getArgSlotSet()) {
-                    subjectiveModeSet.add(new Term(mode)) ;
+    public Set<Term> getMentalModeSet() {
+        if(hasMentalMapRules()) {
+            if(mentalModeSet == null) {
+                mentalModeSet = new LinkedHashSet<Term>() ;
+                for(String mode : mentalMapRules.getArgSlotSet()) {
+                    mentalModeSet.add(new Term(mode)) ;
                 }
             }
-            return subjectiveModeSet ;
+            return mentalModeSet ;
         } else {
             return null ;
         }
     }
-        private LinkedHashSet<Term> subjectiveModeSet = null;
+        private LinkedHashSet<Term> mentalModeSet = null;
     
     /**
      * 主観的距離計算ルールの取得。
-     * @param subjectiveMode 主観モード。
+     * @param mentalMode 主観モード。
      * @return ルールを返す。
      */
-    public Term getSubjectiveMapRule(Term subjectiveMode) {
-        return getSubjectiveMapRule(subjectiveMode.toString()) ;
+    public Term getMentalMapRule(Term mentalMode) {
+        return getMentalMapRule(mentalMode.toString()) ;
     }
     
     /**
      * 主観的距離計算ルールの取得。
-     * @param subjectiveMode 主観モード。
+     * @param mentalMode 主観モード。
      * @return ルールを返す。
      */
-    public Term getSubjectiveMapRule(String subjectiveMode) {
-        if(hasSubjectiveMapRules()) {
-            return subjectiveMapRules.getArgTerm(subjectiveMode) ;
+    public Term getMentalMapRule(String mentalMode) {
+        if(hasMentalMapRules()) {
+            return mentalMapRules.getArgTerm(mentalMode) ;
         } else {
             return null ;
         }
@@ -725,7 +725,7 @@ public class NetworkMap extends DefaultTreeModel {
      * 経路探索
      * @return 探索成功した結果。すでにノードには情報は格納されている。
      */
-    public Dijkstra.Result calcGoalPath(Term subjectiveMode,
+    public Dijkstra.Result calcGoalPath(Term mentalMode,
                                         String goalTag) {
         MapNodeTable goals = new MapNodeTable();
         for (MapNode node : getNodes()) {
@@ -745,7 +745,7 @@ public class NetworkMap extends DefaultTreeModel {
         Itk.logInfo("Found Goal", goalTag) ;
 
         Dijkstra.Result result =
-            Dijkstra.calc(subjectiveMode,
+            Dijkstra.calc(mentalMode,
                           goalTag,
                           goals,
                           this) ;
@@ -754,7 +754,7 @@ public class NetworkMap extends DefaultTreeModel {
             validRouteKeys.put(goalTag, true);
             for (MapNode node : result.keySet()) {
                 NavigationHint hint = result.get(node);
-                node.addNavigationHint(subjectiveMode, goalTag, hint) ;
+                node.addNavigationHint(mentalMode, goalTag, hint) ;
             }
         }
         return result ;
@@ -784,13 +784,13 @@ public class NetworkMap extends DefaultTreeModel {
         boolean isSuccess = true ;
 
         Dijkstra.Result result =
-            calcGoalPath(NavigationHint.DefaultSubjectiveMode, goalTag) ;
+            calcGoalPath(NavigationHint.DefaultMentalMode, goalTag) ;
         isSuccess = (isSuccess && (result != null)) ;
 
-        if(hasSubjectiveMapRules()) {
+        if(hasMentalMapRules()) {
             /* [2016.01.31 I.Noda] ここは並列化したほうが良いかもしれない。 */
-            for(Term subjectiveMode : getSubjectiveModeSet()) {
-                result = calcGoalPath(subjectiveMode, goalTag) ;
+            for(Term mentalMode : getMentalModeSet()) {
+                result = calcGoalPath(mentalMode, goalTag) ;
                 isSuccess = (isSuccess && (result != null)) ;
             }
         }
@@ -854,11 +854,11 @@ public class NetworkMap extends DefaultTreeModel {
             nodeHint.put("ID", node.ID);
             LinkedHashMap hints = new LinkedHashMap();
             for (String goal_tag :
-                     node.getHints(NavigationHint.DefaultSubjectiveMode)
+                     node.getHints(NavigationHint.DefaultMentalMode)
                      .keySet()) {
                 LinkedHashMap navigationHint = new LinkedHashMap();
                 NavigationHint hint =
-                    node.getHints(NavigationHint.DefaultSubjectiveMode)
+                    node.getHints(NavigationHint.DefaultMentalMode)
                     .get(goal_tag);
                 if (hint.toNode == null) {
                     navigationHint.put("exit", null);
@@ -931,7 +931,7 @@ public class NetworkMap extends DefaultTreeModel {
                 Itk.logError("Load Routes", "Unknown node ID: " + id);
                 System.exit(1);
             }
-            node.clearHints(NavigationHint.DefaultSubjectiveMode);
+            node.clearHints(NavigationHint.DefaultMentalMode);
             HashMap<String, Object> hints = (HashMap<String, Object>)nodeHint.get("hints");
             for (Map.Entry<String, Object> entry : hints.entrySet()) {
                 String goal_tag = entry.getKey();
@@ -944,7 +944,7 @@ public class NetworkMap extends DefaultTreeModel {
                     wayLink = links.get(hint.get("way"));
                     distance = ((java.math.BigDecimal)hint.get("distance")).doubleValue();
                 }
-                node.addNavigationHint(NavigationHint.DefaultSubjectiveMode,
+                node.addNavigationHint(NavigationHint.DefaultMentalMode,
                                        goal_tag,
                                        new NavigationHint(null, null, null,
                                                           wayLink, exitNode,
