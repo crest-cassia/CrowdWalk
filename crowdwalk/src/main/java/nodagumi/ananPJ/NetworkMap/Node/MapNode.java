@@ -94,8 +94,17 @@ public class MapNode extends OBMapPart {
 
     private MapLinkTable links;
 
-    /* used in simulation */
-    private HashMap<String, NavigationHint> hints;
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ゴールタグ毎の最短経路情報。（物理的距離）
+     */
+    private HashMap<String, NavigationHint> physicalHints;
+
+    /**
+     * ゴールタグ毎の最短経路情報。（主観的距離）
+     */
+    private HashMap<String, HashMap<String, NavigationHint>>
+        subjectiveHintsTable;
 
     public double getX() { return absolute_coordinates.getX(); }
     public double getY() { return absolute_coordinates.getY(); }
@@ -118,7 +127,10 @@ public class MapNode extends OBMapPart {
         calc_local_coordinates();
 
         selected = false;
-        hints = new HashMap<String, NavigationHint>();
+        physicalHints = new HashMap<String, NavigationHint>();
+        subjectiveHintsTable =
+            new HashMap<String, HashMap<String, NavigationHint>>() ;
+        
         links = new MapLinkTable();
     }
 
@@ -246,10 +258,25 @@ public class MapNode extends OBMapPart {
     }
 
     public HashMap<String, NavigationHint> getHints(Term subjectiveMode) {
-        /* [2016.01.30 I.Noda] 
-         * 正しくは、subjectiveMode ごとに別の hints を返す必要がある。
-         */
-        return hints;
+        if(subjectiveMode == null) {
+            return getHints((String)null) ;
+        } else {
+            return getHints(subjectiveMode.getString()) ;
+        }
+    }
+
+    public HashMap<String, NavigationHint> getHints(String subjectiveMode) {
+        if(subjectiveMode == null) {
+            return physicalHints ;
+        } else {
+            HashMap<String, NavigationHint> hints =
+                subjectiveHintsTable.get(subjectiveMode) ;
+            if(hints == null) {
+                hints = new HashMap<String, NavigationHint>() ;
+                subjectiveHintsTable.put(subjectiveMode, hints) ;
+            }
+            return hints;
+        }
     }
 
     public MapLink getViaLink(Term subjectiveMode, String goalTag) {

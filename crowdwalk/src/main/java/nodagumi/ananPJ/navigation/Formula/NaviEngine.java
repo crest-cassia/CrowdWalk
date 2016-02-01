@@ -47,6 +47,7 @@ public class NaviEngine extends ThinkEngine {
      * コンストラクタ
      */
     public NaviEngine(){
+        setLexicon(NaviFormula.lexicon) ;
     }
 
     //------------------------------------------------------------

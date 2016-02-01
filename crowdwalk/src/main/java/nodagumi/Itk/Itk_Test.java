@@ -33,9 +33,35 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * static へのアクセス
+     */
+    static class Test_static_access0 {
+        public static String foo = "Test_static_access0.foo" ;
+        public String bar() {
+            return this.foo ;
+        }
+    }
+    static class Test_static_access1 extends Test_static_access0 {
+        public static String foo = "Test_static_access1.foo" ;
+    }
+    @Test
+    public void test_static_access() {
+        Test_static_access0 tsa0 = new Test_static_access0() ;
+        Test_static_access1 tsa1 = new Test_static_access1() ;
+        Test_static_access0 tsa2 = (Test_static_access0)tsa1 ;
+        Itk.dbgVal("tsa0.foo", tsa0.foo) ;
+        Itk.dbgVal("tsa1.foo", tsa1.foo) ;
+        Itk.dbgVal("tsa2.foo", tsa2.foo) ;
+        Itk.dbgVal("tsa0.bar()", tsa0.bar()) ;
+        Itk.dbgVal("tsa1.bar()", tsa1.bar()) ;
+        Itk.dbgVal("tsa2.bar()", tsa2.bar()) ;
+    }
+        
+    //------------------------------------------------------------
+    /**
      * String のハッシュと null
      */
-    @Test
+    //@Test
     public void test_permitNullAsString(){
         HashMap<String, Object> map = new HashMap<String, Object>() ;
         map.put("hoge",new Integer(2)) ;

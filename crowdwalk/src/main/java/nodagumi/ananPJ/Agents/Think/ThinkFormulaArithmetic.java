@@ -152,7 +152,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Term values = expr.getArgTerm("values") ;
 	    if(values.isArray()) {
 		for(int i = 0 ; i < values.getArraySize() ; i++) {
-		    Term val = engine.think(values.getNthTerm(i)) ;
+		    Term val = engine.think(values.getNthTerm(i), env) ;
 		    if(result == null) {
 			result = val.getBigDecimal() ;
 		    } else {
@@ -161,8 +161,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 		}
 	    }
 	} else if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left")) ;
-	    Term right = engine.think(expr.getArgTerm("right")) ;
+	    Term left = engine.think(expr.getArgTerm("left"), env) ;
+	    Term right = engine.think(expr.getArgTerm("right"), env) ;
 	    result = left.getBigDecimal().add(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -188,8 +188,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left")) ;
-	    Term right = engine.think(expr.getArgTerm("right")) ;
+	    Term left = engine.think(expr.getArgTerm("left"), env) ;
+	    Term right = engine.think(expr.getArgTerm("right"), env) ;
 	    result = left.getBigDecimal().subtract(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -222,7 +222,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Term values = expr.getArgTerm("values") ;
 	    if(values.isArray()) {
 		for(int i = 0 ; i < values.getArraySize() ; i++) {
-		    Term val = engine.think(values.getNthTerm(i)) ;
+		    Term val = engine.think(values.getNthTerm(i), env) ;
 		    if(result == null) {
 			result = val.getBigDecimal() ;
 		    } else {
@@ -231,8 +231,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 		}
 	    }
 	} else if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left")) ;
-	    Term right = engine.think(expr.getArgTerm("right")) ;
+	    Term left = engine.think(expr.getArgTerm("left"), env) ;
+	    Term right = engine.think(expr.getArgTerm("right"), env) ;
 	    result = left.getBigDecimal().multiply(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -258,8 +258,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left")) ;
-	    Term right = engine.think(expr.getArgTerm("right")) ;
+	    Term left = engine.think(expr.getArgTerm("left"), env) ;
+	    Term right = engine.think(expr.getArgTerm("right"), env) ;
 	    result = left.getBigDecimal().divide(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -284,8 +284,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left")) ;
-	    Term right = engine.think(expr.getArgTerm("right")) ;
+	    Term left = engine.think(expr.getArgTerm("left"), env) ;
+	    Term right = engine.think(expr.getArgTerm("right"), env) ;
 	    result = left.getBigDecimal().remainder(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -310,8 +310,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                            ThinkEngine engine, Object env) {
 	Term result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left")) ;
-	    Term right = engine.think(expr.getArgTerm("right")) ;
+	    Term left = engine.think(expr.getArgTerm("left"), env) ;
+	    Term right = engine.think(expr.getArgTerm("right"), env) ;
 	    if(left.equals(right)) {
 		result = Term_True ;
 	    } else {
@@ -413,8 +413,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     public int compareLeftRightValues(Term expr,
                                       ThinkEngine engine, Object env) {
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left")) ;
-	    Term right = engine.think(expr.getArgTerm("right")) ;
+	    Term left = engine.think(expr.getArgTerm("left"), env) ;
+	    Term right = engine.think(expr.getArgTerm("right"), env) ;
 	    if(left.isNumber() && right.isNumber()) {
 		return left.getBigDecimal().compareTo(right.getBigDecimal()) ;
 	    }

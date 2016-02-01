@@ -47,7 +47,47 @@ public class Dijkstra {
      */
     static public HashMap<String, PathChooser> pathChooserTable =
         new HashMap<String, PathChooser>() ;
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * 主観的距離計算機を取得。
+     */
+    static public PathChooser getPathChooser(Term subjectiveMode) {
+        return getPathChooser((subjectiveMode == null ?
+                               (String)null :
+                               subjectiveMode.getString())) ;
+    }
+    /** */
+    static public PathChooser getPathChooser(String subjectiveMode) {
+        if(subjectiveMode == null) {
+            return DefaultPathChooser ;
+        } else {
+            return pathChooserTable.get(subjectiveMode) ;
+        }
+    }
         
+    /**
+     * 主観的距離計算機を新規登録。
+     */
+    static public PathChooser newPathChooser(Term subjectiveMode,
+                                             NetworkMap networkMap) {
+        PathChooser chooser =
+            new PathChooser(subjectiveMode,
+                            networkMap.getSubjectiveMapRule(subjectiveMode)) ;
+        pathChooserTable.put(subjectiveMode.getString(), chooser) ;
+
+        return chooser ;
+    }
+    /** */
+    static public PathChooser newPathChooser(String subjectiveMode,
+                                             NetworkMap networkMap) {
+        return newPathChooser((subjectiveMode == null ?
+                               (Term)null :
+                               new Term(subjectiveMode)),
+                              networkMap) ;
+    }
+
     //============================================================
     //------------------------------------------------------------
     /**
@@ -64,19 +104,13 @@ public class Dijkstra {
                               String goalTag,
                               MapNodeTable subgoals,
                               NetworkMap networkMap) {
-        Itk.timerStart("calc") ;
+        //Itk.timerStart("calc") ;
 
         PathChooser chooser = Dijkstra.DefaultPathChooser ;
         if(subjectiveMode != null) {
-            synchronized(pathChooserTable) {
-                chooser = pathChooserTable.get(subjectiveMode.getString()) ;
-                if(chooser == null) {
-                    chooser =
-                        new PathChooser(subjectiveMode,
-                                        networkMap
-                                        .getSubjectiveMapRule(subjectiveMode)) ;
-                    pathChooserTable.put(subjectiveMode.getString(), chooser) ;
-                }
+            chooser = getPathChooser(subjectiveMode) ;
+            if(chooser == null) {
+                chooser = newPathChooser(subjectiveMode, networkMap) ;
             }
         }
             
@@ -133,8 +167,8 @@ public class Dijkstra {
             result.put(bestHint.fromNode, bestHint) ;
         }
 
-        Itk.logWarn("Dijkstra.calc() for ", subjectiveMode, ":", goalTag) ;
-        Itk.timerShowLap("calc") ;
+        //Itk.logWarn("Dijkstra.calc() for ", subjectiveMode, ":", goalTag) ;
+        //Itk.timerShowLap("calc") ;
 
         return result ;
     }

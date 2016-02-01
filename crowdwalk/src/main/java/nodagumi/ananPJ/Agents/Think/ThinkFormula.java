@@ -116,24 +116,6 @@ abstract public class ThinkFormula {
     }
 
     //============================================================
-    //------------------------------------------------------------
-    /**
-     * Formula を検索
-     */
-    static public ThinkFormula findFormula(String head) {
-	return (ThinkFormula)(lexicon.lookUp(head)) ;
-    }
-
-    //============================================================
-    //------------------------------------------------------------
-    /**
-     * Formula を検索
-     */
-    static public ThinkFormula findFormula(Term head) {
-	return (ThinkFormula)(lexicon.lookUp(head.getString())) ;
-    }
-
-    //============================================================
     // 特殊 Term
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**

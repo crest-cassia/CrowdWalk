@@ -137,7 +137,7 @@ public class ThinkFormulaMisc extends ThinkFormula {
         } else {
             String tag = expr.getArgString("tag") ;
             Term value = expr.getArgTerm("value") ;
-            Term result = ((value != null) ? engine.think(value) : null) ;
+            Term result = ((value != null) ? engine.think(value, env) : null) ;
 
             if(result == null) {
                 Itk.logInfo(engine.logTag(), tag) ;

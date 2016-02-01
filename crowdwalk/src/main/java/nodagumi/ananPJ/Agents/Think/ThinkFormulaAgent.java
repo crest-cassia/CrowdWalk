@@ -219,8 +219,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_setParam(String head, Term expr,
                               ThinkEngine engine, Object env) {
         String name = expr.getArgString("name") ;
-        Term value = engine.think(expr.getArgTerm("value")) ;
-        RationalAgent agent = (RationalAgent)engine.getAgent() ;
+        Term value = engine.think(expr.getArgTerm("value"), env) ;
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
         if(name.equals("emptySpeed")) {
             agent.setEmptySpeed(value.getDouble()) ;
             return value ;
@@ -243,7 +244,10 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_agentHasTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        if(engine.getAgent().hasTag(tag)) {
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        
+        if(agent.hasTag(tag)) {
             return Term_True ;
         } else {
             return Term_False ;
@@ -263,7 +267,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_placeHasTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        if(engine.getAgent().getCurrentLink().hasTag(tag)) {
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        if(agent.getCurrentLink().hasTag(tag)) {
             return Term_True ;
         } else {
             return Term_False ;
@@ -283,7 +289,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_addAgentTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        if(engine.getAgent().addTag(tag)) {
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        if(agent.addTag(tag)) {
             return Term_True ;
         } else {
             return Term_False ;
@@ -303,7 +311,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_addPlaceTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        if(engine.getAgent().getCurrentLink().addTag(tag)) {
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        if(agent.getCurrentLink().addTag(tag)) {
             return Term_True ;
         } else {
             return Term_False ;
@@ -323,7 +333,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_removeAgentTag(String head, Term expr,
                                     ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        engine.getAgent().removeTag(tag) ;
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        agent.removeTag(tag) ;
         return Term_True ;
     }
 
@@ -340,7 +352,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_removePlaceTag(String head, Term expr,
                                     ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        engine.getAgent().getCurrentLink().removeTag(tag) ;
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        agent.getCurrentLink().removeTag(tag) ;
         return Term_True ;
     }
 
@@ -360,7 +374,10 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_listenAlert(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
-        SimTime alertTime = engine.getAlertedMessageTable().get(message) ;
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        SimTime alertTime =
+            ((ThinkEngine)env).getAlertedMessageTable().get(message) ;
         if(alertTime != null) {
             return Term_True ;
         } else {
@@ -387,10 +404,14 @@ public class ThinkFormulaAgent extends ThinkFormula {
                                ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
-        SimTime alertTime = engine.getAlertedMessageTable().get(message) ;
-        if(redundant || (alertTime == null)) {
-            engine.getAlertedMessageTable().put(message,
-                                                engine.getAgent().currentTime) ;
+        SimTime alertTime =
+            ((ThinkEngine)env).getAlertedMessageTable().get(message) ;
+
+         if(redundant || (alertTime == null)) {
+             ((ThinkEngine)env)
+             .getAlertedMessageTable()
+             .put(message,
+                  ((ThinkEngine)env).getAgent().currentTime) ;
             return ThinkFormula.Term_True ;
         } else {
             return ThinkFormula.Term_False ;
@@ -416,8 +437,10 @@ public class ThinkFormulaAgent extends ThinkFormula {
                                    ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
-        MapLink currentLink = engine.getAgent().getCurrentLink() ;
-        SimTime alertTime = engine.getAgent().currentTime ;
+        RationalAgent agent =
+            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        MapLink currentLink = agent.getCurrentLink() ;
+        SimTime alertTime = agent.currentTime ;
 
         currentLink.addAlertMessage(message, alertTime, true) ;
         return ThinkFormula.Term_True ;
@@ -436,7 +459,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_clearAlert(String head, Term expr,
                                 ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
-        engine.getAlertedMessageTable().remove(message) ;
+        ((ThinkEngine)env).getAlertedMessageTable().remove(message) ;
         return ThinkFormula.Term_True ;
     }
 
@@ -450,7 +473,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
      */
     public Term call_clearAllAlert(String head, Term expr,
                                    ThinkEngine engine, Object env) {
-        engine.getAlertedMessageTable().clear() ;
+        ((ThinkEngine)env).getAlertedMessageTable().clear() ;
         return ThinkFormula.Term_True ;
     }
 
@@ -467,7 +490,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_changeGoal(String head, Term expr,
                                 ThinkEngine engine, Object env) {
         Term goalTag = expr.getArgTerm("goal") ;
-        engine.getAgent().changeGoal(goalTag) ;
+        ((ThinkEngine)env).getAgent().changeGoal(goalTag) ;
         return ThinkFormula.Term_True ;
     }
 
@@ -481,7 +504,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
      */
     public Term call_clearPlannedRoute(String head, Term expr,
                                        ThinkEngine engine, Object env) {
-        engine.getAgent().setPlannedRoute(new ArrayList<Term>(), true) ;
+        ((ThinkEngine)env).getAgent().setPlannedRoute(new ArrayList<Term>(), true) ;
         return Term_True ;
     }
 
@@ -500,10 +523,10 @@ public class ThinkFormulaAgent extends ThinkFormula {
         Term route = expr.getArgTerm("route") ;
         if(route.isArray()) {
             for(int i = route.getArray().size() ; i > 0 ; i--) {
-                engine.getAgent().insertRouteTagSafely(route.getNthTerm(i-1)) ;
+                ((ThinkEngine)env).getAgent().insertRouteTagSafely(route.getNthTerm(i-1)) ;
             }
         } else {
-            engine.getAgent().insertRouteTagSafely(route) ;
+            ((ThinkEngine)env).getAgent().insertRouteTagSafely(route) ;
         }
         return Term_True ;
     }

@@ -56,6 +56,12 @@ public class ThinkEngine {
     /**
      * エージェント
      */
+    private Lexicon lexicon = null ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェント
+     */
     private AgentBase agent = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -82,6 +88,7 @@ public class ThinkEngine {
      * コンストラクタ
      */
     public ThinkEngine(){
+        setLexicon(ThinkFormula.lexicon) ;
         setAgent(null) ;
         setRule(null) ;
     }
@@ -91,6 +98,7 @@ public class ThinkEngine {
      * コンストラクタ
      */
     public ThinkEngine(AgentBase _agent){
+        setLexicon(ThinkFormula.lexicon) ;
         setAgent(_agent) ;
         setRule(null) ;
     }
@@ -100,12 +108,47 @@ public class ThinkEngine {
      * コンストラクタ
      */
     public ThinkEngine(AgentBase _agent, Term _rule){
+        setLexicon(ThinkFormula.lexicon) ;
         setAgent(_agent) ;
         setRule(_rule) ;
     }
 
     //------------------------------------------------------------
     // アクセス
+    //------------------------------------------------------------
+    /**
+     * set lexicon
+     */
+    public Lexicon setLexicon(Lexicon _lexicon) {
+        lexicon = _lexicon ;
+        return lexicon ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * get lexicon
+     */
+    public Lexicon getLexicon() {
+        return lexicon ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Formula を検索
+     */
+    public ThinkFormula findFormula(String head) {
+	return (ThinkFormula)(lexicon.lookUp(head)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Formula を検索
+     */
+    public ThinkFormula findFormula(Term head) {
+	return findFormula(head.getString()) ;
+    }
+
+
     //------------------------------------------------------------
     /**
      * set agent
@@ -162,17 +205,9 @@ public class ThinkEngine {
      * 推論(top)
      */
     public Term think() {
-        return think(rule, null) ;
+        return think(rule, this) ;
     }
 
-    //------------------------------------------------------------
-    /**
-     * 推論(本体)
-     */
-    public Term think(Term expr) {
-        return think(expr, null) ;
-    }
-    
     //------------------------------------------------------------
     /**
      * 推論(本体)
@@ -188,7 +223,7 @@ public class ThinkEngine {
             return expr ;
         } else {
             String head = expr.getHeadString() ;
-            ThinkFormula formula = ThinkFormula.findFormula(head) ;
+            ThinkFormula formula = findFormula(head) ;
             if(formula != null) {
                 return formula.call(head, expr, this, env) ;
             } else if(expr.isAtom()) {

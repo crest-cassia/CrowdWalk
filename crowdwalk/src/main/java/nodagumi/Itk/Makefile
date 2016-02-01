@@ -208,9 +208,9 @@ run2it_cui ::
 ##-----
 SAMPLE3gt00 = sample/generatedTown/gridTown00.prop.json   # fallback
 run3gt00 ::
-	(cd $(BASEDIR) ; bash quickstart.sh -l Warn $(SAMPLE3gt00))
+	(cd $(BASEDIR) ; bash quickstart.sh -l Info $(SAMPLE3gt00))
 run3gt00_cui ::
-	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00))
+	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00))
 
 ##-----
 SAMPLE3gt00r = sample/generatedTown/gridTown00.ruby.prop.json   # ruby agent

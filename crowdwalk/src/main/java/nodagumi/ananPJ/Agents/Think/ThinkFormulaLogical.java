@@ -116,7 +116,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
      */
     public Term call_not(Term expr,
                          ThinkEngine engine, Object env) {
-        Term result = engine.think(expr.getArgTerm("body")) ;
+        Term result = engine.think(expr.getArgTerm("body"), env) ;
         if(checkFalse(result)) {
             return Term_True ;
         } else {
@@ -144,7 +144,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
         Term result = Term_True ;
         for(int i = 0 ; i < body.getArraySize() ; i++) {
             Term subExpr = body.getNthTerm(i) ;
-            result = engine.think(subExpr) ;
+            result = engine.think(subExpr, env) ;
             if(checkFalse(result)) break ;
         }
         return result ;
@@ -170,7 +170,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
         Term result = Term_False ;
         for(int i = 0 ; i < body.getArraySize() ; i++) {
             Term subExpr = body.getNthTerm(i) ;
-            result = engine.think(subExpr) ;
+            result = engine.think(subExpr, env) ;
             if(!checkFalse(result)) break ;
         }
         return result ;
@@ -207,7 +207,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
         Term result = Term_Null ;
         for(int i = 0 ; i < body.getArraySize() ; i++) {
             Term subExpr = body.getNthTerm(i) ;
-            result = engine.think(subExpr) ;
+            result = engine.think(subExpr, env) ;
         }
         return result ;
     }
@@ -236,13 +236,13 @@ public class ThinkFormulaLogical extends ThinkFormula {
             System.exit(1) ;
         }
 
-        Term cond = engine.think(condition) ;
+        Term cond = engine.think(condition, env) ;
 
         if(!checkFalse(cond)) {
-            return engine.think(thenExpr) ;
+            return engine.think(thenExpr, env) ;
         } else {
             if(elseExpr != null) {
-                return engine.think(elseExpr) ;
+                return engine.think(elseExpr, env) ;
             } else {
                 return Term_False ;
             }

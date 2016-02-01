@@ -50,6 +50,8 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.navigation.NavigationHint;
+import nodagumi.ananPJ.navigation.PathChooser;
+import nodagumi.ananPJ.navigation.Dijkstra;
 
 import nodagumi.Itk.*;
 
@@ -345,8 +347,16 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         } else if(hasSubjectiveLength(subjectiveMode, fromNode)) {
             return subjectiveLengthTable.get(subjectiveMode.getString()) ;
         } else {
-            Itk.logWarn("undefined subjective length", "link ID", this.ID) ;
-            return UndefinedSubjectiveLength ;
+            Itk.logWarn("undefined subjective length",
+                        "[link ID=", this.ID, "] ",
+                        "calc on-the-fly.") ;
+            PathChooser chooser = Dijkstra.getPathChooser(subjectiveMode) ;
+            if(chooser == null) {
+                Itk.logError("unknown subjectiveMode. ",
+                             "mode=", subjectiveMode) ;
+                System.exit(1) ;
+            } 
+            return chooser.calcLinkCost(this, fromNode) ;
         }
     }
 
