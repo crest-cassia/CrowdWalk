@@ -16,6 +16,7 @@ import java.awt.Insets;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.MenuShortcut;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -280,7 +281,8 @@ public class SimulationFrame2D extends JFrame
 
         Menu fileMenu = new PopupMenu("File");
 
-        MenuItem mi = new MenuItem("Close");
+        MenuShortcut shortcut = new MenuShortcut(java.awt.event.KeyEvent.VK_W);
+        MenuItem mi = new MenuItem("Close", shortcut);
         mi.addActionListener(e -> {
             if (launcher.isRunning()) {
                 launcher.pause();
