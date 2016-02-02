@@ -213,6 +213,13 @@ run3gt00_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00))
 
 ##-----
+SAMPLE3gt00a = sample/generatedTown/gridTown00.array.prop.json   # array formula
+run3gt00a ::
+	(cd $(BASEDIR) ; bash quickstart.sh -l Info $(SAMPLE3gt00a))
+run3gt00a_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00a))
+
+##-----
 SAMPLE3gt00r = sample/generatedTown/gridTown00.ruby.prop.json   # ruby agent
 run3gt00r ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r))

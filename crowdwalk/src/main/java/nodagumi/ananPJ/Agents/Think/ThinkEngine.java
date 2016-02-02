@@ -32,7 +32,8 @@ import nodagumi.Itk.* ;
  *   _rule_ ::= _expr_
  *   _expr_ ::= _null_ | [_expr_,_expr_,...] | _headedTerm_
  *   _null_ ::= null | {}
- *   _headedTerm_ ::= {"" : _head_, (_argKey_ : _value_)*}
+ *   _headedTerm_ ::= {"" : _head_, (_argKey_ : _value_)*} |
+ *                    [_head_, _value_, _value_, ...]
  *   _head_ ::= _String_
  *   _argKey_ ::= _String_
  *   _value_ ::= _expr_ | _literal_
@@ -42,7 +43,9 @@ import nodagumi.Itk.* ;
  * <h3> 組み込み Forms </h3>
  * <ul>
  *  <li> _null_ は, NOP (No Operation)扱い。
- *  <li> [_expr_, ...] の形式は、{"" : "proc", "body" : [_expr_, ...]} と同じ。
+ *  <li> [_expr_, ...] の形式は、最初の _expr_ が _literal_ ならば、
+ *       _headedTerm_ として扱い、そうでなければ、
+ *       {"" : "proc", "body" : [_expr_, ...]} と同じ。
  * </ul>
  * <h3> 実処理用の _headedTerm_</h3>
  * <ul>
@@ -215,26 +218,62 @@ public class ThinkEngine {
     public Term think(Term expr, Object env) {
         if(expr == null || expr.isNull()) {
             return ThinkFormula.Term_Null ;
-        } else if(expr.isArray()) {
-            return (((ThinkFormulaLogical)(ThinkFormulaLogical.singleton))
-                    .call_procBody(expr, this, env)) ;
-        } else if(!(expr.getHead() instanceof String)) {
-            // maybe, true or false or numbers
-            return expr ;
         } else {
-            String head = expr.getHeadString() ;
-            ThinkFormula formula = findFormula(head) ;
-            if(formula != null) {
-                return formula.call(head, expr, this, env) ;
-            } else if(expr.isAtom()) {
-                // expr がアトムで、かつ予約語でなければ、そのまま返す。
+            String head = getHeadInHeadedTermArray(expr) ;
+            if(expr.isArray() && head == null) {
+                return (((ThinkFormulaLogical)(ThinkFormulaLogical.singleton))
+                        .call_procBody(expr, this, env, 0)) ;
+            } else if(!expr.isArray() && !(expr.getHead() instanceof String)) {
+                // maybe, true or false or numbers
                 return expr ;
             } else {
-                Itk.logError("unknown expression for ThinkEngine.",
-                             "expr=", expr) ;
-                return ThinkFormula.Term_Null ;
+                if(head == null) {
+                    head = expr.getHeadString() ;
+                }
+                ThinkFormula formula = findFormula(head) ;
+                if(formula != null) {
+                    return formula.call(head, expr, this, env) ;
+                } else if(expr.isAtom()) {
+                    // expr がアトムで、かつ予約語でなければ、そのまま返す。
+                    return expr ;
+                } else {
+                    Itk.logError("unknown expression for ThinkEngine.",
+                                 "expr=", expr) ;
+                    return ThinkFormula.Term_Null ;
+                }
             }
         }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * proc 型の配列かどうかのチェックし、その head を返す。
+     * _expr_ が配列だった場合、最初の要素が文字列リテラルの場合は、
+     * _headedTerm_ とみなす。
+     * その _headedTerm_ の head 部分を返す。
+     * _headedTerm_ とみなせない場合は、nullを返す。
+     * @param expr チェックする _expr_.
+     * @return head となる String。_headeTerm_ 出ない場合は、null。
+     */
+    public String getHeadInHeadedTermArray(Term expr) {
+        String head = null ;
+        if(expr.isArray()) {
+            if(expr.getArraySize() > 0) {
+                Object firstObj = expr.getNth(0) ;
+                if(firstObj instanceof String) {
+                    head = (String)firstObj ;
+                } else if(firstObj instanceof Term) {
+                    Term firstTerm = (Term)firstObj ;
+                    if(firstTerm.isAtom()) {
+                        Object headObj = firstTerm.getHead() ;
+                        if(headObj instanceof String) {
+                            head = (String)headObj ;
+                        }
+                    }
+                }
+            }
+        }
+        return head ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

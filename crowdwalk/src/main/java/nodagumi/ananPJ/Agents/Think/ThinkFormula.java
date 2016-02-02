@@ -168,6 +168,49 @@ abstract public class ThinkFormula {
                 expr.equals(Term_False)) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * _expr_ から引数の取り出し。
+     * _expr_ が Object 型 headedTerm の場合は、slot の arg を、
+     * _expr_ が Array 型 headedTerm の場合は、nth を、
+     * 返す。
+     */
+    public Term getArgFromExpr(Term expr, String slot, int n) {
+        if(expr.isArray()) {
+            if(expr.getArraySize() > n) {
+                return expr.getNthTerm(n) ;
+            } else {
+                return null ;
+            }
+        } else if(expr.isObject()) {
+            return expr.getArgTerm(slot) ;
+        } else {
+            return null ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * _expr_ から配列引数の取り出し。
+     * _expr_ が Object 型 headedTerm の場合は、slot の arg を、
+     * _expr_ が Array 型 headedTerm の場合は、_expr_ そのものを
+     * 返す。
+     */
+    public Term getArrayArgOrItself(Term expr, String slot) {
+        if(expr.isArray()) {
+            return expr ;
+        } else if(expr.isObject()) {
+            Term body = expr.getArgTerm(slot) ;
+            if(body.isArray()) {
+                return body ;
+            } else {
+                return null ;
+            }
+        } else {
+            return null ;
+        }
+    }
+
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //------------------------------------------------------------

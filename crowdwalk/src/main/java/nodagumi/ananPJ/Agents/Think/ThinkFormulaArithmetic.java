@@ -142,16 +142,19 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * <pre>
      *   {"":("add" || "+"),
      *    "values": [_Term_, _Term_, _Term_, ...] }
+     * OR
+     * [ ("add" || "+"), _Term_, _Term_, ...]
      * </pre>
      * _Term_ の和を返す。
      */
     public Term call_add(String head, Term expr,
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
-	if(expr.hasArg("values")) {
-	    Term values = expr.getArgTerm("values") ;
+	if(expr.isArray() || expr.hasArg("values")) {
+	    Term values = getArrayArgOrItself(expr, "values") ;
+            int fromIndex = (expr.isArray() ? 1 : 0) ;
 	    if(values.isArray()) {
-		for(int i = 0 ; i < values.getArraySize() ; i++) {
+		for(int i = fromIndex ; i < values.getArraySize() ; i++) {
 		    Term val = engine.think(values.getNthTerm(i), env) ;
 		    if(result == null) {
 			result = val.getBigDecimal() ;
@@ -181,6 +184,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":("sub" || "-"),
      *    "left": _Term_,
      *    "right": _Term_}
+     * OR
+     * [("sub") || "-"), _Term_, _Term]
      * </pre>
      * _Term_ の差を返す。
      */
@@ -188,8 +193,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left"), env) ;
-	    Term right = engine.think(expr.getArgTerm("right"), env) ;
+	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
+            Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    result = left.getBigDecimal().subtract(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -212,16 +217,19 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      * <pre>
      *   {"":("mul" || "*"),
      *    "values": [_Term_, _Term_, _Term_, ...] }
+     * OR
+     * ["("mul" || "*"), _Term_, _Term_, ...]
      * </pre>
      * _Term_ の和を返す。
      */
     public Term call_mul(String head, Term expr,
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
-	if(expr.hasArg("values")) {
-	    Term values = expr.getArgTerm("values") ;
+	if(expr.isArray() || expr.hasArg("values")) {
+	    Term values = getArrayArgOrItself(expr, "values") ;
+            int fromIndex = (expr.isArray() ? 1 : 0) ;
 	    if(values.isArray()) {
-		for(int i = 0 ; i < values.getArraySize() ; i++) {
+		for(int i = fromIndex ; i < values.getArraySize() ; i++) {
 		    Term val = engine.think(values.getNthTerm(i), env) ;
 		    if(result == null) {
 			result = val.getBigDecimal() ;
@@ -258,8 +266,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left"), env) ;
-	    Term right = engine.think(expr.getArgTerm("right"), env) ;
+	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
+            Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    result = left.getBigDecimal().divide(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -277,6 +285,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":("mod" || "%"),
      *    "left": _Term_,
      *    "right": _Term_}
+     * OR
+     * [("mod" || "%"), _Term_, _Term_]
      * </pre>
      * _Term_ の差を返す。
      */
@@ -284,8 +294,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left"), env) ;
-	    Term right = engine.think(expr.getArgTerm("right"), env) ;
+	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
+            Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    result = left.getBigDecimal().remainder(right.getBigDecimal()) ;
 	}
 	if(result == null) {
@@ -303,6 +313,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":"==",
      *    "left": _Term_,
      *    "right": _Term_}
+     * [ "==", _Term_, _Term]
      * </pre>
      * _Term_ の等価チェック。
      */
@@ -310,8 +321,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
                            ThinkEngine engine, Object env) {
 	Term result = null ;
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left"), env) ;
-	    Term right = engine.think(expr.getArgTerm("right"), env) ;
+	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
+            Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    if(left.equals(right)) {
 		result = Term_True ;
 	    } else {
@@ -333,6 +344,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":{@literal ">"},
      *    "left": _Term_,
      *    "right": _Term_}
+     * OR
+     * [{@literal ">"}, _Term_, _Term]
      * </pre>
      * _Term_ の等価チェック。
      */
@@ -353,6 +366,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":{@literal (">=" || "=>")},
      *    "left": _Term_,
      *    "right": _Term_}
+     * OR
+     * [{@literal (">=" || "=>")}, _Term_, _Term]
      * </pre>
      * _Term_ の等価チェック。
      */
@@ -373,6 +388,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":{@literal "<"},
      *    "left": _Term_,
      *    "right": _Term_}
+     * OR
+     * [ {@literal "<"}, _Term_, _Term ]
      * </pre>
      * _Term_ の等価チェック。
      */
@@ -393,6 +410,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":{@literal ("<=" || "=<")},
      *    "left": _Term_,
      *    "right": _Term_}
+     * OR
+     * [ {@literal ("<=" || "=<")}, _Term_, _Term_ ]
      * </pre>
      * _Term_ の等価チェック。
      */
@@ -413,8 +432,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     public int compareLeftRightValues(Term expr,
                                       ThinkEngine engine, Object env) {
 	if(expr.hasArg("left") && expr.hasArg("right")) {
-	    Term left = engine.think(expr.getArgTerm("left"), env) ;
-	    Term right = engine.think(expr.getArgTerm("right"), env) ;
+	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
+            Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    if(left.isNumber() && right.isNumber()) {
 		return left.getBigDecimal().compareTo(right.getBigDecimal()) ;
 	    }
