@@ -556,14 +556,7 @@ public class EvacuationSimulator {
         buildScenario() ;
         buildPollution() ;
         buildAgentHandler() ;
-        if (properties != null && properties.isRoutesLoading()) {
-            networkMap.loadRoutes(properties);
-        } else {
-            buildRoutes() ;
-            if (CrowdWalkLauncher.routesSaving) {
-                networkMap.saveRoutes(properties);
-            }
-        }
+        buildRoutes() ;
         buildRubyEngine() ;
 
         //prepare for simulation

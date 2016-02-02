@@ -89,15 +89,6 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>routes_file</h4>
- *     <pre>  経路探索結果ファイルへのファイルパス
- *  指定すると経路探索を実行する代わりに、このファイルに保存された探索結果を使用する。
- *
- *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
- *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)</pre>
- *   </li>
- *
- *   <li>
  *     <h4>pollution_file</h4>
  *     <pre>  Obstructer file へのファイルパス
  *
@@ -445,8 +436,7 @@ public class CrowdWalkPropertiesHandler {
            "pollution_file",
            "link_appearance_file",
            "node_appearance_file",
-           "fallback_file",
-           "routes_file"
+           "fallback_file"
         };
 
     protected String propertiesFile = null;
@@ -512,30 +502,6 @@ public class CrowdWalkPropertiesHandler {
         return fallbackFile ;
     }
 
-    /**
-     * 経路探索結果のファイルパス
-     */
-    protected String routesFilePath = null;
-
-    /**
-     * 経路探索結果のファイルパスを取得
-     */
-    public String getRoutesFilePath() {
-        return routesFilePath ;
-    }
-
-    /**
-     * 経路探索結果の読み込みフラグ
-     */
-    protected boolean routesLoading = false;
-
-    /**
-     * 経路探索結果を読み込むか?
-     */
-    public boolean isRoutesLoading() {
-        return routesLoading ;
-    }
-
     protected long randseed = 0;
     public long getRandseed() {
         return randseed;
@@ -553,7 +519,7 @@ public class CrowdWalkPropertiesHandler {
     }
 
     /**
-     * 経路探索結果を読み込むか?
+     * 経路探索における、各リンクの主観的距離の変更ルール
      */
     protected Term mentalMapRules = null ;
     public Term getMentalMapRules() {
@@ -621,17 +587,6 @@ public class CrowdWalkPropertiesHandler {
             generationFile = getString("generation_file", null);
             scenarioFile = getString("scenario_file", null);
             fallbackFile = getString("fallback_file", null) ;
-            routesFilePath = getString("routes_file", null);
-
-            // 経路探索結果の読み込み関連
-            if (routesFilePath != null) {
-                routesLoading = true;
-            }
-            if (CrowdWalkLauncher.routesSaving) {
-                if (routesLoading) {
-                    throw new Exception("Property file error - 経路探索結果の Load/Save を同時に実行することは出来ません。");
-                }
-            }
 
             // create random with seed
             randseed = getInteger("randseed", 0);
