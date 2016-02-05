@@ -285,7 +285,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
         selected = false;
 
-        mentalLengthTable = new HashMap<String, Double>() ;
+        clearMentalLengthTable() ;
     }
     /**
      */
@@ -317,6 +317,14 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         length = _length ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * mentalLengthTable のクリア。
+     */
+    public void clearMentalLengthTable() {
+        mentalLengthTable = new HashMap<String, Double>() ;
+    }
+    
     //------------------------------------------------------------
     /**
      * 主観的距離を持っているかのチェック。

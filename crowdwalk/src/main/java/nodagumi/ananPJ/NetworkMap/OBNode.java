@@ -204,6 +204,17 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         return tags;
     }
 
+    /**
+     * n 番目のタグを取り出す。
+     */
+    public String getNthTag(int n) {
+        if(getTags().size() > n) {
+            return getTags().get(n) ;
+        } else {
+            return null ;
+        }
+    }
+
     public String getTagString() {
         StringBuffer str = new StringBuffer();
         boolean first = true;

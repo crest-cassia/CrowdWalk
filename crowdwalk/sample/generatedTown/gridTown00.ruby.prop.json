@@ -6,6 +6,8 @@
   "generation_file":"gridTown00.ruby.gen.json",
   "scenario_file":"gridTown00.scnr.json",
   "fallback_file":"gridTown00.fb.json",
+  "node_appearance_file":"gridTown00.nodeApp.json",
+  "link_appearance_file":"gridTown00.linkApp.json",
   "timer_enable":true,
   "timer_file":"/tmp/timer.log",
   "interval":0,
@@ -26,5 +28,17 @@ require './SampleWrapper.rb'
 #require 'pp'
 p Dir::pwd
 ",
-  "ruby_simulation_wrapper_class":"SampleWrapper"
+  "ruby_simulation_wrapper_class":"SampleWrapper",
+
+  "mental_map_rules" :
+    {
+      "major" :
+        {"":"if",
+    	 "cond":{"":"hasTag","tag":"major"},
+	 "then":":length",
+	 "else":{"":"*", "values":[":length", 10.0]}}
+      "normal" : ":length"
+    },
+
+  "___":null
 }

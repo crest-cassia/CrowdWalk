@@ -34,10 +34,25 @@ class SampleWrapper < CrowdWalkWrapper
     width = @simulator.filterFetchFallbackDouble("link",
                                                  "gathering_location_width",
                                                  40.0) ;
+    ## 一時避難所道路の道幅変更
     @networkMap.eachLinkWithTag("TEMPORARY_GATHERING_LOCATION_LINK"){|link|
       link.setWidth(width) ;
       p ['link.setWidth', link.getID(), link.getTagString(), link.getWidth()] ;
     }
+    ## 中央通りを major 道路に。
+    @networkMap.eachLink(){|link|
+      tag = link.getNthTag(0) ;
+      if(!tag.nil? && tag =~ /link_node_04/ && tag =~ /__node_04/) then
+        link.addTag("major") ;
+        p ['link.addTag', link.getID(), link.getTagString()] ;
+      end
+      if(!tag.nil? && tag =~ /04__/ && tag =~ /04$/) then
+        link.addTag("major") ;
+        p ['link.addTag', link.getID(), link.getTagString()] ;
+      end
+    }
+    rebuildRoutes() ;
+    p ['rebuildRoutes()'] ;
   end
 
   #--------------------------------------------------------------
@@ -57,13 +72,13 @@ class SampleWrapper < CrowdWalkWrapper
 #    @networkMap.eachNode(){|node| p [:node, node]} ;
     @networkMap.eachNode(){|node|
       if(rand(100) == 0) then
-        node.addTag("EXIT") ;
+        node.addTag("foo") ;
         @taggedNodeList.push(node) ;
       end
     }
     while(@taggedNodeList.size > 10)
       node = @taggedNodeList.shift ;
-      node.removeTag("EXIT") ;
+      node.removeTag("foo") ;
     end
   end
 

@@ -188,10 +188,8 @@ public class PollutionHandler {
                     String[] strItems = csvParser.parseLine(line) ;
                     try {
                         String timeStr = strItems[0].replaceAll("[\\# ]*","") ;
-                        Itk.dbgVal("timeStr", timeStr) ;
                         if(timeStr.length() > 0) {
                             int beginTime = Itk.scanTimeStringToInt(timeStr) ;
-                            Itk.dbgVal("beginTime",beginTime) ;
                         } 
                     } catch(Exception ex) {
                         Itk.logWarn("Illegal Time Format", strItems[0]) ;

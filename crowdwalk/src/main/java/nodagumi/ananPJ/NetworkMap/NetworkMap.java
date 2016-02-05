@@ -198,9 +198,17 @@ public class NetworkMap extends DefaultTreeModel {
 
         setRoot((DefaultMutableTreeNode)root);
 
-        validRouteKeys = new HashMap<String, Boolean>();;
+        clearValidRouteKeys() ;
 
         notifier = new NetworkMapPartsNotifier(this);
+    }
+
+    /**
+     * validRouteKeys をクリア。
+     * Route 情報（node の hints）を再構築するときにはクリアしないといけない。
+     */
+    private void clearValidRouteKeys() {
+        validRouteKeys = new HashMap<String, Boolean>();;
     }
 
     //------------------------------------------------------------
@@ -798,6 +806,21 @@ public class NetworkMap extends DefaultTreeModel {
         return isSuccess ;
     }
     
+    //------------------------------------------------------------
+    /**
+     * 経路情報のクリア。
+     * 各ノードの navigationHint と、各リンクの mentalLength をクリアする。
+     */
+    public void clearNavigationHints() {
+        for(MapNode node : getNodes()) {
+            node.clearNavigationHintsAll() ;
+        }
+        for(MapLink link : getLinks()) {
+            link.clearMentalLengthTable() ;
+        }
+        clearValidRouteKeys() ;
+    }
+
     //------------------------------------------------------------
     /**
      * マップに整合性があるかチェック。

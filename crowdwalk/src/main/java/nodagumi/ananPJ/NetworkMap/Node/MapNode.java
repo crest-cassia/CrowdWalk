@@ -127,9 +127,7 @@ public class MapNode extends OBMapPart {
         calc_local_coordinates();
 
         selected = false;
-        physicalHints = new HashMap<String, NavigationHint>();
-        mentalHintsTable =
-            new HashMap<String, HashMap<String, NavigationHint>>() ;
+        clearNavigationHintsAll() ;
         
         links = new MapLinkTable();
     }
@@ -233,7 +231,16 @@ public class MapNode extends OBMapPart {
         }
         return null;
     }
-    
+
+    /**
+     * すべての navigationHinst をくりあ。
+     */
+    public void clearNavigationHintsAll() {
+        physicalHints = new HashMap<String, NavigationHint>();
+        mentalHintsTable =
+            new HashMap<String, HashMap<String, NavigationHint>>() ;
+    }
+
     public void addNavigationHint(Term mentalMode,
                                   String goalTag,
                                   NavigationHint hint) {
@@ -252,7 +259,8 @@ public class MapNode extends OBMapPart {
         NavigationHint hint = getHints(mentalMode).get(goalTag);
         if (hint == null) {
             Itk.logWarn("No hint for goal=", goalTag,
-                        " in mode=", mentalMode, ".") ;
+                        "in mode=", mentalMode, ".") ;
+            System.exit(1) ;
         }
         return hint;
     }

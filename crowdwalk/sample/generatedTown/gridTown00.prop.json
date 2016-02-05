@@ -6,6 +6,8 @@
   "generation_file":"gridTown00.gen.json",
   "scenario_file":"gridTown00.scnr.json",
   "fallback_file":"gridTown00.fb.json",
+  "node_appearance_file":"gridTown00.nodeApp.json",
+  "link_appearance_file":"gridTown00.linkApp.json",
   "timer_enable":true,
   "timer_file":"/tmp/timer.log",
   "interval":0,

@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = CrowdWalk の EvacuationSimulator の wrapper
 ## Author:: Itsuki Noda
@@ -70,6 +71,17 @@ class CrowdWalkWrapper
   ## _simTime_:: シミュレーション内相対時刻
   def postUpdate(simTime)
     p [:postUpdate, simTime, :doNothing] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 経路情報の再構築。
+  ## 各ノードの NavigationHints や、
+  ## 各リンクの mentalLength を作り直す。
+  ## mentalLength に関係するタグなどのマップパラメータを修正した場合、
+  ## これを呼び出さないと、修正が routing に反映されない。
+  def rebuildRoutes()
+    @simulator.rebuildRoutes() ;
   end
 
   #--============================================================
