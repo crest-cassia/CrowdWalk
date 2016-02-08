@@ -36,6 +36,7 @@ dependencies {
 sourceSets {
     main {
         java {
+            exclude '**/ImportGis.java'
         }
     }
 }

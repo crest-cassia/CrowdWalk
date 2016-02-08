@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
-import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;

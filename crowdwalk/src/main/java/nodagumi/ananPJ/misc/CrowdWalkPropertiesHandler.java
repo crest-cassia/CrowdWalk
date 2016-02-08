@@ -13,7 +13,6 @@ import net.arnx.jsonic.JSON;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;
-import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D;
