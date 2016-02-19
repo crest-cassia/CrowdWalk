@@ -18,6 +18,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -46,7 +47,7 @@ import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
 
-public class MapNode extends OBMapPart {
+public class MapNode extends OBMapPart implements Comparable<MapNode> {
     //============================================================
     //------------------------------------------------------------
     /**
@@ -654,6 +655,16 @@ public class MapNode extends OBMapPart {
 
         return speed ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * リンクの比較演算子。
+     * Hash や BinaryTree、sort 用。(Comparable にしたため)
+     */
+    public int compareTo(MapNode node) {
+        return ID.compareTo(node.ID);
+    }
+
 }
 // ;;; Local Variables:
 // ;;; mode:java

@@ -168,6 +168,12 @@ public class AgentHandler {
     private TreeSet<MapLink> effectiveLinkSet =
         new TreeSet<MapLink>() ;
 
+    /**
+     * エージェントが存在するリンクに接続するノードのリスト
+     */
+    private TreeSet<MapNode> effectiveNodeSet =
+        new TreeSet<MapNode>() ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 平均速度。
@@ -554,16 +560,19 @@ public class AgentHandler {
         for(MapLink link : simulator.getLinks()) {
             addEffectiveLink(link) ;
         }
+        // 初回は全ノードを対象とする
+        clearEffectiveNodeSet() ;
+        for(MapNode node : simulator.getNodes()) {
+            addEffectiveNode(node) ;
+        }
     }
 
     //------------------------------------------------------------
     /**
-     * リンクの preprocess 処理
+     * map に対する preprocess 処理
      */
-    private void preUpdateLinks(SimTime currentTime) {
+    private void preUpdateNetworkMap(SimTime currentTime) {
         synchronized (simulator) {
-            //            for (MapLink link : simulator.getLinks()) {
-            // Iterator をちゃんと動かすために、remove は別のところへ退避。
             ArrayList<MapLink> emptyLinkList = new ArrayList<MapLink>() ;
             for(MapLink link : getEffectiveLinkSet()) {
                 if(link.agents.isEmpty()) {
@@ -616,7 +625,7 @@ public class AgentHandler {
         ArrayList<AgentBase> generatedAgentsInStep
             = generateAgentsAndSetup(currentTime) ;
 
-        preUpdateLinks(currentTime);
+        preUpdateNetworkMap(currentTime);
         preUpdateAgents(currentTime);
         updateAgents(currentTime);
         updatePollution();
@@ -685,7 +694,8 @@ public class AgentHandler {
         /** [2015.07.05 I.Noda]
          * effectiveLinkSet を、TreeSet としたので、
          * いちいちクリアする必要はない。
-         * エージェントがいなくなったリンクは、preUpdateLinks() で削除される。
+         * エージェントがいなくなったリンクは、
+         * preUpdateNetworkMap() で削除される。
          */
         //clearEffectiveLinkSet() ;
         evacuatedAgentsInStep.clear();
@@ -1090,7 +1100,7 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * effective link のクリア
+     * effective link を取得
      */
     private Set<MapLink> getEffectiveLinkSet() {
         return effectiveLinkSet ;
@@ -1112,6 +1122,40 @@ public class AgentHandler {
      */
     private void removeEffectiveLink(MapLink link) {
         effectiveLinkSet.remove(link) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective node のクリア
+     */
+    private void clearEffectiveNodeSet() {
+        effectiveNodeSet.clear() ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective node を取得
+     */
+    private Set<MapNode> getEffectiveNodeSet() {
+        return effectiveNodeSet ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective node の登録
+     * @param node : 追加するリンク。
+     */
+    private void addEffectiveNode(MapNode node) {
+        effectiveNodeSet.add(node) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * effective node の削除
+     * @param node : 削除するリンク。
+     */
+    private void removeEffectiveNode(MapNode node) {
+        effectiveNodeSet.remove(node) ;
     }
 
     //------------------------------------------------------------
