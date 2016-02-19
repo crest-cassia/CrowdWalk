@@ -517,6 +517,13 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * リンクのレーンの幅。
+     * レーンの幅は、forward/backward のレーンに存在するエージェント数に
+     * 比例して、元の width から割り振られる。
+     * 1 以下にはしない。
+     */
     public int getLaneWidth(Direction dir) {
         int d = getLane(dir).size() ;
         int lane_width = (int)(d * width / (forwardLane.size() +
