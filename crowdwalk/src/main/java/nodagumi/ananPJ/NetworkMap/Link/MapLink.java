@@ -64,8 +64,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * 順・逆方向を示すもの
      */
     static public enum Direction {
+        /** 順方向 */
         Forward(1.0),
+        /** 逆方向 */
         Backward(-1.0),
+        /** 未定義 */
         None(0.0);
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

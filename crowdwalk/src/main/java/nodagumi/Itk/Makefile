@@ -72,6 +72,8 @@ test_CsvFormatter ::
 test_ItkRuby ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).ItkRuby_Test
 
+test_RingBuffer ::
+	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).RingBuffer_Test
 
 test_all ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(ALLTESTS)
