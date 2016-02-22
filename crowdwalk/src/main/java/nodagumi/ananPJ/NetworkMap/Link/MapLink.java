@@ -652,6 +652,10 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
                 .getHeight()) * position / length;
     }
 
+    public Point2D getMiddlePoint() {
+        return new Point2D.Double((fromNode.getX() + toNode.getX()) / 2.0, (fromNode.getY() + toNode.getY()) / 2.0);
+    }
+
     public void agentEnters(AgentBase agent) {
         agents.add(agent);
         /* [2015.01.09 I.Noda]

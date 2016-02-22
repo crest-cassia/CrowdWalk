@@ -12,10 +12,14 @@ import javax.vecmath.Color3f;
 
 import net.arnx.jsonic.JSON;
 
+import nodagumi.ananPJ.NetworkMap.Link.*;
+
 /**
  * リンクの表示スタイル(幅, 色, 透明度)をタグ別に指定するために使用するクラス
  */
 public class LinkAppearance {
+    public static final String NONE_TAG = "__NONE__";
+
     public boolean widthFixed = false;
     public double widthRatio = 1.0;
     public Color3f color = Colors.DEFAULT_LINK_COLOR;
@@ -49,7 +53,7 @@ public class LinkAppearance {
         }
         appearance.setTransparencyAttributes(
                 new TransparencyAttributes(TransparencyAttributes.FASTEST, transparency));
-        awtColor = new Color(color.x, color.y, color.z, transparency);
+        awtColor = new Color(color.x, color.y, color.z, 1.0f - transparency);
     }
 
     public static void loadLinkAppearances(InputStream is,
@@ -58,6 +62,7 @@ public class LinkAppearance {
 	//Map<String, Object> map = (Map<String, Object>)JSON.decode(is);
 	JSON json = new JSON(JSON.Mode.TRADITIONAL);
 	Map<String, Object> map = (Map<String, Object>)json.parse(is);
+        LinkAppearance noneTagAppearance = null;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String tag = entry.getKey();
             Map<String, Object> items = (Map<String, Object>)entry.getValue();
@@ -65,13 +70,33 @@ public class LinkAppearance {
             if (widthRatio == null) {
                 widthRatio = (BigDecimal)items.get("width");
             }
-            linkAppearances.put(tag, new LinkAppearance(
+            LinkAppearance appearance = new LinkAppearance(
                 (Boolean)items.get("width_fixed"),
                 widthRatio,
                 (String)items.get("color"),
                 (BigDecimal)items.get("transparency"),
                 linkAppearances.get(tag)
-            ));
+            );
+            if (tag.equals(NONE_TAG)) {
+                noneTagAppearance = appearance;
+            } else {
+                linkAppearances.put(tag, appearance);
+            }
         }
+        // LinkedHashMap の最後に追加
+        if (noneTagAppearance != null) {
+            linkAppearances.put(NONE_TAG, noneTagAppearance);
+        }
+    }
+
+    public static LinkAppearance getAppearance(
+            LinkedHashMap<String, LinkAppearance> linkAppearances, MapLink link) {
+        for (Map.Entry<String, LinkAppearance> entry : linkAppearances.entrySet()) {
+            String tag = entry.getKey();
+            if (tag.equals(NONE_TAG) || link.hasTag(tag)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

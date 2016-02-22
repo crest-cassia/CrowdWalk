@@ -54,9 +54,14 @@ public class SimulationPanel2D extends JPanel {
     public static final Color BACKGROUND_COLOR = new Color(0.95f, 0.95f, 0.95f);
 
     /**
+     * ラベル表示に使用するフォント名
+     */
+    public static final String FONT_NAME = "Consolas";
+
+    /**
      * テキスト描画の際に指定する描画位置
      */
-    public static enum TextPosition { NONE, CENTER, UPPER, LOWER, LEFT, RIGHT }
+    public static enum TextPosition { UPPER_CENTER, LOWER_CENTER, UPPER_RIGHT, LOWER_RIGHT }
 
     /**
      * シミュレーションウィンドウのフレーム
@@ -78,10 +83,55 @@ public class SimulationPanel2D extends JPanel {
      */
     private double scale = 1.0;
 
+    /**
+     * ASCIIキャラクタフォントのデフォルトスケール時の文字幅
+     */
+    private int[] originalCharsWidths;
+
+    /**
+     * フォントのデフォルトスケール時の文字高さ
+     */
+    private double originalTextHeight = 0.0;
+
+    /**
+     * フォントのデフォルトスケール時のascent
+     */
+    private double originalAscent = 0.0;
+
+    /**
+     * フォントのデフォルトスケール時のdescent
+     */
+    private double originalDescent = 0.0;
+
+    /**
+     * フォントのデフォルトスケール時のleading
+     */
+    private double originalLeading = 0.0;
+
+    /**
+     * フォントの現在のスケールでの高さ
+     */
+    private double fontHeight = 0.0;
+
+    /**
+     * フォントの現在のスケールでのascent
+     */
+    private double fontAscent = 0.0;
+
+    /**
+     * フォントの現在のスケールでのdescent
+     */
+    private double fontDescent = 0.0;
+
+    /**
+     * フォントの現在のスケールでのleading
+     */
+    private double fontLeading = 0.0;
+
     /* ホバー表示対象 */
 
-    private Hover hoverNode = null;
-    private Hover hoverLink = null;
+    private MapNode hoverNode = null;
+    private MapLink hoverLink = null;
     private MapArea hoverArea = null;
     private AgentBase hoverAgent = null;
 
@@ -93,16 +143,23 @@ public class SimulationPanel2D extends JPanel {
     private boolean showLinkLabels = false;
     private boolean showArea = true;
     private boolean showAreaLabels = false;
+    private boolean showAgents = true;
+    private boolean showAgentLabels = false;
 
     /**
      * 通常リンクの表示色
      */
-    private Color defaultLinkColor;
+    private Color defaultLinkColor = new Color(0.1f, 0.1f, 0.1f, 1.0f - 0.75f);
 
     /**
      * エリアの表示色
      */
     private gas_display show_gas = gas_display.ORANGE;
+
+    /**
+     * ホバーテキストの背景色
+     */
+    private Color hoverBgColor = new Color(0.8f, 0.8f, 0.9f);
 
     /**
      * エリア表示色の彩度 100% に相当する Obstructer level
@@ -187,7 +244,6 @@ public class SimulationPanel2D extends JPanel {
                 System.exit(1);
             }
         }
-        defaultLinkColor = linkAppearances.get("MAINROAD").awtColor;
 
         polygons = createPolygons(networkMap.getLinks());
         // ポリゴンを除いたリンクのリスト
@@ -372,9 +428,23 @@ public class SimulationPanel2D extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         AffineTransform saveAT = g2.getTransform();
 
+        if (originalTextHeight == 0.0) {
+            g2.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
+            FontMetrics fm = g2.getFontMetrics();
+            originalTextHeight = (double)fm.getHeight();
+            originalAscent = (double)fm.getAscent();
+            originalDescent = (double)fm.getDescent();
+            originalLeading = (double)fm.getLeading();
+            originalCharsWidths = fm.getWidths();
+        }
+        fontHeight = originalTextHeight / scale;
+        fontAscent = originalAscent / scale;
+        fontDescent = originalDescent / scale;
+        fontLeading = originalLeading / scale;
+
         g2.translate(tx, ty);
         g2.scale(scale, scale);
-        setScaleFixedFont(g2, "SansSerif", Font.PLAIN, 14);
+        setScaleFixedFont(g2, FONT_NAME, Font.PLAIN, 14);
 
         // ポリゴンの描画
         if (! polygons.isEmpty()) {
@@ -387,7 +457,7 @@ public class SimulationPanel2D extends JPanel {
         /* actual objects */
         if (showArea) {
             for (MapArea area : frame.getMapAreas()) {
-                drawArea(area, g2) ;
+                drawArea(area, g2, showAreaLabels) ;
             }
         }
         if (showLinks) {
@@ -398,16 +468,18 @@ public class SimulationPanel2D extends JPanel {
             }
         }
         if (showNodes) {
-            g2.setStroke(new BasicStroke(1.0f));
+            g2.setStroke(new BasicStroke((float)(1.0 / scale)));
             for (MapNode node : frame.getNodes()) {
-                if (! node.getTags().isEmpty() && viewArea.contains(node.getX(), node.getY())) {
+                if (viewArea.contains(node.getX(), node.getY())) {
                     drawNode(node, g2, showNodeLabels, false);
                 }
             }
         }
-        for (AgentBase agent : frame.getWalkingAgents()) {
-            if (! agent.isEvacuated()) {
-                drawAgent(agent, g2);
+        if (showAgents) {
+            for (AgentBase agent : frame.getWalkingAgents()) {
+                if (! agent.isEvacuated()) {
+                    drawAgent(agent, g2, showAgentLabels);
+                }
             }
         }
 
@@ -451,13 +523,21 @@ public class SimulationPanel2D extends JPanel {
     /**
      * エージェントを描画する
      */
-    public void drawAgent(AgentBase agent, Graphics2D g2) {
+    public void drawAgent(AgentBase agent, Graphics2D g2, boolean showLabel) {
         double scale = g2.getTransform().getScaleX();
         Point2D pos = agent.getPos();
         Vector3d swing = agent.getSwing();
+        double size = frame.getAgentSize() / scale;
+
+        if (showLabel) {
+            String text = agent.getIdNumber();
+            double cx = pos.getX() + swing.getX();
+            double cy = pos.getY() + swing.getY() + size / 2.0;
+            g2.setColor(Color.RED);
+            drawText(g2, cx, cy, TextPosition.LOWER_CENTER, text);
+        }
 
         g2.setColor(getAgentColor(agent));
-        double size = frame.getAgentSize() / scale;
         double x = pos.getX() + swing.getX() - size / 2.0;
         double y = pos.getY() + swing.getY() - size / 2.0;
         g2.fill(new Ellipse2D.Double(x, y, size, size));
@@ -473,6 +553,13 @@ public class SimulationPanel2D extends JPanel {
         Point2D pos = agent.getPos();
         Vector3d swing = agent.getSwing();
         double diameter = 8.0 / scale;
+        double size = frame.getAgentSize() / scale;
+
+        String text = agent.getIdNumber();
+        double cx = pos.getX() + swing.getX();
+        double cy = pos.getY() + swing.getY() + size / 2.0;
+        drawText(g2, cx, cy, TextPosition.LOWER_CENTER, text, hoverBgColor);
+
         double x = pos.getX() + swing.getX() - diameter / 2.0;
         double y = pos.getY() + swing.getY() - diameter / 2.0;
         g2.draw(new Ellipse2D.Double(x, y, diameter, diameter));
@@ -540,15 +627,11 @@ public class SimulationPanel2D extends JPanel {
      * ノードを描画する
      */
     public void drawNode(MapNode node, Graphics2D g, boolean showLabel, boolean isSymbolic) {
+        double diameter = 0.0;
         NodeAppearance nodeAppearance = getNodeAppearance(node);
         if (nodeAppearance != null) {
             g.setColor(nodeAppearance.awtColor);
-            double diameter = nodeAppearance.diameter;
-
-            // ズームに応じてサイズを変える場合
-            // double scale = g.getTransform().getScaleX();
-            // double diameter = nodeAppearance.diameter / scale;
-
+            diameter = nodeAppearance.diameter;
             double x = node.getX() - diameter / 2.0;
             double y = node.getY() - diameter / 2.0;
             g.fill(new Ellipse2D.Double(x, y, diameter, diameter));
@@ -556,34 +639,39 @@ public class SimulationPanel2D extends JPanel {
 
         if (showLabel) {
             String text = node.getHintString();
-            if (text.isEmpty()) {
-                return;
+            if (! text.isEmpty()) {
+                double cx = node.getX();
+                double cy = node.getY() - diameter / 2.0;
+                g.setColor(Color.darkGray);
+                drawText(g, cx, cy, TextPosition.UPPER_CENTER, text);
             }
-            double cx = node.getX();
-            double cy = node.getY();
-            g.setColor(Color.BLACK);
-            drawText(g, cx, cy, TextPosition.RIGHT, node.getHintString());
         }
     }
 
     /**
      * ノードのホバーを描画する
      */
-    public void drawHoverNode(Hover hoverNode, Graphics2D g2) {
+    public void drawHoverNode(MapNode node, Graphics2D g2) {
+        double diameter = 0.0;
+        NodeAppearance nodeAppearance = getNodeAppearance(node);
+        if (nodeAppearance != null) {
+            diameter = nodeAppearance.diameter;
+        }
+
+        g2.setColor(Color.BLUE);
+        String text = node.getHintString();
+        if (! text.isEmpty()) {
+            double cx = node.getX();
+            double cy = node.getY() - diameter / 2.0;
+            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, hoverBgColor);
+        }
+
         double scale = g2.getTransform().getScaleX();
         g2.setStroke(new BasicStroke((float)(3.0 / scale)));
-        g2.setColor(Color.BLUE);
-        double diameter = 8.0 / scale;
-        double x = hoverNode.getX() - diameter / 2.0;
-        double y = hoverNode.getY() - diameter / 2.0;
+        diameter = 8.0 / scale;
+        double x = node.getX() - diameter / 2.0;
+        double y = node.getY() - diameter / 2.0;
         g2.draw(new Ellipse2D.Double(x, y, diameter, diameter));
-
-        String text = hoverNode.orig_node.getHintString();
-        if (! text.isEmpty()) {
-            double cx = hoverNode.getX();
-            double cy = hoverNode.getY();
-            drawText(g2, cx, cy, TextPosition.RIGHT, text);
-        }
     }
     
     /**
@@ -591,48 +679,60 @@ public class SimulationPanel2D extends JPanel {
      */
     public void drawLink(MapLink link, Graphics2D g, boolean show_label, boolean isSymbolic) {
         double scale = g.getTransform().getScaleX();
-        float width = 0.8f;
+        float width = 1.0f;
         Color color = defaultLinkColor;
         LinkAppearance linkAppearance = getLinkAppearance(link);
         if (linkAppearance != null) {
             width = (float)(linkAppearance.widthFixed ?
-                            linkAppearance.widthRatio :
-                            link.getWidth() * linkAppearance.widthRatio);
+                    linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio);
             color = linkAppearance.awtColor;
+        } else {
+            width /= scale;
         }
-        g.setStroke(new BasicStroke(width / (float)scale, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        g.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         g.setColor(color);
         g.draw(link.getLine2D());
+
         if (show_label) {
-            g.setColor(Color.BLACK);
-            double cx = link.calcAgentPos(0.5).getX();
-            double cy = link.calcAgentPos(0.5).getY();
-            drawText(g, cx, cy, TextPosition.NONE, link.getTagString());
+            String text = link.getTagString();
+            if (! text.isEmpty()) {
+                Point2D middlePoint = link.getMiddlePoint();
+                double cx = middlePoint.getX();
+                double cy = middlePoint.getY() - width / scale / 2.0;
+                g.setColor(Color.darkGray);
+                drawText(g, cx, cy, TextPosition.UPPER_CENTER, text);
+            }
         }
     }
 
     /**
      * リンクのホバーを描画する
      */
-    public void drawHoverLink(Hover hoverLink, Graphics2D g2) {
+    public void drawHoverLink(MapLink link, Graphics2D g2) {
+        double scale = g2.getTransform().getScaleX();
         g2.setColor(Color.BLUE);
-        g2.fill(hoverLink.getRect(g2, false));
+        g2.fill(link.getRect(0.0, scale, false));
 
-        if (hoverLink.orig_link != null) {
-            MapLink link = hoverLink.orig_link;
-            String text = link.getTagString();
-            if (! text.isEmpty()) {
-                double cx = link.calcAgentPos(0.5).getX();
-                double cy = link.calcAgentPos(0.5).getY();
-                drawText(g2, cx, cy, TextPosition.NONE, text);
+        String text = link.getTagString();
+        if (! text.isEmpty()) {
+            float width = 1.0f;
+            LinkAppearance linkAppearance = getLinkAppearance(link);
+            if (linkAppearance != null) {
+                width = (float)(linkAppearance.widthFixed ?
+                        linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio);
             }
+            Point2D middlePoint = link.getMiddlePoint();
+            double cx = middlePoint.getX();
+            double cy = middlePoint.getY() - width / scale / 2.0;
+            g2.setColor(Color.darkGray);
+            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, hoverBgColor);
         }
     }
 
     /**
      * エリアを描画する
      */
-    public void drawArea(MapArea area, Graphics2D g) {
+    public void drawArea(MapArea area, Graphics2D g, boolean showLabel) {
         if (area.getPollutionLevel() == null || ! area.getPollutionLevel().isPolluted()) {
             if (frame.isShowAreaLocation()) {
                 g.setColor(Color.WHITE);
@@ -670,13 +770,15 @@ public class SimulationPanel2D extends JPanel {
 
         g.setColor(color);
         g.fill(area.getShape());
-        if (showAreaLabels) {
+
+        if (showLabel) {
             String text = area.getTagString();
             if (! text.isEmpty()) {
-                g.setColor(Color.BLACK);
+                g.setColor(Color.darkGray);
                 double cx = ((Rectangle2D)area.getShape()).getMinX();
-                double cy = ((Rectangle2D)area.getShape()).getMaxY();
-                drawText(g, cx, cy, TextPosition.NONE, text);
+                double cy = ((Rectangle2D)area.getShape()).getMinY();
+                // TODO: バックグラウンドカラーが何故か微妙に異なってしまう
+                drawText(g, cx, cy, TextPosition.LOWER_RIGHT, text, color);
             }
         }
     }
@@ -692,9 +794,9 @@ public class SimulationPanel2D extends JPanel {
 
         String text = hoverArea.getTagString();
         if (! text.isEmpty()) {
-            double cx = ((Rectangle2D)hoverArea.getShape()).getMaxX();
-            double cy = ((Rectangle2D)hoverArea.getShape()).getMaxY();
-            drawText(g2, cx, cy, TextPosition.RIGHT, text);
+            double cx = ((Rectangle2D)hoverArea.getShape()).getMinX();
+            double cy = ((Rectangle2D)hoverArea.getShape()).getMinY();
+            drawText(g2, cx, cy, TextPosition.LOWER_RIGHT, text, hoverBgColor);
         }
     }
 
@@ -702,7 +804,7 @@ public class SimulationPanel2D extends JPanel {
      * ステータスメッセージを描画する
      */
     public void drawMessage(Graphics2D g2, int position, String message) {
-        Font font = new Font("SansSerif", Font.PLAIN, 13);
+        Font font = new Font(FONT_NAME, Font.PLAIN, 14);
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
         int width = fm.stringWidth(message);
@@ -730,86 +832,89 @@ public class SimulationPanel2D extends JPanel {
 
     /**
      * 描画スケールの影響を受けないフォントの指定
-     *
-     * ※ポイント指定が整数でしか出来ないため実際には一定サイズにならない
      */
     public void setScaleFixedFont(Graphics2D g2, String name, int fontStyle, int fontSize) {
         double scale = g2.getTransform().getScaleX();
         int size = (int)(fontSize / scale);
-        g2.setFont(new Font(name, fontStyle, Math.max(size, 1)));
+        Font font = new Font(name, fontStyle, fontSize);
+        g2.setFont(font.deriveFont((float)(fontSize / scale)));
+    }
+
+    /**
+     * FontMetrics.stringWidth(String str) の代用
+     */
+    public int getStringWidth(String text) {
+        int size = 0;
+        for (byte c : text.getBytes()) {
+            size += originalCharsWidths[(int)c];
+        }
+        return size;
+    }
+
+    /**
+     * 指定された位置に text を描画する。
+     */
+    public void drawText(Graphics2D g2, double x, double y, TextPosition position, String text, Color bgColor) {
+        double scale = g2.getTransform().getScaleX();
+        double textWidth = getStringWidth(text) / scale;
+
+        double dx = 0.0;
+        double dy = 0.0;
+        switch (position) {
+        case UPPER_CENTER:
+            dx = textWidth / -2.0;
+            dy = -(fontDescent + fontLeading);
+            break;
+        case LOWER_CENTER:
+            dx = textWidth / -2.0;
+            dy = fontAscent;
+            break;
+        case UPPER_RIGHT:
+            dx = fontHeight / 3.0;
+            dy = -(fontDescent + fontLeading);
+            break;
+        case LOWER_RIGHT:
+            dx = fontHeight / 3.0;
+            dy = fontAscent;
+            break;
+        }
+
+        Color color = g2.getColor();
+        g2.setColor(bgColor);
+        g2.fill(new Rectangle2D.Double(x + dx - fontHeight / 3.0, y + dy - fontAscent,
+                    textWidth + fontHeight * 2.0 / 3.0, fontHeight));
+        g2.setColor(color);
+        g2.drawString(text, (float)(x + dx), (float)(y + dy));
     }
 
     /**
      * 指定された位置に text を描画する。
      */
     public void drawText(Graphics2D g2, double x, double y, TextPosition position, String text) {
-        FontMetrics fm = g2.getFontMetrics();
-        double textWidth = (double)fm.stringWidth(text);
-        double textHeight = (double)fm.getHeight();
-
-        double dx = 0.0;
-        double dy = 0.0;
-        switch (position) {
-        case CENTER:
-            dx = textWidth / -2.0;
-            dy = textHeight / 5.0;
-            break;
-        case UPPER:
-            dx = textWidth / -2.0;
-            dy = textHeight / -3.0;
-            break;
-        case LOWER:
-            dx = textWidth / -2.0;
-            dy = textHeight / 1.3;
-            break;
-        case LEFT:
-            dx = -textWidth - textHeight / 3.0;
-            dy = textHeight / 5.0;
-            break;
-        case RIGHT:
-            dx = textHeight / 3.0;
-            dy = textHeight / 5.0;
-            break;
-        }
-
-        Color color = g2.getColor();
-        g2.setColor(getBackground());
-        g2.fill(new Rectangle2D.Double(x + dx, y + dy - textHeight / 2.0, textWidth, textHeight * 0.7));
-        g2.setColor(color);
-        g2.drawString(text, (float)(x + dx), (float)(y + dy));
+        drawText(g2, x, y, position, text, getBackground());
     }
 
     /**
      * node に振られているタグにマッチする NodeAppearance を返す.
      */
     public NodeAppearance getNodeAppearance(MapNode node) {
-        for (Map.Entry<String, NodeAppearance> entry : nodeAppearances.entrySet()) {
-            if (node.hasTag(entry.getKey())) {
-                return entry.getValue();
-            }
-        }
-        return null;
+        return NodeAppearance.getAppearance(nodeAppearances, node);
     }
 
     /**
      * link に振られているタグにマッチする LinkAppearance を返す.
      */
     public LinkAppearance getLinkAppearance(MapLink link) {
-        for (Map.Entry<String, LinkAppearance> entry : linkAppearances.entrySet()) {
-            if (link.hasTag(entry.getKey())) {
-                return entry.getValue();
-            }
-        }
-        return null;
+        return LinkAppearance.getAppearance(linkAppearances, link);
     }
 
     /* -- Methods to set how drawn 
      */
-    public void updateHoverNode(Hover _hoverNode) {
+    public void updateHoverNode(MapNode _hoverNode) {
         hoverNode = _hoverNode;
     }
     
-    public void updateHoverLink(Hover _hoverLink) {
+    public void updateHoverLink(MapLink _hoverLink) {
         hoverLink = _hoverLink;
     }
     
@@ -843,5 +948,13 @@ public class SimulationPanel2D extends JPanel {
 
     public void setShowAreaNames(boolean showAreaNames) {
         this.showAreaLabels = showAreaNames;
+    }
+
+    public void setShowAgents(boolean showAgents) {
+        this.showAgents = showAgents;
+    }
+
+    public void setShowAgentNames(boolean showAgentNames) {
+        this.showAgentLabels = showAgentNames;
     }
 }

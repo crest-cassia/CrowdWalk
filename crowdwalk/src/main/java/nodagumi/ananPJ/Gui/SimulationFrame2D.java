@@ -70,6 +70,7 @@ import nodagumi.ananPJ.GuiSimulationLauncher2D;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
@@ -155,9 +156,8 @@ public class SimulationFrame2D extends JFrame
 
     /* ホバー表示対象 */
 
-    private Hover hoverNode = null;
-    private MapNode selectedNode = null;
-    private Hover hoverLink = null;
+    private MapNode hoverNode = null;
+    private MapLink hoverLink = null;
     private MapArea hoverArea = null;
     private AgentBase hoverAgent = null;
 
@@ -195,6 +195,8 @@ public class SimulationFrame2D extends JFrame
     private JCheckBox showLinkLabelsCheckBox = null;
     private JCheckBox showAreaCheckBox = null;
     private JCheckBox showAreaLabelsCheckBox = null;
+    private JCheckBox showAgentCheckBox = null;
+    private JCheckBox showAgentLabelsCheckBox = null;
     private JCheckBox record_snapshots = new JCheckBox("Record simulation screen");
     private JCheckBox exit_with_simulation_finished_cb = null;
 
@@ -398,6 +400,8 @@ public class SimulationFrame2D extends JFrame
         panel.setShowArea(showArea.getState());
         showAreaLabels.setEnabled(showArea.getState());
         panel.setShowAreaNames(showAreaLabels.getState());
+        panel.setShowAgents(showAgentCheckBox.isSelected());
+        panel.setShowAgentNames(showAgentLabelsCheckBox.isSelected());
         clearSelection();
         repaint();
     }
@@ -844,6 +848,25 @@ public class SimulationFrame2D extends JFrame
 
         checkbox_panel.add(showAreaPanel);
 
+        JPanel showAgentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        showAgentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // エージェント表示の ON/OFF
+        showAgentCheckBox = new JCheckBox("Show agents");
+        showAgentCheckBox.setSelected(true);
+        showAgentCheckBox.addActionListener(e -> {
+            showAgentLabelsCheckBox.setEnabled(showAgentCheckBox.isSelected());
+            update();
+        });
+        showAgentPanel.add(showAgentCheckBox);
+
+        // エージェントラベル表示の ON/OFF
+        showAgentLabelsCheckBox = new JCheckBox("Show agent labels");
+        showAgentLabelsCheckBox.setSelected(false);
+        showAgentLabelsCheckBox.addActionListener(e -> update());
+        showAgentPanel.add(showAgentLabelsCheckBox);
+        checkbox_panel.add(showAgentPanel);
+
         // 仕切り線
         checkbox_panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
@@ -1207,12 +1230,8 @@ public class SimulationFrame2D extends JFrame
             }
         }
 
-        boolean updated = (selectedNode != hoverNodeCandidate);
-        selectedNode = hoverNodeCandidate;
-        if (selectedNode != null)
-            hoverNode = new Hover(selectedNode, selectedNode.getLocalCoordinates());
-        else
-            hoverNode = null;
+        boolean updated = (hoverNode != hoverNodeCandidate);
+        hoverNode = hoverNodeCandidate;
 
         return updated;
     }
@@ -1221,8 +1240,8 @@ public class SimulationFrame2D extends JFrame
      * 選択中のノードの情報を表示する
      */
     private void selectNode(MouseEvent e) {
-        if (selectedNode != null) {
-            statusIndication(getNodeInformation(selectedNode));
+        if (hoverNode != null) {
+            statusIndication(getNodeInformation(hoverNode));
         }
     }
 
@@ -1265,17 +1284,15 @@ public class SimulationFrame2D extends JFrame
      * マウスカーソル上のリンクを調査対象として選択する
      */
     private boolean updateHoverLink(Point2D p) {
-        Hover hoverLinkCandidate = null;
+        MapLink hoverLinkCandidate = null;
         double mindist = Double.MAX_VALUE;
-        for (final MapLink link : getLinks()) {
+        for (MapLink link : getLinks()) {
             MapNode from = (MapNode)link.getFrom();
             MapNode to = (MapNode)link.getTo();
             Line2D line = new Line2D.Double(from.getLocalCoordinates(), to.getLocalCoordinates());
             double dist = line.ptSegDist(p);
             if (dist < mindist) {
-                hoverLinkCandidate = new Hover(from, to, link.getWidth(), link.getLength());
-                hoverLinkCandidate.setDummyHoverLink(link);
-                hoverLinkCandidate.orig_link = link;
+                hoverLinkCandidate = link;
                 mindist = dist;
             }
         }
@@ -1289,13 +1306,11 @@ public class SimulationFrame2D extends JFrame
      * 選択中のリンクの情報を表示する
      */
     private void selectLink(MouseEvent e) {
-        if (hoverLink == null || hoverLink.getDummyHoverLink() == null) {
+        if (hoverLink == null) {
             return;
         }
-        Hover hover_link_backup = hoverLink;
-        MapLink link = hover_link_backup.getDummyHoverLink();
-        link.selected ^= true;
-        statusIndication(getLinkInformation(link));
+        hoverLink.selected ^= true;
+        statusIndication(getLinkInformation(hoverLink));
     }
 
     /**
@@ -1306,6 +1321,8 @@ public class SimulationFrame2D extends JFrame
         buff.append(" Link ID: ").append(link.ID).append("\n");
         buff.append(" length: ").append(link.getLength()).append("\n");
         buff.append(" width: ").append(link.getWidth()).append("\n");
+        buff.append(" laneWidth(Forward): ").append(link.getLaneWidth(Direction.Forward)).append("\n");
+        buff.append(" laneWidth(Backward): ").append(link.getLaneWidth(Direction.Backward)).append("\n");
         buff.append(" tags: ").append(link.getTagString()).append("\n");
         buff.append(" agents: ").append(link.getAgents().size()).append("\n");
         MapNode fromNode = link.getFrom();

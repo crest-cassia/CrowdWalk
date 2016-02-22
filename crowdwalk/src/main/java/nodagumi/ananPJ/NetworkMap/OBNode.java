@@ -53,6 +53,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     public enum NType{NODE,LINK,AGENT,GROUP,AREA,SYMLINK}
 
     public String ID;
+    protected String idNumber = null;
     protected ArrayList<String> tags;
     public boolean selected = false;
     protected NetworkMap networkMap;
@@ -138,6 +139,24 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         return ID ;
     }
 
+    /**
+     * ID の番号部分(0詰めを除く)を取得
+     */
+    public String getIdNumber() {
+        if (idNumber == null) {
+            idNumber = ID.replaceFirst("[^0-9]*", "");
+            // 番号部分なしならば "" を返す
+            if (idNumber.isEmpty()) {
+                return idNumber;
+            }
+            idNumber = idNumber.replaceFirst("0*", "");
+            // 0のみ
+            if (idNumber.isEmpty()) {
+                idNumber = "0";
+            }
+        }
+        return idNumber;
+    }
 
     /* tag related methods */
     public boolean hasTag (Term _tag) {
