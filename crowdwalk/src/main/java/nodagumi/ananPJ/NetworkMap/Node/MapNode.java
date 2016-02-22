@@ -759,7 +759,13 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     }
         
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    public RingBuffer<PassingAgentRecord> passingAgentRecordBuffer ;
+    /** ノードを交差したエージェントの記録バッファ */
+    private RingBuffer<PassingAgentRecord> passingAgentRecordBuffer ;
+    
+    /** バッファへのアクセス */
+    public RingBuffer<PassingAgentRecord> getPassingAgentRecordBuffer() {
+        return passingAgentRecordBuffer ;
+    }
     
     //------------------------------------------------------------
     /**

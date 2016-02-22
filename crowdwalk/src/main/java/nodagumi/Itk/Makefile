@@ -151,6 +151,13 @@ run0sg2p_cui ::
 	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE0sg2p))
 
 ##-----
+SAMPLE0sg2pn = sample/simpleGrid2/properties-plain-node.xml #kawaguchi's sample
+run0sg2pn ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2pn))
+run0sg2pn_cui ::
+	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE0sg2pn))
+
+##-----
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
 run1 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE1))

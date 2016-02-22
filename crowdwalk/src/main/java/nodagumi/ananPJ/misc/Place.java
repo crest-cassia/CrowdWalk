@@ -306,7 +306,7 @@ public class Place {
 
     //------------------------------------------------------------
     /**
-     * 進入ノード
+     * 進行方向ノード
      */
     public MapNode getHeadingNode() {
         if(enteringNode == null) {
