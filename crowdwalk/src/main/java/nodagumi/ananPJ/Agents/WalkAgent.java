@@ -118,6 +118,18 @@ public class WalkAgent extends AgentBase {
         Fallback_NodeCrossingForceTimeMargin ;
     protected static double Fallback_NodeCrossingForceTimeMargin = 1.5 ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ノードを直前に交差したエージェントから受ける力の
+     * 距離に対する係数。大きいほど力が強くなる。
+     * [2016.02.22 I.Noda] 
+     * 現状の値は、試行錯誤で適当に決めたもの。
+     * 特に根拠はない。
+     */
+    protected double nodeCrossingForceFactor =
+        Fallback_NodeCrossingForceFactor ;
+    protected static double Fallback_NodeCrossingForceFactor = 10.0 ;
+
     /* [2015.01.29 I.Noda]
      *以下は、plain model で使われる。
      */
@@ -346,6 +358,9 @@ public class WalkAgent extends AgentBase {
         nodeCrossingForceTimeMargin =
             getDoubleFromConfig("nodeCrossingForceTimeMargin",
                                 nodeCrossingForceTimeMargin) ;
+        nodeCrossingForceFactor =
+            getDoubleFromConfig("nodeCrossingForceFactor",
+                                nodeCrossingForceFactor) ;
     } ;
 
     //------------------------------------------------------------
@@ -1017,13 +1032,15 @@ public class WalkAgent extends AgentBase {
                 break ;
             }
             if(record.isCrossing(fromLink, toLink)) {
-                double dist = distance ;
-                dist += 
+                double dCross = 
                     ((record.fromLink.getWidth() + record.toLink.getWidth()) /
                      2.0) ; /* 交差する道の両幅の平均 */
-                dist -= dw ; /* 交差分だけ幅減少 */
+                /* 交差分だけ幅減少 */
+                dCross -= dw ;
+                dCross /= nodeCrossingForceFactor ;
                 dw += MapLink.dWidth ; /* 交差した分を増やす */
-                if(dist < 0.0) { dist = 0.0 ; } ; /* 負の値は避ける */
+                if(dCross < 0.0) { dCross = 0.0 ; } ; /* 負の値は避ける */
+                double dist = distance + dCross ;
                 force += calcSocialForce(dist) ;
             }
         }

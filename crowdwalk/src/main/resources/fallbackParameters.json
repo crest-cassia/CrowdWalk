@@ -11,6 +11,7 @@
 	"mentalMode" : null,
         "insensitiveDistanceInCounterFlow" : 0.522,
 	"nodeCrossingForceTimeMargin" : 1.5,
+	"nodeCrossingForceFactor" : 10.0,
         "margin" : 200.0,
         "weight" : 100.0,
         "trail" : 100.0,

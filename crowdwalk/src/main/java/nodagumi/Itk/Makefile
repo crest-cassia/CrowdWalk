@@ -283,6 +283,16 @@ SAMPLE3bench00rubyAgent = sample/generatedTown/gridTown00_bench.ruby.ag.prop.jso
 run3bc00rba ::
 	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00rubyAgent))
 
+##-----
+SAMPLE3crs4x = sample/crossing/crossing4x.prop.json   # crossing. cross.
+run3crs4x ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --log-level Info $(SAMPLE3crs4x))
+
+##-----
+SAMPLE3crs4p = sample/crossing/crossing4p.prop.json   # crossing. parallel
+run3crs4p ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --log-level Info $(SAMPLE3crs4p))
+
 
 
 
