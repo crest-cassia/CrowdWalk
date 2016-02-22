@@ -898,17 +898,24 @@ public class WalkAgent extends AgentBase {
             //順方向探索
             ArrayList<AgentBase> sameLane = workingPlace.getLane() ;
             int laneWidth = workingPlace.getLaneWidth() ;
+            boolean myTernIsOver = false ;
             for(AgentBase agent : sameLane) {
                 if(totalForce < lowerBound) { break ; }
                 double agentPos = agent.getAdvancingDistance() ;
                 if(agent == this) {
+                    myTernIsOver = true ;
                     continue ;
                 } else if(agentPos > workingPlace.getAdvancingDistance()) {
                     // 探索範囲外
                     break ; // for からの脱出
-                } else if(agentPos <= relativePos) {
+//              } else if(agentPos <= relativePos) {
+                } else if(agentPos < relativePos) { // 同一の場合は次で判断
                     // 当該エージェントの後方なので無視
                     continue ; // 次の for へ
+                } else if(agentPos == relativePos && myTernIsOver) {
+                    // 同一位置で、かつ、自分より順番が後ろの場合は無視。
+                    // （つまり、同一位置で自分が先頭の時のみ、影響受けない）
+                    continue ;
                 } else {
                     count++ ;
                     double dx = agentPos - relativePos ;
