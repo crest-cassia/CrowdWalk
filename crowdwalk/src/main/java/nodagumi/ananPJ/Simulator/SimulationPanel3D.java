@@ -1270,11 +1270,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
                             continue;
                         }
                         Agent3D agent3d = displayedAgents.get(agent);
-                        agent3d.updateColor();
+                        updated |= agent3d.updateColor();
                     }
                 }
                 colorChangedAgents.clear();
-                updated = true;
             }
         }
         return updated;
@@ -1369,9 +1368,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
         /**
          * エージェントの表示色を更新する.
          */
-        public void updateColor() {
+        public boolean updateColor() {
             if (agent.isEvacuated()) {
-                return;
+                return false;
             }
             /* determine color based on triage */
             Color3f color = agent_color;
@@ -1400,7 +1399,9 @@ public class SimulationPanel3D extends NetworkPanel3D {
             if (! color.equals(lastColor)) {
                 app.setColoringAttributes(new ColoringAttributes(color, ColoringAttributes.FASTEST));
                 lastColor = color;
+                return true;
             }
+            return false;
         }
     }
 
