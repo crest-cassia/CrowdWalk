@@ -64,8 +64,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * 順・逆方向を示すもの
      */
     static public enum Direction {
+        /** 順方向 */
         Forward(1.0),
+        /** 逆方向 */
         Backward(-1.0),
+        /** 未定義 */
         None(0.0);
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -191,7 +194,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      */
     protected double length;
     /**
-     * リンクの福音
+     * リンクの幅員
      */
     protected double width;
     /**
@@ -199,6 +202,12 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      */
     protected MapNode fromNode, toNode;
 
+    /**
+     * 両端でのリンクの index。
+     * 時計回り(?)順にカウントするとする。
+     */
+    protected int indexAtFromNode, indexAtToNode ;
+    
     /**
      * 主観的距離のテーブル。
      * ルールによって可変。
@@ -517,9 +526,20 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         }
     }
 
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    static public double dWidth = 1.0 ;
+
+    //------------------------------------------------------------
+    /**
+     * リンクのレーンの幅。
+     * レーンの幅は、forward/backward のレーンに存在するエージェント数に
+     * 比例して、元の width から割り振られる。
+     * 1 以下にはしない。
+     */
     public int getLaneWidth(Direction dir) {
         int d = getLane(dir).size() ;
-        int lane_width = (int)(d * width / (forwardLane.size() +
+        int lane_width = (int)(d * (width / dWidth) / (forwardLane.size() +
                     backwardLane.size()));
         if (lane_width == 0) {
             lane_width = 1;
@@ -700,6 +720,65 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     public Boolean equals(MapLink rhs){
         return hasSameEndsForward(rhs) || hasSameEndsBackward(rhs) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * From 終端での index 取得。
+     */
+    public int getIndexAtFromNode() {
+        return indexAtFromNode ;
+    }
+
+    /**
+     * From 終端での index セット。
+     */
+    public void setIndexAtFromNode(int index) {
+        indexAtFromNode = index ;
+    }
+
+    /**
+     * To 終端での index 取得。
+     */
+    public int getIndexAtToNode() {
+        return indexAtToNode ;
+    }
+
+    /**
+     * To 終端での index セット。
+     */
+    public void setIndexAtToNode(int index) {
+        indexAtToNode = index ;
+    }
+
+    /**
+     * From/To 終端での index 取得。
+     * 終端でないノードの場合は、-1。
+     */
+    public int getIndexAtNode(MapNode node) {
+        if(node == fromNode) {
+            return getIndexAtFromNode() ;
+        } else if (node == toNode) {
+            return getIndexAtToNode() ;
+        } else {
+            return -1 ;
+        }
+    }
+
+    /**
+     * From/To 終端での index セット。
+     * 終端でないノードの場合は、false を返す。
+     */
+    public boolean setIndexAtNode(MapNode node, int index) {
+        if(node == fromNode) {
+            setIndexAtFromNode(index) ;
+            return true ;
+        } else if (node == toNode) {
+            setIndexAtToNode(index) ;
+            return true ;
+        } else {
+            return false ;
+        }
     }
 
     //------------------------------------------------------------

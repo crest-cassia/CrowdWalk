@@ -109,6 +109,27 @@ public class WalkAgent extends AgentBase {
     protected double widthUnit_SameLane = Fallback_WidthUnit_SameLane ;
     protected double widthUnit_OtherLane = Fallback_WidthUnit_OtherLane ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ノードを直前に交差したエージェントから受ける力を考慮する
+     * 時間幅。
+     */
+    protected double nodeCrossingForceTimeMargin =
+        Fallback_NodeCrossingForceTimeMargin ;
+    protected static double Fallback_NodeCrossingForceTimeMargin = 1.5 ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ノードを直前に交差したエージェントから受ける力の
+     * 距離に対する係数。大きいほど力が強くなる。
+     * [2016.02.22 I.Noda] 
+     * 現状の値は、試行錯誤で適当に決めたもの。
+     * 特に根拠はない。
+     */
+    protected double nodeCrossingForceFactor =
+        Fallback_NodeCrossingForceFactor ;
+    protected static double Fallback_NodeCrossingForceFactor = 10.0 ;
+
     /* [2015.01.29 I.Noda]
      *以下は、plain model で使われる。
      */
@@ -333,6 +354,13 @@ public class WalkAgent extends AgentBase {
                                 insensitiveDistanceInCounterFlow) ;
         mentalMode =
             getTermFromConfig("mentalMode", mentalMode) ;
+
+        nodeCrossingForceTimeMargin =
+            getDoubleFromConfig("nodeCrossingForceTimeMargin",
+                                nodeCrossingForceTimeMargin) ;
+        nodeCrossingForceFactor =
+            getDoubleFromConfig("nodeCrossingForceFactor",
+                                nodeCrossingForceFactor) ;
     } ;
 
     //------------------------------------------------------------
@@ -898,17 +926,24 @@ public class WalkAgent extends AgentBase {
             //順方向探索
             ArrayList<AgentBase> sameLane = workingPlace.getLane() ;
             int laneWidth = workingPlace.getLaneWidth() ;
+            boolean myTernIsOver = false ;
             for(AgentBase agent : sameLane) {
                 if(totalForce < lowerBound) { break ; }
                 double agentPos = agent.getAdvancingDistance() ;
                 if(agent == this) {
+                    myTernIsOver = true ;
                     continue ;
                 } else if(agentPos > workingPlace.getAdvancingDistance()) {
                     // 探索範囲外
                     break ; // for からの脱出
-                } else if(agentPos <= relativePos) {
+//              } else if(agentPos <= relativePos) {
+                } else if(agentPos < relativePos) { // 同一の場合は次で判断
                     // 当該エージェントの後方なので無視
                     continue ; // 次の for へ
+                } else if(agentPos == relativePos && myTernIsOver) {
+                    // 同一位置で、かつ、自分より順番が後ろの場合は無視。
+                    // （つまり、同一位置で自分が先頭の時のみ、影響受けない）
+                    continue ;
                 } else {
                     count++ ;
                     double dx = agentPos - relativePos ;
@@ -919,7 +954,6 @@ public class WalkAgent extends AgentBase {
                     totalForce += force ;
                 }
             }
-
             //次のリンクへ進む
             relativePos -= workingPlace.getLinkLength() ;
             MapLink nextLink =
@@ -928,6 +962,13 @@ public class WalkAgent extends AgentBase {
             if (nextLink == null) {
                 break;
             }
+            //（直前のターンで）次のノードを交差して渡っている人の影響
+            totalForce += calcNodeCrossingForce(currentTime,
+                                                workingPlace.getLink(),
+                                                nextLink,
+                                                workingPlace.getHeadingNode(),
+                                                -relativePos) ;
+
             workingPlace.transitTo(nextLink) ;
         }
 
@@ -961,6 +1002,51 @@ public class WalkAgent extends AgentBase {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * 向かっている交差点の交差する人流から受ける social force。
+     * @param currentTime : 現在時刻。
+     * @param node : 交差点。
+     * @param distance : 交差点までの距離
+     * @return social force。
+     */
+    public double calcNodeCrossingForce(SimTime currentTime,
+                                        MapLink fromLink,
+                                        MapLink toLink,
+                                        MapNode node,
+                                        double distance) {
+        RingBuffer<MapNode.PassingAgentRecord> buffer =
+            node.getPassingAgentRecordBuffer() ;
+        // 前方、バッファがなければ、まだ誰も交差してないので、
+        // おしまい。
+        if( buffer == null) { return 0.0 ; } 
+
+        // バッファを順にチェック。
+        double force = 0.0 ; /* force の小計 */
+        double dw = MapLink.dWidth ; /* 道幅を考慮するときの、
+                                          距離の減少分 */
+        for(MapNode.PassingAgentRecord record : buffer) {
+            if(currentTime.calcDifferenceFrom(record.time)
+               > nodeCrossingForceTimeMargin) {
+                // 時間マージンを過ぎていたら、それ以降無視。
+                break ;
+            }
+            if(record.isCrossing(fromLink, toLink)) {
+                double dCross = 
+                    ((record.fromLink.getWidth() + record.toLink.getWidth()) /
+                     2.0) ; /* 交差する道の両幅の平均 */
+                /* 交差分だけ幅減少 */
+                dCross -= dw ;
+                dCross /= nodeCrossingForceFactor ;
+                dw += MapLink.dWidth ; /* 交差した分を増やす */
+                if(dCross < 0.0) { dCross = 0.0 ; } ; /* 負の値は避ける */
+                double dist = distance + dCross ;
+                force += calcSocialForce(dist) ;
+            }
+        }
+        return force ;
+    }
+                                        
 	//############################################################
 	/**
 	 * 移動計画及び移動
@@ -990,8 +1076,12 @@ public class WalkAgent extends AgentBase {
         /* transit to new link */
         currentPlace.transitTo(nextLink) ;
         calcNextTarget(passingNode, workingRoutePlan, false) ;
-
+        /* register agent to new link */
         currentPlace.getLink().agentEnters(this);
+        /* record agent pass the passing node */
+        passingNode.recordPassingAgent(currentTime, this,
+                                       previousLink, nextLink) ;
+
         //update_swing_flag = true;
         //2011年6月7日修正
         /*

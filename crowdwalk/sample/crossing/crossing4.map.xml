@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group id='0' imageFileName='' defaultHeight='0.0' maxHeight='0.0' minHeight='0.0' pNorthWestX='-200.0' pNorthWestY='-200.0' pSouthEastX='200.0' pSouthEastY='200.0' pTheta='0.0' r='0.0' scale='1.0' sx='1.0' sy='1.0' tx='0.0' ty='0.0'>
+  <Node id='O' x='0.0' y='0.0' height='0.0'>
+    <tag>Origin</tag>
+    <link id='O_N1'/>
+    <link id='O_S1'/>
+    <link id='O_E1'/>
+    <link id='O_W1'/>
+  </Node>
+  <Node id='N1' x='0.0' y='-100.0' height='0.0'>
+    <tag>North1</tag>
+    <link id='O_N1'/>
+    <link id='N1_N2'/>
+  </Node>
+  <Node id='N2' x='0.0' y='-200.0' height='0.0'>
+    <tag>North2</tag>
+    <link id='N1_N2'/>
+  </Node>
+  <Node id='S1' x='0.0' y='100.0' height='0.0'>
+    <tag>South1</tag>
+    <link id='O_S1'/>
+    <link id='S1_S2'/>
+  </Node>
+  <Node id='S2' x='0.0' y='200.0' height='0.0'>
+    <tag>South2</tag>
+    <link id='S1_S2'/>
+  </Node>
+  <Node id='E1' x='100.0' y='0.0' height='0.0'>
+    <tag>East1</tag>
+    <link id='O_E1'/>
+    <link id='E1_E2'/>
+  </Node>
+  <Node id='E2' x='200.0' y='0.0' height='0.0'>
+    <tag>East2</tag>
+    <link id='E1_E2'/>
+  </Node>
+  <Node id='W1' x='-100.0' y='0.0' height='0.0'>
+    <tag>West1</tag>
+    <link id='O_W1'/>
+    <link id='W1_W2'/>
+  </Node>
+  <Node id='W2' x='-200.0' y='0.0' height='0.0'>
+    <tag>West2</tag>
+    <link id='W1_W2'/>
+  </Node>
+  <Link id='O_N1' from='O' to='N1' length='100.0' width='2.0'>
+    <tag>roadNorth1</tag>
+  </Link>
+  <Link id='N1_N2' from='N1' to='N2' length='100.0' width='2.0'>
+    <tag>roadNorth2</tag>
+  </Link>
+  <Link id='O_S1' from='O' to='S1' length='100.0' width='2.0'>
+    <tag>roadSouth1</tag>
+  </Link>
+  <Link id='S1_S2' from='S1' to='S2' length='100.0' width='2.0'>
+    <tag>roadSouth2</tag>
+  </Link>
+  <Link id='O_E1' from='O' to='E1' length='100.0' width='1.0'>
+    <tag>roadEast1</tag>
+  </Link>
+  <Link id='E1_E2' from='E1' to='E2' length='100.0' width='1.0'>
+    <tag>roadEast2</tag>
+  </Link>
+  <Link id='O_W1' from='O' to='W1' length='100.0' width='1.0'>
+    <tag>roadWest1</tag>
+  </Link>
+  <Link id='W1_W2' from='W1' to='W2' length='100.0' width='1.0'>
+    <tag>roadWest2</tag>
+  </Link>
+</Group>

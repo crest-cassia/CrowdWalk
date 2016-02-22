@@ -1,0 +1,22 @@
+{
+  "__0":"NetmasCuiSimulator",
+  "debug":true,
+  "io_handler_type":"none",
+  "map_file":"crossing4.map.xml",
+  "generation_file":"crossing4p.gen.json",
+  "scenario_file":"crossing4.scnr.json",
+  "fallback_file":"crossing4.fb.json",
+  "timer_enable":true,
+  "timer_file":"/tmp/timer.log",
+  "interval":0,
+  "randseed":2524,
+  "random_navigation":true,
+  "time_series_log":true,
+  "time_series_log_path":"/tmp",
+  "time_series_log_interval":1,
+  "loop_count":1,
+  "exit_count":0,
+  "all_agent_speed_zero_break":false,
+
+  "___":null
+}

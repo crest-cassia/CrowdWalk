@@ -72,6 +72,8 @@ test_CsvFormatter ::
 test_ItkRuby ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).ItkRuby_Test
 
+test_RingBuffer ::
+	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).RingBuffer_Test
 
 test_all ::
 	java -cp $(CLASSPATH) $(JUNITCLASS) $(ALLTESTS)
@@ -147,6 +149,13 @@ run0sg2p ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2p))
 run0sg2p_cui ::
 	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE0sg2p))
+
+##-----
+SAMPLE0sg2pn = sample/simpleGrid2/properties-plain-node.xml #kawaguchi's sample
+run0sg2pn ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0sg2pn))
+run0sg2pn_cui ::
+	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE0sg2pn))
 
 ##-----
 SAMPLE1 = sample/simpleGrid/properties-lane.v1.xml	#simple, version1
@@ -273,6 +282,16 @@ run3bc00rbw ::
 SAMPLE3bench00rubyAgent = sample/generatedTown/gridTown00_bench.ruby.ag.prop.json   # bench, ruby agent
 run3bc00rba ::
 	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00rubyAgent))
+
+##-----
+SAMPLE3crs4x = sample/crossing/crossing4x.prop.json   # crossing. cross.
+run3crs4x ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --log-level Info $(SAMPLE3crs4x))
+
+##-----
+SAMPLE3crs4p = sample/crossing/crossing4p.prop.json   # crossing. parallel
+run3crs4p ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --log-level Info $(SAMPLE3crs4p))
 
 
 

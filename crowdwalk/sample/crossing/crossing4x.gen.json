@@ -1,0 +1,25 @@
+#{ "version" : 2}
+[
+ {"rule":"EACH",
+  "agentType":{"className":"NaiveAgent",
+               "weight": 0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "_":null},
+  "total":1000,"speedModel":"PLAIN",
+  "startPlace":"roadNorth2","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"South2",
+  "plannedRoute":[]},
+ {"rule":"EACH",
+  "agentType":{"className":"NaiveAgent",
+               "weight": -0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "_":null},
+  "total":1000,"speedModel":"PLAIN",
+  "startPlace":"roadEast2","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"West2",
+  "plannedRoute":[]}
+]
