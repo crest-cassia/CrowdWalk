@@ -116,9 +116,53 @@ public class RingBuffer_Test {
     
     //------------------------------------------------------------
     /**
-     * test recycle
+     * test Fixed
+     */
+    //@Test
+    public void testFixed() {
+        RingBuffer<Double> rb0 = new RingBuffer<>(10, ExpandType.Fixed) ;
+        Itk.dbgVal("rb0",rb0) ;
+        for(int i = 0 ; i < 5 ; i++) {
+            Itk.dbgVal("rb0.enqueue", rb0.enqueue((double)i)) ;
+            Itk.dbgVal("rb0.dequeue", rb0.dequeue()) ;
+        }
+        Itk.dbgVal("rb0",rb0) ;
+
+        for(int i = 0 ; i < 15 ; i++) {
+            Itk.dbgVal("rb0.enqueue", rb0.enqueue((double)(i + 10))) ;
+            Itk.dbgVal("rb0", rb0) ;
+            Itk.dbgVal("buffer", rb0.getBuffer()) ;
+            Itk.dbgVal("array", rb0.toArrayList()) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * test Overwrite
      */
     @Test
+    public void testOverwrite() {
+        RingBuffer<Double> rb0 = new RingBuffer<>(10, ExpandType.Overwrite) ;
+        Itk.dbgVal("rb0",rb0) ;
+        for(int i = 0 ; i < 5 ; i++) {
+            Itk.dbgVal("rb0.enqueue", rb0.enqueue((double)i)) ;
+            Itk.dbgVal("rb0.dequeue", rb0.dequeue()) ;
+        }
+        Itk.dbgVal("rb0",rb0) ;
+
+        for(int i = 0 ; i < 15 ; i++) {
+            Itk.dbgVal("rb0.enqueue", rb0.enqueue((double)(i + 10))) ;
+            Itk.dbgVal("rb0", rb0) ;
+            Itk.dbgVal("buffer", rb0.getBuffer()) ;
+            Itk.dbgVal("array", rb0.toArrayList()) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * test recycle
+     */
+    //@Test
     public void testRecycle() {
         RingBuffer<TestRecycleFoo> rb0 =
             new RingBuffer<>(10, ExpandType.Recycle, true) ;

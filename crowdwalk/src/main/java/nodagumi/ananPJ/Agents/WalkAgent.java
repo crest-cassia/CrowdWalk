@@ -990,8 +990,12 @@ public class WalkAgent extends AgentBase {
         /* transit to new link */
         currentPlace.transitTo(nextLink) ;
         calcNextTarget(passingNode, workingRoutePlan, false) ;
-
+        /* register agent to new link */
         currentPlace.getLink().agentEnters(this);
+        /* record agent pass the passing node */
+        passingNode.recordPassingAgent(currentTime, this,
+                                       previousLink, nextLink) ;
+
         //update_swing_flag = true;
         //2011年6月7日修正
         /*

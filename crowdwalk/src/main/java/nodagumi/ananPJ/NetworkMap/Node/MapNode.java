@@ -18,6 +18,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
@@ -46,6 +47,7 @@ import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
+import nodagumi.Itk.RingBuffer.ExpandType;
 
 public class MapNode extends OBMapPart implements Comparable<MapNode> {
     //============================================================
@@ -117,6 +119,35 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         return new Point2D.Double(this.getLocalX(),this.getLocalY());
     }
 
+    //------------------------------------------------------------
+    // 相対位置情報
+    /** 相対 X 座標 */
+    public double getRelativeXFrom(Point2D origin) {
+        return getX() - origin.getX() ;
+    }
+    /** 相対 Y 座標 */
+    public double getRelativeYFrom(Point2D origin) {
+        return getY() - origin.getY() ;
+    }
+    /** 相対 X 座標 from Node */
+    public double getRelativeXFrom(MapNode origin) {
+        return getX() - origin.getX() ;
+    }
+    /** 相対 Y 座標 from Node */
+    public double getRelativeYFrom(MapNode origin) {
+        return getY() - origin.getY() ;
+    }
+    /** 相対位置の角度 */
+    public double getAngleFrom(MapNode origin) {
+        double dX = getRelativeXFrom(origin) ;
+        double dY = getRelativeYFrom(origin) ;
+        return Math.atan2(dY, dX) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * コンストラクタ。
+     */
     public MapNode(String _ID,
             Point2D _absoluteCoordinates,
             double _height) {
@@ -665,6 +696,158 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         return ID.compareTo(node.ID);
     }
 
+    //============================================================
+    //============================================================
+    static public class PassingAgentRecord {
+        /** time */
+        public SimTime time ;
+        /** agent */
+        public AgentBase agent ;
+        /** from Link */
+        public MapLink fromLink ;
+        /** to Link */
+        public MapLink toLink ;
+        /** node */
+        public MapNode atNode ;
+
+        //----------------------------------------
+        /** constructor. */
+        public PassingAgentRecord() {
+            set(null, null, null, null, null) ;
+        }
+        //----------------------------------------
+        /** set. */
+        public PassingAgentRecord set(SimTime _time, AgentBase _agent,
+                                      MapLink _fromLink, MapLink _toLink,
+                                      MapNode _atNode) {
+            time = _time ;
+            agent = _agent ;
+            fromLink = _fromLink ;
+            toLink = _toLink ;
+            atNode = _atNode ;
+            return this ;
+        }
+        //----------------------------------------
+        /** 
+         * 交差チェック。
+         * agent A and B.
+         * A は A.from から A.to へ。
+         * B は B.from から B.to へ。
+         * これらが交差している場合、
+         * A.from からカウントした 各々のリンクの index が、
+         * B.from <> A.to <> B.to の順になっていると、交差している。
+         */
+        public boolean isCrossing(MapLink _fromLink, MapLink _toLink) {
+            int n = atNode.getLinks().size() ;
+            int origin = _fromLink.getIndexAtNode(atNode) ;
+            int destIndex = (_toLink.getIndexAtNode(atNode) + n - origin) % n ;
+            int fromIndex = (fromLink.getIndexAtNode(atNode) + n - origin) % n ;
+            int toIndex = (toLink.getIndexAtNode(atNode) + n - origin) % n ;
+            return ((fromIndex - destIndex) * (destIndex - toIndex) > 0) ;
+        }
+        //----------------------------------------
+        /** 文字列化. */
+        public String toString() {
+            return ("#PassingAgentRecord" +
+                    "[time=" + time +
+                    ",agent=" + agent +
+                    ",from=" + fromLink +
+                    ",to=" + toLink +
+                    ",at=" + atNode +
+                    "]") ;
+        }
+    }
+        
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    public RingBuffer<PassingAgentRecord> passingAgentRecordBuffer ;
+    
+    //------------------------------------------------------------
+    /**
+     * エージェントが通過した時刻の記録バッファの確保。
+     */
+    private void allocatePassingAgentRecordBuffer() {
+        /* すべてのリンクの幅の和を求める */
+        double wSum = 0.0 ;
+        for(MapLink link : links) {
+            double w = link.getWidth() ;
+            wSum += (w / MapLink.dWidth) ;
+            if(w < MapLink.dWidth) {
+                /* 非常に細い道の補正 */
+                wSum += 2.0 ;
+            } else if(w < 2 * MapLink.dWidth) {
+                /* 少し細い道の補正 */
+                wSum += 1.0 ;
+            }
+        }
+        /* リングバッファの大きさは、その倍+1としておく。*/
+        int size = ((int)Math.ceil(wSum)) * 2 + 1 ;
+        passingAgentRecordBuffer =
+            new RingBuffer<>(size, ExpandType.Recycle, true) ;
+        passingAgentRecordBuffer.fillElements(PassingAgentRecord.class);
+    }
+        
+    //------------------------------------------------------------
+    /**
+     * エージェントが通過した時刻の記録。
+     */
+    public void recordPassingAgent(SimTime currentTime,
+                                   AgentBase agent,
+                                   MapLink fromLink,
+                                   MapLink toLink) {
+        if(passingAgentRecordBuffer == null) {
+            allocatePassingAgentRecordBuffer() ;
+        }
+        /* 記録 */
+        passingAgentRecordBuffer.shiftHead().set(currentTime, agent,
+                                                 fromLink, toLink, this) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 交差点の混雑度。
+     * @param currentTime: 基準となる時刻。
+     * @param margin: カウントする時間幅。秒数。
+     * @return 時間幅内の通過エージェント数。
+     */
+    public int countPassingAgent(SimTime currentTime, double margin) {
+        int count = 0 ;
+        for(PassingAgentRecord record : passingAgentRecordBuffer) {
+            if(currentTime.calcDifferenceFrom(record.time) < margin) {
+                count += 1 ;
+            } else {
+                break ;
+            }
+        }
+        return count ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * links の整列。
+     * ノードを原点そして、各リンクの反対側のノード位置の角度で整列する。
+     * 同時に、各ノードにその順番での index を振る。
+     */
+    public void sortLinkTableByAngle() {
+        // 整列。
+        MapNode pivot = this ;
+        Collections.sort(links, new Comparator<MapLink>() {
+                @Override
+                public int compare(MapLink link0, MapLink link1) {
+                    MapNode otherNode0 = link0.getOther(pivot) ;
+                    MapNode otherNode1 = link1.getOther(pivot) ;
+                    double angle0 = otherNode0.getAngleFrom(pivot) ;
+                    double angle1 = otherNode1.getAngleFrom(pivot) ;
+                    return Double.compare(angle0,angle1) ;
+                }
+            }) ;
+        // インデックスを振る。
+        int index = 0 ;
+        for(MapLink link : links) {
+            link.setIndexAtNode(this, index) ;
+            index += 1;
+        }
+    }
+    
 }
 // ;;; Local Variables:
 // ;;; mode:java

@@ -560,10 +560,19 @@ public class AgentHandler {
         for(MapLink link : simulator.getLinks()) {
             addEffectiveLink(link) ;
         }
+        // [2016.02.22 I.Noda]
+        // ノードによる制御は、しばらく必要ないので、以下はコメントアウト。
+        //
         // 初回は全ノードを対象とする
+        /*
         clearEffectiveNodeSet() ;
         for(MapNode node : simulator.getNodes()) {
             addEffectiveNode(node) ;
+        }
+        */
+        // 全ノードのリンクを整列させ、インデックスをつける。
+        for(MapNode node : simulator.getNodes()) {
+            node.sortLinkTableByAngle() ;
         }
     }
 
