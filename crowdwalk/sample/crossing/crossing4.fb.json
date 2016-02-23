@@ -1,8 +1,9 @@
 {
-    "agent" : {"xA_0" : 0.8,
-               "widthUnit_SameLane" : 1.0,
+    "agent" : {"widthUnit_SameLane" : 1.0,
     	       "nodeCrossingForceTimeMargin":1.5,
     	       "nodeCrossingForceFactor":10.0},
+    "generation" : {
+        "_" : null},
     "link" : { "gathering_location_width" : 6.0 },
     "_" : null
 }

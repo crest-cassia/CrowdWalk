@@ -164,10 +164,14 @@ public class WalkAgent extends AgentBase {
     //============================================================
     /**
      * 速度モデル
+     * LaneModel: 前方一人の SocialForce しか考えない。
+     * PlainModel: ある程度前方までの順方向・逆方向の SocialForce を計算。
+     * CrossingModel: PlainModel に加え、node における交差する人流の force も計算。
      */
     public static enum SpeedCalculationModel {
         LaneModel,
         PlainModel,
+        CrossingModel,
     }
 
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -831,6 +835,7 @@ public class WalkAgent extends AgentBase {
             _accel += calcSocialForce(distToPredecessor) ;
             break;
         case PlainModel:
+        case CrossingModel:
             double lowerBound =
                 -((baseSpeed / currentTime.getTickUnit()) + _accel) ;
             _accel += accumulateSocialForces(currentTime, lowerBound) ;
@@ -954,7 +959,7 @@ public class WalkAgent extends AgentBase {
                     totalForce += force ;
                 }
             }
-            //次のリンクへ進む
+            //次のリンクへ進む準備。
             relativePos -= workingPlace.getLinkLength() ;
             MapLink nextLink =
                 chooseNextLinkBody(currentTime, workingPlace,
@@ -963,12 +968,16 @@ public class WalkAgent extends AgentBase {
                 break;
             }
             //（直前のターンで）次のノードを交差して渡っている人の影響
-            totalForce += calcNodeCrossingForce(currentTime,
-                                                workingPlace.getLink(),
-                                                nextLink,
-                                                workingPlace.getHeadingNode(),
-                                                -relativePos) ;
+            if(calculation_model == SpeedCalculationModel.CrossingModel) {
+                totalForce +=
+                    calcNodeCrossingForce(currentTime,
+                                          workingPlace.getLink(),
+                                          nextLink,
+                                          workingPlace.getHeadingNode(),
+                                          -relativePos) ;
+            }
 
+            // 次のリンクへ乗り移り。
             workingPlace.transitTo(nextLink) ;
         }
 

@@ -216,7 +216,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             {{"LANE", SpeedCalculationModel.LaneModel},
              {"lane", SpeedCalculationModel.LaneModel},
              {"PLAIN",SpeedCalculationModel.PlainModel},
-             {"plain",SpeedCalculationModel.PlainModel}
+             {"plain",SpeedCalculationModel.PlainModel},
+             {"CROSSING",SpeedCalculationModel.CrossingModel},
+             {"crossing",SpeedCalculationModel.CrossingModel}
             }) ;
     }
 
