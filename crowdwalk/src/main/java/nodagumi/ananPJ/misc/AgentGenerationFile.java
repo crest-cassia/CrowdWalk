@@ -221,7 +221,36 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
              {"crossing",SpeedCalculationModel.CrossingModel}
             }) ;
     }
+    static public SpeedCalculationModel Fallback_SpeedModel =
+        SpeedCalculationModel.LaneModel ;
 
+    //------------------------------------------------------------
+    /**
+     * SpeedModel の Fallback 値を取得。
+     */
+    public SpeedCalculationModel getFallbackSpeedModel() {
+        SpeedCalculationModel model = null ;
+        Term generationFallback =
+            SetupFileInfo.fetchFallbackTerm(fallbackParameters,
+                                            "generation",
+                                            null) ;
+        if(generationFallback != null) {
+            String modelString =
+                SetupFileInfo.fetchFallbackString(generationFallback,
+                                                  "speedModel",
+                                                  null) ;
+            if(modelString != null) {
+                model =
+                    (SpeedCalculationModel)speedModelLexicon
+                    .lookUp(modelString);
+            }
+        }
+        if(model == null) {
+            model = Fallback_SpeedModel ;
+        }
+        return model ;
+    }
+    
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * enum FileFormat Version
@@ -233,6 +262,18 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * ファイルフォーマットのバージョン
      */
     public FileFormat fileFormat = FileFormat.Ver0;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * fallback 情報。
+     */
+    private Term fallbackParameters = null ;
+    public void setFallbackParameters(Term fallback) {
+        fallbackParameters = fallback ;
+    }
+    public Term getFallbackParameters() {
+        return fallbackParameters ;
+    }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -359,7 +400,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      */
     public AgentGenerationFile(final String filename,
                                NetworkMap map,
-                               Term fallbackParameters,
+                               Term _fallbackParameters,
                                boolean display,
                                double linerGenerateAgentRatio,
                                Random _random)
@@ -370,8 +411,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         }
         setLinerGenerateAgentRatio(linerGenerateAgentRatio);
         setRandom(_random);
+        setFallbackParameters(_fallbackParameters) ;
 
-        scanFile(filename, map, fallbackParameters, display) ;
+        scanFile(filename, map, display) ;
     }
 
     //------------------------------------------------------------
@@ -380,7 +422,6 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      */
     public void scanFile(final String filename,
                          NetworkMap map,
-                         Term fallbackParameters,
                          boolean display)
         throws Exception
     {
@@ -405,11 +446,11 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         switch(fileFormat) {
         case Ver0:
         case Ver1:
-            scanCsvFile(br, map, fallbackParameters) ;
+            scanCsvFile(br, map) ;
             Itk.logInfo("Load Generation File (CSV)", filename) ;
             break ;
         case Ver2:
-            scanJsonFile(br, map, fallbackParameters) ;
+            scanJsonFile(br, map) ;
             Itk.logInfo("Load Generation File (JSON)", filename) ;
             break ;
         default:
@@ -488,8 +529,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 設定解析ルーチン (CSV file) (Ver.0, Ver.1 file format)
      */
     public void scanCsvFile(BufferedReader br,
-                            NetworkMap map,
-                            Term fallbackParameters)
+                            NetworkMap map)
         throws Exception
     {
         String line = null;
@@ -511,7 +551,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 checkPlannedRouteInConfig(map, genConfig, line) ;
 
                 // ここから、エージェント生成が始まる。
-                doGenerationByConfig(map, genConfig, fallbackParameters) ;
+                doGenerationByConfig(map, genConfig) ;
             }
         } catch (Exception e) {
             System.err.println("Error in agent generation.");
@@ -648,7 +688,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         genConfig.speedModel =
             (SpeedCalculationModel)speedModelLexicon.lookUp(columns.top()) ;
         if(genConfig.speedModel == null) {
-            genConfig.speedModel = SpeedCalculationModel.LaneModel;
+            genConfig.speedModel = getFallbackSpeedModel() ;
         } else {
             columns.shift() ;
         }
@@ -836,8 +876,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 設定解析ルーチン (JSON file) (Ver.2 file format)
      */
     public void scanJsonFile(BufferedReader br,
-                             NetworkMap map,
-                             Term fallbackParameters)
+                             NetworkMap map)
         throws Exception
     {
         Term json = Term.newByScannedJson(JSON.decode(br),true) ;
@@ -854,7 +893,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                     checkPlannedRouteInConfig(map, genConfig, item.toJson()) ;
 
                     // ここから、エージェント生成が始まる。
-                    doGenerationByConfig(map, genConfig, fallbackParameters) ;
+                    doGenerationByConfig(map, genConfig) ;
                 } else {
                     Itk.logError("wrong json for generation rule:",item.toJson()) ;
                     continue ;
@@ -941,9 +980,10 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         genConfig.speedModel =
             (SpeedCalculationModel)
             speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
-        if(genConfig.speedModel == null)
-            genConfig.speedModel = SpeedCalculationModel.LaneModel;
-
+        if(genConfig.speedModel == null) {
+            genConfig.speedModel = getFallbackSpeedModel() ;
+        }
+        
         if (genConfig.ruleTag == Rule.EACHRANDOM) {
             ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
                 json.getArgInt("maxFromEach") ;
@@ -1055,8 +1095,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * エージェント生成
      */
     private void doGenerationByConfig(NetworkMap map,
-                                      GenerationConfigBase genConfig,
-                                      Term fallbackParameters) {
+                                      GenerationConfigBase genConfig) {
         genConfig.fallbackParameters = fallbackParameters ;
         switch(genConfig.ruleTag) {
         case EACH:
