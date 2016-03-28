@@ -1081,12 +1081,16 @@ public class WalkAgent extends AgentBase {
 
         /* agent exits the previous link */
         currentPlace.getLink().agentExits(this);
+        // passingNode から出て行ったエージェント数のカウント
+        currentPlace.getLink().incrementPassCounter(passingNode, false);
 
         /* transit to new link */
         currentPlace.transitTo(nextLink) ;
         calcNextTarget(passingNode, workingRoutePlan, false) ;
         /* register agent to new link */
         currentPlace.getLink().agentEnters(this);
+        // passingNode から入ってきたエージェント数のカウント
+        currentPlace.getLink().incrementPassCounter(passingNode, true);
         /* record agent pass the passing node */
         passingNode.recordPassingAgent(currentTime, this,
                                        previousLink, nextLink) ;

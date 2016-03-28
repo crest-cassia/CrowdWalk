@@ -222,6 +222,20 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public ArrayList<AgentBase> agents;
     private boolean nodes_are_set = false;
 
+    /**
+     * ノードを通過したエージェント数をカウントするためのクラス
+     */
+    private class PassCounter {
+        boolean enabled = false;
+        long entryCount = 0;
+        long exitCount = 0;
+    }
+
+    /**
+     * ノードごとの通過エージェントカウンタ
+     */
+    private HashMap<MapNode, PassCounter> passCounters = null;
+
     //------------------------------------------------------------
     /**
      * alert message
@@ -716,6 +730,19 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     public MapNode getTo() {
         return toNode;
+    }
+
+    /**
+     * 指定タグを持つノードを取得する
+     */
+    public MapNode getNode(String tag) {
+        if (fromNode.hasTag(tag)) {
+            return fromNode;
+        }
+        if (toNode.hasTag(tag)) {
+            return toNode;
+        }
+        return null;
     }
 
     public Boolean equals(MapLink rhs){
@@ -1554,5 +1581,126 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
             if(agent.getSpeed() <= upperSpeed) count++ ;
         }
         return count ;
+    }
+
+    /**
+     * 指定ノードの通過エージェントカウンタを取得する
+     */
+    public PassCounter getPassCounter(MapNode node) {
+        if (passCounters == null) {
+            passCounters = new HashMap<MapNode, PassCounter>();
+            return null;
+        }
+        return passCounters.get(node);
+    }
+
+    /**
+     * 指定タグを持つノードの通過エージェントカウンタを取得する
+     */
+    public PassCounter getPassCounter(String tag) {
+        return getPassCounter(getNode(tag));
+    }
+
+    /**
+     * 指定ノードの通過エージェントカウンタを有効化する
+     */
+    public void enablePassCounter(MapNode node) {
+        PassCounter passCounter = getPassCounter(node);
+        if (passCounter == null) {
+            passCounter = new PassCounter();
+            passCounters.put(node, passCounter);
+        }
+        passCounter.enabled = true;
+    }
+
+    /**
+     * 指定タグを持つノードの通過エージェントカウンタを有効化する
+     */
+    public void enablePassCounter(String tag) {
+        enablePassCounter(getNode(tag));
+    }
+
+    /**
+     * 指定ノードの通過エージェントカウンタを無効化する
+     */
+    public void disablePassCounter(MapNode node) {
+        PassCounter passCounter = getPassCounter(node);
+        if (passCounter == null) {
+            return;
+        }
+        passCounter.enabled = false;
+    }
+
+    /**
+     * 指定タグを持つノードの通過エージェントカウンタを無効化する
+     */
+    public void disablePassCounter(String tag) {
+        disablePassCounter(getNode(tag));
+    }
+
+    /**
+     * 指定ノードの通過エージェントカウンタをリセットする
+     */
+    public void resetPassCounter(MapNode node) {
+        PassCounter passCounter = getPassCounter(node);
+        if (passCounter == null) {
+            return;
+        }
+        passCounter.entryCount = 0;
+        passCounter.exitCount = 0;
+    }
+
+    /**
+     * 指定タグを持つノードの通過エージェントカウンタをリセットする
+     */
+    public void resetPassCounter(String tag) {
+        resetPassCounter(getNode(tag));
+    }
+
+    /**
+     * 指定ノードの通過エージェントカウンタを1増加する
+     */
+    public void incrementPassCounter(MapNode node, boolean entry) {
+        if (passCounters == null) {
+            // 無用なオブジェクトを作らない様にするため
+            return;
+        }
+        PassCounter passCounter = getPassCounter(node);
+        if (passCounter == null || ! passCounter.enabled) {
+            return;
+        }
+        if (entry) {
+            passCounter.entryCount++;
+        } else {
+            passCounter.exitCount++;
+        }
+    }
+
+    /**
+     * 指定タグを持つノードの通過エージェントカウンタを1増加する
+     */
+    public void incrementPassCounter(String tag, boolean entry) {
+        incrementPassCounter(getNode(tag), entry);
+    }
+
+    /**
+     * 指定ノードの通過エージェント数を取得する
+     */
+    public long getPassCount(MapNode node, boolean entry) {
+        PassCounter passCounter = getPassCounter(node);
+        if (passCounter == null) {
+            return 0;
+        }
+        if (entry) {
+            return passCounter.entryCount;
+        }
+        return passCounter.exitCount;
+    }
+
+    /**
+     * 指定タグを持つノードの通過エージェント数を取得する
+     */
+    public long getPassCount(String tag, boolean entry) {
+        return getPassCount(getNode(tag), entry);
     }
 }
