@@ -264,14 +264,18 @@ run3mj00a_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3mj00a))
 
 ##-----
-SAMPLE3bench00naive = sample/generatedTown/gridTown00_bench.naive.prop.json   # bench, ruby wrapper
+SAMPLE3bench00naive = sample/generatedTown/gridTown00_bench.naive.prop.json   # bench, naive
 run3bc00n ::
 	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00naive))
 
 ##-----
-SAMPLE3bench00rational = sample/generatedTown/gridTown00_bench.rational.prop.json   # bench, ruby wrapper
+SAMPLE3bench00rational = sample/generatedTown/gridTown00_bench.rational.prop.json   # bench, rational
 run3bc00ra ::
 	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00rational))
+##-----
+SAMPLE3bench00rational2 = sample/generatedTown/gridTown00_bench.rational2.prop.json   # bench, rational
+run3bc00ra2 ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --cui --log-level Error $(SAMPLE3bench00rational2))
 
 ##-----
 SAMPLE3bench00rubyWrapper = sample/generatedTown/gridTown00_bench.ruby.wr.prop.json   # bench, ruby wrapper
