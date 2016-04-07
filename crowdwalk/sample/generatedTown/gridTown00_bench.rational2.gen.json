@@ -1,0 +1,25 @@
+#{ "version" : 2}
+[
+ {"rule":"EACH",
+  "agentType":{"className":"RationalAgent",
+	       "rubyAgentClass":"SampleAgent",
+               "weight": -0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "rule":[
+		   ["if", {"":"listenAlert", "message":"xxx_emergency"},
+		    [{"":"changeGoal", "goal":"node_09_05"},
+		     {"":"clearPlannedRoute"},
+		     {"":"log","tag":"change goal to 09_05"},
+		     {"":"clearAlert", "message":"emergency"}]],
+		   ["if", {"":"listenAlert", "message":"xxx_foo-bar-baz"},
+		    [{"":"insertRoute", "route":"node_02_00"},
+		     {"":"log","tag":"insert route: 02_00"},
+		     {"":"clearAlert", "message":"foo-bar-baz"}]]
+	       ]},
+  "total":1000,"speedModel":"PLAIN",
+  "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"node_09_09",
+  "plannedRoute":["node_02_09","node_04_00","node_06_09","node_08_00"]}
+]
