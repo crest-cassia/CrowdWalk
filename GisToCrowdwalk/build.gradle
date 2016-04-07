@@ -25,6 +25,7 @@ dependencies {
     compile 'junit:junit:4.12'
     compile 'org.geotools:gt-shapefile:2.7-M3'
     compile 'org.geotools:gt-swing:2.7-M3'
+    compile 'org.osgeo:proj4j:0.1.0'
     compile fileTree(dir: 'lib', include: '*.jar')
 }
 

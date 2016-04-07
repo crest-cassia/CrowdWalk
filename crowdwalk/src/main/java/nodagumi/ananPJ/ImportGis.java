@@ -1,15 +1,10 @@
 package nodagumi.ananPJ;
 
-import org.jruby.Ruby;
-import org.jruby.RubyArray;
-import org.jruby.RubyHash;
-import org.jruby.javasupport.JavaEmbedUtils;
-import org.jruby.runtime.builtin.IRubyObject;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
@@ -31,12 +26,17 @@ import org.opengis.filter.*;
 
 import com.vividsolutions.jts.geom.*;
 
+import org.osgeo.proj4j.CRSFactory;
+import org.osgeo.proj4j.CoordinateReferenceSystem;
+import org.osgeo.proj4j.CoordinateTransform;
+import org.osgeo.proj4j.CoordinateTransformFactory;
+import org.osgeo.proj4j.ProjCoordinate;
+
 import nodagumi.ananPJ.*;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.NetworkMap.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Link.*;
-// import nodagumi.ananPJ.network.*;
 
 import nodagumi.Itk.Itk;
 import nodagumi.Itk.ItkXmlUtility;
@@ -83,18 +83,69 @@ public class ImportGis {
      *     0 未調査
      */
     private static final long serialVersionUID = 7346682140815565547L;
-    private static final String VERSION = "Version 1.05 (July 28, 2014)";
+    private static final String VERSION = "Version 1.10 (April 7, 2016)";
 
     private static final boolean REVERSE_Y = false;
     // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）
     public static final String REFERENCE_URL = "http://www.gsi.go.jp/LAW/heimencho.html";
+
+    /**
+     * JGD2000 の平面直角座標系の系番号に対応する EPSG コード
+     */
+    public static String[] JGD2000_JPR_EPSG_CODES = {
+        null,
+        "EPSG:2443",    // 系番号 I
+        "EPSG:2444",    // 系番号 II
+        "EPSG:2445",    // 系番号 III
+        "EPSG:2446",    // 系番号 IV
+        "EPSG:2447",    // 系番号 V
+        "EPSG:2448",    // 系番号 VI
+        "EPSG:2449",    // 系番号 VII
+        "EPSG:2450",    // 系番号 VIII
+        "EPSG:2451",    // 系番号 IX
+        "EPSG:2452",    // 系番号 X
+        "EPSG:2453",    // 系番号 XI
+        "EPSG:2454",    // 系番号 XII
+        "EPSG:2455",    // 系番号 XIII
+        "EPSG:2456",    // 系番号 XIV
+        "EPSG:2457",    // 系番号 XV
+        "EPSG:2458",    // 系番号 XVI
+        "EPSG:2459",    // 系番号 XVII
+        "EPSG:2460",    // 系番号 XVIII
+        "EPSG:2461"     // 系番号 XIX
+    };
+
+    /**
+     * Tokyo Datum の平面直角座標系の系番号に対応する EPSG コード
+     */
+    public static String[] TOKYO_JPR_EPSG_CODES = {
+        null,
+        "EPSG:30161",    // 系番号 I
+        "EPSG:30162",    // 系番号 II
+        "EPSG:30163",    // 系番号 III
+        "EPSG:30164",    // 系番号 IV
+        "EPSG:30165",    // 系番号 V
+        "EPSG:30166",    // 系番号 VI
+        "EPSG:30167",    // 系番号 VII
+        "EPSG:30168",    // 系番号 VIII
+        "EPSG:30169",    // 系番号 IX
+        "EPSG:30170",    // 系番号 X
+        "EPSG:30171",    // 系番号 XI
+        "EPSG:30172",    // 系番号 XII
+        "EPSG:30173",    // 系番号 XIII
+        "EPSG:30174",    // 系番号 XIV
+        "EPSG:30175",    // 系番号 XV
+        "EPSG:30176",    // 系番号 XVI
+        "EPSG:30177",    // 系番号 XVII
+        "EPSG:30178",    // 系番号 XVIII
+        "EPSG:30179"     // 系番号 XIX
+    };
 
     private MapContext map;
     private JMapFrame map_frame = null;
     // tkokada
     //private double DEFAULT_LATITUDE = 36.00;
     //private double DEFAULT_LONGITUDE = 139.83333333;
-    private Ruby ruby = null;
 
     protected Settings settings;
 
@@ -105,9 +156,6 @@ public class ImportGis {
         settings = Settings.load("NetworkMapEditor.ini");
         map = new DefaultMapContext();
 
-        java.util.List<String> loadpath = new ArrayList<String>();
-        loadpath.add("lib");
-        ruby = JavaEmbedUtils.initialize(loadpath);
         if (!promptAndAddMap()) {
             return;
         }
@@ -345,6 +393,8 @@ public class ImportGis {
                 JOptionPane.YES_NO_CANCEL_OPTION);
             if (crowdwalk_coordinate == JOptionPane.CANCEL_OPTION)
                 return;
+            JOptionPane.showMessageDialog(map_frame, "GisToCrowdWalk Version 1.10 uses Proj4J (Java library) to transform point coordinates.", "", JOptionPane.INFORMATION_MESSAGE);
+
             ReferencedEnvelope ref = map.getAreaOfInterest();
             MapPartGroup group = exportNetworkMap.createGroupNode((MapPartGroup)
                     exportNetworkMap.getRoot());
@@ -472,127 +522,36 @@ public class ImportGis {
         }
     }
 
-    // 十進法度単位から度分秒に変換する(ddd.d -> dddmmss.s)
-    public static double decimal2degree(double decimal) {
-        int degree = (int)decimal;
-        int minute = (int)((decimal - degree) * 60.0);
-        double second = ((decimal - degree) * 60.0 - minute) * 60.0;
-        return degree * 10000.0 + minute * 100.0 + second;
-    }
-
-    // Radian
-    public static final double RAD = Math.PI / 180.0;
-
-    // 日本測地系における赤道半径、扁平率、第一離心率
-    public static final double TOKYO_DATUM_A = 6377397.155;
-    public static final double TOKYO_DATUM_F = 1.0 / 299.152813;
-    public static final double TOKYO_DATUM_E2 = TOKYO_DATUM_F * (2.0 - TOKYO_DATUM_F);
-
-    // 世界測地系における赤道半径、扁平率、第一離心率
-    public static final double WGS84_A = 6378137.0;
-    public static final double WGS84_F = 1.0 / 298.257223;
-    public static final double WGS84_E2 = WGS84_F * (2.0 - WGS84_F);
-
-    // 日本測地系から世界測地系に変換する際の並行移動量[m]
-    public static final double DX = -148.0;
-    public static final double DY = 507.0;
-    public static final double DZ = 681.0;
-
-    // 楕円体座標から直行座標へ
-    public static Coordinate llh2xyz(double b, double l, double h, double a, double e2) {
-        b *= RAD;
-        l *= RAD;
-        double rn = a / Math.sqrt(1 - e2 * Math.pow(Math.sin(b), 2.0));
-
-        double x = (rn + h) * Math.cos(b) * Math.cos(l);
-        double y = (rn + h) * Math.cos(b) * Math.sin(l);
-        double z = (rn * (1 - e2) + h) * Math.sin(b);
-
-        return new Coordinate(x, y, z);
-    }
-
-    // 直行座標から楕円体座標へ
-    public static Coordinate xyz2llh(double x, double y, double z, double a, double e2) {
-        double bda = Math.sqrt(1 - e2);
-
-        double p = Math.sqrt(x * x + y * y);
-        double t = Math.atan2(z, p * bda);
-
-        double b = Math.atan2(z + e2 * a / bda * Math.pow(Math.sin(t), 3.0), p - e2 * a * Math.pow(Math.cos(t), 3.0));
-        double l = Math.atan2(y, x);
-        double h = p / Math.cos(b) - a / Math.sqrt(1.0 - e2 * Math.pow(Math.sin(b), 2.0));
-
-        return new Coordinate(l / RAD, b / RAD, h);
-    }
-
-    // 日本測地系 -> 世界測地系に経緯度変換
-    public static void convertJapan2World(Coordinate c) {
-        // double latitude = c.y;
-        // double longitude = c.x;
-        // c.x = longitude - latitude * 0.000046038 - longitude * 0.000083043 + 0.010040;
-        // c.y = latitude - latitude * 0.00010695 + longitude * 0.000017464 + 0.0046017;
-
-        if (Double.isNaN(c.z)) {
-            c.z = 0.0;
+    /**
+     * 実数値 value を小数点以下第 scale 位で四捨五入する
+     */
+    public static double roundValue(double value, int scale) {
+        if (scale >= 0 && ! Double.isNaN(value)) {
+            BigDecimal bd = new BigDecimal(String.valueOf(value));
+            return bd.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
         }
-        Coordinate rcs = llh2xyz(c.y, c.x, c.z, TOKYO_DATUM_A, TOKYO_DATUM_E2);
-        c.setCoordinate(xyz2llh(rcs.x + DX, rcs.y + DY, rcs.z + DZ, WGS84_A, WGS84_E2));
+        return value;
     }
 
-    private double[] call_gtoc(Coordinate c, int number, boolean type) {
-        double[] result = new double[3];    // {x, y, m}
-        try {
-            ruby.evalScriptlet("require 'gtoc'");
-            ruby.evalScriptlet("require 'gtoc'");
-            String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: " + number + ", default_latitude: nil, default_longitude: nil, type: \"" + (type ? "world" : "japan") + "\")";
-            IRubyObject out = ruby.evalScriptlet(caller);
-            RubyHash h = out.convertToHash();
-            for (Object key : h.keySet()) {
-                // System.err.println("  key: " + key.toString() + ", value: " + h.get(key));
-                String keystring = key.toString();
-                if (keystring.equals("x")) {
-                    result[0] = (Double) (h.get(key));
-                } else if (keystring.equals("y")) {
-                    result[1] = (Double) (h.get(key));
-                } else if (keystring.equals("m")) {
-                    result[2] = (Double) (h.get(key));
-                }
-            }
-            //System.err.println(caller);
-        } catch (java.lang.NullPointerException npe) {
-            System.err.println("\tMap number or default latitude and longitude are too far from the coordinate.");
-            System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            JavaEmbedUtils.terminate(ruby);
-        }
-        return result;
+    /**
+     * Proj4J の座標変換オブジェクトを生成する
+     */
+    public static CoordinateTransform createCoordinateTransform(String srcEpsgName, String targetEpsgName) {
+        CRSFactory crsFactory = new CRSFactory();
+        CoordinateReferenceSystem sourceCRS = crsFactory.createFromName(srcEpsgName);
+        CoordinateReferenceSystem targetCRS = crsFactory.createFromName(targetEpsgName);
+        CoordinateTransformFactory transformFactory = new CoordinateTransformFactory();
+        return transformFactory.createTransform(sourceCRS, targetCRS);
     }
 
-    // KMR-zoar 氏作成の変換スクリプトを使用する
-    // (このライブラリは世界測地系に固定されており、そのままでは日本測地系で使うことは出来ない)
-    // KMR-zoar/cblxy -> https://github.com/KMR-zoar/cblxy
-    private double[] call_blxy(Coordinate c, int number) {
-        double[] result = new double[3];    // {x, y, m}
-        try {
-            ruby.evalScriptlet("require 'cblxy'");
-            String caller = "blxy(" + decimal2degree(c.y) +", " + decimal2degree(c.x) + ", " + number + ")";
-            IRubyObject out = ruby.evalScriptlet(caller);
-            RubyArray ruby_array = out.convertToArray();
-            result[0] = (Double)ruby_array.get(0);
-            result[1] = (Double)ruby_array.get(1);
-            result[2] = 0.0;    // dummy
-            //System.err.println(caller);
-        } catch (java.lang.NullPointerException npe) {
-            System.err.println("\tMap number or default latitude and longitude are too far from the coordinate.");
-            System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            JavaEmbedUtils.terminate(ruby);
-        }
-        return result;
+    /**
+     * 座標変換
+     */
+    public static ProjCoordinate transformCoordinate(CoordinateTransform transform, Coordinate c) {
+        ProjCoordinate gcsPoint = new ProjCoordinate(c.x, c.y);
+        ProjCoordinate pcsPoint = new ProjCoordinate();
+        pcsPoint = transform.transform(gcsPoint, pcsPoint);
+        return pcsPoint;
     }
 
     private void make_nodes_precise(Object the_geom, SimpleFeature feature,
@@ -608,12 +567,15 @@ public class ImportGis {
         /* two-pass, first get ratio of each segments */
         double[] ratio = new double[points.length - 1];
 
+        String targetEpsg = null;
         if (type) {     // 世界測地系
-            // どちらのメーカーのシェイプファイルも日本測地系の経緯度が使われているためこの変換が必要
-            for (int j = 0; j < points.length; j++) {
-                convertJapan2World(points[j]);
-            }
+            targetEpsg = JGD2000_JPR_EPSG_CODES[number];
+        } else {
+            targetEpsg = TOKYO_JPR_EPSG_CODES[number];
         }
+
+        // 旧日本測地系の地理座標系から targetEpsg の平面直角座標系に変換する
+        CoordinateTransform transform = createCoordinateTransform("EPSG:4301", targetEpsg);
 
         Coordinate last_c = null;
         double total_d = 0.0;
@@ -633,12 +595,9 @@ public class ImportGis {
         /* two-pass, second actually make links */
         for (int j = 0; j < points.length; j++) {
             Coordinate c = points[j];
-            // double x = (c.x - base_x) * scale_x;
-            // double y = (c.y - base_y) * scale_y;
-            double x = 0.0 , y = 0.0, m = 0.0;
-            double[] result = type ? call_blxy(c, number) : call_gtoc(c, number, type);
-            x = result[0];
-            y = result[1];
+            ProjCoordinate coordinate = transformCoordinate(transform, c);
+            double x = roundValue(coordinate.y, 4);
+            double y = roundValue(coordinate.x, 4);
             //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
             if (REVERSE_Y)
                 y *= -1.0;
@@ -679,7 +638,7 @@ public class ImportGis {
                 if (j == 0)
                     System.err.println("\tj 0 but from is not null!");
                 networkMap.createMapLink(parent_group, from, node,
-                        length * ratio[j - 1], width);
+                        roundValue(length * ratio[j - 1], 4), width);
                 /*
                 double dnodes = Math.sqrt(
                         Math.pow(from.getX() - node.getX(), 2.0) +
@@ -703,22 +662,22 @@ public class ImportGis {
         MapNode from = null;
         Coordinate[] points = line.getCoordinates();
 
+        String targetEpsg = null;
         if (type) {     // 世界測地系
-            // どちらのメーカーのシェイプファイルも日本測地系の経緯度が使われているためこの変換が必要
-            for (int j = 0; j < points.length; j++) {
-                convertJapan2World(points[j]);
-            }
+            targetEpsg = JGD2000_JPR_EPSG_CODES[number];
+        } else {
+            targetEpsg = TOKYO_JPR_EPSG_CODES[number];
         }
+
+        // 旧日本測地系の地理座標系から targetEpsg の平面直角座標系に変換する
+        CoordinateTransform transform = createCoordinateTransform("EPSG:4301", targetEpsg);
 
         for (int j = 0; j < 2; j++) {
             if (j == 1) j = points.length - 1;
             Coordinate c = points[j];
-            // double x = (c.x - base_x) * scale_x;
-            // double y = (c.y - base_y) * scale_y;
-            double x = 0.0 , y = 0.0, m = 0.0;
-            double[] result = type ? call_blxy(c, number) : call_gtoc(c, number, type);
-            x = result[0];
-            y = result[1];
+            ProjCoordinate coordinate = transformCoordinate(transform, c);
+            double x = roundValue(coordinate.y, 4);
+            double y = roundValue(coordinate.x, 4);
             //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
             if (REVERSE_Y)
                 y *= -1.0;
@@ -749,7 +708,7 @@ public class ImportGis {
             }
 
             if (from != null) {
-                networkMap.createMapLink(parent_group, from, node, length,
+                networkMap.createMapLink(parent_group, from, node, roundValue(length, 4),
                         width);
             }
             from = node;
