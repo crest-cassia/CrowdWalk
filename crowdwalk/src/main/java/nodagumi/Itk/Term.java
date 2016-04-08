@@ -655,7 +655,7 @@ public class Term {
         if(val instanceof Term) {
             return ((Term)val).getInt() ;
         } else if(val instanceof Integer) {
-            return (int)val ;
+            return ((Integer)val).intValue() ;
         } else if(val == null) {
             Thread.dumpStack() ;
             Itk.logError("can not convert null to int.") ;
@@ -693,7 +693,7 @@ public class Term {
         if(val instanceof Term) {
             return ((Term)val).getDouble() ;
         } else if(val instanceof Double) {
-            return (double)val ;
+            return ((Double)val).doubleValue() ;
         } else if(val == null) {
             Thread.dumpStack() ;
             Itk.logError("can not convert null to double.") ;

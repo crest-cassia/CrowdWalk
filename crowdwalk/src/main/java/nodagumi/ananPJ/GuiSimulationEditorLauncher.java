@@ -221,22 +221,28 @@ public class GuiSimulationEditorLauncher
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         runButton2d = new JButton("2D Simulate");
         runButton2d.setEnabled(false);
-        runButton2d.addActionListener(e -> {
-            runButton2d.setEnabled(false);
-            runButton3d.setEnabled(false);
-            new GuiSimulationLauncher2D(random, properties, setupFileInfo,
-                    networkMap, settings).simulate();
-        });
+        runButton2d.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    runButton2d.setEnabled(false);
+                    runButton3d.setEnabled(false);
+                    new GuiSimulationLauncher2D(random, properties,
+                                                setupFileInfo, networkMap,
+                                                settings).simulate();
+                }});
         buttonPanel.add(runButton2d);
 
         runButton3d = new JButton("3D Simulate");
         runButton3d.setEnabled(false);
-        runButton3d.addActionListener(e -> {
-            runButton2d.setEnabled(false);
-            runButton3d.setEnabled(false);
-            new GuiSimulationLauncher3D(random, properties, setupFileInfo,
-                    networkMap, settings).simulate();
-        });
+        runButton3d.addActionListener(new ActionListener (){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    runButton2d.setEnabled(false);
+                    runButton3d.setEnabled(false);
+                    new GuiSimulationLauncher3D(random, properties,
+                                                setupFileInfo, networkMap,
+                                                settings).simulate();
+                }});
         buttonPanel.add(runButton3d);
 
         frame.add(buttonPanel, BorderLayout.SOUTH);

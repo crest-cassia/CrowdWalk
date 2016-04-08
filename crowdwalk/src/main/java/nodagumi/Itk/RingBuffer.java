@@ -158,7 +158,7 @@ public class RingBuffer<E> implements Iterable<E> {
      * _buffer にはセットしない。
      */
     private ArrayList<E> allocate(int size) {
-        ArrayList<E> newBuf = new ArrayList<>(size) ;
+        ArrayList<E> newBuf = new ArrayList<E>(size) ;
         for(int i = 0 ; i < size ; i++) {
             newBuf.add(null) ;
         }
@@ -396,7 +396,7 @@ public class RingBuffer<E> implements Iterable<E> {
      * 繰り返し演算子。（順方向）
      */
     public Iterator<E> forwardIterator() {
-        RingBuffer<E> ring = this ;
+        final RingBuffer<E> ring = this ;
         return new Iterator<E>(){
             private RingBuffer<E> _ringBuffer = ring ;
             private int _index = ring.getTailIndex() ;
@@ -416,7 +416,7 @@ public class RingBuffer<E> implements Iterable<E> {
      * 繰り返し演算子。（逆方向）
      */
     public Iterator<E> backwardIterator() {
-        RingBuffer<E> ring = this ;
+        final RingBuffer<E> ring = this ;
         return new Iterator<E>(){
             private RingBuffer<E> _ringBuffer = ring ;
             private int _index = ring.getHeadIndex() ;
@@ -450,7 +450,7 @@ public class RingBuffer<E> implements Iterable<E> {
      * 順序は、iterateBackward の値に依存する。
      */
     public ArrayList<E> toArrayList() {
-        ArrayList<E> array = new ArrayList<>() ;
+        ArrayList<E> array = new ArrayList<E>() ;
         for(E value : this) {
             array.add(value) ;
         }

@@ -20,6 +20,10 @@ import java.awt.MenuShortcut;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.AdjustmentListener ;
+import java.awt.event.AdjustmentEvent ;
+import java.awt.event.ItemEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -240,7 +244,11 @@ public class SimulationFrame2D extends JFrame
 
         addWindowListener(new WindowAdapter() {
             public void windowOpened(WindowEvent e) {
-                SwingUtilities.invokeLater(() -> launcher.simulationWindowOpenedOperation(frame));
+                SwingUtilities.invokeLater(new Runnable (){
+                        @Override
+                        public void run() {
+                            launcher.simulationWindowOpenedOperation(frame) ;
+                        }});
                 panel.centering(true);
                 panel.repaint();
             }
@@ -285,13 +293,15 @@ public class SimulationFrame2D extends JFrame
 
         MenuShortcut shortcut = new MenuShortcut(java.awt.event.KeyEvent.VK_W);
         MenuItem mi = new MenuItem("Close", shortcut);
-        mi.addActionListener(e -> {
-            if (launcher.isRunning()) {
-                launcher.pause();
-            }
-            launcher.saveSimulatorPosition(frame);
-            frame.dispose();
-        });
+        mi.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (launcher.isRunning()) {
+                        launcher.pause();
+                    }
+                    launcher.saveSimulatorPosition(frame);
+                    frame.dispose();
+                }});
         fileMenu.add(mi);
         
         fileMenu.add(fileMenu);
@@ -303,60 +313,74 @@ public class SimulationFrame2D extends JFrame
         Menu viewMenu = new PopupMenu("View");
 
         mi = new MenuItem("Centering");
-        mi.addActionListener(e -> {
-            panel.centering(false);
-            panel.repaint();
-        });
+        mi.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    panel.centering(false);
+                    panel.repaint();
+                }});
         viewMenu.add(mi);
 
         mi = new MenuItem("Centering with scaling");
-        mi.addActionListener(e -> {
-            panel.centering(true);
-            panel.repaint();
-        });
+        mi.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    panel.centering(true);
+                    panel.repaint();
+                }});
         viewMenu.add(mi);
         
         mi = new MenuItem("To the origin");
-        mi.addActionListener(e -> {
-            panel.setPosition(0, 0);
-            panel.repaint();
-        });
+        mi.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    panel.setPosition(0, 0);
+                    panel.repaint();
+                }});
         viewMenu.add(mi);
 
         viewMenu.addSeparator();
 
         showNodes = new CheckboxMenuItem("Show nodes");
         showNodes.setState(true);
-        showNodes.addItemListener(e -> {
-            showNodesCheckBox.setSelected(showNodes.getState());
-            showNodeLabelsCheckBox.setEnabled(showNodes.getState());
-            update();
-        });
+        showNodes.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    showNodesCheckBox.setSelected(showNodes.getState());
+                    showNodeLabelsCheckBox.setEnabled(showNodes.getState());
+                    update();
+                }});
         viewMenu.add(showNodes);
 
         showNodeLabels = new CheckboxMenuItem(" (Show node labels)");
         showNodeLabels.setState(false);
-        showNodeLabels.addItemListener(e -> {
-            showNodeLabelsCheckBox.setSelected(showNodeLabels.getState());
-            update();
-        });
+        showNodeLabels.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    showNodeLabelsCheckBox.setSelected(showNodeLabels.getState());
+                    update();
+                }});
         viewMenu.add(showNodeLabels);
 
         showLinks = new CheckboxMenuItem("Show links");
         showLinks.setState(true);
-        showLinks.addItemListener(e -> {
-            showLinksCheckBox.setSelected(showLinks.getState());
-            showLinkLabelsCheckBox.setEnabled(showLinks.getState());
-            update();
-        });
+        showLinks.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    showLinksCheckBox.setSelected(showLinks.getState());
+                    showLinkLabelsCheckBox.setEnabled(showLinks.getState());
+                    update();
+                }});
         viewMenu.add(showLinks);
 
         showLinkLabels = new CheckboxMenuItem(" (Show link labels)");
         showLinkLabels.setState(false);
-        showLinkLabels.addItemListener(e -> {
-            showLinkLabelsCheckBox.setSelected(showLinkLabels.getState());
-            update();
-        });
+        showLinkLabels.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    showLinkLabelsCheckBox.setSelected(showLinkLabels.getState());
+                    update();
+                }});
         viewMenu.add(showLinkLabels);
         
         // showGroups = new CheckboxMenuItem("Show groups");
@@ -366,19 +390,23 @@ public class SimulationFrame2D extends JFrame
 
         showArea = new CheckboxMenuItem("Show area");
         showArea.setState(true);
-        showArea.addItemListener(e -> {
-            showAreaCheckBox.setSelected(showArea.getState());
-            showAreaLabelsCheckBox.setEnabled(showArea.getState());
-            update();
-        });
+        showArea.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    showAreaCheckBox.setSelected(showArea.getState());
+                    showAreaLabelsCheckBox.setEnabled(showArea.getState());
+                    update();
+                }});
         viewMenu.add(showArea);
 
         showAreaLabels = new CheckboxMenuItem(" (Show area labels)");
         showAreaLabels.setState(false);
-        showAreaLabels.addItemListener(e -> {
-            showAreaLabelsCheckBox.setSelected(showAreaLabels.getState());
-            update();
-        });
+        showAreaLabels.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    showAreaLabelsCheckBox.setSelected(showAreaLabels.getState());
+                    update();
+                }});
         viewMenu.add(showAreaLabels);
         
         menuBar.add(viewMenu);
@@ -509,33 +537,39 @@ public class SimulationFrame2D extends JFrame
 
         start_button = new JToggleButton(start_icon);
         start_button.setSelectedIcon(pause_icon);
-        start_button.addActionListener(e -> {
-            if (start_button.isSelected()) {
-                launcher.start();
-            } else {
-                launcher.pause();
-            }
-            update_buttons();
-        });
+        start_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (start_button.isSelected()) {
+                        launcher.start();
+                    } else {
+                        launcher.pause();
+                    }
+                    update_buttons();
+                }});
         panel.add(start_button);
 
         step_button = new JButton(step_icon);
-        step_button.addActionListener(e -> {
-            if (exit_with_simulation_finished_cb.isSelected()) {
-                // ボタンクリックでいきなりプログラムが終了することがないようにするため
-                exit_with_simulation_finished_cb.doClick();
-            }
-            launcher.step();
-            update_buttons();
-        });
+        step_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (exit_with_simulation_finished_cb.isSelected()) {
+                        // ボタンクリックでいきなりプログラムが終了することがないようにするため
+                        exit_with_simulation_finished_cb.doClick();
+                    }
+                    launcher.step();
+                    update_buttons();
+                }});
         panel.add(step_button);
 
         panel.add(new JLabel("wait:"));
         JScrollBar deferFactorControl = new JScrollBar(JScrollBar.HORIZONTAL, deferFactor, 1, 0, 300);
-        deferFactorControl.addAdjustmentListener(e -> {
-            setSimulationDeferFactor(deferFactorControl.getValue());
-            simulationDeferFactorValue.setText("" + deferFactor);
-        });
+        deferFactorControl.addAdjustmentListener(new AdjustmentListener() {
+                @Override
+                public void adjustmentValueChanged(AdjustmentEvent e) {
+                    setSimulationDeferFactor(deferFactorControl.getValue());
+                    simulationDeferFactorValue.setText("" + deferFactor);
+                }});
         deferFactorControl.setPreferredSize(new Dimension(150, 20));
         panel.add(deferFactorControl);
         simulationDeferFactorValue = new JLabel();
@@ -749,11 +783,13 @@ public class SimulationFrame2D extends JFrame
         addJLabel(zoom_panel, 0, 1, 1, 1, "agent size");
 
         JScrollBar agent_size_control = new JScrollBar(JScrollBar.HORIZONTAL, (int)(agent_size * 10), 1, 1, 100);
-        agent_size_control.addAdjustmentListener(e -> {
-            agent_size = agent_size_control.getValue() / 10.0;
-            agent_size_value.setText("" + agent_size);
-            panel.repaint();
-        });
+        agent_size_control.addAdjustmentListener(new AdjustmentListener() {
+                @Override
+                public void adjustmentValueChanged(AdjustmentEvent e) {
+                    agent_size = agent_size_control.getValue() / 10.0;
+                    agent_size_value.setText("" + agent_size);
+                    panel.repaint();
+                }});
         agent_size_control.setPreferredSize(new Dimension(200, 20));
         addJComponent(zoom_panel, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, agent_size_control);
 
@@ -775,20 +811,24 @@ public class SimulationFrame2D extends JFrame
         // ノード表示の ON/OFF
         showNodesCheckBox = new JCheckBox("Show nodes");
         showNodesCheckBox.setSelected(showNodes.getState());
-        showNodesCheckBox.addActionListener(e -> {
-            showNodeLabelsCheckBox.setEnabled(showNodesCheckBox.isSelected());
-            showNodes.setState(showNodesCheckBox.isSelected());
-            update();
-        });
+        showNodesCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showNodeLabelsCheckBox.setEnabled(showNodesCheckBox.isSelected());
+                    showNodes.setState(showNodesCheckBox.isSelected());
+                    update();
+                }});
         showNodesPanel.add(showNodesCheckBox);
 
         // ノードラベル表示の ON/OFF
         showNodeLabelsCheckBox = new JCheckBox("Show node labels");
         showNodeLabelsCheckBox.setSelected(showNodeLabels.getState());
-        showNodeLabelsCheckBox.addActionListener(e -> {
-            showNodeLabels.setState(showNodeLabelsCheckBox.isSelected());
-            update();
-        });
+        showNodeLabelsCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showNodeLabels.setState(showNodeLabelsCheckBox.isSelected());
+                    update();
+                }});
         showNodesPanel.add(showNodeLabelsCheckBox);
         checkbox_panel.add(showNodesPanel);
 
@@ -798,20 +838,24 @@ public class SimulationFrame2D extends JFrame
         // リンク表示の ON/OFF
         showLinksCheckBox = new JCheckBox("Show links");
         showLinksCheckBox.setSelected(showLinks.getState());
-        showLinksCheckBox.addActionListener(e -> {
-            showLinkLabelsCheckBox.setEnabled(showLinksCheckBox.isSelected());
-            showLinks.setState(showLinksCheckBox.isSelected());
-            update();
-        });
+        showLinksCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showLinkLabelsCheckBox.setEnabled(showLinksCheckBox.isSelected());
+                    showLinks.setState(showLinksCheckBox.isSelected());
+                    update();
+                }});
         showLinksPanel.add(showLinksCheckBox);
 
         // リンクラベル表示の ON/OFF
         showLinkLabelsCheckBox = new JCheckBox("Show link labels");
         showLinkLabelsCheckBox.setSelected(showLinkLabels.getState());
-        showLinkLabelsCheckBox.addActionListener(e -> {
-            showLinkLabels.setState(showLinkLabelsCheckBox.isSelected());
-            update();
-        });
+        showLinkLabelsCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showLinkLabels.setState(showLinkLabelsCheckBox.isSelected());
+                    update();
+                }});
         showLinksPanel.add(showLinkLabelsCheckBox);
         checkbox_panel.add(showLinksPanel);
 
@@ -821,29 +865,35 @@ public class SimulationFrame2D extends JFrame
         // エリア表示の ON/OFF
         showAreaCheckBox = new JCheckBox("Show area");
         showAreaCheckBox.setSelected(showArea.getState());
-        showAreaCheckBox.addActionListener(e -> {
-            showAreaLabelsCheckBox.setEnabled(showAreaCheckBox.isSelected());
-            showArea.setState(showAreaCheckBox.isSelected());
-            update();
-        });
+        showAreaCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showAreaLabelsCheckBox.setEnabled(showAreaCheckBox.isSelected());
+                    showArea.setState(showAreaCheckBox.isSelected());
+                    update();
+                }});
         showAreaPanel.add(showAreaCheckBox);
 
         // エリアラベル表示の ON/OFF
         showAreaLabelsCheckBox = new JCheckBox("Show area labels");
         showAreaLabelsCheckBox.setSelected(showAreaLabels.getState());
-        showAreaLabelsCheckBox.addActionListener(e -> {
-            showAreaLabels.setState(showAreaLabelsCheckBox.isSelected());
-            update();
-        });
+        showAreaLabelsCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showAreaLabels.setState(showAreaLabelsCheckBox.isSelected());
+                    update();
+                }});
         showAreaPanel.add(showAreaLabelsCheckBox);
 
         // エリアの配置を確認できる様にする
         JCheckBox showLocationCheckBox = new JCheckBox("outline");
         showLocationCheckBox.setSelected(isShowAreaLocation());
-        showLocationCheckBox.addActionListener(e -> {
-            setShowAreaLocation(showLocationCheckBox.isSelected());
-            panel.repaint();
-        });
+        showLocationCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setShowAreaLocation(showLocationCheckBox.isSelected());
+                    panel.repaint();
+                }});
         showAreaPanel.add(showLocationCheckBox);
 
         checkbox_panel.add(showAreaPanel);
@@ -854,16 +904,22 @@ public class SimulationFrame2D extends JFrame
         // エージェント表示の ON/OFF
         showAgentCheckBox = new JCheckBox("Show agents");
         showAgentCheckBox.setSelected(true);
-        showAgentCheckBox.addActionListener(e -> {
-            showAgentLabelsCheckBox.setEnabled(showAgentCheckBox.isSelected());
-            update();
-        });
+        showAgentCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showAgentLabelsCheckBox.setEnabled(showAgentCheckBox.isSelected());
+                    update();
+                }});
         showAgentPanel.add(showAgentCheckBox);
 
         // エージェントラベル表示の ON/OFF
         showAgentLabelsCheckBox = new JCheckBox("Show agent labels");
         showAgentLabelsCheckBox.setSelected(false);
-        showAgentLabelsCheckBox.addActionListener(e -> update());
+        showAgentLabelsCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    update() ;
+                }});
         showAgentPanel.add(showAgentLabelsCheckBox);
         checkbox_panel.add(showAgentPanel);
 
@@ -872,22 +928,32 @@ public class SimulationFrame2D extends JFrame
 
         // スクリーンショットを撮る
         record_snapshots.setSelected(isRecordSimulationScreen());
-        record_snapshots.addActionListener(e -> setRecordSimulationScreen(record_snapshots.isSelected()));
+        record_snapshots.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setRecordSimulationScreen(record_snapshots.isSelected()) ;
+                }});
         checkbox_panel.add(record_snapshots);
 
         // 歩行速度に応じてエージェントの色を変える
         JCheckBox change_agent_color_depending_on_speed_cb = new JCheckBox("Change agent color depending on speed");
         change_agent_color_depending_on_speed_cb.setSelected(changeAgentColorDependingOnSpeed);
-        change_agent_color_depending_on_speed_cb.addActionListener(e -> {
-            changeAgentColorDependingOnSpeed = ((JCheckBox)e.getSource()).isSelected();
-            panel.repaint();
-        });
+        change_agent_color_depending_on_speed_cb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    changeAgentColorDependingOnSpeed = ((JCheckBox)e.getSource()).isSelected();
+                    panel.repaint();
+                }});
         checkbox_panel.add(change_agent_color_depending_on_speed_cb);
 
         // エージェントを重要性が高い順にソートしてから表示する
         JCheckBox sortAgentsCheckBox = new JCheckBox("Drawing agent by triage and speed order");
         sortAgentsCheckBox.setSelected(isDrawingAgentByTriageAndSpeedOrder());
-        sortAgentsCheckBox.addActionListener(e -> setDrawingAgentByTriageAndSpeedOrder(sortAgentsCheckBox.isSelected()));
+        sortAgentsCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setDrawingAgentByTriageAndSpeedOrder(sortAgentsCheckBox.isSelected()) ;
+                }});
         checkbox_panel.add(sortAgentsCheckBox);
 
         // シミュレーションビュー上に進捗状況をテキスト表示する、及び表示位置の選択
@@ -898,21 +964,27 @@ public class SimulationFrame2D extends JFrame
         JRadioButton bottom_rb = new JRadioButton("Bottom", (messagePosition & BOTTOM) == BOTTOM);
         top_rb.setEnabled(showStatus);
         bottom_rb.setEnabled(showStatus);
-        show_status_cb.addActionListener(e -> {
-            showStatus = show_status_cb.isSelected();
-            top_rb.setEnabled(showStatus);
-            bottom_rb.setEnabled(showStatus);
-            panel.repaint();
-        });
+        show_status_cb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showStatus = show_status_cb.isSelected();
+                    top_rb.setEnabled(showStatus);
+                    bottom_rb.setEnabled(showStatus);
+                    panel.repaint();
+                }});
         show_status_panel.add(show_status_cb);
-        top_rb.addActionListener(e -> {
-            messagePosition = TOP;
-            panel.repaint();
-        });
-        bottom_rb.addActionListener(e -> {
-            messagePosition = BOTTOM;
-            panel.repaint();
-        });
+        top_rb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    messagePosition = TOP;
+                    panel.repaint();
+                }});
+        bottom_rb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    messagePosition = BOTTOM;
+                    panel.repaint();
+                }});
         ButtonGroup bg = new ButtonGroup();
         bg.add(top_rb);
         bg.add(bottom_rb);
@@ -923,18 +995,22 @@ public class SimulationFrame2D extends JFrame
         // AIST ロゴの表示
         JCheckBox show_logo_cb = new JCheckBox("Show logo");
         show_logo_cb.setSelected(showLogo);
-        show_logo_cb.addActionListener(e -> {
-            showLogo = show_logo_cb.isSelected();
-            panel.repaint();
-        });
+        show_logo_cb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showLogo = show_logo_cb.isSelected();
+                    panel.repaint();
+                }});
         checkbox_panel.add(show_logo_cb);
 
         // 表示の更新が完了するのを待ってから次のステップに進む
         JCheckBox viewSynchronizedCheckBox = new JCheckBox("View-calculation synchronized");
         viewSynchronizedCheckBox.setSelected(isViewSynchronized());
-        viewSynchronizedCheckBox.addActionListener(e -> {
-            frame.setViewSynchronized(viewSynchronizedCheckBox.isSelected());
-        });
+        viewSynchronizedCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    frame.setViewSynchronized(viewSynchronizedCheckBox.isSelected());
+                }});
         checkbox_panel.add(viewSynchronizedCheckBox);
 
         // シミュレーション終了と同時にプログラムを終了する
@@ -945,7 +1021,11 @@ public class SimulationFrame2D extends JFrame
         // Centering with scaling の際にマージンを加える
         JCheckBox marginAddedCheckBox = new JCheckBox("Add centering margin");
         marginAddedCheckBox.setSelected(isMarginAdded());
-        marginAddedCheckBox.addActionListener(e -> setMarginAdded(marginAddedCheckBox.isSelected()));
+        marginAddedCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setMarginAdded(marginAddedCheckBox.isSelected()) ;
+                }});
         checkbox_panel.add(marginAddedCheckBox);
 
         // ロケーションボタン
@@ -953,24 +1033,30 @@ public class SimulationFrame2D extends JFrame
         locationPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JButton centerinButton = new JButton("Centering");
-        centerinButton.addActionListener(e -> {
-            panel.centering(false);
-            panel.repaint();
-        });
+        centerinButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    panel.centering(false);
+                    panel.repaint();
+                }});
         locationPanel.add(centerinButton);
 
         JButton centerinWithScalingButton = new JButton("Centering with scaling");
-        centerinWithScalingButton.addActionListener(e -> {
-            panel.centering(true);
-            panel.repaint();
-        });
+        centerinWithScalingButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    panel.centering(true);
+                    panel.repaint();
+                }});
         locationPanel.add(centerinWithScalingButton);
 
         JButton toTheOriginButton = new JButton("To the origin");
-        toTheOriginButton.addActionListener(e -> {
-            panel.setPosition(0, 0);
-            panel.repaint();
-        });
+        toTheOriginButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    panel.setPosition(0, 0);
+                    panel.repaint();
+                }});
         locationPanel.add(toTheOriginButton);
 
         checkbox_panel.add(locationPanel);
@@ -999,47 +1085,57 @@ public class SimulationFrame2D extends JFrame
         targetPanel.add(new JLabel("Mode: "));
 
         JRadioButton noEffectRb = new JRadioButton("None", true);
-        noEffectRb.addActionListener(e -> {
-            mode = StatusMode.NO_EFFECT;
-            clearSelection();
-            panel.repaint();
-        });
+        noEffectRb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mode = StatusMode.NO_EFFECT;
+                    clearSelection();
+                    panel.repaint();
+                }});
         bg.add(noEffectRb);
         targetPanel.add(noEffectRb);
 
         JRadioButton nodeRb = new JRadioButton("Node", false);
-        nodeRb.addActionListener(e -> {
-            mode = StatusMode.NODE;
-            clearSelection();
-            panel.repaint();
-        });
+        nodeRb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mode = StatusMode.NODE;
+                    clearSelection();
+                    panel.repaint();
+                }});
         bg.add(nodeRb);
         targetPanel.add(nodeRb);
 
         JRadioButton linkRb = new JRadioButton("Link", false);
-        linkRb.addActionListener(e -> {
-            mode = StatusMode.LINK;
-            clearSelection();
-            panel.repaint();
-        });
+        linkRb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mode = StatusMode.LINK;
+                    clearSelection();
+                    panel.repaint();
+                }});
         bg.add(linkRb);
         targetPanel.add(linkRb);
 
         JRadioButton areaRb = new JRadioButton("Area", false);
-        areaRb.addActionListener(e -> {
-            mode = StatusMode.AREA;
-            clearSelection();
-            panel.repaint();
-        });
+        areaRb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mode = StatusMode.AREA;
+                    clearSelection();
+                    panel.repaint();
+                }});
         bg.add(areaRb);
         targetPanel.add(areaRb);
 
         JRadioButton agentRb = new JRadioButton("Agent", false);
-        agentRb.addActionListener(e -> {
-            mode = StatusMode.AGENT;
-            clearSelection();
-            panel.repaint();
-        });
+        agentRb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mode = StatusMode.AGENT;
+                    clearSelection();
+                    panel.repaint();
+                }});
         bg.add(agentRb);
         targetPanel.add(agentRb);
 

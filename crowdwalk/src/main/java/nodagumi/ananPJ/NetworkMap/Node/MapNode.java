@@ -788,7 +788,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         /* リングバッファの大きさは、その倍+1としておく。*/
         int size = ((int)Math.ceil(wSum)) * 2 + 1 ;
         passingAgentRecordBuffer =
-            new RingBuffer<>(size, ExpandType.Recycle, true) ;
+            new RingBuffer<PassingAgentRecord>(size, ExpandType.Recycle, true) ;
         passingAgentRecordBuffer.fillElements(PassingAgentRecord.class);
     }
         
@@ -835,7 +835,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
      */
     public void sortLinkTableByAngle() {
         // 整列。
-        MapNode pivot = this ;
+        final MapNode pivot = this ;
         Collections.sort(links, new Comparator<MapLink>() {
                 @Override
                 public int compare(MapLink link0, MapLink link1) {

@@ -10,6 +10,12 @@ defaultTasks 'clean', 'build'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+// [2016.04.08 I.Noda]
+// コンパイル時に VM のバージョンを指定してみる。
+// 今のところ、まだうまく動かない。
+//targetCompatibility = '1.8' ;
+//sourceCompatibility = '1.6' ;
+
 repositories {
     mavenCentral()
 }
@@ -46,7 +52,7 @@ def defaultEncoding = 'UTF-8'
 compileJava {
     options.encoding = defaultEncoding
 //    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose'] 
-    options.compilerArgs = ['-Xdiags:verbose'] 
+    options.compilerArgs = ['-Xdiags:verbose']
 }
 
 processResources {

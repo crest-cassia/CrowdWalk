@@ -33,13 +33,13 @@ public class RingBuffer_Test {
      */
     //@Test
     public void testConstruct() {
-        RingBuffer<Double> rbd0 = new RingBuffer<>(10) ;
+        RingBuffer<Double> rbd0 = new RingBuffer<Double>(10) ;
         Itk.dbgVal("rbd0", rbd0) ;
-        RingBuffer<Double> rbd1 = new RingBuffer<>(10,ExpandType.Fixed) ;
+        RingBuffer<Double> rbd1 = new RingBuffer<Double>(10,ExpandType.Fixed) ;
         Itk.dbgVal("rbd1", rbd1) ;
-        RingBuffer<Double> rbd2 = new RingBuffer<>(10,ExpandType.Overwrite) ;
+        RingBuffer<Double> rbd2 = new RingBuffer<Double>(10,ExpandType.Overwrite) ;
         Itk.dbgVal("rbd2", rbd2) ;
-        RingBuffer<Double> rbd3 = new RingBuffer<>(10,ExpandType.Recycle) ;
+        RingBuffer<Double> rbd3 = new RingBuffer<Double>(10,ExpandType.Recycle) ;
         Itk.dbgVal("rbd3", rbd3) ;
     }
     //------------------------------------------------------------
@@ -48,22 +48,22 @@ public class RingBuffer_Test {
      */
     //@Test
     public void testIteratorAuto() {
-        RingBuffer<Double> rb0 = new RingBuffer<>(10,ExpandType.Auto) ;
+        RingBuffer<Double> rb0 = new RingBuffer<Double>(10,ExpandType.Auto) ;
         subTestIterator(rb0) ;
     }
     //@Test
     public void testIteratorFixed() {
-        RingBuffer<Double> rb0 = new RingBuffer<>(10,ExpandType.Fixed) ;
+        RingBuffer<Double> rb0 = new RingBuffer<Double>(10,ExpandType.Fixed) ;
         subTestIterator(rb0) ;
     }
     //@Test
     public void testIteratorOverwrite() {
-        RingBuffer<Double> rb0 = new RingBuffer<>(10,ExpandType.Overwrite) ;
+        RingBuffer<Double> rb0 = new RingBuffer<Double>(10,ExpandType.Overwrite) ;
         subTestIterator(rb0) ;
     }
     //@Test
     public void testIteratorRecycle() {
-        RingBuffer<Double> rb0 = new RingBuffer<>(10,ExpandType.Recycle) ;
+        RingBuffer<Double> rb0 = new RingBuffer<Double>(10,ExpandType.Recycle) ;
         subTestIterator(rb0) ;
     }
     /* */
@@ -98,7 +98,7 @@ public class RingBuffer_Test {
      */
     //@Test
     public void testExpand() {
-        RingBuffer<Double> rb0 = new RingBuffer<>(10, ExpandType.Auto) ;
+        RingBuffer<Double> rb0 = new RingBuffer<Double>(10, ExpandType.Auto) ;
         Itk.dbgVal("rb0",rb0) ;
         for(int i = 0 ; i < 5 ; i++) {
             rb0.enqueue((double)i) ;
@@ -120,7 +120,7 @@ public class RingBuffer_Test {
      */
     //@Test
     public void testFixed() {
-        RingBuffer<Double> rb0 = new RingBuffer<>(10, ExpandType.Fixed) ;
+        RingBuffer<Double> rb0 = new RingBuffer<Double>(10, ExpandType.Fixed) ;
         Itk.dbgVal("rb0",rb0) ;
         for(int i = 0 ; i < 5 ; i++) {
             Itk.dbgVal("rb0.enqueue", rb0.enqueue((double)i)) ;
@@ -142,7 +142,7 @@ public class RingBuffer_Test {
      */
     @Test
     public void testOverwrite() {
-        RingBuffer<Double> rb0 = new RingBuffer<>(10, ExpandType.Overwrite) ;
+        RingBuffer<Double> rb0 = new RingBuffer<Double>(10, ExpandType.Overwrite) ;
         Itk.dbgVal("rb0",rb0) ;
         for(int i = 0 ; i < 5 ; i++) {
             Itk.dbgVal("rb0.enqueue", rb0.enqueue((double)i)) ;
@@ -165,7 +165,7 @@ public class RingBuffer_Test {
     //@Test
     public void testRecycle() {
         RingBuffer<TestRecycleFoo> rb0 =
-            new RingBuffer<>(10, ExpandType.Recycle, true) ;
+            new RingBuffer<TestRecycleFoo>(10, ExpandType.Recycle, true) ;
         rb0.fillElements(TestRecycleFoo.class) ;
 
         Itk.dbgVal("rb0",rb0) ;
