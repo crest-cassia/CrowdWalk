@@ -634,10 +634,12 @@ public abstract class NetworkPanel3DBase extends JPanel {
     }
 
     // 全リンクの MapLink と BranchGroup との対応
-    protected HashMap<MapLink, BranchGroup> linkGroups = new HashMap<>();
+    protected HashMap<MapLink, BranchGroup> linkGroups =
+        new HashMap<MapLink, BranchGroup>();
 
     // 表示対象ノードの MapNode と TransformGroup との対応
-    protected HashMap<MapNode, BranchGroup> displayedNodeGroups = new HashMap<>();
+    protected HashMap<MapNode, BranchGroup> displayedNodeGroups =
+        new HashMap<MapNode, BranchGroup>();
 
     /**
      * すべての通常リンクの透明度を link_transparency 値で更新する.

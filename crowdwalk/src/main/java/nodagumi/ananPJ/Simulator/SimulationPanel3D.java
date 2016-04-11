@@ -1107,8 +1107,10 @@ public class SimulationPanel3D extends NetworkPanel3D {
         });
     }
 
-    private HashMap<MapArea, MapArea3D> displayedMapAreas = new HashMap<>();
-    private HashMap<AgentBase, Agent3D> displayedAgents = new HashMap<>();
+    private HashMap<MapArea, MapArea3D> displayedMapAreas =
+        new HashMap<MapArea, MapArea3D>();
+    private HashMap<AgentBase, Agent3D> displayedAgents =
+        new HashMap<AgentBase, Agent3D>();
 
     /**
      * タグが更新されたリンクを再表示する.
