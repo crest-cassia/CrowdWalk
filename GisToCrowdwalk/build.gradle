@@ -32,7 +32,10 @@ dependencies {
 sourceSets {
     main {
         java {
-            srcDirs = ["../crowdwalk/src"];
+            srcDirs = ["../crowdwalk/src/main/java"];
+        }
+        resources {
+            srcDirs = ["../crowdwalk/src/main/resources"];
         }
     }
 }

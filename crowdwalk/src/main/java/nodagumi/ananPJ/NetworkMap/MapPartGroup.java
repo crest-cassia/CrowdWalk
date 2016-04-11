@@ -40,6 +40,7 @@ public class MapPartGroup extends OBNode {
     private double rotation = 0.0;  // tkokada added
     private double defaultHeight = 0.0;
     private String imageFileName = null;
+    private int zone = 0;
       
     private AffineTransform fromParentCache;
     //private AffineTransform fromAbsoluteCache;
@@ -109,6 +110,7 @@ public class MapPartGroup extends OBNode {
         element.setAttribute("maxHeight", "" + getMaxHeight());
         element.setAttribute("defaultHeight", "" + getDefaultHeight());
         element.setAttribute("imageFileName", getImageFileName());
+        element.setAttribute("zone", "" + getZone());
     }
     
     @Override
@@ -140,6 +142,11 @@ public class MapPartGroup extends OBNode {
         setMaxHeight(Double.parseDouble(element.getAttribute("maxHeight")));
         setDefaultHeight(Double.parseDouble(element.getAttribute("defaultHeight")));
         setImageFileName(element.getAttribute("imageFileName"));
+
+        String _zone = element.getAttribute("zone");
+        if (_zone != null && ! _zone.isEmpty()) {
+            setZone(Integer.parseInt(_zone));
+        }
     }
     
     public boolean haveEditorFrame(){
@@ -296,6 +303,13 @@ public class MapPartGroup extends OBNode {
     }
     public double getSouth() {
         return pSouthEast.getY();
+    }
+
+    public void setZone(int zone) {
+        this.zone = zone;
+    }
+    public int getZone() {
+        return zone;
     }
 
     @Override

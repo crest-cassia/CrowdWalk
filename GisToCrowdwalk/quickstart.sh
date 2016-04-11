@@ -7,5 +7,5 @@ case "$OS" in
         CP=".;build\libs\*"
         ;;
 esac
-echo "java -Dfile.encoding=UTF-8 -cp $CP nodagumi.ananPJ.ImportGis"
-java -Dfile.encoding=UTF-8 -cp $CP nodagumi.ananPJ.ImportGis
+echo "java -Dfile.encoding=UTF-8 -cp $CP nodagumi.ananPJ.ImportGis $*"
+java -Dfile.encoding=UTF-8 -cp $CP nodagumi.ananPJ.ImportGis $*
