@@ -44,8 +44,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import net.arnx.jsonic.JSON;
 
-import nodagumi.ananPJ.GuiSimulationEditorLauncher;
-import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
@@ -166,7 +164,7 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * exec undo
      */
-    public void undo(GuiSimulationEditorLauncher editor) {
+    public void undo() {
         if (undo_list.size() == 0) return;
         int i = undo_list.size() - 1;
         UndoInformation info = undo_list.remove(i);
@@ -175,14 +173,7 @@ public class NetworkMap extends DefaultTreeModel {
         } else {
             insertOBNode(info.parent, info.node, false);
         }
-        editor.updateAll();
     }
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 編集用画面関係
-     */
-    private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
 
     //------------------------------------------------------------
     //------------------------------------------------------------
@@ -1049,54 +1040,6 @@ public class NetworkMap extends DefaultTreeModel {
      * NetworkMap の構成要素の状態変化を監視・通知するオブジェクトを返す.
      */
     public NetworkMapPartsNotifier getNotifier() { return notifier; }
-
-    //------------------------------------------------------------
-    /**
-     * Editor Frame
-     */
-    public boolean existNodeEditorFrame(MapPartGroup _obiNode){
-        for (EditorFrame frame : getFrames()) {
-            if (_obiNode.equals(frame)) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Editor Frame
-     */
-    public EditorFrame openEditorFrame(GuiSimulationEditorLauncher editor,
-                                       MapPartGroup obinode) {
-        EditorFrame frame = new EditorFrame(editor, obinode);
-
-        obinode.setUserObject(frame);
-
-        getFrames().add(frame);
-        frame.setVisible(true);
-
-        return frame;
-    }
-
-    /**
-     * Editor Frame
-     */
-    public void removeEditorFrame(MapPartGroup _obinode){
-        getFrames().remove(_obinode.getUserObject());
-        _obinode.setUserObject(null);
-    }
-
-    //------------------------------------------------------------
-    /**
-     * フレームセット
-     */
-    public void setFrames(ArrayList<EditorFrame> frames) {
-        this.frames = frames;
-    }
-    /**
-     * フレーム取得
-     */
-    public ArrayList<EditorFrame> getFrames() {
-        return frames;
-    }
 
 } // class NetworkMap
 

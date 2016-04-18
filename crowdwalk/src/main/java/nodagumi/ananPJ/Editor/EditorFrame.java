@@ -2692,7 +2692,8 @@ public class EditorFrame
         case KeyEvent.VK_BACK_SPACE:
             System.err.println("undo は無効です");
             // 正常動作が保証できないため無効にした(斉藤)
-            //editor.getMap().undo(editor);
+            // editor.getMap().undo();
+            // editor.updateAll();
             break;
         case KeyEvent.VK_DELETE:
             delete();
@@ -2781,7 +2782,7 @@ public class EditorFrame
     }
     @Override
     public void windowClosing(WindowEvent e) {
-        editor.getMap().removeEditorFrame(current_group);
+        editor.removeEditorFrame(current_group);
         try {
             this.finalize();
         } catch (Throwable e1) {

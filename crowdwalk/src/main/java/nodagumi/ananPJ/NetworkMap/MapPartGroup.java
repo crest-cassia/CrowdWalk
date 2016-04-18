@@ -6,9 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -17,11 +14,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
-import nodagumi.ananPJ.misc.FilePathManipulation;
 
 import nodagumi.Itk.*;
 
@@ -149,12 +144,6 @@ public class MapPartGroup extends OBNode {
         }
     }
     
-    public boolean haveEditorFrame(){
-        EditorFrame frame = (EditorFrame) this.getUserObject();
-        if(frame == null) return false;
-        return true;
-    }
-
     public Rectangle2D getRegion(){
         return new Rectangle2D.Double(  this.pNorthWest.getX(),
                                         this.pNorthWest.getY(),
