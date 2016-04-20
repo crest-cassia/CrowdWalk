@@ -71,6 +71,7 @@ import javax.vecmath.Vector3d;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.GuiSimulationLauncher2D;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -147,6 +148,8 @@ public class SimulationFrame2D extends JFrame
     private boolean viewSynchronized = false;
     private boolean exitWithSimulationFinished = false;
     private boolean marginAdded = false;
+    private boolean showBackgroundImage = false;
+    private boolean showBackgroundMap = false;
 
     /* メニュー構成変数 */
 
@@ -227,7 +230,8 @@ public class SimulationFrame2D extends JFrame
     synchronized public void decSaveThreadCount() { saveThreadCount--; }
 
     public SimulationFrame2D(String title, int simulationPanelWidth, int simulationPanelHeight,
-            GuiSimulationLauncher2D launcher, CrowdWalkPropertiesHandler properties) {
+            GuiSimulationLauncher2D launcher, CrowdWalkPropertiesHandler properties,
+            ArrayList<GsiTile> backgroundMapTiles) {
         super(title);
 
         frame = this;
@@ -240,7 +244,7 @@ public class SimulationFrame2D extends JFrame
         setMarginAdded(getLinks().size() < MINIMUM_REAL_MAP_LINKS);
 
         setupMenu();
-        setupContents(simulationPanelWidth, simulationPanelHeight, properties);
+        setupContents(simulationPanelWidth, simulationPanelHeight, properties, backgroundMapTiles);
 
         addWindowListener(new WindowAdapter() {
             public void windowOpened(WindowEvent e) {
@@ -438,15 +442,34 @@ public class SimulationFrame2D extends JFrame
      * パネルの配置
      */
     private void setupContents(int simulationPanelWidth, int simulationPanelHeight,
-            CrowdWalkPropertiesHandler properties) {
+            CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> backgroundMapTiles) {
         setLayout(new BorderLayout());
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(400, simulationPanelHeight));
 
+        boolean backgroundImageEnabled = true;
+        int backgroundImageCount = 0;
+        for (MapPartGroup group : launcher.getMap().getGroups()) {
+            String imageFileName = group.getImageFileName();
+            if (imageFileName != null && ! imageFileName.isEmpty()) {
+                backgroundImageCount++;
+            }
+        }
+        if (backgroundImageCount == 0) {
+            backgroundImageEnabled = false;
+            showBackgroundImage = false;
+        }
+
+        boolean backgroundMapEnabled = true;
+        if (backgroundMapTiles == null || backgroundMapTiles.isEmpty()) {
+            backgroundMapEnabled = false;
+            showBackgroundMap = false;
+        }
+
         //// 2D シミュレーションパネル ////
 
-        panel = new SimulationPanel2D(this, launcher.getMap(), properties);
+        panel = new SimulationPanel2D(this, launcher.getMap(), properties, backgroundMapTiles);
         panel.setPreferredSize(new Dimension(simulationPanelWidth, simulationPanelHeight));
         panel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -461,7 +484,7 @@ public class SimulationFrame2D extends JFrame
 
         JTabbedPane tabs = new JTabbedPane();
         tabs.add(createControlPanel());
-        tabs.add(createViewPanel());
+        tabs.add(createViewPanel(backgroundImageEnabled, backgroundMapEnabled));
         tabs.add(createStatusPanel());
         rightPanel.add(tabs, BorderLayout.CENTER);
 
@@ -765,7 +788,7 @@ public class SimulationFrame2D extends JFrame
     /**
      * View タブの生成
      */
-    private JPanel createViewPanel() {
+    private JPanel createViewPanel(boolean backgroundImageEnabled, boolean backgroundMapEnabled) {
         JPanel tabPanel = new JPanel();
         tabPanel.setName("View");
         tabPanel.setLayout(new BorderLayout());
@@ -922,6 +945,30 @@ public class SimulationFrame2D extends JFrame
                 }});
         showAgentPanel.add(showAgentLabelsCheckBox);
         checkbox_panel.add(showAgentPanel);
+
+        // 背景画像表示の ON/OFF
+        JCheckBox showBackgroundImageCheckBox = new JCheckBox("Show background image");
+        showBackgroundImageCheckBox.setSelected(backgroundImageEnabled && showBackgroundImage);
+        showBackgroundImageCheckBox.setEnabled(backgroundImageEnabled);
+        showBackgroundImageCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showBackgroundImage = showBackgroundImageCheckBox.isSelected();
+                    panel.repaint();
+                }});
+        checkbox_panel.add(showBackgroundImageCheckBox);
+
+        // 背景地図表示の ON/OFF
+        JCheckBox showBackgroundMapCheckBox = new JCheckBox("Show background map");
+        showBackgroundMapCheckBox.setSelected(backgroundMapEnabled && showBackgroundMap);
+        showBackgroundMapCheckBox.setEnabled(backgroundMapEnabled);
+        showBackgroundMapCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showBackgroundMap = showBackgroundMapCheckBox.isSelected();
+                    panel.repaint();
+                }});
+        checkbox_panel.add(showBackgroundMapCheckBox);
 
         // 仕切り線
         checkbox_panel.add(new JSeparator(SwingConstants.HORIZONTAL));
@@ -1667,6 +1714,22 @@ public class SimulationFrame2D extends JFrame
 
     public boolean isMarginAdded() {
         return marginAdded;
+    }
+
+    public void setShowBackgroundImage(boolean showBackgroundImage) {
+        this.showBackgroundImage = showBackgroundImage;
+    }
+
+    public boolean isShowBackgroundImage() {
+        return showBackgroundImage;
+    }
+
+    public void setShowBackgroundMap(boolean showBackgroundMap) {
+        this.showBackgroundMap = showBackgroundMap;
+    }
+
+    public boolean isShowBackgroundMap() {
+        return showBackgroundMap;
     }
 
     /* access to the object(nodes, links, agents, sub-groups)

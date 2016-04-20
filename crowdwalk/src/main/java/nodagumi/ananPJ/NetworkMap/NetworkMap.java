@@ -1041,5 +1041,36 @@ public class NetworkMap extends DefaultTreeModel {
      */
     public NetworkMapPartsNotifier getNotifier() { return notifier; }
 
+    /**
+     * マップに外接する矩形を算出する
+     */
+    public Rectangle2D calcRectangle() {
+        double north = 0.0;
+        double south = 0.0;
+        double west = 0.0;
+        double east = 0.0;
+        for (MapNode node : getNodes()) {
+            if (north == 0.0 && south == 0.0) {
+                north = node.getY();
+                south = node.getY();
+                west = node.getX();
+                east = node.getX();
+            }
+            if (node.getY() < north) {
+                north = node.getY();
+            }
+            if (node.getY() > south) {
+                south = node.getY();
+            }
+            if (node.getX() < west) {
+                west = node.getX();
+            }
+            if (node.getX() > east) {
+                east = node.getX();
+            }
+        }
+        return new Rectangle2D.Double(west, north, east - west, south - north);
+    }
+
 } // class NetworkMap
 

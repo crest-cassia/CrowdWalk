@@ -9,6 +9,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -16,7 +17,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,13 +32,16 @@ import javax.vecmath.Vector3d;
 import org.apache.batik.ext.awt.geom.Polygon2D;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.LinkAppearance;
 import nodagumi.ananPJ.Gui.NodeAppearance;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
+import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D.gas_display;
 
@@ -51,7 +57,7 @@ public class SimulationPanel2D extends JPanel {
     /**
      * ステータスメッセージの背景色
      */
-    public static final Color BACKGROUND_COLOR = new Color(0.95f, 0.95f, 0.95f);
+    public static final Color BACKGROUND_COLOR = Color.WHITE;
 
     /**
      * ラベル表示に使用するフォント名
@@ -72,6 +78,26 @@ public class SimulationPanel2D extends JPanel {
      * AIST ロゴ画像
      */
     private Image aistLogo = getToolkit().createImage(getClass().getResource("/img/aist_logo.png"));
+
+    /**
+     * グループ別の背景画像
+     */
+    private HashMap<MapPartGroup, Image> backgroundImages = new HashMap();
+
+    /**
+     * 背景地図用の地理院タイル
+     */
+    private ArrayList<GsiTile> backgroundMapTiles = null;
+
+    /**
+     * 背景地図のX座標の調整値
+     */
+    private double backgroundMapAdjustX = 0.0;
+
+    /**
+     * 背景地図のY座標の調整値
+     */
+    private double backgroundMapAdjustY = 0.0;
 
     /**
      * 描画前に平行移動する距離
@@ -206,10 +232,11 @@ public class SimulationPanel2D extends JPanel {
 
     /* constructor
      */
-    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties) {
+    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> backgroundMapTiles) {
         super();
         frame = _frame;
         networkMap = _networkMap;
+        this.backgroundMapTiles = backgroundMapTiles;
 
         if (properties != null) {
             try {
@@ -239,6 +266,17 @@ public class SimulationPanel2D extends JPanel {
                 show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE",
                             gas_display.getNames()).toUpperCase()) ;
                 pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
+
+                // グループ別の背景画像を読み込む
+                File file = new File(properties.getNetworkMapFile());
+                String dir = file.getParent() + File.separator;
+                for (MapPartGroup group : networkMap.getGroups()) {
+                    String imageFileName = group.getImageFileName();
+                    if (imageFileName == null || imageFileName.isEmpty()) {
+                        continue;
+                    }
+                    backgroundImages.put(group, getToolkit().getImage(dir + imageFileName));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -428,6 +466,9 @@ public class SimulationPanel2D extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         AffineTransform saveAT = g2.getTransform();
 
+        g2.setBackground(Color.WHITE);
+        g2.clearRect(0, 0, getWidth(), getHeight());
+
         if (originalTextHeight == 0.0) {
             g2.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
             FontMetrics fm = g2.getFontMetrics();
@@ -445,6 +486,20 @@ public class SimulationPanel2D extends JPanel {
         g2.translate(tx, ty);
         g2.scale(scale, scale);
         setScaleFixedFont(g2, FONT_NAME, Font.PLAIN, 14);
+
+        // 背景地図の描画
+        if (frame.isShowBackgroundMap()) {
+            for (GsiTile mapTile : backgroundMapTiles) {
+                drawBackgroundMapTile(mapTile, g2);
+            }
+        }
+
+        // 背景画像の描画
+        if (frame.isShowBackgroundImage()) {
+            for (HashMap.Entry<MapPartGroup, Image> entry : backgroundImages.entrySet()) {
+                drawBackgroundImage(entry.getKey(), entry.getValue(), g2);
+            }
+        }
 
         // ポリゴンの描画
         if (! polygons.isEmpty()) {
@@ -735,7 +790,7 @@ public class SimulationPanel2D extends JPanel {
     public void drawArea(MapArea area, Graphics2D g, boolean showLabel) {
         if (area.getPollutionLevel() == null || ! area.getPollutionLevel().isPolluted()) {
             if (frame.isShowAreaLocation()) {
-                g.setColor(Color.WHITE);
+                g.setColor(Color.LIGHT_GRAY);
                 g.fill(area.getShape());
             }
             return;
@@ -801,6 +856,32 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
+     * 背景画像を描画する
+     */
+    public void drawBackgroundImage(MapPartGroup group, Image image, Graphics2D g2) {
+        AffineTransform at = g2.getTransform();
+        g2.translate(group.tx, group.ty);
+        g2.scale(group.sx, group.sy);
+        g2.rotate(group.r);
+        g2.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), this);
+        g2.setTransform(at);
+    }
+
+    /**
+     * 地理院タイルを描画する
+     */
+    public void drawBackgroundMapTile(GsiTile gsiTile, Graphics2D g2) {
+        AffineTransform at = g2.getTransform();
+        BufferedImage image = gsiTile.getImage();
+        Point2D point = gsiTile.getPoint();
+
+        g2.translate(point.getX() + backgroundMapAdjustX, point.getY() + backgroundMapAdjustY);
+        g2.scale(gsiTile.getScaleX(), gsiTile.getScaleY());
+        g2.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), this);
+        g2.setTransform(at);
+    }
+
+    /**
      * ステータスメッセージを描画する
      */
     public void drawMessage(Graphics2D g2, int position, String message) {
@@ -813,7 +894,7 @@ public class SimulationPanel2D extends JPanel {
         int x = 12;     // メッセージの基準表示位置
         int y = 12;     //          〃
         if ((position & frame.BOTTOM) == frame.BOTTOM) {
-            y += getHeight() - ascent;
+            y += getHeight() - height;
         }
         g2.setColor(BACKGROUND_COLOR);           // メッセージの背景色
         g2.fillRect(x - 4, y - ascent, width + 7, height - 1);  // メッセージの背景描画

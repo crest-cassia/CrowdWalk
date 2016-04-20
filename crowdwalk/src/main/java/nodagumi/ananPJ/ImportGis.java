@@ -500,7 +500,9 @@ public class ImportGis {
 
             networkMap = new NetworkMap();
             ReferencedEnvelope ref = map.getAreaOfInterest();
-            MapPartGroup group = networkMap.createGroupNode((MapPartGroup)networkMap.getRoot());
+            MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+            root.setZone(zone);
+            MapPartGroup group = networkMap.createGroupNode(root);
             group.addTag("(" + roundCoordinate(ref.getMinX()) + "_"
                     + roundCoordinate(ref.getMinY()) + ")-("
                     + roundCoordinate(ref.getMaxX()) + "_"
