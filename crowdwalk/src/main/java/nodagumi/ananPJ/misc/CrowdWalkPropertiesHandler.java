@@ -422,7 +422,7 @@ import nodagumi.Itk.*;
  *     <pre>   * 探索において、各リンクの主観的距離の変更ルールを記述。
  *
  *  設定値： ルールを表す JSON 形式の式。
- *  デフォルト値： null
+ *  デフォルト値： null</pre>
  *   </li>
  *
  *   <li>
@@ -436,8 +436,9 @@ import nodagumi.Itk.*;
  *   <li>
  *     <h4>zone</h4>
  *     <pre>  マップデータの平面直角座標系の系番号
+ *
  *  2D シミュレータ上で、国土地理院の地理院タイルを用いた背景地図表示を有効にする。
- *  マップファイルのルートの <Group> タグに zone 属性があれば省略可能。
+ *  マップファイルのルートの &lt;Group&gt; タグに zone 属性があれば省略可能。
  *  マップ範囲の地理院タイルを読み込むために、初回のみ国土地理院の Web サイトへのアクセスが発生する。
  *  (読み込んだ画像は CrowdWalk/crowdwalk/cache ディレクトリにキャッシュされる)
  *
@@ -448,9 +449,10 @@ import nodagumi.Itk.*;
  *   <li>
  *     <h4>gsi_tile_name</h4>
  *     <pre>  地理院タイルのタイル名(データID)
+ *
  *  背景地図に使用する地理院タイルを指定する。
  *  標準地図/淡色地図/English/数値地図25000（土地条件）/白地図/色別標高図/写真が選択可能。
- *  地理院タイル一覧(http://maps.gsi.go.jp/development/ichiran.html)参照。
+ *  <a href="http://maps.gsi.go.jp/development/ichiran.html" target="_blank">≪地理院タイル一覧≫</a>参照。
  *
  *  設定値： std | pale | english | lcm25k_2012 | blank | relief | ort
  *  デフォルト値： pale</pre>
@@ -459,8 +461,9 @@ import nodagumi.Itk.*;
  *   <li>
  *     <h4>gsi_tile_zoom</h4>
  *     <pre>  地理院タイルのズームレベル
+ *
  *  背景地図に使用する地理院タイルのズームレベルを指定する。
- *  地理院タイル仕様(http://maps.gsi.go.jp/development/siyou.html)参照。
+ *  <a href="http://maps.gsi.go.jp/development/siyou.html" target="_blank">≪地理院タイル仕様≫</a>参照。
  *
  *  設定値： 5～18(タイル名により有効範囲が異なる)
  *  デフォルト値： 14</pre>

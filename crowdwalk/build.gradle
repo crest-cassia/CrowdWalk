@@ -87,13 +87,11 @@ jar {
     }
 }
 
-javadoc {
-    destinationDir = file("./doc/javadoc/")
-    options.setEncoding("UTF-8")
-    options.charSet("UTF-8")
-    options.quiet()
-    options.noTimestamp()
-    setFailOnError(false)
+task javadoc(overwrite: true) << {
+    exec {
+        executable "sh"
+        args "-c", "./make_javadoc.sh"
+    }
 }
 
 task clearCache() {
