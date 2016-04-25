@@ -32,7 +32,8 @@ import org.opengis.feature.simple.*;
 import org.opengis.feature.type.*;
 import org.opengis.filter.*;
 
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.MultiLineString;
 import net.arnx.jsonic.JSON;
 
 import org.osgeo.proj4j.CRSFactory;
@@ -158,6 +159,7 @@ public class ImportGis {
     private static Map<String, Object> shapefileSpecs = null;
     private static String[] shapefileSpecNames;
     private static String shapefileSpecName = null;
+    private static boolean heightEnable = false;
     private static boolean outputByTokyoDatum = false;
     private static boolean outputByPlaneRectangular = false;
     private static boolean makeSimpleModel = false;
@@ -525,6 +527,7 @@ public class ImportGis {
                     .getDefaultHints());
             Filter filter = ff.bbox(ff.property("the_geom"), ref);
             HashMap<String, MapNode> nodes = new HashMap<String, MapNode>();
+            HashMap<String, MapLink> links = new HashMap<String, MapLink>();
             MapLayer layers[] = map.getLayers();
             for (int i = 0; i < layers.length; ++i) {
                 MapLayer layer = layers[i];
@@ -555,11 +558,11 @@ public class ImportGis {
                     width = roundValue(width, 4);
 
                     if (makeSimpleModel) {
-                        make_nodes_simple(the_geom, feature, group, nodes,
+                        make_nodes_simple(the_geom, feature, group, nodes, links,
                             length, width, base_x, base_y, scale_x, scale_y,
                             ! outputByPlaneRectangular, transform);
                     } else {
-                        make_nodes_precise(the_geom, feature, group, nodes,
+                        make_nodes_precise(the_geom, feature, group, nodes, links,
                             length, width, base_x, base_y, scale_x, scale_y,
                             ! outputByPlaneRectangular, transform);
                     }
@@ -596,11 +599,7 @@ public class ImportGis {
      * 経緯度座標を四捨五入して小数第 scaleOfRoundOff 位に丸める
      */
     public double roundCoordinate(double coordinate) {
-        if (scaleOfRoundOff >= 0 && ! Double.isNaN(coordinate)) {
-            BigDecimal bd = new BigDecimal(String.valueOf(coordinate));
-            return bd.setScale(scaleOfRoundOff, BigDecimal.ROUND_HALF_UP).doubleValue();
-        }
-        return coordinate;
+        return roundValue(coordinate, scaleOfRoundOff);
     }
 
     /**
@@ -635,8 +634,19 @@ public class ImportGis {
         return pcsPoint;
     }
 
+    /**
+     * ノード ID を小さい順に並べた文字列
+     */
+    private String makeNodeIdPair(MapNode node1, MapNode node2) {
+        if (node1.ID.compareTo(node2.ID) < 0) {
+            return node1.ID + " " + node2.ID;
+        } else {
+            return node2.ID + " " + node1.ID;
+        }
+    }
+
     private void make_nodes_precise(Object the_geom, SimpleFeature feature,
-            MapPartGroup parent_group, HashMap<String, MapNode> nodes,
+            MapPartGroup parent_group, HashMap<String, MapNode> nodes, HashMap<String, MapLink> links,
             double length, double width, double base_x, double base_y,
             double scale_x, double scale_y, boolean crowdwalk_coordinate, CoordinateTransform transform) {
         if (!(the_geom instanceof MultiLineString))
@@ -677,6 +687,9 @@ public class ImportGis {
             double x = roundValue(coordinate.y, 4);
             double y = roundValue(coordinate.x, 4);
             double z = roundValue(c.z, 4);
+            if (! heightEnable || Double.isNaN(z)) {
+                z = 0.0;
+            }
             //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
 
             Point2D point = null;
@@ -714,8 +727,14 @@ public class ImportGis {
             } else if (from != null) {
                 if (j == 0)
                     System.err.println("\tj 0 but from is not null!");
-                networkMap.createMapLink(parent_group, from, node,
-                        roundValue(length * ratio[j - 1], 4), width);
+                String nodeIdPair = makeNodeIdPair(from, node);
+                if (links.containsKey(nodeIdPair)) {
+                    System.err.println("Duplicate link! node:" + nodeIdPair);
+                } else {
+                    MapLink link = networkMap.createMapLink(parent_group, from,
+                            node, roundValue(length * ratio[j - 1], 4), width);
+                    links.put(nodeIdPair, link);
+                }
                 /*
                 double dnodes = Math.sqrt(
                         Math.pow(from.getX() - node.getX(), 2.0) +
@@ -730,7 +749,7 @@ public class ImportGis {
     }
 
     private void make_nodes_simple(Object the_geom, SimpleFeature feature,
-            MapPartGroup parent_group, HashMap<String, MapNode> nodes,
+            MapPartGroup parent_group, HashMap<String, MapNode> nodes, HashMap<String, MapLink> links,
             double length, double width, double base_x, double base_y,
             double scale_x, double scale_y, boolean crowdwalk_coordinate, CoordinateTransform transform) {
         if (!(the_geom instanceof MultiLineString)) return;
@@ -753,6 +772,9 @@ public class ImportGis {
             double x = roundValue(coordinate.y, 4);
             double y = roundValue(coordinate.x, 4);
             double z = roundValue(c.z, 4);
+            if (! heightEnable || Double.isNaN(z)) {
+                z = 0.0;
+            }
             //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
 
             Point2D point = null;
@@ -782,7 +804,14 @@ public class ImportGis {
             }
 
             if (from != null) {
-                networkMap.createMapLink(parent_group, from, node, roundValue(length, 4), width);
+                String nodeIdPair = makeNodeIdPair(from, node);
+                if (links.containsKey(nodeIdPair)) {
+                    System.err.println("Duplicate link! node:" + nodeIdPair);
+                } else {
+                    MapLink link = networkMap.createMapLink(parent_group, from,
+                            node, roundValue(length, 4), width);
+                    links.put(nodeIdPair, link);
+                }
             }
             from = node;
         }
@@ -845,14 +874,15 @@ public class ImportGis {
      */
     private void defineOptions(Options options) {
         options.addOption("h", "help", false, "この使い方を表示して終了する");
-        options.addOption("p", "output_by_plane_rectangular", false, "平面直角座標系のまま出力する");
+        // options.addOption("H", "height-enable", false, "シェープファイルの標高情報を height 属性に反映する");
+        options.addOption("p", "output-by-plane-rectangular", false, "平面直角座標系のまま出力する");
         options.addOption(OptionBuilder.withLongOpt("shapefile-spec")
             .withDescription("読み込むシェープファイルの形式を指定する\nSPEC = "
                 + String.join(" | ", shapefileSpecNames))
             .hasArg().withArgName("SPEC").create("s"));
-        options.addOption("S", "make_simple_model", false, "簡易モデルのマップを出力する");
-        options.addOption("t", "add_coordinate_value_tag", false, "経緯度タグをノードに付加する");
-        options.addOption("T", "output_by_tokyo_datum", false, "旧日本測地系で出力する");
+        options.addOption("S", "make-simple-model", false, "簡易モデルのマップを出力する");
+        options.addOption("t", "add-coordinate-value-tag", false, "経緯度タグをノードに付加する");
+        options.addOption("T", "output-by-tokyo-datum", false, "旧日本測地系で出力する");
         options.addOption(OptionBuilder.withLongOpt("zone")
             .withDescription("平面直角座標系の系番号(1～19)を指定する")
             .hasArg().withArgName("NUMBER").create("z"));
@@ -891,17 +921,21 @@ public class ImportGis {
                 }
             }
 
+            // シェープファイルが標高情報を持っていたら、その値を height 属性に反映する
+            // heightEnable = commandLine.hasOption("height-enable");
+            // ※標高値に関しては不明な点があるため当面サポートは見送る
+
             // 経緯度タグをノードに付加する
-            addCoordinateValueTag = commandLine.hasOption("add_coordinate_value_tag");
+            addCoordinateValueTag = commandLine.hasOption("add-coordinate-value-tag");
 
             // 旧日本測地系で出力する
-            outputByTokyoDatum = commandLine.hasOption("output_by_tokyo_datum");
+            outputByTokyoDatum = commandLine.hasOption("output-by-tokyo-datum");
 
             // 平面直角座標系のまま出力する
-            outputByPlaneRectangular = commandLine.hasOption("output_by_plane_rectangular");
+            outputByPlaneRectangular = commandLine.hasOption("output-by-plane-rectangular");
 
             // 簡易モデルのマップを出力する
-            makeSimpleModel = commandLine.hasOption("make_simple_model");
+            makeSimpleModel = commandLine.hasOption("make-simple-model");
 
             // 平面直角座標系の系番号(1～19)を指定する
             if (commandLine.hasOption("zone")) {
