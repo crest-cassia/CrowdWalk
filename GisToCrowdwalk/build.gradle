@@ -2,15 +2,16 @@
  * build.gradle
  */
 
-defaultTasks 'clean', 'build', 'copyLibs'
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
+defaultTasks 'clean', 'shadowJar'
 
 repositories {
-    maven { name = "maven2-repository.dev.java.net"; url = "http://download.java.net/maven/2" }
     maven { name = "osgeo"; url = "http://download.osgeo.org/webdav/geotools/" }
-    maven { name = "boundless"; url = "http://repo.boundlessgeo.com/main" }
     mavenCentral()
 }
 
@@ -23,8 +24,8 @@ dependencies {
     compile 'net.arnx:jsonic:1.3.7'
     compile 'com.opencsv:opencsv:3.1'
     compile 'junit:junit:4.12'
-    compile 'org.geotools:gt-shapefile:2.7-M3'
-    compile 'org.geotools:gt-swing:2.7-M3'
+    compile 'org.geotools:gt-shapefile:13.5'
+    compile 'org.geotools:gt-swing:13.5'
     compile 'org.osgeo:proj4j:0.1.0'
     compile fileTree(dir: 'lib', include: '*.jar')
 }
@@ -46,11 +47,11 @@ compileJava {
     options.encoding = defaultEncoding
 }
 
-jar {
-    manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.ImportGis")
+shadowJar {
+    manifest {
+        attributes 'Main-Class': 'nodagumi.ananPJ.ImportGis'
+    }
 }
-
-// ※CrowdWalk と同じように一つの jar ファイルにすべて統合すると GeoTools でシェープファイルを読み込む際にエラーが発生するため、ライブラリの jar ファイルを build/libs に配置して、これを参照する様にした。
 
 task copyLibs(type: Copy) {
     from configurations.compile
