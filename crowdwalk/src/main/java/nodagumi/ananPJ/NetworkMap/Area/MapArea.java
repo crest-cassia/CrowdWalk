@@ -1,10 +1,8 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkMap.Area;
 
-//import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Graphics2D;
-//import java.awt.GridLayout;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,17 +16,12 @@ import java.io.ObjectOutputStream;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.TransformGroup;
-//import javax.swing.JButton;
 import javax.swing.JDialog;
-//import javax.swing.JLabel;
-//import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.vecmath.Vector3f;
+
+import math.geom3d.Point3D;
 
 import nodagumi.ananPJ.NetworkMap.OBNode;
-//import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
 import nodagumi.ananPJ.Simulator.PollutionHandler.*;
 
 //======================================================================
@@ -87,7 +80,7 @@ public abstract class MapArea extends OBNode {
     /**
      * 包含判定。
      */
-    public abstract boolean contains(Vector3f point);
+    public abstract boolean contains(Point3D point);
 
     //------------------------------------------------------------
     /**
@@ -97,15 +90,21 @@ public abstract class MapArea extends OBNode {
 
     //------------------------------------------------------------
     /**
-     * 距離
-     */
-    public abstract double distance(Vector3f point);
-
-    //------------------------------------------------------------
-    /**
      * 形状を取得。
      */
     public abstract Shape getShape();
+
+    //------------------------------------------------------------
+    /**
+     * 高さの範囲の最小値を取得。
+     */
+    public abstract double getMinHeight();
+
+    //------------------------------------------------------------
+    /**
+     * 高さの範囲の最大値を取得。
+     */
+    public abstract double getMaxHeight();
 
     //------------------------------------------------------------
     /**
@@ -124,12 +123,6 @@ public abstract class MapArea extends OBNode {
      * 描画。
      */
     public abstract void drawInEditor(Graphics2D g);
-
-    //------------------------------------------------------------
-    /**
-     * 3D形状。
-     */
-    public abstract TransformGroup get3DShape(Appearance app);
 
     //------------------------------------------------------------
     /**

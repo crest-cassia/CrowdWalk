@@ -15,7 +15,6 @@ import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
-import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
 import nodagumi.Itk.*;
@@ -653,8 +652,6 @@ public class CrowdWalkPropertiesHandler {
                 AgentBase.setObstructerType(obstructerType);
                 ObstructerBase.createInstance(obstructerType) ;
             }
-            getString("pollution_color", "RED",
-                      SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);
 
             /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/

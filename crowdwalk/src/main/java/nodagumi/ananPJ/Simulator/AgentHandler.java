@@ -36,8 +36,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import javax.vecmath.Vector3d;
-
 import org.w3c.dom.Document;
 
 import nodagumi.ananPJ.Agents.AgentBase;
@@ -357,14 +355,14 @@ public class AgentHandler {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getPos().getX() 
-                                      + agent.getSwing().x)) ;}})
+                                      + agent.getSwing().getX())) ;}})
             .addColumn(formatter.new Column("current_position_for_drawing_y") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
                                 "" + (agent.getPos().getY() 
-                                      + agent.getSwing().y)) ;}})
+                                      + agent.getSwing().getY())) ;}})
             .addColumn(formatter.new Column("current_position_for_drawing_z") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -372,7 +370,7 @@ public class AgentHandler {
                                 "" + 0.0 :
                                 "" + ((agent.getHeight() /
                                        ((MapPartGroup)agent.getCurrentLink().getParent()).getScale())
-                                      + agent.getSwing().z)) ;}})
+                                      + agent.getSwing().getZ())) ;}})
             .addColumn(formatter.new Column("current_acceleration") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {

@@ -31,6 +31,7 @@ dependencies {
     compile 'junit:junit:4.12'
 //    compile 'org.jruby:jruby:9.+'
     compile 'org.osgeo:proj4j:0.1.0'
+    compile 'math.geom2d:javaGeom:0.11.1'
     compile fileTree(dir: 'libs/jar', include: '*.jar')
 
     runtime fileTree(dir: 'libs/windows/amd64', include: '*.dll')

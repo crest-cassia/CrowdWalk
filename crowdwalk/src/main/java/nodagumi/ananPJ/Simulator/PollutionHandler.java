@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Collection;
 import java.util.regex.Matcher;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Vector3f;
+import math.geom3d.Point3D;
 
 import com.opencsv.CSVParser ;
 
@@ -354,9 +352,9 @@ public class PollutionHandler {
             }
 
             Double pollutionLevel = null;
-            Vector3f point = new Vector3f((float)agent.getPos().getX(),
-                    (float)agent.getPos().getY(),
-                    (float)(agent.getHeight() + AGENT_HEIGHT));
+            Point3D point = new Point3D(agent.getPos().getX(),
+                    agent.getPos().getY(),
+                    agent.getHeight() + AGENT_HEIGHT);
 
             for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {
                 if (area.contains(point)) {

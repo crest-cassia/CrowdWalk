@@ -24,16 +24,26 @@ dependencies {
     compile 'net.arnx:jsonic:1.3.7'
     compile 'com.opencsv:opencsv:3.1'
     compile 'junit:junit:4.12'
+    compile 'org.jruby:jruby-complete:9.0.5.0'
     compile 'org.geotools:gt-shapefile:13.5'
     compile 'org.geotools:gt-swing:13.5'
     compile 'org.osgeo:proj4j:0.1.0'
-    compile fileTree(dir: 'lib', include: '*.jar')
+    compile 'math.geom2d:javaGeom:0.11.1'
 }
 
 sourceSets {
     main {
         java {
             srcDirs = ["../crowdwalk/src/main/java"];
+            exclude '**/CrowdWalkLauncher.java'
+            exclude '**/CuiSimulationLauncher.java'
+            exclude '**/GuiSimulationEditorLauncher.java'
+            exclude '**/GuiSimulationLauncher.java'
+            exclude '**/GuiSimulationLauncher2D.java'
+            exclude '**/GuiSimulationLauncher3D.java'
+            exclude '**/Editor/**'
+            exclude '**/Gui/**'
+            exclude '**/Simulator/SimulationPanel3D.java'
         }
         resources {
             srcDirs = ["../crowdwalk/src/main/resources"];
@@ -45,6 +55,7 @@ def defaultEncoding = 'UTF-8'
 
 compileJava {
     options.encoding = defaultEncoding
+    // options.compilerArgs << "-Xlint:deprecation"
 }
 
 shadowJar {

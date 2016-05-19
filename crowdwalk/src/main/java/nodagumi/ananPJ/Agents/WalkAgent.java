@@ -9,8 +9,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.vecmath.Vector3d;
-
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -1396,41 +1394,6 @@ public class WalkAgent extends AgentBase {
      */
     private Ellipse2D getCircle(double cx, double cy, double r) {
         return new Ellipse2D.Double(cx -r, cy -r, r * 2, r * 2);
-    }
-
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    @Override
-    public void drawInEditor(Graphics2D g) {
-        if (currentPlace.getLink() == null) return;
-
-        Point2D p = getPos();
-        final double minHight =
-            ((MapPartGroup)currentPlace.getLink().getParent()).getMinHeight();
-        final double maxHight =
-            ((MapPartGroup)currentPlace.getLink().getParent()).getMaxHeight();
-        float r = (float)((getHeight() - minHight) / (maxHight - minHight));
-        if (r < 0) r = 0;
-        if (r > 1) r = 1;
-        g.setColor(new Color(r, r, r));
-        double cx = p.getX();
-        double cy = p.getY();
-
-        Vector3d vec = getSwing();
-        cx += vec.x;
-        cy += vec.y;
-
-        g.fill(getCircle(cx, cy, 20));
-
-        if (selected) {
-            g.setColor(Color.YELLOW);
-            g.fill(getCircle(cx, cy, 10));
-        }  else {
-            g.setColor(Color.GRAY);
-            g.fill(getCircle(cx, cy, 10));
-        }
     }
 }
 // ;;; Local Variables:

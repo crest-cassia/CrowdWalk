@@ -21,6 +21,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -33,18 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BadTransformException;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.RenderingAttributes;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.TransparencyAttributes;
-import javax.media.j3d.WakeupOnElapsedTime;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -62,10 +51,26 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+
+import com.sun.j3d.utils.geometry.Box;
+import javax.media.j3d.Appearance;
+import javax.media.j3d.BadTransformException;
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.ColoringAttributes;
+import javax.media.j3d.PickInfo;
+import javax.media.j3d.RenderingAttributes;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.TransparencyAttributes;
+import javax.media.j3d.WakeupOnElapsedTime;
+import javax.vecmath.AxisAngle4d;   // tkokada
 import javax.vecmath.Color3f;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
+import math.geom3d.Vector3D;
 
 import nodagumi.ananPJ.Gui.Colors;
 import nodagumi.ananPJ.Gui.LinkAppearance;
@@ -1306,7 +1311,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
         public void initialize() {
             /* position */
             Point2D pos = agent.getPos();
-            Vector3d swing = agent.getSwing();
+            Vector3D swing = agent.getSwing();
             MapPartGroup group = (MapPartGroup)(agent.getCurrentLink()).getParent();
             double height = agent.getHeight() / group.getScale();
 
@@ -1345,7 +1350,7 @@ public class SimulationPanel3D extends NetworkPanel3D {
                 return;
             }
             Point2D pos = agent.getPos();
-            Vector3d swing = agent.getSwing();
+            Vector3D swing = agent.getSwing();
             MapPartGroup group = (MapPartGroup)(agent.getCurrentLink()).getParent();
             double height = agent.getHeight() / group.getScale();
 
@@ -1452,7 +1457,38 @@ public class SimulationPanel3D extends NetworkPanel3D {
             rattr.setCapability(RenderingAttributes.ALLOW_DEPTH_ENABLE_READ);
             app.setRenderingAttributes(rattr);
 
-            transformGroup = area.get3DShape(app);
+            transformGroup = get3DShape(app);
+        }
+
+        public TransformGroup get3DShape(Appearance app) {
+            Rectangle2D bounds = (Rectangle2D)area.getShape();
+            double minHeight = area.getMinHeight();
+            double maxHeight = area.getMaxHeight();
+            double angle = area.getAngle();
+
+            float x = (float)bounds.getCenterX();
+            float y = (float)bounds.getCenterY();
+            float z = (float) ((minHeight + maxHeight) / 2);
+            float dx = (float)bounds.getWidth() / 2;
+            float dy = (float)bounds.getHeight() / 2;
+            float dz = (float) ((maxHeight - minHeight) / 2);
+
+            Transform3D trans3d = new Transform3D();
+            trans3d.setTranslation(new Vector3d(x, y, z));
+            trans3d.setRotation(new AxisAngle4d(0, 0, 1.0, angle)); // tkokada
+            TransformGroup areaTransforms = null;
+            try {
+                areaTransforms = new TransformGroup(trans3d);
+            } catch (BadTransformException e){
+                areaTransforms = new TransformGroup();
+                System.err.println("MapArea3D.get3DShape: catch BadTransformException!");
+                return null;
+            }
+
+            Box box = new Box(dx, dy, dz, app);
+            areaTransforms.addChild(box);
+
+            return areaTransforms;
         }
 
         private Color3f set_color_red(float density) {

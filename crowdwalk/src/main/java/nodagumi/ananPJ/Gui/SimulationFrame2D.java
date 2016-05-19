@@ -67,7 +67,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.*;
 
-import javax.vecmath.Vector3d;
+import math.geom3d.Vector3D;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.GuiSimulationLauncher2D;
@@ -1547,7 +1547,7 @@ public class SimulationFrame2D extends JFrame
         double mindist = Double.POSITIVE_INFINITY;
         for (AgentBase agent : getWalkingAgents()) {
             Point2D pos = agent.getPos();
-            Vector3d swing = agent.getSwing();
+            Vector3D swing = agent.getSwing();
             double dist = p.distance(pos.getX() + swing.getX(), pos.getY() + swing.getY());
             if (dist < mindist && dist < (10.0 / panel.getDrawingScale())) {
                 hoverAgent = agent;
@@ -1581,8 +1581,8 @@ public class SimulationFrame2D extends JFrame
         buff.append(" position X: ").append(agent.getPos().getX()).append("\n");
         buff.append(" position Y: ").append(agent.getPos().getY()).append("\n");
         buff.append(" position Z: ").append(agent.getHeight()).append("\n");
-        buff.append(" drawing position X: ").append(agent.getPos().getX() + agent.getSwing().x).append("\n");
-        buff.append(" drawing position Y: ").append(agent.getPos().getY() + agent.getSwing().y).append("\n");
+        buff.append(" drawing position X: ").append(agent.getPos().getX() + agent.getSwing().getX()).append("\n");
+        buff.append(" drawing position Y: ").append(agent.getPos().getY() + agent.getSwing().getY()).append("\n");
         buff.append(" drawing position Z: ").append(
             agent.getHeight() / ((MapPartGroup)agent.getCurrentLink().getParent()).getScale()
         ).append("\n");
