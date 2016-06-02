@@ -331,7 +331,7 @@ public abstract class AgentFactory {
         }
 
         double duration_left =
-            startTime.getRelativeTime() + duration - currentTime.getRelativeTime() ;
+            startTime.getAbsoluteTime() + duration - currentTime.getAbsoluteTime() ;
         int agent_to_gen = total - generated;
         if (duration_left > 0) {
             double r
