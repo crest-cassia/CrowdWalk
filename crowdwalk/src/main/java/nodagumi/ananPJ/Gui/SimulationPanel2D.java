@@ -237,7 +237,7 @@ public class SimulationPanel2D extends JPanel {
         networkMap = _networkMap;
         this.backgroundMapTiles = backgroundMapTiles;
 
-        if (properties != null) {
+        if (properties != null && properties.getPropertiesFile() != null) {
             try {
                 String filePath = null;
                 if (properties.isDefined("link_appearance_file")) {

@@ -181,7 +181,7 @@ public class ImportGis {
     private double lengthCorrectionFactor = 1.0;
     private String widthAttributeName;
     private double widthCorrectionFactor = 1.0;
-    private double[] widthTable = null;
+    private Object[] widthTable = null;
 
     public ImportGis() {
         settings = Settings.load("NetworkMapEditor.ini");
@@ -246,7 +246,7 @@ public class ImportGis {
         }
         object = widthObjects.get("reference_table");
         if (object != null) {
-            widthTable = (double[])object;
+            widthTable = ((ArrayList<Object>)object).toArray();
         }
     }
 
@@ -553,7 +553,7 @@ public class ImportGis {
                         width *= widthCorrectionFactor;
                     }
                     if (widthTable != null) {
-                        width = widthTable[(int)width];
+                        width = objectToDouble(widthTable[(int)width]);
                     }
                     width = roundValue(width, 4);
 
