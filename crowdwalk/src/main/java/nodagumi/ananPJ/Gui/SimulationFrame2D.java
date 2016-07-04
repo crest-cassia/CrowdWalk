@@ -6,6 +6,7 @@ import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -37,12 +38,16 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -54,6 +59,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
@@ -68,6 +74,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.*;
 
 import math.geom3d.Vector3D;
+import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.GuiSimulationLauncher2D;
@@ -133,6 +140,11 @@ public class SimulationFrame2D extends JFrame
      */
     private ArrayList<MapArea> areas;
 
+    /**
+     * カメラワーク
+     */
+    private ArrayList<CameraShot> camerawork = new ArrayList<CameraShot>();
+
     /* Properties */
 
     private double agent_size = 5.0;
@@ -195,6 +207,7 @@ public class SimulationFrame2D extends JFrame
     /* View タブ構成変数 */
 
     private boolean showAreaLocation = false;
+    private JScrollBar agent_size_control = null;
     private JLabel agent_size_value;
     private JCheckBox showNodesCheckBox = null;
     private JCheckBox showNodeLabelsCheckBox = null;
@@ -206,6 +219,17 @@ public class SimulationFrame2D extends JFrame
     private JCheckBox showAgentLabelsCheckBox = null;
     private JCheckBox record_snapshots = new JCheckBox("Record simulation screen");
     private JCheckBox exit_with_simulation_finished_cb = null;
+
+    /* Camera タブ構成変数 */
+
+    private String cameraworkFile = null;
+    private boolean forceUpdateCamerawork = true;
+    private boolean viewpointChangeInhibited = false;
+    private JCheckBox replayCheckBox = new JCheckBox();
+    private transient JTextArea cameraworkArea = new JTextArea();
+    private JButton recordButton = new JButton("Record");
+    private JButton loadCameraworkButton = new JButton("Load");
+    private JButton saveCameraworkButton = new JButton("Save as");
 
     /* Status タブ構成変数 */
 
@@ -229,6 +253,56 @@ public class SimulationFrame2D extends JFrame
     synchronized public void incSaveThreadCount() { saveThreadCount++; }
     synchronized public void decSaveThreadCount() { saveThreadCount--; }
 
+    /**
+     * 1ショットぶんのカメラワーク
+     */
+    public class CameraShot {
+        public double time;
+        public double zoom;
+        public double agentSize;
+        public Point2D position;
+
+        public CameraShot(double time, double zoom, double agentSize, double x, double y) {
+            this.time = time;
+            this.zoom = zoom;
+            this.agentSize = agentSize;
+            position = new Point2D.Double(x, y);
+        }
+
+        public CameraShot(double time, double zoom, double agentSize, Point2D position) {
+            this(time, zoom, agentSize, position.getX(), position.getY());
+        }
+
+        public CameraShot(Map<String, Object> values) {
+            time = getDoubleValue(values, "time", 0.0);
+            zoom = getDoubleValue(values, "zoom", 1.0);
+            agentSize = getDoubleValue(values, "agentSize", 5.0);
+            position = new Point2D.Double(getDoubleValue(values, "x", 0.0), getDoubleValue(values, "y", 0.0));
+        }
+
+        public double getDoubleValue(Map<String, Object> values, String key, double defaultValue) {
+            Object object = values.get(key);
+            if (object != null) {
+                return Double.parseDouble(object.toString());
+            }
+            return defaultValue;
+        }
+
+        public Map<String, Object> getMapObject() {
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("time", new Double(time));
+            map.put("zoom", new Double(zoom));
+            map.put("agentSize", new Double(agentSize));
+            map.put("x", new Double(position.getX()));
+            map.put("y", new Double(position.getY()));
+            return map;
+        }
+
+        public String toString() {
+            return "time: " + time + ", zoom: " + zoom + ", agent_size: " + agentSize + ", x: " + position.getX() + ", y: " + position.getY();
+        }
+    }
+
     public SimulationFrame2D(String title, int simulationPanelWidth, int simulationPanelHeight,
             GuiSimulationLauncher2D launcher, CrowdWalkPropertiesHandler properties,
             ArrayList<GsiTile> backgroundMapTiles) {
@@ -245,6 +319,9 @@ public class SimulationFrame2D extends JFrame
 
         setupMenu();
         setupContents(simulationPanelWidth, simulationPanelHeight, properties, backgroundMapTiles);
+        if (cameraworkFile != null) {
+            setViewpointChangeInhibited(true);
+        }
 
         addWindowListener(new WindowAdapter() {
             public void windowOpened(WindowEvent e) {
@@ -338,7 +415,7 @@ public class SimulationFrame2D extends JFrame
         mi.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    panel.setPosition(0, 0);
+                    panel.setPosition(0.0, 0.0);
                     panel.repaint();
                 }});
         viewMenu.add(mi);
@@ -485,6 +562,7 @@ public class SimulationFrame2D extends JFrame
         JTabbedPane tabs = new JTabbedPane();
         tabs.add(createControlPanel());
         tabs.add(createViewPanel(backgroundImageEnabled, backgroundMapEnabled));
+        tabs.add(createCameraPanel());
         tabs.add(createStatusPanel());
         rightPanel.add(tabs, BorderLayout.CENTER);
 
@@ -805,7 +883,7 @@ public class SimulationFrame2D extends JFrame
         // agent size zoom
         addJLabel(zoom_panel, 0, 1, 1, 1, "agent size");
 
-        JScrollBar agent_size_control = new JScrollBar(JScrollBar.HORIZONTAL, (int)(agent_size * 10), 1, 1, 100);
+        agent_size_control = new JScrollBar(JScrollBar.HORIZONTAL, (int)(agent_size * 10), 1, 1, 100);
         agent_size_control.addAdjustmentListener(new AdjustmentListener() {
                 @Override
                 public void adjustmentValueChanged(AdjustmentEvent e) {
@@ -1101,7 +1179,7 @@ public class SimulationFrame2D extends JFrame
         toTheOriginButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    panel.setPosition(0, 0);
+                    panel.setPosition(0.0, 0.0);
                     panel.repaint();
                 }});
         locationPanel.add(toTheOriginButton);
@@ -1109,6 +1187,202 @@ public class SimulationFrame2D extends JFrame
         checkbox_panel.add(locationPanel);
 
         view_control.add(checkbox_panel, BorderLayout.SOUTH);
+
+        return tabPanel;
+    }
+
+    /**
+     * カメラワークデータを読み込む
+     */
+    public void loadCamerawork(String filePath) {
+        File file = new File(filePath);
+        if (! file.exists()) {
+            Itk.logError_("Camerawork file does not exist", filePath);
+            System.exit(1);
+        }
+
+        Itk.logInfo("Load camerawork file", filePath);
+        try {
+            JSON json = new JSON(JSON.Mode.TRADITIONAL);
+            ArrayList<Map<String, Object>> jsonObject = json.parse(new FileReader(filePath));
+            camerawork.clear();
+            for (Map<String, Object> object : jsonObject) {
+                camerawork.add(new CameraShot(object));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        cameraworkFile = filePath;
+    }
+
+    /**
+     * カメラワークデータを保存する
+     */
+    public void saveCamerawork() {
+        FileDialog fd = new FileDialog(frame, "Save camera position list", FileDialog.SAVE);
+        fd.setVisible (true);
+        if (fd.getFile() == null) {
+            return;
+        }
+        String filePath = fd.getDirectory() + fd.getFile();
+
+        Itk.logInfo("Save camerawork file", filePath);
+        ArrayList<Map<String, Object>> jsonObject = new ArrayList<Map<String, Object>>();
+        for (CameraShot cameraShot : camerawork) {
+            jsonObject.add(cameraShot.getMapObject());
+        }
+        try {
+            JSON.encode(jsonObject, new FileWriter(filePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * カメラワークの記録
+     */
+    public void recordCamerawork() {
+        double currentTime = launcher.getSimulator().currentTime.getRelativeTime();
+        int lastIndex = camerawork.size() - 1;
+        if (lastIndex >= 0 && camerawork.get(lastIndex).time >= currentTime) {
+            JOptionPane.showMessageDialog(frame, "Invalid operation", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        CameraShot cameraShot = new CameraShot(currentTime, panel.getDrawingScale(), agent_size, panel.getViewPosition());
+        camerawork.add(cameraShot);
+        cameraworkArea.append(cameraShot.toString());
+        cameraworkArea.append("\n");
+    }
+
+    /**
+     * マウス操作による視点移動とズーム機能の禁止/解除.
+     *
+     * true で禁止
+     */
+    public void setViewpointChangeInhibited(boolean b) {
+        if (b) {
+            viewpointChangeInhibited = true;
+            agent_size_control.setEnabled(false);
+            recordButton.setEnabled(false);
+            loadCameraworkButton.setEnabled(false);
+            saveCameraworkButton.setEnabled(false);
+        } else {
+            viewpointChangeInhibited = false;
+            agent_size_control.setEnabled(true);
+            // agent_size が変更されていてもスクロールバーへの反映はこの時点でおこなう
+            agent_size_control.setValue((int)(agent_size * 10));
+            recordButton.setEnabled(true);
+            loadCameraworkButton.setEnabled(true);
+            saveCameraworkButton.setEnabled(true);
+        }
+    }
+
+    /**
+     * Camera タブの生成.
+     *
+     * camera_2d_file の指定あり:
+     *    Replay チェックボックスは selected
+     *    Record, Load, Save as ボタンは無効
+     * camera_2d_file の指定なし:
+     *    Replay チェックボックスは無効
+     *    Record, Load, Save as ボタンは有効
+     */
+    private JPanel createCameraPanel() {
+        JPanel tabPanel = new JPanel(new BorderLayout());
+        tabPanel.setName("Camera");
+        tabPanel.setPreferredSize(new Dimension(200, 500));
+
+        // Replay ON/OFF
+
+        JPanel replayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        replayPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        if (cameraworkFile != null) {
+            replayCheckBox.setText("Replay - " + cameraworkFile);
+            replayCheckBox.setSelected(true);
+        } else {
+            replayCheckBox.setText("Replay");
+            replayCheckBox.setEnabled(false);
+        }
+        replayCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (replayCheckBox.isSelected()) {
+                    forceUpdateCamerawork = true;
+                    setViewpointChangeInhibited(true);
+                } else {
+                    setViewpointChangeInhibited(false);
+                }
+            }
+        });
+        replayPanel.add(replayCheckBox);
+
+        tabPanel.add(replayPanel, BorderLayout.NORTH);
+
+        // カメラワークデータ表示
+
+        cameraworkArea.setEditable(false);
+        cameraworkArea.setAutoscrolls(true);
+        cameraworkArea.setLineWrap(true);
+        JScrollPane message_scroller = new JScrollPane(cameraworkArea,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        if (cameraworkFile != null) {
+            for (CameraShot cameraShot : camerawork) {
+                cameraworkArea.append(cameraShot.toString());
+                cameraworkArea.append("\n");
+            }
+        }
+
+        tabPanel.add(message_scroller, BorderLayout.CENTER);
+
+        // コントロールボタン
+
+        JPanel controlButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        controlButtonPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        recordButton.setToolTipText("Add current camera position to camerawork list");
+        recordButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                recordCamerawork();
+            }
+        });
+        controlButtonPanel.add(recordButton);
+
+        loadCameraworkButton.setToolTipText("Load camerawork list.");
+        loadCameraworkButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileDialog fd = new FileDialog(frame, "Open camerawork file", FileDialog.LOAD);
+                fd.setVisible (true);
+                if (fd.getFile() == null) {
+                    return;
+                }
+                loadCamerawork(fd.getDirectory() + fd.getFile());
+                // TODO: 相対ディレクトリパスを付加する
+                replayCheckBox.setText("Replay - " + fd.getFile());
+                replayCheckBox.setEnabled(true);
+                cameraworkArea.setText("");
+                for (CameraShot cameraShot : camerawork) {
+                    cameraworkArea.append(cameraShot.toString());
+                    cameraworkArea.append("\n");
+                }
+            }
+        });
+        controlButtonPanel.add(loadCameraworkButton);
+
+        saveCameraworkButton.setToolTipText("Save current camerawork list.");
+        saveCameraworkButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveCamerawork();
+            }
+        });
+        controlButtonPanel.add(saveCameraworkButton);
+
+        tabPanel.add(controlButtonPanel, BorderLayout.SOUTH);
 
         return tabPanel;
     }
@@ -1249,6 +1523,9 @@ public class SimulationFrame2D extends JFrame
     public void mouseExited(MouseEvent e) {}
  
     public void mousePressed(MouseEvent e) {
+        if (viewpointChangeInhibited) {
+            return;
+        }
         // 右ドラッグまたは左ドラッグでマップをスクロールする
         if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
             scrolling = true;
@@ -1262,12 +1539,18 @@ public class SimulationFrame2D extends JFrame
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
+        if (viewpointChangeInhibited) {
+            return;
+        }
         int i = e.getWheelRotation();
         panel.zoom(i);
         panel.repaint();
     }
 
     public void mouseDragged(MouseEvent e) {
+        if (viewpointChangeInhibited) {
+            return;
+        }
         if (scrolling) {
             panel.scroll((e.getX() - dragStartX), (e.getY() - dragStartY));
             dragStartX = e.getX();
@@ -1786,4 +2069,55 @@ public class SimulationFrame2D extends JFrame
             }
         }
     };
+
+    /**
+     * カメラワークを更新する
+     */
+    public void updateCamerawork(SimTime updateTime) {
+        if (replayCheckBox.isSelected() && camerawork.size() > 0) {
+            double time = updateTime.getRelativeTime();
+            CameraShot last_camera = null;
+            CameraShot next_camera = null;
+            for (CameraShot camera : camerawork) {
+                if (camera.time > time) {
+                    next_camera = camera;
+                    break;
+                }
+                last_camera = camera;
+            }
+            // 最初の CameraShot の time が 0.0 ではなく、まだその time に達していない場合
+            if (last_camera == null) {
+                agent_size = next_camera.agentSize;
+                panel.setDrawingScale(next_camera.zoom);
+                panel.setPosition(next_camera.position.getX(), next_camera.position.getY());
+            }
+            // 最後の CameraShot とそれ以降
+            else if (next_camera == null) {
+                if (last_camera.time < time && ! forceUpdateCamerawork) {
+                    return;
+                }
+                agent_size = last_camera.agentSize;
+                panel.setDrawingScale(last_camera.zoom);
+                panel.setPosition(last_camera.position.getX(), last_camera.position.getY());
+            }
+            // 上の条件以外
+            else {
+                if (time > last_camera.time &&
+                        last_camera.zoom == next_camera.zoom &&
+                        last_camera.agentSize == next_camera.agentSize &&
+                        last_camera.position.equals(next_camera.position) && ! forceUpdateCamerawork) {
+                    return;
+                }
+                double ratio = (time - last_camera.time) / (next_camera.time - last_camera.time);
+                agent_size = (next_camera.agentSize - last_camera.agentSize) * ratio + last_camera.agentSize;
+                panel.setDrawingScale((next_camera.zoom - last_camera.zoom) * ratio + last_camera.zoom);
+                double last_x = last_camera.position.getX();
+                double last_y = last_camera.position.getY();
+                double next_x = next_camera.position.getX();
+                double next_y = next_camera.position.getY();
+                panel.setPosition((next_x - last_x) * ratio + last_x, (next_y - last_y) * ratio + last_y);
+            }
+            forceUpdateCamerawork = false;
+        }
+    }
 }

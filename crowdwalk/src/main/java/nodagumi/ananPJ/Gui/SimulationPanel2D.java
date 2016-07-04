@@ -370,6 +370,13 @@ public class SimulationPanel2D extends JPanel {
         tx += frame.mousePoint.getX() * (scaleOld - scale);
         ty += frame.mousePoint.getY() * (scaleOld - scale);
     }
+
+    /**
+     * 描画スケールを指定する
+     */
+    public void setDrawingScale(double scale) {
+        this.scale = scale;
+    }
     
     /**
      * 描画スケールを返す
@@ -377,7 +384,7 @@ public class SimulationPanel2D extends JPanel {
     public double getDrawingScale() {
         return scale;
     }
-    
+
     /**
      * マップをスクロールする
      */
@@ -389,9 +396,16 @@ public class SimulationPanel2D extends JPanel {
     /**
      * 描画前に平行移動する距離を指定する
      */
-    public void setPosition(int dx, int dy) {
+    public void setPosition(double dx, double dy) {
         tx = dx;
         ty = dy;
+    }
+
+    /**
+     * 視点座標を返す
+     */
+    public Point2D getViewPosition() {
+        return new Point2D.Double(tx, ty);
     }
 
     /**

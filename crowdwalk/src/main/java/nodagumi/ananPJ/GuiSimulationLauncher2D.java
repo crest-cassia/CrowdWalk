@@ -64,6 +64,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      */
     public void updateEveryTick(SimTime currentTime) {
         // 表示の更新
+        simulationFrame.updateCamerawork(currentTime);
         simulationFrame.panel.setUpdated(false);
         simulationFrame.setStatusText(getStatusLine());
         updatePanel(simulator.getWalkingAgentCollection());
@@ -228,6 +229,11 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
         frame.setStatusPosition(statusPosition);
         frame.setShowLogo(showLogo);
         frame.setExitWithSimulationFinished(exitWithSimulationFinished);
+
+        String filePath = properties.getString("camera_2d_file", null);
+        if (filePath != null) {
+            frame.loadCamerawork(filePath);
+        }
     }
 
     /**

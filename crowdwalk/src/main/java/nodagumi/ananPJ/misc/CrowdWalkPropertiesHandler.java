@@ -191,8 +191,18 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>camera_file</h4>
- *     <pre>  シミュレーション画面で3D表示されている地図を映すカメラの位置情報を含んだ設定ファイル。
- *  シミュレーション・ウィンドウのオープン時に Camera file を読み込んで Replay チェックボックスを ON にする。
+ *     <pre>  3D シミュレーション画面のカメラワーク設定ファイル。
+ *  3D シミュレーションウィンドウのオープン時に読み込んで Replay チェックボックスを ON にする。
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>camera_2d_file</h4>
+ *     <pre>  2D シミュレーション画面のカメラワーク設定ファイル。
+ *  2D シミュレーションウィンドウのオープン時に読み込んで Replay チェックボックスを ON にする。
  *
  *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
  *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
@@ -484,6 +494,7 @@ public class CrowdWalkPropertiesHandler {
            "generation_file",
            "scenario_file",
            "camera_file",
+           "camera_2d_file",
            "pollution_file",
            "link_appearance_file",
            "node_appearance_file",
