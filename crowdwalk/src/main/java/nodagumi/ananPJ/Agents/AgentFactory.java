@@ -393,7 +393,7 @@ public abstract class AgentFactory {
                                                        Term directive) {
         try {
             return
-                (boolean)
+                (Boolean)
                 classFinder
                 .callMethodForClass(className, "isKnownDirective", false,
                                     directive) ;
@@ -435,7 +435,7 @@ public abstract class AgentFactory {
     {
         try {
             return
-                (int)
+                (Integer)
                 classFinder
                 .callMethodForClass(className, "pushPlaceTagInDirective", false,
                                     directive, goalList) ;
