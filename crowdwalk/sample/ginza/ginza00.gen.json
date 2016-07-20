@@ -1,0 +1,14 @@
+#{ "version" : 2}
+[
+ {"rule":"EACH",
+  "agentType":{"className":"RationalAgent",
+               "weight": -0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "rule":[]}
+  "total":100,"speedModel":"PLAIN",
+  "startPlace":"foo","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"bar",
+  "plannedRoute":[]}
+]

@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = Map Town class
 ## Author:: Itsuki Noda
@@ -117,6 +118,14 @@ class MapTown < WithConfParam
   def newNode(pos, height = @defaultHeight)
     @maxId += 1 ;
     node = MapNode.new(@maxId, pos, height) ;
+    registerNewNode(node) ;
+    return node ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## register new node
+  def registerNewNode(node)
     @nodeList.push(node) ;
     addObject(node) ;
     return node ;
@@ -128,6 +137,14 @@ class MapTown < WithConfParam
   def newLink(fromNode, toNode, width)
     @maxId += 1 ;
     link = MapLink.new(@maxId, fromNode, toNode, width) ;
+    registerNewLink(link) ;
+    return link ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## register new link
+  def registerNewLink(link)
     @linkList.push(link) ;
     addObject(link) ;
     return link ;

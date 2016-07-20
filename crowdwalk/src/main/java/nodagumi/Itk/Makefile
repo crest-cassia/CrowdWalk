@@ -297,6 +297,11 @@ SAMPLE3crs4p = sample/crossing/crossing4p.prop.json   # crossing. parallel
 run3crs4p ::
 	(cd $(BASEDIR) ; time -p bash quickstart.sh --log-level Info $(SAMPLE3crs4p))
 
+##-----
+SAMPLE4gnz0 = sample/ginza/ginza00.prop.json   # Ginza
+run4gnz0 ::
+	(cd $(BASEDIR) ; time -p bash quickstart.sh --log-level Info $(SAMPLE4gnz0))
+
 
 
 
