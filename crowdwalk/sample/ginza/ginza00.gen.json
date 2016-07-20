@@ -2,7 +2,7 @@
 [
  {"rule":"EACH",
   "agentType":{"className":"RationalAgent",
-               "weight": -0.0, 
+               "weight": 100.0, 
 	       "trail":0.0,
 	       "margin":0.0,
 	       "rule":[]}
