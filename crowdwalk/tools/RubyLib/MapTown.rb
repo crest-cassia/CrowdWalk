@@ -305,6 +305,7 @@ class MapTown < WithConfParam
     str = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>' ;
     str << "\n" ;
     ItkXml::ppp(xml, str) ;
+    str.gsub!(/\<tag\>\s*([^\s]*)\s*\<\/tag\>/, '<tag>\1</tag>') ;
     return str ;
   end
 

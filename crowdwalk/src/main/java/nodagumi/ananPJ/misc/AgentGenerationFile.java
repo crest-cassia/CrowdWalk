@@ -778,7 +778,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         if (genConfig.startLinks.size() == 0 &&
             genConfig.startNodes.size() == 0) {
-            System.err.println("no matching start:" + start_link_tag);
+            Itk.logError("no matching start:" + start_link_tag);
             return false ;
         } else {
             return true ;
