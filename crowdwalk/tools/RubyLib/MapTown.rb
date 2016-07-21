@@ -223,6 +223,20 @@ class MapTown < WithConfParam
   
   #--------------------------------------------------------------
   #++
+  ## 単連結でないノードを集める。
+  ## _startNode_ : 探索開始点
+  ## *return* : _startNode_ から繋がっていないノードの配列。
+  def findNonConnectedNodes(startNode)
+    connectTable = findConnectedNodes(startNode) ;
+    restList = [] ;
+    @nodeList.each{|node|
+      restList.push(node) if (connectTable[node].nil?) ;
+    }
+    return restList ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
   ## n本リンクを削除する。
   def pruneLinks(n)
     retryCount = 0 ;
