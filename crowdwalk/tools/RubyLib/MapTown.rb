@@ -186,6 +186,26 @@ class MapTown < WithConfParam
   #++
   ## check connectivity
   def checkConnectivity(startNode = @nodeList.first)
+    connectedNodeTable = findConnectedNodes(startNode) ;
+
+#    return @nodeList.size == closeList.size ;
+    # 全ノードに対して、close リストに含まれているか、nodeのリンクが無いなら、
+    # 単連結
+    @nodeList.each{|node|
+      if(connectedNodeTable[node].nil? && node.linkList.size > 0) then
+        return false ;
+      end
+    }
+    return true ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 単連結の範囲を求める。
+  ## _startNode_ : 探索開始点
+  ## *return* : _startNode_ から繋がっているノードのテーブル。
+  ##            Node => 探索で辿った一つ手前のノードというテーブル。
+  def findConnectedNodes(startNode)
     openList = [startNode] ;
     closeList = {} ;
     until(openList.empty?)
@@ -198,21 +218,12 @@ class MapTown < WithConfParam
         end
       }
     end
-
-#    return @nodeList.size == closeList.size ;
-    # 前ノードに対して、close リストに含まれているか、nodeのリンクが無いなら、
-    # 単連結
-    @nodeList.each{|node|
-      if(closeList[node].nil? && node.linkList.size > 0) then
-        return false ;
-      end
-    }
-    return true ;
+    return closeList ;
   end
-
+  
   #--------------------------------------------------------------
   #++
-  ## 孤立ノードを削除
+  ## n本リンクを削除する。
   def pruneLinks(n)
     retryCount = 0 ;
     (0...n).each{|i|
