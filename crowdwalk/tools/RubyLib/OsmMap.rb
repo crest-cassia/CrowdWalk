@@ -56,10 +56,18 @@ class OsmMap < MapTown
   #++
   ## scan json file
   ## _file_:: JSON file
-  def scanJsonFile(file)
-    open(file,"r"){|strm| scanJson(strm.read) ; }
+  def scanJsonFromFile(file)
+    open(file,"r"){|strm| scanJsonFromStream(strm) ; }
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## scan json stream
+  ## _strm_:: JSON stream
+  def scanJsonFromStream(strm)
+    scanJson(strm.read) ;
+  end
+  
   #--------------------------------------------------------------
   #++
   ## scan json file
@@ -497,7 +505,8 @@ if($0 == __FILE__) then
     ## about test_b
     def test_b
       map = OsmMap.new() ;
-      map.scanJsonFile(TestJsonData) ;
+      map.scanJsonFromFile(TestJsonData) ;
+
       p [:roadList, map.roadList.length] ;
       map.extractNodeListFromRoadList() ;
       map.assignIds() ;
@@ -507,10 +516,8 @@ if($0 == __FILE__) then
       map.removeNonConnectedNodesLinks() ;
       p [:nodeList, map.nodeList.length] ;
       p [:linkList, map.linkList.length] ;
-      
-      open(TestCWMapData,"w"){|strm|
-        strm << map.to_XmlString() ;
-      }
+
+      map.saveXmlToFile(TestCWMapData) ;
     end
 
     

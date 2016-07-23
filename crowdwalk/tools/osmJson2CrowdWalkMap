@@ -1,0 +1,122 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+## -*- mode: ruby -*-
+## = convert Open Street Map (json) to CrowdWalk Map
+## Author:: Itsuki Noda
+## Version:: 0.0 2016/07/23 I.Noda
+##
+## === History
+## * [2016/07/23]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+
+$LOAD_PATH.push(File::dirname(__FILE__) + "/RubyLib");
+require 'OsmMap.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :inFile => nil,
+  :outFile => nil,
+  :foo => false,
+  :bar => 1,
+  :baz => "test",
+} ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]*
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-i","--in InFile", String, sep + "input file") {|file|
+    $conf[:inFile] = file ;
+  }
+  op.on("-o","--out OutFile", String, sep + "output file") {|file|
+    $conf[:outFile] = file ;
+  }
+  
+  op.on("-f","--[no-]foo", sep + "switch foo.") {|foo|
+    $conf[:foo] = foo ;
+  }
+  op.on("-b","--bar BarVal", Integer, sep + "bar int value.") {|bar|
+    $conf[:bar] = bar ;
+  }
+  op.on("-z","--baz BazVal", String, sep + "baz str value.") {|baz|
+    $conf[:baz] = baz ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ; 
+
+########################################################################
+StdioFileName = "-" ;
+#----------------------------------------------------------------------
+#++
+## ファイルもしくは標準入出力をオープン。
+## もしファイル名が nil もしくは "-" なら、標準入出力を使う。
+## _filename_ :: ファイル名。
+## _mode_ :: :r もしくは :w。
+def myOpenFile(filename, mode, &block)
+  stdio = nil ;
+  if(mode == :r) then
+    stdio = $stdin ;
+  elsif(mode == :w) then
+    stdio = $stdout ;
+  else
+    raise "unknown file IO mode: " + mode.inspect ;
+  end
+
+  if(filename.nil? || filename == StdioFileName) then
+    block.call(stdio) ;
+  else
+    open(filename, mode.to_s){|strm| block.call(strm) ; }
+  end
+end
+
+########################################################################
+##----------------------------------------------------------------------
+## よけいな引数があると、exit
+if(ARGV.length>0) then
+  puts($op) ;
+  exit(1) ;
+end
+
+##----------------------------------------------------------------------
+## メインルーチン
+
+map = OsmMap.new() ;
+myOpenFile($conf[:inFile],:r) {|inStream|
+  map.scanJsonFromStream(inStream) ;
+}
+
+map.extractNodeListFromRoadList() ;
+map.assignIds() ;
+map.removeNonConnectedNodesLinks() ;
+
+myOpenFile($conf[:outFile],:w) {|outStream|
+  map.saveXmlToStream(outStream) ;
+}
+
+
+  
+
+
+
+

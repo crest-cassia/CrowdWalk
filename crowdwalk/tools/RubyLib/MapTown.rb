@@ -334,6 +334,24 @@ class MapTown < WithConfParam
     return str ;
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## save XML to stream
+  ## _strm_ :: output stream
+  def saveXmlToStream(strm)
+    strm << to_XmlString() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## save XML to file
+  ## _strm_ :: output file
+  def saveXmlToFile(file)
+    open(file,"w") {|strm|
+      saveXmlToStream(strm) ;
+    }
+  end
+
 end # class MapTown
 
 ########################################################################
