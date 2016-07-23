@@ -24,15 +24,62 @@ require 'MapTown.rb' ;
 
 #--======================================================================
 #++
-## description of class Foo.
+## OSM の json ファイルを、CrowdWalk 用 XML マップファイルに変換する。
+## OSM の feature の内、 geoType が LineString で、property に "highway" を
+## 含むものを、 Road として取り出す。
+## また、Road を構成する LineString の構成点は、各々、MapNode となり、
+## LineString の構成線分 (LineSegment) は、各々 MapLink になる。
+## Road に付加されている、"cw:tag" という property は、
+## MapLink のタグとして付与される。
+## その際、";" をセパレータとして、順に suffix を取り除いたものも、
+## タグとして付与される。
+## さらに、"cw:tag" の値に、LineSegment のしての序数を付加したものも、
+## タグとして付与される。
+## つまり、
+## "foo;bar;baz" という "cw:tag" を持つロードの3番目の LineSegment は、
+## "foo", "foo;bar", "foo;bar;baz", "foo;bar;baz:2" というタグが付与される。
 class OsmMap < MapTown
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #++
   ## description of DefaultValues.
   DefaultValues = { :foo => :bar } ;
   ## description of DefaultOptsions.
-  DefaultConf = { :bar => :baz } ;
+  DefaultConf = {
+    :cartOrigin => :jp09, # 平面直角原点
+    :cwTagName => "cw:tag", # OSM の Road に付与されている CrowdWalk 用タグの
+                            # property 名。
+    :cwTagSep => ';',       # 上記タグの suffix を切っていく時のセパレータ。
+    :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
+  } ;
 
+  ## 経度(lon)緯度(lat)から平面直角座標系への変換原点
+  CartesianLonLatOrigin = {
+    :jp01 => Geo2D::Point.new(129.0 + (30.0/60.0), 33.0), # [129度30分, 33度]
+    :jp02 => Geo2D::Point.new(131.0 +  (0.0/60.0), 33.0), # [131度00分, 33度]
+    :jp03 => Geo2D::Point.new(132.0 + (10.0/60.0), 36.0), # [132度10分, 36度]
+    :jp04 => Geo2D::Point.new(133.0 + (30.0/60.0), 33.0), # [133度30分, 33度]
+    :jp05 => Geo2D::Point.new(134.0 + (20.0/60.0), 36.0), # [134度20分, 36度]
+    :jp06 => Geo2D::Point.new(136.0 +  (0.0/60.0), 36.0), # [136度00分, 36度]
+    :jp07 => Geo2D::Point.new(137.0 + (10.0/60.0), 36.0), # [137度10分, 36度]
+    :jp08 => Geo2D::Point.new(138.0 + (30.0/60.0), 36.0), # [138度30分, 36度]
+    :jp09 => Geo2D::Point.new(139.0 + (50.0/60.0), 36.0), # [139度50分, 36度]
+    :jp10 => Geo2D::Point.new(140.0 + (50.0/60.0), 40.0), # [140度50分, 40度]
+    :jp11 => Geo2D::Point.new(140.0 + (15.0/60.0), 44.0), # [140度15分, 44度]
+    :jp12 => Geo2D::Point.new(142.0 + (15.0/60.0), 44.0), # [142度15分, 44度]
+    :jp13 => Geo2D::Point.new(144.0 + (15.0/60.0), 44.0), # [144度15分, 44度]
+    :jp14 => Geo2D::Point.new(142.0 +  (0.0/60.0), 26.0), # [142度00分, 26度]
+    :jp15 => Geo2D::Point.new(127.0 + (30.0/60.0), 26.0), # [127度30分, 26度]
+    :jp16 => Geo2D::Point.new(124.0 +  (0.0/60.0), 26.0), # [124度00分, 26度]
+    :jp17 => Geo2D::Point.new(131.0 +  (0.0/60.0), 26.0), # [131度00分, 26度]
+    :jp18 => Geo2D::Point.new(136.0 +  (0.0/60.0), 20.0), # [136度00分, 20度]
+    :jp19 => Geo2D::Point.new(154.0 +  (0.0/60.0), 26.0), # [154度00分, 26度]
+  } ;
+  ## 経度(lon)から平面直角座標系への変換倍率
+  CartesianLatMagnify = 10001960.0/90.0 ;
+
+  ## 角度ラジアン係数。
+  Deg2Rad = (Math::PI / 180.0) ;
+  
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## original json
@@ -98,12 +145,12 @@ class OsmMap < MapTown
     @roadList.push(road) ;
 
     tag = nil ;
-    if(tag = road.hasProperty("cw:tag")) then
+    if(tag = road.hasProperty(getConf(:cwTagName))) then
       road.pushTag(tag) ;
       partList = [] ;
-      tag.split(';').each{|part|
+      tag.split(getConf(:cwTagSep)).each{|part|
         partList.push(part) ;
-        subtag = partList.join(';');
+        subtag = partList.join(getConf(:cwTagSep));
         p [:tag, subtag] ;
         road.pushTag(subtag) if(subtag != tag) ;
       }
@@ -126,14 +173,14 @@ class OsmMap < MapTown
   def extractNodeListFromRoad(road)
     preNode = nil ;
     road.coordinatesJson.each{|coord|
-      pos = OsmMap.convertLonLat2Pos(coord) ;
+      pos = convertLonLat2Pos(coord) ;
       node = getNodeByPos(pos) ;
       road.pushNode(node) ;
       if(!preNode.nil?) then
         link = OsmRoadLink.new(road, preNode, node) ;
         registerNewLink(link) ;
         road.pushLink(link) ;
-        link.assignTagFromRoad() ;
+        link.assignTagFromRoad(getConf(:cwTagNthSep)) ;
       end
       preNode = node ;
     }
@@ -207,25 +254,31 @@ class OsmMap < MapTown
     @nodeList = @nodeList - nonConnectedNodes ;
     @linkList = @linkList - nonConnectedLinks.keys ;
   end
-
-  #--============================================================
+  
   #--------------------------------------------------------------
   #++
   ## convert lonlat to pos (x-y for CrowdWalk)
-  def self.convertLonLat2Pos(lonlat)
+  ## CrowdWalk は、東が x、南が y
+  def convertLonLat2Pos(lonlat)
     ll = Geo2D::Point.sureGeoObj(lonlat) ;
-    x = (ll.x - CartesianJp09LonLat.x) *  CartesianJp09Multi.x ;
-    y = (ll.y - CartesianJp09LonLat.y) *  CartesianJp09Multi.y ;
+    origin = CartesianLonLatOrigin[getConf(:cartOrigin)] ;
+    magnify = Geo2D::Point.new(CartesianLatMagnify *
+                               Math::cos(Deg2Rad * ll.y),
+                               CartesianLatMagnify) ;
+    x = (ll.x - origin.x) * magnify.x ;
+    y = (ll.y - origin.y) * magnify.y ;
     return Geo2D::Point.new(x, -y) ;
   end
 
-  #--============================================================
-  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  CartesianJp09LonLat = Geo2D::Point.sureGeoObj([139.83333,
-                                                 36.0]) ; # [139度50分, 36度]
-  CartesianJp09Multi = Geo2D::Point.sureGeoObj([(10000000/90.0) * Math::cos(Math::PI * 36.0/180.0),
-                                                10000000/90.0]) ;
-
+  #--------------------------------------------------------------
+  #++
+  ## convert OsmMap to CrowdWalk data
+  def convertOsm2CrowdWalk()
+    extractNodeListFromRoadList() ;
+    assignIds() ;
+    removeNonConnectedNodesLinks() ;
+  end
+  
   #--============================================================
   #++
   ## GeoFeature in OSM
@@ -298,7 +351,6 @@ class OsmMap < MapTown
     def coordinatesJson()
       return getGeometry()["coordinates"] ;
     end
-    
     
   end # class OsmFeature
 
@@ -400,13 +452,13 @@ class OsmMap < MapTown
     #------------------------------------------
     #++
     ## bbox
-    def assignTagFromRoad()
+    def assignTagFromRoad(cwTagNthSep)
       nth = @road.linkList.index(self) ;
       if(nth.nil?) then
         nth = @road.linkList.length() ;
       end
-      if(tagList.length > 0) then
-        nthTag = tagList[0] + "_" + nth.to_s ;
+      if(@road.tagList.length > 0) then
+        nthTag = @road.tagList[0] + cwTagNthSep + nth.to_s ;
         addTag(nthTag) ;
       end
       @road.tagList.each{|tag|

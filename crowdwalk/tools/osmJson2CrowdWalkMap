@@ -9,7 +9,8 @@
 ## * [2016/07/23]: Create This File.
 ## * [YYYY/MM/DD]: add more
 ## == Usage
-## * ...
+## * 変換の内容は、RubyLib/OsmMap.rb の説明参照。
+## *
 
 require 'optparse' ;
 require 'pp' ;
@@ -22,6 +23,7 @@ require 'OsmMap.rb' ;
 $conf = {
   :inFile => nil,
   :outFile => nil,
+  :cartOrigin => :jp09,
   :foo => false,
   :bar => 1,
   :baz => "test",
@@ -45,6 +47,17 @@ _END_
   op.on("-o","--out OutFile", String, sep + "output file") {|file|
     $conf[:outFile] = file ;
   }
+  op.on("-c","--cartOrigin OriginName", String, sep + "choose cartesian origin.") {|origName|
+    name = origName.intern ;
+    if(OsmMap::CartesianLonLatOrigin[name]) then
+      $conf[:cartOrigin] = name ;
+    else
+      $stderr.puts("Wrong cartegian origin name: " + origName.inspect) ;
+      $stderr.puts("  possible name: " +
+                   OsmMap::CartesianLonLatOrigin.keys.inspect) ;
+      exit(1) ;
+    end
+  }
   
   op.on("-f","--[no-]foo", sep + "switch foo.") {|foo|
     $conf[:foo] = foo ;
@@ -56,7 +69,7 @@ _END_
     $conf[:baz] = baz ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
-    puts(op)
+    $stderr.puts(op)
     exit(1)
   }
 }
@@ -101,14 +114,16 @@ end
 ##----------------------------------------------------------------------
 ## メインルーチン
 
-map = OsmMap.new() ;
+pp [:convert, $conf]
+
+mapConf = { :cartOrigin => $conf[:cartOrigin] }
+
+map = OsmMap.new(mapConf) ;
 myOpenFile($conf[:inFile],:r) {|inStream|
   map.scanJsonFromStream(inStream) ;
 }
 
-map.extractNodeListFromRoadList() ;
-map.assignIds() ;
-map.removeNonConnectedNodesLinks() ;
+map.convertOsm2CrowdWalk() ;
 
 myOpenFile($conf[:outFile],:w) {|outStream|
   map.saveXmlToStream(outStream) ;
