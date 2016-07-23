@@ -1,3 +1,4 @@
+# coding: euc-jp
 ## -*- Mode: ruby -*-
 ##Header:
 ##Title: Generic 2D Geometrical Operations
@@ -86,7 +87,7 @@ module Geo2D
     
     ##------------------------------------------------------------
     def isAnglesInOrder(first, second, third)
-      # suppose each angle is less than PI if angles are in order.                  
+      # suppose each angle is less than PI if angles are in order.
       angleFirstSecond = normalizeAngle(second - first) ;
       angleSecondThird = normalizeAngle(third - second) ;
       return angleFirstSecond >= 0.0 && angleSecondThird >= 0.0 ;
@@ -158,6 +159,18 @@ module Geo2D
       Geo2D::Vector.new(sizeX(), sizeY()) ;
     end
 
+    ##----------------------------------------
+    ## length
+    def length()
+      raise "length() has not been defined in class : #{self.class().to_s}"
+    end
+
+    ##----------------------------------------
+    ## aera
+    def grossArea()
+      raise "grossArea() has not been defined in class : #{self.class().to_s}"
+    end
+
   end
 
   ##============================================================
@@ -208,7 +221,6 @@ module Geo2D
       clone() ; 
     end
 
-
     ##----------------------------------------
     ## inc/dec/amplify/decay
     def inc(v)
@@ -242,7 +254,7 @@ module Geo2D
 
     ##----------------------------------------
     ## +,-,*,/
-    
+
     def +(v)
       u = dup() ;
       u.inc(v) ;
@@ -262,7 +274,7 @@ module Geo2D
       u = dup() ;
       u.decay(d) ;
     end
-    
+
     ##----------------------------------------
     def innerProd(v)
       @x * v.x + @y * v.y ;
@@ -285,7 +297,7 @@ module Geo2D
       v = dup() ;
       v.unit!()
     end
-   
+
     def unit!()
       d = norm() ;
       decay(d) ;
@@ -980,6 +992,15 @@ module Geo2D
     end
 
     ##----------------------------------------
+    def length()
+      len = 0.0 ;
+      eachLine(){|line|
+        len += line.length() ;
+      }
+      return len ;
+    end
+
+    ##----------------------------------------
     def to_s()
       str = "#LineString[" ;
       c = 0;
@@ -1064,6 +1085,25 @@ module Geo2D
       }
 
       (sumAngle > 0.0) ;
+    end
+
+    ##----------------------------------------
+    ## calc surrounding area by Helon's theory
+    def grossArea()
+      area = 0.0 ;
+      pointA = nthPoint(0) ;
+      pointB = nthPoint(1) ;
+      lenAB = pointA.distanceTo(pointB) ;
+      (2...nPoints()).each{|k|
+        pointC = nthPoint(k) ;
+        lenBC = pointB.distanceTo(pointC) ;
+        lenCA = pointC.distanceTo(pointA) ;
+        lenS = (lenAB + lenBC + lenCA)/2.0 ;
+        a =Math::sqrt(lenS * (lenS-lenAB) * (lenS-lenBC) * (lenS-lenCA)) ;
+        triangle = LinearRing.new([pointA,pointB,pointC]) ;
+        area += (triangle.clockwise?() ? a : -a) ;
+      }
+      return area ;
     end
 
     ##----------------------------------------
@@ -1206,6 +1246,28 @@ module Geo2D
     def maxY();  @exterior.maxY() ; end
 
     ##----------------------------------------
+    def length(withInterior = false)
+      len = @exterior.length() ;
+      if(withInterior) then
+        @interior.each{|ring|
+          len += ring.length() ;
+        }
+      end
+      return len ;
+    end
+
+    ##----------------------------------------
+    def grossArea(withInterior = false)
+      area = @exterior.grossArea() ;
+      if(withInterior) then
+        @interior.each{|ring|
+          area -= ring.grossArea ;
+        }
+      end
+      return area ;
+    end
+
+    ##----------------------------------------
     def to_s()
       str = "#Polygon[" + @exterior.to_s + "/" ;
       c = 0 ;
@@ -1322,6 +1384,58 @@ module Geo2D
     def maxY() ; @maxPos.y ;  end
 
     ##----------------------------------------
+    ## check inside
+    def includePoint(point)
+      return (point.x >= minX() && point.x <= maxX() &&
+              point.y >= minY() && point.y <= maxY()) ;
+    end
+
+    ##----------------------------------------
+    ## check inside
+    def intersectsWithBox(box)
+      myMinX = minX() ; myMinY = minY() ;
+      myMaxX = maxX() ; myMaxY = maxY() ;
+      otherMinX = box.minX() ; otherMinY = box.minY() ;
+      otherMaxX = box.maxX() ; otherMaxY = box.maxY() ;
+      ans = ((! (myMinX > otherMaxX || myMaxX < otherMinX)) &&
+             (! (myMinY > otherMaxY || myMaxY < otherMinY))) ;
+      return ans ;
+    end
+
+    ##----------------------------------------
+    ## get intersecting box with a given box
+    def getIntersectionBoxWith(box)
+      myMinX = max(minX(), box.minX()) ;
+      myMinY = max(minY(), box.minY()) ;
+      myMaxX = min(maxX(), box.maxX()) ;
+      myMaxY = min(maxY(), box.maxY()) ;
+      if(myMinX <= myMaxX && myMinY <= myMaxY) then
+        return Box.new([myMinX, myMinY], [myMaxX, myMaxY]) ;
+      else
+        return nil ;
+      end
+    end
+
+    ##----------------------------------------
+    def length()
+      return 2.0 * (sizeX() + sizeY()) ;
+    end
+
+    ##----------------------------------------
+    def grossArea()
+      return (sizeX() * sizeY()) ;
+    end
+
+    ##----------------------------------------
+    def growByMargin(margin)
+      @minPos.x -= margin ;
+      @maxPos.x += margin ;
+      @minPos.y -= margin ;
+      @maxPos.y += margin ;
+      return self ;
+    end
+
+    ##----------------------------------------
     def to_s()
       "#Box[#{@minPos.to_s(true)}:#{@maxPos.to_s(true)}]" ;
     end
@@ -1367,6 +1481,20 @@ module Geo2D
         y = max(y, geo.maxY()) ;
       }
       y
+    end
+
+    ##----------------------------------------
+    def length()
+      len = 0.0 ;
+      self.each{|geo| len += geo.length()} ;
+      return len ;
+    end
+
+    ##----------------------------------------
+    def grossArea()
+      area = 0.0 ;
+      self.each{|geo| area += geo.grossArea()} ;
+      return area ;
     end
 
     ##----------------------------------------
