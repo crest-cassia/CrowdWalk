@@ -579,7 +579,7 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¿âÀş¤ÎÂ­¤Î¤¢¤ë°ÌÃÖ¤Î u ¤«¤é¤ÎÈæÎ¨ k ¤òµá¤á¤ë
+    ## å‚ç·šã®è¶³ã®ã‚ã‚‹ä½ç½®ã® u ã‹ã‚‰ã®æ¯”ç‡ k ã‚’æ±‚ã‚ã‚‹
     def footPointRatioFrom(point)
       dx = @u.x - @v.x ;
       dy = @u.y - @v.y ;
@@ -594,7 +594,7 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¿âÀş¤ÎÂ­¤Î¤¢¤ë°ÌÃÖ¡£extendP ¤¬ false ¤Î»ş¤ÏÀşÊ¬¤È¤·¤Æ¤ÎºÇ¶áÅÀ
+    ## å‚ç·šã®è¶³ã®ã‚ã‚‹ä½ç½®ã€‚extendP ãŒ false ã®æ™‚ã¯ç·šåˆ†ã¨ã—ã¦ã®æœ€è¿‘ç‚¹
     def footPointFrom(point,extendP = false)
       k = footPointRatioFrom(point) ;
 
@@ -614,14 +614,14 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ë°ÌÃÖ¤«¤é¤ÎºÇÃ»µ÷Î¥
+    ## ã‚ã‚‹ä½ç½®ã‹ã‚‰ã®æœ€çŸ­è·é›¢
     def distanceFromPoint(point,extendP = false)
       foot = footPointFrom(point,extendP) ;
       point.distanceTo(foot) ; 
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÀşÊ¬¤«¤é¤ÎºÇÃ»µ÷Î¥
+    ## ã‚ã‚‹ç·šåˆ†ã‹ã‚‰ã®æœ€çŸ­è·é›¢
     def distanceFromLine(line)
       return 0.0 if(crossWithLine?(line)) ;
 
@@ -633,13 +633,13 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÅÀ¤¬Àş¾å¤Ë¤¢¤ë¤«¡©
+    ## ã‚ã‚‹ç‚¹ãŒç·šä¸Šã«ã‚ã‚‹ã‹ï¼Ÿ
     def onLine?(point, extendP = false, margin = 0.0)
       abs(distanceFromPoint(point, extendP)) <= margin ;
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÅÀ¤¬¡¢ÀşÊ¬(Êı¸ş u->v)¤ËÂĞ¤·º¸/±¦Â¦¤Ë¤¢¤ë¤«¡©
+    ## ã‚ã‚‹ç‚¹ãŒã€ç·šåˆ†(æ–¹å‘ u->v)ã«å¯¾ã—å·¦/å³å´ã«ã‚ã‚‹ã‹ï¼Ÿ
     def isLeft?(point)
       angle0 = @u.angleTo(@v) ;
       angle1 = @u.angleTo(point) ;
@@ -653,14 +653,14 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÅÀ¤¬¡¢ÀşÊ¬¤ËÂĞ¤·ÌÌ¤·¤Æ¤¤¤ë¤«¡©¡ÊÎ¾Ã¼ÅÀ¤ÎÆâÂ¦¤Ë¤¢¤ë¤«¡©¡Ë
+    ## ã‚ã‚‹ç‚¹ãŒã€ç·šåˆ†ã«å¯¾ã—é¢ã—ã¦ã„ã‚‹ã‹ï¼Ÿï¼ˆä¸¡ç«¯ç‚¹ã®å†…å´ã«ã‚ã‚‹ã‹ï¼Ÿï¼‰
     def faceTo?(point)
       k = footPointRatioFrom(point) ;
       (0.0 <= k && k <= 1.0) ;
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÀşÊ¬¤È¸ò¤ï¤ë¤«¡©
+    ## ã‚ã‚‹ç·šåˆ†ã¨äº¤ã‚ã‚‹ã‹ï¼Ÿ
     def crossWithLine?(line, 
                        countParaP = true, # count paralel ?
                        countEndP = :both) # :both/:head/:tail/:none
@@ -673,24 +673,24 @@ module Geo2D
       dyv = line.v.y - @v.y ;
 
       dd = dx0 * dy1 - dx1 * dy0 ;
-      if(dd == 0.0)	## Ê¿¹ÔÀş
-        ## ¤É¤Á¤é¤«¤ÎÃ¼ÅÀ¤¬Â¾Êı¤ÎÀşÊ¬¾å¤Ë¤¢¤ë¤«¤É¤¦¤«¤ÇÈ½Äê
+      if(dd == 0.0)	## å¹³è¡Œç·š
+        ## ã©ã¡ã‚‰ã‹ã®ç«¯ç‚¹ãŒä»–æ–¹ã®ç·šåˆ†ä¸Šã«ã‚ã‚‹ã‹ã©ã†ã‹ã§åˆ¤å®š
         return (onLine?(line.u) || onLine?(line.v) || 
                   line.onLine?(@u) || line.onLine?(@v)) && countParaP
       else
         dp = dy1 * dxv - dx1 * dyv ;
         dq = dy0 * dxv - dx0 * dyv ;
       
-        p = dp / dd ; # self ¾å¤Î¸òÅÀ¤Î°ÌÃÖ(u¤«¤é¤ÎÈæÎ¨)
-        q = dq / dd ; # line ¾å¤Î¸òÅÀ¤Î°ÌÃÖ(u¤«¤é¤ÎÈæÎ¨)
-        return false if !isInRange?(p, countEndP) ; # p ¤¬ [0,1] ¤Ë¤Ê¤±¤ì¤Ğ¤À¤á
-        return false if !isInRange?(q, countEndP) ; # q ¤¬ [0,1] ¤Ë¤Ê¤±¤ì¤Ğ¤À¤á
+        p = dp / dd ; # self ä¸Šã®äº¤ç‚¹ã®ä½ç½®(uã‹ã‚‰ã®æ¯”ç‡)
+        q = dq / dd ; # line ä¸Šã®äº¤ç‚¹ã®ä½ç½®(uã‹ã‚‰ã®æ¯”ç‡)
+        return false if !isInRange?(p, countEndP) ; # p ãŒ [0,1] ã«ãªã‘ã‚Œã°ã ã‚
+        return false if !isInRange?(q, countEndP) ; # q ãŒ [0,1] ã«ãªã‘ã‚Œã°ã ã‚
         return true ;
       end
     end
 
     ##------------------------------
-    ## value ¤¬ [0,1], [0,1), (0,1], (0,1) ¤ËÆş¤Ã¤Æ¤¤¤ë¤«¡©
+    ## value ãŒ [0,1], [0,1), (0,1], (0,1) ã«å…¥ã£ã¦ã„ã‚‹ã‹ï¼Ÿ
     ##   mode = :both, :head, :tail, :none
     def isInRange?(value, mode = :both, head = 0.0, tail = 1.0)
       case mode
@@ -872,7 +872,7 @@ module Geo2D
     end
     
     ##----------------------------------------
-    ## ¤¢¤ë°ÌÃÖ¤«¤é¤ÎºÇÃ»µ÷Î¥
+    ## ã‚ã‚‹ä½ç½®ã‹ã‚‰ã®æœ€çŸ­è·é›¢
     def distanceFrom(object)
       if(object.is_a?(Vector))
         return distanceFromPoint(object) ;
@@ -888,7 +888,7 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ë°ÌÃÖ¤«¤é¤ÎºÇÃ»µ÷Î¥
+    ## ã‚ã‚‹ä½ç½®ã‹ã‚‰ã®æœ€çŸ­è·é›¢
     def distanceFromPoint(point)
       dist = nil ;
       eachLine{|line|
@@ -899,7 +899,7 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÀşÊ¬¤«¤é¤ÎºÇÃ»µ÷Î¥
+    ## ã‚ã‚‹ç·šåˆ†ã‹ã‚‰ã®æœ€çŸ­è·é›¢
     def distanceFromLine(line)
       dist = nil ;
       eachLine{|l|
@@ -910,7 +910,7 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ë LineString¤«¤é¤ÎºÇÃ»µ÷Î¥
+    ## ã‚ã‚‹ LineStringã‹ã‚‰ã®æœ€çŸ­è·é›¢
     def distanceFromLineString(lstring)
       dist = nil ;
       eachPoint{|point|
@@ -925,7 +925,7 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÅÀ¤¬Àş¾å¤Ë¤¢¤ë¤«¡©
+    ## ã‚ã‚‹ç‚¹ãŒç·šä¸Šã«ã‚ã‚‹ã‹ï¼Ÿ
     def onLine?(point, extendP = false, margin = 0.0)
       eachLine{|line|
         return true if(line.onLine?(point, extendP, margin)) ;
@@ -934,9 +934,9 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÀşÊ¬¤È¸ò¤ï¤ë¤«¡©
-    ##    Ãí°Õ¡§ÀÜ¤·¤Æ¤¤¤ë¾ì¹ç¤Ï¥«¥¦¥ó¥È¤·¤Ê¤¤
-    ##          line ¾å¤Ë½Å¤Ê¤ëÊÕ¤¬¤¢¤Ã¤¿¾ì¹ç¤Ë´Ö°ã¤¦¾ì¹ç¤¢¤ê¡£
+    ## ã‚ã‚‹ç·šåˆ†ã¨äº¤ã‚ã‚‹ã‹ï¼Ÿ
+    ##    æ³¨æ„ï¼šæ¥ã—ã¦ã„ã‚‹å ´åˆã¯ã‚«ã‚¦ãƒ³ãƒˆã—ãªã„
+    ##          line ä¸Šã«é‡ãªã‚‹è¾ºãŒã‚ã£ãŸå ´åˆã«é–“é•ã†å ´åˆã‚ã‚Šã€‚
     def crossWithLine?(line)
       eachLine{|l|
         return true if(l.crossWithLine?(line, false, :none)) ;
@@ -945,9 +945,9 @@ module Geo2D
     end
 
     ##----------------------------------------
-    ## ¤¢¤ëÀşÊ¬¤È¸ò¤ï¤ë²ó¿ô
-    ##   Ãí°Õ¡§line ¤¬ÄºÅÀ¤ÇÀÜ¤·¤Æ¤¤¤¿¤ê¡¢¤¢¤ëÊÕ¤È½Å¤Ê¤Ã¤Æ¤¤¤ë¾ì¹ç
-    ##         ´Ö°ã¤¦¾ì¹ç¤¬¤¢¤ë¡£
+    ## ã‚ã‚‹ç·šåˆ†ã¨äº¤ã‚ã‚‹å›æ•°
+    ##   æ³¨æ„ï¼šline ãŒé ‚ç‚¹ã§æ¥ã—ã¦ã„ãŸã‚Šã€ã‚ã‚‹è¾ºã¨é‡ãªã£ã¦ã„ã‚‹å ´åˆ
+    ##         é–“é•ã†å ´åˆãŒã‚ã‚‹ã€‚
     def countCrossingWithLine(line)
       count = 0 ;
       eachLine{|l|
@@ -1121,7 +1121,7 @@ module Geo2D
 
   ##============================================================
   ## Polygon
-  ##	interior ¤Î°·¤¤¤Ë¤Ä¤¤¤Æ¤Ï¤Ş¤ÀÌ¤¼ÂÁõ
+  ##	interior ã®æ‰±ã„ã«ã¤ã„ã¦ã¯ã¾ã æœªå®Ÿè£…
 
   class Polygon < GeoObject
 
