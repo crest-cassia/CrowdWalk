@@ -28,7 +28,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.vecmath.Vector3d;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -111,9 +110,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
 
     public double getX() { return absolute_coordinates.getX(); }
     public double getY() { return absolute_coordinates.getY(); }
-    public Vector3d getPoint() {
-        return new Vector3d(getX(), getY(), getHeight());
-    }
+
     public Point2D getAbsoluteCoordinates(){ return absolute_coordinates; }
     public Point2D getLocalCoordinates(){
         return new Point2D.Double(this.getLocalX(),this.getLocalY());

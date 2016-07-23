@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Arrays;
@@ -148,6 +149,7 @@ public class GuiSimulationEditorLauncher
 
     private EditorMode mode = EditorMode.EDIT_NODE;
     transient private JFrame frame;
+    private HashMap<MapPartGroup, EditorFrame> editorFrames = new HashMap<MapPartGroup, EditorFrame>();
 
     /**
      * シミュレーション開始ボタン(2D シミュレータ用)
@@ -269,7 +271,7 @@ public class GuiSimulationEditorLauncher
         areaPanel.refresh();
         scenarioPanel.refresh();
         browserPanel.refresh();
-        for (EditorFrame frame : networkMap.getFrames()) {
+        for (EditorFrame frame : editorFrames.values()) {
             frame.repaint();
         }
         frame.repaint();
@@ -1040,5 +1042,33 @@ public class GuiSimulationEditorLauncher
             System.err.println(e.getMessage());
             System.exit(1);
         }
+    }
+
+    /**
+     * get Editor Frame
+     */
+    public EditorFrame getEditorFrame(MapPartGroup group) {
+        return editorFrames.get(group);
+    }
+
+    /**
+     * open Editor Frame
+     */
+    public EditorFrame openEditorFrame(MapPartGroup group) {
+        EditorFrame frame = editorFrames.get(group);
+        if (frame == null) {
+            frame = new EditorFrame(this, group);
+            editorFrames.put(group, frame);
+        }
+        frame.setVisible(true);
+
+        return frame;
+    }
+
+    /**
+     * remove Editor Frame
+     */
+    public void removeEditorFrame(MapPartGroup group){
+        editorFrames.remove(group);
     }
 }

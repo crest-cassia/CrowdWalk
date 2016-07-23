@@ -1,0 +1,82 @@
+/*
+・設定方法
+
+    "定義名": {
+        description: "説明",
+        coordinate_system: シェープファイルの座標系("Geographic" または "Projected"),
+        geodetic_datum: シェープファイルの測地系("Tokyo" または "WGS84"),
+        round_off_coordinate_to: 読み込んだ経緯度座標を四捨五入して小数点以下第 n 位に丸める場合の n,
+        length: {
+            attribute_name: <Link>タグの "length" 属性に対応するシェープファイルの属性名
+        },
+        width: {
+            attribute_name: <Link>タグの "width" 属性に対応するシェープファイルの属性名,
+            correction_factor: 読み込んだ width 値に掛ける値,
+            reference_table: 読み込んだ width 値がインデックスである場合に参照する配列
+        }
+    },
+
+*/
+
+{
+    "アルプス社" : {
+        description: "アルプス社 ナビゲーション道路地図2004 (shape版)",
+        coordinate_system: "Geographic",
+        geodetic_datum: "Tokyo",
+        length: {
+            attribute_name: "LK_LENGTH"
+        },
+        width: {
+            attribute_name: "WIDTH_TPCD",
+            /*
+            （Ｅ）道路幅員区分コード（ＦＵＫＵＩＮＣＤ）
+            コード 内 容
+            1 幅員13．0ｍ以上
+            2 幅員 5．5ｍ以上～13．0ｍ未満
+            3 幅員 3．0ｍ以上～ 5．5ｍ未満
+            4 幅員 3．0ｍ未満
+            0 未調査
+            */
+            reference_table: [1.0, 14.0, 9.0, 4.0, 2.5]
+        }
+    },
+
+    "住友電工" : {
+        description: "住友電工 拡張版全国デジタル道路地図データベース (shape版) 2013",
+        coordinate_system: "Geographic",
+        geodetic_datum: "Tokyo",
+        length: {
+            attribute_name: "length"
+        },
+        width: {
+            attribute_name: "rdwdcd",
+            reference_table: [1.0, 14.0, 9.0, 4.0, 2.5]
+        }
+    },
+
+    "昭文社" : {
+        description: "昭文社 MAPPLEルーティングデータ（SHAPE版）",
+        coordinate_system: "Geographic",
+        geodetic_datum: "Tokyo",
+        length: {
+            attribute_name: "link_len"
+        },
+        width: {
+            attribute_name: "width",
+            correction_factor: 0.1
+        }
+    },
+
+    "石巻" : {
+        description: "石巻_検証用データ",
+        coordinate_system: "Geographic",
+        geodetic_datum: "WGS84",
+        round_off_coordinate_to: 6,
+        length: {
+            attribute_name: "length"
+        },
+        width: {
+            attribute_name: "Width"
+        }
+    }
+}

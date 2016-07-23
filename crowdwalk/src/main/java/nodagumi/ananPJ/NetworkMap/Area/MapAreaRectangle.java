@@ -7,28 +7,13 @@ import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;   // tkokada
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import java.util.ArrayList; // tkokada
-
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BadTransformException;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-import javax.vecmath.AxisAngle4d;   // tkokada
-
-import nodagumi.ananPJ.NetworkMap.OBNode;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.sun.j3d.utils.geometry.Box;
+import math.geom3d.Point3D;
+
+import nodagumi.ananPJ.NetworkMap.OBNode;
 
 //======================================================================
 /**
@@ -102,7 +87,7 @@ public class MapAreaRectangle extends MapArea {
      * 包含判定
      */
     @Override
-    public boolean contains(Vector3f point) {
+    public boolean contains(Point3D point) {
         if (point.getZ() < minHeight || point.getZ() > maxHeight) {
             //System.err.println("height not match");
             return false;
@@ -144,6 +129,24 @@ public class MapAreaRectangle extends MapArea {
         return bounds;
     }
     
+    //------------------------------------------------------------
+    /**
+     * 高さの範囲の最小値を取得。
+     */
+    @Override
+    public double getMinHeight() {
+        return minHeight;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 高さの範囲の最大値を取得。
+     */
+    @Override
+    public double getMaxHeight() {
+        return maxHeight;
+    }
+
     //------------------------------------------------------------
     /**
      * 頂点リスト。
@@ -262,47 +265,6 @@ public class MapAreaRectangle extends MapArea {
         g.drawString(this.getTagString(),
                 (float)bounds.getMinX(),
                 (float)bounds.getMaxY());
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 3D描画。
-     */
-    @Override
-    public TransformGroup get3DShape(Appearance app) {
-        float x = (float)bounds.getCenterX();
-        float y = (float)bounds.getCenterY();
-        float z = (float) ((minHeight + maxHeight) / 2);
-        float dx = (float)bounds.getWidth() / 2;
-        float dy = (float)bounds.getHeight() / 2;
-        float dz = (float) ((maxHeight - minHeight) / 2);
-        
-        Transform3D trans3d = new Transform3D();
-        trans3d.setTranslation(new Vector3d(x, y, z));
-        trans3d.setRotation(new AxisAngle4d(0, 0, 1.0, angle)); // tkokada
-        TransformGroup areaTransforms = null;
-        try {
-            areaTransforms = new TransformGroup(trans3d);
-        } catch (BadTransformException e){
-            areaTransforms = new TransformGroup();
-            System.err.println("MapAreaRectangle.get3DShape: catch BadTransformException!");
-            return null;
-        }
-
-        Box box = new Box(dx, dy, dz, app);
-        areaTransforms.addChild(box);
-        
-        return areaTransforms;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 距離。
-     */
-    @Override
-    public double distance(Vector3f point) {
-        // TODO Auto-generated method stub
-        return Double.MAX_VALUE;
     }
 
     //------------------------------------------------------------

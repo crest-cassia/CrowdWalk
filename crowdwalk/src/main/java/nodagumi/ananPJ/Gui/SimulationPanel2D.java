@@ -9,6 +9,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -16,26 +17,30 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import javax.vecmath.Color3f;
-import javax.vecmath.Vector3d;
+import math.geom3d.Vector3D;
 
 import org.apache.batik.ext.awt.geom.Polygon2D;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Gui.LinkAppearance;
-import nodagumi.ananPJ.Gui.NodeAppearance;
+import nodagumi.ananPJ.Gui.GsiTile;
+import nodagumi.ananPJ.Gui.LinkAppearance2D;
+import nodagumi.ananPJ.Gui.NodeAppearance2D;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
+import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.Simulator.SimulationPanel3D.gas_display;
 
@@ -51,7 +56,7 @@ public class SimulationPanel2D extends JPanel {
     /**
      * ステータスメッセージの背景色
      */
-    public static final Color BACKGROUND_COLOR = new Color(0.95f, 0.95f, 0.95f);
+    public static final Color BACKGROUND_COLOR = Color.WHITE;
 
     /**
      * ラベル表示に使用するフォント名
@@ -72,6 +77,26 @@ public class SimulationPanel2D extends JPanel {
      * AIST ロゴ画像
      */
     private Image aistLogo = getToolkit().createImage(getClass().getResource("/img/aist_logo.png"));
+
+    /**
+     * グループ別の背景画像
+     */
+    private HashMap<MapPartGroup, Image> backgroundImages = new HashMap();
+
+    /**
+     * 背景地図用の地理院タイル
+     */
+    private ArrayList<GsiTile> backgroundMapTiles = null;
+
+    /**
+     * 背景地図のX座標の調整値
+     */
+    private double backgroundMapAdjustX = 0.0;
+
+    /**
+     * 背景地図のY座標の調整値
+     */
+    private double backgroundMapAdjustY = 0.0;
 
     /**
      * 描画前に平行移動する距離
@@ -184,12 +209,12 @@ public class SimulationPanel2D extends JPanel {
     /**
      * タグ別リンク表示スタイル
      */
-    private LinkedHashMap<String, LinkAppearance> linkAppearances = new LinkedHashMap();
+    private LinkedHashMap<String, LinkAppearance2D> linkAppearances = new LinkedHashMap();
 
     /**
      * タグ別ノード表示スタイル
      */
-    private LinkedHashMap<String, NodeAppearance> nodeAppearances = new LinkedHashMap();
+    private LinkedHashMap<String, NodeAppearance2D> nodeAppearances = new LinkedHashMap();
 
     /**
      * 表示更新済みフラグ
@@ -206,39 +231,51 @@ public class SimulationPanel2D extends JPanel {
 
     /* constructor
      */
-    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties) {
+    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> backgroundMapTiles) {
         super();
         frame = _frame;
         networkMap = _networkMap;
+        this.backgroundMapTiles = backgroundMapTiles;
 
-        if (properties != null) {
+        if (properties != null && properties.getPropertiesFile() != null) {
             try {
                 String filePath = null;
                 if (properties.isDefined("link_appearance_file")) {
                     filePath = properties.getFilePath("link_appearance_file", null);
-                    LinkAppearance.loadLinkAppearances(new FileInputStream(filePath), linkAppearances);
+                    LinkAppearance2D.load(new FileInputStream(filePath), linkAppearances);
                 }
-                LinkAppearance.loadLinkAppearances(
-                        getClass().getResourceAsStream("/link_appearance.json"), linkAppearances);
+                LinkAppearance2D.load(getClass().getResourceAsStream("/link_appearance.json"),
+                        linkAppearances);
                 // 該当するタグが複数存在した場合には、設定ファイルの記述が上にある方を採用する。
                 // このルールに従わせるため再ロードが必要。
                 if (properties.isDefined("link_appearance_file")) {
-                    LinkAppearance.loadLinkAppearances(new FileInputStream(filePath), linkAppearances);
+                    LinkAppearance2D.load(new FileInputStream(filePath), linkAppearances);
                 }
 
                 if (properties.isDefined("node_appearance_file")) {
                     filePath = properties.getFilePath("node_appearance_file", null);
-                    NodeAppearance.loadNodeAppearances(new FileInputStream(filePath), nodeAppearances);
+                    NodeAppearance2D.load(new FileInputStream(filePath), nodeAppearances);
                 }
-                NodeAppearance.loadNodeAppearances(
+                NodeAppearance2D.load(
                         getClass().getResourceAsStream("/node_appearance.json"), nodeAppearances);
                 if (properties.isDefined("node_appearance_file")) {
-                    NodeAppearance.loadNodeAppearances(new FileInputStream(filePath), nodeAppearances);
+                    NodeAppearance2D.load(new FileInputStream(filePath), nodeAppearances);
                 }
 
                 show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE",
                             gas_display.getNames()).toUpperCase()) ;
                 pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
+
+                // グループ別の背景画像を読み込む
+                File file = new File(properties.getNetworkMapFile());
+                String dir = file.getParent() + File.separator;
+                for (MapPartGroup group : networkMap.getGroups()) {
+                    String imageFileName = group.getImageFileName();
+                    if (imageFileName == null || imageFileName.isEmpty()) {
+                        continue;
+                    }
+                    backgroundImages.put(group, getToolkit().getImage(dir + imageFileName));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -333,6 +370,13 @@ public class SimulationPanel2D extends JPanel {
         tx += frame.mousePoint.getX() * (scaleOld - scale);
         ty += frame.mousePoint.getY() * (scaleOld - scale);
     }
+
+    /**
+     * 描画スケールを指定する
+     */
+    public void setDrawingScale(double scale) {
+        this.scale = scale;
+    }
     
     /**
      * 描画スケールを返す
@@ -340,7 +384,7 @@ public class SimulationPanel2D extends JPanel {
     public double getDrawingScale() {
         return scale;
     }
-    
+
     /**
      * マップをスクロールする
      */
@@ -352,9 +396,16 @@ public class SimulationPanel2D extends JPanel {
     /**
      * 描画前に平行移動する距離を指定する
      */
-    public void setPosition(int dx, int dy) {
+    public void setPosition(double dx, double dy) {
         tx = dx;
         ty = dy;
+    }
+
+    /**
+     * 視点座標を返す
+     */
+    public Point2D getViewPosition() {
+        return new Point2D.Double(tx, ty);
     }
 
     /**
@@ -428,6 +479,9 @@ public class SimulationPanel2D extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         AffineTransform saveAT = g2.getTransform();
 
+        g2.setBackground(Color.WHITE);
+        g2.clearRect(0, 0, getWidth(), getHeight());
+
         if (originalTextHeight == 0.0) {
             g2.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
             FontMetrics fm = g2.getFontMetrics();
@@ -445,6 +499,20 @@ public class SimulationPanel2D extends JPanel {
         g2.translate(tx, ty);
         g2.scale(scale, scale);
         setScaleFixedFont(g2, FONT_NAME, Font.PLAIN, 14);
+
+        // 背景地図の描画
+        if (frame.isShowBackgroundMap()) {
+            for (GsiTile mapTile : backgroundMapTiles) {
+                drawBackgroundMapTile(mapTile, g2);
+            }
+        }
+
+        // 背景画像の描画
+        if (frame.isShowBackgroundImage()) {
+            for (HashMap.Entry<MapPartGroup, Image> entry : backgroundImages.entrySet()) {
+                drawBackgroundImage(entry.getKey(), entry.getValue(), g2);
+            }
+        }
 
         // ポリゴンの描画
         if (! polygons.isEmpty()) {
@@ -526,7 +594,7 @@ public class SimulationPanel2D extends JPanel {
     public void drawAgent(AgentBase agent, Graphics2D g2, boolean showLabel) {
         double scale = g2.getTransform().getScaleX();
         Point2D pos = agent.getPos();
-        Vector3d swing = agent.getSwing();
+        Vector3D swing = agent.getSwing();
         double size = frame.getAgentSize() / scale;
 
         if (showLabel) {
@@ -551,7 +619,7 @@ public class SimulationPanel2D extends JPanel {
         g2.setStroke(new BasicStroke((float)(3.0 / scale)));
         g2.setColor(Color.BLUE);
         Point2D pos = agent.getPos();
-        Vector3d swing = agent.getSwing();
+        Vector3D swing = agent.getSwing();
         double diameter = 8.0 / scale;
         double size = frame.getAgentSize() / scale;
 
@@ -577,44 +645,39 @@ public class SimulationPanel2D extends JPanel {
      * エージェントの表示色を返す
      */
     public Color getAgentColor(AgentBase agent) {
-        Color3f color = Colors.DEFAULT_AGENT_COLOR;
-
         switch (agent.getTriage()) {
         case GREEN:
             if (frame.getChangeAgentColorDependingOnSpeed()) {
                 return speedToColor(agent.getSpeed());
             } else if (agent.hasTag("BLUE")){
-                color = Colors.BLUE;
+                return Color2D.BLUE;
             } else if (agent.hasTag("APINK")){
-                color = Colors.APINK;
+                return Color2D.APINK;
             } else if (agent.hasTag("YELLOW")){
-                color = Colors.YELLOW;
+                return Color2D.YELLOW;
             }
             break;
         case YELLOW:
-            color = Colors.YELLOW;
-            break;
+            return Color2D.YELLOW;
         case RED:
-            color = Colors.PRED;
-            break;
+            return Color2D.PRED;
         case BLACK:
-            color = Colors.BLACK2;
-            break;
+            return Color2D.BLACK2;
         }
-        return new Color(color.x, color.y, color.z);
+        return Color2D.DEFAULT_AGENT_COLOR;
     }
 
     /**
      * ポリゴンを描画する
      */
     public void drawPolygon(Graphics2D g2, String tag, Polygon2D polygon) {
-        Color3f color = Colors.GRAY;
+        Color color = Color2D.GRAY;
         if (tag.contains("OCEAN")) {
-            color = Colors.SLATEBLUE;
+            color = Color2D.SLATEBLUE;
         } else if (tag.contains("STRUCTURE")) {
-            color = Colors.LIGHTGRAY;
+            color = Color2D.LIGHTGRAY;
         }
-        g2.setColor(new Color(color.x, color.y, color.z));
+        g2.setColor(color);
         g2.fill(polygon);
 
         // ポリゴン間に隙間が出来てしまうのを防ぐ
@@ -628,9 +691,9 @@ public class SimulationPanel2D extends JPanel {
      */
     public void drawNode(MapNode node, Graphics2D g, boolean showLabel, boolean isSymbolic) {
         double diameter = 0.0;
-        NodeAppearance nodeAppearance = getNodeAppearance(node);
+        NodeAppearance2D nodeAppearance = getNodeAppearance(node);
         if (nodeAppearance != null) {
-            g.setColor(nodeAppearance.awtColor);
+            g.setColor(nodeAppearance.color);
             diameter = nodeAppearance.diameter;
             double x = node.getX() - diameter / 2.0;
             double y = node.getY() - diameter / 2.0;
@@ -653,7 +716,7 @@ public class SimulationPanel2D extends JPanel {
      */
     public void drawHoverNode(MapNode node, Graphics2D g2) {
         double diameter = 0.0;
-        NodeAppearance nodeAppearance = getNodeAppearance(node);
+        NodeAppearance2D nodeAppearance = getNodeAppearance(node);
         if (nodeAppearance != null) {
             diameter = nodeAppearance.diameter;
         }
@@ -681,11 +744,11 @@ public class SimulationPanel2D extends JPanel {
         double scale = g.getTransform().getScaleX();
         float width = 1.0f;
         Color color = defaultLinkColor;
-        LinkAppearance linkAppearance = getLinkAppearance(link);
+        LinkAppearance2D linkAppearance = getLinkAppearance(link);
         if (linkAppearance != null) {
             width = (float)(linkAppearance.widthFixed ?
                     linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio);
-            color = linkAppearance.awtColor;
+            color = linkAppearance.color;
         } else {
             width /= scale;
         }
@@ -716,7 +779,7 @@ public class SimulationPanel2D extends JPanel {
         String text = link.getTagString();
         if (! text.isEmpty()) {
             float width = 1.0f;
-            LinkAppearance linkAppearance = getLinkAppearance(link);
+            LinkAppearance2D linkAppearance = getLinkAppearance(link);
             if (linkAppearance != null) {
                 width = (float)(linkAppearance.widthFixed ?
                         linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio);
@@ -735,7 +798,7 @@ public class SimulationPanel2D extends JPanel {
     public void drawArea(MapArea area, Graphics2D g, boolean showLabel) {
         if (area.getPollutionLevel() == null || ! area.getPollutionLevel().isPolluted()) {
             if (frame.isShowAreaLocation()) {
-                g.setColor(Color.WHITE);
+                g.setColor(Color.LIGHT_GRAY);
                 g.fill(area.getShape());
             }
             return;
@@ -801,6 +864,32 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
+     * 背景画像を描画する
+     */
+    public void drawBackgroundImage(MapPartGroup group, Image image, Graphics2D g2) {
+        AffineTransform at = g2.getTransform();
+        g2.translate(group.tx, group.ty);
+        g2.scale(group.sx, group.sy);
+        g2.rotate(group.r);
+        g2.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), this);
+        g2.setTransform(at);
+    }
+
+    /**
+     * 地理院タイルを描画する
+     */
+    public void drawBackgroundMapTile(GsiTile gsiTile, Graphics2D g2) {
+        AffineTransform at = g2.getTransform();
+        BufferedImage image = gsiTile.getImage();
+        Point2D point = gsiTile.getPoint();
+
+        g2.translate(point.getX() + backgroundMapAdjustX, point.getY() + backgroundMapAdjustY);
+        g2.scale(gsiTile.getScaleX(), gsiTile.getScaleY());
+        g2.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), this);
+        g2.setTransform(at);
+    }
+
+    /**
      * ステータスメッセージを描画する
      */
     public void drawMessage(Graphics2D g2, int position, String message) {
@@ -813,7 +902,7 @@ public class SimulationPanel2D extends JPanel {
         int x = 12;     // メッセージの基準表示位置
         int y = 12;     //          〃
         if ((position & frame.BOTTOM) == frame.BOTTOM) {
-            y += getHeight() - ascent;
+            y += getHeight() - height;
         }
         g2.setColor(BACKGROUND_COLOR);           // メッセージの背景色
         g2.fillRect(x - 4, y - ascent, width + 7, height - 1);  // メッセージの背景描画
@@ -895,17 +984,17 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
-     * node に振られているタグにマッチする NodeAppearance を返す.
+     * node に振られているタグにマッチする NodeAppearance2D を返す.
      */
-    public NodeAppearance getNodeAppearance(MapNode node) {
-        return NodeAppearance.getAppearance(nodeAppearances, node);
+    public NodeAppearance2D getNodeAppearance(MapNode node) {
+        return NodeAppearance2D.getAppearance(nodeAppearances, node);
     }
 
     /**
-     * link に振られているタグにマッチする LinkAppearance を返す.
+     * link に振られているタグにマッチする LinkAppearance2D を返す.
      */
-    public LinkAppearance getLinkAppearance(MapLink link) {
-        return LinkAppearance.getAppearance(linkAppearances, link);
+    public LinkAppearance2D getLinkAppearance(MapLink link) {
+        return LinkAppearance2D.getAppearance(linkAppearances, link);
     }
 
     /* -- Methods to set how drawn 

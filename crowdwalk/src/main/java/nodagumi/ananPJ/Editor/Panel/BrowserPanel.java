@@ -360,9 +360,8 @@ extends JPanel
 	    	/* single click */
 	    	MapPartGroup group = (MapPartGroup)ob_node.getParent();
 	    	if (group != null) {
-	    		Object o = group.getUserObject();
-	    		if (o != null && o instanceof EditorFrame) {
-	    			EditorFrame frame = (EditorFrame)o;
+                EditorFrame frame = editor.getEditorFrame(group);
+                if (frame != null) {
 	    			frame.clearSelection();
 	    			ob_node.selected = true;
 	    			frame.repaint();
@@ -439,14 +438,12 @@ extends JPanel
     }
 	
 	private EditorFrame showEditorForGroup(MapPartGroup group) {
-    	EditorFrame frame;
-	    if(!group.haveEditorFrame()) {
-	    	//frame = editor.getMap().openEditorFrame(group);
-	    	frame = editor.getMap().openEditorFrame(editor, group);
+        EditorFrame frame = editor.getEditorFrame(group);
+        if (frame == null) {
+            frame = editor.openEditorFrame(group);
 	        editor.updateAll();
 	        refresh();
 	    } else {
-	    	frame = (EditorFrame)group.getUserObject();
 	    	if (!frame.isVisible()) {
 	    		frame.setVisible(true);
 	    	} else {

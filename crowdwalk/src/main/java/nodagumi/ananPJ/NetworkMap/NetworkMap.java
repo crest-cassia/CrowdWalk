@@ -44,8 +44,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import net.arnx.jsonic.JSON;
 
-import nodagumi.ananPJ.GuiSimulationEditorLauncher;
-import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
@@ -166,7 +164,7 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * exec undo
      */
-    public void undo(GuiSimulationEditorLauncher editor) {
+    public void undo() {
         if (undo_list.size() == 0) return;
         int i = undo_list.size() - 1;
         UndoInformation info = undo_list.remove(i);
@@ -175,14 +173,7 @@ public class NetworkMap extends DefaultTreeModel {
         } else {
             insertOBNode(info.parent, info.node, false);
         }
-        editor.updateAll();
     }
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 編集用画面関係
-     */
-    private ArrayList<EditorFrame> frames = new ArrayList<EditorFrame>();
 
     //------------------------------------------------------------
     //------------------------------------------------------------
@@ -1050,52 +1041,35 @@ public class NetworkMap extends DefaultTreeModel {
      */
     public NetworkMapPartsNotifier getNotifier() { return notifier; }
 
-    //------------------------------------------------------------
     /**
-     * Editor Frame
+     * マップに外接する矩形を算出する
      */
-    public boolean existNodeEditorFrame(MapPartGroup _obiNode){
-        for (EditorFrame frame : getFrames()) {
-            if (_obiNode.equals(frame)) return true;
+    public Rectangle2D calcRectangle() {
+        double north = 0.0;
+        double south = 0.0;
+        double west = 0.0;
+        double east = 0.0;
+        for (MapNode node : getNodes()) {
+            if (north == 0.0 && south == 0.0) {
+                north = node.getY();
+                south = node.getY();
+                west = node.getX();
+                east = node.getX();
+            }
+            if (node.getY() < north) {
+                north = node.getY();
+            }
+            if (node.getY() > south) {
+                south = node.getY();
+            }
+            if (node.getX() < west) {
+                west = node.getX();
+            }
+            if (node.getX() > east) {
+                east = node.getX();
+            }
         }
-        return false;
-    }
-
-    /**
-     * Editor Frame
-     */
-    public EditorFrame openEditorFrame(GuiSimulationEditorLauncher editor,
-                                       MapPartGroup obinode) {
-        EditorFrame frame = new EditorFrame(editor, obinode);
-
-        obinode.setUserObject(frame);
-
-        getFrames().add(frame);
-        frame.setVisible(true);
-
-        return frame;
-    }
-
-    /**
-     * Editor Frame
-     */
-    public void removeEditorFrame(MapPartGroup _obinode){
-        getFrames().remove(_obinode.getUserObject());
-        _obinode.setUserObject(null);
-    }
-
-    //------------------------------------------------------------
-    /**
-     * フレームセット
-     */
-    public void setFrames(ArrayList<EditorFrame> frames) {
-        this.frames = frames;
-    }
-    /**
-     * フレーム取得
-     */
-    public ArrayList<EditorFrame> getFrames() {
-        return frames;
+        return new Rectangle2D.Double(west, north, east - west, south - north);
     }
 
 } // class NetworkMap

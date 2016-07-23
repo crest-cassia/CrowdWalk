@@ -10,7 +10,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.SimulationFrame2D;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
@@ -62,6 +64,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      */
     public void updateEveryTick(SimTime currentTime) {
         // 表示の更新
+        simulationFrame.updateCamerawork(currentTime);
         simulationFrame.panel.setUpdated(false);
         simulationFrame.setStatusText(getStatusLine());
         updatePanel(simulator.getWalkingAgentCollection());
@@ -124,8 +127,25 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      * ウィンドウとGUIを構築する
      */
     public void setupFrame() {
+        ArrayList<GsiTile> mapTiles = null;
+        if (properties != null) {
+            // 地理院タイル画像の準備
+            try {
+                String tileName = properties.getString("gsi_tile_name", GsiTile.DATA_ID_PALE);
+                int zoom = properties.getInteger("gsi_tile_zoom", 14);
+                MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+                int zone = properties.getInteger("zone", root.getZone());
+                if (zone != 0) {
+                    mapTiles = GsiTile.loadGsiTiles(networkMap, tileName, zoom, zone);
+                }
+            } catch(Exception e) {
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+        }
         simulationFrame = new SimulationFrame2D("Simulation Preview",
-                simulationPanelWidth, simulationPanelHeight, this, properties);
+		simulationPanelWidth, simulationPanelHeight, this, properties, mapTiles);
+
         int x = settings.get("simulatorPositionX", 0);
         int y = settings.get("simulatorPositionY", 0);
         simulationFrame.setLocation(x, y);
@@ -183,6 +203,13 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
     public void setGuiValues(SimulationFrame2D frame) {
         frame.setSimulationDeferFactor(deferFactor);
         frame.setAgentSize(agentSize);
+        try {
+            frame.setShowBackgroundImage(properties.getBoolean("show_background_image", false));
+            frame.setShowBackgroundMap(properties.getBoolean("show_background_map", false));
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
         frame.setRecordSimulationScreen(recordSimulationScreen);
         frame.setScreenshotDir(screenshotDir);
         frame.setClearScreenshotDir(clearScreenshotDir);
@@ -202,6 +229,11 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
         frame.setStatusPosition(statusPosition);
         frame.setShowLogo(showLogo);
         frame.setExitWithSimulationFinished(exitWithSimulationFinished);
+
+        String filePath = properties.getString("camera_2d_file", null);
+        if (filePath != null) {
+            frame.loadCamerawork(filePath);
+        }
     }
 
     /**

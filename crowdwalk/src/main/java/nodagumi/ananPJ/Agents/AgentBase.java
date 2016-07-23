@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.vecmath.Vector3d;
+import math.geom3d.Vector3D;
 
 import org.w3c.dom.Element;
 
@@ -130,7 +130,7 @@ implements Comparable<AgentBase> {
     /**
      * リンク上の表示上の横ずれ幅の座標差分
      */
-    protected Vector3d swing = new Vector3d(0, 0, 0);
+    protected Vector3D swing = new Vector3D(0.0, 0.0, 0.0);
 
     /**
      * 直前の位置。
@@ -142,7 +142,7 @@ implements Comparable<AgentBase> {
      * 直前のswing。
      * AgentHandler の表示制御あたりで使用。
      */
-    protected Vector3d lastSwing = null ;
+    private Vector3D lastSwing = null ;
 
     //############################################################
     /**
@@ -854,12 +854,6 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * 表示用
-     */
-    abstract public void drawInEditor(Graphics2D g) ;
-
-    //------------------------------------------------------------
-    /**
      * Agent については、fromDom はサポートしない
      */
     public static OBNode fromDom(Element element) {
@@ -895,7 +889,7 @@ implements Comparable<AgentBase> {
     protected void calcSwing() {
         MapLink currentLink = currentPlace.getLink() ;
         if (null == currentLink) {
-            swing = new Vector3d(0, 0, 0);
+            swing = new Vector3D(0.0, 0.0, 0.0);
             return;
         }
 
@@ -906,17 +900,15 @@ implements Comparable<AgentBase> {
         double y1 = currentLink.getFrom().getY();
         double y2 = currentLink.getTo().getY();
 
-        Vector3d v1 = new Vector3d(x2 - x1, y2-y1, 0);
-        v1.normalize();
-        Vector3d v2 = new Vector3d(0, 0, fwidth * swing_width);
-        swing = new Vector3d();     // TODO: この行は不要かもしれない
-        swing.cross(v1, v2);
+        Vector3D v1 = new Vector3D(x2 - x1, y2 - y1, 0.0).normalize();
+        Vector3D v2 = new Vector3D(0.0, 0.0, fwidth * swing_width);
+        swing = Vector3D.crossProduct(v1, v2);
     }
 
     /**
      * swing 値の取得
      */
-    public Vector3d getSwing() {
+    public Vector3D getSwing() {
         return swing;
     }
 

@@ -15,7 +15,6 @@ import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
-import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
 import nodagumi.Itk.*;
@@ -192,8 +191,18 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>camera_file</h4>
- *     <pre>  シミュレーション画面で3D表示されている地図を映すカメラの位置情報を含んだ設定ファイル。
- *  シミュレーション・ウィンドウのオープン時に Camera file を読み込んで Replay チェックボックスを ON にする。
+ *     <pre>  3D シミュレーション画面のカメラワーク設定ファイル。
+ *  3D シミュレーションウィンドウのオープン時に読み込んで Replay チェックボックスを ON にする。
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>camera_2d_file</h4>
+ *     <pre>  2D シミュレーション画面のカメラワーク設定ファイル。
+ *  2D シミュレーションウィンドウのオープン時に読み込んで Replay チェックボックスを ON にする。
  *
  *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
  *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
@@ -420,8 +429,61 @@ import nodagumi.Itk.*;
  *   <li>
  *     <h4>mental_map_rules</h4>
  *     <pre>   * 探索において、各リンクの主観的距離の変更ルールを記述。
+ *
  *  設定値： ルールを表す JSON 形式の式。
- *  デフォルト値： null
+ *  デフォルト値： null</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>show_background_image</h4>
+ *     <pre>  2D シミュレータ上で、シミュレーション画面に背景画像を表示する。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>zone</h4>
+ *     <pre>  マップデータの平面直角座標系の系番号
+ *
+ *  2D シミュレータ上で、国土地理院の地理院タイルを用いた背景地図表示を有効にする。
+ *  マップファイルのルートの &lt;Group&gt; タグに zone 属性があれば省略可能。
+ *  マップ範囲の地理院タイルを読み込むために、初回のみ国土地理院の Web サイトへのアクセスが発生する。
+ *  (読み込んだ画像は CrowdWalk/crowdwalk/cache ディレクトリにキャッシュされる)
+ *
+ *  設定値： 1～19
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>gsi_tile_name</h4>
+ *     <pre>  地理院タイルのタイル名(データID)
+ *
+ *  背景地図に使用する地理院タイルを指定する。
+ *  標準地図/淡色地図/English/数値地図25000（土地条件）/白地図/色別標高図/写真が選択可能。
+ *  <a href="http://maps.gsi.go.jp/development/ichiran.html" target="_blank">≪地理院タイル一覧≫</a>参照。
+ *
+ *  設定値： std | pale | english | lcm25k_2012 | blank | relief | ort
+ *  デフォルト値： pale</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>gsi_tile_zoom</h4>
+ *     <pre>  地理院タイルのズームレベル
+ *
+ *  背景地図に使用する地理院タイルのズームレベルを指定する。
+ *  <a href="http://maps.gsi.go.jp/development/siyou.html" target="_blank">≪地理院タイル仕様≫</a>参照。
+ *
+ *  設定値： 5～18(タイル名により有効範囲が異なる)
+ *  デフォルト値： 14</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>show_background_map</h4>
+ *     <pre>  2D シミュレータ上で、シミュレーション画面に背景地図を表示する。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
  *   </li>
  * </ul>
  */
@@ -432,6 +494,7 @@ public class CrowdWalkPropertiesHandler {
            "generation_file",
            "scenario_file",
            "camera_file",
+           "camera_2d_file",
            "pollution_file",
            "link_appearance_file",
            "node_appearance_file",
@@ -600,8 +663,6 @@ public class CrowdWalkPropertiesHandler {
                 AgentBase.setObstructerType(obstructerType);
                 ObstructerBase.createInstance(obstructerType) ;
             }
-            getString("pollution_color", "RED",
-                      SimulationPanel3D.gas_display.getNames());
             getDouble("pollution_color_saturation", 0.0);
 
             /* [2015.01.07 I.Noda] to switch agent queue in the link directions.*/

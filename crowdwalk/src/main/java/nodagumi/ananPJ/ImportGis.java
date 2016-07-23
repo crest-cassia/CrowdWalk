@@ -1,20 +1,23 @@
 package nodagumi.ananPJ;
 
-import org.jruby.Ruby;
-import org.jruby.RubyArray;
-import org.jruby.RubyHash;
-import org.jruby.javasupport.JavaEmbedUtils;
-import org.jruby.runtime.builtin.IRubyObject;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import org.w3c.dom.*;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 import org.geotools.data.*;
 import org.geotools.data.simple.*;
@@ -29,16 +32,21 @@ import org.opengis.feature.simple.*;
 import org.opengis.feature.type.*;
 import org.opengis.filter.*;
 
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.MultiLineString;
+import net.arnx.jsonic.JSON;
+
+import org.osgeo.proj4j.CRSFactory;
+import org.osgeo.proj4j.CoordinateReferenceSystem;
+import org.osgeo.proj4j.CoordinateTransform;
+import org.osgeo.proj4j.CoordinateTransformFactory;
+import org.osgeo.proj4j.ProjCoordinate;
 
 import nodagumi.ananPJ.*;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.NetworkMap.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Link.*;
-// import nodagumi.ananPJ.network.*;
-
-import nodagumi.Itk.Itk;
 import nodagumi.Itk.ItkXmlUtility;
 
 public class ImportGis {
@@ -82,40 +90,169 @@ public class ImportGis {
      *     4 幅員 3.0ｍ未満
      *     0 未調査
      */
-    private static final long serialVersionUID = 7346682140815565547L;
-    private static final String VERSION = "Version 1.05 (July 28, 2014)";
+    private static final String VERSION = "Version 1.10 (April 7, 2016)";
 
-    private static final boolean REVERSE_Y = false;
+    private static final String SHAPEFILE_SPECS_PATH = "shapefile_specs.json";
+    private static final String optionsFormat = "[-h] [-p] [-s <SPEC>] [-S] [-t] [-T] [-z <NUMBER>]";
+    private static final String commandLineSyntax = String.format("ImportGis %s [Shapefile]", optionsFormat);
+
     // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）
     public static final String REFERENCE_URL = "http://www.gsi.go.jp/LAW/heimencho.html";
 
+    /**
+     * JGD2000 の平面直角座標系の系番号に対応する EPSG コード
+     */
+    public static String[] JGD2000_JPR_EPSG_CODES = {
+        null,
+        "EPSG:2443",    // 系番号 I
+        "EPSG:2444",    // 系番号 II
+        "EPSG:2445",    // 系番号 III
+        "EPSG:2446",    // 系番号 IV
+        "EPSG:2447",    // 系番号 V
+        "EPSG:2448",    // 系番号 VI
+        "EPSG:2449",    // 系番号 VII
+        "EPSG:2450",    // 系番号 VIII
+        "EPSG:2451",    // 系番号 IX
+        "EPSG:2452",    // 系番号 X
+        "EPSG:2453",    // 系番号 XI
+        "EPSG:2454",    // 系番号 XII
+        "EPSG:2455",    // 系番号 XIII
+        "EPSG:2456",    // 系番号 XIV
+        "EPSG:2457",    // 系番号 XV
+        "EPSG:2458",    // 系番号 XVI
+        "EPSG:2459",    // 系番号 XVII
+        "EPSG:2460",    // 系番号 XVIII
+        "EPSG:2461"     // 系番号 XIX
+    };
+
+    /**
+     * Tokyo Datum の平面直角座標系の系番号に対応する EPSG コード
+     */
+    public static String[] TOKYO_JPR_EPSG_CODES = {
+        null,
+        "EPSG:30161",    // 系番号 I
+        "EPSG:30162",    // 系番号 II
+        "EPSG:30163",    // 系番号 III
+        "EPSG:30164",    // 系番号 IV
+        "EPSG:30165",    // 系番号 V
+        "EPSG:30166",    // 系番号 VI
+        "EPSG:30167",    // 系番号 VII
+        "EPSG:30168",    // 系番号 VIII
+        "EPSG:30169",    // 系番号 IX
+        "EPSG:30170",    // 系番号 X
+        "EPSG:30171",    // 系番号 XI
+        "EPSG:30172",    // 系番号 XII
+        "EPSG:30173",    // 系番号 XIII
+        "EPSG:30174",    // 系番号 XIV
+        "EPSG:30175",    // 系番号 XV
+        "EPSG:30176",    // 系番号 XVI
+        "EPSG:30177",    // 系番号 XVII
+        "EPSG:30178",    // 系番号 XVIII
+        "EPSG:30179"     // 系番号 XIX
+    };
+
+    /**
+     * 平面直角座標系の系番号として有効な値
+     */
+    private static Integer[] SYSTEM_NUMBERS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+
+    private static Map<String, Object> shapefileSpecs = null;
+    private static String[] shapefileSpecNames;
+    private static String shapefileSpecName = null;
+    private static boolean heightEnable = false;
+    private static boolean outputByTokyoDatum = false;
+    private static boolean outputByPlaneRectangular = false;
+    private static boolean makeSimpleModel = false;
+    private static boolean addCoordinateValueTag = false;
+    private static int zone = -1;
+
     private MapContext map;
     private JMapFrame map_frame = null;
-    // tkokada
-    //private double DEFAULT_LATITUDE = 36.00;
-    //private double DEFAULT_LONGITUDE = 139.83333333;
-    private Ruby ruby = null;
+    private Settings settings;
+    private String shapefilePath = null;
+    private NetworkMap networkMap;
 
-    protected Settings settings;
+    // ShapefileSpecs
+    private String description = "";
+    private String coordinateSystem = null;
+    private String geodeticDatum = null;
+    private int scaleOfRoundOff = -1;
+    private String lengthAttributeName;
+    private double lengthCorrectionFactor = 1.0;
+    private String widthAttributeName;
+    private double widthCorrectionFactor = 1.0;
+    private Object[] widthTable = null;
 
-    protected NetworkMap networkMap = new NetworkMap();
-    // public NetworkMap getMap() { return networkMap; }
-
-    public ImportGis()  {
+    public ImportGis() {
         settings = Settings.load("NetworkMapEditor.ini");
         map = new DefaultMapContext();
-
-        java.util.List<String> loadpath = new ArrayList<String>();
-        loadpath.add("lib");
-        ruby = JavaEmbedUtils.initialize(loadpath);
-        if (!promptAndAddMap()) {
-            return;
-        }
-
-        JMapFrame mapFrame = setupMapFrame();
-        mapFrame.setVisible(true);
     }
 
+    /**
+     * 初期設定
+     */
+    private void initialize() {
+        readShapefileSpecs();
+
+        // Shapefile を読み込んで MapContext にセットする
+        File source_file = null;
+        if (shapefilePath == null) {
+            source_file = selectShapefile();
+        } else {
+            source_file = new File(shapefilePath);
+        }
+        if (source_file == null) {
+            System.exit(0);
+        }
+        readShapefile(source_file);
+    }
+
+    /**
+     * シェープファイル仕様情報を読み込む
+     */
+    private void readShapefileSpecs() {
+        Map<String, Object> shapefileSpec = (Map<String, Object>)shapefileSpecs.get(shapefileSpecName);
+        JSON json = new JSON();
+        System.err.println("shapefileSpec: " + json.encode(shapefileSpec, true));
+
+        coordinateSystem = (String)shapefileSpec.get("coordinate_system");
+        if (! coordinateSystem.equals("Geographic")) {
+            System.err.println("coordinate_system は現在 \"Geographic\" のみ有効です。");
+            System.exit(1);
+        }
+
+        geodeticDatum = (String)shapefileSpec.get("geodetic_datum");
+
+        // 経緯度座標を四捨五入して小数第 scaleOfRoundOff 位に丸める
+        Object object = shapefileSpec.get("round_off_coordinate_to");
+        if (object != null) {
+            scaleOfRoundOff = Integer.parseInt(object.toString());
+        }
+
+        // length
+        Map<String, Object> lengthObjects = (Map<String, Object>)shapefileSpec.get("length");
+        lengthAttributeName = (String)lengthObjects.get("attribute_name");
+        object = lengthObjects.get("correction_factor");
+        if (object != null) {
+            lengthCorrectionFactor = Double.parseDouble(object.toString());
+        }
+
+        // width
+        Map<String, Object> widthObjects = (Map<String, Object>)shapefileSpec.get("width");
+        widthAttributeName = (String)widthObjects.get("attribute_name");
+        object = widthObjects.get("correction_factor");
+        if (object != null) {
+            widthCorrectionFactor = Double.parseDouble(object.toString());
+        }
+        object = widthObjects.get("reference_table");
+        if (object != null) {
+            widthTable = ((ArrayList<Object>)object).toArray();
+        }
+    }
+
+    /**
+     * アプリケーションウィンドウを構築する
+     */
     private JMapFrame setupMapFrame() {
         map_frame = new JMapFrame(map);
         map_frame.setTitle("Import GIS file - " + VERSION);
@@ -128,26 +265,38 @@ public class ImportGis {
         int h = settings.get("gis-height", 640);
 
         map_frame.setSize(w, h);
-        map_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        map_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setupToolbar(map_frame.getToolBar());
 
         return map_frame;
     }
 
+    /**
+     * ツールバーの設定
+     */
     private void setupToolbar(JToolBar toolbar) {
         toolbar.addSeparator();
         toolbar.add(new JButton(new AddGisMapAction()));
-        toolbar.add(new JButton(new ExportNodeLinkAction(networkMap)));
+        toolbar.add(new JButton(new ExportNodeLinkAction()));
     }
 
-    private boolean promptAndAddMap() {
-        /* set up map */
+    /**
+     * ファイル選択ダイアログでシェープファイルを選択する
+     */
+    private File selectShapefile() {
         File source_file = JFileDataStoreChooser.showOpenFile("shp", getGisFile(), null);
-        if (source_file == null) {
-            return false;
+        if (source_file != null) {
+            setGisFile(source_file);
+            System.err.println("source file path: " + source_file.getPath().replaceAll("\\\\", "/"));
         }
-        setGisFile(source_file);
+        return source_file;
+    }
 
+    /**
+     * シェープファイルを読み込む
+     */
+    private void readShapefile(File source_file) {
+        /* set up map */
         try {
             FileDataStore store;
             store = FileDataStoreFinder.getDataStore(source_file);
@@ -157,7 +306,7 @@ public class ImportGis {
                 System.exit(1);
             }
             String fileName = source_file.getName();
-            if (!(fileName.endsWith("A.shp") || fileName.endsWith("B.shp") || fileName.endsWith("C.shp") || fileName.endsWith("_32.shp") || fileName.endsWith("_l.shp"))) {
+            if (! fileName.toLowerCase().endsWith(".shp")) {
                 System.err.println("WRNING! irregular file name: " + fileName);
             }
             SimpleFeatureSource featureSource;
@@ -167,14 +316,11 @@ public class ImportGis {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return true;
     }
 
     /* Helper actions 
      */
     class AddGisMapAction extends SafeAction {
-        private static final long serialVersionUID = -7174814927091419973L;
         public AddGisMapAction() {
             super("Add map");
             putValue(Action.SHORT_DESCRIPTION, "Adds a gis map.");
@@ -182,7 +328,10 @@ public class ImportGis {
 
         @Override
         public void action(ActionEvent arg0) throws Throwable {
-            promptAndAddMap();
+            File source_file = selectShapefile();
+            if (source_file != null) {
+                readShapefile(source_file);
+            }
         }
     }
 
@@ -192,29 +341,14 @@ public class ImportGis {
      */
     class ExportNodeLinkAction extends SafeAction {
 
-        private static final long serialVersionUID = -4292159606360586326L;
-
-        private NetworkMap exportNetworkMap;
-
-        public ExportNodeLinkAction(NetworkMap _exportNetworkMap) {
+        public ExportNodeLinkAction() {
             super("Convert");
             putValue(Action.SHORT_DESCRIPTION,
                     "Exports GIS map to node-link data of NetMAS");
-            exportNetworkMap = _exportNetworkMap;
         }
-
-        final double[] width_array = new double[] {
-            1.0,
-            14.0,
-            9.0,
-            4.0,
-            2.5
-        };
 
         // 系番号選択ダイアログ
         public class ChooseDialog extends JDialog implements ActionListener, WindowListener {
-            private Integer[] systemNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-
             private JComboBox<Integer> combo = null;
             private boolean canceled = false;
 
@@ -232,7 +366,7 @@ public class ImportGis {
                 JLabel label = new JLabel("Choose a Zone number ");
                 label.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
                 inputPanel.add(label);
-                combo = new JComboBox<Integer>(systemNumbers);
+                combo = new JComboBox<Integer>(SYSTEM_NUMBERS);
                 combo.setSelectedIndex(8);  // デフォルト系番号は 9
                 inputPanel.add(combo);
 
@@ -325,50 +459,67 @@ public class ImportGis {
             return dlg.getNumber();
         }
 
+        public double objectToDouble(Object object) {
+            double value = 0.0;
+            if (object instanceof Double) {
+                value = (Double)object;
+            } else if (object instanceof Integer) {
+                value = (Integer)object;
+            } else if (object instanceof Long) {
+                value = (Long)object;
+            } else if (object instanceof String) {
+                value = Double.valueOf((String)object);
+            } else {
+                System.err.println("Illegal object: " + object);
+                System.exit(1);
+            }
+            return value;
+        }
+
         @Override
         public void action(ActionEvent arg0) throws Throwable {
-            int number = chooseSystemNumber();
-            if (number == -1)
-                return;
-            int type = JOptionPane.showConfirmDialog(map_frame,
-                "World Geodetic System(Y) or Tokyo Datum(N) ?", "",
-                JOptionPane.YES_NO_CANCEL_OPTION);
-            if (type == JOptionPane.CANCEL_OPTION)
-                return;
-            int make_precise = JOptionPane.showConfirmDialog(map_frame,
-                    "Make precise model?", "",
-                    JOptionPane.YES_NO_CANCEL_OPTION);
-            if (make_precise == JOptionPane.CANCEL_OPTION)
-                return;
-            int crowdwalk_coordinate = JOptionPane.showConfirmDialog(map_frame,
-                "CrowdWalk Coordinate(Y) or Plane Rectangular Coordinate(N) ?", "",
-                JOptionPane.YES_NO_CANCEL_OPTION);
-            if (crowdwalk_coordinate == JOptionPane.CANCEL_OPTION)
-                return;
-            ReferencedEnvelope ref = map.getAreaOfInterest();
-            MapPartGroup group = exportNetworkMap.createGroupNode((MapPartGroup)
-                    exportNetworkMap.getRoot());
-            group.addTag("(" + ref.getMinX() + "_" 
-                    + ref.getMinY() + ")-(" 
-                    + ref.getMaxX() + "_" 
-                    + ref.getMaxY() + ")");
-            group.setWest(ref.getMinX());
-            group.setSouth(ref.getMaxY());
-            group.setEast(ref.getMaxX());
-            group.setNorth(ref.getMinY());
-
-            double base_x = ref.getMinX();
-            double scale_x =15.0* Math.min(800 / ref.getWidth(),
-                    800 / ref.getHeight());
-            double base_y;
-            double scale_y;
-            if (ImportGis.REVERSE_Y) {
-                base_y = ref.getMaxY();
-                scale_y = - scale_x;
-            } else {
-                base_y = ref.getMinY();
-                scale_y = scale_x;
+            if (zone == -1) {
+                zone = chooseSystemNumber();
+                if (zone == -1)
+                    return;
             }
+            JOptionPane.showMessageDialog(map_frame, "GisToCrowdWalk Version 1.10 uses Proj4J (Java library) to transform point coordinates.", "", JOptionPane.INFORMATION_MESSAGE);
+
+            // シェープファイルの座標系から平面直角座標系に変換する座標変換オブジェクトを生成する
+            String srcEpsg = null;
+            if (geodeticDatum.equals("Tokyo")) {
+                srcEpsg = "EPSG:4301";  // 旧日本測地系
+            } else {
+                srcEpsg = "EPSG:4326";  // WGS84
+            }
+            String targetEpsg = null;
+            if (outputByTokyoDatum) {
+                targetEpsg = TOKYO_JPR_EPSG_CODES[zone];
+            } else {
+                targetEpsg = JGD2000_JPR_EPSG_CODES[zone];
+            }
+            CoordinateTransform transform = createCoordinateTransform(srcEpsg, targetEpsg);
+
+            networkMap = new NetworkMap();
+            ReferencedEnvelope ref = map.getAreaOfInterest();
+            MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+            root.setZone(zone);
+            MapPartGroup group = networkMap.createGroupNode(root);
+            group.addTag("(" + roundCoordinate(ref.getMinX()) + "_"
+                    + roundCoordinate(ref.getMinY()) + ")-("
+                    + roundCoordinate(ref.getMaxX()) + "_"
+                    + roundCoordinate(ref.getMaxY()) + ")");
+            group.setWest(roundCoordinate(ref.getMinX()));
+            group.setSouth(roundCoordinate(ref.getMaxY()));
+            group.setEast(roundCoordinate(ref.getMaxX()));
+            group.setNorth(roundCoordinate(ref.getMinY()));
+            group.setZone(zone);
+
+            double base_x = roundCoordinate(ref.getMinX());
+            double scale_x =15.0* Math.min(800 / roundCoordinate(ref.getWidth()),
+                    800 / roundCoordinate(ref.getHeight()));
+            double base_y = roundCoordinate(ref.getMinY());
+            double scale_y = scale_x;
 
             System.err.println("basex: " + base_x + ", basey: " + base_y +
                     ", scalex: " + scale_x + ", scaley: " + scale_y);
@@ -376,6 +527,7 @@ public class ImportGis {
                     .getDefaultHints());
             Filter filter = ff.bbox(ff.property("the_geom"), ref);
             HashMap<String, MapNode> nodes = new HashMap<String, MapNode>();
+            HashMap<String, MapLink> links = new HashMap<String, MapLink>();
             MapLayer layers[] = map.getLayers();
             for (int i = 0; i < layers.length; ++i) {
                 MapLayer layer = layers[i];
@@ -390,63 +542,34 @@ public class ImportGis {
                 while (it.hasNext()) {
                     SimpleFeature feature = it.next();
                     Object the_geom = feature.getAttribute("the_geom");
-                    // 2012.11.14 tkokada reviced!
-                    // lengthObject has two types: Double or Long
-                    //double length = (Long)(feature.getAttribute("LK_LENGTH"));
 
-                    // ナビゲーション道路地図2004 (shape版) アルプス社の場合
-                    Object lengthObject = feature.getAttribute("LK_LENGTH");
-                    if (lengthObject == null) {
-                        // 拡張版全国デジタル道路地図データベース (shape版) 2013 住友電工の場合
-                        lengthObject = feature.getAttribute("length");
-                        if (lengthObject == null) {
-                            // MAPPLEルーティングデータ（SHAPE版） 昭文社の場合
-                            lengthObject = feature.getAttribute("link_len");
-                        }
-                    }
-                    double length = 0.0;
-                    if (lengthObject instanceof Double) {
-                        length = (Double) lengthObject;
-                    } else if (lengthObject instanceof Integer) {
-                        length = (Integer) lengthObject;
-                    } else if (lengthObject instanceof Long) {
-                        length = (Long) lengthObject;
-                    } else if (lengthObject instanceof String) {
-                        length = Double.valueOf((String) lengthObject);
-                    } else {
-                        System.err.println("Illegal lengthObject: " + lengthObject);
-                        System.exit(1);
+                    double length = objectToDouble(feature.getAttribute(lengthAttributeName));
+                    if (lengthCorrectionFactor != 1.0) {
+                        length *= lengthCorrectionFactor;
                     }
 
-                    // ナビゲーション道路地図2004 (shape版) アルプス社の場合
-                    double width;
-                    Object rdwdcdObject = feature.getAttribute("WIDTH_TPCD");
-                    if (rdwdcdObject == null) {
-                        // 拡張版全国デジタル道路地図データベース (shape版) 2013 住友電工の場合
-                        rdwdcdObject = feature.getAttribute("rdwdcd");
+                    double width = objectToDouble(feature.getAttribute(widthAttributeName));
+                    if (widthCorrectionFactor != 1.0) {
+                        width *= widthCorrectionFactor;
                     }
-                    if (rdwdcdObject == null) {
-                        // MAPPLEルーティングデータ（SHAPE版） 昭文社の場合
-                        rdwdcdObject = feature.getAttribute("width");
-                        width = (double)(Long)rdwdcdObject / 10.0;
-                    } else {
-                        int tpcd = Integer.parseInt((String)rdwdcdObject);
-                        width = width_array[tpcd];
+                    if (widthTable != null) {
+                        width = objectToDouble(widthTable[(int)width]);
                     }
+                    width = roundValue(width, 4);
 
-                    if (make_precise == JOptionPane.YES_OPTION) {
-                        make_nodes_precise(the_geom, feature, group, nodes,
+                    if (makeSimpleModel) {
+                        make_nodes_simple(the_geom, feature, group, nodes, links,
                             length, width, base_x, base_y, scale_x, scale_y,
-                            crowdwalk_coordinate == JOptionPane.YES_OPTION, number, type == JOptionPane.YES_OPTION);
+                            ! outputByPlaneRectangular, transform);
                     } else {
-                        make_nodes_simple(the_geom, feature, group, nodes,
+                        make_nodes_precise(the_geom, feature, group, nodes, links,
                             length, width, base_x, base_y, scale_x, scale_y,
-                            crowdwalk_coordinate == JOptionPane.YES_OPTION, number, type == JOptionPane.YES_OPTION);
+                            ! outputByPlaneRectangular, transform);
                     }
                 }
             }
             // check the nodes that are placed same coordinate.
-            ArrayList<MapNode> mapNodes = exportNetworkMap.getNodes();
+            ArrayList<MapNode> mapNodes = networkMap.getNodes();
             System.err.println("MapNode size " + mapNodes.size());
             for (int i = 0; i < mapNodes.size(); i++) {
                 for (int j = i + 1; j < mapNodes.size(); j++) {
@@ -455,7 +578,7 @@ public class ImportGis {
                                 " is used by two nodes!");
                 }
             }
-            ArrayList<MapLink> mapLinks = exportNetworkMap.getLinks();
+            ArrayList<MapLink> mapLinks = networkMap.getLinks();
             System.err.println("MapLink size " + mapLinks.size());
             for (int i = 0; i < mapLinks.size(); i++) {
                 for (int j = i + 1; j < mapLinks.size(); j++) {
@@ -472,148 +595,75 @@ public class ImportGis {
         }
     }
 
-    // 十進法度単位から度分秒に変換する(ddd.d -> dddmmss.s)
-    public static double decimal2degree(double decimal) {
-        int degree = (int)decimal;
-        int minute = (int)((decimal - degree) * 60.0);
-        double second = ((decimal - degree) * 60.0 - minute) * 60.0;
-        return degree * 10000.0 + minute * 100.0 + second;
+    /**
+     * 経緯度座標を四捨五入して小数第 scaleOfRoundOff 位に丸める
+     */
+    public double roundCoordinate(double coordinate) {
+        return roundValue(coordinate, scaleOfRoundOff);
     }
 
-    // Radian
-    public static final double RAD = Math.PI / 180.0;
-
-    // 日本測地系における赤道半径、扁平率、第一離心率
-    public static final double TOKYO_DATUM_A = 6377397.155;
-    public static final double TOKYO_DATUM_F = 1.0 / 299.152813;
-    public static final double TOKYO_DATUM_E2 = TOKYO_DATUM_F * (2.0 - TOKYO_DATUM_F);
-
-    // 世界測地系における赤道半径、扁平率、第一離心率
-    public static final double WGS84_A = 6378137.0;
-    public static final double WGS84_F = 1.0 / 298.257223;
-    public static final double WGS84_E2 = WGS84_F * (2.0 - WGS84_F);
-
-    // 日本測地系から世界測地系に変換する際の並行移動量[m]
-    public static final double DX = -148.0;
-    public static final double DY = 507.0;
-    public static final double DZ = 681.0;
-
-    // 楕円体座標から直行座標へ
-    public static Coordinate llh2xyz(double b, double l, double h, double a, double e2) {
-        b *= RAD;
-        l *= RAD;
-        double rn = a / Math.sqrt(1 - e2 * Math.pow(Math.sin(b), 2.0));
-
-        double x = (rn + h) * Math.cos(b) * Math.cos(l);
-        double y = (rn + h) * Math.cos(b) * Math.sin(l);
-        double z = (rn * (1 - e2) + h) * Math.sin(b);
-
-        return new Coordinate(x, y, z);
-    }
-
-    // 直行座標から楕円体座標へ
-    public static Coordinate xyz2llh(double x, double y, double z, double a, double e2) {
-        double bda = Math.sqrt(1 - e2);
-
-        double p = Math.sqrt(x * x + y * y);
-        double t = Math.atan2(z, p * bda);
-
-        double b = Math.atan2(z + e2 * a / bda * Math.pow(Math.sin(t), 3.0), p - e2 * a * Math.pow(Math.cos(t), 3.0));
-        double l = Math.atan2(y, x);
-        double h = p / Math.cos(b) - a / Math.sqrt(1.0 - e2 * Math.pow(Math.sin(b), 2.0));
-
-        return new Coordinate(l / RAD, b / RAD, h);
-    }
-
-    // 日本測地系 -> 世界測地系に経緯度変換
-    public static void convertJapan2World(Coordinate c) {
-        // double latitude = c.y;
-        // double longitude = c.x;
-        // c.x = longitude - latitude * 0.000046038 - longitude * 0.000083043 + 0.010040;
-        // c.y = latitude - latitude * 0.00010695 + longitude * 0.000017464 + 0.0046017;
-
-        if (Double.isNaN(c.z)) {
-            c.z = 0.0;
+    /**
+     * 実数値 value を小数点以下第 scale 位で四捨五入する
+     */
+    public double roundValue(double value, int scale) {
+        if (scale >= 0 && ! Double.isNaN(value)) {
+            BigDecimal bd = new BigDecimal(String.valueOf(value));
+            return bd.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
         }
-        Coordinate rcs = llh2xyz(c.y, c.x, c.z, TOKYO_DATUM_A, TOKYO_DATUM_E2);
-        c.setCoordinate(xyz2llh(rcs.x + DX, rcs.y + DY, rcs.z + DZ, WGS84_A, WGS84_E2));
+        return value;
     }
 
-    private double[] call_gtoc(Coordinate c, int number, boolean type) {
-        double[] result = new double[3];    // {x, y, m}
-        try {
-            ruby.evalScriptlet("require 'gtoc'");
-            ruby.evalScriptlet("require 'gtoc'");
-            String caller = "Geographic::gtoc(latitude: " + c.y + ", longitude: " + c.x + ", number: " + number + ", default_latitude: nil, default_longitude: nil, type: \"" + (type ? "world" : "japan") + "\")";
-            IRubyObject out = ruby.evalScriptlet(caller);
-            RubyHash h = out.convertToHash();
-            for (Object key : h.keySet()) {
-                // System.err.println("  key: " + key.toString() + ", value: " + h.get(key));
-                String keystring = key.toString();
-                if (keystring.equals("x")) {
-                    result[0] = (Double) (h.get(key));
-                } else if (keystring.equals("y")) {
-                    result[1] = (Double) (h.get(key));
-                } else if (keystring.equals("m")) {
-                    result[2] = (Double) (h.get(key));
-                }
-            }
-            //System.err.println(caller);
-        } catch (java.lang.NullPointerException npe) {
-            System.err.println("\tMap number or default latitude and longitude are too far from the coordinate.");
-            System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            JavaEmbedUtils.terminate(ruby);
-        }
-        return result;
+    /**
+     * Proj4J の座標変換オブジェクトを生成する
+     */
+    public CoordinateTransform createCoordinateTransform(String srcEpsgName, String targetEpsgName) {
+        CRSFactory crsFactory = new CRSFactory();
+        CoordinateReferenceSystem sourceCRS = crsFactory.createFromName(srcEpsgName);
+        CoordinateReferenceSystem targetCRS = crsFactory.createFromName(targetEpsgName);
+        CoordinateTransformFactory transformFactory = new CoordinateTransformFactory();
+        return transformFactory.createTransform(sourceCRS, targetCRS);
     }
 
-    // KMR-zoar 氏作成の変換スクリプトを使用する
-    // (このライブラリは世界測地系に固定されており、そのままでは日本測地系で使うことは出来ない)
-    // KMR-zoar/cblxy -> https://github.com/KMR-zoar/cblxy
-    private double[] call_blxy(Coordinate c, int number) {
-        double[] result = new double[3];    // {x, y, m}
-        try {
-            ruby.evalScriptlet("require 'cblxy'");
-            String caller = "blxy(" + decimal2degree(c.y) +", " + decimal2degree(c.x) + ", " + number + ")";
-            IRubyObject out = ruby.evalScriptlet(caller);
-            RubyArray ruby_array = out.convertToArray();
-            result[0] = (Double)ruby_array.get(0);
-            result[1] = (Double)ruby_array.get(1);
-            result[2] = 0.0;    // dummy
-            //System.err.println(caller);
-        } catch (java.lang.NullPointerException npe) {
-            System.err.println("\tMap number or default latitude and longitude are too far from the coordinate.");
-            System.err.println("\t\tc.x: " + c.x + ", c.y: " + c.y);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            JavaEmbedUtils.terminate(ruby);
+    /**
+     * 座標変換
+     */
+    public ProjCoordinate transformCoordinate(CoordinateTransform transform, Coordinate c) {
+        ProjCoordinate gcsPoint = new ProjCoordinate(c.x, c.y);
+        ProjCoordinate pcsPoint = new ProjCoordinate();
+        pcsPoint = transform.transform(gcsPoint, pcsPoint);
+        return pcsPoint;
+    }
+
+    /**
+     * ノード ID を小さい順に並べた文字列
+     */
+    private String makeNodeIdPair(MapNode node1, MapNode node2) {
+        if (node1.ID.compareTo(node2.ID) < 0) {
+            return node1.ID + " " + node2.ID;
+        } else {
+            return node2.ID + " " + node1.ID;
         }
-        return result;
     }
 
     private void make_nodes_precise(Object the_geom, SimpleFeature feature,
-            MapPartGroup parent_group, HashMap<String, MapNode> nodes,
+            MapPartGroup parent_group, HashMap<String, MapNode> nodes, HashMap<String, MapLink> links,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number, boolean type) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate, CoordinateTransform transform) {
         if (!(the_geom instanceof MultiLineString))
             return;
         MultiLineString line = (MultiLineString) the_geom;
         MapNode from = null;
         Coordinate[] points = line.getCoordinates();
 
-        /* two-pass, first get ratio of each segments */
-        double[] ratio = new double[points.length - 1];
-
-        if (type) {     // 世界測地系
-            // どちらのメーカーのシェイプファイルも日本測地系の経緯度が使われているためこの変換が必要
-            for (int j = 0; j < points.length; j++) {
-                convertJapan2World(points[j]);
+        if (scaleOfRoundOff >= 0) {
+            for (int index = 0; index < points.length; index++) {
+                Coordinate c = points[index];
+                points[index] = new Coordinate(roundCoordinate(c.x), roundCoordinate(c.y), roundCoordinate(c.z));
             }
         }
+
+        /* two-pass, first get ratio of each segments */
+        double[] ratio = new double[points.length - 1];
 
         Coordinate last_c = null;
         double total_d = 0.0;
@@ -633,15 +683,14 @@ public class ImportGis {
         /* two-pass, second actually make links */
         for (int j = 0; j < points.length; j++) {
             Coordinate c = points[j];
-            // double x = (c.x - base_x) * scale_x;
-            // double y = (c.y - base_y) * scale_y;
-            double x = 0.0 , y = 0.0, m = 0.0;
-            double[] result = type ? call_blxy(c, number) : call_gtoc(c, number, type);
-            x = result[0];
-            y = result[1];
+            ProjCoordinate coordinate = transformCoordinate(transform, c);
+            double x = roundValue(coordinate.y, 4);
+            double y = roundValue(coordinate.x, 4);
+            double z = roundValue(c.z, 4);
+            if (! heightEnable || Double.isNaN(z)) {
+                z = 0.0;
+            }
             //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
-            if (REVERSE_Y)
-                y *= -1.0;
 
             Point2D point = null;
             if (crowdwalk_coordinate) {
@@ -650,9 +699,7 @@ public class ImportGis {
                 point = new Point2D.Double(x, y);
             }
 
-            // 2012.11.13 tkokada reviced.
-            //String point_str = point.toString();
-            String point_str = removeSpace(point.toString());
+            String point_str = point.toString().replaceAll(" ", "");
             // if (j == 0) {
                 // point_str = feature.getAttribute("ND1").toString();
                 // System.err.println("\tND1: " + point_str);
@@ -667,9 +714,11 @@ public class ImportGis {
             if (nodes.containsKey(point_str)) {
                 node = nodes.get(point_str);
             } else {
-                node = networkMap.createMapNode(parent_group, point, 0.0);
+                node = networkMap.createMapNode(parent_group, point, z);
                 //node.addTag(point_str);
-                //node.addTag("" + c.x + "_" + c.y);
+                if (addCoordinateValueTag) {
+                    node.addTag("" + c.x + "_" + c.y);
+                }
                 nodes.put(point_str, node);
             }
 
@@ -678,8 +727,14 @@ public class ImportGis {
             } else if (from != null) {
                 if (j == 0)
                     System.err.println("\tj 0 but from is not null!");
-                networkMap.createMapLink(parent_group, from, node,
-                        length * ratio[j - 1], width);
+                String nodeIdPair = makeNodeIdPair(from, node);
+                if (links.containsKey(nodeIdPair)) {
+                    System.err.println("Duplicate link! node:" + nodeIdPair);
+                } else {
+                    MapLink link = networkMap.createMapLink(parent_group, from,
+                            node, roundValue(length * ratio[j - 1], 4), width);
+                    links.put(nodeIdPair, link);
+                }
                 /*
                 double dnodes = Math.sqrt(
                         Math.pow(from.getX() - node.getX(), 2.0) +
@@ -694,34 +749,33 @@ public class ImportGis {
     }
 
     private void make_nodes_simple(Object the_geom, SimpleFeature feature,
-            MapPartGroup parent_group, HashMap<String, MapNode> nodes,
+            MapPartGroup parent_group, HashMap<String, MapNode> nodes, HashMap<String, MapLink> links,
             double length, double width, double base_x, double base_y,
-            double scale_x, double scale_y, boolean crowdwalk_coordinate, int number, boolean type) {
+            double scale_x, double scale_y, boolean crowdwalk_coordinate, CoordinateTransform transform) {
         if (!(the_geom instanceof MultiLineString)) return;
 
         MultiLineString line = (MultiLineString)the_geom;
         MapNode from = null;
         Coordinate[] points = line.getCoordinates();
 
-        if (type) {     // 世界測地系
-            // どちらのメーカーのシェイプファイルも日本測地系の経緯度が使われているためこの変換が必要
-            for (int j = 0; j < points.length; j++) {
-                convertJapan2World(points[j]);
+        if (scaleOfRoundOff >= 0) {
+            for (int index = 0; index < points.length; index++) {
+                Coordinate c = points[index];
+                points[index] = new Coordinate(roundCoordinate(c.x), roundCoordinate(c.y), roundCoordinate(c.z));
             }
         }
 
         for (int j = 0; j < 2; j++) {
             if (j == 1) j = points.length - 1;
             Coordinate c = points[j];
-            // double x = (c.x - base_x) * scale_x;
-            // double y = (c.y - base_y) * scale_y;
-            double x = 0.0 , y = 0.0, m = 0.0;
-            double[] result = type ? call_blxy(c, number) : call_gtoc(c, number, type);
-            x = result[0];
-            y = result[1];
+            ProjCoordinate coordinate = transformCoordinate(transform, c);
+            double x = roundValue(coordinate.y, 4);
+            double y = roundValue(coordinate.x, 4);
+            double z = roundValue(c.z, 4);
+            if (! heightEnable || Double.isNaN(z)) {
+                z = 0.0;
+            }
             //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
-            if (REVERSE_Y)
-                y *= -1.0;
 
             Point2D point = null;
             if (crowdwalk_coordinate) {
@@ -730,27 +784,34 @@ public class ImportGis {
                 point = new Point2D.Double(x, y);
             }
 
-            // 2012.11.13 tkokada reviced.
-            //String point_str = point.toString();
-            String point_str = removeSpace(point.toString());
+            String point_str = point.toString().replaceAll(" ", "");
             // if (j == 0) {
                 // point_str = feature.getAttribute("ND1").toString();
             // } else if (j == points.length - 1) {
                 // point_str = feature.getAttribute("ND2").toString();
             // }
 
-            MapNode node = null; 
+            MapNode node = null;
             if (nodes.containsKey(point_str)) {
                 node = nodes.get(point_str);
             } else {
-                node = networkMap.createMapNode(parent_group, point, 0.0);
+                node = networkMap.createMapNode(parent_group, point, z);
                 //node.addTag(point_str);
+                if (addCoordinateValueTag) {
+                    node.addTag("" + c.x + "_" + c.y);
+                }
                 nodes.put(point_str, node);
             }
 
             if (from != null) {
-                networkMap.createMapLink(parent_group, from, node, length,
-                        width);
+                String nodeIdPair = makeNodeIdPair(from, node);
+                if (links.containsKey(nodeIdPair)) {
+                    System.err.println("Duplicate link! node:" + nodeIdPair);
+                } else {
+                    MapLink link = networkMap.createMapLink(parent_group, from,
+                            node, roundValue(length, 4), width);
+                    links.put(nodeIdPair, link);
+                }
             }
             from = node;
         }
@@ -766,16 +827,12 @@ public class ImportGis {
 
         String filename = fd.getDirectory() + fd.getFile();
         settings.put("gis-output-filename", fd.getFile());
-        // networkMap.prepareForSave();
 
         try {
             FileOutputStream fos = new FileOutputStream(filename);
 
-            // DaRuMaClient daruma_client = new DaRuMaClient();
-            // Document doc = daruma_client.newDocument();
             Document doc = ItkXmlUtility.singleton.newDocument() ;
             networkMap.toDOM(doc);
-            // boolean result = daruma_client.docToStream(doc, fos);
             boolean result = ItkXmlUtility.singleton.docToStream(doc, fos);
             if (!result) {
                 JOptionPane.showMessageDialog(map_frame,
@@ -812,24 +869,153 @@ public class ImportGis {
         System.exit(0);
     }
 
-
-    /** Remove white spaces from a inputted string.
-     * @author tkokada
-     * @param input a string.
-     * @return a string that white spaces are removed.
+    /**
+     * コマンドラインオプションの定義
      */
-    private static String removeSpace(String input) {
-        String parsedString = new String();
-        for (String splited : input.split(" ")) {
-            parsedString += splited;
-        }
+    private void defineOptions(Options options) {
+        options.addOption("h", "help", false, "この使い方を表示して終了する");
+        // options.addOption("H", "height-enable", false, "シェープファイルの標高情報を height 属性に反映する");
+        options.addOption("p", "output-by-plane-rectangular", false, "平面直角座標系のまま出力する");
+        options.addOption(OptionBuilder.withLongOpt("shapefile-spec")
+            .withDescription("読み込むシェープファイルの形式を指定する\nSPEC = "
+                + String.join(" | ", shapefileSpecNames))
+            .hasArg().withArgName("SPEC").create("s"));
+        options.addOption("S", "make-simple-model", false, "簡易モデルのマップを出力する");
+        options.addOption("t", "add-coordinate-value-tag", false, "経緯度タグをノードに付加する");
+        options.addOption("T", "output-by-tokyo-datum", false, "旧日本測地系で出力する");
+        options.addOption(OptionBuilder.withLongOpt("zone")
+            .withDescription("平面直角座標系の系番号(1～19)を指定する")
+            .hasArg().withArgName("NUMBER").create("z"));
+    }
 
-        return parsedString;
+    /**
+     * コマンドラインオプションを解析して指定された処理を実行する
+     * @param args : main メソッドの args 引数
+     */
+    private void parseCommandLine(String[] args, Options options) {
+        try {
+            CommandLine commandLine = new PosixParser().parse(options, args);
+            // ヘルプ表示オプションもしくはコマンドライン引数エラー
+            if (commandLine.hasOption("help") || commandLine.getArgs().length > 1) {
+                printHelp(options);
+                System.exit(0);
+            }
+
+            // シェープファイルの指定あり
+            if (commandLine.getArgs().length == 1) {
+                shapefilePath = commandLine.getArgs()[0];
+            }
+
+            // 読み込むシェープファイルの形式
+            if (commandLine.hasOption("shapefile-spec")) {
+                shapefileSpecName = commandLine.getOptionValue("shapefile-spec");
+                boolean found = false;
+                for (String name : shapefileSpecNames) {
+                    if (name.equals(shapefileSpecName)) {
+                        found = true;
+                    }
+                }
+                if (! found) {
+                    printHelp(options);
+                    System.exit(1);
+                }
+            }
+
+            // シェープファイルが標高情報を持っていたら、その値を height 属性に反映する
+            // heightEnable = commandLine.hasOption("height-enable");
+            // ※標高値に関しては不明な点があるため当面サポートは見送る
+
+            // 経緯度タグをノードに付加する
+            addCoordinateValueTag = commandLine.hasOption("add-coordinate-value-tag");
+
+            // 旧日本測地系で出力する
+            outputByTokyoDatum = commandLine.hasOption("output-by-tokyo-datum");
+
+            // 平面直角座標系のまま出力する
+            outputByPlaneRectangular = commandLine.hasOption("output-by-plane-rectangular");
+
+            // 簡易モデルのマップを出力する
+            makeSimpleModel = commandLine.hasOption("make-simple-model");
+
+            // 平面直角座標系の系番号(1～19)を指定する
+            if (commandLine.hasOption("zone")) {
+                String _zone = commandLine.getOptionValue("zone");
+                for (Integer num : SYSTEM_NUMBERS) {
+                    if (_zone.equals(num.toString())) {
+                        zone = num;
+                        break;
+                    }
+                }
+                if (zone == -1) {
+                    printHelp(options);
+                    System.exit(1);
+                }
+            }
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            printHelp(options);
+            System.exit(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    /**
+     * コマンドラインヘルプを標準出力に表示する
+     */
+    public void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        int usageWidth = 7 + commandLineSyntax.length();    // "usege: " + commandLineSyntax
+        formatter.setWidth(Math.max(usageWidth, 80));       // 行の折りたたみ最小幅は80桁
+        formatter.printHelp(commandLineSyntax, options);
+    }
+
+    /**
+     * シェープファイルのメーカー別仕様定義ファイルを読み込む
+     *
+     * ※カレントディレクトリに定義ファイルがあればそちらを優先する
+     */
+    public void loadShapefileSpecs(String filePath) {
+        JSON json = new JSON(JSON.Mode.TRADITIONAL);
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                shapefileSpecs = json.parse(new FileReader(filePath));
+            } else {
+                shapefileSpecs = json.parse(getClass().getResourceAsStream("/shapefile_specs.json"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        shapefileSpecNames = shapefileSpecs.keySet().toArray(new String[0]);
     }
 
     /* Interface to the outside
      */
     public static void main(String[] args) {
-        new ImportGis();
+        ImportGis importGis = new ImportGis();
+        importGis.loadShapefileSpecs(SHAPEFILE_SPECS_PATH);
+
+        Options options = new Options();
+        importGis.defineOptions(options);
+        importGis.parseCommandLine(args, options);
+
+        if (shapefileSpecName == null) {
+            int index = JOptionPane.showOptionDialog(null,
+                    "読み込むシェープファイルの形式を選択してください",
+                    "シェープファイルの形式",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, shapefileSpecNames, shapefileSpecNames[0]);
+            if (index == JOptionPane.CLOSED_OPTION) {
+                System.exit(0);
+            }
+            shapefileSpecName = shapefileSpecNames[index];
+        }
+
+        importGis.initialize();
+        JMapFrame mapFrame = importGis.setupMapFrame();
+        mapFrame.setVisible(true);
     }
 }

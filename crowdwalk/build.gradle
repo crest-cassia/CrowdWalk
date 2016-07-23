@@ -5,7 +5,7 @@
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
-defaultTasks 'clean', 'build'
+defaultTasks 'clean', 'build', 'javadoc'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -15,6 +15,17 @@ apply plugin: 'eclipse'
 // 今のところ、まだうまく動かない。
 //targetCompatibility = '1.8' ;
 //sourceCompatibility = '1.6' ;
+
+def javaVersion = new Double(sourceCompatibility.toString())
+def onlyCuiSimulator = cui.toBoolean()
+
+if (javaVersion < 1.8) {
+    println "javaVersion ${javaVersion}"
+    onlyCuiSimulator = true
+}
+if (onlyCuiSimulator) {
+    println "build mode: onlyCuiSimulator"
+}
 
 repositories {
     mavenCentral()
@@ -30,19 +41,42 @@ dependencies {
     compile 'net.sf.opencsv:opencsv:2.3'
     compile 'junit:junit:4.12'
 //    compile 'org.jruby:jruby:9.+'
+    compile 'org.osgeo:proj4j:0.1.0'
+    compile 'math.geom2d:javaGeom:0.11.1'
     compile fileTree(dir: 'libs/jar', include: '*.jar')
 
-    runtime fileTree(dir: 'libs/windows/amd64', include: '*.dll')
-    runtime fileTree(dir: 'libs/windows/i386', include: '*.dll')
-    runtime fileTree(dir: 'libs/linux/amd64', include: '*.so')
-    runtime fileTree(dir: 'libs/linux/i386', include: '*.so')
-    runtime fileTree(dir: 'libs/macosx', include: '*.jnilib')
+    if (! onlyCuiSimulator) {
+        runtime fileTree(dir: 'libs/windows/amd64', include: '*.dll')
+        runtime fileTree(dir: 'libs/windows/i386', include: '*.dll')
+        runtime fileTree(dir: 'libs/linux/amd64', include: '*.so')
+        runtime fileTree(dir: 'libs/linux/i386', include: '*.so')
+        runtime fileTree(dir: 'libs/macosx', include: '*.jnilib')
+    }
 }
 
 sourceSets {
     main {
         java {
-            exclude '**/ImportGis.java'
+            if (onlyCuiSimulator) {
+                exclude 'nodagumi/ananPJ/CrowdWalkLauncher.java'
+                exclude 'nodagumi/ananPJ/GuiSimulationEditorLauncher.java'
+                exclude 'nodagumi/ananPJ/GuiSimulationLauncher.java'
+                exclude 'nodagumi/ananPJ/GuiSimulationLauncher2D.java'
+                exclude 'nodagumi/ananPJ/GuiSimulationLauncher3D.java'
+                exclude 'nodagumi/ananPJ/Settings.java'
+                exclude 'nodagumi/ananPJ/ImportGis.java'
+                exclude 'nodagumi/ananPJ/Editor/**'
+                exclude 'nodagumi/ananPJ/Gui/**'
+                exclude 'nodagumi/ananPJ/misc/GetDoublesDialog.java'
+                exclude 'nodagumi/ananPJ/misc/GridMapAreaDialog.java'
+                exclude 'nodagumi/ananPJ/misc/GsiAccessor.java'
+                exclude 'nodagumi/ananPJ/misc/Hover.java'
+                exclude 'nodagumi/ananPJ/misc/MapChecker.java'
+                exclude 'nodagumi/ananPJ/Simulator/SimulationPanel3D.java'
+            } else {
+                exclude 'nodagumi/ananPJ/CuiCrowdWalkLauncher.java'
+            }
+            exclude 'nodagumi/ananPJ/ImportGis.java'
         }
     }
 }
@@ -75,7 +109,11 @@ processResources {
 }
 
 jar {
-    manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CrowdWalkLauncher")
+    if (onlyCuiSimulator) {
+        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CuiCrowdWalkLauncher")
+    } else {
+        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CrowdWalkLauncher")
+    }
     doFirst {
         from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
             exclude 'META-INF/MANIFEST.MF'
@@ -86,13 +124,11 @@ jar {
     }
 }
 
-javadoc {
-    destinationDir = file("./doc/javadoc/")
-    options.setEncoding("UTF-8")
-    options.charSet("UTF-8")
-    options.quiet()
-    options.noTimestamp()
-    setFailOnError(false)
+task javadoc(overwrite: true) << {
+    exec {
+        executable "sh"
+        args "-c", "./make_javadoc.sh"
+    }
 }
 
 task clearCache() {

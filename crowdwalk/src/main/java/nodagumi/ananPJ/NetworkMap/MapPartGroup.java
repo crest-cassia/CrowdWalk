@@ -6,9 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -17,11 +14,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
-import nodagumi.ananPJ.misc.FilePathManipulation;
 
 import nodagumi.Itk.*;
 
@@ -40,6 +35,7 @@ public class MapPartGroup extends OBNode {
     private double rotation = 0.0;  // tkokada added
     private double defaultHeight = 0.0;
     private String imageFileName = null;
+    private int zone = 0;
       
     private AffineTransform fromParentCache;
     //private AffineTransform fromAbsoluteCache;
@@ -109,6 +105,7 @@ public class MapPartGroup extends OBNode {
         element.setAttribute("maxHeight", "" + getMaxHeight());
         element.setAttribute("defaultHeight", "" + getDefaultHeight());
         element.setAttribute("imageFileName", getImageFileName());
+        element.setAttribute("zone", "" + getZone());
     }
     
     @Override
@@ -140,14 +137,13 @@ public class MapPartGroup extends OBNode {
         setMaxHeight(Double.parseDouble(element.getAttribute("maxHeight")));
         setDefaultHeight(Double.parseDouble(element.getAttribute("defaultHeight")));
         setImageFileName(element.getAttribute("imageFileName"));
+
+        String _zone = element.getAttribute("zone");
+        if (_zone != null && ! _zone.isEmpty()) {
+            setZone(Integer.parseInt(_zone));
+        }
     }
     
-    public boolean haveEditorFrame(){
-        EditorFrame frame = (EditorFrame) this.getUserObject();
-        if(frame == null) return false;
-        return true;
-    }
-
     public Rectangle2D getRegion(){
         return new Rectangle2D.Double(  this.pNorthWest.getX(),
                                         this.pNorthWest.getY(),
@@ -296,6 +292,13 @@ public class MapPartGroup extends OBNode {
     }
     public double getSouth() {
         return pSouthEast.getY();
+    }
+
+    public void setZone(int zone) {
+        this.zone = zone;
+    }
+    public int getZone() {
+        return zone;
     }
 
     @Override
