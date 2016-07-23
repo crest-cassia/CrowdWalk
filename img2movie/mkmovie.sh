@@ -32,7 +32,8 @@ remove_file_extension() {
 # check ffmpeg and mencoder path
 # if you don't use mencoder, please remove 'mencoder' from following commands 
 # array.
-commands=('ffmpeg' 'mencoder')
+#commands=('ffmpeg' 'mencoder')
+commands=('ffmpeg')
 for command in ${commands[*]} ; do
     if ! chk_command $command ; then
         echo "${command} does not exist!"
@@ -48,8 +49,9 @@ output='out.avi'
 prefix='capture'
 ratio=1
 speed=1
+index=0
 help="FALSE"
-while getopts c:d:f:i:o:p:r:s:vh opt; do
+while getopts c:d:f:i:o:p:r:s:x:vh opt; do
     case "$opt" in
     "c") command=$OPTARG
         ;;
@@ -66,6 +68,8 @@ while getopts c:d:f:i:o:p:r:s:vh opt; do
     "r") ratio=$OPTARG
         ;;
     "s") speed=$OPTARG
+        ;;
+    "x") index=$OPTARG
         ;;
     "v") verbose="TRUE"
         ;;
@@ -95,8 +99,13 @@ if [ "${command}" = "usage" -o "${help}" = "TRUE" ]; then
 #   $dict/$prefix1.$iformat $dict/$prefix2.$iformat ...
 ###############################################################################
 elif [ "${command}" = "img2movie" ]; then
-    echo ffmpeg -r 1 -y -i $dict/$prefix"%d".$iformat -vcodec mjpeg -qscale 0 $output
-    ffmpeg -r 1 -y -i $dict/$prefix"%d".$iformat -vcodec mjpeg -qscale 0 $output
+    if ["${index}" = "0" ]; then
+	idx="%d"
+    else
+	idx="%${index}d"
+    fi
+    echo ffmpeg -r 1 -y -i $dict/$prefix$idx.$iformat -vcodec mjpeg -qscale 0 $output
+    ffmpeg -r 1 -y -i $dict/$prefix$idx.$iformat -vcodec mjpeg -qscale 0 $output
 ###############################################################################
 # make yuv file
 # Caution: The file size of yuv is so huge. Be careful!

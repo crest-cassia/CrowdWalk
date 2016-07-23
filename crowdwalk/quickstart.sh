@@ -2,7 +2,8 @@
 
 # export CROWDWALK=/path/to/CrowdWalk/crowdwalk
 if test "$CROWDWALK" = "" ; then
-	CROWDWALK='.'
+    #	CROWDWALK='.'
+    	CROWDWALK=`dirname $0`
 fi
 
 # カレントディレクトリの CrowdWalk を優先
