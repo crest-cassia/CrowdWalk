@@ -52,7 +52,8 @@ class OsmMap < MapTown
     :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
   } ;
 
-  ## 経度(lon)緯度(lat)から平面直角座標系への変換原点
+  ## 日本の19座標系の原点リスト。
+  ## 経度(lon)緯度(lat)から平面直角座標系への変換原点。
   CartesianLonLatOrigin = {
     :jp01 => Geo2D::Point.new(129.0 + (30.0/60.0), 33.0), # [129度30分, 33度]
     :jp02 => Geo2D::Point.new(131.0 +  (0.0/60.0), 33.0), # [131度00分, 33度]
@@ -91,8 +92,8 @@ class OsmMap < MapTown
   
   #--------------------------------------------------------------
   #++
-  ## description of method initialize
-  ## _baz_:: about argument baz.
+  ## 初期化。
+  ## _conf_:: 設定テーブル
   def initialize(conf = {})
     super(0, 0.0, conf) ;
     @roadList = [] ;
@@ -257,8 +258,9 @@ class OsmMap < MapTown
   
   #--------------------------------------------------------------
   #++
-  ## convert lonlat to pos (x-y for CrowdWalk)
-  ## CrowdWalk は、東が x、南が y
+  ## convert lonlat to pos (x-y for CrowdWalk)。
+  ## CrowdWalk は、東が x、南が y。
+  ## _lonlat_ :: 経度緯度の配列もしくは Geo2D::Point
   def convertLonLat2Pos(lonlat)
     ll = Geo2D::Point.sureGeoObj(lonlat) ;
     origin = CartesianLonLatOrigin[getConf(:cartOrigin)] ;
@@ -292,7 +294,7 @@ class OsmMap < MapTown
 
     #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     #++
-    ## description of DefaultValues.
+    ## 元のJSONデータ（連想配列）。
     attr_accessor :sourceJson ;
     
     #------------------------------------------
@@ -304,7 +306,8 @@ class OsmMap < MapTown
 
     #------------------------------------------
     #++
-    ## initialize
+    ## json を格納。
+    ## 現段階で解析はしない。
     def scanJson(json)
       @sourceJson = json ;
       return self ;
@@ -319,7 +322,8 @@ class OsmMap < MapTown
 
     #------------------------------------------
     #++
-    ## check a certain property
+    ## check a certain property.
+    ## _pattern_ :: 属性名のパターン。
     def hasProperty(pattern)
       if(pattern.is_a?(String)) then
         return getProperties()[pattern] ;
@@ -340,14 +344,15 @@ class OsmMap < MapTown
 
     #------------------------------------------
     #++
-    ## get geometry
+    ## geo object のタイプ。
+    ## "LineString" とか "Point" とかが帰る。
     def geoType()
       return getGeometry()["type"] ;
     end
 
     #------------------------------------------
     #++
-    ## get geometry
+    ## Json に含まれる座標値列。(coordinates)
     def coordinatesJson()
       return getGeometry()["coordinates"] ;
     end
@@ -413,14 +418,16 @@ class OsmMap < MapTown
     
     #------------------------------------------
     #++
-    ## setPos
+    ## 緯度経度設定。
+    ## _lonlat_ :: 経度緯度値
     def setLonLat(lonlat)
       @lonlat = lonlat ;
     end
 
     #------------------------------------------
     #++
-    ## bbox
+    ## bbox.
+    ## BTree のテーブルで必要。
     def bbox()
       @pos.bbox() ;
     end
@@ -443,7 +450,10 @@ class OsmMap < MapTown
 
     #------------------------------------------
     #++
-    ## bbox
+    ## 初期化。
+    ## __road_ :: Road データ。
+    ## __fromNode_ :: 起点ノード。
+    ## __toNode_ :: 終点ノード。
     def initialize(_road, _fromNode, _toNode)
       @road = _road ;
       super(0, _fromNode, _toNode, DefaultWidth) ;
@@ -451,7 +461,13 @@ class OsmMap < MapTown
 
     #------------------------------------------
     #++
-    ## bbox
+    ## Road の属性情報からタグを付与。
+    ## @road にはすでに、Road が入っている。
+    ## その中の tag (cw:tag の属性値) を使ってタグを付与する。
+    ## タグには、そのリンクの序数（RoadLink の何番目のセグメントか）
+    ## が付与される。その際、_cwTagNthSep_ （通常 ":"）がセパレータとして
+    ## 挿入される。
+    ## _cwTagNthSep_ :: 属性名の suffix を追加するときのセパレータ。
     def assignTagFromRoad(cwTagNthSep)
       nth = @road.linkList.index(self) ;
       if(nth.nil?) then
@@ -504,7 +520,8 @@ if($0 == __FILE__) then
 
     #----------------------------------------------------
     #++
-    ## about test_a
+    ## OSM の JSON ファイルの中身をチェック。
+    ## 開発用の作業テスト。
     def test_a
       json = nil ;
       open(TestJsonData,"r"){|strm|
