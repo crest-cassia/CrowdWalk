@@ -5,7 +5,8 @@
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
-defaultTasks 'clean', 'build', 'javadoc'
+// defaultTasks 'clean', 'build', 'javadoc'
+defaultTasks 'clean', 'build'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'

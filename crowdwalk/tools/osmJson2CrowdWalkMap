@@ -24,6 +24,7 @@ $conf = {
   :inFile => nil,
   :outFile => nil,
   :cartOrigin => :jp09,
+  :redundantMargin => 0.5,
   :foo => false,
   :bar => 1,
   :baz => "test",
@@ -57,6 +58,10 @@ _END_
                    OsmMap::CartesianLonLatOrigin.keys.inspect) ;
       exit(1) ;
     end
+  }
+  op.on("-m","--margin ReduceMargin", Float, sep + "margin to reduce nodes") {
+    |margin|
+    $conf[:redundantMargin] = margin ;
   }
   
   op.on("-f","--[no-]foo", sep + "switch foo.") {|foo|
@@ -116,7 +121,9 @@ end
 
 pp [:convert, $conf]
 
-mapConf = { :cartOrigin => $conf[:cartOrigin] }
+mapConf = { :cartOrigin => $conf[:cartOrigin],
+            :redundantMargin => $conf[:redundantMargin],
+          } ;
 
 map = OsmMap.new(mapConf) ;
 myOpenFile($conf[:inFile],:r) {|inStream|

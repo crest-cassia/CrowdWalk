@@ -1161,7 +1161,13 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     }
 
     public static MapLink fromDom(Element element) {
+        /* used in NetworkMap.setupNetwork */
         String id = element.getAttribute("id");
+        if(id == null || id.isEmpty()) {
+            Itk.logError("Link element in DOM has no ID" + element) ;
+            System.exit(1) ;
+        }
+        /* get length and width */
         double length = Double.parseDouble(element.getAttribute("length"));
         double width = Double.parseDouble(element.getAttribute("width"));
         String nodes[] = new String[2];

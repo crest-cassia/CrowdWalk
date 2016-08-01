@@ -92,6 +92,10 @@ class OsmMap < MapTown
   attr_accessor :roadList ;
   ## node table ;
   attr_accessor :nodeTable ;
+  ## node id max
+  attr_accessor :nodeIdMax ;
+  ## link id max
+  attr_accessor :linkIdMax ;
   
   #--------------------------------------------------------------
   #++
@@ -101,6 +105,8 @@ class OsmMap < MapTown
     super(0, 0.0, conf) ;
     @roadList = [] ;
     @nodeTable = Geo2D::RTree.new() ;
+    @nodeIdMax = 0 ;
+    @linkIdMax = 0 ;
   end
 
   #--------------------------------------------------------------
@@ -223,10 +229,8 @@ class OsmMap < MapTown
   #++
   ## assign IDs to nodes.
   def assignNodeIds()
-    id = 0 ;
     @nodeList.each{|node|
-      node.id = ("nd_%06d" % id) ;
-      id += 1 ;
+      node.id = genNodeId() ;
     }
   end
 
@@ -234,15 +238,31 @@ class OsmMap < MapTown
   #++
   ## assign IDs to links.
   def assignLinkIds()
-    id = 0 ;
     @roadList.each{|road|
       road.linkList.each{|link|
-        link.id = ("lk_%06d" % id) ;
-        id += 1 ;
+        link.id = genLinkId() ;
       }
     }
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## genNodeId.
+  def genNodeId()
+    newId = ("nd_%06d" % @linkIdMax) ;
+    @linkIdMax += 1 ;
+    return newId ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## genLinkId.
+  def genLinkId()
+    newId = ("lk_%06d" % @linkIdMax) ;
+    @linkIdMax += 1 ;
+    return newId ;
+  end
+  
   #--------------------------------------------------------------
   #++
   ## remove nodes and links that is not connected from _startNode_.
@@ -359,7 +379,8 @@ class OsmMap < MapTown
         newLink.addTag(tag) ;
       }
     }
-    newLink.children = [node, link0, link1] ; 
+    newLink.children = [node, link0, link1] ;
+    newLink.id = genLinkId() ;
     @linkList.push(newLink) ;
     node0.linkList.delete(link0) ;
     node0.linkList.push(newLink) ;
