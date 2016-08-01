@@ -50,6 +50,9 @@ class OsmMap < MapTown
                             # property 名。
     :cwTagSep => ';',       # 上記タグの suffix を切っていく時のセパレータ。
     :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
+    :redundantMargin => 0.5, # redundant node を判定する距離。
+                             # ノードを取り去った時、形状がの距離以下しか
+                             # 変化しなければOK。
   } ;
 
   ## 日本の19座標系の原点リスト。
@@ -279,7 +282,94 @@ class OsmMap < MapTown
     extractNodeListFromRoadList() ;
     assignIds() ;
     removeNonConnectedNodesLinks() ;
+    reduceRedundantNodes() ;
   end
+
+  #--------------------------------------------------------------
+  #++
+  ## reduce redundant nodes.
+  ## 2リンクのみとつながるノードで、そのノードを取り去っても
+  ## 道路の形状がほとんど変化しないものについて、それを取り去る。
+  def reduceRedundantNodes()
+    @removedNodeList = [] ;
+    @removedLinkList = [] ;
+    c = 0 ;
+    @nodeList.each{|node|
+      if(checkRedundantNode(node)) then
+        removeRedundantNode(node) ;
+        c += 1;
+      end
+    }
+    @removedNodeList.each{|node|
+      @nodeList.delete(node) ;
+      @nodeTable.delete(node) ;
+    }
+    @removedLinkList.each{|link|
+      @linkList.delete(link) ;
+    }
+    p [:reducedNode, c] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## redundant node かどうかのチェック。 
+  ## 2リンクのみとつながるノードで、そのノードを取り去っても
+  ## 道路の形状がほとんど変化しないかどうか。
+  def checkRedundantNode(node)
+    if(node.linkList.length == 2) then
+      # ノードを取り去った時の、新しい線分へのノードの足までの長さを
+      # 求める。
+      (link0, link1, node0, node1) = getBothSidesLinksNodes(node) ;
+      newLine = Geo2D::LineSegment.new(node0.pos, node1.pos) ;
+      dist = newLine.distanceFromPoint(node.pos) ;
+      if(dist < getConf(:redundantMargin)) then
+        p [:node, node.id, dist] ;
+        return true ;
+      else
+        return false ;
+      end
+    else
+      return false ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 2リンクノードの両端リンク及びノードの取得。
+  ## 2リンクのみとつながるノードの、その２つのリンクと、さらにその先のノードを
+  ## まとめて返す。
+  def getBothSidesLinksNodes(node)
+    link0 = node.linkList[0] ;
+    link1 = node.linkList[1] ;
+    node0 = link0.getAnotherNode(node) ;
+    node1 = link1.getAnotherNode(node) ;
+    return [link0, link1, node0, node1] ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## redundant node の削除。
+  def removeRedundantNode(node)
+    (link0, link1, node0, node1) = getBothSidesLinksNodes(node) ;
+    newLink = OsmRoadLink.new(link0.road, node0, node1) ;
+    newLink.setLength(link0.length + link1.length) ;
+    newLink.setWidth(link0.width) ;
+    [link0, link1].each{|l|
+      l.tagList.each{|tag|
+        newLink.addTag(tag) ;
+      }
+    }
+    newLink.children = [node, link0, link1] ; 
+    @linkList.push(newLink) ;
+    node0.linkList.delete(link0) ;
+    node0.linkList.push(newLink) ;
+    node1.linkList.delete(link1) ;
+    node1.linkList.push(newLink) ;
+    @removedNodeList.push(node) ;
+    @removedLinkList.push(link0) ;
+    @removedLinkList.push(link1) ;
+  end
+
   
   #--============================================================
   #++
@@ -447,6 +537,8 @@ class OsmMap < MapTown
     #++
     ## to Road
     attr_accessor :road ;
+    ## children. reduce node した時に消去したノードやリンク。
+    attr_accessor :children ;
 
     #------------------------------------------
     #++
@@ -469,12 +561,12 @@ class OsmMap < MapTown
     ## 挿入される。
     ## _cwTagNthSep_ :: 属性名の suffix を追加するときのセパレータ。
     def assignTagFromRoad(cwTagNthSep)
-      nth = @road.linkList.index(self) ;
-      if(nth.nil?) then
-        nth = @road.linkList.length() ;
+      _nth = @road.linkList.index(self) ;
+      if(_nth.nil?) then
+        _nth = @road.linkList.length() ;
       end
       if(@road.tagList.length > 0) then
-        nthTag = @road.tagList[0] + cwTagNthSep + nth.to_s ;
+        nthTag = @road.tagList[0] + cwTagNthSep + _nth.to_s ;
         addTag(nthTag) ;
       end
       @road.tagList.each{|tag|

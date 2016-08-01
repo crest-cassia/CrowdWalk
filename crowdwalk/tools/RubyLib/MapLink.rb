@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = Map Link class
 ## Author:: Itsuki Noda
@@ -104,7 +105,7 @@ class MapLink
   ## _tag_:: tag string
   ## *return*:: self
   def addTag(tag)
-    @tagList.push(tag) ;
+    @tagList.push(tag) if(!@tagList.member?(tag)) ;
     return self ;
   end
 
