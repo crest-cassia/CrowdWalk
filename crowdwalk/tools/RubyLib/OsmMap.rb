@@ -303,6 +303,7 @@ class OsmMap < MapTown
     assignIds() ;
     removeNonConnectedNodesLinks() ;
     reduceRedundantNodes() ;
+    addIdTags() ;
   end
 
   #--------------------------------------------------------------
@@ -391,6 +392,17 @@ class OsmMap < MapTown
     @removedLinkList.push(link1) ;
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## redundant node の削除。
+  def addIdTags()
+    @nodeList.each{|node|
+      node.addTag(node.id, true) ;
+    }
+    @linkList.each{|link|
+      link.addTag(link.id, true) ;
+    }
+  end
   
   #--============================================================
   #++

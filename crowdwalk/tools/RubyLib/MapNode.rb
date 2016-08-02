@@ -104,8 +104,14 @@ class MapNode
   ## add tag
   ## _tag_:: tag string
   ## *return*:: self
-  def addTag(tag)
-    @tagList.push(tag) ;
+  def addTag(tag, topP = false)
+    if(!@tagList.member?(tag)) then
+      if(topP) then
+        @tagList.unshift(tag) ;
+      else
+        @tagList.push(tag) ;
+      end
+    end
     return self ;
   end
 
