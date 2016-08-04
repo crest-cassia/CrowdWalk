@@ -117,6 +117,31 @@ class MapNode
 
   #--------------------------------------------------------------
   #++
+  ## rebind links by ID
+  ## _town_:: MapTown. (need to have getObject() method)
+  def rebindLinksById(town)
+    (0...@linkList.size).each{|i|
+      link = @linkList[i] ;
+      if(!link.is_a?(MapLink)) then
+        realLink = town.getObject(link) ;
+        if (realLink.nil?) then
+          raise("unknown link tag: #{link.inspect} for Node:#{self.inspect}") ;
+        else
+          @linkList[i] = realLink
+        end
+      end
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## boundary box. (for RTree)
+  def bbox()
+    return @pos.bbox() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
   def to_ArrayedXml()
@@ -154,7 +179,6 @@ class MapNode
     xml.each_element("link"){|link|
       addLink(link.attribute("id").to_s) ;
     }
-    pp [:node, self] ;
     return self ;
   end
   

@@ -67,6 +67,11 @@ class MapTown < WithConfParam
   ## object table (table for id => node/link object)
   attr :objectTable, true ;
 
+  ## node RTree (table for pos => node/link object)
+  attr :nodeTree, true ;
+  ## link RTree (table for pos => node/link object)
+  attr :linkTree, true ;
+
   #--------------------------------------------------------------
   #++
   ## description of method initialize
@@ -115,6 +120,13 @@ class MapTown < WithConfParam
 
   #--------------------------------------------------------------
   #++
+  ## add object
+  def getObject(id)
+    return @objectTable[id] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## new node
   def newNode(pos, height = @defaultHeight)
     @maxId += 1 ;
@@ -149,6 +161,93 @@ class MapTown < WithConfParam
     @linkList.push(link) ;
     addObject(link) ;
     return link ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## rebind nodes and links by ID
+  def rebindNodesLinksById()
+    @nodeList.each{|node|
+      node.rebindLinksById(self) ;
+    }
+    @linkList.each{|link|
+      link.rebindNodesById(self) ;
+    }
+    self ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## build RTree for Nodes and Links.
+  def buildRTree()
+    @nodeTree = Geo2D::RTree.new() ;
+    @nodeList.each{|node|
+      @nodeTree.insert(node) ;
+    }
+    @linkTree = Geo2D::RTree.new() ;
+    @linkList.each{|link|
+      @linkTree.insert(link) ;
+    }
+    self ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  # minimum distance to start to find link/node
+  MinDistToStart = 1.0 ;
+  #++
+  ## find nearrest nodes.
+  def findNearestNode(pos)
+    d = MinDistToStart ;
+    nodes = nil ;
+    # 指定されたposを中心に、d を徐々に増やしながら（＝bbox を大きくしながら)
+    # @nodeTree を探す。
+    begin
+      bbox = pos.bbox.growByMargin(d) ;
+      d *= 2.0 ;
+      nodes = @nodeTree.searchByBBox(bbox) ;
+    end while(nodes.size == 0) ;
+    # nodes の中で最近ノードを探す。
+    minNode = nil ;
+    minDist = nil ;
+    nodes.each{|node|
+      dist = pos.distanceTo(node.pos) ;
+      if(minNode.nil? || dist < minDist) then
+        minNode = node ;
+        minDist = dist ;
+      end
+    }
+    return minNode ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  # minimum distance to start to find link/node
+  #++
+  ## find almost nearrest link.
+  ## 計算上、もしかしたら違う場合があるかもしれない。
+  def findNearestLink(pos)
+    d = MinDistToStart ;
+    links = nil ;
+    # 指定されたposを中心に、d を徐々に増やしながら（＝bbox を大きくしながら)
+    # @linkTree を探す。
+    begin
+      bbox = pos.bbox.growByMargin(d) ;
+      d *= 2.0 ;
+      links = @linkTree.searchByBBox(bbox) ;
+    end while(links.size == 0) ;
+    # links の中で最近リンクを探す。
+    minLink = nil ;
+    minDist = nil ;
+    links.each{|link|
+      line = link.lineSegment() ;
+      dist = line.distanceFromPoint(pos) ;
+      if(minLink.nil? || dist < minDist) then
+        minLink = link ;
+        minDist = dist ;
+      end
+    }
+    return minLink ;
   end
 
   #--------------------------------------------------------------
@@ -380,7 +479,7 @@ class MapTown < WithConfParam
       registerNewLink(link) ;
     }
     fparser.parse ;
-    # rebindNodeLinkById() ;
+    rebindNodesLinksById() ;
   end
   
 end # class MapTown
@@ -438,10 +537,29 @@ if($0 == __FILE__) then
     #----------------------------------------------------
     #++
     ## XML map read test
+    require 'Stat/Uniform.rb' ;
     TestBSampleFile = "../../sample/ginza/ginza00.map.xml" ;
     def test_b
       town = MapTown.new() ;
       town.loadXmlMapFile(TestBSampleFile)
+      pp [:map, [:node, town.nodeList.size], [:link, town.linkList.size]] ;
+      town.buildRTree() ;
+#      town.linkTree.showTree() ;
+      bbox = town.linkTree.root.bbox() ;
+      p [:bbox, bbox] ;
+      mx = (bbox.minX() + bbox.maxX())/2.0 ;
+      my = (bbox.minY() + bbox.maxY())/2.0 ;
+      d = 200.0 ;
+      randX = Stat::Uniform.new(mx - d, mx + d) ;
+      randY = Stat::Uniform.new(my - d, my + d) ;
+      (0...10).each{|i|
+        x = randX.value() ;
+        y = randY.value() ;
+        pos = Geo2D::Point.new(x,y) ;
+        node = town.findNearestNode(pos) ;
+        link = town.findNearestLink(pos) ;
+        pp [i, pos, node, link] ;
+      }
     end
     
   end # class TC_Foo < Test::Unit::TestCase

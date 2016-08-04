@@ -142,6 +142,49 @@ class MapLink
     end
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## rebind nodes by ID
+  ## _town_:: MapTown. (need to have getObject() method)
+  def rebindNodesById(town)
+    @fromNode = ensureNode(@fromNode, town) ;
+    @toNode = ensureNode(@toNode, town) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## get node by id if the node is not MapNode.
+  ## _node_:: MapNode or tag for the node.
+  ## _town_:: MapTown. (need to have getObject() method)
+  def ensureNode(node, town)
+    if(node.is_a?(MapNode)) then
+      return node ;
+    else
+      realNode = town.getObject(node) ;
+      if(realNode.nil?) then
+        raise("unknown node tag: #{node.inspect} for Link:#{self.inspect}") ;
+      else
+        return realNode ;
+      end
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## boundary box: (for RTree)
+  def bbox()
+    return lineSegment().bbox() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## boundary box: (for RTree)
+  def lineSegment()
+    if(@lineSegment.nil?) then
+      @lineSegment = Geo2D::LineSegment.new(@fromNode.pos, @toNode.pos) ;
+    end
+    return @lineSegment ;
+  end
 
   #--------------------------------------------------------------
   #++
@@ -176,7 +219,6 @@ class MapLink
     xml.each_element("tag"){|elm|
       addTag(elm.texts.join()) ;
     }
-    pp [:link, self] 
     return self ;
   end
   #--------------------------------------------------------------
