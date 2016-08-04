@@ -19,6 +19,7 @@ require 'ItkXml.rb' ;
 require 'WithConfParam.rb' ;
 require 'MapNode.rb' ;
 require 'MapLink.rb' ;
+require 'RTree.rb' ;
 
 #--======================================================================
 #++
@@ -345,13 +346,43 @@ class MapTown < WithConfParam
   #--------------------------------------------------------------
   #++
   ## save XML to file
-  ## _strm_ :: output file
+  ## _file_ :: output file
   def saveXmlToFile(file)
     open(file,"w") {|strm|
       saveXmlToStream(strm) ;
     }
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## load XML map file
+  ## _file_ :: map file
+  def loadXmlMapFile(file)
+    open(file,"r"){|strm|
+      loadXmlMapStream(strm) ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## load XML map stream
+  ## _strm_ :: xml map stream
+  def loadXmlMapStream(strm)
+    fparser = ItkXml::FilterParser.new(strm) ;
+    fparser.listenQName("Node"){|xml, str|
+      node = MapNode.new() ;
+      node.scanXml(xml) ;
+      registerNewNode(node) ;
+    }
+    fparser.listenQName("Link"){|xml, str|
+      link = MapLink.new() ;
+      link.scanXml(xml) ;
+      registerNewLink(link) ;
+    }
+    fparser.parse ;
+    # rebindNodeLinkById() ;
+  end
+  
 end # class MapTown
 
 ########################################################################
@@ -404,5 +435,14 @@ if($0 == __FILE__) then
       ItkXml::ppp(xml) ;
     end
 
+    #----------------------------------------------------
+    #++
+    ## XML map read test
+    TestBSampleFile = "../../sample/ginza/ginza00.map.xml" ;
+    def test_b
+      town = MapTown.new() ;
+      town.loadXmlMapFile(TestBSampleFile)
+    end
+    
   end # class TC_Foo < Test::Unit::TestCase
 end # if($0 == __FILE__)

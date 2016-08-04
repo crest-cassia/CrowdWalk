@@ -117,18 +117,6 @@ class MapNode
 
   #--------------------------------------------------------------
   #++
-  ## inspect
-  def inspect()
-    ("\#<MapNode:" +
-     "id=#{@id}," +
-     "pos=#{@pos}," +
-     "height=#{@height}," +
-     "tagList=#{@tagList.inspect}," +
-     "linkList=#{linkList.map{|link| "link:#{link.id}"}.inspect}>")
-  end
-
-  #--------------------------------------------------------------
-  #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
   def to_ArrayedXml()
@@ -148,6 +136,39 @@ class MapNode
     }
 
     return axml ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## scan Xml
+  ## _xml_:: Node Xml
+  ## *return*:: new instance
+  def scanXml(xml)
+    setId(xml.attribute("id").to_s) ;
+    setXY(xml.attribute("x").to_s.to_f,
+          xml.attribute("y").to_s.to_f) ;
+    setHeight(xml.attribute("height").to_s.to_f) ;
+    xml.each_element("tag"){|elm|
+      addTag(elm.texts.join()) ;
+    }
+    xml.each_element("link"){|link|
+      addLink(link.attribute("id").to_s) ;
+    }
+    pp [:node, self] ;
+    return self ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## inspect
+  def inspect()
+    ("\#<MapNode:" +
+     "id=#{@id}," +
+     "pos=#{@pos}," +
+     "height=#{@height}," +
+     "tagList=#{@tagList.inspect}," +
+     "linkList=#{linkList.map{|link| 
+        link.is_a?(MapLink) ? "link:#{link.id}" : link }.inspect}>")
   end
 
 end # class MapNode

@@ -71,11 +71,11 @@ class MapLink
   def setFromToNode(fromNode, toNode)
     @fromNode = fromNode ;
     @toNode = toNode ;
-    if(@fromNode && @toNode) then
+    if(@fromNode.is_a?(MapNode) && @toNode.is_a?(MapNode)) then
       setLength(@fromNode.pos.distanceTo(@toNode.pos)) ;
     end
-    @fromNode.addLink(self) ;
-    @toNode.addLink(self) ;
+    @fromNode.addLink(self) if(@fromNode.is_a?(MapNode)) ;
+    @toNode.addLink(self) if(@toNode.is_a?(MapNode)) ;
     return self ;
   end
 
@@ -145,19 +145,6 @@ class MapLink
 
   #--------------------------------------------------------------
   #++
-  ## inspect
-  def inspect()
-    ("\#<MapLink:" +
-     "id=#{@id}," +
-     "fromNode=node:#{@fromNode.id}," +
-     "toNode=node:#{@toNode.id}," +
-     "length=#{@length}," +
-     "width=#{@width}," +
-     "tagList=#{@tagList.inspect}>")
-  end
-
-  #--------------------------------------------------------------
-  #++
   ## gen Arrayed Xml
   ## *return*:: arrayed xml
   def to_ArrayedXml()
@@ -173,6 +160,36 @@ class MapLink
     }
 
     return axml ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## scan Xml in map file
+  ## _xml_:: xml def
+  ## *return*:: self
+  def scanXml(xml)
+    setId(xml.attribute("id").to_s) ;
+    setFromToNode(xml.attribute("from").to_s,
+                  xml.attribute("to").to_s) ;
+    setLength(xml.attribute("length").to_s.to_f) ;
+    setWidth(xml.attribute("width").to_s.to_f) ;
+    xml.each_element("tag"){|elm|
+      addTag(elm.texts.join()) ;
+    }
+    pp [:link, self] 
+    return self ;
+  end
+  #--------------------------------------------------------------
+  #++
+  ## inspect
+  def inspect()
+    ("\#<MapLink:" +
+     "id=#{@id}," +
+     "fromNode=#{@fromNode.is_a?(MapNode) ? "node:"+@fromNode.id : @fromNode.inspect}," +
+     "toNode=#{(@toNode.is_a?(MapNode) ? "node:"+@toNode.id : @toNode.inspect)}," +
+     "length=#{@length}," +
+     "width=#{@width}," +
+     "tagList=#{@tagList.inspect}>")
   end
 
 end # class MapLink
