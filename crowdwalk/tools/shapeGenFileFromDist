@@ -1,0 +1,402 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+## -*- mode: ruby -*-
+## = shape generation file from distribution
+## Author:: Itsuki Noda
+## Version:: 0.0 2016/08/05 I.Noda
+##
+## === History
+## * [2015/08/05]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+require 'json' ;
+require 'time' ;
+
+$LOAD_PATH.push(File::dirname(__FILE__) + "/RubyLib");
+
+require 'MapTown.rb' ;
+require 'Stat/Gaussian.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :distFile => nil,
+  :mapFile => nil,
+  :genFile => nil,
+} ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]*
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-d","--distFile DistFile", String, sep + "distribution file.") {|file|
+    $conf[:distFile] = file ;
+  }
+  op.on("-m","--mapFile MapFile", String, sep + "map XML file.") {|file|
+    $conf[:mapFile] = file ;
+  }
+  op.on("-g","--genFile GenFile", String, sep + "generation file.") {|file|
+    $conf[:genFile] = file ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ; 
+
+#--======================================================================
+#++
+## rule generator
+##       <RuleShape> ::= { "default" : <RuleSkelton>,
+##                         "ruleN" : <Integer>,
+##                         "timeOrigin" : <TimeStr>,
+##                         "dist" : [ <RuleDist>, <RuleDist>, ...] }
+##       <RuleSkelton> ::= generation rule のうち、固定のもの
+##       <TimeStr>     ::= "HH:MM:SS"
+class RuleShaper
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## map 情報
+  attr_accessor :map ;
+  ## ルール分布の定義 (JSON)
+  attr_accessor :ruleShapeJson ;
+  ## デフォルトルール
+  attr_accessor :defaultRule ;
+  ## 生成ルール数
+  attr_accessor :ruleN ;
+  ## 時間原点
+  attr_accessor :timeOrigin ;
+  ## ルール分布 (混合分布)
+  attr_accessor :ruleDist ;
+  ## 生成したルール
+  attr_accessor :ruleList ;
+
+  #--------------------------------------------------------------
+  #++
+  ## 初期化。
+  def initialize()
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## マップ読み込み
+  def loadMapFile(mapFile)
+    @map = MapTown.new() ;
+    @map.loadXmlMapFile(mapFile) ;
+    @map.buildRTree() ;
+    return @map ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## ルール分布ファイル読み込み
+  def loadDistFile(distFile)
+    open(distFile,"r"){|strm|
+      loadDistStream(strm) ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## ルール分布ストリーム読み込み
+  def loadDistStream(strm)
+    @ruleShapeJson = JSON::Parser.new(strm.read).parse ;
+    scanRuleShapeJson(@ruleShapeJson) ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## ルール分布 JSON 読み込み
+  def scanRuleShapeJson(json)
+    @defaultRule = json["default"] ;
+    raise ("no default slot in JSON: #{json.inspect}") if(@defaultRule.nil?) ;
+
+    @ruleN = json["ruleN"] ;
+    raise ("no ruleN slot in JSON: #{json.inspect}") if(@ruleN.nil?) ;
+    
+    @timeOrigin = json["timeOrigin"] ;
+    raise ("no timeOrigin slot in JSON: #{json.inspect}") if(@timeOrigin.nil?) ;
+    
+    list = json["dist"] ;
+    raise ("no dist slot in JSON: #{json.inspect}") if(list.nil?) ;
+    raise ("dist should be an array of dist defs") if(!list.is_a?(Array)) ;
+
+    @ruleDist = [] ;
+    @totalWeight = 0.0 ;
+    list.each{|distInfo|
+      dist = RuleSingleDist.new(distInfo) ;
+      @ruleDist.push(dist) ;
+      @totalWeight += dist.weight ;
+    }
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## ルール集合生成
+  def shapeRuleList()
+    @ruleList = [] ;
+    (0...@ruleN).each{|i|
+      rule = shapeRuleOne() ;
+      @ruleList.push(rule) ;
+    }
+    return @ruleList ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## １ルール生成
+  def shapeRuleOne()
+    distValue = getValue() ;
+    rule = @defaultRule.dup() ;
+    rule["startPlace"] = distValue[:from] ;
+    rule["goal"] = distValue[:to] ;
+    time = Time.parse(@timeOrigin) + distValue[:time] ;
+    rule["startTime"] = time.strftime("%H:%M:%S") ;
+    return rule ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## 支点終点などを生成
+  def getValue()
+    r = @totalWeight * rand() ;
+    @ruleDist.each{|dist|
+      r -= dist.weight ;
+      return dist.value() if(r < 0.0) ;
+    }
+    return @ruleDist.last.value() ;
+  end
+  
+end # class RuleShaper
+
+#--======================================================================
+#++
+## single distribution of rule in JSON 
+##       <RuleDist> ::= { "weight" : <Float>,
+##                        "fromDist" : <PosDist>,
+##                        "toDist" : <PosDist>,
+##                        "timeDist" : <TimeDist> }
+##       <PosDist> ::= { "type" : "Gaussian2D",
+##                       "center" : <Pos>,
+##                       "std" : <Float> }
+##       <Pos> ::= [ <Float>, <Float> ]
+##       <TimeDist> ::= { "type" : "Gaussian",
+##                        "center" : <Float>,
+##                        "std" : <Float> }
+class RuleSingleDist
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## description of DefaultValues.
+  DefaultValues = { :foo => :bar } ;
+  ## description of DefaultOptsions.
+  DefaultConf = { :bar => :baz } ;
+
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## weight of distribution (used in mixuture)
+  attr_accessor :weight ;
+  ## distribution of origin (from)
+  attr_accessor :fromDist ;
+  ## distrubition of destination (to)
+  attr_accessor :toDist ;
+  ## distrubition of time
+  attr_accessor :timeDist ;
+  ## information of the definition
+  attr_accessor :info ;
+
+  #--------------------------------------------------------------
+  #++
+  ## 初期化。
+  ## _conf_:: 定義の連想リスト。
+  def initialize(conf = {})
+    @info = conf ;
+    setup(@info) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 設定
+  ## _conf_:: 設定リスト
+  def setup(conf)
+    @weight = conf["weight"] ;
+    fromInfo = conf["fromDist"] ;
+    @fromDist = PosDist.new(fromInfo) if(!fromInfo.nil?) ;
+    toInfo = conf["toDist"] ;
+    @toDist = PosDist.new(toInfo) if(!toInfo.nil?) ;
+    timeInfo = conf["timeDist"] ;
+    @timeDist = TimeDist.new(timeInfo) if (!timeInfo.nil?) ;
+    return self;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 値生成
+  def value()
+    return { :from => @fromDist.value(),
+             :to => @toDist.value(),
+             :time => @timeDist.value() } ;
+  end
+  
+  #--============================================================
+  #++
+  ## distribution of position
+  class PosDist
+    #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    #++
+    ## information
+    attr_accessor :info ;
+    ## generator for X ;
+    attr_accessor :distX ;
+    ## generator for Y ;
+    attr_accessor :distY ;
+
+    #------------------------------------------
+    #++
+    ## 初期化
+    ## _conf_:: 設定リスト
+    def initialize(conf)
+      setup(conf) ;
+    end
+
+    #------------------------------------------
+    #++
+    ## 設定。
+    ## _conf_:: 設定リスト
+    def setup(conf)
+      @info = conf ;
+      @center = conf["center"] ;
+      @std = conf["std"] ;
+      @distX = Stat::Gaussian.new(@center[0], @std) ;
+      @distY = Stat::Gaussian.new(@center[1], @std) ;
+      return self ;
+    end
+    
+    #------------------------------------------
+    #++
+    ## 設定。
+    ## _conf_:: 設定リスト
+    def value()
+      return Geo2D::Point.new(@distX.value(), @distY.value()) ;
+    end
+    
+  end # class PosDist
+
+  #--============================================================
+  #++
+  ## distribution of time
+  class TimeDist
+    #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    #++
+    ## information
+    attr_accessor :info ;
+    ## generator for time ;
+    attr_accessor :dist ;
+
+    #------------------------------------------
+    #++
+    ## 初期化
+    ## _conf_:: 設定リスト
+    def initialize(conf)
+      setup(conf) ;
+    end
+
+    #------------------------------------------
+    #++
+    ## 設定。
+    ## _conf_:: 設定リスト
+    def setup(conf)
+      @info = conf ;
+      @center = conf["center"] ;
+      @std = conf["std"] ;
+      @dist = Stat::Gaussian.new(@center, @std) ;
+      return self ;
+    end
+    
+    #------------------------------------------
+    #++
+    ## 設定。
+    ## _conf_:: 設定リスト
+    def value()
+      return @dist.value() ;
+    end
+    
+  end # class TimeDist
+  
+  #--============================================================
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #--------------------------------------------------------------
+end # class RuleDist
+
+########################################################################
+########################################################################
+########################################################################
+
+rshape = RuleShaper.new() ;
+rshape.loadDistStream(DATA) ;
+pp rshape
+rlist = rshape.shapeRuleList() ;
+puts JSON.pretty_generate(rlist) ;
+
+                       
+########################################################################
+########################################################################
+########################################################################
+## sample input file
+__END__
+{
+  "default" : { "rule" : "EACH",
+                "agentType" : {"className" : "RationalAgent",
+                               "weight" : 100.0, 
+                               "trail" : 0.0,
+                               "margin" : 0.0,
+                               "rule" : [] },
+                "total" : 10,
+                "speedMode" : "PLAIN",
+                "conditions" : null,
+                "duration" : 1800,
+                "plannedRoute" : [] },
+  "ruleN" : 10,
+  "timeOrigin" : "18:00:00",
+  "dist" : [
+             { "weight" : 1.0,
+               "fromDist" : { "type" : "Gaussian2D",
+                              "center" : [10.0, 20.0],
+                              "std" : 1.0 },
+               "toDist" : { "type" : "Gaussian2D",
+                            "center" : [20.0, 10.0],
+                            "std" : 2.0 },
+               "timeDist" : { "type" : "Gaussian",
+                              "center" : 30.0,
+                              "std" : 3.0 }
+             },
+             { "weight" : 2.0,
+               "fromDist" : { "type" : "Gaussian2D",
+                              "center" : [10.0, 20.0],
+                              "std" : 1.0 },
+               "toDist" : { "type" : "Gaussian2D",
+                            "center" : [20.0, 10.0],
+                            "std" : 2.0 },
+               "timeDist" : { "type" : "Gaussian",
+                              "center" : 30.0,
+                              "std" : 3.0 }
+               }
+           ]
+}
+
