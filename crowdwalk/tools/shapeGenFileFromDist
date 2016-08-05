@@ -24,6 +24,7 @@ require 'Stat/Gaussian.rb' ;
 #------------------------------------------------------------------------
 #++
 $conf = {
+  :mode => :normal,
   :distFile => nil,
   :mapFile => nil,
   :genFile => nil,
@@ -49,6 +50,12 @@ _END_
   }
   op.on("-g","--genFile GenFile", String, sep + "generation file.") {|file|
     $conf[:genFile] = file ;
+  }
+  op.on("-b","--bbox", sep + "switch boundary box mode.") {
+    $conf[:mode] = :bbox ;
+  }
+  op.on("-t","--test", sep + "run test using sample data (__END__ part)."){
+    $conf[:mode] = :test ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
     puts(op)
@@ -164,8 +171,15 @@ class RuleShaper
   def shapeRuleOne()
     distValue = getValue() ;
     rule = @defaultRule.dup() ;
-    rule["startPlace"] = distValue[:from] ;
-    rule["goal"] = distValue[:to] ;
+
+    if(@map) then
+      rule["startPlace"] = findNearestLinkTag(distValue[:from]) ;
+      rule["goal"] = findNearestLinkTag(distValue[:to]) ;
+    else
+      rule["startPlace"] = distValue[:from] ;
+      rule["goal"] = distValue[:to] ;
+    end
+
     time = Time.parse(@timeOrigin) + distValue[:time] ;
     rule["startTime"] = time.strftime("%H:%M:%S") ;
     return rule ;
@@ -181,6 +195,31 @@ class RuleShaper
       return dist.value() if(r < 0.0) ;
     }
     return @ruleDist.last.value() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 最近傍のリンクを取り出す。
+  def findNearestLinkTag(pos, nth=0)
+    link = @map.findNearestLink(pos) ;
+    return link.tagList[nth] ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## 生成ルールの出力。(ファイル)
+  def saveRuleListToFile(file)
+    open(file,"w") {|strm|
+      saveRuleListToStream(strm) ;
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 生成ルールの出力。(ストリーム)
+  def saveRuleListToStream(strm)
+    strm.puts('#{ "version" : 2}') ;
+    strm.puts(JSON.pretty_generate(@ruleList)) ;
   end
   
 end # class RuleShaper
@@ -289,8 +328,7 @@ class RuleSingleDist
     
     #------------------------------------------
     #++
-    ## 設定。
-    ## _conf_:: 設定リスト
+    ## 正規分布の乱数の値サンプル。
     def value()
       return Geo2D::Point.new(@distX.value(), @distY.value()) ;
     end
@@ -330,10 +368,13 @@ class RuleSingleDist
     
     #------------------------------------------
     #++
-    ## 設定。
-    ## _conf_:: 設定リスト
+    ## 値を返す。正の値しか返さない。
     def value()
-      return @dist.value() ;
+      r = 0 ;
+      begin
+        r = @dist.value() ;
+      end until r > 0 ;
+      return r ;
     end
     
   end # class TimeDist
@@ -348,11 +389,53 @@ end # class RuleDist
 ########################################################################
 ########################################################################
 
-rshape = RuleShaper.new() ;
-rshape.loadDistStream(DATA) ;
-pp rshape
-rlist = rshape.shapeRuleList() ;
-puts JSON.pretty_generate(rlist) ;
+case($conf[:mode])
+when(:bbox)                         ## bbox mode
+  if($conf[:mapFile].nil?) then
+    STDERR << "MapFile should be specified." << "\n" ;
+    STDERR << $op << "\n" ;
+    exit(1) ;
+  else
+    map = MapTown.new() ;
+    map.loadXmlMapFile($conf[:mapFile]) ;
+    map.buildRTree() ;
+    bbox = map.linkTree.root.bbox() ;
+    pp [:bbox, [:x, bbox.minX(), bbox.maxX()], [:y, bbox.minY(), bbox.maxY()]] ;
+    exit(0) ;
+  end
+when(:normal)                                ## normal mode
+  if($conf[:mapFile].nil? || $conf[:distFile].nil?) then
+    STDERR << "MapFile and DistFile should be specified." << "\n" ;
+    STDERR << $op << "\n" ;
+    exit(1) ;
+  else
+    rshape = RuleShaper.new() ;
+    rshape.loadDistFile($conf[:distFile]) ;
+    rshape.loadMapFile($conf[:mapFile]) ;
+    rshape.shapeRuleList() ;
+    if($conf[:genFile]) then
+      rshape.saveRuleListToFile($conf[:genFile]) ;
+    else
+      rshape.saveRuleListToStream(STDOUT) ;
+    end
+  end
+when(:test)                                ## test mode
+  rshape = RuleShaper.new() ;
+  if($conf[:distFile]) then
+    rshape.loadDistFile($conf[:distFile]) ;
+  else
+    rshape.loadDistStream(DATA) ;
+  end
+  rshape.shapeRuleList() ;
+  if($conf[:genFile]) then
+    rshape.saveRuleListToFile($conf[:genFile]) ;
+  else
+    rshape.saveRuleListToStream(STDOUT) ;
+  end
+else
+    STDERR << $op << "\n" ;
+    exit(1) ;
+end
 
                        
 ########################################################################

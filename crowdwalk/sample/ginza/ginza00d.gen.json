@@ -1,0 +1,2203 @@
+#{ "version" : 2}
+[
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010766",
+    "goal": "lk_007821",
+    "startTime": "18:06:09"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011018",
+    "goal": "lk_011679",
+    "startTime": "18:06:25"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010871",
+    "goal": "lk_005634",
+    "startTime": "18:04:15"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010038",
+    "goal": "lk_011231",
+    "startTime": "18:07:03"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007774",
+    "goal": "lk_009285",
+    "startTime": "18:02:42"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011657",
+    "goal": "lk_010692",
+    "startTime": "18:06:23"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_004916",
+    "goal": "lk_008125",
+    "startTime": "18:02:31"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011802",
+    "goal": "lk_010689",
+    "startTime": "18:08:10"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011564",
+    "goal": "lk_011783",
+    "startTime": "18:06:27"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007901",
+    "goal": "lk_007075",
+    "startTime": "18:06:51"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_009065",
+    "goal": "lk_011182",
+    "startTime": "18:03:49"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010753",
+    "goal": "lk_006139",
+    "startTime": "18:07:50"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010034",
+    "goal": "lk_010692",
+    "startTime": "18:06:03"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010319",
+    "goal": "lk_009767",
+    "startTime": "18:03:17"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011141",
+    "goal": "lk_011242",
+    "startTime": "18:11:08"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007164",
+    "goal": "lk_005197",
+    "startTime": "18:08:13"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_008856",
+    "goal": "lk_007776",
+    "startTime": "18:05:50"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011453",
+    "goal": "lk_011462",
+    "startTime": "18:06:13"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011583",
+    "goal": "lk_010869",
+    "startTime": "18:03:19"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010871",
+    "goal": "lk_009767",
+    "startTime": "18:03:25"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_009443",
+    "goal": "lk_009743",
+    "startTime": "18:05:33"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_004979",
+    "goal": "lk_011093",
+    "startTime": "18:07:09"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010938",
+    "goal": "lk_011730",
+    "startTime": "18:06:46"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005300",
+    "goal": "lk_011477",
+    "startTime": "18:02:09"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005300",
+    "goal": "lk_011647",
+    "startTime": "18:05:52"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011139",
+    "goal": "lk_006962",
+    "startTime": "18:05:09"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011604",
+    "goal": "lk_009439",
+    "startTime": "18:06:19"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007397",
+    "goal": "lk_008244",
+    "startTime": "18:03:21"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011553",
+    "goal": "lk_006962",
+    "startTime": "18:06:44"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010319",
+    "goal": "lk_011727",
+    "startTime": "18:04:02"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007099",
+    "goal": "lk_011669",
+    "startTime": "18:06:19"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005180",
+    "goal": "lk_009322",
+    "startTime": "18:10:05"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007393",
+    "goal": "lk_011244",
+    "startTime": "18:02:28"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005453",
+    "goal": "lk_011823",
+    "startTime": "18:02:18"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011800",
+    "goal": "lk_011488",
+    "startTime": "18:03:06"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011453",
+    "goal": "lk_007592",
+    "startTime": "18:07:33"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010954",
+    "goal": "lk_005247",
+    "startTime": "18:02:46"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011142",
+    "goal": "lk_005198",
+    "startTime": "18:07:27"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010682",
+    "goal": "lk_008398",
+    "startTime": "18:05:22"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011018",
+    "goal": "lk_009767",
+    "startTime": "18:06:45"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005453",
+    "goal": "lk_005058",
+    "startTime": "18:02:56"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010542",
+    "goal": "lk_011242",
+    "startTime": "18:01:55"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010939",
+    "goal": "lk_009307",
+    "startTime": "18:08:13"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_009056",
+    "goal": "lk_008244",
+    "startTime": "18:05:51"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011422",
+    "goal": "lk_011733",
+    "startTime": "18:03:22"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011480",
+    "goal": "lk_010237",
+    "startTime": "18:01:05"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007519",
+    "goal": "lk_009785",
+    "startTime": "18:05:31"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_004916",
+    "goal": "lk_006137",
+    "startTime": "18:03:19"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_009443",
+    "goal": "lk_006345",
+    "startTime": "18:08:57"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011734",
+    "goal": "lk_009322",
+    "startTime": "18:07:02"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011480",
+    "goal": "lk_010954",
+    "startTime": "18:05:11"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011137",
+    "goal": "lk_010926",
+    "startTime": "18:07:50"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011026",
+    "goal": "lk_010950",
+    "startTime": "18:06:55"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007392",
+    "goal": "lk_010445",
+    "startTime": "18:02:42"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005453",
+    "goal": "lk_009056",
+    "startTime": "18:03:15"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011452",
+    "goal": "lk_011489",
+    "startTime": "18:05:57"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011131",
+    "goal": "lk_010237",
+    "startTime": "18:06:17"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011448",
+    "goal": "lk_011489",
+    "startTime": "18:05:53"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005453",
+    "goal": "lk_006270",
+    "startTime": "18:00:51"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011360",
+    "goal": "lk_006055",
+    "startTime": "18:03:58"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011175",
+    "goal": "lk_011764",
+    "startTime": "18:05:29"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_006842",
+    "goal": "lk_011654",
+    "startTime": "18:07:46"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010782",
+    "goal": "lk_011488",
+    "startTime": "18:07:29"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011726",
+    "goal": "lk_011488",
+    "startTime": "18:07:22"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010929",
+    "goal": "lk_011614",
+    "startTime": "18:02:12"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010954",
+    "goal": "lk_011736",
+    "startTime": "18:04:02"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011521",
+    "goal": "lk_006334",
+    "startTime": "18:09:07"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010942",
+    "goal": "lk_011537",
+    "startTime": "18:04:27"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_008778",
+    "goal": "lk_005191",
+    "startTime": "18:10:10"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_006224",
+    "goal": "lk_007863",
+    "startTime": "18:06:39"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_008242",
+    "goal": "lk_011083",
+    "startTime": "18:01:50"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007678",
+    "goal": "lk_005470",
+    "startTime": "18:03:19"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007774",
+    "goal": "lk_011478",
+    "startTime": "18:03:54"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011360",
+    "goal": "lk_011478",
+    "startTime": "18:08:36"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005099",
+    "goal": "lk_006967",
+    "startTime": "18:04:45"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_008526",
+    "goal": "lk_009905",
+    "startTime": "18:07:05"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010475",
+    "goal": "lk_011764",
+    "startTime": "18:07:20"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011723",
+    "goal": "lk_009744",
+    "startTime": "18:05:49"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010581",
+    "goal": "lk_005219",
+    "startTime": "18:05:58"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007520",
+    "goal": "lk_009785",
+    "startTime": "18:06:31"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011452",
+    "goal": "lk_009320",
+    "startTime": "18:06:09"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005634",
+    "goal": "lk_011333",
+    "startTime": "18:06:59"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_009325",
+    "goal": "lk_011670",
+    "startTime": "18:05:44"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_009626",
+    "goal": "lk_007204",
+    "startTime": "18:05:55"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011450",
+    "goal": "lk_009104",
+    "startTime": "18:06:51"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_010939",
+    "goal": "lk_011489",
+    "startTime": "18:09:26"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011726",
+    "goal": "lk_010081",
+    "startTime": "18:08:01"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_006454",
+    "goal": "lk_005588",
+    "startTime": "18:04:50"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007099",
+    "goal": "lk_011460",
+    "startTime": "18:07:02"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011735",
+    "goal": "lk_010103",
+    "startTime": "18:06:38"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007462",
+    "goal": "lk_005258",
+    "startTime": "18:03:00"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005648",
+    "goal": "lk_008499",
+    "startTime": "18:08:25"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_005266",
+    "goal": "lk_006949",
+    "startTime": "18:07:56"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011345",
+    "goal": "lk_008114",
+    "startTime": "18:08:46"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_008019",
+    "goal": "lk_011735",
+    "startTime": "18:06:37"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011766",
+    "goal": "lk_011096",
+    "startTime": "18:07:19"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007678",
+    "goal": "lk_007860",
+    "startTime": "18:05:20"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011137",
+    "goal": "lk_010825",
+    "startTime": "18:06:21"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_007090",
+    "goal": "lk_011175",
+    "startTime": "18:06:30"
+  },
+  {
+    "rule": "EACH",
+    "agentType": {
+      "className": "RationalAgent",
+      "weight": 100.0,
+      "trail": 0.0,
+      "margin": 0.0,
+      "rule": [
+
+      ]
+    },
+    "total": 100,
+    "speedMode": "PLAIN",
+    "conditions": null,
+    "duration": 1800,
+    "plannedRoute": [
+
+    ],
+    "startPlace": "lk_011114",
+    "goal": "lk_007118",
+    "startTime": "18:05:03"
+  }
+]
