@@ -1,0 +1,115 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+## -*- mode: ruby -*-
+## = add id as a tag to link/node in a map
+## Author:: Itsuki Noda
+## Version:: 0.0 2016/08/31 I.Noda
+##
+## === History
+## * [2015/08/31]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+require 'time' ;
+
+$LOAD_PATH.push(File::dirname(__FILE__) + "/RubyLib");
+
+require 'MapTown.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :link => true,
+  :node => true,
+  :mapFile => nil,
+  :outFile => nil,
+} ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]* MapFile
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-l","--onlyLink", sep + "add only to each link.") {
+    $conf[:link] = true ;
+    $conf[:node] = false ;
+  }
+  op.on("-n","--onlyNode", sep + "add only to each node.") {
+    $conf[:link] = false ;
+    $conf[:node] = true ;
+  }
+  op.on("-b","--both", sep + "add to both of link and node.") {
+    $conf[:link] = false ;
+    $conf[:node] = true ;
+  }
+  op.on("-o","--outFile OutFile", String, sep + "output file.") {|file|
+    $conf[:outFile] = file ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ;
+if(ARGV.length != 1) then
+  puts($op) ;
+  exit(1) ;
+end
+$conf[:mapFile] = ARGV[0]
+
+##------------------------------------------------------------------------
+##++ ID を Tag として付与する。
+## _map_:: TownMap データ
+## _conf_:: 各種設定
+def addIdAsTag(map, conf)
+  addIdAsTagToLink(map, conf) if (conf[:link]) ;
+  addIdAsTagToNode(map, conf) if (conf[:node]) ;
+end
+
+##------------------------------------------------------------------------
+##++ ID を Tag として付与する。(リンク)
+## _map_:: TownMap データ
+## _conf_:: 各種設定
+def addIdAsTagToLink(map, conf)
+  map.linkList.each{|link|
+    link.addTag(link.id) ;
+  }
+end
+
+##------------------------------------------------------------------------
+##++ ID を Tag として付与する。(ノード)
+## _map_:: TownMap データ
+## _conf_:: 各種設定
+def addIdAsTagToNode(map, conf)
+  map.nodeList.each{|node|
+    node.addTag(node.id) ;
+  }
+end
+
+
+########################################################################
+########################################################################
+########################################################################
+
+map = MapTown.new() ;
+map.loadXmlMapFile($conf[:mapFile]) ;
+addIdAsTag(map, $conf) ;
+if($conf[:outFile].nil?) then
+  map.saveXmlToStream(STDOUT) ;
+else
+  map.saveXmlToFile($conf[:outFile]) ;
+end
+                       
