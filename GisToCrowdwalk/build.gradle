@@ -36,6 +36,7 @@ sourceSets {
         java {
             srcDirs = ["../crowdwalk/src/main/java"];
             exclude '**/CrowdWalkLauncher.java'
+            exclude '**/CuiCrowdWalkLauncher.java'
             exclude '**/CuiSimulationLauncher.java'
             exclude '**/GuiSimulationEditorLauncher.java'
             exclude '**/GuiSimulationLauncher.java'
