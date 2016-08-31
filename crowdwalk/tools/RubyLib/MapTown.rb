@@ -456,9 +456,10 @@ class MapTown < WithConfParam
   #++
   ## load XML map file
   ## _file_ :: map file
-  def loadXmlMapFile(file)
+  ## _verboseP_ :: show progress or not
+  def loadXmlMapFile(file, verboseP = false)
     open(file,"r"){|strm|
-      loadXmlMapStream(strm) ;
+      loadXmlMapStream(strm, verboseP) ;
     }
   end
 
@@ -466,19 +467,30 @@ class MapTown < WithConfParam
   #++
   ## load XML map stream
   ## _strm_ :: xml map stream
-  def loadXmlMapStream(strm)
+  ## _verboseP_ :: show progress or not
+  def loadXmlMapStream(strm, verboseP = false)
     fparser = ItkXml::FilterParser.new(strm) ;
+    m = 1000 ;
+    nodeC = 0 ;
     fparser.listenQName("Node"){|xml, str|
       node = MapNode.new() ;
       node.scanXml(xml) ;
       registerNewNode(node) ;
+      nodeC += 1 ;
+      STDERR.putc("n") if(verboseP && (nodeC % m == 0)) ;
     }
+
+    linkC = 0 ; 
     fparser.listenQName("Link"){|xml, str|
       link = MapLink.new() ;
       link.scanXml(xml) ;
       registerNewLink(link) ;
+      linkC += 1 ;
+      STDERR.putc("l") if(verboseP && (linkC % m == 0)) ;
     }
+    STDERR << "Loading:" if (verboseP) ;
     fparser.parse ;
+    STDERR.puts("") if (verboseP) ;
     rebindNodesLinksById() ;
   end
   

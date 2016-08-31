@@ -26,6 +26,7 @@ $conf = {
   :node => true,
   :mapFile => nil,
   :outFile => nil,
+  :verboseP => false
 } ;
 
 #------------------------------------------------------------------------
@@ -54,6 +55,9 @@ _END_
   }
   op.on("-o","--outFile OutFile", String, sep + "output file.") {|file|
     $conf[:outFile] = file ;
+  }
+  op.on("-v","--verbose", sep + "verbose mode.") {
+    $conf[:verboseP] = true ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
     puts(op)
@@ -105,11 +109,15 @@ end
 ########################################################################
 
 map = MapTown.new() ;
-map.loadXmlMapFile($conf[:mapFile]) ;
+map.loadXmlMapFile($conf[:mapFile], $conf[:verbose]) ;
+
+STDERR.puts("Adding tags...") if ($conf[:verbose]) ;
 addIdAsTag(map, $conf) ;
+
 if($conf[:outFile].nil?) then
   map.saveXmlToStream(STDOUT) ;
 else
+  STDERR.puts("Save file to: #{$conf[:outFile]}") if ($conf[:verbose]) ;
   map.saveXmlToFile($conf[:outFile]) ;
 end
                        

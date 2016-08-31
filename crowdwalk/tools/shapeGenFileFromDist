@@ -28,6 +28,7 @@ $conf = {
   :distFile => nil,
   :mapFile => nil,
   :genFile => nil,
+  :verboseP => false
 } ;
 
 #------------------------------------------------------------------------
@@ -56,6 +57,9 @@ _END_
   }
   op.on("-t","--test", sep + "run test using sample data (__END__ part)."){
     $conf[:mode] = :test ;
+  }
+  op.on("-v","--verbose", sep + "verbose mode.") {
+    $conf[:verboseP] = true ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
     puts(op)
@@ -103,9 +107,9 @@ class RuleShaper
   #--------------------------------------------------------------
   #++
   ## マップ読み込み
-  def loadMapFile(mapFile)
+  def loadMapFile(mapFile,verboseP = false)
     @map = MapTown.new() ;
-    @map.loadXmlMapFile(mapFile) ;
+    @map.loadXmlMapFile(mapFile,verboseP) ;
     @map.buildRTree() ;
     return @map ;
   end
@@ -397,7 +401,7 @@ when(:bbox)                         ## bbox mode
     exit(1) ;
   else
     map = MapTown.new() ;
-    map.loadXmlMapFile($conf[:mapFile]) ;
+    map.loadXmlMapFile($conf[:mapFile], $conf[:verboseP]) ;
     map.buildRTree() ;
     bbox = map.linkTree.root.bbox() ;
     pp [:bbox, [:x, bbox.minX(), bbox.maxX()], [:y, bbox.minY(), bbox.maxY()]] ;
@@ -411,7 +415,7 @@ when(:normal)                                ## normal mode
   else
     rshape = RuleShaper.new() ;
     rshape.loadDistFile($conf[:distFile]) ;
-    rshape.loadMapFile($conf[:mapFile]) ;
+    rshape.loadMapFile($conf[:mapFile], $conf[:verboseP]) ;
     rshape.shapeRuleList() ;
     if($conf[:genFile]) then
       rshape.saveRuleListToFile($conf[:genFile]) ;
