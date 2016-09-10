@@ -1,0 +1,175 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+## -*- mode: ruby -*-
+## = reduce map as a connected network
+## Author:: Itsuki Noda
+## Version:: 0.0 2016/09/10 I.Noda
+##
+## === History
+## * [2016/09/10]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+require 'time' ;
+
+$LOAD_PATH.push(File::dirname(__FILE__) + "/RubyLib");
+
+require 'MapTown.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :from => nil,
+  :by => :id,
+  :mapFile => nil,
+  :outFile => nil,
+  :verboseP => false
+} ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]* MapFile From
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-i","--byId", sep + "specify start node/link by id.") {
+    $conf[:by] = :id ;
+  }
+  op.on("-t","--byTag", sep + "specify start node/link by tag.") {
+    $conf[:by] = :tag ;
+  }
+  op.on("-o","--outFile OutFile", String, sep + "output map file.") {|file|
+    $conf[:outFile] = file ;
+  }
+  op.on("-v","--verbose", sep + "verbose mode.") {
+    $conf[:verboseP] = true ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+if(ARGV.length != 2) then
+  p [:rest, ARGV], [:conf,$conf] ;
+  puts($op) ;
+  exit(1) ;
+end
+$conf[:mapFile] = ARGV[0] ;
+$conf[:from] = ARGV[1] ;
+p [:rest, ARGV], [:conf,$conf] ;
+
+##--======================================================================
+##++ MapNode に探索フラグ 追加。
+class MapNode
+  ##--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  ##++ 探索フラグ。
+  attr :connected, true ;
+end # class MapNode
+
+##--======================================================================
+##++ MapLink に探索フラグ 追加。
+class MapLink
+  ##--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  ##++ 探索フラグ。
+  attr :connected, true ;
+end # class MapLink
+
+##------------------------------------------------------------------------
+##++ 探索開始点を集める。
+## _map_:: TownMap データ
+## _from_:: 開始点の id もしくは tag
+## _by_ :: id で指定するか、tag で指定するか。
+def getFromPoints(map, from, by)
+  fromList = [] ;
+  case(by)
+  when(:id)
+    map.nodeList.each{|node| fromList.push(node) if(node.id == from) ;}
+    map.linkList.each{|link| fromList.push(link) if(link.id == from) ;}
+  when(:tag)
+    map.nodeList.each{|node|
+      fromList.push(node) if(node.tagList.member?(from)) ;
+    }
+    map.linkList.each{|link|
+      fromList.push(link) if(link.tagList.member?(from)) ;
+    }
+  else
+    raise "unknown 'by' mode: #{by.inspect}" ;
+  end
+  return fromList ;
+end
+
+##------------------------------------------------------------------------
+##++ 探索
+## _map_:: TownMap データ
+## _openList_:: 探査開始点リスト
+def sweepOut(map, openList)
+  until(openList.empty?)
+    obj = openList.pop() ;
+    if(!obj.connected) then
+      obj.connected = true ;
+      if(obj.is_a?(MapNode)) then
+        obj.linkList.each{|link| openList.push(link)} ;
+      elsif(obj.is_a?(MapLink)) then
+        openList.push(obj.fromNode) ;
+        openList.push(obj.toNode) ;
+      else
+        raise "unknown map object type: #{obj.inspect}" ;
+      end
+    end
+  end
+end
+
+##------------------------------------------------------------------------
+##++ マークされていないものを削除
+## _map_:: TownMap データ
+def removeUnmarkedMapObjects(map)
+  map.linkList.delete_if{|link| (! link.connected) }
+  map.nodeList.delete_if{|node| (! node.connected) }
+end
+
+##------------------------------------------------------------------------
+##++ 単連結マップに変換
+## _map_:: TownMap データ
+## _from_:: 開始点の id もしくは tag
+## _by_ :: id で指定するか、tag で指定するか。
+## _verboseP_ :: 処理状況を表示するかどうか
+def makeConnectedMap(map, from, by, verboseP = false)
+  STDERR.puts("Getting from points:...") if ($conf[:verboseP]) ;
+  openList = getFromPoints(map, from, by) ;
+
+  STDERR.puts("sweeping out:...") if ($conf[:verboseP]) ;
+  sweepOut(map, openList) ;
+
+  STDERR.puts("remove unconnected parts:...") if ($conf[:verboseP]) ;
+  removeUnmarkedMapObjects(map) ;
+end
+
+
+########################################################################
+########################################################################
+########################################################################
+
+map = MapTown.new() ;
+map.loadXmlMapFile($conf[:mapFile], $conf[:verboseP]) ;
+
+makeConnectedMap(map, $conf[:from], $conf[:by], $conf[:verboseP]) ;
+
+if($conf[:outFile].nil?) then
+  map.saveXmlToStream(STDOUT) ;
+else
+  STDERR.puts("Save file to: #{$conf[:outFile]}") if ($conf[:verboseP]) ;
+  map.saveXmlToFile($conf[:outFile]) ;
+end
+                       

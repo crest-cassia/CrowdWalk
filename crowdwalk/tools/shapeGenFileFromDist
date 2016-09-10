@@ -416,8 +416,10 @@ when(:normal)                                ## normal mode
     rshape = RuleShaper.new() ;
     rshape.loadDistFile($conf[:distFile]) ;
     rshape.loadMapFile($conf[:mapFile], $conf[:verboseP]) ;
+    STDERR.puts("shaping rules:") if ($conf[:verboseP]) ;
     rshape.shapeRuleList() ;
     if($conf[:genFile]) then
+      STDERR.puts("save rule files to:$conf[:genFile]") if ($conf[:verboseP]) ;
       rshape.saveRuleListToFile($conf[:genFile]) ;
     else
       rshape.saveRuleListToStream(STDOUT) ;

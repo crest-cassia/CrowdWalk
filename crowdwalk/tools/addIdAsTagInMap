@@ -109,15 +109,15 @@ end
 ########################################################################
 
 map = MapTown.new() ;
-map.loadXmlMapFile($conf[:mapFile], $conf[:verbose]) ;
+map.loadXmlMapFile($conf[:mapFile], $conf[:verboseP]) ;
 
-STDERR.puts("Adding tags...") if ($conf[:verbose]) ;
+STDERR.puts("Adding tags...") if ($conf[:verboseP]) ;
 addIdAsTag(map, $conf) ;
 
 if($conf[:outFile].nil?) then
   map.saveXmlToStream(STDOUT) ;
 else
-  STDERR.puts("Save file to: #{$conf[:outFile]}") if ($conf[:verbose]) ;
+  STDERR.puts("Save file to: #{$conf[:outFile]}") if ($conf[:verboseP]) ;
   map.saveXmlToFile($conf[:outFile]) ;
 end
                        
