@@ -431,7 +431,8 @@ import nodagumi.Itk.*;
  *     <pre>   * 探索において、各リンクの主観的距離の変更ルールを記述。
  *
  *  設定値： ルールを表す JSON 形式の式。
- *  デフォルト値： null</pre>
+ *  デフォルト値： null
+ *  ルールの記述方法：{@link nodagumi.ananPJ.navigation.PathChooser}</pre>
  *   </li>
  *
  *   <li>

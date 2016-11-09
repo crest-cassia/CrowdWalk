@@ -23,8 +23,8 @@ import nodagumi.Itk.Term;
  * <pre>
  *   { ...
  *     "mental_map_rules" : { "modeName1" : __Rule__,
- *                                "modeName2" : __Rule__,
- *                                ... },
+ *                            "modeName2" : __Rule__,
+ *                            ... },
  *   ...}
  * </pre>
  *   __Rule__ は、Agent の ThinkEngine の ThinkFormula に準拠。

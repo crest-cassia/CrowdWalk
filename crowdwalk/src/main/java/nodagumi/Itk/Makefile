@@ -28,6 +28,7 @@ JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
 
 ##------------------------------------------------------------
 doc ::
+	rm $(BASEDIR)/doc/javadoc/nodagumi/ananPJ/package-summary.html
 	( cd $(BASEDIR) ; gradle javadoc  )
 
 doc-old ::
