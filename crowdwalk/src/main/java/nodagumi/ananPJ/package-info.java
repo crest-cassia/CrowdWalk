@@ -60,5 +60,20 @@
  * 例えば、{@link nodagumi.ananPJ.Agents.AgentBase AgentBase クラス}の
  * {@code getDoubleFromConfig()}, {@code getIntFromConfig()}, 
  * {@code getTermFromConfig()} などの定義を参考にすべきである。
+ * <br>
+ * 各種フォールバックの説明は、以下を参照。
+ * <ul>
+ *   <li> {@link nodagumi.ananPJ.Simulator.AgentHandler} </li>
+ *   <li> {@link nodagumi.ananPJ.Agents.WalkAgent} </li>
+ *   <li> {@link nodagumi.ananPJ.Agents.AwaitAgent} </li>
+ *   <li> {@link nodagumi.ananPJ.Agents.NaiveAgent} </li>
+ *   <li> {@link nodagumi.ananPJ.Agents.CapriciousAgent} </li>
+ *   <li> {@link nodagumi.ananPJ.Agents.BustleAgent} </li>
+ *   <li> {@link nodagumi.ananPJ.NetworkMap.Link.MapLink} </li>
+ *   <li> {@link nodagumi.ananPJ.NetworkMap.Node.MapNode} </li>
+ *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase} </li>
+ *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Pollution} </li>
+ *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Flood} </li>
+ * </ul>
  */
 package nodagumi.ananPJ;
