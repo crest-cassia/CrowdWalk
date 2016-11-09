@@ -58,6 +58,35 @@ import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.Itk.CsvFormatter;
 import nodagumi.Itk.*;
 
+
+
+//======================================================================
+//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/**
+ * Agent の管理を行う.
+ * 
+ * 以下のパラメータについて、fallback に記載できる。
+ * これらのフォールバックは、 fallback の json の "agentHandler" 
+ * にオブジェクトとしてまとめられる。
+ * つまり、 fallback の中に、
+ * <pre>{ ..., 
+ *   "agentHandler" : { "slot1" : value1, "slot2" : value2 ...},
+ *    ...}
+ * </pre>
+ * と記載する。
+ * <ul>
+ *  <li> "zeroSpeedThreshold" : (Double) 
+ *       止まっているとみなす速度の閾値。
+ *  </li>
+ *  <li> "logColumnsOfIndividualPedestrians" : ([String, String, ...]) 
+ *       individualPedestriansLog に出力する項目のリスト。
+ *       詳細は、{@link #individualPedestriansLoggerFormatter}。
+ *  </li>
+ *  <li> "tickIntervalForindividualPedestriansLog" : (Int) 
+ *       ログを出力する時間間隔。tickCount の値で記述する。
+ *  </li>
+ * </ul>
+ */
 public class AgentHandler {
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -469,6 +498,18 @@ public class AgentHandler {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * default of time interval in cycle of individualPedestriansLogger
+     */
+    static private int Fallback_tickIntervalForindividualPedestriansLog = 1 ;
+
+    /**
+     * time interval in cycle of individualPedestriansLogger
+     */
+    private int tickIntervalForindividualPedestriansLog
+        = Fallback_tickIntervalForindividualPedestriansLog ;
+    
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * EvacuatedAgentsLogger
      */
     private Logger evacuatedAgentsLogger = null;
@@ -510,6 +551,11 @@ public class AgentHandler {
             Term columnName = logColumns.getNthTerm(i);
             logColumnsOfIndividualPedestrians.add(columnName.getString());
         }
+        tickIntervalForindividualPedestriansLog =
+            SetupFileInfo
+            .fetchFallbackInt(fallback,
+                              "tickIntervalForIndividualPedestriansLog",
+                              tickIntervalForindividualPedestriansLog) ;
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -1226,7 +1272,10 @@ public class AgentHandler {
      * individualPedestriansLogger への出力。
      */
     private void logIndividualPedestrians(SimTime currentTime, AgentBase agent) {
-        if (individualPedestriansLogger != null && ! agent.isDead()) {
+        if (individualPedestriansLogger != null
+            && (0 == (currentTime.getTickCount()
+                      % tickIntervalForindividualPedestriansLog))
+            && ! agent.isDead()) {
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
                                          agent, currentTime, this);
