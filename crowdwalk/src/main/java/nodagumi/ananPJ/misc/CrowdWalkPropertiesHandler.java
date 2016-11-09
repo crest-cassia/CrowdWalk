@@ -249,7 +249,7 @@ import nodagumi.Itk.*;
  *     <pre>  ゴールノード別の脱出エージェント数をステップごとに記録するログ
  *
  *  設定値： evacuated_agents_log file へのファイルパス
- *  デフォルト値： なし</pre>
+ *  デフォルト値： なし
  *   </li>
  *
  *   <li>
@@ -257,7 +257,9 @@ import nodagumi.Itk.*;
  *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのログ(?)
  *
  *  設定値： agent_movement_history file へのファイルパス
- *  デフォルト値： なし</pre>
+ *  デフォルト値： なし
+ *  ログの記述内容：{@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter}</pre> 
+ * </pre>
  *   </li>
  *
  *   <li>
@@ -266,7 +268,8 @@ import nodagumi.Itk.*;
  *  ディレクトリを指定した時のみログを収集する。
  *
  *  設定値： ディレクトリへの絶対パス | カレントディレクトリからの相対パス
- *  デフォルト値： なし</pre>
+ *  デフォルト値： なし
+ *  ログの記述内容：{@link nodagumi.ananPJ.Simulator.AgentHandler#individualPedestriansLoggerFormatter}</pre> 
  *   </li>
  *
  *   <li>

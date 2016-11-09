@@ -227,6 +227,7 @@ public class AgentHandler {
 
     /**
      * agentMovementHistoryLogger の CSV フォーマットは以下の通り。
+     * <pre>
      * 各行のカラムの順：
      *		"GenerationFileの情報"
      *		"エージェントID"
@@ -236,9 +237,10 @@ public class AgentHandler {
      *		"到着時刻2"
      *		"移動時間1"
      *		"移動時間2"
+     * </pre>
      */
-    private static CsvFormatter<AgentBase> agentMovementHistoryLoggerFormatter =
-        new CsvFormatter<AgentBase>() ;
+    public static CsvFormatter<AgentBase> agentMovementHistoryLoggerFormatter =
+        new CsvFormatter<AgentBase>() ; //javadoc で説明生成するため、private を public にする。
     static {
         CsvFormatter<AgentBase> formatter = agentMovementHistoryLoggerFormatter ;
         formatter
@@ -295,7 +297,7 @@ public class AgentHandler {
 
     /**
      * individualPedestriansLogger のCSVフォーマットは以下の通り。
-     * 各行のカラムの順：
+     * <pre>各行のカラムの順：
      *		"pedestrianID"
      *		"current_position_in_model_x"
      *		"current_position_in_model_y"
@@ -317,13 +319,13 @@ public class AgentHandler {
      *		"current_status_by_exposure"
      *		"next_assigned_passage_node"
      * ※ "waiting", "in_search_target_link", "current_time" は標準では出力されない。
-     *
+     * </pre>
      * 標準の出力カラムはリソースデータ "fallbackParameters.json" の
      * agentHandler/logColumnsOfIndividualPedestrians で定義されている。
      * プロパティファイルに指定する Fallback file で再定義する事により出力カラムが変更できる。
      */
-    private static CsvFormatter<AgentBase> individualPedestriansLoggerFormatter =
-        new CsvFormatter<AgentBase>() ;
+    public static CsvFormatter<AgentBase> individualPedestriansLoggerFormatter =
+        new CsvFormatter<AgentBase>() ; //javadoc で説明生成するため、private を public にする。
     static {
         CsvFormatter<AgentBase> formatter = individualPedestriansLoggerFormatter ;
         formatter
