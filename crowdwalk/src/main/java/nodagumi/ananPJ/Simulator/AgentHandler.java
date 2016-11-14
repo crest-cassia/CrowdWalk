@@ -1294,6 +1294,15 @@ public class AgentHandler {
     public Logger initLogger(String name, Level level, java.util.logging.Formatter formatter, String filePath) {
         Logger logger = Logger.getLogger(name);
         try {
+            // Check parent directory exists.
+            // If not exist, and Properties' flag is true,
+            // create it.
+            String dirname = (new File(filePath)).getParent() ;
+            File dir = new File(dirname) ;
+            if(!dir.exists() &&
+               simulator.getProperties().doesCreateLogDirAutomatically()) {
+                dir.mkdirs() ;
+            }
             // 「ロックファイルが残っているとログファイルに連番が振られて増え続けてしまう」不具合を回避する
             File file = new File(filePath + ".lck");
             if (file.exists()) {
@@ -1336,7 +1345,7 @@ public class AgentHandler {
             public String format(final LogRecord record) {
                 return formatMessage(record) + "\n";
             }
-        }, filePath);
+            }, filePath);
         agentMovementHistoryLogger.setUseParentHandlers(false); // コンソールには出力しない
         agentMovementHistoryLoggerFormatter
             .outputHeaderToLoggerInfo(agentMovementHistoryLogger) ;

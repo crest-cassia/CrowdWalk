@@ -310,6 +310,14 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>create_log_dirs</h4>
+ *     <pre> log および スクリーンショットの directory がないとき、自動生成するかどうか。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>defer_factor</h4>
  *     <pre>  1ステップごとの待ち時間(ミリ秒単位)
  *  この設定値を小さくするとシミュレーションは早く進み、大きくするとシミュレーションは遅く進む。
@@ -843,7 +851,21 @@ public class CrowdWalkPropertiesHandler {
 
     //--------------------------------------------------
     /**
-     * 
+     *  check property to create directories for logs automatically
+     *  if not exists.
+     */
+    public boolean doesCreateLogDirAutomatically() {
+        try {
+            return getBoolean("create_log_dirs", false) ;
+        } catch(Exception e) {
+            Itk.logWarn("property file error." + e.getMessage()) ;
+            return false ;
+        }
+    }
+    
+    //--------------------------------------------------
+    /**
+     *  get directory path specified by key.
      */
     public String getDirectoryPath(String key, String defaultValue) throws Exception {
         String value = prop.getProperty(key);
@@ -852,7 +874,11 @@ public class CrowdWalkPropertiesHandler {
         }
         File file = new File(value);
         if (! file.exists()) {
-            throw new Exception("Property error - 指定されたディレクトリが存在しません: " + key + ":" + value);
+            if(doesCreateLogDirAutomatically()) {
+                file.mkdirs() ;
+            } else {
+                throw new Exception("Property error - 指定されたディレクトリが存在しません: " + key + ":" + value);
+            }
         }
         if (! file.isDirectory()) {
             throw new Exception("Property error - 指定されたパスがディレクトリではありません: " + key + ":" + value);
@@ -860,6 +886,11 @@ public class CrowdWalkPropertiesHandler {
         return value;
     }
 
+    //--------------------------------------------------
+    /**
+     *  get file path.
+     *  if not exist, raise Exception.
+     */
     public String getFilePath(String key, String defaultValue) throws Exception {
         String value = prop.getProperty(key);
         if (value == null || value.trim().isEmpty()) {
@@ -875,6 +906,13 @@ public class CrowdWalkPropertiesHandler {
         return value;
     }
 
+    //--------------------------------------------------
+    /**
+     *  get file path.
+     *  If existing is true,  cause Exception when the file does not exist.
+     *  If existing is false, cause Exception when the file exists.
+     *  
+     */
     public String getFilePath(String key, String defaultValue, boolean existing) throws Exception {
         if (existing) {
             return getFilePath(key, defaultValue);
