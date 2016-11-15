@@ -875,6 +875,7 @@ public class CrowdWalkPropertiesHandler {
         File file = new File(value);
         if (! file.exists()) {
             if(doesCreateLogDirAutomatically()) {
+                Itk.logWarn("create directory", file) ;
                 file.mkdirs() ;
             } else {
                 throw new Exception("Property error - 指定されたディレクトリが存在しません: " + key + ":" + value);
