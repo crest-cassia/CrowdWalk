@@ -1,0 +1,458 @@
+#! /usr/bin/env ruby
+## -*- mode: ruby -*-
+## = scann individual_log and generate grid population map
+## Author:: Itsuki Noda
+## Version:: 0.0 2016/11/14 I.Noda
+##
+## === History
+## * [2016/11/14]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+require 'time' ;
+require 'csv' ;
+
+$toolBaseDir = File::dirname(__FILE__) ;
+
+$LOAD_PATH.push("#{$toolBaseDir}/./RubyLib");
+
+require 'WithConfParam' ;
+
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :origin => [0.0, 0.0, 0.0],
+  :gridSize => [500.0, 500.0, 5.0],
+  :offset => [0.0, 0.0, 0.0],
+  :timeStep => 60*60,
+  :timeOrigin => "00:00:00",
+} ;
+
+#------------------------------------------------------------------------
+#++
+## scan X-Y or X-Y-Z value
+def scanXYZ(xyz, destArray = nil)
+  pos = xyz.split(":").map{|v| v.to_f} ;
+  if(destArray.nil?) then
+    return pos ;
+  else
+    if(pos.length == 3) then
+      destArray[0,3] = pos[0,3] ;
+    elsif(pos.length == 2) then
+      destArray[0,2] = pos[0,2] ;
+    else
+      raise "XYZ format should be 'x.xx:y.yy' or 'x.xx:y.yy:z.zz'." ;
+    end
+    return destArray ;
+  end
+end
+  
+#------------------------------------------------------------------------
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]*
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-o","--origin X:Y", String, sep + "set origin in 'X:Y' or 'X:Y:Z' form..") {|xyz|
+    scanXYZ(xyz, $conf[:origin]) ;
+  }
+  op.on("-g","--grid X:Y", String, sep + "set grid size in 'X:Y' or 'X:Y;Z' form.") {|xyz|
+    scanXYZ(xyz, $conf[:gridSize]) ;
+  }
+  op.on("-s","--offset X:Y", String, sep + "set offset in 'X:Y' or 'X:Y:Z' form.") {|xyz|
+    scanXYZ(xyz, $conf[:offset]) ;
+  }
+  op.on("-t","--time Sec", Integer, sep + "set timeStep.") {|sec|
+    $conf[:timeStep] = sec ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ;
+
+#--======================================================================
+#++
+## Information of a grid
+class Grid
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## parent table
+  attr_accessor :table ;
+  ## index of the grid. [ix, iy, iz]
+  attr_accessor :index ;
+  ## time
+  attr_accessor :time ;
+  ## time index.
+  attr_accessor :timeIndex ;
+  ## list of agents
+  attr_accessor :agentList ;
+  ## population
+  attr_accessor :population ;
+
+  #--------------------------------------------------------------
+  #++
+  ## initialization.
+  ## _table_:: parent table.
+  ## _index_:: index in [ix, iy, iz] form
+  ## _time_:: time index
+  ## _timestr_:: a string to indicate time
+  def initialize(table, index, time, timeIndex = nil)
+    @table = table ;
+    @index = index ;
+    @time = time ;
+    @timeIndex = timeIndex ;
+    @population = 0 ;
+    @agentList = [] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## add agent
+  ## _agent_:: id or agent object
+  ## *return*:: current population
+  def addAgent(agent)
+    @agentList.push(agent) ;
+    @population = @agentList.length ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## increment population
+  ## _n_:: increment value
+  ## *return*:: current population
+  def incPopulation(n)
+    @population += n ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## generate output data as an array
+  ## *return*:: array
+  def genOutputArray()
+    return [@timeIndex, @index[0], @index[1], @index[2], @population] ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## generate output data as an array
+  ## *return*:: array
+  def genOutputLabelArray()
+    return ["timeIndex",
+            "posIndex_x", "posIndex_y", "posIndex_z",
+            "population"] ;
+  end
+
+  #--============================================================
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #--------------------------------------------------------------
+end # class Grid
+
+#--======================================================================
+#++
+## collection of grids
+class GridTable < WithConfParam
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## default confitulation
+  DefaultConf = { :origin => [0.0, 0.0, 0.0],
+                  :gridSize => [500.0, 500.0, 5.0],
+                  :offset => [0.0, 0.0, 0.0],
+                  :timeStep => 60*60,
+                  :timeOrigin => "00:00:00",
+                  nil => nil } ;
+
+  ## default confitulation
+  DefaultDate = Time.parse("2000/01/01") ;
+
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #++
+  ## origin. should be [x,y,z]
+  attr_accessor :origin ;
+  ## grid size. should be [x,y,z]
+  attr_accessor :gridSize ;
+  ## offset. should be [x,y,z]
+  attr_accessor :offset ;
+  ## timeStep
+  attr_accessor :timeStep ;
+  ## time origin. nil or "hh:mm:ss" or Time Object
+  attr_accessor :timeOrigin ;
+  ## time name table (map from time string to time object)
+  attr_accessor :timeNameTable ;
+  ## pos index table 
+  attr_accessor :posIndexTable ;
+  ## pos index list
+  attr_accessor :posIndexList ;
+  ## table of grid. [time, [ix,iy,iz]] => grid
+  attr_accessor :gridTable ;
+  ## table of summary grid. [timeIndex, [ix,iy,iz]] => grid
+  attr_accessor :sumGridTable ;
+  
+  #--------------------------------------------------------------
+  #++
+  ## initialize
+  def initialize(conf = {})
+    super(conf) ;
+    @origin = getConf(:origin) ;
+    @gridSize = getConf(:gridSize) ;
+    @offset = getConf(:offset) ;
+    @timeStep = getConf(:timeStep) ;
+    @timeOrigin = getConf(:timeOrigin) ;
+    @timeNameTable = {} ;
+    @posIndexTable = {} ;
+    @gridTable = {} ;
+    parseTimeOrigin(@timeOrigin) ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## get position index from position value
+  def getPosIndex(pos)
+    (x,y,z) = pos ;
+    dx = x + @offset[0] - @origin[0] ;
+    dy = y + @offset[1] - @origin[1] ;
+    dz = z + @offset[2] - @origin[2] ;
+    ix = (dx / @gridSize[0]).floor ;
+    iy = (dy / @gridSize[1]).floor ;
+    iz = (dz / @gridSize[2]).floor ;
+    return [ix, iy, iz] ;
+  end
+    
+  #--------------------------------------------------------------
+  #++
+  ## get position index from position value
+  def getPosFromIndex(posIndex)
+    (ix,iy,iz) = posIndex ;
+    x = @origin[0] + ix * @gridSize[0] - @offset[0] ;
+    y = @origin[1] + iy * @gridSize[1] - @offset[1] ;
+    z = @origin[2] + iz * @gridSize[2] - @offset[2] ;
+    return [x,y,z] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## get position range index from position value.
+  ## return [[x0, y0, z0],[x1, y1, z1]]
+  def getPosRangeFromIndex(posIndex)
+    beginPos = getPosFromIndex(posIndex)
+    endPos = [beginPos[0] + @gridSize[0],
+              beginPos[1] + @gridSize[1],
+              beginPos[2] + @gridSize[2]] ;
+    return [beginPos, endPos] 
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## parse time origin string
+  def parseTimeOrigin(timeOrigin)
+    @timeOrigin = parseTime(timeOrigin) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## parse time string to Time object
+  def parseTime(time)
+    if(time.nil?)
+      return nil ;
+    elsif(time.is_a?(String))
+      return Time.parse(time, DefaultDate) ;
+    elsif(time.is_a?(Time))
+      return time ;
+    else
+      raise "can not convert to Time Object from :" + time.inspect ;
+    end
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## get time index
+  def getTimeIndex(time)
+    if(@timeOrigin.nil?) then
+      return nil ;
+    else
+      time = parseTime(time) ;
+      diff = time - @timeOrigin ;
+      index = (diff / @timeStep).floor ;
+      return index ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## get time from index
+  def getTimeFromIndex(index)
+    if(@timeOrigin.nil?) then
+      return nil ;
+    else
+      time = @timeOrigin + @timeStep * index ;
+      return time ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## process individual pedestrian log
+  def processIndivLogFile(file)
+    scanIndivLogFile(file) ;
+    summarizeGridByTime() ;
+    outputSumGridTable() ;
+  end
+    
+  #--------------------------------------------------------------
+  #++
+  ## summarize grid by time
+  def summarizeGridByTime()
+    @sumGridTable = {} ;
+    @gridTable.each{|index, grid|
+      (time, posIndex) = index ;
+      timeIndex = getTimeIndex(time) ;
+      newIndex = [timeIndex, posIndex] ;
+      newGrid = @sumGridTable[newIndex] ;
+      if(newGrid.nil?) then
+        newGrid = Grid.new(self, posIndex, nil, timeIndex) ;
+        @sumGridTable[newIndex] = newGrid ;
+      end
+      newGrid.incPopulation(grid.population) ;
+    }
+  end
+    
+  #--------------------------------------------------------------
+  #++
+  ## output 
+  def outputSumGridTable()
+    str = CSV.generate{|csv|
+      c = 0 ;
+      @sumGridTable.keys.sort.each{|index|
+        grid = @sumGridTable[index] ;
+        if(c == 0) then
+          csv << grid.genOutputLabelArray() ;
+        end
+        c += 1 ;
+        csv << grid.genOutputArray() ;
+      }
+    }
+    puts str ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## scan individual pedestrian log
+  def scanIndivLogFile(file)
+    @csvColumnLabelList = nil ;
+    CSV.foreach(file) {|row|
+      if(@csvColumnLabelList.nil?) then
+        @csvColumnLabelList = [] ;
+        @csvColumnIndex = {} ;
+        row.each{|val|
+          @csvColumnIndex[val] = @csvColumnLabelList.length ;
+          @csvColumnLabelList.push(val) ;
+        }
+      else
+        scanCsvRow(row) ;
+      end
+    }
+  end
+    
+  #--------------------------------------------------------------
+  #++
+  ## scan a row of individual pedestrian log
+  def scanCsvRow(row)
+    return if !checkWalkingAgent(row) ;
+    agentId = getAgentIdInCsvRow(row) ;
+    time = getCurrentTimeInCsvRow(row) ;
+    posIndex = getCurrentPosIndexInCsvRow(row) ;
+    index = [time, posIndex] ;
+    
+    grid = @gridTable[index] ;
+    if(grid.nil?) then
+      grid = Grid.new(self, posIndex, time) ;
+      @gridTable[index] = grid ;
+    end
+
+    grid.addAgent(agentId) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## retrieve a value from CSV row
+  def getValueFromCsvRow(row, label)
+    return row[@csvColumnIndex[label]] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## retrieve agent id
+  def getAgentIdInCsvRow(row)
+    return getValueFromCsvRow(row, "pedestrianID").intern ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## retrieve a current time from CSV row
+  def getCurrentTimeInCsvRow(row)
+    timestr = getValueFromCsvRow(row, "current_time") ;
+    time = @timeNameTable[timestr] ;
+    if(time.nil?) then
+      time = parseTime(timestr) ;
+      @timeNameTable[timestr] = time ;
+    end
+    return time ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## retrieve a position from CSV row
+  def getCurrentPosInCsvRow(row)
+    x = getValueFromCsvRow(row, "current_position_in_model_x").to_f ;
+    y = getValueFromCsvRow(row, "current_position_in_model_y").to_f ;
+    z = getValueFromCsvRow(row, "current_position_in_model_z").to_f ;
+    return [x,y,z] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## retrieve a position index from CSV row
+  def getCurrentPosIndexInCsvRow(row)
+    pos = getCurrentPosInCsvRow(row) ;
+    index = getPosIndex(pos) ;
+    if(@posIndexTable[index].nil?) then
+      @posIndexTable[index] = index ;
+    end
+    return @posIndexTable[index] ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## agent alived?
+  def checkWalkingAgent(row)
+    linkId = getValueFromCsvRow(row, "current_linkID") ;
+    return (linkId != "-1") ;
+  end
+  
+  #--============================================================
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #--------------------------------------------------------------
+end # class GridTable
+
+
+########################################################################
+########################################################################
+########################################################################
+
+gTable = GridTable.new($conf) ;
+gTable.processIndivLogFile(ARGV[0]) ;
