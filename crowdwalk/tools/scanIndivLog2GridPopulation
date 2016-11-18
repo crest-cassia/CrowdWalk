@@ -141,9 +141,13 @@ class Grid
   #--------------------------------------------------------------
   #++
   ## generate output data as an array
+  ## _popUnit_:: normalize unit
   ## *return*:: array
-  def genOutputArray()
-    return [@timeIndex, @index[0], @index[1], @index[2], @population] ;
+  def genOutputArray(popUnit)
+    normalizedPopulation = (@population.to_f / popUnit) ;
+    return [@timeIndex,
+            @index[0], @index[1], @index[2],
+            normalizedPopulation]
   end
   
   #--------------------------------------------------------------
@@ -334,6 +338,8 @@ class GridTable < WithConfParam
   #++
   ## output 
   def outputSumGridTable()
+    diff = findMinimumTimeDiff() ;
+    popUnit = @timeStep / diff ;
     str = CSV.generate{|csv|
       c = 0 ;
       @sumGridTable.keys.sort.each{|index|
@@ -342,12 +348,31 @@ class GridTable < WithConfParam
           csv << grid.genOutputLabelArray() ;
         end
         c += 1 ;
-        csv << grid.genOutputArray() ;
+        csv << grid.genOutputArray(popUnit) ;
       }
     }
     puts str ;
   end
-  
+
+  #--------------------------------------------------------------
+  #++
+  ## find minimum time difference
+  def findMinimumTimeDiff()
+    pre = nil ;
+    diff = nil ;
+    @timeNameTable.values.sort.each{|time|
+      if(pre.nil?) then
+        pre = time ;
+      else
+        d = time - pre ;
+        if(diff.nil? || diff > d) then
+          diff = d ;
+        end
+      end
+    }
+    return diff ;
+  end
+    
   #--------------------------------------------------------------
   #++
   ## scan individual pedestrian log
