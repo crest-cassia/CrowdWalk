@@ -34,6 +34,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.LinkAppearance2D;
 import nodagumi.ananPJ.Gui.NodeAppearance2D;
+import nodagumi.ananPJ.Gui.SimulationPanel3D.ObstructerDisplay;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -42,7 +43,6 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.Hover;
-import nodagumi.ananPJ.Simulator.SimulationPanel3D.gas_display;
 
 /**
  * 2D シミュレーションパネル
@@ -179,7 +179,7 @@ public class SimulationPanel2D extends JPanel {
     /**
      * エリアの表示色
      */
-    private gas_display show_gas = gas_display.ORANGE;
+    private ObstructerDisplay show_gas = ObstructerDisplay.ORANGE;
 
     /**
      * ホバーテキストの背景色
@@ -262,8 +262,8 @@ public class SimulationPanel2D extends JPanel {
                     NodeAppearance2D.load(new FileInputStream(filePath), nodeAppearances);
                 }
 
-                show_gas = gas_display.valueOf(properties.getString("pollution_color", "ORANGE",
-                            gas_display.getNames()).toUpperCase()) ;
+                show_gas = ObstructerDisplay.valueOf(properties.getString("pollution_color", "ORANGE",
+                            ObstructerDisplay.getNames()).toUpperCase()) ;
                 pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
 
                 // グループ別の背景画像を読み込む

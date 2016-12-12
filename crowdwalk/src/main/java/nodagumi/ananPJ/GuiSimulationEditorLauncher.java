@@ -41,16 +41,18 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import nodagumi.ananPJ.Gui.NetworkPanel3D;
+import javafx.embed.swing.JFXPanel;
+import javafx.application.Platform;
+
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Editor.EditorFrame;
-import nodagumi.ananPJ.Editor.EditorPanel3D;
 import nodagumi.ananPJ.Editor.Panel.BrowserPanel;
 import nodagumi.ananPJ.Editor.Panel.ScenarioPanel;
 import nodagumi.ananPJ.Editor.Panel.LinkPanel;
 import nodagumi.ananPJ.Editor.Panel.NodePanel;
 import nodagumi.ananPJ.Editor.Panel.AreaPanel;
+import nodagumi.ananPJ.Gui.MapViewFrame;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -58,7 +60,6 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Simulator.SimulationPanel3D;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.MapChecker;
@@ -647,13 +648,15 @@ public class GuiSimulationEditorLauncher
     }
 
     private void show3D() {
-        JFrame frame = new JFrame("3D preview of Structure");
-        NetworkPanel3D panel3d= EditorPanel3D.createPanel(this, frame);
-        if (panel3d == null) return;
-        frame.add(panel3d);
-        frame.setMenuBar(panel3d.getMenuBar());
-        frame.pack();
-        frame.setVisible(true);
+        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                MapViewFrame frame = new MapViewFrame("3D preview of Structure", 800, 600, networkMap, properties);
+                frame.show();
+                Platform.setImplicitExit(false);
+            }
+       });
     }
 
     //------------------------------------------------------------

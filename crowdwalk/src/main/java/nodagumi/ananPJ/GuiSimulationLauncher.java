@@ -243,8 +243,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                 throw new Exception("Property error - 設定値が範囲(0～299)外です: defer_factor:" + deferFactor);
             }
             verticalScale = properties.getDouble("vertical_scale", verticalScale);
-            if (verticalScale < 0.1 || verticalScale > 49.9) {
-                throw new Exception("Property error - 設定値が範囲(0.1～49.9)外です: vertical_scale:" + verticalScale);
+            if (verticalScale < 0.1 || verticalScale > 10.0) {
+                throw new Exception("Property error - 設定値が範囲(0.1～10.0)外です: vertical_scale:" + verticalScale);
             }
             agentSize = properties.getDouble("agent_size", agentSize);
             if (agentSize < 0.1 || agentSize > 9.9) {

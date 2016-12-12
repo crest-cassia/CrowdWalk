@@ -385,8 +385,6 @@ public class SimulationFrame2D extends JFrame
                 }});
         fileMenu.add(mi);
         
-        fileMenu.add(fileMenu);
-
         menuBar.add(fileMenu);
 
         //// View menu ////
