@@ -48,4 +48,4 @@ case "$OS" in
 esac
 
 echo "$JAVA $JAVAOPT -Djava.library.path=$DYLD -jar $JAR $*"
-$JAVA $JAVAOPT -Djava.library.path=$DYLD -jar $JAR $*
+$JAVA $JAVAOPT -Djava.library.path=$DYLD -Dprism.forceGPU=true -jar $JAR $*
