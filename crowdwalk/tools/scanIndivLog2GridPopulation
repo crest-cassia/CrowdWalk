@@ -54,7 +54,14 @@ end
 #------------------------------------------------------------------------
 $op = OptionParser.new() {|op|
   op.banner = <<_END_
-  Usage: #{$0} [Options]*
+  Usage: #{$0} [Options]* <individual_pedestrian_log.log> 
+  Scan CrowdWalk's individual_pedestrian_log and output grid populations.
+  The output goes out stdout.
+  The output format is csv file in the following columns:
+	timeIndex, gridIndex_X, gridIndex_Y, gridIndex_Z, population
+  The timeIndex is count of time step (default 3600sec) from "00:00:00".
+  The gridIndex_XYZ starts from the origin [0,0,0] (or specified by -o option).
+  The grid size is 500m in X and Y, and 5m in Z axis.
 _END_
 
   op.separator("Options:") ;
