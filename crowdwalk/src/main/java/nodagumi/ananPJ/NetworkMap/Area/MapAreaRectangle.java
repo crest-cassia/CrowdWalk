@@ -20,6 +20,21 @@ import nodagumi.ananPJ.NetworkMap.OBNode;
  * 地図上の方形エリア。
  */
 public class MapAreaRectangle extends MapArea {
+    /**
+     * エリアの表示色
+     */
+    public static enum ObstructerDisplay {
+        NONE, HSV, RED, BLUE, ORANGE;
+
+        public static String[] getNames() {
+            String[] names = new String[values().length];
+            int index = 0;
+            for (ObstructerDisplay value : values()) {
+                names[index++] = value.toString();
+            }
+            return names;
+        }
+    };
 
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

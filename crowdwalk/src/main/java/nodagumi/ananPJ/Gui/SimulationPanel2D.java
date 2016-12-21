@@ -34,7 +34,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.LinkAppearance2D;
 import nodagumi.ananPJ.Gui.NodeAppearance2D;
-import nodagumi.ananPJ.Gui.SimulationPanel3D.ObstructerDisplay;
+import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle.ObstructerDisplay;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;

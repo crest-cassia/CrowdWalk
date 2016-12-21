@@ -51,6 +51,7 @@ import javafx.stage.Window;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle.ObstructerDisplay;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Link.MapLinkTable;
@@ -65,22 +66,6 @@ import nodagumi.Itk.*;
  * 3D シミュレーションパネル
  */
 public class SimulationPanel3D extends StackPane {
-    /**
-     * エリアの表示色
-     */
-    public static enum ObstructerDisplay {
-        NONE, HSV, RED, BLUE, ORANGE;
-
-        public static String[] getNames() {
-            String[] names = new String[values().length];
-            int index = 0;
-            for (ObstructerDisplay value : values()) {
-                names[index++] = value.toString();
-            }
-            return names;
-        }
-    };
-
     /**
      * 実在の地図ベースのマップであると判断する最小リンク数
      */
