@@ -384,10 +384,10 @@ public class SimulationFrame3D extends Stage implements Observer {
             thread.start();
         });
 
-        Label label = new Label("wait:");
+        Label label = new Label("wait");
 
         ScrollBar deferFactorControl = new ScrollBar();
-        deferFactorControl.setPrefSize(230, 20);
+        deferFactorControl.setPrefSize(200, 20);
         deferFactorControl.setMax(300);
         deferFactorControl.setValue(deferFactor);
         deferFactorControl.valueProperty().addListener((ov, oldValue, newValue) -> {
@@ -396,13 +396,12 @@ public class SimulationFrame3D extends Stage implements Observer {
         });
 
         simulationDeferFactorValue = new Label("" + deferFactor);
-        simulationDeferFactorValue.setPrefSize(30, 20);
         simulationDeferFactorValue.setAlignment(Pos.CENTER_RIGHT);
 
         FlowPane innerPane = new FlowPane(12, 0);
         BorderStroke borderStroke = new BorderStroke(Color.LIGHTGREY, BorderStrokeStyle.SOLID, new CornerRadii(2), BorderWidths.DEFAULT);
         innerPane.setBorder(new Border(borderStroke));
-        innerPane.setPadding(new Insets(8));
+        innerPane.setPadding(new Insets(8, 0, 8, 0));
         innerPane.setAlignment(Pos.CENTER);
         innerPane.getChildren().addAll(start_button, step_button, label, deferFactorControl, simulationDeferFactorValue);
 
