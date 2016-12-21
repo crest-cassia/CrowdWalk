@@ -4,20 +4,14 @@ package nodagumi.ananPJ;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.SimulationFrame2D;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
-import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.Scenario.*;
-import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.Itk.*;
 
@@ -26,22 +20,6 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      * シミュレーションウィンドウのフレーム
      */
     private SimulationFrame2D simulationFrame;
-
-    /**
-     * アプリ起動時にシミュレーションを開始する時に用いるコンストラクタ.
-     */
-    public GuiSimulationLauncher2D(String _propertiesPath, Settings _settings,
-            ArrayList<String> commandLineFallbacks) {
-        super(_propertiesPath, _settings, commandLineFallbacks);
-    }
-
-    /**
-     * マップエディタからシミュレーションを開始する時に用いるコンストラクタ.
-     */
-    public GuiSimulationLauncher2D(Random random, CrowdWalkPropertiesHandler _properties,
-            SetupFileInfo _setupFileInfo, NetworkMap _networkMap, Settings _settings) {
-        super(random, _properties, _setupFileInfo, _networkMap, _settings);
-    }
 
     public void quit() {
         Itk.logInfo("Simulation window closed.") ;

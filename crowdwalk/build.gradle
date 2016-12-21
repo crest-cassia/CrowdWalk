@@ -19,6 +19,7 @@ apply plugin: 'eclipse'
 
 def javaVersion = new Double(sourceCompatibility.toString())
 def onlyCuiSimulator = cui.toBoolean()
+def vmName = System.getProperty("java.vm.name")
 
 if (javaVersion < 1.8) {
     println "javaVersion ${javaVersion}"
@@ -26,6 +27,11 @@ if (javaVersion < 1.8) {
 }
 if (onlyCuiSimulator) {
     println "build mode: onlyCuiSimulator"
+} else {
+    if (vmName.toLowerCase().indexOf("openjdk") != -1) {
+        println "Java Virtual Machine: ${vmName}"
+        println "Note: To build with 3D simulator, please use Oracle version JDK."
+    }
 }
 
 repositories {
@@ -67,6 +73,16 @@ sourceSets {
                 exclude 'nodagumi/ananPJ/misc/MapChecker.java'
             } else {
                 exclude 'nodagumi/ananPJ/CuiCrowdWalkLauncher.java'
+                if (vmName.toLowerCase().indexOf("openjdk") != -1) {
+                    exclude 'nodagumi/ananPJ/Gui/FxColor.java'
+                    exclude 'nodagumi/ananPJ/Gui/LinkAppearance3D.java'
+                    exclude 'nodagumi/ananPJ/Gui/MapViewFrame.java'
+                    exclude 'nodagumi/ananPJ/Gui/NodeAppearance3D.java'
+                    exclude 'nodagumi/ananPJ/Gui/SimulationFrame3D.java'
+                    exclude 'nodagumi/ananPJ/Gui/SimulationPanel3D.java'
+                    exclude 'nodagumi/ananPJ/Gui/SimulationViewController3D.java'
+                    exclude 'nodagumi/ananPJ/GuiSimulationLauncher3D.java'
+                }
             }
             exclude 'nodagumi/ananPJ/ImportGis.java'
         }

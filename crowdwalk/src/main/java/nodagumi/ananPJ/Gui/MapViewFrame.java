@@ -1,5 +1,7 @@
 package nodagumi.ananPJ.Gui;
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -15,20 +17,23 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 /**
  * 3D マップ表示専用のウィンドウ
  */
-public class MapViewFrame extends Stage {
+public class MapViewFrame implements MapViewer {
     /**
      * ウィンドウフレーム
      */
-    private Stage frame;
+    private Stage stage;
 
     /**
      * マップパネル
      */
     public SimulationPanel3D panel;
 
+    public MapViewFrame() {}
+
     public MapViewFrame(String title, int width, int height, NetworkMap networkMap,
             CrowdWalkPropertiesHandler properties) {
-        frame = this;
+        stage = new Stage();
+        stage.setTitle(title);
 
         // メニュー
         Node menuBar = createMenu();
@@ -42,8 +47,23 @@ public class MapViewFrame extends Stage {
         borderPane.setCenter(panel);
 
         Scene scene = new Scene(borderPane);
-        setTitle(title);
-        setScene(scene);
+        stage.setScene(scene);
+    }
+
+    /**
+     * 3D マップ確認用のウィンドウを表示する
+     */
+    public void view(final String title, final int width, final int height, final NetworkMap networkMap,
+            final CrowdWalkPropertiesHandler properties) {
+        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                MapViewFrame frame = new MapViewFrame(title, width, height, networkMap, properties);
+                frame.show();
+                Platform.setImplicitExit(false);
+            }
+       });
     }
 
     /**
@@ -57,7 +77,7 @@ public class MapViewFrame extends Stage {
         Menu fileMenu = new Menu("File");
 
         MenuItem miClose = new MenuItem("Close");
-        miClose.setOnAction(e -> frame.close());
+        miClose.setOnAction(e -> stage.close());
         miClose.setAccelerator(KeyCombination.valueOf("Ctrl+W"));
 
         fileMenu.getItems().addAll(miClose);
@@ -81,5 +101,9 @@ public class MapViewFrame extends Stage {
         menuBar.getMenus().addAll(fileMenu, viewMenu);
 
         return menuBar;
+    }
+
+    public void show() {
+        stage.show();
     }
 }

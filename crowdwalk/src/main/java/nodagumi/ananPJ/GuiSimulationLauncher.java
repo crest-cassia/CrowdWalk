@@ -10,10 +10,42 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.SetupFileInfo;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.*;
 
 public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
+    /**
+     * GUI シミュレーションランチャーの一覧
+     */
+    public static final String LAUNCHER_CLASSES = "/gui_simulation_launcher_classes.json";
+
+    /**
+     * クラスローダー
+     */
+    private static ClassFinder classFinder = new ClassFinder();
+
+    static {
+        classFinder.aliasByJson(ObstructerBase.resourceToString(LAUNCHER_CLASSES));
+    }
+
+    /**
+     * 使用可能なサブクラスかどうか?
+     */
+    public static boolean isUsableClass(String className) {
+        return classFinder.isClassName(className);
+    }
+
+    /**
+     * サブクラスのインスタンスを生成する
+     */
+    public static GuiSimulationLauncher createInstance(String className) {
+        try {
+            return (GuiSimulationLauncher)classFinder.newByName(className);
+        } catch (Exception ex) {}
+        return null;
+    }
+
     /**
      * シミュレーションパネルの幅
      */
@@ -80,11 +112,17 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     };
 
     /**
-     * アプリ起動時にシミュレーションを開始する時に用いるコンストラクタ.
+     * コンストラクタ.
      */
-    public GuiSimulationLauncher(String _propertiesPath, Settings _settings,
-            ArrayList<String> commandLineFallbacks) {
+    public GuiSimulationLauncher() {
         super(null) ;
+    }
+
+    /**
+     * アプリ起動時にシミュレーションを開始する場合の初期設定.
+     */
+    public void init(String _propertiesPath, Settings _settings,
+            ArrayList<String> commandLineFallbacks) {
         // load properties
         setPropertiesFromFile(_propertiesPath, commandLineFallbacks) ;
         setPropertiesForDisplay();
@@ -111,11 +149,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     }
 
     /**
-     * マップエディタからシミュレーションを開始する時に用いるコンストラクタ.
+     * マップエディタからシミュレーションを開始する場合の初期設定.
      */
-    public GuiSimulationLauncher(Random random, CrowdWalkPropertiesHandler _properties,
+    public void init(Random _random, CrowdWalkPropertiesHandler _properties,
             SetupFileInfo _setupFileInfo, NetworkMap _networkMap, Settings _settings) {
-        super(random) ;
+        random = _random;
         properties = _properties;
         setPropertiesForDisplay();
         setupFileInfo = _setupFileInfo;

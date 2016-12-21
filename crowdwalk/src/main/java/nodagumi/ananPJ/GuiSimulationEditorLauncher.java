@@ -41,9 +41,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import javafx.embed.swing.JFXPanel;
-import javafx.application.Platform;
-
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Editor.EditorFrame;
@@ -52,7 +49,7 @@ import nodagumi.ananPJ.Editor.Panel.ScenarioPanel;
 import nodagumi.ananPJ.Editor.Panel.LinkPanel;
 import nodagumi.ananPJ.Editor.Panel.NodePanel;
 import nodagumi.ananPJ.Editor.Panel.AreaPanel;
-import nodagumi.ananPJ.Gui.MapViewFrame;
+import nodagumi.ananPJ.Gui.MapViewer;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -229,9 +226,9 @@ public class GuiSimulationEditorLauncher
                 public void actionPerformed(ActionEvent e) {
                     runButton2d.setEnabled(false);
                     runButton3d.setEnabled(false);
-                    new GuiSimulationLauncher2D(random, properties,
-                                                setupFileInfo, networkMap,
-                                                settings).simulate();
+                    GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher2D");
+                    launcher.init(random, properties, setupFileInfo, networkMap, settings);
+                    launcher.simulate();
                 }});
         buttonPanel.add(runButton2d);
 
@@ -242,9 +239,9 @@ public class GuiSimulationEditorLauncher
                 public void actionPerformed(ActionEvent e) {
                     runButton2d.setEnabled(false);
                     runButton3d.setEnabled(false);
-                    new GuiSimulationLauncher3D(random, properties,
-                                                setupFileInfo, networkMap,
-                                                settings).simulate();
+                    GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
+                    launcher.init(random, properties, setupFileInfo, networkMap, settings);
+                    launcher.simulate();
                 }});
         buttonPanel.add(runButton3d);
 
@@ -421,6 +418,7 @@ public class GuiSimulationEditorLauncher
 
         mi = new MenuItem("Show 3D");
         mi.addActionListener(this);
+        mi.setEnabled(CrowdWalkLauncher.isUsable3dSimulator());
         actionMenu.add(mi);
 
         calcTagPathMenu = new MenuItem("Calculate tag paths");
@@ -648,15 +646,15 @@ public class GuiSimulationEditorLauncher
     }
 
     private void show3D() {
-        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                MapViewFrame frame = new MapViewFrame("3D preview of Structure", 800, 600, networkMap, properties);
-                frame.show();
-                Platform.setImplicitExit(false);
-            }
-       });
+        MapViewer mapViewer;
+        try {
+            Class klass = Class.forName("nodagumi.ananPJ.Gui.MapViewFrame");
+            mapViewer = (MapViewer)klass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        mapViewer.view("3D preview of Structure", 800, 600, networkMap, properties);
     }
 
     //------------------------------------------------------------
@@ -746,7 +744,7 @@ public class GuiSimulationEditorLauncher
             runButton3d.setEnabled(false);
         } else {
             runButton2d.setEnabled(true);
-            runButton3d.setEnabled(true);
+            runButton3d.setEnabled(CrowdWalkLauncher.isUsable3dSimulator());
         }
     }
 
@@ -756,12 +754,16 @@ public class GuiSimulationEditorLauncher
     public void simulate() {
         GuiSimulationLauncher launcher;
         if (CrowdWalkLauncher.use2dSimulator) {
-            launcher = new GuiSimulationLauncher2D(random, properties,
-                    setupFileInfo, networkMap, settings);
+            launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher2D");
         } else {
-            launcher = new GuiSimulationLauncher3D(random, properties,
-                    setupFileInfo, networkMap, settings);
+            if (! CrowdWalkLauncher.isUsable3dSimulator()) {
+                JOptionPane.showMessageDialog(frame,
+                        "3D simulator can not be used.", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
         }
+        launcher.init(random, properties, setupFileInfo, networkMap, settings);
         launcher.simulate();
     }
 

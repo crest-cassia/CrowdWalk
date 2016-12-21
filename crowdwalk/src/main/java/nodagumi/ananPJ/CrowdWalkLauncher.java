@@ -136,7 +136,7 @@ public class CrowdWalkLauncher {
             printHelp(options);
             System.exit(1);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             System.exit(1);
         }
     }
@@ -175,17 +175,24 @@ public class CrowdWalkLauncher {
      */
     public static GuiSimulationLauncher
         launchGuiSimulator(String propertiesFilePath,
-                           ArrayList<String> commandLineFallbacks)
+                           ArrayList<String> commandLineFallbacks) throws Exception
     {
         settings = Settings.load(SETTINGS_FILE_NAME);
         GuiSimulationLauncher launcher;
         if (use2dSimulator) {
-            launcher = new GuiSimulationLauncher2D(propertiesFilePath,
-                    settings, commandLineFallbacks);
+            launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher2D");
         } else {
-            launcher = new GuiSimulationLauncher3D(propertiesFilePath,
-                    settings, commandLineFallbacks);
+            if (! GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D")) {
+                throw new Exception("このビルドには 3D シミュレータ機能が組み込まれていません。");
+            }
+            String vmName = System.getProperty("java.vm.name");
+            if (vmName.toLowerCase().indexOf("openjdk") != -1) {
+                throw new Exception("Java Virtual Machine: " + vmName
+                        + "\n\t3D シミュレータは Oracle 版の Java でないと実行できません。");
+            }
+            launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
         }
+        launcher.init(propertiesFilePath, settings, commandLineFallbacks);
         launcher.simulate();
         return launcher;
     }
@@ -235,6 +242,15 @@ public class CrowdWalkLauncher {
         int usageWidth = 7 + commandLineSyntax.length();    // "usege: " + commandLineSyntax
         formatter.setWidth(Math.max(usageWidth, 80));       // 行の折りたたみ最小幅は80桁
         formatter.printHelp(commandLineSyntax, options);
+    }
+
+    /**
+     * 3D シミュレータが使用可能か?
+     */
+    public static boolean isUsable3dSimulator() {
+        String vmName = System.getProperty("java.vm.name");
+        return GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D")
+            && vmName.toLowerCase().indexOf("openjdk") == -1;
     }
 
     public static void main(String[] args) {

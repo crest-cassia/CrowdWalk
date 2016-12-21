@@ -1,8 +1,6 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ;
 
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import javafx.embed.swing.JFXPanel;
@@ -11,9 +9,6 @@ import javafx.application.Platform;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.SimulationFrame3D;
 import nodagumi.ananPJ.Gui.SimulationViewController3D;
-import nodagumi.ananPJ.NetworkMap.NetworkMap;
-import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.Itk.*;
 
@@ -30,22 +25,6 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
      * シミュレーション画面の更新を制御するコントローラ
      */
     private SimulationViewController3D viewController;
-
-    /**
-     * アプリ起動時にシミュレーションを開始する時に用いるコンストラクタ
-     */
-    public GuiSimulationLauncher3D(String _propertiesPath, Settings _settings,
-            ArrayList<String> commandLineFallbacks) {
-        super(_propertiesPath, _settings, commandLineFallbacks);
-    }
-
-    /**
-     * マップエディタからシミュレーションを開始する時に用いるコンストラクタ
-     */
-    public GuiSimulationLauncher3D(Random random, CrowdWalkPropertiesHandler _properties,
-            SetupFileInfo _setupFileInfo, NetworkMap _networkMap, Settings _settings) {
-        super(random, _properties, _setupFileInfo, _networkMap, _settings);
-    }
 
     /**
      * 3D シミュレータを終了する
