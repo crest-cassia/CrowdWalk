@@ -14,8 +14,8 @@ apply plugin: 'eclipse'
 // [2016.04.08 I.Noda]
 // コンパイル時に VM のバージョンを指定してみる。
 // 今のところ、まだうまく動かない。
-//targetCompatibility = '1.6' ;
-//sourceCompatibility = '1.6' ;
+targetCompatibility = '1.6' ;
+sourceCompatibility = '1.6' ;
 
 def javaVersion = new Double(sourceCompatibility.toString())
 def onlyCuiSimulator = cui.toBoolean()
@@ -23,7 +23,7 @@ def vmName = System.getProperty("java.vm.name")
 
 if (javaVersion < 1.8) {
     println "javaVersion ${javaVersion}"
-//  onlyCuiSimulator = true
+    onlyCuiSimulator = true
 }
 if (onlyCuiSimulator) {
     println "build mode: onlyCuiSimulator"
@@ -50,7 +50,10 @@ dependencies {
     compile 'org.jruby:jruby:9.+'
     compile 'org.osgeo:proj4j:0.1.0'
     compile 'math.geom2d:javaGeom:0.11.1'
-    compile 'com.opencsv:opencsv:3.8'
+//  compile 'com.opencsv:opencsv:3.8'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+
 }
 
 sourceSets {
