@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -701,7 +702,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         */
 
         /* alert message を新しいエージェントに伝える */
-        for(HashMap.Entry<Term, SimTime> entry : alertMessageTable.entrySet()) {
+        for(Map.Entry<Term, SimTime> entry : alertMessageTable.entrySet()) {
             agent.alertMessage(entry.getKey(), entry.getValue()) ;
         }
     }

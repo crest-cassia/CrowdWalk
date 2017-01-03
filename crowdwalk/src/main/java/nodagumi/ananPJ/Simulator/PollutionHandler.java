@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collection;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import math.geom3d.Point3D;
@@ -301,7 +302,7 @@ public class PollutionHandler {
     private void updatePollution() {
         Itk.logDebug("PC: updating pollution ",nextInstantTime);
 
-        for (HashMap.Entry<MapArea, Integer> entry : areaIndexTable.entrySet()) {
+        for (Map.Entry<MapArea, Integer> entry : areaIndexTable.entrySet()) {
             MapArea area = entry.getKey() ;
             Integer index = entry.getValue() ;
 

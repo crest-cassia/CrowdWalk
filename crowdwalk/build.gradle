@@ -14,7 +14,7 @@ apply plugin: 'eclipse'
 // [2016.04.08 I.Noda]
 // コンパイル時に VM のバージョンを指定してみる。
 // 今のところ、まだうまく動かない。
-//targetCompatibility = '1.8' ;
+//targetCompatibility = '1.6' ;
 //sourceCompatibility = '1.6' ;
 
 def javaVersion = new Double(sourceCompatibility.toString())
@@ -23,7 +23,7 @@ def vmName = System.getProperty("java.vm.name")
 
 if (javaVersion < 1.8) {
     println "javaVersion ${javaVersion}"
-    onlyCuiSimulator = true
+//  onlyCuiSimulator = true
 }
 if (onlyCuiSimulator) {
     println "build mode: onlyCuiSimulator"
@@ -94,7 +94,7 @@ def defaultEncoding = 'UTF-8'
 compileJava {
     options.encoding = defaultEncoding
 //    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose'] 
-    options.compilerArgs = ['-Xdiags:verbose']
+//    options.compilerArgs = ['-Xdiags:verbose']
 }
 
 processResources {
