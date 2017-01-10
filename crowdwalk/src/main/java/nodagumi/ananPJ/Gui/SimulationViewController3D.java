@@ -380,7 +380,9 @@ public class SimulationViewController3D {
             if (! _changedLinks.isEmpty()) {
                 for (ChangedMapLink changedLink : _changedLinks.values()) {
                     if (panel.removeLink(changedLink.link)) {   // 削除済みのリンクは再表示しない
+                        panel.addPickingLink(changedLink.link);
                         panel.addLink(changedLink.link, changedLink.tags);
+                        panel.addEdgeLink(changedLink.link);
                     }
                 }
                 _changedLinks.clear();

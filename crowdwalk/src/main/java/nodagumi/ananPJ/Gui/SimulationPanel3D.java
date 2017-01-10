@@ -144,6 +144,7 @@ public class SimulationPanel3D extends StackPane {
     private Group linkGroup = new Group();
     private Group pickingLinkGroup = new Group();
     private Group thinLineGroup = new Group();
+    private Group edgeLineGroup = new Group();
 
     /**
      * マップのノードを構成する Group ノード
@@ -331,6 +332,11 @@ public class SimulationPanel3D extends StackPane {
     private HashMap<MapLink, Shape3D> linkShapes = new HashMap();
 
     /**
+     * リンクと実際の道幅表示用 Shape オブジェクトとの対応付け
+     */
+    private HashMap<MapLink, Shape3D> edgeLinkShapes = new HashMap();
+
+    /**
      * ノードと表示用 Shape オブジェクトとの対応付け
      */
     private HashMap<MapNode, Cylinder> nodeShapes = new HashMap();
@@ -438,6 +444,16 @@ public class SimulationPanel3D extends StackPane {
      * 3頂点ポリゴン
      */
     public class TrianglePolygon extends TriangleMesh {
+        private final float[] texCoords = {
+            1, 1,
+            1, 0,
+            0, 1,
+            0, 0
+        };
+        private final int[] faces = {
+            0, 0, 1, 1, 2, 2
+        };
+
         public TrianglePolygon(Point3D[] vertices) {
             float[] points = new float[3 * 3];
             for (int index = 0; index < 3; index++) {
@@ -445,16 +461,6 @@ public class SimulationPanel3D extends StackPane {
                 points[index * 3 + 1] = (float)vertices[index].getY();
                 points[index * 3 + 2] = (float)(vertices[index].getZ() * verticalScale);
             }
-            float[] texCoords = {
-                1, 1,
-                1, 0,
-                0, 1,
-                0, 0
-            };
-            int[] faces = {
-                0, 0, 1, 1, 2, 2
-            };
-
             this.getPoints().setAll(points);
             this.getTexCoords().setAll(texCoords);
             this.getFaces().setAll(faces);
@@ -465,6 +471,17 @@ public class SimulationPanel3D extends StackPane {
      * 疑似的な4頂点ポリゴン
      */
     public class QuadPolygon extends TriangleMesh {
+        private final float[] texCoords = {
+            1, 1,
+            1, 0,
+            0, 1,
+            0, 0
+        };
+        private final int[] faces = {
+            2, 3, 0, 2, 1, 0,
+            2, 3, 1, 0, 3, 1
+        };
+
         public QuadPolygon(Point3D[] vertices) {
             float[] points = new float[4 * 3];
             for (int index = 0; index < 4; index++) {
@@ -472,17 +489,6 @@ public class SimulationPanel3D extends StackPane {
                 points[index * 3 + 1] = (float)vertices[index].getY();
                 points[index * 3 + 2] = (float)(vertices[index].getZ() * verticalScale);
             }
-            float[] texCoords = {
-                1, 1,
-                1, 0,
-                0, 1,
-                0, 0
-            };
-            int[] faces = {
-                2, 3, 0, 2, 1, 0,
-                2, 3, 1, 0, 3, 1
-            };
-
             this.getPoints().setAll(points);
             this.getTexCoords().setAll(texCoords);
             this.getFaces().setAll(faces);
@@ -687,8 +693,11 @@ public class SimulationPanel3D extends StackPane {
             // リンクのシーングラフ
             addLink(link, null);
         }
+        createEdgeLineOfLinks();
         pickingLinkGroup.setVisible(false);     // TODO: true にセットするとリンクの表示が掠れてしまう
-        linkGroup.getChildren().addAll(structureGroup, pickingLinkGroup, thinLineGroup);
+        thinLineGroup.setVisible(! atActualWidth);
+        edgeLineGroup.setVisible(atActualWidth);
+        linkGroup.getChildren().addAll(structureGroup, thinLineGroup, edgeLineGroup, pickingLinkGroup);
         mapGroup.getChildren().add(linkGroup);
 
         // ノードのシーングラフ
@@ -1236,7 +1245,7 @@ public class SimulationPanel3D extends StackPane {
         }
 
         // 中を塗りつぶした長方形
-        Shape3D shape = new MeshView(new QuadPolygon(calcVertices(link.getFrom(), link.getTo(), width)));
+        Shape3D shape = new MeshView(new QuadPolygon(calcVertices(link.getFrom(), link.getTo(), width, 0.0)));
         shape.setDrawMode(DrawMode.FILL);
         shape.setMaterial(material);
 
@@ -1271,7 +1280,7 @@ public class SimulationPanel3D extends StackPane {
             }
 
             // ノード表示用の Shape オブジェクトを作成する
-            shape = new Cylinder(nodeAppearance.diameter, NODE_THICKNESS);
+            shape = new Cylinder(nodeAppearance.diameter / 2.0, NODE_THICKNESS);
             shape.setMaterial(nodeAppearance.material);
             java.awt.geom.Point2D pos = node.getAbsoluteCoordinates();
             shape.setTranslateX(pos.getX());
@@ -1348,7 +1357,7 @@ public class SimulationPanel3D extends StackPane {
         }
 
         // 中を塗りつぶした長方形
-        shape = new MeshView(new QuadPolygon(calcVertices(link.getFrom(), link.getTo(), link.getWidth())));
+        shape = new MeshView(new QuadPolygon(calcVertices(link, -0.1)));     // 10cm 上方に配置する
         shape.setDrawMode(DrawMode.FILL);
         shape.setMaterial(pickingMaterial);
 
@@ -1374,7 +1383,7 @@ public class SimulationPanel3D extends StackPane {
             return false;
         }
 
-        double width = atActualWidth ? link.getWidth() : THIN_LINK_WIDTH;
+        double width = THIN_LINK_WIDTH;
         PhongMaterial material = defaultLinkMaterial;
         LinkAppearance3D linkAppearance = null;
         if (tags == null) {
@@ -1389,12 +1398,12 @@ public class SimulationPanel3D extends StackPane {
         }
         if (width == THIN_LINK_WIDTH) {
             // 線分と見分けが付かない超鋭角の三角形
-            shape = new MeshView(new TrianglePolygon(calcVertices(link.getFrom(), link.getTo(), width)));
+            shape = new MeshView(new TrianglePolygon(calcVertices(link.getFrom(), link.getTo(), width, 0.0)));
             shape.setDrawMode(DrawMode.LINE);
             shape.setCullFace(CullFace.NONE);    // これがないと時々表示が消える
         } else {
             // 中を塗りつぶした長方形
-            shape = new MeshView(new QuadPolygon(calcVertices(link.getFrom(), link.getTo(), width)));
+            shape = new MeshView(new QuadPolygon(calcVertices(link.getFrom(), link.getTo(), width, 0.0)));
             shape.setDrawMode(DrawMode.FILL);
         }
         shape.setMaterial(material);
@@ -1416,6 +1425,13 @@ public class SimulationPanel3D extends StackPane {
             pickingLinkGroup.getChildren().remove(shape);
             shape = linkShapes.get(link);
             thinLineGroup.getChildren().remove(shape);
+
+            // edgeLineGroup の色付きリンク
+            shape = edgeLinkShapes.get(link);
+            if (shape != null) {
+                edgeLinkShapes.remove(link);
+                edgeLineGroup.getChildren().remove(shape);
+            }
             return true;
         }
         return false;
@@ -1428,12 +1444,15 @@ public class SimulationPanel3D extends StackPane {
         hoverOff();
         pickingLinkShapes.clear();
         linkShapes.clear();
+        edgeLinkShapes.clear();
         pickingLinkGroup.getChildren().clear();
         thinLineGroup.getChildren().clear();
+        edgeLineGroup.getChildren().clear();
         for (MapLink link : regularLinks) {
             addPickingLink(link);
             addLink(link, null);
         }
+        createEdgeLineOfLinks();
     }
 
     /**
@@ -1460,18 +1479,213 @@ public class SimulationPanel3D extends StackPane {
     /**
      * リンクをポリゴン表示するための頂点座標を求める
      */
-    public Point3D[] calcVertices(MapNode from, MapNode to, double width) {
+    public Point3D[] calcVertices(MapNode from, MapNode to, double width, double dz) {
         Point3D p1 = new Point3D(to.getX() - from.getX(), to.getY() - from.getY(), 0);
         Point3D p2 = p1.normalize().crossProduct(0, 0, width / 2.0);
         double dx = p2.getX();
         double dy = p2.getY();
 
         Point3D[] vertices = new Point3D[4];
-        vertices[0] = new Point3D(from.getX() + dx, from.getY() + dy, -from.getHeight());
-        vertices[1] = new Point3D(from.getX() - dx, from.getY() - dy, -from.getHeight());
-        vertices[3] = new Point3D(to.getX() - dx, to.getY() - dy, -to.getHeight());
-        vertices[2] = new Point3D(to.getX() + dx, to.getY() + dy, -to.getHeight());
+        vertices[0] = new Point3D(from.getX() + dx, from.getY() + dy, -from.getHeight() + dz);
+        vertices[1] = new Point3D(from.getX() - dx, from.getY() - dy, -from.getHeight() + dz);
+        vertices[3] = new Point3D(to.getX() - dx, to.getY() - dy, -to.getHeight() + dz);
+        vertices[2] = new Point3D(to.getX() + dx, to.getY() + dy, -to.getHeight() + dz);
         return vertices;
+    }
+
+    /**
+     * リンクをポリゴン表示するための頂点座標を求める
+     */
+    public Point3D[] calcVertices(MapLink link, double dz) {
+        return calcVertices(link.getFrom(), link.getTo(), link.getWidth(), dz);
+    }
+
+    /**
+     * リンクをポリゴン表示するための頂点座標を求める
+     */
+    public Point3D[] calcVertices(Point3D point1, Point3D point2, double width, double dz) {
+        Point3D p1 = new Point3D(point2.getX() - point1.getX(), point2.getY() - point1.getY(), 0);
+        Point3D p2 = p1.normalize().crossProduct(0, 0, width / 2.0);
+        double dx = p2.getX();
+        double dy = p2.getY();
+
+        Point3D[] vertices = new Point3D[4];
+        vertices[0] = new Point3D(point1.getX() + dx, point1.getY() + dy, -point1.getZ() + dz);
+        vertices[1] = new Point3D(point1.getX() - dx, point1.getY() - dy, -point1.getZ() + dz);
+        vertices[3] = new Point3D(point2.getX() - dx, point2.getY() - dy, -point2.getZ() + dz);
+        vertices[2] = new Point3D(point2.getX() + dx, point2.getY() + dy, -point2.getZ() + dz);
+        return vertices;
+    }
+
+    /**
+     * 道幅を持ったリンクのシーングラフを作成する.
+     */
+    private void createEdgeLineOfLinks() {
+        // ノードに接続されたリンク(正規のリンクのみ)
+        HashMap<MapNode, ArrayList<MapLink>> regularLinksAtNode = new HashMap();
+        for (MapNode node : networkMap.getNodes()) {
+            ArrayList<MapLink> links = new ArrayList();
+            for (MapLink link : node.getLinks()) {
+                if (link.getOther(node) == node) {
+                    // TODO: ループしたリンクはマップを読み込んだ直後に削除した方がよい
+                    continue;
+                }
+                if (! (link.containsTag("POLYGON") || link.containsTag("STRUCTURE"))) {
+                    links.add(link);
+                }
+            }
+            regularLinksAtNode.put(node, links);
+        }
+
+        // 道のかどを示す座標を求める
+        HashMap<String, Point2D> points = new HashMap();
+        for (MapNode node : networkMap.getNodes()) {
+            ArrayList<MapLink> links = regularLinksAtNode.get(node);
+            if (links.size() <= 1) {
+                continue;
+            }
+
+            Point2D nodePoint = new Point2D(node.getX(), node.getY());
+            for (int index = 0; index < links.size(); index++) {
+                MapLink link = links.get(index);
+                MapLink prevLink = links.get((index + links.size() - 1) % links.size());
+                MapLink nextLink = links.get((index + 1) % links.size());
+                MapNode prevOppositeNode = prevLink.getOther(node);
+                MapNode oppositeNode = link.getOther(node);
+                MapNode nextOppositeNode = nextLink.getOther(node);
+                Point2D oppositeNodePoint = new Point2D(oppositeNode.getX(), oppositeNode.getY());
+
+                Point3D p1 = new Point3D(oppositeNode.getX() - node.getX(), oppositeNode.getY() - node.getY(), 0);
+                Point3D p2 = p1.normalize().crossProduct(0, 0, link.getWidth() / 2.0);
+                double dx = p2.getX();
+                double dy = p2.getY();
+                // links は node を中心として -π を起点とした時計回りの順にソートされている
+                // link 直線に dx, dy をプラスしたものが道幅の(links 順に見て)起点側の縁を表す
+                // よって link 直線に dx, dy をマイナスしたものと、次の link 直線に dx, dy をプラスしたものの交点座標が、かど座標となる
+                Point2D a1 = new Point2D(node.getX() - dx, node.getY() - dy);
+                Point2D a2 = new Point2D(oppositeNode.getX() - dx, oppositeNode.getY() - dy);
+
+                p1 = new Point3D(nextOppositeNode.getX() - node.getX(), nextOppositeNode.getY() - node.getY(), 0);
+                p2 = p1.normalize().crossProduct(0, 0, nextLink.getWidth() / 2.0);
+                dx = p2.getX();
+                dy = p2.getY();
+                Point2D b1 = new Point2D(node.getX() + dx, node.getY() + dy);
+                Point2D b2 = new Point2D(nextOppositeNode.getX() + dx, nextOppositeNode.getY() + dy);
+
+                double prevAngle = angle(prevOppositeNode, node, oppositeNode);
+                double angle = angle(oppositeNode, node, nextOppositeNode);
+                if (
+                    // 曲がり角が突き出てしまう
+                    angle <= 30.0 && links.size() == 2
+                    // 交点座標が遙か彼方になってしまうかもしれない
+                    || angle >= 178.0
+                    // 道幅の差が大きいためきれいに繋がらない
+                    || angle >= 165.0 && (Math.max(link.getWidth(), nextLink.getWidth()) / Math.min(link.getWidth(), nextLink.getWidth())) > 1.5
+                ) {
+                    points.put(link.ID + " " + node.ID + " L", a1);
+                    points.put(nextLink.ID + " " + node.ID + " R", b1);
+                } else {
+                    Point2D intersectionPoint = intersection(a1, a2, b1, b2);
+                    if (
+                        // 交点座標が道幅の1.5倍以上ノードから離れている
+                        nodePoint.distance(intersectionPoint) > Math.max(link.getWidth(), nextLink.getWidth()) * 1.5
+                        // 交点座標がノードよりも先にはみ出ている
+                        && nodePoint.distance(intersectionPoint) > nodePoint.distance(oppositeNodePoint)
+                    ) {
+                        points.put(link.ID + " " + node.ID + " L", a1);
+                        points.put(nextLink.ID + " " + node.ID + " R", b1);
+                    } else {
+                        points.put(link.ID + " " + node.ID + " L", intersectionPoint);
+                        points.put(nextLink.ID + " " + node.ID + " R", intersectionPoint);
+                    }
+                }
+                if (regularLinksAtNode.get(oppositeNode).size() == 1) {
+                    points.put(link.ID + " " + oppositeNode.ID + " R", a2);
+                }
+                if (regularLinksAtNode.get(nextOppositeNode).size() == 1) {
+                    points.put(nextLink.ID + " " + nextOppositeNode.ID + " L", b2);
+                }
+            }
+        }
+
+        // リンクを描画する
+        for (MapLink link : regularLinks) {
+            Point2D a1 = points.get(link.ID + " " + link.getFrom().ID + " L");
+            Point2D a2 = points.get(link.ID + " " + link.getTo().ID + " R");
+            Point2D b1 = points.get(link.ID + " " + link.getFrom().ID + " R");
+            Point2D b2 = points.get(link.ID + " " + link.getTo().ID + " L");
+            if (a1 == null || a2 == null || b1 == null || b2 == null) {
+                Itk.logWarn_("Link can not be rendered", "ID=" + link.ID, link.getTags().toString() + " " + a1 + ", " + a2 + ", " + b1 + ", " + b2);
+                continue;
+            }
+
+	    Point3D point1 = new Point3D(a1.getX(), a1.getY(), link.getFrom().getHeight());
+	    Point3D point2 = new Point3D(a2.getX(), a2.getY(), link.getFrom().getHeight());
+            Shape3D shape = new MeshView(new TrianglePolygon(calcVertices(point1, point2, THIN_LINK_WIDTH, 0.0)));
+            shape.setDrawMode(DrawMode.LINE);
+            shape.setCullFace(CullFace.NONE);
+            shape.setMaterial(defaultLinkMaterial);
+            edgeLineGroup.getChildren().add(shape);
+
+	    Point3D point3 = new Point3D(b1.getX(), b1.getY(), link.getTo().getHeight());
+	    Point3D point4 = new Point3D(b2.getX(), b2.getY(), link.getTo().getHeight());
+            shape = new MeshView(new TrianglePolygon(calcVertices(point3, point4, THIN_LINK_WIDTH, 0.0)));
+            shape.setDrawMode(DrawMode.LINE);
+            shape.setCullFace(CullFace.NONE);
+            shape.setMaterial(defaultLinkMaterial);
+            edgeLineGroup.getChildren().add(shape);
+
+            addEdgeLink(link);
+        }
+    }
+
+    /**
+     * 道幅を持ったリンクに色を付ける
+     */
+    public boolean addEdgeLink(MapLink link) {
+        Shape3D shape = edgeLinkShapes.get(link);
+        if (shape != null) {
+            return false;
+        }
+        LinkAppearance3D linkAppearance = getLinkAppearance(link);
+        if (linkAppearance == null) {
+            return false;
+        }
+        shape = new MeshView(new QuadPolygon(calcVertices(link, 0.0)));
+        shape.setDrawMode(DrawMode.FILL);
+        shape.setMaterial(linkAppearance.material);
+
+        edgeLineGroup.getChildren().add(shape);
+        edgeLinkShapes.put(link, shape);
+        return true;
+    }
+
+    /**
+     * 3点のノードがなす角度を求める.
+     *
+     * 0.0～180.0 を返す
+     */
+    private double angle(MapNode nodeA, MapNode nodeB, MapNode nodeC) {
+        Point2D pointA = new Point2D(nodeA.getX(), nodeA.getY());
+        Point2D pointB = new Point2D(nodeB.getX(), nodeB.getY());
+        Point2D pointC = new Point2D(nodeC.getX(), nodeC.getY());
+        return pointB.angle(pointA, pointC);
+    }
+
+    /**
+     * 2直線の交点座標を求める.
+     *
+     * ※直線 a, b は平行ではないこと。
+     */
+    public Point2D intersection(Point2D a1, Point2D a2, Point2D b1, Point2D b2) {
+        double f1 = a2.getX() - a1.getX();
+        double g1 = a2.getY() - a1.getY();
+        double f2 = b2.getX() - b1.getX();
+        double g2 = b2.getY() - b1.getY();
+        double dx = b1.getX() - a1.getX();
+        double dy = b1.getY() - a1.getY();
+        double t1 = (f2 * dy - g2 * dx) / (f2 * g1 - f1 * g2);
+        return new Point2D(a1.getX() + f1 * t1, a1.getY() + g1 * t1);
     }
 
     /**
@@ -1863,5 +2077,14 @@ public class SimulationPanel3D extends StackPane {
      */
     public boolean isViewPointOperationEnabled() {
         return viewPointOperationEnabled;
+    }
+
+    /**
+     * 表示するリンクを実際の道幅表示に切り替える
+     */
+    public void setAtActualWidth(boolean atActualWidth) {
+        this.atActualWidth = atActualWidth;
+        thinLineGroup.setVisible(! atActualWidth);
+        edgeLineGroup.setVisible(atActualWidth);
     }
 }
