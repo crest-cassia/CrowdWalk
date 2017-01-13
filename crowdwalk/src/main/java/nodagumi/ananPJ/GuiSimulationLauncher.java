@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JOptionPane;
 
+import nodagumi.ananPJ.Gui.GsiTile;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
@@ -72,6 +74,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected transient Runnable simulationRunnable = null;
 
     /**
+     * 地理院タイル画像
+     */
+    protected ArrayList<GsiTile> mapTiles = null;
+
+    /**
      * Properties
      */
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
@@ -81,6 +88,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected double agentSize = 1.0;
     protected String cameraFile = null;
     protected double zoom = 1.0;
+    protected boolean showBackgroundImage = false;
+    protected boolean showBackgroundMap = false;
     protected boolean recordSimulationScreen = false;
     protected String screenshotDir = "screenshots";
     protected boolean clearScreenshotDir = false;
@@ -146,6 +155,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
 
         settings = _settings;
         exitOnClose = true;
+        loadGsiTiles();
     }
 
     /**
@@ -162,6 +172,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         // ending condition
         setExitCount(properties.getExitCount()) ;
         setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
+        loadGsiTiles();
     }
 
     protected void simulate() {
@@ -293,6 +304,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                 throw new Exception("Property error - 設定値が範囲(0.0～9.9)外です: zoom:" + zoom);
             }
             cameraFile = properties.getFilePath("camera_file", null);
+            showBackgroundImage = properties.getBoolean("show_background_image", false);
+            showBackgroundMap = properties.getBoolean("show_background_map", false);
             recordSimulationScreen = properties.getBoolean("record_simulation_screen", recordSimulationScreen);
             screenshotDir = properties.getDirectoryPath("screenshot_dir", screenshotDir).replaceFirst("[/\\\\]+$", "");
             clearScreenshotDir = properties.getBoolean("clear_screenshot_dir", clearScreenshotDir);
@@ -325,6 +338,23 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
             System.err.println(e.getMessage());
             System.exit(1);
+        }
+    }
+
+    /**
+     * 地理院タイル画像の準備
+     */
+    protected void loadGsiTiles() {
+        try {
+            String tileName = properties.getString("gsi_tile_name", GsiTile.DATA_ID_PALE);
+            int zoom = properties.getInteger("gsi_tile_zoom", 14);
+            MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+            int zone = properties.getInteger("zone", root.getZone());
+            if (zone != 0) {
+                mapTiles = GsiTile.loadGsiTiles(networkMap, tileName, zoom, zone);
+            }
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 

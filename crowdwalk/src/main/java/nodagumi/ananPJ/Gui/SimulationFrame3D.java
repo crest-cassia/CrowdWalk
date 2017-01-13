@@ -73,6 +73,7 @@ import javafx.stage.Stage;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.GuiSimulationLauncher3D;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
@@ -203,8 +204,8 @@ public class SimulationFrame3D extends Stage implements Observer {
     /**
      * コンストラクタ
      */
-    public SimulationFrame3D(String title, int width, int height,
-            GuiSimulationLauncher3D launcher, final CrowdWalkPropertiesHandler properties) {
+    public SimulationFrame3D(String title, int width, int height, GuiSimulationLauncher3D launcher,
+            final CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles) {
         frame = this;
         this.launcher = launcher;
         networkMap = launcher.getMap();
@@ -215,9 +216,10 @@ public class SimulationFrame3D extends Stage implements Observer {
         Node menuBar = createMenu();
 
         // シミュレーションパネルの準備
-        panel = new SimulationPanel3D(width, height, networkMap, atActualWidth, launcher.getVerticalScale(), properties);
+        panel = new SimulationPanel3D(width, height, networkMap, atActualWidth, launcher.getVerticalScale(), properties, mapTiles);
         panel.setPrefSize(width, height);
         panel.setShow3dPolygon(launcher.isShow3dPolygon());
+        panel.setShowBackgroundMap(launcher.isShowBackgroundMap());
         panel.setChangeAgentColorDependingOnSpeed(launcher.isChangeAgentColorDependingOnSpeed());
         panel.setShowStatusPosition(launcher.getShowStatusPosition().toLowerCase());
         panel.setShowStatus(launcher.isShowStatus());
@@ -237,7 +239,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         // タブパネルの準備
         controlTab.setContent(createControlPane());
         controlTab.setClosable(false);
-        viewTab.setContent(createViewPane());
+        viewTab.setContent(createViewPane(! (mapTiles == null || mapTiles.isEmpty())));
         viewTab.setClosable(false);
         cameraTab.setContent(createCameraPane());
         cameraTab.setClosable(false);
@@ -592,7 +594,7 @@ public class SimulationFrame3D extends Stage implements Observer {
     /**
      * View タブを作成する
      */
-    private Pane createViewPane() {
+    private Pane createViewPane(boolean backgroundMapEnabled) {
         // 垂直スケール
 
         Label label = new Label("Vertical scale");
@@ -716,6 +718,15 @@ public class SimulationFrame3D extends Stage implements Observer {
         });
         checkboxPanel.getChildren().add(show3dPolygonCheckBox);
 
+        // 背景地図表示の ON/OFF
+        CheckBox showBackgroundMapCheckBox = new CheckBox("Show background map");
+        showBackgroundMapCheckBox.setSelected(backgroundMapEnabled && launcher.isShowBackgroundMap());
+        showBackgroundMapCheckBox.setDisable(! backgroundMapEnabled);
+        showBackgroundMapCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
+            panel.setShowBackgroundMap(newValue);
+        });
+        checkboxPanel.getChildren().add(showBackgroundMapCheckBox);
+
         // スクリーンショットを撮る
         record_snapshots.setSelected(launcher.isRecordSimulationScreen());
         record_snapshots.selectedProperty().addListener((ov, oldValue, newValue) -> {
@@ -762,17 +773,16 @@ public class SimulationFrame3D extends Stage implements Observer {
             panel.setShowStatusPosition("bottom");
         });
 
-        FlowPane showStatusPanel = new FlowPane(12, 0);
-        showStatusPanel.getChildren().addAll(show_status_cb, top_rb, bottom_rb);
-        checkboxPanel.getChildren().add(showStatusPanel);
-
         // AIST ロゴの表示
         CheckBox show_logo_cb = new CheckBox("Show logo");
         show_logo_cb.setSelected(launcher.isShowLogo());
         show_logo_cb.selectedProperty().addListener((ov, oldValue, newValue) -> {
             panel.setShowLogo(newValue);
         });
-        checkboxPanel.getChildren().add(show_logo_cb);
+
+        FlowPane showStatusPanel = new FlowPane(12, 0);
+        showStatusPanel.getChildren().addAll(show_status_cb, top_rb, bottom_rb, new Label(" "), show_logo_cb);
+        checkboxPanel.getChildren().add(showStatusPanel);
 
         // 表示の更新が完了するのを待ってから次のステップに進む
         viewSynchronizedCheckBox.setSelected(true);

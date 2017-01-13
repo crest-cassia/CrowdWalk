@@ -1,6 +1,7 @@
 package nodagumi.ananPJ.Gui;
 
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.FileInputStream;
 
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.layout.Pane;
@@ -49,6 +53,7 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Window;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle.ObstructerDisplay;
@@ -127,6 +132,11 @@ public class SimulationPanel3D extends StackPane {
      * マップのシェイプを構成する Group ノード
      */
     private Group mapGroup = new Group();
+
+    /**
+     * マップの背景地図を構成する Group ノード
+     */
+    private Group backgroundMapGroup = new Group();
 
     /**
      * マップのポリゴンを構成する Group ノード
@@ -499,7 +509,7 @@ public class SimulationPanel3D extends StackPane {
      * コンストラクタ
      */
     public SimulationPanel3D(int panelWidth, int panelHeight, NetworkMap networkMap, boolean atActualWidth,
-            double verticalScale, CrowdWalkPropertiesHandler properties) {
+            double verticalScale, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles) {
         this.networkMap = networkMap;
         this.atActualWidth = atActualWidth;
         this.verticalScale = verticalScale;
@@ -507,7 +517,7 @@ public class SimulationPanel3D extends StackPane {
         init(properties);
 
         // シーングラフの構築
-        SubScene networkMapScene = createNetworkMapScene(panelWidth, panelHeight);
+        SubScene networkMapScene = createNetworkMapScene(panelWidth, panelHeight, mapTiles);
         getChildren().add(networkMapScene);
         getChildren().add(createLogoPane());
         pickingPane = createPickingPane();
@@ -664,7 +674,11 @@ public class SimulationPanel3D extends StackPane {
     /**
      * NetworkMap のシーングラフを作成する.
      */
-    public SubScene createNetworkMapScene(int panelWidth, int panelHeight) {
+    public SubScene createNetworkMapScene(int panelWidth, int panelHeight, ArrayList<GsiTile> mapTiles) {
+        // 背景地図のシーングラフ
+        createBackgroundMap(mapTiles);
+        mapGroup.getChildren().add(backgroundMapGroup);
+
         // ポリゴンのシーングラフ
         polygonPoints = createPolygonPoints(polygonLinks);
         for (String tag : polygonPoints.keySet()) {
@@ -1180,6 +1194,88 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
+     * 背景地図のシーングラフを作成する
+     */
+    public void createBackgroundMap(ArrayList<GsiTile> mapTiles) {
+        if (mapTiles == null || mapTiles.isEmpty()) {
+            return;
+        }
+
+        // 使用する地理院タイルを一枚の画像にまとめる
+        int minTileNumberX = Integer.MAX_VALUE;
+        int minTileNumberY = Integer.MAX_VALUE;
+        int maxTileNumberX = 0;
+        int maxTileNumberY = 0;
+        for (GsiTile mapTile : mapTiles) {
+            minTileNumberX = Math.min(mapTile.getTileNumberX(), minTileNumberX);
+            maxTileNumberX = Math.max(mapTile.getTileNumberX(), maxTileNumberX);
+            minTileNumberY = Math.min(mapTile.getTileNumberY(), minTileNumberY);
+            maxTileNumberY = Math.max(mapTile.getTileNumberY(), maxTileNumberY);
+        }
+        int width = (maxTileNumberX - minTileNumberX + 1) * GsiTile.GSI_TILE_SIZE;
+        int height = (maxTileNumberY - minTileNumberY + 1) * GsiTile.GSI_TILE_SIZE;
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter writer = image.getPixelWriter();
+        for (GsiTile mapTile : mapTiles) {
+            String filePath = new File(mapTile.getFilePath()).toURI().toString();
+            Image tileImage = new Image(filePath);
+            PixelReader reader = tileImage.getPixelReader();
+            int baseX = (mapTile.getTileNumberX() - minTileNumberX) * GsiTile.GSI_TILE_SIZE;
+            int baseY = (mapTile.getTileNumberY() - minTileNumberY) * GsiTile.GSI_TILE_SIZE;
+            for (int y = 0; y < GsiTile.GSI_TILE_SIZE; y++) {
+                for (int x = 0; x < GsiTile.GSI_TILE_SIZE; x++) {
+                    writer.setColor(baseX + x, baseY + y, reader.getColor(x, y));
+                }
+            }
+        }
+
+        float[] texCoords = {
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+        };
+        int[] faces = {
+            0, 0, 1, 1, 2, 2,
+            2, 2, 3, 3, 0, 0
+        };
+
+        java.awt.geom.Point2D[] vertices = new java.awt.geom.Point2D[4];
+        for (GsiTile mapTile : mapTiles) {
+            if (mapTile.getTileNumberX() == minTileNumberX && mapTile.getTileNumberY() == minTileNumberY) {
+                vertices[0] = mapTile.getPoint();
+            }
+            if (mapTile.getTileNumberX() == minTileNumberX && mapTile.getTileNumberY() == maxTileNumberY) {
+                vertices[1] = mapTile.getLowerLeftPoint();
+            }
+            if (mapTile.getTileNumberX() == maxTileNumberX && mapTile.getTileNumberY() == minTileNumberY) {
+                vertices[3] = mapTile.getUpperRightPoint();
+            }
+            if (mapTile.getTileNumberX() == maxTileNumberX && mapTile.getTileNumberY() == maxTileNumberY) {
+                vertices[2] = mapTile.getLowerRightPoint();
+            }
+        }
+        float[] points = new float[4 * 3];
+        for (int index = 0; index < 4; index++) {
+            points[index * 3] = (float)vertices[index].getX();
+            points[index * 3 + 1] = (float)vertices[index].getY();
+            points[index * 3 + 2] = 1.0f;   // 標高 -1.0m
+        }
+
+        TriangleMesh mesh = new TriangleMesh();
+        mesh.getPoints().setAll(points);
+        mesh.getTexCoords().setAll(texCoords);
+        mesh.getFaces().setAll(faces);
+
+        Shape3D shape = new MeshView(mesh);
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseMap(image);
+        shape.setMaterial(material);
+
+        backgroundMapGroup.getChildren().add(shape);
+    }
+
+    /**
      * ポリゴンをシーングラフに追加する
      */
     public void addPolygon(String tag, ArrayList<Point3D> points) {
@@ -1620,14 +1716,14 @@ public class SimulationPanel3D extends StackPane {
             }
 
 	    Point3D point1 = new Point3D(a1.getX(), a1.getY(), link.getFrom().getHeight());
-	    Point3D point2 = new Point3D(a2.getX(), a2.getY(), link.getFrom().getHeight());
+	    Point3D point2 = new Point3D(a2.getX(), a2.getY(), link.getTo().getHeight());
             Shape3D shape = new MeshView(new TrianglePolygon(calcVertices(point1, point2, THIN_LINK_WIDTH, 0.0)));
             shape.setDrawMode(DrawMode.LINE);
             shape.setCullFace(CullFace.NONE);
             shape.setMaterial(defaultLinkMaterial);
             edgeLineGroup.getChildren().add(shape);
 
-	    Point3D point3 = new Point3D(b1.getX(), b1.getY(), link.getTo().getHeight());
+	    Point3D point3 = new Point3D(b1.getX(), b1.getY(), link.getFrom().getHeight());
 	    Point3D point4 = new Point3D(b2.getX(), b2.getY(), link.getTo().getHeight());
             shape = new MeshView(new TrianglePolygon(calcVertices(point3, point4, THIN_LINK_WIDTH, 0.0)));
             shape.setDrawMode(DrawMode.LINE);
@@ -2035,6 +2131,13 @@ public class SimulationPanel3D extends StackPane {
     public void setStatusText(String text) {
         statusTop.setText(text);
         statusBottom.setText(text);
+    }
+
+    /**
+     * 背景地図の表示/非表示を切り替える
+     */
+    public void setShowBackgroundMap(boolean showBackgroundMap) {
+        backgroundMapGroup.setVisible(showBackgroundMap);
     }
 
     /**

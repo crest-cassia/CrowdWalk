@@ -39,7 +39,7 @@ public class MapViewFrame implements MapViewer {
         Node menuBar = createMenu();
 
         // シミュレーションパネル
-        panel = new SimulationPanel3D(width, height, networkMap, false, 1.0, properties);
+        panel = new SimulationPanel3D(width, height, networkMap, false, 1.0, properties, null);
         panel.setPrefSize(width, height);
 
         BorderPane borderPane = new BorderPane();
