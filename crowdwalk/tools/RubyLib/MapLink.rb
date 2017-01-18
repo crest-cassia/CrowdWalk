@@ -101,11 +101,20 @@ class MapLink
 
   #--------------------------------------------------------------
   #++
+  ## check already has tag
+  ## _tag_:: tag string
+  ## *return*:: true if has tag
+  def hasTag(tag)
+    return @tagList.member?(tag) ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
   ## add tag
   ## _tag_:: tag string
   ## *return*:: self
   def addTag(tag, topP = false)
-    if(!@tagList.member?(tag)) then
+    if(!hasTag(tag)) then
       if(topP) then
         @tagList.unshift(tag) ;
       else
@@ -227,8 +236,8 @@ class MapLink
   def inspect()
     ("\#<MapLink:" +
      "id=#{@id}," +
-     "fromNode=#{@fromNode.is_a?(MapNode) ? "node:"+@fromNode.id : @fromNode.inspect}," +
-     "toNode=#{(@toNode.is_a?(MapNode) ? "node:"+@toNode.id : @toNode.inspect)}," +
+     "fromNode=#{@fromNode.is_a?(MapNode) ? "node:"+@fromNode.id.to_s : @fromNode.inspect}," +
+     "toNode=#{(@toNode.is_a?(MapNode) ? "node:"+@toNode.id.to_s : @toNode.inspect)}," +
      "length=#{@length}," +
      "width=#{@width}," +
      "tagList=#{@tagList.inspect}>")

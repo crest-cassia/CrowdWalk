@@ -128,10 +128,15 @@ class MapTown < WithConfParam
   #--------------------------------------------------------------
   #++
   ## new node
-  def newNode(pos, height = @defaultHeight)
+  def newNode(pos = nil, height = @defaultHeight)
     @maxId += 1 ;
-    node = MapNode.new(@maxId, pos, height) ;
-    registerNewNode(node) ;
+    node = nil ;
+    if(pos.nil?) then
+      node = MapNode.new(@maxId) ;
+    else
+      node = MapNode.new(@maxId, pos, height) ;
+      registerNewNode(node) ;
+    end
     return node ;
   end
 
@@ -147,10 +152,15 @@ class MapTown < WithConfParam
   #--------------------------------------------------------------
   #++
   ## new link
-  def newLink(fromNode, toNode, width)
+  def newLink(fromNode = nil, toNode = nil, width = 0.0)
     @maxId += 1 ;
-    link = MapLink.new(@maxId, fromNode, toNode, width) ;
-    registerNewLink(link) ;
+    link = nil ;
+    if(fromNode.nil?) then
+      link = MapLink.new(@maxId) ;
+    else
+      link = MapLink.new(@maxId, fromNode, toNode, width) ;
+      registerNewLink(link) ;
+    end
     return link ;
   end
 
@@ -473,7 +483,7 @@ class MapTown < WithConfParam
     m = 1000 ;
     nodeC = 0 ;
     fparser.listenQName("Node"){|xml, str|
-      node = MapNode.new() ;
+      node = newNode() ;
       node.scanXml(xml) ;
       registerNewNode(node) ;
       nodeC += 1 ;
@@ -482,7 +492,7 @@ class MapTown < WithConfParam
 
     linkC = 0 ; 
     fparser.listenQName("Link"){|xml, str|
-      link = MapLink.new() ;
+      link = newLink() ;
       link.scanXml(xml) ;
       registerNewLink(link) ;
       linkC += 1 ;

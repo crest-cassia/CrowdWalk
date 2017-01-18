@@ -303,6 +303,11 @@ SAMPLE4gnz0 = sample/ginza/ginza00.prop.json   # Ginza
 run4gnz0 ::
 	(cd $(BASEDIR) ; cd `dirname $(SAMPLE4gnz0)` ; time -p bash ../../quickstart.sh --log-level Info `basename $(SAMPLE4gnz0)`)
 
+##-----
+SAMPLE5loop0 = sample/generatedTown/gridTown01s.prop.json   # stay loop
+run5loop0 ::
+	(cd $(BASEDIR) ; cd `dirname $(SAMPLE5loop0)` ; time -p bash ../../quickstart.sh --log-level Info `basename $(SAMPLE5loop0)`)
+
 
 
 

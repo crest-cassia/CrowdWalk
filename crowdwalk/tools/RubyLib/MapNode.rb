@@ -101,11 +101,20 @@ class MapNode
 
   #--------------------------------------------------------------
   #++
+  ## check already has tag
+  ## _tag_:: tag string
+  ## *return*:: true if has tag
+  def hasTag(tag)
+    return @tagList.member?(tag) ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
   ## add tag
   ## _tag_:: tag string
   ## *return*:: self
   def addTag(tag, topP = false)
-    if(!@tagList.member?(tag)) then
+    if(!hasTag(tag)) then
       if(topP) then
         @tagList.unshift(tag) ;
       else
