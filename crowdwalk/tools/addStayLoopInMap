@@ -23,14 +23,16 @@ require 'MapTown.rb' ;
 $conf = {
   :tag => '__NeedStayLoop__',
   :suffix => '_StayLoop_',
-  :width => 100.0,
+  :width => 10.0,
   :length => 100.0,
   :nNodes => 2,
   :dx => 1.0,
   :dy => 1.0,
   :dz => 10.0,
+  :r  => 0.5,
   :mapFile => nil,
   :outFile => nil,
+  :onewayP => true,
   :verboseP => false
 } ;
 
@@ -68,6 +70,13 @@ _END_
     $conf[:dx] = dx ;
     $conf[:dy] = dy ;
     $conf[:dz] = dz ;
+  }
+  op.on("-r","--radius R", Float, sep + "specify radius of loop.") {|r|
+    (dx, dy, dz) = values.split(':').map(){|v| v.to_f} ;
+    $conf[:r] = r ;
+  }
+  op.on("-b","--bidirection", sep + "use two-way instead of oneway.") {
+    $conf[:onewayP] = false ;
   }
   op.on("-v","--verbose", sep + "verbose mode.") {
     $conf[:verboseP] = true ;
@@ -121,24 +130,24 @@ def addStayLoopToNode(node, map, conf)
   suffix = conf[:suffix] ;
   dxdy = Geo2D::Point.new(conf[:dx],conf[:dy]) ;
   dz = conf[:dz] ;
-  width = conf[:width]
-  length = conf[:length] ;
+  r = conf[:r] ;
   n = conf[:nNodes] ;
   fromNode = node ;
+  dTheta = 2 * Math::PI / n.to_f ;
+  theta0 = ((dxdy.norm() == 0.0) ?
+              0.0 :
+              (dxdy.angle() + Math::PI + (dTheta/2.0))) ;
   (0...n).each{|i|
-    newPos = basePos + (dxdy * (i+1)) ;
-    newHeight = baseHeight + (dz * (i+1)) ;
+    theta = theta0 + i * dTheta ;
+    newPos = basePos + dxdy + Geo2D::Point.newByPolar(r, theta) ;
+    newHeight = baseHeight + dz ;
     newNode = map.newNode(newPos, newHeight) ;
     newNode.addTag(baseTag + suffix + i.to_s) ;
     newNodeList.push(newNode) ;
-    newLink = map.newLink(fromNode, newNode, width) ;
-    newLink.setLength(length) ;
-    newLinkList.push(newLink) ;
+    addNewLink(fromNode, newNode, conf, map, newLinkList) ;
     fromNode = newNode ;
   }
-  newLink = map.newLink(fromNode, node, width) ;
-  newLink.setLength(length) ;
-  newLinkList.push(newLink) ;
+  addNewLink(fromNode, node, conf, map, newLinkList) ;
 
   if(conf[:verboseP]) then
     STDERR.puts("-" * 50) ;
@@ -149,6 +158,23 @@ def addStayLoopToNode(node, map, conf)
     STDERR.puts("New Links: " + newLinkList.inspect) ;
   end
 end
+
+##------------------------------------------------------------------------
+##++ 滞在用ループのリンクを追加する。
+## _fromNode_:: 始点ノード
+## _toNode_:: 終点ノード
+## _conf_:: 道幅・長さなどの設定
+## _map_:: TownMap データ
+## _linkList_:: 格納用リスト
+## *return*:: 新しいリンク
+def addNewLink(fromNode, toNode, conf, map, linkList)
+  newLink = map.newLink(fromNode, toNode, conf[:width]) ;
+  newLink.setLength(conf[:length]) ;
+  newLink.addTag('ONE-WAY-FORWARD') if(conf[:onewayP]) ;
+  linkList.push(newLink) ;
+  return newLink ;
+end
+
 
 
 ########################################################################
