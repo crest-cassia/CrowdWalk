@@ -113,28 +113,56 @@ class MapTown < WithConfParam
   #--------------------------------------------------------------
   #++
   ## add object
-  def addObject(object)
-    @objectTable[object.id] = object ;
+  def addObject(object, forceNewId = true)
+    if(forceNewId) then
+      if(!isNewId(object.id)) then
+        object.id = getNewId() ;
+      end
+    end
+    @objectTable[sureIdString(object.id)] = object ;
     return object ;
   end
 
   #--------------------------------------------------------------
   #++
+  ## make sure id string
+  def sureIdString(id)
+    return id.to_s ;
+  end
+  #--------------------------------------------------------------
+  #++
   ## add object
   def getObject(id)
-    return @objectTable[id] ;
+    return @objectTable[sureIdString(id)] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## check id is new or used.
+  def isNewId(id)
+    return !@objectTable.has_key?(sureIdString(id)) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## get new id
+  def getNewId()
+    while(!isNewId(@maxId)) do
+      @maxId += 1 ;
+    end
+    return @maxId ;
   end
 
   #--------------------------------------------------------------
   #++
   ## new node
   def newNode(pos = nil, height = @defaultHeight)
-    @maxId += 1 ;
+    newId = getNewId() ;
     node = nil ;
     if(pos.nil?) then
-      node = MapNode.new(@maxId) ;
+      node = MapNode.new(newId) ;
     else
-      node = MapNode.new(@maxId, pos, height) ;
+      node = MapNode.new(newId, pos, height) ;
       registerNewNode(node) ;
     end
     return node ;
@@ -153,12 +181,12 @@ class MapTown < WithConfParam
   #++
   ## new link
   def newLink(fromNode = nil, toNode = nil, width = 0.0)
-    @maxId += 1 ;
+    newId = getNewId() ;
     link = nil ;
     if(fromNode.nil?) then
-      link = MapLink.new(@maxId) ;
+      link = MapLink.new(newId) ;
     else
-      link = MapLink.new(@maxId, fromNode, toNode, width) ;
+      link = MapLink.new(newId, fromNode, toNode, width) ;
       registerNewLink(link) ;
     end
     return link ;
