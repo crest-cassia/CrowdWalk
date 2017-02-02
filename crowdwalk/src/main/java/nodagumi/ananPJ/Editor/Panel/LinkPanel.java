@@ -29,6 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
+import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.GuiSimulationEditorLauncher.EditorMode;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -109,12 +110,6 @@ public class LinkPanel extends PanelWithTable
         filter_link.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if (((JCheckBox)e.getItem()).getSelectedObjects()
-                        != null) {
-                    searchButton.setText("Filter");
-                } else {
-                    searchButton.setText("Select");
-                }
                 refresh();
             }
         });
@@ -132,7 +127,7 @@ public class LinkPanel extends PanelWithTable
             public void actionPerformed(ActionEvent e) {
                 int count = 0;
                 synchronized(shownLinks) {
-                    for (MapLink link : shownLinks) {
+                    for (MapLink link : editor.getLinks()) {
                         link.selected = (null != link.matchTag(searchText.getText()));
                         if (link.selected) ++count;
                     }
@@ -237,6 +232,10 @@ public class LinkPanel extends PanelWithTable
             }
         });
         lockValueChanged = false;
+
+        for (EditorFrame editorFrame : editor.getEditorFrames()) {
+            editorFrame.panel.repaint();
+        }
     }
 
     public void updateSelectionFromLinks() {
