@@ -14,8 +14,8 @@ apply plugin: 'eclipse'
 // [2016.04.08 I.Noda]
 // コンパイル時に VM のバージョンを指定してみる。
 // 今のところ、まだうまく動かない。
-targetCompatibility = '1.6' ;
-sourceCompatibility = '1.6' ;
+targetCompatibility = '1.7' ;
+sourceCompatibility = '1.7' ;
 
 def javaVersion = new Double(sourceCompatibility.toString())
 def onlyCuiSimulator = cui.toBoolean()
@@ -47,11 +47,11 @@ dependencies {
     compile 'net.arnx:jsonic:1.3.7'
     compile 'net.sf.opencsv:opencsv:2.3'
     compile 'junit:junit:4.12'
-//  compile 'org.jruby:jruby:9.+'
+    compile 'org.jruby:jruby:9.+'
     compile group: 'org.jruby', name: 'jruby-core', version: '1.6.8'
     compile 'org.osgeo:proj4j:0.1.0'
     compile 'math.geom2d:javaGeom:0.11.1'
-//  compile 'com.opencsv:opencsv:3.8'
+    compile 'com.opencsv:opencsv:3.8'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
 
@@ -97,6 +97,7 @@ def defaultEncoding = 'UTF-8'
 
 compileJava {
     options.encoding = defaultEncoding
+    options.compilerArgs = ['-Xlint:unchecked']
 //    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose'] 
 //    options.compilerArgs = ['-Xdiags:verbose']
 }
