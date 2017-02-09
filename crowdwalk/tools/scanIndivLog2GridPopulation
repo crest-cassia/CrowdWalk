@@ -360,16 +360,14 @@ class GridTable < WithConfParam
   #--------------------------------------------------------------
   #++
   ## output  (old)
-  def outputSumGridTable(outfile = nil)
+  def outputSumGridTable_old(outfile = nil, fillP = false)
     diff = findMinimumTimeDiff() ;
     popUnit = @timeStep / diff ;
     str = CSV.generate{|csv|
       c = 0 ;
       @sumGridTable.keys.sort.each{|index|
         grid = @sumGridTable[index] ;
-        if(c == 0) then
-          csv << grid.genOutputLabelArray() ;
-        end
+        csv << grid.genOutputLabelArray() if(c == 0) ;
         c += 1 ;
         csv << grid.genOutputArray(popUnit) ;
       }
@@ -405,9 +403,7 @@ class GridTable < WithConfParam
                   grid = getDummyGridWithIndex(index) ;
                 end
               end
-              if(c == 0) then
-                csv << grid.genOutputLabelArray() ;
-              end
+              csv << grid.genOutputLabelArray() if(c == 0) ;
               c += 1 ;
               csv << grid.genOutputArray(popUnit) ;
             }
