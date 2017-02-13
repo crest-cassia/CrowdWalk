@@ -534,6 +534,11 @@ import nodagumi.Itk.*;
  */
 public class CrowdWalkPropertiesHandler {
 
+    /**
+     * ファイル・ディレクトリ名を設定する属性名。
+     * ここにリストしておくと、パス指定で、絶対・相対の指定がない場合、
+     * properties file のパスを追加する。
+     */
     public static final String[] DEFINITION_FILE_ITEMS
         = {"map_file",
            "generation_file",
@@ -543,6 +548,10 @@ public class CrowdWalkPropertiesHandler {
            "pollution_file",
            "link_appearance_file",
            "node_appearance_file",
+           "evacuated_agents_log_file",
+           "agent_movement_history_file",
+           "individual_pedestrians_log_dir",
+           "screenshot_dir",
            "fallback_file"
         };
 

@@ -35,14 +35,16 @@ import nodagumi.Itk.*;
  * <h3> config, fallbackResources に書ける設定 </h3>
  * <pre>
  *  {
- *    "A_0" : __double__, // social force の A_0
- *    "A_1" : __double__, // social force の A_1
- *    "A_2" : __double__, // social force の A_2
- *    "emptySpeed" : __double__, // 自由速度
- *    "personalSpace" : __double__, // 個人スペース。排他領域。
- *    "widthUnit_SameLane" : __double__, // 同方向流の隣レーンの間隔
- *    "widthUnit_OtehrLane" : __double__, // 対向流のレーンまでの距離
- *    "insensitiveDistanceInCounterFlow" : __double__, // 対向流の影響範囲
+ *    "A_0" : __double__, // social force の A_0 (default=0.962)
+ *    "A_1" : __double__, // social force の A_1 (default=0.869)
+ *    "A_2" : __double__, // social force の A_2 (default=4.682)
+ *    "emptySpeed" : __double__, // 自由速度 (default=1.02265769054586)
+ *    "personalSpace" : __double__, // 個人スペース。排他領域。 (default=2*0.522)
+ *    "widthUnit_SameLane" : __double__, // 同方向流の隣レーンの間隔 (default=0.9)
+ *    "widthUnit_OtehrLane" : __double__, // 対向流のレーンまでの距離 (default=0.9)
+ *    "insensitiveDistanceInCounterFlow" : __double__, // 対向流の影響範囲  (default=0.522)
+ *    "nodeCrossingForceFactor" : __double__, // 前方ノードの横切りからの影響 (default=10.0)
+ *    "nodeCrossingForceTimeMargin" : __double__, // 前方ノードの横切り考慮の時間幅 (default=1.5)
  *    "mentalMode" : __string__ // マップの主観的距離の主観モード
  * }
  * </pre>

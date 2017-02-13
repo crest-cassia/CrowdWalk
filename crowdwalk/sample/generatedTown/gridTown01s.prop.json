@@ -16,6 +16,7 @@
   "time_series_log":true,
   "time_series_log_path":"/tmp",
   "time_series_log_interval":1,
+  "__individual_pedestrians_log_dir":",Log",
   "loop_count":1,
   "exit_count":0,
   "all_agent_speed_zero_break":false
