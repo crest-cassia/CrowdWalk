@@ -152,8 +152,9 @@ class Grid
   ## _agent_:: id or agent object
   ## *return*:: current population
   def addAgent(agent)
-    @agentList.push(agent) ;
-    @population = @agentList.length ;
+#    @agentList.push(agent) ;
+#    @population = @agentList.length ;
+    incPopulation(1) ;
   end
 
   #--------------------------------------------------------------
@@ -209,6 +210,15 @@ class GridTable < WithConfParam
 
   ## default confitulation
   DefaultDate = Time.parse("2000/01/01") ;
+
+  ## required column name
+  RequiredColumnName = ['pedestrianID',
+                        'current_time',
+                        'current_position_in_model_x',
+                        'current_position_in_model_y',
+                        'current_position_in_model_z',
+                        'current_linkID',
+                       ] ;
 
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
@@ -505,14 +515,29 @@ class GridTable < WithConfParam
     @csvColumnLabelList = nil ;
     CSV.foreach(file) {|row|
       if(@csvColumnLabelList.nil?) then
-        @csvColumnLabelList = [] ;
-        @csvColumnIndex = {} ;
-        row.each{|val|
-          @csvColumnIndex[val] = @csvColumnLabelList.length ;
-          @csvColumnLabelList.push(val) ;
-        }
+        scanFirstRowOfIndividualLogFile(row)
       else
         scanCsvRow(row) ;
+      end
+    }
+  end
+    
+  #--------------------------------------------------------------
+  #++
+  ## scan first column
+  def scanFirstRowOfIndividualLogFile(row)
+    @csvColumnLabelList = [] ;
+    @csvColumnIndex = {} ;
+    row.each{|val|
+      index = @csvColumnLabelList.length ;
+      @csvColumnIndex[val] = index ;
+      self.instance_variable_set("@index_" + val.to_s, index) ;
+      @csvColumnLabelList.push(val) ;
+    }
+    RequiredColumnName.each{|colName|
+      if(!@csvColumnIndex.has_key?(colName)) then
+        p [:missingColumn, colName] ;
+        raise("log CSV file should have the column: " + colName) ;
       end
     }
   end
@@ -547,14 +572,15 @@ class GridTable < WithConfParam
   #++
   ## retrieve agent id
   def getAgentIdInCsvRow(row)
-    return getValueFromCsvRow(row, "pedestrianID").intern ;
+#    return getValueFromCsvRow(row, "pedestrianID").intern ;
+    return row[@index_pedestrianID].intern ;
   end
   
   #--------------------------------------------------------------
   #++
   ## retrieve a current time from CSV row
   def getCurrentTimeInCsvRow(row)
-    timestr = getValueFromCsvRow(row, "current_time") ;
+    timestr = row[@index_current_time] ;
     time = @timeNameTable[timestr] ;
     if(time.nil?) then
       time = parseTime(timestr) ;
@@ -567,9 +593,9 @@ class GridTable < WithConfParam
   #++
   ## retrieve a position from CSV row
   def getCurrentPosInCsvRow(row)
-    x = getValueFromCsvRow(row, "current_position_in_model_x").to_f ;
-    y = getValueFromCsvRow(row, "current_position_in_model_y").to_f ;
-    z = getValueFromCsvRow(row, "current_position_in_model_z").to_f ;
+    x = row[@index_current_position_in_model_x].to_f ;
+    y = row[@index_current_position_in_model_y].to_f ;
+    z = row[@index_current_position_in_model_z].to_f ;
     return [x,y,z] ;
   end
 
@@ -589,7 +615,7 @@ class GridTable < WithConfParam
   #++
   ## agent alived?
   def checkWalkingAgent(row)
-    linkId = getValueFromCsvRow(row, "current_linkID") ;
+    linkId = row[@index_current_linkID] ;
     return (linkId != "-1") ;
   end
   
