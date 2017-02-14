@@ -126,6 +126,16 @@ class MapNode
 
   #--------------------------------------------------------------
   #++
+  ## remove tag
+  ## _tag_:: tag string
+  ## *return*:: self
+  def removeTag(tag)
+    @tagList.delete(tag) ;
+    return self ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## rebind links by ID
   ## _town_:: MapTown. (need to have getObject() method)
   def rebindLinksById(town)

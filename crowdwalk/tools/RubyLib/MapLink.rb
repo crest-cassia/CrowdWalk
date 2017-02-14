@@ -126,6 +126,16 @@ class MapLink
 
   #--------------------------------------------------------------
   #++
+  ## remove tag
+  ## _tag_:: tag string
+  ## *return*:: self
+  def removeTag(tag)
+    @tagList.delete(tag) ;
+    return self ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## fromNode かどうか
   def isFromNode(node)
     node == @fromNode ;
