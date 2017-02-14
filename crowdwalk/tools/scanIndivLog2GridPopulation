@@ -32,6 +32,7 @@ $conf = {
   :timeOrigin => "00:00:00",
   :outfile => nil,
   :fillP => false,
+  :quietP => false,
 } ;
 
 #------------------------------------------------------------------------
@@ -92,6 +93,9 @@ _END_
   op.on("-f","--fill", sep + "fill zero grid.") {
     $conf[:fillP] = true ;
   }
+  op.on("-q","--quiet", sep + "suppress verbose outputs.") {
+    $conf[:quietP] = true ;
+  }
   op.on_tail("--help", sep + "show this message.") { |h|
     puts(op)
     exit(1)
@@ -105,7 +109,7 @@ if ($restArg.length < 1) then
   exit(1) ;
 end
 
-p [:rest, ARGV], [:conf,$conf] ;
+p [:rest, ARGV], [:conf,$conf] if !$conf[:quietP] ;
 
 #--======================================================================
 #++
