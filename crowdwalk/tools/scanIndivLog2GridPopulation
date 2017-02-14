@@ -80,6 +80,9 @@ _END_
   op.on("-s","--offset X:Y", String, sep + "set offset in 'X:Y' or 'X:Y:Z' form.") {|xyz|
     scanXYZ(xyz, $conf[:offset]) ;
   }
+  op.on("-T","--timeOrigin Time", String, sep + "set time origin in 'HH:MM:SS' form.") {|time|
+    $conf[:timeOrigin] = time ;
+  }
   op.on("-t","--time Sec", Integer, sep + "set timeStep.") {|sec|
     $conf[:timeStep] = sec ;
   }
