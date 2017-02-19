@@ -29,6 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
+import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.GuiSimulationEditorLauncher.EditorMode;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -112,12 +113,6 @@ public class NodePanel extends PanelWithTable {
         filterNode.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if (((JCheckBox)e.getItem()).getSelectedObjects()
-                        != null) {
-                    searchButton.setText("Filter");
-                } else {
-                    searchButton.setText("Select");
-                }
                 refresh();
             }
         });
@@ -125,7 +120,7 @@ public class NodePanel extends PanelWithTable {
 
         searchText = new JTextArea("");
         filterPanel.add(searchText);
-        searchButton = new JButton("Search");
+        searchButton = new JButton("Select");
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -175,14 +170,26 @@ public class NodePanel extends PanelWithTable {
     public void refresh() {
         if (lockRefresh) return;
 
-        sortedNodes = editor.getMap().getNodes();
+        if (filterNode.isSelected()) {
+            sortedNodes = new MapNodeTable();
+            synchronized(sortedNodes){
+                for (MapNode node : editor.getMap().getNodes()) {
+                    if (null != node.matchTag(searchText.getText())) {
+                        sortedNodes.add(node);
+                    }
+                }
+            }
+        } else {
+            sortedNodes = editor.getMap().getNodes();
+        }
+        // NetworkMap のノードテーブルを標高でソートする
         synchronized(sortedNodes){
             Collections.sort(sortedNodes, new Comparator<MapNode>() {
-                    @Override
-                        public int compare(MapNode lhs, MapNode rhs) {
-                        return (int)Math.signum(lhs.getHeight() - rhs.getHeight());
-                    }
-                });
+                @Override
+                public int compare(MapNode lhs, MapNode rhs) {
+                    return (int)Math.signum(lhs.getHeight() - rhs.getHeight());
+                }
+            });
         }
         
         lockValueChanged = true;
@@ -195,6 +202,10 @@ public class NodePanel extends PanelWithTable {
             }
         });
         lockValueChanged = false;
+
+        for (EditorFrame editorFrame : editor.getEditorFrames()) {
+            editorFrame.panel.repaint();
+        }
     }
 
     public void updateSelectionFromNodes() {

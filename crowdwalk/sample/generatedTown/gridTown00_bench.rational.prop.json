@@ -8,6 +8,7 @@
   "fallback_file":"gridTown00_bench.fb.json",
   "timer_enable":true,
   "timer_file":"/tmp/timer.log",
+  "__individual_pedestrians_log_dir":",Log",
   "interval":0,
   "randseed":2524,
   "random_navigation":true,

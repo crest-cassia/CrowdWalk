@@ -93,14 +93,44 @@ public class GsiTile {
     };
 
     /**
+     * タイル番号 X
+     */
+    private int tileNumberX;
+
+    /**
+     * タイル番号 Y
+     */
+    private int tileNumberY;
+
+    /**
+     * 画像ファイルパス
+     */
+    private String filePath;
+
+    /**
      * 画像オブジェクト
      */
     private BufferedImage image;
 
     /**
-     * 表示座標
+     * 表示座標(左上)
      */
     private Point2D point;
+
+    /**
+     * 右上座標
+     */
+    private Point2D upperRightPoint;
+
+    /**
+     * 左下座標
+     */
+    private Point2D lowerLeftPoint;
+
+    /**
+     * 右下座標
+     */
+    private Point2D lowerRightPoint;
 
     /**
      * X方向の表示スケール
@@ -135,7 +165,7 @@ public class GsiTile {
             return false;
         }
 
-        String filePath = GsiAccessor.getFileNameOfGsiTileImage(cachePath, tileName, x, y, zoom, ext);
+        filePath = GsiAccessor.getFileNameOfGsiTileImage(cachePath, tileName, x, y, zoom, ext);
         try {
             BufferedImage tileImage = ImageIO.read(new FileInputStream(filePath));
             // 隣のタイルとの間に隙間が出来るのを防ぐため1ピクセル分コピーして拡張する
@@ -158,16 +188,49 @@ public class GsiTile {
         Point2D jpr = transformCoordinate(transform, tileRect.getX(), tileRect.getY());
         point = convertJPR2CW(jpr.getY(), jpr.getX());
 
+        // 地理院タイルの右上点に当たる CrowdWalk 座標を求める
+        tileRect = GsiAccessor.tile2boundingBox(x + 1, y, zoom);
+        jpr = transformCoordinate(transform, tileRect.getX(), tileRect.getY());
+        upperRightPoint = convertJPR2CW(jpr.getY(), jpr.getX());
+
+        // 地理院タイルの左下点に当たる CrowdWalk 座標を求める
+        tileRect = GsiAccessor.tile2boundingBox(x, y + 1, zoom);
+        jpr = transformCoordinate(transform, tileRect.getX(), tileRect.getY());
+        lowerLeftPoint = convertJPR2CW(jpr.getY(), jpr.getX());
+
         // 地理院タイルの右下点に当たる CrowdWalk 座標を求める
         tileRect = GsiAccessor.tile2boundingBox(x + 1, y + 1, zoom);
         jpr = transformCoordinate(transform, tileRect.getX(), tileRect.getY());
-        Point2D point2 = convertJPR2CW(jpr.getY(), jpr.getX());
+        lowerRightPoint = convertJPR2CW(jpr.getY(), jpr.getX());
 
-        scaleX = (point2.getX() - point.getX()) / GSI_TILE_SIZE;
-        scaleY = (point2.getY() - point.getY()) / GSI_TILE_SIZE;
+        scaleX = (lowerRightPoint.getX() - point.getX()) / GSI_TILE_SIZE;
+        scaleY = (lowerRightPoint.getY() - point.getY()) / GSI_TILE_SIZE;
+        tileNumberX = x;
+        tileNumberY = y;
 
         // System.err.println(String.format("(%f, %f) %f, %f", point.getX(), point.getY(), scaleX, scaleY));
         return true;
+    }
+
+    /**
+     * タイル番号 X を取得する
+     */
+    public int getTileNumberX() {
+        return tileNumberX;
+    }
+
+    /**
+     * タイル番号 Y を取得する
+     */
+    public int getTileNumberY() {
+        return tileNumberY;
+    }
+
+    /**
+     * 画像ファイルパスを取得する
+     */
+    public String getFilePath() {
+        return filePath;
     }
 
     /**
@@ -178,10 +241,31 @@ public class GsiTile {
     }
 
     /**
-     * 表示座標を取得する
+     * 表示座標(左上)を取得する
      */
     public Point2D getPoint() {
         return point;
+    }
+
+    /**
+     * 右上座標を取得する
+     */
+    public Point2D getUpperRightPoint() {
+        return upperRightPoint;
+    }
+
+    /**
+     * 左下座標を取得する
+     */
+    public Point2D getLowerLeftPoint() {
+        return lowerLeftPoint;
+    }
+
+    /**
+     * 右下座標を取得する
+     */
+    public Point2D getLowerRightPoint() {
+        return lowerRightPoint;
     }
 
     /**
@@ -247,7 +331,7 @@ public class GsiTile {
     /**
      * キャッシュディレクトリのパス文字列を生成する(CrowdWalk/crowdwalk/cache)
      */
-    static String makeCachePath() {
+    public static String makeCachePath() {
 	String fileSeparator = System.getProperty("file.separator");
         File jarFile = new File(System.getProperty("java.class.path"));
         return jarFile.getAbsolutePath().replace(fileSeparator, "/")

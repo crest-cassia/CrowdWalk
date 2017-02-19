@@ -2,15 +2,12 @@
 package nodagumi.ananPJ;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.SwingUtilities;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.SimulationFrame2D;
-import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.Itk.*;
@@ -104,22 +101,6 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      * ウィンドウとGUIを構築する
      */
     public void setupFrame() {
-        ArrayList<GsiTile> mapTiles = null;
-        if (properties != null) {
-            // 地理院タイル画像の準備
-            try {
-                String tileName = properties.getString("gsi_tile_name", GsiTile.DATA_ID_PALE);
-                int zoom = properties.getInteger("gsi_tile_zoom", 14);
-                MapPartGroup root = (MapPartGroup)networkMap.getRoot();
-                int zone = properties.getInteger("zone", root.getZone());
-                if (zone != 0) {
-                    mapTiles = GsiTile.loadGsiTiles(networkMap, tileName, zoom, zone);
-                }
-            } catch(Exception e) {
-                System.err.println(e.getMessage());
-                System.exit(1);
-            }
-        }
         simulationFrame = new SimulationFrame2D("Simulation Preview",
 		simulationPanelWidth, simulationPanelHeight, this, properties, mapTiles);
 
@@ -180,13 +161,8 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
     public void setGuiValues(SimulationFrame2D frame) {
         frame.setSimulationDeferFactor(deferFactor);
         frame.setAgentSize(agentSize);
-        try {
-            frame.setShowBackgroundImage(properties.getBoolean("show_background_image", false));
-            frame.setShowBackgroundMap(properties.getBoolean("show_background_map", false));
-        } catch(Exception e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
+        frame.setShowBackgroundImage(showBackgroundImage);
+        frame.setShowBackgroundMap(showBackgroundMap);
         frame.setRecordSimulationScreen(recordSimulationScreen);
         frame.setScreenshotDir(screenshotDir);
         frame.setClearScreenshotDir(clearScreenshotDir);

@@ -367,6 +367,14 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>show_links_at_actual_width</h4>
+ *     <pre>  3D シミュレーション画面で道幅を持つリンクを表示する。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>outline_color</h4>
  *     <pre>  3D シミュレーション画面で Obstructer 領域を確認するための色
  *
@@ -526,6 +534,11 @@ import nodagumi.Itk.*;
  */
 public class CrowdWalkPropertiesHandler {
 
+    /**
+     * ファイル・ディレクトリ名を設定する属性名。
+     * ここにリストしておくと、パス指定で、絶対・相対の指定がない場合、
+     * properties file のパスを追加する。
+     */
     public static final String[] DEFINITION_FILE_ITEMS
         = {"map_file",
            "generation_file",
@@ -535,6 +548,10 @@ public class CrowdWalkPropertiesHandler {
            "pollution_file",
            "link_appearance_file",
            "node_appearance_file",
+           "evacuated_agents_log_file",
+           "agent_movement_history_file",
+           "individual_pedestrians_log_dir",
+           "screenshot_dir",
            "fallback_file"
         };
 

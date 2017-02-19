@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1047,6 +1048,13 @@ public class GuiSimulationEditorLauncher
             System.err.println(e.getMessage());
             System.exit(1);
         }
+    }
+
+    /**
+     * get Editor Frames
+     */
+    public Collection<EditorFrame> getEditorFrames() {
+        return editorFrames.values();
     }
 
     /**

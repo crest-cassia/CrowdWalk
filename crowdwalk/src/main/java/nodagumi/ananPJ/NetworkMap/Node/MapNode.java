@@ -138,7 +138,12 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     public double getAngleFrom(MapNode origin) {
         double dX = getRelativeXFrom(origin) ;
         double dY = getRelativeYFrom(origin) ;
-        return Math.atan2(dY, dX) ;
+        
+        if(dX == 0.0 && dY == 0.0) { /* dX = dY = 0.0 の場合のエラーを回避 */
+            return 0.0 ;
+        } else {
+            return Math.atan2(dY, dX) ;
+        }
     }
 
     //------------------------------------------------------------

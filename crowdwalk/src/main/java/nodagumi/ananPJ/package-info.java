@@ -69,6 +69,8 @@
  *   <li> {@link nodagumi.ananPJ.Agents.NaiveAgent} </li>
  *   <li> {@link nodagumi.ananPJ.Agents.CapriciousAgent} </li>
  *   <li> {@link nodagumi.ananPJ.Agents.BustleAgent} </li>
+ *   <li> {@link nodagumi.ananPJ.Agents.RationalAgent} </li>
+ *   <li> {@link nodagumi.ananPJ.Agents.RubyAgent} </li>
  *   <li> {@link nodagumi.ananPJ.NetworkMap.Link.MapLink} </li>
  *   <li> {@link nodagumi.ananPJ.NetworkMap.Node.MapNode} </li>
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase} </li>

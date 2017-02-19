@@ -114,7 +114,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
         JFXPanel fxPanel = new JFXPanel();  // JavaFX アプリケーションスレッドを起動するために必要
         Platform.runLater(() -> {
             simulationFrame = new SimulationFrame3D("Simulation Preview",
-                    simulationPanelWidth, simulationPanelHeight, launcher, properties);
+                    simulationPanelWidth, simulationPanelHeight, launcher, properties, mapTiles);
             viewController = new SimulationViewController3D(simulationFrame);
             viewController.addNetworkMapPartsListener(networkMap);
             simulationFrame.setX(x);
@@ -205,5 +205,9 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
 
     public boolean isShow3dPolygon() {
         return show3dPolygon;
+    }
+
+    public boolean isShowBackgroundMap() {
+        return showBackgroundMap;
     }
 }

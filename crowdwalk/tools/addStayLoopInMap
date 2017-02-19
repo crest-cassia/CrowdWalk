@@ -1,0 +1,195 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+## -*- mode: ruby -*-
+## = add staying loop in map
+## Author:: Itsuki Noda
+## Version:: 0.0 2017/01/18 I.Noda
+##
+## === History
+## * [2017/01/18]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+
+$LOAD_PATH.push(File::dirname(__FILE__) + "/RubyLib");
+
+require 'MapTown.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :tag => '__NeedStayLoop__',
+  :suffix => '_StayLoop_',
+  :width => 10.0,
+  :length => 100.0,
+  :nNodes => 2,
+  :dx => 1.0,
+  :dy => 1.0,
+  :dz => 10.0,
+  :r  => 0.5,
+  :mapFile => nil,
+  :outFile => nil,
+  :onewayP => true,
+  :verboseP => false
+} ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]* MapFile
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-t","--tag Tag", String, sep + "loop tag.") {|tag|
+    $conf[:tag] = tag ;
+  }
+  op.on("-s","--suffix Suffix", String, sep + "suffix of new nodes.") {|suffix|
+    $conf[:suffix] = suffix ;
+  }
+  op.on("-w","--width Width", Float, sep + "width of the loop link.") {|width|
+    $conf[:width] = width ;
+  }
+  op.on("-l","--length Length", Float,
+        sep + "virtual length of the loop link.") {|length|
+    $conf[:length] = length ;
+  }
+  op.on("-n","--nNodes NumOfNodes", Integer,
+        sep + "number of loop nodes.") {|n|
+    $conf[:nNodes] = n ;
+  }
+  op.on("-d","--diff DX:DY:DZ", String, sep + "specify dx, dy, dz.") {|values|
+    (dx, dy, dz) = values.split(':').map(){|v| v.to_f} ;
+    $conf[:dx] = dx ;
+    $conf[:dy] = dy ;
+    $conf[:dz] = dz ;
+  }
+  op.on("-r","--radius R", Float, sep + "specify radius of loop.") {|r|
+    (dx, dy, dz) = values.split(':').map(){|v| v.to_f} ;
+    $conf[:r] = r ;
+  }
+  op.on("-b","--bidirection", sep + "use two-way instead of oneway.") {
+    $conf[:onewayP] = false ;
+  }
+  op.on("-v","--verbose", sep + "verbose mode.") {
+    $conf[:verboseP] = true ;
+  }
+  op.on("-o","--outFile OutFile", String, sep + "output file.") {|file|
+    $conf[:outFile] = file ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    puts("Defaults:") ;
+    pp $conf
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ;
+
+if(ARGV.length != 1) then
+  puts($op) ;
+  exit(1) ;
+end
+$conf[:mapFile] = ARGV[0]
+
+
+##------------------------------------------------------------------------
+##++ 指定されたタグを持つノードに、滞在用ループを追加する。
+## _map_:: TownMap データ
+## _conf_:: 各種設定
+def addStayLoopInMap(map, conf)
+  map.nodeList.each{|node|
+    if(node.hasTag(conf[:tag])) then
+      addStayLoopToNode(node, map, conf) 
+    end
+  }
+  return map ;
+end
+
+##------------------------------------------------------------------------
+##++ 指定されたタグを持つノードに、滞在用ループを追加する。
+## _map_:: TownMap データ
+## _node_:: MapNode
+## _conf_:: 各種設定
+def addStayLoopToNode(node, map, conf)
+  newNodeList = [] ;
+  newLinkList = [] ;
+  basePos = node.pos ;
+  baseHeight = node.height ;
+  baseTag = node.tagList[0] ;
+  suffix = conf[:suffix] ;
+  dxdy = Geo2D::Point.new(conf[:dx],conf[:dy]) ;
+  dz = conf[:dz] ;
+  r = conf[:r] ;
+  n = conf[:nNodes] ;
+  fromNode = node ;
+  dTheta = 2 * Math::PI / n.to_f ;
+  theta0 = ((dxdy.norm() == 0.0) ?
+              0.0 :
+              (dxdy.angle() + Math::PI + (dTheta/2.0))) ;
+  (0...n).each{|i|
+    theta = theta0 + i * dTheta ;
+    newPos = basePos + dxdy + Geo2D::Point.newByPolar(r, theta) ;
+    newHeight = baseHeight + dz ;
+    newNode = map.newNode(newPos, newHeight) ;
+    newNode.addTag(baseTag + suffix + i.to_s) ;
+    newNodeList.push(newNode) ;
+    addNewLink(fromNode, newNode, conf, map, newLinkList) ;
+    fromNode = newNode ;
+  }
+  addNewLink(fromNode, node, conf, map, newLinkList) ;
+
+  if(conf[:verboseP]) then
+    STDERR.puts("-" * 50) ;
+    STDERR.puts("add stay_loop to: " + node.inspect) ;
+    STDERR.puts() ;
+    STDERR.puts("New Nodes: " + newNodeList.inspect) ;
+    STDERR.puts() ;
+    STDERR.puts("New Links: " + newLinkList.inspect) ;
+  end
+end
+
+##------------------------------------------------------------------------
+##++ 滞在用ループのリンクを追加する。
+## _fromNode_:: 始点ノード
+## _toNode_:: 終点ノード
+## _conf_:: 道幅・長さなどの設定
+## _map_:: TownMap データ
+## _linkList_:: 格納用リスト
+## *return*:: 新しいリンク
+def addNewLink(fromNode, toNode, conf, map, linkList)
+  newLink = map.newLink(fromNode, toNode, conf[:width]) ;
+  newLink.setLength(conf[:length]) ;
+  newLink.addTag('ONE-WAY-FORWARD') if(conf[:onewayP]) ;
+  linkList.push(newLink) ;
+  return newLink ;
+end
+
+
+
+########################################################################
+########################################################################
+########################################################################
+
+map = MapTown.new() ;
+map.loadXmlMapFile($conf[:mapFile], $conf[:verboseP]) ;
+
+STDERR.puts("Adding Stay Loops...") if ($conf[:verboseP]) ;
+addStayLoopInMap(map, $conf) ;
+
+if($conf[:outFile].nil?) then
+  map.saveXmlToStream(STDOUT) ;
+else
+  STDERR.puts("Save file to: #{$conf[:outFile]}") if ($conf[:verboseP]) ;
+  map.saveXmlToFile($conf[:outFile]) ;
+end

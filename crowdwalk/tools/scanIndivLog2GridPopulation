@@ -30,6 +30,9 @@ $conf = {
   :offset => [0.0, 0.0, 0.0],
   :timeStep => 60*60,
   :timeOrigin => "00:00:00",
+  :outfile => nil,
+  :fillP => false,
+  :quietP => false,
 } ;
 
 #------------------------------------------------------------------------
@@ -56,7 +59,7 @@ $op = OptionParser.new() {|op|
   op.banner = <<_END_
   Usage: #{$0} [Options]* <individual_pedestrian_log.log> 
   Scan CrowdWalk's individual_pedestrian_log and output grid populations.
-  The output goes out stdout.
+  The output goes out stdout or file specified by -O option.
   The output format is csv file in the following columns:
 	timeIndex, gridIndex_X, gridIndex_Y, gridIndex_Z, population
   The timeIndex is count of time step (default 3600sec) from "00:00:00".
@@ -78,8 +81,20 @@ _END_
   op.on("-s","--offset X:Y", String, sep + "set offset in 'X:Y' or 'X:Y:Z' form.") {|xyz|
     scanXYZ(xyz, $conf[:offset]) ;
   }
+  op.on("-T","--timeOrigin Time", String, sep + "set time origin in 'HH:MM:SS' form.") {|time|
+    $conf[:timeOrigin] = time ;
+  }
   op.on("-t","--time Sec", Integer, sep + "set timeStep.") {|sec|
     $conf[:timeStep] = sec ;
+  }
+  op.on("-O","--output OutFile", String, sep + "output file.") {|outfile|
+    $conf[:outfile] = outfile ;
+  }
+  op.on("-f","--fill", sep + "fill zero grid.") {
+    $conf[:fillP] = true ;
+  }
+  op.on("-q","--quiet", sep + "suppress verbose outputs.") {
+    $conf[:quietP] = true ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
     puts(op)
@@ -89,7 +104,12 @@ _END_
 
 $op.parse!(ARGV) ;
 $restArg = ARGV ;
-p [:rest, ARGV], [:conf,$conf] ;
+if ($restArg.length < 1) then
+  puts($op) ;
+  exit(1) ;
+end
+
+p [:rest, ARGV], [:conf,$conf] if !$conf[:quietP] ;
 
 #--======================================================================
 #++
@@ -132,8 +152,9 @@ class Grid
   ## _agent_:: id or agent object
   ## *return*:: current population
   def addAgent(agent)
-    @agentList.push(agent) ;
-    @population = @agentList.length ;
+#    @agentList.push(agent) ;
+#    @population = @agentList.length ;
+    incPopulation(1) ;
   end
 
   #--------------------------------------------------------------
@@ -190,6 +211,15 @@ class GridTable < WithConfParam
   ## default confitulation
   DefaultDate = Time.parse("2000/01/01") ;
 
+  ## required column name
+  RequiredColumnName = ['pedestrianID',
+                        'current_time',
+                        'current_position_in_model_x',
+                        'current_position_in_model_y',
+                        'current_position_in_model_z',
+                        'current_linkID',
+                       ] ;
+
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## origin. should be [x,y,z]
@@ -212,6 +242,8 @@ class GridTable < WithConfParam
   attr_accessor :gridTable ;
   ## table of summary grid. [timeIndex, [ix,iy,iz]] => grid
   attr_accessor :sumGridTable ;
+  ## dummy grid for no data
+  attr_accessor :dummyGrid ;
   
   #--------------------------------------------------------------
   #++
@@ -226,6 +258,7 @@ class GridTable < WithConfParam
     @timeNameTable = {} ;
     @posIndexTable = {} ;
     @gridTable = {} ;
+    @dummyGrid = Grid.new(self, nil, nil) ; 
     parseTimeOrigin(@timeOrigin) ;
   end
   
@@ -317,10 +350,10 @@ class GridTable < WithConfParam
   #--------------------------------------------------------------
   #++
   ## process individual pedestrian log
-  def processIndivLogFile(file)
+  def processIndivLogFile(file, outfile = nil, fillP = false)
     scanIndivLogFile(file) ;
     summarizeGridByTime() ;
-    outputSumGridTable() ;
+    outputSumGridTable(outfile, fillP) ;
   end
     
   #--------------------------------------------------------------
@@ -343,22 +376,117 @@ class GridTable < WithConfParam
     
   #--------------------------------------------------------------
   #++
-  ## output 
-  def outputSumGridTable()
+  ## output  (old)
+  def outputSumGridTable_old(outfile = nil, fillP = false)
     diff = findMinimumTimeDiff() ;
     popUnit = @timeStep / diff ;
     str = CSV.generate{|csv|
       c = 0 ;
       @sumGridTable.keys.sort.each{|index|
         grid = @sumGridTable[index] ;
-        if(c == 0) then
-          csv << grid.genOutputLabelArray() ;
-        end
+        csv << grid.genOutputLabelArray() if(c == 0) ;
         c += 1 ;
         csv << grid.genOutputArray(popUnit) ;
       }
     }
-    puts str ;
+    if(outfile.nil?) then
+      puts str ;
+    else
+      open(outfile, "w") { |strm|
+        strm << str ;
+      }
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## output
+  def outputSumGridTable(outfile = nil, fillP = false)
+    diff = findMinimumTimeDiff() ;
+    popUnit = @timeStep / diff ;
+    str = CSV.generate{|csv|
+      c = 0 ;
+      (rangeT, rangeX, rangeY, rangeZ) = getIndexRange() ;
+      (rangeT[:min]..rangeT[:max]).each{|time|
+        (rangeX[:min]..rangeX[:max]).each{|x|
+          (rangeY[:min]..rangeY[:max]).each{|y|
+            (rangeZ[:min]..rangeZ[:max]).each{|z|
+              index = [time, [x,y,z]] ;
+              grid = @sumGridTable[index] ;
+              if(grid.nil?) then
+                if(!fillP) then
+                  next ;
+                else
+                  grid = getDummyGridWithIndex(index) ;
+                end
+              end
+              csv << grid.genOutputLabelArray() if(c == 0) ;
+              c += 1 ;
+              csv << grid.genOutputArray(popUnit) ;
+            }
+          }
+        }
+      }
+    }
+    if(outfile.nil?) then
+      puts str ;
+    else
+      open(outfile, "w") { |strm|
+        strm << str ;
+      }
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## getDummyGridWithIndex
+  def getDummyGridWithIndex(index)
+    @dummyGrid.timeIndex = index[0] ;
+    @dummyGrid.index = index[1] ;
+    return @dummyGrid ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## get range of time and XYZ index
+  def getIndexRange()
+    rangeTime = { :min => nil, :max => nil} ;
+    rangeX = { :min => nil, :max => nil} ;
+    rangeY = { :min => nil, :max => nil} ;
+    rangeZ = { :min => nil, :max => nil} ;
+    @sumGridTable.keys.sort.each{|index|
+      rangeTime[:min] = safeMin(index[0], rangeTime[:min]) ;
+      rangeTime[:max] = safeMax(index[0], rangeTime[:max]) ;
+      rangeX[:min] = safeMin(index[1][0], rangeX[:min]) ;
+      rangeX[:max] = safeMax(index[1][0], rangeX[:max]) ;
+      rangeY[:min] = safeMin(index[1][1], rangeY[:min]) ;
+      rangeY[:max] = safeMax(index[1][1], rangeY[:max]) ;
+      rangeZ[:min] = safeMin(index[1][2], rangeZ[:min]) ;
+      rangeZ[:max] = safeMax(index[1][2], rangeZ[:max]) ;
+    }
+    return [rangeTime, rangeX, rangeY, rangeZ] ;
+  end
+    
+  #--------------------------------------------------------------
+  #++
+  ## safeMin
+  def safeMin(v, u)
+    return ((v.nil?) ?
+              u :
+              ((u.nil?) ?
+                 v :
+                 (v > u) ? u : v)) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## safeMax
+  def safeMax(v, u)
+    return ((v.nil?) ?
+              u :
+              ((u.nil?) ?
+                 v :
+                 (v > u) ? v : u)) ;
   end
 
   #--------------------------------------------------------------
@@ -387,14 +515,29 @@ class GridTable < WithConfParam
     @csvColumnLabelList = nil ;
     CSV.foreach(file) {|row|
       if(@csvColumnLabelList.nil?) then
-        @csvColumnLabelList = [] ;
-        @csvColumnIndex = {} ;
-        row.each{|val|
-          @csvColumnIndex[val] = @csvColumnLabelList.length ;
-          @csvColumnLabelList.push(val) ;
-        }
+        scanFirstRowOfIndividualLogFile(row)
       else
         scanCsvRow(row) ;
+      end
+    }
+  end
+    
+  #--------------------------------------------------------------
+  #++
+  ## scan first column
+  def scanFirstRowOfIndividualLogFile(row)
+    @csvColumnLabelList = [] ;
+    @csvColumnIndex = {} ;
+    row.each{|val|
+      index = @csvColumnLabelList.length ;
+      @csvColumnIndex[val] = index ;
+      self.instance_variable_set("@index_" + val.to_s, index) ;
+      @csvColumnLabelList.push(val) ;
+    }
+    RequiredColumnName.each{|colName|
+      if(!@csvColumnIndex.has_key?(colName)) then
+        p [:missingColumn, colName] ;
+        raise("log CSV file should have the column: " + colName) ;
       end
     }
   end
@@ -429,14 +572,15 @@ class GridTable < WithConfParam
   #++
   ## retrieve agent id
   def getAgentIdInCsvRow(row)
-    return getValueFromCsvRow(row, "pedestrianID").intern ;
+#    return getValueFromCsvRow(row, "pedestrianID").intern ;
+    return row[@index_pedestrianID].intern ;
   end
   
   #--------------------------------------------------------------
   #++
   ## retrieve a current time from CSV row
   def getCurrentTimeInCsvRow(row)
-    timestr = getValueFromCsvRow(row, "current_time") ;
+    timestr = row[@index_current_time] ;
     time = @timeNameTable[timestr] ;
     if(time.nil?) then
       time = parseTime(timestr) ;
@@ -449,9 +593,9 @@ class GridTable < WithConfParam
   #++
   ## retrieve a position from CSV row
   def getCurrentPosInCsvRow(row)
-    x = getValueFromCsvRow(row, "current_position_in_model_x").to_f ;
-    y = getValueFromCsvRow(row, "current_position_in_model_y").to_f ;
-    z = getValueFromCsvRow(row, "current_position_in_model_z").to_f ;
+    x = row[@index_current_position_in_model_x].to_f ;
+    y = row[@index_current_position_in_model_y].to_f ;
+    z = row[@index_current_position_in_model_z].to_f ;
     return [x,y,z] ;
   end
 
@@ -471,7 +615,7 @@ class GridTable < WithConfParam
   #++
   ## agent alived?
   def checkWalkingAgent(row)
-    linkId = getValueFromCsvRow(row, "current_linkID") ;
+    linkId = row[@index_current_linkID] ;
     return (linkId != "-1") ;
   end
   
@@ -487,4 +631,4 @@ end # class GridTable
 ########################################################################
 
 gTable = GridTable.new($conf) ;
-gTable.processIndivLogFile(ARGV[0]) ;
+gTable.processIndivLogFile(ARGV[0], $conf[:outfile], $conf[:fillP]) ;
