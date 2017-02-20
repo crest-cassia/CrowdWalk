@@ -1,0 +1,656 @@
+(cd ../../../../.. ; time bash quickstart.sh -l Info --cui sample/generatedTown/gridTown00.array.prop.json   )
+java -Dfile.encoding=UTF-8 -jar ./build/libs/crowdwalk.jar -l Info --cui sample/generatedTown/gridTown00.array.prop.json
+ITK_Info[Load Properties File (JSON)]:sample/generatedTown/gridTown00.array.prop.json
+ITK_Info[Load Fallback File]:sample/generatedTown/gridTown00.fb.json
+ITK_Info[fallbackParameters]:{
+	"_link": {
+		"gathering_location_width": 60.0
+	}
+	"obstructer": {
+		"Flood": {
+			"waterDepthThreshold3": 1.0,
+			"waterDepthThreshold2": 0.8,
+			"waterDepthThreshold1": 0.3,
+			"nonAmbulatoryDepth": 1.0
+		}
+		"Pollution": {
+			"deadlyLevel": 178560.0,
+			"unbearableLevel": 900.0,
+			"incapacitatedLevel": 9.0,
+			"irritantLevel": 1.3,
+			"nonAmbulatoryLevel": 9.0
+		}
+		"_": null
+	}
+	"node": {
+		"speedRestrictRule": []
+		"_": null
+	}
+	"link": {
+		"speedRestrictRule": []
+		"emptySpeedRestrictRule": [
+			{
+				"type": "multiply",
+				"tag": "STAIR",
+				"factor": 0.6
+			}]
+		"_": null,
+		"gathering_location_width": 6.0
+	}
+	"_": null,
+	"agentHandler": {
+		"zeroSpeedThreshold": 0.0,
+		"logColumnsOfIndividualPedestrians": [
+			"pedestrianID",
+			"current_time",
+			"current_position_in_model_x",
+			"current_position_in_model_y",
+			"current_position_in_model_z",
+			"current_linkID"
+		],
+		"tickIntervalForIndividualPedestriansLog": 1,
+		"_": null,
+		"_logColumnsOfIndividualPedestrians": [
+			"pedestrianID",
+			"current_time",
+			"current_position_in_model_x",
+			"current_position_in_model_y",
+			"current_position_in_model_z",
+			"current_acceleration",
+			"current_velocity",
+			"current_linkID",
+			"current_nodeID_of_forward_movement",
+			"current_nodeID_of_backward_movement",
+			"current_distance_from_node_of_forward_movement",
+			"current_moving_direction",
+			"generated_time",
+			"current_traveling_period",
+			"current_exposure",
+			"amount_exposure",
+			"current_status_by_exposure",
+			"next_assigned_passage_node"
+		],
+		"_tickIntervalForIndividualPedestriansLog": 10
+	},
+	"generation": {
+		"rule": "EACH",
+		"speedModel": "PLAIN",
+		"_": null
+	},
+	"agent": {
+		"className": "NaiveAgent",
+		"A_0": 0.962,
+		"A_1": 0.869,
+		"A_2": 4.682,
+		"emptySpeed": 1.02265769054586,
+		"personalSpace": 1.044,
+		"widthUnit_SameLane": 0.9,
+		"widthUnit_OtherLane": 0.9,
+		"mentalMode": null,
+		"insensitiveDistanceInCounterFlow": 0.522,
+		"nodeCrossingForceTimeMargin": 1.5,
+		"nodeCrossingForceFactor": 10.0,
+		"margin": 200.0,
+		"weight": 100.0,
+		"trail": 100.0,
+		"trailCountStep": 1.0,
+		"rule": [],
+		"_": null,
+		"xA_0": 0.8
+	}
+}
+ITK_Info[Load Map File]:sample/generatedTown/gridTown00.map.xml
+ITK_Info[Load Scenario File]:sample/generatedTown/gridTown00.scnr.json
+ITK_Info[Scenario]:nodagumi.ananPJ.Scenario.Scenario@7bca4b51
+ITK_Info:---Events---
+ITK_Info[>>>>>]:InitiateEvent[null:,@18:00:00]
+ITK_Info[>>>>>]:AlertEvent[null:,@18:00:10,place=link_node_05_05__node_05_06]
+ITK_Info[>>>>>]:AlertEvent[null:,@18:15:00,place=link_node_01_04__node_02_04]
+ITK_Info[>>>>>]:AlertEvent[null:,@18:45:00,place=link_node_05_03__node_06_03]
+ITK_Info[>>>>>]:AlertEvent[null:,@19:20:00,place=link_node_05_03__node_06_03]
+ITK_Info[Load Pollution File]:(none)
+ITK_Info[Agent Population (JSON)]:100
+ITK_Info[Agent Population (JSON)]:100
+ITK_Info[Agent Population (JSON)]:1
+ITK_Info[Load Generation File (JSON)]:sample/generatedTown/gridTown00.array.gen.json
+ITK_Info[Found Goal]:node_09_09
+ITK_Info[Found Goal]:node_02_09
+ITK_Info[Found Goal]:node_04_00
+ITK_Info[Found Goal]:node_06_09
+ITK_Info[Found Goal]:node_08_00
+ITK_Info[Found Goal]:node_02_09
+ITK_Info[Found Goal]:node_08_00
+ITK_Info[Found Goal]:node_09_00
+ITK_Info[Found Goal]:node_09_00
+ITK_Info[Found Goal]:node_02_00
+ITK_Info[Found Goal]:node_06_09
+ITK_Info[Found Goal]:node_04_02
+ITK_Info[Found Goal]:node_09_09
+ITK_Info[Found Goal]:node_02_00
+ITK_Info[Found Goal]:node_04_02
+ITK_Info[Found Goal]:node_04_00
+ITK_Info[Found Goal]:node_04_09
+ITK_Info[Found Goal]:node_04_09
+ITK_Info[Found Goal]:node_02_00
+ITK_Info[Found Goal]:node_04_02
+ITK_Info[Found Goal]:node_06_00
+ITK_Info[Found Goal]:node_09_00
+ITK_Info[Found Goal]:node_04_09
+ITK_Info[Found Goal]:node_06_00
+ITK_Info[Found Goal]:node_08_09
+ITK_Info[Found Goal]:node_08_09
+ITK_Info[Found Goal]:node_02_09
+ITK_Info[Found Goal]:node_08_00
+ITK_Info[Found Goal]:node_06_09
+ITK_Info[Found Goal]:node_04_00
+ITK_Info[Found Goal]:node_09_09
+ITK_Info[Found Goal]:node_08_09
+ITK_Info[Found Goal]:node_06_00
+ITK_Info[Map Check]:all goals can be reachable from whole map.
+ITK_Info[AlertEvent]:true link_node_05_05__node_05_06 foo-bar-baz #SimTime[18:00:00+10.0s]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00183] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:2.2959496781015303]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00162] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:8.506621166699864]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00194] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:14.886359966367662]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00148] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:38.64390482646706]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00150] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:41.15248065873724]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00141] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:52.78020822428424]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00173] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:56.49464170720432]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00138] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:60.15126275027905]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00154] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:63.81626358485707]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00171] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:67.50350430107262]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00167] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:72.53940170850177]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00159] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:75.0466371820098]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00172] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:77.92202949382411]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00168] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:80.35213881437565]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00161] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:82.91162346640348]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00157] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:86.25622507728501]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00134] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:88.81849610601971]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00146] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:98.84802704759613]
+ITK_Info[AlertEvent]:true link_node_01_04__node_02_04 emergency #SimTime[18:00:00+900.0s]
+ITK_Info[Think:RationalAgent[id:ag00146]]:change goal to 09_05
+ITK_Info[New Target]:find path. tag= node_09_05
+ITK_Info[Found Goal]:node_09_05
+ITK_Info[Found Goal]:node_09_05
+ITK_Info[Found Goal]:node_09_05
+ITK_Info[Think:RationalAgent[id:ag00134]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00157]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00161]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00168]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00172]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00159]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00167]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00171]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00154]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00138]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00173]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00141]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00150]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00148]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00194]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00162]]:change goal to 09_05
+ITK_Info[Think:RationalAgent[id:ag00183]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00179] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.6181874962930181]
+ITK_Info[Think:RationalAgent[id:ag00179]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00186] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.9948038716825067]
+ITK_Info[Think:RationalAgent[id:ag00186]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00190] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.4954680385829562]
+ITK_Info[Think:RationalAgent[id:ag00190]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00200] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.13139121241270857]
+ITK_Info[Think:RationalAgent[id:ag00200]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00184] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.3195835672721472]
+ITK_Info[Think:RationalAgent[id:ag00184]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00177] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.912337548697181]
+ITK_Info[Think:RationalAgent[id:ag00177]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00188] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.6093509212220454]
+ITK_Info[Think:RationalAgent[id:ag00188]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00182] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.16944360589270957]
+ITK_Info[Think:RationalAgent[id:ag00182]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00199] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.36015564174583403]
+ITK_Info[Think:RationalAgent[id:ag00199]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00197] emergency #SimTime[18:00:00+900.0s] Place[on:Link[136,tag:[link_node_01_04__node_02_04],from:15,to:25],enter:Node[15,tag:[node_01_04]],dist:0.13065428950834246]
+ITK_Info[Think:RationalAgent[id:ag00197]]:change goal to 09_05
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00001] foo-bar-baz #SimTime[18:00:00+10.0s] Place[on:Link[198,tag:[link_node_05_05__node_05_06],from:56,to:57],enter:Node[57,tag:[node_05_06]],dist:0.37491171144353075]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00092] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:4.982687363480937]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00062] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:10.890968549205395]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00063] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:20.89329256083368]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00049] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:24.76244199216813]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00050] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:28.62467596026511]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00074] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:34.52196981281306]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00069] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:40.411848869700385]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00056] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:46.287488963631596]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00055] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:49.37103776717344]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00038] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:51.96372328668128]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00045] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:54.983114278505546]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00059] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:57.5873645966485]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00057] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:73.64813912831677]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00040] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:78.72704928041071]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00036] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:81.33852795600828]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00046] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:85.13879720996253]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00048] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:88.94506352097298]
+ITK_Info[AlertEvent]:true link_node_05_03__node_06_03 foo-bar-baz #SimTime[18:00:00+2700.0s]
+ITK_Info[Think:RationalAgent[id:ag00048]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00046]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00036]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00040]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00057]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00059]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00045]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00038]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00055]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00056]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00069]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00074]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00050]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00049]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00063]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00062]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00092]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00058] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.09836256481894168]
+ITK_Info[Think:RationalAgent[id:ag00058]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00086] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.32480473028185486]
+ITK_Info[Think:RationalAgent[id:ag00086]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00048] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.33561541708566267]
+ITK_Info[Think:RationalAgent[id:ag00048]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00046] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.32547827484988545]
+ITK_Info[Think:RationalAgent[id:ag00046]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00036] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3272234999583503]
+ITK_Info[Think:RationalAgent[id:ag00036]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00075] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5585594280310033]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00040] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3169756926617424]
+ITK_Info[Think:RationalAgent[id:ag00075]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00040]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00078] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7966913706667782]
+ITK_Info[Think:RationalAgent[id:ag00078]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00057] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.35158841470180846]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00112] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.24581434925418932]
+ITK_Info[Think:RationalAgent[id:ag00112]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00057]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00065] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.1791145467262396]
+ITK_Info[Think:RationalAgent[id:ag00065]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00103] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.4146738167884507]
+ITK_Info[Think:RationalAgent[id:ag00103]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00070] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8828258890736862]
+ITK_Info[Think:RationalAgent[id:ag00070]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00072] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8219208036418735]
+ITK_Info[Think:RationalAgent[id:ag00072]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00059] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3461013219856568]
+ITK_Info[Think:RationalAgent[id:ag00059]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00116] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.2720643781547665]
+ITK_Info[Think:RationalAgent[id:ag00116]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00045] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3187477061716919]
+ITK_Info[Think:RationalAgent[id:ag00045]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00119] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.884522913988846]
+ITK_Info[Think:RationalAgent[id:ag00119]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00087] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.31897878661550294]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00038] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3542016266310526]
+ITK_Info[Think:RationalAgent[id:ag00087]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00038]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00055] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3124180270256858]
+ITK_Info[Think:RationalAgent[id:ag00055]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00056] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.35251898844293805]
+ITK_Info[Think:RationalAgent[id:ag00056]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00121] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.660988232308128]
+ITK_Info[Think:RationalAgent[id:ag00121]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00069] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3516139612017781]
+ITK_Info[Think:RationalAgent[id:ag00069]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00126] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.9297153958928277]
+ITK_Info[Think:RationalAgent[id:ag00126]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00074] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3511099009808305]
+ITK_Info[Think:RationalAgent[id:ag00074]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00100] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.17173771618053024]
+ITK_Info[Think:RationalAgent[id:ag00100]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00082] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.42641721977186364]
+ITK_Info[Think:RationalAgent[id:ag00082]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00050] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3507942805499198]
+ITK_Info[Think:RationalAgent[id:ag00050]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00085] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8844833443584577]
+ITK_Info[Think:RationalAgent[id:ag00085]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00049] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3502073377332948]
+ITK_Info[Think:RationalAgent[id:ag00049]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00106] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8401800644201529]
+ITK_Info[Think:RationalAgent[id:ag00106]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00063] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3500468430849679]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00128] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.07240284626611526]
+ITK_Info[Think:RationalAgent[id:ag00128]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00063]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00097] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.31865472027402575]
+ITK_Info[Think:RationalAgent[id:ag00097]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00123] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.773090077469476]
+ITK_Info[Think:RationalAgent[id:ag00123]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00094] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7222859858945867]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00062] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.35028851569632025]
+ITK_Info[Think:RationalAgent[id:ag00094]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00062]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00125] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.9645202185339912]
+ITK_Info[Think:RationalAgent[id:ag00125]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00092] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.35012136232515445]
+ITK_Info[Think:RationalAgent[id:ag00092]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00098] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.1699449362190677]
+ITK_Info[Think:RationalAgent[id:ag00098]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00118] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.6203904061313494]
+ITK_Info[Think:RationalAgent[id:ag00118]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00108] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5386156593403513]
+ITK_Info[Think:RationalAgent[id:ag00108]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00058] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3499755472625452]
+ITK_Info[Think:RationalAgent[id:ag00058]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00111] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7565989859635209]
+ITK_Info[Think:RationalAgent[id:ag00111]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00086] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3494184229092099]
+ITK_Info[Think:RationalAgent[id:ag00086]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00114] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5022353548353777]
+ITK_Info[Think:RationalAgent[id:ag00114]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00075] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3496473968324523]
+ITK_Info[Think:RationalAgent[id:ag00075]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00078] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34889284909517926]
+ITK_Info[Think:RationalAgent[id:ag00078]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00112] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3109828001693131]
+ITK_Info[Think:RationalAgent[id:ag00112]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00135] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.3213449183770649]
+ITK_Info[Think:RationalAgent[id:ag00135]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00117] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.32094112389471263]
+ITK_Info[Think:RationalAgent[id:ag00117]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00065] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34888687013727804]
+ITK_Info[Think:RationalAgent[id:ag00065]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00124] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.40366401815177255]
+ITK_Info[Think:RationalAgent[id:ag00124]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00103] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.35020173693195034]
+ITK_Info[Think:RationalAgent[id:ag00103]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00127] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.6537400013180559]
+ITK_Info[Think:RationalAgent[id:ag00127]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00070] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3106599688289293]
+ITK_Info[Think:RationalAgent[id:ag00070]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00072] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3508287118375648]
+ITK_Info[Think:RationalAgent[id:ag00072]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00129] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8582880723988353]
+ITK_Info[Think:RationalAgent[id:ag00129]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00116] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3104747831699939]
+ITK_Info[Think:RationalAgent[id:ag00116]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00143] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.04426048027983143]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00119] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.30748857835786225]
+ITK_Info[Think:RationalAgent[id:ag00143]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00119]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00132] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8044132205067456]
+ITK_Info[Think:RationalAgent[id:ag00132]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00087] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.35058688943068717]
+ITK_Info[Think:RationalAgent[id:ag00087]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00130] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.022129577114554877]
+ITK_Info[Think:RationalAgent[id:ag00130]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00121] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3478725781418319]
+ITK_Info[Think:RationalAgent[id:ag00121]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00156] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.6961131902204158]
+ITK_Info[Think:RationalAgent[id:ag00156]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00158] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8948597749600822]
+ITK_Info[Think:RationalAgent[id:ag00158]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00126] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3472529783295215]
+ITK_Info[Think:RationalAgent[id:ag00126]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00100] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3470487916667082]
+ITK_Info[Think:RationalAgent[id:ag00100]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00082] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34718217758785386]
+ITK_Info[Think:RationalAgent[id:ag00082]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00085] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.30706505000675577]
+ITK_Info[Think:RationalAgent[id:ag00085]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00106] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3482328313621963]
+ITK_Info[Think:RationalAgent[id:ag00106]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00128] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34867068269046797]
+ITK_Info[Think:RationalAgent[id:ag00128]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00097] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34874873405205165]
+ITK_Info[Think:RationalAgent[id:ag00097]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00123] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.30854815420866544]
+ITK_Info[Think:RationalAgent[id:ag00123]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00094] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3491952186374476]
+ITK_Info[Think:RationalAgent[id:ag00094]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00125] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34925478720998626]
+ITK_Info[Think:RationalAgent[id:ag00125]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00098] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34912974059197666]
+ITK_Info[Think:RationalAgent[id:ag00098]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00118] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3088879239691238]
+ITK_Info[Think:RationalAgent[id:ag00118]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00108] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3494526975259191]
+ITK_Info[Think:RationalAgent[id:ag00108]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00111] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34946450838960175]
+ITK_Info[Think:RationalAgent[id:ag00111]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00114] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3487029826981569]
+ITK_Info[Think:RationalAgent[id:ag00114]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00135] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34820646264516597]
+ITK_Info[Think:RationalAgent[id:ag00135]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00117] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34752053196336874]
+ITK_Info[Think:RationalAgent[id:ag00117]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00124] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3083746486694423]
+ITK_Info[Think:RationalAgent[id:ag00124]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00127] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3495982421950572]
+ITK_Info[Think:RationalAgent[id:ag00127]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00129] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3494223905381517]
+ITK_Info[Think:RationalAgent[id:ag00129]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00143] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3490897965379247]
+ITK_Info[Think:RationalAgent[id:ag00143]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00132] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.30931613447351936]
+ITK_Info[Think:RationalAgent[id:ag00132]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00130] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3499904025496221]
+ITK_Info[Think:RationalAgent[id:ag00130]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00156] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3494858928349771]
+ITK_Info[Think:RationalAgent[id:ag00156]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00158] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.34932444443346355]
+ITK_Info[Think:RationalAgent[id:ag00158]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00048] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.6001576305103384]
+ITK_Info[Think:RationalAgent[id:ag00048]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00046] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7993053609426255]
+ITK_Info[Think:RationalAgent[id:ag00046]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00036] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.973155971792039]
+ITK_Info[Think:RationalAgent[id:ag00036]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00040] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.13957614494367476]
+ITK_Info[Think:RationalAgent[id:ag00040]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00057] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.3404791001138108]
+ITK_Info[Think:RationalAgent[id:ag00057]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00059] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5487006305757518]
+ITK_Info[Think:RationalAgent[id:ag00059]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00045] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7464422266124302]
+ITK_Info[Think:RationalAgent[id:ag00045]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00038] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.11290194719279611]
+ITK_Info[Think:RationalAgent[id:ag00038]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00055] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.6471311138846829]
+ITK_Info[Think:RationalAgent[id:ag00055]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00056] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.04876003125585271]
+ITK_Info[Think:RationalAgent[id:ag00056]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00069] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.31997896322151576]
+ITK_Info[Think:RationalAgent[id:ag00069]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00074] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.48120125253589663]
+ITK_Info[Think:RationalAgent[id:ag00074]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00050] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.6417744646981305]
+ITK_Info[Think:RationalAgent[id:ag00050]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00049] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8028650976204119]
+ITK_Info[Think:RationalAgent[id:ag00049]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00063] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.1615477906779148]
+ITK_Info[Think:RationalAgent[id:ag00063]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00062] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.05835135858266938]
+ITK_Info[Think:RationalAgent[id:ag00062]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00092] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.21195819092741885]
+ITK_Info[Think:RationalAgent[id:ag00092]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00058] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.3642085828129922]
+ITK_Info[Think:RationalAgent[id:ag00058]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00086] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5110690315928252]
+ITK_Info[Think:RationalAgent[id:ag00086]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00048] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3318914668628423]
+ITK_Info[Think:RationalAgent[id:ag00048]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00046] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3610382555713443]
+ITK_Info[Think:RationalAgent[id:ag00046]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00036] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3626098976299801]
+ITK_Info[Think:RationalAgent[id:ag00036]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00075] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.6628342022472822]
+ITK_Info[Think:RationalAgent[id:ag00075]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00040] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3635291635501545]
+ITK_Info[Think:RationalAgent[id:ag00040]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00078] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8097434083698403]
+ITK_Info[Think:RationalAgent[id:ag00078]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00057] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3640832875703097]
+ITK_Info[Think:RationalAgent[id:ag00057]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00112] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.9557735227250816]
+ITK_Info[Think:RationalAgent[id:ag00112]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00065] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.07917148774694738]
+ITK_Info[Think:RationalAgent[id:ag00065]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00103] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.226933984174309]
+ITK_Info[Think:RationalAgent[id:ag00103]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00070] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5974881957192508]
+ITK_Info[Think:RationalAgent[id:ag00070]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00072] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.48492140232436043]
+ITK_Info[Think:RationalAgent[id:ag00072]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00059] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3646536567873966]
+ITK_Info[Think:RationalAgent[id:ag00059]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00116] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8617660028272098]
+ITK_Info[Think:RationalAgent[id:ag00116]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00045] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3646110887439704]
+ITK_Info[Think:RationalAgent[id:ag00045]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00119] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7689904443563478]
+ITK_Info[Think:RationalAgent[id:ag00119]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00038] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3146079195012135]
+ITK_Info[Think:RationalAgent[id:ag00038]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00055] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36281185304136443]
+ITK_Info[Think:RationalAgent[id:ag00055]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00087] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.9556967770986518]
+ITK_Info[Think:RationalAgent[id:ag00087]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00056] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3204654227303507]
+ITK_Info[Think:RationalAgent[id:ag00056]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00121] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.11548247022888347]
+ITK_Info[Think:RationalAgent[id:ag00121]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00069] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3642615098442974]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00126] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.308898217350162]
+ITK_Info[Think:RationalAgent[id:ag00126]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00069]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00100] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5130152357167219]
+ITK_Info[Think:RationalAgent[id:ag00100]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00074] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3646177986002783]
+ITK_Info[Think:RationalAgent[id:ag00074]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00082] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7281193938709123]
+ITK_Info[Think:RationalAgent[id:ag00082]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00085] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.07190119486106994]
+ITK_Info[Think:RationalAgent[id:ag00085]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00050] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3648434385987116]
+ITK_Info[Think:RationalAgent[id:ag00050]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00106] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.08347899317377028]
+ITK_Info[Think:RationalAgent[id:ag00106]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00128] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.34315426843159]
+ITK_Info[Think:RationalAgent[id:ag00128]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00049] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36498757277723826]
+ITK_Info[Think:RationalAgent[id:ag00049]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00097] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5881144895890316]
+ITK_Info[Think:RationalAgent[id:ag00097]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00063] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.32149212291402307]
+ITK_Info[Think:RationalAgent[id:ag00063]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00123] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8350748094195666]
+ITK_Info[Think:RationalAgent[id:ag00123]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00094] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.05722021641891217]
+ITK_Info[Think:RationalAgent[id:ag00094]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00062] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3652532717375294]
+ITK_Info[Think:RationalAgent[id:ag00062]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00125] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.2992239612056551]
+ITK_Info[Think:RationalAgent[id:ag00125]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00092] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3652033743241674]
+ITK_Info[Think:RationalAgent[id:ag00092]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00098] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.5326775845558984]
+ITK_Info[Think:RationalAgent[id:ag00098]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00058] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3652538277610944]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00118] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7616419961637888]
+ITK_Info[Think:RationalAgent[id:ag00118]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00058]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00108] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.09851841618770152]
+ITK_Info[Think:RationalAgent[id:ag00108]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00086] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36500431555646173]
+ITK_Info[Think:RationalAgent[id:ag00086]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00111] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.573221736558736]
+ITK_Info[Think:RationalAgent[id:ag00111]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00075] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3652613448893618]
+ITK_Info[Think:RationalAgent[id:ag00075]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00114] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.587435973940515]
+ITK_Info[Think:RationalAgent[id:ag00114]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00078] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36502934024103695]
+ITK_Info[Think:RationalAgent[id:ag00078]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00112] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3650282750082141]
+ITK_Info[Think:RationalAgent[id:ag00112]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00135] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.36726138255484386]
+ITK_Info[Think:RationalAgent[id:ag00135]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00065] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36502577026051597]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00117] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.46028927258313956]
+ITK_Info[Think:RationalAgent[id:ag00117]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00065]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00124] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.7228358403591244]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00103] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36495981564540614]
+ITK_Info[Think:RationalAgent[id:ag00124]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00103]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00070] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.324385175733255]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00127] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.8005422728537326]
+ITK_Info[Think:RationalAgent[id:ag00127]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00070]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00129] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.9291028546870876]
+ITK_Info[Think:RationalAgent[id:ag00129]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00072] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36495298275447396]
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00143] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.9882992753932882]
+ITK_Info[Think:RationalAgent[id:ag00143]]:insert route: 02_00
+ITK_Info[Think:RationalAgent[id:ag00072]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00116] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3242898246977859]
+ITK_Info[Think:RationalAgent[id:ag00116]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00132] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.09385333242580884]
+ITK_Info[Think:RationalAgent[id:ag00132]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00119] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36497792607775636]
+ITK_Info[Think:RationalAgent[id:ag00119]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00130] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.1706171971693493]
+ITK_Info[Think:RationalAgent[id:ag00130]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00156] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.08610522863619963]
+ITK_Info[Think:RationalAgent[id:ag00156]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00087] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3652467152940062]
+ITK_Info[Think:RationalAgent[id:ag00087]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00158] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[54,tag:[node_05_03]],dist:0.08849153979237201]
+ITK_Info[Think:RationalAgent[id:ag00158]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00121] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36497460092031986]
+ITK_Info[Think:RationalAgent[id:ag00121]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00126] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3649497680535063]
+ITK_Info[Think:RationalAgent[id:ag00126]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00100] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36493406896615]
+ITK_Info[Think:RationalAgent[id:ag00100]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00082] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36486209266875846]
+ITK_Info[Think:RationalAgent[id:ag00082]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00085] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3242003247730878]
+ITK_Info[Think:RationalAgent[id:ag00085]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00106] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36494237446663647]
+ITK_Info[Think:RationalAgent[id:ag00106]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00128] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36488865605191734]
+ITK_Info[Think:RationalAgent[id:ag00128]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00097] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36488245024790444]
+ITK_Info[Think:RationalAgent[id:ag00097]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00123] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3648772564678069]
+ITK_Info[Think:RationalAgent[id:ag00123]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00094] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3648723546438788]
+ITK_Info[Think:RationalAgent[id:ag00094]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00125] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36509659868276856]
+ITK_Info[Think:RationalAgent[id:ag00125]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00098] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36487314183351316]
+ITK_Info[Think:RationalAgent[id:ag00098]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00118] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36504016928103056]
+ITK_Info[Think:RationalAgent[id:ag00118]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00108] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.32320458186464407]
+ITK_Info[Think:RationalAgent[id:ag00108]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00111] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3653262143237157]
+ITK_Info[Think:RationalAgent[id:ag00111]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00114] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36498240300323914]
+ITK_Info[Think:RationalAgent[id:ag00114]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00135] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36517373867542346]
+ITK_Info[Think:RationalAgent[id:ag00135]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00117] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3218827643628117]
+ITK_Info[Think:RationalAgent[id:ag00117]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00124] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36461087409163895]
+ITK_Info[Think:RationalAgent[id:ag00124]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00127] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.32312506283562925]
+ITK_Info[Think:RationalAgent[id:ag00127]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00129] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.31682172371633044]
+ITK_Info[Think:RationalAgent[id:ag00129]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00143] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.315677369905373]
+ITK_Info[Think:RationalAgent[id:ag00143]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00132] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.36511462444812537]
+ITK_Info[Think:RationalAgent[id:ag00132]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00130] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3225786991122561]
+ITK_Info[Think:RationalAgent[id:ag00130]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00156] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3644315475800397]
+ITK_Info[Think:RationalAgent[id:ag00156]]:insert route: 02_00
+ITK_Info[hear Alert Message]:RationalAgent[id:ag00158] foo-bar-baz #SimTime[18:00:00+2700.0s] Place[on:Link[210,tag:[link_node_05_03__node_06_03],from:54,to:64],enter:Node[64,tag:[node_06_03]],dist:0.3644161254077858]
+ITK_Info[Think:RationalAgent[id:ag00158]]:insert route: 02_00
+ITK_Info[AlertEvent]:false link_node_05_03__node_06_03 foo-bar-baz #SimTime[18:00:00+4800.0s]
+ITK_Info[finished]:no more agents to generate
+ITK_Info[Status]:Time: 20:19:16  Elapsed: 8356.00sec  Walking: 0  Generated: 201  Evacuated: 201 / 201
