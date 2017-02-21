@@ -303,6 +303,7 @@ class OsmMap < MapTown
     assignIds() ;
     removeNonConnectedNodesLinks() ;
     reduceRedundantNodes() ;
+    reduceLoopedLinks() ;
     addIdTags() ;
   end
 
@@ -321,14 +322,28 @@ class OsmMap < MapTown
         c += 1;
       end
     }
-    @removedNodeList.each{|node|
+    removeNodeInList(@removedNodeList) ;
+    removeLinkInList(@removedLinkList) ;
+    p [:reducedNode, c] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 複数の node を削除する。
+  def removeNodeInList(nodeList)
+    nodeList.each{|node|
       @nodeList.delete(node) ;
       @nodeTable.delete(node) ;
     }
-    @removedLinkList.each{|link|
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## 複数の link を削除する。
+  def removeLinkInList(linkList)
+    linkList.each{|link|
       @linkList.delete(link) ;
     }
-    p [:reducedNode, c] ;
   end
 
   #--------------------------------------------------------------
@@ -390,6 +405,45 @@ class OsmMap < MapTown
     @removedNodeList.push(node) ;
     @removedLinkList.push(link0) ;
     @removedLinkList.push(link1) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## loop link かどうかのチェックして除外。 
+  ## おなじノードに繋がるリンクがあれば、
+  ## それは無駄なリンクのはずなので。
+  def reduceLoopedLinks()
+    @removedLinkList = [] ;
+    @removedNodeList = [] ;
+    c = 0 ;
+    @linkList.each{|link|
+      if(checkLoopedLink(link)) then
+        removeLoopedLink(link) ;
+        c += 1;
+      end
+    }
+    removeNodeInList(@removedNodeList) ;
+    removeLinkInList(@removedLinkList) ;
+    p [:reducedLink, c] ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## loop link かどうかのチェック。 
+  ## おなじノードに繋がるリンクかどうか。
+  def checkLoopedLink(link)
+    return link.fromNode == link.toNode ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## loop link かどうかのチェック。 
+  ## おなじノードに繋がるリンクかどうか。
+  def removeLoopedLink(link)
+    node = link.fromNode ;
+    node.linkList.delete(link) ;
+    @removedLinkList.push(link) ;
+    @removedNodeList.push(node) if (node.linkList.length == 0) ;
   end
 
   #--------------------------------------------------------------
