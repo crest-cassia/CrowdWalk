@@ -1254,7 +1254,7 @@ public class EditorFrame
         for (MapArea area : getChildMapAreas()) {
             for (String tag : tagToRemove)
                 area.removeTag(tag);
-            area.addTag("" + i);
+            area.addTag(("" + i).intern());
             i++;
         }
         maxAreaTag = i;
@@ -1662,7 +1662,7 @@ public class EditorFrame
                             JOptionPane.QUESTION_MESSAGE);
                     if (!new_group_name.equals("")) {
                         to_group = editor.getMap().createGroupNode((MapPartGroup)current_group.getParent());
-                        to_group.addTag(new_group_name);
+                        to_group.addTag(new_group_name.intern());
                     } else {
                         to_group = null;
                     }
@@ -1910,7 +1910,7 @@ public class EditorFrame
         
         double dz = stairs.height_diff * direction;
         MapPartGroup next_group = editor.getMap().createGroupNode((MapPartGroup)group.getParent());
-        next_group.addTag(next_floor_string);
+        next_group.addTag(next_floor_string.intern());
         next_group.setDefaultHeight(group.getDefaultHeight() + dz);
         next_group.setScale(group.getScale());
         next_group.setMinHeight(group.getMinHeight() + dz);
@@ -1928,7 +1928,7 @@ public class EditorFrame
                     next_group.getDefaultHeight() + height_diff);
             for (String tag : node.getTags()) {
                 tag = tag.replaceFirst(floor_string, next_floor_string);
-                newNode.addTag(tag);
+                newNode.addTag(tag.intern());
             }
             nodesToMove.add(newNode);
             nodeToNode.put(node, newNode);
@@ -1947,7 +1947,7 @@ public class EditorFrame
                                    link.getLength(), link.getWidth());
                 for (String tag : link.getTags()) {
                     tag = tag.replaceFirst(floor_string, next_floor_string);
-                    newLink.addTag(tag);
+                    newLink.addTag(tag.intern());
                 }
             }
         }
@@ -1967,8 +1967,8 @@ public class EditorFrame
             MapLink newLink = editor.getMap().createMapLink(next_group,
                     fromNode, toNode,
                     fromNode.calcDistance(toNode), stair_width);
-            newLink.addTag("STAIR_" + stair_set.name
-                    + "_" + floor_string + "_" + next_floor_string);
+            newLink.addTag(("STAIR_" + stair_set.name
+                            + "_" + floor_string + "_" + next_floor_string).intern());
         }
         return next_group;
     }

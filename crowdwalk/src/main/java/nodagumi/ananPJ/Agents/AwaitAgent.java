@@ -401,14 +401,14 @@ public class AwaitAgent extends WalkAgent {
         //------------------------------
         public Term toTerm() {
             Term term = new Term(head) ;
-            term.setArg("target", new Term(target)) ;
-            term.setArg("how", new Term(how)) ;
+            term.setArg("target".intern(), new Term(target)) ;
+            term.setArg("how".intern(), new Term(how)) ;
             switch(type) {
             case WAIT_UNTIL:
-                term.setArg("until", new Term(untilStr)) ;
+                term.setArg("until".intern(), new Term(untilStr)) ;
                 break ;
             case WAIT_FOR:
-                term.setArg("until", new Term(Double.parseDouble(untilStr))) ;
+                term.setArg("until".intern(), new Term(Double.parseDouble(untilStr))) ;
                 break ;
             }
 

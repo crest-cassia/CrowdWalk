@@ -212,7 +212,7 @@ extends JPanel
 	private boolean recursiveTreeAround(OBNode _OBNode,String tag,OP op){
 		switch (op){ 
 		case ADD:
-			_OBNode.addTag(tag);
+			_OBNode.addTag(tag.intern());
 			break;
 		case ALLCLEAR:
 			_OBNode.allTagsClear();
@@ -306,7 +306,7 @@ extends JPanel
 		group.setDefaultHeight(default_height);
 		group.setMinHeight(default_height - 5);
 		group.setMaxHeight(default_height + 5);
-		group.addTag(get_tag_and_height.getTagName());
+		group.addTag(get_tag_and_height.getTagName().intern());
 
 		groupCount++;
         tree.repaint();

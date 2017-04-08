@@ -104,10 +104,10 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     /**
      * Special Tags
      */
-    static public final String Tag_OneWayForward = "ONE-WAY-FORWARD" ;
-    static public final String Tag_OneWayBackward = "ONE-WAY-BACKWARD" ;
-    static public final String Tag_RoadClosed = "ROAD-CLOSED" ;
-    static public final String Tag_Stair = "STAIR" ;
+    static public final String Tag_OneWayForward = "ONE-WAY-FORWARD".intern() ;
+    static public final String Tag_OneWayBackward = "ONE-WAY-BACKWARD".intern() ;
+    static public final String Tag_RoadClosed = "ROAD-CLOSED".intern() ;
+    static public final String Tag_Stair = "STAIR".intern() ;
     static public enum SpecialTagId { OneWayForward,
                                       OneWayBackward,
                                       RoadClosed,
