@@ -68,7 +68,7 @@ public class Term {
     /**
      * head を示すスロット名。
      */
-    static private final String HeadSlot = "" ;
+    static private final String HeadSlot = ("").intern() ;
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -342,9 +342,13 @@ public class Term {
         if(_head instanceof Term) {
             setHead(((Term)_head).getHead(), setInBody) ;
         } else {
-            head = _head ;
+            if(_head instanceof String) {
+                head = ((String)_head).intern() ;
+            } else {
+                head = _head ;
+            }
 
-            if(setInBody) setHeadInBody(_head) ;
+            if(setInBody) setHeadInBody(head) ;
 
             clearArray(true) ;
         }
@@ -766,7 +770,7 @@ public class Term {
         if(!isNullBody()) {
             if(deepP) {
                 for(Map.Entry<String,Object> entry : body.entrySet()) {
-                    setArg(entry.getKey(),entry.getValue(), deepP) ;
+                    setArg(entry.getKey().intern(),entry.getValue(), deepP) ;
                 }
             }
             clearArray(true) ;
@@ -793,7 +797,7 @@ public class Term {
 
         if(HeadSlot.equals(slot)) { setHead(value) ; }
 
-        body.put(slot, value) ;
+        body.put(slot.intern(), value) ;
 
         return this ;
     }
