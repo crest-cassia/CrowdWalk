@@ -37,7 +37,7 @@ public class NaviEngine extends ThinkEngine {
     /**
      * log tag
      */
-    static public String LogTagPrefix = "Navi:" ;
+    static final public String LogTagPrefix = "Navi:" ;
     public String logTag() {
         return LogTagPrefix ;
     }

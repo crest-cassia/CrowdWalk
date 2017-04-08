@@ -21,10 +21,12 @@ BASEDIR = ../../../../..
 JARDIR = $(BASEDIR)/libs/jar
 CLASSDIR = $(BASEDIR)/build/classes/main
 #CLASSDIR = $(BASEDIR)/build/libs/netmas.jar
-JARLIST = junit-4.12 hamcrest-core-1.3 jsonic-1.3.7 jruby
+#JARLIST = junit-4.12 hamcrest-core-1.3 jsonic-1.3.7 jruby
+JARLIST = hamcrest-core-1.3 jsonic-1.3.7 jruby
 JARS = $(subst $( ),:,$(foreach jar,$(JARLIST),$(JARDIR)/$(jar).jar))
 CLASSPATH = $(CLASSDIR):$(JARS)
 JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
+JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar
 
 ##------------------------------------------------------------
 doc ::
@@ -56,28 +58,28 @@ build_vv :
 test : test_Itk
 
 test_ClassFinder ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).ClassFinder_Test
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).ClassFinder_Test
 
 test_Itk ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Itk_Test
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).Itk_Test
 
 test_Lexicon ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Lexicon_Test
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).Lexicon_Test
 
 test_Term ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).Term_Test
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).Term_Test
 
 test_CsvFormatter ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).CsvFormatter_Test
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).CsvFormatter_Test
 
 test_ItkRuby ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).ItkRuby_Test
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).ItkRuby_Test
 
 test_RingBuffer ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(PACKAGE).RingBuffer_Test
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).RingBuffer_Test
 
 test_all ::
-	java -cp $(CLASSPATH) $(JUNITCLASS) $(ALLTESTS)
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(ALLTESTS)
 
 
 ##------------------------------------------------------------

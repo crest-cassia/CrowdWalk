@@ -41,6 +41,17 @@ public class NaviFormulaMap extends NaviFormula {
     static ThinkFormula singleton ;
 
     //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * Lexicon に登録するもの
+     */
+    static private final String Lex_length = ":length".intern() ;
+    static private final String Lex_width = ":width".intern() ;
+    static private final String Lex_hasTag = "hasTag".intern() ;
+    static private final String Lex_tag = "tag".intern() ;
+
+
+    //============================================================
     //------------------------------------------------------------
     /**
      * 登録
@@ -57,9 +68,9 @@ public class NaviFormulaMap extends NaviFormula {
             ex.printStackTrace() ;
         }
 
-        lexicon.register(":length", singleton) ;
-        lexicon.register(":width", singleton) ;
-        lexicon.register("hasTag", singleton) ;
+        lexicon.register(Lex_length, singleton) ;
+        lexicon.register(Lex_width, singleton) ;
+        lexicon.register(Lex_hasTag, singleton) ;
 
         return true ;
     }
@@ -76,11 +87,11 @@ public class NaviFormulaMap extends NaviFormula {
     @Override
     public Term call(String head, Term expr,
                      ThinkEngine engine, Object env) {
-	if(head.equals(":length")) {
+	if(head == Lex_length) {
 	    return call_length(head, expr, engine, env) ;
-        } else if(head.equals(":width")) {
+        } else if(head == Lex_width) {
             return call_width(head, expr, engine, env) ;
-        } else if(head.equals("hasTag")) {
+        } else if(head == Lex_hasTag) {
             return call_hasTag(head, expr, engine, env) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
@@ -125,8 +136,8 @@ public class NaviFormulaMap extends NaviFormula {
     public Term call_hasTag(String head, Term expr,
                             ThinkEngine engine, Object env) {
 	boolean result = false ;
-	if(expr.hasArg("tag")) {
-	    Term tag = expr.getArgTerm("tag") ;
+	if(expr.hasArg(Lex_tag)) {
+	    Term tag = expr.getArgTerm(Lex_tag) ;
 	    result = getLink(env).hasTag(tag) ;
 	} else {
 	    Itk.logError("hasTag formula should have 'tag' slot.") ;

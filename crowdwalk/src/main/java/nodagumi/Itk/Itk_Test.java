@@ -33,6 +33,69 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * String の即値の intern の速さ
+     * 結果： n = 100000000 の場合
+     * ITKDBG[Lap:new String]: 0.526 [sec]
+     * ITKDBG[Lap:inline String]: 0.015 [sec]
+     * ITKDBG[Lap:inline intern String]: 57.639 [sec]
+     * ITKDBG[Lap:stored intern String]: 0.016 [sec]
+     * ITKDBG[Lap:stored intern String ==]: 0.015 [sec]
+     */
+    @Test
+    public void test_String_inline_intern() {
+        String d = "aabbccddeeffggaabbccddeeffggaabbccddeeffgg".intern() ;
+        int n = 100000000 ;
+
+        Itk.timerStart("new String") ;
+        int c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            final String x = new String("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
+            if(d.equals(x)) { c++ ; }
+        }
+        Itk.timerShowLap("new String") ;
+        Itk.dbgVal("c=",c) ;
+        
+        Itk.timerStart("inline String") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            final String x = "aabbccddeeffggaabbccddeeffggaabbccddeeffgg" ;
+            if(d.equals(x)) { c++ ; }
+        }
+        Itk.timerShowLap("inline String") ;
+        Itk.dbgVal("c=",c) ;
+            
+        Itk.timerStart("inline intern String") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            String x = "aabbccddeeffggaabbccddeeffggaabbccddeeffgg".intern() ;
+            if(d.equals(x)) { c++ ; }
+        }
+        Itk.timerShowLap("inline intern String") ;
+        Itk.dbgVal("c=",c) ;
+
+        Itk.timerStart("stored intern String") ;
+        c = 0 ;
+        {
+            final String x = "aabbccddeeffggaabbccddeeffggaabbccddeeffgg".intern() ;
+            for(int i = 0 ; i < n ; i++) {
+                if(d.equals(x)) { c++ ; }
+            }
+        }
+        Itk.timerShowLap("stored intern String") ;
+        Itk.dbgVal("c=",c) ;
+
+        final String x = "aabbccddeeffggaabbccddeeffggaabbccddeeffgg".intern() ;
+        Itk.timerStart("stored intern String ==") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            if(d == x) { c++ ; }
+        }
+        Itk.timerShowLap("stored intern String ==") ;
+        Itk.dbgVal("c=",c) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
      * static へのアクセス
      */
     static class Test_static_access0 {
@@ -44,7 +107,7 @@ public class Itk_Test {
     static class Test_static_access1 extends Test_static_access0 {
         public static String foo = "Test_static_access1.foo" ;
     }
-    @Test
+    //@Test
     public void test_static_access() {
         Test_static_access0 tsa0 = new Test_static_access0() ;
         Test_static_access1 tsa1 = new Test_static_access1() ;

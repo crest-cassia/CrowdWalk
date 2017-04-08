@@ -36,6 +36,18 @@ public abstract class OBMapPart extends OBNode {
         return true;
     }
 
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /** 
+     * ルールで用いるタグ類
+     */
+    static private final String Slot_tag  	    = "tag".intern() ;
+    static private final String Slot_type 	    = "type".intern() ; 
+    static private final String Slot_factor     = "factor".intern() ;
+    static private final String Slot_set		= "set".intern() ;
+    static private final String Slot_multiply	= "multiply".intern() ;
+    static private final String Slot_add		= "add".intern() ;
+    
+    final public int DefaultOne = 1 ;
     //------------------------------------------------------------
     /**
      * ルールに従い速度等のvalueに制限を加える。
@@ -62,15 +74,15 @@ public abstract class OBMapPart extends OBNode {
      */
     public double applyRestrictionRule(double value, Term rule,
                                        AgentBase agent, SimTime currnetTime) {
-        String tag = rule.getArgString("tag") ;
+        String tag = rule.getArgString(Slot_tag) ;
         if(hasTag(tag)) {
-            String type = rule.getArgString("type") ;
-            double factor = rule.getArgDouble("factor") ;
-            if(type.equals("set")) {
+            String type = rule.getArgString(Slot_type) ;
+            double factor = rule.getArgDouble(Slot_factor) ;
+            if(type == Slot_set) {
                 value = factor ;
-            } else if(type.equals("multiply")) {
+            } else if(type == Slot_multiply) {
                 value *= factor ;
-            } else if(type.equals("add")) {
+            } else if(type == Slot_add) {
                 value += factor ;
             } else {
                 Itk.logError("unknown restriction rule type", "rule=", rule) ;
@@ -78,6 +90,8 @@ public abstract class OBMapPart extends OBNode {
         }
         return value ;
     }
+
+
 
 
 }
