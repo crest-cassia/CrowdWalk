@@ -1023,12 +1023,12 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      */
     public ArrayList<String> checkPlannedRoute(String agentClassName,
                                                NetworkMap map,
-                                               List<Term> planned_route) {
+                                               List<Term> plannedRoute) {
         ArrayList<Term> linkTags = new ArrayList();
         ArrayList<Term> nodeTags = new ArrayList();
         int index = 0;
-        while (index < planned_route.size()) {
-            Term candidate = planned_route.get(index);
+        while (index < plannedRoute.size()) {
+            Term candidate = plannedRoute.get(index);
 
             if(AgentFactory
                .isKnownDirectiveInAgentClass(agentClassName, candidate)) {
@@ -1260,7 +1260,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         genConfig.startTime = null ;
 
         SimTime step_time = start_time.newSimTime() ;
-        /* let's assume start & goal & planned_route candidates
+        /* let's assume start & goal & plannedRoute candidates
          * are all MapLink!
          */
 

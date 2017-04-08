@@ -181,11 +181,11 @@ implements Comparable<AgentBase> {
         setConfigLine(factory.configLine) ;
         // set route
         setGoal(new Term(factory.goal));
-        Term planned_route_in_Term =
-            (factory.planned_route == null ?
+        Term plannedRouteInTerm =
+            (factory.plannedRoute == null ?
              Term.newArrayTerm() :
-             new Term(new ArrayList<Term>(factory.planned_route))) ;
-        setPlannedRoute((List)planned_route_in_Term.getArray());
+             new Term(new ArrayList<Term>(factory.plannedRoute))) ;
+        setPlannedRoute((List)plannedRouteInTerm.getArray());
         // tag
         for (final String tag : factory.tags) {
             addTag(tag);
@@ -336,19 +336,19 @@ implements Comparable<AgentBase> {
     /**
      * 全経路をセット
      */
-    public void setPlannedRoute(List<Term> _planned_route) {
-        setPlannedRoute(_planned_route, false) ;
+    public void setPlannedRoute(List<Term> _plannedRoute) {
+        setPlannedRoute(_plannedRoute, false) ;
     }
 
     //------------------------------------------------------------
     /**
      * 全経路をセット
-     * @param _planned_route : セットするルート(tag の配列)
+     * @param _plannedRoute : セットするルート(tag の配列)
      * @param resetIndexP : index もリセットするかどうか。
      */
-    public void setPlannedRoute(List<Term> _planned_route,
+    public void setPlannedRoute(List<Term> _plannedRoute,
                                 boolean resetIndexP) {
-        routePlan.setRoute(_planned_route) ;
+        routePlan.setRoute(_plannedRoute) ;
         if(resetIndexP) routePlan.resetIndex() ;
     }
 
@@ -822,7 +822,7 @@ implements Comparable<AgentBase> {
      * Directive とみなす。（つまり、Atom (String) のみを経由地点の tag
      * と扱うことにする。
      */
-    // planned_route の残り経路がすべて WAIT_FOR/WAIT_UNTIL ならば true を返す
+    // plannedRoute の残り経路がすべて WAIT_FOR/WAIT_UNTIL ならば true を返す
     public boolean isRestAllRouteDirective() {
         if (isPlannedRouteCompleted()) {
             return false;

@@ -230,7 +230,7 @@ public abstract class AgentFactory {
     } // end class Config
 
     public Term goal;
-    public List<Term> planned_route;
+    public List<Term> plannedRoute;
     SimTime startTime ;
     double duration;
     int total;
@@ -274,7 +274,7 @@ public abstract class AgentFactory {
             agentConf = config.agentConf ;
         }
         goal = config.goal ;
-        planned_route = config.plannedRoute ;
+        plannedRoute = config.plannedRoute ;
         startTime = config.startTime ;
         duration = config.duration ;
         total = config.total ;
@@ -289,7 +289,7 @@ public abstract class AgentFactory {
     protected void parse_conditions(String[] conditions) {
         if (conditions == null) return;
         for (int i = 0; i < conditions.length; i++) {
-            final String condition = conditions[i];
+            final String condition = conditions[i].intern();
             tags.add(condition);
         }
     }
@@ -461,8 +461,8 @@ public abstract class AgentFactory {
         ArrayList<Term> goal_tags = new ArrayList<Term>();
 
         int next_check_point_index = 0;
-        while (planned_route.size() > next_check_point_index) {
-            Term candidate = planned_route.get(next_check_point_index);
+        while (plannedRoute.size() > next_check_point_index) {
+            Term candidate = plannedRoute.get(next_check_point_index);
 
             if(isKnownDirectiveInAgentClass(candidate)) {
                 pushPlaceTagInDirectiveByAgentClass(candidate, goal_tags) ;
