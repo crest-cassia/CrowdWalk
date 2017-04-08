@@ -1035,6 +1035,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 AgentFactory
                     .pushPlaceTagInDirectiveByAgentClass(agentClassName,
                                                          candidate,
+                                                         nodeTags,
                                                          linkTags) ;
             } else {
                 nodeTags.add(candidate);

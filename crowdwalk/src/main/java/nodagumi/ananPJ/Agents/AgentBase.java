@@ -801,12 +801,13 @@ implements Comparable<AgentBase> {
      * @return pushした数
      */
     public int pushPlaceTagInDirective(Term directive,
-                                       ArrayList<Term> goalList) {
+                                       ArrayList<Term> nodeList,
+                                       ArrayList<Term> linkList) {
         int count = 0 ;
         if(isKnownDirective(directive)) {
             Term subgoal = getPrimalTargetPlaceInDirective(directive) ;
             if(subgoal != null) {
-                goalList.add(subgoal) ;
+                linkList.add(subgoal) ;
                 count++ ;
             } else {
                 Itk.logWarn("A directive includes no subgoal.") ;

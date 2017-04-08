@@ -418,10 +418,12 @@ public abstract class AgentFactory {
      * directive の中の経由場所tagの取り出し
      */
     public int pushPlaceTagInDirectiveByAgentClass(Term directive,
-                                                   ArrayList<Term> goalList) {
+                                                   ArrayList<Term> nodeTagList,
+                                                   ArrayList<Term> linkTagList) {
         return pushPlaceTagInDirectiveByAgentClass(agentClassName,
                                                    directive,
-                                                   goalList) ;
+                                                   nodeTagList,
+                                                   linkTagList) ;
     }
 
     //------------------------------------------------------------
@@ -431,23 +433,15 @@ public abstract class AgentFactory {
      */
     static public int pushPlaceTagInDirectiveByAgentClass(String className,
                                                           Term directive,
-                                                          ArrayList<Term> goalList)
+                                                          ArrayList<Term> nodeTagList,
+                                                          ArrayList<Term> linkTagList)
     {
         try {
             return
                 (Integer)
                 classFinder
                 .callMethodForClass(className, "pushPlaceTagInDirective", false,
-                                    directive, goalList) ;
-            /*
-            Class<?> klass = classFinder.get(agentClassName) ;
-            Object agent = getDummyAgent(klass) ;
-            Method method =
-                klass.getMethod("pushPlaceTagInDirective",
-                                Term.class,
-                                ArrayList.class) ;
-            return (int)method.invoke(agent,directive,goalList) ;
-            */
+                                    directive, nodeTagList, linkTagList) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
             Itk.logError("can not pushPlaceTag.") ;
@@ -457,21 +451,22 @@ public abstract class AgentFactory {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * planned route の中で、経由地点の tag を取り出す。
+     * directive の中の経由場所tagも Agent Class に応じて取り出す。
+     */
     public ArrayList<Term> getPlannedRoute() {
-        ArrayList<Term> goal_tags = new ArrayList<Term>();
+        ArrayList<Term> routeTags = new ArrayList<Term>();
 
-        int next_check_point_index = 0;
-        while (plannedRoute.size() > next_check_point_index) {
-            Term candidate = plannedRoute.get(next_check_point_index);
-
+        for(Term candidate : plannedRoute) {
             if(isKnownDirectiveInAgentClass(candidate)) {
-                pushPlaceTagInDirectiveByAgentClass(candidate, goal_tags) ;
+                pushPlaceTagInDirectiveByAgentClass(candidate, routeTags, routeTags) ;
             } else {
-                goal_tags.add(candidate);
+                routeTags.add(candidate);
             }
-            next_check_point_index += 1;
         }
-        return goal_tags;
+        return routeTags;
     }
 
     abstract public String getStart();
