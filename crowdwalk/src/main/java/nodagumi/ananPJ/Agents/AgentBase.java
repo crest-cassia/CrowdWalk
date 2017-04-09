@@ -180,11 +180,11 @@ implements Comparable<AgentBase> {
         setMap(simulator.getMap()) ;
         setConfigLine(factory.configLine) ;
         // set route
-        setGoal(new Term(factory.goal));
+        setGoal(new Term(factory.goal, false));
         Term plannedRouteInTerm =
             (factory.plannedRoute == null ?
              Term.newArrayTerm() :
-             new Term(new ArrayList<Term>(factory.plannedRoute))) ;
+             new Term((List)(new ArrayList<Term>(factory.plannedRoute)))) ;
         setPlannedRoute((List)plannedRouteInTerm.getArray());
         // tag
         for (final String tag : factory.tags) {

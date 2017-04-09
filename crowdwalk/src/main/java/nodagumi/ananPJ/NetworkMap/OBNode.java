@@ -102,7 +102,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
             if (children.item(i)  instanceof Element) {
                 Element child = (Element)children.item(i);
                 if (!child.getTagName().equals("tag")) continue;
-                addTag(child.getTextContent().intern()) ;
+                addTag(Term.intern(child.getTextContent())) ;
             }
         }
     }
@@ -398,7 +398,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
             String tag = add_tag_field.getText();
             for (OBNode node : nodes) {
                 if (node.selected) {
-                    node.addTag(tag.intern());
+                    node.addTag(Term.intern(tag)) ;
                 }
             }
             if (parent != null) {

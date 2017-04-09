@@ -89,7 +89,7 @@ public class Term_Test {
 
         List<String> array0 = Arrays.asList("foo","bar","baz") ;
         Itk.dbgVal("array0",array0) ;
-        Term term0 = new Term(array0) ;
+        Term term0 = new Term(array0, false) ;
         Itk.dbgVal("term0",term0) ;
         Itk.dbgVal("term0(JSON)",term0.toJson()) ;
 
@@ -112,7 +112,7 @@ public class Term_Test {
         Itk.dbgVal("term0",term0) ;
         Itk.dbgVal("term0(JSON)",term0.toJson()) ;
 
-        Term term1 = new Term("foo") ;
+        Term term1 = new Term("foo", true) ;
         Itk.dbgVal("term1",term1) ;
         Itk.dbgVal("term1(JSON)",term1.toJson()) ;
 
@@ -135,11 +135,11 @@ public class Term_Test {
         HashMap<String,Object> b4 = new HashMap() ;
         b4.put("bar","aho") ;
         b4.put("baz",2.34) ;
-        Term term4 = new Term("foo",b4) ;
+        Term term4 = new Term("foo",b4, true) ;
         Itk.dbgVal("term4",term4) ;
         Itk.dbgVal("term4(JSON)",term4.toJson()) ;
 
-        Term term5 = new Term("foo") ;
+        Term term5 = new Term("foo", true) ;
         term5.setArg("bar","aho") ;
         term5.setArg("baz",2.34) ;
         Itk.dbgVal("term5", term5) ;

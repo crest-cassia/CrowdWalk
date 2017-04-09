@@ -40,12 +40,12 @@ public abstract class OBMapPart extends OBNode {
     /** 
      * ルールで用いるタグ類
      */
-    static private final String Slot_tag  	    = "tag".intern() ;
-    static private final String Slot_type 	    = "type".intern() ; 
-    static private final String Slot_factor     = "factor".intern() ;
-    static private final String Slot_set		= "set".intern() ;
-    static private final String Slot_multiply	= "multiply".intern() ;
-    static private final String Slot_add		= "add".intern() ;
+    static private final String Slot_tag  	    = Term.intern("tag") ;
+    static private final String Slot_type 	    = Term.intern("type") ;
+    static private final String Slot_factor     = Term.intern("factor") ;
+    static private final String Slot_set		= Term.intern("set") ;
+    static private final String Slot_multiply	= Term.intern("multiply") ;
+    static private final String Slot_add		= Term.intern("add") ;
     
     final public int DefaultOne = 1 ;
     //------------------------------------------------------------

@@ -45,10 +45,10 @@ public class NaviFormulaMap extends NaviFormula {
     /**
      * Lexicon に登録するもの
      */
-    static private final String Lex_length = ":length".intern() ;
-    static private final String Lex_width = ":width".intern() ;
-    static private final String Lex_hasTag = "hasTag".intern() ;
-    static private final String Lex_tag = "tag".intern() ;
+    static private final String Lex_length = Term.intern(":length") ;
+    static private final String Lex_width = Term.intern(":width") ;
+    static private final String Lex_hasTag = Term.intern("hasTag") ;
+    static private final String Lex_tag = Term.intern("tag") ;
 
 
     //============================================================

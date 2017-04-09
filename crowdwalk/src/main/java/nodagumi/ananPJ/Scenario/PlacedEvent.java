@@ -56,7 +56,7 @@ abstract public class PlacedEvent extends EventBase {
 				  ShiftingStringList columns) {
 	super.setupByCsvColumns(_scenario, columns) ;
 
-	placeTag = new Term(columns.nth(2)) ;
+	placeTag = new Term(columns.nth(2), true) ;
     }
 
     //----------------------------------------

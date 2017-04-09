@@ -700,7 +700,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         }
 
         // goal を scan
-        genConfig.goal = new Term(columns.top()) ;
+        genConfig.goal = new Term(columns.top(), true) ;
 
         // ゴールより後ろの読み取り。
         if(!scanRestColumns(columns, map, genConfig))
@@ -836,7 +836,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 if(directive != null) {
                     return directive.toTerm() ;
                 } else {
-                    return new Term(head) ;
+                    return new Term(head, true) ;
                 }
             }
             Matcher matchHead =
@@ -864,10 +864,10 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 Itk.logWarn("strange tag form in planned route:" + head) ;
             }
             // それ以外の場合は、もとの head をTerm化して返す。
-            return new Term(head) ;
+            return new Term(head, true) ;
         } catch (Exception ex) {
             ex.printStackTrace() ;
-            return new Term(head) ;
+            return new Term(head, true) ;
         }
     }
 

@@ -127,13 +127,13 @@ abstract public class ThinkFormula {
     /**
      * true
      */
-    static public Term Term_True = new Term(true) ;
+    static public Term Term_True = new Term(true, false) ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * false
      */
-    static public Term Term_False = new Term(false) ;
+    static public Term Term_False = new Term(false, false) ;
 
     //============================================================
     //------------------------------------------------------------

@@ -395,20 +395,21 @@ public class AwaitAgent extends WalkAgent {
 
         //------------------------------
         public Term targetTerm() {
-            return new Term(target) ;
+            return new Term(target, false) ;
         }
 
         //------------------------------
         public Term toTerm() {
-            Term term = new Term(head) ;
-            term.setArg("target".intern(), new Term(target)) ;
-            term.setArg("how".intern(), new Term(how)) ;
+            Term term = new Term(head, false) ;
+            term.setArg(Term.intern("target"), new Term(target, false)) ;
+            term.setArg(Term.intern("how"), new Term(how, false)) ;
             switch(type) {
             case WAIT_UNTIL:
-                term.setArg("until".intern(), new Term(untilStr)) ;
+                term.setArg(Term.intern("until"), new Term(untilStr, false)) ;
                 break ;
             case WAIT_FOR:
-                term.setArg("until".intern(), new Term(Double.parseDouble(untilStr))) ;
+                term.setArg(Term.intern("until"),
+                            new Term(Double.parseDouble(untilStr))) ;
                 break ;
             }
 

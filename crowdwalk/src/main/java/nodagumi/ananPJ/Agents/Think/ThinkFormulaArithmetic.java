@@ -174,7 +174,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError_("expr=", expr) ;
 	    System.exit(1) ;
 	}
-	return new Term(result) ;
+	return new Term(result, false) ;
     }
 
     //------------------------------------------------------------
@@ -202,7 +202,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError_("expr=", expr) ;
 	    System.exit(1) ;
 	}
-	return new Term(result) ;
+	return new Term(result, false) ;
     }
 
     //------------------------------------------------------------
@@ -249,7 +249,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError_("expr=", expr) ;
 	    System.exit(1) ;
 	}
-	return new Term(result) ;
+	return new Term(result, false) ;
     }
 
     //------------------------------------------------------------
@@ -275,7 +275,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError_("expr=", expr) ;
 	    System.exit(1) ;
 	}
-	return new Term(result) ;
+	return new Term(result, false) ;
     }
 
     //------------------------------------------------------------
@@ -303,7 +303,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError_("expr=", expr) ;
 	    System.exit(1) ;
 	}
-	return new Term(result) ;
+	return new Term(result, false) ;
     }
 
     //------------------------------------------------------------
@@ -334,7 +334,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError_("expr=", expr) ;
 	    System.exit(1) ;
 	}
-	return new Term(result) ;
+	return new Term(result, false) ;
     }
 
     //------------------------------------------------------------

@@ -186,9 +186,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
         if(name.equals("currentTime")) {
             return new Term(agent.currentTime.getRelativeTime()) ;
         } else if(name.equals("agentId")) {
-            return new Term(agent.ID) ;
+            return new Term(agent.ID, false) ;
         } else if(name.equals("linkId")) {
-	    return new Term(agent.getCurrentLink().ID) ;
+	    return new Term(agent.getCurrentLink().ID, false) ;
         } else if(name.equals("speed")) {
 	    return new Term(agent.getSpeed()) ;
         } else if(name.equals("emptySpeed")) {
@@ -198,7 +198,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         } else if(name.equals("triageLevelInt")) {
             return new Term(agent.getTriageInt()) ;
         } else if(name.equals("triageLevelName")) {
-            return new Term(agent.getTriageName()) ;
+            return new Term(agent.getTriageName(), false) ;
         } else {
             Itk.logError("unknown parameter name for getParam.", "name=",name) ;
             return Term_Null ;

@@ -84,7 +84,7 @@ public class Dijkstra {
                                              NetworkMap networkMap) {
         return newPathChooser((mentalMode == null ?
                                (Term)null :
-                               new Term(mentalMode)),
+                               new Term(mentalMode, false)),
                               networkMap) ;
     }
 

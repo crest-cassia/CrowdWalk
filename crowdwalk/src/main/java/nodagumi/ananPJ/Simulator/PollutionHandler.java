@@ -171,7 +171,7 @@ public class PollutionHandler {
                         // 新しいタグ生成が必要ならば、それをチェック。
                         if((index-1) >= tagList.size()) {
                             String tag = (new Integer(index)).toString() ;
-                            addTag(tag.intern()) ;
+                            addTag(Term.intern(tag)) ;
                         }
                         // pollution の最大値を求める
                         if (value > maxPollutionLevel) {
@@ -194,7 +194,7 @@ public class PollutionHandler {
                     }
                     // [2015.06.12 I.Noda] 現状で、開始時刻は未対応。
                     for(int index = 1; index < strItems.length ; index++) {
-                        addTag(strItems[index].intern()) ;
+                        addTag(Term.intern(strItems[index])) ;
                     }
                 }
                 lineCount++ ;

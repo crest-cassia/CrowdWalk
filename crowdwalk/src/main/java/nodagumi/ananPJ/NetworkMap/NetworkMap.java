@@ -687,7 +687,7 @@ public class NetworkMap extends DefaultTreeModel {
             if(mentalModeSet == null) {
                 mentalModeSet = new LinkedHashSet<Term>() ;
                 for(String mode : mentalMapRules.getArgSlotSet()) {
-                    mentalModeSet.add(new Term(mode)) ;
+                    mentalModeSet.add(new Term(mode, false)) ;
                 }
             }
             return mentalModeSet ;

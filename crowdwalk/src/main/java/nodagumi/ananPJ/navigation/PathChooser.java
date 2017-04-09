@@ -53,7 +53,7 @@ public class PathChooser {
      * constractor.
      */
     public PathChooser(String _mentalMode, Term _modifyRule) {
-        this(new Term(_mentalMode), _modifyRule) ;
+        this(new Term(_mentalMode, false), _modifyRule) ;
     }
     
     /**

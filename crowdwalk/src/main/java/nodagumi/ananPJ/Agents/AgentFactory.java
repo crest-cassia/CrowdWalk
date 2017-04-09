@@ -289,7 +289,7 @@ public abstract class AgentFactory {
     protected void parse_conditions(String[] conditions) {
         if (conditions == null) return;
         for (int i = 0; i < conditions.length; i++) {
-            final String condition = conditions[i].intern();
+            final String condition = Term.intern(conditions[i]) ;
             tags.add(condition);
         }
     }

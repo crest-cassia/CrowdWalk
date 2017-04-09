@@ -104,10 +104,14 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     /**
      * Special Tags
      */
-    static public final String Tag_OneWayForward = "ONE-WAY-FORWARD".intern() ;
-    static public final String Tag_OneWayBackward = "ONE-WAY-BACKWARD".intern() ;
-    static public final String Tag_RoadClosed = "ROAD-CLOSED".intern() ;
-    static public final String Tag_Stair = "STAIR".intern() ;
+    static public final String Tag_OneWayForward =
+        Term.intern("ONE-WAY-FORWARD") ; 
+    static public final String Tag_OneWayBackward =
+        Term.intern("ONE-WAY-BACKWARD") ;
+    static public final String Tag_RoadClosed =
+        Term.intern("ROAD-CLOSED") ;
+    static public final String Tag_Stair =
+        Term.intern("STAIR") ;
     static public enum SpecialTagId { OneWayForward,
                                       OneWayBackward,
                                       RoadClosed,
@@ -286,12 +290,6 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     public static final BasicStroke narrow = new BasicStroke(5.0f);
     public static final Color LINK_RED = new Color(1.0f, 0.3f, 0.3f);
     public static final Color LIGHT_BLUE = new Color(0.4f, 0.4f, 1.0f);
-
-    /**
-     * このリンクがポリゴン描画用のリンクかどうか
-     */
-    private boolean polygon = false;
-    public boolean isPolygon() { return polygon; }
 
     //------------------------------------------------------------
     // Constructors
@@ -1205,7 +1203,6 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         boolean result = super.addTag(_tag) ;
         if (result) {
             clearCacheInNodes() ;
-            polygon = containsTag("POLYGON");
             if (networkMap != null) {
                 networkMap.getNotifier().linkTagAdded(this, _tag);
             }
@@ -1222,7 +1219,6 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         int tagsSize = tags.size();
         super.removeTag(_tag) ;
         clearCacheInNodes() ;
-        polygon = containsTag("POLYGON");
         if (networkMap != null && tags.size() < tagsSize) {
             networkMap.getNotifier().linkTagRemoved(this);
         }

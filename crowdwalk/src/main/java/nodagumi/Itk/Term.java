@@ -68,7 +68,7 @@ public class Term {
     /**
      * head を示すスロット名。
      */
-    static private final String HeadSlot = ("").intern() ;
+    static private final String HeadSlot = intern("") ;
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -114,13 +114,13 @@ public class Term {
      * コンストラクタ（headのみ）
      * うまく行かない場合があるので、タイプにより分類。
      */
-    public Term(Object _head) {
+    public Term(Object _head, boolean internP) {
         if(_head instanceof List) {
             setArray((List<Object>)_head) ;
         } else if (_head instanceof HashMap) {
             setBody((HashMap<String,Object>)_head) ;
         } else {
-            setHead(_head) ;
+            setHead(_head, internP) ;
         }
     } ;
 
@@ -130,7 +130,7 @@ public class Term {
      * うまく行かない場合があるので、タイプにより分類。
      */
     public Term(int _head) {
-        setHead(new Integer(_head)) ;
+        setHead(new Integer(_head), false) ;
     } ;
 
     //------------------------------------------------------------
@@ -139,7 +139,7 @@ public class Term {
      * うまく行かない場合があるので、タイプにより分類。
      */
     public Term(double _head) {
-        setHead(new Double(_head)) ;
+        setHead(new Double(_head), false) ;
     } ;
 
     //------------------------------------------------------------
@@ -154,9 +154,9 @@ public class Term {
     /**
      * コンストラクタ（head,args）
      */
-    public Term(Object _head, HashMap<String, Object> _body) {
+    public Term(Object _head, HashMap<String, Object> _body, boolean internP) {
+        setHead(_head, internP) ;
         setBody(_body) ;
-        setHead(_head) ;
     }
 
     //------------------------------------------------------------
@@ -330,20 +330,24 @@ public class Term {
     /**
      * head 設定
      */
-    public Term setHead(Object _head) {
-        return setHead(_head, true) ;
+    public Term setHead(Object _head, boolean internP) {
+        return setHead(_head, internP, true) ;
     }
 
     //------------------------------------------------------------
     /**
      * head 設定
      */
-    public Term setHead(Object _head, boolean setInBody) {
+    public Term setHead(Object _head, boolean internP, boolean setInBody) {
         if(_head instanceof Term) {
-            setHead(((Term)_head).getHead(), setInBody) ;
+            setHead(((Term)_head).getHead(), internP, setInBody) ;
         } else {
             if(_head instanceof String) {
-                head = ((String)_head).intern() ;
+                if(internP) {
+                    head = intern(((String)_head)) ;
+                } else {
+                    head = (String)_head ;
+                }
             } else {
                 head = _head ;
             }
@@ -361,7 +365,7 @@ public class Term {
      */
     public Term setHeadInBody(Object _head) {
         if(!isNullBody()) {
-            if(checkBareValue(_head)) _head = new Term(_head) ;
+            if(checkBareValue(_head)) _head = new Term(_head, false) ;
             body.put(HeadSlot, _head) ;
             return this ;
         } else {
@@ -486,7 +490,7 @@ public class Term {
         else {
             Itk.logWarn("can not cast to Term:" + val) ;
             Itk.logWarn_("generage new Term.") ;
-            return new Term(val) ;
+            return new Term(val, true) ;
         }
     }
 
@@ -770,7 +774,7 @@ public class Term {
         if(!isNullBody()) {
             if(deepP) {
                 for(Map.Entry<String,Object> entry : body.entrySet()) {
-                    setArg(entry.getKey().intern(),entry.getValue(), deepP) ;
+                    setArg(intern(entry.getKey()),entry.getValue(), deepP) ;
                 }
             }
             clearArray(true) ;
@@ -795,9 +799,9 @@ public class Term {
 
         if(deepP){ value = letTermedValue(value, deepP) ; }
 
-        if(HeadSlot.equals(slot)) { setHead(value) ; }
+        if(HeadSlot.equals(slot)) { setHead(value, true) ; }
 
-        body.put(slot.intern(), value) ;
+        body.put(slot, value) ;
 
         return this ;
     }
@@ -1468,7 +1472,7 @@ public class Term {
         } else if(json instanceof List) {
             setArray((List<Object>)json, deepP) ;
         } else {
-            setHead(json) ;
+            setHead(json, true) ;
         }
         return this ;
     }
@@ -1482,8 +1486,21 @@ public class Term {
         if(object instanceof Term) {
             return (Term)object ;
         } else {
-            return new Term(object) ;
+            return new Term(object, true) ;
         }
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * uniformed String intern operation.
+     * currently, just call String::intern()
+     */
+    final static public String intern(String str) {
+        //Itk.dbgVal("intern.str=",str) ;
+        //Itk.dumpStackTrace() ;
+        //return str ;
+        return str.intern() ;
+    }
+    
 } // class Term

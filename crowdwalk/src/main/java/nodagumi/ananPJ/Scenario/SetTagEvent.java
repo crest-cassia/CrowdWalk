@@ -86,7 +86,7 @@ public class SetTagEvent extends PlacedEvent {
             Itk.logWarn("Strange commands for SetTag event.") ;
             Itk.logWarn_("columns", columns) ;
         } else {
-            noticeTag = new Term(subcoms[1]) ;
+            noticeTag = new Term(subcoms[1], true) ;
         }
         if(subcoms[0].equals("SET")) {
             onoff = true ;
