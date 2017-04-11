@@ -42,6 +42,7 @@ import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 
+import nodagumi.Itk.Itk;
 import nodagumi.Itk.Term;
 
 public class BrowserPanel
@@ -213,7 +214,7 @@ extends JPanel
 	private boolean recursiveTreeAround(OBNode _OBNode,String tag,OP op){
 		switch (op){ 
 		case ADD:
-			_OBNode.addTag(Term.intern(tag)) ;
+			_OBNode.addTag(Itk.intern(tag)) ;
 			break;
 		case ALLCLEAR:
 			_OBNode.allTagsClear();
@@ -307,7 +308,7 @@ extends JPanel
 		group.setDefaultHeight(default_height);
 		group.setMinHeight(default_height - 5);
 		group.setMaxHeight(default_height + 5);
-		group.addTag(Term.intern(get_tag_and_height.getTagName())) ;
+		group.addTag(Itk.intern(get_tag_and_height.getTagName())) ;
 
 		groupCount++;
         tree.repaint();

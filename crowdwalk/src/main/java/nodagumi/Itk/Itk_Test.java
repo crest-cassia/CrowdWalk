@@ -43,7 +43,7 @@ public class Itk_Test {
      */
     @Test
     public void test_String_inline_intern() {
-        String d = Term.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
+        String d = Itk.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
         int n = 100000000 ;
 
         Itk.timerStart("new String") ;
@@ -67,7 +67,7 @@ public class Itk_Test {
         Itk.timerStart("inline intern String") ;
         c = 0 ;
         for(int i = 0 ; i < n ; i++) {
-            String x = Term.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg");
+            String x = Itk.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg");
             if(d.equals(x)) { c++ ; }
         }
         Itk.timerShowLap("inline intern String") ;
@@ -76,7 +76,7 @@ public class Itk_Test {
         Itk.timerStart("stored intern String") ;
         c = 0 ;
         {
-            final String x = Term.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
+            final String x = Itk.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
             for(int i = 0 ; i < n ; i++) {
                 if(d.equals(x)) { c++ ; }
             }
@@ -84,7 +84,7 @@ public class Itk_Test {
         Itk.timerShowLap("stored intern String") ;
         Itk.dbgVal("c=",c) ;
 
-        final String x = Term.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
+        final String x = Itk.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
         Itk.timerStart("stored intern String ==") ;
         c = 0 ;
         for(int i = 0 ; i < n ; i++) {

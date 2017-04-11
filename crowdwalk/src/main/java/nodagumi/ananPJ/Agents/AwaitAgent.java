@@ -399,16 +399,21 @@ public class AwaitAgent extends WalkAgent {
         }
 
         //------------------------------
+        private static final String Lex_target = Itk.intern("target") ;
+        private static final String Lex_how = Itk.intern("how") ;
+        private static final String Lex_until = Itk.intern("until") ;
+        
+        //------------------------------
         public Term toTerm() {
             Term term = new Term(head, false) ;
-            term.setArg(Term.intern("target"), new Term(target, false)) ;
-            term.setArg(Term.intern("how"), new Term(how, false)) ;
+            term.setArg(Lex_target, new Term(target, false)) ;
+            term.setArg(Lex_how, new Term(how, false)) ;
             switch(type) {
             case WAIT_UNTIL:
-                term.setArg(Term.intern("until"), new Term(untilStr, false)) ;
+                term.setArg(Lex_until, new Term(untilStr, false)) ;
                 break ;
             case WAIT_FOR:
-                term.setArg(Term.intern("until"),
+                term.setArg(Lex_until,
                             new Term(Double.parseDouble(untilStr))) ;
                 break ;
             }

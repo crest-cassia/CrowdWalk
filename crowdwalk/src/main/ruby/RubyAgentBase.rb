@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = RubyAgentBase for CrowdWalk
 ## Author:: Itsuki Noda
@@ -354,6 +355,13 @@ class RubyAgentBase
     return @javaAgent.super_thinkCycle() ;
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## 文字列の java 内でのintern.
+  def intern(str)
+    return @javaAgent.intern(str) ;
+  end
+  
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

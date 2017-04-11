@@ -853,6 +853,14 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
+     * String の intern. Rubyからの呼び出し用
+     */
+    final public String intern(String str) {
+        return rubyEngine.intern(str) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
      * 各値のリセット。
      */
     void resetValues() {

@@ -66,6 +66,7 @@ import nodagumi.ananPJ.misc.GetDoublesDialog;
 import nodagumi.ananPJ.misc.GridMapAreaDialog;    // tkokada
 import nodagumi.ananPJ.misc.Hover;
 
+import nodagumi.Itk.Itk;
 import nodagumi.Itk.Term;
 
 public class EditorFrame
@@ -1256,7 +1257,7 @@ public class EditorFrame
         for (MapArea area : getChildMapAreas()) {
             for (String tag : tagToRemove)
                 area.removeTag(tag);
-            area.addTag(Term.intern(("" + i))) ;
+            area.addTag(Itk.intern(("" + i))) ;
             i++;
         }
         maxAreaTag = i;
@@ -1664,7 +1665,7 @@ public class EditorFrame
                             JOptionPane.QUESTION_MESSAGE);
                     if (!new_group_name.equals("")) {
                         to_group = editor.getMap().createGroupNode((MapPartGroup)current_group.getParent());
-                        to_group.addTag(Term.intern(new_group_name)) ;
+                        to_group.addTag(Itk.intern(new_group_name)) ;
                     } else {
                         to_group = null;
                     }
@@ -1912,7 +1913,7 @@ public class EditorFrame
         
         double dz = stairs.height_diff * direction;
         MapPartGroup next_group = editor.getMap().createGroupNode((MapPartGroup)group.getParent());
-        next_group.addTag(Term.intern(next_floor_string)) ;
+        next_group.addTag(Itk.intern(next_floor_string)) ;
         next_group.setDefaultHeight(group.getDefaultHeight() + dz);
         next_group.setScale(group.getScale());
         next_group.setMinHeight(group.getMinHeight() + dz);
@@ -1930,7 +1931,7 @@ public class EditorFrame
                     next_group.getDefaultHeight() + height_diff);
             for (String tag : node.getTags()) {
                 tag = tag.replaceFirst(floor_string, next_floor_string);
-                newNode.addTag(Term.intern(tag)) ;
+                newNode.addTag(Itk.intern(tag)) ;
             }
             nodesToMove.add(newNode);
             nodeToNode.put(node, newNode);
@@ -1949,7 +1950,7 @@ public class EditorFrame
                                    link.getLength(), link.getWidth());
                 for (String tag : link.getTags()) {
                     tag = tag.replaceFirst(floor_string, next_floor_string);
-                    newLink.addTag(Term.intern(tag)) ;
+                    newLink.addTag(Itk.intern(tag)) ;
                 }
             }
         }
@@ -1969,9 +1970,9 @@ public class EditorFrame
             MapLink newLink = editor.getMap().createMapLink(next_group,
                     fromNode, toNode,
                     fromNode.calcDistance(toNode), stair_width);
-            newLink.addTag(Term.intern("STAIR_" + stair_set.name + "_"
-                                       + floor_string + "_"
-                                       + next_floor_string)) ;
+            newLink.addTag(Itk.intern("STAIR_" + stair_set.name + "_"
+                                      + floor_string + "_"
+                                      + next_floor_string)) ;
         }
         return next_group;
     }

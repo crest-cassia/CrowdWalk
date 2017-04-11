@@ -826,5 +826,17 @@ public class Itk {
         }
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * uniformed String intern operation.
+     * currently, just call String::intern()
+     */
+    final static public String intern(String str) {
+        //Itk.dbgVal("intern.str=",str) ;
+        //Itk.dumpStackTrace() ;
+        //return str ;
+        return str.intern() ;
+    }
 } // class Itk
 

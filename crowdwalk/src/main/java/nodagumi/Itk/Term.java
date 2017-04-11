@@ -68,7 +68,7 @@ public class Term {
     /**
      * head を示すスロット名。
      */
-    static private final String HeadSlot = intern("") ;
+    static private final String HeadSlot = Itk.intern("") ;
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -344,7 +344,7 @@ public class Term {
         } else {
             if(_head instanceof String) {
                 if(internP) {
-                    head = intern(((String)_head)) ;
+                    head = Itk.intern(((String)_head)) ;
                 } else {
                     head = (String)_head ;
                 }
@@ -774,7 +774,7 @@ public class Term {
         if(!isNullBody()) {
             if(deepP) {
                 for(Map.Entry<String,Object> entry : body.entrySet()) {
-                    setArg(intern(entry.getKey()),entry.getValue(), deepP) ;
+                    setArg(Itk.intern(entry.getKey()),entry.getValue(), deepP) ;
                 }
             }
             clearArray(true) ;
@@ -1490,17 +1490,5 @@ public class Term {
         }
     }
 
-    //============================================================
-    //------------------------------------------------------------
-    /**
-     * uniformed String intern operation.
-     * currently, just call String::intern()
-     */
-    final static public String intern(String str) {
-        //Itk.dbgVal("intern.str=",str) ;
-        //Itk.dumpStackTrace() ;
-        //return str ;
-        return str.intern() ;
-    }
-    
+  
 } // class Term
