@@ -113,7 +113,8 @@ run0w ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0w))
 
 ##-----
-SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
+##SAMPLE0s2 = sample/2links/properties-width-100.xml	#stop (2link)
+SAMPLE0s2 = sample/2links/properties-width-1.xml	#stop (2link)
 run0s2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE0s2))
 

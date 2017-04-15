@@ -9,6 +9,7 @@ import java.util.Map;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.Itk.Itk ;
 
 /**
  * ノードの表示スタイル(直径, 色, 透明度)をタグ別に指定するために使用するクラス
@@ -48,7 +49,7 @@ public class NodeAppearance2D {
 	Map<String, Object> map = (Map<String, Object>)json.parse(is);
         NodeAppearance2D noneTagAppearance = null;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String tag = entry.getKey();
+            String tag = Itk.intern(entry.getKey());
             Map<String, Object> items = (Map<String, Object>)entry.getValue();
             NodeAppearance2D appearance = new NodeAppearance2D(
                 (BigDecimal)items.get("diameter"),

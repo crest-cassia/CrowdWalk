@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = NetworkMap access
 ## Author:: Itsuki Noda
@@ -51,7 +52,7 @@ class NetworkMap
   #++
   ## あるタグを持つリンクに対し、ある処理を行う。
   def eachLinkWithTag(tag, &block)
-    tagString = tag.to_s ;
+    tagString = (tag.is_a?(Term) ? tag : intern(tag.to_s)) ;
     @mapObject.getLinks().each{|link|
       block.call(link) if(link.hasTag(tagString)) ;
     }
@@ -61,7 +62,7 @@ class NetworkMap
   #++
   ## あるタグを持つノードに対し、ある処理を行う。
   def eachNodeWithTag(tag, &block)
-    tagString = tag.to_s ;
+    tagString = (tag.is_a?(Term) ? tag : intern(tag.to_s)) ;
     @mapObject.getNodes().each{|node|
       block.call(node) if(node.hasTag(tagString)) ;
     }

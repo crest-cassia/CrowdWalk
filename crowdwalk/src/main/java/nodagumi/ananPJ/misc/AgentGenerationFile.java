@@ -643,7 +643,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // read start link
         // もし start link の解析に失敗したら、次の行へ。
-        if(! scanStartLinkTag(columns.get(), map, genConfig))
+        if(! scanStartLinkTag(Itk.intern(columns.get()), map, genConfig))
             return null ;
 
         // 出発時刻
@@ -803,7 +803,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         }
         columns.shift() ;
         while(!columns.isEmpty()) {
-            String tag = columns.get() ;
+            String tag = Itk.intern(columns.get()) ;
             if (tag != null &&
                 !tag.equals("")) {
                 Term tagTerm = 

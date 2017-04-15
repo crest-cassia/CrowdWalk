@@ -169,9 +169,8 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     public boolean hasTag (String _tag) {
         if (_tag == null) return false;
 
-        if(tags.contains(_tag)) return true ;
-
-        return false;
+        //return tags.contains(_tag) ;
+        return Itk.containsItself(tags, _tag) ;
     }
 
     /**
@@ -437,6 +436,14 @@ public abstract class OBNode extends DefaultMutableTreeNode {
 
     //------------------------------------------------------------
     /**
+     * ゲート操作  by Term
+     */
+    public GateBase switchGate(Term gateTag, boolean closed) {
+        return switchGate(gateTag.getString(), closed) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
      * ゲート操作
      */
     public GateBase switchGate(String gateTag, boolean closed) {
@@ -447,7 +454,17 @@ public abstract class OBNode extends DefaultMutableTreeNode {
         } else {
             gate.switchGate(closed) ;
         }
+        Itk.logInfo("OBNode::switchGate", gateTag,
+                    (closed ? "close" : "open"), this) ;
         return gate ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ゲート閉鎖 by Term
+     */
+    public GateBase closeGate(Term tag) {
+        return closeGate(tag.getString()) ;
     }
 
     //------------------------------------------------------------
@@ -456,6 +473,14 @@ public abstract class OBNode extends DefaultMutableTreeNode {
      */
     public GateBase closeGate(String tag) {
         return switchGate(tag, true) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ゲート開放 by Term
+     */
+    public GateBase openGate(Term tag) {
+        return openGate(tag.getString()) ;
     }
 
     //------------------------------------------------------------

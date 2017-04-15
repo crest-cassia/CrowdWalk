@@ -13,6 +13,7 @@ import javafx.scene.paint.PhongMaterial;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.Itk.Itk ;
 
 /**
  * ノードの表示スタイル(直径, 色, 透明度)をタグ別に指定するために使用するクラス
@@ -53,7 +54,7 @@ public class NodeAppearance3D {
 	Map<String, Object> map = (Map<String, Object>)json.parse(is);
         NodeAppearance3D noneTagAppearance = null;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String tag = entry.getKey();
+            String tag = Itk.intern(entry.getKey());
             Map<String, Object> items = (Map<String, Object>)entry.getValue();
             NodeAppearance3D appearance = new NodeAppearance3D(
                 (BigDecimal)items.get("diameter"),

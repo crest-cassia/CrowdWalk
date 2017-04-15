@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = Term
 ## Author:: Itsuki Noda
@@ -90,6 +91,8 @@ class ItkTerm
     def newTerm(head = nil)
       if(head.nil?)
         return Term.new() ;
+      elsif(head.is_a?(String))
+        return Term.new(head, true);
       else
         return Term.new(head) ;
       end
@@ -217,11 +220,14 @@ class ItkTerm
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #++
   ## null 定数
-  NullTerm = ItkTerm::newTerm() ;
+  #NullTerm = ItkTerm::newTerm() ;
+  NullTerm = Term.Null ;
   ## null 定数
-  TrueTerm = ItkTerm::newTerm(true) ;
+  #TrueTerm = ItkTerm::newTerm(true) ;
+  TrueTerm = Term.True ;
   ## null 定数
-  FalseTerm = ItkTerm::newTerm(false) ;
+  #FalseTerm = ItkTerm::newTerm(false) ;
+  FalseTerm = Term.False ;
 
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

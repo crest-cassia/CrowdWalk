@@ -443,15 +443,17 @@ public class AwaitAgent extends WalkAgent {
                 return null ;
             }
 
-            String head = matchFull.group(1) ;
+            String head = Itk.intern(matchFull.group(1)) ;
             Type waitType = (Type)lexicon.lookUp(head) ;
             if(waitType == null) {
                 return null ;
             }
 
             WaitDirective _directive = 
-                new WaitDirective(waitType, head, matchFull.group(2),
-                                  matchFull.group(3), matchFull.group(4)) ;
+                new WaitDirective(waitType, head,
+                                  Itk.intern(matchFull.group(2)),
+                                  Itk.intern(matchFull.group(3)),
+                                  Itk.intern(matchFull.group(4))) ;
 
             return _directive ;
         }

@@ -849,6 +849,14 @@ public class Itk {
         for(Object item : array) {
             if(item == obj) { return true ; }
         }
+        if(array.contains(obj)) {
+            Itk.logWarn("not interned values in contains.");
+            Itk.dbgVal("array=", array) ;
+            Itk.dbgVal("obj=", obj) ;
+            Itk.dbgVal("(String)obj is interned?:",
+                       ((String)obj).intern() == ((String)obj)) ;
+            Itk.dumpStackTrace() ;
+        }
         return false ;
     }
 } // class Itk

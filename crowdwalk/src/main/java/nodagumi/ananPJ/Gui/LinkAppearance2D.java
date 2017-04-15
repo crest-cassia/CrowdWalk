@@ -9,6 +9,7 @@ import java.util.Map;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.NetworkMap.Link.*;
+import nodagumi.Itk.Itk ;
 
 /**
  * リンクの表示スタイル(幅, 色, 透明度)をタグ別に指定するために使用するクラス
@@ -53,7 +54,7 @@ public class LinkAppearance2D {
 	Map<String, Object> map = (Map<String, Object>)json.parse(is);
         LinkAppearance2D noneTagAppearance = null;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String tag = entry.getKey();
+            String tag = Itk.intern(entry.getKey());
             Map<String, Object> items = (Map<String, Object>)entry.getValue();
             BigDecimal widthRatio = (BigDecimal)items.get("width_ratio");
             if (widthRatio == null) {

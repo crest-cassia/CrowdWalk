@@ -72,7 +72,10 @@ class GateOperationWrapper < CrowdWalkWrapper
   ##                  :duration => <phase の長さ>,
   ##                  :openGateTag => <gate のタグ> } というハッシュのリスト。
   def setupGatePhaseInfo()
-    @gateTagList = ["R1_CHECK3", "R2_CHECK3", "R3_CHECK2"] ;
+    @gateTagList = [] ;
+    ["R1_CHECK3", "R2_CHECK3", "R3_CHECK2"].each(){|tag|
+      @gateTagList.push(ItkTerm.newTerm(tag)) ;
+    };
     ## gateTag を持つ MapObject をリストアップ。
     @gateNodeList = {} ;
     @gateTagList.each{|gateTag|

@@ -144,6 +144,15 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * コンストラクタ（boolean の headのみ）
+     * うまく行かない場合があるので、タイプにより分類。
+     */
+    public Term(boolean _head) {
+        setHead(new Boolean(_head), false) ;
+    } ;
+
+    //------------------------------------------------------------
+    /**
      * コンストラクタ（bodyのみ）
      */
     public Term(HashMap<String, Object> _body) {
@@ -1490,5 +1499,17 @@ public class Term {
         }
     }
 
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     *  クラスオブジェクト としてもつ定数。
+     *  jruby などからの利用を想定。
+     */
+    /** Null Term */
+    static public Term Null = new Term() ;
+    /** True Term */
+    static public Term True = new Term(true) ;
+    /** False Term */
+    static public Term False = new Term(false) ;
   
 } // class Term
