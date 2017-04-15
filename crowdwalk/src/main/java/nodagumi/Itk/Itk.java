@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Arrays ;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -837,6 +838,18 @@ public class Itk {
         //Itk.dumpStackTrace() ;
         //return str ;
         return str.intern() ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * exact contains an item in an Array.
+     */
+    final static public boolean containsItself(ArrayList array, Object obj){
+        for(Object item : array) {
+            if(item == obj) { return true ; }
+        }
+        return false ;
     }
 } // class Itk
 

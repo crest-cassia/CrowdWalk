@@ -33,6 +33,43 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * String Array の Array.contains と intern による == のスピード比較。
+     * 結果：
+     * ITKDBG[Lap:Itk.containsItself]: 2.84 [sec]
+     * ITKDBG[Lap:String.contains]: 13.876 [sec]
+     */
+    @Test
+    public void test_StringArray_contains() {
+        String prefix = "abcdefg" ;
+        int n = 10 ;
+        ArrayList<String> array = new ArrayList<String>(n) ;
+        
+        for(int i = 0 ; i < n ; i++) {
+            String val = (prefix + i).intern() ;
+            array.add(val) ;
+        }
+
+        int m = 100000000 ;
+        int c = 0 ;
+        String key = (prefix + (n-1)).intern() ;
+        Itk.timerStart("Itk.containsItself") ;
+        for(int i = 0 ; i < m ; i++) {
+            if(Itk.containsItself(array, key)) { c++ ; }
+        }
+        Itk.timerShowLap("Itk.containsItself") ;
+        Itk.dbgVal("c=",c) ;
+        
+        c = 0 ;
+        Itk.timerStart("String.contains") ;
+        for(int i = 0 ; i < m ; i++) {
+            if(array.contains(key)) { c++ ; }
+        }
+        Itk.timerShowLap("String.contains") ;
+        Itk.dbgVal("c=",c) ;
+        
+    }
+    //------------------------------------------------------------
+    /**
      * String の即値の intern の速さ
      * 結果： n = 100000000 の場合
      * ITKDBG[Lap:new String]: 0.526 [sec]
@@ -41,7 +78,7 @@ public class Itk_Test {
      * ITKDBG[Lap:stored intern String]: 0.016 [sec]
      * ITKDBG[Lap:stored intern String ==]: 0.015 [sec]
      */
-    @Test
+    //@Test
     public void test_String_inline_intern() {
         String d = Itk.intern("aabbccddeeffggaabbccddeeffggaabbccddeeffgg") ;
         int n = 100000000 ;
