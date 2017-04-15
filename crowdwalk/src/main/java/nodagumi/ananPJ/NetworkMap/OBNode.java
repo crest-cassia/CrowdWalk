@@ -177,12 +177,12 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * 部分文字列 _tag を含んでいるタグがあるか?
      */
-    public boolean containsTag(String _tag) {
-        if (_tag == null || _tag.isEmpty())
+    public boolean hasSubTag(String subtag) {
+        if (subtag == null || subtag.isEmpty())
             return false;
 
         for (String tag : tags) {
-            if (tag.contains(_tag))
+            if (tag.contains(subtag))
                 return true;
         }
         return false;

@@ -285,7 +285,7 @@ public class SimulationPanel2D extends JPanel {
         polygons = createPolygons(networkMap.getLinks());
         // ポリゴンを除いたリンクのリスト
         for (MapLink link : frame.getLinks()) {
-            if (! link.containsTag("POLYGON")) {
+            if (! link.hasSubTag("POLYGON")) {
                 regularLinks.add(link);
             }
         }

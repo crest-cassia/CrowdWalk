@@ -608,9 +608,9 @@ public class SimulationPanel3D extends StackPane {
                 Itk.logWarn_("Looped link found", "ID=" + link.ID);
                 continue;
             }
-            if (link.containsTag("POLYGON")) {
+            if (link.hasSubTag("POLYGON")) {
                 polygonLinks.add(link);
-            } else if (link.containsTag("STRUCTURE")) {
+            } else if (link.hasSubTag("STRUCTURE")) {
                 structureLinks.add(link);
             } else {
                 regularLinks.add(link);
@@ -1626,7 +1626,7 @@ public class SimulationPanel3D extends StackPane {
                     // TODO: ループしたリンクはマップを読み込んだ直後に削除した方がよい
                     continue;
                 }
-                if (! (link.containsTag("POLYGON") || link.containsTag("STRUCTURE"))) {
+                if (! (link.hasSubTag("POLYGON") || link.hasSubTag("STRUCTURE"))) {
                     links.add(link);
                 }
             }
