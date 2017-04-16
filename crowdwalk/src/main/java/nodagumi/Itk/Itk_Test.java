@@ -35,12 +35,17 @@ public class Itk_Test {
     /**
      * String Array の Array.contains と intern による == のスピード比較。
      * 結果：
+     * prefix = "abcdefg" の場合。
      * ITKDBG[Lap:Itk.containsItself]: 2.84 [sec]
      * ITKDBG[Lap:String.contains]: 13.876 [sec]
+     * prefix = "a" の場合。
+     * ITKDBG[Lap:Itk.containsItself]: 2.715 [sec]
+     * ITKDBG[Lap:String.contains]: 9.329 [sec]
      */
     @Test
     public void test_StringArray_contains() {
-        String prefix = "abcdefg" ;
+        //String prefix = "abcdefg" ;
+        String prefix = "a" ;
         int n = 10 ;
         ArrayList<String> array = new ArrayList<String>(n) ;
         

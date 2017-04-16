@@ -843,20 +843,24 @@ public class Itk {
     //============================================================
     //------------------------------------------------------------
     /**
-     * exact contains an item in an Array.
+     * exact contains an item in an array.
+     * Check the array has the obj as an object itself.
+     * In other word, equality is checked by == instead of equals(). 
      */
     final static public boolean containsItself(ArrayList array, Object obj){
         for(Object item : array) {
             if(item == obj) { return true ; }
         }
-        if(array.contains(obj)) {
-            Itk.logWarn("not interned values in contains.");
-            Itk.dbgVal("array=", array) ;
-            Itk.dbgVal("obj=", obj) ;
-            Itk.dbgVal("(String)obj is interned?:",
-                       ((String)obj).intern() == ((String)obj)) ;
-            Itk.dumpStackTrace() ;
-        }
+        // for test and debug
+        //if(array.contains(obj)) {
+        //    Itk.logWarn("not interned values in contains.");
+        //    Itk.dbgVal("array=", array) ;
+        //    Itk.dbgVal("obj=", obj) ;
+        //    Itk.dbgVal("(String)obj is interned?:",
+        //               ((String)obj).intern() == ((String)obj)) ;
+        //    Itk.dumpStackTrace() ;
+        //}
+        //
         return false ;
     }
 } // class Itk
