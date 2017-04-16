@@ -25,7 +25,8 @@
     <entry key="time_series_log_interval">1</entry>
     <entry key="loop_count">1</entry>
     <entry key="exit_count">0</entry>
-    <entry key="all_agent_speed_zero_break">true</entry>
+    <!--<entry key="all_agent_speed_zero_break">true</entry>-->
+    <entry key="all_agent_speed_zero_break">false</entry>
     <!--entry key="exit_count">1200</entry-->
 </properties>
 
