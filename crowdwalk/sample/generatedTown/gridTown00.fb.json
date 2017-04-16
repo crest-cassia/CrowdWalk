@@ -31,8 +31,8 @@
             "current_status_by_exposure",
             "next_assigned_passage_node"
         ],
-	"_tickIntervalForIndividualPedestriansLog" : 10,
-	"tickIntervalForIndividualPedestriansLog" : 1,
+	"tickIntervalForIndividualPedestriansLog" : 10,
+	"_tickIntervalForIndividualPedestriansLog" : 1,
 	"_" : null
     },
     "_" : null

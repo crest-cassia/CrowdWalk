@@ -853,13 +853,17 @@ public class AgentHandler {
      * ※individual_pedestrians ログは swing 値を使用しているためここで出力する
      */
     private void updateAgentViews(SimTime currentTime) {
-        if (hasDisplay() || individualPedestriansLogger != null) {
+        boolean isLogCycle = isLogIndividualPedestriansCycle(currentTime) ;
+        
+        if (hasDisplay() || isLogCycle) {
             for (AgentBase agent : getWalkingAgentCollection()){
                 if (! agent.isEvacuated()) {
                     // swing 値の計算
                     agent.updateViews();
                 }
-                logIndividualPedestrians(currentTime, agent);
+                if(isLogCycle) {
+                    logIndividualPedestrians(currentTime, agent);
+                }
             }
         }
     }
@@ -1269,13 +1273,20 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
+     * check the currentTime is on a cycle of individualPedestriansLogger
+     */
+    final private boolean isLogIndividualPedestriansCycle(SimTime currentTime) {
+        return (individualPedestriansLogger != null &&
+                (0 == (currentTime.getTickCount()
+                       % tickIntervalForindividualPedestriansLog))) ;
+    }
+                                                                          
+    //------------------------------------------------------------
+    /**
      * individualPedestriansLogger への出力。
      */
     private void logIndividualPedestrians(SimTime currentTime, AgentBase agent) {
-        if (individualPedestriansLogger != null
-            && (0 == (currentTime.getTickCount()
-                      % tickIntervalForindividualPedestriansLog))
-            && ! agent.isDead()) {
+        if (! agent.isDead()) {
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
                                          agent, currentTime, this);

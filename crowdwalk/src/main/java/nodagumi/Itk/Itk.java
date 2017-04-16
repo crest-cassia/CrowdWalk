@@ -16,6 +16,7 @@ import java.lang.Thread ;
 import java.lang.StackTraceElement ;
 import java.lang.StringBuffer;
 
+import java.io.File;
 import java.io.OutputStream ;
 import java.io.PrintStream;
 
@@ -863,5 +864,42 @@ public class Itk {
         //
         return false ;
     }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * check dir / file exists.
+     * @param pathName : path of directory / file.
+     */
+    final static public boolean pathExists(String pathName) {
+        File path = new File(pathName) ;
+        return path.exists() ;
+    }
+    
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * ensure dir exists.
+     * @param path : path of directory / file.
+     * @param fileP : true if path is an actual file path.
+     *                If false, path is considered as dir path.
+     */
+    final static public boolean ensureDirExists(String path,
+                                                boolean checkParent) {
+        if(checkParent) {
+            path = new File(path).getParent() ;
+        }
+        File dir = new File(path) ;
+        if(! dir.exists()) {
+            Itk.logWarn("Itk.ensureDirExists()",
+                        "The directory is not exists. Create it.:",
+                        path) ;
+            dir.mkdir() ;
+            return true ;
+        } else {
+            return false ;
+        }
+    }
+    
 } // class Itk
 

@@ -898,7 +898,7 @@ public class CrowdWalkPropertiesHandler {
      */
     public boolean doesCreateLogDirAutomatically() {
         try {
-            return getBoolean("create_log_dirs", false) ;
+            return getBoolean("create_log_dirs", true) ;
         } catch(Exception e) {
             Itk.logWarn("property file error." + e.getMessage()) ;
             return false ;
