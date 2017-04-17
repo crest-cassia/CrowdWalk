@@ -33,6 +33,49 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * HashMap<String, Object> と HashMap<Object, Object>のスピード競争。
+     * String の equal と == のスピード差がどれくらいきくか。
+     * 結果：
+     * HashMap の中ではかならず equals が呼ばれるため、違いがない。
+     */
+    @Test
+    public void test_StringObjectHashMap() {
+        String prefix = "abcdefg" ;
+        int k = 10 ;
+        HashMap<String, String> sMap = new HashMap<String, String>() ;
+        HashMap<Object, String> oMap = new HashMap<Object, String>() ;
+
+        for(int i = 0 ; i < k ; i++) {
+            String value = (prefix + i).intern() ;
+            sMap.put(value, value) ;
+            oMap.put((Object)value, value) ;
+        }
+
+        int n = 1000000000 ;
+        //String key = (prefix + 0).intern() ;
+        String key = new String((prefix + 0)) ;
+        int c = 0 ;
+
+        Itk.timerStart("sMap") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            String v = sMap.get(key) ;
+            if(v != null) { c++ ; } ;
+        }
+        Itk.timerShowLap("sMap") ;
+        Itk.dbgVal("c=",c) ;
+        
+        Itk.timerStart("oMap") ;
+        c = 0 ;
+        for(int i = 0 ; i < n ; i++) {
+            String v = oMap.get(key) ;
+            if(v != null) { c++ ; } ;
+        }
+        Itk.timerShowLap("oMap") ;
+        Itk.dbgVal("c=",c) ;
+    }
+    //------------------------------------------------------------
+    /**
      * String Array の Array.contains と intern による == のスピード比較。
      * 結果：
      * prefix = "abcdefg" の場合。
@@ -42,7 +85,7 @@ public class Itk_Test {
      * ITKDBG[Lap:Itk.containsItself]: 2.715 [sec]
      * ITKDBG[Lap:String.contains]: 9.329 [sec]
      */
-    @Test
+    //@Test
     public void test_StringArray_contains() {
         //String prefix = "abcdefg" ;
         String prefix = "a" ;
