@@ -19,7 +19,7 @@ import nodagumi.Itk.*;
  * エージェント生成機構。(fromLink)
  */
 public class AgentFactoryFromLink extends AgentFactory {
-    MapLink start_link;
+    MapLink startLink;
 
     //------------------------------------------------------------
     /**
@@ -27,31 +27,42 @@ public class AgentFactoryFromLink extends AgentFactory {
      */
     public AgentFactoryFromLink(Config config, Random random) {
         super(config, random) ;
-        start_link = (MapLink)config.startPlace ;
+        startLink = (MapLink)config.startPlace ;
     }
 
     @Override
     protected boolean finished(SimTime currentTime) {
-        if (super.finished(currentTime) || start_link.isShutOff()) return true;
+        if (super.finished(currentTime) || startLink.isShutOff()) return true;
         return false;
     }
 
     @Override
     protected void place_agent(AgentBase agent) {
-        agent.placeAtRandomPosition(start_link) ;
-        //start_link.agentEnters(agent);
+        agent.placeAtRandomPosition(startLink) ;
+        //startLink.agentEnters(agent);
     }
 
+    //------------------------------------------------------------
+    /**
+     * エージェント生成ルールの情報を文字列で返す。
+     * パネル表示用。
+     */
     @Override
-    public String getStart() {
-        return (start_link.getTagString() +
-                "(" +  start_link.ID + ")" +
+    public String getStartInfo() {
+        return (startLink.getTagString() +
+                "(" +  startLink.ID + ")" +
                 " on " + startTime.getAbsoluteTime() +
                 " ("  + total +
                 " in " + duration + " sec)");
     }
+
+    //------------------------------------------------------------
+    /**
+     * エージェント生成の出発地点のオブジェクトを返す。
+     * パネル用。
+     */
     @Override
-    public OBNode getStartObject() { return start_link; }
+    public OBNode getStartObject() { return startLink; }
 
 }
 

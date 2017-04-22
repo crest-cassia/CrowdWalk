@@ -18,7 +18,7 @@ import nodagumi.Itk.*;
  * エージェント生成機構。(fromNode)
  */
 public class AgentFactoryFromNode extends AgentFactory {
-    MapNode start_node;
+    MapNode startNode;
 
     //------------------------------------------------------------
     /**
@@ -26,7 +26,7 @@ public class AgentFactoryFromNode extends AgentFactory {
      */
     public AgentFactoryFromNode(Config config, Random random) {
         super(config, random) ;
-        start_node = (MapNode)config.startPlace ;
+        startNode = (MapNode)config.startPlace ;
     }
 
     //------------------------------------------------------------
@@ -35,19 +35,30 @@ public class AgentFactoryFromNode extends AgentFactory {
      */
     @Override
     protected void place_agent(AgentBase agent) {
-        agent.place(null, start_node, 0.0) ;
+        agent.place(null, startNode, 0.0) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * エージェント生成ルールの情報を文字列で返す。
+     * パネル表示用。
+     */
     @Override
-    public String getStart() {
-        return (start_node.getTagString() +
-                "(" +  start_node.ID + ")" +
+    public String getStartInfo() {
+        return (startNode.getTagString() +
+                "(" +  startNode.ID + ")" +
                 " from " + startTime.getAbsoluteTime() +
                 " ("  + total +
                 " in " + duration + " sec)");
     }
+
+    //------------------------------------------------------------
+    /**
+     * エージェント生成の出発地点のオブジェクトを返す。
+     * パネル用。
+     */
     @Override
-    public OBNode getStartObject() { return start_node; }
+    public OBNode getStartObject() { return startNode; }
 
 }
 //;;; Local Variables:

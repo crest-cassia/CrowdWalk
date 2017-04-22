@@ -81,14 +81,14 @@ public class ScenarioPanel extends PanelWithTable {
             case 0:
                 return file.get(row).goal;
             case 1:
-                return file.get(row).getStart();
+                return file.get(row).getStartInfo();
             case 2:
                 return file.get(row).getPlannedRoute();
             }
             return "ERR(" + row + ", " + col + ")";
         }
         
-        public OBNode getStart(final int row) {
+        public OBNode getStartObject(final int row) {
             return file.get(row).getStartObject();
         }
     }
@@ -254,7 +254,7 @@ public class ScenarioPanel extends PanelWithTable {
         ListSelectionModel lsm = generationTable.getSelectionModel();
         for (int r = 0; r < generationTable.getRowCount(); ++r) {
             if (lsm.isSelectedIndex(r)) {
-                generationDataModel.getStart(r).selected = true;
+                generationDataModel.getStartObject(r).selected = true;
             }
         }
     }

@@ -469,7 +469,18 @@ public abstract class AgentFactory {
         return routeTags;
     }
 
-    abstract public String getStart();
+    //------------------------------------------------------------
+    /**
+     * エージェント生成ルールの情報を文字列で返す。
+     * パネル表示用。
+     */
+    abstract public String getStartInfo();
+
+    //------------------------------------------------------------
+    /**
+     * エージェント生成の出発地点のオブジェクトを返す。
+     * パネル用。
+     */
     abstract public OBNode getStartObject();
 
     public int getMaxGeneration() {
