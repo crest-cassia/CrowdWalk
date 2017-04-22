@@ -7,7 +7,7 @@
 	       "trail":0.0,
 	       "margin":0.0
 	       },
-  "total":100,"speedModel":"PLAIN",
+  "total":100,"speedModel":"crossing",
   "startPlace":"link_node_00_00__node_00_01","conditions":null,
   "startTime":"18:00:00","duration":500.0,
   "goal":"node_09_09",
@@ -20,7 +20,7 @@
 	       "mentalMode":"major",
 	       "margin":0.0
 	       },
-  "total":100,"speedModel":"PLAIN",
+  "total":100,"speedModel":"crossing",
   "startPlace":"link_node_00_00__node_00_01","conditions":null,
   "startTime":"18:00:00","duration":500.0,
   "goal":"node_09_09",
@@ -72,7 +72,7 @@
 		    "then":{"":"log", "tag":"agent has tag hoge."},
 		    "else":{"":"log", "tag":"agent does not have tag hoge."}}
 	       ]},
-  "total":1,"speedModel":"PLAIN",
+  "total":1,"speedModel":"crossing",
   "startPlace":"link_node_00_08__node_00_09",
   "conditions": ["foo","bar","baz"],
   "startTime":"18:00:00","duration":50.0,

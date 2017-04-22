@@ -170,7 +170,6 @@ implements Comparable<AgentBase> {
                      AgentFactory factory, SimTime currentTime) {
         super.init(null);
         random = _random;
-        //swing_width = Math.random() * 2.0 - 1.0;
         swing_width = random.nextDouble() * 2.0 - 1.0;
         calcSwing();
         // ObstructerBase のサブクラスのインスタンスを取得
@@ -180,7 +179,8 @@ implements Comparable<AgentBase> {
         setMap(simulator.getMap()) ;
         setConfigLine(factory.configLine) ;
         // set route
-        setGoal(new Term(factory.goal, false));
+        //setGoal(new Term(factory.goal, false));
+        setGoal(factory.goal) ; // 多分問題ないはず。[2017.04.22 I.Noda]
         Term plannedRouteInTerm =
             (factory.plannedRoute == null ?
              Term.newArrayTerm() :

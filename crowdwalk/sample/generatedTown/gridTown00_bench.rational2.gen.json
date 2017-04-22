@@ -17,7 +17,7 @@
 		     {"":"log","tag":"insert route: 02_00"},
 		     {"":"clearAlert", "message":"foo-bar-baz"}]]
 	       ]},
-  "total":1000,"speedModel":"PLAIN",
+  "total":1000,"speedModel":"crossing",
   "startPlace":"link_node_00_00__node_00_01","conditions":null,
   "startTime":"18:00:00","duration":500.0,
   "goal":"node_09_09",

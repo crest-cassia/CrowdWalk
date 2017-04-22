@@ -209,6 +209,7 @@ public class AgentHandler {
 
     /**
      * 生成されるはずの全エージェント数。
+     * 現状、表示でのみ使用。[2017-4-22 I.Noda]
      */
     private int maxAgentCount = 0;
 
@@ -1054,6 +1055,7 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * 生成されるはずの全エージェント数。
+     * 表示でのみ使用。[2017-4-22 I.Noda]
      * @return エージェント数。
      */
     public int getMaxAgentCount() {
