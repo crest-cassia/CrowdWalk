@@ -134,7 +134,7 @@ public class AgentHandler {
     /**
      * エージェント生成ファイル
      */
-    private AgentGenerationFile generate_agent = null;
+    private AgentGenerationFile agentFactoryList = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -570,7 +570,7 @@ public class AgentHandler {
     private void loadAgentGenerationFile(String generationFile) {
         try {
             /* [I.Noda] generation file の読み込みはここ */
-             generate_agent =
+             agentFactoryList =
                  new AgentGenerationFile(generationFile,
                                          networkMap,
                                          simulator.getFallbackParameters(),
@@ -584,8 +584,8 @@ public class AgentHandler {
                          ex.getMessage());
             System.exit(1);
         }
-        if (generate_agent != null) {
-            for (AgentFactory factory : generate_agent) {
+        if (agentFactoryList != null) {
+            for (AgentFactory factory : agentFactoryList) {
                 maxAgentCount += factory.getMaxGeneration();
             }
         }
@@ -704,9 +704,9 @@ public class AgentHandler {
     private ArrayList<AgentBase> generateAgentsAndSetup(SimTime currentTime) {
         ArrayList<AgentBase> generatedAgentsInStep = new ArrayList<AgentBase>();
 
-        // generate_agent による生成。
-        if (generate_agent != null) {
-            for (AgentFactory factory : generate_agent) {
+        // agentFactoryList による生成。
+        if (agentFactoryList != null) {
+            for (AgentFactory factory : agentFactoryList) {
                 factory.tryUpdateAndGenerate(simulator, currentTime,
                                              generatedAgentsInStep) ;
             }
@@ -922,7 +922,7 @@ public class AgentHandler {
      */
     public boolean isFinished() {
         if (isAllAgentSpeedZeroBreak) {
-            for (AgentFactory factory : generate_agent) {
+            for (AgentFactory factory : agentFactoryList) {
                 if (factory.enabled) return false;
             }
             boolean existNotFinished = false;
@@ -943,7 +943,7 @@ public class AgentHandler {
             for (final AgentBase agent : getWalkingAgentCollection()) {
                 if (!agent.finished()) return false;
             }
-            for (AgentFactory factory : generate_agent) {
+            for (AgentFactory factory : agentFactoryList) {
                 if (factory.enabled) return false;
             }
         }
@@ -959,7 +959,7 @@ public class AgentHandler {
     public ArrayList<String> getAllGoalTags() {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
 
-        for (AgentFactory factory : generate_agent) {
+        for (AgentFactory factory : agentFactoryList) {
             Term goal_tag = factory.goal;
             if (goal_tag != null &&
                 !all_goal_tags.contains(goal_tag.getString())) {
@@ -982,7 +982,7 @@ public class AgentHandler {
     public ArrayList<String> getGoalTags() {
         ArrayList<String> goal_tags = new ArrayList<String>();
 
-        for (AgentFactory factory : generate_agent) {
+        for (AgentFactory factory : agentFactoryList) {
             Term goal_tag = factory.goal;
             if (goal_tag != null &&
                 !goal_tags.contains(goal_tag.getString())) {
@@ -1010,8 +1010,8 @@ public class AgentHandler {
      */
     public void setRandom(Random _random) {
         random = _random;
-        if (generate_agent != null)
-            generate_agent.setRandom(_random);
+        if (agentFactoryList != null)
+            agentFactoryList.setRandom(_random);
     }
 
     //------------------------------------------------------------
@@ -1020,7 +1020,7 @@ public class AgentHandler {
      * @param _ratio : 設定する割合。
      */
     public void setLinerGenerateAgentRatio(double _ratio) {
-        generate_agent.setLinerGenerateAgentRatio(_ratio);
+        agentFactoryList.setLinerGenerateAgentRatio(_ratio);
     }
 
     //------------------------------------------------------------
