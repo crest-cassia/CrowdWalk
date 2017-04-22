@@ -551,7 +551,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 checkPlannedRouteInConfig(map, genConfig, line) ;
 
                 // ここから、エージェント生成が始まる。
-                doGenerationByConfig(map, genConfig) ;
+                addFactoriesByConfig(map, genConfig) ;
             }
         } catch (Exception e) {
             System.err.println("Error in agent generation.");
@@ -893,7 +893,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                     checkPlannedRouteInConfig(map, genConfig, item.toJson()) ;
 
                     // ここから、エージェント生成が始まる。
-                    doGenerationByConfig(map, genConfig) ;
+                    addFactoriesByConfig(map, genConfig) ;
                 } else {
                     Itk.logError("wrong json for generation rule:",item.toJson()) ;
                     continue ;
@@ -1095,23 +1095,23 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     /**
      * エージェント生成
      */
-    private void doGenerationByConfig(NetworkMap map,
+    private void addFactoriesByConfig(NetworkMap map,
                                       GenerationConfigBase genConfig) {
         genConfig.fallbackParameters = fallbackParameters ;
         switch(genConfig.ruleTag) {
         case EACH:
-            doGenerationForEach(map, genConfig) ;
+            addFactoriesForEach(map, genConfig) ;
             break ;
         case RANDOM:
-            doGenerationForRandom(map, genConfig) ;
+            addFactoriesForRandom(map, genConfig) ;
             break ;
         case EACHRANDOM:
-            doGenerationForEachRandom(map,
+            addFactoriesForEachRandom(map,
                                       ((GenerationConfigForEachRandom)
                                        genConfig)) ;
             break ;
         case TIMEEVERY:
-            doGenerationForTimeEvery(map,
+            addFactoriesForTimeEvery(map,
                                      ((GenerationConfigForTimeEvery)
                                       genConfig)) ;
             break ;
@@ -1126,7 +1126,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * EACH 用生成ルーチン
      * 各々の link, node で total 個ずつのエージェントが生成。
      */
-    private void doGenerationForEach(NetworkMap map,
+    private void addFactoriesForEach(NetworkMap map,
                                      GenerationConfigBase genConfig) {
         for (final MapLink start_link : genConfig.startLinks) {
             genConfig.startPlace = start_link ;
@@ -1144,7 +1144,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 指定された link, node において、
      * 合計で total 個のエージェントが生成。
      */
-    private void doGenerationForRandom(NetworkMap map,
+    private void addFactoriesForRandom(NetworkMap map,
                                        GenerationConfigBase genConfig) {
         int total = genConfig.total ;
 
@@ -1181,7 +1181,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * RANDOM に、1箇所での生成数の上限を入れたもの。
      * 合計で total 個のエージェントが生成。
      */
-    private void doGenerationForEachRandom(NetworkMap map,
+    private void addFactoriesForEachRandom(NetworkMap map,
                                            GenerationConfigForEachRandom genConfig) {
         int maxFromEachPlace = genConfig.maxFromEachPlace ;
         int total = genConfig.total ;
@@ -1248,7 +1248,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 特別な処理をしないようにする。
      * 合計で (total * 生成回数) 個のエージェントが生成。
      */
-    private void doGenerationForTimeEvery(NetworkMap map,
+    private void addFactoriesForTimeEvery(NetworkMap map,
                                           GenerationConfigForTimeEvery genConfig) {
         SimTime every_end_time = genConfig.everyEndTime ;
         double every_seconds = (double)genConfig.everySeconds ;
