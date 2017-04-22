@@ -1413,7 +1413,7 @@ public class AgentHandler {
                 buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
                 buff.append(simulator.currentTime.getTickUnit()); buff.append(",");
                 buff.append(agent.generatedPosition); buff.append(",");
-                buff.append(agent.diedPosition); buff.append(",");
+                buff.append(agent.diedPositionInLink); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;
                 for (Term route : agent.getPlannedRoute()) {

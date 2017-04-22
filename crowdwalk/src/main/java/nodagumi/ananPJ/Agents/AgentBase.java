@@ -65,7 +65,7 @@ implements Comparable<AgentBase> {
     /**
      * 死亡した時のリンク上の位置
      */
-    public double diedPosition = 0.0;
+    public double diedPositionInLink = 0.0;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -566,7 +566,7 @@ implements Comparable<AgentBase> {
         }
         obstructer.expose(c);
         if (isDead()) {
-            diedPosition = getAdvancingDistance();
+            diedPositionInLink = getAdvancingDistance();
         }
     }
 
