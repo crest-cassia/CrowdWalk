@@ -273,7 +273,9 @@ public abstract class AgentFactory {
      * エージェントクラスの名前を格納。
      */
     public String agentClassName = DefaultAgentClassName ;
-    public Term agentConf = null ; // config in json Term
+    
+    private Term agentConf = null ; // config in json Term
+    public Term getAgentConf() { return agentConf ; }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -286,7 +288,8 @@ public abstract class AgentFactory {
      *  Config によるコンストラクタ
      */
     public AgentFactory(Config config, Random _random) {
-        if(config.agentClassName != null && config.agentClassName.length() > 0) {
+        if(config.agentClassName != null &&
+           config.agentClassName.length() > 0) {
             agentClassName = config.agentClassName ;
             agentConf = config.agentConf ;
         }
@@ -316,7 +319,21 @@ public abstract class AgentFactory {
                 generated >= total);
     }
 
-    abstract protected void place_agent(AgentBase agent);
+    //------------------------------------------------------------
+    /**
+     * エージェントを初期化。
+     * すぐにエージェントに制御を戻す。
+     * （ruby generation rule への対応のため）
+     */
+    public void initAgent(AgentBase agent, Term fallback) {
+        agent.initByFactory(this, fallback) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * エージェントを初期位置(startPlace)に置く。
+     */
+    abstract protected void placeAgent(AgentBase agent);
 
     /* [2014.12.24 I.Noda] should fixed
      * 以下のアルゴリズム、正確に正しく total のエージェントを生成しない
@@ -375,8 +392,8 @@ public abstract class AgentFactory {
             AgentBase agent = null;
             try {
                 agent = newAgentByName(agentClassName) ;
-                agent.init(random, simulator, this, currentTime) ;
-                agent.initByConf(agentConf, fallbackForAgent) ;
+                agent.init(random, simulator, this, currentTime,
+                           fallbackForAgent) ;
             } catch (Exception ex ) {
                 Itk.logError("class name not found") ;
                 Itk.logError_("agentClassName", agentClassName) ;
@@ -385,7 +402,7 @@ public abstract class AgentFactory {
             }
 
             agents.add(agent);
-            place_agent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
+            placeAgent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
 
             agent.prepareForSimulation() ;
             agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
@@ -484,6 +501,19 @@ public abstract class AgentFactory {
             }
         }
         return routeTags;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * planned route のクローンを作る。
+     * agent の generation で利用。
+     */
+    public List<Term> clonePlannedRoute() {
+        if(getPlannedRoute() == null) {
+            return new ArrayList<Term>() ;
+        } else {
+            return new ArrayList<Term>(getPlannedRoute()) ;
+        }
     }
 
     //------------------------------------------------------------

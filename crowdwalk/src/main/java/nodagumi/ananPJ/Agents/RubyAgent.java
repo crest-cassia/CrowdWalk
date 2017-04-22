@@ -146,8 +146,9 @@ public class RubyAgent extends RationalAgent {
      */
     @Override
     public void init(Random _random, EvacuationSimulator simulator,
-                     AgentFactory factory, SimTime currentTime) {
-        super.init(_random, simulator, factory, currentTime);
+                     AgentFactory factory, SimTime currentTime,
+                     Term fallback) {
+        super.init(_random, simulator, factory, currentTime, fallback);
         rubyEngine = simulator.getRubyEngine() ;
         if(rubyEngine == null) {
             Itk.logError("ruby engine is not available.",

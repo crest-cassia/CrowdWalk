@@ -37,7 +37,7 @@ public class AgentFactoryFromLink extends AgentFactory {
     }
 
     @Override
-    protected void place_agent(AgentBase agent) {
+    protected void placeAgent(AgentBase agent) {
         agent.placeAtRandomPosition(startLink) ;
         //startLink.agentEnters(agent);
     }

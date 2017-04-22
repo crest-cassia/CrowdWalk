@@ -34,7 +34,7 @@ public class AgentFactoryFromNode extends AgentFactory {
      * エージェントを初期位置に置く。
      */
     @Override
-    protected void place_agent(AgentBase agent) {
+    protected void placeAgent(AgentBase agent) {
         agent.place(null, startNode, 0.0) ;
     }
 

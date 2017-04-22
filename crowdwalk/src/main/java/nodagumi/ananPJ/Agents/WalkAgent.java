@@ -322,8 +322,9 @@ public class WalkAgent extends AgentBase {
      */
     @Override
     public void init(Random _random, EvacuationSimulator simulator,
-                     AgentFactory factory, SimTime currentTime) {
-        super.init(_random, simulator, factory, currentTime);
+                     AgentFactory factory, SimTime currentTime,
+                     Term fallback) {
+        super.init(_random, simulator, factory, currentTime, fallback);
         update_swing_flag = true;
     }
 

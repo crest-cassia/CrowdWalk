@@ -165,7 +165,8 @@ implements Comparable<AgentBase> {
      * 初期化。constractorから分離。
      */
     public void init(Random _random, EvacuationSimulator simulator, 
-                     AgentFactory _factory, SimTime currentTime) {
+                     AgentFactory _factory, SimTime currentTime,
+                     Term fallback) {
         super.init(null);
         random = _random;
         swing_width = random.nextDouble() * 2.0 - 1.0;
@@ -175,23 +176,32 @@ implements Comparable<AgentBase> {
         //AgentFactory から移したもの
         generatedTime = currentTime ;
         setHandler(simulator.getAgentHandler()) ;
+
+        // 一旦、factory に制御を戻す。
+        // （ruby generation rule への対応のため）
+        _factory.initAgent(this, fallback) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Factory による初期化。
+     * Factory の方から一旦制御を戻す。
+     * @param conf json の連想配列形式を scan した Map
+     */
+    public void initByFactory(AgentFactory _factory, Term fallback) {
         setFactory(_factory) ;
         // set route
         //setGoal(new Term(factory.goal, false));
         setGoal(_factory.getGoal()) ; // 多分問題ないはず。[2017.04.22 I.Noda]
-
-        List<Term> _plannedRoute = _factory.getPlannedRoute() ;
-        Term plannedRouteInTerm =
-            (_plannedRoute == null ?
-             Term.newArrayTerm() :
-             new Term((List)(new ArrayList<Term>(_plannedRoute)))) ;
-        setPlannedRoute((List)plannedRouteInTerm.getArray());
+        setPlannedRoute(_factory.clonePlannedRoute()) ;
         // tag
         for (final String tag : _factory.getTags()) {
             addTag(tag);
         }
+        // further setup by agentConf
+        initByConf(_factory.getAgentConf(), fallback) ;
     }
-
+    
     //------------------------------------------------------------
     /**
      * Conf による初期化。
