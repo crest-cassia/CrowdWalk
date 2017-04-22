@@ -21,7 +21,8 @@
     },
     "generation" : {
         "rule" : "EACH",
-        "speedModel" : "PLAIN",
+        "_speedModel" : "PLAIN",
+        "speedModel" : "CROSSING",
         "_" : null
     },
     "agentHandler" : {

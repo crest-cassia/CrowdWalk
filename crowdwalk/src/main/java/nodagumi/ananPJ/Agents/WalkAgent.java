@@ -174,13 +174,6 @@ public class WalkAgent extends AgentBase {
         CrossingModel,
     }
 
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 速度モデル
-     */
-    private SpeedCalculationModel calculation_model =
-        SpeedCalculationModel.LaneModel;
-
     //============================================================
     /**
      * 経由点の通過情報
@@ -332,7 +325,6 @@ public class WalkAgent extends AgentBase {
                      AgentFactory factory, SimTime currentTime) {
         super.init(_random, simulator, factory, currentTime);
         update_swing_flag = true;
-        setSpeedCalculationModel(factory.getSpeedModel()) ;
     }
 
     //------------------------------------------------------------
@@ -388,22 +380,6 @@ public class WalkAgent extends AgentBase {
 	/**
 	 * 変数アクセス関連
 	 */
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public SpeedCalculationModel getSpeedCalculationModel() {
-        return calculation_model;
-    }
-
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    public void setSpeedCalculationModel(SpeedCalculationModel _model) {
-        calculation_model = _model;
-    }
-
     //------------------------------------------------------------
     /**
      *
@@ -829,7 +805,7 @@ public class WalkAgent extends AgentBase {
         double _accel = A_0 * (baseSpeed - previousSpeed) ;
 
         // social force による減速
-        switch (calculation_model) {
+        switch (getSpeedModel()) {
         case LaneModel:
             double distToPredecessor = calcDistanceToPredecessor(currentTime) ;
             _accel += calcSocialForce(distToPredecessor) ;
@@ -842,7 +818,7 @@ public class WalkAgent extends AgentBase {
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
-            Itk.logError_("calculation_model",calculation_model) ;
+            Itk.logError_("speedModel",getSpeedModel()) ;
             break;
         }
         return _accel ;
@@ -968,7 +944,7 @@ public class WalkAgent extends AgentBase {
                 break;
             }
             //（直前のターンで）次のノードを交差して渡っている人の影響
-            if(calculation_model == SpeedCalculationModel.CrossingModel) {
+            if(getSpeedModel() == SpeedCalculationModel.CrossingModel) {
                 totalForce +=
                     calcNodeCrossingForce(currentTime,
                                           workingPlace.getLink(),

@@ -2,6 +2,7 @@
     "agent" : {"xA_0" : 0.8 },
     "_link" : { "gathering_location_width" : 60.0 },
     "link" : { "gathering_location_width" : 6.0 },
+    "generation" : { "_speedModel" : "plain" },
     "agentHandler" : {
         "logColumnsOfIndividualPedestrians" : [
             "pedestrianID",

@@ -39,8 +39,6 @@ import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 import nodagumi.ananPJ.Agents.AgentBase;
-import nodagumi.ananPJ.Agents.WalkAgent;
-import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -1415,7 +1413,7 @@ public class AgentHandler {
             for (AgentBase agent : getAllAgentCollection()) {
                 StringBuilder buff = new StringBuilder();
                 buff.append(agent.ID); buff.append(",");
-                buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
+                buff.append(agent.getSpeedModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
                 buff.append(simulator.currentTime.getTickUnit()); buff.append(",");
                 buff.append(agent.generatedPositionInLink); buff.append(",");

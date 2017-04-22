@@ -222,7 +222,8 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             }) ;
     }
     static public SpeedCalculationModel Fallback_SpeedModel =
-        SpeedCalculationModel.LaneModel ;
+        //        SpeedCalculationModel.LaneModel ;
+        SpeedCalculationModel.CrossingModel ;
 
     //------------------------------------------------------------
     /**

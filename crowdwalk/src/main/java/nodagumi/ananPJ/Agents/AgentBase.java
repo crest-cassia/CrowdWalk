@@ -29,6 +29,7 @@ import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 
+import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 
 import nodagumi.Itk.* ;
 
@@ -76,6 +77,12 @@ implements Comparable<AgentBase> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * 自分を生成した factory
+     */
+    protected AgentFactory factory ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * goal: 目的地
      * routePlan: 目的地までの経路
      */
@@ -104,16 +111,6 @@ implements Comparable<AgentBase> {
      */
     protected static String obstructerType = "Flood";
     public ObstructerBase obstructer ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 設定関係
-     */
-
-    /**
-     * 設定文字列（generation file 中の設定情報の文字列）
-     */
-    protected String configLine = "none";
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -168,7 +165,7 @@ implements Comparable<AgentBase> {
      * 初期化。constractorから分離。
      */
     public void init(Random _random, EvacuationSimulator simulator, 
-                     AgentFactory factory, SimTime currentTime) {
+                     AgentFactory _factory, SimTime currentTime) {
         super.init(null);
         random = _random;
         swing_width = random.nextDouble() * 2.0 - 1.0;
@@ -178,19 +175,19 @@ implements Comparable<AgentBase> {
         //AgentFactory から移したもの
         generatedTime = currentTime ;
         setHandler(simulator.getAgentHandler()) ;
-        setConfigLine(factory.getConfigLine()) ;
+        setFactory(_factory) ;
         // set route
         //setGoal(new Term(factory.goal, false));
-        setGoal(factory.getGoal()) ; // 多分問題ないはず。[2017.04.22 I.Noda]
+        setGoal(_factory.getGoal()) ; // 多分問題ないはず。[2017.04.22 I.Noda]
 
-        List<Term> _plannedRoute = factory.getPlannedRoute() ;
+        List<Term> _plannedRoute = _factory.getPlannedRoute() ;
         Term plannedRouteInTerm =
             (_plannedRoute == null ?
              Term.newArrayTerm() :
              new Term((List)(new ArrayList<Term>(_plannedRoute)))) ;
         setPlannedRoute((List)plannedRouteInTerm.getArray());
         // tag
-        for (final String tag : factory.getTags()) {
+        for (final String tag : _factory.getTags()) {
             addTag(tag);
         }
     }
@@ -256,6 +253,30 @@ implements Comparable<AgentBase> {
     public void setHandler(AgentHandler _handler) {
         handler = _handler ;
         setMap(handler.getMap()) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * factory をセット
+     */
+    public void setFactory(AgentFactory _factory) {
+        factory = _factory ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * factory をセット
+     */
+    final public AgentFactory getFactory() {
+        return factory ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * SpeedCalculationModelへのアクセス。
+     */
+    final public SpeedCalculationModel getSpeedModel() {
+        return factory.getSpeedModel() ;
     }
 
     //------------------------------------------------------------
@@ -576,16 +597,8 @@ implements Comparable<AgentBase> {
     /**
      * 設定文字列（generation file 中の設定情報の文字列）を取得
      */
-    public String getConfigLine() {
-        return configLine;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 設定文字列（generation file 中の設定情報の文字列）を格納
-     */
-    public void setConfigLine(String str) {
-        configLine = str;
+    final public String getConfigLine() {
+        return factory.getConfigLine() ;
     }
 
     //------------------------------------------------------------

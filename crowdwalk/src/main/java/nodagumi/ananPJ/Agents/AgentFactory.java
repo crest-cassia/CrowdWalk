@@ -260,7 +260,7 @@ public abstract class AgentFactory {
      * ログ出力でのみ使用。
      */
     private String configLine;
-    public String getConfigLine() { return configLine ; }
+    final public String getConfigLine() { return configLine ; }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -295,8 +295,8 @@ public abstract class AgentFactory {
         startTime = config.startTime ;
         duration = config.duration ;
         total = config.total ;
-        speedModel = config.speedModel ;
         fallbackParameters = config.fallbackParameters ;
+        speedModel = config.speedModel ;
         random = _random;
         configLine = config.originalInfo ;
 
