@@ -961,12 +961,12 @@ public class AgentHandler {
         ArrayList<String> all_goal_tags = new ArrayList<String>();
 
         for (AgentFactory factory : agentFactoryList) {
-            Term goal_tag = factory.goal;
+            Term goal_tag = factory.getGoal();
             if (goal_tag != null &&
                 !all_goal_tags.contains(goal_tag.getString())) {
                 all_goal_tags.add(goal_tag.getString());
             }
-            for (Term mid_goal : factory.getPlannedRoute()) {
+            for (Term mid_goal : factory.getNakedPlannedRoute()) {
                 if (!all_goal_tags.contains(mid_goal.getString())) {
                     all_goal_tags.add(mid_goal.getString());
                 }
@@ -984,7 +984,7 @@ public class AgentHandler {
         ArrayList<String> goal_tags = new ArrayList<String>();
 
         for (AgentFactory factory : agentFactoryList) {
-            Term goal_tag = factory.goal;
+            Term goal_tag = factory.getGoal();
             if (goal_tag != null &&
                 !goal_tags.contains(goal_tag.getString())) {
                 goal_tags.add(goal_tag.getString());

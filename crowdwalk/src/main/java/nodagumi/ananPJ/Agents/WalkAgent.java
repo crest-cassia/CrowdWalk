@@ -332,7 +332,7 @@ public class WalkAgent extends AgentBase {
                      AgentFactory factory, SimTime currentTime) {
         super.init(_random, simulator, factory, currentTime);
         update_swing_flag = true;
-        setSpeedCalculationModel(factory.speedModel) ;
+        setSpeedCalculationModel(factory.getSpeedModel()) ;
     }
 
     //------------------------------------------------------------

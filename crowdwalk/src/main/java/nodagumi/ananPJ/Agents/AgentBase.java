@@ -177,17 +177,19 @@ implements Comparable<AgentBase> {
         //AgentFactory から移したもの
         generatedTime = currentTime ;
         setMap(simulator.getMap()) ;
-        setConfigLine(factory.configLine) ;
+        setConfigLine(factory.getConfigLine()) ;
         // set route
         //setGoal(new Term(factory.goal, false));
-        setGoal(factory.goal) ; // 多分問題ないはず。[2017.04.22 I.Noda]
+        setGoal(factory.getGoal()) ; // 多分問題ないはず。[2017.04.22 I.Noda]
+
+        List<Term> _plannedRoute = factory.getPlannedRoute() ;
         Term plannedRouteInTerm =
-            (factory.plannedRoute == null ?
+            (_plannedRoute == null ?
              Term.newArrayTerm() :
-             new Term((List)(new ArrayList<Term>(factory.plannedRoute)))) ;
+             new Term((List)(new ArrayList<Term>(_plannedRoute)))) ;
         setPlannedRoute((List)plannedRouteInTerm.getArray());
         // tag
-        for (final String tag : factory.tags) {
+        for (final String tag : factory.getTags()) {
             addTag(tag);
         }
     }

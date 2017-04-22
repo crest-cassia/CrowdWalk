@@ -229,21 +229,38 @@ public abstract class AgentFactory {
         }
     } // end class Config
 
-    public Term goal;
-    public List<Term> plannedRoute;
-    SimTime startTime ;
-    double duration;
-    int total;
-    public SpeedCalculationModel speedModel = null;
-    Random random = null;
-    public List<String> tags = new ArrayList<String>();
+    
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /** 目的地 */
+    private Term goal;
+    public Term getGoal() { return goal ; }
+
+    /** 経由地 */
+    private List<Term> plannedRoute;
+    public List<Term> getPlannedRoute() { return plannedRoute ; }
+    
+    /** スピードモデル */
+    private SpeedCalculationModel speedModel = null;
+    public SpeedCalculationModel getSpeedModel() { return speedModel ; }
+
+    /** エージェントに付与するタグ */
+    private List<String> tags = new ArrayList<String>();
+    public List<String> getTags() { return tags ; }
 
     public boolean enabled = true;
 
+    Random random = null;
+    SimTime startTime ;
+    double duration;
+    int total;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * 設定文字列（generation file 中の設定情報の文字列
+     * 設定文字列（generation file 中の設定情報の文字列)。
+     * ログ出力でのみ使用。
      */
-    public String configLine;
+    private String configLine;
+    public String getConfigLine() { return configLine ; }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -456,7 +473,7 @@ public abstract class AgentFactory {
      * planned route の中で、経由地点の tag を取り出す。
      * directive の中の経由場所tagも Agent Class に応じて取り出す。
      */
-    public ArrayList<Term> getPlannedRoute() {
+    public ArrayList<Term> getNakedPlannedRoute() {
         ArrayList<Term> routeTags = new ArrayList<Term>();
 
         for(Term candidate : plannedRoute) {

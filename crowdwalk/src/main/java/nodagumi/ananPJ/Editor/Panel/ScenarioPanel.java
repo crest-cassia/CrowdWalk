@@ -79,7 +79,7 @@ public class ScenarioPanel extends PanelWithTable {
         public Object getValueAt(final int row, final int col) {
             switch(col) {
             case 0:
-                return file.get(row).goal;
+                return file.get(row).getGoal();
             case 1:
                 return file.get(row).getStartInfo();
             case 2:
