@@ -452,7 +452,7 @@ public class WalkAgent extends AgentBase {
                 prepareForSimulation_FromNode() ;
             }
             speed = 0;
-            generatedPosition = getRemainingDistance();
+            generatedPositionInLink = getRemainingDistance();
 
             prepareRoutePlan() ;
         }
@@ -538,10 +538,10 @@ public class WalkAgent extends AgentBase {
      * speed 変化による再描画必要かのチェック。
      */
     protected void checkSpeedChange(double previousSpeed, double currentSpeed) {
-        if (networkMap != null &&
+        if (getMap() != null &&
             currentSpeed != previousSpeed &&
             !isEvacuated()) {
-            networkMap.getNotifier().agentSpeedChanged(this);
+            getMap().getNotifier().agentSpeedChanged(this);
         }
     }
 
@@ -1349,9 +1349,9 @@ public class WalkAgent extends AgentBase {
          * そのためには、isCheckedRouteKey の拡張が必要。
          */
         String targetTag = _target.getString() ;
-        if(!map.isCheckedRouteKey(targetTag)) {
+        if(!getMap().isCheckedRouteKey(targetTag)) {
             Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
-            map.calcGoalPathAllWithSync(targetTag) ;
+            getMap().calcGoalPathAllWithSync(targetTag) ;
         }
 
         MapNode other = _link.getOther(_node);

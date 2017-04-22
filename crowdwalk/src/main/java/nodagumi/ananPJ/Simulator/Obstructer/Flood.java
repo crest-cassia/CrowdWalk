@@ -96,7 +96,7 @@ public class Flood extends ObstructerBase {
         dead = calcDead();
 
         if (currentTriageLevel != lastTriageLevel) {
-            agent.getNetworkMap().getNotifier().agentTriageChanged(agent);
+            agent.getMap().getNotifier().agentTriageChanged(agent);
             lastTriageLevel = currentTriageLevel;
         }
     }

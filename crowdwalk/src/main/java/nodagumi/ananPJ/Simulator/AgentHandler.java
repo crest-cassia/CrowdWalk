@@ -82,7 +82,7 @@ import nodagumi.Itk.*;
  *       individualPedestriansLog に出力する項目のリスト。
  *       詳細は、{@link #individualPedestriansLoggerFormatter}。
  *  </li>
- *  <li> "tickIntervalForindividualPedestriansLog" : (Int) 
+ *  <li> "tickIntervalForIndividualPedestriansLog" : (Int) 
  *       ログを出力する時間間隔。tickCount の値で記述する。
  *  </li>
  * </ul>
@@ -141,6 +141,12 @@ public class AgentHandler {
      * 地図。
      */
     private NetworkMap networkMap;
+
+    final public NetworkMap getMap() { return networkMap ; } ;
+    final public NetworkMap setMap(NetworkMap _map) {
+        networkMap = _map ;
+        return networkMap ;
+    }
 
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -501,13 +507,13 @@ public class AgentHandler {
     /**
      * default of time interval in cycle of individualPedestriansLogger
      */
-    static private int Fallback_tickIntervalForindividualPedestriansLog = 1 ;
+    static private int Fallback_tickIntervalForIndividualPedestriansLog = 1 ;
 
     /**
      * time interval in cycle of individualPedestriansLogger
      */
-    private int tickIntervalForindividualPedestriansLog
-        = Fallback_tickIntervalForindividualPedestriansLog ;
+    private int tickIntervalForIndividualPedestriansLog
+        = Fallback_tickIntervalForIndividualPedestriansLog ;
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -528,12 +534,12 @@ public class AgentHandler {
      * コンストラクタ。
      * @param _simulator : 親になるシミュレータ。
      */
-    public AgentHandler (EvacuationSimulator _simulator) {
+    public AgentHandler(EvacuationSimulator _simulator) {
         simulator = _simulator;
 
         // simulatorから必須パラメータ取り出し。
         random = simulator.getRandom();
-        networkMap = simulator.getMap() ;
+        setMap(simulator.getMap()) ;
 
         // パラメータ設定
         Term wholeFallback = simulator.getFallbackParameters();
@@ -552,11 +558,11 @@ public class AgentHandler {
             Term columnName = logColumns.getNthTerm(i);
             logColumnsOfIndividualPedestrians.add(columnName.getString());
         }
-        tickIntervalForindividualPedestriansLog =
+        tickIntervalForIndividualPedestriansLog =
             SetupFileInfo
             .fetchFallbackInt(fallback,
                               "tickIntervalForIndividualPedestriansLog",
-                              tickIntervalForindividualPedestriansLog) ;
+                              tickIntervalForIndividualPedestriansLog) ;
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -573,7 +579,7 @@ public class AgentHandler {
             /* [I.Noda] generation file の読み込みはここ */
              agentFactoryList =
                  new AgentGenerationFile(generationFile,
-                                         networkMap,
+                                         getMap(),
                                          simulator.getFallbackParameters(),
                                          hasDisplay(),
                                          simulator.getLinerGenerateAgentRatio(),
@@ -782,7 +788,7 @@ public class AgentHandler {
             boolean agentMoved = agent.updateLastPosition();
             boolean swingChanged = agent.updateLastSwing();
             if (agentMoved || swingChanged) {
-                networkMap.getNotifier().agentMoved(agent);
+                getMap().getNotifier().agentMoved(agent);
             }
         }
     }
@@ -1280,7 +1286,7 @@ public class AgentHandler {
     final private boolean isLogIndividualPedestriansCycle(SimTime currentTime) {
         return (individualPedestriansLogger != null &&
                 (0 == (currentTime.getTickCount()
-                       % tickIntervalForindividualPedestriansLog))) ;
+                       % tickIntervalForIndividualPedestriansLog))) ;
     }
                                                                           
     //------------------------------------------------------------
@@ -1412,7 +1418,7 @@ public class AgentHandler {
                 buff.append(((WalkAgent)agent).getSpeedCalculationModel().toString().replaceFirst("Model$", "")); buff.append(",");
                 buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
                 buff.append(simulator.currentTime.getTickUnit()); buff.append(",");
-                buff.append(agent.generatedPosition); buff.append(",");
+                buff.append(agent.generatedPositionInLink); buff.append(",");
                 buff.append(agent.diedPositionInLink); buff.append(",");
                 buff.append(agent.getLastNode().ID); buff.append(",");
                 int idx = 0;

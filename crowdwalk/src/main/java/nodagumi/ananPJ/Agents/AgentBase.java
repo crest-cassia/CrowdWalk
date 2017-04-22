@@ -25,6 +25,7 @@ import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 
@@ -60,7 +61,7 @@ implements Comparable<AgentBase> {
     /**
      * 生成された時のリンク上の位置
      */
-    public double generatedPosition = 0.0;
+    public double generatedPositionInLink = 0.0;
 
     /**
      * 死亡した時のリンク上の位置
@@ -69,9 +70,9 @@ implements Comparable<AgentBase> {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * map: 自分の存在しているマップ。
+     * handler: 自分を管理している Handler
      */
-    protected NetworkMap map = null ;
+    protected AgentHandler handler ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -176,7 +177,7 @@ implements Comparable<AgentBase> {
         obstructer = ObstructerBase.createAndInitialize(obstructerType, this) ;
         //AgentFactory から移したもの
         generatedTime = currentTime ;
-        setMap(simulator.getMap()) ;
+        setHandler(simulator.getAgentHandler()) ;
         setConfigLine(factory.getConfigLine()) ;
         // set route
         //setGoal(new Term(factory.goal, false));
@@ -250,10 +251,11 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * マップをセット
+     * ハンドラをセット
      */
-    public void setMap(NetworkMap _map) {
-        map = _map ;
+    public void setHandler(AgentHandler _handler) {
+        handler = _handler ;
+        setMap(handler.getMap()) ;
     }
 
     //------------------------------------------------------------
@@ -680,8 +682,8 @@ implements Comparable<AgentBase> {
             currentPlace.getLink().agentExits(this) ;
             currentPlace.quitLastLink() ;
         }
-        if (networkMap != null) {
-            networkMap.getNotifier().agentEvacuated(this);
+        if (getMap() != null) {
+            getMap().getNotifier().agentEvacuated(this);
         }
     }
 

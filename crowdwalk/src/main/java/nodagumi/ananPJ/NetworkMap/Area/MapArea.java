@@ -50,7 +50,7 @@ public abstract class MapArea extends OBNode {
      */
     public void pollutionIsUpdated() {
         if(pollutionLevel.isChanged(true)) {
-            networkMap.getNotifier().pollutionLevelChanged(this);
+            map.getNotifier().pollutionLevelChanged(this);
         }
     }
 

@@ -904,7 +904,7 @@ public class EvacuationSimulator {
          * AgentFactory の tryUpdateAndGenerate() で入れてみたが、
          * おかしくなる。
          */
-        agent.setNetworkMap(getMap()) ;
+        agent.setMap(getMap()) ;
     }
 
     //------------------------------------------------------------

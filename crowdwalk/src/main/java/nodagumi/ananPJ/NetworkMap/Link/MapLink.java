@@ -1189,8 +1189,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         boolean tagsIsEmpty = tags.isEmpty();
         super.allTagsClear() ;
         clearCacheInNodes() ;
-        if (! tagsIsEmpty && networkMap != null) {
-            networkMap.getNotifier().linkTagRemoved(this);
+        if (! tagsIsEmpty && map != null) {
+            map.getNotifier().linkTagRemoved(this);
         }
     }
 
@@ -1203,8 +1203,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         boolean result = super.addTag(_tag) ;
         if (result) {
             clearCacheInNodes() ;
-            if (networkMap != null) {
-                networkMap.getNotifier().linkTagAdded(this, _tag);
+            if (map != null) {
+                map.getNotifier().linkTagAdded(this, _tag);
             }
         }
         return result ;
@@ -1219,8 +1219,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         int tagsSize = tags.size();
         super.removeTag(_tag) ;
         clearCacheInNodes() ;
-        if (networkMap != null && tags.size() < tagsSize) {
-            networkMap.getNotifier().linkTagRemoved(this);
+        if (map != null && tags.size() < tagsSize) {
+            map.getNotifier().linkTagRemoved(this);
         }
     }
 

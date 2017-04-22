@@ -56,7 +56,7 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     protected String idNumber = null;
     protected ArrayList<String> tags;
     public boolean selected = false;
-    protected NetworkMap networkMap;
+    protected NetworkMap map;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -261,15 +261,15 @@ public abstract class OBNode extends DefaultMutableTreeNode {
     /**
      * NetworkMap をセットする.
      */
-    public void setNetworkMap(NetworkMap networkMap) {
-        this.networkMap = networkMap;
+    final public void setMap(NetworkMap _map) {
+        map = _map ;
     }
 
     /**
      * NetworkMap を返す.
      */
-    public NetworkMap getNetworkMap() {
-        return networkMap;
+    final public NetworkMap getMap() {
+        return map ;
     }
 
     static class TagSetupPanel extends JPanel {

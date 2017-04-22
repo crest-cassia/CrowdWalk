@@ -86,7 +86,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
      * エージェント登録
      */
     public void registerAgent(final AgentBase agent) {
-        networkMap.getNotifier().agentAdded(agent);
+        map.getNotifier().agentAdded(agent);
     }
 
     /**
@@ -116,7 +116,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
             simulationFrame = new SimulationFrame3D("Simulation Preview",
                     simulationPanelWidth, simulationPanelHeight, launcher, properties, mapTiles);
             viewController = new SimulationViewController3D(simulationFrame);
-            viewController.addNetworkMapPartsListener(networkMap);
+            viewController.addNetworkMapPartsListener(map) ;
             simulationFrame.setX(x);
             simulationFrame.setY(y);
             simulationFrame.show();

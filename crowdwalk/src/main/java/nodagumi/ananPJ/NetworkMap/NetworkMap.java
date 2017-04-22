@@ -251,7 +251,7 @@ public class NetworkMap extends DefaultTreeModel {
      */
     public void addObject(String id, OBNode part) {
         partTable.put(id, part);
-        part.setNetworkMap(this);
+        part.setMap(this);
     }
 
     //------------------------------------------------------------

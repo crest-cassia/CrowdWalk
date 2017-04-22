@@ -64,7 +64,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * 地図データ。
      */
-    protected NetworkMap networkMap;
+    protected NetworkMap map ;
 
     /*****/
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -153,7 +153,7 @@ public abstract class BasicSimulationLauncher {
     /**
      * マップ取得
      */
-    public NetworkMap getMap() { return networkMap; }
+    public NetworkMap getMap() { return map ; }
 
     /*****/
     /**
@@ -289,12 +289,12 @@ public abstract class BasicSimulationLauncher {
             return null;
         }
         // NetMAS based map
-        NetworkMap network_map = new NetworkMap() ;
-        if (false == network_map.fromDOM(doc))
+        NetworkMap tmpMap = new NetworkMap() ;
+        if (false == tmpMap.fromDOM(doc))
             return null;
         Itk.logInfo("Load Map File", file_name) ;
         setupFileInfo.setNetworkMapFile(file_name);
-        return network_map;
+        return tmpMap;
     }
 
     /*****//*微妙に違う*/
@@ -334,12 +334,12 @@ public abstract class BasicSimulationLauncher {
      * シミュレーションの初期化。
      */
     protected void initializeSimulatorEntity() {
-        simulator = new EvacuationSimulator(networkMap, this, random) ;
+        simulator = new EvacuationSimulator(map, this, random) ;
 
         simulator.setProperties(properties);
         simulator.setup();
 
-        // model.begin set files (pol, gen, sce) to networkMap
+        // model.begin set files (pol, gen, sce) to map
         simulator.begin() ;
 
         simulator.setIsAllAgentSpeedZeroBreak(isAllAgentSpeedZeroBreak);

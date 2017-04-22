@@ -147,7 +147,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             System.exit(1);
         }
         try {
-            networkMap = readMapWithName(getNetworkMapFile()) ;
+            map = readMapWithName(getNetworkMapFile()) ;
         } catch (IOException ioe) {
             ioe.printStackTrace();
             System.exit(1);
@@ -162,12 +162,12 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * マップエディタからシミュレーションを開始する場合の初期設定.
      */
     public void init(Random _random, CrowdWalkPropertiesHandler _properties,
-            SetupFileInfo _setupFileInfo, NetworkMap _networkMap, Settings _settings) {
+            SetupFileInfo _setupFileInfo, NetworkMap _map, Settings _settings) {
         random = _random;
         properties = _properties;
         setPropertiesForDisplay();
         setupFileInfo = _setupFileInfo;
-        networkMap = _networkMap;
+        map = _map;
         settings = _settings;
         // ending condition
         setExitCount(properties.getExitCount()) ;
@@ -348,10 +348,10 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         try {
             String tileName = properties.getString("gsi_tile_name", GsiTile.DATA_ID_PALE);
             int zoom = properties.getInteger("gsi_tile_zoom", 14);
-            MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+            MapPartGroup root = (MapPartGroup)map.getRoot();
             int zone = properties.getInteger("zone", root.getZone());
             if (zone != 0) {
-                mapTiles = GsiTile.loadGsiTiles(networkMap, tileName, zoom, zone);
+                mapTiles = GsiTile.loadGsiTiles(map, tileName, zoom, zone);
             }
         } catch(Exception e) {
             System.err.println(e.getMessage());

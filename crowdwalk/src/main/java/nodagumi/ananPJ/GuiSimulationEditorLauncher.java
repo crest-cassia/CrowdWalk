@@ -119,7 +119,7 @@ public class GuiSimulationEditorLauncher
     /**
      * 地図データ。
      */
-    private NetworkMap networkMap;
+    private NetworkMap map ;
 
     private boolean simulationWindowOpen = false;
     private boolean autoSimulationStart = false;
@@ -162,7 +162,7 @@ public class GuiSimulationEditorLauncher
 
     public GuiSimulationEditorLauncher(Random _random, Settings _settings) {
         random = _random ;
-        networkMap = new NetworkMap() ;
+        map = new NetworkMap() ;
         settings = _settings;
 
         frame = new JFrame("Network Map Editor");
@@ -228,7 +228,7 @@ public class GuiSimulationEditorLauncher
                     runButton2d.setEnabled(false);
                     runButton3d.setEnabled(false);
                     GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher2D");
-                    launcher.init(random, properties, setupFileInfo, networkMap, settings);
+                    launcher.init(random, properties, setupFileInfo, map, settings);
                     launcher.simulate();
                 }});
         buttonPanel.add(runButton2d);
@@ -241,7 +241,7 @@ public class GuiSimulationEditorLauncher
                     runButton2d.setEnabled(false);
                     runButton3d.setEnabled(false);
                     GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
-                    launcher.init(random, properties, setupFileInfo, networkMap, settings);
+                    launcher.init(random, properties, setupFileInfo, map, settings);
                     launcher.simulate();
                 }});
         buttonPanel.add(runButton3d);
@@ -350,15 +350,15 @@ public class GuiSimulationEditorLauncher
     }
 
     public MapNodeTable getNodes() {
-        return networkMap.getNodes();
+        return map.getNodes();
     }
 
     public MapLinkTable getLinks() {
-        return networkMap.getLinks();
+        return map.getLinks();
     }
 
     public ArrayList<OBNode> getOBElements() {
-        return networkMap.getOBElements();
+        return map.getOBElements();
     }
 
     /* private methods */
@@ -474,7 +474,7 @@ public class GuiSimulationEditorLauncher
             // (CUIモードとGUIモードでシミュレーション結果を一致させるため)
             random.setSeed(properties.getRandseed());
         }
-        networkMap = new NetworkMap() ;
+        map = new NetworkMap() ;
         setNetworkMapFile(null);
         updateAll();
         // System.gc();
@@ -555,7 +555,7 @@ public class GuiSimulationEditorLauncher
         clearAll();
         setNetworkMapFile(mapFileName);
         try {
-            networkMap = readMapWithName(mapFileName) ;
+            map = readMapWithName(mapFileName) ;
         } catch (IOException e) {
             Itk.logError("Can't Open Map File", mapFileName) ;
             e.printStackTrace() ;
@@ -565,7 +565,7 @@ public class GuiSimulationEditorLauncher
                                           JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if (networkMap == null) return false;
+        if (map == null) return false;
 
         updateAll();
         return true;
@@ -608,7 +608,7 @@ public class GuiSimulationEditorLauncher
                 new FileOutputStream(getNetworkMapFile());
 
             Document doc = ItkXmlUtility.singleton.newDocument() ;
-            networkMap.toDOM(doc);
+            map.toDOM(doc);
             boolean result =
                 ItkXmlUtility.singleton.docToStream(doc, fos);
             if (false == result) {
@@ -655,7 +655,7 @@ public class GuiSimulationEditorLauncher
             e.printStackTrace();
             return;
         }
-        mapViewer.view("3D preview of Structure", 800, 600, networkMap, properties);
+        mapViewer.view("3D preview of Structure", 800, 600, map, properties);
     }
 
     //------------------------------------------------------------
@@ -673,7 +673,7 @@ public class GuiSimulationEditorLauncher
         }
 
         Dijkstra.Result result =
-            networkMap.calcGoalPath(NavigationHint.DefaultMentalMode, tag) ;
+            map.calcGoalPath(NavigationHint.DefaultMentalMode, tag) ;
 
         if(result != null) {
             for (MapNode node : result.keySet()) {
@@ -764,7 +764,7 @@ public class GuiSimulationEditorLauncher
             }
             launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
         }
-        launcher.init(random, properties, setupFileInfo, networkMap, settings);
+        launcher.init(random, properties, setupFileInfo, map, settings);
         launcher.simulate();
     }
 
@@ -860,7 +860,7 @@ public class GuiSimulationEditorLauncher
     /**
      * マップ取得
      */
-    public NetworkMap getMap() { return networkMap; }
+    public NetworkMap getMap() { return map; }
 
     /*****/
     public SetupFileInfo getSetupFileInfo() { return setupFileInfo; }

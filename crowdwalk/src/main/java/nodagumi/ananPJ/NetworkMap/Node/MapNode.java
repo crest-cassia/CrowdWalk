@@ -352,8 +352,8 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     public void allTagsClear() {
         boolean tagsIsEmpty = tags.isEmpty();
         super.allTagsClear() ;
-        if (! tagsIsEmpty && networkMap != null) {
-            networkMap.getNotifier().nodeTagRemoved(this);
+        if (! tagsIsEmpty && map != null) {
+            map.getNotifier().nodeTagRemoved(this);
         }
     }
 
@@ -363,8 +363,8 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     @Override
     public boolean addTag(String _tag) {
         boolean result = super.addTag(_tag) ;
-        if (result && networkMap != null) {
-            networkMap.getNotifier().nodeTagAdded(this, _tag);
+        if (result && map != null) {
+            map.getNotifier().nodeTagAdded(this, _tag);
         }
         return result ;
     }
@@ -376,8 +376,8 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     public void removeTag(String _tag) {
         int tagsSize = tags.size();
         super.removeTag(_tag) ;
-        if (networkMap != null && tags.size() < tagsSize) {
-            networkMap.getNotifier().nodeTagRemoved(this);
+        if (map != null && tags.size() < tagsSize) {
+            map.getNotifier().nodeTagRemoved(this);
         }
     }
 

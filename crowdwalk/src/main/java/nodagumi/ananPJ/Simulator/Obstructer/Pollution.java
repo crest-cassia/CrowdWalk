@@ -126,7 +126,7 @@ public class Pollution extends ObstructerBase {
         */
 
         if (currentTriageLevel != lastTriageLevel) {
-            agent.getNetworkMap().getNotifier().agentTriageChanged(agent);
+            agent.getMap().getNotifier().agentTriageChanged(agent);
             lastTriageLevel = currentTriageLevel;
         }
     }
