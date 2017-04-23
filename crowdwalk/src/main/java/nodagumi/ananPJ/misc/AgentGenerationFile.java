@@ -154,7 +154,7 @@ import nodagumi.Itk.*;
  *       "config" に、このルール専用のパラメータをJSONで指定できる。
  *      <pre>
  *        { "rule" : "RUBY",
- *          "class" : __RubyClassNameInString__,
+ *          "ruleClass" : __RubyClassNameInString__,
  *          "config" : __Config__
  *        }
  *      </pre>
@@ -200,7 +200,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     /**
      * enum for generation rule type
      */
-    static public enum Rule {
+    static public enum RuleType {
         EACH,
         RANDOM,
         EACHRANDOM,
@@ -214,10 +214,10 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      */
     static public Lexicon ruleLexicon = new Lexicon() ;
     static {
-        // Rule で定義された名前をそのまま文字列で Lexicon を
+        // RuleType で定義された名前をそのまま文字列で Lexicon を
         // 引けるようにする。
-        // 例えば、 Rule.EACH は、"EACH" で引けるようになる。
-        ruleLexicon.registerEnum(Rule.class) ;
+        // 例えば、 RuleType.EACH は、"EACH" で引けるようになる。
+        ruleLexicon.registerEnum(RuleType.class) ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -303,11 +303,43 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      *   
      */
     static private class GenerationConfigBase extends AgentFactory.Config {
+        //========================================
+        //----------------------------------------
+        /**
+         * ruleType に応じて、GenerationConfig のインスタンスを作る。
+         */
+        static public GenerationConfigBase
+            newConfigByRuleType(RuleType ruleType) {
+            
+            GenerationConfigBase genConfig = null;
+            switch(ruleType) {
+            case EACHRANDOM:
+                genConfig = new GenerationConfigForEachRandom() ;
+                break ;
+            case TIMEEVERY:
+                genConfig = new GenerationConfigForTimeEvery() ;
+                break ;
+            case RUBY:
+                genConfig = new GenerationConfigForRuby() ;
+                break ;
+            case EACH:
+            case RANDOM:
+                genConfig = new GenerationConfigBase() ;
+                break ;
+            default:
+                Itk.logError("AgentGenerationFile include invalid rule type:",
+                             ruleType) ;
+                return null ;
+            }
+            genConfig.ruleType = ruleType ;
+            return genConfig ;
+        }
+        
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
          * 生成ルールのタイプ
          */
-        public Rule ruleTag ;
+        public RuleType ruleType ;
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -340,15 +372,15 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * JSON Object への変換
          */
         public Term toTerm(){
-            Term jObject = super.toTerm() ;
+            Term jTerm = super.toTerm() ;
 
-            jObject.setArg("rule",ruleLexicon.lookUpByMeaning(ruleTag).get(0));
+            jTerm.setArg("rule",ruleLexicon.lookUpByMeaning(ruleType).get(0));
             if(startLinkTag != null)
-                jObject.setArg("startPlace", startLinkTag) ;
-            jObject.setArg("speedModel", 
+                jTerm.setArg("startPlace", startLinkTag) ;
+            jTerm.setArg("speedModel", 
                            speedModelLexicon.lookUpByMeaning(speedModel).get(0));
 
-            return jObject ;
+            return jTerm ;
         }
         
         //----------------------------------------
@@ -421,7 +453,84 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             
             return this ;
         }
-    }
+
+        //----------------------------------------
+        /**
+         * Factory を追加。
+         */
+        private void addFactories(AgentGenerationFile factoryList,
+                                  NetworkMap map) {
+            switch(ruleType) {
+            case EACH:
+                addFactoriesForEach(factoryList) ;
+                break ;
+            case RANDOM:
+                addFactoriesForRandom(factoryList) ;
+                break ;
+            default:
+                Itk.logError("Invalid Generation Rule:" + ruleType) ;
+            }
+        }
+
+        //----------------------------------------
+        /**
+         * EACH 用生成ルーチン
+         * 各々の link, node で total 個ずつのエージェントが生成。
+         */
+        private void addFactoriesForEach(AgentGenerationFile factoryList) {
+            for (final MapLink startLink : startLinks) {
+                startPlace = startLink ;
+                factoryList.add(new AgentFactoryFromLink(this,
+                                                         factoryList.random)) ;
+            }
+            for (final MapNode startNode : startNodes) {
+                startPlace = startNode ;
+                factoryList.add(new AgentFactoryFromNode(this,
+                                                         factoryList.random)) ;
+            }
+        }
+
+        //----------------------------------------
+        /**
+         * RANDOM 用生成ルーチン
+         * 指定された link, node において、
+         * 合計で total 個のエージェントが生成。
+         */
+        private void addFactoriesForRandom(AgentGenerationFile factoryList) {
+            int _total = this.total ;
+
+            int links_size = this.startLinks.size();
+            int size = links_size + this.startNodes.size();// linkとnodeの合計
+            int[] chosen_links = new int[this.startLinks.size()];
+            int[] chosen_nodes = new int[this.startNodes.size()];
+            for (int i = 0; i < _total; i++) {
+                int chosen_index = factoryList.random.nextInt(size);
+            if (chosen_index + 1 > links_size)
+                chosen_nodes[chosen_index - links_size] += 1;
+            else
+                chosen_links[chosen_index] += 1;
+            }
+            for (int i = 0; i < this.startLinks.size(); i++) {
+                if (chosen_links[i] > 0) {
+                    this.startPlace = this.startLinks.get(i) ;
+                    this.total = chosen_links[i] ;
+                    factoryList
+                        .add(new AgentFactoryFromLink(this, 
+                                                      factoryList.random)) ;
+                }
+            }
+            for (int i = 0; i < this.startNodes.size(); i++) {
+                if (chosen_nodes[i] > 0) {
+                    this.startPlace = this.startNodes.get(i) ;
+                    this.total = chosen_nodes[i] ;
+                    factoryList
+                        .add(new AgentFactoryFromNode(this,
+                                                      factoryList.random)) ;
+                }
+            }
+        }
+
+    } // end class GenerationConfigBase
 
     //============================================================
     /**
@@ -440,11 +549,11 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * JSON Object への変換
          */
         public Term toTerm(){
-            Term jObject = super.toTerm() ;
+            Term jTerm = super.toTerm() ;
 
-            jObject.setArg("maxFromEach",maxFromEachPlace) ;
+            jTerm.setArg("maxFromEach",maxFromEachPlace) ;
 
-            return jObject ;
+            return jTerm ;
         }
 
         //----------------------------------------
@@ -464,7 +573,77 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
             return this ;
         }
-    }
+
+        //----------------------------------------
+        /**
+         * Factory を追加。
+         * EACH RANDOM 用生成ルーチン
+         * RANDOM に、1箇所での生成数の上限を入れたもの。
+         * 合計で total 個のエージェントが生成。
+         */
+        private void addFactories(AgentGenerationFile factoryList,
+                                  NetworkMap map) {
+
+            int maxFromEachPlace = this.maxFromEachPlace ;
+            int total = this.total ;
+
+            int links_size = this.startLinks.size() ;
+            int nodes_size = this.startNodes.size() ;
+            int size = links_size + nodes_size ; // linkとnodeの合計
+            int[] chosen_links = new int[this.startLinks.size()];
+            int[] chosen_nodes = new int[this.startNodes.size()];
+
+            /* [2014.12.24 I.Noda]
+             * アルゴリズムがあまりにまずいので、修正。
+             */
+            if(total > 0) {
+                int population = 0 ;
+                //とりあえず、maxFromEachPlace で埋める。
+                for(int i = 0 ; i < links_size ; i++) {
+                    chosen_links[i] = maxFromEachPlace ;
+                    population += maxFromEachPlace ;
+                }
+                for(int i = 0 ; i < nodes_size ; i++) {
+                    chosen_nodes[i] = maxFromEachPlace ;
+                    population += maxFromEachPlace ;
+                }
+                //減らしていく。
+                while(population > total){
+                    int chosen_index = factoryList.random.nextInt(size) ;
+                    if(chosen_index < links_size) {
+                        if(chosen_links[chosen_index] > 0) {
+                            chosen_links[chosen_index] -= 1 ;
+                            population -= 1 ;
+                        }
+                    } else {
+                        if(chosen_nodes[chosen_index - links_size] > 0) {
+                            chosen_nodes[chosen_index - links_size] -= 1;
+                            population -= 1 ;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < this.startLinks.size(); i++) {
+                if (chosen_links[i] > 0) {
+                    this.startPlace = this.startLinks.get(i) ;
+                    this.total = chosen_links[i] ;
+                    factoryList
+                        .add(new AgentFactoryFromLink(this,
+                                                      factoryList.random)) ;
+                }
+            }
+            for (int i = 0; i < this.startNodes.size(); i++) {
+                if (chosen_nodes[i] > 0) {
+                    this.startPlace = this.startNodes.get(i) ;
+                    this.total = chosen_nodes[i] ;
+                    factoryList
+                        .add(new AgentFactoryFromNode(this,
+                                                      factoryList.random)) ;
+                }
+            }
+        }
+    } // end class GenerationConfigForEachRandom 
 
     //============================================================
     /**
@@ -489,12 +668,12 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * JSON Object への変換
          */
         public Term toTerm(){
-            Term jObject = super.toTerm() ;
+            Term jTerm = super.toTerm() ;
 
-            jObject.setArg("everyEndTime",everyEndTime.getAbsoluteTimeString());
-            jObject.setArg("everySeconds",everySeconds) ;
+            jTerm.setArg("everyEndTime",everyEndTime.getAbsoluteTimeString());
+            jTerm.setArg("everySeconds",everySeconds) ;
 
-            return jObject ;
+            return jTerm ;
         }
 
         //----------------------------------------
@@ -521,7 +700,118 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
             return this ;
         }
-    }
+
+        //----------------------------------------
+        /**
+         * Factory を追加。
+         * TIME EVERY 用生成ルーチン
+         * [2014.12.24 I.Noda]
+         * GOAL の部分の処理は他と同じはずなので、
+         * 特別な処理をしないようにする。
+         * 合計で (total * 生成回数) 個のエージェントが生成。
+         */
+        private void addFactories(AgentGenerationFile factoryList,
+                                  NetworkMap map) {
+            
+            SimTime every_end_time = this.everyEndTime ;
+            double every_seconds = (double)this.everySeconds ;
+            int total = this.total ;
+
+            // [I.Noda] startPlace は下で指定。
+            this.startPlace = null ;
+            // [I.Noda] startTime も特別な意味
+            SimTime start_time = this.startTime ;
+            this.startTime = null ;
+
+            SimTime step_time = start_time.newSimTime() ;
+            /* let's assume start & goal & plannedRoute candidates
+             * are all MapLink!
+             */
+
+            while (step_time.isBeforeOrAt(every_end_time)) {
+                for (int i = 0; i < total; i++) {
+                    this.startTime = step_time.newSimTime() ;
+                    this.total = 1 ;
+                    if(this.startLinks.size() > 0) {
+                        MapLink start_link =
+                            this.startLinks.chooseRandom(factoryList.random) ;
+                        this.startPlace = start_link ;
+                        factoryList
+                            .add(new AgentFactoryFromLink(this,
+                                                          factoryList.random)) ;
+                    } else if (this.startNodes.size() > 0) {
+                        MapNode start_node = 
+                            this.startNodes.chooseRandom(factoryList.random) ;
+                        this.startPlace = start_node ;
+                        factoryList
+                            .add(new AgentFactoryFromNode(this,
+                                                          factoryList.random)) ;
+                    } else {
+                        Itk.logError("no starting place for generation.") ;
+                        Itk.logError_("config",this) ;
+                    }
+                }
+                step_time.advanceSec(every_seconds) ;
+            }
+        }
+    } // end class GenerationConfigForTimeEvery
+
+    //============================================================
+    /**
+     * 生成ルール情報格納用クラス(Ruby 用)
+     */
+    static private class GenerationConfigForRuby
+        extends GenerationConfigBase {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         *  rule class
+         */
+        public String ruleClass ;
+        
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         *  config
+         */
+        public Term config ;
+        
+        //----------------------------------------
+        /**
+         * JSON Object への変換
+         */
+        public Term toTerm(){
+            Term jTerm = new Term() ;
+
+            jTerm.setArg("rule",ruleLexicon.lookUpByMeaning(ruleType).get(0));
+            jTerm.setArg("ruleClass", ruleClass) ;
+            jTerm.setArg("config", config) ;
+
+            return jTerm ;
+        }
+
+        //----------------------------------------
+        /**
+         * JSON Object からパラメータ設定
+         */
+        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+                                             Term json,
+                                             NetworkMap map) {
+            ruleClass = json.getArgString("ruleClass") ;
+            config = json.getArgTerm("config") ;
+            
+            return this ;
+        }
+
+        //----------------------------------------
+        /**
+         * Factory を追加。
+         * RUBY 用生成ルーチン
+         */
+        private void addFactories(AgentGenerationFile factoryList,
+                                  NetworkMap map) {
+            // ***********
+        }
+        
+    } // end class GenerationConfigForRuby
 
     //------------------------------------------------------------
     /**
@@ -730,20 +1020,20 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // check rule strings
         /* [2014.12.20 I.Noda] should obsolete
-         * rule_tag が指定されないことがあるのか？
+         * ruleType が指定されないことがあるのか？
          * これは、特に CSV の場合、致命的なバグの原因となる。
          */
-        Rule rule_tag = (Rule)ruleLexicon.lookUp(columns.top()) ;
-        if (rule_tag == null)
+        RuleType ruleType = (RuleType)ruleLexicon.lookUp(columns.top()) ;
+        if (ruleType == null)
             // if no rule tag, default tag "EACH" is applied.
-            rule_tag = Rule.EACH ;
+            ruleType = RuleType.EACH ;
         else
             columns.shift() ;
 
         // LINER_GENERATE_AGENT_RATIO の場合、
         // lga_ratio が次に来る。
         // で、読み込んだら次の行。（エージェント生成しない）
-        if (rule_tag == Rule.LINER_GENERATE_AGENT_RATIO) {
+        if (ruleType == RuleType.LINER_GENERATE_AGENT_RATIO) {
             double lga_ratio = 0;
             lga_ratio = Double.parseDouble(columns.get()) ;
             if (lga_ratio > 0)
@@ -752,12 +1042,12 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         }
 
         // 生成条件の格納用データ
-        GenerationConfigBase genConfig = newConfigForRuleTag(rule_tag) ;
+        GenerationConfigBase genConfig = newConfigByRuleType(ruleType) ;
 
         // 生成の設定情報を以下にまとめて保持。
         genConfig.originalInfo = line ;
 
-        /* [I.Noda] Ver1 以降は、rule_tag の直後はエージェントクラス名 */
+        /* [I.Noda] Ver1 以降は、ruleType の直後はエージェントクラス名 */
         if(fileFormat == FileFormat.Ver1) {
             genConfig.agentClassName = columns.nth(0) ;
             genConfig.agentConf = Term.newByJson(columns.nth(1)) ;
@@ -783,7 +1073,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         }
 
         // TIMEEVERYの場合は、出発時刻間隔
-        if (rule_tag == Rule.TIMEEVERY) {
+        if (ruleType == RuleType.TIMEEVERY) {
             try {
                 ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
                     new SimTime(columns.get()) ;
@@ -823,7 +1113,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         }
 
         // EACHRANDOM
-        if (genConfig.ruleTag == Rule.EACHRANDOM) {
+        if (genConfig.ruleType == RuleType.EACHRANDOM) {
             ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
                 Integer.parseInt(columns.get()) ;
         }
@@ -840,22 +1130,10 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
     //------------------------------------------------------------
     /**
-     * new Generation Config for rule_tag
+     * new Generation Config for ruleType
      */
-    private GenerationConfigBase newConfigForRuleTag(Rule rule_tag) {
-        GenerationConfigBase genConfig ;
-        switch(rule_tag) {
-        case EACHRANDOM:
-            genConfig = new GenerationConfigForEachRandom() ;
-            break ;
-        case TIMEEVERY:
-            genConfig = new GenerationConfigForTimeEvery() ;
-            break ;
-        default:
-            genConfig = new GenerationConfigBase() ;
-        }
-        genConfig.ruleTag = rule_tag ;
-        return genConfig ;
+    private GenerationConfigBase newConfigByRuleType(RuleType ruleType) {
+        return GenerationConfigBase.newConfigByRuleType(ruleType) ;
     }
 
     //------------------------------------------------------------
@@ -1045,9 +1323,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         if(json.getArgBoolean("ignore")) { return null ; }
 
         // rule
-        Rule ruleTag = 
-            (Rule)ruleLexicon.lookUp(json.getArgString("rule")) ;
-        GenerationConfigBase genConfig = newConfigForRuleTag(ruleTag) ;
+        RuleType ruleType = 
+            (RuleType)ruleLexicon.lookUp(json.getArgString("rule")) ;
+        GenerationConfigBase genConfig = newConfigByRuleType(ruleType) ;
 
         return genConfig.scanJson(this, json, map) ;
 
@@ -1149,194 +1427,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     private void addFactoriesByConfig(NetworkMap map,
                                       GenerationConfigBase genConfig) {
         genConfig.fallbackParameters = fallbackParameters ;
-        switch(genConfig.ruleTag) {
-        case EACH:
-            addFactoriesForEach(map, genConfig) ;
-            break ;
-        case RANDOM:
-            addFactoriesForRandom(map, genConfig) ;
-            break ;
-        case EACHRANDOM:
-            addFactoriesForEachRandom(map,
-                                      ((GenerationConfigForEachRandom)
-                                       genConfig)) ;
-            break ;
-        case TIMEEVERY:
-            addFactoriesForTimeEvery(map,
-                                     ((GenerationConfigForTimeEvery)
-                                      genConfig)) ;
-            break ;
-        default:
-            Itk.logError("AgentGenerationFile invalid rule " +
-                         "type in generation file!") ;
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * EACH 用生成ルーチン
-     * 各々の link, node で total 個ずつのエージェントが生成。
-     */
-    private void addFactoriesForEach(NetworkMap map,
-                                     GenerationConfigBase genConfig) {
-        for (final MapLink start_link : genConfig.startLinks) {
-            genConfig.startPlace = start_link ;
-            this.add(new AgentFactoryFromLink(genConfig, random)) ;
-        }
-        for (final MapNode start_node : genConfig.startNodes) {
-            genConfig.startPlace = start_node ;
-            this.add(new AgentFactoryFromNode(genConfig, random)) ;
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * RANDOM 用生成ルーチン
-     * 指定された link, node において、
-     * 合計で total 個のエージェントが生成。
-     */
-    private void addFactoriesForRandom(NetworkMap map,
-                                       GenerationConfigBase genConfig) {
-        int total = genConfig.total ;
-
-        int links_size = genConfig.startLinks.size();
-        int size = links_size + genConfig.startNodes.size();// linkとnodeの合計
-        int[] chosen_links = new int[genConfig.startLinks.size()];
-        int[] chosen_nodes = new int[genConfig.startNodes.size()];
-        for (int i = 0; i < total; i++) {
-            int chosen_index = random.nextInt(size);
-            if (chosen_index + 1 > links_size)
-                chosen_nodes[chosen_index - links_size] += 1;
-            else
-                chosen_links[chosen_index] += 1;
-        }
-        for (int i = 0; i < genConfig.startLinks.size(); i++) {
-            if (chosen_links[i] > 0) {
-                genConfig.startPlace = genConfig.startLinks.get(i) ;
-                genConfig.total = chosen_links[i] ;
-                this.add(new AgentFactoryFromLink(genConfig, random)) ;
-            }
-        }
-        for (int i = 0; i < genConfig.startNodes.size(); i++) {
-            if (chosen_nodes[i] > 0) {
-                genConfig.startPlace = genConfig.startNodes.get(i) ;
-                genConfig.total = chosen_nodes[i] ;
-                this.add(new AgentFactoryFromNode(genConfig, random)) ;
-            }
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * EACH RANDOM 用生成ルーチン
-     * RANDOM に、1箇所での生成数の上限を入れたもの。
-     * 合計で total 個のエージェントが生成。
-     */
-    private void addFactoriesForEachRandom(NetworkMap map,
-                                           GenerationConfigForEachRandom genConfig) {
-        int maxFromEachPlace = genConfig.maxFromEachPlace ;
-        int total = genConfig.total ;
-
-        int links_size = genConfig.startLinks.size() ;
-        int nodes_size = genConfig.startNodes.size() ;
-        int size = links_size + nodes_size ; // linkとnodeの合計
-        int[] chosen_links = new int[genConfig.startLinks.size()];
-        int[] chosen_nodes = new int[genConfig.startNodes.size()];
-
-        /* [2014.12.24 I.Noda]
-         * アルゴリズムがあまりにまずいので、修正。
-         */
-        if(total > 0) {
-            int population = 0 ;
-            //とりあえず、maxFromEachPlace で埋める。
-            for(int i = 0 ; i < links_size ; i++) {
-                chosen_links[i] = maxFromEachPlace ;
-                population += maxFromEachPlace ;
-            }
-            for(int i = 0 ; i < nodes_size ; i++) {
-                chosen_nodes[i] = maxFromEachPlace ;
-                population += maxFromEachPlace ;
-            }
-            //減らしていく。
-            while(population > total){
-                int chosen_index = random.nextInt(size) ;
-                if(chosen_index < links_size) {
-                    if(chosen_links[chosen_index] > 0) {
-                        chosen_links[chosen_index] -= 1 ;
-                        population -= 1 ;
-                    }
-                } else {
-                    if(chosen_nodes[chosen_index - links_size] > 0) {
-                        chosen_nodes[chosen_index - links_size] -= 1;
-                        population -= 1 ;
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < genConfig.startLinks.size(); i++) {
-            if (chosen_links[i] > 0) {
-                genConfig.startPlace = genConfig.startLinks.get(i) ;
-                genConfig.total = chosen_links[i] ;
-                this.add(new AgentFactoryFromLink(genConfig, random)) ;
-            }
-
-        }
-        for (int i = 0; i < genConfig.startNodes.size(); i++) {
-            if (chosen_nodes[i] > 0) {
-                genConfig.startPlace = genConfig.startNodes.get(i) ;
-                genConfig.total = chosen_nodes[i] ;
-                this.add(new AgentFactoryFromNode(genConfig,random)) ;
-            }
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * TIME EVERY 用生成ルーチン
-     * [2014.12.24 I.Noda]
-     * GOAL の部分の処理は他と同じはずなので、
-     * 特別な処理をしないようにする。
-     * 合計で (total * 生成回数) 個のエージェントが生成。
-     */
-    private void addFactoriesForTimeEvery(NetworkMap map,
-                                          GenerationConfigForTimeEvery genConfig) {
-        SimTime every_end_time = genConfig.everyEndTime ;
-        double every_seconds = (double)genConfig.everySeconds ;
-        int total = genConfig.total ;
-
-        // [I.Noda] startPlace は下で指定。
-        genConfig.startPlace = null ;
-        // [I.Noda] startTime も特別な意味
-        SimTime start_time = genConfig.startTime ;
-        genConfig.startTime = null ;
-
-        SimTime step_time = start_time.newSimTime() ;
-        /* let's assume start & goal & plannedRoute candidates
-         * are all MapLink!
-         */
-
-        while (step_time.isBeforeOrAt(every_end_time)) {
-            for (int i = 0; i < total; i++) {
-                genConfig.startTime = step_time.newSimTime() ;
-                genConfig.total = 1 ;
-                if(genConfig.startLinks.size() > 0) {
-                    MapLink start_link =
-                        genConfig.startLinks.chooseRandom(random) ;
-                    genConfig.startPlace = start_link ;
-                    this.add(new AgentFactoryFromLink(genConfig, random)) ;
-                } else if (genConfig.startNodes.size() > 0) {
-                    MapNode start_node = 
-                        genConfig.startNodes.chooseRandom(random) ;
-                    genConfig.startPlace = start_node ;
-                    this.add(new AgentFactoryFromNode(genConfig, random)) ;
-                } else {
-                    Itk.logError("no starting place for generation.") ;
-                    Itk.logError_("config",genConfig) ;
-                }
-            }
-            step_time.advanceSec(every_seconds) ;
-        }
+        genConfig.addFactories(this, map) ;
     }
 
 }

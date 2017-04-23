@@ -209,23 +209,23 @@ public abstract class AgentFactory {
          * JSONへの変換用
          */
         public Term toTerm() {
-            Term jObject = new Term() ;
+            Term jTerm = new Term() ;
             { // agentType
                 Term agentType = new Term() ;
                 agentType.setArg("className", agentClassName) ;
                 agentType.setArg("config", agentConf) ;
-                jObject.setArg("agentType", agentType) ;
+                jTerm.setArg("agentType", agentType) ;
             }
-            jObject.setArg("startPlace",startPlace) ;
-            jObject.setArg("conditions",conditions);
-            jObject.setArg("goal",goal);
-            jObject.setArg("plannedRoute",plannedRoute) ;
-            jObject.setArg("startTime",startTime.getAbsoluteTimeString()) ;
-            jObject.setArg("duration",duration) ;
-            jObject.setArg("total",total) ;
-            jObject.setArg("speedModel", speedModel) ;
+            jTerm.setArg("startPlace",startPlace) ;
+            jTerm.setArg("conditions",conditions);
+            jTerm.setArg("goal",goal);
+            jTerm.setArg("plannedRoute",plannedRoute) ;
+            jTerm.setArg("startTime",startTime.getAbsoluteTimeString()) ;
+            jTerm.setArg("duration",duration) ;
+            jTerm.setArg("total",total) ;
+            jTerm.setArg("speedModel", speedModel) ;
 
-            return jObject ;
+            return jTerm ;
         }
     } // end class Config
 
