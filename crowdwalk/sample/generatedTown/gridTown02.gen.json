@@ -1,0 +1,11 @@
+#{ "version" : 2}
+[
+ {"rule":"RUBY",
+  "ruleClass":"SampleFactory",
+  "config":{"total":10,
+            "goalList":["node_09_05", "node_09_06"],
+	    "startList":["link_node_00_00__node_00_01",
+		         "link_node_00_08__node_00_09"],
+	    "_":null},
+  "_":null}
+]	    

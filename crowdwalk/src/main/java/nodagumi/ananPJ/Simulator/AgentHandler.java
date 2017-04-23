@@ -49,6 +49,7 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.AgentFactoryByRuby;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
 import nodagumi.ananPJ.misc.SimTime;
@@ -1482,5 +1483,19 @@ public class AgentHandler {
      */
     public void closeEvacuatedAgentsLogger() {
         closeLogger(evacuatedAgentsLogger);
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * AgentFactoryByRuby への rubyEngine のリンク。
+     * @param rubyEngine : rubyEngine
+     */
+    public void setupAgentFactoryByRuby(ItkRuby rubyEngine) {
+        for(AgentFactory factory : agentFactoryList) {
+            if(factory instanceof AgentFactoryByRuby) {
+                Itk.dbgVal("factory in AgentHandler", factory) ;
+                ((AgentFactoryByRuby)factory).setupRubyEngine(rubyEngine) ;
+            }
+        }
     }
 }

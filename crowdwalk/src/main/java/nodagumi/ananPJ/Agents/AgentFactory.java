@@ -238,6 +238,9 @@ public abstract class AgentFactory {
     /** 経由地 */
     private List<Term> plannedRoute;
     public List<Term> getPlannedRoute() { return plannedRoute ; }
+    public List<Term> setPlannedRoute(List<Term> route) {
+        return plannedRoute = route ;
+    }
     
     /** スピードモデル */
     private SpeedCalculationModel speedModel = null;
@@ -289,6 +292,14 @@ public abstract class AgentFactory {
      *  Config によるコンストラクタ
      */
     public AgentFactory(Config config, Random _random) {
+        init(config, _random) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *  初期化。他で Override できるように。
+     */
+    public void init(Config config, Random _random) {
         if(config.agentClassName != null &&
            config.agentClassName.length() > 0) {
             agentClassName = config.agentClassName ;
@@ -307,6 +318,11 @@ public abstract class AgentFactory {
         parse_conditions(config.conditions);
     }
 
+    //------------------------------------------------------------
+    /**
+     *  生成ルールの conditions の処理。
+     *  これは単純に、生成したエージェントへのタグとなる。
+     */
     protected void parse_conditions(String[] conditions) {
         if (conditions == null) return;
         for (int i = 0; i < conditions.length; i++) {
@@ -315,6 +331,10 @@ public abstract class AgentFactory {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     *  終了判定。
+     */
     protected boolean isFinished(SimTime currentTime) {
         return (currentTime.calcDifferenceFrom(startTime) > duration &&
                 generated >= total);

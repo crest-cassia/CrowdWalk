@@ -33,6 +33,7 @@ import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
 import nodagumi.ananPJ.Agents.AgentFactory;
 import nodagumi.ananPJ.Agents.AgentFactoryFromLink;
 import nodagumi.ananPJ.Agents.AgentFactoryFromNode;
+import nodagumi.ananPJ.Agents.AgentFactoryByRuby;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.Itk.*;
@@ -458,7 +459,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * Factory を追加。
          */
-        private void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentGenerationFile factoryList,
                                   NetworkMap map) {
             switch(ruleType) {
             case EACH:
@@ -581,7 +582,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * RANDOM に、1箇所での生成数の上限を入れたもの。
          * 合計で total 個のエージェントが生成。
          */
-        private void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentGenerationFile factoryList,
                                   NetworkMap map) {
 
             int maxFromEachPlace = this.maxFromEachPlace ;
@@ -710,7 +711,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * 特別な処理をしないようにする。
          * 合計で (total * 生成回数) 個のエージェントが生成。
          */
-        private void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentGenerationFile factoryList,
                                   NetworkMap map) {
             
             SimTime every_end_time = this.everyEndTime ;
@@ -760,7 +761,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     /**
      * 生成ルール情報格納用クラス(Ruby 用)
      */
-    static private class GenerationConfigForRuby
+    static public class GenerationConfigForRuby
         extends GenerationConfigBase {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         /**
@@ -797,6 +798,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                                              NetworkMap map) {
             ruleClass = json.getArgString("ruleClass") ;
             config = json.getArgTerm("config") ;
+
+            //エラーを避けるために。
+            plannedRoute = new ArrayList<Term>() ;
             
             return this ;
         }
@@ -806,9 +810,12 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * Factory を追加。
          * RUBY 用生成ルーチン
          */
-        private void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentGenerationFile factoryList,
                                   NetworkMap map) {
-            // ***********
+            AgentFactory factory =
+                new AgentFactoryByRuby(this, factoryList.random) ;
+            Itk.dbgVal("factory in AgentGenerationFile",factory) ;
+            factoryList.add(factory) ;
         }
         
     } // end class GenerationConfigForRuby

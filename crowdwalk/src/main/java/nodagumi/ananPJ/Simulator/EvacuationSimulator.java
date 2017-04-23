@@ -842,6 +842,8 @@ public class EvacuationSimulator {
                     rubyWrapper =
                         rubyEngine.newInstanceOfClass(rubyWrapperClass, this) ;
                 }
+                // AgentFactoryByRuby 用の処理
+                agentHandler.setupAgentFactoryByRuby(rubyEngine) ;
                 //
                 Itk.logInfo("Ruby Engine", "loading... Done.") ;
             }

@@ -247,6 +247,11 @@ run3gt00r2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r2))
 
 ##-----
+SAMPLE3gt02 = sample/generatedTown/gridTown02.prop.json   # ruby generator
+run3gt02 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02))
+
+##-----
 SAMPLE3kw01 = sample/kawaguchi-S2B/property-S2B.xml # kawaguchi
 run3kw01 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3kw01))
