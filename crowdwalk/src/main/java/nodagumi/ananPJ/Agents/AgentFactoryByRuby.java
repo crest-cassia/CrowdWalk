@@ -1,7 +1,18 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
+/** Agent Factory controlled by Ruby script
+ * @author:: Itsuki Noda
+ * @version:: 0.0 2017/04/23 I.Noda
+ * <B>History:</B>
+ * <UL>
+ *   <LI> [2017/04/23]: Create This File. </LI>
+ *   <LI> [YYYY/MM/DD]: add more </LI>
+ * </UL>
+ * <B>Usage:</B>
+ * ...
+ */
+
 package nodagumi.ananPJ.Agents;
 
-import java.io.PrintWriter;
 import java.util.Random;
 
 import nodagumi.ananPJ.Agents.AgentFactory;
@@ -16,30 +27,33 @@ import nodagumi.Itk.*;
 
 //======================================================================
 /**
- * エージェント生成機構。(fromLink)
+ * エージェント生成機構(Ruby版)。
  */
-public class AgentFactoryFromLink extends AgentFactory {
-    MapLink startLink;
+public class AgentFactoryByRuby extends AgentFactory {
+    //------------------------------------------------------------
+    /**
+     * Config によるコンストラクタ
+     */
+    public AgentFactoryByRuby(Config config, Random random) {
+        super(config, random) ;
+    }
 
     //------------------------------------------------------------
     /**
      * Config によるコンストラクタ
      */
-    public AgentFactoryFromLink(Config config, Random random) {
-        super(config, random) ;
-        startLink = (MapLink)config.startPlace ;
-    }
-
     @Override
     protected boolean isFinished(SimTime currentTime) {
-        if (super.isFinished(currentTime) || startLink.isShutOff()) return true;
-        return false;
+        return false ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * Config によるコンストラクタ
+     */
     @Override
     protected void placeAgent(AgentBase agent) {
-        agent.placeAtRandomPosition(startLink) ;
-        //startLink.agentEnters(agent);
+        agent.placeAtRandomPosition(null) ;
     }
 
     //------------------------------------------------------------
@@ -49,11 +63,7 @@ public class AgentFactoryFromLink extends AgentFactory {
      */
     @Override
     public String getStartInfo() {
-        return (startLink.getTagString() +
-                "(" +  startLink.ID + ")" +
-                " on " + startTime.getAbsoluteTime() +
-                " ("  + total +
-                " in " + duration + " sec)");
+        return ("Ruby Agent Factory:") ;
     }
 
     //------------------------------------------------------------
@@ -62,9 +72,16 @@ public class AgentFactoryFromLink extends AgentFactory {
      * パネル用。
      */
     @Override
-    public OBNode getStartObject() { return startLink; }
+    public OBNode getStartObject() {
+        return null ;
+    }
 
-}
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //------------------------------------------------------------
+
+} // class AgentFactoryByRuby
 
 
 //;;; Local Variables:

@@ -923,12 +923,18 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * 終了チェック。
-     * @return 全エージェントが終了していれば true を返す。
+     * 終了条件は以下の通り。
+     * * isAllAgentSpeedZeroBreak が true の場合：
+     *     * 全員の速度が 0 なら終了。
+     * * isAllAgentSpeedZeroBreak が false の場合：
+     *     * agent がだれか終わっていないなら、未終了。
+     *     * agentFactory のどれかが enable なら、未終了。
+     * @return 終了判定。
      */
     public boolean isFinished() {
         if (isAllAgentSpeedZeroBreak) {
             for (AgentFactory factory : agentFactoryList) {
-                if (factory.enabled) return false;
+                if (factory.isEnabled()) return false;
             }
             boolean existNotFinished = false;
             for (final AgentBase agent : getWalkingAgentCollection()) {
@@ -949,7 +955,7 @@ public class AgentHandler {
                 if (!agent.finished()) return false;
             }
             for (AgentFactory factory : agentFactoryList) {
-                if (factory.enabled) return false;
+                if (factory.isEnabled()) return false;
             }
         }
         Itk.logInfo("finished","no more agents to generate");

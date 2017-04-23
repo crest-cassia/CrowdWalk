@@ -247,7 +247,8 @@ public abstract class AgentFactory {
     private List<String> tags = new ArrayList<String>();
     public List<String> getTags() { return tags ; }
 
-    public boolean enabled = true;
+    private boolean enabled = true;
+    public boolean isEnabled() { return enabled ; }
 
     Random random = null;
     SimTime startTime ;
@@ -314,7 +315,7 @@ public abstract class AgentFactory {
         }
     }
 
-    protected boolean finished(SimTime currentTime) {
+    protected boolean isFinished(SimTime currentTime) {
         return (currentTime.calcDifferenceFrom(startTime) > duration &&
                 generated >= total);
     }
@@ -352,9 +353,9 @@ public abstract class AgentFactory {
     public void tryUpdateAndGenerate(EvacuationSimulator simulator,
                                      SimTime currentTime,
                                      List<AgentBase> agents) {
-        if (!enabled) return;
+        if (!isEnabled()) return;
 
-        if (finished(currentTime)) {
+        if (isFinished(currentTime)) {
             enabled = false;
             return;
         }

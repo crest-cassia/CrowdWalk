@@ -146,6 +146,19 @@ import nodagumi.Itk.*;
  *        }
  *      </pre>
  *     </dd>
+ *   <dt>RUBY</dt>
+ *     <dd>
+ *       Ruby script による generation を行う。
+ *       "class" で指定された Ruby のクラス(AgentFactoryBase class の派生クラス)
+ *       のインスタンスが生成される。
+ *       "config" に、このルール専用のパラメータをJSONで指定できる。
+ *      <pre>
+ *        { "rule" : "RUBY",
+ *          "class" : __RubyClassNameInString__,
+ *          "config" : __Config__
+ *        }
+ *      </pre>
+ *     </dd>
  * </dl>
  * {@code "agentType"} の {@code "className"} および {@code "config"} については、
  * {@link nodagumi.ananPJ.Agents.AgentFactory AgentFactory} で説明されている
@@ -192,6 +205,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         RANDOM,
         EACHRANDOM,
         TIMEEVERY,
+        RUBY,
         LINER_GENERATE_AGENT_RATIO
     }
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -336,6 +350,77 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
             return jObject ;
         }
+        
+        //----------------------------------------
+        /**
+         * JSON Object からパラメータ設定
+         */
+        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+                                             Term json,
+                                             NetworkMap map) {
+            originalInfo = json.toJson() ;
+
+            // agentType & className ;
+            Term agentType = json.getArgTerm("agentType") ;
+            agentClassName = agentType.getArgString("className") ;
+            agentConf = agentType ;
+
+            // startPlace
+            if(!factoryList.scanStartLinkTag(json.getArgString("startPlace"),
+                                             map, this))
+                return null ;
+
+            // conditions
+            Term _conditions = json.getArgTerm("conditions") ;
+            if(_conditions != null) {
+                if(!_conditions.isArray()) {
+                    Itk.logError("'conditions' in generation file should be an array of tags.",
+                                 "conditions=", _conditions) ;
+                    return null ;
+                }
+                int l = _conditions.getArraySize() ;
+                conditions = new String[l] ;
+                for(int i = 0 ; i < l ; i++) {
+                    conditions[i] = _conditions.getNthString(i) ;
+                }
+            }
+
+            // startTime
+            try {
+                startTime = new SimTime(json.getArgString("startTime")) ;
+            } catch(Exception ex) {
+                return null ;
+            }
+
+            // duration
+            duration = json.getArgDouble("duration") ;
+
+            // total
+            total = json.getArgInt("total") ;
+            if (factoryList.liner_generate_agent_ratio > 0) {
+                total = (int) (total * factoryList.liner_generate_agent_ratio);
+                Itk.logInfo("Agent Population (JSON)", total);
+            }
+
+            // speedModel
+            speedModel =
+                (SpeedCalculationModel)
+                speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
+            if(speedModel == null) {
+                speedModel = factoryList.getFallbackSpeedModel() ;
+            }
+        
+            // goal
+            goal = json.getArgTerm("goal") ;
+
+            // plannedRoute
+            Term plannedRouteTerm = json.getArgTerm("plannedRoute") ;
+            plannedRoute = (plannedRouteTerm == null ?
+                            new ArrayList<Term>() :
+                            plannedRouteTerm.<Term>getTypedArray()) ;
+            
+            return this ;
+        }
     }
 
     //============================================================
@@ -360,6 +445,24 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             jObject.setArg("maxFromEach",maxFromEachPlace) ;
 
             return jObject ;
+        }
+
+        //----------------------------------------
+        /**
+         * JSON Object からパラメータ設定
+         */
+        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+                                             Term json,
+                                             NetworkMap map) {
+            GenerationConfigBase r = super.scanJson(factoryList, json, map) ;
+            
+            if(r == null) {
+                return null ;
+            }
+
+            maxFromEachPlace = json.getArgInt("maxFromEach") ;
+
+            return this ;
         }
     }
 
@@ -392,6 +495,31 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             jObject.setArg("everySeconds",everySeconds) ;
 
             return jObject ;
+        }
+
+        //----------------------------------------
+        /**
+         * JSON Object からパラメータ設定
+         */
+        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+                                             Term json,
+                                             NetworkMap map) {
+            GenerationConfigBase r = super.scanJson(factoryList, json, map) ;
+            
+            if(r == null) {
+                return null ;
+            }
+
+            // everyEndTime と everySecond の設定。
+            try {
+                String endTimeStr = json.getArgString("everyEndTime") ;
+                everyEndTime = new SimTime(endTimeStr) ;
+            } catch(Exception ex) {
+                return null ;
+            }
+            everySeconds = json.getArgInt("everySeconds") ;
+
+            return this ;
         }
     }
 
@@ -742,8 +870,8 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      */
     public void setRandom(Random _random) {
         random = _random;
-        for (AgentFactory ga : this) {
-            ga.setRandom(_random);
+        for (AgentFactory factory : this) {
+            factory.setRandom(_random);
         }
     }
 
@@ -921,86 +1049,8 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             (Rule)ruleLexicon.lookUp(json.getArgString("rule")) ;
         GenerationConfigBase genConfig = newConfigForRuleTag(ruleTag) ;
 
-        genConfig.originalInfo = json.toJson() ;
+        return genConfig.scanJson(this, json, map) ;
 
-        // agentType & className ;
-        Term agentType = json.getArgTerm("agentType") ;
-        genConfig.agentClassName = agentType.getArgString("className") ;
-        genConfig.agentConf = agentType ;
-
-        // startPlace
-        if(!scanStartLinkTag(json.getArgString("startPlace"), map, genConfig))
-            return null ;
-
-        // conditions
-        Term conditions = json.getArgTerm("conditions") ;
-        if(conditions != null) {
-            if(!conditions.isArray()) {
-                Itk.logError("'conditions' in generation file should be an array of tags.",
-                             "conditions=", conditions) ;
-                return null ;
-            }
-            int l = conditions.getArraySize() ;
-            genConfig.conditions = new String[l] ;
-            for(int i = 0 ; i < l ; i++) {
-                genConfig.conditions[i] = conditions.getNthString(i) ;
-            }
-        }
-
-        // startTime
-        try {
-            genConfig.startTime = new SimTime(json.getArgString("startTime")) ;
-        } catch(Exception ex) {
-            return null ;
-        }
-
-        // everyEndTime, everySeconds
-        if(genConfig.ruleTag == Rule.TIMEEVERY) {
-            try {
-                String endTimeStr = json.getArgString("everyEndTime") ;
-                ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
-                    new SimTime(endTimeStr) ;
-            } catch(Exception ex) {
-                return null ;
-            }
-            ((GenerationConfigForTimeEvery)genConfig).everySeconds =
-                json.getArgInt("everySeconds") ;
-        }
-
-        // duration
-        genConfig.duration = json.getArgDouble("duration") ;
-
-        // total
-        genConfig.total = json.getArgInt("total") ;
-        if (liner_generate_agent_ratio > 0) {
-            genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
-            Itk.logInfo("Agent Population (JSON)", genConfig.total);
-        }
-
-        // speedModel
-        genConfig.speedModel =
-            (SpeedCalculationModel)
-            speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
-        if(genConfig.speedModel == null) {
-            genConfig.speedModel = getFallbackSpeedModel() ;
-        }
-        
-        if (genConfig.ruleTag == Rule.EACHRANDOM) {
-            ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
-                json.getArgInt("maxFromEach") ;
-        }
-
-        // goal
-        genConfig.goal = json.getArgTerm("goal") ;
-
-        // plannedRoute
-        Term plannedRouteTerm = json.getArgTerm("plannedRoute") ;
-        genConfig.plannedRoute =
-            (plannedRouteTerm == null ?
-             new ArrayList<Term>() :
-             plannedRouteTerm.<Term>getTypedArray()) ;
-
-        return genConfig ;
     }
 
     //------------------------------------------------------------
