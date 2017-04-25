@@ -232,7 +232,7 @@ public abstract class AgentFactory {
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** 目的地 */
-    private Term goal;
+    protected Term goal;
     public Term getGoal() { return goal ; }
 
     /** 経由地 */
@@ -250,7 +250,7 @@ public abstract class AgentFactory {
     private List<String> tags = new ArrayList<String>();
     public List<String> getTags() { return tags ; }
 
-    private boolean enabled = true;
+    protected boolean enabled = true;
     public boolean isEnabled() { return enabled ; }
 
     Random random = null;
@@ -292,6 +292,7 @@ public abstract class AgentFactory {
      *  Config によるコンストラクタ
      */
     public AgentFactory(Config config, Random _random) {
+        random = _random;
         init(config, _random) ;
     }
 
@@ -312,7 +313,6 @@ public abstract class AgentFactory {
         total = config.total ;
         fallbackParameters = config.fallbackParameters ;
         speedModel = config.speedModel ;
-        random = _random;
         configLine = config.originalInfo ;
 
         parse_conditions(config.conditions);
@@ -334,6 +334,7 @@ public abstract class AgentFactory {
     //------------------------------------------------------------
     /**
      *  終了判定。
+     *  tryUpdateAndGenerate だけから参照。
      */
     protected boolean isFinished(SimTime currentTime) {
         return (currentTime.calcDifferenceFrom(startTime) > duration &&
@@ -402,31 +403,59 @@ public abstract class AgentFactory {
         /* else, no time left, must generate all remains */
 
         // fallbacks
-        Term fallbackForAgent =
-            ((fallbackParameters != null) ?
-             SetupFileInfo.filterFallbackTerm(fallbackParameters, "agent") :
-             null) ;
+        Term fallbackForAgent = getFallbackForAgent() ;
 
         /* [I.Noda] ここで Agent 生成 */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
-            AgentBase agent = null;
-            try {
-                agent = newAgentByName(agentClassName) ;
-                agent.init(random, simulator, this, currentTime,
-                           fallbackForAgent) ;
-            } catch (Exception ex ) {
-                Itk.logError("class name not found") ;
-                Itk.logError_("agentClassName", agentClassName) ;
-                ex.printStackTrace();
-                System.exit(1) ;
-            }
+            launchAgent(agentClassName,
+                        simulator,
+                        currentTime,
+                        agents,
+                        fallbackForAgent) ;
+        }
+    }
 
-            agents.add(agent);
-            placeAgent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
+    //------------------------------------------------------------
+    /**
+     * agent 一人を生成。
+     * @param agentClassName : エージェントクラス名。
+     */
+    public AgentBase launchAgent(String agentClassName,
+                                 EvacuationSimulator simulator,
+                                 SimTime currentTime,
+                                 List<AgentBase> agents,
+                                 Term fallbackForAgent) {
+        AgentBase agent = null ;
+        try {
+            agent = newAgentByName(agentClassName) ;
+            agent.init(random, simulator, this, currentTime,
+                       fallbackForAgent) ;
+        } catch (Exception ex ) {
+            Itk.logError("class name not found") ;
+            Itk.logError_("agentClassName", agentClassName) ;
+            ex.printStackTrace();
+            System.exit(1) ;
+        }
 
-            agent.prepareForSimulation() ;
-            agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
+        agents.add(agent);
+        placeAgent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
+        agent.prepareForSimulation() ;
+        agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
+        return agent ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * agent 用の fallback を取得。
+     */
+    
+    public Term getFallbackForAgent() {
+        if (fallbackParameters != null) {
+            return SetupFileInfo.filterFallbackTerm(fallbackParameters,
+                                                    "agent") ;
+        } else {
+            return null ;
         }
     }
 

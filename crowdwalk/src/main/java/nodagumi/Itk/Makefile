@@ -247,7 +247,7 @@ run3gt00r2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r2))
 
 ##-----
-SAMPLE3gt02 = sample/generatedTown/gridTown02.prop.json   # ruby generator
+SAMPLE3gt02 = sample/generatedTown/gridTown02.prop.json   # ruby factory
 run3gt02 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02))
 

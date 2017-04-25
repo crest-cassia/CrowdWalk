@@ -23,6 +23,7 @@ import net.arnx.jsonic.JSON ;
 
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
@@ -70,6 +71,8 @@ public class AgentFactoryByRuby extends AgentFactory {
     private EvacuationSimulator simulator ;
     
     public EvacuationSimulator getSimulator() { return simulator ; }
+
+    public NetworkMap getMap() { return simulator.getMap() ; }
     
     /** access to currentTime */
     private SimTime currentTime ;
@@ -81,6 +84,9 @@ public class AgentFactoryByRuby extends AgentFactory {
     private List<AgentBase> agentList ;
 
     public List<AgentBase> getAgentList() { return agentList ; }
+
+    /** work variable to keep startPlace */
+    private OBNode startPlace ;
     
     //------------------------------------------------------------
     /**
@@ -124,11 +130,20 @@ public class AgentFactoryByRuby extends AgentFactory {
     
     //------------------------------------------------------------
     /**
-     * Config によるコンストラクタ
+     *  enable にする。
+     *  （多分、使いみちはないが、makeDisable() の対照のため。)
      */
-    @Override
-    protected boolean isFinished(SimTime currentTime) {
-        return false ;
+    public void enable() {
+        enabled = true ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     *  disable にする。
+     *  （多分、使いみちはないが、makeDistable() の対照のため。)
+     */
+    public void disable() {
+        enabled = false ;
     }
 
     //------------------------------------------------------------
@@ -137,7 +152,11 @@ public class AgentFactoryByRuby extends AgentFactory {
      */
     @Override
     protected void placeAgent(AgentBase agent) {
-        agent.placeAtRandomPosition(null) ;
+        if(startPlace instanceof MapLink) {
+            agent.placeAtRandomPosition((MapLink)startPlace) ;
+        } else if(startPlace instanceof MapNode) {
+            agent.place(null, (MapNode)startPlace, 0.0) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -176,6 +195,62 @@ public class AgentFactoryByRuby extends AgentFactory {
         Itk.logInfo("AgentFactoryByRuby is called.") ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * intern
+     */
+    public Term makeSymbolTerm(String str) {
+        return new Term(str, true) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * 文字列からの SimTime 生成。
+     */
+    public SimTime getSimTime(String timeStr) {
+        return new SimTime(timeStr) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * タグ名によるリンク取得
+     */
+    public MapLinkTable getLinkTableByTag(Term tag) {
+        MapLinkTable linkTable = new MapLinkTable() ;
+        getMap().getLinks()
+            .findTaggedLinks(tag.getString(), linkTable) ;
+        return linkTable ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * タグ名によるノード取得
+     */
+    public MapNodeTable getNodeTableByTag(Term tag) {
+        MapNodeTable nodeTable = new MapNodeTable() ;
+        getMap().getNodes()
+            .findTaggedNodes(tag.getString(), nodeTable) ;
+        return nodeTable ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * タグ名によるノード取得
+     */
+    public AgentBase launchAgentWithRoute(String agentClassName,
+                                          OBNode _startPlace,
+                                          Term goalTag,
+                                          List<Term> route) {
+        startPlace = _startPlace ;
+        goal = goalTag ;
+        setPlannedRoute(route) ;
+        
+        AgentBase agent =
+            launchAgent(agentClassName, simulator, currentTime,
+                        agentList, getFallbackForAgent()) ;
+        return agent ;
+    }
+        
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
