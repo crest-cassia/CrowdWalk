@@ -353,6 +353,7 @@ public class AgentHandler {
      *		"amount_exposure"
      *		"current_status_by_exposure"
      *		"next_assigned_passage_node"
+     *	        "pedestrian_tag"
      * ※ "waiting", "in_search_target_link", "current_time" は標準では出力されない。
      * </pre>
      * 標準の出力カラムはリソースデータ "fallbackParameters.json" の
@@ -499,6 +500,10 @@ public class AgentHandler {
                                         Object agentHandlerObj) {
                         SimTime currentTime = (SimTime)timeObj ;
                         return currentTime.getAbsoluteTimeString();}})
+            .addColumn(formatter.new Column("pedestrian_tag") {
+                    public String value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return agent.getTags().toString();}})
             ;
     }
 

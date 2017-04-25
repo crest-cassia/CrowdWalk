@@ -25,6 +25,7 @@
 	       ]},
   "total":100,
   "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "conditions": ["aaa","a","b"],
   "startTime":"18:00:00","duration":500.0,
   "goal":"node_09_09",
   "plannedRoute":["node_02_09","node_04_00","node_06_09","node_08_00"]},
@@ -54,6 +55,7 @@
 	       ]},
   "total":100,
   "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "conditions": ["aaa","x","y"],
   "startTime":"18:00:00","duration":500.0,
   "goal":"node_09_09",
   "plannedRoute":["node_02_09","node_04_02","node_06_09","node_08_00"]},
@@ -119,6 +121,7 @@
 	       "rule":[]},
   "total":1000,
   "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "conditions": ["bbb","a","b"],
   "startTime":"19:00:00","duration":500.0,
   "goal":"node_09_09",
   "plannedRoute":[

@@ -46,6 +46,12 @@ public class CsvFormatter<T> {
     private String columnSeparator = "," ;
     private String rawSeparator = "," ;
 
+    /**
+     * クオート文字
+     */
+    private String quoteCharacter = "\"" ;
+    private String escapedQuoteCharacter = "\\\"" ;
+
     //------------------------------------------------------------
     /**
      * コンストラクタ。
@@ -324,6 +330,33 @@ public class CsvFormatter<T> {
 
     //------------------------------------------------------------
     /**
+     * データ列出力。
+     * @param buffer : 出力する buffer。
+     * @param i : 何カラム目かの index。セパレータ出力に使う。
+     * @param value : 出力するデータの文字列
+     * @return 内容を追加した buffer。
+     */
+    public StringBuilder outputColumnToBuffer(StringBuilder buffer,
+                                              int i, String value) {
+        if(i > 0) buffer.append(columnSeparator) ;
+        
+        boolean shouldQuote = value.contains(columnSeparator) ;
+        boolean shouldEscape = value.contains(quoteCharacter) ;
+        
+        if(shouldQuote) buffer.append(quoteCharacter) ;
+        if(shouldEscape) {
+            buffer.append(value.replaceAll(quoteCharacter,
+                                           escapedQuoteCharacter)) ;
+        } else {
+            buffer.append(value) ;
+        }
+        if(shouldQuote) buffer.append(quoteCharacter) ;
+
+        return buffer ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * データ行出力。
      * @param buffer : 出力する buffer。
      * @param object : Column#value に引き渡すデータ。
@@ -332,8 +365,8 @@ public class CsvFormatter<T> {
     public StringBuilder outputValueToBuffer(StringBuilder buffer, T object) {
 	int i = 0 ;
 	for(Column column : columnList) {
-	    if(i > 0) buffer.append(columnSeparator) ;
-	    buffer.append(column.value(object)) ;
+            outputColumnToBuffer(buffer, i,
+                                 column.value(object)) ;
 	    i++ ;
 	}
 	return buffer ;
@@ -345,8 +378,8 @@ public class CsvFormatter<T> {
 					     Object object2) {
 	int i = 0 ;
 	for(Column column : columnList) {
-	    if(i > 0) buffer.append(columnSeparator) ;
-	    buffer.append(column.value(object1, object2)) ;
+            outputColumnToBuffer(buffer, i,
+                                 column.value(object1, object2)) ;
 	    i++ ;
 	}
 	return buffer ;
@@ -358,8 +391,8 @@ public class CsvFormatter<T> {
 					     Object object2, Object object3) {
 	int i = 0 ;
 	for(Column column : columnList) {
-	    if(i > 0) buffer.append(columnSeparator) ;
-	    buffer.append(column.value(object1, object2, object3)) ;
+            outputColumnToBuffer(buffer, i,
+                                 column.value(object1, object2, object3)) ;
 	    i++ ;
 	}
 	return buffer ;

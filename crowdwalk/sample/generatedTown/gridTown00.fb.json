@@ -10,7 +10,8 @@
             "current_position_in_model_x",
             "current_position_in_model_y",
             "current_position_in_model_z",
-            "current_linkID"
+            "current_linkID",
+	    "pedestrian_tag"
         ],
         "_logColumnsOfIndividualPedestrians" : [
             "pedestrianID",
