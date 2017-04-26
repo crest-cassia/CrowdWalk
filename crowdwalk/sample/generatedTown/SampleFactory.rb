@@ -29,21 +29,33 @@ class SampleFactory < AgentFactoryBase
   #++
   ## 
   def initCycle()
+    @beginTime = getCurrentTime() ;
     @fromTag = makeSymbolTerm("major") ;
     @fromList = getLinkTableByTag(@fromTag) ;
     @toTag = makeSymbolTerm("node_09_06") ;
     @toList = getNodeTableByTag(@toTag) ;
+    @agentList = [] ;
   end
   
   #--------------------------------------------------------------
   #++
   ## 
   def cycle()
+    @currentTime = getCurrentTime() ;
+    pp [:diff, timeDiffInSec(@currentTime, @beginTime) ] ;
     @c += 1 ;
-    disable() if(@c > 10) ;
+    disable() if(@c > 10000) ;
 
+    finishAllP = true ;
+    @agentList.each{|agent|
+      finishAllP = false if(isAgentWalking(agent)) ;
+    }
+    return if(!finishAllP) ;
+
+    @agentList = [] ;
     @fromList.each{|origin|
-      launchAgentWithRoute("RationalAgent", origin, @toTag, []) ;
+      agent = launchAgentWithRoute("RationalAgent", origin, @toTag, []) ;
+      @agentList.push(agent) ;
     }
 
     pp [:c, @c] ;

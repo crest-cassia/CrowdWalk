@@ -40,7 +40,7 @@ class AgentFactoryBase
     @javaFactory = factory ;
     @config = config ;
     @fallback = fallback ;
-    @isInitialCycle = true ;
+    @isInitCycle = true ;
   end
 
   #--------------------------------------------------------------
@@ -89,7 +89,7 @@ class AgentFactoryBase
   #++
   ## 
   def tryUpdateAndGenerate()
-    initCycle() if(@isInitialCycle) ;
+    initCycle() if(@isInitCycle) ;
     @isInitCycle = false ;
     
     cycle() ;
@@ -97,9 +97,12 @@ class AgentFactoryBase
 
   #--------------------------------------------------------------
   #++
+  ## 最初の呼び出しの際の初期化。
+  ## インスタンスが作られた際には、まだ、simulator とかがバインド
+  ## されていないので、マップなどを使う初期化はこちらで行う。
   ## 
   def initCycle()
-    ## do nothing
+    ## do nothing.
   end
   
   #--------------------------------------------------------------
@@ -168,10 +171,39 @@ class AgentFactoryBase
   ## _route_ :: 経由点。Term の配列。
   def launchAgentWithRoute(agentClassName, startPlace,
                            goalTag, route)
-    @javaFactory.launchAgentWithRoute(agentClassName, startPlace,
-                                      goalTag, route) ;
+    return @javaFactory.launchAgentWithRoute(agentClassName, startPlace,
+                                             goalTag, route) ;
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## 現在時刻の取得。
+  ## *return* :: 現在時刻。SimTime のインスタンス
+  def getCurrentTime()
+    return @javaFactory.getCurrentTime() ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## 時間の差分計算。(秒)
+  ## time0 - time1 を求める。
+  ## _time0_ :: 後の時刻。SImTime のインスタンス。
+  ## _time1_ :: 前の時刻SImTime のインスタンス。
+  ## *return* :: 差を秒で表す。
+  def timeDiffInSec(time0, time1)
+    return time0.calcDifferenceFrom(time1) ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## エージェントが歩いているかどうか。
+  ## _agent_ :: 調べるエージェント。
+  ## *return* :: まだ生きていれば（歩いていれば）true。
+  def isAgentWalking(agent)
+    return !agent.isEvacuated() ;
+  end
+  
+  
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
