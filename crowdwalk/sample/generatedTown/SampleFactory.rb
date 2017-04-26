@@ -40,17 +40,14 @@ class SampleFactory < AgentFactoryBase
   ## 
   def cycle()
     @c += 1 ;
-    disable() if (@c > 10) ;
+    disable() if(@c > 10) ;
 
     @fromList.each{|origin|
       launchAgentWithRoute("RationalAgent", origin, @toTag, []) ;
     }
 
     pp [:c, @c] ;
-    pp [:time0, @time0.to_s] ;
-    pp [:links, @linkList.to_s] ;
-    pp [:nodes, @nodeList.to_s] ;
-    ## return nil
+    ##pp [:time0, @time0.to_s] ;
   end
 
   #--============================================================

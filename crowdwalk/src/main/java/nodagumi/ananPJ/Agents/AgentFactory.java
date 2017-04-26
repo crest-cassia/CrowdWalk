@@ -243,8 +243,10 @@ public abstract class AgentFactory {
     }
     
     /** スピードモデル */
-    private SpeedCalculationModel speedModel = null;
+    protected SpeedCalculationModel speedModel = null;
     public SpeedCalculationModel getSpeedModel() { return speedModel ; }
+    public SpeedCalculationModel setSpeedModel(SpeedCalculationModel _model) {
+        return speedModel = _model ; }
 
     /** エージェントに付与するタグ */
     private List<String> tags = new ArrayList<String>();

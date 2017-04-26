@@ -436,13 +436,8 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             }
 
             // speedModel
-            speedModel =
-                (SpeedCalculationModel)
-                speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
-            if(speedModel == null) {
-                speedModel = factoryList.getFallbackSpeedModel() ;
-            }
-        
+            scanJsonForSpeedModel(factoryList, json) ;
+
             // goal
             goal = json.getArgTerm("goal") ;
 
@@ -453,6 +448,20 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                             plannedRouteTerm.<Term>getTypedArray()) ;
             
             return this ;
+        }
+
+        //----------------------------------------
+        /**
+         * speed model の取得。
+         */
+        public void scanJsonForSpeedModel(AgentGenerationFile factoryList,
+                                          Term json) {
+            speedModel =
+                (SpeedCalculationModel)
+                speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
+            if(speedModel == null) {
+                speedModel = factoryList.getFallbackSpeedModel() ;
+            }
         }
 
         //----------------------------------------
@@ -801,6 +810,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
             //エラーを避けるために。
             plannedRoute = new ArrayList<Term>() ;
+
+            // speedModel
+            scanJsonForSpeedModel(factoryList, json) ;
             
             return this ;
         }
@@ -1429,7 +1441,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
     //------------------------------------------------------------
     /**
-     * エージェント生成
+     * Agent Factory の追加。
      */
     private void addFactoriesByConfig(NetworkMap map,
                                       GenerationConfigBase genConfig) {

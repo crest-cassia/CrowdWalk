@@ -60,11 +60,6 @@ public class AgentFactoryByRuby extends AgentFactory {
      */
     public Term configForRuby ;
     
-    /**
-     * fallback
-     */
-    public Term fallbackParameters ;
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 以下、ruby との情報受け渡し用
     /** access to simulator */
@@ -100,7 +95,6 @@ public class AgentFactoryByRuby extends AgentFactory {
         
         rubyFactoryClassName = config.ruleClass ;
         configForRuby = config.config ;
-        fallbackParameters = config.fallbackParameters ;
     }
 
     //------------------------------------------------------------
@@ -109,6 +103,8 @@ public class AgentFactoryByRuby extends AgentFactory {
      */
     public void init(Config config, Random random) {
         setPlannedRoute(config.plannedRoute) ;  // 実質意味はないが、エラー回避のため
+        fallbackParameters = config.fallbackParameters ;
+        speedModel = config.speedModel ;
     }
     //------------------------------------------------------------
     /**
@@ -190,9 +186,9 @@ public class AgentFactoryByRuby extends AgentFactory {
         this.currentTime = currentTime ;
         this.agentList = agentList ;
 
-        rubyEngine.callMethod(rubyFactory, "tryUpdateAndGenerate") ;
-        
-        Itk.logInfo("AgentFactoryByRuby is called.") ;
+        if(isEnabled()) {
+            rubyEngine.callMethod(rubyFactory, "tryUpdateAndGenerate") ;
+        }
     }
 
     //------------------------------------------------------------
@@ -244,10 +240,12 @@ public class AgentFactoryByRuby extends AgentFactory {
         startPlace = _startPlace ;
         goal = goalTag ;
         setPlannedRoute(route) ;
+
+        Term fallbackForAgent = getFallbackForAgent() ;
         
         AgentBase agent =
             launchAgent(agentClassName, simulator, currentTime,
-                        agentList, getFallbackForAgent()) ;
+                        agentList, fallbackForAgent) ;
         return agent ;
     }
         
