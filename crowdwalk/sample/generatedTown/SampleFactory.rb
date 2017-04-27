@@ -35,6 +35,7 @@ class SampleFactory < AgentFactoryBase
     @toTag = makeSymbolTerm("node_09_06") ;
     @toList = getNodeTableByTag(@toTag) ;
     @agentList = [] ;
+    @c = 0 ;
   end
   
   #--------------------------------------------------------------
@@ -43,8 +44,7 @@ class SampleFactory < AgentFactoryBase
   def cycle()
     @currentTime = getCurrentTime() ;
     pp [:diff, timeDiffInSec(@currentTime, @beginTime) ] ;
-    @c += 1 ;
-    disable() if(@c > 10000) ;
+    disable() if(@c >= 10) ;
 
     finishAllP = true ;
     @agentList.each{|agent|
@@ -57,6 +57,7 @@ class SampleFactory < AgentFactoryBase
       agent = launchAgentWithRoute("RationalAgent", origin, @toTag, []) ;
       @agentList.push(agent) ;
     }
+    @c += 1 ;
 
     pp [:c, @c] ;
     ##pp [:time0, @time0.to_s] ;
