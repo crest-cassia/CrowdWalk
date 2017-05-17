@@ -43,8 +43,9 @@
     show_3D_polygon: true,
     //show_3D_polygon: false,
 
-    simulation_window_open: true,
-    //simulation_window_open: false,
-    //auto_simulation_start: false,
-    auto_simulation_start: true
+    simulation_window_open: false,
+    auto_simulation_start: false,
+    //simulation_window_open: true,
+    //auto_simulation_start: true,
+    '':null
 }
