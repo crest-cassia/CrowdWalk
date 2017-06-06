@@ -4,7 +4,7 @@
   "io_handler_type":"none",
   "map_file":"ginza00c.map.xml",
   "generation_file":"ginza00d.gen.json",
-  "scenario_file":"ginza00.scnr.json",
+  "scenario_file":"ginza00d.scnr.json",
   "fallback_file":"ginza00.fb.json",
   "node_appearance_file":"ginza00.nodeApp.json",
   "link_appearance_file":"ginza00.linkApp.json",
@@ -17,6 +17,7 @@
   "time_series_log_path":"/tmp",
   "time_series_log_interval":1,
   "_screenshot_dir":",Screenshots",
+  "individual_pedestrians_log_dir":",Log",
   "loop_count":1,
   "exit_count":0,
   "all_agent_speed_zero_break":false
