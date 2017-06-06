@@ -5,7 +5,7 @@
   "map_file":"ginza00c.map.xml",
   "generation_file":"ginza00d.gen.json",
   "scenario_file":"ginza00d.scnr.json",
-  "fallback_file":"ginza00.fb.json",
+  "fallback_file":"ginza00d.fb.json",
   "node_appearance_file":"ginza00.nodeApp.json",
   "link_appearance_file":"ginza00.linkApp.json",
   "timer_enable":true,

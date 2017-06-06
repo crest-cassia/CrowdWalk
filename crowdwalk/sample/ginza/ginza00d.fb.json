@@ -1,0 +1,11 @@
+{
+    "agent" : {"xA_0" : 0.8 },
+    "generation" : {
+        "speedModel" : "PLAIN",
+        "_speedModel" : "CROSSING",
+        "_" : null
+    },
+    "_link" : { "gathering_location_width" : 60.0 },
+    "link" : { "gathering_location_width" : 6.0 },
+    "_" : null
+}

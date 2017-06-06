@@ -314,7 +314,7 @@ run4gnz0 ::
 ##-----
 SAMPLE4gnz0d = sample/ginza/ginza00d.prop.json   # Ginza
 run4gnz0d ::
-	(cd $(BASEDIR) ; cd `dirname $(SAMPLE4gnz0d)` ; time -p bash ../../quickstart.sh --log-level Info `basename $(SAMPLE4gnz0d)`)
+	(cd $(BASEDIR) ; cd `dirname $(SAMPLE4gnz0d)` ; time -p bash ../../quickstart.sh --log-level Info --cui `basename $(SAMPLE4gnz0d)`)
 
 ##-----
 SAMPLE5loop0 = sample/generatedTown/gridTown01s.prop.json   # stay loop

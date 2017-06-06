@@ -7,7 +7,6 @@
                                "rule" : [] },
                 "_total" : 10,
                 "total" : 20,
-                "speedMode" : "PLAIN",
                 "conditions" : null,
                 "duration" : 1800,
                 "plannedRoute" : [] },
