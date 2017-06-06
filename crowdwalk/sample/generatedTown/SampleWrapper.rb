@@ -43,7 +43,7 @@ class SampleWrapper < CrowdWalkWrapper
     @networkMap.eachLink(){|link|
       tag = link.getNthTag(0) ;
       if(!tag.nil? && tag =~ /link_node_04/ && tag =~ /__node_04/) then
-        link.addTag("major") ;
+        link.addTag(Term_major) ;
         p ['link.addTag', link.getID(), link.getTagString()] ;
       end
       if(!tag.nil? && tag =~ /04__/ && tag =~ /04$/) then
@@ -54,6 +54,8 @@ class SampleWrapper < CrowdWalkWrapper
     rebuildRoutes() ;
     p ['rebuildRoutes()'] ;
   end
+
+  Term_major = intern("major") ;
 
   #--------------------------------------------------------------
   #++

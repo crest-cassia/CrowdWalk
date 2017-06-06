@@ -149,11 +149,13 @@ class SampleAgent < RubyAgentBase
   ## 思考ルーチン (テスト用)
   def thinkCycle0()
     pp ['SampleAgent', :thinkCycle, getAgentId()] ;
-    addAgentTag("hogehoge") ;
+    addAgentTag(Term_hogehoge) ;
     pp [:agentTags, ItkTerm.toRuby(getAgentTags())] ;
     pp [:linkTags, ItkTerm.toRuby(getPlaceTags())] ;
     return super() ;
   end
+
+  Term_hogehoge = Itk.Term.ensureTerm("hogehoge") ;
 
 end # class SampleAgent
 
