@@ -1970,7 +1970,7 @@ public class SimulationPanel3D extends StackPane {
 
         Shape3D shape = agentShapes.get(agent);
         if (shape == null) {
-            Itk.logInfo("moveAgent",
+            Itk.logWarn("moveAgent",
 			"agent not registered yet:", agent.getID());
         } else {
             double x = shape.getTranslateX();
@@ -1998,8 +1998,11 @@ public class SimulationPanel3D extends StackPane {
 
         Shape3D shape = agentShapes.get(agent);
         if (shape == null) {
+	    // これは、常時起こりうるので、特に気にしないことにする。
+	    /*
             Itk.logInfo("changeAgentColor",
 			"agent not registered yet:", agent.getID());
+	    */
         } else {
             Color color = getAgentColor(triage, speed, defaultColorOfAgents.get(agent));
             PhongMaterial material = (PhongMaterial)shape.getMaterial();
@@ -2015,7 +2018,7 @@ public class SimulationPanel3D extends StackPane {
     public void updateAgentsColor(AgentBase agent) {
         Shape3D shape = agentShapes.get(agent);
         if (shape == null) {
-            Itk.logInfo("updateAgentsColor",
+            Itk.logWarn("updateAgentsColor",
 			"agent not registered yet:", agent.getID());
         } else {
             Color color = getAgentColor(agent);
