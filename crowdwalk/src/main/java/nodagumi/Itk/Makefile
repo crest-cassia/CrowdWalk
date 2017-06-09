@@ -40,6 +40,9 @@ doc-old ::
 #	-charset utf-8 -private -subpackages nodagumi)
 #	javadoc -d doc -encoding utf-8 -charset utf-8 $(SRCFILES)
 
+clean ::
+	( cd $(BASEDIR) ; gradle clean )
+
 build : build_v
 
 ## quiet

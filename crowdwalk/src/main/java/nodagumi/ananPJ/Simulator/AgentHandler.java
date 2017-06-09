@@ -353,8 +353,10 @@ public class AgentHandler {
      *		"amount_exposure"
      *		"current_status_by_exposure"
      *		"next_assigned_passage_node"
-     *	        "pedestrian_tag"
-     * ※ "waiting", "in_search_target_link", "current_time" は標準では出力されない。
+     * ※ 以下のものはデフォルトでは出力されない。（以下の方法で指定すれば出力）
+     *          "waiting"
+     *          "in_search_target_link"
+     *          "current_time"
      * </pre>
      * 標準の出力カラムはリソースデータ "fallbackParameters.json" の
      * agentHandler/logColumnsOfIndividualPedestrians で定義されている。
@@ -521,9 +523,15 @@ public class AgentHandler {
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * EvacuatedAgentsLogger
+     * EvacuatedAgentsLogger.
+     * ゴールノードごとの脱出したエージェント数を各時刻毎に出力する。
+     * フォーマットは、
+     * <pre>
+     *     先頭行：各目的地の名前（タグ）のリスト
+     *     2行目以降：最初のサイクルより、各時刻毎の出口の人数を、各欄に出力。
+     * </pre>
      */
-    private Logger evacuatedAgentsLogger = null;
+    public Logger evacuatedAgentsLogger = null; // document へ出力のため、public
     private CsvFormatter<HashMap<MapNode, Integer>> evacuatedAgentsLoggerFormatter =
         new CsvFormatter<HashMap<MapNode, Integer>>() ;
 

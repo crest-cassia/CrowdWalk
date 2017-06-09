@@ -77,5 +77,47 @@
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Pollution} </li>
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Flood} </li>
  * </ul>
+ * <!- ============================================================ -->
+ * <hr>
+ * <h3>ログファイルの種類と形式</h3>
+ * <ul>
+ *  <!- ============================== -->
+ *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#individualPedestriansLoggerFormatter individual_pedestrian_log} 
+ *       : 各時刻のエージェント情報のログ
+ *   <ul> 
+ *    <li> {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties} 
+ *        の individual_pedestrians_log_dir を指定する。</li>
+ *    <li> 出力内容や出力時間間隔は<a href="#fallback">fallback</a>で指定。</li>
+ *    <li> 出力可能項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#individualPedestriansLoggerFormatter} 参照。</li>
+ *   </ul> </li>
+ *  <!- ============================== -->
+ *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter agent_movement_history_file}
+ *       : ゴールまでたどり着いたエージェントのゴールした時点でのログ
+ *   <ul> 
+ *    <li> {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties} 
+ *        の agent_movement_history_file で指定する。</li>
+ *    <li> 出力項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter} 参照。</li>
+ *   </ul> </li>
+ *  <!- ============================== -->
+ *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#evacuatedAgentsLogger evacuated_agents_log}
+ *       : ゴールノード別の脱出エージェント数をステップごとに記録するログ
+ *   <ul> 
+ *    <li> {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties} 
+ *        の evacuated_agents_log_file で指定する。</li>
+ *    <li> 出力項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#evacuatedAgentsLogger} 参照。</li>
+ *   </ul> </li>
+ *  <!- ============================== -->
+ *  <li> record_simulation_screen
+ *       : シミュレーション画面のスクリーンショットを記録する。
+ *   <ul> 
+ *    <li> {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties} 
+ *        の record_simulation_screen, screenshot_dir で指定する。</li>
+ *    <li> 出力形式は、
+ *         {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties} 
+ *        の screenshot_image_type で指定。
+ *   </ul> </li>
+ *  <!- ============================== -->
+ * </ul>
+
  */
 package nodagumi.ananPJ;
