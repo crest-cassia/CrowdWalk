@@ -521,20 +521,59 @@ public class AgentHandler {
     private int tickIntervalForIndividualPedestriansLog
         = Fallback_tickIntervalForIndividualPedestriansLog ;
     
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * EvacuatedAgentLogger Logging Format Type.
+     */
+    static public enum EvacuatedAgentLogType {
+        /** original CSV format. */
+        Csv,
+        /** Json per line for each agent. */
+        JsonEachLine
+    }
+
+    //============================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * Lexicon for Generation Rule
+     */
+    static public Lexicon evaculatedAgentLogTypeLexicon = new Lexicon() ;
+    static {
+        // EvacuatedAgentLogType で定義された名前をそのまま文字列で Lexicon を
+        // 引けるようにする。
+        evaculatedAgentLogTypeLexicon
+            .registerEnum(EvacuatedAgentLogType.class) ;
+    }
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * EvacuatedAgentsLogger.
+     * エージェントの脱出時のログ。
      * ゴールノードごとの脱出したエージェント数を各時刻毎に出力する。
-     * フォーマットは、
+     * CSV の時のフォーマットは、
      * <pre>
      *     先頭行：各目的地の名前（タグ）のリスト
      *     2行目以降：最初のサイクルより、各時刻毎の出口の人数を、各欄に出力。
      * </pre>
      */
     public Logger evacuatedAgentsLogger = null; // document へ出力のため、public
-    private CsvFormatter<HashMap<MapNode, Integer>> evacuatedAgentsLoggerFormatter =
+    
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェントの脱出時ログのタイプ。
+     */
+    private EvacuatedAgentLogType evacuatedAgentsLogType =
+        EvacuatedAgentLogType.Csv ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * CSV フォーマットの際のフォーマッター。
+     */
+    private CsvFormatter<HashMap<MapNode, Integer>>
+        evacuatedAgentsLoggerFormatter =
         new CsvFormatter<HashMap<MapNode, Integer>>() ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ゴールノードごとの脱出したエージェント数(カウントアップする)
      */
@@ -1278,7 +1317,7 @@ public class AgentHandler {
             }
             if (evacuatedAgentsPath != null) {
                 initEvacuatedAgentsLogger("evacuated_agents_log",
-                                               evacuatedAgentsPath);
+                                          evacuatedAgentsPath);
             }
         } catch(Exception e) {
             Itk.logError("can not setup Logger",e.getMessage()) ;
