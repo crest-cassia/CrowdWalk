@@ -50,6 +50,8 @@
             "next_assigned_passage_node"
         ],
 	"tickIntervalForIndividualPedestriansLog" : 1,
+	"_evacuatedAgentsLogType" : "Csv",
+	"evacuatedAgentsLogType" : "JsonEachLine",
         "_" : null
     },
     "link" : {

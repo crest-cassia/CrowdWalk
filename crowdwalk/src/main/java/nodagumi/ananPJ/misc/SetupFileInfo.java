@@ -17,6 +17,7 @@ import net.arnx.jsonic.JSON ;
 
 import nodagumi.Itk.Itk;
 import nodagumi.Itk.Term;
+import nodagumi.Itk.Lexicon;
 
 //======================================================================
 /**
@@ -304,7 +305,7 @@ public class SetupFileInfo {
     //============================================================
     //------------------------------------------------------------
     /**
-     * fallback の fetch (double)
+     * fallback の fetch (double)。
      * @param fallbacks : filter する fallback
      * @param tag : fallbacks の中から、tag をたどって filter する。
      * @param finalFallbackValue : 最後の値
@@ -317,7 +318,7 @@ public class SetupFileInfo {
     //============================================================
     //------------------------------------------------------------
     /**
-     * fallback の fetch (int)
+     * fallback の fetch (int)。
      * @param fallbacks : filter する fallback
      * @param tag : fallbacks の中から、tag をたどって filter する。
      * @param finalFallbackValue : 最後の値
@@ -330,7 +331,7 @@ public class SetupFileInfo {
     //============================================================
     //------------------------------------------------------------
     /**
-     * fallback の fetch (boolean)
+     * fallback の fetch (boolean)。
      * @param fallbacks : filter する fallback
      * @param tag : fallbacks の中から、tag をたどって filter する。
      * @param finalFallbackValue : 最後の値
@@ -338,6 +339,37 @@ public class SetupFileInfo {
     static public boolean fetchFallbackBoolean(Term fallbacks, String tag,
                                                boolean finalFallbackValue) {
         return fallbacks.fetchArgBoolean(tag, FallbackSlot, finalFallbackValue) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * fallback の fetch (Lexiconを使ってObjectを取得)。
+     * @param fallbacks : filter する fallback
+     * @param lexicon : 値を変換するための Lexicon。
+     * @param tag : fallbacks の中から、tag をたどって filter する。
+     * @param finalFallbackValue : 最後の値
+     */
+    static public Object fetchFallbackObjectViaLexicon(Term fallbacks,
+                                                       Lexicon lexicon,
+                                                       String tag,
+                                                       Object finalFallbackValue) {
+        String word = fetchFallbackString(fallbacks, tag, null) ;
+        if(word == null) {
+            return finalFallbackValue ;
+        } else {
+            Object value = lexicon.lookUp(word) ;
+            if(value != null) {
+                return value ;
+            } else {
+                Itk.dumpStackTrace() ;
+                Itk.logError("Unknown word in lexicon",
+                             " lookup tag=", tag, ";",
+                             " word=", word) ;
+                Itk.quitByError() ;
+                return null ; // never reach here.
+            }
+        }
     }
 
     //============================================================

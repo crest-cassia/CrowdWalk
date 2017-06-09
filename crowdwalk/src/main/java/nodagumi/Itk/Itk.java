@@ -725,6 +725,33 @@ public class Itk {
     }
 
     //============================================================
+    // Exit from running.
+    //========================================
+    //----------------------------------------
+    /**
+     * exit safely.
+     */
+    static public void quitSafely() {
+        System.exit(0) ;
+    }
+
+    //----------------------------------------
+    /**
+     * exit by error.
+     */
+    static public void quitByError() {
+        System.exit(1) ;
+    }
+    
+    //----------------------------------------
+    /**
+     * exit for test.
+     */
+    static public void quitForTest() {
+        System.exit(1) ;
+    }
+    
+    //============================================================
     /**
      * JSON handling class
      */

@@ -526,7 +526,7 @@ public class AgentHandler {
     /**
      * EvacuatedAgentLogger Logging Format Type.
      */
-    static public enum EvacuatedAgentLogType {
+    static public enum EvacuatedAgentsLogType {
         /** original CSV format. */
         Csv,
         /** Json per line for each agent. */
@@ -540,10 +540,10 @@ public class AgentHandler {
      */
     static public Lexicon evaculatedAgentLogTypeLexicon = new Lexicon() ;
     static {
-        // EvacuatedAgentLogType で定義された名前をそのまま文字列で Lexicon を
+        // EvacuatedAgentsLogType で定義された名前をそのまま文字列で Lexicon を
         // 引けるようにする。
         evaculatedAgentLogTypeLexicon
-            .registerEnum(EvacuatedAgentLogType.class) ;
+            .registerEnum(EvacuatedAgentsLogType.class) ;
     }
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -562,8 +562,8 @@ public class AgentHandler {
     /**
      * エージェントの脱出時ログのタイプ。
      */
-    private EvacuatedAgentLogType evacuatedAgentsLogType =
-        EvacuatedAgentLogType.Csv ;
+    private EvacuatedAgentsLogType evacuatedAgentsLogType =
+        EvacuatedAgentsLogType.Csv ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -577,7 +577,7 @@ public class AgentHandler {
     /**
      * ゴールノードごとの脱出したエージェント数(カウントアップする)
      */
-    private HashMap<MapNode, Integer> evacuatedAgentCountByExit =
+    private HashMap<MapNode, Integer> evacuatedAgentsCountByExit =
         new LinkedHashMap<MapNode, Integer>();
 
     //------------------------------------------------------------
@@ -592,28 +592,48 @@ public class AgentHandler {
         random = simulator.getRandom();
         setMap(simulator.getMap()) ;
 
-        // パラメータ設定
+        // fallback の取得
         Term wholeFallback = simulator.getFallbackParameters();
         Term fallback =
-            SetupFileInfo.filterFallbackTerm(wholeFallback, "agentHandler") ;
-        zeroSpeedThreshold =
-            SetupFileInfo.fetchFallbackDouble(fallback,
-                                              "zeroSpeedThreshold",
-                                              zeroSpeedThreshold) ;
-        searchTargetLinkTag = SetupFileInfo.fetchFallbackString(fallback,
-                "searchTargetLinkTag", searchTargetLinkTag);
+            SetupFileInfo
+            .filterFallbackTerm(wholeFallback, "agentHandler") ;
 
-        Term logColumns = SetupFileInfo.fetchFallbackTerm(fallback,
-                "logColumnsOfIndividualPedestrians", Term.newArrayTerm());
+        // zero speed threshold
+        zeroSpeedThreshold =
+            SetupFileInfo
+            .fetchFallbackDouble(fallback,
+                                 "zeroSpeedThreshold", zeroSpeedThreshold) ;
+        // search target link tag
+        searchTargetLinkTag =
+            SetupFileInfo
+            .fetchFallbackString(fallback,
+                                 "searchTargetLinkTag", searchTargetLinkTag);
+
+        // columns of individual pedestrians log
+        Term logColumns =
+            SetupFileInfo
+            .fetchFallbackTerm(fallback,
+                               "logColumnsOfIndividualPedestrians",
+                               Term.newArrayTerm());
         for (int i = 0; i < logColumns.getArraySize(); i++) {
             Term columnName = logColumns.getNthTerm(i);
             logColumnsOfIndividualPedestrians.add(columnName.getString());
         }
+        // tick size of individual pedestrian log
         tickIntervalForIndividualPedestriansLog =
             SetupFileInfo
             .fetchFallbackInt(fallback,
                               "tickIntervalForIndividualPedestriansLog",
                               tickIntervalForIndividualPedestriansLog) ;
+        // evacuated agents log type
+        evacuatedAgentsLogType =
+            (EvacuatedAgentsLogType)
+            SetupFileInfo
+            .fetchFallbackObjectViaLexicon(fallback,
+                                           evaculatedAgentLogTypeLexicon,
+                                           "evacuatedAgentsLogType",
+                                           evacuatedAgentsLogType) ;
+        Itk.dbgVal("evacuatedAgentsLogType", evacuatedAgentsLogType) ;
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -874,7 +894,7 @@ public class AgentHandler {
 
         if (evacuatedAgentsLogger != null) {
             evacuatedAgentsLoggerFormatter.outputValueToLoggerInfo(
-                    evacuatedAgentsLogger, evacuatedAgentCountByExit);
+                    evacuatedAgentsLogger, evacuatedAgentsCountByExit);
         }
     }
 
@@ -894,13 +914,13 @@ public class AgentHandler {
         }
         if (evacuatedAgentsLogger != null) {
             MapNode exitNode = agent.getPrevNode();
-            Integer counter = evacuatedAgentCountByExit.get(exitNode);
+            Integer counter = evacuatedAgentsCountByExit.get(exitNode);
             if (counter == null) {
                 Itk.logWarn("Evacuated from unregistered goal", exitNode.toShortInfo());
                 return;
             }
             counter += 1;
-            evacuatedAgentCountByExit.put(exitNode, counter);
+            evacuatedAgentsCountByExit.put(exitNode, counter);
         }
     }
 
@@ -935,7 +955,7 @@ public class AgentHandler {
         for (final AgentBase agent : getWalkingAgentCollection()) {
             if (!agent.isEvacuated()) {
                 // (do nothing)
-                // evacuatedAgentCount++;
+                // evacuatedAgentsCount++;
             } else {
                 double damage = agent.obstructer.accumulatedValueForLog() ;
             }
@@ -1521,7 +1541,7 @@ public class AgentHandler {
                                 return agentCounter.get(node).toString();
                             }
                         });
-                    evacuatedAgentCountByExit.put(node, 0);
+                    evacuatedAgentsCountByExit.put(node, 0);
                     break;
                 }
             }

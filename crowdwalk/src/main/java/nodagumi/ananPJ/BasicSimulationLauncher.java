@@ -157,7 +157,7 @@ public abstract class BasicSimulationLauncher {
 
     /*****/
     /**
-     * マップ取得
+     * 設定取得
      */
     public SetupFileInfo getSetupFileInfo() { return setupFileInfo; }
 
