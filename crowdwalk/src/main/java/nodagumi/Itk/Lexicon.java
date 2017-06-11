@@ -86,8 +86,8 @@ public class Lexicon {
      * @param forceP 上書きするかどうか
      */
     public Lexicon register(String word, 
-                           Object meaning,
-                           boolean forceP) {
+                            Object meaning,
+                            boolean forceP) {
         if((! forceP) && (table.containsKey(word))) {
             Itk.logWarn("duplicated word entry in a lexicon:",
                         word + "(meaning=" + meaning.toString() + ")" +

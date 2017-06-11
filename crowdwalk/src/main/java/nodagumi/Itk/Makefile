@@ -21,12 +21,14 @@ BASEDIR = ../../../../..
 JARDIR = $(BASEDIR)/libs/jar
 CLASSDIR = $(BASEDIR)/build/classes/main
 #CLASSDIR = $(BASEDIR)/build/libs/netmas.jar
+CWJAR = $(BASEDIR)/build/libs/crowdwalk.jar
 #JARLIST = junit-4.12 hamcrest-core-1.3 jsonic-1.3.7 jruby
 JARLIST = hamcrest-core-1.3 jsonic-1.3.7 jruby
 JARS = $(subst $( ),:,$(foreach jar,$(JARLIST),$(JARDIR)/$(jar).jar))
 CLASSPATH = $(CLASSDIR):$(JARS)
 JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
-JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar
+#JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar
+JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar:$(CWJAR)
 
 ##------------------------------------------------------------
 doc ::
@@ -74,6 +76,9 @@ test_Term ::
 
 test_CsvFormatter ::
 	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).CsvFormatter_Test
+
+test_JsonFormatter ::
+	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).JsonFormatter_Test
 
 test_ItkRuby ::
 	java -cp $(JUNITCLASSPATH) $(JUNITCLASS) $(PACKAGE).ItkRuby_Test

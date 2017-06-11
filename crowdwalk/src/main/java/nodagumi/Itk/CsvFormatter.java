@@ -98,12 +98,11 @@ public class CsvFormatter<T> {
      * header名によるColumn情報追加。
      * 以下のように記述することを想定。
      * <pre>{@code
-     *    csvFormatter.addColumn(csvFormatter.new Column("foo"){
-     *         public String value(T object) { return object.foo() ; }
-     *         }) ;
+     *    csvFormatter.addColumn("foo") ;
      * }</pre>
-     * 同時に、registerColumnも行う。
-     * @param columnName:: column 情報
+     * 指定された columnName に対応する Column の定義は、すでに registerColumn
+     * で行われているものとする。
+     * @param columnName:: column の名前
      */
     public CsvFormatter addColumn(String columnName) {
         Column column = columnTable.get(columnName) ;
