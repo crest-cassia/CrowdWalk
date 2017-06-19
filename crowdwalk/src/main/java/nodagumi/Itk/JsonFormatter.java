@@ -353,24 +353,9 @@ public class JsonFormatter<T> {
      * @param logger : 出力する Logger
      * @param object : Member#value に引き渡すデータ。
      */
-    public void outputRecordToLoggerInfo(Logger logger, T object) {
-	StringBuilder buffer = outputRecordToBuffer(object) ;
-	logger.info(buffer.toString()) ;
-    }
-
-    /**
-     */
-    public void outputRecordToLoggerInfo(Logger logger, T object1,
-                                         Object object2) {
-	StringBuilder buffer = outputRecordToBuffer(object1, object2) ;
-	logger.info(buffer.toString()) ;
-    }
-
-    /**
-     */
-    public void outputRecordToLoggerInfo(Logger logger, T object1,
-					Object object2, Object object3) {
-	StringBuilder buffer = outputRecordToBuffer(object1, object2, object3) ;
+    public void outputRecordToLoggerInfo(Logger logger, T object,
+                                         Object... auxObjects) {
+	StringBuilder buffer = outputRecordToBuffer(object, auxObjects) ;
 	logger.info(buffer.toString()) ;
     }
 
@@ -380,36 +365,10 @@ public class JsonFormatter<T> {
      * @param writer : 出力する Writer
      * @param object : Column#value に引き渡すデータ。
      */
-    public void outputRecordToWriter(Writer writer, T object) {
-	StringBuilder buffer = outputRecordToBuffer(object) ;
+    public void outputRecordToWriter(Writer writer, T object,
+                                     Object... auxObjects) {
+	StringBuilder buffer = outputRecordToBuffer(object, auxObjects) ;
 	buffer.append("\n") ;
-	try {
-	    writer.write(buffer.toString()) ;
-	} catch(Exception ex) {
-	    ex.printStackTrace() ;
-	    Itk.logError("IOException: ", writer, buffer) ;
-	}
-    }
-
-    /**
-     */
-    public void outputRecordToWriter(Writer writer, T object1,
-                                     Object object2) {
-	StringBuilder buffer = outputRecordToBuffer(object1, object2) ;
-	buffer.append("\n") ;
-	try {
-	    writer.write(buffer.toString()) ;
-	} catch(Exception ex) {
-	    ex.printStackTrace() ;
-	    Itk.logError("IOException: ", writer, buffer) ;
-	}
-    }
-
-    /**
-     */
-    public void outputRecordToWriter(Writer writer, T object1,
-				    Object object2, Object object3) {
-	StringBuilder buffer = outputRecordToBuffer(object1, object2, object3) ;
 	try {
 	    writer.write(buffer.toString()) ;
 	} catch(Exception ex) {
@@ -424,24 +383,9 @@ public class JsonFormatter<T> {
      * @param stream : 出力する Stream
      * @param object : Member#value に引き渡すデータ。
      */
-    public void outputRecordToStream(PrintStream stream, T object) {
-	StringBuilder buffer = outputRecordToBuffer(object) ;
-	stream.println(buffer.toString()) ;
-    }
-
-    /**
-     */
-    public void outputRecordToStream(PrintStream stream, T object1,
-				    Object object2) {
-	StringBuilder buffer = outputRecordToBuffer(object1, object2) ;
-	stream.println(buffer.toString()) ;
-    }
-
-    /**
-     */
-    public void outputRecordToStream(PrintStream stream, T object1,
-				    Object object2, Object object3) {
-	StringBuilder buffer = outputRecordToBuffer(object1, object2, object3) ;
+    public void outputRecordToStream(PrintStream stream, T object,
+                                     Object... auxObjects) {
+	StringBuilder buffer = outputRecordToBuffer(object, auxObjects) ;
 	stream.println(buffer.toString()) ;
     }
 
@@ -451,21 +395,10 @@ public class JsonFormatter<T> {
      * @param object : Member#value に引き渡すデータ。
      * @return 内容を追加した buffer。
      */
-    public StringBuilder outputRecordToBuffer(T object) {
-	return outputRecordToBuffer(new StringBuilder(), object) ;
-    }
-
-    /**
-     */
-    public StringBuilder outputRecordToBuffer(T object1, Object object2) {
-	return outputRecordToBuffer(new StringBuilder(), object1, object2) ;
-    }
-
-    /**
-     */
-    public StringBuilder outputRecordToBuffer(T object1, Object object2,
-					     Object object3) {
-	return outputRecordToBuffer(new StringBuilder(), object1, object2, object3);
+    public StringBuilder outputRecordToBuffer(T object,
+                                              Object... auxObjects) {
+	return outputRecordToBuffer(new StringBuilder(), object,
+                                    auxObjects) ;
     }
 
     //------------------------------------------------------------
@@ -475,37 +408,26 @@ public class JsonFormatter<T> {
      * @param object : Column#value に引き渡すデータ。
      * @return 内容を追加した buffer。
      */
-    public StringBuilder outputRecordToBuffer(StringBuilder buffer, T object) {
+    public StringBuilder outputRecordToBuffer(StringBuilder buffer, T object,
+                                              Object... auxObjects) {
         Term term = new Term() ;
 	for(Member member : memberList) {
-            addMemberInTerm(term, member,
-                            member.value(object)) ;
-	}
-
-	return outputTermToBuffer(buffer, term) ;
-    }
-
-    /**
-     */
-    public StringBuilder outputRecordToBuffer(StringBuilder buffer, T object1,
-					     Object object2) {
-        Term term = new Term() ;
-	for(Member member : memberList) {
-            addMemberInTerm(term, member,
-                            member.value(object1, object2)) ;
-	}
-
-	return outputTermToBuffer(buffer, term) ;
-    }
-
-    /**
-     */
-    public StringBuilder outputRecordToBuffer(StringBuilder buffer, T object1,
-					     Object object2, Object object3) {
-        Term term = new Term() ;
-	for(Member member : memberList) {
-            addMemberInTerm(term, member,
-                            member.value(object1, object2, object3)) ;
+            Object value = null ;
+            switch(auxObjects.length) {
+            case 0:
+                value = member.value(object) ;
+                break ;
+            case 1:
+                value = member.value(object, auxObjects[0]) ;
+                break ;
+            case 2:
+                value = member.value(object, auxObjects[0], auxObjects[1]) ;
+                break ;
+            default:
+                Itk.logError("too many auxObjects[].") ;
+                Itk.quitByError() ;
+            }
+            addMemberInTerm(term, member, value) ;
 	}
 
 	return outputTermToBuffer(buffer, term) ;
@@ -571,29 +493,10 @@ public class JsonFormatter<T> {
      * @param objectList : Member#value に引き渡すデータのIterable
      */
     public void outputAllRecordToLoggerInfo(Logger logger,
-                                            Iterable<T> objectList) {
-	for(T object : objectList) {
-	    outputRecordToLoggerInfo(logger, object) ;
-	}
-    }
-
-    /**
-     */
-    public void outputAllRecordToLoggerInfo(Logger logger,
                                             Iterable<T> objectList,
-                                            Object object2) {
+                                            Object... auxObjects) {
 	for(T object : objectList) {
-	    outputRecordToLoggerInfo(logger, object, object2) ;
-	}
-    }
-
-    /**
-     */
-    public void outputAllRecordToLoggerInfo(Logger logger,
-                                            Iterable<T> objectList,
-                                            Object object2, Object object3) {
-	for(T object : objectList) {
-	    outputRecordToLoggerInfo(logger, object, object2, object3) ;
+	    outputRecordToLoggerInfo(logger, object, auxObjects) ;
 	}
     }
 
@@ -604,29 +507,10 @@ public class JsonFormatter<T> {
      * @param objectList : Member#value に引き渡すデータのIterable
      */
     public void outputAllRecordToWriter(Writer writer,
-                                        Iterable<T> objectList) {
-	for(T object : objectList) {
-	    outputRecordToWriter(writer, object) ;
-	}
-    }
-
-    /**
-     */
-    public void outputAllRecordToWriter(Writer writer,
                                         Iterable<T> objectList,
-                                        Object object2) {
+                                        Object... auxObjects) {
 	for(T object : objectList) {
-	    outputRecordToWriter(writer, object, object2) ;
-	}
-    }
-
-    /**
-     */
-    public void outputAllRecordToWriter(Writer writer,
-                                        Iterable<T> objectList,
-                                        Object object2, Object object3) {
-	for(T object : objectList) {
-	    outputRecordToWriter(writer, object, object2, object3) ;
+	    outputRecordToWriter(writer, object, auxObjects) ;
 	}
     }
 
@@ -637,29 +521,10 @@ public class JsonFormatter<T> {
      * @param objectList : Column#value に引き渡すデータのIterable
      */
     public void outputAllRecordToStream(PrintStream stream,
-                                        Iterable<T> objectList) {
-	for(T object : objectList) {
-	    outputRecordToStream(stream, object) ;
-	}
-    }
-
-    /**
-     */
-    public void outputAllRecordToStream(PrintStream stream,
                                         Iterable<T> objectList,
-                                        Object object2) {
+                                        Object... auxObjects) {
 	for(T object : objectList) {
-	    outputRecordToStream(stream, object, object2) ;
-	}
-    }
-
-    /**
-     */
-    public void outputAllRecordToStream(PrintStream stream,
-                                        Iterable<T> objectList,
-                                        Object object2, Object object3) {
-	for(T object : objectList) {
-	    outputRecordToStream(stream, object, object2, object3) ;
+	    outputRecordToStream(stream, object, auxObjects) ;
 	}
     }
 
@@ -714,7 +579,7 @@ public class JsonFormatter<T> {
 	 */
 	public Object value(T object) {
 	    Itk.logError("Member#value(object) is not implemented.") ;
-	    return "" ;
+	    return null ;
 	}
 
 	//----------------------------------------
@@ -724,7 +589,7 @@ public class JsonFormatter<T> {
 	 */
 	public Object value(T object1, Object object2) {
 	    Itk.logError("Column#value(obj1, obj2) is not implemented.") ;
-	    return "" ;
+	    return null ;
 	}
 
 	//----------------------------------------
@@ -734,7 +599,7 @@ public class JsonFormatter<T> {
 	 */
 	public Object value(T object1, Object object2, Object object3) {
 	    Itk.logError("Column#value(obj1, obj2, obj3) is not implemented.") ;
-	    return "" ;
+	    return null ;
 	}
     }
 
