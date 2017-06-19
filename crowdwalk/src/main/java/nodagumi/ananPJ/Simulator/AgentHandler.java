@@ -55,6 +55,8 @@ import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.CsvFormatter;
+import nodagumi.Itk.JsonFormatter;
+import nodagumi.Itk.Term;
 import nodagumi.Itk.*;
 
 
@@ -256,7 +258,8 @@ public class AgentHandler {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * agentMovementHistoryLogger
+     * agentMovementHistoryLogger.
+     * output log when each agent evacuated.
      */
     private Logger agentMovementHistoryLogger = null;
 
@@ -324,6 +327,78 @@ public class AgentHandler {
             ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * agentTrailLogger.
+     * Agent が evacuate した時、その軌跡を出力するログ。
+     * JSON 形式で出力する。
+     */
+    public Logger agentTrailLogger = null ;
+
+    /**
+     * agentTrailLogger の JSON フォーマットのスタイル
+     */
+    public JsonFormatter.OverallStyle agentTrailLogStyle =
+        JsonFormatter.OverallStyle.RecordPerLine ;
+
+    /**
+     * agentTrailLogger の JSON フォーマット。
+     * <pre>
+     * { "agentId": _AgentID_,
+     *   "generatedAbsTime": _TimeStr_,
+     *   "generatedRelTime": _TimeInSec_,
+     *	 "evacuatedAbsTime": _TimeStr_,
+     *	 "evacuatedRelTime": _TimeInSec_,
+     *   "travelTime": _TimeInSec_,
+     *   "trail": [ {"placeId": _PlaceID_, "time": _TimeInSec_} * ]
+     * }
+     * </pre>
+     */
+    public static JsonFormatter<AgentBase> agentTrailLogFormatter =
+        new JsonFormatter<AgentBase>() ;
+    static {
+        JsonFormatter<AgentBase> formatter = agentTrailLogFormatter ;
+        formatter
+            .addMember(formatter.new Member("agentId") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return agent.ID ;}})
+            .addMember(formatter.new Member("generatedAbsTime") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return agent.generatedTime.getAbsoluteTimeString() ;}})
+            .addMember(formatter.new Member("generatedRelTime") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return new Integer((int)agent.generatedTime
+                                           .getRelativeTime()) ; }})
+            .addMember(formatter.new Member("evacuatedAbsTime") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        SimTime currentTime = (SimTime)timeObj ;
+                        return currentTime.getAbsoluteTimeString();}})
+            .addMember(formatter.new Member("evacuatedRelTime") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        SimTime currentTime = (SimTime)timeObj ;
+                        return new Integer((int)currentTime
+                                           .getRelativeTime()) ; }})
+            .addMember(formatter.new Member("travelTime") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        SimTime currentTime = (SimTime)timeObj ;
+                        return new
+                            Integer((int)currentTime
+                                    .calcDifferenceFrom(agent
+                                                        .generatedTime)) ;}})
+            .addMember(formatter.new Member("trail"){
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        Term r = Term.newArrayTerm() ;
+                        return r ; }})
+            ;
+    }
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * individualPedestriansLogger
@@ -521,31 +596,6 @@ public class AgentHandler {
     private int tickIntervalForIndividualPedestriansLog
         = Fallback_tickIntervalForIndividualPedestriansLog ;
     
-    //============================================================
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    /**
-     * EvacuatedAgentLogger Logging Format Type.
-     */
-    static public enum EvacuatedAgentsLogType {
-        /** original CSV format. */
-        Csv,
-        /** Json per line for each agent. */
-        JsonEachLine
-    }
-
-    //============================================================
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    /**
-     * Lexicon for Generation Rule
-     */
-    static public Lexicon evaculatedAgentLogTypeLexicon = new Lexicon() ;
-    static {
-        // EvacuatedAgentsLogType で定義された名前をそのまま文字列で Lexicon を
-        // 引けるようにする。
-        evaculatedAgentLogTypeLexicon
-            .registerEnum(EvacuatedAgentsLogType.class) ;
-    }
-    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェントの脱出時のログ。
@@ -558,13 +608,6 @@ public class AgentHandler {
      */
     public Logger evacuatedAgentsLogger = null; // document へ出力のため、public
     
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * エージェントの脱出時ログのタイプ。
-     */
-    private EvacuatedAgentsLogType evacuatedAgentsLogType =
-        EvacuatedAgentsLogType.Csv ;
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * CSV フォーマットの際のフォーマッター。
@@ -625,15 +668,17 @@ public class AgentHandler {
             .fetchFallbackInt(fallback,
                               "tickIntervalForIndividualPedestriansLog",
                               tickIntervalForIndividualPedestriansLog) ;
-        // evacuated agents log type
-        evacuatedAgentsLogType =
-            (EvacuatedAgentsLogType)
+        
+        // agent trail log
+        agentTrailLogStyle =
+            (JsonFormatter.OverallStyle)
             SetupFileInfo
             .fetchFallbackObjectViaLexicon(fallback,
-                                           evaculatedAgentLogTypeLexicon,
-                                           "evacuatedAgentsLogType",
-                                           evacuatedAgentsLogType) ;
-        Itk.dbgVal("evacuatedAgentsLogType", evacuatedAgentsLogType) ;
+                                           JsonFormatter.overallStyleLexicon,
+                                           "agentTrailLogType",
+                                           agentTrailLogStyle) ;
+        agentTrailLogFormatter.setOverallStyle(agentTrailLogStyle) ;
+        Itk.dbgVal("agentTrailAgentsLogStyle", agentTrailLogStyle) ;
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -911,6 +956,11 @@ public class AgentHandler {
             agentMovementHistoryLoggerFormatter
                 .outputValueToLoggerInfo(agentMovementHistoryLogger,
                                          agent, currentTime, this);
+        }
+        if (agentTrailLogger != null) {
+            agentTrailLogFormatter
+                .outputRecordToLoggerInfo(agentTrailLogger,
+                                          agent, currentTime, this);
         }
         if (evacuatedAgentsLogger != null) {
             MapNode exitNode = agent.getPrevNode();
@@ -1314,6 +1364,10 @@ public class AgentHandler {
                 simulator.getProperties()
                 .getFilePath("agent_movement_history_file", null, false);
 
+            String agentTrailLogPath =
+                simulator.getProperties()
+                .getFilePath("agent_trail_log_file", null, false);
+
             String individualLogDir =
                 simulator.getProperties()
                 .getDirectoryPath("individual_pedestrians_log_dir", null);
@@ -1330,6 +1384,10 @@ public class AgentHandler {
             if (agentHistoryPath != null) {
                 initAgentMovementHistoryLogger("agent_movement_history",
                                                agentHistoryPath);
+            }
+            if (agentTrailLogPath != null) {
+                initAgentTrailLogger("agent_trail_log",
+                                     agentTrailLogPath);
             }
             if (individualLogDir != null) {
                 initIndividualPedestriansLogger("individual_pedestrians_log",
@@ -1353,6 +1411,7 @@ public class AgentHandler {
     public void finalizeSimulationLoggers() {
         closeIndividualPedestriansLogger();
         closeAgentMovementHistorLogger();
+        closeAgentTrailLogger();
         closeEvacuatedAgentsLogger();
     }
 
@@ -1453,6 +1512,35 @@ public class AgentHandler {
      */
     public void closeAgentMovementHistorLogger() {
         closeLogger(agentMovementHistoryLogger);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * AgentTrailLogger の初期化。
+     * @param name : ロガーの名前。
+     * @param filePath : ログファイル名。
+     */
+    public void initAgentTrailLogger(String name, String filePath) {
+        agentTrailLogger =
+            initLogger(name, Level.INFO,
+                       new java.util.logging.Formatter() {
+                           public String format(final LogRecord record) {
+                               return formatMessage(record) + "\n";
+                           }
+                       }, filePath);
+        agentTrailLogger.setUseParentHandlers(false); // コンソールには出力しない
+        agentTrailLogFormatter
+            .outputHeaderToLoggerInfo(agentTrailLogger) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * AgentTrailLogger の終了
+     */
+    public void closeAgentTrailLogger() {
+        agentTrailLogFormatter
+            .outputTailerToLoggerInfo(agentTrailLogger) ;
+        closeLogger(agentTrailLogger);
     }
 
     //------------------------------------------------------------

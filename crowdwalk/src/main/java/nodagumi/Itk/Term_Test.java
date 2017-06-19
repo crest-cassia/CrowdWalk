@@ -16,10 +16,15 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 //import junit.framework.TestCase;
 
+import java.io.*;
+import java.util.Map ;
 import java.util.HashMap ;
 import java.util.ArrayList ;
 import java.util.List ;
+import java.util.Set ;
 import java.util.Arrays ;
+import net.arnx.jsonic.JSON ;
+import net.arnx.jsonic.JSONWriter;
 
 import nodagumi.Itk.*;
 
@@ -32,6 +37,39 @@ public class Term_Test {
     /**
      */
     @Test
+    public void test_Jsonic() {
+        try {
+            HashMap h = new HashMap<String, Object>() ;
+            //h.put("", "") ;
+            h.put("foo", new ArrayList<Object>()) ;
+            h.put("bar", new ArrayList<Object>()) ;
+            h.put("baz", new ArrayList<Object>()) ;
+            
+            Set<Map.Entry<String, Object>> s = h.entrySet() ;
+            JSONWriter writer = new JSON().getWriter((OutputStream)System.out) ;
+            writer.beginObject() ;
+            for(Map.Entry<String,Object> entry : s) {
+              writer.name(entry.getKey());
+              if(entry.getValue() instanceof List) {
+                  writer.beginArray();
+                  for(Object obj : (List)entry.getValue()) {
+                      writer.value(obj) ;
+                  }
+                  writer.endArray();
+              } else {
+                  writer.value(entry.getValue()) ;
+              }
+            }
+            writer.endObject() ;
+            System.out.close() ;
+        } catch(Exception e) {
+            System.err.println("Error") ;
+        } ;
+    }
+        
+    /**
+     */
+    //@Test
     public void test_updateObject() {
         String str0 = "{'a':'foo', 'b':'def', 'c':1, 'jkl':null, 'x':[1,2,{},'234',null,{'xx':'yy','zz':'123'}], 'y':{'':'bar', 'a':3.21, 'b':[]}, 'zzz':'kkkkk'}" ;
         str0 = str0.replaceAll("'","\"") ;

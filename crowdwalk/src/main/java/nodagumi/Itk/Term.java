@@ -1401,9 +1401,9 @@ public class Term {
     {
         if(value instanceof Term) {
             Term term = (Term)value ;
-            if(term.isArray())
-                toJson_List(writer, term.getArray()) ;
-            else
+            //            if(term.isArray())
+            //                toJson_List(writer, term.getArray()) ;
+            //            else
                 term.toJson_Body(writer) ;
         } else if (value instanceof List) {
             toJson_List(writer, (List)value) ;
