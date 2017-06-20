@@ -393,6 +393,11 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                                              NetworkMap map) {
             originalInfo = json.toJson() ;
 
+            // rule name。
+            // ruleName には、事前に、ルールの順番の番号がうめられている。
+            String _ruleName = json.getArgString("name") ;
+            if(_ruleName != null) { ruleName = _ruleName ; }
+
             // agentType & className ;
             Term agentType = json.getArgTerm("agentType") ;
             agentClassName = agentType.getArgString("className") ;
@@ -978,12 +983,14 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             //[2014.12.23 I.Noda] csvParser は、ShiftingStringList の中へ。
             ShiftingStringList.setCsvSpecialChars(',','\'','\\') ;
 
+            int ruleCount = 1 ;
             while ((line = br.readLine()) != null) {
                 //一行解析
                 GenerationConfigBase genConfig =
-                    scanCsvFileOneLine(line, map) ;
+                    scanCsvFileOneLine(line, map, ruleCount) ;
 
                 if(genConfig == null) continue ;
+                ruleCount++ ;
 
                 // 経路情報に未定義のタグが使用されていないかチェックする
                 checkPlannedRouteInConfig(map, genConfig, line) ;
@@ -1007,7 +1014,8 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * scan one line of CSV file
      */
     private GenerationConfigBase scanCsvFileOneLine(String line,
-                                                    NetworkMap map)
+                                                    NetworkMap map,
+                                                    int ruleCount)
         throws IOException
     {
         //コメント行読み飛ばし
@@ -1065,6 +1073,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
 
         // 生成の設定情報を以下にまとめて保持。
         genConfig.originalInfo = line ;
+        
+        // 生成ルールの名前。CSVの場合は、順序の番号の文字列。
+        genConfig.ruleName = ("" + ruleCount) ;
 
         /* [I.Noda] Ver1 以降は、ruleType の直後はエージェントクラス名 */
         if(fileFormat == FileFormat.Ver1) {
@@ -1307,13 +1318,15 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     {
         Term json = Term.newByScannedJson(JSON.decode(br),true) ;
         if(json.isArray()) {
+            int ruleCount = 1 ;
             for(Object _item : json.getArray()) {
                 Term item = (Term)_item ;
                 if(item.isObject()) {
                     GenerationConfigBase genConfig = 
-                        scanJsonFileOneItem(item, map) ;
+                        scanJsonFileOneItem(item, map, ruleCount) ;
 
                     if(genConfig == null) continue ;
+                    ruleCount++ ;
 
                     // 経路情報に未定義のタグが使用されていないかチェックする
                     checkPlannedRouteInConfig(map, genConfig, item.toJson()) ;
@@ -1336,7 +1349,8 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * 設定解析ルーチン (JSON one line) (Ver.2 file format)
      */
     public GenerationConfigBase scanJsonFileOneItem(Term json,
-                                                    NetworkMap map)
+                                                    NetworkMap map,
+                                                    int ruleCount)
     {
         // ignore が true なら、項目を無視する。
         if(json.getArgBoolean("ignore")) { return null ; }
@@ -1345,6 +1359,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         RuleType ruleType = 
             (RuleType)ruleLexicon.lookUp(json.getArgString("rule")) ;
         GenerationConfigBase genConfig = newConfigByRuleType(ruleType) ;
+
+        // ruleName を一旦与えておく。
+        genConfig.ruleName = ("" + ruleCount) ;
 
         return genConfig.scanJson(this, json, map) ;
 

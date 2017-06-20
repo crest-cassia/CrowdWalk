@@ -174,50 +174,6 @@ public class WalkAgent extends AgentBase {
         CrossingModel,
     }
 
-    //============================================================
-    /**
-     * 経由点の通過情報
-     * [2015.07.11 I.Noda]
-     * 現状、使われていない。
-     */
-    static class LapTimeAtNode {
-        /** 通過ノード */
-        public MapNode node;
-        /** 通過時刻 */
-        public SimTime passTime;
-        /** 付加情報 */
-        public String reason;
-
-        //------------------------------
-        /** コンストラクタ */
-        public LapTimeAtNode(MapNode _node, SimTime _time, String _reason) {
-            node = _node; 
-            passTime = _time; 
-            reason = _reason;
-        }
-    }
-
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 経由点の通過情報。
-     * [2015.07.11 I.Noda]
-     * 経由点情報は、過去に dumpRecord() というところでログ出力されていたが、
-     * 現状では使われていない。
-     * 同様の情報は、 individual_pedestrial_log に含まれている。
-     * なので、現状、下記は使わないでよいはず。
-     * ただ、今後の拡張のため、名称をわかりやすくして残す。
-     */
-    protected ArrayList<LapTimeAtNode> trailWithTime =
-        new ArrayList<LapTimeAtNode>() ;
-
-    /**
-     * 経由点の通過情報を記録するかどうか。
-     * [2015.07.11 I.Noda]
-     * 上記の trail 記録をオンにするかどうか。
-     * 今、これは常時 false の予定。
-     */
-    protected boolean useTrailWithTime = false ;
-
 	//============================================================
     static private class ChooseNextLinkCache {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1104,10 +1060,8 @@ public class WalkAgent extends AgentBase {
      */
     protected void recordTrail(SimTime currentTime, Place passingPlace,
                                MapLink nextLink) {
-        if(useTrailWithTime) {
-            trailWithTime.add(new LapTimeAtNode(passingPlace.getHeadingNode(),
-                                                currentTime,
-                                                navigationReason.toString())) ;
+        if(doesRecordTrail()) {
+            trail.add(currentTime, passingPlace.getTrailContent()) ;
         }
     }
 

@@ -24,6 +24,7 @@ import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.misc.Trail;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
@@ -111,6 +112,26 @@ implements Comparable<AgentBase> {
      */
     protected static String obstructerType = "Flood";
     public ObstructerBase obstructer ;
+
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 経由点の通過情報.
+     * [2015.07.11 I.Noda]
+     * 現状、使われていない。
+     * [2017.06.20 I.Noda]
+     * 復活。
+     */
+    public Trail trail = new Trail() ;
+
+    /**
+     * 経由点の通過情報の取得。
+     */
+    public Trail getTrail() { return trail ; }
+
+    /**
+     * 経由点の通過情報を記録するか？
+     */
+    public boolean doesRecordTrail() { return handler.doesRecordTrail() ; }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**

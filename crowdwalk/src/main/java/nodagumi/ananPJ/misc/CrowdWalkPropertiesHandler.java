@@ -263,6 +263,14 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>agent_trail_log_file</h4>
+ *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのJSON形式のログ(?)
+ *
+ *  設定値： evacuated_agents_log file へのファイルパス
+ *  デフォルト値： なし
+ *   </li>
+ *
+ *   <li>
  *     <h4>individual_pedestrians_log_dir</h4>
  *     <pre>  個別のエージェントに対するログデータを保管する場所の指定
  *  ディレクトリを指定した時のみログを収集する。

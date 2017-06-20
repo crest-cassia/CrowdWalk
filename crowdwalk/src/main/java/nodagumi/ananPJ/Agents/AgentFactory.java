@@ -204,6 +204,12 @@ public abstract class AgentFactory {
          */
         public String originalInfo = null ;
 
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 生成ルール名
+         */
+        public String ruleName = null ;
+        
         //------------------------------
         /**
          * JSONへの変換用
@@ -224,6 +230,7 @@ public abstract class AgentFactory {
             jTerm.setArg("duration",duration) ;
             jTerm.setArg("total",total) ;
             jTerm.setArg("speedModel", speedModel) ;
+            jTerm.setArg("name", ruleName) ;
 
             return jTerm ;
         }
@@ -260,6 +267,17 @@ public abstract class AgentFactory {
     double duration;
     int total;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ルールの名前。
+     * CSV 形式では、ルールの順番の数字の文字列。
+     * Json 形式で、名前 "name" が与えられている場合は、その名前（文字列）。
+     * "name" が与えられていなければ、ルールの順番の数字の文字列。
+     * ログ出力で使用。
+     */
+    public String ruleName = null;
+    public String getRuleName() { return ruleName ; } ;
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 設定文字列（generation file 中の設定情報の文字列)。
@@ -316,6 +334,7 @@ public abstract class AgentFactory {
         fallbackParameters = config.fallbackParameters ;
         speedModel = config.speedModel ;
         configLine = config.originalInfo ;
+        ruleName = config.ruleName ;
 
         parse_conditions(config.conditions);
     }

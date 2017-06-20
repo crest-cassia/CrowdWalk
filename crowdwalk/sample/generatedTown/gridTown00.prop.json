@@ -22,7 +22,8 @@
   "time_series_log_interval":1,
   "loop_count":1,
   "exit_count":0,
-  "all_agent_speed_zero_break":false
+  "all_agent_speed_zero_break":false,
+  "auto_simulation_start":true,
 
   "mental_map_rules" :
     {

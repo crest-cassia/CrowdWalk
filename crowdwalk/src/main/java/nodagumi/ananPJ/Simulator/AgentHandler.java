@@ -342,6 +342,13 @@ public class AgentHandler {
         JsonFormatter.OverallStyle.RecordPerLine ;
 
     /**
+     * agent の Trail を記録するかどうか？
+     */
+    public boolean doesRecordTrail() {
+        return agentTrailLogger != null ;
+    }
+
+    /**
      * agentTrailLogger の JSON フォーマット。
      * <pre>
      * { "agentId": _AgentID_,
@@ -350,6 +357,7 @@ public class AgentHandler {
      *	 "evacuatedAbsTime": _TimeStr_,
      *	 "evacuatedRelTime": _TimeInSec_,
      *   "travelTime": _TimeInSec_,
+     *   "tag": [ _tag_, _tag_, ... ],
      *   "trail": [ {"placeId": _PlaceID_, "time": _TimeInSec_} * ]
      * }
      * </pre>
@@ -363,6 +371,10 @@ public class AgentHandler {
                     public Object value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return agent.ID ;}})
+            .addMember(formatter.new Member("generatedBy") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return agent.getFactory().getRuleName() ; }})
             .addMember(formatter.new Member("generatedAbsTime") {
                     public Object value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -391,11 +403,14 @@ public class AgentHandler {
                             Integer((int)currentTime
                                     .calcDifferenceFrom(agent
                                                         .generatedTime)) ;}})
+            .addMember(formatter.new Member("tags"){
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        return agent.getTags() ; }})
             .addMember(formatter.new Member("trail"){
                     public Object value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        Term r = Term.newArrayTerm() ;
-                        return r ; }})
+                        return agent.getTrail().getJsonObject() ; }})
             ;
     }
     
@@ -957,7 +972,7 @@ public class AgentHandler {
                 .outputValueToLoggerInfo(agentMovementHistoryLogger,
                                          agent, currentTime, this);
         }
-        if (agentTrailLogger != null) {
+        if (doesRecordTrail()) {
             agentTrailLogFormatter
                 .outputRecordToLoggerInfo(agentTrailLogger,
                                           agent, currentTime, this);

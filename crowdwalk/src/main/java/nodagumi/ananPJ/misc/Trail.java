@@ -44,6 +44,54 @@ public class Trail {
     
     //============================================================
     /**
+     *  General Object Content for Trail.
+     */
+    static public class ContentObject implements Content {
+	//----------------------------------------
+	/**
+         * constructor
+	 */
+        public ContentObject() {} ;
+        
+	//----------------------------------------
+	/**
+         * return itself
+	 */
+	public Object getJsonObject() {
+            return this ;
+        }
+    } // class ContentObject
+
+    //============================================================
+    /**
+     *  General Message Content for Trail.
+     */
+    static public class ContentMessage implements Content {
+	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	/**
+         * message itself
+	 */
+        private String message = null ;
+
+	//----------------------------------------
+	/**
+         * constructor
+	 */
+        public ContentMessage(String _message) {
+            message = _message ;
+        }
+        
+	//----------------------------------------
+	/**
+         * return message.
+	 */
+	public Object getJsonObject() {
+            return message ;
+        }
+    } // class ContentObject
+    
+    //============================================================
+    /**
      *  One record of Trail.
      */
     static public class Record {
@@ -82,6 +130,10 @@ public class Trail {
 	}
     } // class Record
     
+    //============================================================
+    //============================================================
+    //============================================================
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      *  Array of Trail Record
@@ -112,7 +164,7 @@ public class Trail {
     /**
      * push JsonObject, which consists of a list of JsonObject of each item.
      */
-    public Record pushJsonObject(SimTime timestamp, Content content) {
+    public Record add(SimTime timestamp, Content content) {
 	Record record = new Record(timestamp, content) ;
 
 	recordList.add(record) ;

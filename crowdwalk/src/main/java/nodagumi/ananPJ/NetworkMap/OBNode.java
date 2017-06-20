@@ -37,6 +37,8 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.misc.Trail;
+
 
 import nodagumi.Itk.*;
 
@@ -49,15 +51,24 @@ import org.w3c.dom.Text;
  * modify the following methods.
  *  OBNode.fromDom(Element element)
  */
-public abstract class OBNode extends DefaultMutableTreeNode {
+public abstract class OBNode extends DefaultMutableTreeNode
+    implements Trail.Content
+{
     public enum NType{NODE,LINK,AGENT,GROUP,AREA,SYMLINK}
 
     public String ID;
+
     protected String idNumber = null;
     protected ArrayList<String> tags;
     public boolean selected = false;
     protected NetworkMap map;
 
+    //------------------------------------------------------------
+    /**
+     * method for Trail.Content interface.
+     */
+    public Object getJsonObject(){ return getID() ; }
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * alert message
@@ -582,7 +593,8 @@ public abstract class OBNode extends DefaultMutableTreeNode {
             return switchGate(false) ;
         }
 
-    }
+    } // class GateBase
+
 }
 //;;; Local Variables:
 //;;; mode:java
