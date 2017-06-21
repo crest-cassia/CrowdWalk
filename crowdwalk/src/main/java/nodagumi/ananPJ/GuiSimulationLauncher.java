@@ -315,13 +315,18 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             if (recordSimulationScreen && ! clearScreenshotDir && new File(screenshotDir).list(imageFileFilter).length > 0) {
                 throw new Exception("Property error - スクリーンショットディレクトリに画像ファイルが残っています: screenshot_dir: " + screenshotDir);
             }
-            screenshotImageType = properties.getString("screenshot_image_type", screenshotImageType, IMAGE_TYPES);
+            screenshotImageType =
+                properties.getStringInPattern("screenshot_image_type",
+                                              screenshotImageType,
+                                              IMAGE_TYPES);
             hideLinks = properties.getBoolean("hide_links", hideLinks);
             densityMode = properties.getBoolean("density_mode", densityMode);
             changeAgentColorDependingOnSpeed =
                 properties.getBoolean("change_agent_color_depending_on_speed", changeAgentColorDependingOnSpeed);
             drawingAgentByTriageAndSpeedOrder = properties.getBoolean("drawing_agent_by_triage_and_speed_order", drawingAgentByTriageAndSpeedOrder);
-            String show_status = properties.getString("show_status", "none", SHOW_STATUS_VALUES);
+            String show_status =
+                properties.getStringInPattern("show_status", "none",
+                                              SHOW_STATUS_VALUES);
             if (show_status.equals("none")) {
                 showStatus = false;
             } else {

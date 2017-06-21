@@ -1375,13 +1375,11 @@ public class AgentHandler {
      */
     public void setupSimulationLoggers() {
         try {
+            setupAgentTrailLogger() ;
+            
             String agentHistoryPath =
                 simulator.getProperties()
                 .getFilePath("agent_movement_history_file", null, false);
-
-            String agentTrailLogPath =
-                simulator.getProperties()
-                .getFilePath("agent_trail_log_file", null, false);
 
             String individualLogDir =
                 simulator.getProperties()
@@ -1400,10 +1398,6 @@ public class AgentHandler {
                 initAgentMovementHistoryLogger("agent_movement_history",
                                                agentHistoryPath);
             }
-            if (agentTrailLogPath != null) {
-                initAgentTrailLogger("agent_trail_log",
-                                     agentTrailLogPath);
-            }
             if (individualLogDir != null) {
                 initIndividualPedestriansLogger("individual_pedestrians_log",
                                                 individualLogDir);
@@ -1415,10 +1409,32 @@ public class AgentHandler {
         } catch(Exception e) {
             Itk.logError("can not setup Logger",e.getMessage()) ;
             e.printStackTrace() ;
-            System.exit(1);
+            Itk.quitByError() ;
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * AgentTrailLog の設定
+     */
+    public void setupAgentTrailLogger() {
+        try {
+            String agentTrailLogPath =
+                simulator.getProperties()
+                .getFilePath("agent_trail_log_file", null, false);
+            
+            if (agentTrailLogPath != null) {
+                initAgentTrailLogger("agent_trail_log",
+                                     agentTrailLogPath);
+            }
+        } catch(Exception e) {
+            Itk.logError("can not setup AgentTrailLogger",e.getMessage()) ;
+            e.printStackTrace() ;
+            Itk.quitByError() ;
+        }
+    }
+        
+    
     //------------------------------------------------------------
     /**
      * ロガーの終了処理

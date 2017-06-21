@@ -262,9 +262,14 @@ public class SimulationPanel2D extends JPanel {
                     NodeAppearance2D.load(new FileInputStream(filePath), nodeAppearances);
                 }
 
-                show_gas = ObstructerDisplay.valueOf(properties.getString("pollution_color", "ORANGE",
-                            ObstructerDisplay.getNames()).toUpperCase()) ;
-                pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
+                show_gas =
+                    ObstructerDisplay
+                    .valueOf(properties
+                             .getStringInPattern("pollution_color", "ORANGE",
+                                                 ObstructerDisplay.getNames())
+                             .toUpperCase()) ;
+                pollutionColorSaturation =
+                    properties.getDouble("pollution_color_saturation", 0.0);
 
                 // グループ別の背景画像を読み込む
                 File file = new File(properties.getNetworkMapFile());

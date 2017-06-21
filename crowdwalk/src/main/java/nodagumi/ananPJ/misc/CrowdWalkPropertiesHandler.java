@@ -3,7 +3,9 @@ package nodagumi.ananPJ.misc;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Properties;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.w3c.dom.Document;
 
@@ -263,10 +265,10 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>agent_trail_log_file</h4>
- *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのJSON形式のログ(?)
+ *     <h4>agent_trail_log</h4>
+ *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのJSON形式のログ
  *
- *  設定値： evacuated_agents_log file へのファイルパス
+ *  設定値： { "file" : ログファイルへのパス }
  *  デフォルト値： なし
  *   </li>
  *
@@ -564,8 +566,7 @@ public class CrowdWalkPropertiesHandler {
         };
 
     protected String propertiesFile = null;
-    protected Properties prop = null;
-    protected Term propTerm = null;
+    protected Term prop = null;
 
     /**
      * Get a properties file name.
@@ -655,7 +656,7 @@ public class CrowdWalkPropertiesHandler {
      * コンストラクタ
      */
     public CrowdWalkPropertiesHandler() {
-        prop = new Properties();
+        prop = new Term();
     }
 
     /**
@@ -663,28 +664,25 @@ public class CrowdWalkPropertiesHandler {
      */
     public CrowdWalkPropertiesHandler(String _propertiesFile) {
         // load properties
-        prop = new Properties();
+        prop = new Term();
         propertiesFile = _propertiesFile;
         try {
             String path = _propertiesFile.toLowerCase();
             if (path.endsWith(".xml")) {
-                prop.loadFromXML(new FileInputStream(_propertiesFile));
+                scanXmlPropertiesIntoTerm(new FileInputStream(_propertiesFile),
+                                          prop) ;
                 Itk.logInfo("Load Properties File (XML)",
                             _propertiesFile);
             } else if (path.endsWith(".json")) {
-                HashMap<String, Object> map = (HashMap<String, Object>)JSON.decode(new FileInputStream(_propertiesFile));
-                propTerm = new Term().setScannedJson(map, true) ;
+                HashMap<String, Object> map =
+                    (HashMap<String, Object>)
+                    JSON.decode(new FileInputStream(_propertiesFile));
+                prop = new Term().setScannedJson(map, true) ;
                 
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    Object value = entry.getValue() ;
-                    prop.setProperty(entry.getKey(),
-                                     (value == null ?
-                                      "null" : value.toString()));
-                }
                 Itk.logInfo("Load Properties File (JSON)",
                             _propertiesFile);
             } else {
-                throw new Exception("Property file error - 拡張子が不正です: "
+                throw new Exception("Property file error - unknown extention: "
                                     + _propertiesFile);
             }
 
@@ -700,7 +698,9 @@ public class CrowdWalkPropertiesHandler {
                 if (filePath != null) {
                     File file = new File(filePath);
                     if (file.getParent() == null) {
-                        prop.setProperty(property_item, propertyDirPath.replaceAll("\\\\", "/") + "/" + filePath);
+                        prop.setArg(property_item,
+                                    propertyDirPath.replaceAll("\\\\", "/") +
+                                    "/" + filePath);
                     }
                 }
             }
@@ -714,6 +714,7 @@ public class CrowdWalkPropertiesHandler {
 
             // create random with seed
             randseed = getInteger("randseed", 0);
+
             // exit count
             exitCount = getInteger("exit_count", 0);
             isAllAgentSpeedZeroBreak = getBoolean("all_agent_speed_zero_break",
@@ -748,13 +749,40 @@ public class CrowdWalkPropertiesHandler {
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;
             ioe.printStackTrace();
-            System.exit(1);
+            Itk.quitByError() ;
         } catch(Exception e) {
             e.printStackTrace() ;
             System.err.println(e.getMessage());
             Itk.logError("unknown exception") ;
-            System.exit(1);
+            Itk.quitByError() ;
         }
+    }
+
+    //--------------------------------------------------
+    /**
+     * scan XML file as Properties into Term
+     */
+    private Term scanXmlPropertiesIntoTerm(InputStream stream, Term term) {
+        try {
+            Properties _prop = new Properties() ;
+            _prop.loadFromXML(stream) ;
+
+            for(String key : _prop.stringPropertyNames()) {
+                term.setArg(Itk.intern(key),
+                            Itk.intern(_prop.getProperty(key))) ;
+            }
+        } catch (IOException ioe) {
+            Itk.logError("IO exception") ;
+            ioe.printStackTrace();
+            Itk.quitByError() ;
+        } catch(Exception e) {
+            e.printStackTrace() ;
+            System.err.println(e.getMessage());
+            Itk.logError("unknown exception") ;
+            Itk.quitByError() ;
+        }
+            
+        return term ;
     }
 
     //--------------------------------------------------
@@ -762,7 +790,7 @@ public class CrowdWalkPropertiesHandler {
      * check defined
      */
     public boolean isDefined(String key) {
-        String value = prop.getProperty(key);
+        String value = prop.getArgString(key);
         return ! (value == null || value.trim().isEmpty());
     }
 
@@ -770,9 +798,9 @@ public class CrowdWalkPropertiesHandler {
     /**
      * get property (raw)
      */
-    public static String getProperty(Properties prop, String key) {
-        if (prop.containsKey(key)) {
-            return prop.getProperty(key);
+    public static String getProperty(Term prop, String key) {
+        if (prop.hasArg(key)) {
+            return prop.getArgString(key);
         } else {
             return null;
         }
@@ -783,15 +811,17 @@ public class CrowdWalkPropertiesHandler {
      * get String property
      */
     public String getString(String key, String defaultValue) {
-        String value = prop.getProperty(key);
+        String value = prop.getArgString(key);
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
         return value;
     }
     /** */
-    public String getString(String key, String defaultValue, String pattern[]) throws Exception {
-        String value = prop.getProperty(key);
+    public String getStringInPattern(String key, String defaultValue,
+                                     String pattern[]) throws Exception
+    {
+        String value = prop.getArgString(key);
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
@@ -801,85 +831,84 @@ public class CrowdWalkPropertiesHandler {
                 return value;
             }
         }
-        throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
-    }
-    /** */
-    public static String getStringProperty(Properties prop, String key) {
-        String stringProp = prop.getProperty(key);
-        if (stringProp != null && !stringProp.equals(""))
-            return stringProp;
-        else {
-            return null;
-        }
+        throw new Exception("Property error - value is not in the pattern:" +
+                            key + ":" + value + " not in " + pattern);
     }
 
     //--------------------------------------------------
     /**
      * get Boolean property
      */
-    public boolean getBoolean(String key, boolean defaultValue) throws Exception {
-        String value = prop.getProperty(key);
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        value = value.toLowerCase();
-        if (value.equals("true") || value.equals("on")) {
-            return true;
-        } else if (value.equals("false") || value.equals("off")) {
-            return false;
-        } else {
-            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
-        }
-    }
-    /** */
-    public static boolean getBooleanProperty(Properties prop, String key) {
-        String stringProp = getStringProperty(prop, key);
-        if (stringProp == null) {
-            //System.err.println("null: ");
-            return false;
-        } else if (stringProp.toLowerCase().equals("true") || stringProp.toLowerCase().equals("on"))
-            return true;
-        else
-            return false;
-    }
+    public boolean getBoolean(String key, boolean defaultValue)
+        throws Exception
+    {
+        Object value = prop.getArg(key) ;
+        
+        if(value == null) { return defaultValue ; } ;
 
+        if(value instanceof String) {
+            String strValue = ((String)value).toLowerCase() ;
+            
+            if (strValue.trim().isEmpty()) { return defaultValue; }
+
+            switch(strValue) {
+            case "true":
+            case "on":
+                return true ;
+            case "false":
+            case "off" :
+                return false ;
+            default:
+                throw new Exception("Property error - wrong boolean value:" +
+                                    key + ":" + value);
+            }
+        } else if(value instanceof Boolean || value instanceof Term) {
+            return prop.getArgBoolean(key) ;
+        } else {
+            throw new Exception("Property error - wrong boolean value:" +
+                                key + ":" + value);
+        }
+    }
+    
     //--------------------------------------------------
     /**
      * get Integer property
      */
     public int getInteger(String key, int defaultValue) throws Exception {
-        String value = prop.getProperty(key);
-        if (value == null || value.trim().isEmpty()) {
+        Object value = prop.getArg(key);
+        if (value == null) {
             return defaultValue;
         }
         try {
-            return Integer.parseInt(value);
+            if(value instanceof String) {
+                return Integer.parseInt((String)value);
+            } else {
+                return prop.getArgInt(key) ;
+            }
         } catch(NumberFormatException e) {
-            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+            throw new Exception("Property error - wrong integer value:" +
+                                key + ":" + value);
         }
     }
-    /** */
-    public static int getIntegerProperty(Properties prop, String key) {
-        String stringProp = getStringProperty(prop, key);
-        if (stringProp == null)
-            return -1;
-        else
-            return Integer.parseInt(stringProp);
-    }
-
+    
     //--------------------------------------------------
     /**
      * get Double property
      */
     public double getDouble(String key, double defaultValue) throws Exception {
-        String value = prop.getProperty(key);
-        if (value == null || value.trim().isEmpty()) {
+        Object value = prop.getArg(key);
+        if (value == null) {
             return defaultValue;
         }
         try {
-            return Double.parseDouble(value);
+            if(value instanceof String) {
+                return Double.parseDouble((String)value);
+            } else {
+                return prop.getArgDouble(key) ;
+            }
         } catch(NumberFormatException e) {
-            throw new Exception("Property error - 設定値が不正です: " + key + ":" + value);
+            throw new Exception("Property error - wrong double value:" +
+                                key + ":" + value);
         }
     }
 
@@ -888,9 +917,9 @@ public class CrowdWalkPropertiesHandler {
      * get Term property
      */
     public Term getTerm(String key, Term defaultValue) {
-        if(propTerm != null) {
-            if(propTerm.hasArg(key)) {
-                return propTerm.getArgTerm(key) ;
+        if(prop != null) {
+            if(prop.hasArg(key)) {
+                return prop.getArgTerm(key) ;
             } else {
                 return defaultValue ;
             }
@@ -918,7 +947,7 @@ public class CrowdWalkPropertiesHandler {
      *  get directory path specified by key.
      */
     public String getDirectoryPath(String key, String defaultValue) throws Exception {
-        String value = prop.getProperty(key);
+        String value = prop.getArgString(key);
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
@@ -943,7 +972,7 @@ public class CrowdWalkPropertiesHandler {
      *  if not exist, raise Exception.
      */
     public String getFilePath(String key, String defaultValue) throws Exception {
-        String value = prop.getProperty(key);
+        String value = prop.getArgString(key);
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
@@ -968,7 +997,7 @@ public class CrowdWalkPropertiesHandler {
         if (existing) {
             return getFilePath(key, defaultValue);
         }
-        String value = prop.getProperty(key);
+        String value = prop.getArgString(key);
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
@@ -997,7 +1026,7 @@ public class CrowdWalkPropertiesHandler {
     public ArrayList<String> getPathList(String key,
                                          ArrayList<String> defaultValue,
                                          String separator) {
-        String value = prop.getProperty(key) ;
+        String value = prop.getArgString(key) ;
         if(value == null || value.trim().isEmpty()) {
             return defaultValue ;
         } else {

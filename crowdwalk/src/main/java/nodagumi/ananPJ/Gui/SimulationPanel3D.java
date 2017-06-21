@@ -655,8 +655,12 @@ public class SimulationPanel3D extends StackPane {
                 }
 
                 backgroundColor = Color.web(properties.getString("background_color", "white"));
-                obstructerDisplay = ObstructerDisplay.valueOf(properties.getString("pollution_color", "ORANGE",
-                            ObstructerDisplay.getNames()).toUpperCase());
+                obstructerDisplay =
+		    ObstructerDisplay
+		    .valueOf(properties
+			     .getStringInPattern("pollution_color", "ORANGE",
+						 ObstructerDisplay.getNames())
+			     .toUpperCase());
                 outlineColor = Color.web(properties.getString("outline_color", "lime"));
                 pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
 
