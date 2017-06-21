@@ -29,5 +29,18 @@ require './SampleWrapper.rb'
 #require 'pp'
 p Dir::pwd
 ",
-  "ruby_simulation_wrapper_class":"SampleWrapper"
+  "ruby_simulation_wrapper_class":"SampleWrapper",
+
+  "mental_map_rules" :
+    {
+      "major" :
+        {"":"if",
+    	 "cond":{"":"hasTag","tag":"major"},
+	 "then":":length",
+	 "else":{"":"*", "values":[":length", 10.0]}}
+      "normal" : ":length"
+    },
+
+  "___":null
+  
 }

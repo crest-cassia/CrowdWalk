@@ -155,7 +155,7 @@ class SampleAgent < RubyAgentBase
     return super() ;
   end
 
-  Term_hogehoge = Itk.Term.ensureTerm("hogehoge") ;
+  Term_hogehoge = ItkTerm.ensureTerm("hogehoge") ;
 
 end # class SampleAgent
 

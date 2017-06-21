@@ -11,6 +11,9 @@
 ## == Usage
 ## * ...
 
+require 'ItkTerm.rb' ;
+require 'NetworkMap.rb' ;
+
 #--======================================================================
 #++
 ## CrowdWalk の RubyAgent に対応する Ruby 側の AgentBase
