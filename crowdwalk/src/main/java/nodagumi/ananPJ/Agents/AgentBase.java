@@ -184,6 +184,8 @@ implements Comparable<AgentBase> {
     //------------------------------------------------------------
     /**
      * 初期化。constractorから分離。
+     * 注意：AgentBase の継承クラスでは、init() よりも initByConf() の方が
+     * 先に呼ばれてしまうことに注意。
      */
     public void init(Random _random, EvacuationSimulator simulator, 
                      AgentFactory _factory, SimTime currentTime,

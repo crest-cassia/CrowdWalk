@@ -131,6 +131,13 @@ public class AgentHandler {
      */
     private EvacuationSimulator simulator;
 
+    /**
+     * 所属するSimulator を取得。
+     */
+    public EvacuationSimulator getSimulator() {
+        return simulator ;
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェント生成ファイル

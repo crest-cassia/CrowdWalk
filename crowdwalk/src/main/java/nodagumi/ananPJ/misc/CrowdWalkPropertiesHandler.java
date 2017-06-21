@@ -854,10 +854,10 @@ public class CrowdWalkPropertiesHandler {
             switch(strValue) {
             case "true":
             case "on":
-                return true ;
+                return true ; 
             case "false":
             case "off" :
-                return false ;
+                return false ; 
             default:
                 throw new Exception("Property error - wrong boolean value:" +
                                     key + ":" + value);
@@ -880,8 +880,8 @@ public class CrowdWalkPropertiesHandler {
             return defaultValue;
         }
         try {
-            if(value instanceof String) {
-                return Integer.parseInt((String)value);
+            if(value instanceof String || Term.isStringTerm(value)) {
+                return Integer.parseInt(prop.getArgString(key)) ;
             } else {
                 return prop.getArgInt(key) ;
             }
@@ -901,8 +901,8 @@ public class CrowdWalkPropertiesHandler {
             return defaultValue;
         }
         try {
-            if(value instanceof String) {
-                return Double.parseDouble((String)value);
+            if(value instanceof String || Term.isStringTerm(value)) {
+                return Double.parseDouble(prop.getArgString(key)) ;
             } else {
                 return prop.getArgDouble(key) ;
             }

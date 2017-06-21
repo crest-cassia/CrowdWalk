@@ -149,22 +149,24 @@ public class RubyAgent extends RationalAgent {
                      AgentFactory factory, SimTime currentTime,
                      Term fallback) {
         super.init(_random, simulator, factory, currentTime, fallback);
-        rubyEngine = simulator.getRubyEngine() ;
-        if(rubyEngine == null) {
-            Itk.logError("ruby engine is not available.",
-                         "should specify 'use_ruby' property to be 'true'.") ;
-            System.exit(1) ;
-        }
     }
 
     //------------------------------------------------------------
     /**
      * Conf による初期化。
+     * init() より先にこちらが実行されるので注意。
      */
     @Override
     public void initByConf(Term conf, Term fallback) {
         super.initByConf(conf, fallback) ;
 
+        rubyEngine = handler.getSimulator().getRubyEngine() ;
+        if(rubyEngine == null) {
+            Itk.logError("ruby engine is not available.",
+                         "should specify 'use_ruby' property to be 'true'.") ;
+            Itk.quitByError() ;
+        }
+        
         rubyAgentClass = getStringFromConfig("rubyAgentClass", rubyAgentClass) ;
         rubyAgent = rubyEngine.newInstanceOfClass(rubyAgentClass, this,
                                                   conf, fallback) ;

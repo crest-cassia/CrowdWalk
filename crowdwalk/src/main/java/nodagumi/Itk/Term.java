@@ -1085,12 +1085,35 @@ public class Term {
         return (!isArray() && isNullHead() && isNullBody()) ;
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * nullかどうか？
+     */
+    static public boolean isNullTerm(Object object) {
+        return ((object != null) &&
+                (object instanceof Term) &&
+                ((Term)object).isNull()) ;
+    }
+    
+
     //------------------------------------------------------------
     /**
      * String となるか？
      */
     public boolean isString() {
         return ((head instanceof String) && isAtom()) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * String となるか？
+     */
+    static public boolean isStringTerm(Object object) {
+        return ((object != null) &&
+                (object instanceof Term) &&
+                ((Term)object).isString()) ;
     }
 
     //------------------------------------------------------------
@@ -1106,6 +1129,17 @@ public class Term {
                 isAtom()) ;
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * int となるか？
+     */
+    static public boolean isIntTerm(Object object) {
+        return ((object != null) &&
+                (object instanceof Term) &&
+                ((Term)object).isInt()) ;
+    }
+
     //------------------------------------------------------------
     /**
      * double となるか？
@@ -1116,12 +1150,32 @@ public class Term {
                  head instanceof Float) && isAtom()) ;
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * int となるか？
+     */
+    static public boolean isDoubleTerm(Object object) {
+        return ((object != null) &&
+                (object instanceof Term) &&
+                ((Term)object).isDouble()) ;
+    }
+
     //------------------------------------------------------------
     /**
      * number となるかどうか？
      */
     public boolean isNumber() {
         return isInt() || isDouble() ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * int となるか？
+     */
+    static public boolean isNumberTerm(Object object) {
+        return isIntTerm(object) || isDoubleTerm(object) ;
     }
 
     //------------------------------------------------------------

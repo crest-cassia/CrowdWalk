@@ -55,7 +55,7 @@ class SampleWrapper < CrowdWalkWrapper
     p ['rebuildRoutes()'] ;
   end
 
-  Term_major = intern("major") ;
+  Term_major = ItkTerm.intern("major") ;
 
   #--------------------------------------------------------------
   #++
@@ -74,13 +74,13 @@ class SampleWrapper < CrowdWalkWrapper
 #    @networkMap.eachNode(){|node| p [:node, node]} ;
     @networkMap.eachNode(){|node|
       if(rand(100) == 0) then
-        node.addTag("foo") ;
+        node.addTag(ItkTerm.intern("foo")) ;
         @taggedNodeList.push(node) ;
       end
     }
     while(@taggedNodeList.size > 10)
       node = @taggedNodeList.shift ;
-      node.removeTag("foo") ;
+      node.removeTag(ItkTerm.intern("foo")) ;
     end
   end
 

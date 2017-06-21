@@ -14,6 +14,7 @@
 require 'java';
 
 import 'nodagumi.Itk.Term' ;
+import 'nodagumi.Itk.Itk' ;
 
 #--======================================================================
 #++
@@ -213,6 +214,12 @@ class ItkTerm
         hash[key] = value ;
       }
       return hash ;
+    end
+
+    #------------------------------------------
+    ## String の intern
+    def intern(string)
+      return Itk.intern(string) ;
     end
 
   end
