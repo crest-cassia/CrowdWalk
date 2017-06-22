@@ -256,20 +256,21 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>agent_movement_history_file</h4>
- *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのログ(?)
+ *     <pre>ゴールまでたどり着いたエージェントのゴールした時点でのログ(?)
  *
  *  設定値： agent_movement_history file へのファイルパス
  *  デフォルト値： なし
- *  ログの記述内容：{@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter}</pre> 
+ *  ログの記述内容：{@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter}
  * </pre>
  *   </li>
  *
  *   <li>
  *     <h4>agent_trail_log</h4>
- *     <pre>  ゴールまでたどり着いたエージェントのゴールした時点でのJSON形式のログ
- *
- *  設定値： { "file" : ログファイルへのパス }
+ *  <pre> ゴールまでたどり着いたエージェントのゴールした時点でのJSON形式のログ。
+ *  ログの記述内容：{@link nodagumi.ananPJ.Simulator.AgentHandler#agentTrailLogFormatter}
+ *  設定値：{@link nodagumi.ananPJ.Simulator.AgentHandler#setupAgentTrailLogger}
  *  デフォルト値： なし
+ *     </pre>  
  *   </li>
  *
  *   <li>
