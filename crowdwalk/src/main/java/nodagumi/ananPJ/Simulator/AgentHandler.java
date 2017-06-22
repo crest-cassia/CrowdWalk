@@ -251,18 +251,10 @@ public class AgentHandler {
     private String searchTargetLinkTag = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // ログ出力定義関連
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * individualPedestriansLog の出力先 dir
-     */
-    private String individualPedestriansLogDir = null;
-
-    /**
-     * individualPedestriansLog の出力対象カラム
-     */
-    private List<String> logColumnsOfIndividualPedestrians = new ArrayList<String>();
-
+    //agentMovementHistoryLogger 関係
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * agentMovementHistoryLogger.
@@ -334,6 +326,8 @@ public class AgentHandler {
             ;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //agentTrailLogger 関係。
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * agentTrailLogger.
@@ -414,6 +408,19 @@ public class AgentHandler {
             ;
     }
     
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // individualPedestriansLog 関係。
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * individualPedestriansLog の出力先 dir
+     */
+    private String individualPedestriansLogDir = null;
+
+    /**
+     * individualPedestriansLog の出力対象カラム
+     */
+    private List<String> logColumnsOfIndividualPedestrians = new ArrayList<String>();
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * individualPedestriansLogger
@@ -611,6 +618,8 @@ public class AgentHandler {
     private int tickIntervalForIndividualPedestriansLog
         = Fallback_tickIntervalForIndividualPedestriansLog ;
     
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // EvacuatedAgentsLogger 関係。
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * エージェントの脱出時のログ。
