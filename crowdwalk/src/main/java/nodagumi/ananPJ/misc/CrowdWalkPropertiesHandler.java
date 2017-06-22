@@ -554,7 +554,12 @@ public class CrowdWalkPropertiesHandler {
      * ファイル・ディレクトリ名を設定する属性名。
      * ここにリストしておくと、パス指定で、絶対・相対の指定がない場合、
      * properties file のパスを追加する。
+     *
+     * [2017.06.22 I.Noda]
+     * 個々の部分、拡張性に乏しいので、下記の方式を使わないように変更。
+     * かわりに、getFurnishedPath などを用いるように変更。
      */
+    /*
     public static final String[] DEFINITION_FILE_ITEMS
         = {"map_file",
            "generation_file",
@@ -570,6 +575,7 @@ public class CrowdWalkPropertiesHandler {
            "screenshot_dir",
            "fallback_file"
         };
+    */
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
