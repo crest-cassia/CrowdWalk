@@ -203,6 +203,15 @@ public class JsonFormatter<T> {
     }
 
     //------------------------------------------------------------
+    /**
+     * keyのリストによるMember情報設定。(Termによる指定)
+     * @param memberKeyList:: member の keyのリスト
+     */
+    public JsonFormatter setMembersByTerm(Term memberKeyList) {
+        return setMembersByTerm(memberKeyList.<Term>getTypedArray()) ;
+    }
+
+    //------------------------------------------------------------
     // ヘッダー関連
     //------------------------------------------------------------
     /**

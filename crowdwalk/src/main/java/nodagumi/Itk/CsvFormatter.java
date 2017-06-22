@@ -142,6 +142,15 @@ public class CsvFormatter<T> {
     }
 
     //------------------------------------------------------------
+    /**
+     * header名のリストによるColumn情報設定。(Termによる指定)
+     * @param columnNameList:: column の header名のリスト
+     */
+    public CsvFormatter setColumnsByTerm(Term columnNameList) {
+        return setColumnsByTerm(columnNameList.<Term>getTypedArray()) ;
+    }
+
+    //------------------------------------------------------------
     // ヘッダー関連
     //------------------------------------------------------------
     /**

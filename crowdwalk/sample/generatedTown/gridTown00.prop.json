@@ -12,7 +12,12 @@
   "timer_file":"/tmp/timer.log",
   "_x_individual_pedestrians_log_dir":",Log",
 
-  "agent_trail_log_file":"sample/generatedTown/,Log/agentTrail.log",
+  "agent_trail_log" :
+    {
+      "file":"sample/generatedTown/,Log/agentTrail.log",
+      "members": ["agentId", "evacuatedRelTime"],
+      "___" : null
+    },
   
   "interval":0,
   "randseed":2524,

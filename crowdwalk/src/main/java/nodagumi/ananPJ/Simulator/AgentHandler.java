@@ -700,7 +700,6 @@ public class AgentHandler {
                                            "agentTrailLogType",
                                            agentTrailLogStyle) ;
         agentTrailLogFormatter.setOverallStyle(agentTrailLogStyle) ;
-        Itk.dbgVal("agentTrailAgentsLogStyle", agentTrailLogStyle) ;
 
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -1422,17 +1421,35 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * AgentTrailLog の設定
+     * AgentTrailLog の設定.
+     * properties file の中の設定法。(json形式)
+     * <pre> {
+     *   ...
+     *   "agent_trail_log" : 
+     *     {
+     *       "file" : __LogFilePath__,
+     *       "members": [__MemberName__, __MemberName__, ...]
+     *     }
+     * } </pre>
      */
     public void setupAgentTrailLogger() {
         try {
-            String agentTrailLogPath =
-                simulator.getProperties()
-                .getFilePath("agent_trail_log_file", null, false);
-            
-            if (agentTrailLogPath != null) {
-                initAgentTrailLogger("agent_trail_log",
-                                     agentTrailLogPath);
+            Term agentTrailLogConf =
+                simulator.getProperties().getTerm("agent_trail_log",null);
+
+            if(agentTrailLogConf != null) {
+                // setup log items (file の設定より先に必要)
+                Term logMembers =
+                    agentTrailLogConf.getArgTerm("members") ;
+                if (logMembers != null) {
+                    agentTrailLogFormatter.setMembersByTerm(logMembers) ;
+                }
+                // setup log file
+                String agentTrailLogPath =
+                    agentTrailLogConf.getArgString("file") ;
+                if (agentTrailLogPath != null) {
+                    initAgentTrailLogger("agent_trail_log", agentTrailLogPath);
+                }
             }
         } catch(Exception e) {
             Itk.logError("can not setup AgentTrailLogger",e.getMessage()) ;
@@ -1691,7 +1708,6 @@ public class AgentHandler {
     public void setupAgentFactoryByRuby(ItkRuby rubyEngine) {
         for(AgentFactory factory : agentFactoryList) {
             if(factory instanceof AgentFactoryByRuby) {
-                Itk.dbgVal("factory in AgentHandler", factory) ;
                 ((AgentFactoryByRuby)factory).setupRubyEngine(rubyEngine) ;
             }
         }
