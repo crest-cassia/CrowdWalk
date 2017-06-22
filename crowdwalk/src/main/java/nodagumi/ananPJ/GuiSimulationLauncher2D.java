@@ -183,7 +183,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
         frame.setShowLogo(showLogo);
         frame.setExitWithSimulationFinished(exitWithSimulationFinished);
 
-        String filePath = properties.getString("camera_2d_file", null);
+        String filePath = properties.getFurnishedPath("camera_2d_file", null);
         if (filePath != null) {
             frame.loadCamerawork(filePath);
         }

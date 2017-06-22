@@ -825,7 +825,8 @@ public class EvacuationSimulator {
                     rubyEngine.eval(String.format("require '%s'",rubyInitFile)) ;
                 }
                 // current dir を properties の directory へ。
-                rubyEngine.setCurrentDirectory(properties.getPropertiesDir()) ;
+                rubyEngine
+                    .setCurrentDirectory(properties.getPropertiesDirAbs()) ;
                 Itk.logInfo("Ruby Engine",
                             "current dir=", rubyEngine.eval("Dir::pwd")) ;
                 // init script

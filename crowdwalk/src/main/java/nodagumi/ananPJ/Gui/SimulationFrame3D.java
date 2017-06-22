@@ -303,13 +303,18 @@ public class SimulationFrame3D extends Stage implements Observer {
         try {
             atActualWidth = properties.getBoolean("show_links_at_actual_width", atActualWidth);
 
-            String filePath = properties.getString("camera_file", "");
-            if (filePath.toLowerCase().endsWith(".json")) {
-                loadCamerawork(filePath);
-            }
+            String filePath = properties.getFilePath("camera_file", null);
+	    if(filePath != null) {
+		if (filePath.toLowerCase().endsWith(".json")) {
+		    loadCamerawork(filePath);
+		} else {
+		    Itk.logError("camera_file should be a json file with .json suffix." ) ;
+		    Itk.quitByError() ;
+		}
+	    }
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(1);
+            Itk.quitByError() ;
         }
     }
 

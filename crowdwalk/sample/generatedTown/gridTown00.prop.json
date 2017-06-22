@@ -14,8 +14,9 @@
 
   "agent_trail_log" :
     {
-      "file":"sample/generatedTown/,Log/agentTrail.log",
-      "members": ["agentId", "evacuatedRelTime"],
+      "_file":"sample/generatedTown/,Log/agentTrail.log",
+      "file":",Log/agentTrail.log",
+      "_members": ["agentId", "evacuatedRelTime"],
       "___" : null
     },
   

@@ -1448,6 +1448,12 @@ public class AgentHandler {
                 String agentTrailLogPath =
                     agentTrailLogConf.getArgString("file") ;
                 if (agentTrailLogPath != null) {
+                    // properties の相対パスを補う。
+                    agentTrailLogPath =
+                        simulator.getProperties()
+                        .furnishPropertiesDirPath(agentTrailLogPath,
+                                                  true, false) ;
+                    Itk.dbgVal("agentTrailLogPath =", agentTrailLogPath) ;
                     initAgentTrailLogger("agent_trail_log", agentTrailLogPath);
                 }
             }

@@ -544,6 +544,12 @@ import nodagumi.Itk.*;
  */
 public class CrowdWalkPropertiesHandler {
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 設定位情報を格納しておくところ。
+     */
+    protected Term prop = null;
+
     /**
      * ファイル・ディレクトリ名を設定する属性名。
      * ここにリストしておくと、パス指定で、絶対・相対の指定がない場合、
@@ -565,8 +571,11 @@ public class CrowdWalkPropertiesHandler {
            "fallback_file"
         };
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 設定ファイルへのPath.
+     */
     protected String propertiesFile = null;
-    protected Term prop = null;
 
     /**
      * Get a properties file name.
@@ -585,29 +594,80 @@ public class CrowdWalkPropertiesHandler {
     }
 
     /**
-     * properties file の directory を返す。
+     * properties file の directory の絶対 Path を返す。
      */
-    public String getPropertiesDir() {
+    public String getPropertiesDirAbs() {
         File file = new File(propertiesFile) ;
         return file.getAbsoluteFile().getParent() ;
     }
 
+    /**
+     * properties file の directory の相対 Path を返す。
+     */
+    public String getPropertiesDirRel() {
+        File file = new File(propertiesFile) ;
+        String dirPath = file.getParent();
+        if(dirPath == null) 
+            return "." ;
+        else
+            return dirPath ;
+    }
 
+    /**
+     * propertiesFile の directory を prefix として追加する。
+     * @param path : もととなる path。
+     * @param forceP : 強制的に追加するかどうか。
+     *        false であれば、path に parent がない場合のみ追加。
+     *        true なら、pathが絶対path以外は強制的に追加。
+     * @param absP : 絶対pathを追加するかどうか。
+     * @return 変更したpath。
+     */
+    public String furnishPropertiesDirPath(String path,
+                                           boolean forceP,
+                                           boolean absP) {
+        String propDir = (absP ?
+                          getPropertiesDirAbs() :
+                          getPropertiesDirRel()) ;
+        File file = new File(path) ;
+
+        if(file.getParent() == null || (forceP && !file.isAbsolute())) {
+            return (propDir.replaceAll("\\\\", "/") + "/" + path) ;
+        } else {
+            return path ;
+        }
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 地図ファイル
+     */
     protected String networkMapFile = null; // path to map file (required)
     public String getNetworkMapFile() {
         return networkMapFile;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 汚染・障害物？ファイル
+     */
     protected String pollutionFile = null; // path to Obstructer file
     public String getPollutionFile() {
         return pollutionFile;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * エージェント生成ルールファイル
+     */
     protected String generationFile = null; // path to generation file
     public String getGenerationFile() {
         return generationFile;
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * イベントシナリオファイル。
+     */
     protected String scenarioFile = null; // path to scenario file
     public String getScenarioFile() {
         return scenarioFile;
@@ -688,29 +748,32 @@ public class CrowdWalkPropertiesHandler {
 
             // パス指定がファイル名のみならば
             // プロパティファイルのディレクトリパスを付加する
-            File propertyFile = new File(_propertiesFile);
-            String propertyDirPath = propertyFile.getParent();
-            if (propertyDirPath == null) {
-                propertyDirPath = ".";
+            /* [2017.06.22 I.Noda] furnishPropertiesDirPath などを使うように、
+             * 全体を改変。
+            file propertyfile = new file(_propertiesfile);
+            string propertydirpath = propertyfile.getparent();
+            if (propertydirpath == null) {
+                propertydirpath = ".";
             }
-            for (String property_item : DEFINITION_FILE_ITEMS) {
-                String filePath = getString(property_item, null);
-                if (filePath != null) {
-                    File file = new File(filePath);
-                    if (file.getParent() == null) {
-                        prop.setArg(property_item,
-                                    propertyDirPath.replaceAll("\\\\", "/") +
-                                    "/" + filePath);
+            for (string property_item : definition_file_items) {
+                string filepath = getstring(property_item, null);
+                if (filepath != null) {
+                    file file = new file(filepath);
+                    if (file.getparent() == null) {
+                        prop.setarg(property_item,
+                                    propertydirpath.replaceall("\\\\", "/") +
+                                    "/" + filepath);
                     }
                 }
             }
+            */
 
             // input files
-            networkMapFile = getString("map_file", null);
-            pollutionFile = getString("pollution_file", null);
-            generationFile = getString("generation_file", null);
-            scenarioFile = getString("scenario_file", null);
-            fallbackFile = getString("fallback_file", null) ;
+            networkMapFile = getFurnishedPath("map_file", null);
+            pollutionFile = getFurnishedPath("pollution_file", null);
+            generationFile = getFurnishedPath("generation_file", null);
+            scenarioFile = getFurnishedPath("scenario_file", null);
+            fallbackFile = getFurnishedPath("fallback_file", null) ;
 
             // create random with seed
             randseed = getInteger("randseed", 0);
@@ -946,11 +1009,14 @@ public class CrowdWalkPropertiesHandler {
     /**
      *  get directory path specified by key.
      */
-    public String getDirectoryPath(String key, String defaultValue) throws Exception {
+    public String getDirectoryPath(String key, String defaultValue)
+        throws Exception
+    {
         String value = prop.getArgString(key);
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
+        value = furnishPropertiesDirPath(value, true, false) ;
         File file = new File(value);
         if (! file.exists()) {
             if(doesCreateLogDirAutomatically()) {
@@ -968,14 +1034,31 @@ public class CrowdWalkPropertiesHandler {
 
     //--------------------------------------------------
     /**
+     *  get furnished path.
+     *  properties file の directory を補ったパスを返す。
+     *  存在チェックなどはしない。
+     */
+    public String getFurnishedPath(String key, String defaultValue) {
+        String value = prop.getArgString(key) ;
+        if(value == null || value.trim().isEmpty()) {
+            return defaultValue ;
+        }
+        return furnishPropertiesDirPath(value, true, false) ;
+    }
+    
+    //--------------------------------------------------
+    /**
      *  get file path.
      *  if not exist, raise Exception.
      */
-    public String getFilePath(String key, String defaultValue) throws Exception {
+    public String getFilePath(String key, String defaultValue)
+        throws Exception
+    {
         String value = prop.getArgString(key);
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
+        value = furnishPropertiesDirPath(value, true, false) ;
         File file = new File(value);
         if (! file.exists()) {
             throw new Exception("Property error - 指定されたファイルが存在しません: " + key + ":" + value);
@@ -1001,6 +1084,7 @@ public class CrowdWalkPropertiesHandler {
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
+        value = furnishPropertiesDirPath(value, true, false) ;
         File file = new File(value);
         if (file.exists() && ! file.isFile()) {
             throw new Exception("Property error - 指定されたパスがファイルではありません: " + key + ":" + value);
