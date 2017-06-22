@@ -349,13 +349,6 @@ public class AgentHandler {
         JsonFormatter.OverallStyle.RecordPerLine ;
 
     /**
-     * agent の Trail を記録するかどうか？
-     */
-    public boolean doesRecordTrail() {
-        return agentTrailLogger != null ;
-    }
-
-    /**
      * agentTrailLogger の JSON フォーマット。
      * <pre>
      * { "agentId": _AgentID_,
@@ -675,32 +668,11 @@ public class AgentHandler {
                                  "searchTargetLinkTag", searchTargetLinkTag);
 
         // columns of individual pedestrians log
-        Term logColumns =
-            SetupFileInfo
-            .fetchFallbackTerm(fallback,
-                               "logColumnsOfIndividualPedestrians",
-                               Term.newArrayTerm());
-        for (int i = 0; i < logColumns.getArraySize(); i++) {
-            Term columnName = logColumns.getNthTerm(i);
-            logColumnsOfIndividualPedestrians.add(columnName.getString());
-        }
-        // tick size of individual pedestrian log
-        tickIntervalForIndividualPedestriansLog =
-            SetupFileInfo
-            .fetchFallbackInt(fallback,
-                              "tickIntervalForIndividualPedestriansLog",
-                              tickIntervalForIndividualPedestriansLog) ;
+        setupIndividualPedestriansLoggerConfig(fallback) ;
         
         // agent trail log
-        agentTrailLogStyle =
-            (JsonFormatter.OverallStyle)
-            SetupFileInfo
-            .fetchFallbackObjectViaLexicon(fallback,
-                                           JsonFormatter.overallStyleLexicon,
-                                           "agentTrailLogType",
-                                           agentTrailLogStyle) ;
-        agentTrailLogFormatter.setOverallStyle(agentTrailLogStyle) ;
-
+        setupAgentTrailLoggerConfig(fallback) ;
+        
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
     }
@@ -968,31 +940,21 @@ public class AgentHandler {
     /**
      * このサイクルで evacuateしたエージェントの処理
      */
-    private void updateNewlyEvacuatedAgent(AgentBase agent, SimTime currentTime) {
+    private void updateNewlyEvacuatedAgent(AgentBase agent,
+                                           SimTime currentTime)
+    {
         evacuatedAgents.add(agent);
         if (agent.isStuck()) {
             stuckAgents.add(agent);
         }
-        if (agentMovementHistoryLogger != null) {
-            agentMovementHistoryLoggerFormatter
-                .outputValueToLoggerInfo(agentMovementHistoryLogger,
-                                         agent, currentTime, this);
-        }
-        if (doesRecordTrail()) {
-            agentTrailLogFormatter
-                .outputRecordToLoggerInfo(agentTrailLogger,
-                                          agent, currentTime, this);
-        }
-        if (evacuatedAgentsLogger != null) {
-            MapNode exitNode = agent.getPrevNode();
-            Integer counter = evacuatedAgentsCountByExit.get(exitNode);
-            if (counter == null) {
-                Itk.logWarn("Evacuated from unregistered goal", exitNode.toShortInfo());
-                return;
-            }
-            counter += 1;
-            evacuatedAgentsCountByExit.put(exitNode, counter);
-        }
+
+        // ログ出力。
+        logAgentMovementHistory(agent, currentTime) ;
+        logAgentTrail(agent, currentTime) ;
+
+        // 避難数カウント（最終ログ用）
+        countEvacuatedAgentsForLogger(agent, currentTime) ;
+
     }
 
     //------------------------------------------------------------
@@ -1011,7 +973,7 @@ public class AgentHandler {
                     agent.updateViews();
                 }
                 if(isLogCycle) {
-                    logIndividualPedestrians(currentTime, agent);
+                    logIndividualPedestrians(agent, currentTime) ;
                 }
             }
         }
@@ -1421,52 +1383,6 @@ public class AgentHandler {
 
     //------------------------------------------------------------
     /**
-     * AgentTrailLog の設定.
-     * properties file の中の設定法。(json形式)
-     * <pre> {
-     *   ...
-     *   "agent_trail_log" : 
-     *     {
-     *       "file" : __LogFilePath__,
-     *       "members": [__MemberName__, __MemberName__, ...]
-     *     }
-     * } </pre>
-     */
-    public void setupAgentTrailLogger() {
-        try {
-            Term agentTrailLogConf =
-                simulator.getProperties().getTerm("agent_trail_log",null);
-
-            if(agentTrailLogConf != null) {
-                // setup log items (file の設定より先に必要)
-                Term logMembers =
-                    agentTrailLogConf.getArgTerm("members") ;
-                if (logMembers != null) {
-                    agentTrailLogFormatter.setMembersByTerm(logMembers) ;
-                }
-                // setup log file
-                String agentTrailLogPath =
-                    agentTrailLogConf.getArgString("file") ;
-                if (agentTrailLogPath != null) {
-                    // properties の相対パスを補う。
-                    agentTrailLogPath =
-                        simulator.getProperties()
-                        .furnishPropertiesDirPath(agentTrailLogPath,
-                                                  true, false) ;
-                    Itk.dbgVal("agentTrailLogPath =", agentTrailLogPath) ;
-                    initAgentTrailLogger("agent_trail_log", agentTrailLogPath);
-                }
-            }
-        } catch(Exception e) {
-            Itk.logError("can not setup AgentTrailLogger",e.getMessage()) ;
-            e.printStackTrace() ;
-            Itk.quitByError() ;
-        }
-    }
-        
-    
-    //------------------------------------------------------------
-    /**
      * ロガーの終了処理
      */
     public void finalizeSimulationLoggers() {
@@ -1474,28 +1390,6 @@ public class AgentHandler {
         closeAgentMovementHistorLogger();
         closeAgentTrailLogger();
         closeEvacuatedAgentsLogger();
-    }
-
-    //------------------------------------------------------------
-    /**
-     * check the currentTime is on a cycle of individualPedestriansLogger
-     */
-    final private boolean isLogIndividualPedestriansCycle(SimTime currentTime) {
-        return (individualPedestriansLogger != null &&
-                (0 == (currentTime.getTickCount()
-                       % tickIntervalForIndividualPedestriansLog))) ;
-    }
-                                                                          
-    //------------------------------------------------------------
-    /**
-     * individualPedestriansLogger への出力。
-     */
-    private void logIndividualPedestrians(SimTime currentTime, AgentBase agent) {
-        if (! agent.isDead()) {
-            individualPedestriansLoggerFormatter
-                .outputValueToLoggerInfo(individualPedestriansLogger,
-                                         agent, currentTime, this);
-        }
     }
 
     //------------------------------------------------------------
@@ -1551,30 +1445,68 @@ public class AgentHandler {
     }
 
     //------------------------------------------------------------
-    /**
-     * AgentMovementHistoryLogger の初期化。
-     * @param name : ロガーの名前。
-     * @param filePath : ログファイル名。
-     */
-    public void initAgentMovementHistoryLogger(String name, String filePath) {
-        agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
-            public String format(final LogRecord record) {
-                return formatMessage(record) + "\n";
-            }
-            }, filePath);
-        agentMovementHistoryLogger.setUseParentHandlers(false); // コンソールには出力しない
-        agentMovementHistoryLoggerFormatter
-            .outputHeaderToLoggerInfo(agentMovementHistoryLogger) ;
-    }
-
+    // AgentTrailLog関係。
     //------------------------------------------------------------
     /**
-     * AgentMovementHistoryLogger の終了
+     * AgentTrailLog の各種設定。
+     * constructor で呼ばれる。 
      */
-    public void closeAgentMovementHistorLogger() {
-        closeLogger(agentMovementHistoryLogger);
+    private void setupAgentTrailLoggerConfig(Term fallback) {
+        agentTrailLogStyle =
+            (JsonFormatter.OverallStyle)
+            SetupFileInfo
+            .fetchFallbackObjectViaLexicon(fallback,
+                                           JsonFormatter.overallStyleLexicon,
+                                           "agentTrailLogType",
+                                           agentTrailLogStyle) ;
+        agentTrailLogFormatter.setOverallStyle(agentTrailLogStyle) ;
     }
+    
+    //------------------------------------------------------------
+    /**
+     * AgentTrailLog の設定.
+     * properties file の中の設定法。(json形式)
+     * <pre> {
+     *   ...
+     *   "agent_trail_log" : 
+     *     {
+     *       "file" : __LogFilePath__,
+     *       "members": [__MemberName__, __MemberName__, ...]
+     *     }
+     * } </pre>
+     */
+    public void setupAgentTrailLogger() {
+        try {
+            Term agentTrailLogConf =
+                simulator.getProperties().getTerm("agent_trail_log",null);
 
+            if(agentTrailLogConf != null) {
+                // setup log items (file の設定より先に必要)
+                Term logMembers =
+                    agentTrailLogConf.getArgTerm("members") ;
+                if (logMembers != null) {
+                    agentTrailLogFormatter.setMembersByTerm(logMembers) ;
+                }
+                // setup log file
+                String agentTrailLogPath =
+                    agentTrailLogConf.getArgString("file") ;
+                if (agentTrailLogPath != null) {
+                    // properties の相対パスを補う。
+                    agentTrailLogPath =
+                        simulator.getProperties()
+                        .furnishPropertiesDirPath(agentTrailLogPath,
+                                                  true, false) ;
+                    Itk.dbgVal("agentTrailLogPath =", agentTrailLogPath) ;
+                    initAgentTrailLogger("agent_trail_log", agentTrailLogPath);
+                }
+            }
+        } catch(Exception e) {
+            Itk.logError("can not setup AgentTrailLogger",e.getMessage()) ;
+            e.printStackTrace() ;
+            Itk.quitByError() ;
+        }
+    }
+        
     //------------------------------------------------------------
     /**
      * AgentTrailLogger の初期化。
@@ -1602,6 +1534,51 @@ public class AgentHandler {
         agentTrailLogFormatter
             .outputTailerToLoggerInfo(agentTrailLogger) ;
         closeLogger(agentTrailLogger);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * agent の Trail を記録するかどうか？
+     */
+    public boolean doesRecordAgentTrail() {
+        return agentTrailLogger != null ;
+    }
+    //------------------------------------------------------------
+    /**
+     * agentTrail のログ出力の本体。
+     */
+    private void logAgentTrail(AgentBase agent, SimTime currentTime) {
+        if (doesRecordAgentTrail()) {
+            agentTrailLogFormatter
+                .outputRecordToLoggerInfo(agentTrailLogger,
+                                          agent, currentTime, this);
+        }
+    }
+
+    //------------------------------------------------------------
+    // individual pedestrian logger 関係。
+    //------------------------------------------------------------
+    /**
+     * individual pedestrian logger の各種設定。
+     * コンストラクタで呼ばれる。
+     */
+    private void setupIndividualPedestriansLoggerConfig(Term fallback) {
+        Term logColumns =
+            SetupFileInfo
+            .fetchFallbackTerm(fallback,
+                               "logColumnsOfIndividualPedestrians",
+                               Term.newArrayTerm());
+        for (int i = 0; i < logColumns.getArraySize(); i++) {
+            Term columnName = logColumns.getNthTerm(i);
+            logColumnsOfIndividualPedestrians.add(columnName.getString());
+        }
+        
+        // tick size of individual pedestrian log
+        tickIntervalForIndividualPedestriansLog =
+            SetupFileInfo
+            .fetchFallbackInt(fallback,
+                              "tickIntervalForIndividualPedestriansLog",
+                              tickIntervalForIndividualPedestriansLog) ;
     }
 
     //------------------------------------------------------------
@@ -1666,6 +1643,71 @@ public class AgentHandler {
         }
     }
 
+   //------------------------------------------------------------
+    /**
+     * check the currentTime is on a cycle of individualPedestriansLogger
+     */
+    final private boolean isLogIndividualPedestriansCycle(SimTime currentTime) {
+        return (individualPedestriansLogger != null &&
+                (0 == (currentTime.getTickCount()
+                       % tickIntervalForIndividualPedestriansLog))) ;
+    }
+                                                                          
+    //------------------------------------------------------------
+    /**
+     * individualPedestriansLogger への出力。
+     */
+    private void logIndividualPedestrians(AgentBase agent,
+                                          SimTime currentTime) {
+        if (! agent.isDead()) {
+            individualPedestriansLoggerFormatter
+                .outputValueToLoggerInfo(individualPedestriansLogger,
+                                         agent, currentTime, this);
+        }
+    }
+
+     //------------------------------------------------------------
+    // AgentMovementHistoryLogger 関係
+    //------------------------------------------------------------
+    /**
+     * AgentMovementHistoryLogger の初期化。
+     * @param name : ロガーの名前。
+     * @param filePath : ログファイル名。
+     */
+    public void initAgentMovementHistoryLogger(String name, String filePath) {
+        agentMovementHistoryLogger = initLogger(name, Level.INFO, new java.util.logging.Formatter() {
+            public String format(final LogRecord record) {
+                return formatMessage(record) + "\n";
+            }
+            }, filePath);
+        agentMovementHistoryLogger.setUseParentHandlers(false); // コンソールには出力しない
+        agentMovementHistoryLoggerFormatter
+            .outputHeaderToLoggerInfo(agentMovementHistoryLogger) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * AgentMovementHistoryLogger の終了
+     */
+    public void closeAgentMovementHistorLogger() {
+        closeLogger(agentMovementHistoryLogger);
+    }
+
+    //------------------------------------------------------------
+    /**
+     * AgentMovementHistoryLogger の出力本体。
+     */
+    final private void logAgentMovementHistory(AgentBase agent,
+                                               SimTime currentTime) {
+      if (agentMovementHistoryLogger != null) {
+            agentMovementHistoryLoggerFormatter
+                .outputValueToLoggerInfo(agentMovementHistoryLogger,
+                                         agent, currentTime, this);
+        }
+    }
+
+    //------------------------------------------------------------
+    // EvacuatedAgentsLogger 関係
     //------------------------------------------------------------
     /**
      * EvacuatedAgentsLogger の初期化。
@@ -1699,13 +1741,37 @@ public class AgentHandler {
             .outputHeaderToLoggerInfo(evacuatedAgentsLogger) ;
     }
 
+    //------------------------------------------------------------
     /**
      * EvacuatedAgentsLogger の終了
      */
     public void closeEvacuatedAgentsLogger() {
         closeLogger(evacuatedAgentsLogger);
     }
+
+    //------------------------------------------------------------
+    /**
+     * EvacuatedAgentsLogger 用のカウントアップ。
+     */
+    public void countEvacuatedAgentsForLogger(AgentBase agent,
+                                              SimTime currentTime)
+    {
+        if (evacuatedAgentsLogger != null) {
+            MapNode exitNode = agent.getPrevNode();
+            Integer counter = evacuatedAgentsCountByExit.get(exitNode);
+            if (counter == null) {
+                Itk.logWarn("Evacuated from unregistered goal",
+                            exitNode.toShortInfo());
+                return;
+            }
+            counter += 1;
+            evacuatedAgentsCountByExit.put(exitNode, counter);
+        }
+
+    }
     
+    //------------------------------------------------------------
+    // Ruby 対応
     //------------------------------------------------------------
     /**
      * AgentFactoryByRuby への rubyEngine のリンク。

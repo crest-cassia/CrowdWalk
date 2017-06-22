@@ -131,7 +131,7 @@ implements Comparable<AgentBase> {
     /**
      * 経由点の通過情報を記録するか？
      */
-    public boolean doesRecordTrail() { return handler.doesRecordTrail() ; }
+    public boolean doesRecordTrail() { return handler.doesRecordAgentTrail() ; }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
