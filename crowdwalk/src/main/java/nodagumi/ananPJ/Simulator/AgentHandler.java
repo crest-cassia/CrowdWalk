@@ -138,6 +138,13 @@ public class AgentHandler {
         return simulator ;
     }
 
+    /**
+     * 所属するSimulator の RubyWrapper の呼び出し。
+     */
+    public Object callRubyWrapper(String methodName, Object... args) {
+        return getSimulator().callRubyWrapper(methodName, args) ;
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * AgentHandler の fallback
@@ -414,6 +421,26 @@ public class AgentHandler {
             ;
     }
     
+    //==================================================
+    //--------------------------------------------------
+    /**
+     * agentTrailLogFormatter 用の member を作成する。
+     * ruby (CrowdWalkWrapper) から呼び出し用。
+     */
+    public void addMemberToAgentTrailLogFormatterForRuby(String name) {
+        agentTrailLogFormatter
+            .addMember(agentTrailLogFormatter.new Member(name){
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object agentHandlerObj) {
+                        AgentHandler handler = (AgentHandler)agentHandlerObj ;
+                        return
+                            handler
+                            .callRubyWrapper("callbackAgentTrailLogMember",
+                                             name,
+                                             agent, timeObj, agentHandlerObj) ;
+                    }}) ;
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // individualPedestriansLog 関係。
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -175,7 +175,6 @@ public class EvacuationSimulator {
      */
     private Object rubyWrapper = null ;
 
-
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -368,6 +367,12 @@ public class EvacuationSimulator {
         return rubyEngine ;
     }
 
+    /**
+     * Ruby Wrapper 実行の呼び出し。
+     */
+    public Object callRubyWrapper(String methodName, Object... args) {
+        return rubyEngine.callMethod(rubyWrapper, methodName, args) ;
+    }
     //------------------------------------------------------------
     /**
      * シミュレーションのサイクル間のスリープの取得。
@@ -563,11 +568,11 @@ public class EvacuationSimulator {
 
         //logger
         if(useRubyWrapper())
-            rubyEngine.callMethod(rubyWrapper, "setupSimulationLoggers") ;
+            callRubyWrapper("setupSimulationLoggers") ;
         initLoggers() ;
 
         if(useRubyWrapper())
-            rubyEngine.callMethod(rubyWrapper, "prepareForSimulation") ;
+            callRubyWrapper("prepareForSimulation") ;
     }
 
     //------------------------------------------------------------
@@ -578,7 +583,7 @@ public class EvacuationSimulator {
         finalizeLoggers() ;
 
         if(useRubyWrapper())
-            rubyEngine.callMethod(rubyWrapper, "finalizeSimulation") ;
+            callRubyWrapper("finalizeSimulation") ;
     }
 
     //------------------------------------------------------------
@@ -923,7 +928,7 @@ public class EvacuationSimulator {
 
             // ruby wrapper の preUpdate()
             if(useRubyWrapper())
-                rubyEngine.callMethod(rubyWrapper, "preUpdate", currentTime) ;
+                callRubyWrapper("preUpdate", currentTime) ;
 
             // pollution 計算。
             if (usePollution())
@@ -936,7 +941,7 @@ public class EvacuationSimulator {
 
             // ruby wrapper の postUpdate()
             if(useRubyWrapper())
-                rubyEngine.callMethod(rubyWrapper, "postUpdate", currentTime) ;
+                callRubyWrapper("postUpdate", currentTime) ;
 
             // 描画のための呼び出し
             launcher.updateEveryTick(currentTime);

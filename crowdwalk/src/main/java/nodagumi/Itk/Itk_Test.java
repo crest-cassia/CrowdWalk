@@ -33,12 +33,35 @@ import nodagumi.Itk.Itk ;
 public class Itk_Test {
     //------------------------------------------------------------
     /**
+     * 無名クラス定義でのクロージャのテスト。
+     */
+    @Test
+    public void test_Closure() {
+        Foo obj1 = test_Closure_createNewObject("bar") ;
+        Foo obj2 = test_Closure_createNewObject("baz") ;
+
+        obj1.foo() ;
+        obj2.foo() ;
+    }
+
+    public static interface Foo { public void foo() ; }
+
+    private Foo test_Closure_createNewObject(String name) {
+        return new Foo(){
+            public void foo() {
+                Itk.dbgVal("foo", name) ;
+            }
+        } ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * HashMap<String, Object> と HashMap<Object, Object>のスピード競争。
      * String の equal と == のスピード差がどれくらいきくか。
      * 結果：
      * HashMap の中ではかならず equals が呼ばれるため、違いがない。
      */
-    @Test
+    //@Test
     public void test_StringObjectHashMap() {
         String prefix = "abcdefg" ;
         int k = 10 ;

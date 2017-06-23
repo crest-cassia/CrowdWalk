@@ -30,7 +30,15 @@ class SampleWrapper < CrowdWalkWrapper
   #++
   ## ロガーの設定
   def setupSimulationLoggers()
-    super() ;
+    addMemberToAgentTrailLogFormatter("foo") {|agent, currentTime, handler|
+      [1, 2, 3, "hogehoge",
+       {"a" => 10,
+        "b" => nil}] ;
+      }
+    addMemberToAgentTrailLogFormatter("bar") {|agent, currentTime, handler|
+      {"time" => currentTime.getAbsoluteTimeString(),
+       "agent" => agent.getID()} ;
+    }
   end
   
   #--------------------------------------------------------------

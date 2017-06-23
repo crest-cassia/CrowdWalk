@@ -32,6 +32,9 @@ class CrowdWalkWrapper
   ## Fallback Parameters ;
   attr_accessor :fallbackParameters ;
 
+  ## シミュレーションの AgentTrailLog の Format Member の手続きテーブル
+  attr_accessor :agentTrailLogFormatTable ;
+
   #--------------------------------------------------------------
   #++
   ## 初期化
@@ -40,6 +43,8 @@ class CrowdWalkWrapper
     @simulator = simulator ;
     @networkMap = NetworkMap.new(simulator.getMap()) ;
     @fallbackParameters = simulator.getFallbackParameters() ;
+
+    @agentTrailLogFormatTable = {} ;
   end
 
   #--------------------------------------------------------------
@@ -50,6 +55,34 @@ class CrowdWalkWrapper
   ## initSimulationLoggers()の間によびだされる。
   def setupSimulationLoggers()
     p [:setupSimulationLoggers, :doNothing] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレーションの AgentTrailLog の Format Member の追加。
+  ## _name_ :: name of the Format Member.
+  ## _&block_ :: a procedure to generage the value of the member.
+  ##             The block should receive three args
+  ##             (agent, timeObj, handler).
+  def addMemberToAgentTrailLogFormatter(name, &block)
+    @agentTrailLogFormatTable[name] = block ;
+    @simulator.getAgentHandler().addMemberToAgentTrailLogFormatterForRuby(name);
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## AgentTrailLog の Format Member からの呼び戻し。
+  ## _name_ :: name of the Format Member.
+  ## _agent_ :: agent object in Java.
+  ## _currentTime_ :: time obj.
+  ## _handler_ :: AgentHandler.
+  def callbackAgentTrailLogMember(name, agent, currentTime, handler)
+    block = @agentTrailLogFormatTable[name] ;
+    if(!block.nil?) 
+      return block.call(agent, currentTime, handler) ;
+    else
+      raise "Uknown callbackAgentTrailLogMember:" + name ; 
+    end
   end
 
   #--------------------------------------------------------------
