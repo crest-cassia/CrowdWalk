@@ -140,6 +140,12 @@ public class AgentHandler {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * AgentHandler の fallback
+     */
+    private Term fallback = null;
+    
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * エージェント生成ファイル
      */
     private AgentGenerationFile agentFactoryList = null;
@@ -254,7 +260,7 @@ public class AgentHandler {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // ログ出力定義関連
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //agentMovementHistoryLogger 関係
+    //agentMovementHistoryLogger 関係  (obsolute)
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * agentMovementHistoryLogger.
@@ -661,7 +667,7 @@ public class AgentHandler {
 
         // fallback の取得
         Term wholeFallback = simulator.getFallbackParameters();
-        Term fallback =
+        fallback =
             SetupFileInfo
             .filterFallbackTerm(wholeFallback, "agentHandler") ;
 
@@ -676,11 +682,8 @@ public class AgentHandler {
             .fetchFallbackString(fallback,
                                  "searchTargetLinkTag", searchTargetLinkTag);
 
-        // columns of individual pedestrians log
-        setupIndividualPedestriansLoggerConfig(fallback) ;
-        
-        // agent trail log
-        setupAgentTrailLoggerConfig(fallback) ;
+        // Logger setup
+        setupSimulationLoggers() ;
         
         // ファイル類の読み込み
         loadAgentGenerationFile(simulator.getSetupFileInfo().getGenerationFile()) ;
@@ -1348,13 +1351,23 @@ public class AgentHandler {
     // ログ関連
     //------------------------------------------------------------
     /**
-     * ロガーの設定
+     * ロガーの設定。パラメータなどを設定する。
      */
     public void setupSimulationLoggers() {
         setupAgentTrailLogger() ;
         setupAgentMovementHistoryLogger() ;
         setupIndividualPedestriansLogger() ;
         setupEvacuatedAgentsLogger() ;
+    }
+    //------------------------------------------------------------
+    /**
+     * ロガーの初期化処理。実際にファイルをオープンするなど。
+     */
+    public void initSimulationLoggers() {
+        initAgentTrailLogger() ;
+        initAgentMovementHistoryLogger() ;
+        initIndividualPedestriansLogger() ;
+        initEvacuatedAgentsLogger() ;
     }
 
     //------------------------------------------------------------
@@ -1377,7 +1390,7 @@ public class AgentHandler {
      * @param filePath : ログファイル名。
      * @return ロガーを返す。
      */
-    public Logger initLogger(String name, Level level, String filePath) {
+    private Logger openLogger(String name, Level level, String filePath) {
         Logger logger = Logger.getLogger(name);
         java.util.logging.Formatter formatter =
             new java.util.logging.Formatter() {
@@ -1421,7 +1434,7 @@ public class AgentHandler {
      * ロガーの終了処理。
      * @param logger : 終了するロガー。
      */
-    public void closeLogger(Logger logger) {
+    private void closeLogger(Logger logger) {
         if (logger != null) {
             for (Handler handler : logger.getHandlers()) {
                 handler.close();
@@ -1436,7 +1449,7 @@ public class AgentHandler {
      * AgentTrailLog の各種設定。
      * constructor で呼ばれる。 
      */
-    private void setupAgentTrailLoggerConfig(Term fallback) {
+    private void setupAgentTrailLogger() {
         // Log Style
         agentTrailLogStyle =
             (JsonFormatter.OverallStyle)
@@ -1460,7 +1473,7 @@ public class AgentHandler {
     
     //------------------------------------------------------------
     /**
-     * AgentTrailLog の設定.
+     * AgentTrailLog 初期化。
      * properties file の中の設定法。(json形式)
      * <pre> {
      *   ...
@@ -1471,7 +1484,7 @@ public class AgentHandler {
      *     }
      * } </pre>
      */
-    public void setupAgentTrailLogger() {
+    public void initAgentTrailLogger() {
         try {
             // setup log file
             if(simulator.getProperties().hasKeyRecursive("agent_trail_log",
@@ -1486,8 +1499,7 @@ public class AgentHandler {
                         simulator.getProperties()
                         .furnishPropertiesDirPath(agentTrailLogPath,
                                                   true, false) ;
-                    Itk.dbgVal("agentTrailLogPath =", agentTrailLogPath) ;
-                    initAgentTrailLogger("agent_trail_log", agentTrailLogPath);
+                    openAgentTrailLogger("agent_trail_log", agentTrailLogPath);
                 }
             }
         } catch(Exception e) {
@@ -1503,9 +1515,9 @@ public class AgentHandler {
      * @param name : ロガーの名前。
      * @param filePath : ログファイル名。
      */
-    public void initAgentTrailLogger(String name, String filePath) {
+    private void openAgentTrailLogger(String name, String filePath) {
         agentTrailLogger =
-            initLogger(name, Level.INFO, filePath);
+            openLogger(name, Level.INFO, filePath);
         agentTrailLogFormatter
             .outputHeaderToLoggerInfo(agentTrailLogger) ;
     }
@@ -1514,7 +1526,7 @@ public class AgentHandler {
     /**
      * AgentTrailLogger の終了
      */
-    public void closeAgentTrailLogger() {
+    private void closeAgentTrailLogger() {
         agentTrailLogFormatter
             .outputTailerToLoggerInfo(agentTrailLogger) ;
         closeLogger(agentTrailLogger);
@@ -1546,7 +1558,7 @@ public class AgentHandler {
      * individual pedestrian logger の各種設定。
      * コンストラクタで呼ばれる。
      */
-    private void setupIndividualPedestriansLoggerConfig(Term fallback) {
+    private void setupIndividualPedestriansLogger() {
         Term logColumns =
             SetupFileInfo
             .fetchFallbackTerm(fallback,
@@ -1569,7 +1581,7 @@ public class AgentHandler {
     /**
      * individualPedestriansLogger の設定。
      */
-    private void setupIndividualPedestriansLogger() {
+    private void initIndividualPedestriansLogger() {
         try {
             String individualLogDir =
                 simulator.getProperties()
@@ -1580,7 +1592,7 @@ public class AgentHandler {
             }
 
             if (individualLogDir != null) {
-                initIndividualPedestriansLogger("individual_pedestrians_log",
+                openIndividualPedestriansLogger("individual_pedestrians_log",
                                                 individualLogDir);
             }
         } catch(Exception e) {
@@ -1596,10 +1608,10 @@ public class AgentHandler {
      * @param name : ロガーの名前。
      * @param dirPath : ログファイルを格納するディレクトリ名。
      */
-    public void initIndividualPedestriansLogger(String name, String dirPath) {
+    private void openIndividualPedestriansLogger(String name, String dirPath) {
         individualPedestriansLogDir = dirPath;
         individualPedestriansLogger =
-            initLogger(name, Level.INFO,
+            openLogger(name, Level.INFO,
                        dirPath + "/log_individual_pedestrians.csv");
         
         individualPedestriansLoggerFormatter
@@ -1614,7 +1626,7 @@ public class AgentHandler {
     /**
      * individualPedestriansLogger の終了
      */
-    public void closeIndividualPedestriansLogger() {
+    private void closeIndividualPedestriansLogger() {
         if (individualPedestriansLogger == null) {
             return;
         }
@@ -1682,12 +1694,20 @@ public class AgentHandler {
      * AgentMovementHistoryLogger の設定。
      */
     private void setupAgentMovementHistoryLogger() {
+        // currently, do nothing.  for the uniform setup of loggers.
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * AgentMovementHistoryLogger の初期化。
+     */
+    private void initAgentMovementHistoryLogger() {
         try {
             String agentHistoryPath =
                 simulator.getProperties()
                 .getFilePath("agent_movement_history_file", null, false);
             if (agentHistoryPath != null) {
-                initAgentMovementHistoryLogger("agent_movement_history",
+                openAgentMovementHistoryLogger("agent_movement_history",
                                                agentHistoryPath);
             }
         } catch(Exception e) {
@@ -1703,9 +1723,9 @@ public class AgentHandler {
      * @param name : ロガーの名前。
      * @param filePath : ログファイル名。
      */
-    public void initAgentMovementHistoryLogger(String name, String filePath) {
+    public void openAgentMovementHistoryLogger(String name, String filePath) {
         agentMovementHistoryLogger =
-            initLogger(name, Level.INFO, filePath);
+            openLogger(name, Level.INFO, filePath);
         agentMovementHistoryLoggerFormatter
             .outputHeaderToLoggerInfo(agentMovementHistoryLogger) ;
     }
@@ -1738,32 +1758,6 @@ public class AgentHandler {
      * EvacuatedAgentsLogger の設定。
      */
     private void setupEvacuatedAgentsLogger() {
-        try {
-            String evacuatedAgentsPath =
-                simulator.getProperties()
-                .getFilePath("evacuated_agents_log_file", null, false);
-
-            // log setup
-            if (evacuatedAgentsPath != null) {
-                initEvacuatedAgentsLogger("evacuated_agents_log",
-                                          evacuatedAgentsPath);
-            }
-        } catch(Exception e) {
-            Itk.logError("can not setup Logger",e.getMessage()) ;
-            e.printStackTrace() ;
-            Itk.quitByError() ;
-        }
-    }
-
-    //------------------------------------------------------------
-    /**
-     * EvacuatedAgentsLogger の初期化。
-     * @param name : ロガーのタグ。
-     * @param filePath : ログファイル名。
-     */
-    public void initEvacuatedAgentsLogger(String name, String filePath) {
-        evacuatedAgentsLogger = initLogger(name, Level.INFO, filePath);
-
         // 出力カラムと初期値をセットする
         for (final MapNode node : simulator.getNodes()) {
             for (String goalTag : getGoalTags()) {
@@ -1779,6 +1773,39 @@ public class AgentHandler {
                 }
             }
         }
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * EvacuatedAgentsLogger の設定。
+     */
+    private void initEvacuatedAgentsLogger() {
+        try {
+            String evacuatedAgentsPath =
+                simulator.getProperties()
+                .getFilePath("evacuated_agents_log_file", null, false);
+
+            // log setup
+            if (evacuatedAgentsPath != null) {
+                openEvacuatedAgentsLogger("evacuated_agents_log",
+                                          evacuatedAgentsPath);
+            }
+        } catch(Exception e) {
+            Itk.logError("can not setup Logger",e.getMessage()) ;
+            e.printStackTrace() ;
+            Itk.quitByError() ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * EvacuatedAgentsLogger の初期化。
+     * @param name : ロガーのタグ。
+     * @param filePath : ログファイル名。
+     */
+    public void openEvacuatedAgentsLogger(String name, String filePath) {
+        evacuatedAgentsLogger = openLogger(name, Level.INFO, filePath);
+
         evacuatedAgentsLoggerFormatter
             .outputHeaderToLoggerInfo(evacuatedAgentsLogger) ;
     }
