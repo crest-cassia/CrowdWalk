@@ -295,9 +295,9 @@ public class EvacuationSimulator {
 
     //------------------------------------------------------------
     /**
-     * ruby Wrapper を呼ぶべきかどうか
+     * ruby Wrapper を使っているかどうか
      */
-    private boolean useRubyWrapper() {
+    public boolean useRubyWrapper() {
         return rubyWrapper != null ;
     }
 
@@ -534,15 +534,15 @@ public class EvacuationSimulator {
     /**
      * ロガーのセットアップ
      */
-    public void setupLogger() {
-        getAgentHandler().setupSimulationLoggers() ;
+    private void initLoggers() {
+        getAgentHandler().initSimulationLoggers() ;
     }
 
     //------------------------------------------------------------
     /**
      * ロガーの finalize
      */
-    public void finalizeLogger() {
+    private void finalizeLoggers() {
         getAgentHandler().finalizeSimulationLoggers() ;
     }
 
@@ -562,7 +562,9 @@ public class EvacuationSimulator {
         agentHandler.prepareForSimulation();
 
         //logger
-        setupLogger() ;
+        if(useRubyWrapper())
+            rubyEngine.callMethod(rubyWrapper, "setupSimulationLoggers") ;
+        initLoggers() ;
 
         if(useRubyWrapper())
             rubyEngine.callMethod(rubyWrapper, "prepareForSimulation") ;
@@ -573,7 +575,8 @@ public class EvacuationSimulator {
      * シミュレーションの終了処理。（メイン）
      */
     public void finalize() {
-        finalizeLogger() ;
+        finalizeLoggers() ;
+
         if(useRubyWrapper())
             rubyEngine.callMethod(rubyWrapper, "finalizeSimulation") ;
     }

@@ -243,7 +243,7 @@ run3gt00a_cui ::
 ##-----
 SAMPLE3gt00r = sample/generatedTown/gridTown00.ruby.prop.json   # ruby agent
 run3gt00r ::
-	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r))
+	(cd $(BASEDIR) ; bash quickstart.sh -l Error --use-2d-simulator $(SAMPLE3gt00r))
 run3gt00r_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00r))
 run3gt00r_fb ::

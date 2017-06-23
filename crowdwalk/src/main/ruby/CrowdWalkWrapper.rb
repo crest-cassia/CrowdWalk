@@ -44,6 +44,16 @@ class CrowdWalkWrapper
 
   #--------------------------------------------------------------
   #++
+  ## シミュレーションの各種ログの設定。
+  ## ログの出力項目などをいじれる。
+  ## AgentHandler の setupSimulationLoggers() と
+  ## initSimulationLoggers()の間によびだされる。
+  def setupSimulationLoggers()
+    p [:setupSimulationLoggers, :doNothing] ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## シミュレーション開始前の処理
   ## AgentHandler の prepareForSimulation の後で呼び出される。
   def prepareForSimulation()

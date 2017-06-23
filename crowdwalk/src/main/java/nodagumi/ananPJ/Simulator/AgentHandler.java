@@ -1758,7 +1758,17 @@ public class AgentHandler {
      * EvacuatedAgentsLogger の設定。
      */
     private void setupEvacuatedAgentsLogger() {
-        // 出力カラムと初期値をセットする
+        // currently, do nothing.  for the uniform setup of loggers.
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * EvacuatedAgentsLogger の設定。
+     */
+    private void initEvacuatedAgentsLogger() {
+        // ゴールの箇所の設定。
+        // ゴールの場所がわかってないといけないので、
+        // generation rule の読み込み後に行う必要がある。なので、ここで初期化。
         for (final MapNode node : simulator.getNodes()) {
             for (String goalTag : getGoalTags()) {
                 if (node.hasTag(goalTag)) {
@@ -1773,14 +1783,11 @@ public class AgentHandler {
                 }
             }
         }
-    }
-    
-    //------------------------------------------------------------
-    /**
-     * EvacuatedAgentsLogger の設定。
-     */
-    private void initEvacuatedAgentsLogger() {
+
+        // logfile
+            
         try {
+        // 出力カラムと初期値をセットする
             String evacuatedAgentsPath =
                 simulator.getProperties()
                 .getFilePath("evacuated_agents_log_file", null, false);

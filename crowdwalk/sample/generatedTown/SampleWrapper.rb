@@ -28,6 +28,13 @@ class SampleWrapper < CrowdWalkWrapper
 
   #--------------------------------------------------------------
   #++
+  ## ロガーの設定
+  def setupSimulationLoggers()
+    super() ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
   ## シミュレーション前処理
   def prepareForSimulation()
     p ['SampleWrapper', :prepareForSimulation]

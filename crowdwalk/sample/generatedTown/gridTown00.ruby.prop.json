@@ -11,6 +11,14 @@
   "timer_enable":true,
   "timer_file":"/tmp/timer.log",
   "__individual_pedestrians_log_dir":",Log",
+
+  "agent_trail_log" :
+    {
+      "file":",Log/agentTrail.ruby.log",
+      "members": ["agentId", "evacuatedRelTime"],
+      "___" : null
+    },
+
   "interval":0,
   "randseed":2524,
   "random_navigation":true,
@@ -20,6 +28,8 @@
   "loop_count":1,
   "exit_count":0,
   "all_agent_speed_zero_break":false
+  "auto_simulation_start":true,
+
   "use_ruby":true,
   "ruby_load_path":"/usr/users/noda/lib/ruby
 /usr/users/noda/work/ruby",
