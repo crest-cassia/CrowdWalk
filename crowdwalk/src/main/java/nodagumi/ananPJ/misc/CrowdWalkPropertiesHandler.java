@@ -1000,6 +1000,26 @@ public class CrowdWalkPropertiesHandler {
 
     //--------------------------------------------------
     /**
+     * get Term property
+     */
+    public Term getTerm(String key) {
+        return getTerm(key, null) ;
+    }
+            
+    //--------------------------------------------------
+    /**
+     * get Term property
+     */
+    public boolean hasKeyRecursive(String... keys) {
+        if(prop != null) {
+            return prop.hasArgRecursive(keys) ;
+        } else {
+            return false ;
+        }
+    }
+
+    //--------------------------------------------------
+    /**
      *  check property to create directories for logs automatically
      *  if not exists.
      */

@@ -1437,14 +1437,25 @@ public class AgentHandler {
      * constructor で呼ばれる。 
      */
     private void setupAgentTrailLoggerConfig(Term fallback) {
+        // Log Style
         agentTrailLogStyle =
             (JsonFormatter.OverallStyle)
             SetupFileInfo
             .fetchFallbackObjectViaLexicon(fallback,
                                            JsonFormatter.overallStyleLexicon,
-                                           "agentTrailLogType",
+                                           "agentTrailLogStyle",
                                            agentTrailLogStyle) ;
         agentTrailLogFormatter.setOverallStyle(agentTrailLogStyle) ;
+
+        // setup log items (file の設定より先に必要)
+        if(simulator.getProperties().hasKeyRecursive("agent_trail_log",
+                                                     "members")) {
+            Term logMembers =
+                simulator.getProperties()
+                .getTerm("agent_trail_log")
+                .getArgTerm("members") ;
+            agentTrailLogFormatter.setMembersByTerm(logMembers) ;
+        }
     }
     
     //------------------------------------------------------------
@@ -1462,19 +1473,13 @@ public class AgentHandler {
      */
     public void setupAgentTrailLogger() {
         try {
-            Term agentTrailLogConf =
-                simulator.getProperties().getTerm("agent_trail_log",null);
-
-            if(agentTrailLogConf != null) {
-                // setup log items (file の設定より先に必要)
-                Term logMembers =
-                    agentTrailLogConf.getArgTerm("members") ;
-                if (logMembers != null) {
-                    agentTrailLogFormatter.setMembersByTerm(logMembers) ;
-                }
-                // setup log file
+            // setup log file
+            if(simulator.getProperties().hasKeyRecursive("agent_trail_log",
+                                                         "file")) {
                 String agentTrailLogPath =
-                    agentTrailLogConf.getArgString("file") ;
+                    simulator.getProperties()
+                    .getTerm("agent_trail_log")
+                    .getArgString("file") ;
                 if (agentTrailLogPath != null) {
                     // properties の相対パスを補う。
                     agentTrailLogPath =

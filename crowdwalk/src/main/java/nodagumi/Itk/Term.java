@@ -422,6 +422,29 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg チェック (再帰的)
+     */
+    public boolean hasArgRecursive(String... slots) {
+        int nSlots = slots.length ;
+        if(nSlots < 1) {
+            Itk.logError("hasArgRecursive() should have one or more args.") ;
+            Itk.quitByError() ;
+        }
+
+        Term term = this ;
+        for(int i = 0 ; i < nSlots - 1 ; i++) {
+            if(!term.hasArg(slots[i])) return false ;
+
+            term = term.getArgTerm(slots[i]) ;
+
+            if(term == null) return false ;
+        }
+        
+        return term.hasArg(slots[nSlots - 1]) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * arg のslot名集合の取得。
      */
     public Set<String> getArgSlotSet() {
