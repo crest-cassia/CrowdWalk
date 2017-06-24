@@ -38,6 +38,14 @@ require 'MapTown.rb' ;
 ## つまり、
 ## "foo;bar;baz" という "cw:tag" を持つロードの3番目の LineSegment は、
 ## "foo", "foo;bar", "foo;bar;baz", "foo;bar;baz:2" というタグが付与される。
+##
+## [2017-06-24 I.Noda] POI の追加。
+## Point の中で、"cw:poi" という property を持つものを取り出し、Point として
+## 登録。
+## "cw:poi" の値をタグに追加。
+## "cw:tag" の値を、上記の処理と同じようにタグに追加。
+## "cw:stayloop" があれば、さらに、 "__StayLoop__" を追加。
+##
 class OsmMap < MapTown
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #++
@@ -46,13 +54,19 @@ class OsmMap < MapTown
   ## description of DefaultOptsions.
   DefaultConf = {
     :cartOrigin => :jp09, # 平面直角原点
-    :cwTagName => "cw:tag", # OSM の Road に付与されている CrowdWalk 用タグの
+    :cwTagName => "cw:tag", # OSM の Road, PoIに付与されている CrowdWalk 用タグの
                             # property 名。
+    :cwPoIName => "cw:poi", # OSM の PoI に付与されている CrowdWalk 用タグの
+                            # property 名。
+    :cwStayLoopName => "cw:stayloop", # OSM の PoI に付与されている
+                            # StayLoop 埋め込み用 用タグのproperty 名。
+    :stayLoopTag => "__NeedStayLoop__", # StayLoop の指定タグ
     :cwTagSep => ';',       # 上記タグの suffix を切っていく時のセパレータ。
     :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
     :redundantMargin => 0.5, # redundant node を判定する距離。
                              # ノードを取り去った時、形状がの距離以下しか
                              # 変化しなければOK。
+    :linkWidth => 2.0,	    # link の width の規定値。
   } ;
 
   ## 日本の19座標系の原点リスト。
@@ -90,6 +104,8 @@ class OsmMap < MapTown
   attr_accessor :sourceJson ;
   ## road list ;
   attr_accessor :roadList ;
+  ## poi list ;
+  attr_accessor :poiList ;
   ## node table ;
   attr_accessor :nodeTable ;
   ## node id max
@@ -104,6 +120,7 @@ class OsmMap < MapTown
   def initialize(conf = {})
     super(0, 0.0, conf) ;
     @roadList = [] ;
+    @poiList = [] ;
     @nodeTable = Geo2D::RTree.new() ;
     @nodeIdMax = 0 ;
     @linkIdMax = 0 ;
@@ -132,6 +149,7 @@ class OsmMap < MapTown
   def scanJson(json)
     @sourceJson = JSON::Parser.new(json).parse ;
     scanRoadJson(@sourceJson) ;
+    scanPoIJson(@sourceJson) ;
   end
 
   #--------------------------------------------------------------
@@ -140,9 +158,23 @@ class OsmMap < MapTown
   ## _json_:: JSON parts
   def scanRoadJson(json)
     json["features"].each{|fjson|
-      feature = OsmRoad.new().scanJson(fjson) ;
+      feature = OsmFeature.new().scanJson(fjson) ;
       if(feature.geoType() == "LineString" && feature.hasProperty("highway"))
-        addRoad(feature) ;
+        addRoad(OsmRoad.new().scanJson(fjson)) ;
+      end
+    }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## scan json PoI
+  ## _json_:: JSON parts
+  def scanPoIJson(json)
+    poiPropName = getConf(:cwPoIName)
+    json["features"].each{|fjson|
+      feature = OsmFeature.new().scanJson(fjson) ;
+      if(feature.geoType() == "Point" && feature.hasProperty(poiPropName))
+        addPoI(OsmPoI.new().scanJson(fjson)) ;
       end
     }
   end
@@ -156,15 +188,45 @@ class OsmMap < MapTown
 
     tag = nil ;
     if(tag = road.hasProperty(getConf(:cwTagName))) then
-      road.pushTag(tag) ;
+      road.addTag(tag) ;
       partList = [] ;
       tag.split(getConf(:cwTagSep)).each{|part|
         partList.push(part) ;
         subtag = partList.join(getConf(:cwTagSep));
-        p [:tag, subtag] ;
-        road.pushTag(subtag) if(subtag != tag) ;
+        road.addTag(subtag) if(subtag != tag) ;
+      }
+      p [:road, road.tagList] ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## add PoI
+  ## _poi_:: added PoI
+  def addPoI(poi)
+    @poiList.push(poi) ;
+
+    poiLabel = getConf(:cwPoIName) ;
+    poiName = poi.hasProperty(poiLabel) ;
+    poi.addTag(poiLabel)
+    poi.addTag(poiName) ;
+
+    ## check StayLoop
+    if(poi.hasProperty(getConf(:cwStayLoopName))) 
+      poi.addTag(getConf(:stayLoopTag))
+    end
+    
+    tag = nil ;
+    if(tag = poi.hasProperty(getConf(:cwTagName))) then
+      poi.addTag(tag) ;
+      partList = [] ;
+      tag.split(getConf(:cwTagSep)).each{|part|
+        partList.push(part) ;
+        subtag = partList.join(getConf(:cwTagSep));
+        poi.addTag(subtag) if(subtag != tag) ;
       }
     end
+    p [:poi, poi.tagList] ;
   end
 
   #--------------------------------------------------------------
@@ -187,7 +249,7 @@ class OsmMap < MapTown
       node = getNodeByPos(pos) ;
       road.pushNode(node) ;
       if(!preNode.nil?) then
-        link = OsmRoadLink.new(road, preNode, node) ;
+        link = OsmRoadLink.new(road, preNode, node, getConf(:linkWidth)) ;
         registerNewLink(link) ;
         road.pushLink(link) ;
         link.assignTagFromRoad(getConf(:cwTagNthSep)) ;
@@ -265,9 +327,22 @@ class OsmMap < MapTown
   
   #--------------------------------------------------------------
   #++
+  ## bind PoI info to nearest Node.
+  def bindPoIToNode()
+    @poiList.each{|poi|
+      coord = poi.coordinatesJson() ;
+      pos = convertLonLat2Pos(coord) ;
+      node = getNodeByPos(pos) ;
+      poi.bindNode(node) ;
+    }
+  end
+  
+  #--------------------------------------------------------------
+  #++
   ## remove nodes and links that is not connected from _startNode_.
-  def removeNonConnectedNodesLinks(startNode = @nodeList.first)
-    nonConnectedNodes = findNonConnectedNodes(startNode) ;
+  def removeNonConnectedNodesLinks()
+    pivotNode = findMostMajorGroupNode() ;
+    nonConnectedNodes = findNonConnectedNodes(pivotNode) ;
     nonConnectedLinks = {} ;
     nonConnectedNodes.each{|node|
       node.linkList.each{|link|
@@ -302,6 +377,7 @@ class OsmMap < MapTown
     extractNodeListFromRoadList() ;
     assignIds() ;
     removeNonConnectedNodesLinks() ;
+    bindPoIToNode() ;
     reduceRedundantNodes() ;
     reduceLoopedLinks() ;
     addIdTags() ;
@@ -351,7 +427,9 @@ class OsmMap < MapTown
   ## redundant node かどうかのチェック。 
   ## 2リンクのみとつながるノードで、そのノードを取り去っても
   ## 道路の形状がほとんど変化しないかどうか。
+  ## ノードが PoI の場合は、削除対象としない。
   def checkRedundantNode(node)
+    #if(!isNodePoI(node) && node.linkList.length == 2) then
     if(node.linkList.length == 2) then
       # ノードを取り去った時の、新しい線分へのノードの足までの長さを
       # 求める。
@@ -359,7 +437,7 @@ class OsmMap < MapTown
       newLine = Geo2D::LineSegment.new(node0.pos, node1.pos) ;
       dist = newLine.distanceFromPoint(node.pos) ;
       if(dist < getConf(:redundantMargin)) then
-        p [:node, node.id, dist] ;
+        # p [:node, node.id, dist] ;
         return true ;
       else
         return false ;
@@ -369,6 +447,14 @@ class OsmMap < MapTown
     end
   end
 
+  #--------------------------------------------------------------
+  #++
+  ## Node が PoI かどうかのチェック。
+  def isNodePoI(node)
+    poiTag = getConf(:cwPoIName) ;
+    return node.tagList.include?(poiTag) ;
+  end
+  
   #--------------------------------------------------------------
   #++
   ## 2リンクノードの両端リンク及びノードの取得。
@@ -473,6 +559,8 @@ class OsmMap < MapTown
     #++
     ## 元のJSONデータ（連想配列）。
     attr_accessor :sourceJson ;
+    ## tag list
+    attr_accessor :tagList ;
     
     #------------------------------------------
     #++
@@ -522,7 +610,7 @@ class OsmMap < MapTown
     #------------------------------------------
     #++
     ## geo object のタイプ。
-    ## "LineString" とか "Point" とかが帰る。
+    ## "LineString" とか "Point" とかが返る。
     def geoType()
       return getGeometry()["type"] ;
     end
@@ -532,6 +620,13 @@ class OsmMap < MapTown
     ## Json に含まれる座標値列。(coordinates)
     def coordinatesJson()
       return getGeometry()["coordinates"] ;
+    end
+    
+    #------------------------------------------
+    #++
+    ## add new tag
+    def addTag(tag)
+      @tagList.push(tag) ;
     end
     
   end # class OsmFeature
@@ -548,8 +643,6 @@ class OsmMap < MapTown
     attr_accessor :nodeList ;
     ## link list
     attr_accessor :linkList ;
-    ## tag list
-    attr_accessor :tagList ;
     
     #------------------------------------------
     #++
@@ -573,13 +666,6 @@ class OsmMap < MapTown
     ## add new link
     def pushLink(link)
       @linkList.push(link) ;
-    end
-    
-    #------------------------------------------
-    #++
-    ## add new tag
-    def pushTag(tag)
-      @tagList.push(tag) ;
     end
     
   end # class OsmRoad
@@ -633,9 +719,9 @@ class OsmMap < MapTown
     ## __road_ :: Road データ。
     ## __fromNode_ :: 起点ノード。
     ## __toNode_ :: 終点ノード。
-    def initialize(_road, _fromNode, _toNode)
+    def initialize(_road, _fromNode, _toNode, _width = DefaultWidth)
       @road = _road ;
-      super(0, _fromNode, _toNode, DefaultWidth) ;
+      super(0, _fromNode, _toNode, _width) ;
     end
 
     #------------------------------------------
@@ -662,6 +748,38 @@ class OsmMap < MapTown
     end
 
   end # class OsmRoadLink
+    
+  #--============================================================
+  #++
+  ## PoI in OSM。
+  ## 地図上でマークした地点情報。
+  class OsmPoI < OsmFeature
+    #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    #++
+    ## 対応ノード。最寄りの OsmNode を探しだして入れる。
+    attr_accessor :node ;
+    
+    #------------------------------------------
+    #++
+    ## initialize
+    def initialize(conf = {})
+      super(conf) ;
+      @node = nil
+      @tagList = [] ;
+    end
+
+    #------------------------------------------
+    #++
+    ## bind OsmNode and OsmPoI
+    def bindNode(node)
+      @node = node ;
+      @tagList.each{|tag|
+        @node.addTag(tag) ;
+      }
+    end
+    
+    
+  end # class OsmPoI
     
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

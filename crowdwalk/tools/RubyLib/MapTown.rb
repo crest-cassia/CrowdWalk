@@ -375,6 +375,33 @@ class MapTown < WithConfParam
   
   #--------------------------------------------------------------
   #++
+  ## もっとも大きな単連結集合の代表ノードを求める。
+  ## *return* : 代表ノード
+  def findMostMajorGroupNode()
+    # calc node rank (number of connected nodes)
+    remainNodeList = @nodeList.dup() ;
+    nodeRankTable = {} ;
+    while(remainNodeList.length > 0)
+      pivotNode = remainNodeList.first() ;
+      connectedList = findConnectedNodes(pivotNode) ;
+      nodeRankTable[pivotNode] = connectedList.length() ;
+      remainNodeList.reject!{|node| connectedList.include?(node)} ;
+    end
+
+    bestNode = nil ;
+    bestNodeRank = nil ;
+    nodeRankTable.each{|node, rank|
+      if(bestNode.nil? || bestNodeRank < rank) then
+        bestNode = node ;
+        bestNodeRank = rank ;
+      end
+    }
+
+    return bestNode ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
   ## n本リンクを削除する。
   def pruneLinks(n)
     retryCount = 0 ;

@@ -25,6 +25,7 @@ $conf = {
   :outFile => nil,
   :cartOrigin => :jp09,
   :redundantMargin => 0.5,
+  :linkWidth => 2.0,
   :foo => false,
   :bar => 1,
   :baz => "test",
@@ -64,14 +65,13 @@ _END_
     $conf[:redundantMargin] = margin ;
   }
   
+  op.on("-w","--width LinkWidth", Float, sep + "width of each link.") {
+    |width|
+    $conf[:linkWidth] = width ;
+  }
+  
   op.on("-f","--[no-]foo", sep + "switch foo.") {|foo|
     $conf[:foo] = foo ;
-  }
-  op.on("-b","--bar BarVal", Integer, sep + "bar int value.") {|bar|
-    $conf[:bar] = bar ;
-  }
-  op.on("-z","--baz BazVal", String, sep + "baz str value.") {|baz|
-    $conf[:baz] = baz ;
   }
   op.on_tail("--help", sep + "show this message.") { |h|
     $stderr.puts(op)
@@ -123,6 +123,7 @@ pp [:convert, $conf]
 
 mapConf = { :cartOrigin => $conf[:cartOrigin],
             :redundantMargin => $conf[:redundantMargin],
+            :linkWidth => $conf[:linkWidth],
           } ;
 
 map = OsmMap.new(mapConf) ;
