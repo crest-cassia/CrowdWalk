@@ -429,8 +429,7 @@ class OsmMap < MapTown
   ## 道路の形状がほとんど変化しないかどうか。
   ## ノードが PoI の場合は、削除対象としない。
   def checkRedundantNode(node)
-    #if(!isNodePoI(node) && node.linkList.length == 2) then
-    if(node.linkList.length == 2) then
+    if(!isNodePoI(node) && node.linkList.length == 2) then
       # ノードを取り去った時の、新しい線分へのノードの足までの長さを
       # 求める。
       (link0, link1, node0, node1) = getBothSidesLinksNodes(node) ;
