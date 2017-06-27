@@ -106,6 +106,8 @@ public class Dijkstra {
                               NetworkMap networkMap) {
         //Itk.timerStart("calc") ;
 
+        // [2017.06.26 I.Noda]
+        // ***** この chooser を造るところで、排他処理が必要かもしれまい。
         PathChooser chooser = Dijkstra.DefaultPathChooser ;
         if(mentalMode != null) {
             chooser = getPathChooser(mentalMode) ;
