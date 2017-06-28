@@ -292,11 +292,11 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     public NavigationHint getHint(Term mentalMode, String goalTag) {
         NavigationHint hint = getHints(mentalMode).get(goalTag);
         if (hint == null) {
-            Itk.logWarn("No hint for goal",
-                        "toward tag", goalTag,
-                        "from node", this,
-                        "in mode", mentalMode, ".") ;
-            //System.exit(1) ;
+            Itk.logFatal("No hint for goal",
+                         "toward tag", goalTag,
+                         "from node", this,
+                         "in mode", mentalMode, ".") ;
+            Itk.quitByError() ;
         }
         return hint;
     }

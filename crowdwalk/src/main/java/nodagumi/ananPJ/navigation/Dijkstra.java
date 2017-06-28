@@ -104,7 +104,10 @@ public class Dijkstra {
                               String goalTag,
                               MapNodeTable subgoals,
                               NetworkMap networkMap) {
-        //Itk.timerStart("calc") ;
+        //String timerStr =
+        //    ("calc(" + (mentalMode == null ? "null" : mentalMode.toString()) +
+        //     "," +  goalTag + ")") ;
+        //Itk.timerStart(timerStr) ;
 
         // [2017.06.26 I.Noda]
         // ***** この chooser を造るところで、排他処理が必要かもしれまい。
@@ -169,8 +172,8 @@ public class Dijkstra {
             result.put(bestHint.fromNode, bestHint) ;
         }
 
-        //Itk.logWarn("Dijkstra.calc() for ", mentalMode, ":", goalTag) ;
-        //Itk.timerShowLap("calc") ;
+        //Itk.logWarn("Dijkstra:", timerStr) ;
+        //Itk.timerShowLap(timerStr) ;
 
         return result ;
     }
