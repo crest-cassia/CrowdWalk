@@ -622,7 +622,7 @@ public class Term {
     /**
      * String への変換
      */
-    private String convertValueToString(Object val) {
+    public static String convertValueToString(Object val) {
         if(val == null) {
             return null ;
         } else if(val instanceof Term) {

@@ -54,16 +54,40 @@ public class Dijkstra {
      * 主観的距離計算機を取得。
      */
     static public PathChooser getPathChooser(Term mentalMode) {
-        return getPathChooser((mentalMode == null ?
-                               (String)null :
-                               mentalMode.getString())) ;
+        return getPathChooser(Term.convertValueToString(mentalMode)) ;
     }
+    
     /** */
     static public PathChooser getPathChooser(String mentalMode) {
         if(mentalMode == null) {
             return DefaultPathChooser ;
         } else {
             return pathChooserTable.get(mentalMode) ;
+        }
+    }
+
+    /**
+     * 主観的距離計算機を、安全に取得。thread safe. (Term 引数)
+     */
+    static public PathChooser getOrNewPathChooserSafe(Term mentalMode,
+                                                      NetworkMap networkMap) {
+        return getOrNewPathChooserSafe(Term.convertValueToString(mentalMode),
+                                       networkMap) ;
+    }
+    /**
+     * 主観的距離計算機を、安全に取得。thread safe. (String 引数)
+     */
+    static public PathChooser getOrNewPathChooserSafe(String mentalMode,
+                                                      NetworkMap networkMap) {
+        synchronized(pathChooserTable){
+            PathChooser chooser = Dijkstra.DefaultPathChooser ;
+            if(mentalMode != null) {
+                chooser = getPathChooser(mentalMode) ;
+                if(chooser == null) {
+                    chooser = newPathChooser(mentalMode, networkMap) ;
+                }
+            }
+            return chooser ;
         }
     }
         
@@ -105,19 +129,12 @@ public class Dijkstra {
                               MapNodeTable subgoals,
                               NetworkMap networkMap) {
         //String timerStr =
-        //    ("calc(" + (mentalMode == null ? "null" : mentalMode.toString()) +
+        //    ("calc(" + (Term.convertValueToString(mentalMode)) +
         //     "," +  goalTag + ")") ;
         //Itk.timerStart(timerStr) ;
 
-        // [2017.06.26 I.Noda]
-        // ***** この chooser を造るところで、排他処理が必要かもしれまい。
-        PathChooser chooser = Dijkstra.DefaultPathChooser ;
-        if(mentalMode != null) {
-            chooser = getPathChooser(mentalMode) ;
-            if(chooser == null) {
-                chooser = newPathChooser(mentalMode, networkMap) ;
-            }
-        }
+        PathChooser chooser = getOrNewPathChooserSafe(mentalMode,
+                                                      networkMap) ;
             
         Result frontier = new Result();
         ArrayList<MapNode> closedList = new ArrayList<MapNode>() ;
