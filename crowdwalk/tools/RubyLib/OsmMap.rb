@@ -56,13 +56,18 @@ class OsmMap < MapTown
     :cartOrigin => :jp09, # 平面直角原点
     :cwTagName => "cw:tag", # OSM の Road, PoIに付与されている CrowdWalk 用タグの
                             # property 名。
+    :cwTagSep => ';',       # 上記タグの suffix を切っていく時のセパレータ。
+    :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
     :cwPoIName => "cw:poi", # OSM の PoI に付与されている CrowdWalk 用タグの
                             # property 名。
     :cwStayLoopName => "cw:stayloop", # OSM の PoI に付与されている
                             # StayLoop 埋め込み用 用タグのproperty 名。
     :stayLoopTag => "__NeedStayLoop__", # StayLoop の指定タグ
-    :cwTagSep => ';',       # 上記タグの suffix を切っていく時のセパレータ。
-    :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
+    :cwOneWayName => "cw:oneway", # OSM の 一方通行リンク に付与されているproperty
+    :cwOneWayFore => "forward", # 一方通行 property の順方向の値。
+    :cwOneWayBack => "backward", # 一方通行 property の順方向の値。
+    :onewayForeTag => "ONE-WAY-FORWARD", # CW の中での一方通行（順）のタグ
+    :onewayBackTag => "ONE-WAY-BACKWARD", # CW の中での一方通行（順）のタグ
     :redundantMargin => 0.5, # redundant node を判定する距離。
                              # ノードを取り去った時、形状がの距離以下しか
                              # 変化しなければOK。
@@ -186,19 +191,51 @@ class OsmMap < MapTown
   def addRoad(road)
     @roadList.push(road) ;
 
+    # 一般タグ
+    tagGeneral = addGeneralTagToMapPart(road) ;
+
+    # ONE-WAY タグ
+    tagOneway = addOnewayTagToRoad(road) ;
+
+    p [:road, road.tagList] if(tagGeneral || tagOneway) ;
+ 
+    return road ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## add one-way tag to link
+  def addOnewayTagToRoad(road)
     tag = nil ;
-    if(tag = road.hasProperty(getConf(:cwTagName))) then
-      road.addTag(tag) ;
+    if(tag = road.hasProperty(getConf(:cwOneWayName))) then
+      if(tag == getConf(:cwOneWayFore)) then
+        road.addTag(getConf(:onewayForeTag)) ;
+      elsif(tag == getConf(:cwOneWayFore)) then
+        road.addTag(getConf(:onewayBackTag)) ;
+      else
+        p [:warning, "illegal oneway tag", tag] ;
+      end
+    end
+    return tag ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## add general tag to link/poi
+  def addGeneralTagToMapPart(object)
+    tag = nil ;
+    if(tag = object.hasProperty(getConf(:cwTagName))) then
+      object.addTag(tag) ;
       partList = [] ;
       tag.split(getConf(:cwTagSep)).each{|part|
         partList.push(part) ;
         subtag = partList.join(getConf(:cwTagSep));
-        road.addTag(subtag) if(subtag != tag) ;
+        object.addTag(subtag) if(subtag != tag) ;
       }
-      p [:road, road.tagList] ;
     end
+    return tag ;
   end
-
+  
   #--------------------------------------------------------------
   #++
   ## add PoI
@@ -215,17 +252,9 @@ class OsmMap < MapTown
     if(poi.hasProperty(getConf(:cwStayLoopName))) 
       poi.addTag(getConf(:stayLoopTag))
     end
-    
-    tag = nil ;
-    if(tag = poi.hasProperty(getConf(:cwTagName))) then
-      poi.addTag(tag) ;
-      partList = [] ;
-      tag.split(getConf(:cwTagSep)).each{|part|
-        partList.push(part) ;
-        subtag = partList.join(getConf(:cwTagSep));
-        poi.addTag(subtag) if(subtag != tag) ;
-      }
-    end
+
+    addGeneralTagToMapPart(poi) ;
+
     p [:poi, poi.tagList] ;
   end
 
