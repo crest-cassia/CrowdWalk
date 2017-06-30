@@ -329,6 +329,14 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>use_relative_path_from_prop</h4>
+ *     <pre> 各種ファイルの指定の相対パスが、この properties file の位置からの相対パスを使うかどうか
+ *
+ *  設定値： true | false
+ *  デフォルト値： true</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>defer_factor</h4>
  *     <pre>  1ステップごとの待ち時間(ミリ秒単位)
  *  この設定値を小さくするとシミュレーションは早く進み、大きくするとシミュレーションは遅く進む。
@@ -632,11 +640,19 @@ public class CrowdWalkPropertiesHandler {
     public String furnishPropertiesDirPath(String path,
                                            boolean forceP,
                                            boolean absP) {
+        try {
+            boolean useRelFromProp =
+                getBoolean("use_relative_path_from_prop", true) ;
+            if(!useRelFromProp) return path ;
+        } catch(Exception ex) {
+            Itk.logError("property file error." + ex.getMessage()) ;
+        }
+            
         String propDir = (absP ?
                           getPropertiesDirAbs() :
                           getPropertiesDirRel()) ;
         File file = new File(path) ;
-
+            
         if(file.getParent() == null || (forceP && !file.isAbsolute())) {
             return (propDir.replaceAll("\\\\", "/") + "/" + path) ;
         } else {
