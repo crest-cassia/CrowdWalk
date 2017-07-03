@@ -264,7 +264,7 @@ import nodagumi.Itk.*;
  * </pre>
  *   </li>
  *
- *   <li>
+ *   <li><a name="agent_trail_log"></a>
  *     <h4>agent_trail_log</h4>
  *  <pre> ゴールまでたどり着いたエージェントのゴールした時点でのJSON形式のログ。
  *  ログの記述内容：{@link nodagumi.ananPJ.Simulator.AgentHandler#agentTrailLogFormatter}

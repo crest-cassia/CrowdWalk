@@ -99,6 +99,14 @@
  *    <li> 出力項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter} 参照。</li>
  *   </ul> </li>
  *  <!- ============================== -->
+ *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#agentTrailLogFormatter agent_trail_log}
+ *       : ゴールまでたどり着いたエージェントのゴールした時点でのログ(新形式,JSON形式)
+ *   <ul> 
+ *    <li> {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties }
+ *        の agent_trail_log で指定する。</li>
+ *    <li> 出力項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#agentTrailLogFormatter} 参照。</li>
+ *   </ul> </li>
+ *  <!- ============================== -->
  *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#evacuatedAgentsLogger evacuated_agents_log}
  *       : ゴールノード別の脱出エージェント数をステップごとに記録するログ
  *   <ul> 

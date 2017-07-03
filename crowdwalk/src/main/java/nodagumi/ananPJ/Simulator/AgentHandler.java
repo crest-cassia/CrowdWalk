@@ -361,13 +361,26 @@ public class AgentHandler {
      * { "agentId": _AgentID_,
      *   "generatedAbsTime": _TimeStr_,
      *   "generatedRelTime": _TimeInSec_,
-     *	 "evacuatedAbsTime": _TimeStr_,
-     *	 "evacuatedRelTime": _TimeInSec_,
+     *   "evacuatedAbsTime": _TimeStr_,
+     *   "evacuatedRelTime": _TimeInSec_,
      *   "travelTime": _TimeInSec_,
      *   "tag": [ _tag_, _tag_, ... ],
      *   "trail": [ {"placeId": _PlaceID_, "time": _TimeInSec_} * ]
      * }
      * </pre>
+     * 指定の方法は、properties file において、
+     * <pre>
+     *  "agent_trail_log" :
+     *    {
+     *      "file":",Log/agentTrail.log",
+     *      "members": ["agentId", "evacuatedRelTime"]
+     *    },
+     * </pre>
+     * という形で指定する。
+     *
+     * これ以外に、CrowdWalkWrapper クラスにおいて、
+     * 新規の項目を追加できる。
+     * {@link #addMemberToAgentTrailLogFormatterForRuby} 参照。
      */
     public static JsonFormatter<AgentBase> agentTrailLogFormatter =
         new JsonFormatter<AgentBase>() ;
@@ -426,6 +439,24 @@ public class AgentHandler {
     /**
      * agentTrailLogFormatter 用の member を作成する。
      * ruby (CrowdWalkWrapper) から呼び出し用。
+     * ruby 側では、CrowdWalkWrapperの継承クラスにおいて、
+     * setupSimulationLoggers() というメソッドを再定義する。その中で、
+     * <pre>
+     *   addMemberToAgentTrailLogFormatter("foo") {|agent, currentTime, handler|
+     *      ## ここで、ログに吐き出すデータ（文字列・数値・Array・Hash)を生成する
+     *      ## Ruby のプログラムを書く。
+     *      ## 以下は、その例
+     *      [1, 2, 3, "hogehoge",
+     *        {"a" => 10,
+     *         "b" => nil}] ;
+     *   }
+     * </pre>
+     * というものを好きなだけ並べる。
+     * この例では、"foo" というスロットに、
+     * 生成したデータ ([1,2,3,...]) が出力される。
+     * なお、このメソッドの name に、"foo" が格納されて呼び出される。
+     * 
+     * sample/generatedTown/SampleWrapper.rb 参照。
      */
     public void addMemberToAgentTrailLogFormatterForRuby(String name) {
         agentTrailLogFormatter
