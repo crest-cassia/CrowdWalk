@@ -836,27 +836,33 @@ public class AgentHandler {
         if (true) {
             synchronized (simulator) {
                 for (MapLink link : getEffectiveLinkSet()) {
-                    ArrayList<AgentBase> forwardAgents
-                        = link.getLane(Direction.Forward);
-                    for(int i = 0 ; i < forwardAgents.size() ; i++) {
-                        AgentBase agent =
-                            (isUsingFrontFirstOrderQueue ?
-                             forwardAgents.get(forwardAgents.size() - i - 1) :
-                             forwardAgents.get(i)) ;
-
-                        agent.preUpdate(currentTime);
-                    }
-                    ArrayList<AgentBase> backwardAgents =
-                        link.getLane(Direction.Backward);
-                    for (int i = backwardAgents.size() - 1; i >= 0; --i) {
-                        AgentBase agent = backwardAgents.get(i);
-                        agent.preUpdate(currentTime);
-                    }
+                    preUpdateAgentsOnLink(link, currentTime) ;
                 }
             }
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * エージェントの preprocess 処理 (１つのリンク)
+     */
+    private void preUpdateAgentsOnLink(MapLink link, SimTime currentTime) {
+        ArrayList<AgentBase> forwardAgents = link.getLane(Direction.Forward);
+        for(int i = 0 ; i < forwardAgents.size() ; i++) {
+            AgentBase agent =
+                (isUsingFrontFirstOrderQueue ?
+                 forwardAgents.get(forwardAgents.size() - i - 1) :
+                 forwardAgents.get(i)) ;
+            
+            agent.preUpdate(currentTime);
+        }
+        ArrayList<AgentBase> backwardAgents = link.getLane(Direction.Backward);
+        for (int i = backwardAgents.size() - 1; i >= 0; --i) {
+            AgentBase agent = backwardAgents.get(i);
+            agent.preUpdate(currentTime);
+        }
+    }
+        
     //------------------------------------------------------------
     /**
      * シミュレーションサイクル。
