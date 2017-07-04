@@ -15,6 +15,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.*;
 import java.lang.ClassNotFoundException;
+
+import java.lang.Thread;
+import java.lang.Runnable;
+import java.util.Iterator;
+
 //import java.lang.System;
 import java.text.*;
 import java.util.ArrayList;
@@ -837,6 +842,49 @@ public class AgentHandler {
             synchronized (simulator) {
                 for (MapLink link : getEffectiveLinkSet()) {
                     preUpdateAgentsOnLink(link, currentTime) ;
+                }
+            }
+        } else {
+            /* [2017.07.04 I.Noda]
+             * 試しに、マルチスレッドでの preUpdate を実装。
+             * 残念ながら、うまく動作しない。
+             * java.util.ConcurrentModificationException が発生する。
+             * WalkAgent.chooseNextLinkBody(WalkAgent.java:1161)。
+             * ここでの原因は、おそらく、MapNode.getUsableLinkTable()
+             * で排他処理していないせい。
+             * さらに、大して速くならない。8並列(paraN=8)としても、
+             * 20%程度しか速くならない。メモリを増やしても(-Xmx32g)効果なし。
+             * なので、ここのマルチスレッド化はしばらくあきらめ。
+             */
+            synchronized (simulator) {
+                Iterator<MapLink> linkIterator =
+                    getEffectiveLinkSet().iterator() ;
+                ArrayList<Thread> threadList = new ArrayList<Thread>() ;
+                int paraN = 8 ;
+                for(int i = 0 ; i < paraN ; i++) {
+                    Runnable worker = new Runnable(){
+                            public void run() {
+                                MapLink link = null;
+                                while(true) {
+                                    synchronized(linkIterator) {
+                                        if(!linkIterator.hasNext()) break ;
+                                        link = linkIterator.next() ;
+                                    }
+                                    preUpdateAgentsOnLink(link, currentTime) ;
+                                }
+                            }
+                        } ;
+                    Thread thread = new Thread(worker) ;
+                    threadList.add(thread) ;
+                    thread.start() ;
+                }
+                try {
+                    for(Thread thread : threadList) {
+                        thread.join() ;
+                    }
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace() ;
+                    Itk.quitByError() ;
                 }
             }
         }

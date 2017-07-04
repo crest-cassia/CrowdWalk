@@ -294,7 +294,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         if (hint == null) {
             Itk.logFatal("No hint for goal",
                          "toward tag", goalTag,
-                         "from node", this,
+                         "from node", this.getID(),
                          "in mode", mentalMode, ".") ;
             Itk.quitByError() ;
         }
