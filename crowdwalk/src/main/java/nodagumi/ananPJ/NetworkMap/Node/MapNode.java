@@ -331,17 +331,16 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     public double getDistance(Term mentalMode, Term target)
         throws TargetNotFoundException {
         String goalTag = target.getString() ;
-        NavigationHint hint = getHint(mentalMode, goalTag);
-        if (hint == null) {
-            if(hasTag(goalTag)) { // 自分自身がターゲットの場合
-                // do nothing
-            } else { // target の情報が見つからない場合。
-                Itk.logWarn("Target Not Found", "target:", goalTag) ;
-                throw new TargetNotFoundException(goalTag + " not found for id=" + ID + "(" + getTagString() + ")");
-            }
+        if(hasTag(goalTag)) {// 自分自身がターゲットの場合
             return 0.0 ;
         } else {
-            return hint.distance;
+            NavigationHint hint = getHint(mentalMode, goalTag);
+            if (hint == null) { // おそらくここには来ないはず。getHintでエラー。
+                Itk.logWarn("Target Not Found", "target:", goalTag) ;
+                throw new TargetNotFoundException(goalTag + " not found for id=" + ID + "(" + getTagString() + ")");
+            } else {
+                return hint.distance;
+            }
         }
     }
 

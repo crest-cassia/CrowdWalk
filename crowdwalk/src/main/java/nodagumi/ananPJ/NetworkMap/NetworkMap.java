@@ -738,10 +738,12 @@ public class NetworkMap extends DefaultTreeModel {
         }
         if (goals.size() == 0) {
             Itk.logWarn("No Goal", goalTag) ;
-            validRouteKeys.put(goalTag, false) ;
+            synchronized(validRouteKeys) {
+                validRouteKeys.put(goalTag, false) ;
+            }
             return null ;
         }
-        Itk.logInfo("Found Goal", goalTag) ;
+        Itk.logInfo("Found Goal", goalTag, ":", goals.size()) ;
 
         Dijkstra.Result result =
             Dijkstra.calc(mentalMode,
@@ -750,7 +752,9 @@ public class NetworkMap extends DefaultTreeModel {
                           this) ;
 
         synchronized(getNodes()) {
-            validRouteKeys.put(goalTag, true);
+            synchronized(validRouteKeys) {
+                validRouteKeys.put(goalTag, true);
+            }
             for (MapNode node : result.keySet()) {
                 NavigationHint hint = result.get(node);
                 node.addNavigationHint(mentalMode, goalTag, hint) ;
@@ -765,7 +769,7 @@ public class NetworkMap extends DefaultTreeModel {
      * @return 探索成功かどうか。goal_tag が探索済みでも true を返す。
      */
     public boolean calcGoalPathAllWithSync(String goalTag) {
-        synchronized(validRouteKeys) {
+        synchronized(this) {
             if(isValidRouteKey(goalTag)) {
                 return true ;
             } else {

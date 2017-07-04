@@ -229,7 +229,7 @@ run2it_cui ::
 ##-----
 SAMPLE3gt00 = sample/generatedTown/gridTown00.prop.json   # fallback
 run3gt00 ::
-	(cd $(BASEDIR) ; bash quickstart.sh -l Error --use-2d-simulator $(SAMPLE3gt00))
+	(cd $(BASEDIR) ; bash quickstart.sh -l Info --use-2d-simulator $(SAMPLE3gt00))
 run3gt00_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00))
 
