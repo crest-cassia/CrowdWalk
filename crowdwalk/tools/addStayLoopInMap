@@ -142,6 +142,7 @@ def addStayLoopToNode(node, map, conf)
     newPos = basePos + dxdy + Geo2D::Point.newByPolar(r, theta) ;
     newHeight = baseHeight + dz ;
     newNode = map.newNode(newPos, newHeight) ;
+    newNode.addTag(suffix) ;
     newNode.addTag(baseTag + suffix + i.to_s) ;
     newNodeList.push(newNode) ;
     addNewLink(fromNode, newNode, conf, map, newLinkList) ;
