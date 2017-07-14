@@ -142,6 +142,11 @@ public class EvacuationSimulator {
      */
     static public String Fallback_rubyInitFile = "initForCrowdWalk.rb" ;
 
+    /**
+     * jar における ruby lib のパス
+     */
+    static public String RubyLibDirInJar = "uri:classloader:/ruby/CrowdWalk" ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ruby 実行系。
@@ -817,6 +822,8 @@ public class EvacuationSimulator {
                 String currentDir = (String)rubyEngine.getCurrentDirectory() ;
                 String libDir = currentDir + "/" + rubyLibDir ;
                 rubyEngine.pushLoadPath(libDir) ;
+                // default load path on jar
+                rubyEngine.pushLoadPath(RubyLibDirInJar) ;
                 // additional load path
                 rubyLoadPath = properties.getPathList("ruby_load_path", null) ;
                 if(rubyLoadPath != null) {

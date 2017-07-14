@@ -129,6 +129,13 @@ jar {
             exclude 'META-INF/*.DSA'
             exclude 'META-INF/*.RSA'
         }
+	/* for ruby */
+	tasks.copyRubyLib.execute() ;
+    }
+    
+    /* for ruby */
+    into('ruby') {
+      from('build/ruby')
     }
 }
 
@@ -157,3 +164,18 @@ task cleanAll {
        delete(f) ;
      }
 }
+
+/* [2017.07.14 I.Noda] ruby のファイルを jar に含める。
+ */
+task mkdirForRuby {
+     doFirst {
+       mkdir('build/ruby');
+       mkdir('build/ruby/CrowdWalk') ;
+     }
+}
+
+task copyRubyLib(dependsOn: mkdirForRuby, type: Copy) {
+    from 'src/main/ruby'
+    into 'build/ruby/CrowdWalk'
+}
+
