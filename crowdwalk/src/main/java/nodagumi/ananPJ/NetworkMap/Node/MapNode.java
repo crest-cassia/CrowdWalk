@@ -296,6 +296,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
                          "toward tag", goalTag,
                          "from node", this.getID(),
                          "in mode", mentalMode, ".") ;
+            Itk.dumpStackTrace() ;
             Itk.quitByError() ;
         }
         return hint;

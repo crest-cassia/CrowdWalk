@@ -1253,11 +1253,14 @@ public class WalkAgent extends AgentBase {
                 Term subgoal = nakedTargetFromRoutePlan(workingRoutePlan) ;
                 if (node.hasTag(subgoal)) {
                     workingRoutePlan.shift() ;
-                } else if (node.getHint(mentalMode, subgoal) != null) {
-                    return subgoal;
                 } else {
-                    Itk.logWarn("no sub-goal hint for " + subgoal);
-                    workingRoutePlan.shift() ;
+                    confirmCheckedRouteKey(subgoal, true) ;
+                    if (node.getHint(mentalMode, subgoal) != null) {
+                        return subgoal;
+                    } else {
+                        Itk.logWarn("no sub-goal hint for " + subgoal);
+                        workingRoutePlan.shift() ;
+                    }
                 }
             }
             return goal ;
@@ -1279,11 +1282,7 @@ public class WalkAgent extends AgentBase {
          * 本来なら、mentalMode ごとに探査すべきかもしれない。
          * そのためには、isCheckedRouteKey の拡張が必要。
          */
-        String targetTag = _target.getString() ;
-        if(!getMap().isCheckedRouteKey(targetTag)) {
-            Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
-            getMap().calcGoalPathAllWithSync(targetTag) ;
-        }
+        confirmCheckedRouteKey(_target, true) ;
 
         MapNode other = _link.getOther(_node);
         double cost = other.getDistance(mentalMode, _target) ;
@@ -1291,6 +1290,30 @@ public class WalkAgent extends AgentBase {
         return cost ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 次のターゲットがすでにルート探索されているかどうかのチェックし、
+     * されていなければ、指定により、探索する。
+     * @param _target : 次のターゲット。
+     * @param _calcP : true なら、探索する。
+     * @return すでに探索していたら true。していなければ、false。
+     */
+
+    public boolean confirmCheckedRouteKey(Term _target, boolean _calcP) {
+        String targetTag = _target.getString() ;
+        if(!getMap().isCheckedRouteKey(targetTag)) {
+            if(_calcP) {
+                Itk.logInfo("New Target", "find path.", "tag=", targetTag) ;
+                getMap().calcGoalPathAllWithSync(targetTag) ;
+            } else {
+                Itk.logWarn("Unknown Target", "tag=", targetTag) ;
+            }
+            return false ;
+        } else {
+            return true ;
+        }
+    }
+     
     //------------------------------------------------------------
     /**
      * あるplaceから現在のroutePlanの次の目的地までのコスト。
