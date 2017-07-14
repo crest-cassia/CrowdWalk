@@ -1255,7 +1255,7 @@ public class WalkAgent extends AgentBase {
                     workingRoutePlan.shift() ;
                 } else {
                     confirmCheckedRouteKey(subgoal, true) ;
-                    if (node.getHint(mentalMode, subgoal) != null) {
+                    if (node.getHint(mentalMode, subgoal, false) != null) {
                         return subgoal;
                     } else {
                         Itk.logWarn("no sub-goal hint for " + subgoal);

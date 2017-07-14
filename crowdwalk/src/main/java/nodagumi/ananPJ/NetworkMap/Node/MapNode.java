@@ -284,20 +284,37 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     public void clearHints(Term mentalMode) {
         getHints(mentalMode).clear();
     }
-    
-    public NavigationHint getHint(Term mentalMode, Term goalTag) {
-        return getHint(mentalMode, goalTag.getString()) ;
+
+    //------------------------------------------------------------
+    /**
+     * ある mentalMode での goalTag への最短経路ヒントを取得。
+     */
+    public NavigationHint getHint(Term mentalMode, Term goalTag,
+                                  boolean causeErrorP) {
+        return getHint(mentalMode, goalTag.getString(), causeErrorP) ;
     }
 
-    public NavigationHint getHint(Term mentalMode, String goalTag) {
+    //------------------------------------------------------------
+    /**
+     * ある mentalMode での goalTag への最短経路ヒントを取得。
+     */
+    public NavigationHint getHint(Term mentalMode, String goalTag,
+                                  boolean causeErrorP) {
         NavigationHint hint = getHints(mentalMode).get(goalTag);
         if (hint == null) {
-            Itk.logFatal("No hint for goal",
-                         "toward tag", goalTag,
-                         "from node", this.getID(),
-                         "in mode", mentalMode, ".") ;
-            Itk.dumpStackTrace() ;
-            Itk.quitByError() ;
+            if(causeErrorP) {
+                Itk.logFatal("No hint for goal",
+                             "toward tag", goalTag,
+                             "from node", this.getID(),
+                             "in mode", mentalMode, ".") ;
+                Itk.dumpStackTrace() ;
+                Itk.quitByError() ;
+            } else {
+                Itk.logWarn("No hint for goal",
+                            "toward tag", goalTag,
+                            "from node", this.getID(),
+                            "in mode", mentalMode, ".") ;
+            }
         }
         return hint;
     }
@@ -325,7 +342,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     }
 
     public MapLink getViaLink(Term mentalMode, String goalTag) {
-        NavigationHint hint = getHint(mentalMode, goalTag);
+        NavigationHint hint = getHint(mentalMode, goalTag, true);
         return hint.viaLink;
     }
 
@@ -335,7 +352,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         if(hasTag(goalTag)) {// 自分自身がターゲットの場合
             return 0.0 ;
         } else {
-            NavigationHint hint = getHint(mentalMode, goalTag);
+            NavigationHint hint = getHint(mentalMode, goalTag, true);
             if (hint == null) { // おそらくここには来ないはず。getHintでエラー。
                 Itk.logWarn("Target Not Found", "target:", goalTag) ;
                 throw new TargetNotFoundException(goalTag + " not found for id=" + ID + "(" + getTagString() + ")");

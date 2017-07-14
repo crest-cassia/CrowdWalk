@@ -740,7 +740,7 @@ public class EvacuationSimulator {
             int nodeCount = 0 ;
             int linkCount = 0 ;
             for (MapNode node : networkMap.getNodes()) {
-                if (node.getHint(NavigationHint.DefaultMentalMode, goal)
+                if (node.getHint(NavigationHint.DefaultMentalMode, goal, false)
                     == null) {
                     nodeCount += 1 ;
                     for (MapLink link : node.getUsableLinkTable()) {
