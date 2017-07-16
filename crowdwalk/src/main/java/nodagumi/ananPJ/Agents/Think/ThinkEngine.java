@@ -171,6 +171,14 @@ public class ThinkEngine {
 
     //------------------------------------------------------------
     /**
+     * get RationalAgent
+     */
+    public RationalAgent getRationalAgent() {
+        return (RationalAgent)agent ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * check agent is null
      */
     public boolean isNullAgent() {
@@ -182,7 +190,7 @@ public class ThinkEngine {
      * get agent's alerted message table.
      */
     public HashMap<Term, SimTime> getAlertedMessageTable() {
-        RationalAgent agent = (RationalAgent)getAgent() ;
+        RationalAgent agent = getRationalAgent() ;
         return agent.alertedMessageTable ;
     }
 

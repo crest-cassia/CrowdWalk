@@ -236,7 +236,8 @@ run3gt00_cui ::
 ##-----
 SAMPLE3gt00a = sample/generatedTown/gridTown00.array.prop.json   # array formula
 run3gt00a ::
-	(cd $(BASEDIR) ; bash quickstart.sh -l Warn $(SAMPLE3gt00a))
+	(cd $(BASEDIR) ; bash quickstart.sh -l Info $(SAMPLE3gt00a))
+#	(cd $(BASEDIR) ; bash quickstart.sh -l Warn $(SAMPLE3gt00a))
 run3gt00a_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00a))
 

@@ -694,7 +694,7 @@ public class Term {
     private int convertValueToInt(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getInt() ;
-        } else if(val instanceof Integer) {
+        } else if(val instanceof Number) {
             return ((Integer)val).intValue() ;
         } else if(val == null) {
             Thread.dumpStack() ;
@@ -732,7 +732,7 @@ public class Term {
     private double convertValueToDouble(Object val) {
         if(val instanceof Term) {
             return ((Term)val).getDouble() ;
-        } else if(val instanceof Double) {
+        } else if(val instanceof Number) {
             return ((Double)val).doubleValue() ;
         } else if(val == null) {
             Thread.dumpStack() ;
@@ -1055,7 +1055,9 @@ public class Term {
         } else if(object instanceof Term) {
             Term term = (Term)object ;
             if(equalToHead(term.getHead())){
-                if(isArray()) {
+                if(isAtom()) {
+                    return true ;
+                } else if(isArray()) {
                     return equalToArray(term.getArray()) ;
                 } else {
                     return equalToBody(term.getBody()) ;
@@ -1072,10 +1074,16 @@ public class Term {
     /**
      * Headとの比較
      */
-    public boolean equalToHead(Object _head) {
-        return (isNullHead() ?
-                _head == null :
-                getHead().equals(_head)) ;
+    public final boolean equalToHead(Object _head) {
+        if(isNullHead()) {
+            return (_head == null) ;
+        } else if(isInt()) { // BigDecimal をちゃんと扱うために。
+            int headValue = getInt() ;
+            int _headValue = convertValueToInt(_head) ;
+            return headValue == _headValue ;
+        } else {
+            return getHead().equals(_head) ;
+        }
     }
 
     //------------------------------------------------------------
@@ -1143,19 +1151,26 @@ public class Term {
     /**
      * int となるか？
      */
-    public boolean isInt() {
-        return (((head instanceof BigDecimal &&
-                  ((BigDecimal)head).scale() <= 0) ||
-                 head instanceof BigInteger ||
-                 head instanceof Integer ||
-                 head instanceof Long) &&
-                isAtom()) ;
+    public final boolean isInt() {
+        return (isInt(head, true) && isAtom()) ;
+    }
+
+    /**
+     * int となるか？
+     */
+    public static final boolean isInt(Object value, boolean checkBigDecimalP){
+        return ((checkBigDecimalP &&
+                 value instanceof BigDecimal &&
+                 ((BigDecimal)value).scale() <= 0) ||
+                value instanceof BigInteger ||
+                value instanceof Integer ||
+                value instanceof Long) ;
     }
 
     //============================================================
     //------------------------------------------------------------
     /**
-     * int となるか？
+     * int のTermか？
      */
     static public boolean isIntTerm(Object object) {
         return ((object != null) &&
@@ -1167,10 +1182,18 @@ public class Term {
     /**
      * double となるか？
      */
-    public boolean isDouble() {
-        return ((head instanceof BigDecimal ||
-                 head instanceof Double ||
-                 head instanceof Float) && isAtom()) ;
+    public final boolean isDouble() {
+        return (isDouble(head, true) && isAtom()) ;
+    }
+
+    /**
+     * double となるか？
+     */
+    public static final boolean isDouble(Object value,
+                                         boolean checkBigDecimalP) {
+        return ((checkBigDecimalP && value instanceof BigDecimal) ||
+                value instanceof Double ||
+                value instanceof Float) ;
     }
 
     //============================================================

@@ -524,13 +524,22 @@ public class Place {
     /**
      * 反転
      */
-    public Place turnAround() {
+    public final Place turnAround() {
         MapNode newEnteringNode = getHeadingNode() ;
         double distance = getLinkLength() - getAdvancingDistance() ;
 
         setEnteringNode(newEnteringNode) ;
         setAdvancingDistance(distance) ;
         return this ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 反転できるかどうか
+     */
+    public final boolean canTurnAround() {
+        return (link != null &&
+                link.isAvailableTo(getEnteringNode())) ;
     }
 
     //------------------------------------------------------------

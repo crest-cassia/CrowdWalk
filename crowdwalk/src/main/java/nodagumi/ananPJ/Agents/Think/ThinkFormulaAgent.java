@@ -77,6 +77,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         lexicon.register("changeGoal", singleton) ;
         lexicon.register("clearPlannedRoute", singleton) ;
         lexicon.register("insertRoute", singleton) ;
+        lexicon.register("turnAround", singleton) ;
 
         return true ;
     }
@@ -103,6 +104,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *   <li>{@link #call_changeGoal "changeGoal"}</li>
      *   <li>{@link #call_clearPlannedRoute "clearPlannedRoute"}</li>
      *   <li>{@link #call_insertRoute "insertRoute"}</li>
+     *   <li>{@link #call_turnAround "turnAround"}</li>
      * </ul>
      */
     @Override
@@ -142,6 +144,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
             return call_clearPlannedRoute(head, expr, engine, env) ;
         } else if(head.equals("insertRoute")) {
             return call_insertRoute(head, expr, engine, env) ;
+        } else if(head.equals("turnAround")) {
+            return call_turnAround(head, expr, engine, env) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -161,7 +165,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_getFallback(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String name = expr.getArgString("name") ;
-        RationalAgent agent = (RationalAgent)engine.getAgent() ;
+        RationalAgent agent = engine.getRationalAgent() ;
 
         return agent.getTermFromConfig(name, Term_Null) ;
     }
@@ -181,7 +185,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_getParam(String head, Term expr,
                               ThinkEngine engine, Object env) {
         String name = expr.getArgString("name") ;
-        RationalAgent agent = (RationalAgent)engine.getAgent() ;
+        RationalAgent agent = engine.getRationalAgent() ;
 
         if(name.equals("currentTime")) {
             return new Term(agent.currentTime.getRelativeTime()) ;
@@ -220,8 +224,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
                               ThinkEngine engine, Object env) {
         String name = expr.getArgString("name") ;
         Term value = engine.think(expr.getArgTerm("value"), env) ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+
         if(name.equals("emptySpeed")) {
             agent.setEmptySpeed(value.getDouble()) ;
             return value ;
@@ -244,8 +248,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_agentHasTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
         
         if(agent.hasTag(tag)) {
             return Term_True ;
@@ -267,8 +270,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_placeHasTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+        
         if(agent.getCurrentLink().hasTag(tag)) {
             return Term_True ;
         } else {
@@ -289,8 +292,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_addAgentTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+        
         if(agent.addTag(tag)) {
             return Term_True ;
         } else {
@@ -311,8 +314,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_addPlaceTag(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+
         if(agent.getCurrentLink().addTag(tag)) {
             return Term_True ;
         } else {
@@ -333,8 +336,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_removeAgentTag(String head, Term expr,
                                     ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+
         agent.removeTag(tag) ;
         return Term_True ;
     }
@@ -352,8 +355,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_removePlaceTag(String head, Term expr,
                                     ThinkEngine engine, Object env) {
         String tag = expr.getArgString("tag") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+
         agent.getCurrentLink().removeTag(tag) ;
         return Term_True ;
     }
@@ -374,8 +377,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_listenAlert(String head, Term expr,
                                  ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+
         SimTime alertTime =
             ((ThinkEngine)env).getAlertedMessageTable().get(message) ;
         if(alertTime != null) {
@@ -437,8 +440,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
                                    ThinkEngine engine, Object env) {
         Term message = expr.getArgTerm("message") ;
         boolean redundant = expr.getArgBoolean("redundant") ;
-        RationalAgent agent =
-            (RationalAgent)(((ThinkEngine)env).getAgent()) ;
+        RationalAgent agent = ((ThinkEngine)env).getRationalAgent() ;
+
         MapLink currentLink = agent.getCurrentLink() ;
         SimTime alertTime = agent.currentTime ;
 
@@ -528,6 +531,22 @@ public class ThinkFormulaAgent extends ThinkFormula {
         } else {
             ((ThinkEngine)env).getAgent().insertRouteTagSafely(route) ;
         }
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 推論(turn around)。
+     * 現在位置のリンクで、反対向きに方向変換(turnAround)を行う。
+     * 次の preUpdate() で反映される。
+     * 2回やっても、元には戻らない。（turn around がセットされるだけなので）
+     * <pre>
+     * { "" : "turnAround" }
+     * </pre>
+     */
+    public Term call_turnAround(String head, Term expr,
+                                ThinkEngine engine, Object env) {
+        ((ThinkEngine)env).getRationalAgent().setTurnAround() ;
         return Term_True ;
     }
 

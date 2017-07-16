@@ -62,6 +62,15 @@ public class RationalAgent extends BustleAgent {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * その場Uターンをするかどうかのフラグ。
+     * これが true になると、
+     * calcSpeed() で speed = 0.0 とし、
+     * advanceNextPlace で、対向レーンに移る。
+     */
+    private boolean turnAroundP = false ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 推論エンジン
      */
     public ThinkEngine thinkEngine = new ThinkEngine() ;
@@ -141,5 +150,61 @@ public class RationalAgent extends BustleAgent {
         return thinkEngine.think() ;
     }
 
+    //------------------------------------------------------------
+    // Uターン関連
+    //------------------------------------------------------------
+    /**
+     * Uターンフラグを on
+     */
+    public boolean setTurnAround() {
+        return setTurnAround(true) ;
+    }
+    
+    /**
+     * Uターンフラグを on/off
+     */
+    public boolean setTurnAround(boolean _turnAroundP) {
+        return turnAroundP = _turnAroundP ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 速度計算(turn around を考慮)
+     */
+    @Override
+    protected double calcSpeed(double previousSpeed, SimTime currentTime) {
+        if(turnAroundP) {
+            return 0.0 ;
+        } else {
+            return super.calcSpeed(previousSpeed, currentTime) ;
+        }
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * 次の位置の計算(turn around を考慮)
+     */
+    @Override
+    protected boolean advanceNextPlace(double _speed, SimTime currentTime,
+                                       boolean stayOnLink) {
+        boolean _turnAroundP = turnAroundP ;
+        turnAroundP = false ;
+        if(_turnAroundP && canTurnAround()) {
+            nextPlace.set(currentPlace) ;
+            nextPlace.turnAround() ;
+            return false ;
+        } else {
+            return super.advanceNextPlace(_speed, currentTime, stayOnLink) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在地でturn around できるかどうか。
+     */
+    protected boolean canTurnAround() {
+        return currentPlace.canTurnAround() ;
+    }
+    
 } // class RationalAgent
 

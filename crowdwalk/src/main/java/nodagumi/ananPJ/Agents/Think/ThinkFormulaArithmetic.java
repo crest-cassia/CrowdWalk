@@ -192,7 +192,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     public Term call_sub(String head, Term expr,
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
-	if(expr.hasArg("left") && expr.hasArg("right")) {
+	if(expr.isArray() || (expr.hasArg("left") && expr.hasArg("right"))) {
 	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
             Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    result = left.getBigDecimal().subtract(right.getBigDecimal()) ;
@@ -265,7 +265,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     public Term call_div(String head, Term expr,
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
-	if(expr.hasArg("left") && expr.hasArg("right")) {
+	if(expr.isArray() || (expr.hasArg("left") && expr.hasArg("right"))) {
 	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
             Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    result = left.getBigDecimal().divide(right.getBigDecimal()) ;
@@ -293,7 +293,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     public Term call_mod(String head, Term expr,
                          ThinkEngine engine, Object env) {
 	BigDecimal result = null ;
-	if(expr.hasArg("left") && expr.hasArg("right")) {
+	if(expr.isArray() || (expr.hasArg("left") && expr.hasArg("right"))) {
 	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
             Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    result = left.getBigDecimal().remainder(right.getBigDecimal()) ;
@@ -320,7 +320,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
     public Term call_equal(String head, Term expr,
                            ThinkEngine engine, Object env) {
 	Term result = null ;
-	if(expr.hasArg("left") && expr.hasArg("right")) {
+	if(expr.isArray() || (expr.hasArg("left") && expr.hasArg("right"))) {
 	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
             Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    if(left.equals(right)) {
@@ -431,7 +431,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      */
     public int compareLeftRightValues(Term expr,
                                       ThinkEngine engine, Object env) {
-	if(expr.hasArg("left") && expr.hasArg("right")) {
+	if(expr.isArray() || (expr.hasArg("left") && expr.hasArg("right"))) {
 	    Term left = engine.think(getArgFromExpr(expr,"left",1), env) ;
             Term right = engine.think(getArgFromExpr(expr,"right",2), env) ;
 	    if(left.isNumber() && right.isNumber()) {
