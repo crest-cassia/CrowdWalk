@@ -60,7 +60,6 @@
 		     {"":"clearAlert", "message":"foo-bar-baz"}]]
 	       ]},
   "total":100,
-  "total":1,
   "startPlace":"link_node_00_00__node_00_01","conditions":null,
   "startTime":"18:00:00","duration":500.0,
   "goal":"node_09_09",

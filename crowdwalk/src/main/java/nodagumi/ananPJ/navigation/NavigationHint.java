@@ -24,6 +24,8 @@ public class NavigationHint implements Comparable<NavigationHint> {
     public Term mentalMode ;
     /** 最終目標ゴールタグ */
     public String goalTag ;
+    /** 最終目標ゴールのノード */
+    public MapNode goalNode;
     /** 起点ノード */
     public MapNode fromNode ;
     /** 向かう方向のノード */
@@ -37,10 +39,10 @@ public class NavigationHint implements Comparable<NavigationHint> {
     /**
      * constructor.
      */
-    public NavigationHint(Term _mentalMode, String _goalTag,
+    public NavigationHint(Term _mentalMode, String _goalTag, MapNode _goalNode,
                           MapNode _fromNode, MapLink _viaLink, MapNode _toNode,
                           double _distance) {
-        set(_mentalMode, _goalTag,
+        set(_mentalMode, _goalTag, _goalNode,
             _fromNode, _viaLink, _toNode, _distance) ;
     }
     
@@ -49,10 +51,12 @@ public class NavigationHint implements Comparable<NavigationHint> {
      * 値設定
      */
     public NavigationHint set(Term _mentalMode, String _goalTag,
+                              MapNode _goalNode,
                               MapNode _fromNode, MapLink _viaLink,
                               MapNode _toNode, double _distance) {
         mentalMode = _mentalMode ;
         goalTag = _goalTag ;
+        goalNode = _goalNode ;
         fromNode = _fromNode ;
         toNode = _toNode ;
         viaLink = _viaLink ;

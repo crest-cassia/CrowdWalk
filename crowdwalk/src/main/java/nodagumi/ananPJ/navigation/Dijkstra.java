@@ -122,7 +122,7 @@ public class Dijkstra {
      * @param goalTag 探索するゴールのタグ。
      * @param subgoals 目標とするゴール集合。
      * @param networkMap 地図。
-     * @return 探索結果。Resule class のインスタンス。
+     * @return 探索結果。Result class のインスタンス。
      */
     static public Result calc(Term mentalMode,
                               String goalTag,
@@ -145,7 +145,8 @@ public class Dijkstra {
             double cost = chooser.calcGoalNodeCost(subgoal);
             NavigationHint hint =
                 new NavigationHint(mentalMode,
-                                   goalTag, subgoal, null, null, cost) ;
+                                   goalTag, subgoal,
+                                   subgoal, null, null, cost) ;
             frontier.put(subgoal, hint) ;
             result.put(subgoal, hint) ;
         }
@@ -153,7 +154,7 @@ public class Dijkstra {
         // 探索ループ。
         while (true) {
             NavigationHint bestHint =
-                new NavigationHint(null, null,
+                new NavigationHint(null, null, null,
                                    null, null, null, Double.POSITIVE_INFINITY) ;
             closedList.clear() ;
             for (MapNode frontierNode : frontier.keySet()) {
@@ -163,11 +164,13 @@ public class Dijkstra {
                     MapNode preNode = preLink.getOther(frontierNode);
                     if (result.containsKey(preNode)) continue;
                     countPerNode ++ ;
-                    double dist =
-                        result.get(frontierNode).distance
-                        + chooser.calcLinkCost(preLink, preNode) ;
+                    NavigationHint frontierHint = result.get(frontierNode) ;
+                    double dist = (frontierHint.distance
+                                   + chooser.calcLinkCost(preLink, preNode)) ;
+
                     if (dist < bestHint.distance) {
                         bestHint.set(mentalMode, goalTag,
+                                     frontierHint.goalNode,
                                      preNode, preLink, frontierNode, dist) ;
                     }
                 }
