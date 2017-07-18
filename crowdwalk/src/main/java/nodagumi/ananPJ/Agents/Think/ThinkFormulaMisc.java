@@ -27,6 +27,7 @@ import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
 
 import nodagumi.Itk.* ;
+import nodagumi.Itk.Itk ;
 
 //======================================================================
 /**
@@ -112,25 +113,32 @@ public class ThinkFormulaMisc extends ThinkFormula {
      * 推論(log)。
      * <pre>
      *   {"":"log",
-     *    "special": ("alertMessages" | "tags" | ...)}
+     *    "special": ("alertMessages" | "tags" | ...),
+     *    ["level" : ("Trace" | "Debug" | "Info" | "Warn" | "Error" | "Fatal"}]
+     *   }
      *  OR
      *   {"":"log",
      *    "tag": _StringForTag_,
-     *    "value": _expr_}
+     *    "value": _expr_,
+     *    ["level" : ("Trace" | "Debug" | "Info" | "Warn" | "Error" | "Fatal"}]
+     *   }
      * </pre>
      * "special":"alertMessages" の場合は、
      * エージェントが取得している alert message のリストが表示される。
      * "special":"tags" の場合は、
      * エージェントが保持している tag のリストが表示される。
+     * "level" が省略された場合、規定値は "Info"。
      */
     public Term call_log(String head, Term expr,
                          ThinkEngine engine, Object env) {
         Term special = expr.getArgTerm("special") ;
+        Itk.LogLevel level = getLogLevel(expr.getArgTerm("level")) ; 
+
         if(special != null) {
             if(special.equals("alertMessages")) {
-                call_logAlertMessages(engine, env) ;
+                call_logAlertMessages(level, engine, env) ;
             } else if(special.equals("tags")) {
-                call_logTags(engine, env) ;
+                call_logTags(level, engine, env) ;
             } else {
                 Itk.logError("unknown log special:", expr) ;
             }
@@ -140,9 +148,9 @@ public class ThinkFormulaMisc extends ThinkFormula {
             Term result = ((value != null) ? engine.think(value, env) : null) ;
 
             if(result == null) {
-                Itk.logInfo(engine.logTag(), tag) ;
+                logGenericWithLevel(level, engine.logTag(), tag) ;
             } else {
-                Itk.logInfo(engine.logTag(), tag, ":", result) ;
+                logGenericWithLevel(level, engine.logTag(), tag, ":", result) ;
             }
         }
         return ThinkFormula.Term_True ;
@@ -152,19 +160,22 @@ public class ThinkFormulaMisc extends ThinkFormula {
     /**
      * 推論(log alertMessages)。
      */
-    public void call_logAlertMessages(ThinkEngine engine, Object env) {
+    public void call_logAlertMessages(Itk.LogLevel level,
+                                      ThinkEngine engine, Object env) {
         if(engine.isNullAgent()) {
-            Itk.logInfo(engine.logTag(), "no agent") ;
+            logGenericWithLevel(level, engine.logTag(), "no agent") ;
         } else {
-            Itk.logInfo(engine.logTag(), "alertMessages",
-                        "time=", engine.getAgent().currentTime) ;
+            logGenericWithLevel(level, engine.logTag(), "alertMessages",
+                                "time=", engine.getAgent().currentTime) ;
             for(Map.Entry<Term, SimTime> entry :
                     engine.getAlertedMessageTable().entrySet()) {
                 Term message = entry.getKey() ;
                 SimTime alertTime = entry.getValue() ;
-                Itk.logInfo(engine.LogTagPrefix, message, alertTime) ;
+                logGenericWithLevel(level,
+                                    engine.LogTagPrefix, message, alertTime) ;
             }
-            Itk.logInfo(engine.LogTagPrefix, "-----------------") ;
+            logGenericWithLevel(level,
+                                engine.LogTagPrefix, "-----------------") ;
         }
     }
 
@@ -172,11 +183,35 @@ public class ThinkFormulaMisc extends ThinkFormula {
     /**
      * 推論(log tags)。
      */
-    public void call_logTags(ThinkEngine engine, Object env) {
+    public void call_logTags(Itk.LogLevel level,
+                             ThinkEngine engine, Object env) {
         if(engine.isNullAgent()) {
-            Itk.logInfo(engine.logTag(), "(null agent)") ;
+            logGenericWithLevel(level, engine.logTag(), "(null agent)") ;
         } else {
-            Itk.logInfo(engine.logTag(), "tags=", engine.getAgent().getTags()) ;
+            logGenericWithLevel(level,
+                                engine.logTag(),
+                                "tags=", engine.getAgent().getTags()) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力(level付き)
+     */
+    public void logGenericWithLevel(Itk.LogLevel level, String label,
+                                    Object... objects) {
+        Itk.logOutput(level, label, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力 level 解析
+     */
+    public Itk.LogLevel getLogLevel(Term term) {
+        if(term == null) { // default
+            return Itk.LogLevel.Info ;
+        } else {
+            return (Itk.LogLevel)Itk.logLevelLexicon.lookUp(term.getString()) ;
         }
     }
 

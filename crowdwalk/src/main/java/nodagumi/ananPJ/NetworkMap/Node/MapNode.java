@@ -289,14 +289,14 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     /**
      * ある mentalMode での goalTag への最短経路ヒントを持っているかチェック。
      */
-    public final boolean hasHint(Term nentalMode, Term goalTag) {
+    public final boolean hasHint(Term mentalMode, Term goalTag) {
         return hasHint(mentalMode, goalTag.getString()) ;
     }
     
     /**
      * ある mentalMode での goalTag への最短経路ヒントを持っているかチェック。
      */
-    public final boolean hasHint(Term nentalMode, String goalTag) {
+    public final boolean hasHint(Term mentalMode, String goalTag) {
         return getHint(mentalMode, goalTag, false) != null ;
     }
     
