@@ -148,9 +148,9 @@ public class ThinkFormulaMisc extends ThinkFormula {
             Term result = ((value != null) ? engine.think(value, env) : null) ;
 
             if(result == null) {
-                logGenericWithLevel(level, engine.logTag(), tag) ;
+                logGenericWithLevel(engine, level, true, tag) ;
             } else {
-                logGenericWithLevel(level, engine.logTag(), tag, ":", result) ;
+                logGenericWithLevel(engine, level, true, tag, ":", result) ;
             }
         }
         return ThinkFormula.Term_True ;
@@ -163,19 +163,17 @@ public class ThinkFormulaMisc extends ThinkFormula {
     public void call_logAlertMessages(Itk.LogLevel level,
                                       ThinkEngine engine, Object env) {
         if(engine.isNullAgent()) {
-            logGenericWithLevel(level, engine.logTag(), "no agent") ;
+            logGenericWithLevel(engine, level, true, "no agent") ;
         } else {
-            logGenericWithLevel(level, engine.logTag(), "alertMessages",
+            logGenericWithLevel(engine, level, true, "alertMessages",
                                 "time=", engine.getAgent().currentTime) ;
             for(Map.Entry<Term, SimTime> entry :
                     engine.getAlertedMessageTable().entrySet()) {
                 Term message = entry.getKey() ;
                 SimTime alertTime = entry.getValue() ;
-                logGenericWithLevel(level,
-                                    engine.LogTagPrefix, message, alertTime) ;
+                logGenericWithLevel(engine, level, true, message, alertTime) ;
             }
-            logGenericWithLevel(level,
-                                engine.LogTagPrefix, "-----------------") ;
+            logGenericWithLevel(engine, level, true, "-----------------") ;
         }
     }
 
@@ -186,10 +184,9 @@ public class ThinkFormulaMisc extends ThinkFormula {
     public void call_logTags(Itk.LogLevel level,
                              ThinkEngine engine, Object env) {
         if(engine.isNullAgent()) {
-            logGenericWithLevel(level, engine.logTag(), "(null agent)") ;
+            logGenericWithLevel(engine, level, false, "(null agent)") ;
         } else {
-            logGenericWithLevel(level,
-                                engine.logTag(),
+            logGenericWithLevel(engine, level, false,
                                 "tags=", engine.getAgent().getTags()) ;
         }
     }
@@ -198,9 +195,11 @@ public class ThinkFormulaMisc extends ThinkFormula {
     /**
      * ログ出力(level付き)
      */
-    public void logGenericWithLevel(Itk.LogLevel level, String label,
+    public void logGenericWithLevel(ThinkEngine engine,
+                                    Itk.LogLevel level,
+                                    boolean contP,
                                     Object... objects) {
-        Itk.logOutput(level, label, objects) ;
+        engine.logInThinkWithLevel(level, contP, objects) ;
     }
 
     //------------------------------------------------------------
@@ -211,7 +210,7 @@ public class ThinkFormulaMisc extends ThinkFormula {
         if(term == null) { // default
             return Itk.LogLevel.Info ;
         } else {
-            return (Itk.LogLevel)Itk.logLevelLexicon.lookUp(term.getString()) ;
+            return Itk.getLogLevel(term.getString()) ;
         }
     }
 

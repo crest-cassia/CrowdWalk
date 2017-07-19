@@ -339,6 +339,11 @@ public class Itk {
         logLevelLexicon.registerEnum(LogLevel.class) ;
     }
     
+    //============================================================
+    //------------------------------------------------------------
+    static public LogLevel getLogLevel(String levelString) {
+        return (LogLevel)logLevelLexicon.lookUp(levelString) ;
+    }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**

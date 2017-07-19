@@ -22,6 +22,7 @@ import nodagumi.ananPJ.Agents.RationalAgent;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.* ;
+import nodagumi.Itk.Itk ;
 
 //======================================================================
 /**
@@ -284,6 +285,33 @@ public class ThinkEngine {
         return head ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * ログ出力インターフェース.
+     * @param level : ログレベル
+     * @param contP : true なら、継続行とみなした tag, そうでないなら通常tag.
+     * @param objects : ログ内容。
+     */
+    public void logInThinkWithLevel(Itk.LogLevel level,
+                                    boolean contP,
+                                    Object... objects) {
+        String label = (contP ? logTag() : LogTagPrefix) ;
+        logGenericWithLevel(level, label, objects) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ログ出力インターフェース.
+     * @param level : ログレベル
+     * @param label : ログラベル。
+     * @param objects : ログ内容。
+     */
+    public void logGenericWithLevel(Itk.LogLevel level,
+                                    String label,
+                                    Object... objects) {
+        Itk.logOutput(level, label, objects) ;
+    }
+    
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //------------------------------------------------------------

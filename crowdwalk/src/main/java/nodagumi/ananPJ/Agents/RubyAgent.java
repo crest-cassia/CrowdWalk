@@ -132,6 +132,14 @@ public class RubyAgent extends RationalAgent {
      */
     private ArrayList<String> triggerFilter = null ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * log tag
+     */
+    public String logTag() {
+        return toString() ;
+    }
+
     //------------------------------------------------------------
     // コンストラクタ
     //------------------------------------------------------------
@@ -415,6 +423,21 @@ public class RubyAgent extends RationalAgent {
      */
     public String intern(String str) {
         return rubyEngine.intern(str) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 実行ログ出力。
+     * @param level : ログレベル
+     * @param label : ログラベル。もし null なら、Agent 情報が入る。
+     * @param objects : ログ内容。
+     */
+    public void logAsRubyAgent(Itk.LogLevel level,
+                               String label,
+                               Object... objects) {
+        if(label == null) { label = logTag() ; }
+
+        thinkEngine.logGenericWithLevel(level, label, objects) ;
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

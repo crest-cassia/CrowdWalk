@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 ## -*- mode: ruby -*-
 ## = Sample Agent for CrowdWalk
 ## Author:: Itsuki Noda
@@ -37,7 +38,9 @@ class SampleAgent < RubyAgentBase
   #++
   ## シミュレーション各サイクルの前半に呼ばれる。
   def preUpdate()
-    p ['SampleAgent', :preUpdate, getAgentId(), currentTime()] ;
+    # p ['SampleAgent', :preUpdate, getAgentId(), getCurrentTime()] ;
+    logInfo(:info, nil,
+            'SampleAgent', :preUpdate, getCurrentTime()) ;
     return super()
   end
 
@@ -45,7 +48,9 @@ class SampleAgent < RubyAgentBase
   #++
   ## シミュレーション各サイクルの後半に呼ばれる。
   def update()
-    p ['SampleAgent', :update, getAgentId(), currentTime()] ;
+    # p ['SampleAgent', :update, getAgentId(), getCurrentTime()] ;
+    logInfo(:info, nil,
+            'SampleAgent', :update, getCurrentTime()) ;
     return super() ;
   end
 
@@ -81,7 +86,7 @@ class SampleAgent < RubyAgentBase
     if(rand(5) == 0) then
       origSpeed = speed ;
       speed *= 0.01 ;
-      p [:speedDown, getAgentId(), origSpeed, speed] ;
+      logInfo(nil, :speedDown, origSpeed, "->", speed) ;
     end
     return speed ;
   end
@@ -106,13 +111,13 @@ class SampleAgent < RubyAgentBase
     if(listenAlert(Term_Emergency)) then
       setGoal(Term_node_09_05) ;
       clearRoute() ;
-      p [:changeGoal, ItkTerm.toRuby(Term_node_09_05)] ;
+      logWarn(nil, :changeGoal, ItkTerm.toRuby(Term_node_09_05)) ;
       clearAlert(Term_Emergency) ;
     end
 
     if(listenAlert(Term_FooBarBaz)) then
       insertRoute(Term_node_02_00) ;
-      p [:insertRoute, ItkTerm.toRuby(Term_node_02_00)] ;
+      logWarn(nil, :insertRoute, ItkTerm.toRuby(Term_node_02_00)) ;
       clearAlert(Term_FooBarBaz) ;
     end
 
