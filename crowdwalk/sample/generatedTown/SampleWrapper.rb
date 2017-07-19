@@ -45,29 +45,30 @@ class SampleWrapper < CrowdWalkWrapper
   #++
   ## シミュレーション前処理
   def prepareForSimulation()
-    p ['SampleWrapper', :prepareForSimulation]
+    logInfo(nil, 'SampleWrapper', :prepareForSimulation) ;
     width = @simulator.filterFetchFallbackDouble("link",
                                                  "gathering_location_width",
                                                  40.0) ;
     ## 一時避難所道路の道幅変更
     @networkMap.eachLinkWithTag("TEMPORARY_GATHERING_LOCATION_LINK"){|link|
       link.setWidth(width) ;
-      p ['link.setWidth', link.getID(), link.getTagString(), link.getWidth()] ;
+      logInfo(nil, 'link.setWidth',
+              link.getID(), link.getTagString(), link.getWidth()) ;
     }
     ## 中央通りを major 道路に。
     @networkMap.eachLink(){|link|
       tag = link.getNthTag(0) ;
       if(!tag.nil? && tag =~ /link_node_04/ && tag =~ /__node_04/) then
         link.addTag(Term_major) ;
-        p ['link.addTag', link.getID(), link.getTagString()] ;
+        logInfo(nil, 'link.addTag', link.getID(), link.getTagString()) ;
       end
       if(!tag.nil? && tag =~ /04__/ && tag =~ /04$/) then
         link.addTag("major") ;
-        p ['link.addTag', link.getID(), link.getTagString()] ;
+        logInfo(nil, 'link.addTag', link.getID(), link.getTagString()) ;
       end
     }
     rebuildRoutes() ;
-    p ['rebuildRoutes()'] ;
+    logInfo(nil, 'rebuildRoutes()') ; ;
   end
 
   Term_major = ItkTerm.intern("major") ;
@@ -84,7 +85,7 @@ class SampleWrapper < CrowdWalkWrapper
   ## update の先頭で呼び出される。
   ## _simTime_:: シミュレーション内相対時刻
   def preUpdate(simTime)
-    p ['SampleWrapper', :preUpdate, simTime] ;
+    logInfo(nil, 'SampleWrapper', :preUpdate, simTime) ;
 #    @networkMap.eachLink(){|link| p [:link, link]} ;
 #    @networkMap.eachNode(){|node| p [:node, node]} ;
     @networkMap.eachNode(){|node|
@@ -104,7 +105,7 @@ class SampleWrapper < CrowdWalkWrapper
   ## update の最後に呼び出される。
   ## _simTime_:: シミュレーション内相対時刻
   def postUpdate(simTime)
-    p ['SampleWrapper', :postUpdate, simTime] ;
+    logInfo(nil, 'SampleWrapper', :postUpdate, simTime) ;
   end
 
   #--============================================================

@@ -11,6 +11,7 @@
 ## == Usage
 ## * ...
 
+require 'ItkUtility.rb' ;
 require 'ItkTerm.rb' ;
 require 'NetworkMap.rb' ;
 
@@ -18,6 +19,8 @@ require 'NetworkMap.rb' ;
 #++
 ## CrowdWalk の RubyAgent に対応する Ruby 側の AgentBase
 class RubyAgentBase
+  include ItkUtility ;
+  
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #++
@@ -377,80 +380,16 @@ class RubyAgentBase
   
   #--------------------------------------------------------------
   #++
-  ## Itkのloggerによるログ出力
+  ## Itkのloggerによるログ出力.
+  ## ItkUtility のものを override.
   ## _level_ :: ログレベル。:trace, :debug, :info, :warn, :error, :fatal
   ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
   ## _*data_ :: データの並び。
   def logWithLevel(level, label, *data)
-    levelObj = LogLevelTable[level] ;
+    levelObj = ItkUtility::LogLevelTable[level] ;
     return @javaAgent.logAsRubyAgent(levelObj, label, *data) ;
   end
 
-  #--------------------------------
-  #++
-  ## Itkのloggerによるログ出力(trace)
-  ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
-  ## _*data_ :: データの並び。
-  def logTrace(label, *data)
-    logWithLevel(:trace, label, *data) ;
-  end
-
-  #--------------------------------
-  #++
-  ## Itkのloggerによるログ出力(debug)
-  ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
-  ## _*data_ :: データの並び。
-  def logDebug(label, *data)
-    logWithLevel(:debug, label, *data) ;
-  end
-  
-  #--------------------------------
-  #++
-  ## Itkのloggerによるログ出力(info)
-  ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
-  ## _*data_ :: データの並び。
-  def logInfo(label, *data)
-    logWithLevel(:info, label, *data) ;
-  end
-
-  #--------------------------------
-  #++
-  ## Itkのloggerによるログ出力(warn)
-  ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
-  ## _*data_ :: データの並び。
-  def logWarn(label, *data)
-    logWithLevel(:warn, label, *data) ;
-  end
-
-  #--------------------------------
-  #++
-  ## Itkのloggerによるログ出力(error)
-  ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
-  ## _*data_ :: データの並び。
-  def logError(label, *data)
-    logWithLevel(:error, label, *data) ;
-  end
-
-  #--------------------------------
-  #++
-  ## Itkのloggerによるログ出力(fatal)
-  ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
-  ## _*data_ :: データの並び。
-  def logFatal(label, *data)
-    logWithLevel(:fatal, label, *data) ;
-  end
-
-  #--::::::::::::::::::::::::::::::
-  #++
-  ## logger のレベル
-  LogLevelTable = ({ :trace => Itk.getLogLevel("Trace"),
-                     :debug => Itk.getLogLevel("Debug"),
-                     :info  => Itk.getLogLevel("Info"),
-                     :warn  => Itk.getLogLevel("Warn"),
-                     :error => Itk.getLogLevel("Error"),
-                     :fatal => Itk.getLogLevel("Fatal"),
-                   }) ;
-  
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

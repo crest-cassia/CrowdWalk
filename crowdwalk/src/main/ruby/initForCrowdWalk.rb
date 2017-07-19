@@ -9,6 +9,7 @@
 
 #------------------------------------------------------------------------
 
+require 'ItkUtility.rb' ;
 require 'ItkTerm.rb' ;
 require 'CrowdWalkWrapper.rb' ;
 require 'AgentFactoryBase.rb' ;

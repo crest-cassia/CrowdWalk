@@ -11,6 +11,7 @@
 ## == Usage
 ## * ...
 
+require 'ItkUtility.rb' ;
 require 'ItkTerm.rb' ;
 require 'NetworkMap.rb' ;
 
@@ -18,6 +19,8 @@ require 'NetworkMap.rb' ;
 #++
 ## CrowdWalk の EvacuationSimulator の制御のwrapper
 class CrowdWalkWrapper
+  include ItkUtility ;
+  
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## Java 側の EvacuationSimulator
@@ -90,7 +93,7 @@ class CrowdWalkWrapper
   ## シミュレーション開始前の処理
   ## AgentHandler の prepareForSimulation の後で呼び出される。
   def prepareForSimulation()
-    p [:prepareForSimulation, :doNothing] ;
+    logInfo(nil, :prepareForSimulation, :doNothing) ;
   end
 
   #--------------------------------------------------------------
@@ -98,7 +101,7 @@ class CrowdWalkWrapper
   ## シミュレーション終了後の処理
   ## EvacuationSimulator の finalize() で呼び出される。
   def finalizeSimulation()
-    p [:finalizeSimulation, :doNothing] ;
+    logInfo(nil, :finalizeSimulation, :doNothing) ;
   end
 
   #--------------------------------------------------------------
@@ -142,6 +145,18 @@ class CrowdWalkWrapper
     return @simulator.intern(str) ;
   end
   
+  #--------------------------------------------------------------
+  #++
+  ## Itkのloggerによるログ出力.
+  ## ItkUtility のものを override.
+  ## _level_ :: ログレベル。:trace, :debug, :info, :warn, :error, :fatal
+  ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
+  ## _*data_ :: データの並び。
+  def logWithLevel(level, label, *data)
+    label = "Wrapper" if label.nil? ;
+    super(level, label, *data) ;
+  end
+
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
