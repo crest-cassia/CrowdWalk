@@ -210,6 +210,18 @@ public abstract class AgentFactory {
          */
         public String ruleName = null ;
         
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 個別パラメータ
+         */
+        public Term individualConfigList = null ;
+        
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 個別パラメータ用 index
+         */
+        public int individualConfigIndex = 0 ;
+        
         //------------------------------
         /**
          * JSONへの変換用
@@ -231,6 +243,7 @@ public abstract class AgentFactory {
             jTerm.setArg("total",total) ;
             jTerm.setArg("speedModel", speedModel) ;
             jTerm.setArg("name", ruleName) ;
+            jTerm.setArg("individualConfig", individualConfigList) ;
 
             return jTerm ;
         }
@@ -278,6 +291,13 @@ public abstract class AgentFactory {
     public String ruleName = null;
     public String getRuleName() { return ruleName ; } ;
     
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 個別パラメータ。Agent 毎にパラメータを与えたい場合に記述。
+     */
+    public Term individualConfigList = null ;
+    public int individualConfigIndex = 0 ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 設定文字列（generation file 中の設定情報の文字列)。
@@ -337,6 +357,8 @@ public abstract class AgentFactory {
         ruleName = config.ruleName ;
 
         parse_conditions(config.conditions);
+
+        setIndividualConfigList(config.individualConfigList) ;
     }
 
     //------------------------------------------------------------
@@ -461,6 +483,7 @@ public abstract class AgentFactory {
 
         agents.add(agent);
         placeAgent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
+        setupAgentByIndividualConfig(agent) ;
         agent.prepareForSimulation() ;
         agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
         return agent ;
@@ -616,6 +639,62 @@ public abstract class AgentFactory {
     public double getDuration() {
         return duration;
     }
+
+    //------------------------------------------------------------
+    /**
+     * 個別パラメータをセット。
+     */
+    public Term setIndividualConfigList(Term _individualConfigList) {
+        if(_individualConfigList == null || _individualConfigList.isArray()) {
+            individualConfigList = _individualConfigList ;
+        } else {
+            Itk.logError("Illegal individualConfig in generation rule.",
+                         _individualConfigList) ;
+            Itk.quitByError() ;
+        }
+        individualConfigIndex = 0 ;
+        return individualConfigList ;
+    }
+
+    //------------------------------
+    /**
+     * 個別パラメータを１つ取得。
+     */
+    public Term getNextIndividualConfig() {
+        int nth = individualConfigIndex ;
+        individualConfigIndex++ ;
+        return getNthIndividualConfig(nth) ;
+    }
+
+    //------------------------------
+    /**
+     * n番目の個別パラメータを１つ取得。
+     */
+    public Term getNthIndividualConfig(int nth) {
+        int mode = individualConfigList.getArraySize() ;
+        return individualConfigList.getNthTerm(nth % mode) ;
+    }
+
+    //------------------------------
+    /**
+     * 個別パラメータを持っているかどうか？
+     */
+    public boolean hasIndividualConfig() {
+        return (individualConfigList != null  &&
+                individualConfigList.getArraySize() > 0) ;
+    }
+
+    //------------------------------
+    /**
+     * 個別パラメータでエージェントを設定。
+     */
+    public void setupAgentByIndividualConfig(AgentBase agent) {
+        if(hasIndividualConfig()) {
+            Term config = getNextIndividualConfig() ;
+            agent.setupByIndividualConfig(config) ;
+        }
+    }
+    
 }
 
 //;;; Local Variables:

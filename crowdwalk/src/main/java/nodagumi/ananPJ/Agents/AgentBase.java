@@ -1012,6 +1012,15 @@ implements Comparable<AgentBase> {
         }
         return false;
     }
+
+    //------------------------------------------------------------
+    /**
+     * AgentFactory の individualConfig によりエージェントを設定。
+     */
+    public void setupByIndividualConfig(Term config) {
+        Itk.dbgVal("indivConfig", config) ;
+    }
+    
 }
 // ;;; Local Variables:
 // ;;; mode:java

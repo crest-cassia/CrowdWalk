@@ -451,6 +451,9 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             plannedRoute = (plannedRouteTerm == null ?
                             new ArrayList<Term>() :
                             plannedRouteTerm.<Term>getTypedArray()) ;
+
+            // individualConfig
+            individualConfigList = json.getArgTerm("individualConfig") ;
             
             return this ;
         }

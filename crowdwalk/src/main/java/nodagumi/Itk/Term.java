@@ -873,7 +873,7 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * array 取得
+     * array の長さ。
      */
     public int getArraySize() {
         return array.size() ;
