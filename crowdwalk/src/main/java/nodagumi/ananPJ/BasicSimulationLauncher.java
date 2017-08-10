@@ -292,6 +292,8 @@ public abstract class BasicSimulationLauncher {
         NetworkMap tmpMap = new NetworkMap() ;
         if (false == tmpMap.fromDOM(doc))
             return null;
+        tmpMap.sortNodesById();
+        tmpMap.sortLinksById();
         Itk.logInfo("Load Map File", file_name) ;
         setupFileInfo.setNetworkMapFile(file_name);
         return tmpMap;

@@ -168,6 +168,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         setPropertiesForDisplay();
         setupFileInfo = _setupFileInfo;
         map = _map;
+        map.sortNodesById();
+        map.sortLinksById();
         settings = _settings;
         // ending condition
         setExitCount(properties.getExitCount()) ;
