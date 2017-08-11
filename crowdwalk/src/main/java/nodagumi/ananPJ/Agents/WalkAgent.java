@@ -14,6 +14,7 @@ import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.misc.SimTime;
@@ -1338,6 +1339,24 @@ public class WalkAgent extends AgentBase {
         double costFromPlace =
             costFromEnteringNode - _place.getAdvancingDistance() ;
         return costFromPlace ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * AgentFactory の individualConfig によりエージェントを設定。
+     */
+    public void setupByIndividualConfig(Term config) {
+        super.setupByIndividualConfig(config) ;
+        emptySpeed =
+            SetupFileInfo.fetchFallbackDouble(config,
+                                              "emptySpeed",
+                                              emptySpeed) ;
+        Itk.dbgVal("emptySpeed", emptySpeed) ;
+        mentalMode =
+            SetupFileInfo.fetchFallbackTerm(config,
+                                            "mentalMode",
+                                            mentalMode) ;
+        Itk.dbgVal("mentalMode", mentalMode) ;
     }
 
 	//############################################################

@@ -1,0 +1,45 @@
+#{ "version" : 2}
+[
+{"rule":"EACH",
+  "agentType":{"className":"RationalAgent",
+               "weight": -0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "_rule":[]},
+  "total":100,
+  "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"node_09_09",
+  "plannedRoute":["node_02_09","node_04_00","node_06_09","node_08_00"],
+  "individualConfig":[
+    { "emptySpeed" : 2.0 },
+    { "emptySpeed" : 1.0 },
+    { "emptySpeed" : 0.5 }
+  ]},
+
+{"rule":"EACH",
+  "agentType":{"className":"RationalAgent",
+	       "mentalMode":"major",
+               "weight": -0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "_rule":[]},
+  "total":1,
+  "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "startTime":"18:00:00","duration":500.0,
+  "goal":"node_09_09",
+  "plannedRoute":["node_02_09","node_04_02","node_06_09","node_08_00"]},
+
+{"rule":"EACH",
+  "agentType":{"className":"RationalAgent",
+	       "weight":-0.0, 
+	       "trail":0.0,
+	       "margin":0.0,
+	       "_rule":[]},
+  "total":1,
+  "startPlace":"link_node_00_08__node_00_09",
+  "conditions": ["foo","bar","baz"],
+  "startTime":"18:00:00","duration":50.0,
+  "goal":"node_09_00",
+  "plannedRoute":["node_02_00","node_04_09","node_06_00","node_08_09"]}
+]

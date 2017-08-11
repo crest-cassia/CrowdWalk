@@ -244,6 +244,16 @@ run3gt00a_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00a))
 
 ##-----
+SAMPLE3gt00i = sample/generatedTown/gridTown00.indivConf.prop.json   # array formula
+run3gt00i ::
+	(cd $(BASEDIR) ; bash quickstart.sh -l Info $(SAMPLE3gt00i))
+#	(cd $(BASEDIR) ; bash quickstart.sh -l Warn $(SAMPLE3gt00i))
+
+
+run3gt00a_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00a))
+
+##-----
 SAMPLE3gt00r = sample/generatedTown/gridTown00.ruby.prop.json   # ruby agent
 run3gt00r ::
 	(cd $(BASEDIR) ; bash quickstart.sh -l Info --use-2d-simulator $(SAMPLE3gt00r))

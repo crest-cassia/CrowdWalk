@@ -1018,7 +1018,7 @@ implements Comparable<AgentBase> {
      * AgentFactory の individualConfig によりエージェントを設定。
      */
     public void setupByIndividualConfig(Term config) {
-        Itk.dbgVal("indivConfig", config) ;
+        //Itk.dbgVal("indivConfig", config) ;
     }
     
 }
