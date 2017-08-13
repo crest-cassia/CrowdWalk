@@ -492,6 +492,28 @@ public class NetworkMap extends DefaultTreeModel {
     }
 
 
+    /**
+     * ノード ID でノードテーブルをソートする
+     */
+    public void sortNodesById() {
+        Collections.sort(nodesCache, new Comparator<MapNode>() {
+            public int compare(MapNode node1, MapNode node2) {
+                return node1.getID().compareTo(node2.getID());
+            }
+        });
+    }
+
+    /**
+     * リンク ID でリンクテーブルをソートする
+     */
+    public void sortLinksById() {
+        Collections.sort(linksCache, new Comparator<MapLink>() {
+            public int compare(MapLink link1, MapLink link2) {
+                return link1.getID().compareTo(link2.getID());
+            }
+        });
+    }
+
     //------------------------------------------------------------
     /**
      * IDテーブルの中身(NetworkMapParts)を取り出す。
