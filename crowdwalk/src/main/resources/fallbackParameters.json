@@ -2,7 +2,8 @@
     "agent" : {
         "className" : "NaiveAgent",
         "A_0" : 0.962,
-        "A_1" : 0.869,
+        "_A_1_orig" : 0.869,
+	"A_1" : 0.8497467021796484659,
         "A_2" : 4.682,
         "emptySpeed" : 1.02265769054586,
         "personalSpace" : 1.044,

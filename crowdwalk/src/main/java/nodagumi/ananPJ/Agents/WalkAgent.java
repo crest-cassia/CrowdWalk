@@ -87,10 +87,16 @@ public class WalkAgent extends AgentBase {
      *   vStar = 1.24504634565416
      *   rStar = 0.805446866507348
      * </pre>
+     * [2017-08-13 I.Noda]
+     * emptySpeed が小さいと、social force の方が大きくなりがちである。
+     * この事態を避けるために、A_1 を、デフォルトの emptySpeed で正規化し、
+     * social force を、emptySpeed に比例させることとする。
      */
     protected static double Fallback_A_0 = 0.962;//1.05;//0.5;
-    protected static double Fallback_A_1 = 0.869;//1.25;//0.97;//2.0;
+    //protected static double Fallback_A_1_orig = 0.869;//1.25;//0.97;//2.0;
+    protected static double Fallback_A_1 = 0.8497467021796484659; // = A_1_orig / EmptySpeed
     protected static double Fallback_A_2 = 4.682;//0.81;//1.5;
+    
     protected static double Fallback_EmptySpeed = 1.02265769054586;
     protected static double Fallback_PersonalSpace = 2.0 * 0.522;//0.75;//0.8;
 
@@ -925,7 +931,7 @@ public class WalkAgent extends AgentBase {
      * @return 力
      */
     protected double calcSocialForce(double dist) {
-        return - A_1  * Math.exp(A_2 * (personalSpace - dist)) ;
+        return - emptySpeed * A_1  * Math.exp(A_2 * (personalSpace - dist)) ;
     }
 
     //------------------------------------------------------------
