@@ -223,6 +223,18 @@ public abstract class OBNode extends DefaultMutableTreeNode
         return true;
     }
 
+    /**
+     * タグを置き換える
+     */
+    public boolean replaceTag(String srcTag, String dstTag) {
+        int index = tags.indexOf(srcTag);
+        if (index == -1) {
+            return false;
+        }
+        tags.set(index, dstTag);
+        return true;
+    }
+
     public void removeTag(String _tag) {
         ArrayList<String> tags_r = new ArrayList<String>();
         tags_r.add(_tag);
@@ -281,6 +293,13 @@ public abstract class OBNode extends DefaultMutableTreeNode
      */
     final public NetworkMap getMap() {
         return map ;
+    }
+
+    /**
+     * このインスタンスの文字列化
+     */
+    public String toString() {
+        return getTagString();
     }
 
     static class TagSetupPanel extends JPanel {

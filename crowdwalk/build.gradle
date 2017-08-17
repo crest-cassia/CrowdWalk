@@ -139,10 +139,12 @@ jar {
     }
 }
 
-task javadoc(overwrite: true) << {
-    exec {
-        executable "sh"
-        args "-c", "./make_javadoc.sh"
+task javadoc(overwrite: true) {
+    doLast {
+        exec {
+            executable "sh"
+            args "-c", "./make_javadoc.sh"
+        }
     }
 }
 
