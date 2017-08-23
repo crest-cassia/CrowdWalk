@@ -495,8 +495,9 @@ class OsmMap < MapTown
   #++
   ## Node が PoI かどうかのチェック。
   def isNodePoI(node)
-    poiTag = getConf(:cwPoIName) ;
-    return node.tagList.include?(poiTag) ;
+    return node.hasPoI() ;
+#    poiTag = getConf(:cwPoIName) ;
+#    return node.tagList.include?(poiTag) ;
   end
   
   #--------------------------------------------------------------
@@ -749,6 +750,8 @@ class OsmMap < MapTown
     #++
     ## longitude and latitude
     attr_accessor :lonlat ;
+    ## link to PoI Node
+    attr_accessor :poi ;
     
     #------------------------------------------
     #++
@@ -756,6 +759,21 @@ class OsmMap < MapTown
     ## _lonlat_ :: 経度緯度値
     def setLonLat(lonlat)
       @lonlat = lonlat ;
+    end
+
+    #------------------------------------------
+    #++
+    ## PoIセット
+    ## _poi_ :: OsmPoI のインスタンス
+    def setPoI(poi)
+      @poi = poi ;
+    end
+
+    #------------------------------------------
+    #++
+    ## PoIを持っているかどうか
+    def hasPoI()
+      return !@poi.nil? ;
     end
 
     #------------------------------------------
@@ -847,6 +865,7 @@ class OsmMap < MapTown
       @tagList.each{|tag|
         @node.addTag(tag) ;
       }
+      @node.setPoI(self) ;
     end
     
     
