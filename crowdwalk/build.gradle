@@ -117,22 +117,23 @@ processResources {
 }
 
 jar {
+    doFirst {
+        /* for ruby */
+        tasks.copyRubyLib.execute() ;
+    }
+
     if (onlyCuiSimulator) {
         manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CuiCrowdWalkLauncher")
     } else {
         manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CrowdWalkLauncher")
     }
-    doFirst {
-        from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
-            exclude 'META-INF/MANIFEST.MF'
-            exclude 'META-INF/*.SF'
-            exclude 'META-INF/*.DSA'
-            exclude 'META-INF/*.RSA'
-        }
-	/* for ruby */
-	tasks.copyRubyLib.execute() ;
+    from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
     }
-    
+
     /* for ruby */
     into('ruby') {
       from('build/ruby')
