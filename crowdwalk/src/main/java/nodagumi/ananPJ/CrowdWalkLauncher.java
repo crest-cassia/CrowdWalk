@@ -16,6 +16,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
+import nodagumi.ananPJ.Editor.MapEditor;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.Itk;
@@ -24,7 +25,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-e] [-g|g2] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -48,6 +49,7 @@ public class CrowdWalkLauncher {
      */
     public static void defineOptions(Options options) {
         options.addOption("c", "cui", false, "CUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
+        options.addOption("e", "old-editor", false, "旧バージョンのエディタを起動する");
         options.addOption("g", "gui", false, "マップエディタウィンドウを開かずに GUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
         options.addOption("2", "use-2d-simulator", false, "2D GUI シミュレータを使用する");
         options.addOption("h", "help", false, "この使い方を表示して終了する");
@@ -127,9 +129,10 @@ public class CrowdWalkLauncher {
                 launchGuiSimulator(propertiesFilePath, fallbackStringList);
             }
             // マップエディタの実行
-            else {
-                launchGuiSimulationEditorLauncher(propertiesFilePath,
-                                                  fallbackStringList);
+            else if (commandLine.hasOption("old-editor")) {
+                launchGuiSimulationEditorLauncher(propertiesFilePath, fallbackStringList);
+            } else {
+                launchMapEditor(propertiesFilePath, fallbackStringList);
             }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
@@ -195,6 +198,25 @@ public class CrowdWalkLauncher {
         launcher.init(propertiesFilePath, settings, commandLineFallbacks);
         launcher.simulate();
         return launcher;
+    }
+
+    /**
+     * マップエディタを実行する
+     */
+    public static void launchMapEditor(String propertiesFilePath,
+            ArrayList<String> commandLineFallbacks) throws Exception {
+        settings = Settings.load(SETTINGS_FILE_NAME);
+        MapEditor editor = new MapEditor(settings);
+        if (propertiesFilePath != null) {
+            editor.setPropertiesFromFile(propertiesFilePath, commandLineFallbacks);
+            if (! editor.loadNetworkMap()) {
+                return;
+            }
+        } else {
+            editor.initProperties(commandLineFallbacks);
+            editor.initNetworkMap();
+        }
+        editor.show();
     }
 
     /**

@@ -1803,8 +1803,11 @@ public class SimulationPanel3D extends StackPane {
         shape = new Box(bounds.getWidth(), bounds.getHeight(), 0.1);
 
         PhongMaterial material = new PhongMaterial();
-        Color color = getAreaColor(area.getPollutionLevel().getCurrentLevel(),
+        Color color = Color.GAINSBORO;
+        if (area.getPollutionLevel() != null) {
+            color = getAreaColor(area.getPollutionLevel().getCurrentLevel(),
                 area.getPollutionLevel().getNormalizedLevel());
+        }
         material.setDiffuseColor(color);
         shape.setMaterial(material);
 

@@ -177,7 +177,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         loadGsiTiles();
     }
 
-    protected void simulate() {
+    public void simulate() {
         // 既に終わっていたら、警告メッセージ
         if (!finished) {
             JOptionPane.showMessageDialog(null,

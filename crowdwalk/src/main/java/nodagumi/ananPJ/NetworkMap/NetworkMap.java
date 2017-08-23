@@ -217,7 +217,7 @@ public class NetworkMap extends DefaultTreeModel {
      * ユニークな id の取得
      * @return 新しい id
      */
-    protected String assignNewId() {
+    public String assignNewId() {
         return partTable.getUniqId() ;
     }
 
@@ -227,7 +227,7 @@ public class NetworkMap extends DefaultTreeModel {
      * @param prefix : id の prefix
      * @return 新しい id
      */
-    protected String assignNewId(String prefix) {
+    public String assignNewId(String prefix) {
         return partTable.getUniqId(prefix) ;
     }
 
@@ -238,7 +238,7 @@ public class NetworkMap extends DefaultTreeModel {
      * @param suffix : id の suffix
      * @return 新しい id
      */
-    protected String assignNewId(String prefix, String suffix) {
+    public String assignNewId(String prefix, String suffix) {
         return partTable.getUniqId(prefix, suffix) ;
     }
 
@@ -288,7 +288,7 @@ public class NetworkMap extends DefaultTreeModel {
     /**
      * OBNode の挿入
      */
-    private void insertOBNode (OBNode parent, OBNode node) {
+    public void insertOBNode (OBNode parent, OBNode node) {
         addObject(node.ID, node);
         insertNodeInto(node, parent, parent.getChildCount());
 
@@ -625,6 +625,21 @@ public class NetworkMap extends DefaultTreeModel {
         }
     }
 
+    /**
+     * シンボリックリンクを取得する
+     */
+    public ArrayList<OBNodeSymbolicLink> getSymbolicLinks() {
+        final ArrayList<OBNodeSymbolicLink> symbolicLinks = new ArrayList();
+        applyToAllChildrenRec((OBNode)root, null, new OBTreeCrawlFunctor() {
+            public void apply(OBNode node, OBNode parent) {
+                if (node.getNodeType() == OBNode.NType.SYMLINK) {
+                    symbolicLinks.add((OBNodeSymbolicLink)node);
+                }
+            }
+        });
+        return symbolicLinks;
+    }
+
     //------------------------------------------------------------
     /**
      * 階段作成
@@ -911,6 +926,9 @@ public class NetworkMap extends DefaultTreeModel {
             return false;
         }
         Element dom_root = (Element) toplevel.item(0);
+
+        // コンストラクタが作った root は削除する
+        removeObject(((MapPartGroup)root).ID);
 
         setRoot(OBNode.fromDom(dom_root));
         setupNetwork((OBNode)this.root);
