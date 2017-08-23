@@ -75,6 +75,8 @@ class OsmMap < MapTown
                              # ノードを取り去った時、形状がの距離以下しか
                              # 変化しなければOK。
     :linkWidth => 2.0,	    # link の width の規定値。
+    :cwWidthName => "cw:width",  # 道路幅指定の property 名。
+    :cwLengthName => "cw:length", # 道路の長さ指定のproperty 名。
   } ;
 
   ## 日本の19座標系の原点リスト。
@@ -275,6 +277,10 @@ class OsmMap < MapTown
   ## extract node list from a road
   ## _road_:: road objects
   def extractNodeListFromRoad(road)
+    roadWidth = road.hasProperty(getConf(:cwWidthName)) ;
+    roadLength = road.hasProperty(getConf(:cwLengthName)) ;
+    nNode = road.coordinatesJson.length ;
+    
     preNode = nil ;
     road.coordinatesJson.each{|coord|
       pos = convertLonLat2Pos(coord) ;
@@ -285,6 +291,12 @@ class OsmMap < MapTown
         registerNewLink(link) ;
         road.pushLink(link) ;
         link.assignTagFromRoad(getConf(:cwTagNthSep)) ;
+        if(roadLength) then
+          link.setLength(roadLength.to_f / (nNode-1).to_f) ;
+        end
+        if(roadWidth) then
+          link.setWidth(roadWidth.to_f) ;
+        end
       end
       preNode = node ;
     }
