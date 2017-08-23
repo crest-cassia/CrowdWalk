@@ -3,7 +3,9 @@ package nodagumi.ananPJ.Editor;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -718,12 +720,14 @@ public class EditorFrameFx {
 
         MenuItem miGitHub = new MenuItem("Browse GitHub repository");
         miGitHub.setOnAction(e -> {
-            try {
-                URI uri = new URI(GITHUB_REPOSITORY_URI);
-                Desktop.getDesktop().browse(uri);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            new Thread(() -> {
+                try {
+                    URI uri = new URI(GITHUB_REPOSITORY_URI);
+                    Desktop.getDesktop().browse(uri);
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }).start();
         });
 
         helpMenu.getItems().addAll(miKeyboardShortcuts, miPropertiesSetting, miTutorialManual, miZoneReference, miGitHub);
