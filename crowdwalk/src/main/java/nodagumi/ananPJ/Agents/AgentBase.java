@@ -290,6 +290,14 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
+     * ハンドラを取得
+     */
+    public AgentHandler getHandler() {
+        return handler ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * factory をセット
      */
     public void setFactory(AgentFactory _factory) {

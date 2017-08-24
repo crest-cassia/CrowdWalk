@@ -364,6 +364,7 @@ public class AgentHandler {
      * agentTrailLogger の JSON フォーマット。
      * <pre>
      * { "agentId": _AgentID_,
+     *   "generatedBy": _RuleName_,
      *   "generatedAbsTime": _TimeStr_,
      *   "generatedRelTime": _TimeInSec_,
      *   "evacuatedAbsTime": _TimeStr_,
@@ -439,7 +440,6 @@ public class AgentHandler {
             ;
     }
     
-    //==================================================
     //--------------------------------------------------
     /**
      * agentTrailLogFormatter 用の member を作成する。

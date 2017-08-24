@@ -765,23 +765,14 @@ public class Place {
     static public class TrailPlaceContent extends Trail.ContentObject {
         public Object atNode ;
         public Object toLink ;
-        public Object aux ;
         
         public TrailPlaceContent(Place place) {
             atNode = (place.getEnteringNode() == null ? null :
                       place.getEnteringNode().getJsonObject()) ;
             toLink = (place.getLink() == null ? null :
                       place.getLink().getJsonObject()) ;
-            aux = null ;
         }
         
-        public TrailPlaceContent(Place place, Object _aux) {
-            atNode = (place.getEnteringNode() == null ? null :
-                      place.getEnteringNode().getJsonObject()) ;
-            toLink = (place.getLink() == null ? null :
-                      place.getLink().getJsonObject()) ;
-            aux = _aux ;
-        }
     }
     
     //------------------------------------------------------------
@@ -792,15 +783,28 @@ public class Place {
         return new TrailPlaceContent(this) ;
     }
 
+    //============================================================
+    /**
+     * Place 用の Trail.Content のクラス。aux 付き。
+     */
+    static public class TrailPlaceContentWithAux extends TrailPlaceContent {
+        public Object aux ;
+        
+        public TrailPlaceContentWithAux(Place place, Object _aux) {
+            super(place) ;
+            aux = _aux ;
+        }
+    }
+    
     //------------------------------------------------------------
     /**
      * Trail.Content interface 用 method (with aux info)
      */
     public Trail.Content getTrailContent(Object aux) {
-        return new TrailPlaceContent(this, aux) ;
+        return new TrailPlaceContentWithAux(this, aux) ;
     }
     
     
 
-} // class Foo
+} // class Place
 
