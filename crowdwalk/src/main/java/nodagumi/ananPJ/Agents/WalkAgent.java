@@ -1357,12 +1357,12 @@ public class WalkAgent extends AgentBase {
             SetupFileInfo.fetchFallbackDouble(config,
                                               "emptySpeed",
                                               emptySpeed) ;
-        Itk.dbgVal("emptySpeed", emptySpeed) ;
+        //Itk.dbgVal("emptySpeed", emptySpeed) ;
         mentalMode =
             SetupFileInfo.fetchFallbackTerm(config,
                                             "mentalMode",
                                             mentalMode) ;
-        Itk.dbgVal("mentalMode", mentalMode) ;
+        //Itk.dbgVal("mentalMode", mentalMode) ;
     }
 
 	//############################################################

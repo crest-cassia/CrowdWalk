@@ -1019,6 +1019,21 @@ implements Comparable<AgentBase> {
      */
     public void setupByIndividualConfig(Term config) {
         //Itk.dbgVal("indivConfig", config) ;
+        Term _tagList = SetupFileInfo.fetchFallbackTerm(config,
+                                                        "conditions",
+                                                        null) ;
+        if(_tagList != null) {
+            if(_tagList.isArray()) {
+                for(Object tagObj : _tagList.getArray()) {
+                    Term tag = (Term)tagObj ;
+                    Itk.dbgVal("add tag", tag) ;
+                    addTag(tag.getString()) ;
+                }
+            } else {
+                Itk.logError("Illegal conditions value:",
+                             "condition=", _tagList.toJson()) ;
+            }
+        }
     }
     
 }

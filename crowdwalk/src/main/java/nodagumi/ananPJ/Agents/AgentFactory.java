@@ -369,8 +369,7 @@ public abstract class AgentFactory {
     protected void parse_conditions(String[] conditions) {
         if (conditions == null) return;
         for (int i = 0; i < conditions.length; i++) {
-            final String condition = Itk.intern(conditions[i]) ;
-            tags.add(condition);
+            tags.add(conditions[i]);
         }
     }
 
