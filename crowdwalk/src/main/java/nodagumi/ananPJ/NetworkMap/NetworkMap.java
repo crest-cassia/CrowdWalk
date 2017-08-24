@@ -932,6 +932,7 @@ public class NetworkMap extends DefaultTreeModel {
 
         setRoot(OBNode.fromDom(dom_root));
         setupNetwork((OBNode)this.root);
+
         return true;
     }
 

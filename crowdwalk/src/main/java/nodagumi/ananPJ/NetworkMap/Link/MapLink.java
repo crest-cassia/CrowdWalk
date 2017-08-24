@@ -1174,9 +1174,11 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
         /* used in NetworkMap.setupNetwork */
         MapLink link = new MapLink(id, length, width);
+
         link.getAttributesFromDom(element);
 
         link.setUserObject(nodes);
+
         return link;
     }
 

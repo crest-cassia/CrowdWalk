@@ -765,12 +765,22 @@ public class Place {
     static public class TrailPlaceContent extends Trail.ContentObject {
         public Object atNode ;
         public Object toLink ;
+        public Object aux ;
         
         public TrailPlaceContent(Place place) {
             atNode = (place.getEnteringNode() == null ? null :
                       place.getEnteringNode().getJsonObject()) ;
             toLink = (place.getLink() == null ? null :
                       place.getLink().getJsonObject()) ;
+            aux = null ;
+        }
+        
+        public TrailPlaceContent(Place place, Object _aux) {
+            atNode = (place.getEnteringNode() == null ? null :
+                      place.getEnteringNode().getJsonObject()) ;
+            toLink = (place.getLink() == null ? null :
+                      place.getLink().getJsonObject()) ;
+            aux = _aux ;
         }
     }
     
@@ -781,6 +791,15 @@ public class Place {
     public Trail.Content getTrailContent() {
         return new TrailPlaceContent(this) ;
     }
+
+    //------------------------------------------------------------
+    /**
+     * Trail.Content interface 用 method (with aux info)
+     */
+    public Trail.Content getTrailContent(Object aux) {
+        return new TrailPlaceContent(this, aux) ;
+    }
+    
     
 
 } // class Foo

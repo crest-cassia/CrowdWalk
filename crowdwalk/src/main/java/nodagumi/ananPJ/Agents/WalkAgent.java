@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.HashMap;
 
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -289,6 +290,7 @@ public class WalkAgent extends AgentBase {
                      Term fallback) {
         super.init(_random, simulator, factory, currentTime, fallback);
         update_swing_flag = true;
+        speed = 0.0 ;
     }
 
     //------------------------------------------------------------
@@ -391,7 +393,10 @@ public class WalkAgent extends AgentBase {
             } else if (currentPlace.isBeforeStartFromNode()) { // ノードが初期位置
                 prepareForSimulation_FromNode() ;
             }
-            speed = 0;
+            /* speed の初期値を与えられるようにするため、 ここでは初期化せず、
+               init で行うようにする。*/
+            //speed = 0;
+            
             generatedPositionInLink = getRemainingDistance();
 
             prepareRoutePlan() ;
@@ -1068,7 +1073,9 @@ public class WalkAgent extends AgentBase {
     protected void recordTrail(SimTime currentTime, Place passingPlace,
                                MapLink nextLink) {
         if(doesRecordTrail()) {
-            trail.add(currentTime, passingPlace.getTrailContent()) ;
+            HashMap<String, Object> auxInfo = new HashMap<String, Object>();
+            auxInfo.put("speed", new Double(speed)) ;
+            trail.add(currentTime, passingPlace.getTrailContent(auxInfo)) ;
         }
     }
 
@@ -1358,6 +1365,11 @@ public class WalkAgent extends AgentBase {
                                               "emptySpeed",
                                               emptySpeed) ;
         //Itk.dbgVal("emptySpeed", emptySpeed) ;
+        speed =
+            SetupFileInfo.fetchFallbackDouble(config,
+                                              "speed",
+                                              speed) ;
+        //Itk.dbgVal("speed", speed) ;
         mentalMode =
             SetupFileInfo.fetchFallbackTerm(config,
                                             "mentalMode",

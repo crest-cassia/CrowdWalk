@@ -63,6 +63,21 @@ public class OBNodeTable<T extends OBNode> extends ArrayList<T> {
 
     //------------------------------------------------------------
     /**
+     * 指定された id を持つOBNodeの取得
+     * @param id tag名
+     * @return 存在したらそのOBNode。
+     */
+    public T findById(String id) {
+        for(T obNode : this) {
+            if(obNode.getID().equals(id)) {
+                return obNode ;
+            }
+        }
+        return null ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 指定された tag を持つOBNodeを取り出す。
      * @param tag tag名
      * @return tag 名を持つOBNodeを集めた OBNodeTable

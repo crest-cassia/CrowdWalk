@@ -765,6 +765,16 @@ public class Itk {
         System.exit(1) ;
     }
     
+    //----------------------------------------
+    /**
+     * exit for debug.
+     */
+    static public void quitForDebug() {
+        Itk.dumpStackTrace(1) ;
+        Itk.logError("quitForDebug()") ;
+        System.exit(1) ;
+    }
+    
     //============================================================
     /**
      * JSON handling class

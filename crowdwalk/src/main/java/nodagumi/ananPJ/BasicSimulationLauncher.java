@@ -18,6 +18,9 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 
+import nodagumi.ananPJ.NetworkMap.Link.MapLink ;
+
+
 import nodagumi.Itk.*;
 
 //======================================================================
@@ -336,11 +339,12 @@ public abstract class BasicSimulationLauncher {
      * シミュレーションの初期化。
      */
     protected void initializeSimulatorEntity() {
+
         simulator = new EvacuationSimulator(map, this, random) ;
 
         simulator.setProperties(properties);
         simulator.setup();
-
+      
         // model.begin set files (pol, gen, sce) to map
         simulator.begin() ;
 
