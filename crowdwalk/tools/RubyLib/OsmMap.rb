@@ -45,6 +45,7 @@ require 'MapTown.rb' ;
 ## "cw:poi" の値をタグに追加。
 ## "cw:tag" の値を、上記の処理と同じようにタグに追加。
 ## "cw:stayloop" があれば、さらに、 "__StayLoop__" を追加。
+## "cw:tsunami" の値を、"tsunami:<値>" というタグで追加。
 ##
 class OsmMap < MapTown
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -63,6 +64,8 @@ class OsmMap < MapTown
     :cwStayLoopName => "cw:stayloop", # OSM の PoI に付与されている
                             # StayLoop 埋め込み用 用タグのproperty 名。
     :stayLoopTag => "__NeedStayLoop__", # StayLoop の指定タグ
+    :cwTsunamiName => "cw:tsunami", # OSM 上の津波関係タグの名前
+    :cwTsunamiTagPrefix => "tsunami:", #津波関係タグにつける prefix
     :cwOneWayName => "cw:oneway", # OSM の 一方通行リンク に付与されているproperty
     :cwOneWayFore => "forward", # 一方通行 property の順方向の値。
     :cwOneWayBack => "backward", # 一方通行 property の順方向の値。
@@ -72,6 +75,8 @@ class OsmMap < MapTown
                              # ノードを取り去った時、形状がの距離以下しか
                              # 変化しなければOK。
     :linkWidth => 2.0,	    # link の width の規定値。
+    :cwWidthName => "cw:width",  # 道路幅指定の property 名。
+    :cwLengthName => "cw:length", # 道路の長さ指定のproperty 名。
   } ;
 
   ## 日本の19座標系の原点リスト。
@@ -272,6 +277,10 @@ class OsmMap < MapTown
   ## extract node list from a road
   ## _road_:: road objects
   def extractNodeListFromRoad(road)
+    roadWidth = road.hasProperty(getConf(:cwWidthName)) ;
+    roadLength = road.hasProperty(getConf(:cwLengthName)) ;
+    nNode = road.coordinatesJson.length ;
+    
     preNode = nil ;
     road.coordinatesJson.each{|coord|
       pos = convertLonLat2Pos(coord) ;
@@ -282,6 +291,12 @@ class OsmMap < MapTown
         registerNewLink(link) ;
         road.pushLink(link) ;
         link.assignTagFromRoad(getConf(:cwTagNthSep)) ;
+        if(roadLength) then
+          link.setLength(roadLength.to_f / (nNode-1).to_f) ;
+        end
+        if(roadWidth) then
+          link.setWidth(roadWidth.to_f) ;
+        end
       end
       preNode = node ;
     }
@@ -403,6 +418,7 @@ class OsmMap < MapTown
   #++
   ## convert OsmMap to CrowdWalk data
   def convertOsm2CrowdWalk()
+    addMiscTagsToRoadList() ;
     extractNodeListFromRoadList() ;
     assignIds() ;
     removeNonConnectedNodesLinks() ;
@@ -562,7 +578,7 @@ class OsmMap < MapTown
 
   #--------------------------------------------------------------
   #++
-  ## redundant node の削除。
+  ## id をタグに追加。
   def addIdTags()
     @nodeList.each{|node|
       node.addTag(node.id, true) ;
@@ -570,6 +586,34 @@ class OsmMap < MapTown
     @linkList.each{|link|
       link.addTag(link.id, true) ;
     }
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## Road に予備のタグを追加
+  def addMiscTagsToRoadList()
+    addedCount = 0 ;
+    @roadList.each{|road|
+      added = addMiscTagsToRoad(road) ;
+      addedCount += added.size ;
+    }
+    p [:addMiscTagsToRoadList, addedCount] ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## １つのロードに予備のタグを追加
+  def addMiscTagsToRoad(road)
+    addedList = [] ;
+    tsunamiPropName = getConf(:cwTsunamiName) ;
+    tsunamiTagPrefix = getConf(:cwTsunamiTagPrefix) ;
+    value = nil ;
+    if(value = road.hasProperty(tsunamiPropName)) then
+      tag = tsunamiTagPrefix + value ;
+      road.addTag(tsunamiTagPrefix + value) ;
+      addedList.push([tsunamiPropName, tag]) ;
+    end
+    return addedList ;
   end
   
   #--============================================================
@@ -581,7 +625,7 @@ class OsmMap < MapTown
     ## description of DefaultValues.
     DefaultValues = { :foo => :bar } ;
     ## description of DefaultOptsions.
-    DefaultConf = { :bar => :baz } ;
+    DefaultConf = { } ;
 
     #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     #++
@@ -664,7 +708,6 @@ class OsmMap < MapTown
   #++
   ## GeoRoad in OSM
   class OsmRoad < OsmFeature
-    
     #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     #++
     ## node list

@@ -1,0 +1,89 @@
+#! /usr/bin/env ruby
+## -*- mode: ruby -*-
+## = summarize generation file
+## Author:: Itsuki Noda
+## Version:: 0.0 2017/04/19 I.Noda
+##
+## === History
+## * [2017/04/19]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+require 'json' ;
+require 'time' ;
+require 'csv' ;
+
+$toolBaseDir = File::dirname(__FILE__) ;
+
+$LOAD_PATH.push("#{$toolBaseDir}/./RubyLib");
+
+require 'WithConfParam' ;
+
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :infileList => [],
+  :outfile => nil,
+  :quietP => false,
+} ;
+
+#------------------------------------------------------------------------
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]* <generationFile>
+  Read CrowdWalk's generation file and output summary of rules.
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-o","--output OutFile", String, sep + "output file.") {|outfile|
+    $conf[:outfile] = outfile ;
+  }
+  op.on("-q","--quiet", sep + "suppress verbose outputs.") {
+    $conf[:quietP] = true ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+if ($restArg.length < 1) then
+  puts($op) ;
+  exit(1) ;
+end
+
+$conf[:infileList].concat($restArg) ;
+
+p [:conf,$conf] if !$conf[:quietP] ;
+
+########################################################################
+########################################################################
+########################################################################
+
+genRuleList = [] ;
+modeLine = nil ;
+
+$conf[:infileList].each{|infile|
+  open(infile,"r"){|strm|
+    modeLine = strm.gets() ;
+    jsonStr = strm.read() ;
+    rules = JSON::Parser.new(jsonStr).parse ;
+    genRuleList.concat(rules) ;
+  }
+}
+
+open($conf[:outfile], "w"){|ostrm|
+  ostrm.puts(modeLine) ;
+  ostrm.puts(JSON.pretty_generate(genRuleList)) ;
+}
+  

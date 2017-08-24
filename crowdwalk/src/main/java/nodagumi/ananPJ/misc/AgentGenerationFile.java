@@ -57,6 +57,9 @@ import nodagumi.Itk.*;
  *      ... ]
  *  </pre>
  * となる。
+ * 各 rule の、"name" の項目はルールの名前で、
+ * log 出力などに置いて、そのエージェントを生成したルールの識別に使われる。
+ * 省略すると、単に、rule の index (前から順につけられた番号の文字列)がつけられる。
  * <code>__Generation_Rule__</code> には以下のバリエーションがある。
  * <dl>
  *   <dt>EACH</dt>
@@ -65,6 +68,7 @@ import nodagumi.Itk.*;
  *       各々指定した数のエージェントが出発する。
  *      <pre>
  *        { "rule" : "EACH",
+ *          "name" : __RuleName__,
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
  *                          (__AgentConfig__)* },
@@ -87,6 +91,7 @@ import nodagumi.Itk.*;
  *       エージェントの総数は指定した数(total)となる。
  *      <pre>
  *        { "rule" : "RANDOM",
+ *          "name" : __RuleName__,
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
  *                          (__AgentConfig__)* },
@@ -108,6 +113,7 @@ import nodagumi.Itk.*;
  *      （エージェントの出発しないリンク・ノードはない）
  *      <pre>
  *        { "rule" : "EACHRANDOM",
+ *          "name" : __RuleName__,
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
  *                          (__AgentConfig__)* },
@@ -131,6 +137,7 @@ import nodagumi.Itk.*;
  *       EACH を、時間区間全て分コピーしたものと同じ。
  *      <pre>
  *        { "rule" : "TIMEEVERY",
+ *          "name" : __RuleName__,
  *          "ignore" : ("true" | "false")
  *          "agentType" : { "className" : __AgentType__,
  *                          (__AgentConfig__)* },
@@ -155,6 +162,7 @@ import nodagumi.Itk.*;
  *       "config" に、このルール専用のパラメータをJSONで指定できる。
  *      <pre>
  *        { "rule" : "RUBY",
+ *          "name" : __RuleName__,
  *          "ruleClass" : __RubyClassNameInString__,
  *          "config" : __Config__
  *        }

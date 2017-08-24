@@ -132,7 +132,7 @@ myOpenFile($conf[:inFile],:r) {|inStream|
 }
 
 map.convertOsm2CrowdWalk() ;
-
+   
 myOpenFile($conf[:outFile],:w) {|outStream|
   map.saveXmlToStream(outStream) ;
 }
