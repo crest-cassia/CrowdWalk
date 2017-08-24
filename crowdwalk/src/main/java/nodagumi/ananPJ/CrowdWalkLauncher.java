@@ -16,7 +16,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import nodagumi.ananPJ.Editor.MapEditor;
+// import nodagumi.ananPJ.Editor.MapEditor;
+import nodagumi.ananPJ.Editor.MapEditorInterface;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.Itk;
@@ -129,7 +130,7 @@ public class CrowdWalkLauncher {
                 launchGuiSimulator(propertiesFilePath, fallbackStringList);
             }
             // マップエディタの実行
-            else if (commandLine.hasOption("old-editor")) {
+            else if (commandLine.hasOption("old-editor") || ! isUsable3dSimulator()) {
                 launchGuiSimulationEditorLauncher(propertiesFilePath, fallbackStringList);
             } else {
                 launchMapEditor(propertiesFilePath, fallbackStringList);
@@ -206,7 +207,19 @@ public class CrowdWalkLauncher {
     public static void launchMapEditor(String propertiesFilePath,
             ArrayList<String> commandLineFallbacks) throws Exception {
         settings = Settings.load(SETTINGS_FILE_NAME);
-        MapEditor editor = new MapEditor(settings);
+        // MapEditor editor = new MapEditor(settings);
+
+        // OpenJDK に JavaFX が同梱されるまでの一時的な対応
+        MapEditorInterface editor = null;
+        try {
+            Class<?> klass = Class.forName("nodagumi.ananPJ.Editor.MapEditor");
+            editor = (MapEditorInterface)klass.newInstance();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
+        editor.setSettings(settings);
+
         if (propertiesFilePath != null) {
             editor.setPropertiesFromFile(propertiesFilePath, commandLineFallbacks);
             if (! editor.loadNetworkMap()) {
