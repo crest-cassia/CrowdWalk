@@ -1026,7 +1026,7 @@ implements Comparable<AgentBase> {
             if(_tagList.isArray()) {
                 for(Object tagObj : _tagList.getArray()) {
                     Term tag = (Term)tagObj ;
-                    Itk.dbgVal("add tag", tag) ;
+                    // Itk.dbgVal("add tag", tag) ;
                     addTag(tag.getString()) ;
                 }
             } else {

@@ -369,7 +369,7 @@ public class AgentHandler {
      *   "evacuatedAbsTime": _TimeStr_,
      *   "evacuatedRelTime": _TimeInSec_,
      *   "travelTime": _TimeInSec_,
-     *   "tag": [ _tag_, _tag_, ... ],
+     *   "tags": [ _tag_, _tag_, ... ],
      *   "trail": [ {"placeId": _PlaceID_, "time": _TimeInSec_} * ]
      * }
      * </pre>
