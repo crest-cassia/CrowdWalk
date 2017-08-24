@@ -60,16 +60,6 @@ implements Comparable<AgentBase> {
     private boolean stuck = false;
     public SimTime currentTime = null ;
 
-    /**
-     * 生成された時のリンク上の位置
-     */
-    public double generatedPositionInLink = 0.0;
-
-    /**
-     * 死亡した時のリンク上の位置
-     */
-    public double diedPositionInLink = 0.0;
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * handler: 自分を管理している Handler
@@ -335,7 +325,7 @@ implements Comparable<AgentBase> {
     /**
      * 避難完了かどうかチェック
      */
-    public boolean isEvacuated() {
+    final public boolean isEvacuated() {
         return evacuated;
     }
 
@@ -343,7 +333,7 @@ implements Comparable<AgentBase> {
     /**
      * スタックしたかどうか
      */
-    public boolean isStuck() {
+    final public boolean isStuck() {
         return stuck;
     }
 
@@ -351,7 +341,7 @@ implements Comparable<AgentBase> {
     /**
      * 死亡したかどうか
      */
-    public boolean isDead() {
+    final public boolean isDead() {
         return obstructer.isDead() ;
     }
 
@@ -630,7 +620,7 @@ implements Comparable<AgentBase> {
         }
         obstructer.expose(c);
         if (isDead()) {
-            diedPositionInLink = getAdvancingDistance();
+            // do something to record changes by expose()
         }
     }
 

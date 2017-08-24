@@ -397,8 +397,6 @@ public class WalkAgent extends AgentBase {
                init で行うようにする。*/
             //speed = 0;
             
-            generatedPositionInLink = getRemainingDistance();
-
             prepareRoutePlan() ;
         }
     }

@@ -1739,40 +1739,8 @@ public class AgentHandler {
      * individualPedestriansLogger の終了
      */
     private void closeIndividualPedestriansLogger() {
-        if (individualPedestriansLogger == null) {
-            return;
-        }
-        closeLogger(individualPedestriansLogger);
-
-        // log_individual_pedestrians_initial.csv
-        try {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(individualPedestriansLogDir + "/log_individual_pedestrians_initial.csv"), "utf-8"));
-            writer.write("pedestrianID,pedestrian_moving_model,generated_time,current_traveling_period,generated_position,died_position,distnation_nodeID,assigned_passage_nodes,status\n");
-            for (AgentBase agent : getAllAgentCollection()) {
-                StringBuilder buff = new StringBuilder();
-                buff.append(agent.ID); buff.append(",");
-                buff.append(agent.getSpeedModel().toString().replaceFirst("Model$", "")); buff.append(",");
-                buff.append((int)agent.generatedTime.getRelativeTime()); buff.append(",");
-                buff.append(simulator.currentTime.getTickUnit()); buff.append(",");
-                buff.append(agent.generatedPositionInLink); buff.append(",");
-                buff.append(agent.diedPositionInLink); buff.append(",");
-                buff.append(agent.getLastNode().ID); buff.append(",");
-                int idx = 0;
-                for (Term route : agent.getPlannedRoute()) {
-                    if (idx > 0) {
-                        buff.append(" ");
-                    }
-                    idx++;
-                    buff.append(route);
-                }
-                buff.append(",");
-                buff.append(agent.isEvacuated() ? "evacuated" : "dead");
-                buff.append("\n");
-                writer.write(buff.toString());
-            }
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (individualPedestriansLogger != null) {
+            closeLogger(individualPedestriansLogger);
         }
     }
 
