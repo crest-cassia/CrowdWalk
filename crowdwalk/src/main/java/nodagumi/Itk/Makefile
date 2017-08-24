@@ -51,6 +51,10 @@ build : build_v
 build_q :
 	( cd $(BASEDIR) ; gradle -q )
 
+## off-line (do not check java lib version via internet)
+build_ol :
+	( cd $(BASEDIR) ; gradle -q --offline)
+
 ## verbose
 build_v :
 	( cd $(BASEDIR) ; gradle)
