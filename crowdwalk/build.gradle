@@ -74,6 +74,16 @@ sourceSets {
             } else {
                 exclude 'nodagumi/ananPJ/CuiCrowdWalkLauncher.java'
                 if (vmName.toLowerCase().indexOf("openjdk") != -1) {
+                    exclude 'nodagumi/ananPJ/Editor/EditorCanvas.java'
+                    exclude 'nodagumi/ananPJ/Editor/EditorFrameFx.java'
+                    exclude 'nodagumi/ananPJ/Editor/MapEditor.java'
+                    exclude 'nodagumi/ananPJ/Editor/EditCommand/**'
+                    exclude 'nodagumi/ananPJ/Editor/Panel/AreaPanelFx.java'
+                    exclude 'nodagumi/ananPJ/Editor/Panel/GroupPanel.java'
+                    exclude 'nodagumi/ananPJ/Editor/Panel/LinkPanelFx.java'
+                    exclude 'nodagumi/ananPJ/Editor/Panel/NodePanelFx.java'
+                    exclude 'nodagumi/ananPJ/Editor/Panel/ScenarioPanelFx.java'
+                    exclude 'nodagumi/ananPJ/Editor/Panel/TagSetupPane.java'
                     exclude 'nodagumi/ananPJ/Gui/FxColor.java'
                     exclude 'nodagumi/ananPJ/Gui/LinkAppearance3D.java'
                     exclude 'nodagumi/ananPJ/Gui/MapViewFrame.java'
