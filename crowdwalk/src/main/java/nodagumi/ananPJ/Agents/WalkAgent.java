@@ -1071,12 +1071,16 @@ public class WalkAgent extends AgentBase {
     protected void recordTrail(SimTime currentTime, Place passingPlace,
                                MapLink nextLink) {
         if(doesRecordTrail()) {
-            /*
-            HashMap<String, Object> auxInfo = new HashMap<String, Object>();
-            auxInfo.put("speed", new Double(speed)) ;
-            trail.add(currentTime, passingPlace.getTrailContent(auxInfo)) ;
-            */
-            trail.add(currentTime, passingPlace.getTrailContent()) ;
+            if(getHandler().agentTrailLogHasTrailAux()) {
+                HashMap<String, Object> auxInfo =
+                    getHandler()
+                    .getAgentTrailLogTrailAuxFormatter()
+                    .outputRecordToNewHashMap(this, currentTime,
+                                              passingPlace, nextLink) ;
+                trail.add(currentTime, passingPlace.getTrailContent(auxInfo)) ;
+            } else {
+                trail.add(currentTime, passingPlace.getTrailContent()) ;
+            }
         }
     }
 

@@ -33,6 +33,10 @@ public class JsonFormatter<T> {
      */
     private ArrayList<Member> memberList = new ArrayList<Member>() ;
 
+    public ArrayList<Member> getMemberList() {
+        return memberList ;
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * Member定義テーブル
@@ -419,6 +423,31 @@ public class JsonFormatter<T> {
      */
     public StringBuilder outputRecordToBuffer(StringBuilder buffer, T object,
                                               Object... auxObjects) {
+        Term term = outputRecordToNewTerm(object, auxObjects) ;
+	return outputTermToBuffer(buffer, term) ;
+    }
+        
+    //------------------------------------------------------------
+    /**
+     * データ行のHashMap出力。
+     * @param object : Column#value に引き渡すデータ。
+     * @return 内容を追加した buffer。
+     */
+    public HashMap<String, Object>
+        outputRecordToNewHashMap(T object, Object... auxObjects)
+    {
+        Term term = outputRecordToNewTerm(object, auxObjects) ;
+        
+        return term.getBody() ;
+    }
+        
+    //------------------------------------------------------------
+    /**
+     * データ行のTerm出力。
+     * @param object : Column#value に引き渡すデータ。
+     * @return 内容を追加した buffer。
+     */
+    public Term outputRecordToNewTerm(T object, Object... auxObjects) {
         Term term = new Term() ;
 	for(Member member : memberList) {
             Object value = null ;
@@ -432,6 +461,24 @@ public class JsonFormatter<T> {
             case 2:
                 value = member.value(object, auxObjects[0], auxObjects[1]) ;
                 break ;
+            case 3:
+                value = member.value(object, auxObjects[0], auxObjects[1],
+                                     auxObjects[2]) ;
+                break ;
+            case 4:
+                value = member.value(object, auxObjects[0], auxObjects[1],
+                                     auxObjects[2], auxObjects[3]) ;
+                break ;
+            case 5:
+                value = member.value(object, auxObjects[0], auxObjects[1],
+                                     auxObjects[2], auxObjects[3],
+                                     auxObjects[4]) ;
+                break ;
+            case 6:
+                value = member.value(object, auxObjects[0], auxObjects[1],
+                                     auxObjects[2], auxObjects[3],
+                                     auxObjects[4], auxObjects[4]) ;
+                break ;
             default:
                 Itk.logError("too many auxObjects[].") ;
                 Itk.quitByError() ;
@@ -439,7 +486,7 @@ public class JsonFormatter<T> {
             addMemberInTerm(term, member, value) ;
 	}
 
-	return outputTermToBuffer(buffer, term) ;
+        return term ;
     }
 
     //------------------------------------------------------------
@@ -586,7 +633,7 @@ public class JsonFormatter<T> {
          * 使われる場合、各々の Member で再定義されるべき。
          * 戻り値は、String, Term, Integer, Double のいずれかであるべき。
 	 */
-	public Object value(T object) {
+	public Object value(T object0) {
 	    Itk.logError("Member#value(object) is not implemented.") ;
 	    return null ;
 	}
@@ -596,8 +643,8 @@ public class JsonFormatter<T> {
 	 * 値の出力(2入力)
          * 使われる場合、各々の Member で再定義されるべき。
 	 */
-	public Object value(T object1, Object object2) {
-	    Itk.logError("Column#value(obj1, obj2) is not implemented.") ;
+	public Object value(T object0, Object object1) {
+	    Itk.logError("Member#value(obj0, obj1) is not implemented.") ;
 	    return null ;
 	}
 
@@ -606,8 +653,54 @@ public class JsonFormatter<T> {
 	 * 値の出力(3入力)
          * 使われる場合、各々の Member で再定義されるべき。
 	 */
-	public Object value(T object1, Object object2, Object object3) {
-	    Itk.logError("Column#value(obj1, obj2, obj3) is not implemented.") ;
+	public Object value(T object0, Object object1, Object object2) {
+	    Itk.logError("Member#value(obj0, obj1, obj2) is not implemented.") ;
+	    return null ;
+	}
+
+	//----------------------------------------
+	/**
+	 * 値の出力(4入力)
+         * 使われる場合、各々の Member で再定義されるべき。
+	 */
+	public Object value(T object0, Object object1, Object object2,
+                            Object object3) {
+	    Itk.logError("Member#value(obj0, obj1, obj2, obj3) is not implemented.") ;
+	    return null ;
+	}
+
+	//----------------------------------------
+	/**
+	 * 値の出力(5入力)
+         * 使われる場合、各々の Member で再定義されるべき。
+	 */
+	public Object value(T object0, Object object1, Object object2,
+                            Object object3, Object object4) {
+	    Itk.logError("Member#value(obj0, obj1, obj2, obj3, obj4) is not implemented.") ;
+	    return null ;
+	}
+
+	//----------------------------------------
+	/**
+	 * 値の出力(6入力)
+         * 使われる場合、各々の Member で再定義されるべき。
+	 */
+	public Object value(T object0, Object object1, Object object2,
+                            Object object3, Object object4, Object object5) {
+	    Itk.logError("Member#value(obj0, obj1, obj2, obj3, obj4, obj5) is not implemented.") ;
+	    return null ;
+	}
+
+	//----------------------------------------
+	/**
+	 * 値の出力(7入力)
+         * 使われる場合、各々の Member で再定義されるべき。
+	 */
+	public Object value(T object0, Object object1, Object object2,
+                            Object object3, Object object4, Object object5,
+                            Object object6) {
+                
+	    Itk.logError("Member#value(obj0, obj1, obj2, obj3, obj4, obj5, obj6) is not implemented.") ;
 	    return null ;
 	}
     }

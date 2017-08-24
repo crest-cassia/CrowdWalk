@@ -12,10 +12,11 @@
   "timer_file":"/tmp/timer.log",
   "_x_individual_pedestrians_log_dir":",Log",
 
-  "agent_trail_log" :
+  "_agent_trail_log" :
     {
       "file":",Log/agentTrail.log",
-      "members": ["agentId", "evacuatedRelTime"],
+      "members": ["agentId", "evacuatedRelTime", "trail"],
+      "_trail_aux" : ["speed", "advancingDist"],
       "___" : null
     },
   

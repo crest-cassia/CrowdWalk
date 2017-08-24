@@ -58,6 +58,7 @@ import nodagumi.ananPJ.Agents.AgentFactoryByRuby;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.misc.Place;
 
 import nodagumi.Itk.CsvFormatter;
 import nodagumi.Itk.JsonFormatter;
@@ -475,6 +476,58 @@ public class AgentHandler {
                                              name,
                                              agent, timeObj, agentHandlerObj) ;
                     }}) ;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * agentTrailLogger の中の、trail の aux 要素の定義。
+     * 設定方法は、properties file において、
+     * <pre>
+     *  "agent_trail_log" :
+     *    {
+     *      ...
+     *      "trail_aux": ["speed", "advancingDist"]
+     *    },
+     * <pre>
+     * という形で指定する。
+     * 可能な項目は、
+     * <pre>
+     *   "speed" : Node を超えた時のスピード。
+     *   "advancingDist" : place における advancingDistance。
+     * </pre>
+     */
+    public static JsonFormatter<AgentBase> agentTrailLogTrailAuxFormatter =
+        new JsonFormatter<AgentBase>() ;
+    static {
+        JsonFormatter<AgentBase> formatter = agentTrailLogTrailAuxFormatter ;
+        formatter
+            .registerMember(formatter.new Member("speed") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object placeObj, Object nextLinkObj) {
+                        return new Double(agent.getSpeed()) ;
+                    }})
+            .registerMember(formatter.new Member("advancingDist") {
+                    public Object value(AgentBase agent, Object timeObj,
+                                        Object placeObj, Object nextLinkObj) {
+                        Place place = (Place)placeObj ;
+                        return new Double(place.getAdvancingDistance()) ;
+                    }})
+            ;
+    }
+                                        
+    /**
+     * agentTrailLogger において、trail の auxのフォーマットが
+     * 指定されているかどうか？
+     */
+    public boolean agentTrailLogHasTrailAux() {
+        return agentTrailLogTrailAuxFormatter.getMemberList().size() > 0 ;
+    }
+
+    /**
+     * agentTrailLogTrailAuxFormatter の取得。
+     */
+    public JsonFormatter<AgentBase> getAgentTrailLogTrailAuxFormatter() {
+        return agentTrailLogTrailAuxFormatter ;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1580,6 +1633,16 @@ public class AgentHandler {
                 .getTerm("agent_trail_log")
                 .getArgTerm("members") ;
             agentTrailLogFormatter.setMembersByTerm(logMembers) ;
+        }
+        
+        // trailAux の items (file の設定より先に必要)
+        if(simulator.getProperties().hasKeyRecursive("agent_trail_log",
+                                                     "trail_aux")) {
+            Term auxMembers =
+                simulator.getProperties()
+                .getTerm("agent_trail_log")
+                .getArgTerm("trail_aux") ;
+            agentTrailLogTrailAuxFormatter.setMembersByTerm(auxMembers) ;
         }
     }
     
