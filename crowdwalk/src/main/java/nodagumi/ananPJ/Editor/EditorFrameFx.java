@@ -666,6 +666,8 @@ public class EditorFrameFx {
         MenuItem miKeyboardShortcuts = new MenuItem("Quick reference");
         miKeyboardShortcuts.setOnAction(e -> {
             helpStage.setTitle("Help - Quick reference");
+            helpStage.setWidth(980);
+            helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
             webView.getEngine().loadContent(ObstructerBase.resourceToString(QUICK_REFERENCE));
             helpStage.show();
             helpStage.toFront();
@@ -821,7 +823,7 @@ public class EditorFrameFx {
         // ・Reset one-way / road closed
         // ・Add symbolic link
         // ・Clear symbolic link
-        // ・Scale calculation and link length recalculation
+        // ・Calculate scale and recalculate link length
         // ・Remove links
 
         MenuItem miSetLinkAttributes = new MenuItem("Set link attributes");
@@ -830,7 +832,7 @@ public class EditorFrameFx {
         MenuItem miSetOneWay = new MenuItem("Set one-way");
         miSetOneWay.setOnAction(e -> setOneWay());
 
-        MenuItem miSetRoadClosed = new MenuItem("Set Road closed");
+        MenuItem miSetRoadClosed = new MenuItem("Set road closed");
         miSetRoadClosed.setOnAction(e -> editor.setRoadClosed());
 
         MenuItem miResetOneWayAndRoadClosed = new MenuItem("Reset one-way / road closed");
