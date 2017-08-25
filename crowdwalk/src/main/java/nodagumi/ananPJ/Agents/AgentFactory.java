@@ -30,6 +30,9 @@ import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
 
+/* ここ、汚いので、解消したい */
+import nodagumi.ananPJ.misc.AgentGenerationFile;
+
 import nodagumi.Itk.*;
 
 
@@ -304,6 +307,14 @@ public abstract class AgentFactory {
 
         //------------------------------
         /**
+         * すでにオーバーしているかチェック。
+         */
+        public boolean isOver() {
+            return index >= size() ;
+        }
+
+        //------------------------------
+        /**
          * config の数。
          */
         public int size() {
@@ -316,7 +327,7 @@ public abstract class AgentFactory {
         
         //------------------------------
         /**
-         * config の数。
+         * 残っているconfig の数。
          */
         public int remainSize() {
             return size() - index ;
@@ -396,6 +407,26 @@ public abstract class AgentFactory {
         
         //------------------------------
         /**
+         * 指定時刻まで残っているconfig の数。
+         */
+        public int remainSizeBefore(SimTime currentTime) {
+            int indexBackup = index ;
+            int count = 0 ;
+            while(!isOver()) {
+                Term config = getNext() ;
+                SimTime startTime =
+                    new SimTime(config.getArgString("startTime")) ;
+                if(startTime.isAfter(currentTime)) {
+                    break ;
+                }
+                count += 1;
+            }
+            index = indexBackup ;
+            return count ;
+        }
+
+        //------------------------------
+        /**
          * JSONへの変換用
          */
         public Term toTerm() {
@@ -404,6 +435,8 @@ public abstract class AgentFactory {
     } // class IndividualConfigList 
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /** Config */
+    public Config config ;
     /** 目的地 */
     protected Term goal;
     public Term getGoal() { return goal ; }
@@ -492,7 +525,8 @@ public abstract class AgentFactory {
     /**
      *  初期化。他で Override できるように。
      */
-    public void init(Config config, Random _random) {
+    public void init(Config _config, Random _random) {
+        config = _config ;
         if(config.agentClassName != null &&
            config.agentClassName.length() > 0) {
             agentClassName = config.agentClassName ;
@@ -580,18 +614,28 @@ public abstract class AgentFactory {
             return;
         }
 
-        double duration_left =
-            startTime.getAbsoluteTime() + duration - currentTime.getAbsoluteTime() ;
-        int agent_to_gen = total - generated;
-        if (duration_left > 0) {
-            double r
-                = (double)(agent_to_gen) / duration_left * currentTime.getTickUnit() ;
-            // tkokada: free timeScale update
-            if (((int) r) > agent_to_gen)
-                r = agent_to_gen;
-            agent_to_gen = (int)r;
-            if (random.nextDouble() < r - (double)agent_to_gen) {
-                agent_to_gen++;
+        // 生成するエージェントの数を求める。
+
+        int agent_to_gen = 0 ;
+        if(((AgentGenerationFile.GenerationConfigBase)config).ruleType ==
+           AgentGenerationFile.RuleType.INDIVIDUAL) {
+            agent_to_gen = individualConfigList.remainSizeBefore(currentTime) ;
+        } else {
+            agent_to_gen = total - generated;
+            double duration_left =
+                startTime.getAbsoluteTime() + duration
+                - currentTime.getAbsoluteTime() ;
+            if (duration_left > 0) {
+                double r
+                    = ((double)(agent_to_gen) /
+                       duration_left * currentTime.getTickUnit()) ;
+                // tkokada: free timeScale update
+                if (((int) r) > agent_to_gen)
+                    r = agent_to_gen;
+                agent_to_gen = (int)r;
+                if (random.nextDouble() < r - (double)agent_to_gen) {
+                    agent_to_gen++;
+                }
             }
         }
         /* else, no time left, must generate all remains */

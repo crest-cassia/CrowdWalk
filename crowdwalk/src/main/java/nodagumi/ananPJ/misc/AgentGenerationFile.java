@@ -345,7 +345,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
      * Generation Rule は以下の形式の JSON (version 2 format).
      *   
      */
-    static private class GenerationConfigBase extends AgentFactory.Config {
+    static public class GenerationConfigBase extends AgentFactory.Config {
         //========================================
         //----------------------------------------
         /**
