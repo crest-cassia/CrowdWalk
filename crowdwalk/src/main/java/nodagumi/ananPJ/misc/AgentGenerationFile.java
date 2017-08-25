@@ -31,6 +31,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
 import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.AgentFactory.IndividualConfigList;
 import nodagumi.ananPJ.Agents.AgentFactoryFromLink;
 import nodagumi.ananPJ.Agents.AgentFactoryFromNode;
 import nodagumi.ananPJ.Agents.AgentFactoryByRuby;
@@ -102,9 +103,12 @@ import nodagumi.Itk.*;
  *          "startTime" : __Time__,
  *          "duration" : __DurationInSec__,
  *          "goal" : __Tag__,
- *          "plannedRoute" : [ __Tag__, __Tag__, ... ]
+ *          "plannedRoute" : [ __Tag__, __Tag__, ... ],
+ *          "individualConfig" : [ __IndivConfig__, __IndivConfig__, ...]
  *        }
  *      </pre>
+ *        __IndivConfig__ については、以下を参照。
+ *        ただし、__IndivConfig__内の "startTime" は無視される。
  *     </dd>
  *   <dt>EACHRANDOM</dt>
  *     <dd>
@@ -152,6 +156,35 @@ import nodagumi.Itk.*;
  *          "goal" : __Tag__,
  *          "plannedRoute" : [ __Tag__, __Tag__, ... ]
  *        }
+ *      </pre>
+ *     </dd>
+ *   <dt>INDIVIDUAL</dt>
+ *     <dd>
+ *       individualConfig によって、個別のパラメータ、開始時刻で
+ *       エージェントを生成される。
+ *       individualConfig によって指定されないものは、ルール共通の
+ *       パラメータが指定される。
+ *      <pre>
+ *        { "rule" : "INDIVIDUAL",
+ *          "name" : __RuleName__,
+ *          "ignore" : ("true" | "false")
+ *          "agentType" : { "className" : __AgentType__,
+ *                          (__AgentConfig__)* },
+ *          "speedModel" : __SpeedModel__,
+ *          "startPlace" : __Tag__,
+ *          "conditions" : __Conditions__,
+ *          "goal" : __Tag__,
+ *          "plannedRoute" : [ __Tag__, __Tag__, ... ],
+ *          "individualConfig" : [ __IndivConfig__, __IndivConfig__, ...]
+ *        }
+ *      </pre>
+ *       __IndivConfig__ は以下の形式。
+ *      <pre>
+ *         { "startTime" : "HH:MM:SS",
+ *           "emptySpeed" : __SpeedValue__,
+ *           "speed" : __SpeedValue__,
+ *           "conditions" : [ __Tag__, __Tag__, ...]
+ *          }
  *      </pre>
  *     </dd>
  *   <dt>RUBY</dt>
@@ -214,6 +247,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         RANDOM,
         EACHRANDOM,
         TIMEEVERY,
+        INDIVIDUAL,
         RUBY,
         LINER_GENERATE_AGENT_RATIO
     }
@@ -333,6 +367,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 break ;
             case EACH:
             case RANDOM:
+            case INDIVIDUAL:
                 genConfig = new GenerationConfigBase() ;
                 break ;
             default:
@@ -431,23 +466,40 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 }
             }
 
-            // startTime
-            try {
-                startTime = new SimTime(json.getArgString("startTime")) ;
-            } catch(Exception ex) {
-                return null ;
+            // individualConfig
+            individualConfigList =
+                new IndividualConfigList(json.getArgTerm("individualConfig")) ;
+
+            // INDIVIDUAL の時は、いろいろ別扱い。
+            if(ruleType == RuleType.INDIVIDUAL) {
+                individualConfigList.sortByStartTime() ;
+                String firstTimeStr =
+                    individualConfigList.peekFirst().getArgString("startTime") ;
+                String lastTimeStr =
+                    individualConfigList.peekLast().getArgString("startTime") ;
+                startTime = new SimTime(firstTimeStr) ;
+                duration = startTime.calcDifferenceTo(new SimTime(lastTimeStr));
+                total = individualConfigList.size() ;
+            } else {
+                // startTime
+                try {
+                    startTime = new SimTime(json.getArgString("startTime")) ;
+                } catch(Exception ex) {
+                    return null ;
+                }
+
+                // duration
+                duration = json.getArgDouble("duration") ;
+
+                // total
+                total = json.getArgInt("total") ;
+                if (factoryList.liner_generate_agent_ratio > 0) {
+                    total =
+                        (int)(total * factoryList.liner_generate_agent_ratio);
+                    Itk.logInfo("Agent Population (JSON)", total);
+                }
             }
-
-            // duration
-            duration = json.getArgDouble("duration") ;
-
-            // total
-            total = json.getArgInt("total") ;
-            if (factoryList.liner_generate_agent_ratio > 0) {
-                total = (int) (total * factoryList.liner_generate_agent_ratio);
-                Itk.logInfo("Agent Population (JSON)", total);
-            }
-
+                
             // speedModel
             scanJsonForSpeedModel(factoryList, json) ;
 
@@ -459,9 +511,6 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
             plannedRoute = (plannedRouteTerm == null ?
                             new ArrayList<Term>() :
                             plannedRouteTerm.<Term>getTypedArray()) ;
-
-            // individualConfig
-            individualConfigList = json.getArgTerm("individualConfig") ;
             
             return this ;
         }

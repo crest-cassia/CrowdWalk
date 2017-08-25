@@ -2,7 +2,6 @@
 package nodagumi.ananPJ.Agents;
 
 import java.lang.reflect.Method;
-
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Map;
+import java.util.Comparator;
 
 import net.arnx.jsonic.JSON ;
 
@@ -214,13 +214,7 @@ public abstract class AgentFactory {
         /**
          * 個別パラメータ
          */
-        public Term individualConfigList = null ;
-        
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 個別パラメータ用 index
-         */
-        public int individualConfigIndex = 0 ;
+        public IndividualConfigList individualConfigList = null;
         
         //------------------------------
         /**
@@ -243,12 +237,171 @@ public abstract class AgentFactory {
             jTerm.setArg("total",total) ;
             jTerm.setArg("speedModel", speedModel) ;
             jTerm.setArg("name", ruleName) ;
-            jTerm.setArg("individualConfig", individualConfigList) ;
+            jTerm.setArg("individualConfig", individualConfigList.toTerm()) ;
 
             return jTerm ;
         }
     } // end class Config
 
+    //============================================================
+    //============================================================
+    /**
+     * エージェント個別設定情報格納用クラス
+     */
+    static public class IndividualConfigList {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 個別パラメータ
+         */
+        public Term list = null ;
+        
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        /**
+         * 個別パラメータ用 index
+         */
+        public int index = 0 ;
+
+        //------------------------------
+        /**
+         * constructor
+         */
+        public IndividualConfigList() {
+            setList(null) ;
+        }
+        
+        //------------------------------
+        /**
+         * constructor
+         */
+        public IndividualConfigList(Term _list) {
+            setList(_list) ;
+        }
+        
+        //------------------------------
+        /**
+         * list の中身をチェックしてセット
+         */
+        public Term setList(Term _list) {
+            if(_list == null || _list.isArray()) {
+                list = _list ;
+            } else {
+                Itk.logError("Illegal IndividualConfig data.",
+                             "should be ArrayTerm:", 
+                             _list) ;
+                Itk.quitByError() ;
+            }
+            index = 0 ;
+            return list ;
+        }
+        
+        //------------------------------
+        /**
+         * 利用可能かチェック。
+         */
+        public boolean isAvailable() {
+            return list != null ;
+        }
+
+        //------------------------------
+        /**
+         * config の数。
+         */
+        public int size() {
+            if(isAvailable()) {
+                return list.getArraySize() ;
+            } else {
+                return 0 ;
+            }
+        }
+        
+        //------------------------------
+        /**
+         * config の数。
+         */
+        public int remainSize() {
+            return size() - index ;
+        }
+
+        //------------------------------
+        /**
+         * startTime で整列。
+         */
+        public void sortByStartTime() {
+            if(size() > 0) {
+                try {
+                    list.getArray().sort(new Comparator<Object>(){
+                            @Override
+                            public int compare(Object xObj, Object yObj) {
+                                Term x = (Term)xObj ;
+                                Term y = (Term)yObj ;
+                                String xTime = x.getArgString("startTime") ;
+                                String yTime = y.getArgString("startTime") ;
+                                return xTime.compareTo(yTime) ;
+                            }
+                        }) ;
+                } catch(Exception ex) {
+                    ex.printStackTrace() ;
+                    Itk.logError("something wrong in sorting IndividualConfigList.") ;
+                    Itk.logError_("list", list) ;
+                    Itk.quitByError() ;
+                }
+            }
+        }
+
+        //------------------------------
+        /**
+         * N 番目を取ってくる。
+         * size() の剰余系なので、ループする。
+         */
+        public Term getNth(int nth) {
+            return list.getNthTerm(nth % size()) ;
+        }
+            
+        //------------------------------
+        /**
+         * 次のデータを見てみる。
+         * index は上げない。
+         */
+        public Term peekNext() {
+            return getNth(index) ;
+        }
+        
+        //------------------------------
+        /**
+         * 次のデータを見て、index をカウントアップ。
+         */
+        public Term getNext() {
+            Term config = peekNext() ;
+            index += 1 ;
+            return config ;
+        }
+        
+        //------------------------------
+        /**
+         * 次のデータを見てみる。
+         * index は上げない。
+         */
+        public Term peekFirst() {
+            return getNth(0) ;
+        }
+        
+        //------------------------------
+        /**
+         * 次のデータを見てみる。
+         * index は上げない。
+         */
+        public Term peekLast() {
+            return getNth(size()-1) ;
+        }
+        
+        //------------------------------
+        /**
+         * JSONへの変換用
+         */
+        public Term toTerm() {
+            return list ;
+        }
+    } // class IndividualConfigList 
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** 目的地 */
@@ -295,8 +448,7 @@ public abstract class AgentFactory {
     /**
      * 個別パラメータ。Agent 毎にパラメータを与えたい場合に記述。
      */
-    public Term individualConfigList = null ;
-    public int individualConfigIndex = 0 ;
+    public IndividualConfigList individualConfigList = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -643,35 +795,10 @@ public abstract class AgentFactory {
     /**
      * 個別パラメータをセット。
      */
-    public Term setIndividualConfigList(Term _individualConfigList) {
-        if(_individualConfigList == null || _individualConfigList.isArray()) {
-            individualConfigList = _individualConfigList ;
-        } else {
-            Itk.logError("Illegal individualConfig in generation rule.",
-                         _individualConfigList) ;
-            Itk.quitByError() ;
-        }
-        individualConfigIndex = 0 ;
+    public IndividualConfigList setIndividualConfigList(IndividualConfigList
+                                                        _individualConfigList) {
+        individualConfigList = _individualConfigList ;
         return individualConfigList ;
-    }
-
-    //------------------------------
-    /**
-     * 個別パラメータを１つ取得。
-     */
-    public Term getNextIndividualConfig() {
-        int nth = individualConfigIndex ;
-        individualConfigIndex++ ;
-        return getNthIndividualConfig(nth) ;
-    }
-
-    //------------------------------
-    /**
-     * n番目の個別パラメータを１つ取得。
-     */
-    public Term getNthIndividualConfig(int nth) {
-        int mode = individualConfigList.getArraySize() ;
-        return individualConfigList.getNthTerm(nth % mode) ;
     }
 
     //------------------------------
@@ -680,7 +807,7 @@ public abstract class AgentFactory {
      */
     public boolean hasIndividualConfig() {
         return (individualConfigList != null  &&
-                individualConfigList.getArraySize() > 0) ;
+                individualConfigList.isAvailable()) ;
     }
 
     //------------------------------
@@ -689,7 +816,7 @@ public abstract class AgentFactory {
      */
     public void setupAgentByIndividualConfig(AgentBase agent) {
         if(hasIndividualConfig()) {
-            Term config = getNextIndividualConfig() ;
+            Term config = individualConfigList.getNext() ;
             agent.setupByIndividualConfig(config) ;
         }
     }
