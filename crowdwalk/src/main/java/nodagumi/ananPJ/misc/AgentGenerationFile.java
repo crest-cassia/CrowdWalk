@@ -540,6 +540,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
                 addFactoriesForEach(factoryList) ;
                 break ;
             case RANDOM:
+            case INDIVIDUAL:
                 addFactoriesForRandom(factoryList) ;
                 break ;
             default:
