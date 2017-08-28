@@ -1,6 +1,7 @@
 package nodagumi.ananPJ.Editor;
 
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,17 +16,20 @@ import java.util.regex.Matcher;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.media.AudioClip;
 
 import org.w3c.dom.Document;
 
 import nodagumi.ananPJ.Editor.EditCommand.*;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Link.MapLinkTable;
@@ -114,6 +118,16 @@ public class MapEditor implements MapEditorInterface {
     private HashMap<MapPartGroup, Image> backgroundImages = new HashMap();
 
     /**
+     * 地理院タイル
+     */
+    private ArrayList<GsiTile> gsiTiles = new ArrayList();
+
+    /**
+     * JavaFX 用の地理院タイル画像
+     */
+    private HashMap<GsiTile, Image> gsiTileImages = new HashMap();
+
+    /**
      * 編集中の Group
      */
     private MapPartGroup currentGroup = null; 
@@ -190,6 +204,8 @@ public class MapEditor implements MapEditorInterface {
     public void initNetworkMap() {
         networkMap = new NetworkMap();
         backgroundImages.clear();
+        gsiTiles.clear();
+        gsiTileImages.clear();
         initCommandHistory();
     }
 
@@ -240,24 +256,11 @@ public class MapEditor implements MapEditorInterface {
             return false;
         }
 
-        // 背景画像を読み込む
-        for (MapPartGroup group : networkMap.getGroups()) {
-            String imageFileName = group.getImageFileName();
-            if (imageFileName == null || imageFileName.isEmpty()) {
-                continue;
-            }
-            File file = new File(getDir(), imageFileName);
-            String filePath = file.toURI().toString();
-            if (! file.exists()) {
-                Itk.logError("Background image file not exists", filePath);
-                return false;
-            }
-            Image image = new Image(filePath);
-            if (image.isError()) {
-                Itk.logError("Illegal image file", filePath);
-                return false;
-            }
-            setBackgroundImage(group, image);
+        if (! loadBackgroundImage()) {
+            return false;
+        }
+        if (! loadGsiTiles()) {
+            return false;
         }
 
         Itk.logInfo("Load Map File", fileName);
@@ -290,6 +293,58 @@ public class MapEditor implements MapEditorInterface {
         Itk.logInfo("Map file has been saved", fileName);
         initCommandHistory();
 
+        return true;
+    }
+
+    /**
+     * 背景画像を読み込む
+     */
+    private boolean loadBackgroundImage() {
+        backgroundImages.clear();
+        for (MapPartGroup group : networkMap.getGroups()) {
+            String imageFileName = group.getImageFileName();
+            if (imageFileName == null || imageFileName.isEmpty()) {
+                continue;
+            }
+            File file = new File(getDir(), imageFileName);
+            String filePath = file.toURI().toString();
+            if (! file.exists()) {
+                Itk.logWarn("Background image file not exists", filePath);
+                continue;
+            }
+            Image image = new Image(filePath);
+            if (image.isError()) {
+                Itk.logError("Illegal image file", filePath);
+                return false;
+            }
+            setBackgroundImage(group, image);
+        }
+        return true;
+    }
+
+    /**
+     * 地理院タイル画像を読み込む
+     */
+    private boolean loadGsiTiles() {
+        gsiTiles.clear();
+        gsiTileImages.clear();
+        try {
+            String tileName = properties.getString("gsi_tile_name", GsiTile.DATA_ID_PALE);
+            int zoom = properties.getInteger("gsi_tile_zoom", 14);
+            MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+            int zone = properties.getInteger("zone", root.getZone());
+            if (zone != 0) {
+                gsiTiles = GsiTile.loadGsiTiles(networkMap, tileName, zoom, zone);
+                for (GsiTile gsiTile : gsiTiles) {
+                    BufferedImage image = gsiTile.getImage();
+                    WritableImage imageFx = new WritableImage(image.getWidth(null), image.getHeight(null));
+                    gsiTileImages.put(gsiTile, SwingFXUtils.toFXImage(image, imageFx));
+                }
+            }
+        } catch(Exception e) {
+            Itk.logError("Background map loading error", e.getMessage());
+            return false;
+        }
         return true;
     }
 
@@ -1529,6 +1584,20 @@ public class MapEditor implements MapEditorInterface {
      */
     public Image getBackgroundImage(MapPartGroup group) {
         return backgroundImages.get(group);
+    }
+
+    /**
+     * 地理院タイルを取得する
+     */
+    public ArrayList<GsiTile> getBackgroundMapTiles() {
+        return gsiTiles;
+    }
+
+    /**
+     * JavaFX 用の地理院タイル画像を取得する
+     */
+    public HashMap<GsiTile, Image> getGsiTileImages() {
+        return gsiTileImages;
     }
 
     /**

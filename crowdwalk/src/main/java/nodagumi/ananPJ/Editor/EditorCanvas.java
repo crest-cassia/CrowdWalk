@@ -27,6 +27,7 @@ import nodagumi.ananPJ.Editor.EditCommand.*;
 import nodagumi.ananPJ.Editor.EditorFrameFx.EditorMode;
 import nodagumi.ananPJ.Editor.MapEditor.TextPosition;
 import nodagumi.ananPJ.Gui.FxColor;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Link.MapLinkTable;
@@ -147,6 +148,7 @@ public class EditorCanvas extends Canvas {
     private boolean linkLabelsShowing = false;
     private boolean areasShowing = true;
     private boolean areaLabelsShowing = false;
+    private boolean backgroundMapShowing = false;
     private boolean backgroundImageShowing = true;
     private boolean mapCoordinatesShowing = false;
 
@@ -1215,6 +1217,16 @@ public class EditorCanvas extends Canvas {
 
         redoRepainting = false;
 
+        // 背景地図の描画
+        if (backgroundMapShowing && ! editor.getBackgroundMapTiles().isEmpty()) {
+            for (GsiTile gsiTile : editor.getBackgroundMapTiles()) {
+                drawBackgroundMapTile(gsiTile, editor.getGsiTileImages().get(gsiTile), gc);
+                if (redoRepainting) {
+                    return;
+                }
+            }
+        }
+
         // 背景画像の描画
         if (backgroundImageShowing) {
             drawBackgroundImage(group, gc);
@@ -1356,6 +1368,18 @@ public class EditorCanvas extends Canvas {
             }
             break;
         }
+    }
+
+    /**
+     * 地理院タイルを描画する
+     */
+    private void drawBackgroundMapTile(GsiTile gsiTile, Image image, GraphicsContext gc) {
+        java.awt.geom.Point2D point = gsiTile.getPoint();
+        double x = point.getX() * SCALE_FACTOR;
+        double y = point.getY() * SCALE_FACTOR;
+        double width = image.getWidth() * gsiTile.getScaleX() * SCALE_FACTOR;
+        double height = image.getHeight() * gsiTile.getScaleY() * SCALE_FACTOR;
+        gc.drawImage(image, x, y, width, height);
     }
 
     /**
@@ -1896,6 +1920,10 @@ public class EditorCanvas extends Canvas {
 
     public void setAreaLabelsShowing(boolean areaLabelsShowing) {
         this.areaLabelsShowing = areaLabelsShowing;
+    }
+
+    public void setBackgroundMapShowing(boolean backgroundMapShowing) {
+        this.backgroundMapShowing = backgroundMapShowing;
     }
 
     public void setBackgroundImageShowing(boolean backgroundImageShowing) {
