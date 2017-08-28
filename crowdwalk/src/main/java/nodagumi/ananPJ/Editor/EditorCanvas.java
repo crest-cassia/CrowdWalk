@@ -1372,7 +1372,7 @@ public class EditorCanvas extends Canvas {
         double angle = group.r * 180.0 / Math.PI;
         affine.appendRotation(angle, group.tx * SCALE_FACTOR, group.ty * SCALE_FACTOR);
         gc.transform(affine);
-        gc.drawImage(image, group.tx * SCALE_FACTOR, group.ty * SCALE_FACTOR, image.getWidth() * group.sx, image.getHeight() * group.sy);
+        gc.drawImage(image, group.tx * SCALE_FACTOR, group.ty * SCALE_FACTOR, image.getWidth() * group.sx * SCALE_FACTOR, image.getHeight() * group.sy * SCALE_FACTOR);
 
         gc.setTransform(originalTransform);
     }

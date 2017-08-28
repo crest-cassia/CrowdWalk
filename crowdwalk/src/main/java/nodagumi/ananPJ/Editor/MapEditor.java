@@ -172,14 +172,6 @@ public class MapEditor implements MapEditorInterface {
      * 初期設定
      */
     private void init() {
-        if (properties != null && properties.getPropertiesFile() != null) {
-            try {
-                dir = new File(properties.getPropertiesDirAbs()).getCanonicalFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         // アラート音の準備
         File dingWav = new File("C:/Windows/Media/Windows Ding.wav");   // Windows7, Windows10 で確認
         if (dingWav.exists()) {
@@ -197,6 +189,7 @@ public class MapEditor implements MapEditorInterface {
      */
     public void initNetworkMap() {
         networkMap = new NetworkMap();
+        backgroundImages.clear();
         initCommandHistory();
     }
 
@@ -205,7 +198,7 @@ public class MapEditor implements MapEditorInterface {
      */
     public void initCurrentGroup() {
         currentGroup = (MapPartGroup)networkMap.getRoot();
-        for (final MapPartGroup group : networkMap.getGroups()) {
+        for (MapPartGroup group : networkMap.getGroups()) {
             if (group != currentGroup && group.getTags().size() != 0) {
                 currentGroup = group;
                 break;
@@ -246,6 +239,27 @@ public class MapEditor implements MapEditorInterface {
         if (! networkMap.fromDOM(doc)) {
             return false;
         }
+
+        // 背景画像を読み込む
+        for (MapPartGroup group : networkMap.getGroups()) {
+            String imageFileName = group.getImageFileName();
+            if (imageFileName == null || imageFileName.isEmpty()) {
+                continue;
+            }
+            File file = new File(getDir(), imageFileName);
+            String filePath = file.toURI().toString();
+            if (! file.exists()) {
+                Itk.logError("Background image file not exists", filePath);
+                return false;
+            }
+            Image image = new Image(filePath);
+            if (image.isError()) {
+                Itk.logError("Illegal image file", filePath);
+                return false;
+            }
+            setBackgroundImage(group, image);
+        }
+
         Itk.logInfo("Load Map File", fileName);
 
         return true;
@@ -1663,6 +1677,12 @@ public class MapEditor implements MapEditorInterface {
         setGenerationFile(properties.getGenerationFile());
         setScenarioFile(properties.getScenarioFile());
         setFallbackFile(properties.getFallbackFile(), commandLineFallbacks);
+
+        try {
+            dir = new File(properties.getPropertiesDirAbs()).getCanonicalFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
