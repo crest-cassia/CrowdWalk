@@ -1014,9 +1014,68 @@ implements Comparable<AgentBase> {
     //------------------------------------------------------------
     /**
      * AgentFactory の individualConfig によりエージェントを設定。
+     * <br>
+     * Format:
+     * <pre>
+     *   { 
+     *     ...
+     *     "place" : { "link" : __LinkId__,
+     *                 "enteringNode" : __NodeId__,
+     *                 "advancingDistance" : __Distance__ },
+     *     "conditions" : [ __Tag__, __Tag__, ... ],
+     *     ...
+     *   }
+     * </pre>
      */
     public void setupByIndividualConfig(Term config) {
         //Itk.dbgVal("indivConfig", config) ;
+
+        setupByIndividualConfig_place(config) ;
+        setupByIndividualConfig_conditions(config) ;
+    }
+
+    //----------
+    /**
+     * individualConfig による設定：place.
+     */
+    private void setupByIndividualConfig_place(Term config) {
+        Term _place = SetupFileInfo.fetchFallbackTerm(config,
+                                                      "place",
+                                                      null) ;
+        if(_place != null) {
+            boolean isValid = false ;
+            if(_place.isObject()) {
+                Term linkId = _place.getArgTerm("link") ;
+                Term enteringNodeId = _place.getArgTerm("enteringNode") ;
+                Term advancingDistTerm =
+                    _place.getArgTerm("advancingDistance") ;
+                if(linkId != null && enteringNodeId != null) {
+                    MapLink link =
+                        getMap().findLinkById(linkId.getString()) ;
+                    MapNode enteringNode =
+                        getMap().findNodeById(enteringNodeId.getString()) ;
+                    double advancingDist = 0.0 ;
+                    if(advancingDistTerm != null &&
+                       advancingDistTerm.isDouble()) {
+                        advancingDist = advancingDistTerm.getDouble() ;
+                    }
+                    place(link, enteringNode, advancingDist) ;
+                    isValid = true ;
+                }
+            }
+            if(! isValid) {
+                Itk.logError("Illegal place value:",
+                             "place=", _place.toJson()) ;
+            }
+        }
+    }
+        
+    //----------
+    /**
+     * individualConfig による設定：conditions
+     */
+    private void setupByIndividualConfig_conditions(Term config) {
+        // conditions
         Term _tagList = SetupFileInfo.fetchFallbackTerm(config,
                                                         "conditions",
                                                         null) ;

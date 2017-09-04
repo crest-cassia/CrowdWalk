@@ -1242,7 +1242,7 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * 実効的なbodyのない Term (= Atom) か？
+     * 配列 Term かどうか？
      */
     public boolean isArray() {
         return array != null ;
@@ -1250,7 +1250,7 @@ public class Term {
 
     //------------------------------------------------------------
     /**
-     * 実効的なbodyのない Term (= Atom) か？
+     * 連想配列 Term かどうか？
      */
     public boolean isObject() {
         return hasBody() ;

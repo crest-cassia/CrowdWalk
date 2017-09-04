@@ -538,8 +538,18 @@ public class NetworkMap extends DefaultTreeModel {
      * ノードテーブル取得
      * @return node table
      */
-    public MapNodeTable getNodes() {
+    final public MapNodeTable getNodes() {
         return nodesCache;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ノード取得(by ID)
+     * @param id : ノードの id
+     * @return node
+     */
+    final public MapNode findNodeById(String id) {
+        return getNodes().findById(id) ;
     }
 
     //------------------------------------------------------------
@@ -547,8 +557,18 @@ public class NetworkMap extends DefaultTreeModel {
      * リンクテーブル取得
      * @return link table
      */
-    public MapLinkTable getLinks() {
+    final public MapLinkTable getLinks() {
         return linksCache;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * リンク取得(by ID)
+     * @param id : リンクの id
+     * @return link
+     */
+    final public MapLink findLinkById(String id) {
+        return getLinks().findById(id) ;
     }
 
     //------------------------------------------------------------

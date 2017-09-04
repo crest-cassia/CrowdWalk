@@ -108,7 +108,6 @@ import nodagumi.Itk.*;
  *        }
  *      </pre>
  *        __IndivConfig__ については、以下を参照。
- *        ただし、__IndivConfig__内の "startTime" は無視される。
  *     </dd>
  *   <dt>EACHRANDOM</dt>
  *     <dd>
@@ -178,14 +177,16 @@ import nodagumi.Itk.*;
  *          "individualConfig" : [ __IndivConfig__, __IndivConfig__, ...]
  *        }
  *      </pre>
- *       __IndivConfig__ は以下の形式。
+ *       __IndivConfig__ は以下のようなJSON Object の形式。
  *      <pre>
  *         { "startTime" : "HH:MM:SS",
- *           "emptySpeed" : __SpeedValue__,
- *           "speed" : __SpeedValue__,
- *           "conditions" : [ __Tag__, __Tag__, ...]
- *          }
+ *           ... }
  *      </pre>
+ *      追加で設定できる項目は、AgentClass によって異なる。以下を参照。
+ *      <ul>
+ *        <li> {@link nodagumi.ananPJ.Agents.AgentBase#setupByIndividualConfig AgentBase} </li>
+ *        <li> {@link nodagumi.ananPJ.Agents.WalkAgent#setupByIndividualConfig WalkAgent} </li>
+ *      </ul>
  *     </dd>
  *   <dt>RUBY</dt>
  *     <dd>

@@ -1362,6 +1362,17 @@ public class WalkAgent extends AgentBase {
     //------------------------------------------------------------
     /**
      * AgentFactory の individualConfig によりエージェントを設定。
+     * <br>
+     * Format:
+     * <pre>
+     *   { 
+     *     ...
+     *     "emptySpeed" : __SpeedValue__,
+     *     "speed" : __SpeedValue_,
+     *     "mentalModel" : __MentalModel__,
+     *     ...
+     *   }
+     * </pre>
      */
     public void setupByIndividualConfig(Term config) {
         super.setupByIndividualConfig(config) ;
