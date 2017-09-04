@@ -469,6 +469,8 @@ public class ImportGis {
                 value = (Long)object;
             } else if (object instanceof String) {
                 value = Double.valueOf((String)object);
+            } else if (object instanceof BigDecimal) {
+                value = ((BigDecimal)object).doubleValue();
             } else {
                 System.err.println("Illegal object: " + object);
                 System.exit(1);

@@ -10,6 +10,17 @@ plugins {
 
 defaultTasks 'clean', 'shadowJar'
 
+println "Gradle Version: ${gradle.gradleVersion}"
+def matching = gradle.gradleVersion =~ /^(\d+)\./
+if (matching.size() == 1) {
+    if (new Integer(matching[0][1]) >= 4) {
+        println "********************************************"
+        println "Please use gradle with version less than 4.0"
+        println "********************************************"
+        System.exit(1)
+    }
+}
+
 repositories {
     maven { name = "osgeo"; url = "http://download.osgeo.org/webdav/geotools/" }
     mavenCentral()

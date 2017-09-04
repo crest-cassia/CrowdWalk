@@ -223,7 +223,7 @@ public class CrowdWalkLauncher {
         if (propertiesFilePath != null) {
             editor.setPropertiesFromFile(propertiesFilePath, commandLineFallbacks);
             if (! editor.loadNetworkMap()) {
-                return;
+                System.exit(1);
             }
         } else {
             editor.initProperties(commandLineFallbacks);

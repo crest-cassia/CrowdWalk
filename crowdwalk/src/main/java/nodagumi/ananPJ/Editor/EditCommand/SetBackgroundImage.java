@@ -59,7 +59,7 @@ public class SetBackgroundImage extends EditCommandBase {
         EditorCanvas canvas = editor.getFrame().getCanvas();
         Point2D upperLeft = canvas.pointConvertCanvasToMap(0.0, 0.0);
         Point2D upperRight = canvas.pointConvertCanvasToMap(canvas.getWidth(), 0.0);
-        sx = Math.abs(upperRight.getX() - upperLeft.getX()) * canvas.SCALE_FACTOR / 2.0 / image.getWidth();
+        sx = Math.abs(upperRight.getX() - upperLeft.getX()) / 2.0 / image.getWidth();
         sy = sx;
         r = 0.0;
 

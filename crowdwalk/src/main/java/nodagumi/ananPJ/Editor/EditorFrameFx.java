@@ -637,12 +637,18 @@ public class EditorFrameFx {
             canvas.repaintLater();
         });
 
+        CheckMenuItem cmiShowBackgroundMap = new CheckMenuItem("Show background map");
+        cmiShowBackgroundMap.setOnAction(e -> {
+            canvas.setBackgroundMapShowing(cmiShowBackgroundMap.isSelected());
+            canvas.repaintLater();
+        });
+
         CheckMenuItem cmiShowMapCoordinates = new CheckMenuItem("Show map coordinates on the cursor");
         cmiShowMapCoordinates.setOnAction(e -> {
             canvas.setMapCoordinatesShowing(cmiShowMapCoordinates.isSelected());
         });
 
-        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuShowBackgroundGroup, cmiShowMapCoordinates);
+        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, cmiShowBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
 
         /* Validation menu */
 
