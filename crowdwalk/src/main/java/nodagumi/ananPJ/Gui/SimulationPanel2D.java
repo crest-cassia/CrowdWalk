@@ -26,11 +26,11 @@ import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import math.geom3d.Vector3D;
-
 import org.apache.batik.ext.awt.geom.Polygon2D;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentAppearance2D;
+import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentViewBase2D;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.LinkAppearance2D;
 import nodagumi.ananPJ.Gui.NodeAppearance2D;
@@ -57,6 +57,16 @@ public class SimulationPanel2D extends JPanel {
      * ステータスメッセージの背景色
      */
     public static final Color BACKGROUND_COLOR = Color.WHITE;
+
+    /**
+     * ホバーの色
+     */
+    public static final Color HOVER_COLOR = Color.BLUE;
+
+    /**
+     * ホバーテキストの背景色
+     */
+    public static final Color HOVER_BG_COLOR = new Color(0.8f, 0.8f, 0.9f);
 
     /**
      * ラベル表示に使用するフォント名
@@ -182,11 +192,6 @@ public class SimulationPanel2D extends JPanel {
     private ObstructerDisplay show_gas = ObstructerDisplay.ORANGE;
 
     /**
-     * ホバーテキストの背景色
-     */
-    private Color hoverBgColor = new Color(0.8f, 0.8f, 0.9f);
-
-    /**
      * エリア表示色の彩度 100% に相当する Obstructer level
      */
     private double pollutionColorSaturation = 0.0;
@@ -215,6 +220,16 @@ public class SimulationPanel2D extends JPanel {
      * タグ別ノード表示スタイル
      */
     private LinkedHashMap<String, NodeAppearance2D> nodeAppearances = new LinkedHashMap();
+
+    /**
+     * タグ別エージェント表示スタイル
+     */
+    private ArrayList<AgentAppearance2D> agentAppearances;
+
+    /**
+     * 各エージェントに対応する View オブジェクト
+     */
+    private HashMap<AgentBase, AgentViewBase2D> agentViewCache = new HashMap();
 
     /**
      * 表示更新済みフラグ
@@ -551,13 +566,10 @@ public class SimulationPanel2D extends JPanel {
         if (showAgents) {
             for (AgentBase agent : frame.getWalkingAgents()) {
                 if (! agent.isEvacuated()) {
-                    drawAgent(agent, g2, showAgentLabels);
+                    getAgentView(agent).draw(agent, g2, showAgentLabels);
                 }
             }
         }
-
-        /* symbolic links */
-        // TODO: 後日アップデートにてサポートする
 
         /* temporary objects */
         if (hoverNode != null) {
@@ -570,7 +582,7 @@ public class SimulationPanel2D extends JPanel {
             drawHoverArea(hoverArea, g2);
         }
         if (hoverAgent != null) {
-            drawHoverAgent(hoverAgent, g2);
+            getAgentView(hoverAgent).drawHover(hoverAgent, g2);
         }
 
         // アフィン変換をリセットする
@@ -591,85 +603,6 @@ public class SimulationPanel2D extends JPanel {
                 notify();
             }
         }
-    }
-
-    /**
-     * エージェントを描画する
-     */
-    public void drawAgent(AgentBase agent, Graphics2D g2, boolean showLabel) {
-        double scale = g2.getTransform().getScaleX();
-        Point2D pos = agent.getPos();
-        Vector3D swing = agent.getSwing();
-        double size = frame.getAgentSize() / scale;
-
-        if (showLabel) {
-            String text = agent.getIdNumber();
-            double cx = pos.getX() + swing.getX();
-            double cy = pos.getY() + swing.getY() + size / 2.0;
-            g2.setColor(Color.RED);
-            drawText(g2, cx, cy, TextPosition.LOWER_CENTER, text);
-        }
-
-        g2.setColor(getAgentColor(agent));
-        double x = pos.getX() + swing.getX() - size / 2.0;
-        double y = pos.getY() + swing.getY() - size / 2.0;
-        g2.fill(new Ellipse2D.Double(x, y, size, size));
-    }
-
-    /**
-     * エージェントのホバーを描画する
-     */
-    public void drawHoverAgent(AgentBase agent, Graphics2D g2) {
-        double scale = g2.getTransform().getScaleX();
-        g2.setStroke(new BasicStroke((float)(3.0 / scale)));
-        g2.setColor(Color.BLUE);
-        Point2D pos = agent.getPos();
-        Vector3D swing = agent.getSwing();
-        double diameter = 8.0 / scale;
-        double size = frame.getAgentSize() / scale;
-
-        String text = agent.getIdNumber();
-        double cx = pos.getX() + swing.getX();
-        double cy = pos.getY() + swing.getY() + size / 2.0;
-        drawText(g2, cx, cy, TextPosition.LOWER_CENTER, text, hoverBgColor);
-
-        double x = pos.getX() + swing.getX() - diameter / 2.0;
-        double y = pos.getY() + swing.getY() - diameter / 2.0;
-        g2.draw(new Ellipse2D.Double(x, y, diameter, diameter));
-    }
-    
-    /**
-     * エージェントの移動速度に応じた表示色を返す
-     */
-    public Color speedToColor(double speed) {
-	float f = ((float) Math.pow(speed,5)) * 0.35f;
-        return new Color(Color.HSBtoRGB(f, 0.8588f, 0.698f));
-    }
-
-    /**
-     * エージェントの表示色を返す
-     */
-    public Color getAgentColor(AgentBase agent) {
-        switch (agent.getTriage()) {
-        case GREEN:
-            if (frame.getChangeAgentColorDependingOnSpeed()) {
-                return speedToColor(agent.getSpeed());
-            } else if (agent.hasTag("BLUE")){
-                return Color2D.BLUE;
-            } else if (agent.hasTag("APINK")){
-                return Color2D.APINK;
-            } else if (agent.hasTag("YELLOW")){
-                return Color2D.YELLOW;
-            }
-            break;
-        case YELLOW:
-            return Color2D.YELLOW;
-        case RED:
-            return Color2D.PRED;
-        case BLACK:
-            return Color2D.BLACK2;
-        }
-        return Color2D.DEFAULT_AGENT_COLOR;
     }
 
     /**
@@ -731,7 +664,7 @@ public class SimulationPanel2D extends JPanel {
         if (! text.isEmpty()) {
             double cx = node.getX();
             double cy = node.getY() - diameter / 2.0;
-            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, hoverBgColor);
+            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, HOVER_BG_COLOR);
         }
 
         double scale = g2.getTransform().getScaleX();
@@ -793,7 +726,7 @@ public class SimulationPanel2D extends JPanel {
             double cx = middlePoint.getX();
             double cy = middlePoint.getY() - width / scale / 2.0;
             g2.setColor(Color.darkGray);
-            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, hoverBgColor);
+            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, HOVER_BG_COLOR);
         }
     }
 
@@ -864,7 +797,7 @@ public class SimulationPanel2D extends JPanel {
         if (! text.isEmpty()) {
             double cx = ((Rectangle2D)hoverArea.getShape()).getMinX();
             double cy = ((Rectangle2D)hoverArea.getShape()).getMinY();
-            drawText(g2, cx, cy, TextPosition.LOWER_RIGHT, text, hoverBgColor);
+            drawText(g2, cx, cy, TextPosition.LOWER_RIGHT, text, HOVER_BG_COLOR);
         }
     }
 
@@ -1002,6 +935,33 @@ public class SimulationPanel2D extends JPanel {
         return LinkAppearance2D.getAppearance(linkAppearances, link);
     }
 
+    /**
+     * agent のタグにマッチする AgentView を返す.
+     */
+    public AgentViewBase2D getAgentView(AgentBase agent) {
+        AgentViewBase2D agentView = agentViewCache.get(agent);
+        if (agentView != null) {
+            return agentView;
+        }
+
+        for (AgentAppearance2D appearance : agentAppearances) {
+            if (agent.getTags().isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    agentViewCache.put(agent, appearance.getView());
+                    return appearance.getView();
+                }
+            } else {
+                for (String tag : agent.getTags()) {
+                    if (appearance.isTagApplied(tag)) {
+                        agentViewCache.put(agent, appearance.getView());
+                        return appearance.getView();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /* -- Methods to set how drawn 
      */
     public void updateHoverNode(MapNode _hoverNode) {
@@ -1050,5 +1010,9 @@ public class SimulationPanel2D extends JPanel {
 
     public void setShowAgentNames(boolean showAgentNames) {
         this.showAgentLabels = showAgentNames;
+    }
+
+    public void setAgentAppearances(ArrayList<AgentAppearance2D> agentAppearances) {
+        this.agentAppearances = agentAppearances;
     }
 }

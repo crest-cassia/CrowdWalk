@@ -3,8 +3,11 @@ package nodagumi.ananPJ;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import javax.swing.JOptionPane;
+
+import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -105,6 +108,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected boolean showLogo = false;
     protected boolean show3dPolygon = true;
     protected boolean exitWithSimulationFinished = false;
+    protected String agentAppearanceFile = null;
 
     /**
      * 画像ファイルかどうかをファイル名の拡張子で判別するフィルタ
@@ -306,6 +310,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                 throw new Exception("Property error - 設定値が範囲(0.0～9.9)外です: zoom:" + zoom);
             }
             cameraFile = properties.getFilePath("camera_file", null);
+            agentAppearanceFile = properties.getFilePath("agent_appearance_file", null);
             showBackgroundImage = properties.getBoolean("show_background_image", false);
             showBackgroundMap = properties.getBoolean("show_background_map", false);
             recordSimulationScreen = properties.getBoolean("record_simulation_screen", recordSimulationScreen);
@@ -347,6 +352,32 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             System.exit(1);
         }
     }
+
+    /**
+     * agent appearance file を読み込む
+     */
+    public ArrayList<HashMap> loadAgentAppearance() {
+        try {
+            JSON json = new JSON(JSON.Mode.TRADITIONAL);
+            ArrayList<HashMap> appearances = new ArrayList();
+            if (agentAppearanceFile != null) {
+                InputStream is = new FileInputStream(agentAppearanceFile);
+                appearances.addAll((ArrayList<HashMap>)json.parse(is));
+            }
+            InputStream is = getClass().getResourceAsStream("/agent_appearance.json");
+            appearances.addAll((ArrayList<HashMap>)json.parse(is));
+            return appearances;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return null;
+    }
+
+    /**
+     * エージェント表示の準備
+     */
+    protected abstract void setupAgentView();
 
     /**
      * 地理院タイル画像の準備

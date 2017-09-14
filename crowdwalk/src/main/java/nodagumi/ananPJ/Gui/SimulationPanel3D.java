@@ -45,7 +45,6 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Shape3D;
-import javafx.scene.shape.Sphere;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
@@ -53,6 +52,8 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Window;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentAppearance3D;
+import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentViewBase3D;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
@@ -106,6 +107,11 @@ public class SimulationPanel3D extends StackPane {
      * ノード表示用の Cylinder オブジェクトを水平に表示するための回転変換オブジェクト
      */
     private static Rotate NODE_ROTATE = new Rotate(90, Rotate.X_AXIS);
+
+    /**
+     * ホバーの色
+     */
+    public static final Color HOVER_COLOR = Color.BLUE;
 
     /**
      * 地図データ。
@@ -327,6 +333,16 @@ public class SimulationPanel3D extends StackPane {
     private LinkedHashMap<String, NodeAppearance3D> nodeAppearances = new LinkedHashMap();
 
     /**
+     * タグ別エージェント表示スタイル
+     */
+    private ArrayList<AgentAppearance3D> agentAppearances;
+
+    /**
+     * 各エージェントに対応する View オブジェクト
+     */
+    private HashMap<AgentBase, AgentViewBase3D> agentViewCache = new HashMap();
+
+    /**
      * リンクタグ別のポリゴン座標リスト
      */
     private HashMap<String, ArrayList<Point3D>> polygonPoints;
@@ -360,11 +376,6 @@ public class SimulationPanel3D extends StackPane {
      * エージェントと表示用 Shape オブジェクトとの対応付け
      */
     private HashMap<AgentBase, Shape3D> agentShapes = new HashMap();
-
-    /**
-     * 各エージェントのデフォルト表示色
-     */
-    private HashMap<AgentBase, Color> defaultColorOfAgents = new HashMap();
 
     /**
      * ID でエリアを参照するハッシュテーブル
@@ -626,7 +637,7 @@ public class SimulationPanel3D extends StackPane {
 
         // ホバー用のマテリアル
         hoverMaterial = new PhongMaterial();
-        hoverMaterial.setDiffuseColor(Color.BLUE);
+        hoverMaterial.setDiffuseColor(HOVER_COLOR);
 
         // リンクのピッキング用のマテリアル
         pickingMaterial = new PhongMaterial();
@@ -1122,9 +1133,12 @@ public class SimulationPanel3D extends StackPane {
             shape.setMaterial(hoverMaterial);
             break;
         case AREA:
-        case AGENT:
             PhongMaterial material = (PhongMaterial)shape.getMaterial();
-            material.setDiffuseColor(Color.BLUE);
+            material.setDiffuseColor(HOVER_COLOR);
+            break;
+        case AGENT:
+            AgentBase agent = (AgentBase)currentHoverObject;
+            getAgentView(agent).switchToHover(agent, shape);
             break;
         }
 
@@ -1161,7 +1175,11 @@ public class SimulationPanel3D extends StackPane {
             updateAreaLevel((MapArea)currentHoverObject);
             break;
         case AGENT:
-            updateAgentsColor((AgentBase)currentHoverObject);
+            AgentBase agent = (AgentBase)currentHoverObject;
+            shape = agentShapes.get(agent);
+            if (shape != null) {
+                getAgentView(agent).switchToNormal(agent, shape);
+            }
             break;
         }
         pickedObjectLabel.setVisible(false);
@@ -1445,6 +1463,33 @@ public class SimulationPanel3D extends StackPane {
      */
     public NodeAppearance3D getNodeAppearance(ArrayList<String> tags) {
         return NodeAppearance3D.getAppearance(nodeAppearances, tags);
+    }
+
+    /**
+     * agent のタグにマッチする AgentView を返す.
+     */
+    public AgentViewBase3D getAgentView(AgentBase agent) {
+        AgentViewBase3D agentView = agentViewCache.get(agent);
+        if (agentView != null) {
+            return agentView;
+        }
+
+        for (AgentAppearance3D appearance : agentAppearances) {
+            if (agent.getTags().isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    agentViewCache.put(agent, appearance.getView());
+                    return appearance.getView();
+                }
+            } else {
+                for (String tag : agent.getTags()) {
+                    if (appearance.isTagApplied(tag)) {
+                        agentViewCache.put(agent, appearance.getView());
+                        return appearance.getView();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -1920,19 +1965,7 @@ public class SimulationPanel3D extends StackPane {
 			"agent already registered:", agent.getID());
             return;
         }
-        shape = new Sphere(size / 2.0);
-
-        Color color = FxColor.DEFAULT_AGENT_COLOR;
-        if (agent.hasTag("BLUE")){
-            color = FxColor.BLUE;
-        } else if (agent.hasTag("APINK")){
-            color = FxColor.APINK;
-        } else if (agent.hasTag("YELLOW")){
-            color = FxColor.YELLOW;
-        }
-        PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(getAgentColor(triage, speed, color));
-        shape.setMaterial(material);
+        shape = getAgentView(agent).createShape(agent, size);
 
         shape.setTranslateX(position.getX());
         shape.setTranslateY(position.getY());
@@ -1947,7 +1980,6 @@ public class SimulationPanel3D extends StackPane {
         agentGroup.getChildren().add(shape);
         agentShapes.put(agent, shape);
         agentMap.put(agent.getID(), agent);
-        defaultColorOfAgents.put(agent, color);
     }
 
     /**
@@ -1959,7 +1991,6 @@ public class SimulationPanel3D extends StackPane {
             abortHover(agent);
             agentShapes.remove(agent);
             agentMap.remove(agent.getID());
-            defaultColorOfAgents.remove(agent);
             shape.setVisible(false);    // 不要かも
             agentGroup.getChildren().remove(shape);
             return true;
@@ -2011,11 +2042,7 @@ public class SimulationPanel3D extends StackPane {
 			"agent not registered yet:", agent.getID());
 	    */
         } else {
-            Color color = getAgentColor(triage, speed, defaultColorOfAgents.get(agent));
-            PhongMaterial material = (PhongMaterial)shape.getMaterial();
-            if (! material.getDiffuseColor().equals(color)) {
-                material.setDiffuseColor(color);
-            }
+            getAgentView(agent).updateAgent(agent, shape);
         }
     }
 
@@ -2028,11 +2055,7 @@ public class SimulationPanel3D extends StackPane {
             Itk.logWarn("updateAgentsColor",
 			"agent not registered yet:", agent.getID());
         } else {
-            Color color = getAgentColor(agent);
-            PhongMaterial material = (PhongMaterial)shape.getMaterial();
-            if (! material.getDiffuseColor().equals(color)) {
-                material.setDiffuseColor(color);
-            }
+            getAgentView(agent).updateAgent(agent, shape);
         }
     }
 
@@ -2046,38 +2069,13 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
-     * エージェントの表示色を返す
-     */
-    public Color getAgentColor(AgentBase agent) {
-        return getAgentColor(agent.getTriage(), agent.getSpeed(), defaultColorOfAgents.get(agent));
-    }
-
-    /**
-     * エージェントの表示色を返す
-     */
-    public Color getAgentColor(TriageLevel triage, double speed, Color defaultColor) {
-        switch (triage) {
-        case GREEN:
-            if (isChangeAgentColorDependingOnSpeed()) {
-                return FxColor.speedToColor(speed);
-            }
-            break;
-        case YELLOW:
-            return FxColor.YELLOW;
-        case RED:
-            return FxColor.PRED;
-        case BLACK:
-            return FxColor.BLACK2;
-        }
-        return defaultColor == null ? FxColor.DEFAULT_AGENT_COLOR : defaultColor;
-    }
-
-    /**
      * 全エージェントのサイズを変更する
      */
     public void changeAgentSize(double size) {
-        for (Shape3D shape : agentShapes.values()) {
-            ((Sphere)shape).setRadius(size / 2.0);
+        for (Map.Entry<AgentBase, Shape3D> entry : agentShapes.entrySet()) {
+            AgentBase agent = entry.getKey();
+            Shape3D shape = entry.getValue();
+            getAgentView(agent).changeAgentSize(agent, shape, size);
         }
     }
 
@@ -2203,5 +2201,9 @@ public class SimulationPanel3D extends StackPane {
         this.atActualWidth = atActualWidth;
         thinLineGroup.setVisible(! atActualWidth);
         edgeLineGroup.setVisible(atActualWidth);
+    }
+
+    public void setAgentAppearances(ArrayList<AgentAppearance3D> agentAppearances) {
+        this.agentAppearances = agentAppearances;
     }
 }

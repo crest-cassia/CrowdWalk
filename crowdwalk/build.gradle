@@ -84,6 +84,7 @@ sourceSets {
                     exclude 'nodagumi/ananPJ/Editor/Panel/NodePanelFx.java'
                     exclude 'nodagumi/ananPJ/Editor/Panel/ScenarioPanelFx.java'
                     exclude 'nodagumi/ananPJ/Editor/Panel/TagSetupPane.java'
+                    exclude 'nodagumi/ananPJ/Gui/AgentAppearance/view3d/**'
                     exclude 'nodagumi/ananPJ/Gui/FxColor.java'
                     exclude 'nodagumi/ananPJ/Gui/LinkAppearance3D.java'
                     exclude 'nodagumi/ananPJ/Gui/MapViewFrame.java'
