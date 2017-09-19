@@ -112,6 +112,11 @@ public class SimulationViewController3D {
     private boolean active = false;
 
     /**
+     * エージェントイベント処理の保留中かどうか
+     */
+    private boolean suspended = false;
+
+    /**
      * イベントキュー
      */
 
@@ -210,7 +215,9 @@ public class SimulationViewController3D {
                 synchronized (addedAgents) {
                     addedAgents.put(agent, new AddedAgent(agent));
                 }
-                updatePanelViewLater();
+                if (! suspended) {
+                    updatePanelViewLater();
+                }
             }
 
             /**
@@ -220,7 +227,9 @@ public class SimulationViewController3D {
                 synchronized (movedAgents) {
                     movedAgents.put(agent, new MovedAgent(agent));
                 }
-                updatePanelViewLater();
+                if (! suspended) {
+                    updatePanelViewLater();
+                }
             }
 
             /**
@@ -230,7 +239,9 @@ public class SimulationViewController3D {
                 synchronized (colorChangedAgents) {
                     colorChangedAgents.put(agent, new ColorChangedAgent(agent));
                 }
-                updatePanelViewLater();
+                if (! suspended) {
+                    updatePanelViewLater();
+                }
             }
 
             /**
@@ -240,7 +251,9 @@ public class SimulationViewController3D {
                 synchronized (colorChangedAgents) {
                     colorChangedAgents.put(agent, new ColorChangedAgent(agent));
                 }
-                updatePanelViewLater();
+                if (! suspended) {
+                    updatePanelViewLater();
+                }
             }
 
             /**
@@ -250,7 +263,9 @@ public class SimulationViewController3D {
                 synchronized (evacuatedAgents) {
                     evacuatedAgents.add(agent);
                 }
-                updatePanelViewLater();
+                if (! suspended) {
+                    updatePanelViewLater();
+                }
             }
         });
     }
@@ -326,32 +341,34 @@ public class SimulationViewController3D {
                     eventAvailable = true;
                 }
             }
-            synchronized (addedAgents) {
-                if (! addedAgents.isEmpty()) {
-                    _addedAgents.putAll(addedAgents);
-                    addedAgents.clear();
-                    eventAvailable = true;
+            if (! suspended) {
+                synchronized (addedAgents) {
+                    if (! addedAgents.isEmpty()) {
+                        _addedAgents.putAll(addedAgents);
+                        addedAgents.clear();
+                        eventAvailable = true;
+                    }
                 }
-            }
-            synchronized (evacuatedAgents) {
-                if (! evacuatedAgents.isEmpty()) {
-                    _evacuatedAgents.addAll(evacuatedAgents);
-                    evacuatedAgents.clear();
-                    eventAvailable = true;
+                synchronized (evacuatedAgents) {
+                    if (! evacuatedAgents.isEmpty()) {
+                        _evacuatedAgents.addAll(evacuatedAgents);
+                        evacuatedAgents.clear();
+                        eventAvailable = true;
+                    }
                 }
-            }
-            synchronized (movedAgents) {
-                if (! movedAgents.isEmpty()) {
-                    _movedAgents.putAll(movedAgents);
-                    movedAgents.clear();
-                    eventAvailable = true;
+                synchronized (movedAgents) {
+                    if (! movedAgents.isEmpty()) {
+                        _movedAgents.putAll(movedAgents);
+                        movedAgents.clear();
+                        eventAvailable = true;
+                    }
                 }
-            }
-            synchronized (colorChangedAgents) {
-                if (! colorChangedAgents.isEmpty()) {
-                    _colorChangedAgents.putAll(colorChangedAgents);
-                    colorChangedAgents.clear();
-                    eventAvailable = true;
+                synchronized (colorChangedAgents) {
+                    if (! colorChangedAgents.isEmpty()) {
+                        _colorChangedAgents.putAll(colorChangedAgents);
+                        colorChangedAgents.clear();
+                        eventAvailable = true;
+                    }
                 }
             }
             synchronized (changedStatuses) {
@@ -457,5 +474,27 @@ public class SimulationViewController3D {
                 _changedStatuses.clear();
             }
         }
+    }
+
+    /**
+     * エージェントイベント処理が保留中か?
+     */
+    public synchronized boolean isSuspended() {
+        return suspended;
+    }
+
+    /**
+     * エージェントイベント処理を保留する
+     */
+    public synchronized void suspend() {
+        suspended = true;
+    }
+
+    /**
+     * 保留中のエージェントイベント処理を再開する
+     */
+    public synchronized void resume() {
+        suspended = false;
+        updatePanelViewLater();
     }
 }

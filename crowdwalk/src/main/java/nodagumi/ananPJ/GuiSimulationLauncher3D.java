@@ -54,6 +54,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
      * サイクル毎の画面描画
      */
     public void updateEveryTick(final SimTime currentTime) {
+        viewController.resume();
         viewController.statusChanged("statusText", getStatusLine());
         viewController.statusChanged("displayClock", currentTime);
         viewController.statusChanged("evacuatedCount", simulator.getEvacuatedCountStatus());
@@ -88,6 +89,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
                 Thread.sleep(100);
             } catch (InterruptedException e) {}
         }
+        viewController.suspend();
     }
 
     /**
@@ -140,6 +142,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
 
             viewController = new SimulationViewController3D(simulationFrame);
             viewController.addNetworkMapPartsListener(map) ;
+            viewController.suspend();
 
             // エージェント表示の準備
             setupAgentView();

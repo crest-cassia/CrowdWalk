@@ -79,7 +79,6 @@ public class AgentAppearanceBase extends JsonicHashMapGetter {
             // タグが正規表現か?
             if (matcher.find()) {
                 tagPattern = Pattern.compile(matcher.group(1));
-                System.err.println(">" + matcher.group(1));
             }
 
             // AgentAppearanceModel インスタンスの生成と初期設定
