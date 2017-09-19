@@ -1439,19 +1439,78 @@ public class EditorFrameFx {
         dialog.setTitle("Set node attributes");
         VBox paramPane = new VBox();
 
-        if (nodes.size() > 1) {
-            Label label = new Label("" + nodes.size() + " nodes selected");
-            label.setPadding(new Insets(0, 0, 12, 0));
-            paramPane.getChildren().addAll(label);
+        Label label = null;
+        if (nodes.size() == 1) {
+            label = new Label("ID: " + nodes.get(0).ID);
+        } else {
+            label = new Label("" + nodes.size() + " nodes selected");
         }
+        label.setPadding(new Insets(0, 0, 12, 0));
+        paramPane.getChildren().addAll(label);
 
-        Label label = new Label("Parameters");
+        label = new Label("Parameters");
         label.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
-        label.setPadding(new Insets(0, 0, 8, 0));
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(0, 0, 0, 10));
+        grid.setHgap(8);
+        grid.setVgap(8);
+        int row = 1;
+
+        if (nodes.size() == 1) {
+            MapNode node = nodes.get(0);
+
+            // X
+            Label xLabel = new Label("X");
+            TextField xField = new TextField("" + node.getX());
+            xField.setPrefWidth(160);
+            Button xButton = new Button("Set");
+            EventHandler xHandler = new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent event) {
+                    Double value = convertToDouble(xField.getText());
+                    if (value != null) {
+                        double x = value;
+                        if (x != node.getX()) {
+                            editor.invokeSingleCommand(new SetCoordinates(node, x, node.getY()));
+                        }
+                        dialog.close();
+                    }
+                }
+            };
+            xField.setOnAction(xHandler);
+            xButton.setOnAction(xHandler);
+            grid.add(xLabel, 1, row);
+            grid.add(xField, 2, row);
+            grid.add(xButton, 3, row);
+            row++;
+
+            // Y
+            Label yLabel = new Label("Y");
+            TextField yField = new TextField("" + node.getY());
+            yField.setPrefWidth(160);
+            Button yButton = new Button("Set");
+            EventHandler yHandler = new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent event) {
+                    Double value = convertToDouble(yField.getText());
+                    if (value != null) {
+                        double y = value;
+                        if (y != node.getY()) {
+                            editor.invokeSingleCommand(new SetCoordinates(node, node.getX(), y));
+                        }
+                        dialog.close();
+                    }
+                }
+            };
+            yField.setOnAction(yHandler);
+            yButton.setOnAction(yHandler);
+            grid.add(yLabel, 1, row);
+            grid.add(yField, 2, row);
+            grid.add(yButton, 3, row);
+            row++;
+        }
 
         // height field
         Label itemInfo = new Label("height(" + averageHeight + ")");
-        itemInfo.setPadding(new Insets(0, 0, 0, 4));
         TextField textField = new TextField("" + averageHeight);
         textField.setMinWidth(100);
         Button button = new Button("Set");
@@ -1474,14 +1533,14 @@ public class EditorFrameFx {
         };
         textField.setOnAction(heightHandler);
         button.setOnAction(heightHandler);
-        FlowPane flowPane = new FlowPane();
-        flowPane.setHgap(8);
-        flowPane.getChildren().addAll(itemInfo, textField, button);
+        grid.add(itemInfo, 1, row);
+        grid.add(textField, 2, row);
+        grid.add(button, 3, row);
 
         Separator separator = new Separator();
         separator.setPadding(new Insets(8, 0, 8, 0));
         TagSetupPane pane = new TagSetupPane(editor, nodes, dialog);
-        paramPane.getChildren().addAll(label, flowPane, separator, pane);
+        paramPane.getChildren().addAll(label, grid, separator, pane);
 
         dialog.getDialogPane().setContent(paramPane);
         ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
@@ -1966,8 +2025,10 @@ public class EditorFrameFx {
                     double length = value;
                     editor.startOfCommandBlock();
                     for (MapLink link : links) {
-                        if (! editor.invoke(new SetLength(link, length))) {
-                            break;
+                        if (link.getLength() != length) {
+                            if (! editor.invoke(new SetLength(link, length))) {
+                                break;
+                            }
                         }
                     }
                     editor.endOfCommandBlock();
@@ -1995,8 +2056,10 @@ public class EditorFrameFx {
                     double width = value;
                     editor.startOfCommandBlock();
                     for (MapLink link : links) {
-                        if (! editor.invoke(new SetWidth(link, width))) {
-                            break;
+                        if (link.getWidth() != width) {
+                            if (! editor.invoke(new SetWidth(link, width))) {
+                                break;
+                            }
                         }
                     }
                     editor.endOfCommandBlock();

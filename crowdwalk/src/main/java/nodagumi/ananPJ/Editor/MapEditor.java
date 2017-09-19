@@ -377,6 +377,7 @@ public class MapEditor implements MapEditorInterface {
     public synchronized void endOfCommandBlock() {
         if (lastCommand != null) {
             lastCommand.setLast(true);
+            lastCommand = null;
         }
         refresh();
     }
