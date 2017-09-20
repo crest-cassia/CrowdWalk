@@ -1619,8 +1619,8 @@ public class EditorCanvas extends Canvas {
                 gc.fillPolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
             } else {
                 Color color = isBg ? Color.web("#ffffcc") : Color.YELLOW;
-                // length と計算値の差が 1cm を超えていたら警告する
-                if (Math.abs(link.getFrom().getAbsoluteCoordinates().distance(link.getTo().getAbsoluteCoordinates()) * editor.getCurrentGroup().getScale() - link.getLength()) > 0.1) {
+                // length と計算値の差が 10cm を超えていたら警告する
+                if (Math.abs(editor.calculateLinkLength(link) - link.getLength()) > 0.1) {
                     color = isBg ? Color.web("#ffcc66") : Color.ORANGE;
                     frameColor = isBg ? Color.web("#ffcc66").brighter() : Color.ORANGE.brighter();
                 }

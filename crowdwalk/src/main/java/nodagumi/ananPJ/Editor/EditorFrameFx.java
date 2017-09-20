@@ -829,6 +829,7 @@ public class EditorFrameFx {
         // ・Reset one-way / road closed
         // ・Add symbolic link
         // ・Clear symbolic link
+        // ・Recalculate link length
         // ・Calculate scale and recalculate link length
         // ・Remove links
 
@@ -844,6 +845,9 @@ public class EditorFrameFx {
         MenuItem miResetOneWayAndRoadClosed = new MenuItem("Reset one-way / road closed");
         miResetOneWayAndRoadClosed.setOnAction(e -> editor.resetOneWayRoadClosed());
 
+        MenuItem miRecalculateLinkLength = new MenuItem("Recalculate link length");
+        miRecalculateLinkLength.setOnAction(e -> openRecalculateLinkLengthDialog());
+
         MenuItem miCalculateScale = new MenuItem("Calculate scale and recalculate link length");
         miCalculateScale.setOnAction(e -> openCalculateScaleDialog());
 
@@ -853,7 +857,7 @@ public class EditorFrameFx {
         MenuItem miRemoveLink = new MenuItem("Remove links");
         miRemoveLink.setOnAction(e -> editor.removeLinks());
 
-        editLinkMenu.getItems().addAll(miSetLinkAttributes, miSetOneWay, miSetRoadClosed, miResetOneWayAndRoadClosed, menuAddSymbolicLinkOfLink, miClearSymbolicLinkOfLink, miCalculateScale, miRemoveLink);
+        editLinkMenu.getItems().addAll(miSetLinkAttributes, miSetOneWay, miSetRoadClosed, miResetOneWayAndRoadClosed, menuAddSymbolicLinkOfLink, miClearSymbolicLinkOfLink, miRecalculateLinkLength, miCalculateScale, miRemoveLink);
 
         // EDIT_AREA モード
         // ・Set area attributes
@@ -2082,6 +2086,36 @@ public class EditorFrameFx {
         ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(cancel);
         dialog.showAndWait();
+    }
+
+    /**
+     * リンク長再計算ダイアログを開く
+     */
+    public void openRecalculateLinkLengthDialog() {
+        MapLinkTable links = editor.getSelectedLinks();
+        if (links.isEmpty()) {
+            return;
+        }
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Recalculate link length");
+        dialog.getDialogPane().setPrefWidth(400);
+        VBox paramPane = new VBox();
+
+        Label label = new Label("" + links.size() + " links selected");
+        label.setPadding(new Insets(0, 0, 12, 0));
+
+        CheckBox reflectHeightCheckBox = new CheckBox("Reflect height");
+        reflectHeightCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, reflectHeightCheckBox.getFont().getSize()));
+
+        paramPane.getChildren().addAll(label, reflectHeightCheckBox);
+
+        dialog.getDialogPane().setContent(paramPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            editor.recalculateLinkLength(links, reflectHeightCheckBox.isSelected());
+        }
     }
 
     /**
