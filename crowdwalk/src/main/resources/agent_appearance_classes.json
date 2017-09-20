@@ -2,6 +2,7 @@
     "SpeedModel" : "nodagumi.ananPJ.Gui.AgentAppearance.model.SpeedModel",
     "RoundAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view2d.RoundAgent",
     "SquareAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view2d.SquareAgent",
+    "TriangleAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view2d.TriangleAgent",
     "SphereAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.SphereAgent",
     "CubeAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.CubeAgent"
 }
