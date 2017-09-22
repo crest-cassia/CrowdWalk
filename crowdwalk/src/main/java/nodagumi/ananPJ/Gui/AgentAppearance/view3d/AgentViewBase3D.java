@@ -58,6 +58,11 @@ public abstract class AgentViewBase3D extends JsonicHashMapGetter {
     public abstract Shape3D createShape(AgentBase agent, double size);
 
     /**
+     * エージェントが移動した
+     */
+    public void agentMoved(AgentBase agent, Shape3D shape) {}
+
+    /**
      * エージェントの表示を更新する
      */
     public abstract void updateAgent(AgentBase agent, Shape3D shape);

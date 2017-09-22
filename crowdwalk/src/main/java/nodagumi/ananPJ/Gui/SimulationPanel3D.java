@@ -2023,6 +2023,7 @@ public class SimulationPanel3D extends StackPane {
             if (position.getZ() != z) {
                 shape.setTranslateZ(-(position.getZ() * verticalScale + size / 2.0));
             }
+            getAgentView(agent).agentMoved(agent, shape);
         }
     }
 
