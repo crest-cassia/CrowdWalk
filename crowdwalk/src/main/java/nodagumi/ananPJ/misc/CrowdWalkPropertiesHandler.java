@@ -213,18 +213,26 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>link_appearance_file</h4>
- *     <pre>  各リンクの設定を記述した設定ファイル
+ *     <pre>  各リンクの設定を記述した設定ファイル(JSON形式)
  *
- *  設定値： link_appearance_fileへのファイルパス(JSONまたはXML形式)
+ *  設定値： link_appearance_fileへのファイルパス
  *  デフォルト値： なし</pre>
  *   </li>
  *
  *   <li>
  *     <h4>node_appearance_file</h4>
- *     <pre>  各ノードの設定を記述した設定ファイル
+ *     <pre>  各ノードの設定を記述した設定ファイル(JSON形式)
  *
- *  設定値： node_appearance_fileへのファイルパス(JSONまたはXML形式)
- *  デフォルト値： なし(シード指定なし)</pre>
+ *  設定値： node_appearance_fileへのファイルパス
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>agent_appearance_file</h4>
+ *     <pre>  エージェントの表示形式を記述した設定ファイル(JSON形式)
+ *
+ *  設定値： agent_appearance_fileへのファイルパス
+ *  デフォルト値： なし</pre>
  *   </li>
  *
  *   <li>
@@ -232,7 +240,7 @@ import nodagumi.Itk.*;
  *     <pre>  乱数発生のシード
  *
  *  設定値： 整数値
- *  デフォルト値： なし</pre>
+ *  デフォルト値： なし(シード指定なし)</pre>
  *   </li>
  *
  *   <li>

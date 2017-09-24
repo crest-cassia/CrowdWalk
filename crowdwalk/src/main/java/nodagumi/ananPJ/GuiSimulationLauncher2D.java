@@ -2,11 +2,14 @@
 package nodagumi.ananPJ;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.swing.SwingUtilities;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentAppearance2D;
 import nodagumi.ananPJ.Gui.SimulationFrame2D;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.misc.SimTime;
@@ -17,6 +20,11 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      * シミュレーションウィンドウのフレーム
      */
     private SimulationFrame2D simulationFrame;
+
+    /**
+     * agent appearance のリスト
+     */
+    private ArrayList<AgentAppearance2D> agentAppearances = new ArrayList();
 
     public void quit() {
         Itk.logInfo("Simulation window closed.") ;
@@ -98,11 +106,29 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
     }
 
     /**
+     * エージェント表示の準備
+     */
+    public void setupAgentView() {
+        for (HashMap parameters : loadAgentAppearance()) {
+            AgentAppearance2D appearance = new AgentAppearance2D(this, simulationFrame, parameters);
+            if (! appearance.isValidFor2D()) {
+                Itk.logFatal("2D view not defined", agentAppearanceFile);
+                System.exit(1);
+            }
+            agentAppearances.add(appearance);
+        }
+    }
+
+    /**
      * ウィンドウとGUIを構築する
      */
     public void setupFrame() {
         simulationFrame = new SimulationFrame2D("Simulation Preview",
 		simulationPanelWidth, simulationPanelHeight, this, properties, mapTiles);
+
+        // エージェント表示の準備
+        setupAgentView();
+        simulationFrame.panel.setAgentAppearances(agentAppearances);
 
         int x = settings.get("simulatorPositionX", 0);
         int y = settings.get("simulatorPositionY", 0);

@@ -377,6 +377,7 @@ public class MapEditor implements MapEditorInterface {
     public synchronized void endOfCommandBlock() {
         if (lastCommand != null) {
             lastCommand.setLast(true);
+            lastCommand = null;
         }
         refresh();
     }
@@ -952,6 +953,47 @@ public class MapEditor implements MapEditorInterface {
             }
         }
         return true;
+    }
+
+    /**
+     * 高低差を反映してリンク長を計算する
+     */
+    public double calculateLinkLength(MapLink link) {
+        MapPartGroup group = (MapPartGroup)link.getParent();
+        double scale = group.getScale();
+        MapNode fromNode = link.getFrom();
+        MapNode toNode = link.getTo();
+        if (fromNode.getHeight() == toNode.getHeight()) {
+            return fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * scale;
+        }
+        Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
+        Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
+        return point0.distance(point1) * scale;
+    }
+
+    /**
+     * リンク長を再計算する
+     */
+    public void recalculateLinkLength(ArrayList<MapLink> links, boolean reflectHeight) {
+        startOfCommandBlock();
+        for (MapLink link : links) {
+            MapPartGroup group = (MapPartGroup)link.getParent();
+            double scale = group.getScale();
+            MapNode fromNode = link.getFrom();
+            MapNode toNode = link.getTo();
+            double length = 0.0;
+            if (reflectHeight) {
+                Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
+                Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
+                length = point0.distance(point1) * scale;
+            } else {
+                length = fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * scale;
+            }
+            if (! invoke(new SetLength(link, length))) {
+                break;
+            }
+        }
+        endOfCommandBlock();
     }
 
     /**

@@ -1,12 +1,15 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.application.Platform;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentAppearance3D;
 import nodagumi.ananPJ.Gui.SimulationFrame3D;
 import nodagumi.ananPJ.Gui.SimulationViewController3D;
 import nodagumi.ananPJ.misc.SimTime;
@@ -25,6 +28,11 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
      * シミュレーション画面の更新を制御するコントローラ
      */
     private SimulationViewController3D viewController;
+
+    /**
+     * agent appearance のリスト
+     */
+    private ArrayList<AgentAppearance3D> agentAppearances = new ArrayList();
 
     /**
      * 3D シミュレータを終了する
@@ -46,6 +54,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
      * サイクル毎の画面描画
      */
     public void updateEveryTick(final SimTime currentTime) {
+        viewController.resume();
         viewController.statusChanged("statusText", getStatusLine());
         viewController.statusChanged("displayClock", currentTime);
         viewController.statusChanged("evacuatedCount", simulator.getEvacuatedCountStatus());
@@ -80,6 +89,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
                 Thread.sleep(100);
             } catch (InterruptedException e) {}
         }
+        viewController.suspend();
     }
 
     /**
@@ -104,6 +114,20 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
     }
 
     /**
+     * エージェント表示の準備
+     */
+    public void setupAgentView() {
+        for (HashMap parameters : loadAgentAppearance()) {
+            AgentAppearance3D appearance = new AgentAppearance3D(this, simulationFrame, parameters);
+            if (! appearance.isValidFor3D()) {
+                Itk.logFatal("3D view not defined", agentAppearanceFile);
+                System.exit(1);
+            }
+            agentAppearances.add(appearance);
+        }
+    }
+
+    /**
      * ウィンドウとGUIを構築する
      */
     public void setupFrame() {
@@ -115,8 +139,15 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
         Platform.runLater(() -> {
             simulationFrame = new SimulationFrame3D("Simulation Preview",
                     simulationPanelWidth, simulationPanelHeight, launcher, properties, mapTiles);
+
             viewController = new SimulationViewController3D(simulationFrame);
             viewController.addNetworkMapPartsListener(map) ;
+            viewController.suspend();
+
+            // エージェント表示の準備
+            setupAgentView();
+            simulationFrame.getSimulationPanel().setAgentAppearances(agentAppearances);
+
             simulationFrame.setX(x);
             simulationFrame.setY(y);
             simulationFrame.show();

@@ -1857,27 +1857,32 @@ public class SimulationFrame2D extends JFrame
         buff.append(" Agent ID: ").append(agent.ID).append("\n");
         buff.append(" config: ").append(agent.getConfigLine()).append("\n");
         buff.append(" type: ").append(agent.getClass().getSimpleName()).append("\n");
+        buff.append(" tags: ").append(agent.getTagString()).append("\n");
         buff.append(" goal: ").append(agent.getGoal()).append("\n");
         buff.append(" generated time: ").append(agent.generatedTime.getAbsoluteTimeString()).append("\n");
-        buff.append(" position X: ").append(agent.getPos().getX()).append("\n");
-        buff.append(" position Y: ").append(agent.getPos().getY()).append("\n");
-        buff.append(" position Z: ").append(agent.getHeight()).append("\n");
-        buff.append(" drawing position X: ").append(agent.getPos().getX() + agent.getSwing().getX()).append("\n");
-        buff.append(" drawing position Y: ").append(agent.getPos().getY() + agent.getSwing().getY()).append("\n");
-        buff.append(" drawing position Z: ").append(
-            agent.getHeight() / ((MapPartGroup)agent.getCurrentLink().getParent()).getScale()
-        ).append("\n");
-        buff.append(" velocity: ").append(agent.getSpeed()).append("\n");
-        buff.append(" acceleration: ").append(agent.getAcceleration()).append("\n");
-        buff.append(" previous node: ").append(agent.getPrevNode().ID).append("\n");
-        buff.append(" next node: ").append(agent.getNextNode().ID).append("\n");
-        buff.append(" current link: ").append(agent.getCurrentLink().ID).append("\n");
-        buff.append(" advancing distance: ").append(agent.getAdvancingDistance()).append("\n");
-        buff.append(" direction: ").append(agent.isForwardDirection() ? "Forward" : "Backward").append("\n");
-        buff.append(" waiting: ").append(agent.isWaiting()).append("\n");
-        buff.append(" current exposure: ").append(agent.obstructer.currentValueForLog()).append("\n");
-        buff.append(" amount exposure: ").append(agent.obstructer.accumulatedValueForLog()).append("\n");
-        buff.append(" triage: ").append(agent.getTriageName()).append("\n");
+        if (agent.isEvacuated()) {
+            buff.append(" evacuated: true\n");
+        } else {
+            buff.append(" position X: ").append(agent.getPos().getX()).append("\n");
+            buff.append(" position Y: ").append(agent.getPos().getY()).append("\n");
+            buff.append(" position Z: ").append(agent.getHeight()).append("\n");
+            buff.append(" drawing position X: ").append(agent.getPos().getX() + agent.getSwing().getX()).append("\n");
+            buff.append(" drawing position Y: ").append(agent.getPos().getY() + agent.getSwing().getY()).append("\n");
+            buff.append(" drawing position Z: ").append(
+                agent.getHeight() / ((MapPartGroup)agent.getCurrentLink().getParent()).getScale()
+            ).append("\n");
+            buff.append(" velocity: ").append(agent.getSpeed()).append("\n");
+            buff.append(" acceleration: ").append(agent.getAcceleration()).append("\n");
+            buff.append(" previous node: ").append(agent.getPrevNode().ID).append("\n");
+            buff.append(" next node: ").append(agent.getNextNode().ID).append("\n");
+            buff.append(" current link: ").append(agent.getCurrentLink().ID).append("\n");
+            buff.append(" advancing distance: ").append(agent.getAdvancingDistance()).append("\n");
+            buff.append(" direction: ").append(agent.isForwardDirection() ? "Forward" : "Backward").append("\n");
+            buff.append(" waiting: ").append(agent.isWaiting()).append("\n");
+            buff.append(" current exposure: ").append(agent.obstructer.currentValueForLog()).append("\n");
+            buff.append(" amount exposure: ").append(agent.obstructer.accumulatedValueForLog()).append("\n");
+            buff.append(" triage: ").append(agent.getTriageName()).append("\n");
+        }
         return buff.toString();
     }
 

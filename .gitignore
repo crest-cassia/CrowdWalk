@@ -25,14 +25,20 @@ GuiSimulationLauncher.ini
 # execution result data
 tick.txt
 
+# cache files
+crowdwalk/cache/*
+
+# javadoc files
+crowdwalk/doc/javadoc/*
+
 # screen shots
-netmas/screenshots/*
+crowdwalk/screenshots/*
 
 # log files
-netmas/log/*
+crowdwalk/log/*
 
 # temporary files
-netmas/tmp/*
+crowdwalk/tmp/*
 
 # vim plugin
 .vimsessions/
