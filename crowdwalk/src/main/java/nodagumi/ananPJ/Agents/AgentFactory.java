@@ -438,79 +438,79 @@ public abstract class AgentFactory {
     /** Config */
     public Config config ;
     /** 目的地 */
-    protected Term goal;
-    public Term getGoal() { return goal ; }
+    final public Term getGoal() { return config.goal ; }
+    final public Term setGoal(Term goal) {
+        return config.goal = goal ;
+    }
 
     /** 経由地 */
-    private List<Term> plannedRoute;
-    public List<Term> getPlannedRoute() { return plannedRoute ; }
-    public List<Term> setPlannedRoute(List<Term> route) {
-        return plannedRoute = route ;
+    final public List<Term> getPlannedRoute() { return config.plannedRoute ; }
+    final public List<Term> setPlannedRoute(List<Term> route) {
+        return config.plannedRoute = route ;
     }
-    
     /** スピードモデル */
-    protected SpeedCalculationModel speedModel = null;
-    public SpeedCalculationModel getSpeedModel() { return speedModel ; }
-    public SpeedCalculationModel setSpeedModel(SpeedCalculationModel _model) {
-        return speedModel = _model ; }
-
-    /** エージェントに付与するタグ */
-    private List<String> tags = new ArrayList<String>();
-    public List<String> getTags() { return tags ; }
-
-    protected boolean enabled = true;
-    public boolean isEnabled() { return enabled ; }
-
-    Random random = null;
-    SimTime startTime ;
-    double duration;
-    int total;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
+    final public SpeedCalculationModel getSpeedModel() {
+        return config.speedModel ;
+    }
+    /** start Time */
+    final public SimTime getStartTime() { return config.startTime ; }
+    /** duration */
+    final public double getDuration() { return config.duration ; }
+    /** total */
+    final public int getTotal() { return config.total ; }
+    /** fallback parameters */
+    final public Term getFallbackParameters() {
+        return config.fallbackParameters ;
+    }
+    /** 設定文字列（generation file 中の設定情報の文字列)。 */
+    final public String getConfigLine() { return config.originalInfo ; }
+    /** 
      * ルールの名前。
      * CSV 形式では、ルールの順番の数字の文字列。
      * Json 形式で、名前 "name" が与えられている場合は、その名前（文字列）。
      * "name" が与えられていなければ、ルールの順番の数字の文字列。
      * ログ出力で使用。
      */
-    public String ruleName = null;
-    public String getRuleName() { return ruleName ; } ;
+    final public String getRuleName() { return config.ruleName ; } ;
+    /** エージェントクラスの名前を格納。*/
+    public String agentClassName = DefaultAgentClassName ;
+    final public String getAgentClassName() {
+        if(config.agentClassName == null) {
+            return DefaultAgentClassName ;
+        } else {
+            return config.agentClassName ;
+        }
+    }
+    /** agent config */
+    public Term getAgentConf() { return config.agentConf ; }
     
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    
+    /*********/
+    /** エージェントに付与するタグ */
+    private List<String> tags = new ArrayList<String>();
+    public List<String> getTags() { return tags ; }
+    //------------------------------------------------------------
     /**
-     * 個別パラメータ。Agent 毎にパラメータを与えたい場合に記述。
+     *  生成ルールの conditions の処理。
+     *  これは単純に、生成したエージェントへのタグとなる。
      */
-    public IndividualConfigList individualConfigList = null ;
+    protected void parse_conditions(String[] conditions) {
+        if (conditions == null) return;
+        for (int i = 0; i < conditions.length; i++) {
+            tags.add(conditions[i]);
+        }
+    }
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 設定文字列（generation file 中の設定情報の文字列)。
-     * ログ出力でのみ使用。
-     */
-    private String configLine;
-    final public String getConfigLine() { return configLine ; }
+    protected boolean enabled = true;
+    public boolean isEnabled() { return enabled ; }
 
+    Random random = null;
+    
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
      * エージェントクラスの規定値
      */
     static public String DefaultAgentClassName = "NaiveAgent" ;
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * エージェントクラスの名前を格納。
-     */
-    public String agentClassName = DefaultAgentClassName ;
-    
-    private Term agentConf = null ; // config in json Term
-    public Term getAgentConf() { return agentConf ; }
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * fallback parameters
-     */
-    public Term fallbackParameters = null ;
 
     //------------------------------------------------------------
     /**
@@ -527,36 +527,8 @@ public abstract class AgentFactory {
      */
     public void init(Config _config, Random _random) {
         config = _config ;
-        if(config.agentClassName != null &&
-           config.agentClassName.length() > 0) {
-            agentClassName = config.agentClassName ;
-            agentConf = config.agentConf ;
-        }
-        goal = config.goal ;
-        plannedRoute = config.plannedRoute ;
-        startTime = config.startTime ;
-        duration = config.duration ;
-        total = config.total ;
-        fallbackParameters = config.fallbackParameters ;
-        speedModel = config.speedModel ;
-        configLine = config.originalInfo ;
-        ruleName = config.ruleName ;
 
         parse_conditions(config.conditions);
-
-        setIndividualConfigList(config.individualConfigList) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     *  生成ルールの conditions の処理。
-     *  これは単純に、生成したエージェントへのタグとなる。
-     */
-    protected void parse_conditions(String[] conditions) {
-        if (conditions == null) return;
-        for (int i = 0; i < conditions.length; i++) {
-            tags.add(conditions[i]);
-        }
     }
 
     //------------------------------------------------------------
@@ -565,8 +537,9 @@ public abstract class AgentFactory {
      *  tryUpdateAndGenerate だけから参照。
      */
     protected boolean isFinished(SimTime currentTime) {
-        return (currentTime.calcDifferenceFrom(startTime) > duration &&
-                generated >= total);
+        return (currentTime.calcDifferenceFrom(getStartTime()) > getDuration()
+                &&
+                generated >= getTotal());
     }
 
     //------------------------------------------------------------
@@ -609,7 +582,7 @@ public abstract class AgentFactory {
             return;
         }
 
-        if (currentTime.isBefore(startTime)) {
+        if (currentTime.isBefore(getStartTime())) {
             /* not yet time to start generating agents */
             return;
         }
@@ -619,11 +592,12 @@ public abstract class AgentFactory {
         int agent_to_gen = 0 ;
         if(((AgentGenerationFile.GenerationConfigBase)config).ruleType ==
            AgentGenerationFile.RuleType.INDIVIDUAL) {
-            agent_to_gen = individualConfigList.remainSizeBefore(currentTime) ;
+            agent_to_gen =
+                getIndividualConfigList().remainSizeBefore(currentTime) ;
         } else {
-            agent_to_gen = total - generated;
+            agent_to_gen = getTotal() - generated;
             double duration_left =
-                startTime.getAbsoluteTime() + duration
+                getStartTime().getAbsoluteTime() + getDuration()
                 - currentTime.getAbsoluteTime() ;
             if (duration_left > 0) {
                 double r
@@ -690,8 +664,8 @@ public abstract class AgentFactory {
      */
     
     public Term getFallbackForAgent() {
-        if (fallbackParameters != null) {
-            return SetupFileInfo.filterFallbackTerm(fallbackParameters,
+        if (getFallbackParameters() != null) {
+            return SetupFileInfo.filterFallbackTerm(getFallbackParameters(),
                                                     "agent") ;
         } else {
             return null ;
@@ -782,7 +756,7 @@ public abstract class AgentFactory {
     public ArrayList<Term> getNakedPlannedRoute() {
         ArrayList<Term> routeTags = new ArrayList<Term>();
 
-        for(Term candidate : plannedRoute) {
+        for(Term candidate : getPlannedRoute()) {
             if(isKnownDirectiveInAgentClass(candidate)) {
                 pushPlaceTagInDirectiveByAgentClass(candidate, routeTags, routeTags) ;
             } else {
@@ -820,47 +794,36 @@ public abstract class AgentFactory {
     abstract public OBNode getStartObject();
 
     public int getMaxGeneration() {
-        return total;
+        return getTotal();
     }
 
     public void setRandom(Random _random) {
         random = _random;
     }
 
-    public void setDuration(double _duration) {
-        duration = _duration;
-    }
-
-    public double getDuration() {
-        return duration;
-    }
-
-    //------------------------------------------------------------
+    //------------------------------
     /**
-     * 個別パラメータをセット。
+     * 個別パラメータを持っているかどうか？
      */
-    public IndividualConfigList setIndividualConfigList(IndividualConfigList
-                                                        _individualConfigList) {
-        individualConfigList = _individualConfigList ;
-        return individualConfigList ;
+    final public IndividualConfigList getIndividualConfigList() {
+        return config.individualConfigList ;
     }
-
     //------------------------------
     /**
      * 個別パラメータを持っているかどうか？
      */
     public boolean hasIndividualConfig() {
-        return (individualConfigList != null  &&
-                individualConfigList.isAvailable()) ;
+        return (getIndividualConfigList() != null  &&
+                getIndividualConfigList().isAvailable()) ;
     }
-
+    
     //------------------------------
     /**
      * 個別パラメータでエージェントを設定。
      */
     public void setupAgentByIndividualConfig(AgentBase agent) {
         if(hasIndividualConfig()) {
-            Term config = individualConfigList.getNext() ;
+            Term config = getIndividualConfigList().getNext() ;
             agent.setupByIndividualConfig(config) ;
         }
     }

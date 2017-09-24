@@ -248,7 +248,7 @@ run3gt00a_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00a))
 
 ##-----
-SAMPLE3gt00i = sample/generatedTown/gridTown00.indivConf.prop.json   # array formula
+SAMPLE3gt00i = sample/generatedTown/gridTown00.indivConf.prop.json   # array formula individual
 run3gt00i ::
 	(cd $(BASEDIR) ; bash quickstart.sh -l Info $(SAMPLE3gt00i))
 #	(cd $(BASEDIR) ; bash quickstart.sh -l Warn $(SAMPLE3gt00i))
@@ -275,9 +275,11 @@ run3gt00r2 ::
 SAMPLE3gt02 = sample/generatedTown/gridTown02.prop.json   # ruby factory
 run3gt02 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02))
+run3gt02_cui ::
+	(cd $(BASEDIR) ; bash quickstart.sh --cui $(SAMPLE3gt02))
 
 ##-----
-SAMPLE3gt02i = sample/generatedTown/gridTown02i.prop.json   # ruby factory
+SAMPLE3gt02i = sample/generatedTown/gridTown02i.prop.json   # individual
 run3gt02i ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02i))
 

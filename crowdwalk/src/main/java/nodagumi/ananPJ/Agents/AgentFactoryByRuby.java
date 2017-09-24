@@ -99,15 +99,6 @@ public class AgentFactoryByRuby extends AgentFactory {
 
     //------------------------------------------------------------
     /**
-     * 初期化。(AgentFactory で行われているものを置き換え)
-     */
-    public void init(Config config, Random random) {
-        setPlannedRoute(config.plannedRoute) ;  // 実質意味はないが、エラー回避のため
-        fallbackParameters = config.fallbackParameters ;
-        speedModel = config.speedModel ;
-    }
-    //------------------------------------------------------------
-    /**
      * Ruby Engine の設定
      */
     public void setupRubyEngine(ItkRuby _rubyEngine) {
@@ -121,7 +112,7 @@ public class AgentFactoryByRuby extends AgentFactory {
         rubyFactory = rubyEngine.newInstanceOfClass(rubyFactoryClassName,
                                                     this,
                                                     configForRuby,
-                                                    fallbackParameters) ;
+                                                    getFallbackParameters()) ;
     }
     
     //------------------------------------------------------------
@@ -238,7 +229,7 @@ public class AgentFactoryByRuby extends AgentFactory {
                                           Term goalTag,
                                           List<Term> route) {
         startPlace = _startPlace ;
-        goal = goalTag ;
+        setGoal(goalTag) ;
         setPlannedRoute(route) ;
 
         Term fallbackForAgent = getFallbackForAgent() ;
