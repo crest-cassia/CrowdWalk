@@ -88,7 +88,7 @@ public class AgentFactoryByRuby extends AgentFactory {
     /**
      * Config によるコンストラクタ
      */
-    public AgentFactoryByRuby(Config _config, Random random) {
+    public AgentFactoryByRuby(AgentFactoryConfig _config, Random random) {
         super(_config, random) ;
         
         GenerationConfigForRuby config =

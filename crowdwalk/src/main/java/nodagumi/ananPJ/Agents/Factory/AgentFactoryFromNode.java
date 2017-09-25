@@ -24,7 +24,7 @@ public class AgentFactoryFromNode extends AgentFactory {
     /**
      * Config によるコンストラクタ
      */
-    public AgentFactoryFromNode(Config config, Random random) {
+    public AgentFactoryFromNode(AgentFactoryConfig config, Random random) {
         super(config, random) ;
         startNode = (MapNode)config.startPlace ;
     }

@@ -25,7 +25,7 @@ public class AgentFactoryFromLink extends AgentFactory {
     /**
      * Config によるコンストラクタ
      */
-    public AgentFactoryFromLink(Config config, Random random) {
+    public AgentFactoryFromLink(AgentFactoryConfig config, Random random) {
         super(config, random) ;
         startLink = (MapLink)config.startPlace ;
     }

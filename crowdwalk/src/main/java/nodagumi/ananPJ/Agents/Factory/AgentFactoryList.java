@@ -30,7 +30,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
-import nodagumi.ananPJ.Agents.Factory.AgentFactory.IndividualConfigList;
+
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SetupFileInfo;
@@ -345,7 +345,7 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
      * Generation Rule は以下の形式の JSON (version 2 format).
      *   
      */
-    static public class GenerationConfigBase extends AgentFactory.Config {
+    static public class GenerationConfigBase extends AgentFactoryConfig {
         //========================================
         //----------------------------------------
         /**
@@ -422,7 +422,7 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
             if(startLinkTag != null)
                 jTerm.setArg("startPlace", startLinkTag) ;
             jTerm.setArg("speedModel", 
-                           speedModelLexicon.lookUpByMeaning(speedModel).get(0));
+                         speedModelLexicon.lookUpByMeaning(speedModel).get(0));
 
             return jTerm ;
         }

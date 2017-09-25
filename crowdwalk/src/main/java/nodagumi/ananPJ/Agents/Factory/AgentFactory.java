@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Map;
-import java.util.Comparator;
 
 import net.arnx.jsonic.JSON ;
 
@@ -125,127 +124,9 @@ public abstract class AgentFactory {
         return classFinder.aliasTable.keySet().toArray(new String[0]) ;
     }
 
-    //============================================================
-    //============================================================
-    /**
-     * エージェント生成用設定情報用クラス
-     * あまりに引数が多いので、整理。
-     */
-    static public class Config {
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * エージェントのクラス名
-         */
-        public String agentClassName = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * エージェント設定情報 (JSON Object)
-         */
-        public Term agentConf = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 出発場所
-         */
-        public OBNode startPlace = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成条件
-         */
-        public String[] conditions = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 目的地
-         */
-        public Term goal = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 経路
-         */
-        public List<Term> plannedRoute ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 開始時刻
-         */
-        public SimTime startTime = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 持続時間
-         */
-        public double duration = 0.0 ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成数
-         */
-        public int total = 0 ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * スピードモデル
-         */
-        public SpeedCalculationModel speedModel ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * fallback 情報
-         */
-        public Term fallbackParameters = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 設定文字列（generation file 中の設定情報の文字列）
-         */
-        public String originalInfo = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成ルール名
-         */
-        public String ruleName = null ;
-        
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 個別パラメータ
-         */
-        public IndividualConfigList individualConfigList = null;
-        
-        //------------------------------
-        /**
-         * JSONへの変換用
-         */
-        public Term toTerm() {
-            Term jTerm = new Term() ;
-            { // agentType
-                Term agentType = new Term() ;
-                agentType.setArg("className", agentClassName) ;
-                agentType.setArg("config", agentConf) ;
-                jTerm.setArg("agentType", agentType) ;
-            }
-            jTerm.setArg("startPlace",startPlace) ;
-            jTerm.setArg("conditions",conditions);
-            jTerm.setArg("goal",goal);
-            jTerm.setArg("plannedRoute",plannedRoute) ;
-            jTerm.setArg("startTime",startTime.getAbsoluteTimeString()) ;
-            jTerm.setArg("duration",duration) ;
-            jTerm.setArg("total",total) ;
-            jTerm.setArg("speedModel", speedModel) ;
-            jTerm.setArg("name", ruleName) ;
-            jTerm.setArg("individualConfig", individualConfigList.toTerm()) ;
-
-            return jTerm ;
-        }
-    } // end class Config
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /** Config */
-    public Config config ;
+    public AgentFactoryConfig config ;
     /** 目的地 */
     final public Term getGoal() { return config.goal ; }
     final public Term setGoal(Term goal) {
@@ -325,7 +206,7 @@ public abstract class AgentFactory {
     /**
      *  Config によるコンストラクタ
      */
-    public AgentFactory(Config config, Random _random) {
+    public AgentFactory(AgentFactoryConfig config, Random _random) {
         random = _random;
         init(config, _random) ;
     }
@@ -334,7 +215,7 @@ public abstract class AgentFactory {
     /**
      *  初期化。他で Override できるように。
      */
-    public void init(Config _config, Random _random) {
+    public void init(AgentFactoryConfig _config, Random _random) {
         config = _config ;
 
         parse_conditions(config.conditions);
