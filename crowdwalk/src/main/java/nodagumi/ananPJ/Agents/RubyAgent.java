@@ -23,7 +23,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.BustleAgent ;
-import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.Factory.AgentFactory;
 import nodagumi.ananPJ.Agents.Think.ThinkFormula;
 import nodagumi.ananPJ.misc.SimTime;
 

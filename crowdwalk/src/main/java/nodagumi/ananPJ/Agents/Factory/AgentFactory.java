@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.Agents;
+package nodagumi.ananPJ.Agents.Factory;
 
 import java.lang.reflect.Method;
 import java.io.PrintWriter;
@@ -29,9 +29,6 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
-
-/* ここ、汚いので、解消したい */
-import nodagumi.ananPJ.misc.AgentGenerationFile;
 
 import nodagumi.Itk.*;
 
@@ -590,8 +587,8 @@ public abstract class AgentFactory {
         // 生成するエージェントの数を求める。
 
         int agent_to_gen = 0 ;
-        if(((AgentGenerationFile.GenerationConfigBase)config).ruleType ==
-           AgentGenerationFile.RuleType.INDIVIDUAL) {
+        if(((AgentFactoryList.GenerationConfigBase)config).ruleType ==
+           AgentFactoryList.RuleType.INDIVIDUAL) {
             agent_to_gen =
                 getIndividualConfigList().remainSizeBefore(currentTime) ;
         } else {

@@ -26,7 +26,7 @@ import javax.swing.table.AbstractTableModel;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.GuiSimulationEditorLauncher;
 import nodagumi.ananPJ.NetworkMap.OBNode;
-import nodagumi.ananPJ.misc.AgentGenerationFile;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryList;
 
 import nodagumi.Itk.*;
 
@@ -40,11 +40,11 @@ public class ScenarioPanel extends PanelWithTable {
 	JButton fallbackFileButton = null ;
     Random random = null;
 
-    JTable generationTable = null;
+    JTable factoryTable = null;
     final static String[] COLUMN_NAMES = { "Goal", "Start", "Path" };
-    private class AgentGenerationDataModel extends AbstractTableModel {
-        AgentGenerationFile file = null;
-        public AgentGenerationDataModel() {
+    private class AgentFactoryListModel extends AbstractTableModel {
+        AgentFactoryList factoryList = null;
+        public AgentFactoryListModel() {
         }
 
         public void setFile(File _file) {
@@ -52,24 +52,24 @@ public class ScenarioPanel extends PanelWithTable {
                 try {
 					Term fallbackParameters =
 						editor.getSetupFileInfo().fallbackParameters ;
-                    file = new AgentGenerationFile(_file.getPath(),
-												   editor.getMap(),
-												   fallbackParameters,
-												   true, 1.0, random);
+                    factoryList = new AgentFactoryList(_file.getPath(),
+                                                       editor.getMap(),
+                                                       fallbackParameters,
+                                                       true, 1.0, random);
                 } catch(Exception ex) {
 					ex.printStackTrace();
                     System.err.printf("Illegal AgentGenerationFile: %s\n%s", _file.getPath(), ex.getMessage());
                     System.exit(1);
                 }
             } else {
-                file = null;
+                factoryList = null;
             }
         }
         
         public int getColumnCount() { return 3; }
         public int getRowCount() { 
-            if (file == null) return 0;
-            else return file.size();
+            if (factoryList == null) return 0;
+            else return factoryList.size();
         }
 
         public String getColumnName(final int col) {
@@ -79,20 +79,20 @@ public class ScenarioPanel extends PanelWithTable {
         public Object getValueAt(final int row, final int col) {
             switch(col) {
             case 0:
-                return file.get(row).getGoal();
+                return factoryList.get(row).getGoal();
             case 1:
-                return file.get(row).getStartInfo();
+                return factoryList.get(row).getStartInfo();
             case 2:
-                return file.get(row).getPlannedRoute();
+                return factoryList.get(row).getPlannedRoute();
             }
             return "ERR(" + row + ", " + col + ")";
         }
         
         public OBNode getStartObject(final int row) {
-            return file.get(row).getStartObject();
+            return factoryList.get(row).getStartObject();
         }
     }
-    AgentGenerationDataModel generationDataModel = null;
+    AgentFactoryListModel factoryListModel = null;
 
     JPanel button_panel;
     public ScenarioPanel(GuiSimulationEditorLauncher _editor, Random _random) {
@@ -137,11 +137,11 @@ public class ScenarioPanel extends PanelWithTable {
 
         add(button_panel, BorderLayout.NORTH);
 
-        generationDataModel = new AgentGenerationDataModel();
-        generationTable = new JTable(generationDataModel);
-        generationTable.getSelectionModel().addListSelectionListener(this);
+        factoryListModel = new AgentFactoryListModel();
+        factoryTable = new JTable(factoryListModel);
+        factoryTable.getSelectionModel().addListSelectionListener(this);
 
-        JScrollPane scrollpane = new JScrollPane(generationTable,
+        JScrollPane scrollpane = new JScrollPane(factoryTable,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         add(scrollpane, BorderLayout.CENTER);
@@ -214,11 +214,11 @@ public class ScenarioPanel extends PanelWithTable {
                     generation_file.getName() +
                     message);
             generateFileButton.setToolTipText(generation_file.getPath());
-            generationDataModel.setFile(generation_file);
+            factoryListModel.setFile(generation_file);
         } else {
             generateFileLabel.setText("Generation: not given");
             generateFileButton.setToolTipText(null);
-            generationDataModel.setFile(null);
+            factoryListModel.setFile(null);
         }
 
         if (editor.getSetupFileInfo().getScenarioFile() != null) {
@@ -226,8 +226,8 @@ public class ScenarioPanel extends PanelWithTable {
                 new File(editor.getSetupFileInfo().getScenarioFile());
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    adjustColumnPreferredWidth(generationTable);
-                    generationTable.revalidate();
+                    adjustColumnPreferredWidth(factoryTable);
+                    factoryTable.revalidate();
                 }
             });
             String message = "";
@@ -251,10 +251,10 @@ public class ScenarioPanel extends PanelWithTable {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        ListSelectionModel lsm = generationTable.getSelectionModel();
-        for (int r = 0; r < generationTable.getRowCount(); ++r) {
+        ListSelectionModel lsm = factoryTable.getSelectionModel();
+        for (int r = 0; r < factoryTable.getRowCount(); ++r) {
             if (lsm.isSelectedIndex(r)) {
-                generationDataModel.getStartObject(r).selected = true;
+                factoryListModel.getStartObject(r).selected = true;
             }
         }
     }

@@ -19,7 +19,7 @@ import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
-import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.Factory.AgentFactory;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place ;
 import nodagumi.ananPJ.misc.SetupFileInfo;

@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.misc;
+package nodagumi.ananPJ.Agents.Factory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -30,17 +30,16 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
-import nodagumi.ananPJ.Agents.AgentFactory;
-import nodagumi.ananPJ.Agents.AgentFactory.IndividualConfigList;
-import nodagumi.ananPJ.Agents.AgentFactoryFromLink;
-import nodagumi.ananPJ.Agents.AgentFactoryFromNode;
-import nodagumi.ananPJ.Agents.AgentFactoryByRuby;
+import nodagumi.ananPJ.Agents.Factory.AgentFactory.IndividualConfigList;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
+import nodagumi.ananPJ.misc.SetupFileInfo;
+
 import nodagumi.Itk.*;
 
 //======================================================================
 /**
+ * Generation Rule (= Agent Factory)のセット。
  * Generate agents depending on a generation file.
  * Generation File は、Version 0, 1, 2 の3種類。
  * その区別は、先頭行に
@@ -233,7 +232,7 @@ import nodagumi.Itk.*;
  * example6) TIMEEVERY,NaiveAgent,"{}",LINK_TAG_1,18:00:00,18:00:00,60,60,100,LANE,EXIT_1,EXIT_2,EXIT_3
  * </pre>
  */
-public class AgentGenerationFile extends ArrayList<AgentFactory> {
+public class AgentFactoryList extends ArrayList<AgentFactory> {
     private Random random = null;
     private double liner_generate_agent_ratio = 1.0;
     private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
@@ -432,7 +431,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * JSON Object からパラメータ設定
          */
-        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
                                              Term json,
                                              NetworkMap map) {
             originalInfo = json.toJson() ;
@@ -520,7 +519,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * speed model の取得。
          */
-        public void scanJsonForSpeedModel(AgentGenerationFile factoryList,
+        public void scanJsonForSpeedModel(AgentFactoryList factoryList,
                                           Term json) {
             speedModel =
                 (SpeedCalculationModel)
@@ -534,7 +533,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * Factory を追加。
          */
-        public void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentFactoryList factoryList,
                                   NetworkMap map) {
             switch(ruleType) {
             case EACH:
@@ -554,7 +553,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * EACH 用生成ルーチン
          * 各々の link, node で total 個ずつのエージェントが生成。
          */
-        private void addFactoriesForEach(AgentGenerationFile factoryList) {
+        private void addFactoriesForEach(AgentFactoryList factoryList) {
             for (final MapLink startLink : startLinks) {
                 startPlace = startLink ;
                 factoryList.add(new AgentFactoryFromLink(this,
@@ -573,7 +572,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * 指定された link, node において、
          * 合計で total 個のエージェントが生成。
          */
-        private void addFactoriesForRandom(AgentGenerationFile factoryList) {
+        private void addFactoriesForRandom(AgentFactoryList factoryList) {
             int _total = this.total ;
 
             int links_size = this.startLinks.size();
@@ -637,7 +636,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * JSON Object からパラメータ設定
          */
-        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
                                              Term json,
                                              NetworkMap map) {
             GenerationConfigBase r = super.scanJson(factoryList, json, map) ;
@@ -658,7 +657,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * RANDOM に、1箇所での生成数の上限を入れたもの。
          * 合計で total 個のエージェントが生成。
          */
-        public void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentFactoryList factoryList,
                                   NetworkMap map) {
 
             int maxFromEachPlace = this.maxFromEachPlace ;
@@ -757,7 +756,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * JSON Object からパラメータ設定
          */
-        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
                                              Term json,
                                              NetworkMap map) {
             GenerationConfigBase r = super.scanJson(factoryList, json, map) ;
@@ -787,7 +786,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * 特別な処理をしないようにする。
          * 合計で (total * 生成回数) 個のエージェントが生成。
          */
-        public void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentFactoryList factoryList,
                                   NetworkMap map) {
             
             SimTime every_end_time = this.everyEndTime ;
@@ -869,7 +868,7 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
         /**
          * JSON Object からパラメータ設定
          */
-        public GenerationConfigBase scanJson(AgentGenerationFile factoryList,
+        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
                                              Term json,
                                              NetworkMap map) {
             ruleClass = json.getArgString("ruleClass") ;
@@ -889,11 +888,11 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
          * Factory を追加。
          * RUBY 用生成ルーチン
          */
-        public void addFactories(AgentGenerationFile factoryList,
+        public void addFactories(AgentFactoryList factoryList,
                                   NetworkMap map) {
             AgentFactory factory =
                 new AgentFactoryByRuby(this, factoryList.random) ;
-            Itk.dbgVal("factory in AgentGenerationFile",factory) ;
+            Itk.dbgVal("factory in AgentFactoryList",factory) ;
             factoryList.add(factory) ;
         }
         
@@ -903,12 +902,12 @@ public class AgentGenerationFile extends ArrayList<AgentFactory> {
     /**
      * コンストラクタ
      */
-    public AgentGenerationFile(final String filename,
-                               NetworkMap map,
-                               Term _fallbackParameters,
-                               boolean display,
-                               double linerGenerateAgentRatio,
-                               Random _random)
+    public AgentFactoryList(final String filename,
+                            NetworkMap map,
+                            Term _fallbackParameters,
+                            boolean display,
+                            double linerGenerateAgentRatio,
+                            Random _random)
         throws Exception 
     {
         if (filename == null || filename.isEmpty()) {

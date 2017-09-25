@@ -1,10 +1,10 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-package nodagumi.ananPJ.Agents;
+package nodagumi.ananPJ.Agents.Factory;
 
 import java.io.PrintWriter;
 import java.util.Random;
 
-import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.*;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;

@@ -51,10 +51,10 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink.*;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.AgentGenerationFile;
 import nodagumi.ananPJ.misc.SetupFileInfo;
-import nodagumi.ananPJ.Agents.AgentFactory;
-import nodagumi.ananPJ.Agents.AgentFactoryByRuby;
+import nodagumi.ananPJ.Agents.Factory.AgentFactory;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryByRuby;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryList;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
 import nodagumi.ananPJ.misc.SimTime;
@@ -161,7 +161,7 @@ public class AgentHandler {
     /**
      * エージェント生成ファイル
      */
-    private AgentGenerationFile agentFactoryList = null;
+    private AgentFactoryList agentFactoryList = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -815,12 +815,12 @@ public class AgentHandler {
         try {
             /* [I.Noda] generation file の読み込みはここ */
              agentFactoryList =
-                 new AgentGenerationFile(generationFile,
-                                         getMap(),
-                                         simulator.getFallbackParameters(),
-                                         hasDisplay(),
-                                         simulator.getLinerGenerateAgentRatio(),
-                                         random);
+                 new AgentFactoryList(generationFile,
+                                      getMap(),
+                                      simulator.getFallbackParameters(),
+                                      hasDisplay(),
+                                      simulator.getLinerGenerateAgentRatio(),
+                                      random);
         } catch(Exception ex) {
             ex.printStackTrace() ;
             Itk.logError("Illegal AgentGenerationFile",

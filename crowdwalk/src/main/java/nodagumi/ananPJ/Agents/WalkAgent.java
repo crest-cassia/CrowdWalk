@@ -19,7 +19,7 @@ import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.RoutePlan ;
 import nodagumi.ananPJ.misc.Place;
 import nodagumi.ananPJ.misc.SimTime;
-import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.Factory.AgentFactory;
 import nodagumi.ananPJ.navigation.NavigationHint;
 
 import nodagumi.Itk.*;

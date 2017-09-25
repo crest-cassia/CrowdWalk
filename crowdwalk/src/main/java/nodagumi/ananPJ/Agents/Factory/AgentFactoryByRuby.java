@@ -11,7 +11,7 @@
  * ...
  */
 
-package nodagumi.ananPJ.Agents;
+package nodagumi.ananPJ.Agents.Factory;
 
 import java.util.Random;
 import java.util.List;
@@ -22,14 +22,15 @@ import java.util.Random;
 import net.arnx.jsonic.JSON ;
 
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
-import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.*;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
-import nodagumi.ananPJ.misc.AgentGenerationFile.GenerationConfigForRuby;
+
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryList.GenerationConfigForRuby;
 
 import nodagumi.Itk.*;
 

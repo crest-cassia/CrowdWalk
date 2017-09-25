@@ -19,10 +19,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
-import nodagumi.ananPJ.Agents.AgentFactory;
+import nodagumi.ananPJ.Agents.Factory.AgentFactory;
 import nodagumi.ananPJ.Editor.MapEditor;
 import nodagumi.ananPJ.Editor.EditorFrameFx;
-import nodagumi.ananPJ.misc.AgentGenerationFile;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryList;
 import nodagumi.Itk.Term;
 
 /**
@@ -229,8 +229,11 @@ public class ScenarioPanelFx extends BorderPane {
         if (fileName != null && ! fileName.isEmpty()) {
             try {
                 Term fallbackParameters = editor.getSetupFileInfo().fallbackParameters;
-                AgentGenerationFile generations = new AgentGenerationFile(fileName, editor.getMap(), fallbackParameters, true, 1.0, new Random());
-                for (AgentFactory factory : generations) {
+                AgentFactoryList factoryList =
+		    new AgentFactoryList(fileName, editor.getMap(),
+					 fallbackParameters, true, 1.0,
+					 new Random());
+                for (AgentFactory factory : factoryList) {
                     generationModels.add(new GenerationModel(factory));
                 }
             } catch(Exception ex) {
