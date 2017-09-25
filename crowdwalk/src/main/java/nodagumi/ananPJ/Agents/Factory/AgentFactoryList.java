@@ -30,6 +30,7 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
 import nodagumi.ananPJ.Agents.AwaitAgent.WaitDirective;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryConfig.*;
 
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
@@ -233,9 +234,10 @@ import nodagumi.Itk.*;
  * </pre>
  */
 public class AgentFactoryList extends ArrayList<AgentFactory> {
-    private Random random = null;
-    private double liner_generate_agent_ratio = 1.0;
-    private LinkedHashMap<String, ArrayList<String>> definitionErrors = new LinkedHashMap();
+    public Random random = null;
+    public double liner_generate_agent_ratio = 1.0;
+    private LinkedHashMap<String, ArrayList<String>> definitionErrors =
+        new LinkedHashMap();
 
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -338,565 +340,6 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
      * mode を格納している Map
      */
     public Map<String,Object> modeMap ;
-
-    //============================================================
-    /**
-     * 生成ルール情報格納用クラス(Base)。
-     * Generation Rule は以下の形式の JSON (version 2 format).
-     *   
-     */
-    static public class GenerationConfigBase extends AgentFactoryConfig {
-        //========================================
-        //----------------------------------------
-        /**
-         * ruleType に応じて、GenerationConfig のインスタンスを作る。
-         */
-        static public GenerationConfigBase
-            newConfigByRuleType(RuleType ruleType) {
-            
-            GenerationConfigBase genConfig = null;
-            switch(ruleType) {
-            case EACHRANDOM:
-                genConfig = new GenerationConfigForEachRandom() ;
-                break ;
-            case TIMEEVERY:
-                genConfig = new GenerationConfigForTimeEvery() ;
-                break ;
-            case RUBY:
-                genConfig = new GenerationConfigForRuby() ;
-                break ;
-            case EACH:
-            case RANDOM:
-            case INDIVIDUAL:
-                genConfig = new GenerationConfigBase() ;
-                break ;
-            default:
-                Itk.logError("AgentGenerationFile include invalid rule type:",
-                             ruleType) ;
-                return null ;
-            }
-            genConfig.ruleType = ruleType ;
-            return genConfig ;
-        }
-        
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成ルールのタイプ
-         */
-        public RuleType ruleType ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成リンクタグ
-         */
-        public String startLinkTag = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成リンクリスト
-         */
-        public MapLinkTable startLinks = new MapLinkTable() ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成ノードリスト
-         */
-        public MapNodeTable startNodes = new MapNodeTable() ;
-
-        //----------------------------------------
-        /**
-         * JSON への変換
-         */
-        public String toJson(boolean pprintP){
-            return toTerm().toJson(pprintP) ;
-        }
-
-        //----------------------------------------
-        /**
-         * JSON Object への変換
-         */
-        public Term toTerm(){
-            Term jTerm = super.toTerm() ;
-
-            jTerm.setArg("rule",ruleLexicon.lookUpByMeaning(ruleType).get(0));
-            if(startLinkTag != null)
-                jTerm.setArg("startPlace", startLinkTag) ;
-            jTerm.setArg("speedModel", 
-                         speedModelLexicon.lookUpByMeaning(speedModel).get(0));
-
-            return jTerm ;
-        }
-        
-        //----------------------------------------
-        /**
-         * JSON Object からパラメータ設定
-         */
-        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
-                                             Term json,
-                                             NetworkMap map) {
-            originalInfo = json.toJson() ;
-
-            // rule name。
-            // ruleName には、事前に、ルールの順番の番号がうめられている。
-            String _ruleName = json.getArgString("name") ;
-            if(_ruleName != null) { ruleName = _ruleName ; }
-
-            // agentType & className ;
-            Term agentType = json.getArgTerm("agentType") ;
-            agentClassName = agentType.getArgString("className") ;
-            agentConf = agentType ;
-
-            // startPlace
-            if(!factoryList.scanStartLinkTag(json.getArgString("startPlace"),
-                                             map, this))
-                return null ;
-
-            // conditions
-            Term _conditions = json.getArgTerm("conditions") ;
-            if(_conditions != null) {
-                if(!_conditions.isArray()) {
-                    Itk.logError("'conditions' in generation file should be an array of tags.",
-                                 "conditions=", _conditions) ;
-                    return null ;
-                }
-                int l = _conditions.getArraySize() ;
-                conditions = new String[l] ;
-                for(int i = 0 ; i < l ; i++) {
-                    conditions[i] = _conditions.getNthString(i) ;
-                }
-            }
-
-            // individualConfig
-            individualConfigList =
-                new IndividualConfigList(json.getArgTerm("individualConfig")) ;
-
-            // INDIVIDUAL の時は、いろいろ別扱い。
-            if(ruleType == RuleType.INDIVIDUAL) {
-                individualConfigList.sortByStartTime() ;
-                String firstTimeStr =
-                    individualConfigList.peekFirst().getArgString("startTime") ;
-                String lastTimeStr =
-                    individualConfigList.peekLast().getArgString("startTime") ;
-                startTime = new SimTime(firstTimeStr) ;
-                duration = startTime.calcDifferenceTo(new SimTime(lastTimeStr));
-                total = individualConfigList.size() ;
-            } else {
-                // startTime
-                try {
-                    startTime = new SimTime(json.getArgString("startTime")) ;
-                } catch(Exception ex) {
-                    return null ;
-                }
-
-                // duration
-                duration = json.getArgDouble("duration") ;
-
-                // total
-                total = json.getArgInt("total") ;
-                if (factoryList.liner_generate_agent_ratio > 0) {
-                    total =
-                        (int)(total * factoryList.liner_generate_agent_ratio);
-                    Itk.logInfo("Agent Population (JSON)", total);
-                }
-            }
-                
-            // speedModel
-            scanJsonForSpeedModel(factoryList, json) ;
-
-            // goal
-            goal = json.getArgTerm("goal") ;
-
-            // plannedRoute
-            Term plannedRouteTerm = json.getArgTerm("plannedRoute") ;
-            plannedRoute = (plannedRouteTerm == null ?
-                            new ArrayList<Term>() :
-                            plannedRouteTerm.<Term>getTypedArray()) ;
-            
-            return this ;
-        }
-
-        //----------------------------------------
-        /**
-         * speed model の取得。
-         */
-        public void scanJsonForSpeedModel(AgentFactoryList factoryList,
-                                          Term json) {
-            speedModel =
-                (SpeedCalculationModel)
-                speedModelLexicon.lookUp(json.getArgString("speedModel")) ;
-            if(speedModel == null) {
-                speedModel = factoryList.getFallbackSpeedModel() ;
-            }
-        }
-
-        //----------------------------------------
-        /**
-         * Factory を追加。
-         */
-        public void addFactories(AgentFactoryList factoryList,
-                                  NetworkMap map) {
-            switch(ruleType) {
-            case EACH:
-                addFactoriesForEach(factoryList) ;
-                break ;
-            case RANDOM:
-            case INDIVIDUAL:
-                addFactoriesForRandom(factoryList) ;
-                break ;
-            default:
-                Itk.logError("Invalid Generation Rule:" + ruleType) ;
-            }
-        }
-
-        //----------------------------------------
-        /**
-         * EACH 用生成ルーチン
-         * 各々の link, node で total 個ずつのエージェントが生成。
-         */
-        private void addFactoriesForEach(AgentFactoryList factoryList) {
-            for (final MapLink startLink : startLinks) {
-                startPlace = startLink ;
-                factoryList.add(new AgentFactoryFromLink(this,
-                                                         factoryList.random)) ;
-            }
-            for (final MapNode startNode : startNodes) {
-                startPlace = startNode ;
-                factoryList.add(new AgentFactoryFromNode(this,
-                                                         factoryList.random)) ;
-            }
-        }
-
-        //----------------------------------------
-        /**
-         * RANDOM 用生成ルーチン
-         * 指定された link, node において、
-         * 合計で total 個のエージェントが生成。
-         */
-        private void addFactoriesForRandom(AgentFactoryList factoryList) {
-            int _total = this.total ;
-
-            int links_size = this.startLinks.size();
-            int size = links_size + this.startNodes.size();// linkとnodeの合計
-            int[] chosen_links = new int[this.startLinks.size()];
-            int[] chosen_nodes = new int[this.startNodes.size()];
-            for (int i = 0; i < _total; i++) {
-                int chosen_index = factoryList.random.nextInt(size);
-            if (chosen_index + 1 > links_size)
-                chosen_nodes[chosen_index - links_size] += 1;
-            else
-                chosen_links[chosen_index] += 1;
-            }
-            for (int i = 0; i < this.startLinks.size(); i++) {
-                if (chosen_links[i] > 0) {
-                    this.startPlace = this.startLinks.get(i) ;
-                    this.total = chosen_links[i] ;
-                    factoryList
-                        .add(new AgentFactoryFromLink(this, 
-                                                      factoryList.random)) ;
-                }
-            }
-            for (int i = 0; i < this.startNodes.size(); i++) {
-                if (chosen_nodes[i] > 0) {
-                    this.startPlace = this.startNodes.get(i) ;
-                    this.total = chosen_nodes[i] ;
-                    factoryList
-                        .add(new AgentFactoryFromNode(this,
-                                                      factoryList.random)) ;
-                }
-            }
-        }
-
-    } // end class GenerationConfigBase
-
-    //============================================================
-    /**
-     * 生成ルール情報格納用クラス(EachRandom 用)
-     */
-    static private class GenerationConfigForEachRandom 
-        extends GenerationConfigBase {
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 各リンク・ノードにおける発生上限数
-         */
-        public int maxFromEachPlace = 0 ;
-
-        //----------------------------------------
-        /**
-         * JSON Object への変換
-         */
-        public Term toTerm(){
-            Term jTerm = super.toTerm() ;
-
-            jTerm.setArg("maxFromEach",maxFromEachPlace) ;
-
-            return jTerm ;
-        }
-
-        //----------------------------------------
-        /**
-         * JSON Object からパラメータ設定
-         */
-        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
-                                             Term json,
-                                             NetworkMap map) {
-            GenerationConfigBase r = super.scanJson(factoryList, json, map) ;
-            
-            if(r == null) {
-                return null ;
-            }
-
-            maxFromEachPlace = json.getArgInt("maxFromEach") ;
-
-            return this ;
-        }
-
-        //----------------------------------------
-        /**
-         * Factory を追加。
-         * EACH RANDOM 用生成ルーチン
-         * RANDOM に、1箇所での生成数の上限を入れたもの。
-         * 合計で total 個のエージェントが生成。
-         */
-        public void addFactories(AgentFactoryList factoryList,
-                                  NetworkMap map) {
-
-            int maxFromEachPlace = this.maxFromEachPlace ;
-            int total = this.total ;
-
-            int links_size = this.startLinks.size() ;
-            int nodes_size = this.startNodes.size() ;
-            int size = links_size + nodes_size ; // linkとnodeの合計
-            int[] chosen_links = new int[this.startLinks.size()];
-            int[] chosen_nodes = new int[this.startNodes.size()];
-
-            /* [2014.12.24 I.Noda]
-             * アルゴリズムがあまりにまずいので、修正。
-             */
-            if(total > 0) {
-                int population = 0 ;
-                //とりあえず、maxFromEachPlace で埋める。
-                for(int i = 0 ; i < links_size ; i++) {
-                    chosen_links[i] = maxFromEachPlace ;
-                    population += maxFromEachPlace ;
-                }
-                for(int i = 0 ; i < nodes_size ; i++) {
-                    chosen_nodes[i] = maxFromEachPlace ;
-                    population += maxFromEachPlace ;
-                }
-                //減らしていく。
-                while(population > total){
-                    int chosen_index = factoryList.random.nextInt(size) ;
-                    if(chosen_index < links_size) {
-                        if(chosen_links[chosen_index] > 0) {
-                            chosen_links[chosen_index] -= 1 ;
-                            population -= 1 ;
-                        }
-                    } else {
-                        if(chosen_nodes[chosen_index - links_size] > 0) {
-                            chosen_nodes[chosen_index - links_size] -= 1;
-                            population -= 1 ;
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < this.startLinks.size(); i++) {
-                if (chosen_links[i] > 0) {
-                    this.startPlace = this.startLinks.get(i) ;
-                    this.total = chosen_links[i] ;
-                    factoryList
-                        .add(new AgentFactoryFromLink(this,
-                                                      factoryList.random)) ;
-                }
-            }
-            for (int i = 0; i < this.startNodes.size(); i++) {
-                if (chosen_nodes[i] > 0) {
-                    this.startPlace = this.startNodes.get(i) ;
-                    this.total = chosen_nodes[i] ;
-                    factoryList
-                        .add(new AgentFactoryFromNode(this,
-                                                      factoryList.random)) ;
-                }
-            }
-        }
-    } // end class GenerationConfigForEachRandom 
-
-    //============================================================
-    /**
-     * 生成ルール情報格納用クラス(TimeEvery 用)
-     */
-    static private class GenerationConfigForTimeEvery
-        extends GenerationConfigBase {
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成の終了時刻
-         */
-        public SimTime everyEndTime = null ;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 生成のインターバル
-         */
-        public int everySeconds = 0 ;
-
-        //----------------------------------------
-        /**
-         * JSON Object への変換
-         */
-        public Term toTerm(){
-            Term jTerm = super.toTerm() ;
-
-            jTerm.setArg("everyEndTime",everyEndTime.getAbsoluteTimeString());
-            jTerm.setArg("everySeconds",everySeconds) ;
-
-            return jTerm ;
-        }
-
-        //----------------------------------------
-        /**
-         * JSON Object からパラメータ設定
-         */
-        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
-                                             Term json,
-                                             NetworkMap map) {
-            GenerationConfigBase r = super.scanJson(factoryList, json, map) ;
-            
-            if(r == null) {
-                return null ;
-            }
-
-            // everyEndTime と everySecond の設定。
-            try {
-                String endTimeStr = json.getArgString("everyEndTime") ;
-                everyEndTime = new SimTime(endTimeStr) ;
-            } catch(Exception ex) {
-                return null ;
-            }
-            everySeconds = json.getArgInt("everySeconds") ;
-
-            return this ;
-        }
-
-        //----------------------------------------
-        /**
-         * Factory を追加。
-         * TIME EVERY 用生成ルーチン
-         * [2014.12.24 I.Noda]
-         * GOAL の部分の処理は他と同じはずなので、
-         * 特別な処理をしないようにする。
-         * 合計で (total * 生成回数) 個のエージェントが生成。
-         */
-        public void addFactories(AgentFactoryList factoryList,
-                                  NetworkMap map) {
-            
-            SimTime every_end_time = this.everyEndTime ;
-            double every_seconds = (double)this.everySeconds ;
-            int total = this.total ;
-
-            // [I.Noda] startPlace は下で指定。
-            this.startPlace = null ;
-            // [I.Noda] startTime も特別な意味
-            SimTime start_time = this.startTime ;
-            this.startTime = null ;
-
-            SimTime step_time = start_time.newSimTime() ;
-            /* let's assume start & goal & plannedRoute candidates
-             * are all MapLink!
-             */
-
-            while (step_time.isBeforeOrAt(every_end_time)) {
-                for (int i = 0; i < total; i++) {
-                    this.startTime = step_time.newSimTime() ;
-                    this.total = 1 ;
-                    if(this.startLinks.size() > 0) {
-                        MapLink start_link =
-                            this.startLinks.chooseRandom(factoryList.random) ;
-                        this.startPlace = start_link ;
-                        factoryList
-                            .add(new AgentFactoryFromLink(this,
-                                                          factoryList.random)) ;
-                    } else if (this.startNodes.size() > 0) {
-                        MapNode start_node = 
-                            this.startNodes.chooseRandom(factoryList.random) ;
-                        this.startPlace = start_node ;
-                        factoryList
-                            .add(new AgentFactoryFromNode(this,
-                                                          factoryList.random)) ;
-                    } else {
-                        Itk.logError("no starting place for generation.") ;
-                        Itk.logError_("config",this) ;
-                    }
-                }
-                step_time.advanceSec(every_seconds) ;
-            }
-        }
-    } // end class GenerationConfigForTimeEvery
-
-    //============================================================
-    /**
-     * 生成ルール情報格納用クラス(Ruby 用)
-     */
-    static public class GenerationConfigForRuby
-        extends GenerationConfigBase {
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         *  rule class
-         */
-        public String ruleClass ;
-        
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         *  config
-         */
-        public Term config ;
-        
-        //----------------------------------------
-        /**
-         * JSON Object への変換
-         */
-        public Term toTerm(){
-            Term jTerm = new Term() ;
-
-            jTerm.setArg("rule",ruleLexicon.lookUpByMeaning(ruleType).get(0));
-            jTerm.setArg("ruleClass", ruleClass) ;
-            jTerm.setArg("config", config) ;
-
-            return jTerm ;
-        }
-
-        //----------------------------------------
-        /**
-         * JSON Object からパラメータ設定
-         */
-        public GenerationConfigBase scanJson(AgentFactoryList factoryList,
-                                             Term json,
-                                             NetworkMap map) {
-            ruleClass = json.getArgString("ruleClass") ;
-            config = json.getArgTerm("config") ;
-
-            //エラーを避けるために。
-            plannedRoute = new ArrayList<Term>() ;
-
-            // speedModel
-            scanJsonForSpeedModel(factoryList, json) ;
-            
-            return this ;
-        }
-
-        //----------------------------------------
-        /**
-         * Factory を追加。
-         * RUBY 用生成ルーチン
-         */
-        public void addFactories(AgentFactoryList factoryList,
-                                  NetworkMap map) {
-            AgentFactory factory =
-                new AgentFactoryByRuby(this, factoryList.random) ;
-            Itk.dbgVal("factory in AgentFactoryList",factory) ;
-            factoryList.add(factory) ;
-        }
-        
-    } // end class GenerationConfigForRuby
 
     //------------------------------------------------------------
     /**
@@ -1010,7 +453,9 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         if(modeline.startsWith("#")) {
             // 先頭の '#' をカット
             String modeString = modeline ;
-            while(modeString.startsWith("#")) modeString = modeString.substring(1) ;
+            while(modeString.startsWith("#")) {
+                modeString = modeString.substring(1) ;
+            }
             // のこりを JSON として解釈
             modeMap = (Map<String, Object>)JSON.decode(modeString) ;
             String versionString = modeMap.get("version").toString() ;
@@ -1047,17 +492,17 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
             int ruleCount = 1 ;
             while ((line = br.readLine()) != null) {
                 //一行解析
-                GenerationConfigBase genConfig =
+                AgentFactoryConfig factoryConfig =
                     scanCsvFileOneLine(line, map, ruleCount) ;
 
-                if(genConfig == null) continue ;
+                if(factoryConfig == null) continue ;
                 ruleCount++ ;
 
                 // 経路情報に未定義のタグが使用されていないかチェックする
-                checkPlannedRouteInConfig(map, genConfig, line) ;
+                checkPlannedRouteInConfig(map, factoryConfig, line) ;
 
                 // ここから、エージェント生成が始まる。
-                addFactoriesByConfig(map, genConfig) ;
+                addFactoriesByConfig(map, factoryConfig) ;
             }
         } catch (Exception e) {
             System.err.println("Error in agent generation.");
@@ -1074,9 +519,9 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
     /**
      * scan one line of CSV file
      */
-    private GenerationConfigBase scanCsvFileOneLine(String line,
-                                                    NetworkMap map,
-                                                    int ruleCount)
+    private AgentFactoryConfig scanCsvFileOneLine(String line,
+                                                  NetworkMap map,
+                                                  int ruleCount)
         throws IOException
     {
         //コメント行読み飛ばし
@@ -1130,35 +575,35 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         }
 
         // 生成条件の格納用データ
-        GenerationConfigBase genConfig = newConfigByRuleType(ruleType) ;
+        AgentFactoryConfig factoryConfig = newConfigByRuleType(ruleType) ;
 
         // 生成の設定情報を以下にまとめて保持。
-        genConfig.originalInfo = line ;
+        factoryConfig.originalInfo = line ;
         
         // 生成ルールの名前。CSVの場合は、順序の番号の文字列。
-        genConfig.ruleName = ("" + ruleCount) ;
+        factoryConfig.ruleName = ("" + ruleCount) ;
 
         /* [I.Noda] Ver1 以降は、ruleType の直後はエージェントクラス名 */
         if(fileFormat == FileFormat.Ver1) {
-            genConfig.agentClassName = columns.nth(0) ;
-            genConfig.agentConf = Term.newByJson(columns.nth(1)) ;
+            factoryConfig.agentClassName = columns.nth(0) ;
+            factoryConfig.agentConf = Term.newByJson(columns.nth(1)) ;
             columns.shift(2) ;
         } else {
             /* [2014.12.29 I.Noda]
              * agentClassName を埋めておかないと、directive の処理が出来ない。
              * なので、AgentFactory に指定する規定値を埋める。
              */
-            genConfig.agentClassName = AgentFactory.DefaultAgentClassName ;
+            factoryConfig.agentClassName = AgentFactory.DefaultAgentClassName ;
         }
 
         // read start link
         // もし start link の解析に失敗したら、次の行へ。
-        if(! scanStartLinkTag(Itk.intern(columns.get()), map, genConfig))
+        if(! scanStartLinkTag(Itk.intern(columns.get()), map, factoryConfig))
             return null ;
 
         // 出発時刻
         try {
-            genConfig.startTime = new SimTime(columns.get()) ;
+            factoryConfig.startTime = new SimTime(columns.get()) ;
         } catch(Exception ex) {
             return null ;
         }
@@ -1166,25 +611,26 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         // TIMEEVERYの場合は、出発時刻間隔
         if (ruleType == RuleType.TIMEEVERY) {
             try {
-                ((GenerationConfigForTimeEvery)genConfig).everyEndTime =
+                ((AgentFactoryConfig_TimeEvery)factoryConfig).everyEndTime =
                     new SimTime(columns.get()) ;
             } catch(Exception ex) {
                 return null ;
             }
-            ((GenerationConfigForTimeEvery)genConfig).everySeconds =
+            ((AgentFactoryConfig_TimeEvery)factoryConfig).everySeconds =
                 Integer.parseInt(columns.get()) ;
         }
 
         // duration
-        genConfig.duration = Double.parseDouble(columns.get()) ;
+        factoryConfig.duration = Double.parseDouble(columns.get()) ;
 
         // total number of generated agents
-        genConfig.total = Integer.parseInt(columns.get());
+        factoryConfig.total = Integer.parseInt(columns.get());
         if (liner_generate_agent_ratio != 1) {
             Itk.logInfo("use liner_generate_agent_ratio",
-                        "genConfig.total:", genConfig.total,
+                        "factoryConfig.total:", factoryConfig.total,
                         "ratio:", liner_generate_agent_ratio);
-            genConfig.total = (int) (genConfig.total * liner_generate_agent_ratio);
+            factoryConfig.total =
+                (int)(factoryConfig.total * liner_generate_agent_ratio);
         }
 
         // speed model
@@ -1195,36 +641,36 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
          * 一番問題なのは、speed_model に相当するタグでなければ、
          * columns を shift しないところ。
          */
-        genConfig.speedModel =
+        factoryConfig.speedModel =
             (SpeedCalculationModel)speedModelLexicon.lookUp(columns.top()) ;
-        if(genConfig.speedModel == null) {
-            genConfig.speedModel = getFallbackSpeedModel() ;
+        if(factoryConfig.speedModel == null) {
+            factoryConfig.speedModel = getFallbackSpeedModel() ;
         } else {
             columns.shift() ;
         }
 
         // EACHRANDOM
-        if (genConfig.ruleType == RuleType.EACHRANDOM) {
-            ((GenerationConfigForEachRandom)genConfig).maxFromEachPlace =
+        if (factoryConfig.ruleType == RuleType.EACHRANDOM) {
+            ((AgentFactoryConfig_EachRandom)factoryConfig).maxFromEachPlace =
                 Integer.parseInt(columns.get()) ;
         }
 
         // goal を scan
-        genConfig.goal = new Term(columns.top(), true) ;
+        factoryConfig.goal = new Term(columns.top(), true) ;
 
         // ゴールより後ろの読み取り。
-        if(!scanRestColumns(columns, map, genConfig))
+        if(!scanRestColumns(columns, map, factoryConfig))
             return null ;
 
-        return genConfig ;
+        return factoryConfig ;
     }
 
     //------------------------------------------------------------
     /**
      * new Generation Config for ruleType
      */
-    private GenerationConfigBase newConfigByRuleType(RuleType ruleType) {
-        return GenerationConfigBase.newConfigByRuleType(ruleType) ;
+    private AgentFactoryConfig newConfigByRuleType(RuleType ruleType) {
+        return AgentFactoryConfig.newByRuleType(ruleType) ;
     }
 
     //------------------------------------------------------------
@@ -1257,25 +703,27 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
      *    Tag | Tag(Cond;Cond;...) 
      * という形式らしい。
      */
-    private boolean scanStartLinkTag(String start_link_tag,
-                                     NetworkMap map,
-                                     GenerationConfigBase genConfig) {
+    public boolean scanStartLinkTag(String start_link_tag,
+                                    NetworkMap map,
+                                    AgentFactoryConfig factoryConfig) {
         Matcher tag_match = startpat.matcher(start_link_tag);
         if (tag_match.matches()) {
             start_link_tag = tag_match.group(1);
-            genConfig.conditions = tag_match.group(2).split(";");
+            factoryConfig.conditions = tag_match.group(2).split(";");
         }
 
-        genConfig.startLinkTag = start_link_tag ;
+        factoryConfig.startLinkTag = start_link_tag ;
 
         /* get all links with the start_link_tag */
-        map.getLinks().findTaggedLinks(start_link_tag, genConfig.startLinks) ;
+        map.getLinks().findTaggedLinks(start_link_tag,
+                                       factoryConfig.startLinks) ;
 
         /* get all nodes with the start_link_tag */
-        map.getNodes().findTaggedNodes(start_link_tag, genConfig.startNodes) ;
+        map.getNodes().findTaggedNodes(start_link_tag,
+                                       factoryConfig.startNodes) ;
 
-        if (genConfig.startLinks.size() == 0 &&
-            genConfig.startNodes.size() == 0) {
+        if (factoryConfig.startLinks.size() == 0 &&
+            factoryConfig.startNodes.size() == 0) {
             Itk.logError("no matching start:" + start_link_tag);
             return false ;
         } else {
@@ -1289,12 +737,12 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
      */
     private boolean scanRestColumns(ShiftingStringList columns,
                                     NetworkMap map,
-                                    GenerationConfigBase genConfig) {
-        genConfig.plannedRoute = new ArrayList<Term>();
+                                    AgentFactoryConfig factoryConfig) {
+        factoryConfig.plannedRoute = new ArrayList<Term>();
 
         // goal and route plan
         //String goal = items[index];
-        if (genConfig.goal.isNull()) {
+        if (factoryConfig.goal.isNull()) {
             System.err.println("no matching link:" + columns.top() +
                                " while reading agent generation rule.");
             return false ;
@@ -1306,7 +754,7 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
                 !tag.equals("")) {
                 Term tagTerm = 
                     tryScanDirectiveAndMakeTerm(tag, columns) ;
-                genConfig.plannedRoute.add(tagTerm) ;
+                factoryConfig.plannedRoute.add(tagTerm) ;
             }
         }
         return true ;
@@ -1383,25 +831,28 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
             for(Object _item : json.getArray()) {
                 Term item = (Term)_item ;
                 if(item.isObject()) {
-                    GenerationConfigBase genConfig = 
+                    AgentFactoryConfig factoryConfig = 
                         scanJsonFileOneItem(item, map, ruleCount) ;
 
-                    if(genConfig == null) continue ;
+                    if(factoryConfig == null) continue ;
                     ruleCount++ ;
 
                     // 経路情報に未定義のタグが使用されていないかチェックする
-                    checkPlannedRouteInConfig(map, genConfig, item.toJson()) ;
+                    checkPlannedRouteInConfig(map, factoryConfig,
+                                              item.toJson()) ;
 
                     // ここから、エージェント生成が始まる。
-                    addFactoriesByConfig(map, genConfig) ;
+                    addFactoriesByConfig(map, factoryConfig) ;
                 } else {
-                    Itk.logError("wrong json for generation rule:",item.toJson()) ;
+                    Itk.logError("wrong json for generation rule:",
+                                 item.toJson()) ;
                     continue ;
                 }
             }
         } else {
             Itk.logError("wrong json for generation file:",json.toJson()) ;
-            throw new Exception("wrong json for generation file:" + json.toJson()) ;
+            throw new Exception("wrong json for generation file:" +
+                                json.toJson()) ;
         }
     }
 
@@ -1409,9 +860,9 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
     /**
      * 設定解析ルーチン (JSON one line) (Ver.2 file format)
      */
-    public GenerationConfigBase scanJsonFileOneItem(Term json,
-                                                    NetworkMap map,
-                                                    int ruleCount)
+    public AgentFactoryConfig scanJsonFileOneItem(Term json,
+                                                  NetworkMap map,
+                                                  int ruleCount)
     {
         // ignore が true なら、項目を無視する。
         if(json.getArgBoolean("ignore")) { return null ; }
@@ -1419,12 +870,12 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         // rule
         RuleType ruleType = 
             (RuleType)ruleLexicon.lookUp(json.getArgString("rule")) ;
-        GenerationConfigBase genConfig = newConfigByRuleType(ruleType) ;
+        AgentFactoryConfig factoryConfig = newConfigByRuleType(ruleType) ;
 
         // ruleName を一旦与えておく。
-        genConfig.ruleName = ("" + ruleCount) ;
+        factoryConfig.ruleName = ("" + ruleCount) ;
 
-        return genConfig.scanJson(this, json, map) ;
+        return factoryConfig.scanJson(this, json, map) ;
 
     }
 
@@ -1433,11 +884,11 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
      * 経路情報に未定義のタグが使用されていないかチェックする
      */
     private void checkPlannedRouteInConfig(NetworkMap map,
-                                           GenerationConfigBase genConfig,
+                                           AgentFactoryConfig factoryConfig,
                                            String where) {
         ArrayList<String> routeErrors =
-            checkPlannedRoute(genConfig.agentClassName,
-                              map, genConfig.plannedRoute);
+            checkPlannedRoute(factoryConfig.agentClassName,
+                              map, factoryConfig.plannedRoute);
         if (! routeErrors.isEmpty()) {
             definitionErrors.put(where, routeErrors);
         }
@@ -1499,13 +950,10 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
     {
         if (! definitionErrors.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder();
-            //definitionErrors.forEach((_line, messages) -> {
-            //    errorMessage.append("line: ").append(_line).append("\n");
-            //    messages.forEach(message -> errorMessage.append("    ").append(message).append("\n"));
-            //});
             Iterator it = definitionErrors.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String, ArrayList<String>> entry = (Map.Entry)it.next();
+                Map.Entry<String, ArrayList<String>> entry =
+                    (Map.Entry)it.next();
                 String _line = entry.getKey();
                 ArrayList<String>messages = entry.getValue();
                 errorMessage.append("line: ").append(_line).append("\n");
@@ -1522,9 +970,9 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
      * Agent Factory の追加。
      */
     private void addFactoriesByConfig(NetworkMap map,
-                                      GenerationConfigBase genConfig) {
-        genConfig.fallbackParameters = fallbackParameters ;
-        genConfig.addFactories(this, map) ;
+                                      AgentFactoryConfig factoryConfig) {
+        factoryConfig.fallbackParameters = fallbackParameters ;
+        factoryConfig.addFactories(this, map) ;
     }
 
 }

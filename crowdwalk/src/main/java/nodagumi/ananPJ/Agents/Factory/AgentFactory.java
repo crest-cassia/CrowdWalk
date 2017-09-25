@@ -280,8 +280,7 @@ public abstract class AgentFactory {
         // 生成するエージェントの数を求める。
 
         int agent_to_gen = 0 ;
-        if(((AgentFactoryList.GenerationConfigBase)config).ruleType ==
-           AgentFactoryList.RuleType.INDIVIDUAL) {
+        if(config.ruleType == AgentFactoryList.RuleType.INDIVIDUAL) {
             agent_to_gen =
                 getIndividualConfigList().remainSizeBefore(currentTime) ;
         } else {

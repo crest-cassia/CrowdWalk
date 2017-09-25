@@ -30,7 +30,7 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
 
-import nodagumi.ananPJ.Agents.Factory.AgentFactoryList.GenerationConfigForRuby;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryConfig.AgentFactoryConfig_Ruby;
 
 import nodagumi.Itk.*;
 
@@ -91,8 +91,8 @@ public class AgentFactoryByRuby extends AgentFactory {
     public AgentFactoryByRuby(AgentFactoryConfig _config, Random random) {
         super(_config, random) ;
         
-        GenerationConfigForRuby config =
-            (GenerationConfigForRuby)_config ;
+        AgentFactoryConfig_Ruby config =
+            (AgentFactoryConfig_Ruby)_config ;
         
         rubyFactoryClassName = config.ruleClass ;
         configForRuby = config.config ;
