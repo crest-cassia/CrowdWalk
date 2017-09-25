@@ -44,14 +44,23 @@ public class ScenarioPanelFx extends BorderPane {
         }
 
         public String getGoal() {
+            if (factory.getGoal() == null) {
+                return "---";
+            }
             return factory.getGoal().toString();
         }
 
         public String getStart() {
+            if (factory.getStartInfo() == null) {
+                return "---";
+            }
             return factory.getStartInfo();
         }
 
         public String getPath() {
+            if (factory.getPlannedRoute() == null) {
+                return "---";
+            }
             return factory.getPlannedRoute().toString();
         }
     }
@@ -189,8 +198,10 @@ public class ScenarioPanelFx extends BorderPane {
                 editor.deselectLinks();
                 // 選択状態の要素すべて
                 for (GenerationModel model : changed.getList()) {
-                    int index = getIndex(model);
-                    model.getAgentFactory().getStartObject().selected = selectionModel.isSelected(index);
+                    if (model.getAgentFactory().getStartObject() != null) {
+                        int index = getIndex(model);
+                        model.getAgentFactory().getStartObject().selected = selectionModel.isSelected(index);
+                    }
                 }
                 frame.getCanvas().repaintLater();
             }
