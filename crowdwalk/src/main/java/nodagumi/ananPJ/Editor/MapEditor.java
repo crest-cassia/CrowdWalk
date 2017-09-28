@@ -1227,7 +1227,7 @@ public class MapEditor implements MapEditorInterface {
     /**
      * ノードを複製して移動する
      */
-    public void duplicateAndMoveNodes(ArrayList<MapNode> nodes, double x, double y, double z, MapPartGroup toGroup, boolean withoutLinks) {
+    public void duplicateAndMoveNodes(ArrayList<MapNode> nodes, double x, double y, double z, MapPartGroup toGroup, boolean withoutLinks, boolean withNodeTags, boolean withLinkTags) {
         MapPartGroup group = (MapPartGroup)nodes.get(0).getParent();
 
         startOfCommandBlock();
@@ -1242,6 +1242,17 @@ public class MapEditor implements MapEditorInterface {
                 break;
             }
             MapNode newNode = (MapNode)networkMap.getObject(command.getId());
+            if (withNodeTags) {
+                for (String tag : node.getTags()) {
+                    if (! invoke(new AddTag(newNode, tag))) {
+                        failed = true;
+                        break;
+                    }
+                }
+                if (failed) {
+                    break;
+                }
+            }
             nodeToNode.put(node, newNode);
         }
         updateHeight();
@@ -1251,12 +1262,27 @@ public class MapEditor implements MapEditorInterface {
         }
 
         if (! withoutLinks) {
+            failed = false;
             for (MapLink link : (List<MapLink>)(networkMap.getLinks().clone())) {
                 if (link.getFrom().selected && link.getTo().selected) {
                     MapNode fromNode = nodeToNode.get(link.getFrom());
                     MapNode toNode = nodeToNode.get(link.getTo());
-                    if (! invoke(new AddLink(fromNode, toNode, link.getLength(), link.getWidth()))) {
+                    AddLink command = new AddLink(fromNode, toNode, link.getLength(), link.getWidth());
+                    if (! invoke(command)) {
+                        failed = true;
                         break;
+                    }
+                    if (withLinkTags) {
+                        MapLink newLink = (MapLink)networkMap.getObject(command.getId());
+                        for (String tag : link.getTags()) {
+                            if (! invoke(new AddTag(newLink, tag))) {
+                                failed = true;
+                                break;
+                            }
+                        }
+                        if (failed) {
+                            break;
+                        }
                     }
                 }
             }

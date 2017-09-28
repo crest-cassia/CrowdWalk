@@ -1705,8 +1705,17 @@ public class EditorFrameFx {
 
         CheckBox wlCheckBox = new CheckBox("Without links");
         wlCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, wlCheckBox.getFont().getSize()));
+        wlCheckBox.setPadding(new Insets(0, 0, 8, 0));
 
-        paramPane.getChildren().addAll(xyzLabel, grid, groupLabel, flowPane, wlCheckBox);
+        CheckBox withNodeTagsCheckBox = new CheckBox("copy with node tags");
+        withNodeTagsCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, withNodeTagsCheckBox.getFont().getSize()));
+        withNodeTagsCheckBox.setPadding(new Insets(0, 0, 8, 0));
+
+        CheckBox withLinkTagsCheckBox = new CheckBox("copy with link tags");
+        withLinkTagsCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, withLinkTagsCheckBox.getFont().getSize()));
+        withLinkTagsCheckBox.setPadding(new Insets(0, 0, 8, 0));
+
+        paramPane.getChildren().addAll(xyzLabel, grid, groupLabel, flowPane, wlCheckBox, withNodeTagsCheckBox, withLinkTagsCheckBox);
 
         dialog.getDialogPane().setContent(paramPane);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -1736,8 +1745,101 @@ public class EditorFrameFx {
                     return;
                 }
             }
-            editor.duplicateAndMoveNodes(nodes, x, y, z, toGroup, wlCheckBox.isSelected());
+            editor.duplicateAndMoveNodes(nodes, x, y, z, toGroup, wlCheckBox.isSelected(), withNodeTagsCheckBox.isSelected(), withLinkTagsCheckBox.isSelected());
         }
+    }
+
+    /**
+     * ノードの移動またはコピーダイアログを開く
+     */
+    public void moveOrCopyNodes(double x, double y, double z) {
+        ArrayList<MapNode> nodes = editor.getSelectedNodes();
+        if (nodes.isEmpty()) {
+            canvas.repaintLater();
+            return;
+        }
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Copy or move nodes");
+        VBox paramPane = new VBox();
+
+        Label xyzLabel = new Label("Moving distance (m)");
+        xyzLabel.setFont(Font.font("Arial", FontWeight.BOLD, xyzLabel.getFont().getSize()));
+        xyzLabel.setPadding(new Insets(12, 0, 8, 0));
+
+        // X
+        Label xLabel = new Label("X");
+        TextField xField = new TextField("" + x);
+        xField.setMinWidth(176);
+
+        // Y
+        Label yLabel = new Label("Y");
+        TextField yField = new TextField("" + y);
+        yField.setMinWidth(176);
+
+        // Z
+        Label zLabel = new Label("Z");
+        TextField zField = new TextField("" + z);
+        zField.setMinWidth(176);
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(0, 0, 8, 10));
+        grid.setHgap(8);
+        grid.setVgap(8);
+        grid.add(xLabel, 1, 1);
+        grid.add(xField, 2, 1);
+        grid.add(yLabel, 1, 2);
+        grid.add(yField, 2, 2);
+        grid.add(zLabel, 1, 3);
+        grid.add(zField, 2, 3);
+
+        Label label = new Label("Copy attributes");
+        label.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
+        label.setPadding(new Insets(8, 0, 4, 0));
+
+        CheckBox withNodeTagsCheckBox = new CheckBox("copy with node tags");
+        withNodeTagsCheckBox.setPadding(new Insets(12, 0, 0, 8));
+
+        CheckBox withLinkTagsCheckBox = new CheckBox("copy with link tags");
+        withLinkTagsCheckBox.setPadding(new Insets(0, 0, 12, 8));
+
+        paramPane.getChildren().addAll(xyzLabel, grid, label, withNodeTagsCheckBox, withLinkTagsCheckBox);
+        dialog.getDialogPane().setContent(paramPane);
+
+        ButtonType buttonTypeCopy = new ButtonType("Copy");
+        ButtonType buttonTypeMove = new ButtonType("Move");
+        dialog.getDialogPane().getButtonTypes().addAll(buttonTypeCopy, buttonTypeMove, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() != ButtonType.CANCEL) {
+            Double _x = convertToDouble(xField.getText());
+            Double _y = convertToDouble(yField.getText());
+            Double _z = convertToDouble(zField.getText());
+            if (_x != null) {
+                x = _x;
+            }
+            if (_y != null) {
+                y = _y;
+            }
+            if (_z != null) {
+                z = _z;
+            }
+            ArrayList<MapNode> collisionNodes = editor.getCollisionNodes(nodes, x, y, z, editor.getCurrentGroup());
+            if (! collisionNodes.isEmpty()) {
+                Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    " + collisionNodes.size() + " nodes are place on nodes already existing.\n    Do you want to continue?", ButtonType.YES, ButtonType.NO);
+                Optional<ButtonType> _result = alert.showAndWait();
+                if (! _result.isPresent() || _result.get() != ButtonType.YES) {
+                    canvas.repaintLater();
+                    return;
+                }
+            }
+
+            if (result.get() == buttonTypeCopy) {
+                editor.duplicateAndMoveNodes(nodes, x, y, z, editor.getCurrentGroup(), false, withNodeTagsCheckBox.isSelected(), withLinkTagsCheckBox.isSelected());
+            } else if (result.get() == buttonTypeMove) {
+                editor.moveNodes(nodes, x, y, z);
+            }
+        }
+        canvas.repaintLater();
     }
 
     /**

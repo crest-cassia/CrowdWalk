@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -193,6 +196,13 @@ public class EditorCanvas extends Canvas {
      * マウスドラッグ中フラグ
      */
     private boolean dragging = false;
+
+    /**
+     * ノード移動
+     */
+    private boolean nodeMoving = false;
+    private Point2D mousePressedPoint = null;
+    private Point2D nodeMovingAmount = null;
 
     /**
      * ホバー表示対象の各オブジェクト
@@ -413,6 +423,7 @@ public class EditorCanvas extends Canvas {
         setOnMousePressed(event -> {
             lastMouseX = event.getX();
             lastMouseY = event.getY();
+            mousePressedPoint = pointConvertCanvasToMap(lastMouseX, lastMouseY);
             dragging = false;
         });
 
@@ -423,6 +434,16 @@ public class EditorCanvas extends Canvas {
                 selectionRangeStart = null;
                 selectionRange = null;
                 repaintLater();
+            }
+            if (nodeMoving) {
+                nodeMoving = false;
+                nodeMovingAmount = pointConvertCanvasToMap(event.getX(), event.getY()).subtract(mousePressedPoint);
+                if (nodeMovingAmount.getX() == 0.0 && nodeMovingAmount.getY() == 0.0) {
+                    repaintLater();
+                    return;
+                }
+                // 選択中の複数ノードを移動またはコピーする
+                frame.moveOrCopyNodes(nodeMovingAmount.getX(), nodeMovingAmount.getY(), 0.0);
             }
         });
 
@@ -639,7 +660,22 @@ public class EditorCanvas extends Canvas {
                 if (event.isShiftDown()) {
                     // Shift + 左クリックでドラッグ: ノードの移動
                     if (editor.getCountOfSelectedNodes() >= 2) {
-                        // TODO: 複数ノードをまとめて移動
+                        // 選択中の複数ノードの移動中
+                        if (! nodeMoving) {
+                            if (! editor.isSingleGroup(editor.getSelectedNodes())) {
+                                Alert alert = new Alert(AlertType.WARNING, "When moving multiple nodes, it must be a single group.", ButtonType.OK);
+                                alert.showAndWait();
+                                break;
+                            }
+                            if (editor.getOperableNodes(true).isEmpty()) {
+                                Alert alert = new Alert(AlertType.WARNING, "When moving multiple nodes, it must be the current group.", ButtonType.OK);
+                                alert.showAndWait();
+                                break;
+                            }
+                            nodeMoving = true;
+                        }
+                        nodeMovingAmount = pointConvertCanvasToMap(x, y).subtract(mousePressedPoint);
+                        repaintLater();
                     } else {
                         if (pointedNode != null) {
                             Point2D mapPoint = pointConvertCanvasToMap(x, y);
@@ -1326,6 +1362,13 @@ public class EditorCanvas extends Canvas {
             drawSelectionRangePolygon(gc, selectionRangePolygon, point);
         }
 
+        // 移動中の複数ノードの仮描画
+        if (nodeMoving) {
+            for (MapNode node : editor.getSelectedNodes()) {
+                drawTemporaryNode(node, gc, nodeMovingAmount.getX(), nodeMovingAmount.getY());
+            }
+        }
+
         // ホバーの描画
         switch (mode) {
         case ADD_NODE:
@@ -1537,6 +1580,24 @@ public class EditorCanvas extends Canvas {
                 gc.setFill(isBg ? Color.SILVER : Color.BLACK);
                 gc.fillText(text, cx, cy - radius);
             }
+        }
+    }
+
+    /**
+     * ノードを仮描画する
+     */
+    private void drawTemporaryNode(MapNode node, GraphicsContext gc, double dx, double dy) {
+        double radius = 4.0 / scale;
+        double cx = (node.getX() + dx) * SCALE_FACTOR;
+        double cy = (node.getY() + dy) * SCALE_FACTOR;
+
+        if (node.selected) {
+            gc.setStroke(Color.RED);
+            gc.setLineWidth(2.0 / scale);
+            gc.strokeRect(cx - radius, cy - radius, radius * 2, radius * 2);
+        } else {
+            gc.setFill(Color.MEDIUMBLUE);
+            gc.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
         }
     }
 
