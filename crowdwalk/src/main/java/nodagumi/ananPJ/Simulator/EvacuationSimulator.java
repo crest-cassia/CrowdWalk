@@ -663,24 +663,27 @@ public class EvacuationSimulator {
         // 経路探索をゴールごとに別スレッドで実行
         for (String goal_tag : all_goal_tags) {
             CalcGoalPath worker = new CalcGoalPath(goal_tag);
-            Thread thread = new Thread(worker);
-            workers.put(goal_tag, worker);
-            threads.put(goal_tag, thread);
-            thread.start();
+            // Thread thread = new Thread(worker);
+            // workers.put(goal_tag, worker);
+            // threads.put(goal_tag, thread);
+            // thread.start();
+            if (!worker.goalCalculated) {
+                no_goal_list.add(worker.goalTag);
+            }
         }
         // スレッド終了を待ってno_goal_list更新
-        try {
-            for (String goal_tag : all_goal_tags) {
-                threads.get(goal_tag).join();
-                CalcGoalPath worker = workers.get(goal_tag);
-                if (!worker.goalCalculated) {
-                    no_goal_list.add(worker.goalTag);
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        // try {
+        //     for (String goal_tag : all_goal_tags) {
+        //         threads.get(goal_tag).join();
+        //         CalcGoalPath worker = workers.get(goal_tag);
+        //         if (!worker.goalCalculated) {
+        //             no_goal_list.add(worker.goalTag);
+        //         }
+        //     }
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        //     System.exit(1);
+        // }
 
         // チェック
         checkMapDefectiveness(all_goal_tags, no_goal_list) ;
