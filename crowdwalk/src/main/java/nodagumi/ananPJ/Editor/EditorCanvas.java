@@ -3,7 +3,9 @@ package nodagumi.ananPJ.Editor;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Polygon;
+import java.awt.Shape;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 import javafx.application.Platform;
@@ -166,9 +168,19 @@ public class EditorCanvas extends Canvas {
     private double scale = 1.0 / SCALE_FACTOR;  // 標準で 0.01
 
     /**
-     * 表示回転角
+     * マップの回転角
      */
     private double angle = 0.0;
+
+    /**
+     * マップの回転を反映したノード座標の再計算フラグ
+     */
+    private boolean nodePointsUpdated = true;
+
+    /**
+     * マップの回転を反映したノード座標を保持する
+     */
+    private HashMap<MapNode, Point2D> rotatedPoints = new HashMap();
 
     /**
      * マップ座標(現在の scale で縮尺)をキャンバス原点に合わせるための移動量
@@ -363,8 +375,8 @@ public class EditorCanvas extends Canvas {
                     repaintLater();
                     if (fromNode != null) {
                         MapPartGroup group = editor.getCurrentGroup();
-                        java.awt.geom.Point2D point = toAwtPoint2D(pointConvertCanvasToMap(x, y));
-                        double length = fromNode.getAbsoluteCoordinates().distance(point) * group.getScale();
+                        Point2D point = pointConvertCanvasToMap(x, y);
+                        double length = getRotatedPoint(fromNode).distance(point) * group.getScale();
                         frame.setCurrentLinkLength(length);
                     }
                 }
@@ -414,7 +426,7 @@ public class EditorCanvas extends Canvas {
             lastMouseY = y;
 
             if (mapCoordinatesShowing || mode == EditorMode.ADD_NODE) {
-                Point2D mapPoint = pointConvertCanvasToMap(x, y);
+                Point2D mapPoint = convertToOriginal(pointConvertCanvasToMap(x, y));
                 frame.setStatusText("Map coordinates: " + mapPoint.getX() + ", " + mapPoint.getY());
             }
         });
@@ -437,13 +449,15 @@ public class EditorCanvas extends Canvas {
             }
             if (nodeMoving) {
                 nodeMoving = false;
-                nodeMovingAmount = pointConvertCanvasToMap(event.getX(), event.getY()).subtract(mousePressedPoint);
+                Point2D point = pointConvertCanvasToMap(event.getX(), event.getY());
+                nodeMovingAmount = point.subtract(mousePressedPoint);
                 if (nodeMovingAmount.getX() == 0.0 && nodeMovingAmount.getY() == 0.0) {
                     repaintLater();
                     return;
                 }
                 // 選択中の複数ノードを移動またはコピーする
-                frame.moveOrCopyNodes(nodeMovingAmount.getX(), nodeMovingAmount.getY(), 0.0);
+                Point2D originalNodeMovingAmount = convertToOriginal(point).subtract(convertToOriginal(mousePressedPoint));
+                frame.moveOrCopyNodes(originalNodeMovingAmount.getX(), originalNodeMovingAmount.getY(), 0.0);
             }
         });
 
@@ -477,7 +491,7 @@ public class EditorCanvas extends Canvas {
                 }
                 switch (mode) {
                 case ADD_NODE:
-                    editor.invokeSingleCommand(new AddNode(group, mapPoint, group.getDefaultHeight()));
+                    editor.invokeSingleCommand(new AddNode(group, convertToOriginal(mapPoint), group.getDefaultHeight()));
                     editor.updateHeight();
                     break;
                 case ADD_LINK:
@@ -509,7 +523,7 @@ public class EditorCanvas extends Canvas {
                     break;
                 case ADD_NODE_LINK:
                     editor.startOfCommandBlock();
-                    if (editor.invoke(new AddNode(group, mapPoint, group.getDefaultHeight()))) {
+                    if (editor.invoke(new AddNode(group, convertToOriginal(mapPoint), group.getDefaultHeight()))) {
                         updateTargetNode(mapPoint);     // pointedNode に今生成したノードをセット
                         if (pointedNode == null) {
                             fromNode = null;
@@ -678,7 +692,7 @@ public class EditorCanvas extends Canvas {
                         repaintLater();
                     } else {
                         if (pointedNode != null) {
-                            Point2D mapPoint = pointConvertCanvasToMap(x, y);
+                            Point2D mapPoint = convertToOriginal(pointConvertCanvasToMap(x, y));
                             editor.invokeSingleCommand(new MoveNode(pointedNode, mapPoint.getX(), mapPoint.getY()));
                         }
                     }
@@ -709,7 +723,8 @@ public class EditorCanvas extends Canvas {
                     // Shift + 左クリックでドラッグ: 背景画像の移動
                     double dx = x - lastMouseX;
                     double dy = y - lastMouseY;
-                    editor.invokeSingleCommand(new MoveBackgroundImage(group, group.tx + dx / (scale * SCALE_FACTOR), group.ty + dy / (scale * SCALE_FACTOR)));
+                    Point2D movingAmount = convertToOriginal(dx, dy);
+                    editor.invokeSingleCommand(new MoveBackgroundImage(group, group.tx + movingAmount.getX() / (scale * SCALE_FACTOR), group.ty + movingAmount.getY() / (scale * SCALE_FACTOR)));
                 }
                 break;
             default:
@@ -776,7 +791,7 @@ public class EditorCanvas extends Canvas {
             ArrayList<MapNode> nodes = new ArrayList();
             for (MapNode node : editor.getCurrentGroup().getChildNodes()) {
                 if (frame.getNodePanel().getFilteredSet().contains(node)) {
-                    java.awt.geom.Point2D point = node.getAbsoluteCoordinates();
+                    java.awt.geom.Point2D point = toAwtPoint2D(getRotatedPoint(node));
                     if (polygon.contains(point)) {
                         nodes.add(node);
                     }
@@ -788,8 +803,8 @@ public class EditorCanvas extends Canvas {
             ArrayList<MapLink> links = new ArrayList();
             for (MapLink link : editor.getCurrentGroup().getChildLinks()) {
                 if (frame.getLinkPanel().getFilteredSet().contains(link)) {
-                    java.awt.geom.Point2D fromPoint = link.getFrom().getAbsoluteCoordinates();
-                    java.awt.geom.Point2D toPoint = link.getTo().getAbsoluteCoordinates();
+                    java.awt.geom.Point2D fromPoint = toAwtPoint2D(getRotatedPoint(link.getFrom()));
+                    java.awt.geom.Point2D toPoint = toAwtPoint2D(getRotatedPoint(link.getTo()));
                     if (polygon.contains(fromPoint) && polygon.contains(toPoint)) {
                         links.add(link);
                     }
@@ -801,7 +816,7 @@ public class EditorCanvas extends Canvas {
             ArrayList<MapArea> areas = new ArrayList();
             for (MapArea area : editor.getCurrentGroup().getChildMapAreas()) {
                 if (frame.getAreaPanel().getFilteredSet().contains(area)) {
-                    if (polygon.contains((Rectangle2D)area.getShape())) {
+                    if (contains(polygon, area, true)) {
                         areas.add(area);
                     }
                 }
@@ -809,6 +824,37 @@ public class EditorCanvas extends Canvas {
             frame.getAreaPanel().select(areas);
             break;
         }
+    }
+
+    /**
+     * MapArea の頂点座標リストを取得する
+     */
+    private ArrayList<Point2D> getPointsOfRectangle(MapArea area) {
+        Rectangle2D rect = (Rectangle2D)area.getShape();
+        ArrayList<Point2D> points = new ArrayList();
+        points.add(calcRotatedPoint(rect.getMinX(), rect.getMinY()));
+        points.add(calcRotatedPoint(rect.getMaxX(), rect.getMinY()));
+        points.add(calcRotatedPoint(rect.getMaxX(), rect.getMaxY()));
+        points.add(calcRotatedPoint(rect.getMinX(), rect.getMaxY()));
+        return points;
+    }
+
+    /**
+     * マップ座標の回転を反映した contains
+     */
+    private boolean contains(Shape shape, MapArea area, boolean andConditional) {
+        for (Point2D point : getPointsOfRectangle(area)) {
+            if (andConditional) {
+                if (! shape.contains(toAwtPoint2D(point))) {
+                    return false;
+                }
+            } else {
+                if (shape.contains(toAwtPoint2D(point))) {
+                    return true;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -867,7 +913,7 @@ public class EditorCanvas extends Canvas {
         default:
             if (event.isAltDown()) {
                 // Alt + ホイール: 編集画面の回転
-                rotate(event.getDeltaY(), event.isControlDown());
+                rotate(event.getX(), event.getY(), event.getDeltaY(), event.isControlDown());
             } else {
                 // ホイール: マップ表示の拡大・縮小
                 zoom(event.getX(), event.getY(), event.getDeltaY(), event.isControlDown());
@@ -957,28 +1003,33 @@ public class EditorCanvas extends Canvas {
     }
 
     /**
-     * Canvas 自身を回転する
+     * マップを回転する
      */
-    private void rotate(double deltaY, boolean controlDown) {
-        // Control キーが押されていたら 0.1 度刻み
-        double delta = controlDown ? 0.1 : 1.0;
+    public void rotate(double x, double y, double angle) {
+        Point2D mapPoint = convertToOriginal(pointConvertCanvasToMap(x, y));
+        this.angle = angle;
+        Point2D point = calcRotatedPoint(mapPoint);
+        setTranslate(point.getX(), point.getY());
+        adjustmentTranslate = new Point2D(x, y);
+
+        frame.setStatusText("Rotation angle: " + angle);
+        nodePointsUpdated = true;
+        repaintLater();
+    }
+
+    /**
+     * マップを回転する
+     */
+    private void rotate(double x, double y, double deltaY, boolean controlDown) {
+        double angle = this.angle;
+        double delta = controlDown ? 0.1 : 1.0;     // Control キーが押されていたら 0.1 度刻み
 
         if (deltaY > 0.0) {
             angle -= delta;
         } else if (deltaY < 0.0) {
             angle += delta;
         }
-        frame.setStatusText("Rotation angle: " + angle);
-        repaintLater();
-    }
-
-    /**
-     * Canvas 自身を回転する
-     */
-    public void rotate(double angle) {
-        this.angle = angle;
-        frame.setStatusText("Rotation angle: " + angle);
-        repaintLater();
+        rotate(x, y, angle);
     }
 
     /**
@@ -1001,6 +1052,100 @@ public class EditorCanvas extends Canvas {
         originTranslate = new Point2D(ox * scale, oy * scale);
         adjustmentTranslate = new Point2D(x, y);
         repaintLater();
+    }
+
+    /**
+     * マップの回転を反映した座標を求める
+     */
+    private Point2D calcRotatedPoint(double x, double y) {
+        double r = Math.toRadians(angle);
+        return new Point2D(x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r));
+    }
+
+    /**
+     * マップの回転を反映した座標を求める
+     */
+    private Point2D calcRotatedPoint(Point2D point) {
+        return calcRotatedPoint(point.getX(), point.getY());
+    }
+
+    /**
+     * マップの回転を反映した座標を求める
+     */
+    private Point2D calcRotatedPoint(java.awt.geom.Point2D point) {
+        return calcRotatedPoint(point.getX(), point.getY());
+    }
+
+    /**
+     * マップの回転を反映したノード座標を再計算する
+     */
+    private void recalcRotatedPoints() {
+        double r = Math.toRadians(angle);
+        NetworkMap networkMap = editor.getMap();
+        rotatedPoints.clear();
+        for (MapNode node : networkMap.getNodes()) {
+            double x = node.getX() * Math.cos(r) - node.getY() * Math.sin(r);
+            double y = node.getX() * Math.sin(r) + node.getY() * Math.cos(r);
+            rotatedPoints.put(node, new Point2D(x, y));
+        }
+    }
+
+    /**
+     * マップの回転を反映したノード座標を取得する
+     */
+    private Point2D getRotatedPoint(MapNode node) {
+        Point2D point = rotatedPoints.get(node);
+        if (point == null) {
+            point = calcRotatedPoint(node.getX(), node.getY());
+            rotatedPoints.put(node, point);
+        }
+        return point;
+    }
+
+    /**
+     * マップの回転を反映したノード座標の X を取得する
+     */
+    private double getRotatedX(MapNode node) {
+        return getRotatedPoint(node).getX();
+    }
+
+    /**
+     * マップの回転を反映したノード座標の Y を取得する
+     */
+    private double getRotatedY(MapNode node) {
+        return getRotatedPoint(node).getY();
+    }
+
+    /**
+     * リンクが矩形領域の内部と交差しているか?
+     */
+    private boolean intersectsLine(Rectangle2D rectangle, MapLink link) {
+        return rectangle.intersectsLine(
+            getRotatedX(link.getFrom()), getRotatedY(link.getFrom()),
+            getRotatedX(link.getTo()), getRotatedY(link.getTo())
+        );
+    }
+
+    /**
+     * マップの回転を反映した座標から元の座標を求める
+     */
+    private Point2D convertToOriginal(double x, double y) {
+        double r = Math.toRadians(-angle);
+        return new Point2D(x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r));
+    }
+
+    /**
+     * マップの回転を反映した座標から元の座標を求める
+     */
+    private Point2D convertToOriginal(Point2D point) {
+        return convertToOriginal(point.getX(), point.getY());
+    }
+
+    /**
+     * マップの回転を反映したノード座標を再計算する
+     */
+    public void updateNodePoints() {
+        nodePointsUpdated = true;
     }
 
     /**
@@ -1036,7 +1181,7 @@ public class EditorCanvas extends Canvas {
      * マップのセンタリングとスケーリング
      */
     public void centering(boolean withScaling) {
-        Rectangle2D bounds = editor.getMap().calcRectangle();
+        Rectangle2D bounds = calcRotatedMapRectangle();
         double cx = bounds.getMinX() + bounds.getWidth() / 2.0;
         double cy = bounds.getMinY() + bounds.getHeight() / 2.0;
         cx *= SCALE_FACTOR;
@@ -1045,6 +1190,8 @@ public class EditorCanvas extends Canvas {
         // map is empty
         if (cx == 0.0 && cy == 0.0) {
             scale = 1.0 / SCALE_FACTOR;
+            originTranslate = new Point2D(0.0, 0.0);
+            adjustmentTranslate = new Point2D(getWidth() / 2, getHeight() / 2);
             return;
         }
 
@@ -1066,6 +1213,38 @@ public class EditorCanvas extends Canvas {
     }
 
     /**
+     * マップに外接する矩形を算出する
+     */
+    public Rectangle2D calcRotatedMapRectangle() {
+        double north = 0.0;
+        double south = 0.0;
+        double west = 0.0;
+        double east = 0.0;
+        for (MapNode node : editor.getMap().getNodes()) {
+            Point2D point = calcRotatedPoint(node.getX(), node.getY());
+            if (north == 0.0 && south == 0.0) {
+                north = point.getY();
+                south = point.getY();
+                west = point.getX();
+                east = point.getX();
+            }
+            if (point.getY() < north) {
+                north = point.getY();
+            }
+            if (point.getY() > south) {
+                south = point.getY();
+            }
+            if (point.getX() < west) {
+                west = point.getX();
+            }
+            if (point.getX() > east) {
+                east = point.getX();
+            }
+        }
+        return new Rectangle2D.Double(west, north, east - west, south - north);
+    }
+
+    /**
      * マウスカーソル上のノードを pointedNode にセットする
      */
     private boolean updateTargetNode(double x, double y) {
@@ -1076,7 +1255,7 @@ public class EditorCanvas extends Canvas {
      * マップ座標 point から16ピクセル以内にある一番近いノードを pointedNode にセットする
      */
     private boolean updateTargetNode(Point2D point) {
-        java.awt.geom.Point2D p = new java.awt.geom.Point2D.Double(point.getX(), point.getY());
+        java.awt.geom.Point2D p = toAwtPoint2D(convertToOriginal(point.getX(), point.getY()));
         double mindist = Double.POSITIVE_INFINITY;
         MapNode pointedNodeCandidate = null;
         double radius = 16.0  / (scale * SCALE_FACTOR);
@@ -1106,8 +1285,7 @@ public class EditorCanvas extends Canvas {
         Point2D lowerRight = pointConvertCanvasToMap(getWidth(), getHeight());
         Rectangle2D bounds = new Rectangle2D.Double(upperLeft.getX(), upperLeft.getY(), lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY());
 
-        Point2D point = pointConvertCanvasToMap(x, y);
-        java.awt.geom.Point2D p = new java.awt.geom.Point2D.Double(point.getX(), point.getY());
+        java.awt.geom.Point2D point = toAwtPoint2D(pointConvertCanvasToMap(x, y));
         double mindist = 16.0  / (scale * SCALE_FACTOR);
         MapLink pointedLinkCandidate = null;
 
@@ -1117,11 +1295,11 @@ public class EditorCanvas extends Canvas {
             }
             MapNode from = link.getFrom();
             MapNode to = link.getTo();
-            Line2D line = new Line2D.Double(from.getX(), from.getY(), to.getX(), to.getY());
+            Line2D line = new Line2D.Double(getRotatedX(from), getRotatedY(from), getRotatedX(to), getRotatedY(to));
             if (! bounds.intersectsLine(line)) {
                 continue;
             }
-            double dist = line.ptSegDist(p);
+            double dist = line.ptSegDist(point);
             if (dist < mindist) {
                 pointedLinkCandidate = link;
                 mindist = dist;
@@ -1138,15 +1316,14 @@ public class EditorCanvas extends Canvas {
      * マウスカーソル上のエリアを pointedArea にセットする
      */
     private boolean updateTargetArea(double x, double y) {
-        Point2D point = pointConvertCanvasToMap(x, y);
-        java.awt.geom.Point2D p = new java.awt.geom.Point2D.Double(point.getX(), point.getY());
+        java.awt.geom.Point2D point = toAwtPoint2D(convertToOriginal(pointConvertCanvasToMap(x, y)));
         MapArea pointedAreaCandidate = null;
 
         for (MapArea area : editor.getCurrentGroup().getChildMapAreas()) {
             if (! frame.getAreaPanel().getFilteredSet().contains(area)) {
                 continue;
             }
-            if (area.getShape().contains(p)) {
+            if (area.getShape().contains(point)) {
                 pointedAreaCandidate = area;
                 break;
             }
@@ -1162,7 +1339,7 @@ public class EditorCanvas extends Canvas {
      * 仮リンク(を構成する toNode)を決める
      */
     private void updateTentativeLink(double x, double y) {
-        java.awt.geom.Point2D point = toAwtPoint2D(pointConvertCanvasToMap(x, y));
+        java.awt.geom.Point2D point = toAwtPoint2D(convertToOriginal(pointConvertCanvasToMap(x, y)));
         MapPartGroup group = editor.getCurrentGroup();
 
         MapNodeTable nodes = group.getChildNodesAndSymlinks(fromNode, fromNode.getQuadrant(point));
@@ -1219,13 +1396,15 @@ public class EditorCanvas extends Canvas {
      * 再描画
      */
     public void repaint() {
+        if (nodePointsUpdated) {
+            recalcRotatedPoints();
+            nodePointsUpdated = false;
+        }
+
         // viewArea を使って表示範囲外の無駄な描画処理を省く
         Point2D upperLeft = pointConvertCanvasToMap(0.0, 0.0);
         Point2D lowerRight = pointConvertCanvasToMap(getWidth(), getHeight());
         Rectangle2D viewArea = new Rectangle2D.Double(upperLeft.getX(), upperLeft.getY(), lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY());
-
-        // Canvas 自身を回転する
-        setRotate(angle);
 
         // Canvas のクリア
         GraphicsContext gc = getGraphicsContext2D();
@@ -1282,8 +1461,7 @@ public class EditorCanvas extends Canvas {
         /* actual objects */
         if (areasShowing) {
             for (MapArea area : group.getChildMapAreas()) {
-                Rectangle2D rect = area.getShape().getBounds2D();
-                if ((viewArea.contains(rect.getX(), rect.getY()) || viewArea.contains(rect.getMaxX(), rect.getMaxY())) && frame.getAreaPanel().getFilteredSet().contains(area)) {
+                if (frame.getAreaPanel().getFilteredSet().contains(area) && contains(viewArea, area, false)) {
                     drawArea(area, gc, areaLabelsShowing, false);
                     if (redoRepainting) {
                         return;
@@ -1293,7 +1471,7 @@ public class EditorCanvas extends Canvas {
         }
         if (linksShowing) {
             for (MapLink link : group.getChildLinks()) {
-                if (viewArea.intersectsLine(link.getLine2D()) && frame.getLinkPanel().getFilteredSet().contains(link)) {
+                if (intersectsLine(viewArea, link) && frame.getLinkPanel().getFilteredSet().contains(link)) {
                     drawLink(link, gc, linkLabelsShowing, false, false);
                     if (redoRepainting) {
                         return;
@@ -1303,7 +1481,7 @@ public class EditorCanvas extends Canvas {
         }
         if (nodesShowing) {
             for (MapNode node : group.getChildNodes()) {
-                if (viewArea.contains(node.getX(), node.getY()) && frame.getNodePanel().getFilteredSet().contains(node)) {
+                if (viewArea.contains(getRotatedX(node), getRotatedY(node)) && frame.getNodePanel().getFilteredSet().contains(node)) {
                     drawNode(node, gc, nodeLabelsShowing, false, false);
                     if (redoRepainting) {
                         return;
@@ -1323,7 +1501,7 @@ public class EditorCanvas extends Canvas {
                 }
                 if (orig.getNodeType() == OBNode.NType.LINK) {
                     MapLink link = (MapLink)orig;
-                    if (viewArea.intersectsLine(link.getLine2D())) {
+                    if (intersectsLine(viewArea, link)) {
                         drawLink(link, gc, linkLabelsShowing, true, false);
                     }
                 }
@@ -1338,7 +1516,7 @@ public class EditorCanvas extends Canvas {
                 OBNode orig = symlink.getOriginal();
                 if (orig.getNodeType() == OBNode.NType.NODE) {
                     MapNode node = (MapNode)orig;
-                    if (viewArea.contains(node.getX(), node.getY())) {
+                    if (viewArea.contains(getRotatedX(node), getRotatedY(node))) {
                         drawNode(node, gc, nodeLabelsShowing, true, false);
                     }
                 }
@@ -1417,12 +1595,18 @@ public class EditorCanvas extends Canvas {
      * 地理院タイルを描画する
      */
     private void drawBackgroundMapTile(GsiTile gsiTile, Image image, GraphicsContext gc) {
-        java.awt.geom.Point2D point = gsiTile.getPoint();
+        Point2D point = calcRotatedPoint(gsiTile.getPoint());
         double x = point.getX() * SCALE_FACTOR;
         double y = point.getY() * SCALE_FACTOR;
         double width = image.getWidth() * gsiTile.getScaleX() * SCALE_FACTOR;
         double height = image.getHeight() * gsiTile.getScaleY() * SCALE_FACTOR;
+
+        Affine originalTransform = gc.getTransform();
+        Affine affine = new Affine();
+        affine.appendRotation(angle, x, y);
+        gc.transform(affine);
         gc.drawImage(image, x, y, width, height);
+        gc.setTransform(originalTransform);
     }
 
     /**
@@ -1436,10 +1620,11 @@ public class EditorCanvas extends Canvas {
         Affine originalTransform = gc.getTransform();
 
         Affine affine = new Affine();
-        double angle = group.r * 180.0 / Math.PI;
-        affine.appendRotation(angle, group.tx * SCALE_FACTOR, group.ty * SCALE_FACTOR);
+        double angle = group.r * 180.0 / Math.PI + this.angle;
+        Point2D point = calcRotatedPoint(group.tx, group.ty);
+        affine.appendRotation(angle, point.getX() * SCALE_FACTOR, point.getY() * SCALE_FACTOR);
         gc.transform(affine);
-        gc.drawImage(image, group.tx * SCALE_FACTOR, group.ty * SCALE_FACTOR, image.getWidth() * group.sx * SCALE_FACTOR, image.getHeight() * group.sy * SCALE_FACTOR);
+        gc.drawImage(image, point.getX() * SCALE_FACTOR, point.getY() * SCALE_FACTOR, image.getWidth() * group.sx * SCALE_FACTOR, image.getHeight() * group.sy * SCALE_FACTOR);
 
         gc.setTransform(originalTransform);
     }
@@ -1450,8 +1635,7 @@ public class EditorCanvas extends Canvas {
     private void drawBackgroundGroup(MapPartGroup group, GraphicsContext gc, Rectangle2D viewArea) {
         if (areasShowing) {
             for (MapArea area : group.getChildMapAreas()) {
-                Rectangle2D rect = area.getShape().getBounds2D();
-                if ((viewArea.contains(rect.getX(), rect.getY()) || viewArea.contains(rect.getMaxX(), rect.getMaxY())) && frame.getAreaPanel().getFilteredSet().contains(area)) {
+                if (frame.getAreaPanel().getFilteredSet().contains(area) && contains(viewArea, area, false)) {
                     drawArea(area, gc, areaLabelsShowing, true);
                     if (redoRepainting) {
                         return;
@@ -1461,7 +1645,7 @@ public class EditorCanvas extends Canvas {
         }
         if (linksShowing) {
             for (MapLink link : group.getChildLinks()) {
-                if (viewArea.intersectsLine(link.getLine2D()) && frame.getLinkPanel().getFilteredSet().contains(link)) {
+                if (intersectsLine(viewArea, link) && frame.getLinkPanel().getFilteredSet().contains(link)) {
                     drawLink(link, gc, linkLabelsShowing, false, true);
                     if (redoRepainting) {
                         return;
@@ -1471,7 +1655,7 @@ public class EditorCanvas extends Canvas {
         }
         if (nodesShowing) {
             for (MapNode node : group.getChildNodes()) {
-                if (viewArea.contains(node.getX(), node.getY()) && frame.getNodePanel().getFilteredSet().contains(node)) {
+                if (viewArea.contains(getRotatedX(node), getRotatedY(node)) && frame.getNodePanel().getFilteredSet().contains(node)) {
                     drawNode(node, gc, nodeLabelsShowing, false, true);
                     if (redoRepainting) {
                         return;
@@ -1489,7 +1673,7 @@ public class EditorCanvas extends Canvas {
                 }
                 if (orig.getNodeType() == OBNode.NType.LINK) {
                     MapLink link = (MapLink)orig;
-                    if (viewArea.intersectsLine(link.getLine2D())) {
+                    if (intersectsLine(viewArea, link)) {
                         drawLink(link, gc, linkLabelsShowing, true, true);
                     }
                 }
@@ -1503,7 +1687,7 @@ public class EditorCanvas extends Canvas {
                 OBNode orig = symlink.getOriginal();
                 if (orig.getNodeType() == OBNode.NType.NODE) {
                     MapNode node = (MapNode)orig;
-                    if (viewArea.contains(node.getX(), node.getY())) {
+                    if (viewArea.contains(getRotatedX(node), getRotatedY(node))) {
                         drawNode(node, gc, nodeLabelsShowing, true, true);
                     }
                 }
@@ -1547,8 +1731,8 @@ public class EditorCanvas extends Canvas {
      */
     private void drawNode(MapNode node, GraphicsContext gc, boolean labelShowing, boolean isSymbolic, boolean isBg) {
         double radius = 4.0 / scale;
-        double cx = node.getX() * SCALE_FACTOR;
-        double cy = node.getY() * SCALE_FACTOR;
+        double cx = getRotatedX(node) * SCALE_FACTOR;
+        double cy = getRotatedY(node) * SCALE_FACTOR;
 
         Color baseColor = isBg ? Color.web("#66ccff") : Color.MEDIUMBLUE;
         double brightness = baseColor.getBrightness();
@@ -1588,8 +1772,8 @@ public class EditorCanvas extends Canvas {
      */
     private void drawTemporaryNode(MapNode node, GraphicsContext gc, double dx, double dy) {
         double radius = 4.0 / scale;
-        double cx = (node.getX() + dx) * SCALE_FACTOR;
-        double cy = (node.getY() + dy) * SCALE_FACTOR;
+        double cx = (getRotatedX(node) + dx) * SCALE_FACTOR;
+        double cy = (getRotatedY(node) + dy) * SCALE_FACTOR;
 
         if (node.selected) {
             gc.setStroke(Color.RED);
@@ -1606,8 +1790,8 @@ public class EditorCanvas extends Canvas {
      */
     private void drawNodeHover(MapNode node, GraphicsContext gc) {
         double radius = 5.0 / scale;
-        double cx = node.getX() * SCALE_FACTOR;
-        double cy = node.getY() * SCALE_FACTOR;
+        double cx = getRotatedX(node) * SCALE_FACTOR;
+        double cy = getRotatedY(node) * SCALE_FACTOR;
 
         gc.setFill(Color.AQUA);
         gc.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
@@ -1695,7 +1879,7 @@ public class EditorCanvas extends Canvas {
         if (labelShowing) {
             String text = link.getTagString();
             if (! text.isEmpty()) {
-                java.awt.geom.Point2D middlePoint = link.getMiddlePoint();
+                Point2D middlePoint = calcRotatedPoint(link.getMiddlePoint());
                 double cx = middlePoint.getX();
                 double cy = middlePoint.getY();
                 gc.setFill(isBg ? Color.SILVER : Color.BLACK);
@@ -1715,7 +1899,7 @@ public class EditorCanvas extends Canvas {
 
         String text = link.getTagString();
         if (! text.isEmpty()) {
-            java.awt.geom.Point2D middlePoint = link.getMiddlePoint();
+            Point2D middlePoint = calcRotatedPoint(link.getMiddlePoint());
             double cx = middlePoint.getX();
             double cy = middlePoint.getY();
             gc.setFill(Color.BLUE);
@@ -1727,7 +1911,7 @@ public class EditorCanvas extends Canvas {
      * 仮リンクを描画する
      */
     private void drawTentativeLink(MapNode fromNode, MapNode toNode, GraphicsContext gc) {
-        PolygonPointsBuilder polygon = getLinkRect(fromNode.getX(), fromNode.getY(), toNode.getX(), toNode.getY(), scale);
+        PolygonPointsBuilder polygon = getLinkRect(getRotatedX(fromNode), getRotatedY(fromNode), getRotatedX(toNode), getRotatedY(toNode), scale);
 
         gc.setFill(Color.BLUE);
         gc.fillPolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
@@ -1737,7 +1921,7 @@ public class EditorCanvas extends Canvas {
      * 仮リンクを描画する
      */
     private void drawTentativeLink(MapNode fromNode, Point2D toPoint, GraphicsContext gc) {
-        PolygonPointsBuilder polygon = getLinkRect(fromNode.getX(), fromNode.getY(), toPoint.getX(), toPoint.getY(), scale);
+        PolygonPointsBuilder polygon = getLinkRect(getRotatedX(fromNode), getRotatedY(fromNode), toPoint.getX(), toPoint.getY(), scale);
 
         gc.setFill(Color.BLUE);
         gc.fillPolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
@@ -1772,10 +1956,10 @@ public class EditorCanvas extends Canvas {
      * create rectangle polygon.
      */
     private PolygonPointsBuilder getLinkRect(MapLink link, double scale) {
-        double x1 = link.getFrom().getX();
-        double y1 = link.getFrom().getY();
-        double x2 = link.getTo().getX();
-        double y2 = link.getTo().getY();
+        double x1 = getRotatedX(link.getFrom());
+        double y1 = getRotatedY(link.getFrom());
+        double x2 = getRotatedX(link.getTo());
+        double y2 = getRotatedY(link.getTo());
         return getLinkRect(x1, y1, x2, y2, scale);
     }
 
@@ -1789,15 +1973,15 @@ public class EditorCanvas extends Canvas {
         double x2 = 0.0;
         double y2 = 0.0;
         if (forward) {
-            x1 = link.getFrom().getX();
-            y1 = link.getFrom().getY();
-            x2 = link.getTo().getX();
-            y2 = link.getTo().getY();
+            x1 = getRotatedX(link.getFrom());
+            y1 = getRotatedY(link.getFrom());
+            x2 = getRotatedX(link.getTo());
+            y2 = getRotatedY(link.getTo());
         } else {
-            x1 = link.getTo().getX();
-            y1 = link.getTo().getY();
-            x2 = link.getFrom().getX();
-            y2 = link.getFrom().getY();
+            x1 = getRotatedX(link.getTo());
+            y1 = getRotatedY(link.getTo());
+            x2 = getRotatedX(link.getFrom());
+            y2 = getRotatedY(link.getFrom());
         }
         x1 *= SCALE_FACTOR;
         y1 *= SCALE_FACTOR;
@@ -1834,22 +2018,25 @@ public class EditorCanvas extends Canvas {
      * エリアを描画する
      */
     private void drawArea(MapArea area, GraphicsContext gc, boolean labelShowing, boolean isBg) {
-        Rectangle2D bounds = (Rectangle2D)area.getShape();
-        double x = bounds.getX() * SCALE_FACTOR;
-        double y = bounds.getY() * SCALE_FACTOR;
-        double width = bounds.getWidth() * SCALE_FACTOR;
-        double height = bounds.getHeight() * SCALE_FACTOR;
+        PolygonPointsBuilder polygon = new PolygonPointsBuilder();
+        for (Point2D point : getPointsOfRectangle(area)) {
+            polygon.append(point.getX() * SCALE_FACTOR, point.getY() * SCALE_FACTOR);
+        }
 
         gc.setFill(area.selected ? Color.RED : gray8050);
-        gc.fillRect(x, y, width, height);
+        gc.fillPolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
 
         if (labelShowing) {
             String text = area.getTagString();
             if (! text.isEmpty()) {
+                Rectangle2D bounds = (Rectangle2D)area.getShape();
+                Point2D point = calcRotatedPoint(bounds.getCenterX(), bounds.getCenterY());
+                double x = point.getX() * SCALE_FACTOR;
+                double y = point.getY() * SCALE_FACTOR;
                 double textWidth = 10 / scale;      // フォントメトリクスが使えないため目分量で決めている
                 double textHeight = 16 / scale;     //                  同上
                 gc.setFill(isBg ? Color.SILVER : Color.BLACK);
-                gc.fillText(text, x + textWidth / 2, y + textHeight);
+                gc.fillText(text, x - textWidth * 2, y + textHeight / 2);
             }
         }
     }
@@ -1858,23 +2045,26 @@ public class EditorCanvas extends Canvas {
      * エリアのホバーを描画する
      */
     private void drawAreaHover(MapArea area, GraphicsContext gc) {
-        Rectangle2D bounds = (Rectangle2D)area.getShape();
-        double x = bounds.getX() * SCALE_FACTOR;
-        double y = bounds.getY() * SCALE_FACTOR;
-        double width = bounds.getWidth() * SCALE_FACTOR;
-        double height = bounds.getHeight() * SCALE_FACTOR;
+        PolygonPointsBuilder polygon = new PolygonPointsBuilder();
+        for (Point2D point : getPointsOfRectangle(area)) {
+            polygon.append(point.getX() * SCALE_FACTOR, point.getY() * SCALE_FACTOR);
+        }
 
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(2.0 / scale);
-        gc.strokeRect(x, y, width, height);
+        gc.strokePolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
 
         // タグ表示
         String text = area.getTagString();
         if (! text.isEmpty()) {
+            Rectangle2D bounds = (Rectangle2D)area.getShape();
+            Point2D point = calcRotatedPoint(bounds.getCenterX(), bounds.getCenterY());
+            double x = point.getX() * SCALE_FACTOR;
+            double y = point.getY() * SCALE_FACTOR;
             double textWidth = 10 / scale;      // フォントメトリクスが使えないため目分量で決めている
             double textHeight = 16 / scale;     //                  同上
             gc.setFill(Color.BLUE);
-            gc.fillText(text, x + textWidth / 2, y + textHeight);
+            gc.fillText(text, x - textWidth * 2, y + textHeight / 2);
         }
     }
 
@@ -1893,8 +2083,8 @@ public class EditorCanvas extends Canvas {
      * 一方通行設定用のテキストを描画する
      */
     private void drawOneWayIndicator(MapNode node, String text, TextPosition position, GraphicsContext gc) {
-        double cx = node.getX() * SCALE_FACTOR;
-        double cy = node.getY() * SCALE_FACTOR;
+        double cx = getRotatedX(node) * SCALE_FACTOR;
+        double cy = getRotatedY(node) * SCALE_FACTOR;
         double textWidth = 10 / scale;      // フォントメトリクスが使えないため目分量で決めている
         double textHeight = 20 / scale;     //                  同上
 

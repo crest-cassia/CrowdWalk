@@ -567,13 +567,18 @@ public class EditorFrameFx {
             }
             Double angle = convertToDouble(text);
             if (angle != null) {
-                canvas.rotate(angle);
+                if (angle < -180.0 || angle > 180) {
+                    Alert alert = new Alert(AlertType.WARNING, "Angle range is -180.0 to 180.0", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, angle);
             }
         });
 
         MenuItem miResetRotation = new MenuItem("Reset rotation");
         miResetRotation.setOnAction(e -> {
-            canvas.rotate(0.0);
+            canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, 0.0);
         });
 
         CheckMenuItem cmiShowNodes = new CheckMenuItem("Show nodes");

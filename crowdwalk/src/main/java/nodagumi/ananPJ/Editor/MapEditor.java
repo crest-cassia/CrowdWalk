@@ -600,11 +600,13 @@ public class MapEditor implements MapEditorInterface {
         }
 
         if (nodeTagChanged || nodeVolumeChanged) {
+            frame.getCanvas().updateNodePoints();
             // フィルタ処理があるため nodeTagChanged でも reset() が必要
             frame.getNodePanel().reset();
             frame.getScenarioPanel().reset();
             scenarioPanelUpdated = true;
         } else if (nodeParamChanged) {
+            frame.getCanvas().updateNodePoints();
             frame.getNodePanel().refresh();
         }
 
