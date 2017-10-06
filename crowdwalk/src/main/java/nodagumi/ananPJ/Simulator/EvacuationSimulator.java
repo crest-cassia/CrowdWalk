@@ -663,6 +663,7 @@ public class EvacuationSimulator {
         // 経路探索をゴールごとに別スレッドで実行
         for (String goal_tag : all_goal_tags) {
             CalcGoalPath worker = new CalcGoalPath(goal_tag);
+            worker.run();
             // Thread thread = new Thread(worker);
             // workers.put(goal_tag, worker);
             // threads.put(goal_tag, thread);
