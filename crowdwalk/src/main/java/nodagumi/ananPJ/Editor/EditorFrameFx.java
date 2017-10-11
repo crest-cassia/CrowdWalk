@@ -181,6 +181,7 @@ public class EditorFrameFx {
     private FlowPane groupSelectionPane = new FlowPane();
     private ToggleGroup groupToggleGroup = new ToggleGroup();
     private HashMap<MapPartGroup, ToggleButton> groupButtonMap = new HashMap();
+    private ArrayList<ToggleButton> groupButtons = new ArrayList();
 
     /**
      * ステータスバー
@@ -221,6 +222,11 @@ public class EditorFrameFx {
     private Stage helpStage = new Stage();
     private WebView webView = new WebView();
     private double helpZoom = 1.0;
+
+    /**
+     * 編集モード選択ボタンのリスト
+     */
+    private ArrayList<ToggleButton> editModeButtons = new ArrayList();
 
     /**
      * コンストラクタ
@@ -480,7 +486,7 @@ public class EditorFrameFx {
 
         MenuItem miNew = new MenuItem("New");
         miNew.setOnAction(e -> clearMapData());
-        miNew.setAccelerator(KeyCombination.valueOf("Ctrl+N"));
+        // miNew.setAccelerator(KeyCombination.valueOf("Ctrl+N"));
 
         MenuItem miOpenMap = new MenuItem("Open map");
         miOpenMap.setOnAction(e -> openMap());
@@ -543,12 +549,14 @@ public class EditorFrameFx {
             canvas.centering(false);
             canvas.repaintLater();
         });
+        miCentering.setAccelerator(KeyCombination.valueOf("Ctrl+C"));
 
         MenuItem miCenteringWithScaling = new MenuItem("Centering with scaling");
         miCenteringWithScaling.setOnAction(e -> {
             canvas.centering(true);
             canvas.repaintLater();
         });
+        miCenteringWithScaling.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+C"));
 
         MenuItem miToTheOrigin = new MenuItem("To the origin");
         miToTheOrigin.setOnAction(e -> {
@@ -587,6 +595,7 @@ public class EditorFrameFx {
             canvas.setNodesShowing(cmiShowNodes.isSelected());
             canvas.repaintLater();
         });
+        cmiShowNodes.setAccelerator(KeyCombination.valueOf("Ctrl+N"));
 
         CheckMenuItem cmiShowNodeLabels = new CheckMenuItem("Show node labels");
         cmiShowNodeLabels.setSelected(false);
@@ -594,6 +603,7 @@ public class EditorFrameFx {
             canvas.setNodeLabelsShowing(cmiShowNodeLabels.isSelected());
             canvas.repaintLater();
         });
+        cmiShowNodeLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+N"));
 
         CheckMenuItem cmiShowLinks = new CheckMenuItem("Show links");
         CheckMenuItem cmiShowLinkLabels = new CheckMenuItem("Show link labels");
@@ -608,12 +618,14 @@ public class EditorFrameFx {
             }
             canvas.repaintLater();
         });
+        cmiShowLinks.setAccelerator(KeyCombination.valueOf("Ctrl+L"));
 
         cmiShowLinkLabels.setSelected(false);
         cmiShowLinkLabels.setOnAction(e -> {
             canvas.setLinkLabelsShowing(cmiShowLinkLabels.isSelected());
             canvas.repaintLater();
         });
+        cmiShowLinkLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+L"));
 
         CheckMenuItem cmiShowAreas = new CheckMenuItem("Show areas");
         CheckMenuItem cmiShowAreaLabels = new CheckMenuItem("Show area labels");
@@ -628,12 +640,14 @@ public class EditorFrameFx {
             }
             canvas.repaintLater();
         });
+        cmiShowAreas.setAccelerator(KeyCombination.valueOf("Ctrl+R"));
 
         cmiShowAreaLabels.setSelected(false);
         cmiShowAreaLabels.setOnAction(e -> {
             canvas.setAreaLabelsShowing(cmiShowAreaLabels.isSelected());
             canvas.repaintLater();
         });
+        cmiShowAreaLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+R"));
 
         CheckMenuItem cmiShowBackgroundImage = new CheckMenuItem("Show background image");
         cmiShowBackgroundImage.setSelected(true);
@@ -641,12 +655,14 @@ public class EditorFrameFx {
             canvas.setBackgroundImageShowing(cmiShowBackgroundImage.isSelected());
             canvas.repaintLater();
         });
+        cmiShowBackgroundImage.setAccelerator(KeyCombination.valueOf("Ctrl+B"));
 
         CheckMenuItem cmiShowBackgroundMap = new CheckMenuItem("Show background map");
         cmiShowBackgroundMap.setOnAction(e -> {
             canvas.setBackgroundMapShowing(cmiShowBackgroundMap.isSelected());
             canvas.repaintLater();
         });
+        cmiShowBackgroundMap.setAccelerator(KeyCombination.valueOf("Ctrl+M"));
 
         CheckMenuItem cmiShowMapCoordinates = new CheckMenuItem("Show map coordinates on the cursor");
         cmiShowMapCoordinates.setOnAction(e -> {
@@ -919,6 +935,7 @@ public class EditorFrameFx {
     public FlowPane updateGroupSelectionPane() {
         NetworkMap networkMap = editor.getMap();
         groupButtonMap.clear();
+        groupButtons.clear();
         groupSelectionPane.getChildren().clear();
         groupToggleGroup.getToggles().clear();
 
@@ -943,6 +960,7 @@ public class EditorFrameFx {
                 });
             }
             groupButtonMap.put(group, groupButton);
+            groupButtons.add(groupButton);
             groupSelectionPane.getChildren().add(groupButton);
         }
         return groupSelectionPane;
@@ -1010,10 +1028,26 @@ public class EditorFrameFx {
             canvas.setMode(EditorMode.BACKGROUND_IMAGE);
         });
 
+        editModeButtons.add(tbAddNode);
+        editModeButtons.add(tbAddLink);
+        editModeButtons.add(tbAddNodeAndLink);
+        editModeButtons.add(tbEditNode);
+        editModeButtons.add(tbEditLink);
+        editModeButtons.add(tbEditArea);
+        editModeButtons.add(tbBgImage);
         flowPane.getChildren().addAll(label, tbAddNode, tbAddLink, tbAddNodeAndLink, tbEditNode, tbEditLink, tbEditArea, tbBgImage);
         tbEditNode.setSelected(true);
 
         return flowPane;
+    }
+
+    /**
+     * 編集モードを選択する
+     */
+    public void selectEditMode(int index) {
+        if (index >= 0 && index < editModeButtons.size() && ! editModeButtons.get(index).isSelected()) {
+            editModeButtons.get(index).fire();
+        }
     }
 
     /**
@@ -2652,6 +2686,15 @@ public class EditorFrameFx {
         groupButton.setText(group.getTagString());
     }
 
+    /**
+     * グループを選択する
+     */
+    public void selectGroup(int index) {
+        if (index >= 0 && index < groupButtons.size() && ! groupButtons.get(index).isSelected()) {
+            groupButtons.get(index).fire();
+        }
+    }
+
     public Stage getStage() {
         return frame;
     }
@@ -2694,5 +2737,9 @@ public class EditorFrameFx {
 
     public ContextMenu getBgImageMenu() {
         return bgImageMenu;
+    }
+
+    public boolean isContextMenuShowing() {
+        return editNodeMenu.isShowing() || editLinkMenu.isShowing() || editAreaMenu.isShowing() || bgImageMenu.isShowing();
     }
 }

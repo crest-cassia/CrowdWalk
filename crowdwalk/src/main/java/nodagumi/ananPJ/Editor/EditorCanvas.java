@@ -278,6 +278,17 @@ public class EditorCanvas extends Canvas {
         setFocusTraversable(true);
         addEventFilter(MouseEvent.ANY, e -> requestFocus());
 
+        final ArrayList<KeyCode> functionKeys = new ArrayList();
+        functionKeys.add(KeyCode.F1);
+        functionKeys.add(KeyCode.F2);
+        functionKeys.add(KeyCode.F3);
+        functionKeys.add(KeyCode.F4);
+        functionKeys.add(KeyCode.F5);
+        functionKeys.add(KeyCode.F6);
+        functionKeys.add(KeyCode.F7);
+        functionKeys.add(KeyCode.F8);
+        functionKeys.add(KeyCode.F9);
+
         // 何かのキーが押された
         setOnKeyPressed(event -> {
             // ESC
@@ -302,6 +313,7 @@ public class EditorCanvas extends Canvas {
                     frame.getAreaPanel().clearSelection();
                     break;
                 }
+                event.consume();
             }
 
             // Ctrl + A
@@ -338,6 +350,29 @@ public class EditorCanvas extends Canvas {
                     frame.getAreaPanel().select(areas);
                     break;
                 }
+                event.consume();
+            }
+
+            // アプリケーションキー
+            if (event.getCode() == KeyCode.CONTEXT_MENU) {
+                if (! frame.isContextMenuShowing()) {
+                    popupMenu(lastMouseX, lastMouseY, event.isControlDown());
+                    event.consume();
+                }
+            }
+
+            // ファンクションキー
+            int fKeyIndex = functionKeys.indexOf(event.getCode());
+            if (fKeyIndex != -1) {
+                // Edit mode shortcut
+                if (! event.isAltDown() && ! event.isControlDown() && ! event.isMetaDown() && ! event.isShiftDown()) {
+                    frame.selectEditMode(fKeyIndex);
+                }
+                // Group selection shortcut
+                else if (! event.isAltDown() && ! event.isControlDown() && ! event.isMetaDown() && event.isShiftDown()) {
+                    frame.selectGroup(fKeyIndex);
+                }
+                event.consume();
             }
 
             // 何かキーを押したら矩形選択はキャンセルする
@@ -928,9 +963,13 @@ public class EditorCanvas extends Canvas {
      * コンテキストメニューを表示する
      */
     private void popupMenu(MouseEvent event) {
-        double x = event.getScreenX();
-        double y = event.getScreenY();
+        popupMenu(event.getScreenX(), event.getScreenY(), event.isControlDown());
+    }
 
+    /**
+     * コンテキストメニューを表示する
+     */
+    private void popupMenu(double x, double y, boolean ctrlDown) {
         switch (mode) {
         case ADD_LINK:
         case ADD_NODE_LINK:
@@ -943,7 +982,7 @@ public class EditorCanvas extends Canvas {
             // 右クリック: コンテキストメニュー表示
             if (pointedNode != null) {
                 if (! pointedNode.selected) {
-                    if (event.isControlDown()) {
+                    if (ctrlDown) {
                         frame.getNodePanel().select(pointedNode);
                     } else {
                         frame.getNodePanel().clearAndSelect(pointedNode);
@@ -958,7 +997,7 @@ public class EditorCanvas extends Canvas {
             // 右クリック: コンテキストメニュー表示
             if (pointedLink != null) {
                 if (! pointedLink.selected) {
-                    if (event.isControlDown()) {
+                    if (ctrlDown) {
                         frame.getLinkPanel().select(pointedLink);
                     } else {
                         frame.getLinkPanel().clearAndSelect(pointedLink);
@@ -973,7 +1012,7 @@ public class EditorCanvas extends Canvas {
             // 右クリック: コンテキストメニュー表示
             if (pointedArea != null) {
                 if (! pointedArea.selected) {
-                    if (event.isControlDown()) {
+                    if (ctrlDown) {
                         frame.getAreaPanel().select(pointedArea);
                     } else {
                         frame.getAreaPanel().clearAndSelect(pointedArea);
