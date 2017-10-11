@@ -491,8 +491,8 @@ public class EditorCanvas extends Canvas {
                     return;
                 }
                 // 選択中の複数ノードを移動またはコピーする
-                Point2D originalNodeMovingAmount = convertToOriginal(point).subtract(convertToOriginal(mousePressedPoint));
-                frame.moveOrCopyNodes(originalNodeMovingAmount.getX(), originalNodeMovingAmount.getY(), 0.0);
+                Point2D movingAmount = point.subtract(mousePressedPoint);
+                frame.copyOrMoveNodes(movingAmount.getX(), movingAmount.getY(), 0.0);
             }
         });
 
@@ -1168,7 +1168,7 @@ public class EditorCanvas extends Canvas {
     /**
      * マップの回転を反映した座標から元の座標を求める
      */
-    private Point2D convertToOriginal(double x, double y) {
+    public Point2D convertToOriginal(double x, double y) {
         double r = Math.toRadians(-angle);
         return new Point2D(x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r));
     }
@@ -1176,7 +1176,7 @@ public class EditorCanvas extends Canvas {
     /**
      * マップの回転を反映した座標から元の座標を求める
      */
-    private Point2D convertToOriginal(Point2D point) {
+    public Point2D convertToOriginal(Point2D point) {
         return convertToOriginal(point.getX(), point.getY());
     }
 

@@ -823,11 +823,8 @@ public class EditorFrameFx {
         MenuItem miVertically = new MenuItem("Align nodes vertically");
         miVertically.setOnAction(e -> editor.alignNodesVertically());
 
-        MenuItem miMove = new MenuItem("Move");
-        miMove.setOnAction(e -> openMoveNodesDialog());
-
-        MenuItem miDuplicateAndMove = new MenuItem("Duplicate and move");
-        miDuplicateAndMove.setOnAction(e -> openDuplicateAndMoveDialog());
+        MenuItem miCopyOrMove = new MenuItem("Copy or move");
+        miCopyOrMove.setOnAction(e -> copyOrMoveNodes(0.0, 0.0, 0.0));
 
         MenuItem miMakeStairs = new MenuItem("Make stairs");
         miMakeStairs.setOnAction(e -> openMakeStairsDialog());
@@ -841,7 +838,7 @@ public class EditorFrameFx {
         MenuItem miRemoveNode = new MenuItem("Remove nodes");
         miRemoveNode.setOnAction(e -> editor.removeNodes());
 
-        editNodeMenu.getItems().addAll(miSetNodeAttributes, miHorizontally, miVertically, miMove, miDuplicateAndMove, miMakeStairs, miRotateAndScale, menuAddSymbolicLinkOfNode, miClearSymbolicLinkOfNode, miRemoveNode);
+        editNodeMenu.getItems().addAll(miSetNodeAttributes, miHorizontally, miVertically, miCopyOrMove, miMakeStairs, miRotateAndScale, menuAddSymbolicLinkOfNode, miClearSymbolicLinkOfNode, miRemoveNode);
 
         // EDIT_LINK モード
         // ・Set link attributes
@@ -1592,208 +1589,15 @@ public class EditorFrameFx {
     }
 
     /**
-     * ノード移動ダイアログを開く
-     */
-    public void openMoveNodesDialog() {
-        ArrayList<MapNode> nodes = editor.getSelectedNodes();
-        if (nodes.isEmpty()) {
-            return;
-        }
-        if (! multipleGroupConfirmation(nodes, "Warning:\n    Nodes of multiple groups were selected.\n    Do you want to continue?")) {
-            return;
-        }
-
-        Dialog dialog = new Dialog();
-        dialog.setTitle("Move nodes");
-        dialog.getDialogPane().setPrefWidth(300);
-        VBox paramPane = new VBox();
-
-        if (nodes.size() > 1) {
-            Label label = new Label("" + nodes.size() + " nodes selected");
-            label.setPadding(new Insets(0, 0, 12, 0));
-            paramPane.getChildren().addAll(label);
-        }
-
-        Label label = new Label("Moving distance (m)");
-        label.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
-        label.setPadding(new Insets(0, 0, 8, 0));
-
-        // X
-        Label xLabel = new Label("X");
-        TextField xField = new TextField("" + 0.0);
-        xField.setMinWidth(100);
-
-        // Y
-        Label yLabel = new Label("Y");
-        TextField yField = new TextField("" + 0.0);
-        yField.setMinWidth(100);
-
-        // Z
-        Label zLabel = new Label("Z");
-        TextField zField = new TextField("" + 0.0);
-        zField.setMinWidth(100);
-
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(0, 0, 0, 10));
-        grid.setHgap(8);
-        grid.setVgap(8);
-        grid.add(xLabel, 1, 1);
-        grid.add(xField, 2, 1);
-        grid.add(yLabel, 1, 2);
-        grid.add(yField, 2, 2);
-        grid.add(zLabel, 1, 3);
-        grid.add(zField, 2, 3);
-
-        paramPane.getChildren().addAll(label, grid);
-
-        dialog.getDialogPane().setContent(paramPane);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            // TODO: 既存のノードと座標が重なる場合は失敗させる
-            Double _x = convertToDouble(xField.getText());
-            Double _y = convertToDouble(yField.getText());
-            Double _z = convertToDouble(zField.getText());
-            double x = 0.0;
-            double y = 0.0;
-            double z = 0.0;
-            if (_x != null) {
-                x = _x;
-            }
-            if (_y != null) {
-                y = _y;
-            }
-            if (_z != null) {
-                z = _z;
-            }
-            editor.moveNodes(nodes, x, y, z);
-        }
-    }
-
-    /**
-     * 複製して移動ダイアログを開く
-     */
-    public void openDuplicateAndMoveDialog() {
-        ArrayList<MapNode> nodes = editor.getSelectedNodes();
-        if (nodes.isEmpty()) {
-            return;
-        }
-        if (! multipleGroupConfirmation(nodes, "Warning:\n    Nodes of multiple groups were selected.\n    Do you want to continue?")) {
-            return;
-        }
-
-        Dialog dialog = new Dialog();
-        dialog.setTitle("Duplicate and Move");
-        dialog.getDialogPane().setPrefWidth(300);
-        VBox paramPane = new VBox();
-
-        if (nodes.size() > 1) {
-            Label label = new Label("" + nodes.size() + " nodes selected");
-            label.setPadding(new Insets(0, 0, 12, 0));
-            paramPane.getChildren().addAll(label);
-        }
-
-        Label xyzLabel = new Label("Moving distance (m)");
-        xyzLabel.setFont(Font.font("Arial", FontWeight.BOLD, xyzLabel.getFont().getSize()));
-        xyzLabel.setPadding(new Insets(0, 0, 8, 0));
-
-        // X
-        Label xLabel = new Label("X");
-        TextField xField = new TextField("" + 0.0);
-        xField.setMinWidth(100);
-
-        // Y
-        Label yLabel = new Label("Y");
-        TextField yField = new TextField("" + 0.0);
-        yField.setMinWidth(100);
-
-        // Z
-        Label zLabel = new Label("Z");
-        TextField zField = new TextField("" + 0.0);
-        zField.setMinWidth(100);
-
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(0, 0, 8, 10));
-        grid.setHgap(8);
-        grid.setVgap(8);
-        grid.add(xLabel, 1, 1);
-        grid.add(xField, 2, 1);
-        grid.add(yLabel, 1, 2);
-        grid.add(yField, 2, 2);
-        grid.add(zLabel, 1, 3);
-        grid.add(zField, 2, 3);
-
-        Label groupLabel = new Label("Destination group");
-        groupLabel.setFont(Font.font("Arial", FontWeight.BOLD, groupLabel.getFont().getSize()));
-        groupLabel.setPadding(new Insets(2, 0, 10, 0));
-
-        HashMap<String, MapPartGroup> groups = new HashMap();
-        ArrayList<String> groupNames = new ArrayList();
-        for (MapPartGroup group : editor.getMap().getGroups()) {
-            if (group == editor.getMap().getRoot() || group.getTags().size() == 0) {
-                continue;
-            }
-            groups.put(group.getTagString(), group);
-            groupNames.add(group.getTagString());
-        }
-        ChoiceBox groupChoiceBox = new ChoiceBox(FXCollections.observableArrayList(groupNames));
-        groupChoiceBox.setValue(editor.getCurrentGroup().getTagString());
-        FlowPane flowPane = new FlowPane();
-        flowPane.setPadding(new Insets(0, 0, 14, 18));
-        flowPane.getChildren().add(groupChoiceBox);
-
-        CheckBox wlCheckBox = new CheckBox("Without links");
-        wlCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, wlCheckBox.getFont().getSize()));
-        wlCheckBox.setPadding(new Insets(0, 0, 8, 0));
-
-        CheckBox withNodeTagsCheckBox = new CheckBox("copy with node tags");
-        withNodeTagsCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, withNodeTagsCheckBox.getFont().getSize()));
-        withNodeTagsCheckBox.setPadding(new Insets(0, 0, 8, 0));
-
-        CheckBox withLinkTagsCheckBox = new CheckBox("copy with link tags");
-        withLinkTagsCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, withLinkTagsCheckBox.getFont().getSize()));
-        withLinkTagsCheckBox.setPadding(new Insets(0, 0, 8, 0));
-
-        paramPane.getChildren().addAll(xyzLabel, grid, groupLabel, flowPane, wlCheckBox, withNodeTagsCheckBox, withLinkTagsCheckBox);
-
-        dialog.getDialogPane().setContent(paramPane);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            Double _x = convertToDouble(xField.getText());
-            Double _y = convertToDouble(yField.getText());
-            Double _z = convertToDouble(zField.getText());
-            double x = 0.0;
-            double y = 0.0;
-            double z = 0.0;
-            if (_x != null) {
-                x = _x;
-            }
-            if (_y != null) {
-                y = _y;
-            }
-            if (_z != null) {
-                z = _z;
-            }
-            MapPartGroup toGroup = groups.get(groupChoiceBox.getValue());
-            ArrayList<MapNode> collisionNodes = editor.getCollisionNodes(nodes, x, y, z, toGroup);
-            if (! collisionNodes.isEmpty()) {
-                Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    " + collisionNodes.size() + " nodes are place on nodes already existing.\n    Do you want to continue?", ButtonType.YES, ButtonType.NO);
-                result = alert.showAndWait();
-                if (! result.isPresent() || result.get() != ButtonType.YES) {
-                    return;
-                }
-            }
-            editor.duplicateAndMoveNodes(nodes, x, y, z, toGroup, wlCheckBox.isSelected(), withNodeTagsCheckBox.isSelected(), withLinkTagsCheckBox.isSelected());
-        }
-    }
-
-    /**
      * ノードの移動またはコピーダイアログを開く
      */
-    public void moveOrCopyNodes(double x, double y, double z) {
+    public void copyOrMoveNodes(double x, double y, double z) {
         ArrayList<MapNode> nodes = editor.getSelectedNodes();
         if (nodes.isEmpty()) {
+            canvas.repaintLater();
+            return;
+        }
+        if (! multipleGroupConfirmation(nodes, "Warning:\n    Nodes of multiple groups were selected.\n    Do you want to continue?")) {
             canvas.repaintLater();
             return;
         }
@@ -1802,22 +1606,28 @@ public class EditorFrameFx {
         dialog.setTitle("Copy or move nodes");
         VBox paramPane = new VBox();
 
-        Label xyzLabel = new Label("Moving distance (m)");
+        if (nodes.size() > 1) {
+            Label label = new Label("" + nodes.size() + " nodes selected");
+            label.setPadding(new Insets(4, 0, 12, 0));
+            paramPane.getChildren().addAll(label);
+        }
+
+        Label xyzLabel = new Label("Moving distance");
         xyzLabel.setFont(Font.font("Arial", FontWeight.BOLD, xyzLabel.getFont().getSize()));
-        xyzLabel.setPadding(new Insets(12, 0, 8, 0));
+        xyzLabel.setPadding(new Insets(0, 0, 8, 0));
 
         // X
-        Label xLabel = new Label("X");
+        Label xLabel = new Label("X (m)");
         TextField xField = new TextField("" + x);
         xField.setMinWidth(176);
 
         // Y
-        Label yLabel = new Label("Y");
+        Label yLabel = new Label("Y (m)");
         TextField yField = new TextField("" + y);
         yField.setMinWidth(176);
 
         // Z
-        Label zLabel = new Label("Z");
+        Label zLabel = new Label("Z (m)");
         TextField zField = new TextField("" + z);
         zField.setMinWidth(176);
 
@@ -1832,17 +1642,37 @@ public class EditorFrameFx {
         grid.add(zLabel, 1, 3);
         grid.add(zField, 2, 3);
 
-        Label label = new Label("Copy attributes");
+        Label label = new Label("Copy attributes (No effect on the Move)");
         label.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
         label.setPadding(new Insets(8, 0, 4, 0));
 
+        Label groupLabel = new Label("destination group");
+        HashMap<String, MapPartGroup> groups = new HashMap();
+        ArrayList<String> groupNames = new ArrayList();
+        for (MapPartGroup group : editor.getMap().getGroups()) {
+            if (group == editor.getMap().getRoot() || group.getTags().size() == 0) {
+                continue;
+            }
+            groups.put(group.getTagString(), group);
+            groupNames.add(group.getTagString());
+        }
+        ChoiceBox groupChoiceBox = new ChoiceBox(FXCollections.observableArrayList(groupNames));
+        groupChoiceBox.setValue(editor.getCurrentGroup().getTagString());
+        HBox destGroupPane = new HBox(8);
+        destGroupPane.setAlignment(Pos.CENTER_LEFT);
+        destGroupPane.setPadding(new Insets(0, 0, 0, 8));
+        destGroupPane.getChildren().addAll(groupLabel, groupChoiceBox);
+
+        CheckBox wlCheckBox = new CheckBox("without links");
+        wlCheckBox.setPadding(new Insets(10, 0, 0, 8));
+
         CheckBox withNodeTagsCheckBox = new CheckBox("copy with node tags");
-        withNodeTagsCheckBox.setPadding(new Insets(12, 0, 0, 8));
+        withNodeTagsCheckBox.setPadding(new Insets(10, 0, 0, 8));
 
         CheckBox withLinkTagsCheckBox = new CheckBox("copy with link tags");
         withLinkTagsCheckBox.setPadding(new Insets(0, 0, 12, 8));
 
-        paramPane.getChildren().addAll(xyzLabel, grid, label, withNodeTagsCheckBox, withLinkTagsCheckBox);
+        paramPane.getChildren().addAll(xyzLabel, grid, label, destGroupPane, wlCheckBox, withNodeTagsCheckBox, withLinkTagsCheckBox);
         dialog.getDialogPane().setContent(paramPane);
 
         ButtonType buttonTypeCopy = new ButtonType("Copy");
@@ -1862,7 +1692,11 @@ public class EditorFrameFx {
             if (_z != null) {
                 z = _z;
             }
-            ArrayList<MapNode> collisionNodes = editor.getCollisionNodes(nodes, x, y, z, editor.getCurrentGroup());
+            Point2D distance = canvas.convertToOriginal(x, y);
+            x = distance.getX();
+            y = distance.getY();
+            MapPartGroup toGroup = groups.get(groupChoiceBox.getValue());
+            ArrayList<MapNode> collisionNodes = editor.getCollisionNodes(nodes, x, y, z, toGroup);
             if (! collisionNodes.isEmpty()) {
                 Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    " + collisionNodes.size() + " nodes are place on nodes already existing.\n    Do you want to continue?", ButtonType.YES, ButtonType.NO);
                 Optional<ButtonType> _result = alert.showAndWait();
@@ -1873,7 +1707,7 @@ public class EditorFrameFx {
             }
 
             if (result.get() == buttonTypeCopy) {
-                editor.duplicateAndMoveNodes(nodes, x, y, z, editor.getCurrentGroup(), false, withNodeTagsCheckBox.isSelected(), withLinkTagsCheckBox.isSelected());
+                editor.duplicateAndMoveNodes(nodes, x, y, z, toGroup, wlCheckBox.isSelected(), withNodeTagsCheckBox.isSelected(), withLinkTagsCheckBox.isSelected());
             } else if (result.get() == buttonTypeMove) {
                 editor.moveNodes(nodes, x, y, z);
             }
