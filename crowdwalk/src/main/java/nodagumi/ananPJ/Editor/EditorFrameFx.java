@@ -1503,7 +1503,7 @@ public class EditorFrameFx {
             // X
             Label xLabel = new Label("X");
             TextField xField = new TextField("" + node.getX());
-            xField.setPrefWidth(160);
+            xField.setPrefWidth(176);
             Button xButton = new Button("Set");
             EventHandler xHandler = new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent event) {
@@ -1527,7 +1527,7 @@ public class EditorFrameFx {
             // Y
             Label yLabel = new Label("Y");
             TextField yField = new TextField("" + node.getY());
-            yField.setPrefWidth(160);
+            yField.setPrefWidth(176);
             Button yButton = new Button("Set");
             EventHandler yHandler = new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent event) {

@@ -1148,8 +1148,6 @@ public class MapEditor implements MapEditorInterface {
 
     /**
      * 選択中のノードを水平に整列させる
-     *
-     * TODO: 編集画面の回転に対応させる
      */
     public void alignNodesHorizontally() {
         ArrayList<MapNode> nodes = getOperableNodes(true);
@@ -1163,10 +1161,13 @@ public class MapEditor implements MapEditorInterface {
             return;
         }
 
+        double y = frame.getCanvas().getRotatedY(pointedNode);
         startOfCommandBlock();
         for (MapNode node : nodes) {
             if (node != pointedNode) {
-                if (! invoke(new MoveNode(node, node.getX(), pointedNode.getY()))) {
+                double x = frame.getCanvas().getRotatedX(node);
+                Point2D point = frame.getCanvas().convertToOriginal(x, y);
+                if (! invoke(new MoveNode(node, point.getX(), point.getY()))) {
                     break;
                 }
             }
@@ -1176,8 +1177,6 @@ public class MapEditor implements MapEditorInterface {
 
     /**
      * 選択中のノードを垂直に整列させる
-     *
-     * TODO: 編集画面の回転に対応させる
      */
     public void alignNodesVertically() {
         ArrayList<MapNode> nodes = getOperableNodes(true);
@@ -1191,10 +1190,13 @@ public class MapEditor implements MapEditorInterface {
             return;
         }
 
+        double x = frame.getCanvas().getRotatedX(pointedNode);
         startOfCommandBlock();
         for (MapNode node : nodes) {
             if (node != pointedNode) {
-                if (! invoke(new MoveNode(node, pointedNode.getX(), node.getY()))) {
+                double y = frame.getCanvas().getRotatedY(node);
+                Point2D point = frame.getCanvas().convertToOriginal(x, y);
+                if (! invoke(new MoveNode(node, point.getX(), point.getY()))) {
                     break;
                 }
             }

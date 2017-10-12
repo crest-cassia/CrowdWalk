@@ -1132,7 +1132,7 @@ public class EditorCanvas extends Canvas {
     /**
      * マップの回転を反映したノード座標を取得する
      */
-    private Point2D getRotatedPoint(MapNode node) {
+    public Point2D getRotatedPoint(MapNode node) {
         Point2D point = rotatedPoints.get(node);
         if (point == null) {
             point = calcRotatedPoint(node.getX(), node.getY());
@@ -1144,14 +1144,14 @@ public class EditorCanvas extends Canvas {
     /**
      * マップの回転を反映したノード座標の X を取得する
      */
-    private double getRotatedX(MapNode node) {
+    public double getRotatedX(MapNode node) {
         return getRotatedPoint(node).getX();
     }
 
     /**
      * マップの回転を反映したノード座標の Y を取得する
      */
-    private double getRotatedY(MapNode node) {
+    public double getRotatedY(MapNode node) {
         return getRotatedPoint(node).getY();
     }
 
