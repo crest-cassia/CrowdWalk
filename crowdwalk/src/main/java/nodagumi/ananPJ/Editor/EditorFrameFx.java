@@ -95,7 +95,6 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.MapChecker;
-import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
@@ -136,6 +135,11 @@ public class EditorFrameFx {
     private MapEditor editor;
 
     /**
+     * GUI の設定情報
+     */
+    private Settings settings;
+
+    /**
      * ウィンドウフレーム
      */
     private Stage frame;
@@ -149,26 +153,6 @@ public class EditorFrameFx {
      * 編集エリアとタブエリアの仕切り
      */
     private SplitPane splitPane;
-
-    /**
-     * GUI の設定情報
-     */
-    private Settings settings;
-
-    /**
-     * 属性を扱うハンドラ
-     */
-    private CrowdWalkPropertiesHandler properties = null;
-
-    /**
-     * 設定ファイルの取りまとめ。
-     */
-    private SetupFileInfo setupFileInfo = new SetupFileInfo();
-
-    /**
-     * コマンドラインで指定された fallback 設定
-     */
-    private ArrayList<String> commandLineFallbacks = null;
 
     /**
      * 背景グループ表示メニュー
@@ -192,6 +176,8 @@ public class EditorFrameFx {
     private Label linkScaleLabel = new Label("(scale: 1.0)");
     private TextField linkWidthField = new TextField("1.0");
     private Label statusLabel = new Label("Unedited");
+    private Button simulate2dButton = new Button("2D Simulate");
+    private Button simulate3dButton = new Button("3D Simulate");
 
     /**
      * コンテキスト・メニュー
@@ -236,11 +222,10 @@ public class EditorFrameFx {
     /**
      * コンストラクタ
      */
-    public EditorFrameFx(MapEditor editor, String title, CrowdWalkPropertiesHandler properties, Settings settings) {
+    public EditorFrameFx(MapEditor editor, String title, Settings settings) {
         frame = new Stage();
         frame.setTitle(title);
         this.editor = editor;
-        this.properties = properties;
         this.settings = settings;
         new EnableButtonEnterKey();
 
@@ -329,10 +314,8 @@ public class EditorFrameFx {
         linkAttributesPane = createLinkAttributesPane();
         statusPane.getChildren().addAll(statusLabel);
 
-        Button simulate2dButton = new Button("2D Simulate");
-        Button simulate3dButton = new Button("3D Simulate");
-        simulate2dButton.setOnAction(e -> simulate("GuiSimulationLauncher2D", simulate2dButton, simulate3dButton));
-        simulate3dButton.setOnAction(e -> simulate("GuiSimulationLauncher3D", simulate2dButton, simulate3dButton));
+        simulate2dButton.setOnAction(e -> simulate("GuiSimulationLauncher2D"));
+        simulate3dButton.setOnAction(e -> simulate("GuiSimulationLauncher3D"));
 
         FlowPane simulationButtonPane = new FlowPane();
         simulationButtonPane.setHgap(8);
@@ -375,12 +358,12 @@ public class EditorFrameFx {
         // ウィンドウイベントのハンドリング
         frame.setOnShown(e -> {
             try {
-                boolean simulationWindowOpen = properties.getBoolean("simulation_window_open", false);
-                boolean autoSimulationStart = properties.getBoolean("auto_simulation_start", false);
+                boolean simulationWindowOpen = editor.getProperties().getBoolean("simulation_window_open", false);
+                boolean autoSimulationStart = editor.getProperties().getBoolean("auto_simulation_start", false);
                 if (simulationWindowOpen || autoSimulationStart) {
                     if (editor.getNetworkMapFile() == null || editor.getGenerationFile() == null || editor.getScenarioFile() == null) {
                         // プロパティファイルの設定が足りないためシミュレーションを開始することが出来ません
-                        Alert alert = new Alert(AlertType.WARNING, "The simulation can not be started because the property file setting is insufficient.", ButtonType.OK);
+                        Alert alert = new Alert(AlertType.WARNING, "The simulation can not be started because the properties file setting is insufficient.", ButtonType.OK);
                         alert.showAndWait();
                         return;
                     }
@@ -486,7 +469,6 @@ public class EditorFrameFx {
 
         MenuItem miNew = new MenuItem("New");
         miNew.setOnAction(e -> clearMapData());
-        // miNew.setAccelerator(KeyCombination.valueOf("Ctrl+N"));
 
         MenuItem miOpenMap = new MenuItem("Open map");
         miOpenMap.setOnAction(e -> openMap());
@@ -499,15 +481,13 @@ public class EditorFrameFx {
         MenuItem miSaveMapAs = new MenuItem("Save map as");
         miSaveMapAs.setOnAction(e -> saveMapAs());
 
-        // TODO:
-        // MenuItem miOpenProperty = new MenuItem("Open property");
-        // miOpenProperty.setOnAction(e -> {
-        //     System.err.println("Open property: under construction");
-        // });
-        //
-        // MenuItem miSaveProperty = new MenuItem("Save property");
+        MenuItem miOpenProperty = new MenuItem("Open properties");
+        miOpenProperty.setOnAction(e -> openProperties());
+        miOpenProperty.setAccelerator(KeyCombination.valueOf("Ctrl+P"));
+
+        // MenuItem miSaveProperty = new MenuItem("Save properties");
         // miSaveProperty.setOnAction(e -> {
-        //     System.err.println("Save property: under construction");
+        //     System.err.println("Save properties: under construction");
         // });
 
         MenuItem miQuit = new MenuItem("Quit");
@@ -518,7 +498,7 @@ public class EditorFrameFx {
         });
         miQuit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
 
-        fileMenu.getItems().addAll(miNew, miOpenMap, miSaveMap, miSaveMapAs, /* miOpenProperty, miSaveProperty, */ miQuit);
+        fileMenu.getItems().addAll(miNew, miOpenMap, miSaveMap, miSaveMapAs, miOpenProperty, /* miSaveProperty, */ miQuit);
 
         /* Edit menu */
 
@@ -540,7 +520,7 @@ public class EditorFrameFx {
 
         MenuItem miShow3d = new MenuItem("Show 3D");
         miShow3d.setOnAction(e -> {
-            MapViewFrame mapViewer = new MapViewFrame("3D preview of Structure", 800, 600, editor.getMap(), properties);
+            MapViewFrame mapViewer = new MapViewFrame("3D preview of Structure", 800, 600, editor.getMap(), editor.getProperties());
             mapViewer.show();
         });
 
@@ -1178,7 +1158,10 @@ public class EditorFrameFx {
             return;
         }
         editor.setNetworkMapFile(editor.getRelativePath(file));
-        if (! editor.loadNetworkMap()) {
+        if (editor.loadNetworkMap()) {
+            simulate2dButton.setDisable(false);
+            simulate3dButton.setDisable(false);
+        } else {
             Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
             alert.showAndWait();
             editor.initNetworkMap();
@@ -1248,9 +1231,57 @@ public class EditorFrameFx {
     }
 
     /**
+     * ファイル選択ダイアログを開いてプロパティファイルを読み込む
+     */
+    public void openProperties() {
+        if (editor.isModified()) {
+            Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Map data has been modified.\n    Do you wish to continue anyway?", ButtonType.YES, ButtonType.NO);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (! result.isPresent() || result.get() == ButtonType.NO) {
+                return;
+            }
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open properties");
+        String fileName = editor.getPropertiesFile();
+        if (fileName == null || fileName.isEmpty()) {
+            String dirName = settings.get("propertiesDir", "");
+            if (dirName.isEmpty()) {
+                dirName = "./";
+            }
+            fileChooser.setInitialDirectory(new File(dirName));
+            fileChooser.setInitialFileName(settings.get("propertiesFile", ""));     // TODO: 現状では無効
+        } else {
+            setInitialPath(fileChooser, fileName);
+        }
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("JSON", "*.json"),
+            new FileChooser.ExtensionFilter("XML", "*.xml")
+        );
+        File file = fileChooser.showOpenDialog(frame);
+        if (file == null) {
+            return;
+        }
+
+        editor.setPropertiesFromFile(editor.getRelativePath(file));
+        if (editor.loadNetworkMap()) {
+            simulate2dButton.setDisable(false);
+            simulate3dButton.setDisable(false);
+        } else {
+            Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
+            alert.showAndWait();
+            editor.initSetupFileInfo();
+            editor.initNetworkMap();
+        }
+        canvas.clearEditingStates();
+        resetGui();
+    }
+
+    /**
      * GUI シミュレータを起動する
      */
-    private void simulate(String simulator, Button simulate2dButton, Button simulate3dButton) {
+    private void simulate(String simulator) {
         if (editor.getNetworkMapFile() == null || editor.getNetworkMapFile().isEmpty() || editor.getGenerationFile() == null || editor.getGenerationFile().isEmpty() || editor.getScenarioFile() == null || editor.getScenarioFile().isEmpty()) {
             Alert alert = new Alert(AlertType.INFORMATION, "There are not enough files for simulation.", ButtonType.OK);
             alert.showAndWait();
@@ -1266,7 +1297,7 @@ public class EditorFrameFx {
         simulate2dButton.setDisable(true);
         simulate3dButton.setDisable(true);
         GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance(simulator);
-        launcher.init(editor.getRandom(), properties, editor.getSetupFileInfo(), editor.getMap(), settings);
+        launcher.init(editor.getRandom(), editor.getProperties(), editor.getSetupFileInfo(), editor.getMap(), settings);
         launcher.simulate();
     }
 

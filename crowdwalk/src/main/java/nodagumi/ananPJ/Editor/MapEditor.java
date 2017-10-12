@@ -85,7 +85,7 @@ public class MapEditor implements MapEditorInterface {
     /**
      * 設定ファイルの取りまとめ。
      */
-    private SetupFileInfo setupFileInfo = new SetupFileInfo();
+    private SetupFileInfo setupFileInfo = null;
 
     /**
      * コマンドラインで指定された fallback 設定
@@ -646,7 +646,7 @@ public class MapEditor implements MapEditorInterface {
                     alert.showAndWait();
                     return;
                 }
-                frame = new EditorFrameFx(editor, "Network Map Editor", properties, settings);
+                frame = new EditorFrameFx(editor, "Network Map Editor", settings);
                 frame.show();
             }
         });
@@ -1712,6 +1712,14 @@ public class MapEditor implements MapEditorInterface {
      * 設定ファイル関連の処理
      */
 
+    public String getPropertiesFile() {
+        return propertiesFile;
+    }
+
+    public void initSetupFileInfo() {
+        setupFileInfo = new SetupFileInfo();
+    }
+
     public SetupFileInfo getSetupFileInfo() { return setupFileInfo; }
 
     public void setNetworkMapFile(String _mapPath) {
@@ -1721,7 +1729,8 @@ public class MapEditor implements MapEditorInterface {
             settings.put("mapFile", "");
         } else {
             File file = new File(_mapPath);
-            settings.put("mapDir", file.getParent() + File.separator);
+            String dirPath = file.getParent();
+            settings.put("mapDir", (dirPath == null ? "." : dirPath) + File.separator);
             settings.put("mapFile", file.getName());
         }
     }
@@ -1737,7 +1746,8 @@ public class MapEditor implements MapEditorInterface {
             settings.put("obstructerFile", "");
         } else {
             File file = new File(_pollutionFile);
-            settings.put("obstructerDir", file.getParent() + File.separator);
+            String dirPath = file.getParent();
+            settings.put("obstructerDir", (dirPath == null ? "." : dirPath) + File.separator);
             settings.put("obstructerFile", file.getName());
         }
     }
@@ -1753,7 +1763,8 @@ public class MapEditor implements MapEditorInterface {
             settings.put("generationFile", "");
         } else {
             File file = new File(_generationFile);
-            settings.put("generationDir", file.getParent() + File.separator);
+            String dirPath = file.getParent();
+            settings.put("generationDir", (dirPath == null ? "." : dirPath) + File.separator);
             settings.put("generationFile", file.getName());
         }
     }
@@ -1769,7 +1780,8 @@ public class MapEditor implements MapEditorInterface {
             settings.put("scenarioFile", "");
         } else {
             File file = new File(_scenarioFile);
-            settings.put("scenarioDir", file.getParent() + File.separator);
+            String dirPath = file.getParent();
+            settings.put("scenarioDir", (dirPath == null ? "." : dirPath) + File.separator);
             settings.put("scenarioFile", file.getName());
         }
     }
@@ -1786,7 +1798,8 @@ public class MapEditor implements MapEditorInterface {
             settings.put("fallbackFile", "");
         } else {
             File file = new File(_fallbackFile);
-            settings.put("fallbackDir", file.getParent() + File.separator);
+            String dirPath = file.getParent();
+            settings.put("fallbackDir", (dirPath == null ? "." : dirPath) + File.separator);
             settings.put("fallbackFile", file.getName());
         }
     }
@@ -1805,6 +1818,13 @@ public class MapEditor implements MapEditorInterface {
     /**
      * ファイルからプロパティの読み込み。
      */
+    public void setPropertiesFromFile(String propertiesFile) {
+        setPropertiesFromFile(propertiesFile, commandLineFallbacks);
+    }
+
+    /**
+     * ファイルからプロパティの読み込み。
+     */
     public void setPropertiesFromFile(String _propertiesFile, ArrayList<String> _commandLineFallbacks) {
         properties = new CrowdWalkPropertiesHandler(_propertiesFile);
         propertiesFile = _propertiesFile;
@@ -1813,6 +1833,7 @@ public class MapEditor implements MapEditorInterface {
         // random
         random.setSeed(properties.getRandseed());
         // files
+        initSetupFileInfo();
         setNetworkMapFile(properties.getNetworkMapFile());
         setPollutionFile(properties.getPollutionFile());
         setGenerationFile(properties.getGenerationFile());
@@ -1824,6 +1845,9 @@ public class MapEditor implements MapEditorInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        File file = new File(propertiesFile);
+        settings.put("propertiesDir", file.getParent() + File.separator);
+        settings.put("propertiesFile", file.getName());
     }
 
     /**
@@ -1836,6 +1860,7 @@ public class MapEditor implements MapEditorInterface {
         // random
         random.setSeed(properties.getRandseed());
         // files
+        initSetupFileInfo();
         setupFileInfo.scanFallbackFile(commandLineFallbacks, true);
     }
 
