@@ -158,6 +158,16 @@ public class EditorCanvas extends Canvas {
     private boolean mapCoordinatesShowing = false;
 
     /**
+     * 背景画像の色の濃さ
+     */
+    private double colorDepthOfBackgroundImage = 1.0;
+
+    /**
+     * 背景地図の色の濃さ
+     */
+    private double colorDepthOfBackgroundMap = 1.0;
+
+    /**
      * 背景表示するグループ
      */
     private MapPartGroup backgroundGroup = null;
@@ -1473,20 +1483,26 @@ public class EditorCanvas extends Canvas {
 
         // 背景地図の描画
         if (backgroundMapShowing && ! editor.getBackgroundMapTiles().isEmpty()) {
+            gc.setGlobalAlpha(colorDepthOfBackgroundMap);
             for (GsiTile gsiTile : editor.getBackgroundMapTiles()) {
                 drawBackgroundMapTile(gsiTile, editor.getGsiTileImages().get(gsiTile), gc);
                 if (redoRepainting) {
+                    gc.setGlobalAlpha(1.0);
                     return;
                 }
             }
+            gc.setGlobalAlpha(1.0);
         }
 
         // 背景画像の描画
         if (backgroundImageShowing) {
+            gc.setGlobalAlpha(colorDepthOfBackgroundImage);
             drawBackgroundImage(group, gc);
             if (redoRepainting) {
+                gc.setGlobalAlpha(1.0);
                 return;
             }
+            gc.setGlobalAlpha(1.0);
         }
 
         // 背景グループの描画
@@ -2216,8 +2232,16 @@ public class EditorCanvas extends Canvas {
         this.backgroundMapShowing = backgroundMapShowing;
     }
 
+    public void setColorDepthOfBackgroundMap(double colorDepth) {
+        colorDepthOfBackgroundMap = colorDepth;
+    }
+
     public void setBackgroundImageShowing(boolean backgroundImageShowing) {
         this.backgroundImageShowing = backgroundImageShowing;
+    }
+
+    public void setColorDepthOfBackgroundImage(double colorDepth) {
+        colorDepthOfBackgroundImage = colorDepth;
     }
 
     public void setMapCoordinatesShowing(boolean mapCoordinatesShowing) {

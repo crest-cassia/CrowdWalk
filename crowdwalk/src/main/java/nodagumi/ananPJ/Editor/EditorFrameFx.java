@@ -155,6 +155,16 @@ public class EditorFrameFx {
     private SplitPane splitPane;
 
     /**
+     * 背景画像の色の濃さ設定メニュー
+     */
+    private Menu menuColorDepthOfBackgroundImage = new Menu("Set color depth of background image");
+
+    /**
+     * 背景地図の色の濃さ設定メニュー
+     */
+    private Menu menuColorDepthOfBackgroundMap = new Menu("Set color depth of background map");
+
+    /**
      * 背景グループ表示メニュー
      */
     private Menu menuShowBackgroundGroup = new Menu("Show background group");
@@ -252,6 +262,8 @@ public class EditorFrameFx {
         Group root = new Group();
         canvas = new EditorCanvas(editor, this);
         root.getChildren().add(canvas);
+        updateColorDepthOfBackgroundImageMenu();    // canvas のメソッドを呼び出すためここで実行する
+        updateColorDepthOfBackgroundMapMenu();      //                  〃
         StackPane canvasPane = new StackPane();
         String image = getClass().getResource("/img/canvas_bg.png").toExternalForm();
         canvasPane.setStyle(
@@ -633,13 +645,26 @@ public class EditorFrameFx {
         cmiShowBackgroundImage.setSelected(true);
         cmiShowBackgroundImage.setOnAction(e -> {
             canvas.setBackgroundImageShowing(cmiShowBackgroundImage.isSelected());
+            if (cmiShowBackgroundImage.isSelected()) {
+                menuColorDepthOfBackgroundImage.setDisable(false);
+                canvas.setBackgroundImageShowing(true);
+            } else {
+                menuColorDepthOfBackgroundImage.setDisable(true);
+                canvas.setBackgroundImageShowing(false);
+            }
             canvas.repaintLater();
         });
         cmiShowBackgroundImage.setAccelerator(KeyCombination.valueOf("Ctrl+B"));
 
         CheckMenuItem cmiShowBackgroundMap = new CheckMenuItem("Show background map");
         cmiShowBackgroundMap.setOnAction(e -> {
-            canvas.setBackgroundMapShowing(cmiShowBackgroundMap.isSelected());
+            if (cmiShowBackgroundMap.isSelected()) {
+                menuColorDepthOfBackgroundMap.setDisable(false);
+                canvas.setBackgroundMapShowing(true);
+            } else {
+                menuColorDepthOfBackgroundMap.setDisable(true);
+                canvas.setBackgroundMapShowing(false);
+            }
             canvas.repaintLater();
         });
         cmiShowBackgroundMap.setAccelerator(KeyCombination.valueOf("Ctrl+M"));
@@ -649,7 +674,7 @@ public class EditorFrameFx {
             canvas.setMapCoordinatesShowing(cmiShowMapCoordinates.isSelected());
         });
 
-        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, cmiShowBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
+        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
 
         /* Validation menu */
 
@@ -744,6 +769,66 @@ public class EditorFrameFx {
         menuBar.getMenus().addAll(fileMenu, editMenu, viewMenu, actionMenu, helpMenu);
 
         return menuBar;
+    }
+
+    /**
+     * 背景画像の色の濃さ設定サブメニューを更新する
+     */
+    public void updateColorDepthOfBackgroundImageMenu() {
+        menuColorDepthOfBackgroundImage.getItems().clear();
+        try {
+            double colorDepthOfBackgroundImage = editor.getProperties().getDouble("color_depth_of_background_image", 1.0);
+            ToggleGroup group = new ToggleGroup();
+            for (int index = 1; index <= 10; index++) {
+                double colorDepth = index / 10.0;
+                RadioMenuItem menuItem = new RadioMenuItem("" + (index * 10) + "%");
+                menuItem.setToggleGroup(group);
+                menuItem.setOnAction(e -> {
+                    canvas.setColorDepthOfBackgroundImage(colorDepth);
+                    canvas.repaintLater();
+                });
+                menuColorDepthOfBackgroundImage.getItems().add(menuItem);
+                if (colorDepth == colorDepthOfBackgroundImage) {
+                    menuItem.setSelected(true);
+                    if (canvas != null) {
+                        canvas.setColorDepthOfBackgroundImage(colorDepth);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    /**
+     * 背景地図の色の濃さ設定サブメニューを更新する
+     */
+    public void updateColorDepthOfBackgroundMapMenu() {
+        menuColorDepthOfBackgroundMap.getItems().clear();
+        try {
+            double colorDepthOfBackgroundMap = editor.getProperties().getDouble("color_depth_of_background_map", 1.0);
+            ToggleGroup group = new ToggleGroup();
+            for (int index = 1; index <= 10; index++) {
+                double colorDepth = index / 10.0;
+                RadioMenuItem menuItem = new RadioMenuItem("" + (index * 10) + "%");
+                menuItem.setToggleGroup(group);
+                menuItem.setOnAction(e -> {
+                    canvas.setColorDepthOfBackgroundMap(colorDepth);
+                    canvas.repaintLater();
+                });
+                menuColorDepthOfBackgroundMap.getItems().add(menuItem);
+                if (colorDepth == colorDepthOfBackgroundMap) {
+                    menuItem.setSelected(true);
+                    if (canvas != null) {
+                        canvas.setColorDepthOfBackgroundMap(colorDepth);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**
@@ -1102,6 +1187,8 @@ public class EditorFrameFx {
         linkPanel.reset();
         areaPanel.reset();
         scenarioPanel.reset();
+        updateColorDepthOfBackgroundImageMenu();
+        updateColorDepthOfBackgroundMapMenu();
         updateShowBackgroundGroupMenu();
         updateAddSymbolicLinkMenu();
         updateGroupSelectionPane();
