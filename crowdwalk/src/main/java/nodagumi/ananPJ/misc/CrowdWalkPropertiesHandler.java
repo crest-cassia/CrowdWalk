@@ -573,6 +573,22 @@ import nodagumi.Itk.*;
  *  設定値： 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1.0
  *  デフォルト値： 1.0</pre>
  *   </li>
+ *
+ *   <li>
+ *     <h4>rotation_angle</h4>
+ *     <pre>  マップエディタで表示されるマップの回転角度の初期値
+ *
+ *  設定値： -180.0～180.0
+ *  デフォルト値： 0.0</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>rotation_angle_locking</h4>
+ *     <pre>  マップエディタで表示されるマップの回転角度をロックする
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
  * </ul>
  */
 public class CrowdWalkPropertiesHandler {

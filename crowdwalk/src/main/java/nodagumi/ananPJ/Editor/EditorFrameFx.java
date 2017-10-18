@@ -97,6 +97,7 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.MapChecker;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
+import nodagumi.Itk.Itk;
 
 /**
  * マップエディタのウィンドウ構築と GUI コントロール
@@ -153,6 +154,11 @@ public class EditorFrameFx {
      * 編集エリアとタブエリアの仕切り
      */
     private SplitPane splitPane;
+
+    /**
+     * マップの回転角度リセットメニュー
+     */
+    private MenuItem miResetRotation = new MenuItem("Reset rotation");
 
     /**
      * 背景画像の色の濃さ設定メニュー
@@ -262,7 +268,8 @@ public class EditorFrameFx {
         Group root = new Group();
         canvas = new EditorCanvas(editor, this);
         root.getChildren().add(canvas);
-        updateColorDepthOfBackgroundImageMenu();    // canvas のメソッドを呼び出すためここで実行する
+        updateRotationMenu();                       // canvas のメソッドを呼び出すためここで実行する
+        updateColorDepthOfBackgroundImageMenu();    //                  〃
         updateColorDepthOfBackgroundMapMenu();      //                  〃
         StackPane canvasPane = new StackPane();
         String image = getClass().getResource("/img/canvas_bg.png").toExternalForm();
@@ -557,26 +564,8 @@ public class EditorFrameFx {
         });
 
         MenuItem miSetRotation = new MenuItem("Set rotation");
-        miSetRotation.setOnAction(e -> {
-            TextInputDialog dialog = new TextInputDialog("" + 0.0);
-            dialog.setTitle("Set rotation");
-            dialog.setHeaderText("Enter the rotation angle");
-            String text = dialog.showAndWait().orElse("").trim();
-            if (text.isEmpty()) {
-                return;
-            }
-            Double angle = convertToDouble(text);
-            if (angle != null) {
-                if (angle < -180.0 || angle > 180) {
-                    Alert alert = new Alert(AlertType.WARNING, "Angle range is -180.0 to 180.0", ButtonType.OK);
-                    alert.showAndWait();
-                    return;
-                }
-                canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, angle);
-            }
-        });
+        miSetRotation.setOnAction(e -> setRotation());
 
-        MenuItem miResetRotation = new MenuItem("Reset rotation");
         miResetRotation.setOnAction(e -> {
             canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, 0.0);
         });
@@ -769,6 +758,32 @@ public class EditorFrameFx {
         menuBar.getMenus().addAll(fileMenu, editMenu, viewMenu, actionMenu, helpMenu);
 
         return menuBar;
+    }
+
+    /**
+     * マップの回転角と回転角度リセットメニューの状態を更新する
+     */
+    public void updateRotationMenu() {
+        try {
+            double angle = editor.getProperties().getDouble("rotation_angle", 0.0);
+            if (angle < -180.0 || angle > 180) {
+                Itk.logWarn("Parameter out of range", "rotation_angle", "" + angle);
+                angle %= 360.0;
+                if (angle < -180.0) {
+                    angle = (angle % 180.0) + 180.0;
+                } else if (angle > 180.0) {
+                    angle = (angle % 180.0) - 180.0;
+                }
+            }
+            canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, angle);
+
+            boolean angleLocking = editor.getProperties().getBoolean("rotation_angle_locking", false);
+            miResetRotation.setDisable(angleLocking);
+            canvas.setAngleLocking(angleLocking);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**
@@ -1187,6 +1202,7 @@ public class EditorFrameFx {
         linkPanel.reset();
         areaPanel.reset();
         scenarioPanel.reset();
+        updateRotationMenu();
         updateColorDepthOfBackgroundImageMenu();
         updateColorDepthOfBackgroundMapMenu();
         updateShowBackgroundGroupMenu();
@@ -1386,6 +1402,45 @@ public class EditorFrameFx {
         GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance(simulator);
         launcher.init(editor.getRandom(), editor.getProperties(), editor.getSetupFileInfo(), editor.getMap(), settings);
         launcher.simulate();
+    }
+
+    /**
+     * マップの回転角と角度ロックを設定する
+     */
+    private void setRotation() {
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Set rotation");
+        VBox paramPane = new VBox();
+
+        Label label = new Label("Rotation angle (degree)");
+        TextField angleField = new TextField("" + canvas.getAngle());
+        FlowPane flowPane = new FlowPane();
+        flowPane.setPadding(new Insets(8, 0, 8, 0));
+        flowPane.setHgap(8);
+        flowPane.getChildren().addAll(label, angleField);
+
+        CheckBox lockingCheckBox = new CheckBox("Angle locking");
+        lockingCheckBox.setSelected(canvas.isAngleLocking());
+
+        paramPane.getChildren().addAll(flowPane, lockingCheckBox);
+
+        dialog.getDialogPane().setContent(paramPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Double value = convertToDouble(angleField.getText());
+            if (value != null) {
+                double angle = value;
+                if (angle < -180.0 || angle > 180) {
+                    Alert alert = new Alert(AlertType.WARNING, "Angle range is -180.0 to 180.0", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, angle);
+            }
+            miResetRotation.setDisable(lockingCheckBox.isSelected());
+            canvas.setAngleLocking(lockingCheckBox.isSelected());
+        }
     }
 
     /**

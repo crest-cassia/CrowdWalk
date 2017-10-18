@@ -183,6 +183,11 @@ public class EditorCanvas extends Canvas {
     private double angle = 0.0;
 
     /**
+     * マップの回転角を固定する
+     */
+    private boolean angleLocking = false;
+
+    /**
      * マップの回転を反映したノード座標の再計算フラグ
      */
     private boolean nodePointsUpdated = true;
@@ -958,7 +963,11 @@ public class EditorCanvas extends Canvas {
         default:
             if (event.isAltDown()) {
                 // Alt + ホイール: 編集画面の回転
-                rotate(event.getX(), event.getY(), event.getDeltaY(), event.isControlDown());
+                if (angleLocking) {
+                    editor.ding(null);
+                } else {
+                    rotate(event.getX(), event.getY(), event.getDeltaY(), event.isControlDown());
+                }
             } else {
                 // ホイール: マップ表示の拡大・縮小
                 zoom(event.getX(), event.getY(), event.getDeltaY(), event.isControlDown());
@@ -1101,6 +1110,27 @@ public class EditorCanvas extends Canvas {
         originTranslate = new Point2D(ox * scale, oy * scale);
         adjustmentTranslate = new Point2D(x, y);
         repaintLater();
+    }
+
+    /**
+     * マップの回転角を返す
+     */
+    public double getAngle() {
+        return angle;
+    }
+
+    /**
+     * マップの回転角の固定を設定する
+     */
+    public void setAngleLocking(boolean angleLocking) {
+        this.angleLocking = angleLocking;
+    }
+
+    /**
+     * マップの回転角が固定されているか?
+     */
+    public boolean isAngleLocking() {
+        return angleLocking;
     }
 
     /**
