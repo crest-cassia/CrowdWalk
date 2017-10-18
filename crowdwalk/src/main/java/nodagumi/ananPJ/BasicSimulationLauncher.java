@@ -396,16 +396,16 @@ public abstract class BasicSimulationLauncher {
             }
         }
         if (finished) {
-            finalize() ;
+            finish() ;
         }
     }
 
     /**
      * シミュレーションの終了処理。
      */
-    protected void finalize() {
+    protected void finish() {
         // ログの書き出し。ログは、最後に出力。
-        simulator.finalize() ;
+        simulator.finish() ;
 
         // 終了時ステータスの表示
         // ※注意) Time がプラス1余計にされている
