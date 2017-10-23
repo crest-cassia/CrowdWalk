@@ -1133,6 +1133,7 @@ public class EditorFrameFx {
     private HBox createLinkAttributesPane() {
         HBox hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setMinWidth(512);
         hbox.setSpacing(8);
 
         Label lengthLabel = new Label("length");
@@ -2460,7 +2461,7 @@ public class EditorFrameFx {
      * 背景画像をセットする
      */
     public void setBackgroundImage() {
-        Point2D point = canvas.getMapPointOnTheMouseCursor();
+        Point2D point = canvas.convertToOriginal(canvas.getMapPointOnTheMouseCursor());
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open background image file");
         fileChooser.setInitialDirectory(editor.getDir());
