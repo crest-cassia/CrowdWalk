@@ -102,11 +102,20 @@ class OsmMap < MapTown
     :jp18 => Geo2D::Point.new(136.0 +  (0.0/60.0), 20.0), # [136度00分, 20度]
     :jp19 => Geo2D::Point.new(154.0 +  (0.0/60.0), 26.0), # [154度00分, 26度]
   } ;
+  
   ## 経度(lon)から平面直角座標系への変換倍率
   CartesianLatMagnify = 10001960.0/90.0 ;
 
   ## 角度ラジアン係数。
   Deg2Rad = (Math::PI / 180.0) ;
+
+  #--============================================================
+  #--------------------------------------------------------------
+  #++
+  ## add new origin for Cartesian
+  def self.addCartesianLonLatOrigin(label, lon, lat)
+    CartesianLonLatOrigin[label] = Geo2D::Point.new(lon, lat) ;
+  end
   
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
@@ -154,12 +163,22 @@ class OsmMap < MapTown
   
   #--------------------------------------------------------------
   #++
-  ## scan json file
+  ## scan json JSON string
   ## _json_:: JSON string
   def scanJson(json)
     @sourceJson = JSON::Parser.new(json).parse ;
     scanRoadJson(@sourceJson) ;
     scanPoIJson(@sourceJson) ;
+    setCenterOrigin() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## set center of bbox as a :local origin for convertion from LonLat to XY
+  def setCenterOrigin()
+    center = getCenterInLonLat() ;
+    p [:centerLonLat, center, center.x, center.y] 
+    OsmMap.addCartesianLonLatOrigin(:bbox, center.x, center.y) ;
   end
 
   #--------------------------------------------------------------
@@ -616,6 +635,32 @@ class OsmMap < MapTown
     end
     return addedList ;
   end
+
+  #--------------------------------------------------------------
+  #++
+  ## get bbox in LonLat
+  def getBBoxInLonLat() ;
+    bbox = nil ;
+    @roadList.each{|road|
+      roadBBox = road.getBBoxInLonLat() ;
+      if(bbox.nil?) then
+        bbox = roadBBox ;
+      else
+        bbox.insert(roadBBox) ;
+      end
+    }
+    return bbox ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## get center of bbox in LonLat
+  def getCenterInLonLat() ;
+    bbox = getBBoxInLonLat() ;
+    cx = (bbox.minPos().x() + bbox.maxPos().x()) / 2.0 ;
+    cy = (bbox.minPos().y() + bbox.maxPos().y()) / 2.0 ;
+    return Geo2D::Point.new(cx, cy) ;
+  end
   
   #--============================================================
   #++
@@ -701,7 +746,7 @@ class OsmMap < MapTown
     def addTag(tag)
       @tagList.push(tag) ;
     end
-    
+
   end # class OsmFeature
 
   
@@ -738,6 +783,21 @@ class OsmMap < MapTown
     ## add new link
     def pushLink(link)
       @linkList.push(link) ;
+    end
+
+    #------------------------------------------
+    #++
+    ## get bbox in LonLat
+    def getBBoxInLonLat()
+      bbox = nil ;
+      coordinatesJson().each(){|coord|
+        if(bbox.nil?) then
+          bbox = Geo2D::Box.new(coord) ;
+        else
+          bbox.insert(Geo2D::Point.new(coord[0], coord[1])) ;
+        end
+      }
+      return bbox ;
     end
     
   end # class OsmRoad

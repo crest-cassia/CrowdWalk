@@ -60,6 +60,14 @@ _END_
       exit(1) ;
     end
   }
+  op.on("-C","--newCartOrigin Lon:Lat", String, sep + "temporal cartesian origin."){|lonlat|
+    (lon, lat) = lonlat.split(':').map(){|v| v.to_f}
+    OsmMap.addCartesianLonLatOrigin(:temporal, lon, lat) ;
+    $conf[:cartOrigin] = :temporal ;
+  }
+  op.on("-b","--useCenterForOrigin", sep + "use center of bbox as origin."){
+    $conf[:cartOrigin] = :bbox ;
+  }
   op.on("-m","--margin ReduceMargin", Float, sep + "margin to reduce nodes") {
     |margin|
     $conf[:redundantMargin] = margin ;
