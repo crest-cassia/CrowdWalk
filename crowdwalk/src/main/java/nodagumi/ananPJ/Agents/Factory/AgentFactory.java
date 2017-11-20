@@ -162,17 +162,6 @@ public abstract class AgentFactory {
      * ログ出力で使用。
      */
     final public String getRuleName() { return config.ruleName ; } ;
-    /** エージェントクラスの名前を格納。*/
-    public String agentClassName = DefaultAgentClassName ;
-    final public String getAgentClassName() {
-        if(config.agentClassName == null) {
-            return DefaultAgentClassName ;
-        } else {
-            return config.agentClassName ;
-        }
-    }
-    /** agent config */
-    public Term getAgentConf() { return config.agentConf ; }
     
     
     /*********/
@@ -196,12 +185,6 @@ public abstract class AgentFactory {
 
     Random random = null;
     
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    /**
-     * エージェントクラスの規定値
-     */
-    static public String DefaultAgentClassName = "NaiveAgent" ;
-
     //------------------------------------------------------------
     /**
      *  Config によるコンストラクタ
@@ -220,6 +203,27 @@ public abstract class AgentFactory {
 
         parse_conditions(config.conditions);
     }
+
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * エージェントクラスの規定値
+     */
+    static public String DefaultAgentClassName = "NaiveAgent" ;
+
+    //------------------------------------------------------------
+    /**
+     *  エージェントクラスの名前を取得格納。
+     */
+    final public String getAgentClassName() {
+        if(config.agentClassName == null) {
+            return DefaultAgentClassName ;
+        } else {
+            return config.agentClassName ;
+        }
+    }
+    
+    /** agent config */
+    public Term getAgentConf() { return config.agentConf ; }
 
     //------------------------------------------------------------
     /**
@@ -309,7 +313,7 @@ public abstract class AgentFactory {
         /* [I.Noda] ここで Agent 生成 */
         for (int i = 0; i < agent_to_gen; ++i) {
             generated++;
-            launchAgent(agentClassName,
+            launchAgent(getAgentClassName(),
                         simulator,
                         currentTime,
                         agents,
@@ -367,7 +371,7 @@ public abstract class AgentFactory {
      * 扱い可能な directive かのチェック
      */
     public boolean isKnownDirectiveInAgentClass(Term directive) {
-        return isKnownDirectiveInAgentClass(agentClassName, directive) ;
+        return isKnownDirectiveInAgentClass(getAgentClassName(), directive) ;
     }
 
     //------------------------------------------------------------
@@ -406,7 +410,7 @@ public abstract class AgentFactory {
     public int pushPlaceTagInDirectiveByAgentClass(Term directive,
                                                    ArrayList<Term> nodeTagList,
                                                    ArrayList<Term> linkTagList) {
-        return pushPlaceTagInDirectiveByAgentClass(agentClassName,
+        return pushPlaceTagInDirectiveByAgentClass(getAgentClassName(),
                                                    directive,
                                                    nodeTagList,
                                                    linkTagList) ;

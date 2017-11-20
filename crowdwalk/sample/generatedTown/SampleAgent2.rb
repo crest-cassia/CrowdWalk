@@ -123,7 +123,6 @@ class SampleAgent < RubyAgentBase
   ## 思考ルーチン。
   ## ThinkAgent のサンプルと同じ動作をさせている。
   def thinkCycle()
-
     if(listenAlert(Term_Emergency)) then
       setGoal(Term_node_09_05) ;
       clearRoute() ;

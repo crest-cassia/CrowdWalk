@@ -685,7 +685,6 @@ public class AgentFactoryConfig {
 				 NetworkMap map) {
             AgentFactory factory =
                 new AgentFactoryByRuby(this, factoryList.random) ;
-            Itk.dbgVal("factory in AgentFactoryList",factory) ;
             factoryList.add(factory) ;
         }
         

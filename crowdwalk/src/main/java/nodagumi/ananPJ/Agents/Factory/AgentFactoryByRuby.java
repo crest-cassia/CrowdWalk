@@ -90,7 +90,7 @@ public class AgentFactoryByRuby extends AgentFactory {
      */
     public AgentFactoryByRuby(AgentFactoryConfig _config, Random random) {
         super(_config, random) ;
-        
+
         AgentFactoryConfig_Ruby config =
             (AgentFactoryConfig_Ruby)_config ;
         
