@@ -65,7 +65,7 @@ public class SimulationViewController3D {
         public AddedAgent(AgentBase agent) {
             this.agent = agent;
             Vector3D swing = agent.getSwing();
-            Point2D pos = agent.getPos();
+            Point2D pos = agent.getPosition();
             position = new Point3D(pos.getX() + swing.getX(), pos.getY() + swing.getY(), agent.getHeight());
             triage = agent.getTriage();
             speed = agent.getSpeed();
@@ -79,7 +79,7 @@ public class SimulationViewController3D {
         public MovedAgent(AgentBase agent) {
             this.agent = agent;
             Vector3D swing = agent.getSwing();
-            Point2D pos = agent.getPos();
+            Point2D pos = agent.getPosition();
             position = new Point3D(pos.getX() + swing.getX(), pos.getY() + swing.getY(), agent.getHeight());
         }
     }

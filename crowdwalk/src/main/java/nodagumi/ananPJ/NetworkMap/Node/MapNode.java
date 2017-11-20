@@ -113,8 +113,8 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
 
     public Point2D getPosition(){ return position; }
 
-    public void setPosition(Point2D position) {
-        position = position;
+    public void setPosition(Point2D _position) {
+        position = _position;
     }
 
     //------------------------------------------------------------

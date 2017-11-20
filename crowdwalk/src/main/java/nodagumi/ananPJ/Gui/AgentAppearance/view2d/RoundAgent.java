@@ -30,7 +30,7 @@ public class RoundAgent extends AgentViewBase2D {
      */
     public void draw(AgentBase agent, Graphics2D g2) {
         double scale = g2.getTransform().getScaleX();
-        Point2D pos = agent.getPos();
+        Point2D pos = agent.getPosition();
         Vector3D swing = agent.getSwing();
         double size = frame.getAgentSize() / scale;
         double x = pos.getX() + swing.getX() - size / 2.0;
@@ -54,7 +54,7 @@ public class RoundAgent extends AgentViewBase2D {
         drawLabel(agent, g2, panel.HOVER_COLOR, panel.HOVER_BG_COLOR);
 
         double scale = g2.getTransform().getScaleX();
-        Point2D pos = agent.getPos();
+        Point2D pos = agent.getPosition();
         Vector3D swing = agent.getSwing();
         double size = hoverSize / scale;
         double x = pos.getX() + swing.getX() - size / 2.0;

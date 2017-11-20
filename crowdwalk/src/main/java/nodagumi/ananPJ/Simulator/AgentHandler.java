@@ -595,13 +595,13 @@ public class AgentHandler {
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
-                                "" + (agent.getPos().getX())) ;}})
+                                "" + (agent.getPosition().getX())) ;}})
             .addColumn(formatter.new Column("current_position_in_model_y") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
-                                "" + (agent.getPos().getY())) ;}})
+                                "" + (agent.getPosition().getY())) ;}})
             .addColumn(formatter.new Column("current_position_in_model_z") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
@@ -613,14 +613,14 @@ public class AgentHandler {
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
-                                "" + (agent.getPos().getX() 
+                                "" + (agent.getPosition().getX() 
                                       + agent.getSwing().getX())) ;}})
             .addColumn(formatter.new Column("current_position_for_drawing_y") {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return (agent.isEvacuated() ?
                                 "" + 0.0 :
-                                "" + (agent.getPos().getY() 
+                                "" + (agent.getPosition().getY() 
                                       + agent.getSwing().getY())) ;}})
             .addColumn(formatter.new Column("current_position_for_drawing_z") {
                     public String value(AgentBase agent, Object timeObj,

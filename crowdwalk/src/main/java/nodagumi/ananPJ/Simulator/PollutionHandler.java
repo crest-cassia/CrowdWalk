@@ -352,8 +352,8 @@ public class PollutionHandler {
             }
 
             Double pollutionLevel = null;
-            Point3D point = new Point3D(agent.getPos().getX(),
-                    agent.getPos().getY(),
+            Point3D point = new Point3D(agent.getPosition().getX(),
+                    agent.getPosition().getY(),
                     agent.getHeight() + AGENT_HEIGHT);
 
             for (MapArea area : agent.getCurrentLink().getIntersectedMapAreas()) {

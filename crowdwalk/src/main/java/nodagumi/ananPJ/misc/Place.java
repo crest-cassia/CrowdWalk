@@ -725,14 +725,14 @@ public class Place {
      * 表示上の位置計算 (obsolute)
      */
     public Point2D getPosForDisplay() {
-        return getPos() ;
+        return getPosition() ;
     }
     //------------------------------------------------------------
     /**
      * 全体での位置計算
      * ただし、リンクが真っ直ぐであると仮定。
      */
-    public Point2D getPos() {
+    public Point2D getPosition() {
         if (getLink() != null) {
             return getLink().calcPosition(getPositionOnLink());
         } else if (getLastNode() != null){

@@ -1827,7 +1827,7 @@ public class SimulationFrame2D extends JFrame
         hoverAgent = null;
         double mindist = Double.POSITIVE_INFINITY;
         for (AgentBase agent : getWalkingAgents()) {
-            Point2D pos = agent.getPos();
+            Point2D pos = agent.getPosition();
             Vector3D swing = agent.getSwing();
             double dist = p.distance(pos.getX() + swing.getX(), pos.getY() + swing.getY());
             if (dist < mindist && dist < (10.0 / panel.getDrawingScale())) {
@@ -1863,11 +1863,11 @@ public class SimulationFrame2D extends JFrame
         if (agent.isEvacuated()) {
             buff.append(" evacuated: true\n");
         } else {
-            buff.append(" position X: ").append(agent.getPos().getX()).append("\n");
-            buff.append(" position Y: ").append(agent.getPos().getY()).append("\n");
+            buff.append(" position X: ").append(agent.getPosition().getX()).append("\n");
+            buff.append(" position Y: ").append(agent.getPosition().getY()).append("\n");
             buff.append(" position Z: ").append(agent.getHeight()).append("\n");
-            buff.append(" drawing position X: ").append(agent.getPos().getX() + agent.getSwing().getX()).append("\n");
-            buff.append(" drawing position Y: ").append(agent.getPos().getY() + agent.getSwing().getY()).append("\n");
+            buff.append(" drawing position X: ").append(agent.getPosition().getX() + agent.getSwing().getX()).append("\n");
+            buff.append(" drawing position Y: ").append(agent.getPosition().getY() + agent.getSwing().getY()).append("\n");
             buff.append(" drawing position Z: ").append(
                 agent.getHeight() / ((MapPartGroup)agent.getCurrentLink().getParent()).getScale()
             ).append("\n");

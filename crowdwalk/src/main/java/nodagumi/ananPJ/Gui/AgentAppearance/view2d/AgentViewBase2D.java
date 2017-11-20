@@ -79,7 +79,7 @@ public abstract class AgentViewBase2D extends JsonicHashMapGetter {
      */
     public void drawLabel(AgentBase agent, Graphics2D g2, Color color, Color bgColor) {
         double scale = g2.getTransform().getScaleX();
-        Point2D pos = agent.getPos();
+        Point2D pos = agent.getPosition();
         Vector3D swing = agent.getSwing();
         String text = agent.getIdNumber();
         double size = frame.getAgentSize() / scale;

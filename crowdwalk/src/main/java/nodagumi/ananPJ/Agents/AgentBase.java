@@ -966,8 +966,8 @@ implements Comparable<AgentBase> {
      * 地図上の絶対位置計算。
      * リンクが直線と仮定。
      */
-    public Point2D getPos() {
-        return currentPlace.getPos() ;
+    public Point2D getPosition() {
+        return currentPlace.getPosition() ;
     }
 
     //------------------------------------------------------------
@@ -992,7 +992,7 @@ implements Comparable<AgentBase> {
      * @return 値が変化したら true、変わらなければ false
      */
     public boolean updateLastPosition() {
-        Point2D currentPosition = getPos();
+        Point2D currentPosition = getPosition();
         if (lastPosition == null || ! currentPosition.equals(lastPosition)) {
             lastPosition = currentPosition;
             return true;
