@@ -474,7 +474,7 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * 現在のリンク上の絶対位置（リンクから見た位置）を得る
+     * 現在のリンク上の絶対位置（リンク始点から見た位置）を得る
      */
     public double getPositionOnLink() {
         return currentPlace.getPositionOnLink() ;
@@ -482,7 +482,7 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * 最後のリンク上の絶対位置（リンクから見た位置）を得る
+     * 最後のリンク上の絶対位置（リンク始点から見た位置）を得る
      */
     public double getLastPositionOnLink() {
         return lastPlace.getPositionOnLink() ;
@@ -963,18 +963,20 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * 表示上の位置計算
+     * 地図上の絶対位置計算。
+     * リンクが直線と仮定。
      */
     public Point2D getPos() {
-        return currentPlace.getPosForDisplay() ;
+        return currentPlace.getPos() ;
     }
 
     //------------------------------------------------------------
     /**
-     * 高さ？
+     * 地図上の絶対的高さ。
+     * リンクが直線と仮定。
      */
     public double getHeight() {
-        return currentPlace.getHeightForDisplay() ;
+        return currentPlace.getHeight() ;
     }
 
     /**

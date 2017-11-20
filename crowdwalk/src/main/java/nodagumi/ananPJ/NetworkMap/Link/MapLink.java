@@ -647,15 +647,15 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         }
         if (show_label) {
             g.drawString(getTagString(),
-                     (float)calcAgentPos(0.5).getX(),
-                     (float)calcAgentPos(0.5).getY());
+                     (float)calcAbsolutePos(0.5).getX(),
+                     (float)calcAbsolutePos(0.5).getY());
         }
     }
 
     public void drawLabel(Graphics2D g, boolean showScaling) {
         double scale = showScaling ? g.getTransform().getScaleX() : 1.0;
         g.setStroke(new BasicStroke(2.0f / (float)scale));
-        g.drawString(getTagString(), (float)calcAgentPos(0.5).getX(), (float)calcAgentPos(0.5).getY());
+        g.drawString(getTagString(), (float)calcAbsolutePos(0.5).getX(), (float)calcAbsolutePos(0.5).getY());
     }
 
     public Color getColorFromDensity() {
@@ -670,7 +670,12 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return new Color(Color.HSBtoRGB(f, 0.8f, 0.8f ));
     }
 
-    public Point2D calcAgentPos(double position) {
+    //------------------------------------------------------------
+    /**
+     * リンク上のある点の位置の計算。リンク上の視点からの距離を指定。
+     * ただし、リンクが真っ直ぐであると仮定。
+     */
+    public Point2D calcAbsolutePos(double position) {
         double x = fromNode.getX() + (toNode.getX() - fromNode.getX()) * 
             position / length;
         double y = fromNode.getY() + (toNode.getY() - fromNode.getY()) * 
@@ -679,7 +684,12 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return new Point2D.Double(x,y);
     }
 
-    public double calcAgentHeight(double position) {
+    //------------------------------------------------------------
+    /**
+     * リンク上のある点の高さの計算。リンク上の視点からの距離を指定。
+     * ただし、リンクが真っ直ぐであると仮定。
+     */
+    public double calcAbsoluteHeight(double position) {
         return fromNode.getHeight() + (toNode.getHeight() - fromNode
                 .getHeight()) * position / length;
     }

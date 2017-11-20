@@ -722,11 +722,19 @@ public class Place {
      */
     //------------------------------------------------------------
     /**
-     * 表示上の位置計算
+     * 表示上の位置計算 (obsolute)
      */
     public Point2D getPosForDisplay() {
+        return getPos() ;
+    }
+    //------------------------------------------------------------
+    /**
+     * 全体での位置計算
+     * ただし、リンクが真っ直ぐであると仮定。
+     */
+    public Point2D getPos() {
         if (getLink() != null) {
-            return getLink().calcAgentPos(getPositionOnLink());
+            return getLink().calcAbsolutePos(getPositionOnLink());
         } else if (getLastNode() != null){
             return getLastNode().getAbsoluteCoordinates();
         } else {
@@ -736,11 +744,20 @@ public class Place {
 
     //------------------------------------------------------------
     /**
-     * 表示上の高さ計算
+     * 表示上の高さ計算 (obsolute)
      */
     public double getHeightForDisplay() {
+        return getHeight() ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * 全体での高さの計算。
+     * ただし、リンクが真っ直ぐであると仮定。
+     */
+    public double getHeight() {
         if (getLink() != null) {
-            return getLink().calcAgentHeight(getPositionOnLink());
+            return getLink().calcAbsoluteHeight(getPositionOnLink());
         } else {
             return Double.NaN;
         }
