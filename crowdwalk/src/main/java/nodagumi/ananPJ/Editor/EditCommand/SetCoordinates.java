@@ -37,7 +37,7 @@ public class SetCoordinates extends EditCommandBase {
 
         originalX = node.getX();
         originalY = node.getY();
-        node.setAbsoluteCoordinates(new Point2D.Double(x, y));
+        node.setPosition(new Point2D.Double(x, y));
 
         invoked = true;
         return true;
@@ -52,7 +52,7 @@ public class SetCoordinates extends EditCommandBase {
             return false;
         }
 
-        node.setAbsoluteCoordinates(new Point2D.Double(originalX, originalY));
+        node.setPosition(new Point2D.Double(originalX, originalY));
 
         invoked = false;
         return true;

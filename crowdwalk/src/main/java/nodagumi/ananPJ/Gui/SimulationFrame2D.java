@@ -1647,7 +1647,7 @@ public class SimulationFrame2D extends JFrame
         double mindist = Double.POSITIVE_INFINITY;
         MapNode hoverNodeCandidate = null;
         for (MapNode node : getNodes()) {
-            double dist = p.distance(node.getLocalCoordinates());
+            double dist = p.distance(node.getPosition());
             if (dist < mindist && dist < (10.0 / panel.getDrawingScale())) {
                 hoverNodeCandidate = node;
                 mindist = dist;
@@ -1713,7 +1713,7 @@ public class SimulationFrame2D extends JFrame
         for (MapLink link : getLinks()) {
             MapNode from = (MapNode)link.getFrom();
             MapNode to = (MapNode)link.getTo();
-            Line2D line = new Line2D.Double(from.getLocalCoordinates(), to.getLocalCoordinates());
+            Line2D line = new Line2D.Double(from.getPosition(), to.getPosition());
             double dist = line.ptSegDist(p);
             if (dist < mindist) {
                 hoverLinkCandidate = link;

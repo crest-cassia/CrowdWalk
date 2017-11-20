@@ -647,15 +647,15 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         }
         if (show_label) {
             g.drawString(getTagString(),
-                     (float)calcAbsolutePos(0.5).getX(),
-                     (float)calcAbsolutePos(0.5).getY());
+                     (float)calcPosition(0.5).getX(),
+                     (float)calcPosition(0.5).getY());
         }
     }
 
     public void drawLabel(Graphics2D g, boolean showScaling) {
         double scale = showScaling ? g.getTransform().getScaleX() : 1.0;
         g.setStroke(new BasicStroke(2.0f / (float)scale));
-        g.drawString(getTagString(), (float)calcAbsolutePos(0.5).getX(), (float)calcAbsolutePos(0.5).getY());
+        g.drawString(getTagString(), (float)calcPosition(0.5).getX(), (float)calcPosition(0.5).getY());
     }
 
     public Color getColorFromDensity() {
@@ -675,7 +675,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * リンク上のある点の位置の計算。リンク上の視点からの距離を指定。
      * ただし、リンクが真っ直ぐであると仮定。
      */
-    public Point2D calcAbsolutePos(double position) {
+    public Point2D calcPosition(double position) {
         double x = fromNode.getX() + (toNode.getX() - fromNode.getX()) * 
             position / length;
         double y = fromNode.getY() + (toNode.getY() - fromNode.getY()) * 
@@ -689,7 +689,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * リンク上のある点の高さの計算。リンク上の視点からの距離を指定。
      * ただし、リンクが真っ直ぐであると仮定。
      */
-    public double calcAbsoluteHeight(double position) {
+    public double calcHeight(double position) {
         return fromNode.getHeight() + (toNode.getHeight() - fromNode
                 .getHeight()) * position / length;
     }
@@ -924,8 +924,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     }
 /*
     public Line2D getLine2D() {
-        Point2D from = fromNode.getAbsoluteCoordinates();
-        Point2D to = toNode.getAbsoluteCoordinates();
+        Point2D from = fromNode.getPosition();
+        Point2D to = toNode.getPosition();
         double fwidth = width / (((MapPartGroup)(parent)).getScale());
         if (from.getX() == to.getX()) {
             double y1 = from.getY();
@@ -1132,8 +1132,8 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
                     dispose();
                 } else if (e.getActionCommand().
                         equals("Calc length from scale")) {
-                    attributes.setLinkLength(from.getAbsoluteCoordinates()
-                            .distance(to.getAbsoluteCoordinates()));
+                    attributes.setLinkLength(from.getPosition()
+                            .distance(to.getPosition()));
                     repaint();
                 }
             }
@@ -1329,13 +1329,13 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     //------------------------------------------------------------
     /**
-     * リンクが指定されたノードから見た時の direction の値
+     * リンク上の相対位置が、絶対方向でリンク上のどの位置にあるか。
      * @param originNode エージェントが入る側のノード
      * @param relativePos エージェント進行方向から見た位置
      * @return 順方向なら relativePos。逆なら length-relativePos。
      */
-    public double calcAbstractPositionByDirectionFrom(MapNode originNode,
-                                                      double relativePos) {
+    public double calcAbstractPositionOnLinkByDirectionFrom(MapNode originNode,
+                                                            double relativePos) {
         return (isForwardDirectionFrom(originNode) ?
                 relativePos :
                 length - relativePos) ;
@@ -1343,12 +1343,12 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
 
     //------------------------------------------------------------
     /**
-     * リンクが指定されたノードの方を見て正方向かどうかのチェック
+     * リンク上の相対位置が、絶対方向でリンク上のどの位置にあるか。
      * @param destinationNode エージェントが向かう方のノード
      * @param relativePos エージェント進行方向から見た位置
      * @return 順方向なら relativePos。逆なら length-relativePos。
      */
-    public double calcAbstractPositionByDirectionTo(MapNode destinationNode,
+    public double calcAbstractPositionOnLinkByDirectionTo(MapNode destinationNode,
                                                     double relativePos) {
         return (isForwardDirectionTo(destinationNode) ?
                 relativePos :

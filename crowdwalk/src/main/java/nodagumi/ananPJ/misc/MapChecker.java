@@ -80,8 +80,8 @@ public class MapChecker {
                 MapNode lhs = nodes.get(i);
                 MapNode rhs = nodes.get(j);
 
-                if (lhs.getAbsoluteCoordinates().equals(rhs.getAbsoluteCoordinates())) {
-                    Point2D pos = lhs.getAbsoluteCoordinates();
+                if (lhs.getPosition().equals(rhs.getPosition())) {
+                    Point2D pos = lhs.getPosition();
                     MapNodeTable nodesHere = collisions.get(pos);
                     if (nodesHere == null) {
                         nodesHere = new MapNodeTable();

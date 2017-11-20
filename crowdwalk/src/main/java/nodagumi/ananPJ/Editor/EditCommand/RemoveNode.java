@@ -27,7 +27,7 @@ public class RemoveNode extends EditCommandBase {
         changeType = ChangeType.NODE_VOLUME;
         groupId = ((MapPartGroup)node.getParent()).getID();
         id = node.getID();
-        coordinates.setLocation(node.getAbsoluteCoordinates());
+        coordinates.setLocation(node.getPosition());
         height = node.getHeight();
         tags = new ArrayList<String>(node.getTags());
     }

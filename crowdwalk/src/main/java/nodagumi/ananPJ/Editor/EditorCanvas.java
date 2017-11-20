@@ -443,7 +443,7 @@ public class EditorCanvas extends Canvas {
                     if (toNode != null && toNode != lastNode) {
                         repaintLater();
                         MapPartGroup group = editor.getCurrentGroup();
-                        double length = fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * group.getScale();
+                        double length = fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
                         frame.setCurrentLinkLength(length);
                     }
                 }
@@ -558,7 +558,7 @@ public class EditorCanvas extends Canvas {
                         if (toNode == null) {
                             editor.ding("Point to the end node");
                         } else {
-                            double length = fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * group.getScale();
+                            double length = fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
                             frame.setCurrentLinkLength(length);
                             double width = frame.getCurrentLinkWidth();
                             if (width <= 0.0) {
@@ -583,7 +583,7 @@ public class EditorCanvas extends Canvas {
                                 fromNode = pointedNode;
                             } else {
                                 // 新規リンク追加
-                                double length = fromNode.getAbsoluteCoordinates().distance(pointedNode.getAbsoluteCoordinates()) * group.getScale();
+                                double length = fromNode.getPosition().distance(pointedNode.getPosition()) * group.getScale();
                                 frame.setCurrentLinkLength(length);
                                 double width = frame.getCurrentLinkWidth();
                                 if (width <= 0.0) {
@@ -1343,7 +1343,7 @@ public class EditorCanvas extends Canvas {
             if (mode != EditorMode.ADD_NODE_LINK && ! frame.getNodePanel().getFilteredSet().contains(node)) {
                 continue;
             }
-            double dist = p.distance(node.getAbsoluteCoordinates());
+            double dist = p.distance(node.getPosition());
             if (dist < mindist && dist < radius) {
                 pointedNodeCandidate = node;
                 mindist = dist;
@@ -1425,7 +1425,7 @@ public class EditorCanvas extends Canvas {
         MapLinkTable links = group.getChildLinks();
         double minDistance = -1.0;
         for (MapNode toNode : nodes) {
-            Line2D line = new Line2D.Double(fromNode.getAbsoluteCoordinates(), toNode.getAbsoluteCoordinates());
+            Line2D line = new Line2D.Double(fromNode.getPosition(), toNode.getPosition());
             if (line.ptSegDist(point) < 5.0 / (scale * SCALE_FACTOR)) {
                 double distance = line.getP1().distance(line.getP2());
                 if (minDistance == -1.0 || distance < minDistance) {

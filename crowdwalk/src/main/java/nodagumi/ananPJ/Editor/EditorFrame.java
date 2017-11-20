@@ -700,7 +700,7 @@ public class EditorFrame
         double mindist = Double.POSITIVE_INFINITY;
         MapNode hoverNodeCandidate = null;
         for (final MapNode node : getChildNodes()) {
-            double dist = p.distance(node.getLocalCoordinates());
+            double dist = p.distance(node.getPosition());
             if (dist < mindist &&
                     dist < (10.0 / panel.getDrawingScale())) {
                 hoverNodeCandidate = node;
@@ -711,7 +711,7 @@ public class EditorFrame
         final boolean updated = (selectedNode != hoverNodeCandidate);
         selectedNode = hoverNodeCandidate;
         if (selectedNode != null) hoverNode = new Hover(selectedNode,
-                selectedNode.getLocalCoordinates());
+                selectedNode.getPosition());
         else hoverNode = null;
 
         return updated;
@@ -811,7 +811,7 @@ public class EditorFrame
         MapLinkTable childLinks = getChildLinks();
         for (int tindex = 0; tindex < childNodesAndSymlinks.size(); ++tindex) {
             final MapNode to = childNodesAndSymlinks.get(tindex);
-            Line2D line = new Line2D.Double (from.getLocalCoordinates(), to.getLocalCoordinates());
+            Line2D line = new Line2D.Double (from.getPosition(), to.getPosition());
             if (line.ptSegDist(p) < 5.0 / panel.getDrawingScale()) {
                 double lineLength = line.getP1().distance(line.getP2());
                 if (candidate == null || lineLength < candidate.length) {
@@ -850,8 +850,8 @@ public class EditorFrame
         MapNodeTable childNodesAndSymlinks = getChildNodesAndSymlinks();
         for (int tindex = 0; tindex < childNodesAndSymlinks.size(); ++tindex) {
             final MapNode to = childNodesAndSymlinks.get(tindex);
-            Line2D line = new Line2D.Double (from.getLocalCoordinates(),
-                    to.getLocalCoordinates());
+            Line2D line = new Line2D.Double (from.getPosition(),
+                    to.getPosition());
             if (line.ptSegDist(p) < 5.0 / panel.getDrawingScale()) {
                 /* check for existing links */
                 boolean exists = false;
@@ -882,8 +882,8 @@ public class EditorFrame
         }
 
         final MapNode tmpNode = new MapNode(null, p, getDefaultHeight());
-        Line2D line = new Line2D.Double (from.getLocalCoordinates(),
-                tmpNode.getLocalCoordinates());
+        Line2D line = new Line2D.Double (from.getPosition(),
+                tmpNode.getPosition());
         double lineLength = line.getP1().distance(line.getP2());
 
         editor.linkPanel.attributePanel.setLinkLength(lineLength);
@@ -930,7 +930,7 @@ public class EditorFrame
         for (final MapLink link : getChildLinks()) {
             MapNode from = (MapNode)link.getFrom();
             MapNode to = (MapNode)link.getTo();
-            Line2D line = new Line2D.Double(from.getLocalCoordinates(), to.getLocalCoordinates());
+            Line2D line = new Line2D.Double(from.getPosition(), to.getPosition());
             double dist = line.ptSegDist(p);
             if (dist  < mindist) {
                 hoverLinkCandidate = new Hover(from,
@@ -1094,7 +1094,7 @@ public class EditorFrame
                         }
                         if (!nodeExist)
                             node = editor.getMap().createMapNode(current_group,
-                                    hoverLink.to.getAbsoluteCoordinates()
+                                    hoverLink.to.getPosition()
                                     , getDefaultHeight());
                         if (!linkExist) {
                             link = editor.getMap().createMapLink(
@@ -1280,8 +1280,8 @@ public class EditorFrame
             if (link.getWidth() == 0) continue;
             MapNode from = (MapNode)link.getFrom();
             MapNode to = (MapNode)link.getTo();
-            link.setLength(from.getLocalCoordinates()
-                           .distance(to.getLocalCoordinates())
+            link.setLength(from.getPosition()
+                           .distance(to.getPosition())
                            * current_group.getScale());
         }
     }
@@ -1927,7 +1927,7 @@ public class EditorFrame
         for (MapNode node : group.getChildNodes()) {
             double height_diff = node.getHeight() - group.getDefaultHeight();
             MapNode newNode = editor.getMap().createMapNode(next_group, 
-                    node.getAbsoluteCoordinates(),
+                    node.getPosition(),
                     next_group.getDefaultHeight() + height_diff);
             for (String tag : node.getTags()) {
                 tag = tag.replaceFirst(floor_string, next_floor_string);
@@ -1992,7 +1992,7 @@ public class EditorFrame
             if (!node.selected) continue;
             double height_diff = node.getHeight() - getDefaultHeight();
             MapNode newNode = editor.getMap().createMapNode(dst_group, 
-                    node.getAbsoluteCoordinates(),
+                    node.getPosition(),
                     dst_group.getDefaultHeight() + height_diff);
             nodesToMove.add(newNode);
             nodeToNode.put(node, newNode);
@@ -2004,7 +2004,7 @@ public class EditorFrame
             for (MapNode node : getChildNodes()) {
                 if (node == newNode) continue;
                 if (node.getHeight() != newNode.getHeight()) continue;
-                if (!node.getLocalCoordinates().equals(newNode.getLocalCoordinates())) continue;
+                if (!node.getPosition().equals(newNode.getPosition())) continue;
                 ++pileCount;
                 String heightStr = "" + node.getHeight();
                 
@@ -2067,10 +2067,10 @@ public class EditorFrame
             double dx, double dy, double dz) {
         for (MapNode node : group.getChildNodes()) {
             if (node.selected) {
-                final double x = node.getLocalX() + dx; 
-                final double y = node.getLocalY() + dy;
+                final double x = node.getX() + dx; 
+                final double y = node.getY() + dy;
 
-                node.setAbsoluteCoordinates(new Point2D.Double(x, y));
+                node.setPosition(new Point2D.Double(x, y));
                 node.setHeight(node.getHeight() + dz);
             }
         }
@@ -2093,8 +2093,8 @@ public class EditorFrame
         int count = 0;
         for (MapNode node : getChildNodes()) {
             if (node.selected) {
-                cx += node.getLocalX();
-                cy += node.getLocalY();
+                cx += node.getX();
+                cy += node.getY();
                 ++count; 
             }
         }
@@ -2106,8 +2106,8 @@ public class EditorFrame
 
         for (MapNode node : getChildNodes()) {
             if (node.selected) {
-                double x = node.getLocalX();
-                double y = node.getLocalY();
+                double x = node.getX();
+                double y = node.getY();
                 
                 double dx = x -cx;
                 double dy = y -cy;
@@ -2118,7 +2118,7 @@ public class EditorFrame
                 x = cx + dx * cosR + dy * sinR;
                 y = cy - dx * sinR + dy * cosR;
                 
-                node.setAbsoluteCoordinates(new Point2D.Double(x, y));
+                node.setPosition(new Point2D.Double(x, y));
             }
         }
     }
@@ -2152,8 +2152,8 @@ public class EditorFrame
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
         if (ret == JOptionPane.YES_OPTION) {
             for (MapLink link : current_group.getChildLinks()) {
-                link.setLength(link.getFrom().getLocalCoordinates()
-                               .distance(link.getTo().getLocalCoordinates())
+                link.setLength(link.getFrom().getPosition()
+                               .distance(link.getTo().getPosition())
                                * current_group.getScale());
             }
             for (MapPartGroup group : editor.getMap().getGroups()) {
@@ -2161,8 +2161,8 @@ public class EditorFrame
             }
         } else if (ret == JOptionPane.NO_OPTION) {
             for (MapLink link : getChildLinks()) {
-                link.setLength(link.getFrom().getLocalCoordinates()
-                               .distance(link.getTo().getLocalCoordinates())
+                link.setLength(link.getFrom().getPosition()
+                               .distance(link.getTo().getPosition())
                                * current_group.getScale());
             }
         }
@@ -2243,7 +2243,7 @@ public class EditorFrame
             editor.setModified(true);
             for (MapNode node : getChildNodes()) {
                 if (node.selected && node != currentNode) {
-                    node.setAbsoluteCoordinates(new Point2D.Double(node.getLocalX(), currentNode.getLocalY()));
+                    node.setPosition(new Point2D.Double(node.getX(), currentNode.getY()));
                 }
             }
             editor.getNodePanel().refresh();
@@ -2254,7 +2254,7 @@ public class EditorFrame
             editor.setModified(true);
             for (MapNode node : getChildNodes()) {
                 if (node.selected && node != currentNode) {
-                    node.setAbsoluteCoordinates(new Point2D.Double(currentNode.getLocalX(), node.getLocalY()));
+                    node.setPosition(new Point2D.Double(currentNode.getX(), node.getY()));
                 }
             }
             editor.getNodePanel().refresh();
@@ -2468,7 +2468,7 @@ public class EditorFrame
             switch (editor.getMode()) {
             case EDIT_NODE:
                 for (MapNode node : getChildNodes()) {
-                    if (selectedArea.contains(node.getLocalCoordinates()) &&
+                    if (selectedArea.contains(node.getPosition()) &&
                             //node.isInLayer(layer, minHeight, maxHeight)
                             node.isBetweenHeight( getMinHeight(), getMaxHeight())
 
@@ -2482,8 +2482,8 @@ public class EditorFrame
                 for (MapLink link : getChildLinks()) {
                     MapNode from = link.getFrom();
                     MapNode to = link.getTo();
-                    if (selectedArea.contains(from.getLocalCoordinates())
-                            && selectedArea.contains(to.getLocalCoordinates())
+                    if (selectedArea.contains(from.getPosition())
+                            && selectedArea.contains(to.getPosition())
                             && to.isBetweenHeight(getMinHeight(), getMaxHeight())
                             && from.isBetweenHeight(getMinHeight(), getMaxHeight())     
                     ) {
@@ -2592,7 +2592,7 @@ public class EditorFrame
             }
         } else if (selectedNode != null && draggingNode) {
             hoverNode.setPos(panel.revCalcPos(e.getX(), e.getY()));
-            selectedNode.setAbsoluteCoordinates(panel.revCalcPos(e.getX(), e.getY()));
+            selectedNode.setPosition(panel.revCalcPos(e.getX(), e.getY()));
             panel.updateHoverNode(hoverNode);
             editor.setModified(true);
             editor.getNodePanel().refresh();
@@ -2632,7 +2632,7 @@ public class EditorFrame
                 }
             } else if (placeHoverLink(p)) {
                 panel.updateHoverNode(new Hover(null,
-                        hoverLinkFromCandidate.getLocalCoordinates()));
+                        hoverLinkFromCandidate.getPosition()));
                 panel.updateHoverLink(hoverLink);
                 panel.repaint();
             }
@@ -2647,7 +2647,7 @@ public class EditorFrame
             if (initialNode != null) {
                 if (placeHoverNodeLink(p)) {
                     panel.updateHoverNode(new Hover(null,
-                            hoverLinkFromCandidate.getLocalCoordinates()));
+                            hoverLinkFromCandidate.getPosition()));
                     panel.updateHoverLink(hoverLink);
                     panel.repaint();
                 }

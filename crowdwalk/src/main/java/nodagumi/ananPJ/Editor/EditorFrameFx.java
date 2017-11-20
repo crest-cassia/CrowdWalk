@@ -1932,7 +1932,7 @@ public class EditorFrameFx {
         Button calcLengthButton = new Button("Calc length");
         CheckBox heightDiffCheckBox = new CheckBox("Reflect the height difference");
         calcLengthButton.setOnAction(e -> {
-            double distance = fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * editor.getCurrentGroup().getScale();
+            double distance = fromNode.getPosition().distance(toNode.getPosition()) * editor.getCurrentGroup().getScale();
             if (heightDiffCheckBox.isSelected()) {
                 Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
                 Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
@@ -2162,7 +2162,7 @@ public class EditorFrameFx {
             MapLink link = links.get(0);
             MapNode fromNode = link.getFrom();
             MapNode toNode = link.getTo();
-            double distance = fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * editor.getCurrentGroup().getScale();
+            double distance = fromNode.getPosition().distance(toNode.getPosition()) * editor.getCurrentGroup().getScale();
             if (heightDiffCheckBox.isSelected()) {
                 Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
                 Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
@@ -2279,7 +2279,7 @@ public class EditorFrameFx {
 
         MapPartGroup group = editor.getCurrentGroup();
         MapLink link = editor.getSelectedLinks().get(0);
-        double actualDistance = link.getFrom().getAbsoluteCoordinates().distance(link.getTo().getAbsoluteCoordinates());
+        double actualDistance = link.getFrom().getPosition().distance(link.getTo().getPosition());
 
         Dialog dialog = new Dialog();
         dialog.setTitle("Calculate scale and recalculate link length");

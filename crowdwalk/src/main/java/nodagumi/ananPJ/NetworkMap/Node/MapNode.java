@@ -91,7 +91,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     public static Term speedRestrictRule = null ;
 
     /* global coordinates */
-    private Point2D absolute_coordinates;
+    private Point2D position ;
     private double height;
 
     private MapLinkTable links;
@@ -108,12 +108,13 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     private HashMap<String, HashMap<String, NavigationHint>>
         mentalHintsTable;
 
-    public double getX() { return absolute_coordinates.getX(); }
-    public double getY() { return absolute_coordinates.getY(); }
+    public double getX() { return position.getX(); }
+    public double getY() { return position.getY(); }
 
-    public Point2D getAbsoluteCoordinates(){ return absolute_coordinates; }
-    public Point2D getLocalCoordinates(){
-        return new Point2D.Double(this.getLocalX(),this.getLocalY());
+    public Point2D getPosition(){ return position; }
+
+    public void setPosition(Point2D position) {
+        position = position;
     }
 
     //------------------------------------------------------------
@@ -151,14 +152,12 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
      * コンストラクタ。
      */
     public MapNode(String _ID,
-            Point2D _absoluteCoordinates,
-            double _height) {
+                   Point2D _position,
+                   double _height) {
         super(_ID);
 
-        absolute_coordinates = _absoluteCoordinates;
+        setPosition(_position);
         setHeight(_height);
-
-        calc_local_coordinates();
 
         selected = false;
         clearNavigationHintsAll() ;
@@ -166,26 +165,11 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         links = new MapLinkTable();
     }
 
-    private void calc_local_coordinates() {
-        //TODO implement
-    }
-
-    //temporary
-    public double getLocalX(){ return absolute_coordinates.getX(); }
-    public double getLocalY(){ return absolute_coordinates.getY(); }
-    public double getAbsoluteX(){ return absolute_coordinates.getX(); }
-    public double getAbsoluteY(){ return absolute_coordinates.getY(); }
-
     public double calcDistance(MapNode other) {
         return Math.sqrt((getX() - other.getX()) * (getX() - other.getX()) +
                 (getY() - other.getY()) * (getY() - other.getY()) +
                 (getHeight() - other.getHeight()) * (getHeight() - other.getHeight()))
                 * ((MapPartGroup)getParent()).getScale();
-    }
-
-    /* invert transformation  by parent Affine transform */
-    public void setAbsoluteCoordinates(Point2D _absoluteCoorditanes){
-        absolute_coordinates = _absoluteCoorditanes;
     }
 
     public boolean addLink(MapLink link) {
@@ -591,8 +575,8 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         Element element = super.toDom(dom, getNodeTypeString());
 
         element.setAttribute("id", ID);
-        element.setAttribute("x", "" + absolute_coordinates.getX());
-        element.setAttribute("y", "" + absolute_coordinates.getY());
+        element.setAttribute("x", "" + position.getX());
+        element.setAttribute("y", "" + position.getY());
         element.setAttribute("height", "" + getHeight());
         for (MapLink link : links) {
             Element link_element = dom.createElement("link");
@@ -645,7 +629,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
 
     @Override
     public String getHintString() {
-        //return "" + getAbsoluteX() + ", " + getAbsoluteY() + ", " + getHeight();
+        //return "" + getX() + ", " + getY() + ", " + getHeight();
         return getTagString();
     }
     public void setHeight(double height) {

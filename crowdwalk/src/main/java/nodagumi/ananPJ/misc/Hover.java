@@ -33,7 +33,7 @@ public class Hover {
     }
 
     public Hover(MapNode _from,MapNode _to,double _width,double _length){
-        line = new Line2D.Double(_from.getLocalCoordinates(),_to.getLocalCoordinates());
+        line = new Line2D.Double(_from.getPosition(),_to.getPosition());
         from = _from;
         to   = _to;
         width =_width;

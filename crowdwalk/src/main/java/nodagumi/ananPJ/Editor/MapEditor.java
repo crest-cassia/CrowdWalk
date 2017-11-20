@@ -966,7 +966,7 @@ public class MapEditor implements MapEditorInterface {
         MapNode fromNode = link.getFrom();
         MapNode toNode = link.getTo();
         if (fromNode.getHeight() == toNode.getHeight()) {
-            return fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * scale;
+            return fromNode.getPosition().distance(toNode.getPosition()) * scale;
         }
         Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
         Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
@@ -989,7 +989,7 @@ public class MapEditor implements MapEditorInterface {
                 Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
                 length = point0.distance(point1) * scale;
             } else {
-                length = fromNode.getAbsoluteCoordinates().distance(toNode.getAbsoluteCoordinates()) * scale;
+                length = fromNode.getPosition().distance(toNode.getPosition()) * scale;
             }
             if (! invoke(new SetLength(link, length))) {
                 break;
@@ -1014,7 +1014,7 @@ public class MapEditor implements MapEditorInterface {
             }
             if (recalcLength) {
                 for (MapLink link : networkMap.getLinks()) {
-                    double length = link.getFrom().getAbsoluteCoordinates().distance(link.getTo().getAbsoluteCoordinates()) * scale;
+                    double length = link.getFrom().getPosition().distance(link.getTo().getPosition()) * scale;
                     if (! invoke(new SetLength(link, length))) {
                         endOfCommandBlock();
                         return;
@@ -1030,7 +1030,7 @@ public class MapEditor implements MapEditorInterface {
             }
             if (recalcLength) {
                 for (MapLink link : group.getChildLinks()) {
-                    double length = link.getFrom().getAbsoluteCoordinates().distance(link.getTo().getAbsoluteCoordinates()) * scale;
+                    double length = link.getFrom().getPosition().distance(link.getTo().getPosition()) * scale;
                     if (! invoke(new SetLength(link, length))) {
                         endOfCommandBlock();
                         return;
@@ -1574,7 +1574,7 @@ public class MapEditor implements MapEditorInterface {
     public ArrayList<MapNode> getPiledNodes() {
         HashMap<java.awt.geom.Point2D, Boolean> collisions = new HashMap();
         for (MapNode node : networkMap.getNodes()) {
-            java.awt.geom.Point2D coordinates = node.getAbsoluteCoordinates();
+            java.awt.geom.Point2D coordinates = node.getPosition();
             if (collisions.get(coordinates) == null) {
                 collisions.put(coordinates, Boolean.FALSE);
             } else {
@@ -1583,7 +1583,7 @@ public class MapEditor implements MapEditorInterface {
         }
         ArrayList<MapNode> piledNodes = new ArrayList();
         for (MapNode node : networkMap.getNodes()) {
-            if (collisions.get(node.getAbsoluteCoordinates())) {
+            if (collisions.get(node.getPosition())) {
                 piledNodes.add(node);
             }
         }

@@ -734,9 +734,9 @@ public class Place {
      */
     public Point2D getPos() {
         if (getLink() != null) {
-            return getLink().calcAbsolutePos(getPositionOnLink());
+            return getLink().calcPosition(getPositionOnLink());
         } else if (getLastNode() != null){
-            return getLastNode().getAbsoluteCoordinates();
+            return getLastNode().getPosition();
         } else {
             return null;
         }
@@ -757,7 +757,7 @@ public class Place {
      */
     public double getHeight() {
         if (getLink() != null) {
-            return getLink().calcAbsoluteHeight(getPositionOnLink());
+            return getLink().calcHeight(getPositionOnLink());
         } else {
             return Double.NaN;
         }

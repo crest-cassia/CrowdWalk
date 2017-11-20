@@ -937,7 +937,7 @@ public class SimulationPanel3D extends StackPane {
             // 元々の CrowdWalk で使われていた方法
             int count = 0;
             for (MapNode node : networkMap.getNodes()) {
-                java.awt.geom.Point2D pos = node.getAbsoluteCoordinates();
+                java.awt.geom.Point2D pos = node.getPosition();
                 x += pos.getX();
                 y += pos.getY();
                 count++;
@@ -1415,7 +1415,7 @@ public class SimulationPanel3D extends StackPane {
             // ノード表示用の Shape オブジェクトを作成する
             shape = new Cylinder(nodeAppearance.diameter / 2.0, NODE_THICKNESS);
             shape.setMaterial(nodeAppearance.material);
-            java.awt.geom.Point2D pos = node.getAbsoluteCoordinates();
+            java.awt.geom.Point2D pos = node.getPosition();
             shape.setTranslateX(pos.getX());
             shape.setTranslateY(pos.getY());
             shape.setTranslateZ(-node.getHeight() * verticalScale);

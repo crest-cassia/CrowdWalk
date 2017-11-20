@@ -516,8 +516,8 @@ public class EditorFramePanel extends JPanel {
                 dy += 10 / scale;
                 NavigationHint hint = hints.get(key);
                 g.drawString(key + " " + hint.distance,
-                             (float)otherNode.getAbsoluteX(),
-                             (float)otherNode.getAbsoluteY() + dy);
+                             (float)otherNode.getX(),
+                             (float)otherNode.getY() + dy);
             }
         }
     }
