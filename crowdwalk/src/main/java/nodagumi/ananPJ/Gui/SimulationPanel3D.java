@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -251,6 +252,11 @@ public class SimulationPanel3D extends StackPane {
      * 背景色
      */
     private Color backgroundColor;
+
+    /**
+     * 背景地図の色の濃さ
+     */
+    private double colorDepthOfBackgroundMap = 1.0;
 
     /**
      * エリアの表示色
@@ -674,6 +680,13 @@ public class SimulationPanel3D extends StackPane {
 			     .toUpperCase());
                 outlineColor = Color.web(properties.getString("outline_color", "lime"));
                 pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
+
+                colorDepthOfBackgroundMap = properties.getDouble("color_depth_of_background_map", colorDepthOfBackgroundMap);
+                double values[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+                if (Arrays.binarySearch(values, colorDepthOfBackgroundMap) < 0) {
+                    Itk.logWarn("Invalid parameter", "color_depth_of_background_map", "" + colorDepthOfBackgroundMap);
+                    colorDepthOfBackgroundMap = 1.0;
+                }
 
                 centeringByNodeAverage = properties.getBoolean("centering_by_node_average", centeringByNodeAverage);
             } else {
@@ -1246,7 +1259,9 @@ public class SimulationPanel3D extends StackPane {
             int baseY = (mapTile.getTileNumberY() - minTileNumberY) * GsiTile.GSI_TILE_SIZE;
             for (int y = 0; y < GsiTile.GSI_TILE_SIZE; y++) {
                 for (int x = 0; x < GsiTile.GSI_TILE_SIZE; x++) {
-                    writer.setColor(baseX + x, baseY + y, reader.getColor(x, y));
+                    Color color = reader.getColor(x, y);
+                    Color _color = new Color(color.getRed(), color.getGreen(), color.getBlue(), colorDepthOfBackgroundMap);
+                    writer.setColor(baseX + x, baseY + y, _color);
                 }
             }
         }

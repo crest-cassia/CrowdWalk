@@ -245,7 +245,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                 finished = true;
             }
             if (finished) {
-                finalize() ;
+                finish() ;
             }
         }
     }
@@ -258,8 +258,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * シミュレーションの終了処理。
      */
     @Override
-    protected void finalize() {
-        super.finalize() ;
+    protected void finish() {
+        super.finish() ;
         if (isExitWithSimulationFinished()) {
             exitOnClose = true;
             quit();

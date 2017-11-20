@@ -1,8 +1,10 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Gui;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -20,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,6 +46,7 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.Hover;
+import nodagumi.Itk.*;
 
 /**
  * 2D シミュレーションパネル
@@ -94,6 +98,11 @@ public class SimulationPanel2D extends JPanel {
     private HashMap<MapPartGroup, Image> backgroundImages = new HashMap();
 
     /**
+     * 背景画像の色の濃さ
+     */
+    private double colorDepthOfBackgroundImage = 1.0;
+
+    /**
      * 背景地図用の地理院タイル
      */
     private ArrayList<GsiTile> backgroundMapTiles = null;
@@ -107,6 +116,11 @@ public class SimulationPanel2D extends JPanel {
      * 背景地図のY座標の調整値
      */
     private double backgroundMapAdjustY = 0.0;
+
+    /**
+     * 背景地図の色の濃さ
+     */
+    private double colorDepthOfBackgroundMap = 1.0;
 
     /**
      * 描画前に平行移動する距離
@@ -295,6 +309,19 @@ public class SimulationPanel2D extends JPanel {
                         continue;
                     }
                     backgroundImages.put(group, getToolkit().getImage(dir + imageFileName));
+                }
+
+                double values[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+                colorDepthOfBackgroundImage = properties.getDouble("color_depth_of_background_image", colorDepthOfBackgroundImage);
+                if (Arrays.binarySearch(values, colorDepthOfBackgroundImage) < 0) {
+                    Itk.logWarn("Invalid parameter", "color_depth_of_background_image", "" + colorDepthOfBackgroundImage);
+                    colorDepthOfBackgroundImage = 1.0;
+                }
+
+                colorDepthOfBackgroundMap = properties.getDouble("color_depth_of_background_map", colorDepthOfBackgroundMap);
+                if (Arrays.binarySearch(values, colorDepthOfBackgroundMap) < 0) {
+                    Itk.logWarn("Invalid parameter", "color_depth_of_background_map", "" + colorDepthOfBackgroundMap);
+                    colorDepthOfBackgroundMap = 1.0;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -522,16 +549,24 @@ public class SimulationPanel2D extends JPanel {
 
         // 背景地図の描画
         if (frame.isShowBackgroundMap()) {
+            Composite oroginalComposite = g2.getComposite();
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)colorDepthOfBackgroundMap);
+            g2.setComposite(ac);
             for (GsiTile mapTile : backgroundMapTiles) {
                 drawBackgroundMapTile(mapTile, g2);
             }
+            g2.setComposite(oroginalComposite);
         }
 
         // 背景画像の描画
         if (frame.isShowBackgroundImage()) {
+            Composite oroginalComposite = g2.getComposite();
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)colorDepthOfBackgroundImage);
+            g2.setComposite(ac);
             for (HashMap.Entry<MapPartGroup, Image> entry : backgroundImages.entrySet()) {
                 drawBackgroundImage(entry.getKey(), entry.getValue(), g2);
             }
+            g2.setComposite(oroginalComposite);
         }
 
         // ポリゴンの描画

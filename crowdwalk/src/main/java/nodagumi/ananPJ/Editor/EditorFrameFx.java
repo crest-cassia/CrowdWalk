@@ -97,6 +97,7 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.MapChecker;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
+import nodagumi.Itk.Itk;
 
 /**
  * マップエディタのウィンドウ構築と GUI コントロール
@@ -153,6 +154,21 @@ public class EditorFrameFx {
      * 編集エリアとタブエリアの仕切り
      */
     private SplitPane splitPane;
+
+    /**
+     * マップの回転角度リセットメニュー
+     */
+    private MenuItem miResetRotation = new MenuItem("Reset rotation");
+
+    /**
+     * 背景画像の色の濃さ設定メニュー
+     */
+    private Menu menuColorDepthOfBackgroundImage = new Menu("Set color depth of background image");
+
+    /**
+     * 背景地図の色の濃さ設定メニュー
+     */
+    private Menu menuColorDepthOfBackgroundMap = new Menu("Set color depth of background map");
 
     /**
      * 背景グループ表示メニュー
@@ -252,6 +268,9 @@ public class EditorFrameFx {
         Group root = new Group();
         canvas = new EditorCanvas(editor, this);
         root.getChildren().add(canvas);
+        updateRotationMenu();                       // canvas のメソッドを呼び出すためここで実行する
+        updateColorDepthOfBackgroundImageMenu();    //                  〃
+        updateColorDepthOfBackgroundMapMenu();      //                  〃
         StackPane canvasPane = new StackPane();
         String image = getClass().getResource("/img/canvas_bg.png").toExternalForm();
         canvasPane.setStyle(
@@ -545,26 +564,8 @@ public class EditorFrameFx {
         });
 
         MenuItem miSetRotation = new MenuItem("Set rotation");
-        miSetRotation.setOnAction(e -> {
-            TextInputDialog dialog = new TextInputDialog("" + 0.0);
-            dialog.setTitle("Set rotation");
-            dialog.setHeaderText("Enter the rotation angle");
-            String text = dialog.showAndWait().orElse("").trim();
-            if (text.isEmpty()) {
-                return;
-            }
-            Double angle = convertToDouble(text);
-            if (angle != null) {
-                if (angle < -180.0 || angle > 180) {
-                    Alert alert = new Alert(AlertType.WARNING, "Angle range is -180.0 to 180.0", ButtonType.OK);
-                    alert.showAndWait();
-                    return;
-                }
-                canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, angle);
-            }
-        });
+        miSetRotation.setOnAction(e -> setRotation());
 
-        MenuItem miResetRotation = new MenuItem("Reset rotation");
         miResetRotation.setOnAction(e -> {
             canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, 0.0);
         });
@@ -633,13 +634,26 @@ public class EditorFrameFx {
         cmiShowBackgroundImage.setSelected(true);
         cmiShowBackgroundImage.setOnAction(e -> {
             canvas.setBackgroundImageShowing(cmiShowBackgroundImage.isSelected());
+            if (cmiShowBackgroundImage.isSelected()) {
+                menuColorDepthOfBackgroundImage.setDisable(false);
+                canvas.setBackgroundImageShowing(true);
+            } else {
+                menuColorDepthOfBackgroundImage.setDisable(true);
+                canvas.setBackgroundImageShowing(false);
+            }
             canvas.repaintLater();
         });
         cmiShowBackgroundImage.setAccelerator(KeyCombination.valueOf("Ctrl+B"));
 
         CheckMenuItem cmiShowBackgroundMap = new CheckMenuItem("Show background map");
         cmiShowBackgroundMap.setOnAction(e -> {
-            canvas.setBackgroundMapShowing(cmiShowBackgroundMap.isSelected());
+            if (cmiShowBackgroundMap.isSelected()) {
+                menuColorDepthOfBackgroundMap.setDisable(false);
+                canvas.setBackgroundMapShowing(true);
+            } else {
+                menuColorDepthOfBackgroundMap.setDisable(true);
+                canvas.setBackgroundMapShowing(false);
+            }
             canvas.repaintLater();
         });
         cmiShowBackgroundMap.setAccelerator(KeyCombination.valueOf("Ctrl+M"));
@@ -649,7 +663,7 @@ public class EditorFrameFx {
             canvas.setMapCoordinatesShowing(cmiShowMapCoordinates.isSelected());
         });
 
-        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, cmiShowBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
+        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
 
         /* Validation menu */
 
@@ -744,6 +758,92 @@ public class EditorFrameFx {
         menuBar.getMenus().addAll(fileMenu, editMenu, viewMenu, actionMenu, helpMenu);
 
         return menuBar;
+    }
+
+    /**
+     * マップの回転角と回転角度リセットメニューの状態を更新する
+     */
+    public void updateRotationMenu() {
+        try {
+            double angle = editor.getProperties().getDouble("rotation_angle", 0.0);
+            if (angle < -180.0 || angle > 180) {
+                Itk.logWarn("Parameter out of range", "rotation_angle", "" + angle);
+                angle %= 360.0;
+                if (angle < -180.0) {
+                    angle = (angle % 180.0) + 180.0;
+                } else if (angle > 180.0) {
+                    angle = (angle % 180.0) - 180.0;
+                }
+            }
+            canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, angle);
+
+            boolean angleLocking = editor.getProperties().getBoolean("rotation_angle_locking", false);
+            miResetRotation.setDisable(angleLocking);
+            canvas.setAngleLocking(angleLocking);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    /**
+     * 背景画像の色の濃さ設定サブメニューを更新する
+     */
+    public void updateColorDepthOfBackgroundImageMenu() {
+        menuColorDepthOfBackgroundImage.getItems().clear();
+        try {
+            double colorDepthOfBackgroundImage = editor.getProperties().getDouble("color_depth_of_background_image", 1.0);
+            ToggleGroup group = new ToggleGroup();
+            for (int index = 1; index <= 10; index++) {
+                double colorDepth = index / 10.0;
+                RadioMenuItem menuItem = new RadioMenuItem("" + (index * 10) + "%");
+                menuItem.setToggleGroup(group);
+                menuItem.setOnAction(e -> {
+                    canvas.setColorDepthOfBackgroundImage(colorDepth);
+                    canvas.repaintLater();
+                });
+                menuColorDepthOfBackgroundImage.getItems().add(menuItem);
+                if (colorDepth == colorDepthOfBackgroundImage) {
+                    menuItem.setSelected(true);
+                    if (canvas != null) {
+                        canvas.setColorDepthOfBackgroundImage(colorDepth);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    /**
+     * 背景地図の色の濃さ設定サブメニューを更新する
+     */
+    public void updateColorDepthOfBackgroundMapMenu() {
+        menuColorDepthOfBackgroundMap.getItems().clear();
+        try {
+            double colorDepthOfBackgroundMap = editor.getProperties().getDouble("color_depth_of_background_map", 1.0);
+            ToggleGroup group = new ToggleGroup();
+            for (int index = 1; index <= 10; index++) {
+                double colorDepth = index / 10.0;
+                RadioMenuItem menuItem = new RadioMenuItem("" + (index * 10) + "%");
+                menuItem.setToggleGroup(group);
+                menuItem.setOnAction(e -> {
+                    canvas.setColorDepthOfBackgroundMap(colorDepth);
+                    canvas.repaintLater();
+                });
+                menuColorDepthOfBackgroundMap.getItems().add(menuItem);
+                if (colorDepth == colorDepthOfBackgroundMap) {
+                    menuItem.setSelected(true);
+                    if (canvas != null) {
+                        canvas.setColorDepthOfBackgroundMap(colorDepth);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**
@@ -1033,6 +1133,7 @@ public class EditorFrameFx {
     private HBox createLinkAttributesPane() {
         HBox hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setMinWidth(512);
         hbox.setSpacing(8);
 
         Label lengthLabel = new Label("length");
@@ -1102,6 +1203,9 @@ public class EditorFrameFx {
         linkPanel.reset();
         areaPanel.reset();
         scenarioPanel.reset();
+        updateRotationMenu();
+        updateColorDepthOfBackgroundImageMenu();
+        updateColorDepthOfBackgroundMapMenu();
         updateShowBackgroundGroupMenu();
         updateAddSymbolicLinkMenu();
         updateGroupSelectionPane();
@@ -1299,6 +1403,45 @@ public class EditorFrameFx {
         GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance(simulator);
         launcher.init(editor.getRandom(), editor.getProperties(), editor.getSetupFileInfo(), editor.getMap(), settings);
         launcher.simulate();
+    }
+
+    /**
+     * マップの回転角と角度ロックを設定する
+     */
+    private void setRotation() {
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Set rotation");
+        VBox paramPane = new VBox();
+
+        Label label = new Label("Rotation angle (degree)");
+        TextField angleField = new TextField("" + canvas.getAngle());
+        FlowPane flowPane = new FlowPane();
+        flowPane.setPadding(new Insets(8, 0, 8, 0));
+        flowPane.setHgap(8);
+        flowPane.getChildren().addAll(label, angleField);
+
+        CheckBox lockingCheckBox = new CheckBox("Angle locking");
+        lockingCheckBox.setSelected(canvas.isAngleLocking());
+
+        paramPane.getChildren().addAll(flowPane, lockingCheckBox);
+
+        dialog.getDialogPane().setContent(paramPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Double value = convertToDouble(angleField.getText());
+            if (value != null) {
+                double angle = value;
+                if (angle < -180.0 || angle > 180) {
+                    Alert alert = new Alert(AlertType.WARNING, "Angle range is -180.0 to 180.0", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, angle);
+            }
+            miResetRotation.setDisable(lockingCheckBox.isSelected());
+            canvas.setAngleLocking(lockingCheckBox.isSelected());
+        }
     }
 
     /**
@@ -2318,7 +2461,7 @@ public class EditorFrameFx {
      * 背景画像をセットする
      */
     public void setBackgroundImage() {
-        Point2D point = canvas.getMapPointOnTheMouseCursor();
+        Point2D point = canvas.convertToOriginal(canvas.getMapPointOnTheMouseCursor());
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open background image file");
         fileChooser.setInitialDirectory(editor.getDir());

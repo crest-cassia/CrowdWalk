@@ -584,7 +584,7 @@ public class EvacuationSimulator {
     /**
      * シミュレーションの終了処理。（メイン）
      */
-    public void finalize() {
+    public void finish() {
         finalizeLoggers() ;
 
         if(useRubyWrapper())
