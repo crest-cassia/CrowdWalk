@@ -35,7 +35,7 @@ import nodagumi.Itk.* ;
  *
  * <h3>新しい Formula の作成方法 </h3>
  * <a name="addToExistingThinkFormula"></a>
- * {@link nodagumi.ananPJ.Agents.Think.ThinkFormula#addToExistingThinkFormula ThinkFormula} 参照
+ * <a href="../../../ananPJ/Agents/Think/ThinkFormula.html#addToExistingThinkFormula">go to ThinkFormula#addToExistingThinkFormula</a>
  */
 abstract public class NaviFormula extends ThinkFormula {
     //============================================================

@@ -14,7 +14,13 @@ if [[ -f $JAVADOC_FILE ]]; then
     fi
 fi
 
-"$JAVA_HOME/bin/javadoc" -d ./doc/javadoc -sourcepath ./src/main/java -encoding utf-8 -charset UTF-8 -subpackages nodagumi -notimestamp -windowtitle "crowdwalk API"
+not_work_LINK_EXTPACKAGES="
+  -linkoffline http://jsonic.osdn.jp/1.0/as3/api http://jsonic.osdn.jp/1.0/as3/api
+  -linkoffline http://docs.geotools.org/latest/javadocs http://docs.geotools.org/latest/javadocs
+  -linkoffline http://www.atetric.com/atetric/javadoc/io.jeo/proj4j/0.1.1 http://www.atetric.com/atetric/javadoc/io.jeo/proj4j/0.1.1
+"
+
+"$JAVA_HOME/bin/javadoc" -d ./doc/javadoc -sourcepath ./src/main/java -encoding utf-8 -charset UTF-8 -subpackages nodagumi -notimestamp -windowtitle "crowdwalk API" -quiet -linksource 
 
 # gradle が FAILURE exception を出してしまうのを回避する
 exit 0

@@ -256,7 +256,7 @@ public class SetupFileInfo {
      * @param params : もとになる parameter 設定用 Term
      * @param fallback : params の後に追加する fallback
      * @return fallbackを含んだ 設定Term。
-     * @see nodagumi.ananPJ.package-info package-info
+     * @see nodagumi.ananPJ Overview
      */
     static public Term attachFallback(Term params, Term fallback) {
         params.setArg(FallbackSlot, fallback) ;
