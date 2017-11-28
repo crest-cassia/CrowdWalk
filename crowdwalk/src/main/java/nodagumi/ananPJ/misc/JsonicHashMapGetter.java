@@ -101,7 +101,7 @@ public class JsonicHashMapGetter {
     }
 
     /**
-     * HashMap<String, Object> 型のパラメータを取得する
+     * {@code HashMap<String, Object>} 型のパラメータを取得する
      */
     public HashMap<String, Object> getHashMapParameter(String name, HashMap<String, Object> defaultValue) throws Exception {
         Object parameter = parameters.get(name);

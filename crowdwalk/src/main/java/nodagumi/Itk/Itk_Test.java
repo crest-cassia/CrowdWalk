@@ -56,7 +56,7 @@ public class Itk_Test {
 
     //------------------------------------------------------------
     /**
-     * HashMap<String, Object> と HashMap<Object, Object>のスピード競争。
+     * {@code HashMap<String, Object>} と {@code HashMap<Object, Object>}のスピード競争。
      * String の equal と == のスピード差がどれくらいきくか。
      * 結果：
      * HashMap の中ではかならず equals が呼ばれるため、違いがない。

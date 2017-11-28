@@ -7,8 +7,8 @@
  * <ul>
  *  <li> {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties}</li>
  *  <li> {@link nodagumi.ananPJ.Scenario.Scenario シナリオ記述}</li>
- *  <li> {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}</li>
- *  <li> {@link nodagumi.ananPJ.Agents.AgentFactory エージェント設定 config}</li>
+ *  <li> {@link nodagumi.ananPJ.Agents.Factory.AgentFactoryList エージェント生成ルール}</li>
+ *  <li> {@link nodagumi.ananPJ.Agents.Factory.AgentFactory エージェント設定 config}</li>
  *  <li> {@link nodagumi.ananPJ.Agents.Think.ThinkEngine エージェント行動ルール}</li>
  *  <li> <a href="#fallback"> 各種設定とFallback</a></li>
  * </ul>
@@ -16,12 +16,12 @@
  * Agent のconfig など、シミュレーションの各種設定は、以下の優先順位で決定される。
  * <ol>
  *   <li> Agentに関するパラメータについては、
- *       {@link nodagumi.ananPJ.misc.AgentGenerationFile エージェント生成ルール}
+ *       {@link nodagumi.ananPJ.Agents.Factory.AgentFactoryList エージェント生成ルール}
  *       の中の、"agentType" の項目で、エージェントクラス名と共に規定値を
  *       指定できる。
  *       設定できる項目はエージェントクラスにより異なる。
  *       各クラスでの設定項目は、
- *       {@link nodagumi.ananPJ.Agents.AgentFactory エージェント設定 config} を
+ *       {@link nodagumi.ananPJ.Agents.Factory.AgentFactory エージェント設定 config} を
  *       参照。
  *   </li>
  *   <li> 全ての設定項目について、
@@ -77,11 +77,11 @@
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Pollution} </li>
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Flood} </li>
  * </ul>
- * <!- ============================================================ -->
+ * <!-- ============================================================ -->
  * <hr>
  * <h3>ログファイルの種類と形式</h3>
  * <ul>
- *  <!- ============================== -->
+ *  <!-- ============================== -->
  *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#individualPedestriansLoggerFormatter individual_pedestrian_log} 
  *       : 各時刻のエージェント情報のログ
  *   <ul> 
@@ -90,7 +90,7 @@
  *    <li> 出力内容や出力時間間隔は<a href="#fallback">fallback</a>で指定。</li>
  *    <li> 出力可能項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#individualPedestriansLoggerFormatter} 参照。</li>
  *   </ul> </li>
- *  <!- ============================== -->
+ *  <!-- ============================== -->
  *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter agent_movement_history_file}
  *       : ゴールまでたどり着いたエージェントのゴールした時点でのログ
  *   <ul> 
@@ -98,7 +98,7 @@
  *        の agent_movement_history_file で指定する。</li>
  *    <li> 出力項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#agentMovementHistoryLoggerFormatter} 参照。</li>
  *   </ul> </li>
- *  <!- ============================== -->
+ *  <!-- ============================== -->
  *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#agentTrailLogFormatter agent_trail_log}
  *       : ゴールまでたどり着いたエージェントのゴールした時点でのログ(新形式,JSON形式)
  *   <ul> 
@@ -106,7 +106,7 @@
  *        の agent_trail_log で指定する。</li>
  *    <li> 出力項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#agentTrailLogFormatter} 参照。</li>
  *   </ul> </li>
- *  <!- ============================== -->
+ *  <!-- ============================== -->
  *  <li> {@link nodagumi.ananPJ.Simulator.AgentHandler#evacuatedAgentsLogger evacuated_agents_log}
  *       : ゴールノード別の脱出エージェント数をステップごとに記録するログ
  *   <ul> 
@@ -114,7 +114,7 @@
  *        の evacuated_agents_log_file で指定する。</li>
  *    <li> 出力項目は、{@link nodagumi.ananPJ.Simulator.AgentHandler#evacuatedAgentsLogger} 参照。</li>
  *   </ul> </li>
- *  <!- ============================== -->
+ *  <!-- ============================== -->
  *  <li> record_simulation_screen
  *       : シミュレーション画面のスクリーンショットを記録する。
  *   <ul> 
@@ -124,7 +124,7 @@
  *         {@link nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler 実行properties} 
  *        の screenshot_image_type で指定。
  *   </ul> </li>
- *  <!- ============================== -->
+ *  <!-- ============================== -->
  * </ul>
 
  */

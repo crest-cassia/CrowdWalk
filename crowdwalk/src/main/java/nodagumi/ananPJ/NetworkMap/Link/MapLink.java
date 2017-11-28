@@ -392,7 +392,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     //------------------------------------------------------------
     /**
      * 主観的距離の設定。
-     * @param tag 主観距離の指定タグ。tag が null なら、もとの length。
+     * @param mentalMode 主観距離の指定タグ。tag が null なら、もとの length。
      * @param fromNode リンクに侵入するノード。
      *        距離が非対称の時に使う。（[2016-01-30 I.Noda]未実装）
      * @param _length 主観距離。

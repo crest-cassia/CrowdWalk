@@ -124,12 +124,10 @@ import nodagumi.Itk.*;
  *
  *  設定値： 有理数
  *  デフォルト値： 0.0</pre>
- * <p>
  *   <center>
  *     <img src="./doc-files/pollution_color_saturation_1.png" alt="./doc-files/pollution_color_saturation_1.png"><br>図1　10.0のとき<br><br>
  *     <img src="./doc-files/pollution_color_saturation_2.png" alt="./doc-files/pollution_color_saturation_2.png"><br>図2　1.0のとき
  *   </center>
- * </p>
  *   </li>
  *
  *   <li>
@@ -144,11 +142,9 @@ import nodagumi.Itk.*;
  *           blue：   青色
  *           orange： オレンジ色
  *  デフォルト値： orange</pre>
- * <p>
  *   <center>
  *     <img src="./doc-files/pollution_color.png" alt="./doc-files/pollution_color.png"><br>図3　hsv のとき
  *   </center>
- * </p>
  *   </li>
  *
  *   <li>
@@ -256,10 +252,10 @@ import nodagumi.Itk.*;
  *
  *   <li>
  *     <h4>evacuated_agents_log_file</h4>
- *     <pre>  ゴールノード別の脱出エージェント数をステップごとに記録するログ
+ *     <pre>ゴールノード別の脱出エージェント数をステップごとに記録するログ
  *
  *  設定値： evacuated_agents_log file へのファイルパス
- *  デフォルト値： なし
+ *  デフォルト値： なし</pre>
  *   </li>
  *
  *   <li>
@@ -368,12 +364,10 @@ import nodagumi.Itk.*;
  *
  *  設定値： 0.1～9.9
  *  デフォルト値： 1.0</pre>
- * <p>
  *   <center>
  *     <img src="./doc-files/agent_size_1.png" alt="./doc-files/agent_size_1.png"><br>図6　1.0のとき<br><br>
  *     <img src="./doc-files/agent_size_2.png" alt="./doc-files/agent_size_2.png"><br>図7　2.0のとき
  *   </center>
- * </p>
  *   </li>
  *
  *   <li>
@@ -424,12 +418,10 @@ import nodagumi.Itk.*;
  *
  *  設定値： true | false
  *  デフォルト値： true</pre>
- * <p>
  *   <center>
  *     <img src="./doc-files/change_agent_color_depending_on_speed_1.png" alt="./doc-files/change_agent_color_depending_on_speed_1.png"><br>図8　true のとき<br><br>
  *     <img src="./doc-files/change_agent_color_depending_on_speed_2.png" alt="./doc-files/change_agent_color_depending_on_speed_2.png"><br>図9　false のとき
  *   </center>
- * </p>
  *   </li>
  *
  *   <li>
@@ -452,25 +444,21 @@ import nodagumi.Itk.*;
  *           top：   上側に表示する
  *           bottom：下側に表示する
  *  デフォルト値： none</pre>
- * <p>
  *   <center>
  *     <img src="./doc-files/show_status_1.png" alt="./doc-files/show_status_1.png"><br>図10　show_status を有効にしなかった場合のスクリーンショット<br><br>
  *     <img src="./doc-files/show_status_2.png" alt="./doc-files/show_status_2.png"><br>図11　show_status を top に設定した場合のスクリーンショット
  *   </center>
- * </p>
  *   </li>
  *
  *   <li>
  *     <h4>show_logo</h4>
- *     <pre>  シミュレーション画面に AIST ロゴを表示する(図12)
+ *     <pre>シミュレーション画面に AIST ロゴを表示する(図12)
  *
  *  設定値： true | false
  *  デフォルト値： false</pre>
- * <p>
  *   <center>
  *     <img src="./doc-files/show_logo.png" alt="./doc-files/show_logo.png"><br>図12
  *   </center>
- * </p>
  *   </li>
  *
  *   <li>

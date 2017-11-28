@@ -37,7 +37,7 @@ import nodagumi.Itk.*;
  *    "rule" : __ThinkRule__ // 思考ルール
  * }
  * </pre>
- * 思考ルールの記述法については {@link Think.ThinkEngine} 参照。
+ * 思考ルールの記述法については {@link nodagumi.ananPJ.Agents.Think.ThinkEngine ThinkEngine} 参照。
  */
 public class RationalAgent extends BustleAgent {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

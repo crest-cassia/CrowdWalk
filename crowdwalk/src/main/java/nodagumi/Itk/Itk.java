@@ -932,7 +932,7 @@ public class Itk {
     /**
      * ensure dir exists.
      * @param path : path of directory / file.
-     * @param fileP : true if path is an actual file path.
+     * @param checkParent : true if path is an actual file path.
      *                If false, path is considered as dir path.
      */
     final static public boolean ensureDirExists(String path,

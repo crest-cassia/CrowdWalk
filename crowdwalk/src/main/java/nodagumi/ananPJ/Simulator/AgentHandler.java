@@ -453,8 +453,8 @@ public class AgentHandler {
      *      ## Ruby のプログラムを書く。
      *      ## 以下は、その例
      *      [1, 2, 3, "hogehoge",
-     *        {"a" => 10,
-     *         "b" => nil}] ;
+     *        {"a" {@code =>} 10,
+     *         "b" {@code =>} nil}] ;
      *   }
      * </pre>
      * というものを好きなだけ並べる。
@@ -488,7 +488,7 @@ public class AgentHandler {
      *      ...
      *      "trail_aux": ["speed", "advancingDist"]
      *    },
-     * <pre>
+     * </pre>
      * という形で指定する。
      * 可能な項目は、
      * <pre>

@@ -27,15 +27,15 @@ import nodagumi.Itk.* ;
  * 主観によるMapの距離計算を表す式の処理系。
  * 組み込まれている Formula リスト
  * <ul>
- *  <li>{@link nodagumi.ananPJ.Agent.Think.ThinkFormulaLogical#call Logical: 論理形式および実行制御}</li>
- *  <li>{@link nodagumi.ananPJ.Agent.Think.ThinkFormulaArithmetic#call Arithmetic: 数値処理など}</li>
+ *  <li>{@link nodagumi.ananPJ.Agents.Think.ThinkFormulaLogical#call Logical: 論理形式および実行制御}</li>
+ *  <li>{@link nodagumi.ananPJ.Agents.Think.ThinkFormulaArithmetic#call Arithmetic: 数値処理など}</li>
  *  <li>{@link NaviFormulaMap#call Map: マップパラメータ関係}</li>
- *  <li>{@link nodagumi.ananPJ.Agent.Think.ThinkFormulaMisc#call Misc: その他}</li>
+ *  <li>{@link nodagumi.ananPJ.Agents.Think.ThinkFormulaMisc#call Misc: その他}</li>
  * </ul>
  *
  * <h3>新しい Formula の作成方法 </h3>
  * <a name="addToExistingThinkFormula"></a>
- * {@link nodagumi.ananPJ.Agent.Think.ThinkFormula#addToExistingThinkFormulacall Agent ThinkFormula} 参照
+ * {@link nodagumi.ananPJ.Agents.Think.ThinkFormula#addToExistingThinkFormula ThinkFormula} 参照
  */
 abstract public class NaviFormula extends ThinkFormula {
     //============================================================

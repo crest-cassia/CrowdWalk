@@ -69,7 +69,6 @@ public class SetupFileInfo {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * resource 中の fallback parameter を収めた JSON ファイル。
-     * @see
      */
     static public final String FallbackResource = "/fallbackParameters.json" ;
 
@@ -254,11 +253,10 @@ public class SetupFileInfo {
      *                   "_fallback" : { ..."src/main/resources/fallbackParameters.json"のJSON>...} }
      * }
      * }</pre>
-     *
      * @param params : もとになる parameter 設定用 Term
      * @param fallback : params の後に追加する fallback
      * @return fallbackを含んだ 設定Term。
-     * @see nodagumi.ananPJ.package-info
+     * @see nodagumi.ananPJ.package-info package-info
      */
     static public Term attachFallback(Term params, Term fallback) {
         params.setArg(FallbackSlot, fallback) ;

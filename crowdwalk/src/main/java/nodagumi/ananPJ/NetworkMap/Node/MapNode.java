@@ -752,7 +752,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
          * B は B.from から B.to へ。
          * これらが交差している場合、
          * A.from からカウントした 各々のリンクの index が、
-         * B.from <> A.to <> B.to の順になっていると、交差している。
+         * {@code B.from <> @code A.to <> B.to} の順になっていると、交差している。
          */
         public boolean isCrossing(MapLink _fromLink, MapLink _toLink) {
             int n = atNode.getLinks().size() ;

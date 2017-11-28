@@ -199,7 +199,8 @@ implements Comparable<AgentBase> {
     /**
      * Factory による初期化。
      * Factory の方から一旦制御を戻す。
-     * @param conf json の連想配列形式を scan した Map
+     * @param _factory : Agent を生成する Agent Factory。
+     * @param fallback : fallback の値を収めたもの。
      */
     public void initByFactory(AgentFactory _factory, Term fallback) {
         setFactory(_factory) ;

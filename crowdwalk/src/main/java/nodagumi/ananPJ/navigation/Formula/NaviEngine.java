@@ -27,6 +27,7 @@ import nodagumi.Itk.* ;
  * Navigation 用 主観距離計算エンジン.
  *
  * ルールは、Agent の ThinkEngine の記法に準拠。
+ * <ul>
  *   <li>{@link NaviFormula NaviFormula: 式要素 トップ}</li>
  * </ul>
  * また、上記にマッチしないアトム（配列でもオブジェクトでもないデータ）は、
