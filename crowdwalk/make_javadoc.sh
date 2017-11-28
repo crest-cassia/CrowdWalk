@@ -20,7 +20,7 @@ not_work_LINK_EXTPACKAGES="
   -linkoffline http://www.atetric.com/atetric/javadoc/io.jeo/proj4j/0.1.1 http://www.atetric.com/atetric/javadoc/io.jeo/proj4j/0.1.1
 "
 
-"$JAVA_HOME/bin/javadoc" -d ./doc/javadoc -sourcepath ./src/main/java -encoding utf-8 -charset UTF-8 -subpackages nodagumi -notimestamp -windowtitle "crowdwalk API" -quiet -linksource 
+"$JAVA_HOME/bin/javadoc" -d ./doc/javadoc -sourcepath ./src/main/java -encoding utf-8 -charset UTF-8 -subpackages nodagumi -notimestamp -windowtitle "crowdwalk API" -quiet -linksource -overview ./src/main/java/nodagumi/ananPJ/overview.html
 
 # gradle が FAILURE exception を出してしまうのを回避する
 exit 0
