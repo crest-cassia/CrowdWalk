@@ -1037,6 +1037,17 @@ implements Comparable<AgentBase> {
         setupByIndividualConfig_conditions(config) ;
     }
 
+    //------------------------------
+    /**
+     * individualConfig 用にエージェント状態をTermにdump。
+     * Format は、{@link #setupByIndividualConfig(Term)} に準拠。 
+     */
+    public Term dumpTermForIndividualConfig(Term config) {
+        dumpTermForIndividualConfig_place(config) ;
+        dumpTermForIndividualConfig_conditions(config) ;
+        return config ;
+    }
+    
     //----------
     /**
      * individualConfig による設定：place.
@@ -1075,6 +1086,21 @@ implements Comparable<AgentBase> {
         
     //----------
     /**
+     * individualConfig へのdump：place.
+     */
+    private Term dumpTermForIndividualConfig_place(Term config) {
+        Term _place = Term.newObjectTerm() ;
+        config.setArg("place", _place) ;
+
+        _place.setArg("link", getCurrentLink().ID) ;
+        _place.setArg("enteringNode", getPrevNode().ID) ;
+        _place.setArg("advancingDistance", getAdvancingDistance()) ;
+
+        return config ;
+    }
+
+    //----------
+    /**
      * individualConfig による設定：conditions
      */
     private void setupByIndividualConfig_conditions(Term config) {
@@ -1094,6 +1120,21 @@ implements Comparable<AgentBase> {
                              "condition=", _tagList.toJson()) ;
             }
         }
+    }
+    
+    //----------
+    /**
+     * individualConfig へのdump：conditions
+     */
+    private Term dumpTermForIndividualConfig_conditions(Term config) {
+        Term _tagList = Term.newArrayTerm() ;
+        config.setArg("conditions", _tagList) ;
+
+        for(String tag : getTags()) {
+            _tagList.addNth(tag) ;
+        }
+
+        return config ;
     }
     
 }

@@ -1393,6 +1393,21 @@ public class WalkAgent extends AgentBase {
         //Itk.dbgVal("mentalMode", mentalMode) ;
     }
 
+    //------------------------------
+    /**
+     * individualConfig 用にエージェント状態をTermにdump。
+     * Format は、{@link #setupByIndividualConfig(Term)} に準拠。 
+     */
+    public Term dumpTermForIndividualConfig(Term config) {
+        super.dumpTermForIndividualConfig(config) ;
+        
+        config.setArg("emptySpeed", emptySpeed) ;
+        config.setArg("speed", speed) ;
+        config.setArg("mentalMode", mentalMode) ;
+            
+        return config ;
+    }
+    
 	//############################################################
 	/**
 	 * 入出力
