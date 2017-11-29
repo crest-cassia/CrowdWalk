@@ -498,6 +498,9 @@ public class Itk {
     static public final String DefaultTimeStrFormatPattern 
         = "yyyy-MM-dd_HH:mm:ss.SSS" ;
 
+    static public final String DefaultTimeStrFormatPattern_HmsS
+        = "HH:mm:ss.SSS" ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 時刻フォーマット
@@ -512,6 +515,15 @@ public class Itk {
      */
     static public String getCurrentTimeStr() {
         return getCurrentTimeStr(DefaultTimeStrFormat) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在時刻をStringで取得(short)
+     * @return 現在時刻文字列
+     */
+    static public String getCurrentTimeStrShort() {
+        return getCurrentTimeStr(DefaultTimeStrFormatPattern_HmsS) ;
     }
 
     //------------------------------------------------------------

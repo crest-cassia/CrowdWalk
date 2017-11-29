@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-/** Itk EventBase.java
+/** PlacedEvent.java
  * @author:: Itsuki Noda
  * @version:: 0.0 2015/01/29 I.Noda
  * <B>History:</B>

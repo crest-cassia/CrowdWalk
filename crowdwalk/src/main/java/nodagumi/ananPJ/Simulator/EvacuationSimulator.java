@@ -116,7 +116,7 @@ public class EvacuationSimulator {
     /**
      * シナリオ情報
      */
-    private Scenario scenario = new Scenario();
+    private Scenario scenario ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -538,6 +538,8 @@ public class EvacuationSimulator {
         pollutionFileName = getSetupFileInfo().getPollutionFile();
 
         random = _random;
+
+        scenario = new Scenario(this);
     }
 
     //------------------------------------------------------------

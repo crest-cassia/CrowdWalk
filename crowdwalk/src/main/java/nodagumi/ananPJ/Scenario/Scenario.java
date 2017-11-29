@@ -31,6 +31,8 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.Simulator.AgentHandler;
 
 import nodagumi.Itk.* ;
 
@@ -57,6 +59,7 @@ import nodagumi.Itk.* ;
  *  <li>{@link OpenGateEvent "OpenGate"}</li>
  *  <li>{@link CloseGateEvent "CloseGate"}</li>
  *  <li>{@link PeriodicGateEvent "PeriodicGate"}</li>
+ *  <li>{@link DumpEvent "Dump"}</li>
  * </ul>
  */
 public class Scenario {
@@ -105,6 +108,40 @@ public class Scenario {
     private HashMap<String, EventBase> eventTable =
         new HashMap<String, EventBase>() ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * EvacuationSimulator へのポインタ。
+     */
+    public EvacuationSimulator simulator ;
+
+    //------------------------------------------------------------
+    // アクセッサ
+    /** */
+    public EvacuationSimulator getSimulator() {
+        return simulator ;
+    }
+
+    /** */
+    public EvacuationSimulator setSimulator(EvacuationSimulator _simulator) {
+        simulator = _simulator ;
+        return simulator ;
+    }
+
+    /** */
+    public AgentHandler getAgentHandler() {
+        return getSimulator().getAgentHandler() ;
+    }
+    
+    //------------------------------------------------------------
+    // constructor
+    //------------------------------------------------------------
+    /**
+     * EventSimulator を初期化
+     */
+    public Scenario(EvacuationSimulator _simulator) {
+        setSimulator(_simulator) ;
+    }
+    
     //------------------------------------------------------------
     // 時刻処理
     //------------------------------------------------------------
@@ -427,6 +464,7 @@ public class Scenario {
         registerEventClass("SetTag",	SetTagEvent.class) ;
         registerEventClass("AddTag",	SetTagEvent.class) ;
         registerEventClass("RemoveTag",	SetTagEvent.class) ;
+        registerEventClass("Dump",      DumpEvent.class) ;
 
         // for old CSV scenario file format
         registerEventClass("START", InitiateEvent.class) ;

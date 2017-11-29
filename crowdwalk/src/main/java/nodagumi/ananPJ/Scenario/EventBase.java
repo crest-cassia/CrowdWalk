@@ -16,6 +16,8 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.Scenario;
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.SimClock;
 
@@ -99,6 +101,32 @@ abstract public class EventBase {
         atTime = originClock.newSimTimeByString(atTimeString) ;
     }
 
+    //------------------------------------------------------------
+    //  accessors
+    //------------------------------------------------------------
+    /**
+     * get scenario
+     */
+    public Scenario getScenario() {
+        return scenario ;
+    }
+
+    //----------------------------------------
+    /**
+     * get simulator
+     */
+    public EvacuationSimulator getSimulator() {
+        return getScenario().getSimulator() ;
+    }
+    
+    //----------------------------------------
+    /**
+     * get agent handler
+     */
+    public AgentHandler getAgentHandler() {
+        return getSimulator().getAgentHandler() ;
+    }
+    
     //----------------------------------------
     /**
      * id を持つかどうか

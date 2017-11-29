@@ -284,6 +284,11 @@ run3gt02i ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02i))
 
 ##-----
+SAMPLE3gt02d = sample/generatedTown/gridTown02d.prop.json   # dump event
+run3gt02d ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02d))
+
+##-----
 SAMPLE3kw01 = sample/kawaguchi-S2B/property-S2B.xml # kawaguchi
 run3kw01 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3kw01))

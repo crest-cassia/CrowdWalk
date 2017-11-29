@@ -367,8 +367,9 @@ public abstract class BasicSimulationLauncher {
         counter++ ;
         if ((counter % 100) == 0)
             Itk.logDebug("Cycle",
-                         "count:", counter,
-                         "time:", Itk.getCurrentTimeStr(),
+                         "at:", simulator.currentTime.getAbsoluteTimeString(),
+                         "("+counter+")",
+                         "time:", Itk.getCurrentTimeStrShort(),
                          "walking:",
                          simulator.getAgentHandler().numOfWalkingAgents()) ;
     }
