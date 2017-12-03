@@ -16,6 +16,10 @@ package nodagumi.ananPJ.Scenario;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
@@ -84,11 +88,14 @@ public class DumpEvent extends EventBase {
 	    Itk.quitByError() ;
 	}
 
-	filename = eventDef.getArgString("filename") ;
-	if(filename == null) {
+        String bareFilename = eventDef.getArgString("filename") ;
+	if(bareFilename == null) {
 	    Itk.logError("Wrong dump filename in DumpEvent:", eventDef) ;
 	    Itk.quitByError() ;
 	}
+	filename =
+            getScenario().getProperties()
+            .furnishPropertiesDirPath(bareFilename, false, false) ;
     }
 
 
@@ -110,10 +117,6 @@ public class DumpEvent extends EventBase {
 	    Itk.logError("unknown dump format:", format) ;
 	    Itk.quitByError() ;
 	}
-	Itk.dbgMsg("DumpEvent","occur") ;
-	Itk.dbgVal("currentTime", currentTime) ;
-	Itk.dbgVal("agentHandler",getAgentHandler()) ;
-	/* ??? */
 	return true ;
     }
 
@@ -135,6 +138,27 @@ public class DumpEvent extends EventBase {
      * Dump in GenerationFile format
      */
     public void dumpInGenerationFileFormat(SimTime currentTime) {
+	Term ruleList = Term.newArrayTerm() ;
+        dumpTermForIndivRules(currentTime, ruleList) ;
+
+        try {
+            File dumpFile = new File(filename) ;
+            FileWriter writer = new FileWriter(dumpFile) ;
+            writer.write("#{ \"version\" : 2}\n") ;
+            writer.write(ruleList.toJson(true)) ;
+            writer.close() ;
+        } catch (IOException ex){
+            Itk.dumpStackTrace() ;
+            Itk.logError("IOError",ex) ;
+            Itk.quitByError() ;
+        }
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * generate Dump term for individual gen rule in GenerationFile format
+     */
+    private Term dumpTermForIndivRules(SimTime currentTime, Term ruleList) {
 	AgentHandler handler = getAgentHandler() ;
 
 	// collect agents by each rule
@@ -150,33 +174,34 @@ public class DumpEvent extends EventBase {
 	}
 
 	// generate rules
-	Term ruleList = Term.newArrayTerm() ;
+        String currentTimeStr = currentTime.getAbsoluteTimeString() ;
 	for(AgentFactory factory : agentTable.keySet()) {
 	    Term rule =
 		dumpTermForOneRule(factory, agentTable.get(factory),
-				   currentTime) ;
+				   currentTimeStr) ;
 	    ruleList.addNth(rule) ;
 	}
-	Itk.dbgVal("ruleList", ruleList.toJson(true)) ;
+
+        return ruleList ;
     }
-    
+
     //------------------------------------------------------------
     /**
      * dump one rule
      */
     private Term dumpTermForOneRule(AgentFactory factory,
 				    ArrayList<AgentBase> agentList,
-				    SimTime currentTime) {
+				    String currentTimeStr) {
 	Term rule = factory.config.toTerm() ;
 	rule.setArg("rule","INDIVIDUAL") ;
-	rule.setArg("startTime",currentTime.getAbsoluteTimeString()) ;
+	rule.setArg("startTime", currentTimeStr) ;
 	rule.setArg("duration", 1.0) ;
 
 	Term indivList = Term.newArrayTerm() ;
 	rule.setArg("individualConfig", indivList) ;
 	
 	for(AgentBase agent : agentList) {
-	    Term agentConf = dumpTermForOneAgent(agent) ;
+	    Term agentConf = dumpTermForOneAgent(agent, currentTimeStr) ;
 	    indivList.addNth(agentConf) ;
 	}
 
@@ -187,9 +212,10 @@ public class DumpEvent extends EventBase {
     /**
      * dump one agent
      */
-    private Term dumpTermForOneAgent(AgentBase agent) {
+    private Term dumpTermForOneAgent(AgentBase agent, String currentTimeStr) {
 	Term agentConf = Term.newObjectTerm() ;
 	agent.dumpTermForIndividualConfig(agentConf) ;
+        agentConf.setArg("startTime", currentTimeStr) ;
 	return agentConf ;
     }
     

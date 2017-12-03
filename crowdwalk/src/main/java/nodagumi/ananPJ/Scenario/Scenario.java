@@ -31,6 +31,7 @@ import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.misc.SimClock;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
@@ -115,7 +116,7 @@ public class Scenario {
     public EvacuationSimulator simulator ;
 
     //------------------------------------------------------------
-    // アクセッサ
+    // アクセサ
     /** */
     public EvacuationSimulator getSimulator() {
         return simulator ;
@@ -130,6 +131,11 @@ public class Scenario {
     /** */
     public AgentHandler getAgentHandler() {
         return getSimulator().getAgentHandler() ;
+    }
+    
+    /** */
+    public CrowdWalkPropertiesHandler getProperties() {
+        return getSimulator().getProperties() ;
     }
     
     //------------------------------------------------------------
