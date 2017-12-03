@@ -61,6 +61,7 @@ import nodagumi.Itk.* ;
  *  <li>{@link CloseGateEvent "CloseGate"}</li>
  *  <li>{@link PeriodicGateEvent "PeriodicGate"}</li>
  *  <li>{@link DumpEvent "Dump"}</li>
+ *  <li>{@link NullEvent "Null"}</li>
  * </ul>
  */
 public class Scenario {
@@ -471,6 +472,7 @@ public class Scenario {
         registerEventClass("AddTag",	SetTagEvent.class) ;
         registerEventClass("RemoveTag",	SetTagEvent.class) ;
         registerEventClass("Dump",      DumpEvent.class) ;
+        registerEventClass("Null",      NullEvent.class) ;
 
         // for old CSV scenario file format
         registerEventClass("START", InitiateEvent.class) ;

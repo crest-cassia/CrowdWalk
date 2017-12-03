@@ -4,7 +4,7 @@
   "io_handler_type":"none",
   "map_file":"gridTown01s.map.xml",
   "generation_file":"gridTown02ds.gen.json",
-  "scenario_file":"gridTown02d.scnr.json",
+  "scenario_file":"gridTown02ds.scnr.json",
   "fallback_file":"gridTown00.fb.json",
   "node_appearance_file":"gridTown00.nodeApp.json",
   "link_appearance_file":"gridTown00.linkApp.json",
