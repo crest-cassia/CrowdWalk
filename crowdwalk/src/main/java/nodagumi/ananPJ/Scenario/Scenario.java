@@ -35,6 +35,8 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 
+import nodagumi.ananPJ.BasicSimulationLauncher;
+
 import nodagumi.Itk.* ;
 
 //======================================================================
@@ -62,6 +64,7 @@ import nodagumi.Itk.* ;
  *  <li>{@link PeriodicGateEvent "PeriodicGate"}</li>
  *  <li>{@link DumpEvent "Dump"}</li>
  *  <li>{@link NullEvent "Null"}</li>
+ *  <li>{@link PauseEvent "Pause"}</li>
  * </ul>
  */
 public class Scenario {
@@ -137,6 +140,11 @@ public class Scenario {
     /** */
     public CrowdWalkPropertiesHandler getProperties() {
         return getSimulator().getProperties() ;
+    }
+
+    /** */
+    public BasicSimulationLauncher getSimulationLauncher() {
+        return getSimulator().getSimulationLauncher() ;
     }
     
     //------------------------------------------------------------
@@ -473,6 +481,7 @@ public class Scenario {
         registerEventClass("RemoveTag",	SetTagEvent.class) ;
         registerEventClass("Dump",      DumpEvent.class) ;
         registerEventClass("Null",      NullEvent.class) ;
+        registerEventClass("Pause",     PauseEvent.class) ;
 
         // for old CSV scenario file format
         registerEventClass("START", InitiateEvent.class) ;

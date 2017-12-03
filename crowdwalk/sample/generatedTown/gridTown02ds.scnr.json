@@ -5,6 +5,8 @@
     "atTime":"18:00:10",
     "placeTag":"link_node_05_05__node_05_06",
     "message":"foo-bar-baz"},
+  { "type":"Pause",
+    "atTime":"18:09:59"},
   { "type":"Null",
     "_type":"Dump",
     "atTime":"18:10:00",
