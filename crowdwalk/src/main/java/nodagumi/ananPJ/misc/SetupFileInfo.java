@@ -266,6 +266,17 @@ public class SetupFileInfo {
     //============================================================
     //------------------------------------------------------------
     /**
+     * fallback スロットを削除する。
+     * @param params : もとになる parameter 設定用 Term
+     * @return Term.
+     */
+    static public Term clearFallback(Term params) {
+        return params.clearFallback(FallbackSlot) ;
+    }
+
+    //============================================================
+    //------------------------------------------------------------
+    /**
      * fallback のフィルタリング
      * @param fallbacks : filter する fallback
      * @param tag : fallbacks の中から、tag をたどって filter する。

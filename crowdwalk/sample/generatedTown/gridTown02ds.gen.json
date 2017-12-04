@@ -8,14 +8,11 @@
 		"individualConfig": null,
 		"agentType": {
 			"className": "RationalAgent",
-			"config": {
-				"className": "RationalAgent",
-				"mentalMode": "major",
-				"weight": 0.0,
-				"trail": 0.0,
-				"margin": 0.0,
-				"rule": []
-			}
+			"mentalMode": "major",
+			"weight": 0.0,
+			"trail": 0.0,
+			"margin": 0.0,
+			"rule": []
 		},
 		"goal": "node_09_09",
 		"plannedRoute": [
@@ -1668,61 +1665,58 @@
 		],
 		"agentType": {
 			"className": "RationalAgent",
-			"config": {
-				"className": "RationalAgent",
-				"weight": 0.0,
-				"trail": 0.0,
-				"margin": 0.0,
-				"rule": [
-					{
-						"": "null",
-						"special": "alertMessages"
+			"weight": 0.0,
+			"trail": 0.0,
+			"margin": 0.0,
+			"rule": [
+				{
+					"": "null",
+					"special": "alertMessages"
+				},
+				{
+					"": "if",
+					"condition": {
+						"": "listenAlert",
+						"message": "emergency"
 					},
-					{
-						"": "if",
-						"condition": {
-							"": "listenAlert",
+					"then": [
+						{
+							"": "changeGoal",
+							"goal": "node_09_05"
+						},
+						"clearPlannedRoute",
+						{
+							"": "log",
+							"tag": "change goal to 09_05"
+						},
+						{
+							"": "clearAlert",
 							"message": "emergency"
-						},
-						"then": [
-							{
-								"": "changeGoal",
-								"goal": "node_09_05"
-							},
-							"clearPlannedRoute",
-							{
-								"": "log",
-								"tag": "change goal to 09_05"
-							},
-							{
-								"": "clearAlert",
-								"message": "emergency"
-							}
-						]
+						}
+					]
+				},
+				{
+					"": "if",
+					"condition": {
+						"": "listenAlert",
+						"message": "foo-bar-baz"
 					},
-					{
-						"": "if",
-						"condition": {
-							"": "listenAlert",
-							"message": "foo-bar-baz"
+					"then": [
+						{
+							"": "insertRoute",
+							"route": "node_02_00"
 						},
-						"then": [
-							{
-								"": "insertRoute",
-								"route": "node_02_00"
-							},
-							{
-								"": "log",
-								"tag": "insert route: 02_00"
-							},
-							{
-								"": "clearAlert",
-								"message": "foo-bar-baz"
-							}
-						]
-					}
-				]
-			}
+						{
+							"": "log",
+							"tag": "insert route: 02_00"
+						},
+						{
+							"": "clearAlert",
+							"message": "foo-bar-baz"
+						}
+					]
+				}
+			]
 		},
 		"goal": "node_09_09",
 		"plannedRoute": [
@@ -3349,62 +3343,59 @@
 		],
 		"agentType": {
 			"className": "RationalAgent",
-			"config": {
-				"className": "RationalAgent",
-				"mentalMode": "major",
-				"weight": 0.0,
-				"trail": 0.0,
-				"margin": 0.0,
-				"rule": [
-					{
-						"": "null",
-						"special": "alertMessages"
+			"mentalMode": "major",
+			"weight": 0.0,
+			"trail": 0.0,
+			"margin": 0.0,
+			"rule": [
+				{
+					"": "null",
+					"special": "alertMessages"
+				},
+				{
+					"": "if",
+					"condition": {
+						"": "listenAlert",
+						"message": "emergency"
 					},
-					{
-						"": "if",
-						"condition": {
-							"": "listenAlert",
+					"then": [
+						{
+							"": "changeGoal",
+							"goal": "node_09_05"
+						},
+						"clearPlannedRoute",
+						{
+							"": "log",
+							"tag": "change goal to 09_05"
+						},
+						{
+							"": "clearAlert",
 							"message": "emergency"
-						},
-						"then": [
-							{
-								"": "changeGoal",
-								"goal": "node_09_05"
-							},
-							"clearPlannedRoute",
-							{
-								"": "log",
-								"tag": "change goal to 09_05"
-							},
-							{
-								"": "clearAlert",
-								"message": "emergency"
-							}
-						]
+						}
+					]
+				},
+				{
+					"": "if",
+					"condition": {
+						"": "listenAlert",
+						"message": "foo-bar-baz"
 					},
-					{
-						"": "if",
-						"condition": {
-							"": "listenAlert",
-							"message": "foo-bar-baz"
+					"then": [
+						{
+							"": "insertRoute",
+							"route": "node_02_00"
 						},
-						"then": [
-							{
-								"": "insertRoute",
-								"route": "node_02_00"
-							},
-							{
-								"": "log",
-								"tag": "insert route: 02_00"
-							},
-							{
-								"": "clearAlert",
-								"message": "foo-bar-baz"
-							}
-						]
-					}
-				]
-			}
+						{
+							"": "log",
+							"tag": "insert route: 02_00"
+						},
+						{
+							"": "clearAlert",
+							"message": "foo-bar-baz"
+						}
+					]
+				}
+			]
 		},
 		"goal": "node_09_09",
 		"plannedRoute": [
@@ -3447,100 +3438,97 @@
 		],
 		"agentType": {
 			"className": "RationalAgent",
-			"config": {
-				"className": "RationalAgent",
-				"weight": 0.0,
-				"trail": 0.0,
-				"margin": 0.0,
-				"rule": [
-					{
-						"": "null",
-						"tag": "Hello",
-						"value": {
-							"": "quote",
-							"value": "bar"
-						}
-					},
-					{
-						"": "null",
-						"tag": "linkID",
-						"value": {
-							"": "getParam",
-							"name": "linkId"
-						}
-					},
-					{
-						"": "null",
-						"tag": "goal",
-						"value": {
-							"": "getParam",
-							"name": "speed"
-						}
-					},
-					{
-						"": "null",
-						"tag": "fallback",
-						"value": {
-							"": "getFallback",
-							"name": "emptySpeed"
-						}
-					},
-					{
-						"": "null",
-						"tag": "param",
-						"value": {
-							"": "getParam",
-							"name": "emptySpeed"
-						}
-					},
-					{
-						"": "null",
-						"special": "tags"
-					},
-					{
-						"": "null",
-						"tag": "FOO",
-						"value": {
-							"": "random",
-							"max": 10
-						}
-					},
-					{
-						"": "null",
-						"tag": "BAR",
-						"value": {
-							"": "random",
-							"double": 10
-						}
-					},
-					{
-						"": "null",
-						"condition": {
-							"": "agentHasTag",
-							"tag": "foo"
-						},
-						"then": {
-							"": "log",
-							"tag": "agent has tag foo"
-						}
-					},
-					{
-						"": "null",
-						"condition": {
-							"": "agentHasTag",
-							"tag": "hoge"
-						},
-						"then": {
-							"": "log",
-							"tag": "agent has tag hoge."
-						},
-						"else": {
-							"": "log",
-							"tag": "agent does not have tag hoge."
-						}
+			"weight": 0.0,
+			"trail": 0.0,
+			"margin": 0.0,
+			"rule": [
+				{
+					"": "null",
+					"tag": "Hello",
+					"value": {
+						"": "quote",
+						"value": "bar"
 					}
-				]
-			}
+				},
+				{
+					"": "null",
+					"tag": "linkID",
+					"value": {
+						"": "getParam",
+						"name": "linkId"
+					}
+				},
+				{
+					"": "null",
+					"tag": "goal",
+					"value": {
+						"": "getParam",
+						"name": "speed"
+					}
+				},
+				{
+					"": "null",
+					"tag": "fallback",
+					"value": {
+						"": "getFallback",
+						"name": "emptySpeed"
+					}
+				},
+				{
+					"": "null",
+					"tag": "param",
+					"value": {
+						"": "getParam",
+						"name": "emptySpeed"
+					}
+				},
+				{
+					"": "null",
+					"special": "tags"
+				},
+				{
+					"": "null",
+					"tag": "FOO",
+					"value": {
+						"": "random",
+						"max": 10
+					}
+				},
+				{
+					"": "null",
+					"tag": "BAR",
+					"value": {
+						"": "random",
+						"double": 10
+					}
+				},
+				{
+					"": "null",
+					"condition": {
+						"": "agentHasTag",
+						"tag": "foo"
+					},
+					"then": {
+						"": "log",
+						"tag": "agent has tag foo"
+					}
+				},
+				{
+					"": "null",
+					"condition": {
+						"": "agentHasTag",
+						"tag": "hoge"
+					},
+					"then": {
+						"": "log",
+						"tag": "agent has tag hoge."
+					},
+					"else": {
+						"": "log",
+						"tag": "agent does not have tag hoge."
+					}
+				}
+			]
 		},
 		"goal": "node_09_00",
 		"plannedRoute": [

@@ -18,6 +18,7 @@ import java.lang.Exception;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -97,7 +98,7 @@ public class Term {
     /**
      * array
      */
-    private List<Object> array = null ;
+    private AbstractList<Object> array = null ;
 
     //------------------------------------------------------------
     // コンストラクタ
@@ -116,7 +117,7 @@ public class Term {
      */
     public Term(Object _head, boolean internP) {
         if(_head instanceof List) {
-            setArray((List<Object>)_head) ;
+            setArray((AbstractList<Object>)_head) ;
         } else if (_head instanceof HashMap) {
             setBody((HashMap<String,Object>)_head) ;
         } else {
@@ -153,6 +154,23 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * コンストラクタ: Term から。
+     * Term の中身は clone する。
+     */
+    public Term(Term origin) {
+        if(! origin.isNullBody()) {
+            setBody((HashMap)origin.getBody().clone()) ;
+        }
+        if(! origin.isNullArray()) {
+            setArray((AbstractList)((ArrayList)origin.getArray()).clone()) ;
+        }
+        if(! origin.isNullHead()) {
+            setHead(origin.getHead(), false) ;
+        }
+    } ;
+
+    //------------------------------------------------------------
+    /**
      * コンストラクタ（bodyのみ）
      */
     public Term(HashMap<String, Object> _body) {
@@ -172,7 +190,7 @@ public class Term {
     /**
      * コンストラクタ（head,args）
      */
-    public Term(List<Object> _array) {
+    public Term(AbstractList<Object> _array) {
         setArray(_array) ;
     }
 
@@ -242,7 +260,7 @@ public class Term {
     /**
      * array の確保
      */
-    public List<Object> allocArray() {
+    public AbstractList<Object> allocArray() {
         array = new ArrayList<Object>() ;
 
         clearHeadBody(true) ;
@@ -269,6 +287,14 @@ public class Term {
         }
         head = null ;
         body = null ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * clone.
+     */
+    public Term clone() {
+        return new Term(this) ;
     }
 
     //------------------------------------------------------------
@@ -599,7 +625,15 @@ public class Term {
                                 fallbackSlot) ;
         }
         unifiedTerm.updateObjectFacile(originalTerm, true) ;
-        unifiedTerm.clearArg(fallbackSlot) ;
+        unifiedTerm.clearFallback(fallbackSlot) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * fallback スロットを削除する。
+     */
+    public Term clearFallback(String fallbackSlot) {
+        return this.clearArg(fallbackSlot) ;
     }
 
     //------------------------------------------------------------
@@ -855,7 +889,7 @@ public class Term {
     /**
      * array 取得
      */
-    public List<Object> getArray() {
+    public AbstractList<Object> getArray() {
         return array ;
     }
 
@@ -863,8 +897,8 @@ public class Term {
     /**
      * 型指定の array 取得 (copy が生じる)
      */
-    public <T> List<T> getTypedArray() {
-        List<T> ret = new ArrayList<T>() ;
+    public <T> AbstractList<T> getTypedArray() {
+        AbstractList<T> ret = new ArrayList<T>() ;
         for(Object element  : array) {
             ret.add((T)element) ;
         }
@@ -935,7 +969,7 @@ public class Term {
     /**
      * array 設定
      */
-    public Term setArray(List<Object> _array) {
+    public Term setArray(AbstractList<Object> _array) {
         return setArray(_array, true) ;
     }
 
@@ -943,7 +977,7 @@ public class Term {
     /**
      * array 設定
      */
-    public Term setArray(List<Object> _array, boolean deepP) {
+    public Term setArray(AbstractList<Object> _array, boolean deepP) {
         array = _array ;
 
         if(!isNullArray()) {
@@ -1579,7 +1613,7 @@ public class Term {
         } else if(json instanceof HashMap) {
             setBody((HashMap<String, Object>)json, deepP) ;
         } else if(json instanceof List) {
-            setArray((List<Object>)json, deepP) ;
+            setArray((AbstractList<Object>)json, deepP) ;
         } else {
             setHead(json, true) ;
         }

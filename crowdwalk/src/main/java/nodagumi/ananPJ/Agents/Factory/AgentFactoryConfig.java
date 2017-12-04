@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
@@ -208,12 +209,18 @@ public class AgentFactoryConfig {
      */
     public Term toTerm() {
 	Term jTerm = new Term() ;
+        
 	{ // agentType
-	    Term agentType = new Term() ;
-	    agentType.setArg("className", agentClassName) ;
-	    agentType.setArg("config", agentConf) ;
-	    jTerm.setArg("agentType", agentType) ;
-	}
+            if(agentConf != null) { // new gen style.
+                Term agentType = agentConf.clone() ;
+                SetupFileInfo.clearFallback(agentType) ;
+                jTerm.setArg("agentType", agentType) ;
+            } else { // old stype gen file
+                Term agentType = new Term() ;
+                agentType.setArg("className", agentClassName) ;
+                jTerm.setArg("agentType", agentType) ;
+            }
+        }
 	jTerm.setArg("startPlace",startPlace) ;
 	jTerm.setArg("conditions",conditions);
 	jTerm.setArg("goal",goal);

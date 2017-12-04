@@ -203,9 +203,6 @@ public class DumpEvent extends EventBase {
                     rule.setArg("duration", duration) ;
                 }
                 rule.setArg("total", remainN) ;
-                rule.getArgTerm("agentType")
-                    .getArgTerm("config")
-                    .clearArg("_fallback") ;
                 
                 ruleList.addNth(rule) ;
             }
@@ -260,9 +257,6 @@ public class DumpEvent extends EventBase {
 	rule.setArg("startTime", currentTime.getAbsoluteTimeString()) ;
 	rule.setArg("duration", 1) ;
         rule.setArg("name", "_dumped_" + origRuleName) ;
-        rule.getArgTerm("agentType")
-            .getArgTerm("config")
-            .clearArg("_fallback") ;
 
 	Term indivList = Term.newArrayTerm() ;
 	rule.setArg("individualConfig", indivList) ;
