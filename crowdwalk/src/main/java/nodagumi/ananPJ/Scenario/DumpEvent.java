@@ -27,6 +27,8 @@ import nodagumi.ananPJ.Scenario.Scenario;
 import nodagumi.ananPJ.Simulator.AgentHandler;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.Factory.AgentFactory;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryList;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryConfig;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.* ;
@@ -139,8 +141,18 @@ public class DumpEvent extends EventBase {
      */
     public void dumpInGenerationFileFormat(SimTime currentTime) {
 	Term ruleList = Term.newArrayTerm() ;
-        dumpTermForIndivRules(currentTime, ruleList) ;
 
+        dumpTermForRemainingRules(currentTime, ruleList) ;
+        dumpTermForWalkingAgents(currentTime, ruleList) ;
+
+        outputDumpFileInGenerationFileFormat(ruleList) ;
+    }
+    
+    //------------------------------------------------------------
+    /**
+     * output dump file
+     */
+    private void outputDumpFileInGenerationFileFormat(Term ruleList) {
         try {
             File dumpFile = new File(filename) ;
             FileWriter writer = new FileWriter(dumpFile) ;
@@ -153,32 +165,82 @@ public class DumpEvent extends EventBase {
             Itk.quitByError() ;
         }
     }
-    
+        
     //------------------------------------------------------------
     /**
-     * generate Dump term for individual gen rule in GenerationFile format
+     * generate Dump term for remaining generation rules.
      */
-    private Term dumpTermForIndivRules(SimTime currentTime, Term ruleList) {
+    private Term dumpTermForRemainingRules(SimTime currentTime,
+                                           Term ruleList) {
+	AgentHandler handler = getAgentHandler() ;
+        AgentFactoryList factoryList = handler.getAgentFactoryList() ;
+
+        // generate rule
+        for(String ruleName :
+                factoryList.getAgentFactoryConfigNameTable().keySet()) {
+            AgentFactoryConfig factoryConfig =
+                factoryList.getAgentFactoryConfigByName(ruleName) ;
+            
+            int remainN = 0 ;
+            for(AgentFactory factory : factoryConfig.getAgentFactoryList()) {
+                remainN += factory.getNAgentsRemain() ;
+            }
+            
+            if(remainN > 0) {
+                AgentFactory factory =
+                    factoryConfig.getAgentFactoryList().get(0);
+                Term rule = factory.config.toTerm() ;
+                SimTime startTime = factory.getStartTime() ;
+                if(startTime.isBefore(currentTime)) {
+                    rule.setArg("_startTime",
+                                startTime.getAbsoluteTimeString());
+                    rule.setArg("startTime",
+                                currentTime.getAbsoluteTimeString()) ;
+                    double duration =
+                        (factory.getDuration() -
+                         startTime.calcDifferenceTo(currentTime)) ;
+                    rule.setArg("_duration", factory.getDuration()) ;
+                    rule.setArg("duration", duration) ;
+                }
+                rule.setArg("total", remainN) ;
+                rule.getArgTerm("agentType")
+                    .getArgTerm("config")
+                    .clearArg("_fallback") ;
+                
+                ruleList.addNth(rule) ;
+            }
+        }
+        return ruleList ;
+    }
+        
+    //------------------------------------------------------------
+    /**
+     * generate Dump term for walking agents in individual gen rule format
+     * in GenerationFile format.
+     */
+    private Term dumpTermForWalkingAgents(SimTime currentTime,
+                                          Term ruleList) {
 	AgentHandler handler = getAgentHandler() ;
 
 	// collect agents by each rule
-	HashMap<AgentFactory, ArrayList<AgentBase>> agentTable =
-	    new HashMap<AgentFactory, ArrayList<AgentBase>>() ;
+	HashMap<String, ArrayList<AgentBase>> agentTable =
+	    new HashMap<String, ArrayList<AgentBase>>() ;
 
 	for(AgentBase agent : handler.getWalkingAgentCollection()) {
-	    AgentFactory factory = agent.getFactory() ;
-	    if(!agentTable.containsKey(factory)) {
-		agentTable.put(factory, new ArrayList<AgentBase>()) ;
+            String ruleName = agent.getFactory().getRuleName() ;
+	    if(!agentTable.containsKey(ruleName)) {
+		agentTable.put(ruleName, new ArrayList<AgentBase>()) ;
 	    }
-	    agentTable.get(factory).add(agent) ;
+	    agentTable.get(ruleName).add(agent) ;
 	}
 
 	// generate rules
-        String currentTimeStr = currentTime.getAbsoluteTimeString() ;
-	for(AgentFactory factory : agentTable.keySet()) {
+	for(String ruleName : agentTable.keySet()) {
+            AgentFactory factory =
+                handler.getFirstAgentFactoryByName(ruleName) ;
 	    Term rule =
-		dumpTermForOneRule(factory, agentTable.get(factory),
-				   currentTimeStr) ;
+		dumpTermForAgentsInOneRule(factory, agentTable.get(ruleName),
+                                           currentTime) ;
 	    ruleList.addNth(rule) ;
 	}
 
@@ -187,21 +249,27 @@ public class DumpEvent extends EventBase {
 
     //------------------------------------------------------------
     /**
-     * dump one rule
+     * dump agents in one rule
      */
-    private Term dumpTermForOneRule(AgentFactory factory,
-				    ArrayList<AgentBase> agentList,
-				    String currentTimeStr) {
+    private Term dumpTermForAgentsInOneRule(AgentFactory factory,
+                                            ArrayList<AgentBase> agentList,
+                                            SimTime currentTime) {
 	Term rule = factory.config.toTerm() ;
+        String origRuleName = rule.getArgString("name") ;
 	rule.setArg("rule","INDIVIDUAL") ;
-	rule.setArg("startTime", currentTimeStr) ;
-	rule.setArg("duration", 1.0) ;
+	rule.setArg("startTime", currentTime.getAbsoluteTimeString()) ;
+	rule.setArg("duration", 1) ;
+        rule.setArg("name", "_dumped_" + origRuleName) ;
+        rule.getArgTerm("agentType")
+            .getArgTerm("config")
+            .clearArg("_fallback") ;
 
 	Term indivList = Term.newArrayTerm() ;
 	rule.setArg("individualConfig", indivList) ;
 	
 	for(AgentBase agent : agentList) {
-	    Term agentConf = dumpTermForOneAgent(agent, currentTimeStr) ;
+	    Term agentConf =
+                dumpTermForOneAgent(agent, currentTime) ;
 	    indivList.addNth(agentConf) ;
 	}
 
@@ -212,10 +280,10 @@ public class DumpEvent extends EventBase {
     /**
      * dump one agent
      */
-    private Term dumpTermForOneAgent(AgentBase agent, String currentTimeStr) {
+    private Term dumpTermForOneAgent(AgentBase agent, SimTime currentTime) {
 	Term agentConf = Term.newObjectTerm() ;
 	agent.dumpTermForIndividualConfig(agentConf) ;
-        agentConf.setArg("startTime", currentTimeStr) ;
+        agentConf.setArg("startTime", currentTime.getAbsoluteTimeString()) ;
 	return agentConf ;
     }
     

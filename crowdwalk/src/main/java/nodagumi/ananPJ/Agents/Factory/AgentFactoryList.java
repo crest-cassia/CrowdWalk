@@ -341,6 +341,24 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
      */
     public Map<String,Object> modeMap ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * rule の name のテーブル
+     */
+    private HashMap<String,AgentFactoryConfig> factoryConfigNameTable =
+        new HashMap<String,AgentFactoryConfig>() ;
+
+    /** AgentFactoryConfigNameTable 取得 */
+    public HashMap<String,AgentFactoryConfig> getAgentFactoryConfigNameTable(){
+        return factoryConfigNameTable ;
+    }
+
+    /** rule の名前から AgentFactoryConfig 取得 */
+    final public AgentFactoryConfig getAgentFactoryConfigByName(String ruleName)
+    {
+        return factoryConfigNameTable.get(ruleName) ;
+    }
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -875,8 +893,34 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         // ruleName を一旦与えておく。
         factoryConfig.ruleName = ("" + ruleCount) ;
 
-        return factoryConfig.scanJson(this, json, map) ;
+        // scan
+        factoryConfig.scanJson(this, json, map) ;
 
+        // name の uniqness check
+        checkUniqueNameRule(factoryConfig) ;
+
+        return factoryConfig ;
+
+    }
+
+    //------------------------------------------------------------
+    /**
+     * ruleName の uniqness check して、テーブルへ。
+     * 名前が変更されたら true を返す。
+     */
+    private boolean checkUniqueNameRule(AgentFactoryConfig factoryConfig) {
+        String ruleName = factoryConfig.ruleName ;
+        String suffix = "" ;
+        int i = 0 ;
+        while(factoryConfigNameTable.containsKey(ruleName + suffix)) {
+            i++ ;
+            suffix = "_" + i ;
+        }
+        ruleName = ruleName + suffix ;
+        factoryConfig.ruleName = ruleName ;
+        factoryConfigNameTable.put(ruleName, factoryConfig) ;
+
+        return (i != 0) ;
     }
 
     //------------------------------------------------------------

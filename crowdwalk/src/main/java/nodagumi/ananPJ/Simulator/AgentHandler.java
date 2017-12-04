@@ -55,6 +55,7 @@ import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Agents.Factory.AgentFactory;
 import nodagumi.ananPJ.Agents.Factory.AgentFactoryByRuby;
 import nodagumi.ananPJ.Agents.Factory.AgentFactoryList;
+import nodagumi.ananPJ.Agents.Factory.AgentFactoryConfig;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
 import nodagumi.ananPJ.misc.SimTime;
@@ -163,6 +164,27 @@ public class AgentHandler {
      */
     private AgentFactoryList agentFactoryList = null;
 
+    final public AgentFactoryList getAgentFactoryList() {
+        return agentFactoryList ;
+    }
+
+    /** 名前よりエージェント生成ルール (AgentFactoryConfig) 取得 */
+    final public AgentFactoryConfig getAgentFactoryConfigByName(String ruleName)
+    {
+        return getAgentFactoryList().getAgentFactoryConfigByName(ruleName) ;
+    }
+
+    /** 名前より代表的 AgentFactory 取得 */
+    final public AgentFactory getFirstAgentFactoryByName(String ruleName) {
+        AgentFactoryConfig factoryConfig =
+            getAgentFactoryConfigByName(ruleName) ;
+        if(factoryConfig == null) {
+            return null ;
+        } else {
+            return factoryConfig.getAgentFactoryList().get(0) ;
+        }
+    }
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 地図。

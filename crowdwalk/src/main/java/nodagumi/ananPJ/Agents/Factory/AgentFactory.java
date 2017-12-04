@@ -146,8 +146,15 @@ public abstract class AgentFactory {
     final public SimTime getStartTime() { return config.startTime ; }
     /** duration */
     final public double getDuration() { return config.duration ; }
-    /** total */
-    final public int getTotal() { return config.total ; }
+    
+    /** total 
+     * rule の total と factory の totalを分けておかないと、おかしくなる。
+     * 
+     */
+    private int totalInFactory ;
+    final public int getTotalInFactory() { return totalInFactory ; }
+    final public int getRuleTotal() { return config.total ; }
+    
     /** fallback parameters */
     final public Term getFallbackParameters() {
         return config.fallbackParameters ;
@@ -201,6 +208,9 @@ public abstract class AgentFactory {
     public void init(AgentFactoryConfig _config, Random _random) {
         config = _config ;
 
+        /** config.total は、途中で変更になるので、コピーしておく */
+        totalInFactory = _config.total ;
+
         parse_conditions(config.conditions);
     }
 
@@ -233,7 +243,7 @@ public abstract class AgentFactory {
     protected boolean isFinished(SimTime currentTime) {
         return (currentTime.calcDifferenceFrom(getStartTime()) > getDuration()
                 &&
-                generated >= getTotal());
+                getNAgentsRemain() <= 0) ;
     }
 
     //------------------------------------------------------------
@@ -258,7 +268,21 @@ public abstract class AgentFactory {
      * 予め total 個の乱数時刻を発生させ、それをソートしておき、
      * 指定した時間までの分を生成するようにすべき。
      */
-    int generated = 0;
+    int nAgentsGenerated = 0;
+
+    //------------------------------------------------------------
+    /**
+     *  生成されたエージェント数。
+     */
+    final public int getNAgentsGenerated() { return nAgentsGenerated ; }
+
+    //------------------------------------------------------------
+    /**
+     *  残りのエージェント数。
+     */
+    public int getNAgentsRemain() {
+        return getTotalInFactory() - getNAgentsGenerated() ;
+    }
 
     /* TODO must wait finish until generate &
      * must control here with scenario */
@@ -283,25 +307,25 @@ public abstract class AgentFactory {
 
         // 生成するエージェントの数を求める。
 
-        int agent_to_gen = 0 ;
+        int nAgentsToGen = 0 ;
         if(config.ruleType == AgentFactoryList.RuleType.INDIVIDUAL) {
-            agent_to_gen =
+            nAgentsToGen =
                 getIndividualConfigList().remainSizeBefore(currentTime) ;
         } else {
-            agent_to_gen = getTotal() - generated;
+            nAgentsToGen = getNAgentsRemain() ;
             double duration_left =
                 getStartTime().getAbsoluteTime() + getDuration()
                 - currentTime.getAbsoluteTime() ;
             if (duration_left > 0) {
                 double r
-                    = ((double)(agent_to_gen) /
+                    = ((double)(nAgentsToGen) /
                        duration_left * currentTime.getTickUnit()) ;
                 // tkokada: free timeScale update
-                if (((int) r) > agent_to_gen)
-                    r = agent_to_gen;
-                agent_to_gen = (int)r;
-                if (random.nextDouble() < r - (double)agent_to_gen) {
-                    agent_to_gen++;
+                if (((int) r) > nAgentsToGen)
+                    r = nAgentsToGen;
+                nAgentsToGen = (int)r;
+                if (random.nextDouble() < r - (double)nAgentsToGen) {
+                    nAgentsToGen++;
                 }
             }
         }
@@ -311,8 +335,8 @@ public abstract class AgentFactory {
         Term fallbackForAgent = getFallbackForAgent() ;
 
         /* [I.Noda] ここで Agent 生成 */
-        for (int i = 0; i < agent_to_gen; ++i) {
-            generated++;
+        for (int i = 0; i < nAgentsToGen; ++i) {
+            nAgentsGenerated++;
             launchAgent(getAgentClassName(),
                         simulator,
                         currentTime,
@@ -487,7 +511,7 @@ public abstract class AgentFactory {
     abstract public OBNode getStartObject();
 
     public int getMaxGeneration() {
-        return getTotal();
+        return getTotalInFactory();
     }
 
     public void setRandom(Random _random) {

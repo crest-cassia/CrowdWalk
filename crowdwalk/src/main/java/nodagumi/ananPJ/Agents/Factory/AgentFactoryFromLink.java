@@ -52,7 +52,7 @@ public class AgentFactoryFromLink extends AgentFactory {
         return (startLink.getTagString() +
                 "(" +  startLink.ID + ")" +
                 " on " + getStartTime().getAbsoluteTime() +
-                " ("  + getTotal() +
+                " ("  + getTotalInFactory() +
                 " in " + getDuration() + " sec)");
     }
 

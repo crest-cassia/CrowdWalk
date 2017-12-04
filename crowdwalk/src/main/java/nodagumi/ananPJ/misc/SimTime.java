@@ -64,6 +64,15 @@ public class SimTime {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * 現時刻の文字列標記。
+     * 絶対時刻表示。
+     * getAbsoluteTimeString() で一度生成されたら、
+     * 個々に保存される。
+     */
+    protected String absoluteTimeString = null ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 基準となる絶対時刻の整数値。
      * 未定値は -1。
      */
@@ -346,7 +355,11 @@ public class SimTime {
      * 1秒以下は切り捨て。
      */
     public String getAbsoluteTimeString() {
-        return Itk.formatSecTime(originTimeInt + (int)getRelativeTime()) ;
+        if(absoluteTimeString == null) {
+            absoluteTimeString =
+                Itk.formatSecTime(originTimeInt + (int)getRelativeTime()) ;
+        }
+        return absoluteTimeString ;
     }
 
     //------------------------------------------------------------

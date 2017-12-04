@@ -48,7 +48,7 @@ public class AgentFactoryFromNode extends AgentFactory {
         return (startNode.getTagString() +
                 "(" +  startNode.ID + ")" +
                 " from " + getStartTime().getAbsoluteTime() +
-                " ("  + getTotal() +
+                " ("  + getTotalInFactory() +
                 " in " + getDuration() + " sec)");
     }
 
