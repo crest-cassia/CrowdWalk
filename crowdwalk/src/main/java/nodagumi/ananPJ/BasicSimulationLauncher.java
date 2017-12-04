@@ -401,6 +401,18 @@ public abstract class BasicSimulationLauncher {
         }
     }
 
+    //------------------------------------------------------------
+    /**
+     * シミュレーションのpause。
+     * GUI モードの時には、paused を on にするなどの処理を行う。
+     * それらの処理は GuiSimulationLauncher に定義。
+     * CUI モードではなにもしない。
+     */
+    public void pause() {
+        /* do nothing in default */
+    }
+    
+    //------------------------------------------------------------
     /**
      * シミュレーションの終了処理。
      */
@@ -424,4 +436,5 @@ public abstract class BasicSimulationLauncher {
     public String getStatusLine() {
         return simulator.getStatusLine();
     }
+
 }

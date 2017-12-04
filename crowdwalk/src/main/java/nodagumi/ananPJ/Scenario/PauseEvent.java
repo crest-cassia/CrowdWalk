@@ -19,7 +19,6 @@ import nodagumi.ananPJ.Scenario.Scenario;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.ananPJ.BasicSimulationLauncher;
-import nodagumi.ananPJ.GuiSimulationLauncher;
 
 import nodagumi.Itk.* ;
 
@@ -49,11 +48,7 @@ public class PauseEvent extends EventBase {
      */
     @Override
     public boolean occur(SimTime currentTime, NetworkMap map) {
-        BasicSimulationLauncher launcher =
-            getScenario().getSimulationLauncher() ;
-        if(launcher.hasDisplay()) {
-            ((GuiSimulationLauncher)launcher).pause() ;
-        }
+        getScenario().getSimulationLauncher().pause() ;
 	return true ;
     }
 

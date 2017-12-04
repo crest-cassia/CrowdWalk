@@ -11,89 +11,41 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 78.27266380814466,
-					"link": "148"
+					"enteringNode": "4",
+					"advancingDistance": 33.52761873124927,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0212187766645962
+				"speed": 1.021184916654456
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 59.00234524312063,
-					"link": "148"
+					"enteringNode": "4",
+					"advancingDistance": 39.35080355663328,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0219301514730625
+				"speed": 1.0213021190075082
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 83.26170484598931,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 80.69335989553299,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0219368881823974
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 96.9200385650196,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0220768212243774
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 9.27576134428987,
-					"link": "167"
+					"enteringNode": "4",
+					"advancingDistance": 22.81949083498384,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
@@ -107,153 +59,73 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 22.764331726770195,
-					"link": "167"
+					"enteringNode": "4",
+					"advancingDistance": 74.26880582569363,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0220012977927686
+				"speed": 1.0226562529468415
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 71.16718427302973,
-					"link": "148"
+					"enteringNode": "4",
+					"advancingDistance": 100.25036555904613,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0211531220234575
+				"speed": 1.0214691983806372
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 65.20718015978076,
-					"link": "148"
+					"enteringNode": "5",
+					"advancingDistance": 44.226933321873155,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0226512536563708
+				"speed": 1.0224891144100539
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 47.8118000244493,
-					"link": "148"
+					"enteringNode": "5",
+					"advancingDistance": 47.10503231208224,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.02265769054586
+				"speed": 1.0226534252603292
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 75.93813273066087,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.020503751833939
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 45.78922199410864,
-					"link": "167"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0221180721677148
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 6.868475009583327,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0209264485806122
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 4.625540124524969,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0193361997858763
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 68.80815444392091,
-					"link": "171"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0226514148517531
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 20.108301607588903,
-					"link": "148"
+					"enteringNode": "5",
+					"advancingDistance": 19.48789579720985,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -267,9 +139,73 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 91.15017640764351,
-					"link": "169"
+					"enteringNode": "4",
+					"advancingDistance": 48.636991661709466,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0226500256259907
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 54.621162564244585,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0226558640901822
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 1.7671331859136123,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0220403376890963
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 56.69608932518973,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0221423850894946
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 95.91760265206739,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
@@ -283,105 +219,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 13.729509255170695,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0218123919925248
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 44.15270361169193,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0226533414020733
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 83.43995605114057,
-					"link": "169"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0214763964470503
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 27.107978241920726,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0207338383704534
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 24.82764091668228,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0198797483288093
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 66.10032112146814,
-					"link": "171"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0222832010033502
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 84.64502214424935,
-					"link": "129"
+					"enteringNode": "4",
+					"advancingDistance": 41.78490624585075,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
@@ -395,41 +235,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 85.90245211282868,
-					"link": "169"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0218719065725272
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 29.466754878697245,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0215616211004477
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 12.257355321280743,
-					"link": "171"
+					"enteringNode": "7",
+					"advancingDistance": 44.861269058609274,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -443,73 +251,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 18.68336326501893,
-					"link": "171"
+					"enteringNode": "4",
+					"advancingDistance": 91.57267534043586,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.021089882871763
+				"speed": 1.0216783328747638
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 72.38893054014504,
-					"link": "171"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 7.012986418697814,
-					"link": "171"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0218669100126854
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 61.5687053071067,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0226529006916913
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 28.799829351581145,
-					"link": "171"
+					"enteringNode": "7",
+					"advancingDistance": 34.22025424346433,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -523,41 +283,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 73.57719884034184,
-					"link": "148"
+					"enteringNode": "4",
+					"advancingDistance": 35.94411737014289,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.020763228724884
+				"speed": 1.0226436041048252
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 35.80903617700287,
-					"link": "167"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 0.8746024911882699,
-					"link": "129"
+					"enteringNode": "7",
+					"advancingDistance": 68.66876838821194,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -571,41 +315,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 99.38700174031528,
-					"link": "167"
+					"enteringNode": "7",
+					"advancingDistance": 1.1565383198048047,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0221612804574522
+				"speed": 1.0221757503331141
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "1",
-					"advancingDistance": 29.494014860781796,
-					"link": "110"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "1",
-					"advancingDistance": 71.41430469324042,
-					"link": "110"
+					"enteringNode": "4",
+					"advancingDistance": 58.46556214157302,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
@@ -619,9 +347,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 13.184686986144603,
-					"link": "129"
+					"enteringNode": "6",
+					"advancingDistance": 93.21581205755415,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.022272422641636
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 8.509441228322748,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -635,73 +379,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 75.16023457810321,
-					"link": "167"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0213402052396374
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "1",
-					"advancingDistance": 41.55744214717121,
-					"link": "110"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0226560932421103
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 29.711109593814687,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0195059340312123
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 96.87541705387504,
-					"link": "167"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0217187409618702
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 80.18504821145868,
-					"link": "167"
+					"enteringNode": "7",
+					"advancingDistance": 94.42977423428025,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -715,25 +395,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 10.807780420662011,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0208822282908916
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 8.312289161611224,
-					"link": "169"
+					"enteringNode": "7",
+					"advancingDistance": 50.75317778969464,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -747,73 +411,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 31.964137820792008,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0200294013435702
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 27.488376920857306,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0190263868705656
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 8.578889106028974,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0191072710743048
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 72.05490552132899,
-					"link": "169"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0222690332970632
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 91.89693048772085,
-					"link": "167"
+					"enteringNode": "8",
+					"advancingDistance": 11.016937713576267,
+					"link": "108"
 				},
 				"conditions": [
 					"aaa",
@@ -827,9 +427,41 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "1",
-					"advancingDistance": 45.43047460236605,
-					"link": "110"
+					"enteringNode": "5",
+					"advancingDistance": 11.092118873050913,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.022649270230213
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 46.20073933441341,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0213158335856376
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 35.472865356513154,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -843,25 +475,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 56.58318306756178,
-					"link": "148"
+					"enteringNode": "2",
+					"advancingDistance": 48.092041836709605,
+					"link": "102"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0212083796811877
+				"speed": 1.019869531591973
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 0.9488595190563274,
-					"link": "167"
+					"enteringNode": "5",
+					"advancingDistance": 53.3141130270516,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -875,9 +507,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 89.4720879624261,
-					"link": "148"
+					"enteringNode": "5",
+					"advancingDistance": 41.6566518168605,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0219440048200552
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 41.91009400491299,
+					"link": "102"
 				},
 				"conditions": [
 					"aaa",
@@ -891,25 +539,73 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 68.78078812570536,
-					"link": "148"
+					"enteringNode": "5",
+					"advancingDistance": 73.95623523056423,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0209725230188234
+				"speed": 1.0204669786440883
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 48.419211685993325,
-					"link": "167"
+					"enteringNode": "3",
+					"advancingDistance": 6.719548027412358,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0226572067868014
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 28.828004248428968,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0217973983603525
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 84.96671539197725,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0171179816987017
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 27.238586224521285,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
@@ -923,9 +619,153 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 25.352602364457546,
-					"link": "167"
+					"enteringNode": "3",
+					"advancingDistance": 30.121975885128514,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0223980766781338
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 78.7042772739304,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0219247173997152
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 58.77921514034068,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0213116644675895
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 74.82141548829516,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0211700295973618
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 76.28716350744611,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0211943517508808
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 4.659869002267897,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0145717947855857
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 82.81577922394936,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0175992296676246
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 87.20610167046212,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0226522239001208
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 59.13219922878859,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0212561906553181
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 97.80287696590321,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -939,57 +779,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 72.80526271981945,
-					"link": "167"
+					"enteringNode": "3",
+					"advancingDistance": 32.907933668982814,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0207010579225728
+				"speed": 1.0226451370948761
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 86.32055916200345,
-					"link": "167"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0225248754580916
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 77.59969231764352,
-					"link": "167"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0219922493960334
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 60.91930809120536,
-					"link": "169"
+					"enteringNode": "5",
+					"advancingDistance": 4.368459888231487,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -1003,25 +811,89 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 16.263952537660575,
-					"link": "148"
+					"enteringNode": "4",
+					"advancingDistance": 97.8717213449491,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.022655863658215
+				"speed": 1.0209069893300873
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 74.75482887961991,
-					"link": "169"
+					"enteringNode": "5",
+					"advancingDistance": 50.767457353137246,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.021859545165
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 14.608177789705682,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0207975858615432
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 78.16433592075803,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0226560569786707
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 94.07581652750345,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.022655417974701
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 82.03257366098411,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
@@ -1035,9 +907,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 56.93379635265229,
-					"link": "129"
+					"enteringNode": "5",
+					"advancingDistance": 63.79498240223634,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -1051,105 +923,73 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 9.561203061449412,
-					"link": "171"
+					"enteringNode": "5",
+					"advancingDistance": 61.214110350582494,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0222620967578813
+				"speed": 1.0219780850232179
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 81.03931662605096,
-					"link": "169"
+					"enteringNode": "5",
+					"advancingDistance": 31.35870921138188,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0210795777909147
+				"speed": 1.0226571740196906
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 26.100282006463132,
-					"link": "171"
+					"enteringNode": "5",
+					"advancingDistance": 8.53964060667542,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0222683471653515
+				"speed": 1.0218811232223886
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 80.85620587962238,
-					"link": "129"
+					"enteringNode": "5",
+					"advancingDistance": 16.974255647250466,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0226553211831668
+				"speed": 1.0217255141302641
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 2.150841597036042,
-					"link": "171"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0210779369093828
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 21.08539933510353,
-					"link": "171"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.021484169733777
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 72.99096326996573,
-					"link": "129"
+					"enteringNode": "6",
+					"advancingDistance": 5.9398498105895285,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
@@ -1163,41 +1003,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 69.11596243040776,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0226561078953105
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 31.945617913171148,
-					"link": "148"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0223165956518763
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 46.96496509882939,
-					"link": "129"
+					"enteringNode": "7",
+					"advancingDistance": 3.810612018454689,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -1211,9 +1019,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 42.96751090079568,
-					"link": "171"
+					"enteringNode": "3",
+					"advancingDistance": 36.34063608742565,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -1227,9 +1035,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 34.673372453920386,
-					"link": "148"
+					"enteringNode": "6",
+					"advancingDistance": 86.07442428557069,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.022304088071578
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 24.873634811994897,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -1243,41 +1067,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 66.63436946732101,
-					"link": "129"
+					"enteringNode": "6",
+					"advancingDistance": 51.58879309558624,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0215738153579519
+				"speed": 1.0219324346018885
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 4.551256355714145,
-					"link": "171"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0214721566096585
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 91.35832473928453,
-					"link": "129"
+					"enteringNode": "4",
+					"advancingDistance": 0.09101710761211734,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
@@ -1291,9 +1099,41 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 66.86785256845592,
-					"link": "169"
+					"enteringNode": "6",
+					"advancingDistance": 36.16895314232296,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0220545012076465
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 20.427429571107712,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0210048270191892
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 16.729932277010143,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -1307,9 +1147,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "21",
-					"advancingDistance": 9.250722526010472,
-					"link": "148"
+					"enteringNode": "6",
+					"advancingDistance": 54.15497743144076,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.021840534185088
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 31.875321381473885,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
@@ -1323,25 +1179,41 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 5.662670151131199,
-					"link": "169"
+					"enteringNode": "4",
+					"advancingDistance": 52.17373531730373,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0221655686293
+				"speed": 1.0213846262368387
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "1",
-					"advancingDistance": 65.58382832125153,
-					"link": "110"
+					"enteringNode": "4",
+					"advancingDistance": 31.257713203737566,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0197321843652023
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 49.76625814244666,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -1355,9 +1227,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 0.67792478473622,
-					"link": "169"
+					"enteringNode": "3",
+					"advancingDistance": 64.47455193692758,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -1371,9 +1243,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "1",
-					"advancingDistance": 85.72586722581795,
-					"link": "110"
+					"enteringNode": "6",
+					"advancingDistance": 59.335900455367344,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
@@ -1387,41 +1259,25 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "31",
-					"advancingDistance": 89.24903438865172,
-					"link": "167"
+					"enteringNode": "3",
+					"advancingDistance": 68.85459154395802,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.022161573138996
+				"speed": 1.0216541396894256
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 34.25678079199206,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0213430023521923
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 98.21566706484542,
-					"link": "169"
+					"enteringNode": "2",
+					"advancingDistance": 61.55923311328943,
+					"link": "102"
 				},
 				"conditions": [
 					"aaa",
@@ -1435,9 +1291,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 36.697381669045335,
-					"link": "129"
+					"enteringNode": "5",
+					"advancingDistance": 93.40087235938293,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -1451,57 +1307,41 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 6.43656434400082,
-					"link": "129"
+					"enteringNode": "5",
+					"advancingDistance": 71.68628945529186,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0173329321257258
+				"speed": 1.0197430992012557
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 51.54551356884863,
-					"link": "169"
+					"enteringNode": "2",
+					"advancingDistance": 93.76813002892192,
+					"link": "102"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0222413569808186
+				"speed": 1.0214166106161493
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 64.29781120610495,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0205205821806491
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 46.43030887232246,
-					"link": "169"
+					"enteringNode": "3",
+					"advancingDistance": 19.914550790075513,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -1515,41 +1355,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "11",
-					"advancingDistance": 24.709350833320947,
-					"link": "129"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0223941890787809
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 88.45202122235561,
-					"link": "169"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"speed": 1.0222657962340314
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 17.531986291046632,
-					"link": "169"
+					"enteringNode": "5",
+					"advancingDistance": 81.26905861443475,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -1563,9 +1371,57 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 54.23077349229186,
-					"link": "169"
+					"enteringNode": "2",
+					"advancingDistance": 89.2508503184206,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.018868941944624
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 90.81566329249206,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0219917902970148
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 62.01628308725441,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.021447997428497
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 41.0631934916833,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -1579,9 +1435,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "41",
-					"advancingDistance": 23.237826556418582,
-					"link": "169"
+					"enteringNode": "6",
+					"advancingDistance": 88.79450011580785,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
@@ -1595,16 +1451,160 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "42",
-					"advancingDistance": 23.54930279526508,
-					"link": "171"
+					"enteringNode": "3",
+					"advancingDistance": 56.707149584300645,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
 					"x",
 					"y"
 				],
-				"speed": 1.0218770872994227
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 24.592592652811007,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0221571233224562
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 47.183927026063124,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 47.4413327101175,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0203875383262169
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 10.847702242702331,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 38.77522231660139,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 96.2209605311435,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 45.23158606712731,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0187774525516795
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 82.76018412332311,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.0226358676438185
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 71.35254818308611,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"speed": 1.02265769054586
 			}
 		],
 		"agentType": {
@@ -1719,7 +1719,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 37.02082565716509,
+					"advancingDistance": 43.44174181810608,
 					"link": "118"
 				},
 				"conditions": [
@@ -1727,7 +1727,7 @@
 					"bar",
 					"baz"
 				],
-				"speed": 1.0215670622621453
+				"speed": 0.5755858266922453
 			}
 		],
 		"agentType": {
@@ -1880,7 +1880,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 59.452827627979296,
+					"advancingDistance": 66.84749317920988,
 					"link": "116"
 				},
 				"conditions": [
@@ -1888,55 +1888,7 @@
 					"a",
 					"b"
 				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 31.32254927647768,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0209684252794629
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 40.73956308876036,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0204483700209985
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 24.62937204299017,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0226546357046922
+				"speed": 1.0187904126238523
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -1944,7 +1896,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 53.6451220160331,
+					"advancingDistance": 43.852625848078475,
 					"link": "116"
 				},
 				"conditions": [
@@ -1960,7 +1912,87 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 71.80886808712258,
+					"advancingDistance": 85.17294897210205,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.020590764802532
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 75.91624525059014,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226571809655982
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 34.86115772606152,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226515766204363
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 56.84148062870786,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0075848682533104
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 80.03312296660485,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0224940159844262
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 96.22285952110549,
 					"link": "116"
 				},
 				"conditions": [
@@ -1976,7 +2008,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "14",
-					"advancingDistance": 36.100509016313175,
+					"advancingDistance": 26.218721790248434,
 					"link": "118"
 				},
 				"conditions": [
@@ -1984,71 +2016,7 @@
 					"a",
 					"b"
 				],
-				"speed": 1.0205306996788026
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 43.06840825437224,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0209098449452947
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 70.03211947422979,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 66.95963860436842,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022589872937566
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 31.948177766412872,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0222729988260773
+				"speed": 1.02173057503418
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -2056,7 +2024,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 49.70482075196803,
+					"advancingDistance": 54.94607178786264,
 					"link": "116"
 				},
 				"conditions": [
@@ -2064,7 +2032,7 @@
 					"a",
 					"b"
 				],
-				"speed": 1.0226565247985049
+				"speed": 1.0057301225526107
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -2072,151 +2040,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 39.852806699705056,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0222728784144013
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 75.29609135754147,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0222115282811013
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 78.40079016330276,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 37.87513944961857,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 84.69131732115395,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 81.97842787578449,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0222919665318853
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 52.20267026988398,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 99.2568840374193,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 13.745073576211562,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 76.98561433704779,
+					"advancingDistance": 56.66801229780449,
 					"link": "139"
 				},
 				"conditions": [
@@ -2232,7 +2056,151 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 32.00265022796949,
+					"advancingDistance": 27.492681294492982,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0210122431066202
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 67.62779146304389,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 29.28596423405883,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 12.31295930222098,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.022654036272948
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 92.01971596295135,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0205162852508523
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 82.69552500310368,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0194435997568791
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 84.94472083636852,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0203036749649743
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 91.65417349688609,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 87.51661122154303,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.021617205921707
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 29.885695309373983,
 					"link": "116"
 				},
 				"conditions": [
@@ -2248,7 +2216,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 84.98825902452033,
+					"advancingDistance": 50.37579763630734,
 					"link": "116"
 				},
 				"conditions": [
@@ -2264,439 +2232,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 9.824233541692458,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022656413588219
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 94.36091257518846,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0208688645779458
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 27.762435865491245,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 50.48024230456028,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022248726841721
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 7.5194723107516825,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 47.90627952479793,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0219570650546346
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 72.98746205765005,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.020798479086745
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 19.713028154757154,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 75.35461133719228,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 53.16812222400546,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0215159414979393
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 80.10654144018558,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0217466548809835
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 31.56097934422403,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 45.44738413569185,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0214556935189127
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 45.948223776458406,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 51.016430185156764,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022183906269076
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 83.1638709822562,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 72.6741742989413,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0226570428282948
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 63.45760627394974,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 2.524320264334497,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0225223716435807
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 59.58734296402224,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022656072397851
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 51.852036057069014,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0226560309714865
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 46.083715981107474,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0212362685718297
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 37.24402276832072,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 80.78926816671282,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0208628043799663
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 63.85469534717152,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0222138443941167
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 33.70829585872272,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0210231638959495
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 55.638072705639125,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022086545787778
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 98.02354184721356,
+					"advancingDistance": 37.90337817556532,
 					"link": "116"
 				},
 				"conditions": [
@@ -2712,7 +2248,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 82.68318437157086,
+					"advancingDistance": 18.40369190684795,
 					"link": "116"
 				},
 				"conditions": [
@@ -2720,103 +2256,7 @@
 					"a",
 					"b"
 				],
-				"speed": 1.020163712433704
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 28.363796860315116,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0225431068646733
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 69.17532303556663,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0220021869867846
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 22.03109601912746,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022031438773391
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 58.25596777407998,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
 				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 38.43660613718364,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0201658483616236
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 82.62505922666162,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0226576905458387
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -2824,7 +2264,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 42.554849640174915,
+					"advancingDistance": 85.13156637423224,
 					"link": "139"
 				},
 				"conditions": [
@@ -2832,208 +2272,16 @@
 					"a",
 					"b"
 				],
-				"speed": 1.02265769054586
+				"speed": 1.022301937309397
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 51.86727378551845,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 37.745516030403,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0224745951687573
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 47.11597744601093,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0201502949715875
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "12",
-					"advancingDistance": 13.791640269256087,
-					"link": "114"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 43.72210926496516,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.020762431074128
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 96.73529728184532,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0217597089562396
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 48.50677035766502,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0217100964606487
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 83.80861278560971,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0226552303615637
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 81.1297859322455,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.022228604910655
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 49.49553796035909,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0222819561014216
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 34.65028742475861,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 91.46445350847249,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0225043493289963
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 87.58939513114339,
-					"link": "136"
+					"enteringNode": "14",
+					"advancingDistance": 8.199003392738197,
+					"link": "118"
 				},
 				"conditions": [
 					"aaa",
@@ -3048,7 +2296,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 26.678408309143762,
+					"advancingDistance": 53.96839335026089,
 					"link": "139"
 				},
 				"conditions": [
@@ -3056,39 +2304,7 @@
 					"a",
 					"b"
 				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 44.89542546363097,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.018976702900833
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 46.93649191460482,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0219060762982741
+				"speed": 1.0222684779156768
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -3096,7 +2312,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 7.269392491457153,
+					"advancingDistance": 71.47030271571035,
 					"link": "116"
 				},
 				"conditions": [
@@ -3104,48 +2320,16 @@
 					"a",
 					"b"
 				],
-				"speed": 1.0218896719671007
+				"speed": 1.02265769054586
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 40.60012975168777,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0170201278470037
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 59.006107326587795,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0203465560584666
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 53.67414084568313,
-					"link": "136"
+					"enteringNode": "25",
+					"advancingDistance": 87.85034926626895,
+					"link": "139"
 				},
 				"conditions": [
 					"aaa",
@@ -3159,57 +2343,25 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 41.40816423305277,
-					"link": "136"
+					"enteringNode": "13",
+					"advancingDistance": 62.700961136456534,
+					"link": "116"
 				},
 				"conditions": [
 					"aaa",
 					"a",
 					"b"
 				],
-				"speed": 1.0202885962077513
+				"speed": 1.0139927374632223
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 89.01629389961609,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 72.76754034426959,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0217905330673538
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 5.449324880946243,
-					"link": "136"
+					"enteringNode": "25",
+					"advancingDistance": 80.23829772615531,
+					"link": "139"
 				},
 				"conditions": [
 					"aaa",
@@ -3224,7 +2376,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "2",
-					"advancingDistance": 55.71689856730783,
+					"advancingDistance": 80.65578232443178,
 					"link": "102"
 				},
 				"conditions": [
@@ -3232,23 +2384,119 @@
 					"a",
 					"b"
 				],
-				"speed": 1.0226560737819574
+				"speed": 1.017802747223325
 			},
 			{
 				"emptySpeed": 1.02265769054586,
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 77.96655715949369,
-					"link": "136"
+					"enteringNode": "14",
+					"advancingDistance": 38.44659863086645,
+					"link": "118"
 				},
 				"conditions": [
 					"aaa",
 					"a",
 					"b"
 				],
-				"speed": 1.022613445783225
+				"speed": 1.021779667684255
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 31.51645244405816,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 40.97296534127542,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 22.80323088146514,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 29.13344968395796,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.020932611322717
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 23.851423079530964,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0208082383125359
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 50.37174531810025,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.020867871129152
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -3256,8 +2504,104 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 72.84338678757926,
+					"advancingDistance": 8.638446423809617,
 					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226576905458393
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 96.76610701802373,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 21.57009949787741,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0198917055984646
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 71.45874554710448,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226403911882986
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 52.74548485150242,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0212525874991183
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 55.1719729834037,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226566358513423
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 28.73351941009677,
+					"link": "118"
 				},
 				"conditions": [
 					"aaa",
@@ -3272,7 +2616,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 61.32607114080795,
+					"advancingDistance": 15.12409149992653,
 					"link": "113"
 				},
 				"conditions": [
@@ -3280,7 +2624,7 @@
 					"a",
 					"b"
 				],
-				"speed": 1.0215208509307336
+				"speed": 1.0203141607639101
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -3288,7 +2632,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 59.682691208976536,
+					"advancingDistance": 0.45876302577745776,
 					"link": "136"
 				},
 				"conditions": [
@@ -3303,9 +2647,393 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 72.46167999395365,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.022657690530515
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 91.46535309721799,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0201517894586594
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 84.19733255154816,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.021277773396779
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 64.73991780980012,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0163724739102917
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 58.7617940784721,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.009556624123161
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 67.75638224796859,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226576901750997
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 69.05873511542018,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0211501604340047
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 56.414720141633275,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0218481415987923
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 15.060093686968399,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 82.91432461272079,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.019580144014333
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 90.00688691995701,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 81.94415088349083,
+					"advancingDistance": 43.26818075916482,
 					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 61.96483307764631,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0222494314893429
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 54.26442115594872,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 79.44537918702015,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 13.815887452992753,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0211809378894288
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 2.5218514279729702,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 8.951333693377178,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226401803457663
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 42.23608348533535,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.019775886618886
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 89.64055666402507,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0209193975937467
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 66.64547222751179,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 25.247585217154636,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0193687863783
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 64.65426761779712,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 23.088931804114956,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0177280517554799
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 7.356049861411238,
+					"link": "139"
 				},
 				"conditions": [
 					"aaa",
@@ -3320,7 +3048,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 13.188070263053794,
+					"advancingDistance": 20.678274380838253,
 					"link": "139"
 				},
 				"conditions": [
@@ -3336,71 +3064,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 49.418603031994266,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0213920511202126
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 99.30979570039923,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0226555571231197
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 17.39729739912601,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.0202865081680432
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 3.6471203651467032,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"speed": 1.02265769054586
-			},
-			{
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 19.76430504215111,
+					"advancingDistance": 96.83660210020876,
 					"link": "113"
 				},
 				"conditions": [
@@ -3416,7 +3080,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 10.498569731715149,
+					"advancingDistance": 15.590932790755376,
 					"link": "139"
 				},
 				"conditions": [
@@ -3424,7 +3088,119 @@
 					"a",
 					"b"
 				],
-				"speed": 1.0222495578610382
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 16.00755043905674,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.021036351843229
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 71.22730244297206,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 12.940828596257495,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.022166687955769
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 39.74037552167431,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 60.712226442579144,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0116996296845735
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 10.965593531793953,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0224670263221545
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 8.762624880889513,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.018608183026441
 			},
 			{
 				"emptySpeed": 1.02265769054586,
@@ -3432,7 +3208,119 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 63.79753088152616,
+					"advancingDistance": 12.91672154908133,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0187346182445518
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 77.23578263592373,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226446787733445
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 18.52213644885009,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 34.32063705015768,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 51.87246151831898,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0210040339878153
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 58.520846322119944,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 0.5756211885880451
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 90.48309625699245,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 17.442298913455115,
 					"link": "113"
 				},
 				"conditions": [
@@ -3448,7 +3336,39 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 25.676397311746452,
+					"advancingDistance": 94.35584523137862,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0215695330341308
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 16.22908190983848,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0200174496872316
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 38.674747446072,
 					"link": "113"
 				},
 				"conditions": [
@@ -3463,8 +3383,88 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 49.950717648536084,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 86.62765690649478,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0226559560988524
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 44.51069104236307,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.02265769054586
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 87.09921339332854,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0175719398148177
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 40.10887855634831,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"speed": 1.0169118932124799
+			},
+			{
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 42.72934180624988,
+					"advancingDistance": 87.2601841366782,
 					"link": "113"
 				},
 				"conditions": [
@@ -3472,7 +3472,7 @@
 					"a",
 					"b"
 				],
-				"speed": 1.0179098894937468
+				"speed": 1.0209258984069314
 			}
 		],
 		"agentType": {
