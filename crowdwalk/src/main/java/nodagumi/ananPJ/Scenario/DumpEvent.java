@@ -187,19 +187,17 @@ public class DumpEvent extends EventBase {
             }
             
             if(remainN > 0) {
-                AgentFactory factory =
-                    factoryConfig.getAgentFactoryList().get(0);
-                Term rule = factory.config.toTerm() ;
-                SimTime startTime = factory.getStartTime() ;
+                Term rule = factoryConfig.toTerm() ;
+                SimTime startTime = factoryConfig.startTime ;
                 if(startTime.isBefore(currentTime)) {
                     rule.setArg("_startTime",
                                 startTime.getAbsoluteTimeString());
                     rule.setArg("startTime",
                                 currentTime.getAbsoluteTimeString()) ;
                     double duration =
-                        (factory.getDuration() -
+                        (factoryConfig.duration -
                          startTime.calcDifferenceTo(currentTime)) ;
-                    rule.setArg("_duration", factory.getDuration()) ;
+                    rule.setArg("_duration", rule.getArgDouble("duration")) ;
                     rule.setArg("duration", duration) ;
                 }
                 rule.setArg("total", remainN) ;
@@ -233,10 +231,11 @@ public class DumpEvent extends EventBase {
 
 	// generate rules
 	for(String ruleName : agentTable.keySet()) {
-            AgentFactory factory =
-                handler.getFirstAgentFactoryByName(ruleName) ;
+            AgentFactoryConfig factoryConfig =
+                handler.getAgentFactoryConfigByName(ruleName) ;
 	    Term rule =
-		dumpTermForAgentsInOneRule(factory, agentTable.get(ruleName),
+		dumpTermForAgentsInOneRule(factoryConfig,
+                                           agentTable.get(ruleName),
                                            currentTime) ;
 	    ruleList.addNth(rule) ;
 	}
@@ -248,10 +247,10 @@ public class DumpEvent extends EventBase {
     /**
      * dump agents in one rule
      */
-    private Term dumpTermForAgentsInOneRule(AgentFactory factory,
+    private Term dumpTermForAgentsInOneRule(AgentFactoryConfig factoryConfig,
                                             ArrayList<AgentBase> agentList,
                                             SimTime currentTime) {
-	Term rule = factory.config.toTerm() ;
+	Term rule = factoryConfig.toTerm() ;
         String origRuleName = rule.getArgString("name") ;
 	rule.setArg("rule","INDIVIDUAL") ;
 	rule.setArg("startTime", currentTime.getAbsoluteTimeString()) ;
