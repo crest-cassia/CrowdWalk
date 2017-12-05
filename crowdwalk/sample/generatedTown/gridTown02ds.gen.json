@@ -58,10 +58,7 @@
 		]
 	},
 	{
-		"duration": 1,
 		"startPlace": "link_node_00_00__node_00_01",
-		"total": 100,
-		"speedModel": "CROSSING",
 		"individualConfig": [
 			{
 				"emptySpeed": 1.02265769054586,
@@ -1720,15 +1717,23 @@
 			]
 		},
 		"goal": "node_09_09",
+		"_name": "1",
+		"_startTime": "18:00:00",
 		"plannedRoute": [
 			"node_02_09",
 			"node_04_00",
 			"node_06_09",
 			"node_08_00"
 		],
-		"name": "_dumped_1",
 		"rule": "INDIVIDUAL",
+		"_rule": "EACH",
+		"duration": 1,
+		"total": 100,
+		"speedModel": "CROSSING",
+		"name": "_dumped_1",
+		"_individualConfig": null,
 		"startTime": "18:10:00",
+		"_duration": 500.0,
 		"conditions": [
 			"aaa",
 			"a",
@@ -1736,10 +1741,7 @@
 		]
 	},
 	{
-		"duration": 1,
 		"startPlace": "link_node_00_00__node_00_01",
-		"total": 100,
-		"speedModel": "CROSSING",
 		"individualConfig": [
 			{
 				"emptySpeed": 1.02265769054586,
@@ -3399,15 +3401,23 @@
 			]
 		},
 		"goal": "node_09_09",
+		"_name": "2",
+		"_startTime": "18:00:00",
 		"plannedRoute": [
 			"node_02_09",
 			"node_04_02",
 			"node_06_09",
 			"node_08_00"
 		],
-		"name": "_dumped_2",
 		"rule": "INDIVIDUAL",
+		"_rule": "EACH",
+		"duration": 1,
+		"total": 100,
+		"speedModel": "CROSSING",
+		"name": "_dumped_2",
+		"_individualConfig": null,
 		"startTime": "18:10:00",
+		"_duration": 500.0,
 		"conditions": [
 			"aaa",
 			"x",
@@ -3415,10 +3425,7 @@
 		]
 	},
 	{
-		"duration": 1,
 		"startPlace": "link_node_00_08__node_00_09",
-		"total": 1,
-		"speedModel": "CROSSING",
 		"individualConfig": [
 			{
 				"emptySpeed": 1.02265769054586,
@@ -3532,15 +3539,23 @@
 			]
 		},
 		"goal": "node_09_00",
+		"_name": "3",
+		"_startTime": "18:00:00",
 		"plannedRoute": [
 			"node_02_00",
 			"node_04_09",
 			"node_06_00",
 			"node_08_09"
 		],
-		"name": "_dumped_3",
 		"rule": "INDIVIDUAL",
+		"_rule": "EACH",
+		"duration": 1,
+		"total": 1,
+		"speedModel": "CROSSING",
+		"name": "_dumped_3",
+		"_individualConfig": null,
 		"startTime": "18:10:00",
+		"_duration": 50.0,
 		"conditions": [
 			"foo",
 			"bar",

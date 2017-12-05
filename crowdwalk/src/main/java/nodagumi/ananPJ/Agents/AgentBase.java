@@ -1041,10 +1041,16 @@ implements Comparable<AgentBase> {
     /**
      * individualConfig 用にエージェント状態をTermにdump。
      * Format は、{@link #setupByIndividualConfig(Term)} に準拠。 
+     * @param startTime : エージェント発生時刻。 null なら設定しない。
      */
-    public Term dumpTermForIndividualConfig(Term config) {
+    public Term dumpTermForIndividualConfig(SimTime startTime) {
+        Term config = Term.newObjectTerm() ;
         dumpTermForIndividualConfig_place(config) ;
         dumpTermForIndividualConfig_conditions(config) ;
+
+        if(startTime != null) {
+            config.setArg("startTime", startTime.getAbsoluteTimeString()) ;
+        }
         return config ;
     }
     

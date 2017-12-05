@@ -1398,8 +1398,8 @@ public class WalkAgent extends AgentBase {
      * individualConfig 用にエージェント状態をTermにdump。
      * Format は、{@link #setupByIndividualConfig(Term)} に準拠。 
      */
-    public Term dumpTermForIndividualConfig(Term config) {
-        super.dumpTermForIndividualConfig(config) ;
+    public Term dumpTermForIndividualConfig(SimTime startTime) {
+        Term config = super.dumpTermForIndividualConfig(startTime) ;
         
         config.setArg("emptySpeed", emptySpeed) ;
         config.setArg("speed", speed) ;

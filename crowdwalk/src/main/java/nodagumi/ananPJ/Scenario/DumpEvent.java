@@ -142,8 +142,8 @@ public class DumpEvent extends EventBase {
     public void dumpInGenerationFileFormat(SimTime currentTime) {
 	Term ruleList = Term.newArrayTerm() ;
 
-        dumpTermForRemainingRules(currentTime, ruleList) ;
-        dumpTermForWalkingAgents(currentTime, ruleList) ;
+        dumpRuleTermForRemainingRules(currentTime, ruleList) ;
+        dumpRuleTermForWalkingAgents(currentTime, ruleList) ;
 
         outputDumpFileInGenerationFileFormat(ruleList) ;
     }
@@ -170,8 +170,8 @@ public class DumpEvent extends EventBase {
     /**
      * generate Dump term for remaining generation rules.
      */
-    private Term dumpTermForRemainingRules(SimTime currentTime,
-                                           Term ruleList) {
+    private Term dumpRuleTermForRemainingRules(SimTime currentTime,
+                                               Term ruleList) {
 	AgentHandler handler = getAgentHandler() ;
         AgentFactoryList factoryList = handler.getAgentFactoryList() ;
 
@@ -195,8 +195,8 @@ public class DumpEvent extends EventBase {
      * generate Dump term for walking agents in individual gen rule format
      * in GenerationFile format.
      */
-    private Term dumpTermForWalkingAgents(SimTime currentTime,
-                                          Term ruleList) {
+    private Term dumpRuleTermForWalkingAgents(SimTime currentTime,
+                                              Term ruleList) {
 	AgentHandler handler = getAgentHandler() ;
 
 	// collect agents by each rule
@@ -239,15 +239,9 @@ public class DumpEvent extends EventBase {
 	    indivList.addNth(agentConf) ;
 	}
 
-	Term rule = factoryConfig.toTerm() ;
-        String origRuleName = rule.getArgString("name") ;
-	rule.setArg("rule","INDIVIDUAL") ;
-	rule.setArg("startTime", currentTime.getAbsoluteTimeString()) ;
-	rule.setArg("duration", 1) ;
-        rule.setArg("name", "_dumped_" + origRuleName) ;
-
-	rule.setArg("individualConfig", indivList) ;
-	
+	Term rule = factoryConfig.toTermForWalkingAgents(indivList,
+                                                         currentTime,
+                                                         "_dumped_") ;
 
 	return rule ;
     }
@@ -257,9 +251,8 @@ public class DumpEvent extends EventBase {
      * dump one agent
      */
     private Term dumpTermForOneAgent(AgentBase agent, SimTime currentTime) {
-	Term agentConf = Term.newObjectTerm() ;
-	agent.dumpTermForIndividualConfig(agentConf) ;
-        agentConf.setArg("startTime", currentTime.getAbsoluteTimeString()) ;
+	Term agentConf = 
+            agent.dumpTermForIndividualConfig(currentTime) ;
 	return agentConf ;
     }
     

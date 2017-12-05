@@ -278,7 +278,8 @@ public class AgentFactoryConfig {
      * DumpEvent で用いる。
      */
     public Term toTermForWalkingAgents(Term indivList,
-                                       SimTime currentTime) {
+                                       SimTime currentTime,
+                                       String namePrefix) {
 	Term rule = toTerm() ;
 
 	rule.setArgWithBackup("rule","INDIVIDUAL", TermArgBackupPrefix) ;
@@ -290,7 +291,7 @@ public class AgentFactoryConfig {
 	rule.setArgWithBackup("duration", 1, TermArgBackupPrefix) ;
                     
         rule.setArgWithBackup("name",
-                              "_dumped_" + rule.getArgString("name"),
+                              namePrefix + rule.getArgString("name"),
                               TermArgBackupPrefix) ;
 
 	rule.setArgWithBackup("individualConfig", indivList,
