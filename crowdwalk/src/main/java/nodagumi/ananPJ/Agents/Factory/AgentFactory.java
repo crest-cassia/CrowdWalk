@@ -196,20 +196,26 @@ public abstract class AgentFactory {
     /**
      *  Config によるコンストラクタ
      */
-    public AgentFactory(AgentFactoryConfig config, Random _random) {
-        random = _random;
-        init(config, _random) ;
+    public AgentFactory(AgentFactoryConfig config,
+                        OBNode _startPlace,
+                        int _totalInFactory,
+                        Random _random) {
+        init(config, _startPlace, _totalInFactory, _random) ;
     }
 
     //------------------------------------------------------------
     /**
      *  初期化。他で Override できるように。
      */
-    public void init(AgentFactoryConfig _config, Random _random) {
+    public void init(AgentFactoryConfig _config,
+                     OBNode _startPlace,
+                     int _totalInFactory,
+                     Random _random) {
         config = _config ;
+        random = _random;
 
         /** config.total は、途中で変更になるので、コピーしておく */
-        totalInFactory = _config.total ;
+        totalInFactory = _totalInFactory ;
 
         parse_conditions(config.conditions);
     }

@@ -23,11 +23,26 @@ public class AgentFactoryFromLink extends AgentFactory {
 
     //------------------------------------------------------------
     /**
-     * Config によるコンストラクタ
+     *  Config によるコンストラクタ
      */
-    public AgentFactoryFromLink(AgentFactoryConfig config, Random random) {
-        super(config, random) ;
-        startLink = (MapLink)config.startPlace ;
+    public AgentFactoryFromLink(AgentFactoryConfig config,
+                                OBNode _startPlace,
+                                int _totalInFactory,
+                                Random _random) {
+        super(config, _startPlace, _totalInFactory, _random) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Config による初期化
+     */
+    @Override
+    public void init(AgentFactoryConfig config,
+                     OBNode _startPlace,
+                     int _totalInFactory,
+                     Random random) {
+        super.init(config, _startPlace, _totalInFactory, random) ;
+        startLink = (MapLink)_startPlace ;
     }
 
     @Override

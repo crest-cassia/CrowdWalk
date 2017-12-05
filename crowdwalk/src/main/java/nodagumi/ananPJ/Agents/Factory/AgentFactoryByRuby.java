@@ -88,14 +88,30 @@ public class AgentFactoryByRuby extends AgentFactory {
     /**
      * Config によるコンストラクタ
      */
-    public AgentFactoryByRuby(AgentFactoryConfig _config, Random random) {
-        super(_config, random) ;
+    public AgentFactoryByRuby(AgentFactoryConfig config,
+                              OBNode _startPlace,
+                              int _totalInFactory,
+                              Random _random) {
+        super(config, _startPlace, _totalInFactory, _random) ;
+    }
 
-        AgentFactoryConfig_Ruby config =
-            (AgentFactoryConfig_Ruby)_config ;
+    
+    //------------------------------------------------------------
+    /**
+     * Config による初期化
+     */
+    @Override
+    public void init(AgentFactoryConfig config,
+                     OBNode _startPlace,
+                     int _totalInFactory,
+                     Random random) {
+        super.init(config, _startPlace, _totalInFactory, random) ;
+
+        AgentFactoryConfig_Ruby rubyConfig =
+            (AgentFactoryConfig_Ruby)config ;
         
-        rubyFactoryClassName = config.ruleClass ;
-        configForRuby = config.config ;
+        rubyFactoryClassName = rubyConfig.ruleClass ;
+        configForRuby = rubyConfig.config ;
     }
 
     //------------------------------------------------------------

@@ -55,12 +55,6 @@ public class AgentFactoryConfig {
      */
     public Term agentConf = null ;
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 出発場所
-     */
-    public OBNode startPlace = null ;
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * 生成リンクタグ
@@ -221,7 +215,6 @@ public class AgentFactoryConfig {
                 jTerm.setArg("agentType", agentType) ;
             }
         }
-	jTerm.setArg("startPlace",startPlace) ;
 	jTerm.setArg("conditions",conditions);
 	jTerm.setArg("goal",goal);
 	jTerm.setArg("plannedRoute",plannedRoute) ;
@@ -383,16 +376,20 @@ public class AgentFactoryConfig {
      */
     protected void addFactoriesForEach(AgentFactoryList factoryList) {
 	for (final MapLink startLink : startLinks) {
-	    startPlace = startLink ;
-	    registerAgentFactory(new AgentFactoryFromLink(this,
-                                                          factoryList.random),
-                                 factoryList) ;
+            AgentFactory factory =
+                new AgentFactoryFromLink(this,
+                                         startLink,
+                                         this.total,
+                                         factoryList.random) ;
+	    registerAgentFactory(factory, factoryList) ;
 	}
 	for (final MapNode startNode : startNodes) {
-	    startPlace = startNode ;
-	    registerAgentFactory(new AgentFactoryFromNode(this,
-                                                          factoryList.random),
-                                 factoryList) ;
+            AgentFactory factory =
+                new AgentFactoryFromNode(this,
+                                         startNode,
+                                         this.total,
+                                         factoryList.random) ;
+	    registerAgentFactory(factory, factoryList) ;
 	}
     }
 
@@ -403,13 +400,11 @@ public class AgentFactoryConfig {
      * 合計で total 個のエージェントが生成。
      */
     protected void addFactoriesForRandom(AgentFactoryList factoryList) {
-	int _total = this.total ;
-
 	int links_size = this.startLinks.size();
 	int size = links_size + this.startNodes.size();// linkとnodeの合計
 	int[] chosen_links = new int[this.startLinks.size()];
 	int[] chosen_nodes = new int[this.startNodes.size()];
-	for (int i = 0; i < _total; i++) {
+	for (int i = 0; i < this.total; i++) {
 	    int chosen_index = factoryList.random.nextInt(size);
             if (chosen_index + 1 > links_size)
                 chosen_nodes[chosen_index - links_size] += 1;
@@ -418,25 +413,24 @@ public class AgentFactoryConfig {
 	}
 	for (int i = 0; i < this.startLinks.size(); i++) {
 	    if (chosen_links[i] > 0) {
-		this.startPlace = this.startLinks.get(i) ;
-		this.total = chosen_links[i] ;
-                registerAgentFactory(new AgentFactoryFromLink(this, 
-                                                              factoryList
-                                                              .random),
-                                     factoryList) ;
+                AgentFactory factory =
+                    new AgentFactoryFromLink(this,
+                                             this.startLinks.get(i),
+                                             chosen_links[i],
+                                             factoryList.random) ;
+                registerAgentFactory(factory, factoryList) ;
 	    }
 	}
 	for (int i = 0; i < this.startNodes.size(); i++) {
 	    if (chosen_nodes[i] > 0) {
-		this.startPlace = this.startNodes.get(i) ;
-		this.total = chosen_nodes[i] ;
-                registerAgentFactory(new AgentFactoryFromNode(this,
-                                                              factoryList
-                                                              .random),
-                                     factoryList) ;
+                AgentFactory factory =
+                    new AgentFactoryFromNode(this,
+                                             this.startNodes.get(i),
+                                             chosen_nodes[i],
+                                             factoryList.random) ;
+                registerAgentFactory(factory, factoryList) ;
 	    }
 	}
-        this.total = _total ;
     }
 
     //============================================================
@@ -533,22 +527,22 @@ public class AgentFactoryConfig {
 
             for (int i = 0; i < this.startLinks.size(); i++) {
                 if (chosen_links[i] > 0) {
-                    this.startPlace = this.startLinks.get(i) ;
-                    this.total = chosen_links[i] ;
-                    registerAgentFactory(new AgentFactoryFromLink(this,
-                                                                  factoryList
-                                                                  .random),
-                                         factoryList) ;
+                    AgentFactory factory =
+                        new AgentFactoryFromLink(this,
+                                                 this.startLinks.get(i),
+                                                 chosen_links[i],
+                                                 factoryList.random) ;
+                    registerAgentFactory(factory, factoryList) ;
                 }
             }
             for (int i = 0; i < this.startNodes.size(); i++) {
                 if (chosen_nodes[i] > 0) {
-                    this.startPlace = this.startNodes.get(i) ;
-                    this.total = chosen_nodes[i] ;
-                    registerAgentFactory(new AgentFactoryFromNode(this,
-                                                                  factoryList
-                                                                  .random),
-                                         factoryList) ;
+                    AgentFactory factory =
+                        new AgentFactoryFromNode(this,
+                                                 this.startNodes.get(i),
+                                                 chosen_nodes[i],
+                                                 factoryList.random) ;
+                    registerAgentFactory(factory, factoryList) ;
                 }
             }
         }
@@ -626,13 +620,11 @@ public class AgentFactoryConfig {
             double every_seconds = (double)this.everySeconds ;
             int total = this.total ;
 
-            // [I.Noda] startPlace は下で指定。
-            this.startPlace = null ;
             // [I.Noda] startTime も特別な意味
-            SimTime start_time = this.startTime ;
+            SimTime _startTime = this.startTime ;
             this.startTime = null ;
 
-            SimTime step_time = start_time.newSimTime() ;
+            SimTime step_time = _startTime.newSimTime() ;
             /* let's assume start & goal & plannedRoute candidates
              * are all MapLink!
              */
@@ -644,21 +636,21 @@ public class AgentFactoryConfig {
                     if(this.startLinks.size() > 0) {
                         MapLink start_link =
                             this.startLinks.chooseRandom(factoryList.random) ;
-                        this.startPlace = start_link ;
-                        registerAgentFactory(new
-                                             AgentFactoryFromLink(this,
-                                                                  factoryList
-                                                                  .random),
-                                             factoryList) ;
+                        AgentFactory factory =
+                            new AgentFactoryFromLink(this,
+                                                     start_link,
+                                                     this.total,
+                                                     factoryList.random) ;
+                        registerAgentFactory(factory, factoryList) ;
                     } else if (this.startNodes.size() > 0) {
                         MapNode start_node = 
                             this.startNodes.chooseRandom(factoryList.random) ;
-                        this.startPlace = start_node ;
-                        registerAgentFactory(new
-                                             AgentFactoryFromNode(this,
-                                                                  factoryList
-                                                                  .random),
-                                             factoryList) ;
+                        AgentFactory factory =
+                            new AgentFactoryFromNode(this,
+                                                     start_node,
+                                                     this.total,
+                                                     factoryList.random) ;
+                        registerAgentFactory(factory, factoryList) ;
                     } else {
                         Itk.logError("no starting place for generation.") ;
                         Itk.logError_("config",this) ;
@@ -666,6 +658,8 @@ public class AgentFactoryConfig {
                 }
                 step_time.advanceSec(every_seconds) ;
             }
+            // retrieve backup startTime.
+            this.startTime = _startTime ; 
         }
     } // end class AgentFactoryConfig_TimeEvery
 
@@ -730,7 +724,10 @@ public class AgentFactoryConfig {
         public void addFactories(AgentFactoryList factoryList,
 				 NetworkMap map) {
             AgentFactory factory =
-                new AgentFactoryByRuby(this, factoryList.random) ;
+                new AgentFactoryByRuby(this,
+                                       null,
+                                       this.total,
+                                       factoryList.random) ;
             registerAgentFactory(factory, factoryList) ;
         }
         
