@@ -874,6 +874,18 @@ public class Term {
 
     //------------------------------------------------------------
     /**
+     * arg 設定
+     */
+    public Term setArgWithBackup(String slot, Object value,
+                                 String backupPrefix){
+        if(hasArg(slot)) {
+            setArg(backupPrefix + slot, getArg(slot)) ;
+        }
+        return setArg(slot, value) ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * arg クリア
      */
     public Term clearArg(String slot) {

@@ -180,28 +180,10 @@ public class DumpEvent extends EventBase {
                 factoryList.getAgentFactoryConfigNameTable().keySet()) {
             AgentFactoryConfig factoryConfig =
                 factoryList.getAgentFactoryConfigByName(ruleName) ;
-            
-            int remainN = 0 ;
-            for(AgentFactory factory : factoryConfig.getAgentFactoryList()) {
-                remainN += factory.getNAgentsRemain() ;
-            }
-            
-            if(remainN > 0) {
-                Term rule = factoryConfig.toTerm() ;
-                SimTime startTime = factoryConfig.startTime ;
-                if(startTime.isBefore(currentTime)) {
-                    rule.setArg("_startTime",
-                                startTime.getAbsoluteTimeString());
-                    rule.setArg("startTime",
-                                currentTime.getAbsoluteTimeString()) ;
-                    double duration =
-                        (factoryConfig.duration -
-                         startTime.calcDifferenceTo(currentTime)) ;
-                    rule.setArg("_duration", rule.getArgDouble("duration")) ;
-                    rule.setArg("duration", duration) ;
-                }
-                rule.setArg("total", remainN) ;
-                
+
+            Term rule = factoryConfig.toTermForRemainingAgents(currentTime) ;
+
+            if(rule != null) {
                 ruleList.addNth(rule) ;
             }
         }
@@ -250,6 +232,13 @@ public class DumpEvent extends EventBase {
     private Term dumpTermForAgentsInOneRule(AgentFactoryConfig factoryConfig,
                                             ArrayList<AgentBase> agentList,
                                             SimTime currentTime) {
+	Term indivList = Term.newArrayTerm() ;
+	for(AgentBase agent : agentList) {
+	    Term agentConf =
+                dumpTermForOneAgent(agent, currentTime) ;
+	    indivList.addNth(agentConf) ;
+	}
+
 	Term rule = factoryConfig.toTerm() ;
         String origRuleName = rule.getArgString("name") ;
 	rule.setArg("rule","INDIVIDUAL") ;
@@ -257,14 +246,8 @@ public class DumpEvent extends EventBase {
 	rule.setArg("duration", 1) ;
         rule.setArg("name", "_dumped_" + origRuleName) ;
 
-	Term indivList = Term.newArrayTerm() ;
 	rule.setArg("individualConfig", indivList) ;
 	
-	for(AgentBase agent : agentList) {
-	    Term agentConf =
-                dumpTermForOneAgent(agent, currentTime) ;
-	    indivList.addNth(agentConf) ;
-	}
 
 	return rule ;
     }

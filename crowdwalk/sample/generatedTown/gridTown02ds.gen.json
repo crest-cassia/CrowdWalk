@@ -1,10 +1,7 @@
 #{ "version" : 2}
 [
 	{
-		"duration": 500.0,
 		"startPlace": "link_node_00_00__node_00_01",
-		"total": 1000,
-		"speedModel": "CROSSING",
 		"individualConfig": null,
 		"agentType": {
 			"className": "RationalAgent",
@@ -47,8 +44,12 @@
 			"node_06_09",
 			"node_08_00"
 		],
-		"name": "4",
 		"rule": "EACH",
+		"duration": 500.0,
+		"total": 1000,
+		"speedModel": "CROSSING",
+		"_total": 1000,
+		"name": "4",
 		"startTime": "19:00:00",
 		"conditions": [
 			"bbb",

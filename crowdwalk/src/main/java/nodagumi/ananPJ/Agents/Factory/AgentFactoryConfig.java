@@ -197,6 +197,10 @@ public class AgentFactoryConfig {
 	return toTerm().toJson(pprintP) ;
     }
 
+    //==================================================
+    //::::::::::::::::::::::::::::::::::::::::::::::::::
+    static final String TermArgBackupPrefix = "_" ;
+        
     //------------------------------
     /**
      * JSONへの変換用のTerm変換
@@ -223,6 +227,7 @@ public class AgentFactoryConfig {
 	jTerm.setArg("total",total) ;
 	jTerm.setArg("speedModel", speedModel) ;
 	jTerm.setArg("name", ruleName) ;
+        
 	jTerm.setArg("individualConfig", individualConfigList.toTerm()) ;
 
 	jTerm.setArg("rule",
@@ -237,6 +242,63 @@ public class AgentFactoryConfig {
 	return jTerm ;
     }
 
+    //------------------------------
+    /**
+     * 未だ生成していないエージェントについてのConfig.
+     * DumpEvent で用いる。
+     */
+    public Term toTermForRemainingAgents(SimTime currentTime) {
+        int remainN = 0 ;
+        for(AgentFactory factory : getAgentFactoryList()) {
+            remainN += factory.getNAgentsRemain() ;
+        }
+        
+        if(remainN > 0) {
+            Term rule = toTerm() ;
+            if(startTime.isBefore(currentTime)) {
+                rule.setArgWithBackup("startTime",
+                                      currentTime.getAbsoluteTimeString(),
+                                      TermArgBackupPrefix) ;
+                double _duration = (duration -
+                                    startTime.calcDifferenceTo(currentTime)) ;
+                rule.setArgWithBackup("duration", _duration,
+                                      TermArgBackupPrefix) ;
+            }
+            rule.setArgWithBackup("total", remainN, TermArgBackupPrefix) ;
+
+            return rule ;
+        } else {
+            return null ;
+        }
+    }
+    
+    //------------------------------
+    /**
+     * Walking 中のエージェントについてのConfig.
+     * DumpEvent で用いる。
+     */
+    public Term toTermForWalkingAgents(Term indivList,
+                                       SimTime currentTime) {
+	Term rule = toTerm() ;
+
+	rule.setArgWithBackup("rule","INDIVIDUAL", TermArgBackupPrefix) ;
+        
+	rule.setArgWithBackup("startTime",
+                              currentTime.getAbsoluteTimeString(),
+                              TermArgBackupPrefix) ;
+
+	rule.setArgWithBackup("duration", 1, TermArgBackupPrefix) ;
+                    
+        rule.setArgWithBackup("name",
+                              "_dumped_" + rule.getArgString("name"),
+                              TermArgBackupPrefix) ;
+
+	rule.setArgWithBackup("individualConfig", indivList,
+                              TermArgBackupPrefix) ;
+
+        return rule ;
+    }
+        
     //----------------------------------------
     /**
      * JSON Object からパラメータ設定
