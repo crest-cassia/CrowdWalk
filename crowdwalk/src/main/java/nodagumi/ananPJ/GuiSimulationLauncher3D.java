@@ -241,4 +241,8 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
     public boolean isShowBackgroundMap() {
         return showBackgroundMap;
     }
+
+    public boolean isShowTheSea() {
+        return showTheSea;
+    }
 }

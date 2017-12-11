@@ -1,6 +1,7 @@
 package nodagumi.ananPJ.misc;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -112,5 +113,26 @@ public class JsonicHashMapGetter {
             throw new Exception("Parameter type error - \"" + name + "\" : " + parameter.toString());
         }
         return (HashMap<String, Object>)parameter;
+    }
+
+    /**
+     * ArrayList 型のパラメータを取得する
+     */
+    public ArrayList getArrayListParameter(String name, ArrayList defaultValue) throws Exception {
+        Object parameter = parameters.get(name);
+        if (parameter == null) {
+            return defaultValue;
+        }
+        if (! (parameter instanceof ArrayList)) {
+            throw new Exception("Parameter type error - \"" + name + "\" : " + parameter.toString());
+        }
+        return (ArrayList)parameter;
+    }
+
+    /**
+     * ArrayList<BigDecimal> 型のパラメータを取得する
+     */
+    public ArrayList<BigDecimal> getBigDecimalArrayList(String name, ArrayList<BigDecimal> defaultValue) throws Exception {
+        return (ArrayList<BigDecimal>)getArrayListParameter(name, defaultValue);
     }
 }

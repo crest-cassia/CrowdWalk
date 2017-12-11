@@ -162,6 +162,7 @@ public class SimulationFrame2D extends JFrame
     private boolean marginAdded = false;
     private boolean showBackgroundImage = false;
     private boolean showBackgroundMap = false;
+    private boolean showTheSea = false;
 
     /* メニュー構成変数 */
 
@@ -1034,6 +1035,9 @@ public class SimulationFrame2D extends JFrame
                 }});
         checkbox_panel.add(showBackgroundImageCheckBox);
 
+        JPanel showMapPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        showMapPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         // 背景地図表示の ON/OFF
         JCheckBox showBackgroundMapCheckBox = new JCheckBox("Show background map");
         showBackgroundMapCheckBox.setSelected(backgroundMapEnabled && showBackgroundMap);
@@ -1044,7 +1048,24 @@ public class SimulationFrame2D extends JFrame
                     showBackgroundMap = showBackgroundMapCheckBox.isSelected();
                     panel.repaint();
                 }});
-        checkbox_panel.add(showBackgroundMapCheckBox);
+        showMapPanel.add(showBackgroundMapCheckBox);
+
+        // 海面表示の ON/OFF
+        JCheckBox showTheSeaCheckBox = new JCheckBox("Show the sea");
+        Coastline coastline = launcher.getCoastline();
+        if (coastline == null || coastline.getOuterBoundaries().isEmpty()) {
+            showTheSea = false;
+            showTheSeaCheckBox.setEnabled(false);
+        }
+        showTheSeaCheckBox.setSelected(showTheSea);
+        showTheSeaCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showTheSea = showTheSeaCheckBox.isSelected();
+                    panel.repaint();
+                }});
+        showMapPanel.add(showTheSeaCheckBox);
+        checkbox_panel.add(showMapPanel);
 
         // 仕切り線
         checkbox_panel.add(new JSeparator(SwingConstants.HORIZONTAL));
@@ -2016,6 +2037,14 @@ public class SimulationFrame2D extends JFrame
 
     public boolean isShowBackgroundMap() {
         return showBackgroundMap;
+    }
+
+    public void setShowTheSea(boolean showTheSea) {
+        this.showTheSea = showTheSea;
+    }
+
+    public boolean isShowTheSea() {
+        return showTheSea;
     }
 
     /* access to the object(nodes, links, agents, sub-groups)

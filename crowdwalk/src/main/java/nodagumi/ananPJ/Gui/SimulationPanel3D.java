@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -51,6 +52,12 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Window;
+
+import org.poly2tri.Poly2Tri;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonPoint;
+import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentAppearance3D;
@@ -115,6 +122,16 @@ public class SimulationPanel3D extends StackPane {
     public static final Color HOVER_COLOR = Color.BLUE;
 
     /**
+     * 海面ポリゴンの標高値(m)
+     */
+    private static final double SEA_LEVEL = -1.5;
+
+    /**
+     * 属性を扱うハンドラ
+     */
+    private CrowdWalkPropertiesHandler properties = null;
+
+    /**
      * 地図データ。
      */
     private NetworkMap networkMap;
@@ -139,6 +156,11 @@ public class SimulationPanel3D extends StackPane {
      * マップのシェイプを構成する Group ノード
      */
     private Group mapGroup = new Group();
+
+    /**
+     * 海面ポリゴンを構成する Group ノード
+     */
+    private Group seaGroup = new Group();
 
     /**
      * マップの背景地図を構成する Group ノード
@@ -472,13 +494,10 @@ public class SimulationPanel3D extends StackPane {
      */
     public class TrianglePolygon extends TriangleMesh {
         private final float[] texCoords = {
-            1, 1,
-            1, 0,
-            0, 1,
             0, 0
         };
         private final int[] faces = {
-            0, 0, 1, 1, 2, 2
+            0, 0, 1, 0, 2, 0
         };
 
         public TrianglePolygon(Point3D[] vertices) {
@@ -526,15 +545,16 @@ public class SimulationPanel3D extends StackPane {
      * コンストラクタ
      */
     public SimulationPanel3D(int panelWidth, int panelHeight, NetworkMap networkMap, boolean atActualWidth,
-            double verticalScale, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles) {
+            double verticalScale, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles, Coastline coastline) {
         this.networkMap = networkMap;
         this.atActualWidth = atActualWidth;
         this.verticalScale = verticalScale;
+        this.properties = properties;
 
         init(properties);
 
         // シーングラフの構築
-        SubScene networkMapScene = createNetworkMapScene(panelWidth, panelHeight, mapTiles);
+        SubScene networkMapScene = createNetworkMapScene(panelWidth, panelHeight, mapTiles, coastline);
         getChildren().add(networkMapScene);
         getChildren().add(createLogoPane());
         pickingPane = createPickingPane();
@@ -702,7 +722,11 @@ public class SimulationPanel3D extends StackPane {
     /**
      * NetworkMap のシーングラフを作成する.
      */
-    public SubScene createNetworkMapScene(int panelWidth, int panelHeight, ArrayList<GsiTile> mapTiles) {
+    public SubScene createNetworkMapScene(int panelWidth, int panelHeight, ArrayList<GsiTile> mapTiles, Coastline coastline) {
+        // 海面ポリゴンのシーングラフ
+        createSea(coastline);
+        mapGroup.getChildren().add(seaGroup);
+
         // 背景地図のシーングラフ
         createBackgroundMap(mapTiles);
         mapGroup.getChildren().add(backgroundMapGroup);
@@ -1225,6 +1249,53 @@ public class SimulationPanel3D extends StackPane {
     private synchronized void notifyClicked() {
         if (hoverType != null && observable.countObservers() > 0) {
             observable.notifyObservers(currentHoverObject);
+        }
+    }
+
+    /**
+     * 海面ポリゴンのシーングラフを作成する
+     */
+    public void createSea(Coastline coastline) {
+        if (coastline == null || coastline.getOuterBoundaries().isEmpty()) {
+            return;
+        }
+        for (ArrayList<java.awt.geom.Point2D> boundary : coastline.getOuterBoundaries()) {
+            ArrayList<PolygonPoint> outerPoints = new ArrayList();
+            for (java.awt.geom.Point2D point : boundary) {
+                outerPoints.add(new PolygonPoint(point.getX(), point.getY(), -SEA_LEVEL));
+            }
+            Polygon polygon = new Polygon(outerPoints);
+            for (ArrayList<java.awt.geom.Point2D> innerBoundary : coastline.getInnerBoundaries(boundary)) {
+                ArrayList<PolygonPoint> innerPoints = new ArrayList();
+                for (java.awt.geom.Point2D point : innerBoundary) {
+                    innerPoints.add(new PolygonPoint(point.getX(), point.getY(), -SEA_LEVEL));
+                }
+                polygon.addHole(new Polygon(innerPoints));
+            }
+            try {
+                Poly2Tri.triangulate(polygon);
+            } catch (RuntimeException e) {
+                // TODO: 要デバッグ
+                Itk.logError("RuntimeException", e.getMessage());
+                Itk.logError("Bug", "Please change the setting value of \"gsi_tile_zoom\" in the property file.");
+                System.exit(1);
+            }
+
+            PhongMaterial material = new PhongMaterial();
+            material.setDiffuseColor(FxColor.AEGEANBLUE);
+
+            Point3D[] vertices = new Point3D[3];
+            for (DelaunayTriangle triangle : polygon.getTriangles()) {
+                for (int index = 0; index < 3; index++) {
+                    TriangulationPoint point = triangle.points[index];
+                    vertices[index] = new Point3D(point.getX(), point.getY(), point.getZ());
+                }
+                MeshView shape = new MeshView(new TrianglePolygon(vertices));
+                shape.setDrawMode(DrawMode.FILL);
+                shape.setCullFace(CullFace.NONE);
+                shape.setMaterial(material);
+                seaGroup.getChildren().add(shape);
+            }
         }
     }
 
@@ -2166,6 +2237,13 @@ public class SimulationPanel3D extends StackPane {
      */
     public void setShowBackgroundMap(boolean showBackgroundMap) {
         backgroundMapGroup.setVisible(showBackgroundMap);
+    }
+
+    /**
+     * 海面の表示/非表示を切り替える
+     */
+    public void setShowTheSea(boolean showTheSea) {
+        seaGroup.setVisible(showTheSea);
     }
 
     /**

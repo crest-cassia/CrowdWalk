@@ -17,6 +17,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -246,6 +247,16 @@ public class SimulationPanel2D extends JPanel {
     private HashMap<AgentBase, AgentViewBase2D> agentViewCache = new HashMap();
 
     /**
+     * 海面ポリゴンの外側座標リスト
+     */
+    private ArrayList<Path2D> outerBoundaries = new ArrayList();
+
+    /**
+     * 海面ポリゴンの内側座標リスト
+     */
+    private ArrayList<Path2D> innerBoundaries = new ArrayList();
+
+    /**
      * 表示更新済みフラグ
      */
     private boolean updated = false;
@@ -334,6 +345,17 @@ public class SimulationPanel2D extends JPanel {
         for (MapLink link : frame.getLinks()) {
             if (! link.hasSubTag("POLYGON")) {
                 regularLinks.add(link);
+            }
+        }
+
+        // 海面描画の準備
+        Coastline coastline = frame.getLauncher().getCoastline();
+        if (coastline != null) {
+            for (ArrayList<Point2D> boundary : coastline.getOuterBoundaries()) {
+                outerBoundaries.add(Coastline.pointListToPath2D(boundary));
+            }
+            for (ArrayList<Point2D> boundary : coastline.getIslands()) {
+                innerBoundaries.add(Coastline.pointListToPath2D(boundary));
             }
         }
     }
@@ -546,6 +568,18 @@ public class SimulationPanel2D extends JPanel {
         g2.translate(tx, ty);
         g2.scale(scale, scale);
         setScaleFixedFont(g2, FONT_NAME, Font.PLAIN, 14);
+
+        // 海面の描画
+        if (frame.isShowTheSea()) {
+            g2.setColor(Color2D.AEGEANBLUE);
+            for (Path2D boundary : outerBoundaries) {
+                g2.fill(boundary);
+            }
+            g2.setColor(Color.WHITE);
+            for (Path2D boundary : innerBoundaries) {
+                g2.fill(boundary);
+            }
+        }
 
         // 背景地図の描画
         if (frame.isShowBackgroundMap()) {

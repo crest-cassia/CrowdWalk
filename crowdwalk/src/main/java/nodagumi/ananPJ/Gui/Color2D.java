@@ -26,6 +26,8 @@ public class Color2D {
     static public final Color ARED = new Color(1.0f, 0.7f, 0.7f);
     static public final Color PURPLE = new Color(1.0f, 0.0f, 1.0f);
     static public final Color PRED = new Color(0.7f, 0.0f, 0.0f);
+    static public final Color AQUABLUE = new Color(144, 205, 241);
+    static public final Color AEGEANBLUE = new Color(138, 207, 255);
 
     static public final Color BACKGROUND_3D_COLOR = new Color(0.98f, 0.98f, 0.98f);
     static public final Color DEFAULT_LINK_COLOR = new Color(0.1f, 0.1f, 0.1f);
@@ -44,12 +46,12 @@ public class Color2D {
     public static final String[] NAMES = {
         "BLACK", "BLACK2", "GRAY", "GRAY2", "LIGHTGRAY", "RED", "GREEN", "BLUE", "DARKBLUE", "LIGHTBLUE",
         "SLATEBLUE", "TURQUOISE", "YELLOW", "WHITE", "PINK", "LIGHTB", "APINK", "ALIGHTB", "ARED", "PURPLE",
-        "PRED", "BACKGROUND_3D_COLOR", "DEFAULT_LINK_COLOR", "DEFAULT_AGENT_COLOR"
+        "PRED", "AQUABLUE", "AEGEANBLUE", "BACKGROUND_3D_COLOR", "DEFAULT_LINK_COLOR", "DEFAULT_AGENT_COLOR"
     };
     public static final Color[] COLORS = {
         BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE, LIGHTBLUE,
         SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK, ALIGHTB, ARED, PURPLE,
-        PRED, BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
+        PRED, AQUABLUE, AEGEANBLUE, BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
     };
 
     public static Color getColor(String name) {

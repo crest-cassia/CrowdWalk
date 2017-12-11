@@ -51,6 +51,10 @@ dependencies {
     compile 'org.osgeo:proj4j:0.1.0'
     compile 'math.geom2d:javaGeom:0.11.1'
     compile 'com.opencsv:opencsv:3.8'
+    // https://mvnrepository.com/artifact/org.orbisgis/poly2tri-core
+    compile group: 'org.orbisgis', name: 'poly2tri-core', version: '0.1.2'
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 }
 
 sourceSets {

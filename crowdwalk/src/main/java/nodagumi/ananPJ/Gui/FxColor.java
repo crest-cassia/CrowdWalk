@@ -24,6 +24,8 @@ public class FxColor {
     public static final Color ARED = Color.color(1.0, 0.7, 0.7);
     public static final Color PURPLE = Color.color(1.0, 0.0, 1.0);
     public static final Color PRED = Color.color(0.7, 0.0, 0.0);
+    public static final Color AQUABLUE = Color.rgb(144, 205, 241);
+    public static final Color AEGEANBLUE = Color.rgb(138, 207, 255);
     public static final Color LINK_RED = Color.color(1.0, 0.3, 0.3);
 
     public static final Color BACKGROUND_3D_COLOR = Color.color(0.98, 0.98, 0.98);
@@ -40,12 +42,12 @@ public class FxColor {
     public static final String[] NAMES = {
         "BLACK", "BLACK2", "GRAY", "GRAY2", "LIGHTGRAY", "RED", "GREEN", "BLUE", "DARKBLUE", "LIGHTBLUE",
         "SLATEBLUE", "TURQUOISE", "YELLOW", "WHITE", "PINK", "LIGHTB", "APINK", "ALIGHTB", "ARED", "PURPLE",
-        "PRED", "BACKGROUND_3D_COLOR", "DEFAULT_LINK_COLOR", "DEFAULT_AGENT_COLOR"
+        "PRED", "AQUABLUE", "AEGEANBLUE", "BACKGROUND_3D_COLOR", "DEFAULT_LINK_COLOR", "DEFAULT_AGENT_COLOR"
     };
     public static final Color[] COLORS = {
         BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE, LIGHTBLUE,
         SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK, ALIGHTB, ARED, PURPLE,
-        PRED, BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
+        PRED, AQUABLUE, AEGEANBLUE, BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
     };
 
     public static Color speedToColor(double speed) {

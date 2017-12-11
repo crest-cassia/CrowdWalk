@@ -216,7 +216,8 @@ public class SimulationFrame3D extends Stage implements Observer {
         Node menuBar = createMenu();
 
         // シミュレーションパネルの準備
-        panel = new SimulationPanel3D(width, height, networkMap, atActualWidth, launcher.getVerticalScale(), properties, mapTiles);
+        Coastline coastline = launcher.getCoastline();
+        panel = new SimulationPanel3D(width, height, networkMap, atActualWidth, launcher.getVerticalScale(), properties, mapTiles, coastline);
         panel.setPrefSize(width, height);
         panel.setShow3dPolygon(launcher.isShow3dPolygon());
         panel.setShowBackgroundMap(launcher.isShowBackgroundMap());
@@ -239,7 +240,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         // タブパネルの準備
         controlTab.setContent(createControlPane());
         controlTab.setClosable(false);
-        viewTab.setContent(createViewPane(! (mapTiles == null || mapTiles.isEmpty())));
+        viewTab.setContent(createViewPane(! (mapTiles == null || mapTiles.isEmpty()), ! (coastline == null || coastline.getOuterBoundaries().isEmpty())));
         viewTab.setClosable(false);
         cameraTab.setContent(createCameraPane());
         cameraTab.setClosable(false);
@@ -599,7 +600,7 @@ public class SimulationFrame3D extends Stage implements Observer {
     /**
      * View タブを作成する
      */
-    private Pane createViewPane(boolean backgroundMapEnabled) {
+    private Pane createViewPane(boolean backgroundMapEnabled, boolean theSeaEnabled) {
         // 垂直スケール
 
         Label label = new Label("Vertical scale");
@@ -730,7 +731,18 @@ public class SimulationFrame3D extends Stage implements Observer {
         showBackgroundMapCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
             panel.setShowBackgroundMap(newValue);
         });
-        checkboxPanel.getChildren().add(showBackgroundMapCheckBox);
+
+        // 海面表示の ON/OFF
+        CheckBox showTheSeaCheckBox = new CheckBox("Show the sea");
+        showTheSeaCheckBox.setSelected(theSeaEnabled && launcher.isShowTheSea());
+        showTheSeaCheckBox.setDisable(! theSeaEnabled);
+        showTheSeaCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
+            panel.setShowTheSea(newValue);
+        });
+
+        FlowPane showMapPanel = new FlowPane(12, 0);
+        showMapPanel.getChildren().addAll(showBackgroundMapCheckBox, showTheSeaCheckBox);
+        checkboxPanel.getChildren().add(showMapPanel);
 
         // スクリーンショットを撮る
         record_snapshots.setSelected(launcher.isRecordSimulationScreen());
@@ -1261,7 +1273,16 @@ public class SimulationFrame3D extends Stage implements Observer {
                 Point3D translate = next_camera.translate.subtract(last_camera.translate).multiply(ratio).add(last_camera.translate);
                 Point3D pivot = next_camera.pivot.subtract(last_camera.pivot).multiply(ratio).add(last_camera.pivot);
                 double rotateX = (next_camera.rotateX - last_camera.rotateX) * ratio + last_camera.rotateX;
-                double rotateZ = (next_camera.rotateZ - last_camera.rotateZ) * ratio + last_camera.rotateZ;
+                double drot = next_camera.rotateZ - last_camera.rotateZ;
+                // 補完する角度が180度を超えている場合は、(360度- 角度)の遷移と判断する
+                if (drot > 180.0 || drot <= -180.0) {
+                    if (Math.signum(drot) == 1.0) {
+                        drot -= 360.0;
+                    } else {
+                        drot += 360.0;
+                    }
+                }
+                double rotateZ = drot * ratio + last_camera.rotateZ;
                 double zoom_scale = (next_camera.zoom - last_camera.zoom) * ratio + last_camera.zoom;
                 panel.updateTransform(translate, pivot, rotateX, rotateZ, zoom_scale);
             }

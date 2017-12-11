@@ -1,6 +1,8 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +11,13 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON;
 
+import nodagumi.ananPJ.Gui.Coastline;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
+import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
@@ -82,6 +86,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected ArrayList<GsiTile> mapTiles = null;
 
     /**
+     * 海岸線
+     */
+    protected Coastline coastline = null;
+
+    /**
      * Properties
      */
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
@@ -93,6 +102,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected double zoom = 1.0;
     protected boolean showBackgroundImage = false;
     protected boolean showBackgroundMap = false;
+    protected boolean showTheSea = false;
     protected boolean recordSimulationScreen = false;
     protected String screenshotDir = "screenshots";
     protected boolean clearScreenshotDir = false;
@@ -109,6 +119,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected boolean show3dPolygon = true;
     protected boolean exitWithSimulationFinished = false;
     protected String agentAppearanceFile = null;
+    protected int gsiTileZoom = 14;
 
     /**
      * 画像ファイルかどうかをファイル名の拡張子で判別するフィルタ
@@ -160,6 +171,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         settings = _settings;
         exitOnClose = true;
         loadGsiTiles();
+        loadCoastlines();
     }
 
     /**
@@ -179,6 +191,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         setExitCount(properties.getExitCount()) ;
         setIsAllAgentSpeedZeroBreak(properties.getIsAllAgentSpeedZeroBreak());
         loadGsiTiles();
+        loadCoastlines();
     }
 
     public void simulate() {
@@ -318,6 +331,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             agentAppearanceFile = properties.getFilePath("agent_appearance_file", null);
             showBackgroundImage = properties.getBoolean("show_background_image", false);
             showBackgroundMap = properties.getBoolean("show_background_map", false);
+            showTheSea = properties.getBoolean("show_the_sea", false);
             recordSimulationScreen = properties.getBoolean("record_simulation_screen", recordSimulationScreen);
             screenshotDir = properties.getDirectoryPath("screenshot_dir", screenshotDir).replaceFirst("[/\\\\]+$", "");
             clearScreenshotDir = properties.getBoolean("clear_screenshot_dir", clearScreenshotDir);
@@ -390,15 +404,65 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected void loadGsiTiles() {
         try {
             String tileName = properties.getString("gsi_tile_name", GsiTile.DATA_ID_PALE);
-            int zoom = properties.getInteger("gsi_tile_zoom", 14);
+            gsiTileZoom = properties.getInteger("gsi_tile_zoom", gsiTileZoom);
             MapPartGroup root = (MapPartGroup)map.getRoot();
             int zone = properties.getInteger("zone", root.getZone());
             if (zone != 0) {
-                mapTiles = GsiTile.loadGsiTiles(map, tileName, zoom, zone);
+                mapTiles = GsiTile.loadGsiTiles(map, tileName, gsiTileZoom, zone);
             }
         } catch(Exception e) {
-            System.err.println(e.getMessage());
+            Itk.logError("loadGsiTiles error", e.getMessage());
         }
+    }
+
+    /**
+     * 海岸線の準備
+     */
+    protected void loadCoastlines() {
+        if (mapTiles == null) {
+            return;
+        }
+        try {
+            ArrayList<String> fileNames = new ArrayList();
+            for (String fileName : properties.getString("coastline_file", "").split(",")) {
+                if (! fileName.isEmpty()) {
+                    fileNames.add(properties.furnishPropertiesDirPath(fileName, true, false));
+                }
+            }
+            if (fileNames.isEmpty()) {
+                return;
+            }
+
+            Rectangle2D boundary = new Rectangle2D.Double();
+            for (GsiTile mapTile : mapTiles) {
+                if (boundary.isEmpty()) {
+                    boundary.setFrameFromDiagonal(mapTile.getPoint(), mapTile.getLowerRightPoint());
+                } else {
+                    boundary.add(mapTile.getPoint());
+                    boundary.add(mapTile.getLowerRightPoint());
+                }
+            }
+            Itk.logInfo("Region of coastline", String.format("(%f, %f)-(%f, %f)", boundary.getX(), boundary.getY(), boundary.getMaxX(), boundary.getMaxY()));
+
+            String cachePath = GsiTile.makeCachePath();
+            GsiTile mapTile = mapTiles.get(0);
+            double elevation = GsiAccessor.getElevation(cachePath, mapTile.getTileNumberX(), mapTile.getTileNumberY(), gsiTileZoom);
+
+            coastline = new Coastline();
+            for (String fileName : fileNames) {
+                coastline.read(fileName, boundary);
+            }
+            coastline.polygonization(boundary, elevation == 0.0);
+        } catch(Exception e) {
+            Itk.logError("loadCoastlines error", e.getMessage());
+        }
+    }
+
+    /**
+     * 海岸線を取得する
+     */
+    public Coastline getCoastline() {
+        return coastline;
     }
 
     //// properties 変数用のアクセサ ////

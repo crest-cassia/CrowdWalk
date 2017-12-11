@@ -4,9 +4,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.HashMap;
 import javax.imageio.ImageIO;
+
+import net.arnx.jsonic.JSON;
 
 import nodagumi.Itk.*;
 
@@ -92,5 +97,36 @@ public class GsiAccessor {
             Thread.sleep(500);
         } catch(InterruptedException e) {}
         return true;
+    }
+
+    /**
+     * 地理院タイルの左上点の標高値を取得する
+     */
+    public static double getElevation(String cachePath, int x, int y, int zoom) {
+        String _cachePath = cachePath.replaceFirst("[/\\\\]$", "");
+        String filePath = String.format("%s/elevation_%d_%d_%d.json", _cachePath, zoom, x, y);
+        File file = new File(filePath);
+        if (! file.exists()) {
+            // 国土地理院Webの標高APIにアクセスして標高値を取得し、キャッシュファイルに保存する
+            Rectangle2D tileRect = tile2boundingBox(x, y, zoom);
+            String url = String.format("http://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=%s&lat=%s&outtype=JSON", tileRect.getX(), tileRect.getY());
+            try {
+                Itk.logInfo("Access to", url);
+                Files.copy(new URL(url).openStream(), file.toPath());
+            } catch (IOException e) {
+                Itk.logError("IOException", e.getMessage());
+                return 0.0;
+            }
+        }
+        String elevation = "";
+        try {
+            Itk.logInfo("Read elevation file", filePath);
+            HashMap<String, Object> json = JSON.decode(new FileInputStream(filePath));
+            elevation = json.get("elevation").toString();
+            return new Double(elevation).doubleValue();
+        } catch (Exception e) {
+            Itk.logError(e.getMessage(), elevation);
+        }
+        return 0.0;
     }
 }

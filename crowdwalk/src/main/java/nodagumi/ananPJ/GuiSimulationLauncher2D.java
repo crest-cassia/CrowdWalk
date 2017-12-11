@@ -189,6 +189,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
         frame.setAgentSize(agentSize);
         frame.setShowBackgroundImage(showBackgroundImage);
         frame.setShowBackgroundMap(showBackgroundMap);
+        frame.setShowTheSea(showTheSea);
         frame.setRecordSimulationScreen(recordSimulationScreen);
         frame.setScreenshotDir(screenshotDir);
         frame.setClearScreenshotDir(clearScreenshotDir);
