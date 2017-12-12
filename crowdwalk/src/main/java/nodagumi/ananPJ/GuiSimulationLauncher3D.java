@@ -51,6 +51,19 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
     }
 
     /**
+     * シミュレーションの pause 要求。
+     */
+    @Override
+    public void pauseRequest() {
+        pause();
+        Platform.runLater(() -> {
+            if (simulationFrame.getStartButton().isSelected()) {
+                simulationFrame.getStartButton().fire();
+            }
+        });
+    }
+
+    /**
      * サイクル毎の画面描画
      */
     public void updateEveryTick(final SimTime currentTime) {
@@ -75,7 +88,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
             // 画面の更新が完了するまで待つ
             try {
                 latch.await();
-            } catch (InterruptedException e) {} 
+            } catch (InterruptedException e) {}
         } else {
             Platform.runLater(() -> {
                 simulationFrame.updateCamerawork(currentTime);

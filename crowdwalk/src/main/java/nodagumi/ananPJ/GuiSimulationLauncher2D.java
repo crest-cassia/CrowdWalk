@@ -42,6 +42,21 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
     }
 
     /**
+     * シミュレーションの pause 要求。
+     */
+    @Override
+    public void pauseRequest() {
+        pause();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (simulationFrame.getStartButton().isSelected()) {
+                    simulationFrame.getStartButton().doClick();
+                }
+            }
+        });
+    }
+
+    /**
      * サイクル毎の画面描画
      */
     public void updateEveryTick(SimTime currentTime) {

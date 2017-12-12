@@ -403,12 +403,12 @@ public abstract class BasicSimulationLauncher {
 
     //------------------------------------------------------------
     /**
-     * シミュレーションのpause。
+     * シミュレーションの pause 要求。
      * GUI モードの時には、paused を on にするなどの処理を行う。
      * それらの処理は GuiSimulationLauncher に定義。
      * CUI モードではなにもしない。
      */
-    public void pause() {
+    public void pauseRequest() {
         /* do nothing in default */
     }
     

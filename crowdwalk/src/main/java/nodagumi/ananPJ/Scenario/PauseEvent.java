@@ -48,7 +48,7 @@ public class PauseEvent extends EventBase {
      */
     @Override
     public boolean occur(SimTime currentTime, NetworkMap map) {
-        getScenario().getSimulationLauncher().pause() ;
+        getScenario().getSimulationLauncher().pauseRequest() ;
 	return true ;
     }
 

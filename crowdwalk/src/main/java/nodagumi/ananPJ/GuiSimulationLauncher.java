@@ -245,11 +245,6 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         }
     }
 
-    //------------------------------------------------------------
-    /**
-     * シミュレーションのpause。
-     */
-    @Override
     public void pause() {
         synchronized (simulationRunnable) {
             paused = true ;
