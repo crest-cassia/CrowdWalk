@@ -47,6 +47,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
@@ -379,6 +380,11 @@ public class EditorFrameFx {
             try {
                 boolean simulationWindowOpen = editor.getProperties().getBoolean("simulation_window_open", false);
                 boolean autoSimulationStart = editor.getProperties().getBoolean("auto_simulation_start", false);
+
+                if (! autoSimulationStart) {
+                    totalValidation(false, null);
+                }
+
                 if (simulationWindowOpen || autoSimulationStart) {
                     if (editor.getNetworkMapFile() == null || editor.getGenerationFile() == null || editor.getScenarioFile() == null) {
                         // プロパティファイルの設定が足りないためシミュレーションを開始することが出来ません
@@ -669,16 +675,33 @@ public class EditorFrameFx {
 
         Menu actionMenu = new Menu("Validation");
 
-        MenuItem miCalculateTagPaths = new MenuItem("Calculate tag paths");
-        miCalculateTagPaths.setOnAction(e -> openCalculateTagPathsDialog());
+        MenuItem miTotalValidation = new MenuItem("Total validation");
+        miTotalValidation.setOnAction(e -> totalValidation(true, null));
 
         MenuItem miCheckForPiledNodes = new MenuItem("Check for node in same position");
         miCheckForPiledNodes.setOnAction(e -> checkForPiledNodes());
 
+        MenuItem miCheckLinksWhereNodeDoesNotExist = new MenuItem("Check links where node does not exist");
+        miCheckLinksWhereNodeDoesNotExist.setOnAction(e -> checkLinksWhereNodeDoesNotExist());
+
+        MenuItem miCheckLoopedLinks = new MenuItem("Check for looped link");
+        miCheckLoopedLinks.setOnAction(e -> checkLoopedLinks());
+
+        MenuItem miCheck0LengthLinks = new MenuItem("Check for zero length link");
+        miCheck0LengthLinks.setOnAction(e -> check0LengthLinks());
+
+        MenuItem miCheckDuplicateLinks = new MenuItem("Check for duplicate link");
+        miCheckDuplicateLinks.setOnAction(e -> checkDuplicateLinks());
+
+        MenuItem miCalculateTagPaths = new MenuItem("Calculate tag paths");
+        miCalculateTagPaths.setOnAction(e -> openCalculateTagPathsDialog());
+
         MenuItem miCheckReachability = new MenuItem("Check reachability");
         miCheckReachability.setOnAction(e -> checkForReachability());
+        // TODO: 正常に機能していないので無効にした
+        miCheckReachability.setDisable(true);
 
-        actionMenu.getItems().addAll(miCalculateTagPaths, miCheckForPiledNodes, miCheckReachability);
+        actionMenu.getItems().addAll(miTotalValidation, miCheckForPiledNodes, miCheckLinksWhereNodeDoesNotExist, miCheckLoopedLinks, miCheck0LengthLinks, miCheckDuplicateLinks, miCalculateTagPaths, miCheckReachability);
 
         /* Help menu */
 
@@ -1289,6 +1312,11 @@ public class EditorFrameFx {
             saveMapAs();
             return;
         }
+
+        if (! totalValidation(false, "Do you wish to continue anyway?")) {
+            return;
+        }
+
         if (! editor.saveMap()) {
             Alert alert = new Alert(AlertType.ERROR, "Save map file failed: " + fileName, ButtonType.OK);
             alert.showAndWait();
@@ -1299,6 +1327,10 @@ public class EditorFrameFx {
      * マップファイルに名前を付けて保存する
      */
     public void saveMapAs() {
+        if (! totalValidation(false, "Do you wish to continue anyway?")) {
+            return;
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save map as");
         String fileName = editor.getNetworkMapFile();
@@ -1549,34 +1581,300 @@ public class EditorFrameFx {
     }
 
     /**
+     * 詳細表示機能付きのアラートダイアログを表示する
+     */
+    public Optional<ButtonType> alert(AlertType alertType, String title, String headerText, String contentText, String expandableContentText, ButtonType... buttonTypes) {
+        Alert alert = new Alert(alertType);
+        if (buttonTypes.length > 0) {
+            alert.getButtonTypes().clear();
+            for (ButtonType buttonType : buttonTypes) {
+                alert.getButtonTypes().add(buttonType);
+            }
+        }
+        if (title != null && ! title.isEmpty()) {
+            alert.setTitle(title);
+        }
+        if (headerText != null && ! headerText.isEmpty()) {
+            alert.setHeaderText(headerText);
+        }
+        if (contentText != null && ! contentText.isEmpty()) {
+            alert.setContentText(contentText + (expandableContentText != null && ! expandableContentText.isEmpty() ? "\n\n" : ""));
+        }
+        if (expandableContentText != null && ! expandableContentText.isEmpty()) {
+            TextArea textArea = new TextArea(expandableContentText);
+            textArea.setEditable(false);
+            alert.getDialogPane().setExpandableContent(textArea);
+        }
+        return alert.showAndWait();
+    }
+
+    /**
      * ノード座標の重複をチェックする
      */
     public void checkForPiledNodes() {
+        String title = "Check for node in same position";
         for (MapNode node : editor.getMap().getNodes()) {
             if (node.selected) {
-                Alert alert = new Alert(AlertType.WARNING, "Cancel all node selections before executing.", ButtonType.OK);
-                alert.showAndWait();
+                alert(AlertType.WARNING, title, "Cancel all node selections before executing.", null, null, ButtonType.OK);
                 return;
             }
             if (! nodePanel.getFilteredSet().contains(node)) {
-                Alert alert = new Alert(AlertType.WARNING, "Cancel node filter before executing.", ButtonType.OK);
-                alert.showAndWait();
+                alert(AlertType.WARNING, title, "Cancel node filter before executing.", null, null, ButtonType.OK);
                 return;
             }
         }
 
         ArrayList<MapNode> piledNodes = editor.getPiledNodes();
         if (piledNodes.isEmpty()) {
-            Alert alert = new Alert(AlertType.INFORMATION, "No nodes with the same position.", ButtonType.OK);
-            alert.showAndWait();
+            alert(AlertType.INFORMATION, title, "No nodes with the same position.", null, null, ButtonType.OK);
             return;
         }
 
-        Alert alert = new Alert(AlertType.CONFIRMATION, "" + piledNodes.size() + " collisions were found.\nResolve them?", ButtonType.YES, ButtonType.NO);
-        Optional<ButtonType> result = alert.showAndWait();
+        StringBuilder buff = new StringBuilder();
+        for (MapNode node : piledNodes) {
+            Itk.logWarn_("Piled node found", node.toShortInfo());
+            buff.append(String.format("(%s, %s, %s) ", node.getX(), node.getY(), node.getHeight()));
+            buff.append(node.toShortInfo());
+            buff.append("\n");
+        }
+        Optional<ButtonType> result = alert(AlertType.WARNING, title, "" + piledNodes.size() + " piled nodes found.", "Resolve them?", buff.toString(), ButtonType.YES, ButtonType.NO);
         if (result.isPresent() && result.get() == ButtonType.YES) {
             nodePanel.select(piledNodes);
         }
+    }
+
+    /**
+     * ノードが null のリンクがないかをチェックする
+     */
+    public void checkLinksWhereNodeDoesNotExist() {
+        if (editor.getMap().checkConsistency()) {
+            alert(AlertType.INFORMATION, "Check links where node does not exist", "There is no problem.", null, null, ButtonType.OK);
+        } else {
+            alert(AlertType.WARNING, "Check links where node does not exist", "There are links where the node does not exist.\nLook at the command line message.", null, null, ButtonType.OK);
+        }
+    }
+
+    /**
+     * ループしたリンクがないかをチェックする
+     */
+    public void checkLoopedLinks() {
+        String title = "Check for looped link";
+        for (MapLink link : editor.getMap().getLinks()) {
+            if (link.selected) {
+                alert(AlertType.WARNING, title, "Cancel all link selections before executing.", null, null, ButtonType.OK);
+                return;
+            }
+            if (! linkPanel.getFilteredSet().contains(link)) {
+                alert(AlertType.WARNING, title, "Cancel link filter before executing.", null, null, ButtonType.OK);
+                return;
+            }
+        }
+
+        ArrayList<MapLink> loopedLinks = editor.getLoopedLinks();
+        if (loopedLinks.isEmpty()) {
+            alert(AlertType.INFORMATION, title, "Looped link does not exist.", null, null, ButtonType.OK);
+            return;
+        }
+
+        StringBuilder buff = new StringBuilder();
+        for (MapLink link : loopedLinks) {
+            Itk.logWarn_("Looped link found", link.toShortInfo());
+            buff.append(link.toShortInfo());
+            buff.append("\n");
+        }
+        Optional<ButtonType> result = alert(AlertType.WARNING, title, "" + loopedLinks.size() + " looped links found.", "Resolve them?", buff.toString(), ButtonType.YES, ButtonType.NO);
+        if (result.isPresent() && result.get() == ButtonType.YES) {
+            linkPanel.select(loopedLinks);
+        }
+    }
+
+    /**
+     * 長さ 0 (以下)のリンクがないかをチェックする
+     */
+    public void check0LengthLinks() {
+        String title = "Check for zero length link";
+        for (MapLink link : editor.getMap().getLinks()) {
+            if (link.selected) {
+                alert(AlertType.WARNING, title, "Cancel all link selections before executing.", null, null, ButtonType.OK);
+                return;
+            }
+            if (! linkPanel.getFilteredSet().contains(link)) {
+                alert(AlertType.WARNING, title, "Cancel link filter before executing.", null, null, ButtonType.OK);
+                return;
+            }
+        }
+
+        ArrayList<MapLink> zeroLengthLinks = editor.get0LengthLinks();
+        if (zeroLengthLinks.isEmpty()) {
+            alert(AlertType.INFORMATION, title, "Zero length link does not exist.", null, null, ButtonType.OK);
+            return;
+        }
+
+        StringBuilder buff = new StringBuilder();
+        for (MapLink link : zeroLengthLinks) {
+            Itk.logWarn_("Zero length link found", link.toShortInfo());
+            buff.append(link.toShortInfo());
+            buff.append("\n");
+        }
+        Optional<ButtonType> result = alert(AlertType.WARNING, title, "" + zeroLengthLinks.size() + " zero length links found.", "Resolve them?", buff.toString(), ButtonType.YES, ButtonType.NO);
+        if (result.isPresent() && result.get() == ButtonType.YES) {
+            linkPanel.select(zeroLengthLinks);
+        }
+    }
+
+    /**
+     * 重複したリンクがないかをチェックする
+     */
+    public void checkDuplicateLinks() {
+        String title = "Check for duplicate link";
+        for (MapLink link : editor.getMap().getLinks()) {
+            if (link.selected) {
+                alert(AlertType.WARNING, title, "Cancel all link selections before executing.", null, null, ButtonType.OK);
+                return;
+            }
+            if (! linkPanel.getFilteredSet().contains(link)) {
+                alert(AlertType.WARNING, title, "Cancel link filter before executing.", null, null, ButtonType.OK);
+                return;
+            }
+        }
+
+        HashMap<String, ArrayList<MapLink>> duplicateLinks = editor.getDuplicateLinks();
+        if (duplicateLinks.isEmpty()) {
+            alert(AlertType.INFORMATION, title, "Duplicate link does not exist.", null, null, ButtonType.OK);
+            return;
+        }
+
+        ArrayList<MapLink> links = new ArrayList();
+        int n = 1;
+        StringBuilder buff = new StringBuilder();
+        for (String key : duplicateLinks.keySet()) {
+            for (MapLink link : duplicateLinks.get(key)) {
+                Itk.logWarn_("Duplicate link found at place #" + n, link.toShortInfo());
+                links.add(link);
+                buff.append(String.format("Place #%d ", n));
+                buff.append(link.toShortInfo());
+                buff.append("\n");
+            }
+            n++;
+        }
+        Optional<ButtonType> result = alert(AlertType.WARNING, title, "Duplicate links found at " + duplicateLinks.size() + " places.", "Resolve them?", buff.toString(), ButtonType.YES, ButtonType.NO);
+        if (result.isPresent() && result.get() == ButtonType.YES) {
+            linkPanel.select(links);
+        }
+    }
+
+    /**
+     * マップデータの総合的な検証
+     */
+    public boolean totalValidation(boolean alwaysDisplayDialog, String confirmingMessage) {
+        StringBuilder contentBuff = new StringBuilder();
+        StringBuilder buff = new StringBuilder();
+
+        // ノード座標の重複チェック
+        ArrayList<MapNode> piledNodes = editor.getPiledNodes();
+        if (! piledNodes.isEmpty()) {
+            contentBuff.append(piledNodes.size());
+            contentBuff.append(" piled nodes found.");
+
+            buff.append(piledNodes.size());
+            buff.append(" piled nodes found:\n");
+            for (MapNode node : piledNodes) {
+                Itk.logWarn_("Piled node found", node.toShortInfo());
+                buff.append(String.format("(%s, %s, %s) ", node.getX(), node.getY(), node.getHeight()));
+                buff.append(node.toShortInfo());
+                buff.append("\n");
+            }
+            buff.append("\n");
+        }
+
+        // ノードが null のリンクがないかチェック
+        if (! editor.getMap().checkConsistency()) {
+            if (contentBuff.length() > 0) {
+                contentBuff.append("\n");
+            }
+            contentBuff.append("There are links where the node does not exist.");
+        }
+
+        // ループしたリンクのチェック
+        ArrayList<MapLink> loopedLinks = editor.getLoopedLinks();
+        if (! loopedLinks.isEmpty()) {
+            if (contentBuff.length() > 0) {
+                contentBuff.append("\n");
+            }
+            contentBuff.append(loopedLinks.size());
+            contentBuff.append(" looped links found.");
+
+            buff.append(loopedLinks.size());
+            buff.append(" looped links found:\n");
+            for (MapLink link : loopedLinks) {
+                Itk.logWarn_("Looped link found", link.toShortInfo());
+                buff.append(link.toShortInfo());
+                buff.append("\n");
+            }
+            buff.append("\n");
+        }
+
+        // 長さ 0 (以下)のリンクのチェック
+        ArrayList<MapLink> zeroLengthLinks = editor.get0LengthLinks();
+        if (! zeroLengthLinks.isEmpty()) {
+            if (contentBuff.length() > 0) {
+                contentBuff.append("\n");
+            }
+            contentBuff.append(zeroLengthLinks.size());
+            contentBuff.append(" zero length links found.");
+
+            buff.append(zeroLengthLinks.size());
+            buff.append(" zero length links found:\n");
+            for (MapLink link : zeroLengthLinks) {
+                Itk.logWarn_("Zero length link found", link.toShortInfo());
+                buff.append(link.toShortInfo());
+                buff.append("\n");
+            }
+            buff.append("\n");
+        }
+
+        // 重複したリンクのチェック
+        HashMap<String, ArrayList<MapLink>> duplicateLinks = editor.getDuplicateLinks();
+        if (! duplicateLinks.isEmpty()) {
+            if (contentBuff.length() > 0) {
+                contentBuff.append("\n");
+            }
+            contentBuff.append("Duplicate links found at ");
+            contentBuff.append(duplicateLinks.size());
+            contentBuff.append(" places.");
+
+            buff.append("Duplicate links found at ");
+            buff.append(duplicateLinks.size());
+            buff.append(" places:\n");
+            int n = 1;
+            for (String key : duplicateLinks.keySet()) {
+                for (MapLink link : duplicateLinks.get(key)) {
+                    Itk.logWarn_("Duplicate link found at place #" + n, link.toShortInfo());
+                    buff.append(String.format("Place #%d ", n));
+                    buff.append(link.toShortInfo());
+                    buff.append("\n");
+                }
+                n++;
+            }
+        }
+
+        String title = "Total validation of map data";
+        if (contentBuff.length() == 0) {
+            if (alwaysDisplayDialog) {
+                alert(AlertType.INFORMATION, title, "There is no problem.", null, null, ButtonType.OK);
+            }
+            // 何も問題がなければ true
+            return true;
+        }
+
+        if (confirmingMessage == null || confirmingMessage.isEmpty()) {
+            alert(AlertType.WARNING, title, "There are some problems with map data.", contentBuff.toString(), buff.toString(), ButtonType.OK);
+            // 問題があり confirmingMessage が指定されていなければ false
+            return false;
+        }
+        Optional<ButtonType> result = alert(AlertType.WARNING, title, "There are some problems with map data.", contentBuff.toString() + "\n\n" + confirmingMessage, buff.toString(), ButtonType.YES, ButtonType.NO);
+        // 問題があり confirmingMessage が指定されていた場合は YES ならば true、NO ならば false
+        return result.isPresent() && result.get() == ButtonType.YES;
     }
 
     /**

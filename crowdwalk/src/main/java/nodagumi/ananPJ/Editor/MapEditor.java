@@ -1568,26 +1568,90 @@ public class MapEditor implements MapEditorInterface {
 
     /**
      * 他のノードと座標が重複しているノードを取得する
-     * TODO: boolean withHeight
      * TODO: MapChecker に移動
      */
     public ArrayList<MapNode> getPiledNodes() {
-        HashMap<java.awt.geom.Point2D, Boolean> collisions = new HashMap();
+        HashMap<Point3D, Boolean> collisions = new HashMap();
         for (MapNode node : networkMap.getNodes()) {
             java.awt.geom.Point2D coordinates = node.getPosition();
-            if (collisions.get(coordinates) == null) {
-                collisions.put(coordinates, Boolean.FALSE);
+            Point3D point = new Point3D(coordinates.getX(), coordinates.getY(), node.getHeight());
+            if (collisions.get(point) == null) {
+                collisions.put(point, Boolean.FALSE);
             } else {
-                collisions.put(coordinates, Boolean.TRUE);
+                collisions.put(point, Boolean.TRUE);
             }
         }
         ArrayList<MapNode> piledNodes = new ArrayList();
         for (MapNode node : networkMap.getNodes()) {
-            if (collisions.get(node.getPosition())) {
+            java.awt.geom.Point2D coordinates = node.getPosition();
+            Point3D point = new Point3D(coordinates.getX(), coordinates.getY(), node.getHeight());
+            if (collisions.get(point)) {
                 piledNodes.add(node);
             }
         }
         return piledNodes;
+    }
+
+    /**
+     * ループしたリンクを取得する
+     */
+    public ArrayList<MapLink> getLoopedLinks() {
+        ArrayList<MapLink> links = new ArrayList();
+        for (MapLink link : networkMap.getLinks()) {
+            if (link.getFrom() == link.getTo()) {
+                links.add(link);
+            }
+        }
+        return links;
+    }
+
+    /**
+     * 長さ 0 (以下)のリンクを取得する
+     */
+    public ArrayList<MapLink> get0LengthLinks() {
+        ArrayList<MapLink> links = new ArrayList();
+        for (MapLink link : networkMap.getLinks()) {
+            if (link.getLength() <= 0.0) {
+                links.add(link);
+            }
+        }
+        return links;
+    }
+
+    /**
+     * 重複したリンクを取得する
+     */
+    public HashMap<String, ArrayList<MapLink>> getDuplicateLinks() {
+        HashMap<String, ArrayList<MapLink>> duplicateLinks = new HashMap();
+        for (MapLink link : networkMap.getLinks()) {
+            MapNode fromNode = link.getFrom();
+            MapNode toNode = link.getTo();
+            for (MapLink _link : fromNode.getLinks()) {
+                if (_link != link && _link.getOther(fromNode) == toNode) {
+                    String key = null;
+                    if (fromNode.getID().compareTo(toNode.getID()) < 0) {
+                        key = fromNode.getID() + " " + toNode.getID();
+                    } else {
+                        key = toNode.getID() + " " + fromNode.getID();
+                    }
+                    ArrayList<MapLink> links = duplicateLinks.get(key);
+                    if (links == null) {
+                        links = new ArrayList();
+                        links.add(link);
+                        links.add(_link);
+                        duplicateLinks.put(key, links);
+                    } else {
+                        if (! links.contains(link)) {
+                            links.add(link);
+                        }
+                        if (! links.contains(_link)) {
+                            links.add(_link);
+                        }
+                    }
+                }
+            }
+        }
+        return duplicateLinks;
     }
 
     /**
