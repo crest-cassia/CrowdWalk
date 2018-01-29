@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,6 +32,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.apache.batik.ext.awt.geom.Polygon2D;
+
+import org.poly2tri.Poly2Tri;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonPoint;
+import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentAppearance2D;
@@ -44,6 +51,9 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
+import nodagumi.ananPJ.NetworkMap.Polygon.OuterBoundary;
+import nodagumi.ananPJ.NetworkMap.Polygon.InnerBoundary;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.Hover;
@@ -247,14 +257,29 @@ public class SimulationPanel2D extends JPanel {
     private HashMap<AgentBase, AgentViewBase2D> agentViewCache = new HashMap();
 
     /**
-     * 海面ポリゴンの外側座標リスト
+     * 海面ポリゴンの外側境界座標
      */
-    private ArrayList<Path2D> outerBoundaries = new ArrayList();
+    private ArrayList<Path2D> outerCoastlines = new ArrayList();
 
     /**
-     * 海面ポリゴンの内側座標リスト
+     * 海面ポリゴンの内側境界座標
      */
-    private ArrayList<Path2D> innerBoundaries = new ArrayList();
+    private ArrayList<Path2D> innerCoastlines = new ArrayList();
+
+    /**
+     * 平面ポリゴン
+     */
+    private ArrayList<Path2D> planePolygons = new ArrayList();
+
+    /**
+     * 平面ポリゴンの表示色
+     */
+    private ArrayList<Color> planePolygonColors = new ArrayList();
+
+    /**
+     * ポリゴン表示スタイル
+     */
+    private ArrayList<PolygonAppearance> polygonAppearances;
 
     /**
      * 表示更新済みフラグ
@@ -277,8 +302,8 @@ public class SimulationPanel2D extends JPanel {
         networkMap = _networkMap;
         this.backgroundMapTiles = backgroundMapTiles;
 
-        if (properties != null && properties.getPropertiesFile() != null) {
-            try {
+        try {
+            if (properties != null && properties.getPropertiesFile() != null) {
                 String filePath = null;
                 if (properties.isDefined("link_appearance_file")) {
                     filePath = properties.getFilePath("link_appearance_file", null);
@@ -311,6 +336,9 @@ public class SimulationPanel2D extends JPanel {
                 pollutionColorSaturation =
                     properties.getDouble("pollution_color_saturation", 0.0);
 
+                filePath = properties.getFilePath("polygon_appearance_file", null);
+                polygonAppearances = PolygonAppearance.load(filePath);
+
                 // グループ別の背景画像を読み込む
                 File file = new File(properties.getNetworkMapFile());
                 String dir = file.getParent() + File.separator;
@@ -334,10 +362,12 @@ public class SimulationPanel2D extends JPanel {
                     Itk.logWarn("Invalid parameter", "color_depth_of_background_map", "" + colorDepthOfBackgroundMap);
                     colorDepthOfBackgroundMap = 1.0;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
+            } else {
+                polygonAppearances = PolygonAppearance.load(null);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
         }
 
         polygons = createPolygons(networkMap.getLinks());
@@ -352,10 +382,45 @@ public class SimulationPanel2D extends JPanel {
         Coastline coastline = frame.getLauncher().getCoastline();
         if (coastline != null) {
             for (ArrayList<Point2D> boundary : coastline.getOuterBoundaries()) {
-                outerBoundaries.add(Coastline.pointListToPath2D(boundary));
+                outerCoastlines.add(Coastline.pointListToPath2D(boundary));
             }
             for (ArrayList<Point2D> boundary : coastline.getIslands()) {
-                innerBoundaries.add(Coastline.pointListToPath2D(boundary));
+                innerCoastlines.add(Coastline.pointListToPath2D(boundary));
+            }
+        }
+
+        // 平面ポリゴンの準備
+        ArrayList<MapPolygon> mapPolygons = new ArrayList();
+        for (MapPolygon polygon : networkMap.getPolygons()) {
+            if (polygon.isPlanePolygon()) {
+                mapPolygons.add(polygon);
+            }
+        }
+        // 標高順にソートする
+        mapPolygons.sort(new Comparator<MapPolygon>() {
+            public int compare(MapPolygon polygon1, MapPolygon polygon2) {
+                return (int)Math.signum(polygon1.getOuterBoundary().getHeight() - polygon2.getOuterBoundary().getHeight());
+            }
+        });
+        for (MapPolygon polygon : mapPolygons) {
+            PolygonAppearance appearance = getPolygonAppearance(polygon.getTags());
+            String colorValue = appearance.getColorValue();
+            if (colorValue == null) {
+                Itk.logError("Mismatch of appearance of polygon: ID=" + polygon.getID(), "Only single color specification is allowed");
+                continue;
+            }
+            Color color = Color2D.getColor(colorValue);
+            if (color == null) {
+                Itk.logError("Polygon appearance error: ID=" + polygon.getID(), "Color name is not defined: " + colorValue);
+                continue;
+            }
+            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(appearance.getOpacity() * 255));
+
+            planePolygons.add(MapPolygon.convertToPath2D(polygon.getOuterBoundary().getCoordinates()));
+            planePolygonColors.add(color);
+            for (InnerBoundary innerBoundary : polygon.getInnerBoundaries()) {
+                planePolygons.add(MapPolygon.convertToPath2D(innerBoundary.getCoordinates()));
+                planePolygonColors.add(Color.WHITE);
             }
         }
     }
@@ -572,11 +637,11 @@ public class SimulationPanel2D extends JPanel {
         // 海面の描画
         if (frame.isShowTheSea()) {
             g2.setColor(Color2D.AEGEANBLUE);
-            for (Path2D boundary : outerBoundaries) {
+            for (Path2D boundary : outerCoastlines) {
                 g2.fill(boundary);
             }
             g2.setColor(Color.WHITE);
-            for (Path2D boundary : innerBoundaries) {
+            for (Path2D boundary : innerCoastlines) {
                 g2.fill(boundary);
             }
         }
@@ -603,7 +668,13 @@ public class SimulationPanel2D extends JPanel {
             g2.setComposite(oroginalComposite);
         }
 
-        // ポリゴンの描画
+        if (showArea) {
+            for (MapArea area : frame.getMapAreas()) {
+                drawArea(area, g2, showAreaLabels) ;
+            }
+        }
+
+        // リンクポリゴンの描画
         if (! polygons.isEmpty()) {
             for (String tag : polygons.keySet()) {
                 Polygon2D polygon = polygons.get(tag);
@@ -611,12 +682,17 @@ public class SimulationPanel2D extends JPanel {
             }
         }
 
-        /* actual objects */
-        if (showArea) {
-            for (MapArea area : frame.getMapAreas()) {
-                drawArea(area, g2, showAreaLabels) ;
+        // 平面ポリゴンの描画(穴あきポリゴンの穴の部分は白く塗り潰しているだけ)
+        if (frame.isPolygonShowing() && ! planePolygons.isEmpty()) {
+            int index = 0;
+            for (Path2D path : planePolygons) {
+                g2.setColor(planePolygonColors.get(index));
+                g2.fill(path);
+                index++;
             }
         }
+
+        /* actual objects */
         if (showLinks) {
             for (MapLink link : regularLinks) {
                 if (viewArea.intersectsLine(link.getLine2D())) {
@@ -675,6 +751,15 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
+     * 現在の1ドットの幅(m)を取得する
+     */
+    public double getWidthOf1dot() {
+        Point2D upperLeft = revCalcPos(0, 0);
+        Point2D lowerRight = revCalcPos(getWidth(), getHeight());
+        return (lowerRight.getX() - upperLeft.getX()) / getWidth();
+    }
+
+    /**
      * ポリゴンを描画する
      */
     public void drawPolygon(Graphics2D g2, String tag, Polygon2D polygon) {
@@ -689,7 +774,7 @@ public class SimulationPanel2D extends JPanel {
 
         // ポリゴン間に隙間が出来てしまうのを防ぐ
         double scale = g2.getTransform().getScaleX();
-        g2.setStroke(new BasicStroke((float)(2.0 / scale)));
+        g2.setStroke(new BasicStroke((float)getWidthOf1dot(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
         g2.draw(polygon);
     }
 
@@ -1024,6 +1109,26 @@ public class SimulationPanel2D extends JPanel {
                     if (appearance.isTagApplied(tag)) {
                         agentViewCache.put(agent, appearance.getView());
                         return appearance.getView();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * polygon のタグにマッチする PolygonAppearance を返す.
+     */
+    public PolygonAppearance getPolygonAppearance(ArrayList<String> tags) {
+        for (PolygonAppearance appearance : polygonAppearances) {
+            if (tags.isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    return appearance;
+                }
+            } else {
+                for (String tag : tags) {
+                    if (appearance.isTagApplied(tag)) {
+                        return appearance;
                     }
                 }
             }

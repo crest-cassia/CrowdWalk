@@ -73,6 +73,9 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.OBNode.NType;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
+import nodagumi.ananPJ.NetworkMap.Polygon.OuterBoundary;
+import nodagumi.ananPJ.NetworkMap.Polygon.InnerBoundary;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel;
 import nodagumi.Itk.*;
 
@@ -359,6 +362,11 @@ public class SimulationPanel3D extends StackPane {
      * タグ別ノード表示スタイル
      */
     private LinkedHashMap<String, NodeAppearance3D> nodeAppearances = new LinkedHashMap();
+
+    /**
+     * ポリゴン表示スタイルリスト
+     */
+    private ArrayList<PolygonAppearance> polygonAppearances;
 
     /**
      * タグ別エージェント表示スタイル
@@ -691,6 +699,9 @@ public class SimulationPanel3D extends StackPane {
                     NodeAppearance3D.load(new FileInputStream(filePath), nodeAppearances);
                 }
 
+                filePath = properties.getFilePath("polygon_appearance_file", null);
+                polygonAppearances = PolygonAppearance.load(filePath);
+
                 backgroundColor = Color.web(properties.getString("background_color", "white"));
                 obstructerDisplay =
 		    ObstructerDisplay
@@ -712,6 +723,7 @@ public class SimulationPanel3D extends StackPane {
             } else {
                 LinkAppearance3D.load(getClass().getResourceAsStream("/link_appearance.json"), linkAppearances);
                 NodeAppearance3D.load(getClass().getResourceAsStream("/node_appearance.json"), nodeAppearances);
+                polygonAppearances = PolygonAppearance.load(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -730,13 +742,6 @@ public class SimulationPanel3D extends StackPane {
         // 背景地図のシーングラフ
         createBackgroundMap(mapTiles);
         mapGroup.getChildren().add(backgroundMapGroup);
-
-        // ポリゴンのシーングラフ
-        polygonPoints = createPolygonPoints(polygonLinks);
-        for (String tag : polygonPoints.keySet()) {
-            addPolygon(tag, polygonPoints.get(tag));
-        }
-        mapGroup.getChildren().add(polygonGroup);
 
         // Obstructer のシーングラフ
         for (MapArea area : areas) {
@@ -772,6 +777,17 @@ public class SimulationPanel3D extends StackPane {
         }
         mapGroup.getChildren().add(nodeGroup);
 
+        // ポリゴン(リンク)のシーングラフ
+        polygonPoints = createPolygonPoints(polygonLinks);
+        for (String tag : polygonPoints.keySet()) {
+            addPolygon(tag, polygonPoints.get(tag));
+        }
+        // ポリゴンのシーングラフ
+        for (MapPolygon polygon : networkMap.getPolygons()) {
+            addPolygon(polygon);
+        }
+        mapGroup.getChildren().add(polygonGroup);
+
         rotationControl.getChildren().add(mapGroup);
         elevationControl.getChildren().add(rotationControl);
 
@@ -802,6 +818,17 @@ public class SimulationPanel3D extends StackPane {
         subScene.setCamera(camera);
 
         return subScene;
+    }
+
+    /**
+     * ポリゴン座標を math.geom3d.Point3D から javafx.geometry.Point3D に変換する
+     */
+    public static ArrayList<Point3D> getPolygonPoints(MapPolygon polygon) {
+        ArrayList<Point3D> points = new ArrayList();
+        for (math.geom3d.Point3D point : polygon.getTriangleMeshes().getCoordinates().getValue()) {
+            points.add(new Point3D(point.getX(), point.getY(), -point.getZ()));
+        }
+        return points;
     }
 
     /**
@@ -1255,47 +1282,54 @@ public class SimulationPanel3D extends StackPane {
     /**
      * 海面ポリゴンのシーングラフを作成する
      */
-    public void createSea(Coastline coastline) {
-        if (coastline == null || coastline.getOuterBoundaries().isEmpty()) {
+    private void createSea(Coastline coastline) {
+        if (coastline == null) {
             return;
         }
         for (ArrayList<java.awt.geom.Point2D> boundary : coastline.getOuterBoundaries()) {
-            ArrayList<PolygonPoint> outerPoints = new ArrayList();
-            for (java.awt.geom.Point2D point : boundary) {
-                outerPoints.add(new PolygonPoint(point.getX(), point.getY(), -SEA_LEVEL));
-            }
-            Polygon polygon = new Polygon(outerPoints);
-            for (ArrayList<java.awt.geom.Point2D> innerBoundary : coastline.getInnerBoundaries(boundary)) {
-                ArrayList<PolygonPoint> innerPoints = new ArrayList();
-                for (java.awt.geom.Point2D point : innerBoundary) {
-                    innerPoints.add(new PolygonPoint(point.getX(), point.getY(), -SEA_LEVEL));
-                }
-                polygon.addHole(new Polygon(innerPoints));
-            }
             try {
-                Poly2Tri.triangulate(polygon);
+                addPlanePolygon(seaGroup, -SEA_LEVEL, boundary, coastline.getInnerBoundaries(boundary), FxColor.AEGEANBLUE);
             } catch (RuntimeException e) {
                 // TODO: 要デバッグ
                 Itk.logError("RuntimeException", e.getMessage());
                 Itk.logError("Bug", "Please change the setting value of \"gsi_tile_zoom\" in the property file.");
-                System.exit(1);
+                return;
             }
+        }
+    }
 
-            PhongMaterial material = new PhongMaterial();
-            material.setDiffuseColor(FxColor.AEGEANBLUE);
-
-            Point3D[] vertices = new Point3D[3];
-            for (DelaunayTriangle triangle : polygon.getTriangles()) {
-                for (int index = 0; index < 3; index++) {
-                    TriangulationPoint point = triangle.points[index];
-                    vertices[index] = new Point3D(point.getX(), point.getY(), point.getZ());
-                }
-                MeshView shape = new MeshView(new TrianglePolygon(vertices));
-                shape.setDrawMode(DrawMode.FILL);
-                shape.setCullFace(CullFace.NONE);
-                shape.setMaterial(material);
-                seaGroup.getChildren().add(shape);
+    /**
+     * 境界線を三角形ポリゴンメッシュに変換してシーングラフに追加する
+     */
+    public void addPlanePolygon(Group group, double height, ArrayList<java.awt.geom.Point2D> outerBoundary, ArrayList<ArrayList<java.awt.geom.Point2D>> innerBoundaries, Color color) throws RuntimeException {
+        ArrayList<PolygonPoint> outerPoints = new ArrayList();
+        for (java.awt.geom.Point2D point : outerBoundary) {
+            outerPoints.add(new PolygonPoint(point.getX(), point.getY(), -height));
+        }
+        Polygon polygon = new Polygon(outerPoints);
+        for (ArrayList<java.awt.geom.Point2D> innerBoundary : innerBoundaries) {
+            ArrayList<PolygonPoint> innerPoints = new ArrayList();
+            for (java.awt.geom.Point2D point : innerBoundary) {
+                innerPoints.add(new PolygonPoint(point.getX(), point.getY(), -height));
             }
+            polygon.addHole(new Polygon(innerPoints));
+        }
+        Poly2Tri.triangulate(polygon);
+
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseColor(color);
+
+        Point3D[] vertices = new Point3D[3];
+        for (DelaunayTriangle triangle : polygon.getTriangles()) {
+            for (int index = 0; index < 3; index++) {
+                TriangulationPoint point = triangle.points[index];
+                vertices[index] = new Point3D(point.getX(), point.getY(), point.getZ());
+            }
+            MeshView shape = new MeshView(new TrianglePolygon(vertices));
+            shape.setDrawMode(DrawMode.FILL);
+            shape.setCullFace(CullFace.NONE);
+            shape.setMaterial(material);
+            group.getChildren().add(shape);
         }
     }
 
@@ -1384,7 +1418,7 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
-     * ポリゴンをシーングラフに追加する
+     * ポリゴンをシーングラフに追加する(互換性のため残す)
      */
     public void addPolygon(String tag, ArrayList<Point3D> points) {
         Color color = Color.GRAY;
@@ -1419,12 +1453,98 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
+     * ポリゴンをシーングラフに追加する
+     */
+    public void addPolygon(MapPolygon polygon) {
+        PolygonAppearance appearance = getPolygonAppearance(polygon);
+        if (appearance == null) {
+            Itk.logWarn("Polygon appearance not found", "tag=" + polygon.getTags());
+            return;
+        }
+
+        if (polygon.isTriangleMeshes()) {
+            float[] points = polygon.getTriangleMeshes().getPoints();
+            // Z 座標の符号を反転する
+            for (int index = 0; index < points.length / 3; index++) {
+                points[index * 3 + 2] *= -1.0f;
+            }
+            TriangleMesh mesh = new TriangleMesh();
+            mesh.getPoints().setAll(points);
+            PhongMaterial material = new PhongMaterial();
+
+            if (appearance.getTextureFileName() != null) {
+                String filePath = properties.furnishPropertiesDirPath(appearance.getTextureFileName(), true, false);
+                Image image = new Image(new File(filePath).toURI().toString());
+                material.setDiffuseMap(image);
+
+                mesh.getTexCoords().setAll(appearance.getTexCoords());
+            } else {
+                String colorValue = appearance.getColorValue();
+                if (colorValue == null) {
+                    Itk.logError("Polygon appearance error: ID=" + polygon.getID(), "No texture or color specified");
+                    return;
+                }
+                if (appearance.getFaces() == null) {
+                    Itk.logError("Polygon appearance error: ID=" + polygon.getID(), "No faces specified");
+                    return;
+                }
+                Color color = FxColor.getColor(colorValue);
+                if (color == null) {
+                    Itk.logError("Polygon appearance error: ID=" + polygon.getID(), "Color name is not defined: " + colorValue);
+                    return;
+                }
+                color = Color.color(color.getRed(), color.getGreen(), color.getBlue(), appearance.getOpacity());
+                material.setDiffuseColor(color);
+
+                mesh.getTexCoords().addAll(0, 0);
+            }
+            mesh.getFaces().setAll(appearance.getFaces());
+
+            Shape3D shape = new MeshView(mesh);
+            shape.setDrawMode(DrawMode.valueOf(appearance.getDrawMode()));
+            shape.setCullFace(CullFace.valueOf(appearance.getFaceCulling()));
+            shape.setMaterial(material);
+
+            polygonGroup.getChildren().add(shape);
+        } else if (polygon.isPlanePolygon()) {
+            String colorValue = appearance.getColorValue();
+            if (colorValue == null) {
+                Itk.logError("Polygon appearance error: ID=" + polygon.getID(), "No color specified");
+                return;
+            }
+            Color color = FxColor.getColor(colorValue);
+            if (color == null) {
+                Itk.logError("Polygon appearance error: ID=" + polygon.getID(), "Color name is not defined: " + colorValue);
+                return;
+            }
+            color = Color.color(color.getRed(), color.getGreen(), color.getBlue(), appearance.getOpacity());
+
+            OuterBoundary outerBoundary = polygon.getOuterBoundary();
+            ArrayList<ArrayList<java.awt.geom.Point2D>> innerPoints = new ArrayList();
+            for (InnerBoundary innerBoundary : polygon.getInnerBoundaries()) {
+                innerPoints.add(innerBoundary.getPoints());
+            }
+            try {
+                addPlanePolygon(polygonGroup, outerBoundary.getHeight(), outerBoundary.getPoints(), innerPoints, color);
+            } catch (RuntimeException e) {
+                // TODO: 要デバッグ
+                Itk.logError("RuntimeException", e.getMessage());
+                Itk.logError("Bug", "Failed triangulation of polygons: ID=" + polygon.getID());
+                return;
+            }
+        }
+    }
+
+    /**
      * ポリゴンのシーングラフを再構築する.
      */
     public void rebuildPolygonGroup() {
         polygonGroup.getChildren().clear();
         for (String tag : polygonPoints.keySet()) {
             addPolygon(tag, polygonPoints.get(tag));
+        }
+        for (MapPolygon polygon : networkMap.getPolygons()) {
+            addPolygon(polygon);
         }
     }
 
@@ -1571,6 +1691,30 @@ public class SimulationPanel3D extends StackPane {
                     if (appearance.isTagApplied(tag)) {
                         agentViewCache.put(agent, appearance.getView());
                         return appearance.getView();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * polygon のタグにマッチする PolygonAppearance を返す.
+     */
+    public PolygonAppearance getPolygonAppearance(MapPolygon polygon) {
+        ArrayList<String> tags = polygon.getTags();
+        for (PolygonAppearance appearance : polygonAppearances) {
+            if (polygon.isTriangleMeshes() && appearance.getTag().equals("*")) {
+                continue;
+            }
+            if (tags.isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    return appearance;
+                }
+            } else {
+                for (String tag : tags) {
+                    if (appearance.isTagApplied(tag)) {
+                        return appearance;
                     }
                 }
             }

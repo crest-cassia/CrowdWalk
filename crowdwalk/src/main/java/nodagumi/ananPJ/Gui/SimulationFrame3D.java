@@ -716,20 +716,11 @@ public class SimulationFrame3D extends Stage implements Observer {
         checkboxPanel.getChildren().add(showAgentPanel);
 
         // ポリゴン表示の ON/OFF
-        CheckBox show3dPolygonCheckBox = new CheckBox("Show 3D polygons");
-        show3dPolygonCheckBox.setSelected(! panel.getPolygonLinks().isEmpty() && launcher.isShow3dPolygon());
-        show3dPolygonCheckBox.setDisable(panel.getPolygonLinks().isEmpty());
-        show3dPolygonCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
+        CheckBox showPolygonCheckBox = new CheckBox("Show polygons");
+        showPolygonCheckBox.setSelected(launcher.isShow3dPolygon() && (! panel.getPolygonLinks().isEmpty() || ! networkMap.getPolygons().isEmpty()));
+        showPolygonCheckBox.setDisable(panel.getPolygonLinks().isEmpty() && networkMap.getPolygons().isEmpty());
+        showPolygonCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
             panel.setShow3dPolygon(newValue);
-        });
-        checkboxPanel.getChildren().add(show3dPolygonCheckBox);
-
-        // 背景地図表示の ON/OFF
-        CheckBox showBackgroundMapCheckBox = new CheckBox("Show background map");
-        showBackgroundMapCheckBox.setSelected(backgroundMapEnabled && launcher.isShowBackgroundMap());
-        showBackgroundMapCheckBox.setDisable(! backgroundMapEnabled);
-        showBackgroundMapCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
-            panel.setShowBackgroundMap(newValue);
         });
 
         // 海面表示の ON/OFF
@@ -740,9 +731,18 @@ public class SimulationFrame3D extends Stage implements Observer {
             panel.setShowTheSea(newValue);
         });
 
-        FlowPane showMapPanel = new FlowPane(12, 0);
-        showMapPanel.getChildren().addAll(showBackgroundMapCheckBox, showTheSeaCheckBox);
-        checkboxPanel.getChildren().add(showMapPanel);
+        FlowPane showPolygonPanel = new FlowPane(12, 0);
+        showPolygonPanel.getChildren().addAll(showPolygonCheckBox, showTheSeaCheckBox);
+        checkboxPanel.getChildren().add(showPolygonPanel);
+
+        // 背景地図表示の ON/OFF
+        CheckBox showBackgroundMapCheckBox = new CheckBox("Show background map");
+        showBackgroundMapCheckBox.setSelected(backgroundMapEnabled && launcher.isShowBackgroundMap());
+        showBackgroundMapCheckBox.setDisable(! backgroundMapEnabled);
+        showBackgroundMapCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
+            panel.setShowBackgroundMap(newValue);
+        });
+        checkboxPanel.getChildren().add(showBackgroundMapCheckBox);
 
         // スクリーンショットを撮る
         record_snapshots.setSelected(launcher.isRecordSimulationScreen());

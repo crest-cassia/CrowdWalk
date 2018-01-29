@@ -42,6 +42,9 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
+import nodagumi.ananPJ.NetworkMap.Polygon.InnerBoundary;
+import nodagumi.ananPJ.NetworkMap.Polygon.OuterBoundary;
 
 /**
  * マップエディタの編集画面の表示と GUI コントロール
@@ -153,6 +156,8 @@ public class EditorCanvas extends Canvas {
     private boolean linkLabelsShowing = false;
     private boolean areasShowing = true;
     private boolean areaLabelsShowing = false;
+    private boolean polygonsShowing = true;
+    private boolean polygonLabelsShowing = false;
     private boolean backgroundMapShowing = false;
     private boolean backgroundImageShowing = true;
     private boolean mapCoordinatesShowing = false;
@@ -237,6 +242,7 @@ public class EditorCanvas extends Canvas {
     private MapNode pointedNode = null;
     private MapLink pointedLink = null;
     private MapArea pointedArea = null;
+    private MapPolygon pointedPolygon = null;
 
     /**
      * 仮リンクパラメータ
@@ -327,6 +333,10 @@ public class EditorCanvas extends Canvas {
                     // ESC: 選択を解除
                     frame.getAreaPanel().clearSelection();
                     break;
+                case EDIT_POLYGON:
+                    // ESC: 選択を解除
+                    frame.getPolygonPanel().clearSelection();
+                    break;
                 }
                 event.consume();
             }
@@ -363,6 +373,16 @@ public class EditorCanvas extends Canvas {
                         }
                     }
                     frame.getAreaPanel().select(areas);
+                    break;
+                case EDIT_POLYGON:
+                    // Ctrl + A (編集画面): カレントグループの全ポリゴンを選択
+                    ArrayList<MapPolygon> polygons = new ArrayList();
+                    for (MapPolygon polygon : editor.getCurrentGroup().getChildMapPolygons()) {
+                        if (frame.getPolygonPanel().getFilteredSet().contains(polygon)) {
+                            polygons.add(polygon);
+                        }
+                    }
+                    frame.getPolygonPanel().select(polygons);
                     break;
                 }
                 event.consume();
@@ -468,6 +488,13 @@ public class EditorCanvas extends Canvas {
                 if (event.isAltDown() && ! selectionRangePolygon.isEmpty()) {
                     repaintLater();
                 } else if (updateTargetArea(x, y)) {
+                    repaintLater();
+                }
+                break;
+            case EDIT_POLYGON:
+                if (event.isAltDown() && ! selectionRangePolygon.isEmpty()) {
+                    repaintLater();
+                } else if (updateTargetPolygon(x, y)) {
                     repaintLater();
                 }
                 break;
@@ -688,6 +715,34 @@ public class EditorCanvas extends Canvas {
                         }
                     }
                     break;
+                case EDIT_POLYGON:
+                    if (event.isAltDown()) {
+                        // Alt + 左クリック: ポリゴンによるエリア選択
+                        if (! event.isControlDown() && selectionRangePolygon.isEmpty()) {
+                            selectionRangePolygon.add(mapPoint);
+                            frame.getPolygonPanel().clearSelection();
+                        } else {
+                            selectionRangePolygon.add(mapPoint);
+                            repaintLater();
+                        }
+                    } else {
+                        if (pointedPolygon == null) {
+                            frame.getPolygonPanel().clearSelection();
+                        } else {
+                            if (event.isControlDown()) {
+                                // Ctrl + 左クリック: 追加でエリア選択 / 選択解除
+                                if (pointedPolygon.selected) {
+                                    frame.getPolygonPanel().clearSelection(pointedPolygon);
+                                } else {
+                                    frame.getPolygonPanel().select(pointedPolygon);
+                                }
+                            } else {
+                                // 左クリック: エリア選択
+                                frame.getPolygonPanel().clearAndSelect(pointedPolygon);
+                            }
+                        }
+                    }
+                    break;
                 }
                 break;
             case SECONDARY:
@@ -765,6 +820,13 @@ public class EditorCanvas extends Canvas {
                 // 左クリックでドラッグ: 矩形範囲内のエリア選択
                 updateSelectionRange(x, y, event.isControlDown());
                 break;
+            case EDIT_POLYGON:
+                if (event.isAltDown() || event.isMetaDown() || event.isShiftDown()) {
+                    break;
+                }
+                // 左クリックでドラッグ: 矩形範囲内のエリア選択
+                updateSelectionRange(x, y, event.isControlDown());
+                break;
             case BACKGROUND_IMAGE:
                 if (event.isAltDown() || event.isControlDown() || event.isMetaDown()) {
                     break;
@@ -809,6 +871,9 @@ public class EditorCanvas extends Canvas {
                     break;
                 case EDIT_AREA:
                     frame.getAreaPanel().clearSelection();
+                    break;
+                case EDIT_POLYGON:
+                    frame.getPolygonPanel().clearSelection();
                     break;
                 }
             }
@@ -872,6 +937,25 @@ public class EditorCanvas extends Canvas {
                 }
             }
             frame.getAreaPanel().select(areas);
+            break;
+        case EDIT_POLYGON:
+            ArrayList<MapPolygon> polygons = new ArrayList();
+            for (MapPolygon _polygon : editor.getCurrentGroup().getChildMapPolygons()) {
+                if (frame.getPolygonPanel().getFilteredSet().contains(_polygon)) {
+                    if (_polygon.isPlanePolygon() && ! _polygon.getOuterBoundary().isEmpty()) {
+                        boolean containing = true;
+                        for (java.awt.geom.Point2D point : _polygon.getOuterBoundary().getPoints()) {
+                            if (! polygon.contains(toAwtPoint2D(calcRotatedPoint(point.getX(), point.getY())))) {
+                                containing = false;
+                            }
+                        }
+                        if (containing) {
+                            polygons.add(_polygon);
+                        }
+                    }
+                }
+            }
+            frame.getPolygonPanel().select(polygons);
             break;
         }
     }
@@ -1040,6 +1124,25 @@ public class EditorCanvas extends Canvas {
             }
             if (editor.getCountOfSelectedAreas() > 0) {
                 frame.getEditAreaMenu().show(getStage(), x, y);
+            }
+            break;
+        case EDIT_POLYGON:
+            // 右クリック: コンテキストメニュー表示
+            if (pointedPolygon == null && editor.getCountOfSelectedPolygons() == 0) {
+                frame.getAddTriangleMeshMenu().show(getStage(), x, y);
+                break;
+            }
+            if (pointedPolygon != null) {
+                if (! pointedPolygon.selected) {
+                    if (ctrlDown) {
+                        frame.getPolygonPanel().select(pointedPolygon);
+                    } else {
+                        frame.getPolygonPanel().clearAndSelect(pointedPolygon);
+                    }
+                }
+            }
+            if (editor.getCountOfSelectedPolygons() > 0) {
+                frame.getEditPolygonMenu().show(getStage(), x, y);
             }
             break;
         case BACKGROUND_IMAGE:
@@ -1415,6 +1518,29 @@ public class EditorCanvas extends Canvas {
     }
 
     /**
+     * マウスカーソル上のポリゴンを pointedPolygon にセットする
+     */
+    private boolean updateTargetPolygon(double x, double y) {
+        Point2D point = convertToOriginal(pointConvertCanvasToMap(x, y));
+        MapPolygon pointedPolygonCandidate = null;
+
+        for (MapPolygon polygon : editor.getCurrentGroup().getChildMapPolygons()) {
+            if (! frame.getPolygonPanel().getFilteredSet().contains(polygon)) {
+                continue;
+            }
+            if (polygon.isPlanePolygon() && polygon.contains(point.getX(), point.getY())) {
+                pointedPolygonCandidate = polygon;
+                break;
+            }
+        }
+
+        boolean updated = (pointedPolygon != pointedPolygonCandidate);
+        pointedPolygon = pointedPolygonCandidate;
+
+        return updated;
+    }
+
+    /**
      * 仮リンク(を構成する toNode)を決める
      */
     private void updateTentativeLink(double x, double y) {
@@ -1554,6 +1680,16 @@ public class EditorCanvas extends Canvas {
                 }
             }
         }
+        if (polygonsShowing) {
+            for (MapPolygon polygon : group.getChildMapPolygons()) {
+                if (polygon.isPlanePolygon() && frame.getPolygonPanel().getFilteredSet().contains(polygon)) {
+                    drawPolygon(polygon, gc, polygonLabelsShowing, false, false);
+                    if (redoRepainting) {
+                        return;
+                    }
+                }
+            }
+        }
         if (linksShowing) {
             for (MapLink link : group.getChildLinks()) {
                 if (intersectsLine(viewArea, link) && frame.getLinkPanel().getFilteredSet().contains(link)) {
@@ -1673,6 +1809,11 @@ public class EditorCanvas extends Canvas {
                 drawAreaHover(pointedArea, gc);
             }
             break;
+        case EDIT_POLYGON:
+            if (pointedPolygon != null) {
+                drawPolygon(pointedPolygon, gc, true, false, true);
+            }
+            break;
         }
     }
 
@@ -1722,6 +1863,16 @@ public class EditorCanvas extends Canvas {
             for (MapArea area : group.getChildMapAreas()) {
                 if (frame.getAreaPanel().getFilteredSet().contains(area) && contains(viewArea, area, false)) {
                     drawArea(area, gc, areaLabelsShowing, true);
+                    if (redoRepainting) {
+                        return;
+                    }
+                }
+            }
+        }
+        if (polygonsShowing) {
+            for (MapPolygon polygon : group.getChildMapPolygons()) {
+                if (polygon.isPlanePolygon() && frame.getPolygonPanel().getFilteredSet().contains(polygon)) {
+                    drawPolygon(polygon, gc, polygonLabelsShowing, true, false);
                     if (redoRepainting) {
                         return;
                     }
@@ -2154,6 +2305,61 @@ public class EditorCanvas extends Canvas {
     }
 
     /**
+     * 平面ポリゴンを描画する
+     */
+    private void drawPolygon(MapPolygon polygon, GraphicsContext gc, boolean labelShowing, boolean isBg, boolean hovering) {
+        Color outerColor = Color.DEEPSKYBLUE;
+        Color innerColor = Color.LIMEGREEN;
+        if (hovering) {
+            outerColor = Color.BLUE;
+            innerColor = Color.BLUE;
+        } else if (polygon.selected) {
+            outerColor = Color.RED;
+            innerColor = Color.RED;
+        } else if (isBg) {
+            outerColor = Color.LIGHTSKYBLUE;
+            innerColor = Color.LIGHTGREEN;
+        }
+
+        Point2D firstPoint = null;
+        PolygonPointsBuilder builder = new PolygonPointsBuilder();
+        for (java.awt.geom.Point2D point : polygon.getOuterBoundary().getPoints()) {
+            Point2D rotatedPoint = calcRotatedPoint(point.getX(), point.getY());
+            if (firstPoint == null) {
+                firstPoint = rotatedPoint;
+            }
+            builder.append(rotatedPoint.getX() * SCALE_FACTOR, rotatedPoint.getY() * SCALE_FACTOR);
+        }
+        gc.setStroke(outerColor);
+        gc.setLineWidth(2.0 / scale);
+        gc.strokePolygon(builder.getXPoints(), builder.getYPoints(), builder.size());
+
+        for (InnerBoundary innerBoundary : polygon.getInnerBoundaries()) {
+            builder.clear();
+            for (java.awt.geom.Point2D point : innerBoundary.getPoints()) {
+                Point2D rotatedPoint = calcRotatedPoint(point.getX(), point.getY());
+                builder.append(rotatedPoint.getX() * SCALE_FACTOR, rotatedPoint.getY() * SCALE_FACTOR);
+            }
+            gc.setStroke(innerColor);
+            gc.strokePolygon(builder.getXPoints(), builder.getYPoints(), builder.size());
+        }
+
+        if (labelShowing) {
+            String text = polygon.getTagString();
+            if (! text.isEmpty()) {
+                double cx = firstPoint.getX();
+                double cy = firstPoint.getY();
+                if (hovering) {
+                    gc.setFill(Color.BLUE);
+                } else {
+                    gc.setFill(isBg ? Color.SILVER : Color.BLACK);
+                }
+                gc.fillText(text, cx * SCALE_FACTOR, cy * SCALE_FACTOR);
+            }
+        }
+    }
+
+    /**
      * 一方通行設定時の表示設定
      */
     public void setOneWayIndicator(boolean showing, MapNode firstNode, TextPosition positionA, MapNode lastNode, TextPosition positionB) {
@@ -2212,6 +2418,7 @@ public class EditorCanvas extends Canvas {
         pointedNode = null;
         pointedLink = null;
         pointedArea = null;
+        pointedPolygon = null;
         fromNode = null;
         toNode = null;
         selectionRangeStart = null;
@@ -2227,6 +2434,7 @@ public class EditorCanvas extends Canvas {
         frame.getNodePanel().clearSelection();
         frame.getLinkPanel().clearSelection();
         frame.getAreaPanel().clearSelection();
+        frame.getPolygonPanel().clearSelection();
         clearEditingStates();
     }
 
@@ -2256,6 +2464,14 @@ public class EditorCanvas extends Canvas {
 
     public void setAreaLabelsShowing(boolean areaLabelsShowing) {
         this.areaLabelsShowing = areaLabelsShowing;
+    }
+
+    public void setPolygonsShowing(boolean polygonsShowing) {
+        this.polygonsShowing = polygonsShowing;
+    }
+
+    public void setPolygonLabelsShowing(boolean polygonLabelsShowing) {
+        this.polygonLabelsShowing = polygonLabelsShowing;
     }
 
     public void setBackgroundMapShowing(boolean backgroundMapShowing) {

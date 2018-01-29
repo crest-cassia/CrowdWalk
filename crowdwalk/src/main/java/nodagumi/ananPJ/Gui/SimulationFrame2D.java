@@ -86,6 +86,7 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.misc.SimTime;
@@ -163,6 +164,7 @@ public class SimulationFrame2D extends JFrame
     private boolean showBackgroundImage = false;
     private boolean showBackgroundMap = false;
     private boolean showTheSea = false;
+    private boolean polygonShowing = false;
 
     /* メニュー構成変数 */
 
@@ -1023,6 +1025,9 @@ public class SimulationFrame2D extends JFrame
         showAgentPanel.add(showAgentLabelsCheckBox);
         checkbox_panel.add(showAgentPanel);
 
+        JPanel showMapPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        showMapPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         // 背景画像表示の ON/OFF
         JCheckBox showBackgroundImageCheckBox = new JCheckBox("Show background image");
         showBackgroundImageCheckBox.setSelected(backgroundImageEnabled && showBackgroundImage);
@@ -1033,10 +1038,7 @@ public class SimulationFrame2D extends JFrame
                     showBackgroundImage = showBackgroundImageCheckBox.isSelected();
                     panel.repaint();
                 }});
-        checkbox_panel.add(showBackgroundImageCheckBox);
-
-        JPanel showMapPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
-        showMapPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        showMapPanel.add(showBackgroundImageCheckBox);
 
         // 背景地図表示の ON/OFF
         JCheckBox showBackgroundMapCheckBox = new JCheckBox("Show background map");
@@ -1049,6 +1051,30 @@ public class SimulationFrame2D extends JFrame
                     panel.repaint();
                 }});
         showMapPanel.add(showBackgroundMapCheckBox);
+        checkbox_panel.add(showMapPanel);
+
+        JPanel showPolygonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        showPolygonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // ポリゴン表示の ON/OFF
+        JCheckBox showPolygonCheckBox = new JCheckBox("Show polygons");
+        boolean polygonExists = false;
+        for (MapPolygon polygon : launcher.getMap().getPolygons()) {
+            if (polygon.isPlanePolygon()) {
+                polygonExists = true;
+                polygonShowing = true;
+                break;
+            }
+        }
+        showPolygonCheckBox.setEnabled(polygonExists);
+        showPolygonCheckBox.setSelected(polygonExists);
+        showPolygonCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    polygonShowing = showPolygonCheckBox.isSelected();
+                    panel.repaint();
+                }});
+        showPolygonPanel.add(showPolygonCheckBox);
 
         // 海面表示の ON/OFF
         JCheckBox showTheSeaCheckBox = new JCheckBox("Show the sea");
@@ -1064,8 +1090,8 @@ public class SimulationFrame2D extends JFrame
                     showTheSea = showTheSeaCheckBox.isSelected();
                     panel.repaint();
                 }});
-        showMapPanel.add(showTheSeaCheckBox);
-        checkbox_panel.add(showMapPanel);
+        showPolygonPanel.add(showTheSeaCheckBox);
+        checkbox_panel.add(showPolygonPanel);
 
         // 仕切り線
         checkbox_panel.add(new JSeparator(SwingConstants.HORIZONTAL));
@@ -2045,6 +2071,14 @@ public class SimulationFrame2D extends JFrame
 
     public boolean isShowTheSea() {
         return showTheSea;
+    }
+
+    public void setPolygonShowing(boolean polygonShowing) {
+        this.polygonShowing = polygonShowing;
+    }
+
+    public boolean isPolygonShowing() {
+        return polygonShowing;
     }
 
     /* access to the object(nodes, links, agents, sub-groups)

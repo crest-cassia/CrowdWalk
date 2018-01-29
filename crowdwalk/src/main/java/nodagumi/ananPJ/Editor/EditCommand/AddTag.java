@@ -32,6 +32,9 @@ public class AddTag extends EditCommandBase {
         case AREA:
             changeType = ChangeType.AREA_TAG;
             break;
+        case POLYGON:
+            changeType = ChangeType.POLYGON_TAG;
+            break;
         }
         id = obNode.getID();
         this.tag = Itk.intern(tag);

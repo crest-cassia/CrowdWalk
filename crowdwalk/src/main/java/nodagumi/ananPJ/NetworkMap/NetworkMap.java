@@ -54,6 +54,7 @@ import nodagumi.ananPJ.NetworkMap.OBNode.NType;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.NetworkMapPartsNotifier;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
@@ -305,6 +306,8 @@ public class NetworkMap extends DefaultTreeModel {
             /* no operation */
         } else if (type == OBNode.NType.SYMLINK) {
             /* no operation */
+        } else if (type == OBNode.NType.POLYGON) {
+            /* no operation */
         } else {
             Itk.logError("unkown type added");
         }
@@ -355,6 +358,8 @@ public class NetworkMap extends DefaultTreeModel {
         case AREA:
             break;
         case SYMLINK:
+            break;
+        case POLYGON:
             break;
         default:
             System.err.println(type);
@@ -658,6 +663,25 @@ public class NetworkMap extends DefaultTreeModel {
             }
         });
         return symbolicLinks;
+    }
+
+    /**
+     * MapPolygon リストを取得する
+     */
+    public ArrayList<MapPolygon> getPolygons() {
+        ArrayList<MapPolygon> polygons = new ArrayList<MapPolygon>();
+        for (OBNode node : getOBElements()) {
+            if (node.getNodeType() == NType.POLYGON) {
+                polygons.add((MapPolygon)node);
+            }
+        }
+        // z-index 順にソートする
+        polygons.sort(new Comparator<MapPolygon>() {
+            public int compare(MapPolygon polygon1, MapPolygon polygon2) {
+                return (int)Math.signum((double)(polygon1.getZIndex() - polygon2.getZIndex()));
+            }
+        });
+        return polygons;
     }
 
     //------------------------------------------------------------
@@ -1048,6 +1072,8 @@ public class NetworkMap extends DefaultTreeModel {
             OBNodeSymbolicLink symlink = (OBNodeSymbolicLink)ob_node;
             symlink.setOriginal(original);
         } else if (ob_node.getNodeType() == OBNode.NType.AREA){
+            addObject(ob_node.ID, ob_node);
+        } else if (ob_node.getNodeType() == OBNode.NType.POLYGON){
             addObject(ob_node.ID, ob_node);
         } else if (ob_node.getNodeType() == OBNode.NType.NODE ||
                    ob_node.getNodeType() == OBNode.NType.LINK ||

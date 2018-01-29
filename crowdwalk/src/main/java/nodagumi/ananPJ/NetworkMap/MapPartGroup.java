@@ -17,6 +17,7 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 
 import nodagumi.Itk.*;
 
@@ -424,6 +425,19 @@ public class MapPartGroup extends OBNode {
             OBNode node = all_children.nextElement();
             if (node.getNodeType() == OBNode.NType.AREA) {
                 children.add((MapArea)node);
+            }
+        }
+        return children;
+    }
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<MapPolygon> getChildMapPolygons() {
+        ArrayList<MapPolygon> children = new ArrayList<MapPolygon>();
+        Enumeration<OBNode> all_children = children();
+        while (all_children.hasMoreElements()) {
+            OBNode node = all_children.nextElement();
+            if (node.getNodeType() == OBNode.NType.POLYGON) {
+                children.add((MapPolygon)node);
             }
         }
         return children;

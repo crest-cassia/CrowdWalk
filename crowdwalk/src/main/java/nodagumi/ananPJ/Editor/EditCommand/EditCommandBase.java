@@ -7,6 +7,7 @@ import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 
 /**
  * Undo が可能な編集コマンドの抽象クラス
@@ -29,6 +30,9 @@ public abstract class EditCommandBase {
         AREA_PARAM,
         AREA_TAG,
         AREA_VOLUME,
+        POLYGON_PARAM,
+        POLYGON_TAG,
+        POLYGON_VOLUME,
         SYMBOLIC_LINK_VOLUME
     }
 
@@ -218,6 +222,22 @@ public abstract class EditCommandBase {
             return null;
         }
         return (MapArea)obNode;
+    }
+
+    /**
+     * ポリゴンを取得する
+     */
+    public MapPolygon getPolygon(MapEditor editor, String id) {
+        OBNode obNode = getOBNode(editor, id);
+        if (obNode == null) {
+            return null;
+        }
+        if (obNode.getNodeType() != OBNode.NType.POLYGON) {
+            editor.displayMessage("Error", getName(), "Polygon was lost: ID=" + id);
+            invalid = true;
+            return null;
+        }
+        return (MapPolygon)obNode;
     }
 
     /**

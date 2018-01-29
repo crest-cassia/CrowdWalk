@@ -1,11 +1,13 @@
 package nodagumi.ananPJ.Editor;
 
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +40,9 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
+import nodagumi.ananPJ.NetworkMap.Polygon.OuterBoundary;
+import nodagumi.ananPJ.NetworkMap.Polygon.InnerBoundary;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.navigation.Dijkstra;
@@ -152,13 +157,16 @@ public class MapEditor implements MapEditorInterface {
     private boolean nodeParamChanged = false;
     private boolean linkParamChanged = false;
     private boolean areaParamChanged = false;
+    private boolean polygonParamChanged = false;
     private boolean nodeTagChanged = false;
     private boolean linkTagChanged = false;
     private boolean areaTagChanged = false;
+    private boolean polygonTagChanged = false;
     private boolean groupVolumeChanged = false;
     private boolean nodeVolumeChanged = false;
     private boolean linkVolumeChanged = false;
     private boolean areaVolumeChanged = false;
+    private boolean polygonVolumeChanged = false;
 
     /**
      * コンストラクタ
@@ -512,13 +520,16 @@ public class MapEditor implements MapEditorInterface {
         nodeParamChanged = false;
         linkParamChanged = false;
         areaParamChanged = false;
+        polygonParamChanged = false;
         nodeTagChanged = false;
         linkTagChanged = false;
         areaTagChanged = false;
+        polygonTagChanged = false;
         groupVolumeChanged = false;
         nodeVolumeChanged = false;
         linkVolumeChanged = false;
         areaVolumeChanged = false;
+        polygonVolumeChanged = false;
     }
 
     /**
@@ -557,10 +568,19 @@ public class MapEditor implements MapEditorInterface {
             areaParamChanged = true;
             break;
         case AREA_TAG:
-            areaTagChanged = false;
+            areaTagChanged = true;
             break;
         case AREA_VOLUME:
             areaVolumeChanged = true;
+            break;
+        case POLYGON_PARAM:
+            polygonParamChanged = true;
+            break;
+        case POLYGON_TAG:
+            polygonTagChanged = true;
+            break;
+        case POLYGON_VOLUME:
+            polygonVolumeChanged = true;
             break;
         case SYMBOLIC_LINK_VOLUME:
             // Canvas の更新だけで十分
@@ -625,6 +645,13 @@ public class MapEditor implements MapEditorInterface {
             frame.getAreaPanel().reset();
         } else if (areaParamChanged) {
             frame.getAreaPanel().refresh();
+        }
+
+        if (polygonTagChanged || polygonVolumeChanged) {
+            // フィルタ処理があるため polygonTagChanged でも reset() が必要
+            frame.getPolygonPanel().reset();
+        } else if (polygonParamChanged) {
+            frame.getPolygonPanel().refresh();
         }
     }
 
@@ -863,6 +890,46 @@ public class MapEditor implements MapEditorInterface {
         int count = 0;
         for (MapArea area : networkMap.getAreas()) {
             if (area.selected) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 選択中のポリゴンをすべて取得する
+     */
+    public ArrayList<MapPolygon> getSelectedPolygons() {
+        ArrayList<MapPolygon> polygons = new ArrayList();
+        for (MapPolygon polygon : networkMap.getPolygons()) {
+            if (polygon.selected) {
+                polygons.add(polygon);
+            }
+        }
+        return polygons;
+    }
+
+    /**
+     * ポリゴンの選択をすべて解除する
+     */
+    public int deselectPolygons() {
+        int countOfselected = 0;
+        for (MapPolygon polygon : networkMap.getPolygons()) {
+            if (polygon.selected) {
+                polygon.selected = false;
+                countOfselected++;
+            }
+        }
+        return countOfselected;
+    }
+
+    /**
+     * 選択中のポリゴン数を取得する
+     */
+    public int getCountOfSelectedPolygons() {
+        int count = 0;
+        for (MapPolygon polygon : networkMap.getPolygons()) {
+            if (polygon.selected) {
                 count++;
             }
         }
@@ -1353,19 +1420,25 @@ public class MapEditor implements MapEditorInterface {
     /**
      * 選択中のノードを接続リンクと共に削除する
      */
-    public void removeNodes() {
+    public void removeNodes(boolean commandBlocking) {
         ArrayList<MapNode> nodes = (ArrayList<MapNode>)(getSelectedNodes().clone());
 
-        startOfCommandBlock();
+        if (commandBlocking) {
+            startOfCommandBlock();
+        }
         if (! _removeSymbolicLink(nodes)) {
-            endOfCommandBlock();
+            if (commandBlocking) {
+                endOfCommandBlock();
+            }
             return;
         }
         for (MapNode node : nodes) {
             boolean failed = false;
             ArrayList<MapLink> links = (ArrayList<MapLink>)(node.getLinks().clone());
             if (! _removeSymbolicLink(links)) {
-                endOfCommandBlock();
+                if (commandBlocking) {
+                    endOfCommandBlock();
+                }
                 updateHeight();
                 return;
             }
@@ -1382,7 +1455,9 @@ public class MapEditor implements MapEditorInterface {
                 break;
             }
         }
-        endOfCommandBlock();
+        if (commandBlocking) {
+            endOfCommandBlock();
+        }
         updateHeight();
     }
 
@@ -1538,6 +1613,315 @@ public class MapEditor implements MapEditorInterface {
         startOfCommandBlock();
         for (MapArea area : (List<MapArea>)(getSelectedAreas().clone())) {
             if (! invoke(new RemoveArea(area))) {
+                break;
+            }
+        }
+        endOfCommandBlock();
+    }
+
+    /**
+     * リング状の連なりを構成するリンクを取得する
+     */
+    public static ArrayList<MapLink> getRingedLinks(MapLink startLink) {
+        ArrayList<MapLink> ring = new ArrayList();
+        MapNode firstNode = startLink.getFrom();
+        if (firstNode.getLinks().size() != 2) {
+            return null;
+        }
+        MapNode lastNode = startLink.getTo();
+        MapLink lastLink = startLink;
+        ring.add(lastLink);
+        while (lastNode != firstNode) {
+            if (lastNode.getLinks().size() != 2) {
+                return null;
+            }
+            if (lastNode.getLinks().indexOf(lastLink) == 0) {
+                lastLink = lastNode.getLinks().get(1);
+            } else {
+                lastLink = lastNode.getLinks().get(0);
+            }
+            ring.add(lastLink);
+            lastNode = lastLink.getOther(lastNode);
+        }
+        return ring;
+    }
+
+    /**
+     * リンクリストをノードリストに変換する.
+     *
+     * links はリング状に連なったリンクであること
+     */
+    public static ArrayList<MapNode> getBoundaryNodes(ArrayList<MapLink> links) {
+        ArrayList<MapNode> nodes = new ArrayList();
+        MapLink firstLink = links.get(0);
+        MapLink secondLink = links.get(1);
+        MapNode lastNode = firstLink.getFrom();
+        if (lastNode == secondLink.getFrom() || lastNode == secondLink.getTo()) {
+            lastNode = firstLink.getTo();
+        }
+        for (MapLink link : links) {
+            nodes.add(lastNode);
+            lastNode = link.getOther(lastNode);
+        }
+        return nodes;
+    }
+
+    /**
+     * リンクリストを Path2D に変換する
+     */
+    public static Path2D convertToPath2D(ArrayList<MapLink> links) {
+        Path2D path = new Path2D.Double();
+        for (MapNode node : getBoundaryNodes(links)) {
+            if (path.getCurrentPoint() == null) {
+                path.moveTo(node.getX(), node.getY());
+            } else {
+                path.lineTo(node.getX(), node.getY());
+            }
+        }
+        path.closePath();
+        return path;
+    }
+
+    /**
+     * リンクをポリゴンに変換する
+     */
+    public void convertToPolygon(ArrayList<MapLink> links) throws Exception {
+        if (links.isEmpty()) {
+            return;
+        }
+
+        // links の中からリング状に連なったリンクを探す(一部でもあれば対象)
+        ArrayList<MapLink> _links = (ArrayList<MapLink>)links.clone();
+        ArrayList<ArrayList<MapLink>> boundaries = new ArrayList();
+        while (! _links.isEmpty()) {
+            ArrayList<MapLink> boundary = getRingedLinks(_links.remove(0));
+            if (boundary == null) {
+                throw new Exception("Unclosed links found.");
+            }
+            boundaries.add(boundary);
+            for (MapLink link : boundary) {
+                _links.remove(link);
+            }
+        }
+
+        // 標高値とタグに不整合がないかチェックする
+        double height = boundaries.get(0).get(0).getFrom().getHeight();
+        ArrayList<String> tags = null;
+        String tagString = null;
+        HashMap<ArrayList, Path2D> paths = new HashMap();
+        for (ArrayList<MapLink> boundary : boundaries) {
+            for (MapLink link : boundary) {
+                if (link.getFrom().getHeight() != height || link.getTo().getHeight() != height) {
+                    throw new Exception("Height is not constant.");
+                }
+                if (! link.getTags().isEmpty()) {
+                    if (tagString == null) {
+                        tags = (ArrayList<String>)link.getTags().clone();
+                        Collections.sort(tags);
+                        tagString = String.join(",", tags);
+                    } else {
+                        ArrayList<String> linkTags = (ArrayList<String>)link.getTags().clone();
+                        Collections.sort(linkTags);
+                        if (! String.join(",", linkTags).equals(tagString)) {
+                            throw new Exception("Link tag is not constant.");
+                        }
+                    }
+                }
+            }
+            paths.put(boundary, convertToPath2D(boundary));
+        }
+
+        // outerBoundary を特定する
+        ArrayList<MapLink> _outerBoundary = boundaries.get(0);
+        ArrayList<MapNode> outerNodes = getBoundaryNodes(_outerBoundary);
+        for (ArrayList<MapLink> boundary : boundaries) {
+            if (boundary == _outerBoundary) {
+                continue;
+            }
+            Path2D path = paths.get(boundary);
+            for (MapNode node : outerNodes) {
+                if (path.contains(node.getX(), node.getY())) {
+                    _outerBoundary = boundary;
+                    outerNodes = getBoundaryNodes(_outerBoundary);
+                    break;
+                }
+            }
+        }
+        boundaries.remove(_outerBoundary);   // == innerBoundaries
+
+        // outerBoundary からはみ出している innerBoundary がないかチェックする(念のため)
+        Path2D outerBoundaryPath = paths.get(_outerBoundary);
+        for (ArrayList<MapLink> boundary : boundaries) {
+            for (MapNode node : getBoundaryNodes(boundary)) {
+                if (! outerBoundaryPath.contains(node.getX(), node.getY())) {
+                    throw new Exception("There are multiple outer boundaries.");
+                }
+            }
+        }
+
+        // innerBoundary が重なったり入れ子になっていないかチェックする
+        for (ArrayList<MapLink> boundary : boundaries) {
+            for (MapNode node : getBoundaryNodes(boundary)) {
+                for (ArrayList<MapLink> _boundary : boundaries) {
+                    if (_boundary == boundary) {
+                        continue;
+                    }
+                    Path2D path = paths.get(_boundary);
+                    if (path.contains(node.getX(), node.getY())) {
+                        throw new Exception("Inner boundaries overlap.");
+                    }
+                }
+            }
+        }
+
+        ArrayList<java.awt.geom.Point2D> coordinates = new ArrayList();
+        for (MapNode node : outerNodes) {
+            coordinates.add(new java.awt.geom.Point2D.Double(node.getX(), node.getY()));
+        }
+        OuterBoundary outerBoundary = new OuterBoundary(height, coordinates);
+
+        ArrayList<InnerBoundary> innerBoundaries = new ArrayList();
+        for (ArrayList<MapLink> boundary : boundaries) {
+            coordinates.clear();
+            for (MapNode node : getBoundaryNodes(boundary)) {
+                coordinates.add(new java.awt.geom.Point2D.Double(node.getX(), node.getY()));
+            }
+            innerBoundaries.add(new InnerBoundary(coordinates));
+        }
+
+        int zIndex = 0;
+        if (tags != null) {
+            for (String tag : (List<String>)tags.clone()) {
+                if (tag.startsWith("Z_INDEX_")) {
+                    zIndex = Integer.parseInt(tag.substring(8));
+                    tags.remove(tag);
+                    break;
+                }
+            }
+        }
+
+        startOfCommandBlock();
+        AddPolygon command = new AddPolygon(currentGroup, zIndex, outerBoundary, innerBoundaries);
+        if (invoke(command)) {
+            if (tags != null) {
+                MapPolygon polygon = (MapPolygon)networkMap.getObject(command.getId());
+                for (String tag : tags) {
+                    if (! invoke(new AddTag(polygon, tag))) {
+                        endOfCommandBlock();
+                        return;
+                    }
+                }
+            }
+
+            // ポリゴンの元になったノードを削除する(連動してリンクも削除される)
+            frame.getNodePanel().clearSelection();
+            frame.getLinkPanel().clearSelection();
+            for (MapNode node : getBoundaryNodes(_outerBoundary)) {
+                node.selected = true;
+            }
+            for (ArrayList<MapLink> boundary : boundaries) {
+                for (MapNode node : getBoundaryNodes(boundary)) {
+                    node.selected = true;
+                }
+            }
+            removeNodes(false);
+        }
+        endOfCommandBlock();
+    }
+
+    /**
+     * ポリゴンをノードとリンクに変換する
+     */
+    private boolean convertToNodesAndLinks(int zIndex, double height, ArrayList<java.awt.geom.Point2D> coordinates, ArrayList<String> tags) {
+        ArrayList<MapNode> nodes = new ArrayList();
+        for (java.awt.geom.Point2D point : coordinates) {
+            AddNode command = new AddNode(currentGroup, new Point2D(point.getX(), point.getY()), height);
+            if (! invoke(command)) {
+                return false;
+            }
+            MapNode node = (MapNode)networkMap.getObject(command.getId());
+            for (String tag : tags) {
+                if (! invoke(new AddTag(node, tag))) {
+                    return false;
+                }
+            }
+            if (zIndex != 0) {
+                if (! invoke(new AddTag(node, "Z_INDEX_" + zIndex))) {
+                    return false;
+                }
+            }
+            nodes.add(node);
+        }
+        nodes.add(nodes.get(0));
+        for (int index = 0; index < nodes.size() - 1; index++) {
+            MapNode fromNode = nodes.get(index);
+            MapNode toNode = nodes.get(index + 1);
+            double length = fromNode.getPosition().distance(toNode.getPosition()) * currentGroup.getScale();
+            AddLink command = new AddLink(fromNode, toNode, length, 1.0);
+            if (! invoke(command)) {
+                return false;
+            }
+            MapLink link = (MapLink)networkMap.getObject(command.getId());
+            for (String tag : tags) {
+                if (! invoke(new AddTag(link, tag))) {
+                    return false;
+                }
+            }
+            if (zIndex != 0) {
+                if (! invoke(new AddTag(link, "Z_INDEX_" + zIndex))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * ポリゴンをノードとリンクに変換する
+     */
+    public void convertToNodesAndLinks(ArrayList<MapPolygon> polygons) {
+        if (polygons.isEmpty()) {
+            return;
+        }
+
+        startOfCommandBlock();
+        for (MapPolygon polygon : (List<MapPolygon>)polygons.clone()) {
+            if (polygon.isTriangleMeshes()) {
+                continue;
+            }
+
+            // outerBoundary をノードとリンクに変換する
+            int zIndex = polygon.getZIndex();
+            ArrayList<String> tags = polygon.getTags();
+            OuterBoundary outerBoundary = polygon.getOuterBoundary();
+            double height = outerBoundary.getHeight();
+            if (! convertToNodesAndLinks(zIndex, height, outerBoundary.getPoints(), tags)) {
+                break;
+            }
+
+            // innerBoundary をノードとリンクに変換する
+            for (InnerBoundary innerBoundary : polygon.getInnerBoundaries()) {
+                if (! convertToNodesAndLinks(zIndex, height, innerBoundary.getPoints(), tags)) {
+                    endOfCommandBlock();
+                    return;
+                }
+            }
+
+            // 変換が済んだポリゴンを削除する
+            if (! invoke(new RemovePolygon(polygon))) {
+                break;
+            }
+        }
+        endOfCommandBlock();
+    }
+
+    /**
+     * 選択中のポリゴンを削除する
+     */
+    public void removePolygons() {
+        startOfCommandBlock();
+        for (MapPolygon polygon : (List<MapPolygon>)getSelectedPolygons().clone()) {
+            if (! invoke(new RemovePolygon(polygon))) {
                 break;
             }
         }

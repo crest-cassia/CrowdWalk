@@ -84,6 +84,7 @@ import nodagumi.ananPJ.Editor.Panel.AreaPanelFx;
 import nodagumi.ananPJ.Editor.Panel.GroupPanel;
 import nodagumi.ananPJ.Editor.Panel.LinkPanelFx;
 import nodagumi.ananPJ.Editor.Panel.NodePanelFx;
+import nodagumi.ananPJ.Editor.Panel.PolygonPanel;
 import nodagumi.ananPJ.Editor.Panel.ScenarioPanelFx;
 import nodagumi.ananPJ.Editor.Panel.TagSetupPane;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
@@ -94,6 +95,9 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
+import nodagumi.ananPJ.NetworkMap.Polygon.TriangleMeshes;
+import nodagumi.ananPJ.NetworkMap.Polygon.Coordinates;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.MapChecker;
 import nodagumi.ananPJ.Settings;
@@ -127,7 +131,7 @@ public class EditorFrameFx {
      * 編集モード
      */
     public static enum EditorMode {
-        ADD_NODE, ADD_LINK, ADD_NODE_LINK, ADD_AREA, EDIT_NODE, EDIT_LINK, EDIT_AREA, BACKGROUND_IMAGE
+        ADD_NODE, ADD_LINK, ADD_NODE_LINK, ADD_AREA, EDIT_NODE, EDIT_LINK, EDIT_AREA, EDIT_POLYGON, BACKGROUND_IMAGE
     };
     private EditorMode mode = EditorMode.EDIT_NODE;
 
@@ -202,6 +206,8 @@ public class EditorFrameFx {
     private ContextMenu editNodeMenu = new ContextMenu();
     private ContextMenu editLinkMenu = new ContextMenu();
     private ContextMenu editAreaMenu = new ContextMenu();
+    private ContextMenu editPolygonMenu = new ContextMenu();
+    private ContextMenu addTriangleMesheMenu = new ContextMenu();
     private ContextMenu bgImageMenu = new ContextMenu();
     private Menu menuAddSymbolicLinkOfNode = new Menu("Add symbolic link");
     private Menu menuAddSymbolicLinkOfLink = new Menu("Add symbolic link");
@@ -217,6 +223,7 @@ public class EditorFrameFx {
     private NodePanelFx nodePanel;
     private LinkPanelFx linkPanel;
     private AreaPanelFx areaPanel;
+    private PolygonPanel polygonPanel;
     private ScenarioPanelFx scenarioPanel;
 
     /**
@@ -318,12 +325,17 @@ public class EditorFrameFx {
         areasTab.setContent(areaPanel);
         areasTab.setClosable(false);
 
+        polygonPanel = new PolygonPanel(editor, this);
+        Tab polygonsTab = new Tab("Polygons");
+        polygonsTab.setContent(polygonPanel);
+        polygonsTab.setClosable(false);
+
         scenarioPanel = new ScenarioPanelFx(editor, this);
         Tab scenarioTab = new Tab("Scenario");
         scenarioTab.setContent(scenarioPanel);
         scenarioTab.setClosable(false);
 
-        tabPane.getTabs().addAll(groupsTab, nodesTab, linksTab, areasTab, scenarioTab);
+        tabPane.getTabs().addAll(groupsTab, nodesTab, linksTab, areasTab, polygonsTab, scenarioTab);
 
         // 下側ペインの構築
 
@@ -636,6 +648,28 @@ public class EditorFrameFx {
         });
         cmiShowAreaLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+R"));
 
+        CheckMenuItem cmiShowPolygons = new CheckMenuItem("Show polygons");
+        CheckMenuItem cmiShowPolygonLabels = new CheckMenuItem("Show polygon labels");
+        cmiShowPolygons.setSelected(true);
+        cmiShowPolygons.setOnAction(e -> {
+            if (cmiShowPolygons.isSelected()) {
+                cmiShowPolygonLabels.setDisable(false);
+                canvas.setPolygonsShowing(true);
+            } else {
+                cmiShowPolygonLabels.setDisable(true);
+                canvas.setPolygonsShowing(false);
+            }
+            canvas.repaintLater();
+        });
+        cmiShowPolygons.setAccelerator(KeyCombination.valueOf("Ctrl+G"));
+
+        cmiShowPolygonLabels.setSelected(false);
+        cmiShowPolygonLabels.setOnAction(e -> {
+            canvas.setPolygonLabelsShowing(cmiShowPolygonLabels.isSelected());
+            canvas.repaintLater();
+        });
+        cmiShowPolygonLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+G"));
+
         CheckMenuItem cmiShowBackgroundImage = new CheckMenuItem("Show background image");
         cmiShowBackgroundImage.setSelected(true);
         cmiShowBackgroundImage.setOnAction(e -> {
@@ -669,7 +703,7 @@ public class EditorFrameFx {
             canvas.setMapCoordinatesShowing(cmiShowMapCoordinates.isSelected());
         });
 
-        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
+        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, cmiShowPolygons, cmiShowPolygonLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
 
         /* Validation menu */
 
@@ -939,7 +973,7 @@ public class EditorFrameFx {
         miClearSymbolicLinkOfNode.setOnAction(e -> editor.removeSymbolicLink(editor.getSelectedNodes()));
 
         MenuItem miRemoveNode = new MenuItem("Remove nodes");
-        miRemoveNode.setOnAction(e -> editor.removeNodes());
+        miRemoveNode.setOnAction(e -> editor.removeNodes(true));
 
         editNodeMenu.getItems().addAll(miSetNodeAttributes, miHorizontally, miVertically, miCopyOrMove, miMakeStairs, miRotateAndScale, menuAddSymbolicLinkOfNode, miClearSymbolicLinkOfNode, miRemoveNode);
 
@@ -975,10 +1009,20 @@ public class EditorFrameFx {
         MenuItem miClearSymbolicLinkOfLink = new MenuItem("Clear symbolic link");
         miClearSymbolicLinkOfLink.setOnAction(e -> editor.removeSymbolicLink(editor.getSelectedLinks()));
 
+        MenuItem miConvertToPolygon = new MenuItem("Convert to polygon");
+        miConvertToPolygon.setOnAction(e -> {
+            try {
+                editor.convertToPolygon(editor.getSelectedLinks());
+            } catch (Exception ex) {
+                Alert alert = new Alert(AlertType.WARNING, ex.getMessage(), ButtonType.OK);
+                alert.showAndWait();
+            }
+        });
+
         MenuItem miRemoveLink = new MenuItem("Remove links");
         miRemoveLink.setOnAction(e -> editor.removeLinks());
 
-        editLinkMenu.getItems().addAll(miSetLinkAttributes, miSetOneWay, miSetRoadClosed, miResetOneWayAndRoadClosed, menuAddSymbolicLinkOfLink, miClearSymbolicLinkOfLink, miRecalculateLinkLength, miCalculateScale, miRemoveLink);
+        editLinkMenu.getItems().addAll(miSetLinkAttributes, miSetOneWay, miSetRoadClosed, miResetOneWayAndRoadClosed, menuAddSymbolicLinkOfLink, miClearSymbolicLinkOfLink, miRecalculateLinkLength, miCalculateScale, miConvertToPolygon, miRemoveLink);
 
         // EDIT_AREA モード
         // ・Set area attributes
@@ -991,6 +1035,28 @@ public class EditorFrameFx {
         miRemoveArea.setOnAction(e -> editor.removeAreas());
 
         editAreaMenu.getItems().addAll(miSetAreaAttributes, miRemoveArea);
+
+        // EDIT_POLYGON モード
+        // ・Set polygon attributes
+        // ・Convert to nodes & links
+        // ・Remove polygons
+
+        MenuItem miSetPolygonAttributes = new MenuItem("Set polygon attributes");
+        miSetPolygonAttributes.setOnAction(e -> openPolygonAttributesDialog());
+
+        MenuItem miConvertToNodesAndLinks = new MenuItem("Convert to nodes & links");
+        miConvertToNodesAndLinks.setOnAction(e -> editor.convertToNodesAndLinks(editor.getSelectedPolygons()));
+
+        MenuItem miRemovePolygon = new MenuItem("Remove polygons");
+        miRemovePolygon.setOnAction(e -> editor.removePolygons());
+
+        editPolygonMenu.getItems().addAll(miSetPolygonAttributes, miConvertToNodesAndLinks, miRemovePolygon);
+
+        // ・Add triangle mesh polygon
+        MenuItem miAddTriangleMesh = new MenuItem("Add triangle mesh polygon");
+        miAddTriangleMesh.setOnAction(e -> openAddTriangleMeshDialog());
+
+        addTriangleMesheMenu.getItems().addAll(miAddTriangleMesh);
 
         // BACKGROUND_IMAGE モード
         // ・Set background image
@@ -1121,6 +1187,13 @@ public class EditorFrameFx {
             canvas.setMode(EditorMode.EDIT_AREA);
         });
 
+        ToggleButton tbEditPolygon = new ToggleButton("Edit Polygon");
+        tbEditPolygon.setToggleGroup(group);
+        tbEditPolygon.setOnAction(e -> {
+            removeLinkAttributesPane();
+            canvas.setMode(EditorMode.EDIT_POLYGON);
+        });
+
         ToggleButton tbBgImage = new ToggleButton("Background Image");
         tbBgImage.setToggleGroup(group);
         tbBgImage.setOnAction(e -> {
@@ -1134,8 +1207,9 @@ public class EditorFrameFx {
         editModeButtons.add(tbEditNode);
         editModeButtons.add(tbEditLink);
         editModeButtons.add(tbEditArea);
+        editModeButtons.add(tbEditPolygon);
         editModeButtons.add(tbBgImage);
-        flowPane.getChildren().addAll(label, tbAddNode, tbAddLink, tbAddNodeAndLink, tbEditNode, tbEditLink, tbEditArea, tbBgImage);
+        flowPane.getChildren().addAll(label, tbAddNode, tbAddLink, tbAddNodeAndLink, tbEditNode, tbEditLink, tbEditArea, tbEditPolygon, tbBgImage);
         tbEditNode.setSelected(true);
 
         return flowPane;
@@ -1225,6 +1299,7 @@ public class EditorFrameFx {
         nodePanel.reset();
         linkPanel.reset();
         areaPanel.reset();
+        polygonPanel.reset();
         scenarioPanel.reset();
         updateRotationMenu();
         updateColorDepthOfBackgroundImageMenu();
@@ -1856,6 +1931,33 @@ public class EditorFrameFx {
                 }
                 n++;
             }
+        }
+
+        // "OCEAN" および "STRUCTURE" タグ使用のチェック
+        int oceanTagCount = 0;
+        int structureTagCount = 0;
+        for (MapLink link : editor.getMap().getLinks()) {
+            for (String tag : link.getTags()) {
+                if (tag.contains("OCEAN")) {
+                    oceanTagCount++;
+                } else if (tag.contains("STRUCTURE")) {
+                    structureTagCount++;
+                }
+            }
+        }
+        if (oceanTagCount > 0) {
+            if (contentBuff.length() > 0) {
+                contentBuff.append("\n");
+            }
+            contentBuff.append("Tags including \"OCEAN\" is used. This tag is deprecated.");
+            Itk.logWarn_("Tags including \"OCEAN\" is used. This tag is deprecated.");
+        }
+        if (structureTagCount > 0) {
+            if (contentBuff.length() > 0) {
+                contentBuff.append("\n");
+            }
+            contentBuff.append("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
+            Itk.logWarn_("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
         }
 
         String title = "Total validation of map data";
@@ -2756,6 +2858,249 @@ public class EditorFrameFx {
     }
 
     /**
+     * ポリゴン設定ダイアログを開く
+     */
+    public void openPolygonAttributesDialog() {
+        ArrayList<MapPolygon> polygons = editor.getSelectedPolygons();
+        if (polygons.isEmpty()) {
+            return;
+        }
+        if (! multipleGroupConfirmation(polygons, "Warning:\n    Polygons of multiple groups were selected.\n    Do you want to continue?")) {
+            return;
+        }
+
+        double averageHeight = 0.0;
+        int minIndex = Integer.MAX_VALUE;
+        int maxIndex = Integer.MIN_VALUE;
+        int planePolygonCount = 0;
+        for (MapPolygon polygon : polygons) {
+            minIndex = Math.min(polygon.getZIndex(), minIndex);
+            maxIndex = Math.max(polygon.getZIndex(), maxIndex);
+            if (polygon.isPlanePolygon()) {
+                averageHeight += polygon.getOuterBoundary().getHeight();
+                planePolygonCount++;
+            }
+        }
+        averageHeight /= planePolygonCount;
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Set polygon attributes");
+        VBox paramPane = new VBox();
+
+        Label label = null;
+        if (polygons.size() == 1) {
+            label = new Label("ID: " + polygons.get(0).ID);
+        } else {
+            label = new Label("" + polygons.size() + " polygons selected");
+        }
+        label.setPadding(new Insets(0, 0, 12, 0));
+        paramPane.getChildren().addAll(label);
+
+        label = new Label("Parameters");
+        label.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(0, 0, 0, 10));
+        grid.setHgap(8);
+        grid.setVgap(8);
+        int row = 1;
+
+        // Z-index
+        Label zIndexLabel = new Label(polygons.size() > 1 ? String.format("Z-index(%d...%d)", minIndex, maxIndex) : "Z-index");
+        TextField zIndexField = new TextField("" + minIndex);
+        zIndexField.setMinWidth(100);
+        Button button = new Button("Set");
+        EventHandler zIndexHandler = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
+                Integer value = convertToInteger(zIndexField.getText());
+                if (value != null) {
+                    int zIndex = value;
+                    editor.startOfCommandBlock();
+                    for (MapPolygon polygon : polygons) {
+                        if (! editor.invoke(new SetZIndex(polygon, zIndex))) {
+                            break;
+                        }
+                    }
+                    editor.endOfCommandBlock();
+                    dialog.close();
+                }
+            }
+        };
+        zIndexField.setOnAction(zIndexHandler);
+        button.setOnAction(zIndexHandler);
+        grid.add(zIndexLabel, 1, row);
+        grid.add(zIndexField, 2, row);
+        grid.add(button, 3, row);
+        row++;
+
+        if (planePolygonCount > 0) {
+            // height field
+            Label heightLabel = new Label("height(" + averageHeight + ")");
+            TextField heightField = new TextField("" + averageHeight);
+            heightField.setMinWidth(100);
+            Button heightButton = new Button("Set");
+            EventHandler heightHandler = new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent event) {
+                    Double value = convertToDouble(heightField.getText());
+                    if (value != null) {
+                        double height = value;
+                        editor.startOfCommandBlock();
+                        for (MapPolygon polygon : polygons) {
+                            if (polygon.isPlanePolygon()) {
+                                if (! editor.invoke(new SetPolygonHeight(polygon, height))) {
+                                    break;
+                                }
+                            }
+                        }
+                        editor.endOfCommandBlock();
+                        dialog.close();
+                    }
+                }
+            };
+            heightField.setOnAction(heightHandler);
+            heightButton.setOnAction(heightHandler);
+            grid.add(heightLabel, 1, row);
+            grid.add(heightField, 2, row);
+            grid.add(heightButton, 3, row);
+        }
+
+        Separator separator = new Separator();
+        separator.setPadding(new Insets(8, 0, 8, 0));
+        TagSetupPane pane = new TagSetupPane(editor, polygons, dialog);
+
+        if (polygons.size() == 1 && polygons.get(0).isTriangleMeshes()) {
+            // Coordinates
+            MapPolygon polygon = polygons.get(0);
+            TriangleMeshes triangleMeshes = polygon.getTriangleMeshes();
+            Label coordinatesLabel = new Label("Coordinates (Format: X1,Y1,Z1<space>X2,Y2,Z2<space>X3,Y3,Z3<space> ...)");
+            coordinatesLabel.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
+            coordinatesLabel.setPadding(new Insets(10, 0, 4, 0));
+            TextArea coordinatesArea = new TextArea(triangleMeshes.getCoordinates().getCoordinatesText());
+            coordinatesArea.setWrapText(true);
+
+            Button coordinatesButton = new Button("Set");
+            coordinatesButton.setOnAction(e -> {
+                Coordinates coordinates = null;
+                try {
+                    coordinates = new Coordinates(coordinatesArea.getText(), 3);
+                } catch (Exception ex) {
+                    Alert alert = new Alert(AlertType.WARNING, ex.getMessage(), ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                if (coordinates.getValue().size() < 3) {
+                    Alert alert = new Alert(AlertType.WARNING, "Lack of coordinates", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                editor.invokeSingleCommand(new SetTriangleMeshesCoordinates(polygon, coordinates));
+                dialog.close();
+            });
+            FlowPane flowPane = new FlowPane();
+            flowPane.setAlignment(Pos.CENTER_RIGHT);
+            flowPane.setPadding(new Insets(4, 0, 0, 0));
+            flowPane.getChildren().addAll(coordinatesButton);
+
+            dialog.setResizable(true);
+            paramPane.getChildren().addAll(label, grid, coordinatesLabel, coordinatesArea, flowPane, separator, pane);
+        } else {
+            paramPane.getChildren().addAll(label, grid, separator, pane);
+        }
+
+        dialog.getDialogPane().setContent(paramPane);
+        ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(cancel);
+        dialog.showAndWait();
+    }
+
+    private static FlowPane flowWrap(Node node) {
+        FlowPane flowPane = new FlowPane();
+        flowPane.setPadding(new Insets(2, 0, 2, 0));
+        flowPane.getChildren().add(node);
+        return flowPane;
+    }
+
+    /**
+     * 三角形メッシュポリゴン追加ダイアログを開く
+     */
+    public void openAddTriangleMeshDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Add triangle mesh polygon");
+        dialog.getDialogPane().setPrefWidth(600);
+        dialog.setResizable(true);
+        VBox paramPane = new VBox();
+
+        // Z-index
+        Label zIndexLabel = new Label("Z-index");
+        TextField zIndexField = new TextField("0");
+
+        // Coordinates
+        Point2D point = canvas.convertToOriginal(canvas.getMapPointOnTheMouseCursor());
+        Label coordinatesLabel = new Label("Coordinates (Format: X1,Y1,Z1<space>X2,Y2,Z2<space>X3,Y3,Z3<space> ...)");
+        TextArea coordinatesArea = new TextArea("" + point.getX() + "," + point.getY() + ",0.0 ");
+        coordinatesArea.setWrapText(true);
+
+        // Tags
+        Label tagsLabel = new Label("Tags (Format: TAG1<line feed>TAG2<line feed> ...)");
+        TextArea tagsArea = new TextArea();
+        tagsArea.setWrapText(true);
+
+        paramPane.getChildren().addAll(flowWrap(zIndexLabel), flowWrap(zIndexField), flowWrap(coordinatesLabel), coordinatesArea, flowWrap(flowWrap(tagsLabel)), tagsArea);
+
+        dialog.getDialogPane().setContent(paramPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        while (result.isPresent() && result.get() == ButtonType.OK) {
+            int zIndex = 0;
+            Integer value = convertToInteger(zIndexField.getText().trim());
+            if (value == null) {
+                result = dialog.showAndWait();
+                continue;
+            }
+            zIndex = value;
+
+            Coordinates coordinates = null;
+            try {
+                coordinates = new Coordinates(coordinatesArea.getText(), 3);
+            } catch (Exception e) {
+                Alert alert = new Alert(AlertType.WARNING, e.getMessage(), ButtonType.OK);
+                alert.showAndWait();
+                result = dialog.showAndWait();
+                continue;
+            }
+            if (coordinates.getValue().size() < 3) {
+                Alert alert = new Alert(AlertType.WARNING, "Lack of coordinates", ButtonType.OK);
+                alert.showAndWait();
+                result = dialog.showAndWait();
+                continue;
+            }
+
+            String tagsText = tagsArea.getText().trim();
+            String[] tags = tagsText.split("\\r\\n|\\n|\\r");
+            if (tagsText.isEmpty() || tags.length == 0) {
+                Alert alert = new Alert(AlertType.WARNING, "There is no tag", ButtonType.OK);
+                alert.showAndWait();
+                result = dialog.showAndWait();
+                continue;
+            }
+
+            editor.startOfCommandBlock();
+            AddPolygon command = new AddPolygon(editor.getCurrentGroup(), zIndex, new TriangleMeshes(coordinates));
+            if (editor.invoke(command)) {
+                MapPolygon polygon = (MapPolygon)editor.getMap().getObject(command.getId());
+                for (String tag : tags) {
+                    if (! editor.invoke(new AddTag(polygon, tag))) {
+                        editor.endOfCommandBlock();
+                        return;
+                    }
+                }
+            }
+            editor.endOfCommandBlock();
+            break;
+        }
+    }
+
+    /**
      * 背景画像をセットする
      */
     public void setBackgroundImage() {
@@ -3025,6 +3370,10 @@ public class EditorFrameFx {
         return areaPanel;
     }
 
+    public PolygonPanel getPolygonPanel() {
+        return polygonPanel;
+    }
+
     public ScenarioPanelFx getScenarioPanel() {
         return scenarioPanel;
     }
@@ -3041,11 +3390,19 @@ public class EditorFrameFx {
         return editAreaMenu;
     }
 
+    public ContextMenu getEditPolygonMenu() {
+        return editPolygonMenu;
+    }
+
+    public ContextMenu getAddTriangleMeshMenu() {
+        return addTriangleMesheMenu;
+    }
+
     public ContextMenu getBgImageMenu() {
         return bgImageMenu;
     }
 
     public boolean isContextMenuShowing() {
-        return editNodeMenu.isShowing() || editLinkMenu.isShowing() || editAreaMenu.isShowing() || bgImageMenu.isShowing();
+        return editNodeMenu.isShowing() || editLinkMenu.isShowing() || editAreaMenu.isShowing() || editPolygonMenu.isShowing() || addTriangleMesheMenu.isShowing() || bgImageMenu.isShowing();
     }
 }

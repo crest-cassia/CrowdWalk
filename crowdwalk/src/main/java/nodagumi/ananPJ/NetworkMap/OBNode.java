@@ -35,6 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
+import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.Trail;
@@ -54,7 +55,7 @@ import org.w3c.dom.Text;
 public abstract class OBNode extends DefaultMutableTreeNode
     implements Trail.Content
 {
-    public enum NType{NODE,LINK,AGENT,GROUP,AREA,SYMLINK}
+    public enum NType{NODE,LINK,AGENT,GROUP,AREA,SYMLINK,POLYGON}
 
     public String ID;
 
@@ -131,6 +132,8 @@ public abstract class OBNode extends DefaultMutableTreeNode
             return MapAreaRectangle.fromDom(element);
         } else if (tagName.equals(OBNodeSymbolicLink.getNodeTypeString())) {
             return OBNodeSymbolicLink.fromDom(element);
+        } else if (tagName.equals(MapPolygon.getNodeTypeString())) {
+            return MapPolygon.fromDom(element);
         } else if (tagName.equals("tag")){
             return null;
         } else {

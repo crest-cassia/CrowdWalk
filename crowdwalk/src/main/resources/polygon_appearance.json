@@ -1,0 +1,23 @@
+[
+    {
+        "tag" : "OCEAN",
+        "color" : {
+            "value" : "AQUABLUE",
+            "transparency" : 0.0
+        }
+    },
+    {
+        "tag" : "STRUCTURE",
+        "color" : {
+            "value" : "BLACK2",
+            "transparency" : 0.8
+        }
+    },
+    {
+        "tag" : "*",
+        "color" : {
+            "value" : "GRAY",
+            "transparency" : 0.0
+        }
+    }
+]
