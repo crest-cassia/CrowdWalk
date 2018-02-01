@@ -55,6 +55,8 @@ dependencies {
     compile group: 'org.orbisgis', name: 'poly2tri-core', version: '0.1.2'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    // https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-all
+    compile group: 'com.vladsch.flexmark', name: 'flexmark-all', version: '0.28.34'
 }
 
 sourceSets {

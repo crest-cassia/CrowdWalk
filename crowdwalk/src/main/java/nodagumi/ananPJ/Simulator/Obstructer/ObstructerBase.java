@@ -3,7 +3,6 @@ package nodagumi.ananPJ.Simulator.Obstructer;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SetupFileInfo;
@@ -166,19 +165,21 @@ public abstract class ObstructerBase {
      * リソースファイルを文字列に変換する
      */
     public static String resourceToString(String resourceName) {
-        StringBuilder buff = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         try {
             InputStream is = ObstructerBase.class.getResourceAsStream(resourceName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = br.readLine()) != null) {
-                buff.append(line);
-            } 
-            br.close();
+            InputStreamReader reader = new InputStreamReader(is);
+            char[] buff = new char[1024];
+            int length = reader.read(buff);
+            while (length >= 0) {
+                builder.append(buff, 0, length);
+                length = reader.read(buff);
+            }
+            reader.close();
         } catch (Exception ex) {
             Itk.logError("リソースファイルの読み込みに失敗しました", resourceName);
             System.exit(1);
         }
-        return buff.toString();
+        return builder.toString();
     }
 }

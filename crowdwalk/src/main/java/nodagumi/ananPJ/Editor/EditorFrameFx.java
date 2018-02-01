@@ -7,6 +7,7 @@ import java.lang.Thread;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -75,6 +76,13 @@ import javafx.stage.WindowEvent;
 import com.sun.javafx.scene.control.behavior.ButtonBehavior;
 import com.sun.javafx.scene.control.behavior.KeyBinding;
 
+// import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
+import com.vladsch.flexmark.util.options.MutableDataSet;
+
 import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Editor.EditCommand.*;
 import nodagumi.ananPJ.Gui.MapViewFrame;
@@ -121,7 +129,8 @@ public class EditorFrameFx {
      * ヘルプ表示用コンテンツのアドレス
      * TODO: 定義ファイル化する
      */
-    public static final String QUICK_REFERENCE = "/quick_reference.html";
+    public static final String QUICK_REFERENCE = "/quick_reference.md";
+    public static final String QUICK_REFERENCE_TEMPLATE = "/quick_reference_template.html";
     public static final String PROPERTIES_PATH = "./doc/javadoc/nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html";
     public static final String TUTORIAL_PATH = "./doc/manual.html";
     public static final String ZONE_REFERENCE_URI = "http://www.gsi.go.jp/sokuchikijun/jpc.html";
@@ -229,6 +238,8 @@ public class EditorFrameFx {
     /**
      * ヘルプ表示用
      */
+    private Parser parser;
+    private HtmlRenderer renderer;
     private Stage helpStage = new Stage();
     private WebView webView = new WebView();
     private double helpZoom = 1.0;
@@ -441,6 +452,14 @@ public class EditorFrameFx {
      */
     private void init() {
         // ヘルプ画面の準備
+
+        MutableDataSet options = new MutableDataSet();
+        options.setFrom(ParserEmulationProfile.MARKDOWN);
+        options.set(Parser.EXTENSIONS, Arrays.asList(
+            TablesExtension.create()
+        ));
+        parser = Parser.builder(options).build();
+        renderer = HtmlRenderer.builder(options).build();
 
         webView.setOnKeyPressed(event -> {
             if (event.isControlDown()) {
@@ -746,7 +765,9 @@ public class EditorFrameFx {
             helpStage.setTitle("Help - Quick reference");
             helpStage.setWidth(980);
             helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
-            webView.getEngine().loadContent(ObstructerBase.resourceToString(QUICK_REFERENCE));
+            String template = ObstructerBase.resourceToString(QUICK_REFERENCE_TEMPLATE);
+            com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
+            webView.getEngine().loadContent(template.replace("__HTML_BODY__", renderer.render(document)));
             helpStage.show();
             helpStage.toFront();
         });
