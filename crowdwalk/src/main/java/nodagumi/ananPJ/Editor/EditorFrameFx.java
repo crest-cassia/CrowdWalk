@@ -73,9 +73,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import com.sun.javafx.scene.control.behavior.ButtonBehavior;
-import com.sun.javafx.scene.control.behavior.KeyBinding;
-
 // import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -116,15 +113,6 @@ import nodagumi.Itk.Itk;
  * マップエディタのウィンドウ構築と GUI コントロール
  */
 public class EditorFrameFx {
-    // Enter キーを押下した時にフォーカスが当たっているボタンが押される様にする(デフォルトではそうなっていないため)
-    public class EnableButtonEnterKey extends ButtonBehavior<Button> {
-        public EnableButtonEnterKey() {
-            super(new Button());
-            BUTTON_BINDINGS.add(new KeyBinding(KeyCode.ENTER, KeyEvent.KEY_PRESSED, "Press"));
-            BUTTON_BINDINGS.add(new KeyBinding(KeyCode.ENTER, KeyEvent.KEY_RELEASED, "Release"));
-        }
-    }
-
     /**
      * ヘルプ表示用コンテンツのアドレス
      * TODO: 定義ファイル化する
@@ -262,7 +250,6 @@ public class EditorFrameFx {
         frame.setTitle(title);
         this.editor = editor;
         this.settings = settings;
-        new EnableButtonEnterKey();
 
         int x = settings.get("_editorPositionX", 0);
         int y = settings.get("_editorPositionY", 0);

@@ -185,8 +185,9 @@ public class MapPartGroup extends OBNode {
         Element element = super.toDom(dom, getNodeTypeString());
 
         addAttributesToDom(element);
-        for (Enumeration<OBNode> e = children(); e.hasMoreElements();) {
-            OBNode child = e.nextElement();
+        Enumeration e = children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
             if (child != null) {
                 element.appendChild(child.toDom(dom, null));
             }
@@ -329,11 +330,11 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public MapNodeTable getChildNodes() {
         MapNodeTable children = new MapNodeTable();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.NODE) {
-                children.add((MapNode)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.NODE) {
+                children.add((MapNode)child);
             }
         }
         return children;
@@ -341,13 +342,13 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public MapNodeTable getChildNodesAndSymlinks() {
         MapNodeTable children = new MapNodeTable();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.NODE) {
-                children.add((MapNode)node);
-            } else if (node.getNodeType() == OBNode.NType.SYMLINK) {
-                OBNode orig = ((OBNodeSymbolicLink)node).getOriginal();
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.NODE) {
+                children.add((MapNode)child);
+            } else if (child.getNodeType() == OBNode.NType.SYMLINK) {
+                OBNode orig = ((OBNodeSymbolicLink)child).getOriginal();
                 if (orig.getNodeType() == OBNode.NType.NODE) {
                     children.add((MapNode)orig);
                 }
@@ -359,15 +360,15 @@ public class MapPartGroup extends OBNode {
     // 基準座標から象限を絞って抽出する
     public MapNodeTable getChildNodesAndSymlinks(MapNode from, int quadrant) {
         MapNodeTable children = new MapNodeTable();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.NODE) {
-                if (from.include((MapNode)node, quadrant)) {
-                    children.add((MapNode)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.NODE) {
+                if (from.include((MapNode)child, quadrant)) {
+                    children.add((MapNode)child);
                 }
-            } else if (node.getNodeType() == OBNode.NType.SYMLINK) {
-                OBNode orig = ((OBNodeSymbolicLink)node).getOriginal();
+            } else if (child.getNodeType() == OBNode.NType.SYMLINK) {
+                OBNode orig = ((OBNodeSymbolicLink)child).getOriginal();
                 if (orig.getNodeType() == OBNode.NType.NODE) {
                     if (from.include((MapNode)orig, quadrant)) {
                         children.add((MapNode)orig);
@@ -381,11 +382,11 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public MapLinkTable getChildLinks() {
         MapLinkTable children = new MapLinkTable();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.LINK) {
-                children.add((MapLink)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.LINK) {
+                children.add((MapLink)child);
             }
         }
         return children;
@@ -394,11 +395,11 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public ArrayList<AgentBase> getChildAgents() {
         ArrayList<AgentBase> children = new ArrayList<AgentBase>();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.AGENT) {
-                children.add((AgentBase)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.AGENT) {
+                children.add((AgentBase)child);
             }
         }
         return children;
@@ -407,11 +408,11 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public ArrayList<MapPartGroup> getChildGroups() {
         ArrayList<MapPartGroup> children = new ArrayList<MapPartGroup>();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.GROUP) {
-                children.add((MapPartGroup)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.GROUP) {
+                children.add((MapPartGroup)child);
             }
         }
         return children;
@@ -420,11 +421,11 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public ArrayList<MapArea> getChildMapAreas() {
         ArrayList<MapArea> children = new ArrayList<MapArea>();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.AREA) {
-                children.add((MapArea)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.AREA) {
+                children.add((MapArea)child);
             }
         }
         return children;
@@ -433,11 +434,11 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public ArrayList<MapPolygon> getChildMapPolygons() {
         ArrayList<MapPolygon> children = new ArrayList<MapPolygon>();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.POLYGON) {
-                children.add((MapPolygon)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.POLYGON) {
+                children.add((MapPolygon)child);
             }
         }
         return children;
@@ -446,11 +447,11 @@ public class MapPartGroup extends OBNode {
     @SuppressWarnings("unchecked")
     public ArrayList<OBNodeSymbolicLink> getSymbolicLinks() {
         ArrayList<OBNodeSymbolicLink> children = new ArrayList<OBNodeSymbolicLink>();
-        Enumeration<OBNode> all_children = children();
-        while (all_children.hasMoreElements()) {
-            OBNode node = all_children.nextElement();
-            if (node.getNodeType() == OBNode.NType.SYMLINK) {
-                children.add((OBNodeSymbolicLink)node);
+        Enumeration e = this.children();
+        while (e.hasMoreElements()) {
+            OBNode child = (OBNode)e.nextElement();
+            if (child.getNodeType() == OBNode.NType.SYMLINK) {
+                children.add((OBNodeSymbolicLink)child);
             }
         }
         return children;

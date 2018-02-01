@@ -1004,8 +1004,9 @@ public class NetworkMap extends DefaultTreeModel {
 
             nodesCache.add(node);
         } else if (OBNode.NType.GROUP == ob_node.getNodeType()) {
-            for (Enumeration<OBNode> e = ob_node.children();e.hasMoreElements();) {
-                OBNode child = e.nextElement();
+            Enumeration e = ob_node.children();
+            while (e.hasMoreElements()) {
+                OBNode child = (OBNode)e.nextElement();
                 setupNodes(child);
             }
         }
@@ -1045,8 +1046,9 @@ public class NetworkMap extends DefaultTreeModel {
                                               JOptionPane.WARNING_MESSAGE);
             }
         } else if (OBNode.NType.GROUP == ob_node.getNodeType()) {
-            for (Enumeration<OBNode> e = ob_node.children();e.hasMoreElements();) {
-                OBNode child = e.nextElement();
+            Enumeration e = ob_node.children();
+            while (e.hasMoreElements()) {
+                OBNode child = (OBNode)e.nextElement();
                 setupLinks(child);
             }
         }
@@ -1060,8 +1062,9 @@ public class NetworkMap extends DefaultTreeModel {
     private void setupOthers(OBNode ob_node) {
         if (OBNode.NType.GROUP == ob_node.getNodeType()) {
             addObject(ob_node.ID, ob_node);
-            for (Enumeration<OBNode> e = ob_node.children(); e.hasMoreElements();) {
-                OBNode child = e.nextElement();
+            Enumeration e = ob_node.children();
+            while (e.hasMoreElements()) {
+                OBNode child = (OBNode)e.nextElement();
                 setupOthers(child);
             }
         } else if (ob_node.getNodeType() == OBNode.NType.SYMLINK) {
