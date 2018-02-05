@@ -16,6 +16,7 @@ import org.apache.commons.cli.PosixParser;
 
 import nodagumi.ananPJ.CuiSimulationLauncher;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.Itk;
 
@@ -27,17 +28,10 @@ public class CuiCrowdWalkLauncher {
     public static String commandLineSyntax = String.format("crowdwalk %s <properties-file>", optionsFormat);
 
     /**
-     * ビルドバージョンの取得
+     * バージョン情報の取得(最終コミットログの出力で代用)
      */
     public static String getVersion() {
-        Properties prop = new Properties();
-        try {
-            prop.load(CuiCrowdWalkLauncher.class.getResourceAsStream("/CrowdWalk.properties"));
-            return String.format("%s.%s.%s-%s", prop.getProperty("version"), prop.getProperty("branch"),
-                    prop.getProperty("revision"), prop.getProperty("commit_hash"));
-        } catch (IOException e) {
-            return "";
-        }
+        return ObstructerBase.resourceToString("/commit_version.txt");
     }
 
     /**
@@ -75,7 +69,11 @@ public class CuiCrowdWalkLauncher {
             }
             // バージョン表示
             if (commandLine.hasOption("version")) {
-                System.err.println("CrowdWalk Version " + getVersion());
+                System.err.println(
+                    "CrowdWalk Version\n" +
+                    "----------------------------------------------------------------\n" +
+                    getVersion() +
+                    "----------------------------------------------------------------");
                 System.exit(0);
             }
 

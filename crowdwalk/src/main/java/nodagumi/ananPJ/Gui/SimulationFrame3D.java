@@ -73,6 +73,7 @@ import javafx.stage.Stage;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.GuiSimulationLauncher3D;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -341,7 +342,23 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         fileMenu.getItems().addAll(miClose);
 
-        menuBar.getMenus().addAll(fileMenu);
+        //// Help menu ////
+
+        Menu helpMenu = new Menu("Help");
+
+        MenuItem miVersion = new MenuItem("About version");
+        miVersion.setOnAction(e -> {
+            Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);
+            alert.setTitle("About version");
+            alert.setHeaderText("CrowdWalk Version");
+            alert.setResizable(true);
+            alert.getDialogPane().setPrefSize(600, 240);
+            alert.showAndWait();
+        });
+
+        helpMenu.getItems().addAll(miVersion);
+
+        menuBar.getMenus().addAll(fileMenu, helpMenu);
 
         return menuBar;
     }

@@ -19,6 +19,7 @@ import org.apache.commons.cli.PosixParser;
 // import nodagumi.ananPJ.Editor.MapEditor;
 import nodagumi.ananPJ.Editor.MapEditorInterface;
 import nodagumi.ananPJ.misc.SimTime;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.Itk;
 
@@ -83,7 +84,11 @@ public class CrowdWalkLauncher {
             }
             // バージョン表示
             if (commandLine.hasOption("version")) {
-                System.err.println("CrowdWalk Version " + GuiSimulationEditorLauncher.getVersion());
+                System.err.println(
+                    "CrowdWalk Version\n" +
+                    "----------------------------------------------------------------\n" +
+                    getVersion() +
+                    "----------------------------------------------------------------");
                 System.exit(0);
             }
 
@@ -143,6 +148,13 @@ public class CrowdWalkLauncher {
             System.out.println(e.getMessage());
             System.exit(1);
         }
+    }
+
+    /**
+     * バージョン情報の取得(最終コミットログの出力で代用)
+     */
+    public static String getVersion() {
+        return ObstructerBase.resourceToString("/commit_version.txt");
     }
 
     /**

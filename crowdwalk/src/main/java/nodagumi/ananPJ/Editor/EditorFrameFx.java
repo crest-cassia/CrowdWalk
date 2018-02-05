@@ -818,7 +818,17 @@ public class EditorFrameFx {
             }).start();
         });
 
-        helpMenu.getItems().addAll(miKeyboardShortcuts, miPropertiesSetting, miTutorialManual, miZoneReference, miGitHub);
+        MenuItem miVersion = new MenuItem("About version");
+        miVersion.setOnAction(e -> {
+            Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);
+            alert.setTitle("About version");
+            alert.setHeaderText("CrowdWalk Version");
+            alert.setResizable(true);
+            alert.getDialogPane().setPrefSize(600, 240);
+            alert.showAndWait();
+        });
+
+        helpMenu.getItems().addAll(miKeyboardShortcuts, miPropertiesSetting, miTutorialManual, miZoneReference, miGitHub, miVersion);
 
         menuBar.getMenus().addAll(fileMenu, editMenu, viewMenu, actionMenu, helpMenu);
 

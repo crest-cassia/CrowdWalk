@@ -117,20 +117,12 @@ compileJava {
 
 processResources {
     doFirst {
-        // バージョン番号を生成してリソースファイルにセットする
-        def version = new File("version.txt").getText().trim()
-        def branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
-        def revision = 0
-        "git rev-list HEAD".execute().in.eachLine { revision++ }
-        def commit_hash = "git rev-parse --short HEAD".execute().text.trim()
-
-        filesMatching("CrowdWalk.properties") {
-            filter(ReplaceTokens, tokens: ['version': version])
-            filter(ReplaceTokens, tokens: ['branch': branch])
-            filter(ReplaceTokens, tokens: ['revision': "" + revision])
-            filter(ReplaceTokens, tokens: ['commit_hash': commit_hash])
+        // 最終コミットログの出力をバージョン情報としてリソースファイルにセットする
+        def commit_version = "git log -n 1".execute().text.trim()
+        filesMatching("commit_version.txt") {
+            filter(ReplaceTokens, tokens: ['commit_version': commit_version])
         }
-        println "    version -> ${version}.${branch}.${revision}-${commit_hash}"
+        println "    commit version -> ${commit_version}"
     }
 }
 

@@ -77,6 +77,7 @@ import math.geom3d.Vector3D;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.GuiSimulationLauncher2D;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -492,6 +493,21 @@ public class SimulationFrame2D extends JFrame
         viewMenu.add(showAreaLabels);
         
         menuBar.add(viewMenu);
+
+        //// Help menu ////
+
+        Menu helpMenu = new PopupMenu("Help");
+
+        MenuItem miVersion = new MenuItem("About version");
+        miVersion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, CrowdWalkLauncher.getVersion(), "CrowdWalk Version", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+        helpMenu.add(miVersion);
+
+        menuBar.add(helpMenu);
 
         setMenuBar(menuBar);
     }

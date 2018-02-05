@@ -44,6 +44,7 @@ import javax.swing.event.ChangeListener;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent.SpeedCalculationModel;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Editor.EditorFrame;
 import nodagumi.ananPJ.Editor.Panel.BrowserPanel;
 import nodagumi.ananPJ.Editor.Panel.ScenarioPanel;
@@ -448,21 +449,17 @@ public class GuiSimulationEditorLauncher
         menuBar.add(actionMenu);
 
         Menu help = new Menu("Help");
-        mi = new MenuItem("Version " + getVersion());
-        mi.setEnabled(false);
-        help.add(mi);
+        MenuItem miVersion = new MenuItem("About version");
+        miVersion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, CrowdWalkLauncher.getVersion(), "CrowdWalk Version", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+        help.add(miVersion);
+
         menuBar.add(help);
         frame.setMenuBar(menuBar);
-    }
-
-    public static String getVersion() {
-        Properties prop = new Properties();
-        try {
-            prop.load(GuiSimulationEditorLauncher.class.getResourceAsStream("/CrowdWalk.properties"));
-            return String.format("%s.%s.%s-%s", prop.getProperty("version"), prop.getProperty("branch"), prop.getProperty("revision"), prop.getProperty("commit_hash"));
-        } catch(IOException e) {
-            return "";
-        }
     }
 
     private boolean clearAll() {
