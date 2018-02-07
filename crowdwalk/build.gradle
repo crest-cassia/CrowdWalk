@@ -19,19 +19,21 @@ apply plugin: 'eclipse'
 
 def javaVersion = new Double(sourceCompatibility.toString())
 def onlyCuiSimulator = cui.toBoolean()
-def vmName = System.getProperty("java.vm.name")
+def javaFxExists = true
 
 if (javaVersion < 1.8) {
     println "javaVersion ${javaVersion}"
     onlyCuiSimulator = true
+    javaFxExists = false
+} else {
+    if (fileTree(dir: System.getenv()['JAVA_HOME']).include('**/javafx.properties').isEmpty()) {
+        println "Warning: JavaFX is not installed."
+        println "         To build with new editor and 3D simulator, please install JavaFX."
+        javaFxExists = false
+    }
 }
 if (onlyCuiSimulator) {
     println "build mode: onlyCuiSimulator"
-} else {
-    if (vmName.toLowerCase().indexOf("openjdk") != -1) {
-        println "Java Virtual Machine: ${vmName}"
-        println "Note: To build with 3D simulator, please use Oracle version JDK."
-    }
 }
 
 repositories {
@@ -80,7 +82,7 @@ sourceSets {
                 exclude 'nodagumi/ananPJ/misc/MapChecker.java'
             } else {
                 exclude 'nodagumi/ananPJ/CuiCrowdWalkLauncher.java'
-                if (vmName.toLowerCase().indexOf("openjdk") != -1) {
+                if (! javaFxExists) {
                     exclude 'nodagumi/ananPJ/Editor/EditorCanvas.java'
                     exclude 'nodagumi/ananPJ/Editor/EditorFrameFx.java'
                     exclude 'nodagumi/ananPJ/Editor/MapEditor.java'
@@ -89,6 +91,7 @@ sourceSets {
                     exclude 'nodagumi/ananPJ/Editor/Panel/GroupPanel.java'
                     exclude 'nodagumi/ananPJ/Editor/Panel/LinkPanelFx.java'
                     exclude 'nodagumi/ananPJ/Editor/Panel/NodePanelFx.java'
+                    exclude 'nodagumi/ananPJ/Editor/Panel/PolygonPanel.java'
                     exclude 'nodagumi/ananPJ/Editor/Panel/ScenarioPanelFx.java'
                     exclude 'nodagumi/ananPJ/Editor/Panel/TagSetupPane.java'
                     exclude 'nodagumi/ananPJ/Gui/AgentAppearance/view3d/**'
@@ -118,7 +121,9 @@ compileJava {
 processResources {
     doFirst {
         // 最終コミットログの出力をバージョン情報としてリソースファイルにセットする
-        def commit_version = "git log -n 1".execute().text.trim()
+        def gitBranch = "git symbolic-ref --short HEAD".execute().text.trim()
+        def gitLog = "git log -n 1".execute().text.trim()
+        def commit_version = "Branch: " + gitBranch + "\n" + gitLog
         filesMatching("commit_version.txt") {
             filter(ReplaceTokens, tokens: ['commit_version': commit_version])
         }

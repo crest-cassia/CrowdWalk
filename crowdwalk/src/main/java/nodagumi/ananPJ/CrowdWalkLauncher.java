@@ -201,11 +201,6 @@ public class CrowdWalkLauncher {
             if (! GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D")) {
                 throw new Exception("このビルドには 3D シミュレータ機能が組み込まれていません。");
             }
-            String vmName = System.getProperty("java.vm.name");
-            if (vmName.toLowerCase().indexOf("openjdk") != -1) {
-                throw new Exception("Java Virtual Machine: " + vmName
-                        + "\n\t3D シミュレータは Oracle 版の Java でないと実行できません。");
-            }
             launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
         }
         launcher.init(propertiesFilePath, settings, commandLineFallbacks);
@@ -295,9 +290,7 @@ public class CrowdWalkLauncher {
      * 3D シミュレータが使用可能か?
      */
     public static boolean isUsable3dSimulator() {
-        String vmName = System.getProperty("java.vm.name");
-        return GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D")
-            && vmName.toLowerCase().indexOf("openjdk") == -1;
+        return GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D");
     }
 
     public static void main(String[] args) {
