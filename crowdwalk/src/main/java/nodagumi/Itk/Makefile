@@ -33,7 +33,7 @@ JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar:$(CWJAR)
 ##------------------------------------------------------------
 doc ::
 	rm -f $(BASEDIR)/doc/javadoc/nodagumi/ananPJ/package-summary.html
-	( cd $(BASEDIR) ; gradle javadoc  )
+	( cd $(BASEDIR) ; gradle --offline javadoc  )
 
 doc-old ::
 	(cd ../.. ;\
