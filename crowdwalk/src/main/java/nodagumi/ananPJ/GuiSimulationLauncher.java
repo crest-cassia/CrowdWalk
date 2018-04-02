@@ -19,6 +19,7 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.SetupFileInfo;
+import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.*;
@@ -89,6 +90,16 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * 海岸線
      */
     protected Coastline coastline = null;
+
+    /**
+     * リセット中か?
+     */
+    protected boolean resetting = false;
+
+    /**
+     * 一時停止の有効/無効
+     */
+    protected boolean pauseEnabled = false;
 
     /**
      * Properties
@@ -228,10 +239,33 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         };
     }
 
-    protected void quit() {
+    /**
+     * シミュレータを終了または再起動する
+     */
+    public void quit() {
         Itk.logInfo("Simulation window closed.") ;
-        if (exitOnClose) {
-            System.exit(0);
+        // スクリーンショットの保存中ならば完了するのを待つ
+        while (getSaveThreadCount() > 0) {
+            synchronized (this) {
+                try {
+                    wait(100);
+                } catch (InterruptedException e) {}
+            }
+        }
+        if (resetting) {
+            resetting = false;
+            if (! finished) {
+                // ログファイルのクローズ処理
+                simulator.finish();
+                Itk.logInfo("Status", getStatusLine());
+                finished = true;
+            }
+            init(getPropertiesFile(), settings, commandLineFallbacks);
+            simulate();
+        } else {
+            if (exitOnClose) {
+                System.exit(0);
+            }
         }
     }
 
@@ -287,6 +321,13 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     }
 
     /**
+     * リセット中かどうかを設定する
+     */
+    public void setResetting(boolean resetting) {
+        this.resetting = resetting;
+    }
+
+    /**
      * シミュレーションの完了と共にアプリケーションを終了させるかどうか。
      */
     public abstract boolean isExitWithSimulationFinished();
@@ -300,6 +341,18 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * ボタン類のアップデート
      */
     public abstract void update_buttons();
+
+    /**
+     * スクリーンショット保存用のスレッド数カウンタ値を取得する
+     */
+    public abstract int getSaveThreadCount();
+
+    /**
+     * 一時停止の有効/無効を設定する
+     */
+    public void setPauseEnabled(boolean pauseEnabled) {
+        this.pauseEnabled = pauseEnabled;
+    }
 
     /**
      * 画面出力用properties設定

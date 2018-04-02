@@ -35,22 +35,6 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
     private ArrayList<AgentAppearance3D> agentAppearances = new ArrayList();
 
     /**
-     * 3D シミュレータを終了する
-     */
-    public void quit() {
-        Itk.logInfo("Simulation window closed.") ;
-        // スクリーンショットの保存中だったら完了するまで待つ
-        while (simulationFrame.getSaveThreadCount() > 0) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {}
-        }
-        if (exitOnClose) {
-            System.exit(0);
-        }
-    }
-
-    /**
      * シミュレーションの pause 要求。
      */
     @Override
@@ -71,6 +55,10 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
         viewController.statusChanged("statusText", getStatusLine());
         viewController.statusChanged("displayClock", currentTime);
         viewController.statusChanged("evacuatedCount", simulator.getEvacuatedCountStatus());
+
+        if (pauseEnabled && ! paused && currentTime.getTickCount() == simulationFrame.getPauseTime().getTickCount()) {
+            pauseRequest();
+        }
 
         if (isRecordSimulationScreen() || simulationFrame.isViewSynchronized()) {
             final CountDownLatch latch = new CountDownLatch(1);
@@ -130,6 +118,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
      * エージェント表示の準備
      */
     public void setupAgentView() {
+        agentAppearances.clear();
         for (HashMap parameters : loadAgentAppearance()) {
             AgentAppearance3D appearance = new AgentAppearance3D(this, simulationFrame, parameters);
             if (! appearance.isValidFor3D()) {
@@ -181,6 +170,13 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
     public void saveSimulatorPosition(int x, int y) {
         settings.put("simulatorPositionX", x);
         settings.put("simulatorPositionY", y);
+    }
+
+    /**
+     * スクリーンショット保存用のスレッド数カウンタ値を取得する
+     */
+    public int getSaveThreadCount() {
+        return simulationFrame.getSaveThreadCount();
     }
 
     /**

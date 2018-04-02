@@ -264,6 +264,13 @@ public abstract class BasicSimulationLauncher {
         return setupFileInfo.getFallbackFile() ;
     }
 
+    /**
+     * プロパティファイル名を取得する
+     */
+    public String getPropertiesFile() {
+        return propertiesFile;
+    }
+
     /*****/
     /**
      * プロパティへの橋渡し。

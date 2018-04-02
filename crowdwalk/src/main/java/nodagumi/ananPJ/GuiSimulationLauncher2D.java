@@ -26,21 +26,6 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      */
     private ArrayList<AgentAppearance2D> agentAppearances = new ArrayList();
 
-    public void quit() {
-        Itk.logInfo("Simulation window closed.") ;
-        // スクリーンショットの保存中ならば完了するのを待つ
-        while (simulationFrame.getSaveThreadCount() > 0) {
-            synchronized (this) {
-                try {
-                    wait(100);
-                } catch (InterruptedException e) {}
-            }
-        }
-        if (exitOnClose) {
-            System.exit(0);
-        }
-    }
-
     /**
      * シミュレーションの pause 要求。
      */
@@ -68,6 +53,10 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
         update_buttons();
         displayClock(currentTime);
         updateEvacuatedCount();
+
+        if (pauseEnabled && ! paused && currentTime.getTickCount() == simulationFrame.getPauseTime().getTickCount()) {
+            pauseRequest();
+        }
 
         if (simulationFrame.isRecordSimulationScreen()) {
             // スクリーンショット
@@ -124,6 +113,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      * エージェント表示の準備
      */
     public void setupAgentView() {
+        agentAppearances.clear();
         for (HashMap parameters : loadAgentAppearance()) {
             AgentAppearance2D appearance = new AgentAppearance2D(this, simulationFrame, parameters);
             if (! appearance.isValidFor2D()) {
@@ -237,5 +227,12 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
     public void saveSimulatorPosition(SimulationFrame2D frame) {
         settings.put("simulatorPositionX", frame.getLocationOnScreen().x);
         settings.put("simulatorPositionY", frame.getLocationOnScreen().y);
+    }
+
+    /**
+     * スクリーンショット保存用のスレッド数カウンタ値を取得する
+     */
+    public int getSaveThreadCount() {
+        return simulationFrame.getSaveThreadCount();
     }
 }
