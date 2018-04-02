@@ -818,6 +818,11 @@ public class EditorFrameFx {
             }).start();
         });
 
+        if (CrowdWalkLauncher.offline) {
+            miZoneReference.setDisable(true);
+            miGitHub.setDisable(true);
+        }
+
         MenuItem miVersion = new MenuItem("About version");
         miVersion.setOnAction(e -> {
             Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);

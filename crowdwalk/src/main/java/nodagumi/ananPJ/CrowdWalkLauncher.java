@@ -27,7 +27,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-e] [-g|g2] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-e] [-g|g2] [-h] [-l <LEVEL>] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -47,6 +47,11 @@ public class CrowdWalkLauncher {
     public static boolean use2dSimulator = false;
 
     /**
+     * オフラインモード
+     */
+    public static boolean offline = false;
+
+    /**
      * コマンドラインオプションの定義
      */
     public static void defineOptions(Options options) {
@@ -58,6 +63,7 @@ public class CrowdWalkLauncher {
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
             .hasArg().withArgName("LEVEL").create("l"));
+        options.addOption("o", "offline", false, "Internet への接続をおこなわない");
         options.addOption(OptionBuilder.withLongOpt("tick")
             .withDescription("tick 情報を FILE に出力する\nCUI モード時のみ有効")
             .hasArg().withArgName("FILE").create("t"));
@@ -111,6 +117,9 @@ public class CrowdWalkLauncher {
 
             // 2D GUI シミュレータを使用する
             use2dSimulator = commandLine.hasOption("use-2d-simulator");
+
+            // オフラインモード
+            offline = commandLine.hasOption("offline");
 
             // CUI モードで実行
             if (commandLine.hasOption("cui")) {
