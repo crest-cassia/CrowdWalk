@@ -334,6 +334,12 @@ public class SimulationFrame2D extends JFrame
                         public void run() {
                             launcher.simulationWindowOpenedOperation(frame) ;
                         }});
+                // Java 9 ではウィンドウが 8x8 縮小されるためスクロールバーがつぶれてしまう不具合の対策
+                if (panel.getWidth() < 800 || panel.getHeight() < 600) {
+                    int dw = Math.max(800 - panel.getWidth(), 0);
+                    int dh = Math.max(600 - panel.getHeight(), 0);
+                    setSize(getWidth() + dw, getHeight() + dh);
+                }
                 panel.centering(true);
                 panel.repaint();
             }

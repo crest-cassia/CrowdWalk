@@ -1290,9 +1290,7 @@ public class SimulationPanel3D extends StackPane {
             try {
                 addPlanePolygon(seaGroup, -SEA_LEVEL, boundary, coastline.getInnerBoundaries(boundary), FxColor.AEGEANBLUE);
             } catch (RuntimeException e) {
-                // TODO: 要デバッグ
                 Itk.logError("RuntimeException", e.getMessage());
-                Itk.logError("Bug", "Please change the setting value of \"gsi_tile_zoom\" in the property file.");
                 return;
             }
         }
@@ -1527,9 +1525,7 @@ public class SimulationPanel3D extends StackPane {
             try {
                 addPlanePolygon(polygonGroup, outerBoundary.getHeight(), outerBoundary.getPoints(), innerPoints, color);
             } catch (RuntimeException e) {
-                // TODO: 要デバッグ
                 Itk.logError("RuntimeException", e.getMessage());
-                Itk.logError("Bug", "Failed triangulation of polygons: ID=" + polygon.getID());
                 return;
             }
         }
