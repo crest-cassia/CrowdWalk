@@ -1,30 +1,12 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Simulator;
 
-import java.awt.geom.Point2D;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.*;
-import java.lang.ClassNotFoundException;
-
 import java.lang.Thread;
 import java.lang.Runnable;
 import java.util.Iterator;
-
-//import java.lang.System;
-import java.text.*;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
@@ -40,8 +22,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
-import org.w3c.dom.Document;
 
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
@@ -761,7 +741,22 @@ public class AgentHandler {
      */
     private int tickIntervalForIndividualPedestriansLog
         = Fallback_tickIntervalForIndividualPedestriansLog ;
-    
+
+    /**
+     * individualPedestriansLogger の出力対象エージェントを示すタグ
+     */
+    private ArrayList<String> tagsForIndividualPedestriansLog = new ArrayList();
+
+    /**
+     * individualPedestriansLogger の出力対象エージェントを示すタグの正規表現
+     */
+    private ArrayList<Pattern> regexpsForIndividualPedestriansLog = new ArrayList();
+
+    /**
+     * 対象エージェントを除外する場合は true
+     */
+    private boolean excludeAgentsInIndividualPedestriansLog = false;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // EvacuatedAgentsLogger 関係。
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1772,6 +1767,26 @@ public class AgentHandler {
             .fetchFallbackInt(fallback,
                               "tickIntervalForIndividualPedestriansLog",
                               tickIntervalForIndividualPedestriansLog) ;
+
+        // 出力(非)対象エージェントの設定
+        Term logAgentsFallback = SetupFileInfo.filterFallbackTerm(fallback, "logAgentsOfIndividualPedestrians");
+        Term tags = SetupFileInfo.fetchFallbackTerm(logAgentsFallback, "tags", Term.newArrayTerm());
+        for (int i = 0; i < tags.getArraySize(); i++) {
+            Term tag = tags.getNthTerm(i);
+            Matcher matcher = Pattern.compile("^\\/(.*)\\/$").matcher(tag.getString());
+            if (matcher.find()) {
+                // タグが正規表現だった場合
+                Pattern tagPattern = Pattern.compile(matcher.group(1));
+                regexpsForIndividualPedestriansLog.add(tagPattern);
+            } else {
+                tagsForIndividualPedestriansLog.add(tag.getString());
+            }
+        }
+        excludeAgentsInIndividualPedestriansLog =
+            SetupFileInfo.fetchFallbackBoolean(logAgentsFallback, "exclusion", false);
+        if (tags.getArraySize() > 0) {
+            Itk.logInfo("logAgentsOfIndividualPedestrians", tags.toJson(), "exclusion:" + excludeAgentsInIndividualPedestriansLog);
+        }
     }
 
     //------------------------------------------------------------
@@ -1846,6 +1861,27 @@ public class AgentHandler {
     private void logIndividualPedestrians(AgentBase agent,
                                           SimTime currentTime) {
         if (! agent.isDead()) {
+            if (! tagsForIndividualPedestriansLog.isEmpty() || ! regexpsForIndividualPedestriansLog.isEmpty()) {
+                boolean applied = false;
+                for (String tag : agent.getTags()) {
+                    if (tagsForIndividualPedestriansLog.contains(tag)) {
+                        applied = true;
+                        break;
+                    }
+                    for (Pattern tagPattern : regexpsForIndividualPedestriansLog) {
+                        if (tagPattern.matcher(tag).find()) {
+                            applied = true;
+                            break;
+                        }
+                    }
+                    if (applied) {
+                        break;
+                    }
+                }
+                if (applied == excludeAgentsInIndividualPedestriansLog) {
+                    return;
+                }
+            }
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
                                          agent, currentTime, this);
