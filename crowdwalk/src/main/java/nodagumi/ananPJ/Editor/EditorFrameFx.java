@@ -526,7 +526,6 @@ public class EditorFrameFx {
 
         MenuItem miOpenProperty = new MenuItem("Open properties");
         miOpenProperty.setOnAction(e -> openProperties());
-        miOpenProperty.setAccelerator(KeyCombination.valueOf("Ctrl+P"));
 
         // MenuItem miSaveProperty = new MenuItem("Save properties");
         // miSaveProperty.setOnAction(e -> {
@@ -593,6 +592,18 @@ public class EditorFrameFx {
         miResetRotation.setOnAction(e -> {
             canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, 0.0);
         });
+
+        CheckMenuItem cmiGridShowing = new CheckMenuItem("Show grid");
+        cmiGridShowing.setSelected(false);
+        cmiGridShowing.setOnAction(e -> {
+            canvas.setGridShowing(cmiGridShowing.isSelected());
+            canvas.repaintLater();
+        });
+        cmiGridShowing.setAccelerator(KeyCombination.valueOf("Ctrl+G"));
+
+        MenuItem miSetGrid = new MenuItem("Set grid");
+        miSetGrid.setOnAction(e -> setGrid());
+        miSetGrid.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+G"));
 
         CheckMenuItem cmiShowNodes = new CheckMenuItem("Show nodes");
         cmiShowNodes.setSelected(true);
@@ -667,14 +678,14 @@ public class EditorFrameFx {
             }
             canvas.repaintLater();
         });
-        cmiShowPolygons.setAccelerator(KeyCombination.valueOf("Ctrl+G"));
+        cmiShowPolygons.setAccelerator(KeyCombination.valueOf("Ctrl+P"));
 
         cmiShowPolygonLabels.setSelected(false);
         cmiShowPolygonLabels.setOnAction(e -> {
             canvas.setPolygonLabelsShowing(cmiShowPolygonLabels.isSelected());
             canvas.repaintLater();
         });
-        cmiShowPolygonLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+G"));
+        cmiShowPolygonLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+P"));
 
         CheckMenuItem cmiShowBackgroundImage = new CheckMenuItem("Show background image");
         cmiShowBackgroundImage.setSelected(true);
@@ -709,7 +720,7 @@ public class EditorFrameFx {
             canvas.setMapCoordinatesShowing(cmiShowMapCoordinates.isSelected());
         });
 
-        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, cmiShowPolygons, cmiShowPolygonLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
+        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, cmiGridShowing, miSetGrid, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, cmiShowPolygons, cmiShowPolygonLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
 
         /* Validation menu */
 
@@ -1571,6 +1582,108 @@ public class EditorFrameFx {
             }
             miResetRotation.setDisable(lockingCheckBox.isSelected());
             canvas.setAngleLocking(lockingCheckBox.isSelected());
+        }
+    }
+
+    /**
+     * グリッドパラメータを設定する
+     */
+    private void setGrid() {
+        if (editor.getCurrentGroup().getScale() != 1.0) {
+            Alert alert = new Alert(AlertType.WARNING, "If the group scale is not 1.0, the grid can not be used.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Set grid");
+
+        // 横幅(m)
+        Label widthLabel = new Label("Grid width(m)");
+        TextField widthField = new TextField("" + canvas.getGridWidth());
+        widthField.setMaxWidth(160);
+
+        // 縦幅(m)
+        Label heightLabel = new Label("Grid height(m)");
+        TextField heightField = new TextField("" + canvas.getGridHeight());
+        heightField.setMaxWidth(160);
+
+        // 横オフセット(m)
+        Label xOffsetLabel = new Label("X offset(m)");
+        TextField xOffsetField = new TextField("" + canvas.getGridOffsetX());
+        xOffsetField.setMaxWidth(160);
+
+        // 縦オフセット(m)
+        Label yOffsetLabel = new Label("Y offset(m)");
+        TextField yOffsetField = new TextField("" + canvas.getGridOffsetY());
+        yOffsetField.setMaxWidth(160);
+
+        CheckBox showSizeCheckBox = new CheckBox("Show size");
+        showSizeCheckBox.setSelected(canvas.isGridSizeShowing());
+
+        FlowPane flowPane = new FlowPane();
+        CheckBox snapCheckBox = new CheckBox("Snap");
+        snapCheckBox.setSelected(canvas.isGridSnapping());
+        snapCheckBox.setOnAction(e -> flowPane.setDisable(! snapCheckBox.isSelected()));
+        TextField pixelField = new TextField("" + canvas.getGridSnapSize());
+        pixelField.setMaxWidth(100);
+        flowPane.setHgap(8);
+        flowPane.getChildren().addAll(pixelField, new Label("pixel"));
+        flowPane.setDisable(! snapCheckBox.isSelected());
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(12, 0, 12, 20));
+        gridPane.setHgap(12);
+        gridPane.setVgap(8);
+        gridPane.add(widthLabel, 1, 1);
+        gridPane.add(widthField, 2, 1);
+        gridPane.add(heightLabel, 1, 2);
+        gridPane.add(heightField, 2, 2);
+        gridPane.add(xOffsetLabel, 1, 3);
+        gridPane.add(xOffsetField, 2, 3);
+        gridPane.add(yOffsetLabel, 1, 4);
+        gridPane.add(yOffsetField, 2, 4);
+        gridPane.add(showSizeCheckBox, 1, 5, 2, 1);
+        gridPane.add(snapCheckBox, 1, 6);
+        gridPane.add(flowPane, 2, 6);
+
+        dialog.getDialogPane().setContent(gridPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Double value = convertToDouble(widthField.getText());
+            if (value != null) {
+                if (value < 0.1) {
+                    Alert alert = new Alert(AlertType.WARNING, "Invalid grid width.", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                canvas.setGridWidth(value);
+            }
+            value = convertToDouble(heightField.getText());
+            if (value != null) {
+                if (value < 0.1) {
+                    Alert alert = new Alert(AlertType.WARNING, "Invalid grid height.", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                canvas.setGridHeight(value);
+            }
+            value = convertToDouble(xOffsetField.getText());
+            if (value != null) {
+                canvas.setGridOffsetX(value);
+            }
+            value = convertToDouble(yOffsetField.getText());
+            if (value != null) {
+                canvas.setGridOffsetY(value);
+            }
+            Integer intValue = convertToInteger(pixelField.getText());
+            if (intValue != null) {
+                canvas.setGridSnapSize(intValue);
+            }
+            canvas.setGridSizeShowing(showSizeCheckBox.isSelected());
+            canvas.setGridSnapping(snapCheckBox.isSelected());
+            canvas.repaintLater();
         }
     }
 

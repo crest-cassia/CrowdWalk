@@ -597,6 +597,11 @@ public class MapEditor implements MapEditorInterface {
         frame.getCanvas().repaintLater();
 
         if (groupVolumeChanged) {
+            // root 以外にグループがあればそのグループに移る
+            if (networkMap.getGroups().size() == 2) {
+                initCurrentGroup();
+            }
+
             // グループボタンを再構築する
             frame.updateShowBackgroundGroupMenu();
             frame.updateGroupSelectionPane();
