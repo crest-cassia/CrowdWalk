@@ -73,7 +73,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-// import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -115,10 +114,9 @@ import nodagumi.Itk.Itk;
 public class EditorFrameFx {
     /**
      * ヘルプ表示用コンテンツのアドレス
-     * TODO: 定義ファイル化する
      */
-    public static final String QUICK_REFERENCE = "/quick_reference.md";
-    public static final String QUICK_REFERENCE_TEMPLATE = "/quick_reference_template.html";
+    public static final String HTML_TEMPLATE = "/doc/template.html";
+    public static final String QUICK_REFERENCE = "/doc/quick_reference_map_editor.md";
     public static final String PROPERTIES_PATH = "./doc/javadoc/nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html";
     public static final String TUTORIAL_PATH = "./doc/manual.html";
     public static final String ZONE_REFERENCE_URI = "http://www.gsi.go.jp/sokuchikijun/jpc.html";
@@ -763,9 +761,10 @@ public class EditorFrameFx {
             helpStage.setTitle("Help - Quick reference");
             helpStage.setWidth(980);
             helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
-            String template = ObstructerBase.resourceToString(QUICK_REFERENCE_TEMPLATE);
+            String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
             com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
-            webView.getEngine().loadContent(template.replace("__HTML_BODY__", renderer.render(document)));
+            String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
+            webView.getEngine().loadContent(html);
             helpStage.show();
             helpStage.toFront();
         });

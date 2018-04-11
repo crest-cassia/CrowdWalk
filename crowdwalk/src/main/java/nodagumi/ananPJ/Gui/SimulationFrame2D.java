@@ -43,6 +43,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -80,6 +81,22 @@ import javax.swing.border.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.web.WebView;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
+import com.vladsch.flexmark.util.options.MutableDataSet;
+
 import math.geom3d.Vector3D;
 import net.arnx.jsonic.JSON;
 
@@ -101,6 +118,7 @@ import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.PollutionHandler.*;
 import nodagumi.Itk.*;
 
@@ -109,6 +127,12 @@ import nodagumi.Itk.*;
  */
 public class SimulationFrame2D extends JFrame
     implements MouseListener, MouseWheelListener, MouseMotionListener {
+    /**
+     * ヘルプ表示用コンテンツのアドレス
+     */
+    public static final String HTML_TEMPLATE = "/doc/template.html";
+    public static final String QUICK_REFERENCE = "/doc/quick_reference_simulator_2d.md";
+
     /**
      * 実在の地図ベースのマップであると判断する最小リンク数
      */
@@ -258,6 +282,15 @@ public class SimulationFrame2D extends JFrame
     private int dragStartX = 0;
     private int dragStartY = 0;
 
+    /**
+     * ヘルプ表示用
+     */
+    private Parser parser;
+    private HtmlRenderer renderer;
+    private Stage helpStage;
+    private WebView webView;
+    private double helpZoom = 1.0;
+
     /* スクリーンショット保存用スレッド数を管理するためのカウンタ制御 */
 
     private int saveThreadCount = 0;
@@ -329,6 +362,14 @@ public class SimulationFrame2D extends JFrame
         // 実在の地図ベースのマップでない時はセンタリングマージンを付加する
         setMarginAdded(getLinks().size() < MINIMUM_REAL_MAP_LINKS);
 
+        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Platform.setImplicitExit(false);
+                initHelp();
+            }
+        });
         setupMenu();
         setupContents(simulationPanelWidth, simulationPanelHeight, properties, backgroundMapTiles);
         if (cameraworkFile != null) {
@@ -378,6 +419,51 @@ public class SimulationFrame2D extends JFrame
         addMouseWheelListener(this);
 
         pack();
+    }
+
+    /**
+     * ヘルプ画面の準備
+     */
+    private void initHelp() {
+        helpStage = new Stage();
+
+        MutableDataSet options = new MutableDataSet();
+        options.setFrom(ParserEmulationProfile.MARKDOWN);
+        options.set(Parser.EXTENSIONS, Arrays.asList(
+            TablesExtension.create()
+        ));
+        parser = Parser.builder(options).build();
+        renderer = HtmlRenderer.builder(options).build();
+
+        webView = new WebView();
+        webView.setOnKeyPressed(event -> {
+            if (event.isControlDown()) {
+                if (event.getCode() == KeyCode.W) {
+                    helpStage.close();
+                } else if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.UP) {
+                    helpZoom += 0.1;
+                    webView.setZoom(helpZoom);
+                } else if (event.getCode() == KeyCode.MINUS || event.getCode() == KeyCode.DOWN) {
+                    helpZoom -= 0.1;
+                    webView.setZoom(helpZoom);
+                } else if (event.getCode() == KeyCode.DIGIT0) {
+                    helpZoom = 1.0;
+                    webView.setZoom(helpZoom);
+                }
+            }
+        });
+
+        Button okButton = new Button("  OK  ");
+        okButton.setOnAction(event -> helpStage.close());
+        BorderPane buttonPane = new BorderPane();
+        buttonPane.setPadding(new javafx.geometry.Insets(4, 8, 4, 8));
+        buttonPane.setRight(okButton);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(webView);
+        borderPane.setBottom(buttonPane);
+
+        helpStage.setScene(new Scene(borderPane));
     }
 
     /**
@@ -511,6 +597,28 @@ public class SimulationFrame2D extends JFrame
         //// Help menu ////
 
         Menu helpMenu = new PopupMenu("Help");
+
+        MenuItem miQuickReference = new MenuItem("Quick reference");
+        miQuickReference.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        helpStage.setTitle("Help - Quick reference");
+                        helpStage.setWidth(980);
+                        helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+                        String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
+                        com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
+                        String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
+                        webView.getEngine().loadContent(html);
+                        helpStage.show();
+                        helpStage.toFront();
+                    }
+                });
+            }
+        });
+        helpMenu.add(miQuickReference);
 
         MenuItem miVersion = new MenuItem("About version");
         miVersion.addActionListener(new ActionListener() {

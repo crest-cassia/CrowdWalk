@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
@@ -68,10 +70,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Translate;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalTimeStringConverter;
+
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
+import com.vladsch.flexmark.util.options.MutableDataSet;
 
 import net.arnx.jsonic.JSON;
 
@@ -92,6 +102,7 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Scenario.*;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.PollutionHandler.*;
 import nodagumi.Itk.*;
 
@@ -124,6 +135,12 @@ public class SimulationFrame3D extends Stage implements Observer {
             }
         }
     }
+
+    /**
+     * ヘルプ表示用コンテンツのアドレス
+     */
+    public static final String HTML_TEMPLATE = "/doc/template.html";
+    public static final String QUICK_REFERENCE = "/doc/quick_reference_simulator_3d.md";
 
     /**
      * シミュレーションウィンドウ
@@ -230,6 +247,15 @@ public class SimulationFrame3D extends Stage implements Observer {
     /* ステータスバーを構成する UI コントロール */
 
     private Label status = new Label("NOT STARTED");
+
+    /**
+     * ヘルプ表示用
+     */
+    private Parser parser;
+    private HtmlRenderer renderer;
+    private Stage helpStage = new Stage();
+    private WebView webView = new WebView();
+    private double helpZoom = 1.0;
 
     /* スクリーンショット保存用スレッド数を管理するためのカウンタ制御 */
 
@@ -354,6 +380,45 @@ public class SimulationFrame3D extends Stage implements Observer {
             e.printStackTrace();
             Itk.quitByError() ;
         }
+
+        // ヘルプ画面の準備
+
+        MutableDataSet options = new MutableDataSet();
+        options.setFrom(ParserEmulationProfile.MARKDOWN);
+        options.set(Parser.EXTENSIONS, Arrays.asList(
+            TablesExtension.create()
+        ));
+        parser = Parser.builder(options).build();
+        renderer = HtmlRenderer.builder(options).build();
+
+        webView.setOnKeyPressed(event -> {
+            if (event.isControlDown()) {
+                if (event.getCode() == KeyCode.W) {
+                    helpStage.close();
+                } else if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.UP) {
+                    helpZoom += 0.1;
+                    webView.setZoom(helpZoom);
+                } else if (event.getCode() == KeyCode.MINUS || event.getCode() == KeyCode.DOWN) {
+                    helpZoom -= 0.1;
+                    webView.setZoom(helpZoom);
+                } else if (event.getCode() == KeyCode.DIGIT0) {
+                    helpZoom = 1.0;
+                    webView.setZoom(helpZoom);
+                }
+            }
+        });
+
+        Button okButton = new Button("  OK  ");
+        okButton.setOnAction(event -> helpStage.close());
+        BorderPane buttonPane = new BorderPane();
+        buttonPane.setPadding(new Insets(4, 8, 4, 8));
+        buttonPane.setRight(okButton);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(webView);
+        borderPane.setBottom(buttonPane);
+
+        helpStage.setScene(new Scene(borderPane));
     }
 
     /**
@@ -382,6 +447,19 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         Menu helpMenu = new Menu("Help");
 
+        MenuItem miQuickReference = new MenuItem("Quick reference");
+        miQuickReference.setOnAction(e -> {
+            helpStage.setTitle("Help - Quick reference");
+            helpStage.setWidth(980);
+            helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+            String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
+            com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
+            String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
+            webView.getEngine().loadContent(html);
+            helpStage.show();
+            helpStage.toFront();
+        });
+
         MenuItem miVersion = new MenuItem("About version");
         miVersion.setOnAction(e -> {
             Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);
@@ -392,7 +470,7 @@ public class SimulationFrame3D extends Stage implements Observer {
             alert.showAndWait();
         });
 
-        helpMenu.getItems().addAll(miVersion);
+        helpMenu.getItems().addAll(miQuickReference, miVersion);
 
         menuBar.getMenus().addAll(fileMenu, helpMenu);
 
