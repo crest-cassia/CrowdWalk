@@ -19,17 +19,15 @@ apply plugin: 'eclipse'
 
 def javaVersion = new Double(sourceCompatibility.toString())
 def onlyCuiSimulator = cui.toBoolean()
-def javaFxExists = true
 
 if (javaVersion < 1.8) {
     println "javaVersion ${javaVersion}"
     onlyCuiSimulator = true
-    javaFxExists = false
 } else {
     if (fileTree(dir: System.getenv()['JAVA_HOME']).include('**/javafx.properties').isEmpty()) {
         println "Warning: JavaFX is not installed."
-        println "         To build with new editor and 3D simulator, please install JavaFX."
-        javaFxExists = false
+        println "         To build with the editor and GUI simulators, please install JavaFX."
+        onlyCuiSimulator = true
     }
 }
 if (onlyCuiSimulator) {
@@ -67,43 +65,15 @@ sourceSets {
         java {
             if (onlyCuiSimulator) {
                 exclude 'nodagumi/ananPJ/CrowdWalkLauncher.java'
-                exclude 'nodagumi/ananPJ/GuiSimulationEditorLauncher.java'
                 exclude 'nodagumi/ananPJ/GuiSimulationLauncher.java'
                 exclude 'nodagumi/ananPJ/GuiSimulationLauncher2D.java'
                 exclude 'nodagumi/ananPJ/GuiSimulationLauncher3D.java'
                 exclude 'nodagumi/ananPJ/Settings.java'
-                exclude 'nodagumi/ananPJ/ImportGis.java'
                 exclude 'nodagumi/ananPJ/Editor/**'
                 exclude 'nodagumi/ananPJ/Gui/**'
-                exclude 'nodagumi/ananPJ/misc/GetDoublesDialog.java'
-                exclude 'nodagumi/ananPJ/misc/GridMapAreaDialog.java'
                 exclude 'nodagumi/ananPJ/misc/GsiAccessor.java'
-                exclude 'nodagumi/ananPJ/misc/Hover.java'
-                exclude 'nodagumi/ananPJ/misc/MapChecker.java'
             } else {
                 exclude 'nodagumi/ananPJ/CuiCrowdWalkLauncher.java'
-                if (! javaFxExists) {
-                    exclude 'nodagumi/ananPJ/Editor/EditorCanvas.java'
-                    exclude 'nodagumi/ananPJ/Editor/EditorFrameFx.java'
-                    exclude 'nodagumi/ananPJ/Editor/MapEditor.java'
-                    exclude 'nodagumi/ananPJ/Editor/EditCommand/**'
-                    exclude 'nodagumi/ananPJ/Editor/Panel/AreaPanelFx.java'
-                    exclude 'nodagumi/ananPJ/Editor/Panel/GroupPanel.java'
-                    exclude 'nodagumi/ananPJ/Editor/Panel/LinkPanelFx.java'
-                    exclude 'nodagumi/ananPJ/Editor/Panel/NodePanelFx.java'
-                    exclude 'nodagumi/ananPJ/Editor/Panel/PolygonPanel.java'
-                    exclude 'nodagumi/ananPJ/Editor/Panel/ScenarioPanelFx.java'
-                    exclude 'nodagumi/ananPJ/Editor/Panel/TagSetupPane.java'
-                    exclude 'nodagumi/ananPJ/Gui/AgentAppearance/view3d/**'
-                    exclude 'nodagumi/ananPJ/Gui/FxColor.java'
-                    exclude 'nodagumi/ananPJ/Gui/LinkAppearance3D.java'
-                    exclude 'nodagumi/ananPJ/Gui/MapViewFrame.java'
-                    exclude 'nodagumi/ananPJ/Gui/NodeAppearance3D.java'
-                    exclude 'nodagumi/ananPJ/Gui/SimulationFrame3D.java'
-                    exclude 'nodagumi/ananPJ/Gui/SimulationPanel3D.java'
-                    exclude 'nodagumi/ananPJ/Gui/SimulationViewController3D.java'
-                    exclude 'nodagumi/ananPJ/GuiSimulationLauncher3D.java'
-                }
             }
             exclude 'nodagumi/ananPJ/ImportGis.java'
         }

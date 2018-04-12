@@ -1,8 +1,6 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkMap.Area;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -35,13 +33,6 @@ public class MapAreaRectangle extends MapArea {
             return names;
         }
     };
-
-    //============================================================
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * 描画用の色。
-     */
-    static Color gray8050 = new Color(0.8f, 0.8f, 0.8f, 0.5f);
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -262,25 +253,6 @@ public class MapAreaRectangle extends MapArea {
                 origin.getX() + (point.getX() - origin.getX()) * Math.cos(angle) - (point.getY() - origin.getY()) * Math.sin(angle),
                 origin.getY() + (point.getX() - origin.getX()) * Math.sin(angle) + (point.getY() - origin.getY()) * Math.cos(angle));
     }
-    
-    //------------------------------------------------------------
-    /**
-     * 描画。
-     */
-    @Override
-    public void drawInEditor(Graphics2D g) {
-        if (selected) {
-            g.setColor(Color.YELLOW);
-        } else {
-            g.setColor(gray8050);
-        }
-        
-        g.fill(bounds);
-        g.setColor(Color.BLACK);
-        g.drawString(this.getTagString(),
-                (float)bounds.getMinX(),
-                (float)bounds.getMaxY());
-    }
 
     //------------------------------------------------------------
     /**
@@ -289,9 +261,7 @@ public class MapAreaRectangle extends MapArea {
     public static OBNode fromDom(Element element) {
         MapAreaRectangle area = new MapAreaRectangle(null);
         area.getAttributesFromDom(element);
-        //System.err.println(area.toString());
         return area;
-
     }
 
     //------------------------------------------------------------

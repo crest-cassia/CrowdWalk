@@ -19,8 +19,6 @@ import java.util.regex.Pattern;
 import java.lang.Exception;
 import java.lang.Integer;
 
-import javax.swing.JOptionPane;
-
 import net.arnx.jsonic.JSON ;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
@@ -394,13 +392,7 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         try {
             br = new BufferedReader(new FileReader(filename));
         } catch (IOException e) {
-            Itk.logError(e.toString()) ;
-            if (display) {
-                JOptionPane.showMessageDialog(null,
-                e.toString(),
-                "Fail to open a generation file.",
-                JOptionPane.ERROR_MESSAGE);
-            }
+            Itk.logError("Fail to open a generation file.", e.toString()) ;
             return;
         }
 

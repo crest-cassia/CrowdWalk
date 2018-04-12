@@ -12,19 +12,14 @@
 
 package nodagumi.ananPJ.NetworkMap;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap ;
-import java.util.LinkedHashMap ;
 import java.util.LinkedHashSet ;
 import java.util.Collection ;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.Enumeration;
@@ -32,17 +27,10 @@ import java.util.Enumeration;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
-import javax.swing.JOptionPane;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-
-import org.apache.commons.codec.digest.DigestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -55,7 +43,6 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.NetworkMapPartsNotifier;
 import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
-import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
 
@@ -129,54 +116,6 @@ public class NetworkMap extends DefaultTreeModel {
      */
     private NetworkMapPartsNotifier notifier;
 
-    //============================================================
-    /**
-     * class for undo related stuff
-     */
-    class UndoInformation {
-        public boolean addition;
-        public OBNode parent;
-        public OBNode node;
-
-        public UndoInformation(OBNode _parent,
-                               OBNode _node,
-                               boolean _addition) {
-            parent = _parent;
-            node = _node;
-            addition = _addition;
-        }
-    }
-
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    /**
-     * updo stack
-     */
-    private ArrayList<UndoInformation> undo_list =
-        new ArrayList<UndoInformation>();
-
-    /**
-     * check updo stack
-     */
-    public boolean canUndo() {
-        return undo_list.size() > 0;
-
-    }
-
-    /**
-     * exec undo
-     */
-    public void undo() {
-        if (undo_list.size() == 0) return;
-        int i = undo_list.size() - 1;
-        UndoInformation info = undo_list.remove(i);
-        if (info.addition) {
-            removeOBNode(info.parent, info.node, false);
-        } else {
-            insertOBNode(info.parent, info.node, false);
-        }
-    }
-
-    //------------------------------------------------------------
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -274,18 +213,6 @@ public class NetworkMap extends DefaultTreeModel {
         return partTable.get(id);
     }
 
-    //------------------------------------------------------------
-    /**
-     * OBNode の挿入
-     */
-    private void insertOBNode(OBNode parent, OBNode node,
-                              boolean can_undo) {
-        insertOBNode(parent, node) ;
-        if (can_undo) {
-            undo_list.add(new UndoInformation(parent, node, true));
-        }
-    }
-
     /**
      * OBNode の挿入
      */
@@ -314,19 +241,6 @@ public class NetworkMap extends DefaultTreeModel {
 
     }
 
-    //------------------------------------------------------------
-    /**
-     * OBノード削除
-     */
-    public void removeOBNode(OBNode parent,
-                             OBNode node,
-                             boolean can_undo) {
-        removeOBNode(parent, node) ;
-        if (can_undo) {
-            undo_list.add(new UndoInformation(parent, node, false));
-        }
-    }
-
     /**
      * OBノード削除
      */
@@ -352,7 +266,7 @@ public class NetworkMap extends DefaultTreeModel {
             break;
         case GROUP:
             while (node.getChildCount() > 0) {
-                removeOBNode(node, (OBNode)node.getChildAt(0), true);
+                removeOBNode(node, (OBNode)node.getChildAt(0));
             }
             break;
         case AREA:
@@ -382,7 +296,7 @@ public class NetworkMap extends DefaultTreeModel {
         String id = assignNewId();
         MapNode node = new MapNode(id,
                                    _coordinates, _height);
-        insertOBNode(parent, node, true);
+        insertOBNode(parent, node);
         return node;
     }
 
@@ -398,7 +312,7 @@ public class NetworkMap extends DefaultTreeModel {
         String id = assignNewId();
         MapLink link = new MapLink(id, _from, _to, _length, _width);
         link.prepareAdd();
-        insertOBNode(parent, link, true);
+        insertOBNode(parent, link);
         return link;
     }
 
@@ -415,7 +329,7 @@ public class NetworkMap extends DefaultTreeModel {
         String id = assignNewId();
         MapArea area = new MapAreaRectangle(id,
                                             bounds, min_height, max_height, angle);
-        insertOBNode(parent, area, true);
+        insertOBNode(parent, area);
         return area;
     }
 
@@ -426,7 +340,7 @@ public class NetworkMap extends DefaultTreeModel {
     public MapPartGroup createGroupNode(MapPartGroup parent){
         String id = assignNewId();
         MapPartGroup group = new MapPartGroup(id);
-        insertOBNode(parent, group, true);
+        insertOBNode(parent, group);
         return group;
     }
 
@@ -445,7 +359,7 @@ public class NetworkMap extends DefaultTreeModel {
                                             OBNode orig){
         String id = assignNewId();
         OBNodeSymbolicLink symlink = new OBNodeSymbolicLink(id, orig);
-        insertOBNode(parent, symlink, true);
+        insertOBNode(parent, symlink);
         return symlink;
     }
 
@@ -464,7 +378,7 @@ public class NetworkMap extends DefaultTreeModel {
                                               (OBNodeSymbolicLink)node;
                                           if (symlink.getOriginal() == orig) {
                                               Itk.logInfo("deleted!");
-                                              removeOBNode(parent, node, true);
+                                              removeOBNode(parent, node);
                                           }
                                       }
                                   }
@@ -682,36 +596,6 @@ public class NetworkMap extends DefaultTreeModel {
             }
         });
         return polygons;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * 階段作成
-     */
-    public void makeStairs() {
-        MapNodeTable selected_nodes = new MapNodeTable();
-        for (MapNode node : getNodes()) {
-            if (node.selected) selected_nodes.add(node);
-        }
-        if (selected_nodes.size() != 2) {
-            JOptionPane.showMessageDialog(null,
-                                          "Number of selected nodes:"
-                                          + selected_nodes.size() + "\nwhere it should be 2",
-                                          "Fail to make stair",
-                                          JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        MapNode from_node = selected_nodes.get(0);
-        MapNode to_node = selected_nodes.get(1);
-
-        if (from_node.getHeight() < to_node.getHeight()) {
-            from_node = selected_nodes.get(1);
-            to_node = selected_nodes.get(0);
-        }
-        MapLink link = createMapLink((MapPartGroup)from_node.getParent(),
-                                     from_node, to_node,    100, 6);
-        link.addTag("GENERATED_STAIR");
-
     }
 
     //------------------------------------------------------------
@@ -962,11 +846,7 @@ public class NetworkMap extends DefaultTreeModel {
     public boolean fromDOM(Document doc) {
         NodeList toplevel = doc.getChildNodes();
         if (toplevel.getLength() != 1) {
-            JOptionPane.showMessageDialog(null,
-                                          "The number of networks in the dom was "
-                                          + toplevel.getLength(),
-                                          "Fail to convert from DOM",
-                                          JOptionPane.ERROR_MESSAGE);
+            Itk.logError("Fail to convert from DOM", "The number of networks in the dom was " + toplevel.getLength());
             return false;
         }
         Element dom_root = (Element) toplevel.item(0);
@@ -1039,11 +919,7 @@ public class NetworkMap extends DefaultTreeModel {
                 link.setFromTo(from_node, to_node);
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(null,
-                                              "Try to set from/to of a link, which alread has it setted\n"
-                                              + "link ID: " + link.ID,
-                                              "Warning setting up network",
-                                              JOptionPane.WARNING_MESSAGE);
+                Itk.logWarn("Warning setting up network", "Try to set from/to of a link, which alread has it setted link ID: " + link.ID);
             }
         } else if (OBNode.NType.GROUP == ob_node.getNodeType()) {
             Enumeration e = ob_node.children();
@@ -1089,7 +965,7 @@ public class NetworkMap extends DefaultTreeModel {
 
     //------------------------------------------------------------
     /**
-     * ???
+     * 元となる OBNode が存在しないシンボリックリンクをすべて削除する
      */
     private void checkDanglingSymlinks(OBNode node) {
         class CheckSymlink extends OBTreeCrawlFunctor {
@@ -1103,7 +979,7 @@ public class NetworkMap extends DefaultTreeModel {
                     if (original == null) {
                         dangling_symlink_count++;
                         found = true;
-                        removeOBNode(parent, node, false);
+                        removeOBNode(parent, node);
                     }
                 }
             }
@@ -1119,14 +995,8 @@ public class NetworkMap extends DefaultTreeModel {
             applyToAllChildrenRec(node, null, checker);
         } while(checker.mustCheckMore());
         if (checker.dangling_symlink_count != 0) {
-            JOptionPane.showMessageDialog(null,
-                                          "Removed " + checker.dangling_symlink_count
-                                          + " dangling symlink(s) on loading",
-                                          "Corrupt file",
-                                          JOptionPane.WARNING_MESSAGE
-                                          );
+            Itk.logWarn("Corrupt file", "Removed " + checker.dangling_symlink_count + " dangling symlink(s) on loading");
         }
-
     }
 
     //------------------------------------------------------------

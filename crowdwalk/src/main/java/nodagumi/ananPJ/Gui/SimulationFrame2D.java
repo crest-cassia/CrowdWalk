@@ -113,7 +113,6 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Scenario.*;
@@ -366,7 +365,6 @@ public class SimulationFrame2D extends JFrame
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                Platform.setImplicitExit(false);
                 initHelp();
             }
         });

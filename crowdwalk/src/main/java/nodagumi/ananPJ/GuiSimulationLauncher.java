@@ -16,7 +16,6 @@ import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
@@ -219,7 +218,15 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
 
         // スクリーンショットディレクトリのクリア
         if (recordSimulationScreen && clearScreenshotDir) {
-            FilePathManipulation.deleteFiles(screenshotDir, imageFileFilter);
+            File dir = new File(screenshotDir);
+            if (dir.isDirectory()) {
+                for (String filename : dir.list(imageFileFilter)) {
+                    File file = new File(dir, filename);
+                    if (! file.delete()) {
+                        Itk.logError("File can not delete", file.toString());
+                    }
+                }
+            }
         }
 
         // シミュレータの実体の初期化

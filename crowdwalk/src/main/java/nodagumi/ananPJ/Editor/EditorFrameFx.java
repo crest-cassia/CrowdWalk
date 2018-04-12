@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.regex.Matcher;
 
 import javafx.application.Platform;
@@ -103,7 +104,6 @@ import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.NetworkMap.Polygon.TriangleMeshes;
 import nodagumi.ananPJ.NetworkMap.Polygon.Coordinates;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.MapChecker;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.Itk.Itk;
@@ -410,26 +410,13 @@ public class EditorFrameFx {
                 System.err.println(ex.getMessage());
                 System.exit(1);
             }
-            notice();
         });
         frame.setOnCloseRequest(e -> closing(e));
-
-        // TODO: 旧エディタを廃止したら setImplicitExit(false) と以下を削除する
         frame.setOnHidden(e -> {
-            notice();
-            System.exit(0);
+            if (! Platform.isImplicitExit()) {
+                System.exit(0);
+            }
         });
-    }
-
-    /**
-     * お知らせ表示
-     */
-    private void notice() {
-        System.err.println("\n【お知らせ】");
-        System.err.println("・GitHub の CrowdWalk ページ(Help > Browse GitHub repository で表示されます)の Issues にある「新マップエディタの問題点と追加予定機能」を一読してください。");
-        System.err.println("・何か不具合が生じたら Issues に書き込んで報告してください。");
-        System.err.println("・追加して欲しい機能等があれば Issues に書き込んでください。");
-        System.err.println("・コマンドラインで -e オプションを使うと旧バージョンのエディタを起動することが出来ます。新エディタで問題が生じる場合にはこちらを使用してください。\n");
     }
 
     /**
@@ -2140,7 +2127,7 @@ public class EditorFrameFx {
             return;
         }
 
-        MapLinkTable reachableLinks = MapChecker.getReachableLinks(networkMap.getNodes(), tag);
+        MapLinkTable reachableLinks = getReachableLinks(networkMap.getNodes(), tag);
         int notConnectedCount = networkMap.getLinks().size() - reachableLinks.size();
         if (notConnectedCount > 0) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "There were " + notConnectedCount + " links not leading to target!\nShould select REACHABLE links?", ButtonType.YES, ButtonType.NO);
@@ -2152,6 +2139,47 @@ public class EditorFrameFx {
             Alert alert = new Alert(AlertType.INFORMATION, "Calculation of paths finished.", ButtonType.OK);
             alert.showAndWait();
         }
+    }
+
+    /**
+     * TODO: 正常に機能しないためデバッグが必要
+     */
+    public MapLinkTable getReachableLinks(MapNodeTable nodes, String targetTag) {
+        final MapNodeTable exits = new MapNodeTable();
+        for (final MapNode node : nodes) {
+            if (node.hasTag(targetTag)) exits.add(node);
+        }
+
+        Stack<MapNode> path = new Stack<MapNode>();
+        Stack<Integer> selection = new Stack<Integer>();
+        MapLinkTable reachableLinks = new MapLinkTable();
+
+        for (MapNode exit : exits) {
+            path.push(exit);
+            selection.push(0);
+
+            while(!path.empty()) {
+                MapNode node = path.peek();
+                Integer index = selection.pop();
+
+                final MapLinkTable linkList  = node.getUsableLinkTable();
+                if (index == linkList.size()) {
+                    path.pop();
+                    continue;
+                }
+
+                final MapLink link = linkList.get(index);
+                ++index;
+                selection.push(index);
+
+                if (!reachableLinks.contains(link)) {
+                    reachableLinks.add(link);
+                    path.push(link.getOther(node));
+                    selection.push(0);
+                }
+            }
+        }
+        return reachableLinks;
     }
 
     /**

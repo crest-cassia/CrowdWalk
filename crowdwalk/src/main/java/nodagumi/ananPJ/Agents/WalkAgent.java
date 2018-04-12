@@ -1,11 +1,6 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Agents;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.HashMap;
@@ -1406,18 +1401,6 @@ public class WalkAgent extends AgentBase {
         config.setArg("mentalMode", mentalMode) ;
             
         return config ;
-    }
-    
-	//############################################################
-	/**
-	 * 入出力
-	 */
-    //------------------------------------------------------------
-    /**
-     *
-     */
-    private Ellipse2D getCircle(double cx, double cy, double r) {
-        return new Ellipse2D.Double(cx -r, cy -r, r * 2, r * 2);
     }
 }
 // ;;; Local Variables:

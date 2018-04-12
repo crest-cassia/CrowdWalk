@@ -49,13 +49,12 @@ sourceSets {
             exclude '**/CrowdWalkLauncher.java'
             exclude '**/CuiCrowdWalkLauncher.java'
             exclude '**/CuiSimulationLauncher.java'
-            exclude '**/GuiSimulationEditorLauncher.java'
             exclude '**/GuiSimulationLauncher.java'
             exclude '**/GuiSimulationLauncher2D.java'
             exclude '**/GuiSimulationLauncher3D.java'
             exclude '**/Editor/**'
             exclude '**/Gui/**'
-            exclude '**/Simulator/SimulationPanel3D.java'
+            exclude '**/misc/GsiAccessor.java'
         }
         resources {
             srcDirs = ["../crowdwalk/src/main/resources"];

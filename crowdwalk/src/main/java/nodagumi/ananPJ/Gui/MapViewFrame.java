@@ -1,7 +1,6 @@
 package nodagumi.ananPJ.Gui;
 
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -17,7 +16,7 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 /**
  * 3D マップ表示専用のウィンドウ
  */
-public class MapViewFrame implements MapViewer {
+public class MapViewFrame {
     /**
      * ウィンドウフレーム
      */
@@ -55,15 +54,13 @@ public class MapViewFrame implements MapViewer {
      */
     public void view(final String title, final int width, final int height, final NetworkMap networkMap,
             final CrowdWalkPropertiesHandler properties) {
-        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 MapViewFrame frame = new MapViewFrame(title, width, height, networkMap, properties);
                 frame.show();
-                Platform.setImplicitExit(false);
             }
-       });
+        });
     }
 
     /**

@@ -1,35 +1,11 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkMap;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
@@ -39,7 +15,6 @@ import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.Trail;
-
 
 import nodagumi.Itk.*;
 
@@ -303,147 +278,6 @@ public abstract class OBNode extends DefaultMutableTreeNode
      */
     public String toString() {
         return getTagString();
-    }
-
-    static class TagSetupPanel extends JPanel {
-        private ArrayList<OBNode> nodes;
-        private ArrayList<String> tags = new ArrayList<String>();
-        private ArrayList<JCheckBox> tag_cbs = new ArrayList<JCheckBox>();
-
-        JDialog parent;
-
-        public TagSetupPanel(ArrayList<OBNode> _nodes, JDialog _parent) {
-            nodes = _nodes;
-            parent = _parent;
-            setLayout(new BorderLayout());
-
-            JPanel remove_tag_panel = setup_remove_tag();
-            add(remove_tag_panel, BorderLayout.CENTER);
-            JPanel add_tag_panel = setup_add_tag();
-            add(add_tag_panel, BorderLayout.SOUTH);
-
-            parent.repaint();
-        }
-
-        JButton update_button;
-        private JPanel setup_remove_tag() {
-            JPanel panel = new JPanel();
-
-            panel.setLayout(new FlowLayout());
-            panel.setBorder(BorderFactory.createTitledBorder(
-                                                             BorderFactory.createLineBorder(Color.black), "remove tags"));
-
-            for (OBNode node : nodes) {
-                if (node.selected) {
-                    for (String tag : node.getTags()) {
-                        if (!tags.contains(tag)) {
-                            tags.add(tag);
-                        }
-                    }
-                }
-            }
-
-            if (tags.isEmpty()) {
-                panel.add(new JLabel("no tags to remove"));
-                parent.repaint();
-                return panel;
-            }
-
-            for (String tag : tags) {
-                JCheckBox cb = new JCheckBox(tag);
-                cb.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            boolean be = false;
-                            for (JCheckBox cb : tag_cbs) { be |= cb.isSelected(); }
-                            update_button.setEnabled(be);
-                        }
-                    });
-                tag_cbs.add(cb);
-                panel.add(cb);
-            }
-
-            update_button = new JButton("remove");
-            update_button.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) { update_tags(); }
-                });
-            update_button.setEnabled(false);
-            panel.add(update_button);
-
-            return panel;
-        }
-
-        private void update_tags() {
-            for (JCheckBox cb : tag_cbs) {
-                if (cb.isSelected()) {
-                    String tag = cb.getText();
-                    for (OBNode node : nodes) {
-                        if (node.selected) {
-                            node.removeTag(tag);
-                        }
-                    }
-                }
-            }
-            if (parent != null) {
-                parent.dispose();
-            }
-        }
-
-        JTextField add_tag_field;
-        JButton add_tag_button;
-
-        private JPanel setup_add_tag() {
-            JPanel panel = new JPanel();
-            panel.setLayout(new GridBagLayout());
-            panel.setBorder(BorderFactory.createTitledBorder(
-                                                             BorderFactory.createLineBorder(Color.black), "add tag"));
-            GridBagConstraints c;
-
-            add_tag_field = new JTextField();
-            add_tag_field.setPreferredSize(new Dimension(200, 24));
-            add_tag_field.addKeyListener(new KeyListener() {
-                    public void keyTyped(KeyEvent e) {
-                        boolean enabled = !add_tag_field.getText().isEmpty();
-                        add_tag_button.setEnabled(enabled);
-                        if (enabled && (e.getKeyChar() == 10)) {
-                            add_tag();
-                        }
-                    }
-                    public void keyReleased(KeyEvent e) {}
-                    public void keyPressed(KeyEvent e) {}
-                });
-            c = new GridBagConstraints();
-            panel.add(add_tag_field, c);
-
-            add_tag_button = new JButton("add");
-            add_tag_button.setEnabled(false);
-            add_tag_button.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) { add_tag(); }
-                });
-            c = new GridBagConstraints();
-            c.gridx = 1;
-            panel.add(add_tag_button, c);
-
-            return panel;
-        }
-
-        private void add_tag() {
-            String tag = add_tag_field.getText();
-            for (OBNode node : nodes) {
-                if (node.selected) {
-                    node.addTag(Itk.intern(tag)) ;
-                }
-            }
-            if (parent != null) {
-                parent.dispose();
-            }
-        }
-    }
-
-    // Conversion from MapNode, MapLink, MapArea to OBNode
-    @SuppressWarnings("unchecked")
-    public static JPanel setupTagPanel(ArrayList nodes, JDialog parent) {
-        TagSetupPanel panel = new TagSetupPanel(nodes, parent);
-        return panel;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

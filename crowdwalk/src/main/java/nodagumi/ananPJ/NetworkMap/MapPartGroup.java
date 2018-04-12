@@ -1,11 +1,7 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkMap;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -38,11 +34,6 @@ public class MapPartGroup extends OBNode {
     private String imageFileName = null;
     private int zone = 0;
       
-    private AffineTransform fromParentCache;
-    //private AffineTransform fromAbsoluteCache;
-    //private AffineTransform fromAbsolute;
-    //private AffineTransform toAbsolute;
-      
     /* Parameters related on how this frame will be drawn.
      * Will be used in EditorFrame.
      */ 
@@ -64,12 +55,6 @@ public class MapPartGroup extends OBNode {
       pSouthEast = _pSouthEast;
       pTheta = _pTheta;
       setImageFileName(_imageFileName);
-
-      /* create affine Transform absolute->local */
-      fromParentCache = new AffineTransform();
-      fromParentCache.translate(-pNorthWest.getX(), -pNorthWest.getY());
-      fromParentCache.scale(getScale(), getScale());
-      fromParentCache.rotate(-pTheta);
     }
       
     public MapPartGroup(String _ID,
@@ -144,26 +129,6 @@ public class MapPartGroup extends OBNode {
             setZone(Integer.parseInt(_zone));
         }
     }
-    
-    public Rectangle2D getRegion(){
-        return new Rectangle2D.Double(  this.pNorthWest.getX(),
-                                        this.pNorthWest.getY(),
-                                        this.pSouthEast.getX() - this.pNorthWest.getX(),
-                                        this.pSouthEast.getY() - this.pNorthWest.getY()
-                                        );
-    }
-    public void drawInEditor(Graphics2D g, boolean showInside) {
-        if (selected) {
-            g.setColor(Color.RED);
-        } else {
-            g.setColor(Color.BLACK);
-        }
-        g.fill(getRegion());
-        if (showInside) {
-            // not implemented
-        }
-    }
-
 
     @Override
     public NType getNodeType() {

@@ -56,7 +56,7 @@ import nodagumi.Itk.ItkXmlUtility;
 /**
  * マップエディタのメイン処理
  */
-public class MapEditor implements MapEditorInterface {
+public class MapEditor {
     /**
      * テキストの描画位置
      */
@@ -171,22 +171,8 @@ public class MapEditor implements MapEditorInterface {
     /**
      * コンストラクタ
      */
-    public MapEditor() {
-        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
-    }
-
-    /**
-     * コンストラクタ
-     */
     public MapEditor(Settings settings) {
-        super();
-        this.settings = settings;
-    }
-
-    /**
-     * 設定データオブジェクトのセット
-     */
-    public void setSettings(Settings settings) {
+        JFXPanel fxPanel = new JFXPanel();  // JavaFX アプリケーションスレッドを起動するために必要
         this.settings = settings;
     }
 
