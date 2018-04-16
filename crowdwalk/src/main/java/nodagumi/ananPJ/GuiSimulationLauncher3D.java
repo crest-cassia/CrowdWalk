@@ -180,6 +180,13 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
     }
 
     /**
+     * アプリケーションを終了する
+     */
+    public void exit(int exitCode) {
+        Platform.runLater(() -> Platform.exit());
+    }
+
+    /**
      * accessors
      */
 

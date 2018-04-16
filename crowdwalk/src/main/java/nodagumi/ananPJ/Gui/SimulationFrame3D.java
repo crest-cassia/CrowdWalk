@@ -349,6 +349,7 @@ public class SimulationFrame3D extends Stage implements Observer {
             launcher.saveSimulatorPosition((int)getX(), (int)getY());
         });
         setOnHidden(e -> {
+            helpStage.close();
             launcher.quit();
         });
     }

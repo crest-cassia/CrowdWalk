@@ -156,6 +156,16 @@ public class EditorFrameFx {
     private SplitPane splitPane;
 
     /**
+     * File メニュー
+     */
+    private MenuItem miNew;
+    private MenuItem miOpenMap;
+    private MenuItem miSaveMap;
+    private MenuItem miSaveMapAs;
+    private MenuItem miOpenProperty;
+    private MenuItem miQuit;
+
+    /**
      * マップの回転角度リセットメニュー
      */
     private MenuItem miResetRotation = new MenuItem("Reset rotation");
@@ -414,7 +424,7 @@ public class EditorFrameFx {
         frame.setOnCloseRequest(e -> closing(e));
         frame.setOnHidden(e -> {
             if (! Platform.isImplicitExit()) {
-                System.exit(0);
+                Platform.runLater(() -> Platform.exit());
             }
         });
     }
@@ -495,21 +505,21 @@ public class EditorFrameFx {
 
         Menu fileMenu = new Menu("File");
 
-        MenuItem miNew = new MenuItem("New");
+        miNew = new MenuItem("New");
         miNew.setOnAction(e -> clearMapData());
 
-        MenuItem miOpenMap = new MenuItem("Open map");
+        miOpenMap = new MenuItem("Open map");
         miOpenMap.setOnAction(e -> openMap());
         miOpenMap.setAccelerator(KeyCombination.valueOf("Ctrl+O"));
 
-        MenuItem miSaveMap = new MenuItem("Save map");
+        miSaveMap = new MenuItem("Save map");
         miSaveMap.setOnAction(e -> saveMap());
         miSaveMap.setAccelerator(KeyCombination.valueOf("Ctrl+S"));
 
-        MenuItem miSaveMapAs = new MenuItem("Save map as");
+        miSaveMapAs = new MenuItem("Save map as");
         miSaveMapAs.setOnAction(e -> saveMapAs());
 
-        MenuItem miOpenProperty = new MenuItem("Open properties");
+        miOpenProperty = new MenuItem("Open properties");
         miOpenProperty.setOnAction(e -> openProperties());
 
         // MenuItem miSaveProperty = new MenuItem("Save properties");
@@ -517,7 +527,7 @@ public class EditorFrameFx {
         //     System.err.println("Save properties: under construction");
         // });
 
-        MenuItem miQuit = new MenuItem("Quit");
+        miQuit = new MenuItem("Quit");
         miQuit.setOnAction(e -> {
             if (closing(null)) {
                 frame.close();
@@ -835,6 +845,15 @@ public class EditorFrameFx {
         menuBar.getMenus().addAll(fileMenu, editMenu, viewMenu, actionMenu, helpMenu);
 
         return menuBar;
+    }
+
+    /**
+     * マップデータの初期化または読込をおこなうメニューの有効/無効設定
+     */
+    public void setDisableReloadMenus(boolean value) {
+        miNew.setDisable(value);
+        miOpenMap.setDisable(value);
+        miOpenProperty.setDisable(value);
     }
 
     /**
@@ -1527,8 +1546,9 @@ public class EditorFrameFx {
         }
         simulate2dButton.setDisable(true);
         simulate3dButton.setDisable(true);
+        setDisableReloadMenus(true);
         GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance(simulator);
-        launcher.init(editor.getRandom(), editor.getProperties(), editor.getSetupFileInfo(), editor.getMap(), settings);
+        launcher.init(this, editor.getRandom(), editor.getProperties(), editor.getSetupFileInfo(), editor.getMap(), settings);
         launcher.simulate();
     }
 

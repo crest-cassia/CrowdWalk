@@ -362,12 +362,7 @@ public class SimulationFrame2D extends JFrame
         setMarginAdded(getLinks().size() < MINIMUM_REAL_MAP_LINKS);
 
         JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                initHelp();
-            }
-        });
+        Platform.runLater(() -> initHelp());
         setupMenu();
         setupContents(simulationPanelWidth, simulationPanelHeight, properties, backgroundMapTiles);
         if (cameraworkFile != null) {
@@ -398,6 +393,7 @@ public class SimulationFrame2D extends JFrame
                 frame.dispose();
             }
             public void windowClosed(WindowEvent e) {
+                Platform.runLater(() -> helpStage.close());
                 launcher.quit();
             }
         });
@@ -436,23 +432,25 @@ public class SimulationFrame2D extends JFrame
         webView = new WebView();
         webView.setOnKeyPressed(event -> {
             if (event.isControlDown()) {
-                if (event.getCode() == KeyCode.W) {
-                    helpStage.close();
-                } else if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.UP) {
-                    helpZoom += 0.1;
-                    webView.setZoom(helpZoom);
-                } else if (event.getCode() == KeyCode.MINUS || event.getCode() == KeyCode.DOWN) {
-                    helpZoom -= 0.1;
-                    webView.setZoom(helpZoom);
-                } else if (event.getCode() == KeyCode.DIGIT0) {
-                    helpZoom = 1.0;
-                    webView.setZoom(helpZoom);
-                }
+                Platform.runLater(() -> {
+                    if (event.getCode() == KeyCode.W) {
+                        helpStage.close();
+                    } else if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.UP) {
+                        helpZoom += 0.1;
+                        webView.setZoom(helpZoom);
+                    } else if (event.getCode() == KeyCode.MINUS || event.getCode() == KeyCode.DOWN) {
+                        helpZoom -= 0.1;
+                        webView.setZoom(helpZoom);
+                    } else if (event.getCode() == KeyCode.DIGIT0) {
+                        helpZoom = 1.0;
+                        webView.setZoom(helpZoom);
+                    }
+                });
             }
         });
 
         Button okButton = new Button("  OK  ");
-        okButton.setOnAction(event -> helpStage.close());
+        okButton.setOnAction(event -> Platform.runLater(() -> helpStage.close()));
         BorderPane buttonPane = new BorderPane();
         buttonPane.setPadding(new javafx.geometry.Insets(4, 8, 4, 8));
         buttonPane.setRight(okButton);
@@ -600,19 +598,16 @@ public class SimulationFrame2D extends JFrame
         miQuickReference.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        helpStage.setTitle("Help - Quick reference");
-                        helpStage.setWidth(980);
-                        helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
-                        String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
-                        com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
-                        String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
-                        webView.getEngine().loadContent(html);
-                        helpStage.show();
-                        helpStage.toFront();
-                    }
+                Platform.runLater(() -> {
+                    helpStage.setTitle("Help - Quick reference");
+                    helpStage.setWidth(980);
+                    helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+                    String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
+                    com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
+                    String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
+                    webView.getEngine().loadContent(html);
+                    helpStage.show();
+                    helpStage.toFront();
                 });
             }
         });

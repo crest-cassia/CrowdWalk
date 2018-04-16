@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON;
 
+import nodagumi.ananPJ.Editor.EditorFrameFx;
 import nodagumi.ananPJ.Gui.Coastline;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -56,6 +57,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     }
 
     /**
+     * マップエディタのウィンドウと GUI
+     */
+    protected EditorFrameFx editorFrame = null;
+
+    /**
      * シミュレーションパネルの幅
      */
     protected int simulationPanelWidth = 800;
@@ -99,6 +105,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * 一時停止の有効/無効
      */
     protected boolean pauseEnabled = false;
+
+    /**
+     * quit() の呼び出し後か?(リセットを除く)
+     */
+    protected boolean quitting = false;
 
     /**
      * Properties
@@ -187,8 +198,9 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     /**
      * マップエディタからシミュレーションを開始する場合の初期設定.
      */
-    public void init(Random _random, CrowdWalkPropertiesHandler _properties,
+    public void init(EditorFrameFx _editorFrame, Random _random, CrowdWalkPropertiesHandler _properties,
             SetupFileInfo _setupFileInfo, NetworkMap _map, Settings _settings) {
+        editorFrame = _editorFrame;
         random = _random;
         properties = _properties;
         setPropertiesForDisplay();
@@ -250,6 +262,10 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * シミュレータを終了または再起動する
      */
     public void quit() {
+        if (quitting) {
+            return;
+        }
+
         Itk.logInfo("Simulation window closed.") ;
         // スクリーンショットの保存中ならば完了するのを待つ
         while (getSaveThreadCount() > 0) {
@@ -270,8 +286,12 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             init(getPropertiesFile(), settings, commandLineFallbacks);
             simulate();
         } else {
+            quitting = true;
+            if (editorFrame != null) {
+                editorFrame.setDisableReloadMenus(false);
+            }
             if (exitOnClose) {
-                System.exit(0);
+                exit(0);
             }
         }
     }
@@ -353,6 +373,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * スクリーンショット保存用のスレッド数カウンタ値を取得する
      */
     public abstract int getSaveThreadCount();
+
+    /**
+     * アプリケーションを終了する
+     */
+    public abstract void exit(int exitCode);
 
     /**
      * 一時停止の有効/無効を設定する

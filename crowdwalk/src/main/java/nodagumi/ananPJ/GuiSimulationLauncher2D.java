@@ -235,4 +235,11 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
     public int getSaveThreadCount() {
         return simulationFrame.getSaveThreadCount();
     }
+
+    /**
+     * アプリケーションを終了する
+     */
+    public void exit(int exitCode) {
+        System.exit(exitCode);
+    }
 }
