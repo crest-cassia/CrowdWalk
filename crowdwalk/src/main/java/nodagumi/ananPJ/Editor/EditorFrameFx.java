@@ -1008,13 +1008,16 @@ public class EditorFrameFx {
         MenuItem miRotateAndScale = new MenuItem("Rotate and scale");
         miRotateAndScale.setOnAction(e -> openRotateAndScaleNodesDialog());
 
+        MenuItem miNormalizeCoordinates = new MenuItem("Normalize coordinates");
+        miNormalizeCoordinates.setOnAction(e -> openNormalizeCoordinatesDialog());
+
         MenuItem miClearSymbolicLinkOfNode = new MenuItem("Clear symbolic link");
         miClearSymbolicLinkOfNode.setOnAction(e -> editor.removeSymbolicLink(editor.getSelectedNodes()));
 
         MenuItem miRemoveNode = new MenuItem("Remove nodes");
         miRemoveNode.setOnAction(e -> editor.removeNodes(true));
 
-        editNodeMenu.getItems().addAll(miSetNodeAttributes, miHorizontally, miVertically, miCopyOrMove, miMakeStairs, miRotateAndScale, menuAddSymbolicLinkOfNode, miClearSymbolicLinkOfNode, miRemoveNode);
+        editNodeMenu.getItems().addAll(miSetNodeAttributes, miHorizontally, miVertically, miCopyOrMove, miMakeStairs, miRotateAndScale, miNormalizeCoordinates, menuAddSymbolicLinkOfNode, miClearSymbolicLinkOfNode, miRemoveNode);
 
         // EDIT_LINK モード
         // ・Set link attributes
@@ -2655,6 +2658,134 @@ public class EditorFrameFx {
 
             if (scaleX != 1.0 || scaleY != 1.0 || (angle > 0.0 && angle < 360.0)) {
                 editor.rotateAndScaleNodes(nodes, scaleX, scaleY, angle);
+            }
+        }
+    }
+
+    /**
+     * マップ座標の正規化
+     */
+    public void openNormalizeCoordinatesDialog() {
+        ArrayList<MapNode> nodes = editor.getSelectedNodes();
+        if (nodes.size() != 2) {
+            Alert alert = new Alert(AlertType.WARNING, "Select only 2 nodes.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+        MapNode node1 = nodes.get(0);
+        MapNode node2 = nodes.get(1);
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Normalize coordinates");
+        dialog.getDialogPane().setPrefWidth(360);
+        VBox paramPane = new VBox();
+        paramPane.setPadding(new Insets(16, 24, 12, 24));
+        paramPane.setSpacing(8);
+
+        ArrayList<String> zones = new ArrayList();
+        for (int zone = 1; zone <= 19; zone++) {
+            zones.add("" + zone);
+        }
+        ChoiceBox zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        zoneChoiceBox.setValue(zones.get(0));
+
+        Label node1Label = new Label("Node 1");
+        node1Label.setFont(Font.font("Arial", FontWeight.BOLD, node1Label.getFont().getSize()));
+
+        TextField node1LongitudeField = new TextField("");
+        node1LongitudeField.setPrefWidth(200);
+
+        TextField node1LatitudeField = new TextField("");
+        node1LatitudeField.setPrefWidth(200);
+
+        Label node2Label = new Label("Node 2");
+        node2Label.setFont(Font.font("Arial", FontWeight.BOLD, node2Label.getFont().getSize()));
+
+        TextField node2LongitudeField = new TextField("");
+        node2LongitudeField.setPrefWidth(200);
+
+        TextField node2LatitudeField = new TextField("");
+        node2LatitudeField.setPrefWidth(200);
+
+        RadioButton separatelyButton = new RadioButton("separately");
+        RadioButton averageButton = new RadioButton("average");
+        RadioButton scaleXButton = new RadioButton("X");
+        RadioButton scaleYButton = new RadioButton("Y");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        separatelyButton.setToggleGroup(toggleGroup);
+        averageButton.setToggleGroup(toggleGroup);
+        scaleXButton.setToggleGroup(toggleGroup);
+        scaleYButton.setToggleGroup(toggleGroup);
+        separatelyButton.setSelected(true);
+        FlowPane scalePane = new FlowPane();
+        scalePane.setHgap(8);
+        scalePane.getChildren().addAll(new Label("Scale"), separatelyButton, averageButton, scaleXButton, scaleYButton);
+
+        CheckBox rotaionCheckBox = new CheckBox("Rotation");
+        rotaionCheckBox.setSelected(true);
+
+        CheckBox calcLengthCheckBox = new CheckBox("Recalc length");
+        CheckBox reflectHeightCheckBox = new CheckBox("Reflect height");
+        reflectHeightCheckBox.setDisable(true);
+        calcLengthCheckBox.setOnAction(e -> reflectHeightCheckBox.setDisable(! calcLengthCheckBox.isSelected()));
+        FlowPane calcLengthPane = new FlowPane();
+        calcLengthPane.setHgap(8);
+        calcLengthPane.getChildren().addAll(calcLengthCheckBox, reflectHeightCheckBox);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(6);
+        grid.add(new Label("Zone"), 0, 0, 2, 1);
+        grid.add(zoneChoiceBox, 2, 0);
+
+        grid.add(new Separator(), 0, 1, 3, 1);
+
+        grid.add(node1Label, 0, 2, 3, 1);
+        grid.add(new Label("ID"), 1, 3);
+        grid.add(new Label(node1.getID()), 2, 3);
+        grid.add(new Label("Tags"), 1, 4);
+        grid.add(new Label(node1.getTagString()), 2, 4);
+        grid.add(new Label("X"), 1, 5);
+        grid.add(new Label("" + node1.getX()), 2, 5);
+        grid.add(new Label("Y"), 1, 6);
+        grid.add(new Label("" + node1.getY()), 2, 6);
+        grid.add(new Label("Longitude"), 1, 7);
+        grid.add(node1LongitudeField, 2, 7);
+        grid.add(new Label("Latitude"), 1, 8);
+        grid.add(node1LatitudeField, 2, 8);
+
+        grid.add(new Separator(), 0, 9, 3, 1);
+
+        grid.add(node2Label, 0, 10, 3, 1);
+        grid.add(new Label("ID"), 1, 11);
+        grid.add(new Label(node2.getID()), 2, 11);
+        grid.add(new Label("Tags"), 1, 12);
+        grid.add(new Label(node2.getTagString()), 2, 12);
+        grid.add(new Label("X"), 1, 13);
+        grid.add(new Label("" + node2.getX()), 2, 13);
+        grid.add(new Label("Y"), 1, 14);
+        grid.add(new Label("" + node2.getY()), 2, 14);
+        grid.add(new Label("Longitude"), 1, 15);
+        grid.add(node2LongitudeField, 2, 15);
+        grid.add(new Label("Latitude"), 1, 16);
+        grid.add(node2LatitudeField, 2, 16);
+
+        grid.add(new Separator(), 0, 17, 3, 1);
+
+        paramPane.getChildren().addAll(grid, scalePane, rotaionCheckBox, calcLengthPane);
+
+        dialog.getDialogPane().setContent(paramPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Double node1Longitude = convertToDouble(node1LongitudeField.getText());
+            Double node1Latitude = convertToDouble(node1LatitudeField.getText());
+            Double node2Longitude = convertToDouble(node2LongitudeField.getText());
+            Double node2Latitude = convertToDouble(node2LatitudeField.getText());
+            if (node1Longitude != null && node1Latitude != null && node2Longitude != null && node2Latitude != null) {
+                int zone = Integer.parseInt((String)zoneChoiceBox.getValue());
+                RadioButton scaleButton = (RadioButton)toggleGroup.getSelectedToggle();
+                editor.normalizeCoordinates(node1, node2, zone, node1Longitude.doubleValue(), node1Latitude.doubleValue(), node2Longitude.doubleValue(), node2Latitude.doubleValue(), scaleButton.getText(), rotaionCheckBox.isSelected(), calcLengthCheckBox.isSelected(), reflectHeightCheckBox.isSelected());
             }
         }
     }

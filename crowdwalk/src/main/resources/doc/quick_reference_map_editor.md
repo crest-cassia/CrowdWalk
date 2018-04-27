@@ -125,6 +125,7 @@
 | Copy or move | 選択したノードを複製または移動する |
 | Make stairs | 異なるグループで選択した二つのノード間に階段を設置する |
 | Rotate and scale | 選択した複数ノードの(ノード間の)拡大縮小と回転をおこなう |
+| Normalize coordinates | マップデータの座標を正規化する |
 | Add symbolic link | 選択したノードのシンボリックリンクを追加する |
 | Clear symbolic link | 選択したノードにシンボリックリンクがあれば削除する |
 | Remove nodes | 選択したノードを削除する |
