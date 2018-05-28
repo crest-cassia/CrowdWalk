@@ -19,6 +19,18 @@ public class AddNode extends EditCommandBase {
     /**
      * コンストラクタ
      */
+    public AddNode(String id, MapPartGroup group, Point2D coordinates, double height) {
+        this.id = id;
+        heightChangeable = true;
+        changeType = ChangeType.NODE_VOLUME;
+        groupId = group.getID();
+        this.coordinates = coordinates;
+        this.height = height;
+    }
+
+    /**
+     * コンストラクタ
+     */
     public AddNode(MapPartGroup group, Point2D coordinates, double height) {
         heightChangeable = true;
         changeType = ChangeType.NODE_VOLUME;

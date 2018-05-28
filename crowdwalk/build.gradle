@@ -36,6 +36,12 @@ if (onlyCuiSimulator) {
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://mvn.topobyte.de"
+    }
+    maven {
+        url "http://mvn.slimjars.com"
+    }
 }
 
 dependencies {
@@ -58,6 +64,10 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     // https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-all
     compile group: 'com.vladsch.flexmark', name: 'flexmark-all', version: '0.28.34'
+    // https://jaryard.com/projects/osm4j/
+    compile 'de.topobyte:osm4j-core:0.1.0'
+    compile 'de.topobyte:osm4j-utils:0.1.2'
+    compile 'de.topobyte:osm4j-xml:0.1.2'
 }
 
 sourceSets {
