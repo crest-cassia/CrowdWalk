@@ -158,8 +158,8 @@ public abstract class OBNode extends DefaultMutableTreeNode
     public boolean hasTag (String _tag) {
         if (_tag == null) return false;
 
-        //return tags.contains(_tag) ;
-        return Itk.containsItself(tags, _tag) ;
+        return tags.contains(_tag) ;
+        // return Itk.containsItself(tags, _tag) ;
     }
 
     /**

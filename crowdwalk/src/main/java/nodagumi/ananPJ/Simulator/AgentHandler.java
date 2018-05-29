@@ -1970,17 +1970,43 @@ public class AgentHandler {
         // ゴールの箇所の設定。
         // ゴールの場所がわかってないといけないので、
         // generation rule の読み込み後に行う必要がある。なので、ここで初期化。
-        for (final MapNode node : simulator.getNodes()) {
-            for (String goalTag : getGoalTags()) {
-                if (node.hasTag(goalTag)) {
-                    evacuatedAgentsLoggerFormatter
-                        .addColumn(evacuatedAgentsLoggerFormatter.new Column(node.getTagLabel()) {
-                            public String value(HashMap<MapNode, Integer> agentCounter) {
-                                return agentCounter.get(node).toString();
-                            }
-                        });
-                    evacuatedAgentsCountByExit.put(node, 0);
-                    break;
+        ArrayList<String> goalTags = getGoalTags();
+        String nodeOrder = simulator.getProperties().getString("node_order_of_evacuated_agents_log", "").trim();
+        if (nodeOrder.isEmpty()) {
+            for (MapNode node : simulator.getNodes()) {
+                for (String goalTag : goalTags) {
+                    if (node.hasTag(goalTag)) {
+                        evacuatedAgentsLoggerFormatter
+                            .addColumn(evacuatedAgentsLoggerFormatter.new Column(node.getTagLabel()) {
+                                public String value(HashMap<MapNode, Integer> agentCounter) {
+                                    return agentCounter.get(node).toString();
+                                }
+                            });
+                        evacuatedAgentsCountByExit.put(node, 0);
+                        break;
+                    }
+                }
+            }
+        } else {
+            // ※ nodeOrder にすべてのゴールノードが含まれるとは限らない
+            for (String tag : nodeOrder.split("\\s*,\\s*")) {
+                if (! goalTags.contains(tag)) {
+                    Itk.logError("can not setup Logger", "A node that is not a goal was set: " + tag);
+                    Itk.quitByError();
+                }
+                for (MapNode node : simulator.getNodes()) {
+                    if (evacuatedAgentsCountByExit.containsKey(node)) {
+                        continue;
+                    }
+                    if (node.hasTag(tag)) {
+                        evacuatedAgentsLoggerFormatter
+                            .addColumn(evacuatedAgentsLoggerFormatter.new Column(node.getTagLabel()) {
+                                public String value(HashMap<MapNode, Integer> agentCounter) {
+                                    return agentCounter.get(node).toString();
+                                }
+                            });
+                        evacuatedAgentsCountByExit.put(node, 0);
+                    }
                 }
             }
         }
@@ -2037,9 +2063,11 @@ public class AgentHandler {
             MapNode exitNode = agent.getPrevNode();
             Integer counter = evacuatedAgentsCountByExit.get(exitNode);
             if (counter == null) {
+                // 最初の一回だけ警告メッセージを表示する
+                // 出力しないノードを evacuatedAgentsCountByExit にセットしているが現状では問題ない
                 Itk.logWarn("Evacuated from unregistered goal",
                             exitNode.toShortInfo());
-                return;
+                counter = new Integer(0);
             }
             counter += 1;
             evacuatedAgentsCountByExit.put(exitNode, counter);

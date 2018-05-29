@@ -259,6 +259,14 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>node_order_of_evacuated_agents_log</h4>
+ *     <pre>evacuated_agents_log の出力カラムの並び順
+ *
+ *  設定値： ゴールノードを示すタグをカンマで区切って並べる。ゴールノードがすべて揃っている必要はない
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>agent_movement_history_file</h4>
  *     <pre>ゴールまでたどり着いたエージェントのゴールした時点でのログ(?)
  *
