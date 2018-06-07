@@ -250,6 +250,11 @@ public class EditorFrameFx {
     private ArrayList<ToggleButton> editModeButtons = new ArrayList();
 
     /**
+     * JavaFX アプリケーション・スレッド
+     */
+    private Thread fxThread = null;
+
+    /**
      * コンストラクタ
      */
     public EditorFrameFx() {}
@@ -497,6 +502,26 @@ public class EditorFrameFx {
         settings.put("_editorHeight", (int)frame.getHeight());
         settings.put("dividerPosition", "" + splitPane.getDividerPositions()[0]);
         return true;
+    }
+
+    /**
+     * アプリケーションを終了する
+     */
+    public void exit() {
+        Platform.runLater(() -> {
+            fxThread = Thread.currentThread();
+            Platform.exit();
+            new Thread(() -> {
+                if (fxThread.isAlive()) {
+                    try {
+                        fxThread.join();
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                System.exit(0);
+            }).start();
+        });
     }
 
     /**
@@ -855,12 +880,11 @@ public class EditorFrameFx {
     }
 
     /**
-     * マップデータの初期化または読込をおこなうメニューの有効/無効設定
+     * シミュレーションボタンの有効/無効設定
      */
-    public void setDisableReloadMenus(boolean value) {
-        miNew.setDisable(value);
-        miOpenMap.setDisable(value);
-        miOpenProperty.setDisable(value);
+    public void setDisableSimulationButtons(boolean value) {
+        simulate2dButton.setDisable(value);
+        simulate3dButton.setDisable(value);
     }
 
     /**
@@ -1409,10 +1433,7 @@ public class EditorFrameFx {
             return;
         }
         editor.setNetworkMapFile(editor.getRelativePath(file));
-        if (editor.loadNetworkMap()) {
-            simulate2dButton.setDisable(false);
-            simulate3dButton.setDisable(false);
-        } else {
+        if (! editor.loadNetworkMap()) {
             Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
             alert.showAndWait();
             editor.initNetworkMap();
@@ -1525,10 +1546,7 @@ public class EditorFrameFx {
         }
 
         editor.setPropertiesFromFile(editor.getRelativePath(file));
-        if (editor.loadNetworkMap()) {
-            simulate2dButton.setDisable(false);
-            simulate3dButton.setDisable(false);
-        } else {
+        if (! editor.loadNetworkMap()) {
             Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
             alert.showAndWait();
             editor.initSetupFileInfo();
@@ -1547,18 +1565,9 @@ public class EditorFrameFx {
             alert.showAndWait();
             return;
         }
-        if (editor.isModified()) {
-            Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Map data may change when simulation is executed.\n    Would you like to start the simulator?", ButtonType.YES, ButtonType.NO);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (! result.isPresent() || result.get() != ButtonType.YES) {
-                return;
-            }
-        }
-        simulate2dButton.setDisable(true);
-        simulate3dButton.setDisable(true);
-        setDisableReloadMenus(true);
+        setDisableSimulationButtons(true);
         GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance(simulator);
-        launcher.init(this, editor.getRandom(), editor.getProperties(), editor.getSetupFileInfo(), editor.getMap(), settings);
+        launcher.init(editor, settings);
         launcher.simulate();
     }
 

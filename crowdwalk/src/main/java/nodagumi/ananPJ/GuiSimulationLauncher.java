@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON;
 
-import nodagumi.ananPJ.Editor.EditorFrameFx;
+import nodagumi.ananPJ.Editor.MapEditor;
 import nodagumi.ananPJ.Gui.Coastline;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
@@ -57,9 +57,9 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     }
 
     /**
-     * マップエディタのウィンドウと GUI
+     * マップエディタ
      */
-    protected EditorFrameFx editorFrame = null;
+    protected MapEditor editor = null;
 
     /**
      * シミュレーションパネルの幅
@@ -198,14 +198,13 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     /**
      * マップエディタからシミュレーションを開始する場合の初期設定.
      */
-    public void init(EditorFrameFx _editorFrame, Random _random, CrowdWalkPropertiesHandler _properties,
-            SetupFileInfo _setupFileInfo, NetworkMap _map, Settings _settings) {
-        editorFrame = _editorFrame;
-        random = _random;
-        properties = _properties;
+    public void init(MapEditor _editor, Settings _settings) {
+        editor = _editor;
+        properties = editor.getProperties().clone();
+        random = new Random(properties.getRandseed());
         setPropertiesForDisplay();
-        setupFileInfo = _setupFileInfo;
-        map = _map;
+        setupFileInfo = editor.getSetupFileInfo().clone();
+        map = editor.getMap().clone();
         map.sortNodesById();
         map.sortLinksById();
         settings = _settings;
@@ -275,23 +274,32 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                 } catch (InterruptedException e) {}
             }
         }
+        if (! finished) {
+            // ログファイルのクローズ処理
+            simulator.finish();
+            Itk.logInfo("Status", getStatusLine());
+            finished = true;
+        }
         if (resetting) {
             resetting = false;
-            if (! finished) {
-                // ログファイルのクローズ処理
-                simulator.finish();
-                Itk.logInfo("Status", getStatusLine());
-                finished = true;
+            initPropertyValues();
+            if (editor == null) {
+                init(getPropertiesFile(), settings, commandLineFallbacks);
+            } else {
+                init(editor, settings);
             }
-            init(getPropertiesFile(), settings, commandLineFallbacks);
             simulate();
         } else {
             quitting = true;
-            if (editorFrame != null) {
-                editorFrame.setDisableReloadMenus(false);
+            if (editor != null) {
+                editor.getFrame().setDisableSimulationButtons(false);
             }
             if (exitOnClose) {
-                exit(0);
+                if (editor != null) {
+                    editor.getFrame().exit();
+                } else {
+                    exit(0);
+                }
             }
         }
     }
@@ -384,6 +392,40 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      */
     public void setPauseEnabled(boolean pauseEnabled) {
         this.pauseEnabled = pauseEnabled;
+    }
+
+    /**
+     * 設定値を初期化する
+     */
+    protected void initPropertyValues() {
+        pauseEnabled = false;
+        quitting = false;
+
+        deferFactor = 0;
+        verticalScale = 1.0;
+        agentSize = 1.0;
+        cameraFile = null;
+        zoom = 1.0;
+        showBackgroundImage = false;
+        showBackgroundMap = false;
+        showTheSea = false;
+        recordSimulationScreen = false;
+        screenshotDir = "screenshots";
+        clearScreenshotDir = false;
+        screenshotImageType = "png";
+        simulationWindowOpen = false;
+        autoSimulationStart = false;
+        hideLinks = false;
+        densityMode = false;
+        changeAgentColorDependingOnSpeed = true;
+        drawingAgentByTriageAndSpeedOrder = true;
+        showStatus = false;
+        showStatusPosition = "top";
+        showLogo = false;
+        show3dPolygon = true;
+        exitWithSimulationFinished = false;
+        agentAppearanceFile = null;
+        gsiTileZoom = 14;
     }
 
     /**

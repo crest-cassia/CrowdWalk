@@ -231,6 +231,7 @@ public class MapEditor {
         initNetworkMap();
 
         // シミュレーション結果の同一性を確保するため
+        // TODO: これは既に不要かもしれない
         random.setSeed(properties.getRandseed());
 
         Document doc = null;

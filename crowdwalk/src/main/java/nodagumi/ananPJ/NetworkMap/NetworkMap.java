@@ -1036,5 +1036,88 @@ public class NetworkMap extends DefaultTreeModel {
         return new Rectangle2D.Double(west, north, east - west, south - north);
     }
 
+    /**
+     * このオブジェクトのコピーを作成して返す
+     */
+    public NetworkMap clone() {
+        final NetworkMap networkMap = new NetworkMap();
+        // コンストラクタが作ったグループは削除する
+        networkMap.removeObject(((MapPartGroup)networkMap.root).ID);
+
+        applyToAllChildrenRec((OBNode)root, null, new OBTreeCrawlFunctor() {
+            public void apply(OBNode node, OBNode parent) {
+                MapPartGroup parentGroup = null;
+                if (parent != null) {
+                    parentGroup = (MapPartGroup)networkMap.getObject(parent.ID);
+                }
+                String id = node.ID;
+                OBNode.NType type = node.getNodeType();
+                if (type == OBNode.NType.GROUP) {
+                    MapPartGroup group = new MapPartGroup(id);
+                    ((MapPartGroup)node).copyAttributes(group);
+                    if (parent == null) {
+                        networkMap.addObject(id, group);
+                        networkMap.setRoot(group);
+                    } else {
+                        networkMap.insertOBNode(parentGroup, group);
+                    }
+                } else if (type == OBNode.NType.NODE) {
+                    MapNode srcNode = (MapNode)node;
+                    MapNode newNode = new MapNode(id, (Point2D)srcNode.getPosition().clone(), srcNode.getHeight());
+                    for (String tag : srcNode.getTags()) {
+                        newNode.getTags().add(tag);
+                    }
+                    networkMap.insertOBNode(parentGroup, newNode);
+                } else if (type == OBNode.NType.LINK) {
+                    MapLink srcLink = (MapLink)node;
+                    MapLink newLink = new MapLink(id, srcLink.getLength(), srcLink.getWidth());
+                    for (String tag : srcLink.getTags()) {
+                        newLink.getTags().add(tag);
+                    }
+                    networkMap.insertOBNode(parentGroup, newLink);
+                } else if (type == OBNode.NType.AREA) {
+                    MapArea srcArea = (MapArea)node;
+                    Rectangle2D bounds = (Rectangle2D)srcArea.getShape();
+                    MapAreaRectangle newArea = new MapAreaRectangle(id, bounds, srcArea.getMinHeight(), srcArea.getMaxHeight(), srcArea.getAngle());
+                    for (String tag : srcArea.getTags()) {
+                        newArea.getTags().add(tag);
+                    }
+                    networkMap.insertOBNode(parentGroup, newArea);
+                } else if (type == OBNode.NType.SYMLINK) {
+                    OBNodeSymbolicLink srcSymlink = (OBNodeSymbolicLink)node;
+                    if (srcSymlink.getOriginal() != null) {
+                        // 元のオリジナルを仮代入しておく
+                        OBNodeSymbolicLink symlink = new OBNodeSymbolicLink(id, srcSymlink.getOriginal());
+                        networkMap.insertOBNode(parentGroup, symlink);
+                    }
+                } else if (type == OBNode.NType.POLYGON) {
+                    networkMap.insertOBNode(parentGroup, ((MapPolygon)node).clone());
+                }
+            }
+        });
+        for (MapLink link : networkMap.getLinks()) {
+            MapLink srcLink = (MapLink)this.getObject(link.ID);
+            MapNode fromNode = (MapNode)networkMap.getObject(srcLink.getFrom().ID);
+            MapNode toNode = (MapNode)networkMap.getObject(srcLink.getTo().ID);
+            try {
+                link.setFromTo(fromNode, toNode);
+            } catch (Exception e) {
+                Itk.logError("NetworkMap replication error", e.getMessage());
+                return null;
+            }
+            link.prepareAdd();
+        }
+        networkMap.applyToAllChildrenRec((OBNode)networkMap.root, null, new OBTreeCrawlFunctor() {
+            public void apply(OBNode node, OBNode parent) {
+                if (node.getNodeType() == OBNode.NType.SYMLINK) {
+                    OBNodeSymbolicLink symlink = (OBNodeSymbolicLink)node;
+                    OBNode original = networkMap.getObject(symlink.getOriginal().ID);
+                    symlink.setOriginal(original);
+                }
+            }
+        });
+
+        return networkMap;
+    }
 } // class NetworkMap
 

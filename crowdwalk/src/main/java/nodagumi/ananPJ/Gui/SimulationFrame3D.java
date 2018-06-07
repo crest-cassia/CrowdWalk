@@ -498,17 +498,13 @@ public class SimulationFrame3D extends Stage implements Observer {
             if (start_button.isSelected()) {
                 start_button.setGraphic(pauseIcon);
                 verticalScaleControl.setDisable(true);
-                if (launcher.getPropertiesFile() != null) {
-                    resetButton.setDisable(true);
-                }
+                resetButton.setDisable(true);
                 launcher.start();
             } else {
                 start_button.setGraphic(startIcon);
                 launcher.pause();
                 verticalScaleControl.setDisable(false);
-                if (launcher.getPropertiesFile() != null) {
-                    resetButton.setDisable(false);
-                }
+                resetButton.setDisable(false);
             }
             update_buttons();
         });
@@ -800,7 +796,8 @@ public class SimulationFrame3D extends Stage implements Observer {
         /* Reset button */
 
         if (launcher.getPropertiesFile() == null) {
-            resetButton.setDisable(true);
+            // エディタから起動した場合は名前を変える
+            resetButton.setText("Reset with latest state");
         }
         resetButton.setOnAction(e -> {
             launcher.setResetting(true);

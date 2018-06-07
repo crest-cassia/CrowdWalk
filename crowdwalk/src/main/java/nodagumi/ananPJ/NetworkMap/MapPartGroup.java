@@ -421,6 +421,31 @@ public class MapPartGroup extends OBNode {
         }
         return children;
     }
+
+    /**
+     * 属性パラメータの値をコピーする
+     */
+    public void copyAttributes(MapPartGroup group) {
+        group.pNorthWest = (Point2D)pNorthWest.clone();
+        group.pSouthEast = (Point2D)pSouthEast.clone();
+        group.pTheta = pTheta;
+        group.tx = tx;
+        group.ty = ty;
+        group.sx = sx;
+        group.sy = sy;
+        group.r = r;
+        group.setScale(scale);
+        group.setMinHeight(minHeight);
+        group.setMaxHeight(maxHeight);
+        group.setDefaultHeight(defaultHeight);
+        group.setImageFileName(imageFileName);
+        group.setZone(zone);
+
+        group.getTags().clear();
+        for (String tag : getTags()) {
+            group.getTags().add(tag);
+        }
+    }
 }
 //;;; Local Variables:
 //;;; mode:java

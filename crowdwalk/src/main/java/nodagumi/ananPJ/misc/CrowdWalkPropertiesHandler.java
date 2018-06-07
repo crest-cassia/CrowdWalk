@@ -908,6 +908,27 @@ public class CrowdWalkPropertiesHandler {
         }
     }
 
+    /**
+     * このオブジェクトのコピーを作成して返す
+     */
+    public CrowdWalkPropertiesHandler clone() {
+        CrowdWalkPropertiesHandler properties = new CrowdWalkPropertiesHandler();
+        properties.prop = prop.clone();
+        properties.propertiesFile = propertiesFile;
+        properties.networkMapFile = networkMapFile;
+        properties.pollutionFile = pollutionFile;
+        properties.generationFile = generationFile;
+        properties.scenarioFile = scenarioFile;
+        properties.fallbackFile = fallbackFile;
+        properties.randseed = randseed;
+        properties.exitCount = exitCount;
+        properties.isAllAgentSpeedZeroBreak = isAllAgentSpeedZeroBreak;
+        if (mentalMapRules != null) {
+            properties.mentalMapRules = mentalMapRules.clone();
+        }
+        return properties;
+    }
+
     //--------------------------------------------------
     /**
      * scan XML file as Properties into Term

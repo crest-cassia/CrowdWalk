@@ -28,7 +28,7 @@ public class SetupFileInfo {
     /**
      * 実験設定ファイル。
      */
-    private static String propertiesFile = null;
+    private String propertiesFile = null;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -83,6 +83,23 @@ public class SetupFileInfo {
      * constructor
      */
     public SetupFileInfo() {
+    }
+
+    /**
+     * このオブジェクトのコピーを作成して返す
+     */
+    public SetupFileInfo clone() {
+        SetupFileInfo newSetupFileInfo = new SetupFileInfo();
+        newSetupFileInfo.propertiesFile = propertiesFile;
+        newSetupFileInfo.networkMapFile = networkMapFile;
+        newSetupFileInfo.pollutionFile = pollutionFile;
+        newSetupFileInfo.generationFile = generationFile;
+        newSetupFileInfo.scenarioFile = scenarioFile;
+        newSetupFileInfo.fallbackFile = fallbackFile;
+        if (fallbackParameters != null) {
+            newSetupFileInfo.fallbackParameters = fallbackParameters.clone();
+        }
+        return newSetupFileInfo;
     }
 
     //------------------------------------------------------------

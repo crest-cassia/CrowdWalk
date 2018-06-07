@@ -1065,7 +1065,8 @@ public class SimulationFrame2D extends JFrame
 
         JPanel resetPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         if (launcher.getPropertiesFile() == null) {
-            resetButton.setEnabled(false);
+            // エディタから起動した場合は名前を変える
+            resetButton.setText("Reset with latest state");
         }
         resetButton.addActionListener(new ActionListener() {
             @Override
