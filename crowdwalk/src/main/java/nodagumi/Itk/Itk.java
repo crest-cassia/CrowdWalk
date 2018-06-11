@@ -912,6 +912,13 @@ public class Itk {
      * In other word, equality is checked by == instead of equals(). 
      */
     final static public boolean containsItself(ArrayList array, Object obj){
+        return array.contains(obj) ;
+    }
+
+    /**
+     * obsolute
+     */
+    final static public boolean containsItself0(ArrayList array, Object obj){
         for(Object item : array) {
             if(item == obj) { return true ; }
         }
