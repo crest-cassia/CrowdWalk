@@ -11,14 +11,15 @@ import javax.swing.JOptionPane;
 
 import net.arnx.jsonic.JSON;
 
+import nodagumi.ananPJ.Editor.MapEditor;
 import nodagumi.ananPJ.Gui.Coastline;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.FilePathManipulation;
 import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.SetupFileInfo;
+import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.*;
@@ -56,6 +57,11 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     }
 
     /**
+     * マップエディタ
+     */
+    protected MapEditor editor = null;
+
+    /**
      * シミュレーションパネルの幅
      */
     protected int simulationPanelWidth = 800;
@@ -89,6 +95,21 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * 海岸線
      */
     protected Coastline coastline = null;
+
+    /**
+     * リセット中か?
+     */
+    protected boolean resetting = false;
+
+    /**
+     * 一時停止の有効/無効
+     */
+    protected boolean pauseEnabled = false;
+
+    /**
+     * quit() の呼び出し後か?(リセットを除く)
+     */
+    protected boolean quitting = false;
 
     /**
      * Properties
@@ -177,13 +198,13 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     /**
      * マップエディタからシミュレーションを開始する場合の初期設定.
      */
-    public void init(Random _random, CrowdWalkPropertiesHandler _properties,
-            SetupFileInfo _setupFileInfo, NetworkMap _map, Settings _settings) {
-        random = _random;
-        properties = _properties;
+    public void init(MapEditor _editor, Settings _settings) {
+        editor = _editor;
+        properties = editor.getProperties().clone();
+        random = new Random(properties.getRandseed());
         setPropertiesForDisplay();
-        setupFileInfo = _setupFileInfo;
-        map = _map;
+        setupFileInfo = editor.getSetupFileInfo().clone();
+        map = editor.getMap().clone();
         map.sortNodesById();
         map.sortLinksById();
         settings = _settings;
@@ -208,7 +229,15 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
 
         // スクリーンショットディレクトリのクリア
         if (recordSimulationScreen && clearScreenshotDir) {
-            FilePathManipulation.deleteFiles(screenshotDir, imageFileFilter);
+            File dir = new File(screenshotDir);
+            if (dir.isDirectory()) {
+                for (String filename : dir.list(imageFileFilter)) {
+                    File file = new File(dir, filename);
+                    if (! file.delete()) {
+                        Itk.logError("File can not delete", file.toString());
+                    }
+                }
+            }
         }
 
         // シミュレータの実体の初期化
@@ -228,10 +257,50 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         };
     }
 
-    protected void quit() {
+    /**
+     * シミュレータを終了または再起動する
+     */
+    public void quit() {
+        if (quitting) {
+            return;
+        }
+
         Itk.logInfo("Simulation window closed.") ;
-        if (exitOnClose) {
-            System.exit(0);
+        // スクリーンショットの保存中ならば完了するのを待つ
+        while (getSaveThreadCount() > 0) {
+            synchronized (this) {
+                try {
+                    wait(100);
+                } catch (InterruptedException e) {}
+            }
+        }
+        if (! finished) {
+            // ログファイルのクローズ処理
+            simulator.finish();
+            Itk.logInfo("Status", getStatusLine());
+            finished = true;
+        }
+        if (resetting) {
+            resetting = false;
+            initPropertyValues();
+            if (editor == null) {
+                init(getPropertiesFile(), settings, commandLineFallbacks);
+            } else {
+                init(editor, settings);
+            }
+            simulate();
+        } else {
+            quitting = true;
+            if (editor != null) {
+                editor.getFrame().setDisableSimulationButtons(false);
+            }
+            if (exitOnClose) {
+                if (editor != null) {
+                    editor.getFrame().exit();
+                } else {
+                    exit(0);
+                }
+            }
         }
     }
 
@@ -287,6 +356,13 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     }
 
     /**
+     * リセット中かどうかを設定する
+     */
+    public void setResetting(boolean resetting) {
+        this.resetting = resetting;
+    }
+
+    /**
      * シミュレーションの完了と共にアプリケーションを終了させるかどうか。
      */
     public abstract boolean isExitWithSimulationFinished();
@@ -300,6 +376,57 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * ボタン類のアップデート
      */
     public abstract void update_buttons();
+
+    /**
+     * スクリーンショット保存用のスレッド数カウンタ値を取得する
+     */
+    public abstract int getSaveThreadCount();
+
+    /**
+     * アプリケーションを終了する
+     */
+    public abstract void exit(int exitCode);
+
+    /**
+     * 一時停止の有効/無効を設定する
+     */
+    public void setPauseEnabled(boolean pauseEnabled) {
+        this.pauseEnabled = pauseEnabled;
+    }
+
+    /**
+     * 設定値を初期化する
+     */
+    protected void initPropertyValues() {
+        pauseEnabled = false;
+        quitting = false;
+
+        deferFactor = 0;
+        verticalScale = 1.0;
+        agentSize = 1.0;
+        cameraFile = null;
+        zoom = 1.0;
+        showBackgroundImage = false;
+        showBackgroundMap = false;
+        showTheSea = false;
+        recordSimulationScreen = false;
+        screenshotDir = "screenshots";
+        clearScreenshotDir = false;
+        screenshotImageType = "png";
+        simulationWindowOpen = false;
+        autoSimulationStart = false;
+        hideLinks = false;
+        densityMode = false;
+        changeAgentColorDependingOnSpeed = true;
+        drawingAgentByTriageAndSpeedOrder = true;
+        showStatus = false;
+        showStatusPosition = "top";
+        showLogo = false;
+        show3dPolygon = true;
+        exitWithSimulationFinished = false;
+        agentAppearanceFile = null;
+        gsiTileZoom = 14;
+    }
 
     /**
      * 画面出力用properties設定

@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import net.arnx.jsonic.JSON;
 
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.Itk.*;
 
 /**
@@ -81,6 +82,9 @@ public class GsiAccessor {
         if (file.exists()) {
             return true;
         }
+        if (CrowdWalkLauncher.offline) {
+            return false;
+        }
 
         String url = String.format("http://cyberjapandata.gsi.go.jp/xyz/%s/%d/%d/%d.%s", tileName, zoom, x, y, ext);
         Itk.logInfo("Download", url);
@@ -107,6 +111,9 @@ public class GsiAccessor {
         String filePath = String.format("%s/elevation_%d_%d_%d.json", _cachePath, zoom, x, y);
         File file = new File(filePath);
         if (! file.exists()) {
+            if (CrowdWalkLauncher.offline) {
+                return 0.0;
+            }
             // 国土地理院Webの標高APIにアクセスして標高値を取得し、キャッシュファイルに保存する
             Rectangle2D tileRect = tile2boundingBox(x, y, zoom);
             String url = String.format("http://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=%s&lat=%s&outtype=JSON", tileRect.getX(), tileRect.getY());

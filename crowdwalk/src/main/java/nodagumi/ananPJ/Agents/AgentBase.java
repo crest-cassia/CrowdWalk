@@ -1,9 +1,7 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.Agents;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;

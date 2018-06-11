@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.Random;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
@@ -16,8 +15,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-// import nodagumi.ananPJ.Editor.MapEditor;
-import nodagumi.ananPJ.Editor.MapEditorInterface;
+import nodagumi.ananPJ.Editor.MapEditor;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
@@ -27,7 +25,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-e] [-g|g2] [-h] [-l <LEVEL>] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -47,17 +45,22 @@ public class CrowdWalkLauncher {
     public static boolean use2dSimulator = false;
 
     /**
+     * オフラインモード
+     */
+    public static boolean offline = false;
+
+    /**
      * コマンドラインオプションの定義
      */
     public static void defineOptions(Options options) {
         options.addOption("c", "cui", false, "CUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
-        options.addOption("e", "old-editor", false, "旧バージョンのエディタを起動する");
         options.addOption("g", "gui", false, "マップエディタウィンドウを開かずに GUI モードでシミュレーションを開始する\nproperties-file の指定が必須");
         options.addOption("2", "use-2d-simulator", false, "2D GUI シミュレータを使用する");
         options.addOption("h", "help", false, "この使い方を表示して終了する");
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
             .hasArg().withArgName("LEVEL").create("l"));
+        options.addOption("o", "offline", false, "Internet への接続をおこなわない");
         options.addOption(OptionBuilder.withLongOpt("tick")
             .withDescription("tick 情報を FILE に出力する\nCUI モード時のみ有効")
             .hasArg().withArgName("FILE").create("t"));
@@ -112,6 +115,9 @@ public class CrowdWalkLauncher {
             // 2D GUI シミュレータを使用する
             use2dSimulator = commandLine.hasOption("use-2d-simulator");
 
+            // オフラインモード
+            offline = commandLine.hasOption("offline");
+
             // CUI モードで実行
             if (commandLine.hasOption("cui")) {
                 if (propertiesFilePath == null) {
@@ -135,9 +141,7 @@ public class CrowdWalkLauncher {
                 launchGuiSimulator(propertiesFilePath, fallbackStringList);
             }
             // マップエディタの実行
-            else if (commandLine.hasOption("old-editor") || ! isUsable3dSimulator()) {
-                launchGuiSimulationEditorLauncher(propertiesFilePath, fallbackStringList);
-            } else {
+            else {
                 launchMapEditor(propertiesFilePath, fallbackStringList);
             }
         } catch (ParseException e) {
@@ -214,19 +218,7 @@ public class CrowdWalkLauncher {
     public static void launchMapEditor(String propertiesFilePath,
             ArrayList<String> commandLineFallbacks) throws Exception {
         settings = Settings.load(SETTINGS_FILE_NAME);
-        // MapEditor editor = new MapEditor(settings);
-
-        // OpenJDK に JavaFX が同梱されるまでの一時的な対応
-        MapEditorInterface editor = null;
-        try {
-            Class<?> klass = Class.forName("nodagumi.ananPJ.Editor.MapEditor");
-            editor = (MapEditorInterface)klass.newInstance();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
-        }
-        editor.setSettings(settings);
-
+        MapEditor editor = new MapEditor(settings);
         if (propertiesFilePath != null) {
             editor.setPropertiesFromFile(propertiesFilePath, commandLineFallbacks);
             if (! editor.loadNetworkMap()) {
@@ -237,30 +229,6 @@ public class CrowdWalkLauncher {
             editor.initNetworkMap();
         }
         editor.show();
-    }
-
-    /**
-     * マップエディタを実行する
-     */
-    public static GuiSimulationEditorLauncher
-        launchGuiSimulationEditorLauncher(String propertiesFilePath,
-                                          ArrayList<String> commandLineFallbacks)
-        throws Exception
-    {
-        Random random = new Random();
-        settings = Settings.load(SETTINGS_FILE_NAME);
-        GuiSimulationEditorLauncher mapEditor
-            = new GuiSimulationEditorLauncher(random, settings);
-        if (propertiesFilePath != null) {
-            mapEditor.setPropertiesFromFile(propertiesFilePath,
-                                            commandLineFallbacks);
-            mapEditor.setPropertiesForDisplay();
-        } else {
-            mapEditor.initProperties(commandLineFallbacks);
-        }
-        mapEditor.updateAll();
-        mapEditor.setVisible(true);
-        return mapEditor;
     }
 
     /**

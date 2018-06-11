@@ -16,6 +16,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -56,7 +57,6 @@ import nodagumi.ananPJ.NetworkMap.Polygon.OuterBoundary;
 import nodagumi.ananPJ.NetworkMap.Polygon.InnerBoundary;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.GsiAccessor;
-import nodagumi.ananPJ.misc.Hover;
 import nodagumi.Itk.*;
 
 /**
@@ -866,7 +866,7 @@ public class SimulationPanel2D extends JPanel {
     public void drawHoverLink(MapLink link, Graphics2D g2) {
         double scale = g2.getTransform().getScaleX();
         g2.setColor(Color.BLUE);
-        g2.fill(link.getRect(0.0, scale, false));
+        g2.fill(getLinkRect(link, scale));
 
         String text = link.getTagString();
         if (! text.isEmpty()) {
@@ -882,6 +882,33 @@ public class SimulationPanel2D extends JPanel {
             g2.setColor(Color.darkGray);
             drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, HOVER_BG_COLOR);
         }
+    }
+
+    private GeneralPath getLinkRect(MapLink link, double scale) {
+        MapNode fromNode = link.getFrom();
+        MapNode toNode = link.getTo();
+        double x1 = fromNode.getX();
+        double y1 = fromNode.getY();
+        double x2 = toNode.getX();
+        double y2 = toNode.getY();
+        double fwidth = 4.0 / scale;
+
+        double dx = (x2 - x1);
+        double dy = (y2 - y1);
+        double a = Math.sqrt(dx*dx + dy*dy);
+
+        double edx = fwidth * dx / a / 2;
+        double edy = fwidth * dy / a / 2;
+
+        GeneralPath p = new GeneralPath();
+        p.moveTo(x1 - edy, y1 + edx);
+        p.lineTo(x1 + edy, y1 - edx);
+        p.lineTo(x2 + edy, y2 - edx);
+        p.lineTo(x2 - edy, y2 + edx);
+        p.lineTo(x1 - edy, y1 + edx);
+        p.closePath();
+
+        return p;
     }
 
     /**

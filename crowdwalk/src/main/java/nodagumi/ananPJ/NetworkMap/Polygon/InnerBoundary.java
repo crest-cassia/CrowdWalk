@@ -57,6 +57,13 @@ public class InnerBoundary {
     }
 
     /**
+     * このオブジェクトのコピーを作成して返す
+     */
+    public InnerBoundary clone() {
+        return new InnerBoundary(coordinates.getPoints2D());
+    }
+
+    /**
      * 座標が境界の内側にあるか?
      */
     public boolean contains(double x, double y) {

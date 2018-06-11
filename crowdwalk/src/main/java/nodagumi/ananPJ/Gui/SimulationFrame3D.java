@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +24,6 @@ import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -40,6 +42,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -49,6 +53,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
@@ -60,15 +65,23 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Translate;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.converter.LocalTimeStringConverter;
+
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
+import com.vladsch.flexmark.util.options.MutableDataSet;
 
 import net.arnx.jsonic.JSON;
 
@@ -89,6 +102,7 @@ import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Scenario.*;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.PollutionHandler.*;
 import nodagumi.Itk.*;
 
@@ -96,6 +110,38 @@ import nodagumi.Itk.*;
  * 3D シミュレーションウィンドウ
  */
 public class SimulationFrame3D extends Stage implements Observer {
+    private class TimeSpinnerValueFactory extends SpinnerValueFactory<LocalTime> {
+        private LocalTime maxValue;
+        private LocalTime minValue;
+
+        public TimeSpinnerValueFactory(LocalTime min, LocalTime max, LocalTime initialValue) {
+            minValue = min;
+            maxValue = max;
+            setValue(initialValue);
+            setConverter(new LocalTimeStringConverter(DateTimeFormatter.ofPattern("HH:mm:ss"), null));
+        }
+
+        public void decrement(int steps) {
+            LocalTime time = (LocalTime)getValue();
+            if (time.isAfter(minValue)) {
+                setValue(time.minusSeconds(steps));
+            }
+        }
+
+        public void increment(int steps) {
+            LocalTime time = (LocalTime)getValue();
+            if (time.isBefore(maxValue)) {
+                setValue(time.plusSeconds(steps));
+            }
+        }
+    }
+
+    /**
+     * ヘルプ表示用コンテンツのアドレス
+     */
+    public static final String HTML_TEMPLATE = "/doc/template.html";
+    public static final String QUICK_REFERENCE = "/doc/quick_reference_simulator_3d.md";
+
     /**
      * シミュレーションウィンドウ
      */
@@ -141,6 +187,11 @@ public class SimulationFrame3D extends Stage implements Observer {
      */
     private boolean atActualWidth = false;
 
+    /**
+     * 一時停止させる時刻
+     */
+    private SimTime pauseTime = new SimTime();
+
     /* コントロールボタンパネルを構成する UI コントロール */
 
     private ImageView startIcon;
@@ -160,7 +211,9 @@ public class SimulationFrame3D extends Stage implements Observer {
     private Label clock_label = new Label("00:00:00");
     private Label time_label = new Label("NOT STARTED");
     private Label evacuatedCount_label = new Label("NOT STARTED");
-    private TextArea messageArea = new TextArea("UNMaps Version 1.9.5\n");
+    private Button resetButton = new Button("Reset");
+    private Spinner<Integer> intSpinner = new Spinner<>(0, 60 * 60 * 72, 0);
+    private Spinner<LocalTime> timeSpinner = null;
 
     /* View タブを構成する UI コントロール */
 
@@ -194,6 +247,15 @@ public class SimulationFrame3D extends Stage implements Observer {
     /* ステータスバーを構成する UI コントロール */
 
     private Label status = new Label("NOT STARTED");
+
+    /**
+     * ヘルプ表示用
+     */
+    private Parser parser;
+    private HtmlRenderer renderer;
+    private Stage helpStage = new Stage();
+    private WebView webView = new WebView();
+    private double helpZoom = 1.0;
 
     /* スクリーンショット保存用スレッド数を管理するためのカウンタ制御 */
 
@@ -287,6 +349,7 @@ public class SimulationFrame3D extends Stage implements Observer {
             launcher.saveSimulatorPosition((int)getX(), (int)getY());
         });
         setOnHidden(e -> {
+            helpStage.close();
             launcher.quit();
         });
     }
@@ -318,6 +381,45 @@ public class SimulationFrame3D extends Stage implements Observer {
             e.printStackTrace();
             Itk.quitByError() ;
         }
+
+        // ヘルプ画面の準備
+
+        MutableDataSet options = new MutableDataSet();
+        options.setFrom(ParserEmulationProfile.MARKDOWN);
+        options.set(Parser.EXTENSIONS, Arrays.asList(
+            TablesExtension.create()
+        ));
+        parser = Parser.builder(options).build();
+        renderer = HtmlRenderer.builder(options).build();
+
+        webView.setOnKeyPressed(event -> {
+            if (event.isControlDown()) {
+                if (event.getCode() == KeyCode.W) {
+                    helpStage.close();
+                } else if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.UP) {
+                    helpZoom += 0.1;
+                    webView.setZoom(helpZoom);
+                } else if (event.getCode() == KeyCode.MINUS || event.getCode() == KeyCode.DOWN) {
+                    helpZoom -= 0.1;
+                    webView.setZoom(helpZoom);
+                } else if (event.getCode() == KeyCode.DIGIT0) {
+                    helpZoom = 1.0;
+                    webView.setZoom(helpZoom);
+                }
+            }
+        });
+
+        Button okButton = new Button("  OK  ");
+        okButton.setOnAction(event -> helpStage.close());
+        BorderPane buttonPane = new BorderPane();
+        buttonPane.setPadding(new Insets(4, 8, 4, 8));
+        buttonPane.setRight(okButton);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(webView);
+        borderPane.setBottom(buttonPane);
+
+        helpStage.setScene(new Scene(borderPane));
     }
 
     /**
@@ -346,6 +448,19 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         Menu helpMenu = new Menu("Help");
 
+        MenuItem miQuickReference = new MenuItem("Quick reference");
+        miQuickReference.setOnAction(e -> {
+            helpStage.setTitle("Help - Quick reference");
+            helpStage.setWidth(980);
+            helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+            String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
+            com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
+            String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
+            webView.getEngine().loadContent(html);
+            helpStage.show();
+            helpStage.toFront();
+        });
+
         MenuItem miVersion = new MenuItem("About version");
         miVersion.setOnAction(e -> {
             Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);
@@ -356,7 +471,7 @@ public class SimulationFrame3D extends Stage implements Observer {
             alert.showAndWait();
         });
 
-        helpMenu.getItems().addAll(miVersion);
+        helpMenu.getItems().addAll(miQuickReference, miVersion);
 
         menuBar.getMenus().addAll(fileMenu, helpMenu);
 
@@ -383,11 +498,13 @@ public class SimulationFrame3D extends Stage implements Observer {
             if (start_button.isSelected()) {
                 start_button.setGraphic(pauseIcon);
                 verticalScaleControl.setDisable(true);
+                resetButton.setDisable(true);
                 launcher.start();
             } else {
                 start_button.setGraphic(startIcon);
                 launcher.pause();
                 verticalScaleControl.setDisable(false);
+                resetButton.setDisable(false);
             }
             update_buttons();
         });
@@ -476,55 +593,65 @@ public class SimulationFrame3D extends Stage implements Observer {
         gridPane.setPadding(new Insets(0, 0, 8, 0));
         Insets insets = new Insets(3, 8, 3, 12);
 
+        Label label_Properties = createLabel("Properties", insets);
+        gridPane.add(label_Properties, 0, 0);
+        gridPane.setHalignment(label_Properties, HPos.RIGHT);
+        if (launcher.getPropertiesFile() != null) {
+            File propertiesFile = new File(launcher.getPropertiesFile());
+            gridPane.add(createLabel(propertiesFile.getName(), insets), 1, 0);
+        } else {
+            gridPane.add(createLabel("No properties file", insets), 1, 0);
+        }
+
         Label label_Map = createLabel("Map", insets);
-        gridPane.add(label_Map, 0, 0);
+        gridPane.add(label_Map, 0, 1);
         gridPane.setHalignment(label_Map, HPos.RIGHT);
         if (launcher.getNetworkMapFile() != null) {
             File map_file = new File(launcher.getNetworkMapFile());
-            gridPane.add(createLabel(map_file.getName(), insets), 1, 0);
+            gridPane.add(createLabel(map_file.getName(), insets), 1, 1);
         } else {
-            gridPane.add(createLabel("No map file", insets), 1, 0);
+            gridPane.add(createLabel("No map file", insets), 1, 1);
         }
 
-        Label label_Agent = createLabel("Agent", insets);
-        gridPane.add(label_Agent, 0, 1);
+        Label label_Agent = createLabel("Generation", insets);
+        gridPane.add(label_Agent, 0, 2);
         gridPane.setHalignment(label_Agent, HPos.RIGHT);
         if (launcher.getGenerationFile() != null) {
             File generation_file = new File(launcher.getGenerationFile());
-            gridPane.add(createLabel(generation_file.getName(), insets), 1, 1);
+            gridPane.add(createLabel(generation_file.getName(), insets), 1, 2);
         } else {
-            gridPane.add(createLabel("No generation file", insets), 1, 1);
+            gridPane.add(createLabel("No generation file", insets), 1, 2);
         }
 
         Label label_Scenario = createLabel("Scenario", insets);
-        gridPane.add(label_Scenario, 0, 2);
+        gridPane.add(label_Scenario, 0, 3);
         gridPane.setHalignment(label_Scenario, HPos.RIGHT);
         if (launcher.getScenarioFile() != null) {
             File scenario_file = new File(launcher.getScenarioFile());
-            gridPane.add(createLabel(scenario_file.getName(), insets), 1, 2);
+            gridPane.add(createLabel(scenario_file.getName(), insets), 1, 3);
         } else {
-            gridPane.add(createLabel("No scenario file", insets), 1, 2);
+            gridPane.add(createLabel("No scenario file", insets), 1, 3);
         }
 
         Label label_Pollution = createLabel("Pollution", insets);
-        gridPane.add(label_Pollution, 0, 3);
+        gridPane.add(label_Pollution, 0, 4);
         gridPane.setHalignment(label_Pollution, HPos.RIGHT);
         if (launcher.getPollutionFile() != null) {
             File pollution_file = new File(launcher.getPollutionFile());
-            gridPane.add(createLabel(pollution_file.getName(), insets), 1, 3);
+            gridPane.add(createLabel(pollution_file.getName(), insets), 1, 4);
         } else {
-            gridPane.add(createLabel("No pollution file", insets), 1, 3);
+            gridPane.add(createLabel("No pollution file", insets), 1, 4);
         }
 
         clock_label.setPadding(new Insets(4, 8, 4, 12));
         clock_label.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        gridPane.add(clock_label, 0, 4);
+        gridPane.add(clock_label, 0, 5);
         gridPane.setHalignment(clock_label, HPos.RIGHT);
         time_label.setPadding(new Insets(4, 8, 4, 12));
-        gridPane.add(time_label, 1, 4);
+        gridPane.add(time_label, 1, 5);
 
         evacuatedCount_label.setPadding(new Insets(2, 8, 3, 12));
-        gridPane.add(evacuatedCount_label, 0, 5, 2, 1);
+        gridPane.add(evacuatedCount_label, 0, 6, 2, 1);
 
         /* scenarios */
 
@@ -553,10 +680,14 @@ public class SimulationFrame3D extends Stage implements Observer {
             radio_button = new RadioButton(event.atTime.getAbsoluteTimeString());
             radio_button.setToggleGroup(group);
             radio_button.setSelected(true);
-            radio_button.setOnAction(e -> {
-                Itk.logError("wrong index");
-            });
             scenarioPane.add(radio_button, 2, row);
+
+            String eventName = event.getClass().getName().replaceAll("^.*\\.|Event$", "");
+            scenarioPane.add(new Label(eventName), 3, row);
+            if (eventName.equals("Initiate")) {
+                // ここで pauseTime の初期値を設定する
+                pauseTime.copyFrom(event.atTime);
+            }
 
             row++;
         }
@@ -569,24 +700,134 @@ public class SimulationFrame3D extends Stage implements Observer {
         scroller.setFitToHeight(true);
         scroller.setContent(scenarioPane);
 
-        /* text message */
+        VBox bottomPanel = new VBox(8);
+        bottomPanel.setPadding(new Insets(4, 0, 0, 0));
 
-        messageArea.setEditable(false);
-        messageArea.setWrapText(true);
+        /* Pause */
 
-        ScrollPane messageScroller = new ScrollPane();
-        messageScroller.setPrefSize(400, 150);
-        messageScroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        messageScroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        messageScroller.setContent(messageArea);
+        final FlowPane pausePanel = new FlowPane(10, 0);
+        BorderStroke borderStroke = new BorderStroke(Color.LIGHTGREY, BorderStrokeStyle.SOLID, new CornerRadii(2), BorderWidths.DEFAULT);
+        pausePanel.setBorder(new Border(borderStroke));
+        pausePanel.setPadding(new Insets(4, 0, 4, 12));
+
+        Label pauseLabel = new Label("Pause");
+
+        final SpinnerValueFactory.IntegerSpinnerValueFactory intSpinnerValueFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory)intSpinner.getValueFactory();
+
+        ToggleGroup pauseGroup = new ToggleGroup();
+        RadioButton timeButton = new RadioButton("time");
+        timeButton.setToggleGroup(pauseGroup);
+        timeButton.setOnAction(e -> {
+            launcher.setPauseEnabled(true);
+            intSpinner.setVisible(false);
+            timeSpinner.setDisable(false);
+            timeSpinner.setVisible(true);
+            pauseTime.setTickCount(timeSpinner.getValue().toSecondOfDay() - pauseTime.getOriginTimeInt());
+            intSpinnerValueFactory.setValue(pauseTime.getTickCount());
+        });
+
+        RadioButton tickCountButton = new RadioButton("elapsed");
+        tickCountButton.setToggleGroup(pauseGroup);
+        tickCountButton.setOnAction(e -> {
+            launcher.setPauseEnabled(true);
+            timeSpinner.setVisible(false);
+            intSpinner.setDisable(false);
+            intSpinner.setVisible(true);
+        });
+
+        RadioButton disabledButton = new RadioButton("disabled");
+        disabledButton.setToggleGroup(pauseGroup);
+        disabledButton.setSelected(true);
+        disabledButton.setOnAction(e -> {
+            launcher.setPauseEnabled(false);
+            timeSpinner.setDisable(true);
+            intSpinner.setDisable(true);
+        });
+
+        LocalTime maxTime = LocalTime.of(23, 59, 59);
+        LocalTime initialTime = LocalTime.parse(pauseTime.getAbsoluteTimeString());
+        final TimeSpinnerValueFactory timeSpinnerValueFactory = new TimeSpinnerValueFactory(initialTime, maxTime, initialTime);
+        timeSpinner = new Spinner<LocalTime>(timeSpinnerValueFactory);
+        timeSpinner.setEditable(true);
+        timeSpinner.setDisable(true);
+        timeSpinner.getEditor().setOnAction(e -> {
+            String text = timeSpinner.getEditor().getCharacters().toString();
+            try {
+                LocalTime time = LocalTime.parse(text);
+                timeSpinnerValueFactory.setValue(time);
+                pauseTime.setTickCount(timeSpinner.getValue().toSecondOfDay() - pauseTime.getOriginTimeInt());
+                intSpinnerValueFactory.setValue(pauseTime.getTickCount());
+            } catch(java.time.format.DateTimeParseException ex) {}
+        });
+        timeSpinner.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> {
+            pauseTime.setTickCount(timeSpinner.getValue().toSecondOfDay() - pauseTime.getOriginTimeInt());
+            intSpinnerValueFactory.setValue(pauseTime.getTickCount());
+        });
+
+        intSpinner.getValueFactory().setValue(pauseTime.getTickCount());
+        // int maxValue = 60 * 60 * 24 - (pauseTime.getOriginTimeInt() + pauseTime.getTickCount()) - 1; // 23:59:59
+        int maxValue = 60 * 60 * 72;
+        intSpinnerValueFactory.setMax(Math.max(maxValue, 0));
+        intSpinner.getValueFactory().setWrapAround(false);
+        intSpinner.setVisible(false);
+        intSpinner.setEditable(true);
+        intSpinner.setDisable(true);
+        intSpinner.getEditor().setOnAction(e -> {
+            String text = intSpinner.getEditor().getCharacters().toString();
+            try {
+                intSpinnerValueFactory.setValue(Integer.parseInt(text));
+                setPauseTime(timeSpinnerValueFactory);
+            } catch(NumberFormatException ex) {}
+        });
+        intSpinner.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> {
+            setPauseTime(timeSpinnerValueFactory);
+        });
+
+        StackPane spinnerPanel = new StackPane();
+        spinnerPanel.getChildren().addAll(timeSpinner, intSpinner);
+
+        pausePanel.getChildren().addAll(pauseLabel, timeButton, tickCountButton, disabledButton, spinnerPanel);
+        // 時刻刻み幅が1秒以外の時は一時停止機能を無効にする
+        if (pauseTime.getTickUnit() != 1.0) {
+            pausePanel.setDisable(true);
+        }
+        bottomPanel.getChildren().add(pausePanel);
+
+        /* Reset button */
+
+        if (launcher.getPropertiesFile() == null) {
+            // エディタから起動した場合は名前を変える
+            resetButton.setText("Reset with latest state");
+        }
+        resetButton.setOnAction(e -> {
+            launcher.setResetting(true);
+            if (launcher.isRunning()) {
+                launcher.pause();
+            }
+            frame.close();
+        });
+
+        FlowPane resetPanel = new FlowPane(12, 0);
+        resetPanel.setAlignment(Pos.CENTER);
+        resetPanel.getChildren().add(resetButton);
+        bottomPanel.getChildren().add(resetPanel);
 
         BorderPane controlPane = new BorderPane();
         controlPane.setPadding(new Insets(8, 8, 16, 8));
         controlPane.setTop(gridPane);
         controlPane.setCenter(scroller);
-        controlPane.setBottom(messageScroller);
+        controlPane.setBottom(bottomPanel);
 
         return controlPane;
+    }
+
+    /**
+     * 一時停止時刻の設定
+     */
+    private void setPauseTime(TimeSpinnerValueFactory timeSpinnerValueFactory) {
+        pauseTime.setTickCount(intSpinner.getValue());
+        int secondOfDay = pauseTime.getOriginTimeInt() + pauseTime.getTickCount();
+        timeSpinnerValueFactory.setValue(LocalTime.ofSecondOfDay(Math.min(secondOfDay, 60 * 60 * 24 - 1)));
     }
 
     /**
@@ -1511,5 +1752,12 @@ public class SimulationFrame3D extends Stage implements Observer {
      */
     public boolean isViewSynchronized() {
         return viewSynchronizedCheckBox.isSelected();
+    }
+
+    /**
+     * 一時停止時刻を返す
+     */
+    public SimTime getPauseTime() {
+        return pauseTime;
     }
 }

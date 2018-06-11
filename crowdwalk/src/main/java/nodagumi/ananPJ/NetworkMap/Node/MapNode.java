@@ -1,33 +1,11 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
 package nodagumi.ananPJ.NetworkMap.Node;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -396,169 +374,9 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         }
     }
 
-    private Rectangle2D getSquare(double cx, double cy, double l, double scale) {
-        return new Rectangle2D.Double(getX() - l / scale,
-                getY() - l / scale,
-                l * 2 / scale,
-                l * 2 / scale);
-
-    }
-
-    public void drawInEditor(Graphics2D g,
-                             boolean showLabel,
-                             boolean isSymbolic) {
-        Color c = null;
-
-        if (isSymbolic)
-            c = Color.GRAY;
-        else
-            c = Color.BLUE;
-
-        drawInEditor(g, showLabel, isSymbolic, c);
-    }
-
-    public void drawInEditor(Graphics2D g,
-                             boolean showLabel,
-                             boolean isSymbolic,
-                             Color c) {
-        double scale = g.getTransform().getScaleX();
-        double cx = getX();
-        double cy = getY();
-
-        if (selected) {
-            g.setColor(Color.BLACK);
-            g.fill(getSquare(cx, cy, 6, scale));
-            g.setColor(Color.RED);
-            g.fill(getSquare(cx, cy, 5, scale));
-        }
-        final double minHight = ((MapPartGroup)getParent()).getMinHeight();
-        final double maxHight = ((MapPartGroup)getParent()).getMaxHeight();
-        float r = (float)((getHeight() - minHight) / (maxHight - minHight));
-
-        if (r < 0) r = 0;
-        if (r > 1) r = 1;
-
-        g.setColor(new Color(r, r, r));
-        g.fill(getSquare(cx, cy, 4, scale));
-
-        g.setColor(c);
-        g.fill(getSquare(cx, cy, 2, scale));
-
-        /* show description text here? */
-        if (showLabel) {
-            g.setColor(Color.WHITE);
-            g.drawString(getHintString(),
-                    (float)cx + 6.0f, (float)cy + 5.0f);
-            g.setColor(Color.BLACK);
-            g.drawString(getHintString(),
-                    (float)cx + 5.0f, (float)cy + 5.0f);
-        }
-        g.setColor(Color.BLACK);
-    }
-    
     public boolean isBetweenHeight(double minHeight, double maxHeight) {
         if (getHeight() < minHeight || getHeight() > maxHeight) return false;
         return true;
-    }
-
-    public static void showAttributeDialog(MapNodeTable nodes) {
-        /* Set attributes with a dialog */
-        class AttributeSetDialog  extends JDialog {
-            private boolean singleNode;
-            private MapNodeTable nodes;
-
-            private double height = 0.0;
-
-            public AttributeSetDialog(MapNodeTable _nodes) {
-                super();
-
-                this.setModal(true);
-                nodes = _nodes;
-
-                int count = 0;
-                singleNode = true;
-                for (MapNode node : nodes) {
-                    if (node.selected) {
-                        if (count != 0) {
-                            singleNode = false;
-                        }
-                        ++count;
-                        height += node.getHeight();
-                    }
-                }
-                if (count == 0) return;
-
-                height /= count;                
-                setUpPanel();
-            }
-            
-            private JTextField height_field;
-            
-            private void setUpPanel() {
-                Container contentPane = getContentPane();
-
-                GridBagConstraints c;
-                /* parameters */
-                JPanel parameter_panel = new JPanel(new GridBagLayout());
-                parameter_panel.setBorder(BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.black), "Parameters"));
-                JLabel height_panel = new JLabel("height:");
-                c = new GridBagConstraints();
-                c.gridx = 0; c.gridy = 0;
-                parameter_panel.add(height_panel, c);
-                JLabel height_orig_label = new JLabel("" + height + "->");
-                c = new GridBagConstraints();
-                c.gridx = 1; c.gridy = 0;
-                parameter_panel.add(height_orig_label, c);
-                height_field = new JTextField("" + height);
-                height_field.setPreferredSize(new Dimension(40, 20));
-                c = new GridBagConstraints();
-                c.gridx = 2; c.gridy = 0;
-                parameter_panel.add(height_field, c);
-                JButton height_update_button = new JButton("update");
-                if (!singleNode) {
-                    height_update_button.setText("update all");
-                }
-                height_update_button.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) { update_height(); }
-                });
-                c = new GridBagConstraints();
-                c.gridx = 3; c.gridy = 0;
-                parameter_panel.add(height_update_button, c);
-                contentPane.add(parameter_panel, BorderLayout.NORTH);
-
-                /* tags */
-                contentPane.add(OBNode.setupTagPanel(nodes, this), BorderLayout.CENTER);
-
-                /* close button */
-                JPanel panel = new JPanel(new GridLayout(1, 3));
-                panel.add(new JLabel());
-                panel.add(new JLabel());
-                JButton cancel = new JButton("Cancel");
-                cancel.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        dispose();
-                    }
-                });
-                panel.add(cancel);
-                contentPane.add(panel, BorderLayout.SOUTH);
-                this.pack();
-            }
-
-            public void update_height() {
-                for (MapNode node : nodes) {
-                    if (node.selected) {
-                        node.setHeight(Double.parseDouble(
-                                    height_field.getText()));
-                    }
-                    //node.selected = false;
-                }
-                this.dispose();
-            }
-        }
-
-        AttributeSetDialog dialog = new AttributeSetDialog(nodes);
-        dialog.setVisible(true);
     }
 
     @Override

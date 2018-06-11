@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.regex.Matcher;
 
 import javafx.application.Platform;
@@ -43,6 +45,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SplitPane;
@@ -73,7 +76,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-// import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -104,10 +106,11 @@ import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.NetworkMap.Polygon.TriangleMeshes;
 import nodagumi.ananPJ.NetworkMap.Polygon.Coordinates;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.MapChecker;
+import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Settings;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.Itk.Itk;
+import nodagumi.Itk.Term;
 
 /**
  * マップエディタのウィンドウ構築と GUI コントロール
@@ -115,10 +118,9 @@ import nodagumi.Itk.Itk;
 public class EditorFrameFx {
     /**
      * ヘルプ表示用コンテンツのアドレス
-     * TODO: 定義ファイル化する
      */
-    public static final String QUICK_REFERENCE = "/quick_reference.md";
-    public static final String QUICK_REFERENCE_TEMPLATE = "/quick_reference_template.html";
+    public static final String HTML_TEMPLATE = "/doc/template.html";
+    public static final String QUICK_REFERENCE = "/doc/quick_reference_map_editor.md";
     public static final String PROPERTIES_PATH = "./doc/javadoc/nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html";
     public static final String TUTORIAL_PATH = "./doc/manual.html";
     public static final String ZONE_REFERENCE_URI = "http://www.gsi.go.jp/sokuchikijun/jpc.html";
@@ -156,6 +158,16 @@ public class EditorFrameFx {
      * 編集エリアとタブエリアの仕切り
      */
     private SplitPane splitPane;
+
+    /**
+     * File メニュー
+     */
+    private MenuItem miNew;
+    private MenuItem miOpenMap;
+    private MenuItem miSaveMap;
+    private MenuItem miSaveMapAs;
+    private MenuItem miOpenProperty;
+    private MenuItem miQuit;
 
     /**
      * マップの回転角度リセットメニュー
@@ -236,6 +248,11 @@ public class EditorFrameFx {
      * 編集モード選択ボタンのリスト
      */
     private ArrayList<ToggleButton> editModeButtons = new ArrayList();
+
+    /**
+     * JavaFX アプリケーション・スレッド
+     */
+    private Thread fxThread = null;
 
     /**
      * コンストラクタ
@@ -412,26 +429,13 @@ public class EditorFrameFx {
                 System.err.println(ex.getMessage());
                 System.exit(1);
             }
-            notice();
         });
         frame.setOnCloseRequest(e -> closing(e));
-
-        // TODO: 旧エディタを廃止したら setImplicitExit(false) と以下を削除する
         frame.setOnHidden(e -> {
-            notice();
-            System.exit(0);
+            if (! Platform.isImplicitExit()) {
+                Platform.runLater(() -> Platform.exit());
+            }
         });
-    }
-
-    /**
-     * お知らせ表示
-     */
-    private void notice() {
-        System.err.println("\n【お知らせ】");
-        System.err.println("・GitHub の CrowdWalk ページ(Help > Browse GitHub repository で表示されます)の Issues にある「新マップエディタの問題点と追加予定機能」を一読してください。");
-        System.err.println("・何か不具合が生じたら Issues に書き込んで報告してください。");
-        System.err.println("・追加して欲しい機能等があれば Issues に書き込んでください。");
-        System.err.println("・コマンドラインで -e オプションを使うと旧バージョンのエディタを起動することが出来ます。新エディタで問題が生じる場合にはこちらを使用してください。\n");
     }
 
     /**
@@ -501,6 +505,26 @@ public class EditorFrameFx {
     }
 
     /**
+     * アプリケーションを終了する
+     */
+    public void exit() {
+        Platform.runLater(() -> {
+            fxThread = Thread.currentThread();
+            Platform.exit();
+            new Thread(() -> {
+                if (fxThread.isAlive()) {
+                    try {
+                        fxThread.join();
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                System.exit(0);
+            }).start();
+        });
+    }
+
+    /**
      * メインメニューの生成
      */
     private Node createMainMenu() {
@@ -510,30 +534,29 @@ public class EditorFrameFx {
 
         Menu fileMenu = new Menu("File");
 
-        MenuItem miNew = new MenuItem("New");
+        miNew = new MenuItem("New");
         miNew.setOnAction(e -> clearMapData());
 
-        MenuItem miOpenMap = new MenuItem("Open map");
+        miOpenMap = new MenuItem("Open map");
         miOpenMap.setOnAction(e -> openMap());
         miOpenMap.setAccelerator(KeyCombination.valueOf("Ctrl+O"));
 
-        MenuItem miSaveMap = new MenuItem("Save map");
+        miSaveMap = new MenuItem("Save map");
         miSaveMap.setOnAction(e -> saveMap());
         miSaveMap.setAccelerator(KeyCombination.valueOf("Ctrl+S"));
 
-        MenuItem miSaveMapAs = new MenuItem("Save map as");
+        miSaveMapAs = new MenuItem("Save map as");
         miSaveMapAs.setOnAction(e -> saveMapAs());
 
-        MenuItem miOpenProperty = new MenuItem("Open properties");
+        miOpenProperty = new MenuItem("Open properties");
         miOpenProperty.setOnAction(e -> openProperties());
-        miOpenProperty.setAccelerator(KeyCombination.valueOf("Ctrl+P"));
 
         // MenuItem miSaveProperty = new MenuItem("Save properties");
         // miSaveProperty.setOnAction(e -> {
         //     System.err.println("Save properties: under construction");
         // });
 
-        MenuItem miQuit = new MenuItem("Quit");
+        miQuit = new MenuItem("Quit");
         miQuit.setOnAction(e -> {
             if (closing(null)) {
                 frame.close();
@@ -555,7 +578,10 @@ public class EditorFrameFx {
         miRedo.setOnAction(e -> editor.redo());
         miRedo.setAccelerator(KeyCombination.valueOf("Ctrl+Y"));
 
-        editMenu.getItems().addAll(miUndo, miRedo);
+        MenuItem miReadOsm = new MenuItem("Read OpenStreetMap");
+        miReadOsm.setOnAction(e -> readOpenStreetMap());
+
+        editMenu.getItems().addAll(miUndo, miRedo, miReadOsm);
 
         /* View menu */
 
@@ -593,6 +619,18 @@ public class EditorFrameFx {
         miResetRotation.setOnAction(e -> {
             canvas.rotate(canvas.getWidth() / 2.0, canvas.getHeight() / 2.0, 0.0);
         });
+
+        CheckMenuItem cmiGridShowing = new CheckMenuItem("Show grid");
+        cmiGridShowing.setSelected(false);
+        cmiGridShowing.setOnAction(e -> {
+            canvas.setGridShowing(cmiGridShowing.isSelected());
+            canvas.repaintLater();
+        });
+        cmiGridShowing.setAccelerator(KeyCombination.valueOf("Ctrl+G"));
+
+        MenuItem miSetGrid = new MenuItem("Set grid");
+        miSetGrid.setOnAction(e -> setGrid());
+        miSetGrid.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+G"));
 
         CheckMenuItem cmiShowNodes = new CheckMenuItem("Show nodes");
         cmiShowNodes.setSelected(true);
@@ -667,14 +705,14 @@ public class EditorFrameFx {
             }
             canvas.repaintLater();
         });
-        cmiShowPolygons.setAccelerator(KeyCombination.valueOf("Ctrl+G"));
+        cmiShowPolygons.setAccelerator(KeyCombination.valueOf("Ctrl+P"));
 
         cmiShowPolygonLabels.setSelected(false);
         cmiShowPolygonLabels.setOnAction(e -> {
             canvas.setPolygonLabelsShowing(cmiShowPolygonLabels.isSelected());
             canvas.repaintLater();
         });
-        cmiShowPolygonLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+G"));
+        cmiShowPolygonLabels.setAccelerator(KeyCombination.valueOf("Ctrl+Shift+P"));
 
         CheckMenuItem cmiShowBackgroundImage = new CheckMenuItem("Show background image");
         cmiShowBackgroundImage.setSelected(true);
@@ -709,7 +747,7 @@ public class EditorFrameFx {
             canvas.setMapCoordinatesShowing(cmiShowMapCoordinates.isSelected());
         });
 
-        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, cmiShowPolygons, cmiShowPolygonLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
+        viewMenu.getItems().addAll(miShow3d, new SeparatorMenuItem(), miCentering, miCenteringWithScaling, miToTheOrigin, miSetRotation, miResetRotation, cmiGridShowing, miSetGrid, new SeparatorMenuItem(), cmiShowNodes, cmiShowNodeLabels, cmiShowLinks, cmiShowLinkLabels, cmiShowAreas, cmiShowAreaLabels, cmiShowPolygons, cmiShowPolygonLabels, new SeparatorMenuItem(), cmiShowBackgroundImage, menuColorDepthOfBackgroundImage, cmiShowBackgroundMap, menuColorDepthOfBackgroundMap, menuShowBackgroundGroup, cmiShowMapCoordinates);
 
         /* Validation menu */
 
@@ -752,9 +790,10 @@ public class EditorFrameFx {
             helpStage.setTitle("Help - Quick reference");
             helpStage.setWidth(980);
             helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
-            String template = ObstructerBase.resourceToString(QUICK_REFERENCE_TEMPLATE);
+            String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
             com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
-            webView.getEngine().loadContent(template.replace("__HTML_BODY__", renderer.render(document)));
+            String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
+            webView.getEngine().loadContent(html);
             helpStage.show();
             helpStage.toFront();
         });
@@ -818,6 +857,11 @@ public class EditorFrameFx {
             }).start();
         });
 
+        if (CrowdWalkLauncher.offline) {
+            miZoneReference.setDisable(true);
+            miGitHub.setDisable(true);
+        }
+
         MenuItem miVersion = new MenuItem("About version");
         miVersion.setOnAction(e -> {
             Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);
@@ -833,6 +877,14 @@ public class EditorFrameFx {
         menuBar.getMenus().addAll(fileMenu, editMenu, viewMenu, actionMenu, helpMenu);
 
         return menuBar;
+    }
+
+    /**
+     * シミュレーションボタンの有効/無効設定
+     */
+    public void setDisableSimulationButtons(boolean value) {
+        simulate2dButton.setDisable(value);
+        simulate3dButton.setDisable(value);
     }
 
     /**
@@ -987,13 +1039,16 @@ public class EditorFrameFx {
         MenuItem miRotateAndScale = new MenuItem("Rotate and scale");
         miRotateAndScale.setOnAction(e -> openRotateAndScaleNodesDialog());
 
+        MenuItem miNormalizeCoordinates = new MenuItem("Normalize coordinates");
+        miNormalizeCoordinates.setOnAction(e -> openNormalizeCoordinatesDialog());
+
         MenuItem miClearSymbolicLinkOfNode = new MenuItem("Clear symbolic link");
         miClearSymbolicLinkOfNode.setOnAction(e -> editor.removeSymbolicLink(editor.getSelectedNodes()));
 
         MenuItem miRemoveNode = new MenuItem("Remove nodes");
         miRemoveNode.setOnAction(e -> editor.removeNodes(true));
 
-        editNodeMenu.getItems().addAll(miSetNodeAttributes, miHorizontally, miVertically, miCopyOrMove, miMakeStairs, miRotateAndScale, menuAddSymbolicLinkOfNode, miClearSymbolicLinkOfNode, miRemoveNode);
+        editNodeMenu.getItems().addAll(miSetNodeAttributes, miHorizontally, miVertically, miCopyOrMove, miMakeStairs, miRotateAndScale, miNormalizeCoordinates, menuAddSymbolicLinkOfNode, miClearSymbolicLinkOfNode, miRemoveNode);
 
         // EDIT_LINK モード
         // ・Set link attributes
@@ -1378,10 +1433,7 @@ public class EditorFrameFx {
             return;
         }
         editor.setNetworkMapFile(editor.getRelativePath(file));
-        if (editor.loadNetworkMap()) {
-            simulate2dButton.setDisable(false);
-            simulate3dButton.setDisable(false);
-        } else {
+        if (! editor.loadNetworkMap()) {
             Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
             alert.showAndWait();
             editor.initNetworkMap();
@@ -1494,10 +1546,7 @@ public class EditorFrameFx {
         }
 
         editor.setPropertiesFromFile(editor.getRelativePath(file));
-        if (editor.loadNetworkMap()) {
-            simulate2dButton.setDisable(false);
-            simulate3dButton.setDisable(false);
-        } else {
+        if (! editor.loadNetworkMap()) {
             Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
             alert.showAndWait();
             editor.initSetupFileInfo();
@@ -1516,18 +1565,263 @@ public class EditorFrameFx {
             alert.showAndWait();
             return;
         }
-        if (editor.isModified()) {
-            Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Map data may change when simulation is executed.\n    Would you like to start the simulator?", ButtonType.YES, ButtonType.NO);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (! result.isPresent() || result.get() != ButtonType.YES) {
-                return;
+        setDisableSimulationButtons(true);
+        GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance(simulator);
+        launcher.init(editor, settings);
+        launcher.simulate();
+    }
+
+    /**
+     * OpenStreetMap データを読み込む
+     */
+    private void readOpenStreetMap() {
+        NetworkMap networkMap = editor.getMap();
+        if (networkMap.getGroups().size() < 2) {
+            Alert alert = new Alert(AlertType.WARNING, "Please create a new group.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+
+        OsmReader osmReader = null;
+        try {
+            osmReader = new OsmReader(editor);
+        } catch (Exception e) {
+            Itk.logError("Read OSM", e.getMessage());
+            Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Read OpenStreetMap");
+        dialog.getDialogPane().setPrefWidth(416);
+        VBox paramPane = new VBox();
+        paramPane.setPadding(new Insets(16, 24, 12, 24));
+        paramPane.setSpacing(8);
+
+        // Destination group
+        HashMap<String, MapPartGroup> groups = new HashMap();
+        ArrayList<String> groupNames = new ArrayList();
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group == networkMap.getRoot() || group.getTags().size() == 0) {
+                continue;
+            }
+            groups.put(group.getTagString(), group);
+            groupNames.add(group.getTagString());
+        }
+        ChoiceBox groupChoiceBox = new ChoiceBox(FXCollections.observableArrayList(groupNames));
+        groupChoiceBox.setValue(editor.getCurrentGroup().getTagString());
+
+        // Zone
+        ArrayList<String> zones = new ArrayList();
+        for (int zone = 1; zone <= 19; zone++) {
+            zones.add("" + zone);
+        }
+        ChoiceBox zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        zoneChoiceBox.setValue(zones.get(0));
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group.getZone() != 0) {
+                zoneChoiceBox.setValue("" + group.getZone());
+                break;
             }
         }
-        simulate2dButton.setDisable(true);
-        simulate3dButton.setDisable(true);
-        GuiSimulationLauncher launcher = GuiSimulationLauncher.createInstance(simulator);
-        launcher.init(editor.getRandom(), editor.getProperties(), editor.getSetupFileInfo(), editor.getMap(), settings);
-        launcher.simulate();
+
+        // Highway value to convert to link
+        Label highwayLabel = new Label("Highway value to convert to link");
+        highwayLabel.setFont(Font.font("Arial", FontWeight.BOLD, highwayLabel.getFont().getSize()));
+
+        VBox highwayCheckBoxesPane = new VBox();
+        highwayCheckBoxesPane.setPadding(new Insets(8));
+        highwayCheckBoxesPane.setSpacing(4);
+
+        ArrayList<CheckBox> highwayCheckBoxes = new ArrayList();
+        for (String highwayValue : osmReader.getHighwayValues()) {
+            if (highwayValue.equals("----")) {
+                Separator separator = new Separator();
+                separator.setPadding(new Insets(3, 0, 2, 0));
+                highwayCheckBoxesPane.getChildren().add(separator);
+            } else {
+                CheckBox checkBox = new CheckBox(highwayValue);
+                checkBox.setSelected(true);
+                highwayCheckBoxes.add(checkBox);
+                highwayCheckBoxesPane.getChildren().add(checkBox);
+            }
+        }
+
+        ScrollPane scroller = new ScrollPane();
+        scroller.setPrefSize(360, 144);
+        scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scroller.setFitToWidth(true);
+        scroller.setFitToHeight(true);
+        scroller.setContent(highwayCheckBoxesPane);
+
+        Button checkAllButton = new Button("Check all");
+        checkAllButton.setOnAction(e -> {
+            highwayCheckBoxes.forEach(checkBox -> checkBox.setSelected(true));
+        });
+
+        Button uncheckAllButton = new Button("Uncheck all");
+        uncheckAllButton.setOnAction(e -> {
+            highwayCheckBoxes.forEach(checkBox -> checkBox.setSelected(false));
+        });
+
+        FlowPane checkAllPane = new FlowPane();
+        checkAllPane.setHgap(8);
+        checkAllPane.setAlignment(Pos.CENTER_RIGHT);
+        checkAllPane.getChildren().addAll(checkAllButton, uncheckAllButton);
+
+        // Tag filter
+        TextArea tagFilterArea = new TextArea(OsmReader.DEFAULT_TAG_FILTER);
+        tagFilterArea.setPrefSize(360, 60);
+        tagFilterArea.setWrapText(true);
+        CheckBox rejectCheckBox = new CheckBox("Reject");
+
+        // OSM data from
+        Label dataFromLabel = new Label("OSM data from");
+        dataFromLabel.setFont(Font.font("Arial", FontWeight.BOLD, dataFromLabel.getFont().getSize()));
+        RadioButton selectFileButton = new RadioButton("file");
+        RadioButton selectWebButton = new RadioButton("web service");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        selectFileButton.setToggleGroup(toggleGroup);
+        selectWebButton.setToggleGroup(toggleGroup);
+        selectFileButton.setSelected(true);
+        FlowPane selectPane = new FlowPane();
+        selectPane.setHgap(8);
+        selectPane.getChildren().addAll(dataFromLabel, selectFileButton, selectWebButton);
+
+        Label fileNameLabel = new Label("File name");
+        TextField fileNameField = new TextField("");
+        Button openButton = new Button("Open");
+        openButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open OSM file");
+            setInitialPath(fileChooser, "");
+            fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("OSM", "*.osm")
+            );
+            File file = fileChooser.showOpenDialog(frame);
+            if (file != null) {
+                try {
+                    fileNameField.setText(file.getCanonicalPath());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        Label upperLeftLabel = new Label("Upper left coordinate");
+        upperLeftLabel.setFont(Font.font("Arial", FontWeight.BOLD, upperLeftLabel.getFont().getSize()));
+        Label longitudeLabel = new Label("Longitude");
+        TextField ulLongitudeField = new TextField("");
+        ulLongitudeField.setPrefWidth(200);
+        Label latitudeLabel = new Label("Latitude");
+        TextField ulLatitudeField = new TextField("");
+        ulLatitudeField.setPrefWidth(200);
+
+        Label lowerRightLabel = new Label("Lower right coordinate");
+        lowerRightLabel.setFont(Font.font("Arial", FontWeight.BOLD, lowerRightLabel.getFont().getSize()));
+        Label lrLongitudeLabel = new Label("Longitude");
+        Label lrLatitudeLabel = new Label("Latitude");
+        TextField lrLongitudeField = new TextField("");
+        lrLongitudeField.setPrefWidth(200);
+        TextField lrLatitudeField = new TextField("");
+        lrLatitudeField.setPrefWidth(200);
+
+        List<Node> fromFileControls = Arrays.asList(fileNameLabel, fileNameField, openButton);
+        List<Node> fromWebControls = Arrays.asList(upperLeftLabel, longitudeLabel, latitudeLabel, ulLongitudeField, ulLatitudeField, lowerRightLabel, lrLongitudeLabel, lrLatitudeLabel, lrLongitudeField, lrLatitudeField);
+        fromWebControls.forEach(node -> node.setDisable(true));
+
+        selectFileButton.setOnAction(e -> {
+            fromFileControls.forEach(node -> node.setDisable(false));
+            fromWebControls.forEach(node -> node.setDisable(true));
+        });
+        selectWebButton.setOnAction(e -> {
+            fromFileControls.forEach(node -> node.setDisable(true));
+            fromWebControls.forEach(node -> node.setDisable(false));
+        });
+
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(6);
+        int row = 0;
+        grid.add(new Label("Destination group"), 0, row, 2, 1);
+        grid.add(groupChoiceBox, 2, row++);
+        grid.add(new Label("Zone"), 0, row, 2, 1);
+        grid.add(zoneChoiceBox, 2, row++);
+
+        grid.add(highwayLabel, 0, row++, 3, 1);
+        grid.add(scroller, 0, row++, 3, 1);
+        grid.add(checkAllPane, 0, row++, 3, 1);
+
+        grid.add(new Label("Tag filter"), 0, row++, 3, 1);
+        grid.add(tagFilterArea, 0, row++, 3, 1);
+        grid.add(rejectCheckBox, 1, row++, 2, 1);
+
+        grid.add(new Separator(), 0, row++, 3, 1);
+
+        grid.add(selectPane, 0, row++, 3, 1);
+        grid.add(fileNameLabel, 0, row++, 3, 1);
+        grid.add(fileNameField, 0, row++, 3, 1);
+        grid.add(openButton, 1, row++, 2, 1);
+
+        grid.add(upperLeftLabel, 0, row++, 3, 1);
+        grid.add(longitudeLabel, 0, row, 2, 1);
+        grid.add(ulLongitudeField, 2, row++);
+        grid.add(latitudeLabel, 0, row, 2, 1);
+        grid.add(ulLatitudeField, 2, row++);
+
+        grid.add(lowerRightLabel, 0, row++, 3, 1);
+        grid.add(lrLongitudeLabel, 0, row, 2, 1);
+        grid.add(lrLongitudeField, 2, row++);
+        grid.add(lrLatitudeLabel, 0, row, 2, 1);
+        grid.add(lrLatitudeField, 2, row++);
+
+        paramPane.getChildren().addAll(grid);
+
+        dialog.getDialogPane().setContent(paramPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            MapPartGroup group = groups.get(groupChoiceBox.getValue());
+            int zone = Integer.parseInt((String)zoneChoiceBox.getValue());
+            ArrayList<String> validHighways = new ArrayList();
+            for (CheckBox checkBox : highwayCheckBoxes) {
+                if (checkBox.isSelected()) {
+                    validHighways.add(checkBox.getText());
+                }
+            }
+            try {
+                if (selectFileButton.isSelected()) {
+                    String fileName = fileNameField.getText().trim();
+                    if (fileName.isEmpty()) {
+                        Alert alert = new Alert(AlertType.WARNING, "File name is empty.", ButtonType.OK);
+                        alert.showAndWait();
+                        return;
+                    }
+                    File file = new File(fileName);
+                    if (! file.exists()) {
+                        Alert alert = new Alert(AlertType.WARNING, "File not found.", ButtonType.OK);
+                        alert.showAndWait();
+                        return;
+                    }
+                    osmReader.read(file, group, validHighways, tagFilterArea.getText(), rejectCheckBox.isSelected(), zone);
+                } else {
+                    Double ulLongitude = convertToDouble(ulLongitudeField.getText());
+                    Double ulLatitude = convertToDouble(ulLatitudeField.getText());
+                    Double lrLongitude = convertToDouble(lrLongitudeField.getText());
+                    Double lrLatitude = convertToDouble(lrLatitudeField.getText());
+                    if (ulLongitude == null || ulLatitude == null || lrLongitude == null || lrLatitude == null) {
+                        return;
+                    }
+                    osmReader.read(ulLongitude.doubleValue(), ulLatitude.doubleValue(), lrLongitude.doubleValue(), lrLatitude.doubleValue(), group, validHighways, tagFilterArea.getText(), rejectCheckBox.isSelected(), zone);
+                }
+            } catch (Exception e) {
+                Itk.logError("Read OSM", e.getMessage());
+                Alert alert = new Alert(AlertType.ERROR, e.getMessage() + "\n\nMap data is over on the way.", ButtonType.OK);
+                alert.showAndWait();
+            }
+        }
     }
 
     /**
@@ -1566,6 +1860,108 @@ public class EditorFrameFx {
             }
             miResetRotation.setDisable(lockingCheckBox.isSelected());
             canvas.setAngleLocking(lockingCheckBox.isSelected());
+        }
+    }
+
+    /**
+     * グリッドパラメータを設定する
+     */
+    private void setGrid() {
+        if (editor.getCurrentGroup().getScale() != 1.0) {
+            Alert alert = new Alert(AlertType.WARNING, "If the group scale is not 1.0, the grid can not be used.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Set grid");
+
+        // 横幅(m)
+        Label widthLabel = new Label("Grid width(m)");
+        TextField widthField = new TextField("" + canvas.getGridWidth());
+        widthField.setMaxWidth(160);
+
+        // 縦幅(m)
+        Label heightLabel = new Label("Grid height(m)");
+        TextField heightField = new TextField("" + canvas.getGridHeight());
+        heightField.setMaxWidth(160);
+
+        // 横オフセット(m)
+        Label xOffsetLabel = new Label("X offset(m)");
+        TextField xOffsetField = new TextField("" + canvas.getGridOffsetX());
+        xOffsetField.setMaxWidth(160);
+
+        // 縦オフセット(m)
+        Label yOffsetLabel = new Label("Y offset(m)");
+        TextField yOffsetField = new TextField("" + canvas.getGridOffsetY());
+        yOffsetField.setMaxWidth(160);
+
+        CheckBox showSizeCheckBox = new CheckBox("Show size");
+        showSizeCheckBox.setSelected(canvas.isGridSizeShowing());
+
+        FlowPane flowPane = new FlowPane();
+        CheckBox snapCheckBox = new CheckBox("Snap");
+        snapCheckBox.setSelected(canvas.isGridSnapping());
+        snapCheckBox.setOnAction(e -> flowPane.setDisable(! snapCheckBox.isSelected()));
+        TextField pixelField = new TextField("" + canvas.getGridSnapSize());
+        pixelField.setMaxWidth(100);
+        flowPane.setHgap(8);
+        flowPane.getChildren().addAll(pixelField, new Label("pixel"));
+        flowPane.setDisable(! snapCheckBox.isSelected());
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(12, 0, 12, 20));
+        gridPane.setHgap(12);
+        gridPane.setVgap(8);
+        gridPane.add(widthLabel, 1, 1);
+        gridPane.add(widthField, 2, 1);
+        gridPane.add(heightLabel, 1, 2);
+        gridPane.add(heightField, 2, 2);
+        gridPane.add(xOffsetLabel, 1, 3);
+        gridPane.add(xOffsetField, 2, 3);
+        gridPane.add(yOffsetLabel, 1, 4);
+        gridPane.add(yOffsetField, 2, 4);
+        gridPane.add(showSizeCheckBox, 1, 5, 2, 1);
+        gridPane.add(snapCheckBox, 1, 6);
+        gridPane.add(flowPane, 2, 6);
+
+        dialog.getDialogPane().setContent(gridPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Double value = convertToDouble(widthField.getText());
+            if (value != null) {
+                if (value < 0.1) {
+                    Alert alert = new Alert(AlertType.WARNING, "Invalid grid width.", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                canvas.setGridWidth(value);
+            }
+            value = convertToDouble(heightField.getText());
+            if (value != null) {
+                if (value < 0.1) {
+                    Alert alert = new Alert(AlertType.WARNING, "Invalid grid height.", ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+                canvas.setGridHeight(value);
+            }
+            value = convertToDouble(xOffsetField.getText());
+            if (value != null) {
+                canvas.setGridOffsetX(value);
+            }
+            value = convertToDouble(yOffsetField.getText());
+            if (value != null) {
+                canvas.setGridOffsetY(value);
+            }
+            Integer intValue = convertToInteger(pixelField.getText());
+            if (intValue != null) {
+                canvas.setGridSnapSize(intValue);
+            }
+            canvas.setGridSizeShowing(showSizeCheckBox.isSelected());
+            canvas.setGridSnapping(snapCheckBox.isSelected());
+            canvas.repaintLater();
         }
     }
 
@@ -2023,7 +2419,7 @@ public class EditorFrameFx {
             return;
         }
 
-        MapLinkTable reachableLinks = MapChecker.getReachableLinks(networkMap.getNodes(), tag);
+        MapLinkTable reachableLinks = getReachableLinks(networkMap.getNodes(), tag);
         int notConnectedCount = networkMap.getLinks().size() - reachableLinks.size();
         if (notConnectedCount > 0) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "There were " + notConnectedCount + " links not leading to target!\nShould select REACHABLE links?", ButtonType.YES, ButtonType.NO);
@@ -2035,6 +2431,47 @@ public class EditorFrameFx {
             Alert alert = new Alert(AlertType.INFORMATION, "Calculation of paths finished.", ButtonType.OK);
             alert.showAndWait();
         }
+    }
+
+    /**
+     * TODO: 正常に機能しないためデバッグが必要
+     */
+    public MapLinkTable getReachableLinks(MapNodeTable nodes, String targetTag) {
+        final MapNodeTable exits = new MapNodeTable();
+        for (final MapNode node : nodes) {
+            if (node.hasTag(targetTag)) exits.add(node);
+        }
+
+        Stack<MapNode> path = new Stack<MapNode>();
+        Stack<Integer> selection = new Stack<Integer>();
+        MapLinkTable reachableLinks = new MapLinkTable();
+
+        for (MapNode exit : exits) {
+            path.push(exit);
+            selection.push(0);
+
+            while(!path.empty()) {
+                MapNode node = path.peek();
+                Integer index = selection.pop();
+
+                final MapLinkTable linkList  = node.getUsableLinkTable();
+                if (index == linkList.size()) {
+                    path.pop();
+                    continue;
+                }
+
+                final MapLink link = linkList.get(index);
+                ++index;
+                selection.push(index);
+
+                if (!reachableLinks.contains(link)) {
+                    reachableLinks.add(link);
+                    path.push(link.getOther(node));
+                    selection.push(0);
+                }
+            }
+        }
+        return reachableLinks;
     }
 
     /**
@@ -2490,6 +2927,134 @@ public class EditorFrameFx {
 
             if (scaleX != 1.0 || scaleY != 1.0 || (angle > 0.0 && angle < 360.0)) {
                 editor.rotateAndScaleNodes(nodes, scaleX, scaleY, angle);
+            }
+        }
+    }
+
+    /**
+     * マップ座標の正規化
+     */
+    public void openNormalizeCoordinatesDialog() {
+        ArrayList<MapNode> nodes = editor.getSelectedNodes();
+        if (nodes.size() != 2) {
+            Alert alert = new Alert(AlertType.WARNING, "Select only 2 nodes.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+        MapNode node1 = nodes.get(0);
+        MapNode node2 = nodes.get(1);
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Normalize coordinates");
+        dialog.getDialogPane().setPrefWidth(360);
+        VBox paramPane = new VBox();
+        paramPane.setPadding(new Insets(16, 24, 12, 24));
+        paramPane.setSpacing(8);
+
+        ArrayList<String> zones = new ArrayList();
+        for (int zone = 1; zone <= 19; zone++) {
+            zones.add("" + zone);
+        }
+        ChoiceBox zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        zoneChoiceBox.setValue(zones.get(0));
+
+        Label node1Label = new Label("Node 1");
+        node1Label.setFont(Font.font("Arial", FontWeight.BOLD, node1Label.getFont().getSize()));
+
+        TextField node1LongitudeField = new TextField("");
+        node1LongitudeField.setPrefWidth(200);
+
+        TextField node1LatitudeField = new TextField("");
+        node1LatitudeField.setPrefWidth(200);
+
+        Label node2Label = new Label("Node 2");
+        node2Label.setFont(Font.font("Arial", FontWeight.BOLD, node2Label.getFont().getSize()));
+
+        TextField node2LongitudeField = new TextField("");
+        node2LongitudeField.setPrefWidth(200);
+
+        TextField node2LatitudeField = new TextField("");
+        node2LatitudeField.setPrefWidth(200);
+
+        RadioButton separatelyButton = new RadioButton("separately");
+        RadioButton averageButton = new RadioButton("average");
+        RadioButton scaleXButton = new RadioButton("X");
+        RadioButton scaleYButton = new RadioButton("Y");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        separatelyButton.setToggleGroup(toggleGroup);
+        averageButton.setToggleGroup(toggleGroup);
+        scaleXButton.setToggleGroup(toggleGroup);
+        scaleYButton.setToggleGroup(toggleGroup);
+        separatelyButton.setSelected(true);
+        FlowPane scalePane = new FlowPane();
+        scalePane.setHgap(8);
+        scalePane.getChildren().addAll(new Label("Scale"), separatelyButton, averageButton, scaleXButton, scaleYButton);
+
+        CheckBox rotaionCheckBox = new CheckBox("Rotation");
+        rotaionCheckBox.setSelected(true);
+
+        CheckBox calcLengthCheckBox = new CheckBox("Recalc length");
+        CheckBox reflectHeightCheckBox = new CheckBox("Reflect height");
+        reflectHeightCheckBox.setDisable(true);
+        calcLengthCheckBox.setOnAction(e -> reflectHeightCheckBox.setDisable(! calcLengthCheckBox.isSelected()));
+        FlowPane calcLengthPane = new FlowPane();
+        calcLengthPane.setHgap(8);
+        calcLengthPane.getChildren().addAll(calcLengthCheckBox, reflectHeightCheckBox);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(6);
+        grid.add(new Label("Zone"), 0, 0, 2, 1);
+        grid.add(zoneChoiceBox, 2, 0);
+
+        grid.add(new Separator(), 0, 1, 3, 1);
+
+        grid.add(node1Label, 0, 2, 3, 1);
+        grid.add(new Label("ID"), 1, 3);
+        grid.add(new Label(node1.getID()), 2, 3);
+        grid.add(new Label("Tags"), 1, 4);
+        grid.add(new Label(node1.getTagString()), 2, 4);
+        grid.add(new Label("X"), 1, 5);
+        grid.add(new Label("" + node1.getX()), 2, 5);
+        grid.add(new Label("Y"), 1, 6);
+        grid.add(new Label("" + node1.getY()), 2, 6);
+        grid.add(new Label("Longitude"), 1, 7);
+        grid.add(node1LongitudeField, 2, 7);
+        grid.add(new Label("Latitude"), 1, 8);
+        grid.add(node1LatitudeField, 2, 8);
+
+        grid.add(new Separator(), 0, 9, 3, 1);
+
+        grid.add(node2Label, 0, 10, 3, 1);
+        grid.add(new Label("ID"), 1, 11);
+        grid.add(new Label(node2.getID()), 2, 11);
+        grid.add(new Label("Tags"), 1, 12);
+        grid.add(new Label(node2.getTagString()), 2, 12);
+        grid.add(new Label("X"), 1, 13);
+        grid.add(new Label("" + node2.getX()), 2, 13);
+        grid.add(new Label("Y"), 1, 14);
+        grid.add(new Label("" + node2.getY()), 2, 14);
+        grid.add(new Label("Longitude"), 1, 15);
+        grid.add(node2LongitudeField, 2, 15);
+        grid.add(new Label("Latitude"), 1, 16);
+        grid.add(node2LatitudeField, 2, 16);
+
+        grid.add(new Separator(), 0, 17, 3, 1);
+
+        paramPane.getChildren().addAll(grid, scalePane, rotaionCheckBox, calcLengthPane);
+
+        dialog.getDialogPane().setContent(paramPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Double node1Longitude = convertToDouble(node1LongitudeField.getText());
+            Double node1Latitude = convertToDouble(node1LatitudeField.getText());
+            Double node2Longitude = convertToDouble(node2LongitudeField.getText());
+            Double node2Latitude = convertToDouble(node2LatitudeField.getText());
+            if (node1Longitude != null && node1Latitude != null && node2Longitude != null && node2Latitude != null) {
+                int zone = Integer.parseInt((String)zoneChoiceBox.getValue());
+                RadioButton scaleButton = (RadioButton)toggleGroup.getSelectedToggle();
+                editor.normalizeCoordinates(node1, node2, zone, node1Longitude.doubleValue(), node1Latitude.doubleValue(), node2Longitude.doubleValue(), node2Latitude.doubleValue(), scaleButton.getText(), rotaionCheckBox.isSelected(), calcLengthCheckBox.isSelected(), reflectHeightCheckBox.isSelected());
             }
         }
     }

@@ -213,6 +213,11 @@ public class EditorCanvas extends Canvas {
     private Point2D adjustmentTranslate = new Point2D(0, 0);
 
     /**
+     * Canvas に表示されるマップの範囲
+     */
+    private Rectangle2D viewArea = null;
+
+    /**
      * 画面更新用フラグ
      */
     private boolean repainting = false;
@@ -235,6 +240,8 @@ public class EditorCanvas extends Canvas {
     private boolean nodeMoving = false;
     private Point2D mousePressedPoint = null;
     private Point2D nodeMovingAmount = null;
+    private double nodeCursorX = 0.0;
+    private double nodeCursorY = 0.0;
 
     /**
      * ホバー表示対象の各オブジェクト
@@ -275,21 +282,52 @@ public class EditorCanvas extends Canvas {
     private ArrayList<Point2D> selectionRangePolygon = new ArrayList();
 
     /**
+     * グリッド表示パラメータ
+     */
+    private boolean gridShowing = false;
+    private boolean gridSizeShowing = true;
+    private boolean gridSnapping = true;
+    private double gridWidth = 10.0;        // 初期グリッド幅: 10m
+    private double gridHeight = 10.0;       // 初期グリッド高さ: 10m
+    private double gridOffsetX = 0.0;
+    private double gridOffsetY = 0.0;
+    private int gridSnapSize = 24;
+
+    /**
      * コンストラクタ
      */
     public EditorCanvas(MapEditor editor, EditorFrameFx frame) {
         this.editor = editor;
         this.frame = frame;
+        MapPartGroup group = editor.getCurrentGroup();
 
         // サイズが変更されたら再描画する
-        widthProperty().addListener(e -> repaintLater());
-        heightProperty().addListener(e -> repaintLater());
+        widthProperty().addListener((obs, oldVal, newVal) -> {
+            Point2D upperLeft = pointConvertCanvasToMap(0.0, 0.0);
+            Point2D lowerRight = pointConvertCanvasToMap((Double)newVal, getHeight());
+            viewArea = new Rectangle2D.Double(upperLeft.getX(), upperLeft.getY(), lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY());
+            repaintLater();
+        });
+        heightProperty().addListener((obs, oldVal, newVal) -> {
+            Point2D upperLeft = pointConvertCanvasToMap(0.0, 0.0);
+            Point2D lowerRight = pointConvertCanvasToMap(getWidth(), (Double)newVal);
+            viewArea = new Rectangle2D.Double(upperLeft.getX(), upperLeft.getY(), lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY());
+            repaintLater();
+        });
 
         // キー操作の設定
         setKeyOperation();
 
         // マウス操作の設定
         setMouseOperation();
+
+        // グリッドサイズの初期設定
+        Rectangle2D bounds = calcRotatedMapRectangle();
+        if (group.getScale() == 1.0 && Math.min(bounds.getWidth(), bounds.getHeight()) > 10.0) {
+            double length = Math.max(bounds.getWidth(), bounds.getHeight());
+            gridWidth = Math.pow(10, Math.floor(Math.log10(length))) / 10;
+            gridHeight = gridWidth;
+        }
     }
 
     /**
@@ -430,6 +468,14 @@ public class EditorCanvas extends Canvas {
     }
 
     /**
+     * ステータスラインにカーソルのマップ座標を表示する
+     */
+    private void indicateMapCoordinates(double x, double y) {
+        Point2D mapPoint = convertToOriginal(pointConvertCanvasToMap(x, y));
+        frame.setStatusText("Map coordinates: " + mapPoint.getX() + ", " + mapPoint.getY());
+    }
+
+    /**
      * マウス操作の設定
      */
     private void setMouseOperation() {
@@ -442,13 +488,32 @@ public class EditorCanvas extends Canvas {
             case ADD_NODE:
             case ADD_NODE_LINK:
                 if (lastMouseX != x || lastMouseY != y) {
-                    repaintLater();
+                    Point2D snapPoint = null;
+                    if (gridShowing && gridSnapping) {
+                        snapPoint = getGridSnapPoint(x, y);
+                        if (snapPoint == null) {
+                            nodeCursorX = x;
+                            nodeCursorY = y;
+                            indicateMapCoordinates(x, y);
+                        } else {
+                            Point2D mapPoint = convertToOriginal(snapPoint);
+                            frame.setStatusText("Map coordinates: " + mapPoint.getX() + ", " + mapPoint.getY());
+                            Point2D point = pointConvertMapToCanvas(snapPoint);
+                            nodeCursorX = point.getX();
+                            nodeCursorY = point.getY();
+                        }
+                    } else {
+                        nodeCursorX = x;
+                        nodeCursorY = y;
+                        indicateMapCoordinates(x, y);
+                    }
                     if (fromNode != null) {
                         MapPartGroup group = editor.getCurrentGroup();
-                        Point2D point = pointConvertCanvasToMap(x, y);
+                        Point2D point = (snapPoint == null ? pointConvertCanvasToMap(x, y) : snapPoint);
                         double length = getRotatedPoint(fromNode).distance(point) * group.getScale();
                         frame.setCurrentLinkLength(length);
                     }
+                    repaintLater();
                 }
                 break;
             case ADD_LINK:
@@ -467,6 +532,9 @@ public class EditorCanvas extends Canvas {
                         frame.setCurrentLinkLength(length);
                     }
                 }
+                if (mapCoordinatesShowing) {
+                    indicateMapCoordinates(x, y);
+                }
                 break;
             case ADD_AREA:
                 break;
@@ -476,12 +544,18 @@ public class EditorCanvas extends Canvas {
                 } else if (updateTargetNode(x, y)) {
                     repaintLater();
                 }
+                if (mapCoordinatesShowing) {
+                    indicateMapCoordinates(x, y);
+                }
                 break;
             case EDIT_LINK:
                 if (event.isAltDown() && ! selectionRangePolygon.isEmpty()) {
                     repaintLater();
                 } else if (updateTargetLink(x, y)) {
                     repaintLater();
+                }
+                if (mapCoordinatesShowing) {
+                    indicateMapCoordinates(x, y);
                 }
                 break;
             case EDIT_AREA:
@@ -490,6 +564,9 @@ public class EditorCanvas extends Canvas {
                 } else if (updateTargetArea(x, y)) {
                     repaintLater();
                 }
+                if (mapCoordinatesShowing) {
+                    indicateMapCoordinates(x, y);
+                }
                 break;
             case EDIT_POLYGON:
                 if (event.isAltDown() && ! selectionRangePolygon.isEmpty()) {
@@ -497,15 +574,13 @@ public class EditorCanvas extends Canvas {
                 } else if (updateTargetPolygon(x, y)) {
                     repaintLater();
                 }
+                if (mapCoordinatesShowing) {
+                    indicateMapCoordinates(x, y);
+                }
                 break;
             }
             lastMouseX = x;
             lastMouseY = y;
-
-            if (mapCoordinatesShowing || mode == EditorMode.ADD_NODE) {
-                Point2D mapPoint = convertToOriginal(pointConvertCanvasToMap(x, y));
-                frame.setStatusText("Map coordinates: " + mapPoint.getX() + ", " + mapPoint.getY());
-            }
         });
 
         // ボタンを押した時
@@ -568,6 +643,12 @@ public class EditorCanvas extends Canvas {
                 }
                 switch (mode) {
                 case ADD_NODE:
+                    if (gridShowing && gridSnapping) {
+                        Point2D point = getGridSnapPoint(event.getX(), event.getY());
+                        if (point != null) {
+                            mapPoint = point;
+                        }
+                    }
                     editor.invokeSingleCommand(new AddNode(group, convertToOriginal(mapPoint), group.getDefaultHeight()));
                     editor.updateHeight();
                     break;
@@ -600,6 +681,12 @@ public class EditorCanvas extends Canvas {
                     break;
                 case ADD_NODE_LINK:
                     editor.startOfCommandBlock();
+                    if (gridShowing && gridSnapping) {
+                        Point2D point = getGridSnapPoint(event.getX(), event.getY());
+                        if (point != null) {
+                            mapPoint = point;
+                        }
+                    }
                     if (editor.invoke(new AddNode(group, convertToOriginal(mapPoint), group.getDefaultHeight()))) {
                         updateTargetNode(mapPoint);     // pointedNode に今生成したノードをセット
                         if (pointedNode == null) {
@@ -797,7 +884,14 @@ public class EditorCanvas extends Canvas {
                         repaintLater();
                     } else {
                         if (pointedNode != null) {
-                            Point2D mapPoint = convertToOriginal(pointConvertCanvasToMap(x, y));
+                            Point2D point = null;
+                            if (gridShowing && gridSnapping) {
+                                point = getGridSnapPoint(x, y);
+                            }
+                            if (point == null) {
+                                point = pointConvertCanvasToMap(x, y);
+                            }
+                            Point2D mapPoint = convertToOriginal(point);
                             editor.invokeSingleCommand(new MoveNode(pointedNode, mapPoint.getX(), mapPoint.getY()));
                         }
                     }
@@ -1346,6 +1440,22 @@ public class EditorCanvas extends Canvas {
     }
 
     /**
+     * マップ座標をキャンバス座標に変換する
+     */
+    public Point2D pointConvertMapToCanvas(double x, double y) {
+        Point2D origin = new Point2D(-x * (scale * SCALE_FACTOR), -y * (scale * SCALE_FACTOR));
+        Point2D point = origin.subtract(adjustmentTranslate).subtract(originTranslate);
+        return new Point2D(-point.getX(), -point.getY());
+    }
+
+    /**
+     * マップ座標をキャンバス座標に変換する
+     */
+    public Point2D pointConvertMapToCanvas(Point2D point) {
+        return pointConvertMapToCanvas(point.getX(), point.getY());
+    }
+
+    /**
      * マウスカーソル上のマップ座標を取得する
      */
     public Point2D getMapPointOnTheMouseCursor() {
@@ -1371,7 +1481,9 @@ public class EditorCanvas extends Canvas {
 
         // map is empty
         if (cx == 0.0 && cy == 0.0) {
-            scale = 1.0 / SCALE_FACTOR;
+            if (withScaling) {
+                scale = 1.0 / SCALE_FACTOR;
+            }
             originTranslate = new Point2D(0.0, 0.0);
             adjustmentTranslate = new Point2D(getWidth() / 2, getHeight() / 2);
             return;
@@ -1609,7 +1721,7 @@ public class EditorCanvas extends Canvas {
         // viewArea を使って表示範囲外の無駄な描画処理を省く
         Point2D upperLeft = pointConvertCanvasToMap(0.0, 0.0);
         Point2D lowerRight = pointConvertCanvasToMap(getWidth(), getHeight());
-        Rectangle2D viewArea = new Rectangle2D.Double(upperLeft.getX(), upperLeft.getY(), lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY());
+        viewArea = new Rectangle2D.Double(upperLeft.getX(), upperLeft.getY(), lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY());
 
         // Canvas のクリア
         GraphicsContext gc = getGraphicsContext2D();
@@ -1747,6 +1859,13 @@ public class EditorCanvas extends Canvas {
             return;
         }
 
+        if (gridShowing && group.getScale() == 1.0) {
+            drawGrid(gc, viewArea);
+        }
+        if (redoRepainting) {
+            return;
+        }
+
         if (oneWayIndicatorShowing) {
             drawOneWayIndicator(oneWayfirstNode, "A", oneWayLabelPositionA, gc);
             drawOneWayIndicator(oneWaylastNode, "B", oneWayLabelPositionB, gc);
@@ -1768,11 +1887,14 @@ public class EditorCanvas extends Canvas {
             }
         }
 
+        // 原点マーカーの描画
+        drawOriginMarker(gc);
+
         // ホバーの描画
         switch (mode) {
         case ADD_NODE:
             gc.setTransform(originalAffine);
-            drawNodeHoverOnMouseCursor(lastMouseX, lastMouseY, gc);
+            drawNodeHoverOnMouseCursor(nodeCursorX, nodeCursorY, gc);
             break;
         case ADD_LINK:
             if (fromNode != null && toNode != null) {
@@ -1784,13 +1906,13 @@ public class EditorCanvas extends Canvas {
             break;
         case ADD_NODE_LINK:
             if (fromNode != null) {
-                drawTentativeLink(fromNode, pointConvertCanvasToMap(lastMouseX, lastMouseY), gc);
+                drawTentativeLink(fromNode, pointConvertCanvasToMap(nodeCursorX, nodeCursorY), gc);
             }
             if (pointedNode != null) {
                 drawNodeHover(pointedNode, gc);
             }
             gc.setTransform(originalAffine);
-            drawNodeHoverOnMouseCursor(lastMouseX, lastMouseY, gc);
+            drawNodeHoverOnMouseCursor(nodeCursorX, nodeCursorY, gc);
             break;
         case ADD_AREA:
             break;
@@ -1815,6 +1937,23 @@ public class EditorCanvas extends Canvas {
             }
             break;
         }
+    }
+
+    /**
+     * 原点マーカーを描画する
+     */
+    private void drawOriginMarker(GraphicsContext gc) {
+        double size = 8.0;
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(1.0 / scale);
+        gc.beginPath();
+        gc.moveTo(-size / scale, 0.0);
+        gc.lineTo(size / scale, 0.0);
+        gc.stroke();
+        gc.beginPath();
+        gc.moveTo(0.0, -size / scale);
+        gc.lineTo(0.0, size / scale);
+        gc.stroke();
     }
 
     /**
@@ -2360,6 +2499,50 @@ public class EditorCanvas extends Canvas {
     }
 
     /**
+     * グリッドを描画する
+     */
+    public void drawGrid(GraphicsContext gc, Rectangle2D viewArea) {
+        double offsetX = Math.abs(gridOffsetX);
+        while (offsetX > gridWidth) {
+            offsetX -= gridWidth;
+        }
+        offsetX *= Math.signum(gridOffsetX);
+
+        double offsetY = Math.abs(gridOffsetY);
+        while (offsetY > gridHeight) {
+            offsetY -= gridHeight;
+        }
+        offsetY *= Math.signum(gridOffsetY);
+
+        double x1 = ((int)((viewArea.getMinX() + offsetX) / gridWidth) - 1) * gridWidth;
+        double y1 = ((int)((viewArea.getMinY() + offsetY) / gridHeight) - 1) * gridHeight;
+        double x2 = ((int)((viewArea.getMaxX() + offsetX) / gridWidth) + 1) * gridWidth;
+        double y2 = ((int)((viewArea.getMaxY() + offsetY) / gridHeight) + 1) * gridHeight;
+
+        gc.setStroke(Color.LIGHTGRAY);
+        gc.setLineWidth(1.0 / scale);
+        for (double y = y1; y < y2; y += gridHeight) {
+            double _y = (y + offsetY) * SCALE_FACTOR;
+            gc.strokeLine(x1 * SCALE_FACTOR, _y, x2 * SCALE_FACTOR, _y);
+        }
+        for (double x = x1; x < x2; x += gridWidth) {
+            double _x = (x + offsetX) * SCALE_FACTOR;
+            gc.strokeLine(_x, y1 * SCALE_FACTOR, _x, y2 * SCALE_FACTOR);
+        }
+
+        if (gridSizeShowing) {
+            double textWidth = 10 / scale;      // フォントメトリクスが使えないため目分量で決めている
+            double textHeight = 20 / scale;     //                  同上
+            double dx = textHeight / 3.0;
+            double dy = textHeight / 1.3;
+
+            String text = "Grid: width=" + gridWidth + "m, height=" + gridHeight + "m";
+            gc.setFill(Color.BLACK);
+            gc.fillText(text, viewArea.getMinX() * SCALE_FACTOR + dx, viewArea.getMinY() * SCALE_FACTOR + dy);
+        }
+    }
+
+    /**
      * 一方通行設定時の表示設定
      */
     public void setOneWayIndicator(boolean showing, MapNode firstNode, TextPosition positionA, MapNode lastNode, TextPosition positionB) {
@@ -2438,8 +2621,108 @@ public class EditorCanvas extends Canvas {
         clearEditingStates();
     }
 
+    /**
+     * 座標がスナップエリア内だったらグリッドの交点座標を返す
+     */
+    public Point2D getGridSnapPoint(double x, double y) {
+        double offsetX = Math.abs(gridOffsetX);
+        while (offsetX > gridWidth) {
+            offsetX -= gridWidth;
+        }
+        offsetX *= Math.signum(gridOffsetX);
+
+        double offsetY = Math.abs(gridOffsetY);
+        while (offsetY > gridHeight) {
+            offsetY -= gridHeight;
+        }
+        offsetY *= Math.signum(gridOffsetY);
+
+        double x1 = ((int)((viewArea.getMinX() + offsetX) / gridWidth) - 1) * gridWidth;
+        double y1 = ((int)((viewArea.getMinY() + offsetY) / gridHeight) - 1) * gridHeight;
+        double x2 = ((int)((viewArea.getMaxX() + offsetX) / gridWidth) + 1) * gridWidth;
+        double y2 = ((int)((viewArea.getMaxY() + offsetY) / gridHeight) + 1) * gridHeight;
+
+        Point2D point = pointConvertCanvasToMap(x, y);
+        double mindist = Double.POSITIVE_INFINITY;
+        double radius = gridSnapSize / (scale * SCALE_FACTOR);
+        double snappedX = point.getX();
+        double snappedY = point.getY();
+        for (double _y = y1; _y < y2; _y += gridHeight) {
+            for (double _x = x1; _x < x2; _x += gridWidth) {
+                double dist = point.distance(_x + offsetX, _y + offsetY);
+                if (dist < mindist && dist < radius) {
+                    mindist = dist;
+                    snappedX = _x + offsetX;
+                    snappedY = _y + offsetY;
+                }
+            }
+        }
+
+        return snappedX == point.getX() && snappedY == point.getY() ? null : new Point2D(snappedX, snappedY);
+    }
+
     public Stage getStage() {
         return (Stage)getScene().getWindow();
+    }
+
+    public void setGridShowing(boolean gridShowing) {
+        this.gridShowing = gridShowing;
+    }
+
+    public void setGridSizeShowing(boolean gridSizeShowing) {
+        this.gridSizeShowing = gridSizeShowing;
+    }
+
+    public boolean isGridSizeShowing() {
+        return gridSizeShowing;
+    }
+
+    public void setGridSnapping(boolean gridSnapping) {
+        this.gridSnapping = gridSnapping;
+    }
+
+    public boolean isGridSnapping() {
+        return gridSnapping;
+    }
+
+    public void setGridWidth(double gridWidth) {
+        this.gridWidth = gridWidth;
+    }
+
+    public double getGridWidth() {
+        return gridWidth;
+    }
+
+    public void setGridHeight(double gridHeight) {
+        this.gridHeight = gridHeight;
+    }
+
+    public double getGridHeight() {
+        return gridHeight;
+    }
+
+    public void setGridOffsetX(double gridOffsetX) {
+        this.gridOffsetX = gridOffsetX;
+    }
+
+    public double getGridOffsetX() {
+        return gridOffsetX;
+    }
+
+    public void setGridOffsetY(double gridOffsetY) {
+        this.gridOffsetY = gridOffsetY;
+    }
+
+    public double getGridOffsetY() {
+        return gridOffsetY;
+    }
+
+    public void setGridSnapSize(int gridSnapSize) {
+        this.gridSnapSize = gridSnapSize;
+    }
+
+    public int getGridSnapSize() {
+        return gridSnapSize;
     }
 
     public void setNodesShowing(boolean nodesShowing) {

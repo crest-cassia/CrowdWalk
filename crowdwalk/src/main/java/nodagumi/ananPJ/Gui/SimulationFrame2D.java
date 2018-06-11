@@ -2,8 +2,8 @@
 package nodagumi.ananPJ.Gui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.CheckboxMenuItem;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -43,11 +43,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -58,20 +62,40 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.web.WebView;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
+import com.vladsch.flexmark.util.options.MutableDataSet;
 
 import math.geom3d.Vector3D;
 import net.arnx.jsonic.JSON;
@@ -89,11 +113,11 @@ import nodagumi.ananPJ.NetworkMap.Area.MapArea;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
-import nodagumi.ananPJ.misc.Hover;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Scenario.*;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.PollutionHandler.*;
 import nodagumi.Itk.*;
 
@@ -102,6 +126,12 @@ import nodagumi.Itk.*;
  */
 public class SimulationFrame2D extends JFrame
     implements MouseListener, MouseWheelListener, MouseMotionListener {
+    /**
+     * ヘルプ表示用コンテンツのアドレス
+     */
+    public static final String HTML_TEMPLATE = "/doc/template.html";
+    public static final String QUICK_REFERENCE = "/doc/quick_reference_simulator_2d.md";
+
     /**
      * 実在の地図ベースのマップであると判断する最小リンク数
      */
@@ -146,6 +176,11 @@ public class SimulationFrame2D extends JFrame
      * カメラワーク
      */
     private ArrayList<CameraShot> camerawork = new ArrayList<CameraShot>();
+
+    /**
+     * 一時停止させる時刻
+     */
+    private SimTime pauseTime = new SimTime();
 
     /* Properties */
 
@@ -200,13 +235,9 @@ public class SimulationFrame2D extends JFrame
     private transient JLabel clock_label = new JLabel("00:00:00");
     private transient JLabel time_label = new JLabel("NOT STARTED");
     private transient JLabel evacuatedCount_label = new JLabel("NOT STARTED");
-    private transient JTextArea message = new JTextArea("UNMaps Version 1.9.5\n") {
-        @Override
-        public void append(String str) {
-            super.append(str);
-            message.setCaretPosition(message.getDocument().getLength());
-        }
-    };
+    private JSpinner intSpinner = null;
+    private JSpinner timeSpinner = null;
+    private JButton resetButton = new JButton("Reset");
 
     /* View タブ構成変数 */
 
@@ -249,6 +280,15 @@ public class SimulationFrame2D extends JFrame
     private boolean scrolling = false;
     private int dragStartX = 0;
     private int dragStartY = 0;
+
+    /**
+     * ヘルプ表示用
+     */
+    private Parser parser;
+    private HtmlRenderer renderer;
+    private Stage helpStage;
+    private WebView webView;
+    private double helpZoom = 1.0;
 
     /* スクリーンショット保存用スレッド数を管理するためのカウンタ制御 */
 
@@ -321,6 +361,8 @@ public class SimulationFrame2D extends JFrame
         // 実在の地図ベースのマップでない時はセンタリングマージンを付加する
         setMarginAdded(getLinks().size() < MINIMUM_REAL_MAP_LINKS);
 
+        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
+        Platform.runLater(() -> initHelp());
         setupMenu();
         setupContents(simulationPanelWidth, simulationPanelHeight, properties, backgroundMapTiles);
         if (cameraworkFile != null) {
@@ -334,6 +376,12 @@ public class SimulationFrame2D extends JFrame
                         public void run() {
                             launcher.simulationWindowOpenedOperation(frame) ;
                         }});
+                // Java 9 ではウィンドウが 8x8 縮小されるためスクロールバーがつぶれてしまう不具合の対策
+                if (panel.getWidth() < 800 || panel.getHeight() < 600) {
+                    int dw = Math.max(800 - panel.getWidth(), 0);
+                    int dh = Math.max(600 - panel.getHeight(), 0);
+                    setSize(getWidth() + dw, getHeight() + dh);
+                }
                 panel.centering(true);
                 panel.repaint();
             }
@@ -345,6 +393,7 @@ public class SimulationFrame2D extends JFrame
                 frame.dispose();
             }
             public void windowClosed(WindowEvent e) {
+                Platform.runLater(() -> helpStage.close());
                 launcher.quit();
             }
         });
@@ -364,6 +413,53 @@ public class SimulationFrame2D extends JFrame
         addMouseWheelListener(this);
 
         pack();
+    }
+
+    /**
+     * ヘルプ画面の準備
+     */
+    private void initHelp() {
+        helpStage = new Stage();
+
+        MutableDataSet options = new MutableDataSet();
+        options.setFrom(ParserEmulationProfile.MARKDOWN);
+        options.set(Parser.EXTENSIONS, Arrays.asList(
+            TablesExtension.create()
+        ));
+        parser = Parser.builder(options).build();
+        renderer = HtmlRenderer.builder(options).build();
+
+        webView = new WebView();
+        webView.setOnKeyPressed(event -> {
+            if (event.isControlDown()) {
+                Platform.runLater(() -> {
+                    if (event.getCode() == KeyCode.W) {
+                        helpStage.close();
+                    } else if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.UP) {
+                        helpZoom += 0.1;
+                        webView.setZoom(helpZoom);
+                    } else if (event.getCode() == KeyCode.MINUS || event.getCode() == KeyCode.DOWN) {
+                        helpZoom -= 0.1;
+                        webView.setZoom(helpZoom);
+                    } else if (event.getCode() == KeyCode.DIGIT0) {
+                        helpZoom = 1.0;
+                        webView.setZoom(helpZoom);
+                    }
+                });
+            }
+        });
+
+        Button okButton = new Button("  OK  ");
+        okButton.setOnAction(event -> Platform.runLater(() -> helpStage.close()));
+        BorderPane buttonPane = new BorderPane();
+        buttonPane.setPadding(new javafx.geometry.Insets(4, 8, 4, 8));
+        buttonPane.setRight(okButton);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(webView);
+        borderPane.setBottom(buttonPane);
+
+        helpStage.setScene(new Scene(borderPane));
     }
 
     /**
@@ -497,6 +593,25 @@ public class SimulationFrame2D extends JFrame
         //// Help menu ////
 
         Menu helpMenu = new PopupMenu("Help");
+
+        MenuItem miQuickReference = new MenuItem("Quick reference");
+        miQuickReference.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Platform.runLater(() -> {
+                    helpStage.setTitle("Help - Quick reference");
+                    helpStage.setWidth(980);
+                    helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+                    String template = ObstructerBase.resourceToString(HTML_TEMPLATE);
+                    com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));
+                    String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));
+                    webView.getEngine().loadContent(html);
+                    helpStage.show();
+                    helpStage.toFront();
+                });
+            }
+        });
+        helpMenu.add(miQuickReference);
 
         MenuItem miVersion = new MenuItem("About version");
         miVersion.addActionListener(new ActionListener() {
@@ -659,9 +774,11 @@ public class SimulationFrame2D extends JFrame
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (start_button.isSelected()) {
+                        resetButton.setEnabled(false);
                         launcher.start();
                     } else {
                         launcher.pause();
+                        resetButton.setEnabled(true);
                     }
                     update_buttons();
                 }});
@@ -736,53 +853,59 @@ public class SimulationFrame2D extends JFrame
 
         /* title & clock */
         JPanel titlepanel = new JPanel(new GridBagLayout());
-        addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, "Map");
+        addJLabel(titlepanel, 0, 0, 1, 1, GridBagConstraints.EAST, "Properties");
+        if (launcher.getPropertiesFile() != null) {
+            File propertiesFile = new File(launcher.getPropertiesFile());
+            addJLabel(titlepanel, 1, 0, 1, 1, propertiesFile.getName());
+        } else {
+            addJLabel(titlepanel, 1, 0, 1, 1, "No properties file");
+        }
+
+        addJLabel(titlepanel, 0, 1, 1, 1, GridBagConstraints.EAST, "Map");
         if (launcher.getNetworkMapFile() != null) {
             File map_file = new File(launcher.getNetworkMapFile());
-            addJLabel(titlepanel, 1, 0, 1, 1, map_file.getName());
+            addJLabel(titlepanel, 1, 1, 1, 1, map_file.getName());
         } else {
-            addJLabel(titlepanel, 1, 0, 1, 1, "No map file");
+            addJLabel(titlepanel, 1, 1, 1, 1, "No map file");
         }
 
-        addJLabel(titlepanel, 0, 1, 1, 1, GridBagConstraints.EAST, "Agent");
+        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, "Generation");
         if (launcher.getGenerationFile() != null) {
             File generation_file = new File(launcher.getGenerationFile());
-            addJLabel(titlepanel, 1, 1, 1, 1, generation_file.getName());
+            addJLabel(titlepanel, 1, 2, 1, 1, generation_file.getName());
         } else {
-            addJLabel(titlepanel, 1, 1, 1, 1, "No generation file");
+            addJLabel(titlepanel, 1, 2, 1, 1, "No generation file");
         }
 
-        addJLabel(titlepanel, 0, 2, 1, 1, GridBagConstraints.EAST, "Scenario");
+        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST, "Scenario");
         if (launcher.getScenarioFile() != null) {
             File scenario_file = new File(launcher.getScenarioFile());
-            addJLabel(titlepanel, 1, 2, 1, 1, scenario_file.getName());
+            addJLabel(titlepanel, 1, 3, 1, 1, scenario_file.getName());
         } else {
-            addJLabel(titlepanel, 1, 2, 1, 1, "No scenario file");
+            addJLabel(titlepanel, 1, 3, 1, 1, "No scenario file");
         }
 
-        addJLabel(titlepanel, 0, 3, 1, 1, GridBagConstraints.EAST, "Pollution");
+        addJLabel(titlepanel, 0, 4, 1, 1, GridBagConstraints.EAST, "Pollution");
         if (launcher.getPollutionFile() != null) {
             File pollution_file = new File(launcher.getPollutionFile());
-            addJLabel(titlepanel, 1, 3, 1, 1, pollution_file.getName());
+            addJLabel(titlepanel, 1, 4, 1, 1, pollution_file.getName());
         } else {
-            addJLabel(titlepanel, 1, 3, 1, 1, "No pollution file");
+            addJLabel(titlepanel, 1, 4, 1, 1, "No pollution file");
         }
 
         clock_label.setHorizontalAlignment(JLabel.CENTER);
         clock_label.setFont(new Font("Lucida", Font.BOLD, 18));
-        addJComponent(titlepanel, 0, 4, 1, 1, GridBagConstraints.CENTER, clock_label);
+        addJComponent(titlepanel, 0, 5, 1, 1, GridBagConstraints.CENTER, clock_label);
 
         time_label.setHorizontalAlignment(JLabel.LEFT);
         time_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        addJComponent(titlepanel, 1, 4, 1, 1, time_label);
+        addJComponent(titlepanel, 1, 5, 1, 1, time_label);
 
         evacuatedCount_label.setHorizontalAlignment(JLabel.LEFT);
         evacuatedCount_label.setFont(new Font("Lucida", Font.ITALIC, 12));
-        addJComponent(titlepanel, 0, 5, 2, 1, GridBagConstraints.WEST, evacuatedCount_label);
+        addJComponent(titlepanel, 0, 6, 2, 1, GridBagConstraints.WEST, evacuatedCount_label);
 
-        JScrollPane scroller = new JScrollPane(titlepanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroller.setPreferredSize(new Dimension(400, 160));
-        top_panel.add(scroller, BorderLayout.NORTH);
+        top_panel.add(titlepanel, BorderLayout.NORTH);
 
         /* scenarios */
         JPanel label_toggle_panel = new JPanel(new GridBagLayout());
@@ -793,11 +916,6 @@ public class SimulationFrame2D extends JFrame
 
         int y = 0;
         for (EventBase event : launcher.getSimulator().getScenario().eventList) {
-            c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = y;
-            c.fill = GridBagConstraints.WEST;
-
             ButtonGroup bgroup = new ButtonGroup();
             class RadioButtonListener implements ActionListener {
                 int index;
@@ -842,24 +960,128 @@ public class SimulationFrame2D extends JFrame
             c.gridy = y;
             label_toggle_panel.add(radio_button, c);
             radio_button.setSelected(true);
+
+            c = new GridBagConstraints();
+            c.gridx = 4;
+            c.gridy = y;
+            c.anchor = GridBagConstraints.WEST;
+            c.insets = new Insets(0, 4, 0, 0);
+            String eventName = event.getClass().getName().replaceAll("^.*\\.|Event$", "");
+            label_toggle_panel.add(new JLabel(eventName), c);
+            if (eventName.equals("Initiate")) {
+                // ここで pauseTime の初期値を設定する
+                pauseTime.copyFrom(event.atTime);
+            }
+
             y++;
         }
-        scroller = new JScrollPane(label_toggle_panel,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroller.setPreferredSize(new Dimension(400, 220));
+        JScrollPane scroller = new JScrollPane(label_toggle_panel,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         top_panel.add(scroller, BorderLayout.CENTER);
 
+        JPanel bottomPanel = new JPanel(new java.awt.GridLayout(0, 1));
+
+        /* Pause */
+
+        JPanel pausePanel = new JPanel(new FlowLayout());
+        pausePanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        pausePanel.add(new JLabel("Pause"));
+        final CardLayout spinnerLayout = new CardLayout();
+        final JPanel spinnerPanel = new JPanel(spinnerLayout);
+        final int offset = TimeZone.getDefault().getRawOffset();
+
+        ButtonGroup pauseGroup = new ButtonGroup();
+        JRadioButton timeButton = new JRadioButton("time");
+        timeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                launcher.setPauseEnabled(true);
+                timeSpinner.setEnabled(true);
+                spinnerLayout.first(spinnerPanel);
+                int time = (int)(((Date)timeSpinner.getValue()).getTime() + offset) / 1000;
+                pauseTime.setTickCount(time - pauseTime.getOriginTimeInt());
+                intSpinner.setValue(pauseTime.getTickCount());
+            }
+        });
+        pauseGroup.add(timeButton);
+        pausePanel.add(timeButton);
+
+        JRadioButton tickCountButton = new JRadioButton("elapsed");
+        tickCountButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                launcher.setPauseEnabled(true);
+                intSpinner.setEnabled(true);
+                spinnerLayout.last(spinnerPanel);
+            }
+        });
+        pauseGroup.add(tickCountButton);
+        pausePanel.add(tickCountButton);
+
+        JRadioButton disabledButton = new JRadioButton("disabled");
+        disabledButton.setSelected(true);
+        disabledButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                launcher.setPauseEnabled(false);
+                timeSpinner.setEnabled(false);
+                intSpinner.setEnabled(false);
+            }
+        });
+        pauseGroup.add(disabledButton);
+        pausePanel.add(disabledButton);
+
+        Date start = new Date(pauseTime.getOriginTimeInt() * 1000L - offset);
+        Date end = new Date((60 * 60 * 24 - 1) * 1000L - offset);
+        timeSpinner = new JSpinner(new SpinnerDateModel(start, start, end, Calendar.SECOND));
+        timeSpinner.setEditor(new JSpinner.DateEditor(timeSpinner, "HH:mm:ss"));
+        timeSpinner.setEnabled(false);
+        timeSpinner.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                int time = (int)(((Date)timeSpinner.getValue()).getTime() + offset) / 1000;
+                pauseTime.setTickCount(time - pauseTime.getOriginTimeInt());
+                intSpinner.setValue(pauseTime.getTickCount());
+            }
+        });
+
+        intSpinner = new JSpinner(new SpinnerNumberModel(pauseTime.getTickCount(), 0, 60 * 60 * 72, 1));
+        intSpinner.setEnabled(false);
+        intSpinner.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                pauseTime.setTickCount((Integer)intSpinner.getValue());
+                int secondOfDay = pauseTime.getOriginTimeInt() + pauseTime.getTickCount();
+                timeSpinner.setValue(new Date(Math.min(secondOfDay, 60 * 60 * 24 - 1) * 1000L - offset));
+            }
+        });
+
+        spinnerPanel.add("timeSpinner", timeSpinner);
+        spinnerPanel.add("intSpinner", intSpinner);
+        pausePanel.add(spinnerPanel);
+
+        // 時刻刻み幅が1秒以外の時は一時停止機能を無効にする
+        if (pauseTime.getTickUnit() != 1.0) {
+            pausePanel.setEnabled(false);
+        }
+        bottomPanel.add(pausePanel);
+
+        /* Reset button */
+
+        JPanel resetPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        if (launcher.getPropertiesFile() == null) {
+            // エディタから起動した場合は名前を変える
+            resetButton.setText("Reset with latest state");
+        }
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                launcher.setResetting(true);
+                if (launcher.isRunning()) {
+                    launcher.pause();
+                }
+                frame.dispose();
+            }});
+        resetPanel.add(resetButton);
+        bottomPanel.add(resetPanel);
+
+        top_panel.add(bottomPanel, BorderLayout.SOUTH);
         control_panel.add(top_panel, BorderLayout.CENTER);
-
-        /* text message */
-        message.setEditable(false);
-        message.setAutoscrolls(true);
-        JScrollPane message_scroller = new JScrollPane(message,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        message_scroller.setPreferredSize(new Dimension(300, 150));
-
-        control_panel.add(message_scroller, BorderLayout.SOUTH);
 
         return control_panel;
     }
@@ -2109,6 +2331,13 @@ public class SimulationFrame2D extends JFrame
 
     public ArrayList<MapArea> getMapAreas() {
         return areas;
+    }
+
+    /**
+     * 一時停止時刻を返す
+     */
+    public SimTime getPauseTime() {
+        return pauseTime;
     }
 
     /**

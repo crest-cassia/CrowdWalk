@@ -27,8 +27,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.media.AudioClip;
+import javafx.scene.transform.Affine;
 
 import org.w3c.dom.Document;
+
+import org.osgeo.proj4j.CoordinateTransform;
 
 import nodagumi.ananPJ.Editor.EditCommand.*;
 import nodagumi.ananPJ.Gui.GsiTile;
@@ -56,7 +59,7 @@ import nodagumi.Itk.ItkXmlUtility;
 /**
  * マップエディタのメイン処理
  */
-public class MapEditor implements MapEditorInterface {
+public class MapEditor {
     /**
      * テキストの描画位置
      */
@@ -171,22 +174,8 @@ public class MapEditor implements MapEditorInterface {
     /**
      * コンストラクタ
      */
-    public MapEditor() {
-        JFXPanel fxPanel = new JFXPanel();  // Platform.runLater() を有効化するために必要
-    }
-
-    /**
-     * コンストラクタ
-     */
     public MapEditor(Settings settings) {
-        super();
-        this.settings = settings;
-    }
-
-    /**
-     * 設定データオブジェクトのセット
-     */
-    public void setSettings(Settings settings) {
+        JFXPanel fxPanel = new JFXPanel();  // JavaFX アプリケーションスレッドを起動するために必要
         this.settings = settings;
     }
 
@@ -242,6 +231,7 @@ public class MapEditor implements MapEditorInterface {
         initNetworkMap();
 
         // シミュレーション結果の同一性を確保するため
+        // TODO: これは既に不要かもしれない
         random.setSeed(properties.getRandseed());
 
         Document doc = null;
@@ -597,6 +587,11 @@ public class MapEditor implements MapEditorInterface {
         frame.getCanvas().repaintLater();
 
         if (groupVolumeChanged) {
+            // root 以外にグループがあればそのグループに移る
+            if (networkMap.getGroups().size() == 2) {
+                initCurrentGroup();
+            }
+
             // グループボタンを再構築する
             frame.updateShowBackgroundGroupMenu();
             frame.updateGroupSelectionPane();
@@ -1415,6 +1410,112 @@ public class MapEditor implements MapEditorInterface {
             }
         }
         endOfCommandBlock();
+    }
+
+    /**
+     * マップ座標の正規化
+     */
+    public void normalizeCoordinates(MapNode node1, MapNode node2, int zone, double node1Longitude, double node1Latitude, double node2Longitude, double node2Latitude, String scaleName, boolean rotationEnabled, boolean lengthCalculating, boolean heightReflecting) {
+        // 経緯度を CrowdWalk 座標に変換する
+        CoordinateTransform transform = GsiTile.createCoordinateTransform("EPSG:4326", GsiTile.JGD2000_JPR_EPSG_NAMES[zone]);
+        java.awt.geom.Point2D jpr1 = GsiTile.transformCoordinate(transform, node1Longitude, node1Latitude);
+        java.awt.geom.Point2D jpr2 = GsiTile.transformCoordinate(transform, node2Longitude, node2Latitude);
+        Point2D point1 = toFxPoint2D(GsiTile.convertJPR2CW(jpr1.getY(), jpr1.getX()));
+        Point2D point2 = toFxPoint2D(GsiTile.convertJPR2CW(jpr2.getY(), jpr2.getX()));
+
+        Point2D nodePoint1 = toFxPoint2D(node1.getPosition());
+        Point2D nodePoint2 = toFxPoint2D(node2.getPosition());
+
+        double angularDifference = 0.0;
+        if (rotationEnabled) {
+            double angle = getAngle(nodePoint1, nodePoint2);
+            double correctAngle = getAngle(point1, point2);
+            angularDifference = correctAngle - angle;
+            Affine affine = new Affine();
+            affine.prependRotation(angularDifference, nodePoint1);
+            nodePoint2 = affine.transform(nodePoint2);
+            Itk.logInfo("Normalize coordinates", "angular_difference = " + angularDifference);
+        }
+
+        Affine affine = new Affine();
+        affine.prependTranslation(-nodePoint1.getX(), -nodePoint1.getY());
+        if (rotationEnabled) {
+            affine.prependRotation(angularDifference);
+        }
+
+        double scaleX = (point2.getX() - point1.getX()) / (nodePoint2.getX() - nodePoint1.getX());
+        double scaleY = (point2.getY() - point1.getY()) / (nodePoint2.getY() - nodePoint1.getY());
+        Itk.logInfo("Normalize coordinates", "scaleX = " + scaleX + ", scaleY = " + scaleY);
+        switch (scaleName) {
+        case "separately":
+            affine.prependScale(scaleX, scaleY);
+            Itk.logInfo("Normalize coordinates", "applied scale = " + scaleName + ", value = " + scaleX + ", " + scaleY);
+            break;
+        case "average":
+            double scale = (scaleX + scaleY) / 2.0;
+            affine.prependScale(scale, scale);
+            Itk.logInfo("Normalize coordinates", "applied scale = " + scaleName + ", value = " + scale);
+            break;
+        case "X":
+            affine.prependScale(scaleX, scaleX);
+            Itk.logInfo("Normalize coordinates", "applied scale = " + scaleName + ", value = " + scaleX);
+            break;
+        case "Y":
+            affine.prependScale(scaleY, scaleY);
+            Itk.logInfo("Normalize coordinates", "applied scale = " + scaleName + ", value = " + scaleY);
+            break;
+        }
+
+        affine.prependTranslation(point1.getX(), point1.getY());
+
+        startOfCommandBlock();
+        for (MapNode node : networkMap.getNodes()) {
+            Point2D point = affine.transform(node.getX(), node.getY());
+            if (! invoke(new MoveNode(node, point.getX(), point.getY()))) {
+                endOfCommandBlock();
+                return;
+            }
+        }
+        if (lengthCalculating) {
+            for (MapLink link : networkMap.getLinks()) {
+                double length = 0.0;
+                if (heightReflecting) {
+                    MapNode fromNode = link.getFrom();
+                    MapNode toNode = link.getTo();
+                    Point3D fromPosition = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
+                    length = fromPosition.distance(toNode.getX(), toNode.getY(), toNode.getHeight());
+                } else {
+                    length = link.getFrom().getPosition().distance(link.getTo().getPosition());
+                }
+                if (! invoke(new SetLength(link, length))) {
+                    endOfCommandBlock();
+                    return;
+                }
+            }
+        }
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group.getZone() != zone) {
+                if (! invoke(new SetZone(group, zone))) {
+                    break;
+                }
+            }
+            if (group.getScale() != 1.0) {
+                if (! invoke(new SetScale(group, 1.0))) {
+                    break;
+                }
+            }
+        }
+        endOfCommandBlock();
+    }
+
+    public static Point2D toFxPoint2D(java.awt.geom.Point2D point) {
+        return new Point2D(point.getX(), point.getY());
+    }
+
+    public static double getAngle(Point2D point1, Point2D point2) {
+        double radian = Math.atan2(point2.getY() - point1.getY(), point2.getX() - point1.getX());
+        double angle = Math.toDegrees(radian);
+        return angle < 0.0 ? 360.0 + angle : angle;
     }
 
     /**

@@ -3,34 +3,18 @@ package nodagumi.ananPJ.Gui;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.awt.Point;
 import java.io.FileInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.TreeMap;
-import javax.imageio.ImageIO;
-
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.TreeMap;
 
 import net.arnx.jsonic.JSON;
 
-import nodagumi.ananPJ.misc.GsiAccessor;
 import nodagumi.ananPJ.misc.JsonicHashMapGetter;
-import nodagumi.ananPJ.NetworkMap.NetworkMap;
-import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.Itk.*;
 
 /**
@@ -258,17 +242,21 @@ public class Coastline extends JsonicHashMapGetter {
             }
             // boundary からはみ出す島は、始点を boundary の外に移動して閉じていない海岸線として扱う
             else if (! clippedIsland.equals(original)) {
-                if (boundary.contains(coordinates.get(0))) {
-                    for (Point2D point : (ArrayList<Point2D>)coordinates.clone()) {
-                        coordinates.remove(0);
-                        coordinates.add(point);
-                        if (! boundary.contains(point)) {
-                            break;
-                        }
+                ArrayList<Point2D> wCoordinates = new ArrayList(coordinates);
+                wCoordinates.addAll(coordinates);
+                int startIndex = -1;
+                for (int idx = 0; idx < wCoordinates.size(); idx++) {
+                    if (! boundary.contains(wCoordinates.get(idx)) && boundary.contains(wCoordinates.get(idx + 1))) {
+                        startIndex = idx;
+                        break;
                     }
                 }
+                ArrayList<Point2D> _coordinates = new ArrayList();
+                for (int idx = 0; idx < coordinates.size() - 1; idx++) {
+                    _coordinates.add(wCoordinates.get(startIndex + idx));
+                }
                 islands.remove(index);
-                coastlines.add(coordinates);
+                coastlines.add(_coordinates);
             }
         }
 
@@ -321,7 +309,7 @@ public class Coastline extends JsonicHashMapGetter {
                 for (int side = 0; side < 4; side++) {
                     if (lineSegment.intersectsLine(boundaryLines[side])) {
                         // 交点
-                        Point2D iPoint = intersection(lineSegment, boundaryLines[side]);
+                        Point2D iPoint = intersection(lineSegment, boundaryLines, side);
                         // 内部 -> 外部
                         if (inside) {
                             dividingLine.add(iPoint);
@@ -344,7 +332,7 @@ public class Coastline extends JsonicHashMapGetter {
                             int otherSide = side + 1;
                             while (otherSide < 4) {
                                 if (lineSegment.intersectsLine(boundaryLines[otherSide])) {
-                                    otherPoint = intersection(lineSegment, boundaryLines[otherSide]);
+                                    otherPoint = intersection(lineSegment, boundaryLines, otherSide);
                                     break;
                                 }
                                 otherSide++;
@@ -548,6 +536,18 @@ public class Coastline extends JsonicHashMapGetter {
             coordinates.remove(length - 1);
         }
         return coordinates;
+    }
+
+    /**
+     * line と boundary の交点座標を求める
+     */
+    public static Point2D intersection(Line2D line, Line2D[] boundaryLines, int side) {
+        Point2D point = intersection(line, boundaryLines[side]);
+        if (side == 0 || side == 2) {
+            return new Point2D.Double(point.getX(), boundaryLines[side].getY1());
+        } else {
+            return new Point2D.Double(boundaryLines[side].getX1(), point.getY());
+        }
     }
 
     /**

@@ -259,6 +259,14 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>node_order_of_evacuated_agents_log</h4>
+ *     <pre>evacuated_agents_log の出力カラムの並び順
+ *
+ *  設定値： ゴールノードを示すタグをカンマで区切って並べる。ゴールノードがすべて揃っている必要はない
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>agent_movement_history_file</h4>
  *     <pre>ゴールまでたどり着いたエージェントのゴールした時点でのログ(?)
  *
@@ -582,6 +590,15 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>osm_conversion_file</h4>
+ *     <pre>  マップエディタで OpenStreetMap データを読み込む際に使用する設定ファイルのパス名
+ *
+ *  設定値： 絶対パス | カレントディレクトリからの相対パス | ファイル名のみ
+ *           (プロパティファイルと同じディレクトリに存在する場合はファイル名のみでも可)
+ *  デフォルト値： なし</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>rotation_angle</h4>
  *     <pre>  マップエディタで表示されるマップの回転角度の初期値
  *
@@ -889,6 +906,27 @@ public class CrowdWalkPropertiesHandler {
             Itk.logError("unknown exception") ;
             Itk.quitByError() ;
         }
+    }
+
+    /**
+     * このオブジェクトのコピーを作成して返す
+     */
+    public CrowdWalkPropertiesHandler clone() {
+        CrowdWalkPropertiesHandler properties = new CrowdWalkPropertiesHandler();
+        properties.prop = prop.clone();
+        properties.propertiesFile = propertiesFile;
+        properties.networkMapFile = networkMapFile;
+        properties.pollutionFile = pollutionFile;
+        properties.generationFile = generationFile;
+        properties.scenarioFile = scenarioFile;
+        properties.fallbackFile = fallbackFile;
+        properties.randseed = randseed;
+        properties.exitCount = exitCount;
+        properties.isAllAgentSpeedZeroBreak = isAllAgentSpeedZeroBreak;
+        if (mentalMapRules != null) {
+            properties.mentalMapRules = mentalMapRules.clone();
+        }
+        return properties;
     }
 
     //--------------------------------------------------

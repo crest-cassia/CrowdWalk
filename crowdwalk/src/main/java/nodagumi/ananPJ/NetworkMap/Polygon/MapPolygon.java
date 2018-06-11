@@ -60,6 +60,27 @@ public class MapPolygon extends OBMapPart {
         this.innerBoundaries = innerBoundaries;
     }
 
+    /**
+     * このオブジェクトのコピーを作成して返す
+     */
+    public MapPolygon clone() {
+        MapPolygon newPolygon = null;
+        if (isTriangleMeshes()) {
+            TriangleMeshes triangleMeshes = new TriangleMeshes(getTriangleMeshes().getCoordinates().getValue());
+            newPolygon = new MapPolygon(ID, z_index, triangleMeshes);
+        } else {
+            ArrayList<InnerBoundary> innerBoundaries = new ArrayList();
+            for (InnerBoundary innerBoundary : this.innerBoundaries) {
+                innerBoundaries.add(innerBoundary);
+            }
+            newPolygon = new MapPolygon(ID, z_index, outerBoundary.clone(), innerBoundaries);
+        }
+        for (String tag : getTags()) {
+            newPolygon.getTags().add(tag);
+        }
+        return newPolygon;
+    }
+
     public NType getNodeType() {
         return NType.POLYGON;
     }
