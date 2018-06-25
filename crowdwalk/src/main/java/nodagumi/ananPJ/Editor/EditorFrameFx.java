@@ -2,6 +2,7 @@ package nodagumi.ananPJ.Editor;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.Thread;
 import java.net.URI;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -75,6 +77,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import net.arnx.jsonic.JSON;
 
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -408,6 +412,12 @@ public class EditorFrameFx {
                 boolean simulationWindowOpen = editor.getProperties().getBoolean("simulation_window_open", false);
                 boolean autoSimulationStart = editor.getProperties().getBoolean("auto_simulation_start", false);
 
+                String filePath = editor.getProperties().getFurnishedPath("camera_2d_file", null);
+                if (filePath != null) {
+                    if (! checkCameraworkVersion(filePath)) {
+                        exit();
+                    }
+                }
                 if (! autoSimulationStart) {
                     totalValidation(false, null);
                 }
@@ -2250,6 +2260,35 @@ public class EditorFrameFx {
         if (result.isPresent() && result.get() == ButtonType.YES) {
             linkPanel.select(links);
         }
+    }
+
+    /**
+     * 2D カメラワークデータのバージョンをチェックする
+     */
+    public boolean checkCameraworkVersion(String filePath) {
+        File file = new File(filePath);
+        if (! file.exists()) {
+            Alert alert = new Alert(AlertType.WARNING, "Camerawork file does not exist: " + filePath, ButtonType.OK);
+            alert.showAndWait();
+            return false;
+        }
+
+        Itk.logInfo("Load camerawork file", filePath);
+        try {
+            JSON json = new JSON(JSON.Mode.TRADITIONAL);
+            ArrayList<Map<String, Object>> jsonObject = json.parse(new FileReader(filePath));
+            for (Map<String, Object> object : jsonObject) {
+                if (object.get("angle") == null) {
+                    Alert alert = new Alert(AlertType.WARNING, "Camerawork file format is old: " + filePath, ButtonType.OK);
+                    alert.showAndWait();
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return true;
     }
 
     /**
