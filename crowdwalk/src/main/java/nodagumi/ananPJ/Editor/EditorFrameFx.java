@@ -274,8 +274,8 @@ public class EditorFrameFx {
 
         int x = settings.get("_editorPositionX", 0);
         int y = settings.get("_editorPositionY", 0);
-        int width = settings.get("_editorWidth", 960);
-        int height = settings.get("_editorHeight", 720);
+        int width = settings.get("_editorWidth", 1400);
+        int height = settings.get("_editorHeight", 768);
         frame.setX(x);
         frame.setY(y);
         frame.setWidth(width);
@@ -390,7 +390,7 @@ public class EditorFrameFx {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                String pos = settings.get("dividerPosition", "");
+                String pos = settings.get("dividerPosition", "0.625");
                 if (! pos.isEmpty()) {
                     splitPane.setDividerPositions(Double.valueOf(pos));
                 }
@@ -1426,7 +1426,7 @@ public class EditorFrameFx {
         String fileName = editor.getNetworkMapFile();
         if (fileName == null || fileName.isEmpty()) {
             String dirName = settings.get("mapDir", "");
-            if (dirName.isEmpty()) {
+            if (dirName.isEmpty() || ! new File(dirName).exists()) {
                 dirName = "./";
             }
             fileChooser.setInitialDirectory(new File(dirName));
@@ -1440,6 +1440,14 @@ public class EditorFrameFx {
         );
         File file = fileChooser.showOpenDialog(frame);
         if (file == null) {
+            return;
+        }
+        try {
+            editor.setDir(file.getParentFile().getCanonicalFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
             return;
         }
         editor.setNetworkMapFile(editor.getRelativePath(file));
@@ -1491,7 +1499,7 @@ public class EditorFrameFx {
         String fileName = editor.getNetworkMapFile();
         if (fileName == null || fileName.isEmpty()) {
             String dirName = settings.get("mapDir", "");
-            if (dirName.isEmpty()) {
+            if (dirName.isEmpty() || ! new File(dirName).exists()) {
                 dirName = "./";
             }
             fileChooser.setInitialDirectory(new File(dirName));
@@ -1510,9 +1518,12 @@ public class EditorFrameFx {
 
         try {
             fileName = file.getCanonicalPath();
+            editor.setDir(file.getParentFile().getCanonicalFile());
         } catch (IOException e) {
             e.printStackTrace();
-            fileName = file.getAbsolutePath();
+            Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+            return;
         }
         editor.setNetworkMapFile(fileName);
         if (! editor.saveMap()) {
