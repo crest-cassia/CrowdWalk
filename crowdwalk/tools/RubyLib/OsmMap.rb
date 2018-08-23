@@ -709,7 +709,12 @@ class OsmMap < MapTown
     ## _pattern_ :: 属性名のパターン。
     def hasProperty(pattern)
       if(pattern.is_a?(String)) then
-        return getProperties()[pattern] ;
+        prop = getProperties() ;
+        if(prop.nil?) then
+          return nil ;
+        else
+          return prop[pattern] ;
+        end
       else
         getProperties().keys.each{|key|
           return getProperties()[key] if(key =~ pattern) ;
@@ -730,14 +735,24 @@ class OsmMap < MapTown
     ## geo object のタイプ。
     ## "LineString" とか "Point" とかが返る。
     def geoType()
-      return getGeometry()["type"] ;
+      geo = getGeometry() ;
+      if(geo.nil?) then
+        return nil ;
+      else
+        return geo["type"] ;
+      end
     end
 
     #------------------------------------------
     #++
     ## Json に含まれる座標値列。(coordinates)
     def coordinatesJson()
-      return getGeometry()["coordinates"] ;
+      geo = getGeometry() ;
+      if(geo.nil?) then
+        return nil ;
+      else
+        return geo["coordinates"] ;
+      end
     end
     
     #------------------------------------------
