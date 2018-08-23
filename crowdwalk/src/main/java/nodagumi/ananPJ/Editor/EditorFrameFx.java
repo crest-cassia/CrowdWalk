@@ -2,6 +2,7 @@ package nodagumi.ananPJ.Editor;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.Thread;
 import java.net.URI;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -75,6 +77,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import net.arnx.jsonic.JSON;
 
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -270,8 +274,8 @@ public class EditorFrameFx {
 
         int x = settings.get("_editorPositionX", 0);
         int y = settings.get("_editorPositionY", 0);
-        int width = settings.get("_editorWidth", 960);
-        int height = settings.get("_editorHeight", 720);
+        int width = settings.get("_editorWidth", 1400);
+        int height = settings.get("_editorHeight", 768);
         frame.setX(x);
         frame.setY(y);
         frame.setWidth(width);
@@ -386,7 +390,7 @@ public class EditorFrameFx {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                String pos = settings.get("dividerPosition", "");
+                String pos = settings.get("dividerPosition", "0.625");
                 if (! pos.isEmpty()) {
                     splitPane.setDividerPositions(Double.valueOf(pos));
                 }
@@ -408,6 +412,12 @@ public class EditorFrameFx {
                 boolean simulationWindowOpen = editor.getProperties().getBoolean("simulation_window_open", false);
                 boolean autoSimulationStart = editor.getProperties().getBoolean("auto_simulation_start", false);
 
+                String filePath = editor.getProperties().getFurnishedPath("camera_2d_file", null);
+                if (filePath != null) {
+                    if (! checkCameraworkVersion(filePath)) {
+                        exit();
+                    }
+                }
                 if (! autoSimulationStart) {
                     totalValidation(false, null);
                 }
@@ -1416,7 +1426,7 @@ public class EditorFrameFx {
         String fileName = editor.getNetworkMapFile();
         if (fileName == null || fileName.isEmpty()) {
             String dirName = settings.get("mapDir", "");
-            if (dirName.isEmpty()) {
+            if (dirName.isEmpty() || ! new File(dirName).exists()) {
                 dirName = "./";
             }
             fileChooser.setInitialDirectory(new File(dirName));
@@ -1430,6 +1440,14 @@ public class EditorFrameFx {
         );
         File file = fileChooser.showOpenDialog(frame);
         if (file == null) {
+            return;
+        }
+        try {
+            editor.setDir(file.getParentFile().getCanonicalFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
             return;
         }
         editor.setNetworkMapFile(editor.getRelativePath(file));
@@ -1481,7 +1499,7 @@ public class EditorFrameFx {
         String fileName = editor.getNetworkMapFile();
         if (fileName == null || fileName.isEmpty()) {
             String dirName = settings.get("mapDir", "");
-            if (dirName.isEmpty()) {
+            if (dirName.isEmpty() || ! new File(dirName).exists()) {
                 dirName = "./";
             }
             fileChooser.setInitialDirectory(new File(dirName));
@@ -1500,9 +1518,12 @@ public class EditorFrameFx {
 
         try {
             fileName = file.getCanonicalPath();
+            editor.setDir(file.getParentFile().getCanonicalFile());
         } catch (IOException e) {
             e.printStackTrace();
-            fileName = file.getAbsolutePath();
+            Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+            return;
         }
         editor.setNetworkMapFile(fileName);
         if (! editor.saveMap()) {
@@ -2250,6 +2271,35 @@ public class EditorFrameFx {
         if (result.isPresent() && result.get() == ButtonType.YES) {
             linkPanel.select(links);
         }
+    }
+
+    /**
+     * 2D カメラワークデータのバージョンをチェックする
+     */
+    public boolean checkCameraworkVersion(String filePath) {
+        File file = new File(filePath);
+        if (! file.exists()) {
+            Alert alert = new Alert(AlertType.WARNING, "Camerawork file does not exist: " + filePath, ButtonType.OK);
+            alert.showAndWait();
+            return false;
+        }
+
+        Itk.logInfo("Load camerawork file", filePath);
+        try {
+            JSON json = new JSON(JSON.Mode.TRADITIONAL);
+            ArrayList<Map<String, Object>> jsonObject = json.parse(new FileReader(filePath));
+            for (Map<String, Object> object : jsonObject) {
+                if (object.get("angle") == null) {
+                    Alert alert = new Alert(AlertType.WARNING, "Camerawork file format is old: " + filePath, ButtonType.OK);
+                    alert.showAndWait();
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return true;
     }
 
     /**

@@ -2154,6 +2154,13 @@ public class MapEditor {
     }
 
     /**
+     * マップファイルを読み書きするディレクトリをセットする
+     */
+    public void setDir(File file) {
+        dir = file;
+    }
+
+    /**
      * マップファイルを読み書きするディレクトリを取得する
      */
     public File getDir() {

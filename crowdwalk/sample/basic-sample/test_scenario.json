@@ -1,0 +1,12 @@
+[
+    {
+        "atTime"    : "07:30:00",
+        "type"      : "Initiate"
+    },
+    {
+        "atTime"    : "07:30:50",
+        "type"      : "AddTag",
+        "placeTag"  : "HALLWAY_1",
+        "noticeTag" : "RESUME"
+    }
+]

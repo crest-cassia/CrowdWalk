@@ -17,6 +17,12 @@ import nodagumi.ananPJ.Agents.AgentBase;
  */
 public class TriangleAgent extends RoundAgent {
     /**
+     * 三角形ポリゴンのキャッシュ
+     */
+    private Polygon2D triangleCache = null;
+    private double lastSize = 0.0;
+
+    /**
      * コンストラクタ
      */
     public TriangleAgent() {}
@@ -26,7 +32,7 @@ public class TriangleAgent extends RoundAgent {
      */
     public void draw(AgentBase agent, Graphics2D g2) {
         double scale = g2.getTransform().getScaleX();
-        Point2D pos = agent.getPosition();
+        Point2D pos = panel.calcRotatedPoint(agent.getPosition());
         Vector3D swing = agent.getSwing();
         double size = frame.getAgentSize() / scale;
         double x = pos.getX() + swing.getX();
@@ -35,7 +41,7 @@ public class TriangleAgent extends RoundAgent {
 
         AffineTransform at = g2.getTransform();
         g2.translate(x, y);
-        g2.rotate(angle + Math.PI / 2.0);
+        g2.rotate(Math.toRadians(Math.toDegrees(angle + Math.PI / 2.0) + panel.getAngle()));
         g2.setColor(getAgentColor(agent));
         g2.fill(makeTriangle(size));
         g2.setTransform(at);
@@ -48,7 +54,7 @@ public class TriangleAgent extends RoundAgent {
         drawLabel(agent, g2, panel.HOVER_COLOR, panel.HOVER_BG_COLOR);
 
         double scale = g2.getTransform().getScaleX();
-        Point2D pos = agent.getPosition();
+        Point2D pos = panel.calcRotatedPoint(agent.getPosition());
         Vector3D swing = agent.getSwing();
         double size = hoverSize / scale;
         double x = pos.getX() + swing.getX();
@@ -57,7 +63,7 @@ public class TriangleAgent extends RoundAgent {
 
         AffineTransform at = g2.getTransform();
         g2.translate(x, y);
-        g2.rotate(angle + Math.PI / 2.0);
+        g2.rotate(Math.toRadians(Math.toDegrees(angle + Math.PI / 2.0) + panel.getAngle()));
         g2.setStroke(new BasicStroke((float)(3.0 / scale)));
         g2.setColor(panel.HOVER_COLOR);
         g2.draw(makeTriangle(size));
@@ -68,6 +74,10 @@ public class TriangleAgent extends RoundAgent {
      * 三角形ポリゴンを生成する
      */
     protected Polygon2D makeTriangle(double size) {
+        if (size == lastSize) {
+            return triangleCache;
+        }
+
         double height = Math.sqrt(size * size - Math.pow(size / 2.0, 2.0));
         double x1 = 0.0;
         double y1 = -2.0 * height / 3.0;
@@ -80,6 +90,9 @@ public class TriangleAgent extends RoundAgent {
         polygon.addPoint((float)x1, (float)y1);
         polygon.addPoint((float)x2, (float)y2);
         polygon.addPoint((float)x3, (float)y3);
+
+        lastSize = size;
+        triangleCache = polygon;
 
         return polygon;
     }

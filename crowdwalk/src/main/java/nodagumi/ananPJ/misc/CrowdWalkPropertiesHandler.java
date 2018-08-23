@@ -240,17 +240,6 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>random_navigation</h4>
- *     <pre>  random_navigation モードの ON/OFF
- *  エージェントは通常、ゴールまでの最短距離を進むようになっているが、そのように進まないエージェントを
- *  発生させるかどうかを設定することができる。
- *  ※randseedの値を変更しないと、エージェントは同じ挙動をする。
- *
- *  設定値： true | false
- *  デフォルト値： false</pre>
- *   </li>
- *
- *   <li>
  *     <h4>evacuated_agents_log_file</h4>
  *     <pre>ゴールノード別の脱出エージェント数をステップごとに記録するログ
  *

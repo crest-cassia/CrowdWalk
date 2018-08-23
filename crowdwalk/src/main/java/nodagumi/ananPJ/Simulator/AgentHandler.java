@@ -7,6 +7,7 @@ import java.lang.Thread;
 import java.lang.Runnable;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
@@ -282,6 +283,16 @@ public class AgentHandler {
      * output log when each agent evacuated.
      */
     private Logger agentMovementHistoryLogger = null;
+
+    /**
+     * チェックポイントリスト
+     */
+    private List<String> checkpoints = null;
+
+    /**
+     * チェックポイントの通過時刻
+     */
+    private HashMap<AgentBase, HashMap<String, SimTime>> checkpointPassingTimes = null;
 
     /**
      * agentMovementHistoryLogger の CSV フォーマットは以下の通り。
@@ -1119,6 +1130,9 @@ public class AgentHandler {
                     } else {
                         isAllAgentSpeedZero &= (agent.getSpeed() <= zeroSpeedThreshold) ;
                     }
+                    if (checkpointPassingTimes != null) {
+                        savePassingTime(agent, currentTime);
+                    }
                 }
             }
         }
@@ -1903,6 +1917,53 @@ public class AgentHandler {
      * AgentMovementHistoryLogger の初期化。
      */
     private void initAgentMovementHistoryLogger() {
+        // 出力カラムにチェックポイント(ノード)の通過時刻を追加する
+        String _checkpoints = simulator.getProperties().getString("checkpoints_of_agent_movement_history_log", "").trim();
+        if (! _checkpoints.isEmpty()) {
+            Term fallback = SetupFileInfo.filterFallbackTerm(simulator.getFallbackParameters(), "agent");
+            double emptySpeed = SetupFileInfo.fetchFallbackDouble(fallback, "emptySpeed", 0.0);
+            if (emptySpeed == 0.0) {
+                Itk.logError("can not setup Logger", "fallback parameter error: /agent/emptySpeed");
+                Itk.quitByError();
+            }
+
+            checkpoints = Arrays.asList(_checkpoints.split("\\s*,\\s*"));
+            checkpointPassingTimes = new HashMap();
+            for (String checkpoint : checkpoints) {
+                // checkpoint が適切かどうかを検査する
+                int counter = 0;
+                for (MapNode node : simulator.getNodes()) {
+                    if (node.hasTag(checkpoint)) {
+                        counter++;
+                        // このノードにつながったリンクが1ステップで通過可能な長さではないこと(tickUnitは1.0とする)
+                        for (MapLink link : node.getLinks()) {
+                            if (link.getLength() < emptySpeed) {
+                                Itk.logError("can not setup Logger", "There is a link of a length that can passing in 1 step: " + checkpoint);
+                                Itk.quitByError();
+                            }
+                        }
+                    }
+                }
+                if (counter == 0) {
+                    Itk.logError("can not setup Logger", "Checkpoint node does not exist: " + checkpoint);
+                    Itk.quitByError();
+                // } else if (counter > 1) {
+                //     Itk.logError("can not setup Logger", "There are multiple checkpoint nodes: " + checkpoint);
+                //     Itk.quitByError();
+                }
+
+                agentMovementHistoryLoggerFormatter.addColumn(
+                    agentMovementHistoryLoggerFormatter.new Column(checkpoint) {
+                        public String value(AgentBase agent, Object timeObj, Object agentHandlerObj) {
+                            HashMap<String, SimTime> checkpointPassingTime = checkpointPassingTimes.get(agent);
+                            SimTime passingTime = checkpointPassingTime.get(checkpoint);
+                            return passingTime == null ? "" : "" + (int)passingTime.getRelativeTime();
+                        }
+                    }
+                );
+            }
+        }
+
         try {
             String agentHistoryPath =
                 simulator.getProperties()
@@ -1937,6 +1998,29 @@ public class AgentHandler {
      */
     public void closeAgentMovementHistorLogger() {
         closeLogger(agentMovementHistoryLogger);
+    }
+
+    /**
+     * AgentMovementHistoryLogger 用にチェックポイント通過時刻を記録する
+     */
+    private void savePassingTime(AgentBase agent, SimTime currentTime) {
+        MapNode node = agent.getPrevNode();
+        if (node == null) {
+            return;
+        }
+        HashMap<String, SimTime> checkpointPassingTime = checkpointPassingTimes.get(agent);
+        if (checkpointPassingTime == null) {
+            checkpointPassingTime = new HashMap<String, SimTime>();
+            checkpointPassingTimes.put(agent, checkpointPassingTime);
+        }
+        for (String checkpoint : checkpoints) {
+            if (! checkpointPassingTime.containsKey(checkpoint)) {
+                if (node.hasTag(checkpoint)) {
+                    checkpointPassingTime.put(checkpoint, currentTime);
+                    break;
+                }
+            }
+        }
     }
 
     //------------------------------------------------------------

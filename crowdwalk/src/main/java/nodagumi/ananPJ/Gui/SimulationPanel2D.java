@@ -12,11 +12,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.apache.batik.ext.awt.geom.Polygon2D;
 
@@ -52,6 +51,7 @@ import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
+import nodagumi.ananPJ.NetworkMap.Polygon.Coordinates;
 import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.NetworkMap.Polygon.OuterBoundary;
 import nodagumi.ananPJ.NetworkMap.Polygon.InnerBoundary;
@@ -119,29 +119,44 @@ public class SimulationPanel2D extends JPanel {
     private ArrayList<GsiTile> backgroundMapTiles = null;
 
     /**
-     * 背景地図のX座標の調整値
-     */
-    private double backgroundMapAdjustX = 0.0;
-
-    /**
-     * 背景地図のY座標の調整値
-     */
-    private double backgroundMapAdjustY = 0.0;
-
-    /**
      * 背景地図の色の濃さ
      */
     private double colorDepthOfBackgroundMap = 1.0;
 
     /**
-     * 描画前に平行移動する距離
-     */
-    private double tx = 0.0, ty = 0.0;
-
-    /**
      * 描画スケール
      */
     private double scale = 1.0;
+
+    /**
+     * 回転角度
+     */
+    private double angle = 0.0;
+
+    /**
+     * 画面の回転角度が更新されたフラグ
+     */
+    private boolean angleUpdated = false;
+
+    /**
+     * 描画前に平行移動する距離
+     */
+    private Point2D translate = new Point2D.Double(0.0, 0.0);
+
+    /**
+     * 回転を加えたノード座標を保持する
+     */
+    private HashMap<MapNode, Point2D> rotatedNodePoints = new HashMap();
+
+    /**
+     * 回転を加えたリンクの Line2D を保持する
+     */
+    private HashMap<MapLink, Line2D> rotatedLinkLines = new HashMap();
+
+    /**
+     * 回転を加えたエリアの Path2D を保持する
+     */
+    private HashMap<MapArea, Path2D> rotatedAreaPaths = new HashMap();
 
     /**
      * ASCIIキャラクタフォントのデフォルトスケール時の文字幅
@@ -269,6 +284,11 @@ public class SimulationPanel2D extends JPanel {
     /**
      * 平面ポリゴン
      */
+    private ArrayList<MapPolygon> mapPolygons = new ArrayList();
+
+    /**
+     * 平面ポリゴンのパス
+     */
     private ArrayList<Path2D> planePolygons = new ArrayList();
 
     /**
@@ -370,6 +390,12 @@ public class SimulationPanel2D extends JPanel {
             System.exit(1);
         }
 
+        // マップの回転を反映したノード座標の準備
+        recalcRotatedNodes();
+
+        // マップの回転を反映したエリアの Path2D の準備
+        recalcRotatedAreas();
+
         polygons = createPolygons(networkMap.getLinks());
         // ポリゴンを除いたリンクのリスト
         for (MapLink link : frame.getLinks()) {
@@ -377,6 +403,9 @@ public class SimulationPanel2D extends JPanel {
                 regularLinks.add(link);
             }
         }
+
+        // マップの回転を反映したリンクの Line2D の準備
+        recalcRotatedLinks();
 
         // 海面描画の準備
         Coastline coastline = frame.getLauncher().getCoastline();
@@ -390,7 +419,6 @@ public class SimulationPanel2D extends JPanel {
         }
 
         // 平面ポリゴンの準備
-        ArrayList<MapPolygon> mapPolygons = new ArrayList();
         for (MapPolygon polygon : networkMap.getPolygons()) {
             if (polygon.isPlanePolygon()) {
                 mapPolygons.add(polygon);
@@ -472,7 +500,7 @@ public class SimulationPanel2D extends JPanel {
             // 収集した MapNode でポリゴンオブジェクトを生成する
             Polygon2D polygon = new Polygon2D();
             for (MapNode node : polygonNodes) {
-                polygon.addPoint((float)node.getX(), (float)node.getY());
+                polygon.addPoint((float)getRotatedX(node), (float)getRotatedY(node));
             }
             polygons.put(tag, polygon);
         }
@@ -480,29 +508,55 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
-     * マウスカーソル位置を基準にしてズームイン/ズームアウトする.
+     * マウスカーソル位置を基準にズームイン/ズームアウトする
      */
-    public void zoom(int z) {
-        double scaleOld = scale;
+    public void zoom(double x, double y, int wheelRotation, boolean controlDown) {
+        Point2D origin = add(translate, -x, -y);
+        double ox = origin.getX() / scale;
+        double oy = origin.getY() / scale;
 
-        double r;
-        if (z > 0) {
-            r = 0.8;
-        } else {
-            r = 1.25;
+        if (wheelRotation < 0) {
+            scale *= (controlDown ? 1.01 : 1.1);
+        } else if (wheelRotation > 0) {
+            scale /= (controlDown ? 1.01 : 1.1);
+        }
+        scale = Math.min(scale, 100.0);
+        scale = Math.max(scale, 0.01);
+        frame.setStatusText("Scale: " + scale);
+
+        translate = new Point2D.Double(ox * scale + x, oy * scale + y);
+    }
+
+    /**
+     * マウスカーソル位置を基準に画面を回転する
+     */
+    public void rotate(double x, double y, double angle) {
+        if (angle < 0.0) {
+            angle += 360.0;
+        } else if (angle >= 360.0) {
+            angle -= 360.0;
         }
 
-        z = Math.abs(z);
-        for (int i = 0; i < z; i++) {
-            scale *= r;
-        }
-        
-        if (scale > 100.0) scale = 100.0;
-        if (scale < 0.01) scale = 0.01;
+        Point2D mapPoint = convertToOriginal(pointConvertCanvasToMap(x, y));
+        this.angle = angle;
+        Point2D point = calcRotatedPoint(mapPoint);
+        translate = new Point2D.Double(x - point.getX() * scale, y - point.getY() * scale);
 
-        //TODO: needs calculation for rotation
-        tx += frame.mousePoint.getX() * (scaleOld - scale);
-        ty += frame.mousePoint.getY() * (scaleOld - scale);
+        frame.setStatusText("Rotation angle: " + angle);
+        angleUpdated = true;
+    }
+
+    /**
+     * マウスカーソル位置を基準に画面を回転する
+     */
+    public void rotate(double x, double y, int wheelRotation, boolean controlDown) {
+        double delta = controlDown ? 0.1 : 1.0;     // Control キーが押されていたら 0.1 度刻み
+
+        if (wheelRotation < 0) {
+            rotate(x, y, angle - delta);
+        } else if (wheelRotation > 0) {
+            rotate(x, y, angle + delta);
+        }
     }
 
     /**
@@ -520,93 +574,330 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
+     * 回転角度を指定する
+     */
+    public void setAngle(double angle) {
+        if (angle != this.angle) {
+            this.angle = angle;
+            angleUpdated = true;
+        }
+    }
+
+    /**
+     * 回転角度を返す
+     */
+    public double getAngle() {
+        return angle;
+    }
+
+    /**
      * マップをスクロールする
      */
     public void scroll(int dx, int dy) {
-        tx += dx;
-        ty += dy;
+        translate = add(translate, (double)dx, (double)dy);
     }
 
     /**
      * 描画前に平行移動する距離を指定する
      */
-    public void setPosition(double dx, double dy) {
-        tx = dx;
-        ty = dy;
+    public void setPosition(double x, double y) {
+        translate = new Point2D.Double(x * scale, y * scale);
     }
 
     /**
      * 視点座標を返す
      */
     public Point2D getViewPosition() {
-        return new Point2D.Double(tx, ty);
+        return new Point2D.Double(translate.getX() / scale, translate.getY() / scale);
     }
 
     /**
      * マップをセンタリングする
      */
     public void centering(boolean withScaling) {
-        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
-        // ※Double.MIN_VALUE が何故か正の値と判定されることがあるため Long.MIN_VALUE で代用した
-        double maxX = (double)Long.MIN_VALUE, maxY = (double)Long.MIN_VALUE;
-        for (MapNode node : networkMap.getNodes()) {
-            minX = Math.min(minX, node.getX());
-            maxX = Math.max(maxX, node.getX());
-            minY = Math.min(minY, node.getY());
-            maxY = Math.max(maxY, node.getY());
+        if (angle != 0.0) {
+            angle = 0.0;
+            angleUpdated = true;
         }
-        if (minX == Double.MAX_VALUE) {
-            tx = 0.0;
-            ty = 0.0;
-            scale = 1.0;
+
+        Rectangle2D bounds = calcRotatedMapRectangle();
+        double cx = bounds.getMinX() + bounds.getWidth() / 2.0;
+        double cy = bounds.getMinY() + bounds.getHeight() / 2.0;
+
+        // map is empty
+        if (cx == 0.0 && cy == 0.0) {
+            if (withScaling) {
+                scale = 1.0;
+            }
+            translate = new Point2D.Double(getWidth() / 2, getHeight() / 2);
             return;
         }
 
         if (withScaling) {
-            double width = maxX - minX;
-            double height = maxY - minY;
-            double scaleX, scaleY;
+            int centeringMargin = 0;
             if (frame.isMarginAdded()) {
-                scaleX = (getWidth() - CENTERING_MARGIN * 2) / width;
-                scaleY = (getHeight() - CENTERING_MARGIN * 2) / height;
-            } else {
-                scaleX = getWidth() / width;
-                scaleY = getHeight() / height;
+                centeringMargin = CENTERING_MARGIN;
             }
+            double scaleX = (getWidth() - centeringMargin * 2) / bounds.getWidth();
+            double scaleY = (getHeight() - centeringMargin * 2) / bounds.getHeight();
             scale = Math.min(scaleX, scaleY);
         }
 
-        tx = -(minX + maxX) / (2) * scale + getWidth() / 2;
-        ty = -(minY + maxY) / (2) * scale + getHeight() / 2;
+        // -(マップの中心座標に相当するCanvas座標)
+        translate = new Point2D.Double(-cx * scale, -cy * scale);
+        // 表示位置をCanvasの中央に合わせる
+        translate = add(translate, getWidth() / 2.0, getHeight() / 2.0);
     }
 
-    /* display to theoretical value */
-    /* this method is called by zoom relate function */  
-    public Point2D revCalcPos(int x, int y) {
-        Point point_on_panel = SwingUtilities.convertPoint(null, x, y, this);
-        
-        AffineTransform trans = new AffineTransform();
-        trans.translate(tx, ty);
-        trans.scale(scale, scale);
+    /**
+     * キャンバス座標をマップ座標に変換する
+     */
+    public final Point2D pointConvertCanvasToMap(double x, double y) {
+        Point2D origin = add(translate, -x, -y);
+        return new Point2D.Double(-origin.getX() / scale, -origin.getY() / scale);
+    }
 
-        try {
-            trans.invert();
-        } catch (NoninvertibleTransformException e) {
-            e.printStackTrace();
+    /**
+     * 点 p1 に p2 を加算した座標を返す
+     */
+    public final Point2D add(Point2D p1, Point2D p2) {
+        return new Point2D.Double(p1.getX() + p2.getX(), p1.getY() + p2.getY());
+    }
+
+    /**
+     * 点 p1 に x, y を加算した座標を返す
+     */
+    public final Point2D add(Point2D p1, double x, double y) {
+        return new Point2D.Double(p1.getX() + x, p1.getY() + y);
+    }
+
+    /**
+     * マップの回転を反映した座標を求める
+     */
+    public final Point2D calcRotatedPoint(double x, double y) {
+        double r = Math.toRadians(angle);
+        return new Point2D.Double(x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r));
+    }
+
+    /**
+     * マップの回転を反映した座標を求める
+     */
+    public final Point2D calcRotatedPoint(Point2D point) {
+        return calcRotatedPoint(point.getX(), point.getY());
+    }
+
+    /**
+     * マップの回転を反映した座標から元の座標を求める
+     */
+    public final Point2D convertToOriginal(double x, double y) {
+        double r = Math.toRadians(-angle);
+        return new Point2D.Double(x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r));
+    }
+
+    /**
+     * マップの回転を反映した座標から元の座標を求める
+     */
+    public Point2D convertToOriginal(Point2D point) {
+        return convertToOriginal(point.getX(), point.getY());
+    }
+
+    /**
+     * マップの回転を反映したノード座標を再計算する
+     */
+    private void recalcRotatedNodes() {
+        double r = Math.toRadians(angle);
+        rotatedNodePoints.clear();
+        for (MapNode node : networkMap.getNodes()) {
+            double x = node.getX() * Math.cos(r) - node.getY() * Math.sin(r);
+            double y = node.getX() * Math.sin(r) + node.getY() * Math.cos(r);
+            rotatedNodePoints.put(node, new Point2D.Double(x, y));
         }
-        return trans.transform(new Point2D.Double(point_on_panel.getX(), point_on_panel.getY()), null);
+    }
+
+    /**
+     * マップの回転を反映したノード座標を取得する
+     */
+    public final Point2D getRotatedPoint(MapNode node) {
+        return rotatedNodePoints.get(node);
+    }
+
+    /**
+     * マップの回転を反映したノード座標の X を取得する
+     */
+    public final double getRotatedX(MapNode node) {
+        return rotatedNodePoints.get(node).getX();
+    }
+
+    /**
+     * マップの回転を反映したノード座標の Y を取得する
+     */
+    public final double getRotatedY(MapNode node) {
+        return rotatedNodePoints.get(node).getY();
+    }
+
+    /**
+     * マップの回転を反映したリンクの Line2D を再計算する
+     */
+    private void recalcRotatedLinks() {
+        rotatedLinkLines.clear();
+        for (MapLink link : regularLinks) {
+            rotatedLinkLines.put(link, new Line2D.Double(getRotatedPoint(link.getFrom()), getRotatedPoint(link.getTo())));
+        }
+    }
+
+    /**
+     * マップの回転を反映したエリアの Path2D を再計算する
+     */
+    private void recalcRotatedAreas() {
+        rotatedAreaPaths.clear();
+        for (MapArea area : networkMap.getAreas()) {
+            Rectangle2D bounds = (Rectangle2D)area.getShape();
+            Path2D path = new Path2D.Double();
+
+            Point2D point = calcRotatedPoint(bounds.getMinX(), bounds.getMinY());
+            path.moveTo(point.getX(), point.getY());
+            point = calcRotatedPoint(bounds.getMaxX(), bounds.getMinY());
+            path.lineTo(point.getX(), point.getY());
+            point = calcRotatedPoint(bounds.getMaxX(), bounds.getMaxY());
+            path.lineTo(point.getX(), point.getY());
+            point = calcRotatedPoint(bounds.getMinX(), bounds.getMaxY());
+            path.lineTo(point.getX(), point.getY());
+            path.closePath();
+            rotatedAreaPaths.put(area, path);
+        }
+    }
+
+    /**
+     * マップの回転を反映した海面座標を再計算する
+     */
+    private void recalcRotatedCoastlines() {
+        Coastline coastline = frame.getLauncher().getCoastline();
+        if (coastline != null) {
+            outerCoastlines.clear();
+            innerCoastlines.clear();
+            for (ArrayList<Point2D> boundary : coastline.getOuterBoundaries()) {
+                outerCoastlines.add(pointListToPath2D(boundary));
+            }
+            for (ArrayList<Point2D> boundary : coastline.getIslands()) {
+                innerCoastlines.add(pointListToPath2D(boundary));
+            }
+        }
+    }
+
+    /**
+     * マップの回転を反映して座標リストから Path2D を作成する.
+     *
+     * 先頭と末尾の座標が同じならば末尾の座標は除外する
+     */
+    private Path2D pointListToPath2D(ArrayList<Point2D> coordinates) {
+        int length = coordinates.size();
+        if (length > 1 && coordinates.get(0).equals(coordinates.get(length - 1))) {
+            length--;
+        }
+        Path2D path = new Path2D.Double();
+        for (int index = 0; index < length; index++) {
+            Point2D point = calcRotatedPoint(coordinates.get(index));
+            if (path.getCurrentPoint() == null) {
+                path.moveTo(point.getX(), point.getY());
+            } else {
+                path.lineTo(point.getX(), point.getY());
+            }
+        }
+        path.closePath();
+        return path;
+    }
+
+    /**
+     * マップの回転を反映した平面ポリゴン座標を再計算する
+     */
+    private void recalcRotatedPlanePolygons() {
+        planePolygons.clear();
+        for (MapPolygon polygon : mapPolygons) {
+            planePolygons.add(convertToPath2D(polygon.getOuterBoundary().getCoordinates()));
+            for (InnerBoundary innerBoundary : polygon.getInnerBoundaries()) {
+                planePolygons.add(convertToPath2D(innerBoundary.getCoordinates()));
+            }
+        }
+    }
+
+    /**
+     * マップの回転を反映して頂点座標を Path2D に変換する
+     */
+    private Path2D convertToPath2D(Coordinates coordinates) {
+        Path2D path = new Path2D.Double();
+        if (! coordinates.getPoints2D().isEmpty()) {
+            for (Point2D point : coordinates.getPoints2D()) {
+                Point2D rotatedPoint = calcRotatedPoint(point);
+                if (path.getCurrentPoint() == null) {
+                    path.moveTo(rotatedPoint.getX(), rotatedPoint.getY());
+                } else {
+                    path.lineTo(rotatedPoint.getX(), rotatedPoint.getY());
+                }
+            }
+            path.closePath();
+        }
+        return path;
+    }
+
+    /**
+     * マップに外接する矩形を算出する
+     */
+    public Rectangle2D calcRotatedMapRectangle() {
+        double north = 0.0;
+        double south = 0.0;
+        double west = 0.0;
+        double east = 0.0;
+        for (MapNode node : networkMap.getNodes()) {
+            Point2D point = calcRotatedPoint(node.getX(), node.getY());
+            if (north == 0.0 && south == 0.0) {
+                north = point.getY();
+                south = point.getY();
+                west = point.getX();
+                east = point.getX();
+            }
+            if (point.getY() < north) {
+                north = point.getY();
+            }
+            if (point.getY() > south) {
+                south = point.getY();
+            }
+            if (point.getX() < west) {
+                west = point.getX();
+            }
+            if (point.getX() > east) {
+                east = point.getX();
+            }
+        }
+        return new Rectangle2D.Double(west, north, east - west, south - north);
+    }
+
+    /**
+     * リンクが矩形領域の内部と交差しているか?
+     */
+    private boolean intersectsLine(Rectangle2D rectangle, MapLink link) {
+        return rectangle.intersectsLine(
+            getRotatedX(link.getFrom()), getRotatedY(link.getFrom()),
+            getRotatedX(link.getTo()), getRotatedY(link.getTo())
+        );
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (angleUpdated) {
+            recalcRotatedNodes();
+            recalcRotatedLinks();
+            recalcRotatedAreas();
+            polygons = createPolygons(networkMap.getLinks());
+            recalcRotatedCoastlines();
+            recalcRotatedPlanePolygons();
+            angleUpdated = false;
+        }
 
         // viewArea を使って表示範囲外の無駄な描画処理を省く
-        Dimension frameSize = new Dimension();
-        frame.getSize(frameSize);
-        Point2D position = revCalcPos(0, 0);
-        Point2D size = revCalcPos(frameSize.width, frameSize.height);
-        Rectangle2D viewArea = new Rectangle2D.Double(position.getX(), position.getY(), (size.getX() - position.getX()) + 1, (size.getY() - position.getY()) + 1);
+        Point2D upperLeft = pointConvertCanvasToMap(0.0, 0.0);
+        Point2D lowerRight = pointConvertCanvasToMap(getWidth(), getHeight());
+        Rectangle2D viewArea = new Rectangle2D.Double(upperLeft.getX(), upperLeft.getY(), lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY());
 
         Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -630,8 +921,9 @@ public class SimulationPanel2D extends JPanel {
         fontDescent = originalDescent / scale;
         fontLeading = originalLeading / scale;
 
-        g2.translate(tx, ty);
+        g2.translate(translate.getX(), translate.getY());
         g2.scale(scale, scale);
+
         setScaleFixedFont(g2, FONT_NAME, Font.PLAIN, 14);
 
         // 海面の描画
@@ -695,7 +987,7 @@ public class SimulationPanel2D extends JPanel {
         /* actual objects */
         if (showLinks) {
             for (MapLink link : regularLinks) {
-                if (viewArea.intersectsLine(link.getLine2D())) {
+                if (intersectsLine(viewArea, link)) {
                     drawLink(link, g2, showLinkLabels, false);
                 }
             }
@@ -703,7 +995,7 @@ public class SimulationPanel2D extends JPanel {
         if (showNodes) {
             g2.setStroke(new BasicStroke((float)(1.0 / scale)));
             for (MapNode node : frame.getNodes()) {
-                if (viewArea.contains(node.getX(), node.getY())) {
+                if (viewArea.contains(getRotatedX(node), getRotatedY(node))) {
                     drawNode(node, g2, showNodeLabels, false);
                 }
             }
@@ -726,7 +1018,7 @@ public class SimulationPanel2D extends JPanel {
         if (hoverArea != null) {
             drawHoverArea(hoverArea, g2);
         }
-        if (hoverAgent != null) {
+        if (hoverAgent != null && ! hoverAgent.isEvacuated()) {
             getAgentView(hoverAgent).drawHover(hoverAgent, g2);
         }
 
@@ -754,8 +1046,8 @@ public class SimulationPanel2D extends JPanel {
      * 現在の1ドットの幅(m)を取得する
      */
     public double getWidthOf1dot() {
-        Point2D upperLeft = revCalcPos(0, 0);
-        Point2D lowerRight = revCalcPos(getWidth(), getHeight());
+        Point2D upperLeft = pointConvertCanvasToMap(0.0, 0.0);
+        Point2D lowerRight = pointConvertCanvasToMap(getWidth(), getHeight());
         return (lowerRight.getX() - upperLeft.getX()) / getWidth();
     }
 
@@ -773,7 +1065,6 @@ public class SimulationPanel2D extends JPanel {
         g2.fill(polygon);
 
         // ポリゴン間に隙間が出来てしまうのを防ぐ
-        double scale = g2.getTransform().getScaleX();
         g2.setStroke(new BasicStroke((float)getWidthOf1dot(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
         g2.draw(polygon);
     }
@@ -781,15 +1072,16 @@ public class SimulationPanel2D extends JPanel {
     /**
      * ノードを描画する
      */
-    public void drawNode(MapNode node, Graphics2D g, boolean showLabel, boolean isSymbolic) {
+    public void drawNode(MapNode node, Graphics2D g2, boolean showLabel, boolean isSymbolic) {
         double diameter = 0.0;
+        Point2D point = rotatedNodePoints.get(node);
         NodeAppearance2D nodeAppearance = getNodeAppearance(node);
         if (nodeAppearance != null) {
-            g.setColor(nodeAppearance.color);
+            g2.setColor(nodeAppearance.color);
             diameter = nodeAppearance.diameter;
-            double x = node.getX() - diameter / 2.0;
-            double y = node.getY() - diameter / 2.0;
-            g.fill(new Ellipse2D.Double(x, y, diameter, diameter));
+            double x = point.getX() - diameter / 2.0;
+            double y = point.getY() - diameter / 2.0;
+            g2.fill(new Ellipse2D.Double(x, y, diameter, diameter));
         }
 
         if (showLabel) {
@@ -797,8 +1089,8 @@ public class SimulationPanel2D extends JPanel {
             if (! text.isEmpty()) {
                 double cx = node.getX();
                 double cy = node.getY() - diameter / 2.0;
-                g.setColor(Color.darkGray);
-                drawText(g, cx, cy, TextPosition.UPPER_CENTER, text);
+                g2.setColor(Color.darkGray);
+                drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text);
             }
         }
     }
@@ -808,6 +1100,7 @@ public class SimulationPanel2D extends JPanel {
      */
     public void drawHoverNode(MapNode node, Graphics2D g2) {
         double diameter = 0.0;
+        Point2D point = rotatedNodePoints.get(node);
         NodeAppearance2D nodeAppearance = getNodeAppearance(node);
         if (nodeAppearance != null) {
             diameter = nodeAppearance.diameter;
@@ -821,19 +1114,17 @@ public class SimulationPanel2D extends JPanel {
             drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, HOVER_BG_COLOR);
         }
 
-        double scale = g2.getTransform().getScaleX();
         g2.setStroke(new BasicStroke((float)(3.0 / scale)));
         diameter = 8.0 / scale;
-        double x = node.getX() - diameter / 2.0;
-        double y = node.getY() - diameter / 2.0;
+        double x = point.getX() - diameter / 2.0;
+        double y = point.getY() - diameter / 2.0;
         g2.draw(new Ellipse2D.Double(x, y, diameter, diameter));
     }
     
     /**
      * リンクを描画する
      */
-    public void drawLink(MapLink link, Graphics2D g, boolean show_label, boolean isSymbolic) {
-        double scale = g.getTransform().getScaleX();
+    public void drawLink(MapLink link, Graphics2D g2, boolean show_label, boolean isSymbolic) {
         float width = 1.0f;
         Color color = defaultLinkColor;
         LinkAppearance2D linkAppearance = getLinkAppearance(link);
@@ -844,9 +1135,9 @@ public class SimulationPanel2D extends JPanel {
         } else {
             width /= scale;
         }
-        g.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        g.setColor(color);
-        g.draw(link.getLine2D());
+        g2.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        g2.setColor(color);
+        g2.draw(rotatedLinkLines.get(link));
 
         if (show_label) {
             String text = link.getTagString();
@@ -854,8 +1145,8 @@ public class SimulationPanel2D extends JPanel {
                 Point2D middlePoint = link.getMiddlePoint();
                 double cx = middlePoint.getX();
                 double cy = middlePoint.getY() - width / scale / 2.0;
-                g.setColor(Color.darkGray);
-                drawText(g, cx, cy, TextPosition.UPPER_CENTER, text);
+                g2.setColor(Color.darkGray);
+                drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text);
             }
         }
     }
@@ -864,7 +1155,6 @@ public class SimulationPanel2D extends JPanel {
      * リンクのホバーを描画する
      */
     public void drawHoverLink(MapLink link, Graphics2D g2) {
-        double scale = g2.getTransform().getScaleX();
         g2.setColor(Color.BLUE);
         g2.fill(getLinkRect(link, scale));
 
@@ -887,10 +1177,10 @@ public class SimulationPanel2D extends JPanel {
     private GeneralPath getLinkRect(MapLink link, double scale) {
         MapNode fromNode = link.getFrom();
         MapNode toNode = link.getTo();
-        double x1 = fromNode.getX();
-        double y1 = fromNode.getY();
-        double x2 = toNode.getX();
-        double y2 = toNode.getY();
+        double x1 = getRotatedX(fromNode);
+        double y1 = getRotatedY(fromNode);
+        double x2 = getRotatedX(toNode);
+        double y2 = getRotatedY(toNode);
         double fwidth = 4.0 / scale;
 
         double dx = (x2 - x1);
@@ -914,11 +1204,11 @@ public class SimulationPanel2D extends JPanel {
     /**
      * エリアを描画する
      */
-    public void drawArea(MapArea area, Graphics2D g, boolean showLabel) {
+    public void drawArea(MapArea area, Graphics2D g2, boolean showLabel) {
         if (area.getPollutionLevel() == null || ! area.getPollutionLevel().isPolluted()) {
             if (frame.isShowAreaLocation()) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fill(area.getShape());
+                g2.setColor(Color.LIGHT_GRAY);
+                g2.fill(rotatedAreaPaths.get(area));
             }
             return;
         }
@@ -950,17 +1240,17 @@ public class SimulationPanel2D extends JPanel {
             break;
         }
 
-        g.setColor(color);
-        g.fill(area.getShape());
+        g2.setColor(color);
+        g2.fill(rotatedAreaPaths.get(area));
 
         if (showLabel) {
             String text = area.getTagString();
             if (! text.isEmpty()) {
-                g.setColor(Color.darkGray);
+                g2.setColor(Color.darkGray);
                 double cx = ((Rectangle2D)area.getShape()).getMinX();
                 double cy = ((Rectangle2D)area.getShape()).getMinY();
                 // TODO: バックグラウンドカラーが何故か微妙に異なってしまう
-                drawText(g, cx, cy, TextPosition.LOWER_RIGHT, text, color);
+                drawText(g2, cx, cy, TextPosition.LOWER_RIGHT, text, color);
             }
         }
     }
@@ -969,10 +1259,9 @@ public class SimulationPanel2D extends JPanel {
      * エリアのホバーを描画する
      */
     public void drawHoverArea(MapArea hoverArea, Graphics2D g2) {
-        double scale = g2.getTransform().getScaleX();
         g2.setStroke(new BasicStroke((float)(3.0 / scale)));
         g2.setColor(Color.BLUE);
-        g2.draw(hoverArea.getShape());
+        g2.draw(rotatedAreaPaths.get(hoverArea));
 
         String text = hoverArea.getTagString();
         if (! text.isEmpty()) {
@@ -986,10 +1275,12 @@ public class SimulationPanel2D extends JPanel {
      * 背景画像を描画する
      */
     public void drawBackgroundImage(MapPartGroup group, Image image, Graphics2D g2) {
+        Point2D point = calcRotatedPoint(group.tx, group.ty);
         AffineTransform at = g2.getTransform();
-        g2.translate(group.tx, group.ty);
+        g2.translate(point.getX(), point.getY());
+        double angle = Math.toDegrees(group.r) + this.angle;
+        g2.rotate(Math.toRadians(angle));
         g2.scale(group.sx, group.sy);
-        g2.rotate(group.r);
         g2.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), this);
         g2.setTransform(at);
     }
@@ -1000,10 +1291,11 @@ public class SimulationPanel2D extends JPanel {
     public void drawBackgroundMapTile(GsiTile gsiTile, Graphics2D g2) {
         AffineTransform at = g2.getTransform();
         BufferedImage image = gsiTile.getImage();
-        Point2D point = gsiTile.getPoint();
+        Point2D point = calcRotatedPoint(gsiTile.getPoint());
 
-        g2.translate(point.getX() + backgroundMapAdjustX, point.getY() + backgroundMapAdjustY);
+        g2.translate(point.getX(), point.getY());
         g2.scale(gsiTile.getScaleX(), gsiTile.getScaleY());
+        g2.rotate(Math.toRadians(angle));
         g2.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), this);
         g2.setTransform(at);
     }
@@ -1042,7 +1334,6 @@ public class SimulationPanel2D extends JPanel {
      * 描画スケールの影響を受けないフォントの指定
      */
     public void setScaleFixedFont(Graphics2D g2, String name, int fontStyle, int fontSize) {
-        double scale = g2.getTransform().getScaleX();
         int size = (int)(fontSize / scale);
         Font font = new Font(name, fontStyle, fontSize);
         g2.setFont(font.deriveFont((float)(fontSize / scale)));
@@ -1062,43 +1353,48 @@ public class SimulationPanel2D extends JPanel {
     /**
      * 指定された位置に text を描画する。
      */
-    public void drawText(Graphics2D g2, double x, double y, TextPosition position, String text, Color bgColor) {
-        double scale = g2.getTransform().getScaleX();
+    public void drawText(Graphics2D g2, double x, double y, TextPosition position, String text, Color bgColor, double dx, double dy) {
+        Point2D point = calcRotatedPoint(x, y);
         double textWidth = getStringWidth(text) / scale;
 
-        double dx = 0.0;
-        double dy = 0.0;
         switch (position) {
         case UPPER_CENTER:
-            dx = textWidth / -2.0;
-            dy = -(fontDescent + fontLeading);
+            dx += textWidth / -2.0;
+            dy += -(fontDescent + fontLeading);
             break;
         case LOWER_CENTER:
-            dx = textWidth / -2.0;
-            dy = fontAscent;
+            dx += textWidth / -2.0;
+            dy += fontAscent;
             break;
         case UPPER_RIGHT:
-            dx = fontHeight / 3.0;
-            dy = -(fontDescent + fontLeading);
+            dx += fontHeight / 3.0;
+            dy += -(fontDescent + fontLeading);
             break;
         case LOWER_RIGHT:
-            dx = fontHeight / 3.0;
-            dy = fontAscent;
+            dx += fontHeight / 3.0;
+            dy += fontAscent;
             break;
         }
 
         Color color = g2.getColor();
         g2.setColor(bgColor);
-        g2.fill(new Rectangle2D.Double(x + dx - fontHeight / 3.0, y + dy - fontAscent,
+        g2.fill(new Rectangle2D.Double(point.getX() + dx - fontHeight / 3.0, point.getY() + dy - fontAscent,
                     textWidth + fontHeight * 2.0 / 3.0, fontHeight));
         g2.setColor(color);
-        g2.drawString(text, (float)(x + dx), (float)(y + dy));
+        g2.drawString(text, (float)(point.getX() + dx), (float)(point.getY() + dy));
     }
 
     /**
      * 指定された位置に text を描画する。
      */
-    public void drawText(Graphics2D g2, double x, double y, TextPosition position, String text) {
+    public final void drawText(Graphics2D g2, double x, double y, TextPosition position, String text, Color bgColor) {
+        drawText(g2, x, y, position, text, bgColor, 0.0, 0.0);
+    }
+
+    /**
+     * 指定された位置に text を描画する。
+     */
+    public final void drawText(Graphics2D g2, double x, double y, TextPosition position, String text) {
         drawText(g2, x, y, position, text, getBackground());
     }
 

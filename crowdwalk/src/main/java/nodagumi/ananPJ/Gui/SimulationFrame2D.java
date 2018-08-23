@@ -18,6 +18,7 @@ import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
+import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -276,7 +277,6 @@ public class SimulationFrame2D extends JFrame
 
     /* マウス操作情報 */
 
-    public Point2D mousePoint = new Point2D.Double(0.0, 0.0);
     private boolean scrolling = false;
     private int dragStartX = 0;
     private int dragStartY = 0;
@@ -303,23 +303,26 @@ public class SimulationFrame2D extends JFrame
     public class CameraShot {
         public double time;
         public double zoom;
+        public double angle;
         public double agentSize;
         public Point2D position;
 
-        public CameraShot(double time, double zoom, double agentSize, double x, double y) {
+        public CameraShot(double time, double zoom, double angle, double agentSize, double x, double y) {
             this.time = time;
             this.zoom = zoom;
+            this.angle = angle;
             this.agentSize = agentSize;
             position = new Point2D.Double(x, y);
         }
 
-        public CameraShot(double time, double zoom, double agentSize, Point2D position) {
-            this(time, zoom, agentSize, position.getX(), position.getY());
+        public CameraShot(double time, double zoom, double angle, double agentSize, Point2D position) {
+            this(time, zoom, angle, agentSize, position.getX(), position.getY());
         }
 
         public CameraShot(Map<String, Object> values) {
             time = getDoubleValue(values, "time", 0.0);
             zoom = getDoubleValue(values, "zoom", 1.0);
+            angle = getDoubleValue(values, "angle", 0.0);
             agentSize = getDoubleValue(values, "agentSize", 5.0);
             position = new Point2D.Double(getDoubleValue(values, "x", 0.0), getDoubleValue(values, "y", 0.0));
         }
@@ -336,6 +339,7 @@ public class SimulationFrame2D extends JFrame
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("time", new Double(time));
             map.put("zoom", new Double(zoom));
+            map.put("angle", new Double(angle));
             map.put("agentSize", new Double(agentSize));
             map.put("x", new Double(position.getX()));
             map.put("y", new Double(position.getY()));
@@ -343,7 +347,7 @@ public class SimulationFrame2D extends JFrame
         }
 
         public String toString() {
-            return "time: " + time + ", zoom: " + zoom + ", agent_size: " + agentSize + ", x: " + position.getX() + ", y: " + position.getY();
+            return "time: " + time + ", zoom: " + zoom + ", angle: " + angle + ", agent_size: " + agentSize + ", x: " + position.getX() + ", y: " + position.getY();
         }
     }
 
@@ -1490,6 +1494,10 @@ public class SimulationFrame2D extends JFrame
             ArrayList<Map<String, Object>> jsonObject = json.parse(new FileReader(filePath));
             camerawork.clear();
             for (Map<String, Object> object : jsonObject) {
+                if (object.get("angle") == null) {
+                    Itk.logError_("Camerawork file format is old", filePath);
+                    System.exit(1);
+                }
                 camerawork.add(new CameraShot(object));
             }
         } catch (IOException e) {
@@ -1532,7 +1540,7 @@ public class SimulationFrame2D extends JFrame
             JOptionPane.showMessageDialog(frame, "Invalid operation", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        CameraShot cameraShot = new CameraShot(currentTime, panel.getDrawingScale(), agent_size, panel.getViewPosition());
+        CameraShot cameraShot = new CameraShot(currentTime, panel.getDrawingScale(), panel.getAngle(), agent_size, panel.getViewPosition());
         camerawork.add(cameraShot);
         cameraworkArea.append(cameraShot.toString());
         cameraworkArea.append("\n");
@@ -1825,8 +1833,12 @@ public class SimulationFrame2D extends JFrame
         if (viewpointChangeInhibited) {
             return;
         }
-        int i = e.getWheelRotation();
-        panel.zoom(i);
+        Point point = SwingUtilities.convertPoint(null, e.getX(), e.getY(), panel);
+        if (e.isAltDown() || e.isShiftDown()) {
+            panel.rotate(point.getX(), point.getY(), e.getWheelRotation(), e.isControlDown());
+        } else {
+            panel.zoom(point.getX(), point.getY(), e.getWheelRotation(), e.isControlDown());
+        }
         panel.repaint();
     }
 
@@ -1843,29 +1855,29 @@ public class SimulationFrame2D extends JFrame
     }
 
     public void mouseMoved(MouseEvent e) {
-        Point2D p = panel.revCalcPos(e.getX(), e.getY());
-        mousePoint = p;     // これはCrowdWalk座標値
+        Point canvasPoint = SwingUtilities.convertPoint(null, e.getX(), e.getY(), panel);
+        Point2D mapPoint = panel.convertToOriginal(panel.pointConvertCanvasToMap(canvasPoint.getX(), canvasPoint.getY()));
         switch (mode) {
         case NODE:
-            if (updateHoverNode(p)) {
+            if (updateHoverNode(mapPoint)) {
                 panel.updateHoverNode(hoverNode);
                 panel.repaint();
             }
             break;
         case LINK:
-            if (updateHoverLink(p)) {
+            if (updateHoverLink(mapPoint)) {
                 panel.updateHoverLink(hoverLink);               
                 panel.repaint();
             }
             break;
         case AREA:
-            if (updateHoverArea(p)) {
+            if (updateHoverArea(mapPoint)) {
                 panel.updateHoverArea(hoverArea);
                 panel.repaint();
             }
             break;
         case AGENT:
-            if (updateHoverAgent(p)) {
+            if (updateHoverAgent(mapPoint)) {
                 panel.updateHoverAgent(hoverAgent);
                 panel.repaint();
             }
@@ -2400,6 +2412,7 @@ public class SimulationFrame2D extends JFrame
             if (last_camera == null) {
                 agent_size = next_camera.agentSize;
                 panel.setDrawingScale(next_camera.zoom);
+                panel.setAngle(next_camera.angle);
                 panel.setPosition(next_camera.position.getX(), next_camera.position.getY());
             }
             // 最後の CameraShot とそれ以降
@@ -2409,6 +2422,7 @@ public class SimulationFrame2D extends JFrame
                 }
                 agent_size = last_camera.agentSize;
                 panel.setDrawingScale(last_camera.zoom);
+                panel.setAngle(last_camera.angle);
                 panel.setPosition(last_camera.position.getX(), last_camera.position.getY());
             }
             // 上の条件以外
@@ -2422,6 +2436,21 @@ public class SimulationFrame2D extends JFrame
                 double ratio = (time - last_camera.time) / (next_camera.time - last_camera.time);
                 agent_size = (next_camera.agentSize - last_camera.agentSize) * ratio + last_camera.agentSize;
                 panel.setDrawingScale((next_camera.zoom - last_camera.zoom) * ratio + last_camera.zoom);
+
+                double angularDifference = next_camera.angle - last_camera.angle;
+                if (angularDifference <= -180.0) {
+                    angularDifference += 360.0;
+                } else if (angularDifference > 180.0) {
+                    angularDifference -= 360.0;
+                }
+                double angle = angularDifference * ratio + last_camera.angle;
+                if (angle < 0.0) {
+                    angle += 360.0;
+                } else if (angle >= 360.0) {
+                    angle -= 360.0;
+                }
+                panel.setAngle(angle);
+
                 double last_x = last_camera.position.getX();
                 double last_y = last_camera.position.getY();
                 double next_x = next_camera.position.getX();

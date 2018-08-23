@@ -1,0 +1,78 @@
+{
+  "map_file":"moji.xml",
+  "generation_file":"generation.json",
+  "scenario_file":"scenario.json",
+  "fallback_file":"fallbackParameters.json",
+  "node_appearance_file":"appearance_node.json",
+  "link_appearance_file":"appearance_link.json",
+  "polygon_appearance_file":"appearance_polygon.json",
+  "camera_file":"camera_3d.json",
+  "camera_2d_file":"camera_2d.json",
+
+  "show_background_map":false,
+  "gsi_tile_name":ort,
+  "gsi_tile_zoom":17,
+
+  "randseed":2524,
+  "exit_count":0,
+  "all_agent_speed_zero_break":true,
+
+  "create_log_dirs":true,
+  "_agent_movement_history_file":"../../log/agent_movement_history.csv",
+  "_individual_pedestrians_log_dir":"../../log",
+  "_evacuated_agents_log_file":"../../log/evacuatedAgent.csv",
+
+  "record_simulation_screen":false,
+  "screenshot_dir": "../../screenshots",
+  "clear_screenshot_dir":true,
+  "screenshot_image_type":"png",
+
+  "agent_size":3.0,
+  "zoom":1.6,
+  "show_3D_polygon":true,
+  "change_agent_color_depending_on_speed":true,
+  "show_status":"Bottom",
+  "show_logo":false,
+  "exit_with_simulation_finished":true,
+  "simulation_window_open":false,
+  "auto_simulation_start":true,
+
+  "use_ruby": true,
+  "ruby_load_path": ".",
+  "ruby_simulation_wrapper_class":"GateOperation",
+  "ruby_init_script":"
+    require 'GateOperation'
+    $settings = {
+      # コンソールに状態表示をするか
+      monitor: true,
+      
+      # ゲートノードのタグ(該当するノードは一つだけであること)
+      gate_node_tag: 'EXIT_STATION_ROOT',
+      
+      # ノードからリンクに入って来る人数をカウントする場合は true, 出て行く人数をカウントする場合は false
+      count_by_entering: true,
+      
+      # 通過エージェント数をカウントするノード・リンクのタグ
+      # ※末端のノードは指定出来ないので注意(カウントされない)
+      counting_positions: [
+        {
+          link_tag: 'GL_R1',      # 該当するリンクは一つだけであること
+          node_tag: 'EXIT_STATION_ROOT'     # 該当するノードは一つだけであること
+        },
+        {
+          link_tag: 'GL_R2',
+          node_tag: 'EXIT_STATION_ROOT'
+        },
+        {
+          link_tag: 'GL_R3',
+          node_tag: 'EXIT_STATION_ROOT'
+        }
+      ],
+      
+      # ドアが開いてから、ホームで待機していた乗客が全員乗車を完了するまでの時間(s)
+      delay_time: 60,
+      
+      # 運行表(乗車時刻, 収容人数, コメント)のファイル名
+      diagram_file: 'diagram.csv'
+    }"
+}

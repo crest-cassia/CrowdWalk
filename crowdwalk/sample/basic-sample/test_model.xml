@@ -1,67 +1,75 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Group GenerationSettings="test_generation.csv" PollutionSettings="" scenarioSettings="test_scenario.csv" defaultHeight="0.0" id="1850374459" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="0.0" pNorthWestY="0.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="0.05128188270283231" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
-  <Group defaultHeight="0.0" id="326032321" imageFileName="rooms.png" maxHeight="5.0" minHeight="-5.0" pNorthWestX="0.0" pNorthWestY="0.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="0.05128188270283231" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
-    <tag>1F</tag>
-    <Node height="0.0" id="365042696" x="86.0" y="112.0">
-      <tag>1F</tag>
-      <link id="845978310"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<Group defaultHeight="0.0" id="_p00000" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0" zone="0">
+  <tag>root</tag>
+  <Group defaultHeight="0.0" id="_p00001" imageFileName="rooms.png" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="0.0590851661547463" sy="0.0590851661547463" tx="-1.3232718375780137" ty="-2.0957840004931576" zone="0">
+    <tag>FLOOR</tag>
+    <Node height="0.0" id="_p00002" x="3.600000000000001" y="9.2">
+      <link id="_p00015"/>
+      <link id="_p00016"/>
     </Node>
-    <Node height="0.0" id="180754606" x="86.0" y="308.0">
-      <tag>1F</tag>
-      <link id="845978310"/>
-      <link id="110773735"/>
+    <Node height="0.0" id="_p00003" x="10.199999999999996" y="9.2">
+      <link id="_p00017"/>
+      <link id="_p00018"/>
     </Node>
-    <Node height="0.0" id="689744877" x="237.0" y="308.0">
-      <tag>1F</tag>
-      <link id="110773735"/>
-      <link id="251489882"/>
-      <link id="1169349224"/>
+    <Node height="0.0" id="_p00004" x="16.799999999999972" y="9.2">
+      <link id="_p00019"/>
+      <link id="_p00020"/>
     </Node>
-    <Node height="0.0" id="1338463736" x="237.0" y="112.0">
-      <tag>1F</tag>
-      <link id="1169349224"/>
+    <Node height="0.0" id="_p00005" x="0.6" y="11.399999999999991">
+      <link id="_p00021"/>
     </Node>
-    <Node height="0.0" id="836141145" x="410.0" y="308.0">
-      <tag>1F</tag>
-      <link id="251489882"/>
-      <link id="1019241695"/>
-      <link id="1686293358"/>
+    <Node height="0.0" id="_p00006" x="3.600000000000001" y="0.6">
+      <link id="_p00015"/>
     </Node>
-    <Node height="0.0" id="1015070351" x="410.0" y="112.0">
-      <tag>1F</tag>
-      <link id="1019241695"/>
+    <Node height="0.0" id="_p00008" x="10.199999999999996" y="0.6">
+      <link id="_p00017"/>
     </Node>
-    <Link from="365042696" id="845978310" length="10.051249009755132" to="180754606" width="1.0">
-      <tag>1F</tag>
-      <tag>ROOM</tag>
+    <Node height="0.0" id="_p00009" x="16.799999999999972" y="0.6">
+      <link id="_p00019"/>
+    </Node>
+    <Node height="0.0" id="_p00010" x="3.600000000000001" y="11.399999999999991">
+      <link id="_p00016"/>
+      <link id="_p00021"/>
+      <link id="_p00022"/>
+    </Node>
+    <Node height="0.0" id="_p00011" x="10.199999999999996" y="11.399999999999991">
+      <link id="_p00018"/>
+      <link id="_p00022"/>
+      <link id="_p00023"/>
+    </Node>
+    <Node height="0.0" id="_p00012" x="16.799999999999972" y="11.399999999999991">
+      <link id="_p00020"/>
+      <link id="_p00023"/>
+      <link id="_p00024"/>
+    </Node>
+    <Node height="0.0" id="_p00013" x="19.399999999999963" y="11.399999999999991">
+      <link id="_p00024"/>
+      <link id="_p00025"/>
+    </Node>
+    <Node height="0.0" id="_p00014" x="20.799999999999958" y="11.399999999999991">
+      <tag>EXIT</tag>
+      <link id="_p00025"/>
+    </Node>
+    <Link from="_p00006" id="_p00015" length="8.6" to="_p00002" width="6.0">
       <tag>ROOM1</tag>
     </Link>
-    <Link from="180754606" id="110773735" length="7.743564288127678" to="689744877" width="1.0">
-      <tag>1F</tag>
-      <tag>HALLWAY_1</tag>
-    </Link>
-    <Link from="689744877" id="251489882" length="8.871765707589988" to="836141145" width="1.0">
-      <tag>1F</tag>
-      <tag>HALLWAY_2</tag>
-    </Link>
-    <Link from="1015070351" id="1019241695" length="10.051249009755132" to="836141145" width="1.0">
-      <tag>1F</tag>
-      <tag>ROOM</tag>
-      <tag>1F</tag>
-      <tag>ROOM3</tag>
-    </Link>
-    <Link from="1338463736" id="1169349224" length="10.051249009755132" to="689744877" width="1.0">
-      <tag>1F</tag>
-      <tag>ROOM</tag>
+    <Link from="_p00002" id="_p00016" length="2.199999999999992" to="_p00010" width="1.0"/>
+    <Link from="_p00008" id="_p00017" length="8.6" to="_p00003" width="6.0">
       <tag>ROOM2</tag>
     </Link>
-    <Node height="0.0" id="207894160" x="476.0" y="308.0">
-      <tag>EXIT</tag>
-      <tag>1F</tag>
-      <link id="1686293358"/>
-    </Node>
-    <Link from="836141145" id="1686293358" length="3.3846042583869322" to="207894160" width="1.0">
-      <tag>1F</tag>
+    <Link from="_p00003" id="_p00018" length="2.199999999999992" to="_p00011" width="1.0"/>
+    <Link from="_p00009" id="_p00019" length="8.6" to="_p00004" width="6.0">
+      <tag>ROOM3</tag>
     </Link>
+    <Link from="_p00004" id="_p00020" length="2.199999999999992" to="_p00012" width="1.0"/>
+    <Link from="_p00005" id="_p00021" length="3.000000000000001" to="_p00010" width="3.0"/>
+    <Link from="_p00010" id="_p00022" length="6.599999999999994" to="_p00011" width="3.0">
+      <tag>HALLWAY_1</tag>
+    </Link>
+    <Link from="_p00011" id="_p00023" length="6.5999999999999766" to="_p00012" width="3.0">
+      <tag>HALLWAY_2</tag>
+    </Link>
+    <Link from="_p00012" id="_p00024" length="2.5999999999999908" to="_p00013" width="3.0"/>
+    <Link from="_p00013" id="_p00025" length="1.399999999999995" to="_p00014" width="1.0"/>
   </Group>
 </Group>

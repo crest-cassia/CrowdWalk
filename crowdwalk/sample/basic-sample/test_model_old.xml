@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group GenerationSettings="test_generation.csv" PollutionSettings="" scenarioSettings="test_scenario.csv" defaultHeight="0.0" id="1850374459" imageFileName="" maxHeight="5.0" minHeight="-5.0" pNorthWestX="0.0" pNorthWestY="0.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="0.05128188270283231" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <Group defaultHeight="0.0" id="326032321" imageFileName="rooms.png" maxHeight="5.0" minHeight="-5.0" pNorthWestX="0.0" pNorthWestY="0.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="0.05128188270283231" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+    <tag>1F</tag>
+    <Node height="0.0" id="365042696" x="86.0" y="112.0">
+      <tag>1F</tag>
+      <link id="845978310"/>
+    </Node>
+    <Node height="0.0" id="180754606" x="86.0" y="308.0">
+      <tag>1F</tag>
+      <link id="845978310"/>
+      <link id="110773735"/>
+    </Node>
+    <Node height="0.0" id="689744877" x="237.0" y="308.0">
+      <tag>1F</tag>
+      <link id="110773735"/>
+      <link id="251489882"/>
+      <link id="1169349224"/>
+    </Node>
+    <Node height="0.0" id="1338463736" x="237.0" y="112.0">
+      <tag>1F</tag>
+      <link id="1169349224"/>
+    </Node>
+    <Node height="0.0" id="836141145" x="410.0" y="308.0">
+      <tag>1F</tag>
+      <link id="251489882"/>
+      <link id="1019241695"/>
+      <link id="1686293358"/>
+    </Node>
+    <Node height="0.0" id="1015070351" x="410.0" y="112.0">
+      <tag>1F</tag>
+      <link id="1019241695"/>
+    </Node>
+    <Link from="365042696" id="845978310" length="10.051249009755132" to="180754606" width="1.0">
+      <tag>1F</tag>
+      <tag>ROOM</tag>
+      <tag>ROOM1</tag>
+    </Link>
+    <Link from="180754606" id="110773735" length="7.743564288127678" to="689744877" width="1.0">
+      <tag>1F</tag>
+      <tag>HALLWAY_1</tag>
+    </Link>
+    <Link from="689744877" id="251489882" length="8.871765707589988" to="836141145" width="1.0">
+      <tag>1F</tag>
+      <tag>HALLWAY_2</tag>
+    </Link>
+    <Link from="1015070351" id="1019241695" length="10.051249009755132" to="836141145" width="1.0">
+      <tag>1F</tag>
+      <tag>ROOM</tag>
+      <tag>1F</tag>
+      <tag>ROOM3</tag>
+    </Link>
+    <Link from="1338463736" id="1169349224" length="10.051249009755132" to="689744877" width="1.0">
+      <tag>1F</tag>
+      <tag>ROOM</tag>
+      <tag>ROOM2</tag>
+    </Link>
+    <Node height="0.0" id="207894160" x="476.0" y="308.0">
+      <tag>EXIT</tag>
+      <tag>1F</tag>
+      <link id="1686293358"/>
+    </Node>
+    <Link from="836141145" id="1686293358" length="3.3846042583869322" to="207894160" width="1.0">
+      <tag>1F</tag>
+    </Link>
+  </Group>
+</Group>
