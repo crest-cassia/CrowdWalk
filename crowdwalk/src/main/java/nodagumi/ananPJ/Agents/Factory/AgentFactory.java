@@ -142,8 +142,11 @@ public abstract class AgentFactory {
     final public SpeedCalculationModel getSpeedModel() {
         return config.speedModel ;
     }
-    /** start Time */
-    final public SimTime getStartTime() { return config.startTime ; }
+    /** start Time
+     * TIME EVERY が config.startTime 共通にならないため個別に記憶する。
+     */
+    private SimTime startTime ;
+    final public SimTime getStartTime() { return startTime ; }
     /** duration */
     final public double getDuration() { return config.duration ; }
     
@@ -213,6 +216,7 @@ public abstract class AgentFactory {
                      Random _random) {
         config = _config ;
         random = _random;
+        startTime = config.startTime.newSimTime();
 
         /** config.total は、途中で変更になるので、コピーしておく */
         totalInFactory = _totalInFactory ;
