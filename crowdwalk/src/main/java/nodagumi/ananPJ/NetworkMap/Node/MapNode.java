@@ -125,6 +125,12 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         }
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 避難完了（ゴール到達）エージェント情報
+     */
+    private int numberOfEvacuatedAgents = 0 ;
+    
     //------------------------------------------------------------
     /**
      * コンストラクタ。
@@ -688,7 +694,28 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
             index += 1;
         }
     }
-    
+
+    //------------------------------------------------------------
+    /**
+     * 避難完了（ゴール到達）エージェント処理。
+     * 現状では、カウントアップしかしない。
+     * @param agent : 避難完了したエージェント。
+     * @param currentTime : 現在時刻。
+     * @return 現在の避難完了数。
+     */
+    public int acceptEvacuatedAgent(AgentBase agent, SimTime currentTime) {
+        numberOfEvacuatedAgents++ ;
+        return numberOfEvacuatedAgents ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 避難完了（ゴール到達）したエージェント数。
+     * @return 現在の避難完了数。
+     */
+    public int getNumberOfEvacuatedAgents() {
+        return numberOfEvacuatedAgents ;
+    }
 }
 // ;;; Local Variables:
 // ;;; mode:java
