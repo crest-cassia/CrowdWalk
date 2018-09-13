@@ -657,15 +657,19 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
      * @return 時間幅内の通過エージェント数。
      */
     public int countPassingAgent(SimTime currentTime, double margin) {
-        int count = 0 ;
-        for(PassingAgentRecord record : passingAgentRecordBuffer) {
-            if(currentTime.calcDifferenceFrom(record.time) < margin) {
-                count += 1 ;
-            } else {
-                break ;
+        if(passingAgentRecordBuffer == null) {
+            return 0 ;
+        } else {
+            int count = 0 ;
+            for(PassingAgentRecord record : passingAgentRecordBuffer) {
+                if(currentTime.calcDifferenceFrom(record.time) < margin) {
+                    count += 1 ;
+                } else {
+                    break ;
+                }
             }
+            return count ;
         }
-        return count ;
     }
 
     //------------------------------------------------------------
