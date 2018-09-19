@@ -7,12 +7,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.regex.Matcher;
 
@@ -33,6 +35,8 @@ import org.w3c.dom.Document;
 
 import org.osgeo.proj4j.CoordinateTransform;
 
+import net.arnx.jsonic.JSON;
+
 import nodagumi.ananPJ.Editor.EditCommand.*;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
@@ -47,6 +51,7 @@ import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.NetworkMap.Polygon.OuterBoundary;
 import nodagumi.ananPJ.NetworkMap.Polygon.InnerBoundary;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
+import nodagumi.ananPJ.misc.JsonicHashMapGetter;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.navigation.Dijkstra;
 import nodagumi.ananPJ.navigation.NavigationHint;
@@ -1017,6 +1022,278 @@ public class MapEditor {
             }
         }
         return true;
+    }
+
+    /**
+     * シェープファイルを読み込んで座標リストに変換する
+     */
+    public ArrayList<ArrayList<Point2D>> shapefileToLines(String srcEpsg, int zone, String shapefilePath) throws Exception {
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        if (! tmpDir.endsWith(File.separator)) {
+            tmpDir += File.separator;
+        }
+
+        // シェープファイルを平面直角座標系で GeoJSON に変換する
+        List<String> commandLine = Arrays.asList("ogr2ogr", "-s_srs", srcEpsg, "-t_srs", GsiTile.JGD2000_JPR_EPSG_NAMES[zone], "-f", "geoJSON", tmpDir + "__GEOJSON__.json", shapefilePath);
+        Itk.logInfo("External process", String.join(" ", commandLine));
+        ProcessBuilder pb = new ProcessBuilder(commandLine);
+        pb.inheritIO();
+        Process process = pb.start();
+        int ret = process.waitFor();
+        if (ret != 0) {
+            throw new Exception("Execution of external program \"ogr2ogr\" failed.");
+        }
+
+        // GeoJSON ファイルを読み込んで座標リストに変換する
+        return geoJSONtoLines(tmpDir + "__GEOJSON__.json");
+    }
+
+    /**
+     * GeoJSON ファイルを読み込んで座標リストに変換する
+     */
+    public ArrayList<ArrayList<Point2D>> geoJSONtoLines(String filePath) throws Exception {
+        JsonicHashMapGetter jsonMap = new JsonicHashMapGetter();
+
+        FileInputStream is = new FileInputStream(filePath);
+        jsonMap.setParameters(JSON.decode(is));
+        is.close();
+
+        ArrayList<HashMap> features = (ArrayList<HashMap>)jsonMap.getArrayListParameter("features", null);
+        if (features == null) {
+            throw new Exception("File parsing error - \"" + filePath + "\" : \"features\" elements are missing.");
+        }
+        ArrayList<ArrayList<Point2D>> lines = new ArrayList();
+        for (HashMap feature : features) {
+            jsonMap.setParameters(feature);
+
+            HashMap geometry = jsonMap.getHashMapParameter("geometry", null);
+            if (geometry == null) {
+                Itk.logWarn_("File parsing error", "\"" + filePath + "\" : \"geometry\" elements are missing.");
+                continue;
+            }
+            jsonMap.setParameters(geometry);
+
+            ArrayList<ArrayList<BigDecimal>> coordinates = (ArrayList<ArrayList<BigDecimal>>)jsonMap.getArrayListParameter("coordinates", null);
+            if (coordinates == null) {
+                Itk.logWarn_("File parsing error", "\"" + filePath + "\" : \"coordinates\" elements are missing.");
+                continue;
+            }
+
+            ArrayList<Point2D> line = new ArrayList();
+            for (ArrayList<BigDecimal> coordinate : coordinates) {
+                if (coordinate.size() < 2) {
+                    throw new Exception("File parsing error - \"" + filePath + "\" : invalid coordinates: " + coordinate);
+                }
+                double east = coordinate.get(0).doubleValue();
+                double north = coordinate.get(1).doubleValue();
+                // CrowdWalk 座標系に変換
+                Point2D point = new Point2D(east, -north);
+                line.add(point);
+            }
+            if (! line.isEmpty()) {
+                lines.add(line);
+            }
+        }
+        return lines;
+    }
+
+    /**
+     * シェープファイルを読み込んでマップデータに追加する
+     */
+    public void readShapefile(String srcEpsg, int scaleOfRoundOff, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone, List<String> shapefileList) throws Exception {
+        if (shapefileList.isEmpty()) {
+            return;
+        }
+
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        if (! tmpDir.endsWith(File.separator)) {
+            tmpDir += File.separator;
+        }
+
+        // シェープファイルを結合する
+        String dst = "__SHAPEFILE__";
+        for (int index = 0; index < shapefileList.size(); index++) {
+            List<String> commandLine = null;
+            if (index == 0) {
+                commandLine = Arrays.asList("ogr2ogr", "-lco", "ENCODING=UTF-8", tmpDir + dst + ".shp", shapefileList.get(index));
+            } else {
+                commandLine = Arrays.asList("ogr2ogr", "-update", "-append", tmpDir + dst + ".shp", shapefileList.get(index), "-nln", dst);
+            }
+            Itk.logInfo("External process", String.join(" ", commandLine));
+            ProcessBuilder pb = new ProcessBuilder(commandLine);
+            pb.inheritIO();
+            Process process = pb.start();
+            int ret = process.waitFor();
+            if (ret != 0) {
+                throw new Exception("Execution of external program \"ogr2ogr\" failed.");
+            }
+        }
+
+        // 結合されたシェープファイルを平面直角座標系で GeoJSON に変換する
+        List<String> commandLine = Arrays.asList("ogr2ogr", "-s_srs", srcEpsg, "-t_srs", GsiTile.JGD2000_JPR_EPSG_NAMES[zone], "-f", "geoJSON", tmpDir + "__GEOJSON__.json", tmpDir + dst + ".shp");
+        Itk.logInfo("External process", String.join(" ", commandLine));
+        ProcessBuilder pb = new ProcessBuilder(commandLine);
+        pb.inheritIO();
+        Process process = pb.start();
+        int ret = process.waitFor();
+        if (ret != 0) {
+            throw new Exception("Execution of external program \"ogr2ogr\" failed.");
+        }
+
+        // GeoJSON ファイルを読み込んでマップデータに追加する
+        readGeoJSON(tmpDir + "__GEOJSON__.json", scaleOfRoundOff, widthName, correctionFactor, referenceTable, group, zone);
+    }
+
+    /**
+     * GeoJSON ファイルを読み込んでマップデータに追加する
+     */
+    public void readGeoJSON(String filePath, int scaleOfRoundOff, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone) throws Exception {
+        JsonicHashMapGetter jsonMap = new JsonicHashMapGetter();
+
+        FileInputStream is = new FileInputStream(filePath);
+        jsonMap.setParameters(JSON.decode(is));
+        is.close();
+
+        ArrayList<HashMap> features = (ArrayList<HashMap>)jsonMap.getArrayListParameter("features", null);
+        if (features == null) {
+            throw new Exception("File parsing error - \"" + filePath + "\" : \"features\" elements are missing.");
+        }
+
+        startOfCommandBlock();
+        HashMap<String, MapNode> nodes = new HashMap<>();
+        HashMap<String, MapLink> links = new HashMap<>();
+        for (HashMap feature : features) {
+            jsonMap.setParameters(feature);
+            HashMap _properties = jsonMap.getHashMapParameter("properties", null);
+            if (_properties == null) {
+                Itk.logWarn_("File parsing error", "\"" + filePath + "\" : \"properties\" elements are missing.");
+                continue;
+            }
+            HashMap geometry = jsonMap.getHashMapParameter("geometry", null);
+            if (geometry == null) {
+                Itk.logWarn_("File parsing error", "\"" + filePath + "\" : \"geometry\" elements are missing.");
+                continue;
+            }
+
+            jsonMap.setParameters(_properties);
+            double width = jsonMap.getDoubleParameter(widthName, 0.0);
+            if (referenceTable != null && ! referenceTable.isEmpty()) {
+                width = referenceTable.get((int)width);
+            } else if (correctionFactor != null) {
+                width *= correctionFactor.doubleValue();
+            }
+
+            jsonMap.setParameters(geometry);
+            ArrayList<ArrayList<BigDecimal>> coordinates = (ArrayList<ArrayList<BigDecimal>>)jsonMap.getArrayListParameter("coordinates", null);
+            if (coordinates == null) {
+                Itk.logWarn_("File parsing error", "\"" + filePath + "\" : \"coordinates\" elements are missing.");
+                continue;
+            }
+            MapNode from = null;
+            for (ArrayList<BigDecimal> coordinate : coordinates) {
+                if (coordinate.size() < 2) {
+                    endOfCommandBlock();
+                    updateHeight();
+                    throw new Exception("File parsing error - \"" + filePath + "\" : invalid coordinates: " + coordinate);
+                }
+                double east = roundValue(coordinate.get(0).doubleValue(), scaleOfRoundOff);
+                double north = roundValue(coordinate.get(1).doubleValue(), scaleOfRoundOff);
+                double height = 0.0;
+                // CrowdWalk 座標系に変換
+                java.awt.geom.Point2D point = new java.awt.geom.Point2D.Double(east, -north);
+                String pointStr = point.toString().replaceAll(" ", "");
+
+                MapNode node = null;
+                if (nodes.containsKey(pointStr)) {
+                    node = nodes.get(pointStr);
+                } else {
+                    AddNode command = new AddNode(group, new Point2D(point.getX(), point.getY()), height);
+                    if (! invoke(command)) {
+                        endOfCommandBlock();
+                        updateHeight();
+                        throw new Exception("Edit command error: AddNode" + command.toString());
+                    }
+                    node = (MapNode)networkMap.getObject(command.getId());
+                    nodes.put(pointStr, node);
+                }
+
+                if (from == node) {
+                    Itk.logWarn_("readGeoJSON", "from === node");
+                } else if (from != null) {
+                    String nodeIdPair = makeNodeIdPair(from, node);
+                    if (links.containsKey(nodeIdPair)) {
+                        Itk.logWarn_("readGeoJSON", "Duplicate link found at node[" + nodeIdPair + "]. Ignore this.");
+                    } else {
+                        double length = from.getPosition().distance(node.getPosition());
+                        AddLink command = new AddLink(from, node, length, width);
+                        if (! invoke(command)) {
+                            endOfCommandBlock();
+                            updateHeight();
+                            throw new Exception("Edit command error: AddLink" + command.toString());
+                        }
+                        MapLink link = (MapLink)networkMap.getObject(command.getId());
+                        links.put(nodeIdPair, link);
+                    }
+                }
+                from = node;
+            }
+        }
+
+        // root グループまで遡りながら zone をセットする
+        setNetworkMapZone(group, zone);
+
+        endOfCommandBlock();
+        updateHeight();
+    }
+
+    /**
+     * 実数値 value を小数点以下第 scale 位で四捨五入する
+     */
+    public double roundValue(double value, int scale) {
+        if (scale >= 0) {
+            BigDecimal bd = new BigDecimal(String.valueOf(value));
+            return bd.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
+        return value;
+    }
+
+    /**
+     * 2つのノード ID を小さい順に並べた文字列を返す
+     */
+    private String makeNodeIdPair(MapNode node1, MapNode node2) {
+        if (node1.ID.compareTo(node2.ID) < 0) {
+            return node1.ID + " " + node2.ID;
+        } else {
+            return node2.ID + " " + node1.ID;
+        }
+    }
+
+    /**
+     * root グループまで遡りながら zone をセットする
+     */
+    private void setNetworkMapZone(MapPartGroup currentGroup, int zone) {
+        if (currentGroup == null) {
+            return;
+        }
+        ArrayList<MapPartGroup> groups = new ArrayList();
+        groups.add(currentGroup);
+        // 将来の仕様拡張に備えて3階層以上にも対応
+        while (currentGroup != networkMap.getRoot()) {
+            for (MapPartGroup parentGroup : networkMap.getGroups()) {
+                if (parentGroup.getChildGroups().contains(currentGroup)) {
+                    groups.add(parentGroup);
+                    currentGroup = parentGroup;
+                    break;
+                }
+            }
+        }
+        for (MapPartGroup group : groups) {
+            if (group.getZone() != zone) {
+                if (! invoke(new SetZone(group, zone))) {
+                    break;
+                }
+            }
+        }
     }
 
     /**

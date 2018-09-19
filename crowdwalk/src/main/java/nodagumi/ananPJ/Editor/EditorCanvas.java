@@ -2221,7 +2221,7 @@ public class EditorCanvas extends Canvas {
             gc.setStroke(Color.RED);
             gc.strokePolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
         } else if (link.getWidth() == 0.0) {
-            gc.setFill(isBg ? Color.web("#ffffcc") : Color.YELLOW);
+            gc.setFill(isBg ? Color.LIGHTGRAY : Color.GRAY);
             gc.fillPolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
         } else {
             if (link.isOneWayForward()) {

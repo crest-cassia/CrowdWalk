@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -26,9 +27,12 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -41,6 +45,7 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -70,6 +75,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
@@ -88,6 +94,8 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
 
 import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Editor.EditCommand.*;
+import nodagumi.ananPJ.Gui.FxColor;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.MapViewFrame;
 import nodagumi.ananPJ.GuiSimulationLauncher;
 import nodagumi.ananPJ.Editor.MapEditor.TextPosition;
@@ -126,7 +134,7 @@ public class EditorFrameFx {
     public static final String HTML_TEMPLATE = "/doc/template.html";
     public static final String QUICK_REFERENCE = "/doc/quick_reference_map_editor.md";
     public static final String PROPERTIES_PATH = "./doc/javadoc/nodagumi/ananPJ/misc/CrowdWalkPropertiesHandler.html";
-    public static final String TUTORIAL_PATH = "./doc/manual.html";
+    public static final String TUTORIAL_URI = "https://github.com/crest-cassia/CrowdWalk/wiki/CrowdWalk-%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB";
     public static final String ZONE_REFERENCE_URI = "http://www.gsi.go.jp/sokuchikijun/jpc.html";
     public static final String GITHUB_REPOSITORY_URI = "https://github.com/crest-cassia/CrowdWalk";
 
@@ -238,6 +246,11 @@ public class EditorFrameFx {
     private AreaPanelFx areaPanel;
     private PolygonPanel polygonPanel;
     private ScenarioPanelFx scenarioPanel;
+
+    /**
+     * シェープファイル読み込みダイアログのプリセット情報
+     */
+    private Map<String, Object> shapefileSpecs;
 
     /**
      * ヘルプ表示用
@@ -452,6 +465,15 @@ public class EditorFrameFx {
      * 初期設定
      */
     private void init() {
+        // シェープファイル読み込みダイアログのプリセット情報を読み込む
+        JSON json = new JSON(JSON.Mode.TRADITIONAL);
+        try {
+            shapefileSpecs = json.parse(getClass().getResourceAsStream("/shapefile_specs.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            shapefileSpecs = new HashMap();
+        }
+
         // ヘルプ画面の準備
 
         MutableDataSet options = new MutableDataSet();
@@ -588,10 +610,13 @@ public class EditorFrameFx {
         miRedo.setOnAction(e -> editor.redo());
         miRedo.setAccelerator(KeyCombination.valueOf("Ctrl+Y"));
 
+        MenuItem miReadShapefile = new MenuItem("Read shapefile");
+        miReadShapefile.setOnAction(e -> readShapefile());
+
         MenuItem miReadOsm = new MenuItem("Read OpenStreetMap");
         miReadOsm.setOnAction(e -> readOpenStreetMap());
 
-        editMenu.getItems().addAll(miUndo, miRedo, miReadOsm);
+        editMenu.getItems().addAll(miUndo, miRedo, miReadShapefile, miReadOsm);
 
         /* View menu */
 
@@ -828,21 +853,16 @@ public class EditorFrameFx {
             }
         });
 
-        MenuItem miTutorialManual = new MenuItem("Tutorial manual(Old content)");
+        MenuItem miTutorialManual = new MenuItem("Tutorial manual (Open web browser)");
         miTutorialManual.setOnAction(e -> {
-            File file = new File(TUTORIAL_PATH);
-            if (file.exists()) {
-                helpStage.setTitle("Help - Tutorial manual");
-                helpStage.setWidth(1000);
-                helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+            new Thread(() -> {
                 try {
-                    webView.getEngine().load("file:///" + file.getCanonicalPath().replace('\\', '/'));
-                    helpStage.show();
-                    helpStage.toFront();
-                } catch (Exception ex) {
+                    URI uri = new URI(TUTORIAL_URI);
+                    Desktop.getDesktop().browse(uri);
+                } catch (IOException | URISyntaxException ex) {
                     ex.printStackTrace();
                 }
-            }
+            }).start();
         });
 
         MenuItem miZoneReference = new MenuItem("Zone of plane rectangular coordinate system");
@@ -855,7 +875,7 @@ public class EditorFrameFx {
             helpStage.toFront();
         });
 
-        MenuItem miGitHub = new MenuItem("Browse GitHub repository");
+        MenuItem miGitHub = new MenuItem("Browse GitHub repository (Open web browser)");
         miGitHub.setOnAction(e -> {
             new Thread(() -> {
                 try {
@@ -868,6 +888,7 @@ public class EditorFrameFx {
         });
 
         if (CrowdWalkLauncher.offline) {
+            miTutorialManual.setDisable(true);
             miZoneReference.setDisable(true);
             miGitHub.setDisable(true);
         }
@@ -1593,6 +1614,461 @@ public class EditorFrameFx {
     }
 
     /**
+     * リンクを表すライン群表示用の Canvas
+     */
+    private class LinkViewCanvas extends Canvas {
+        private HashMap<String, ArrayList<ArrayList<Point2D>>> linesOfMeshCode;
+        private Rectangle2D boundary = Rectangle2D.EMPTY;
+
+        public LinkViewCanvas(HashMap<String, ArrayList<ArrayList<Point2D>>> linesOfMeshCode) {
+            this.linesOfMeshCode = linesOfMeshCode;
+            widthProperty().addListener(evt -> draw());
+            heightProperty().addListener(evt -> draw());
+        }
+
+        public void update() {
+            boolean passing = false;
+            double minX = 0.0;
+            double maxX = 0.0;
+            double minY = 0.0;
+            double maxY = 0.0;
+            for (ArrayList<ArrayList<Point2D>> lines : linesOfMeshCode.values()) {
+                for (ArrayList<Point2D> line : lines) {
+                    for (Point2D point : line) {
+                        if (passing) {
+                            if (point.getX() < minX) {
+                                minX = point.getX();
+                            }
+                            if (point.getX() > maxX) {
+                                maxX = point.getX();
+                            }
+                            if (point.getY() < minY) {
+                                minY = point.getY();
+                            }
+                            if (point.getY() > maxY) {
+                                maxY = point.getY();
+                            }
+                        } else {
+                            minX = point.getX();
+                            maxX = point.getX();
+                            minY = point.getY();
+                            maxY = point.getY();
+                            passing = true;
+                        }
+                    }
+                }
+            }
+            boundary = new Rectangle2D(minX, minY, maxX - minX, maxY - minY);
+            draw();
+        }
+
+        private void draw() {
+            double width = getWidth();
+            double height = getHeight();
+
+            GraphicsContext gc = getGraphicsContext2D();
+            gc.clearRect(0, 0, width, height);
+            if (boundary.getHeight() == 0.0) {
+                return;
+            }
+
+            double k = Math.min(width / boundary.getWidth(), height / boundary.getHeight());
+            double offsetX = (width - boundary.getWidth() * k) / 2.0;
+            double offsetY = (height - boundary.getHeight() * k) / 2.0;
+
+            gc.setStroke(FxColor.DEFAULT_LINK_COLOR);
+            for (ArrayList<ArrayList<Point2D>> lines : linesOfMeshCode.values()) {
+                for (ArrayList<Point2D> line : lines) {
+                    Point2D lastPoint = null;
+                    for (Point2D point : line) {
+                        Point2D _point = new Point2D((point.getX() - boundary.getMinX()) * k + offsetX, (point.getY() - boundary.getMinY()) * k + offsetY);
+                        if (lastPoint != null) {
+                            gc.strokeLine(lastPoint.getX(), lastPoint.getY(), _point.getX(), _point.getY());
+                        }
+                        lastPoint = _point;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean isResizable() {
+            return true;
+        }
+
+        @Override
+        public double prefWidth(double height) {
+            return getWidth();
+        }
+
+        @Override
+        public double prefHeight(double width) {
+            return getHeight();
+        }
+    }
+
+    /**
+     * シェープファイルを読み込む
+     */
+    private void readShapefile() {
+        NetworkMap networkMap = editor.getMap();
+
+        // root グループには読み込めない
+        if (networkMap.getGroups().size() == 1) {
+            Alert alert = new Alert(AlertType.WARNING, "Please create a new group.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+
+        // zone の不整合がないかチェックする
+        int fixedZone = 0;
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group.getZone() != 0) {
+                if (fixedZone == 0) {
+                    fixedZone = group.getZone();
+                    continue;
+                }
+                if (group.getZone() != fixedZone) {
+                    Alert alert = new Alert(AlertType.WARNING, "Group zone mismatch: " + fixedZone + " and " + group.getZone(), ButtonType.OK);
+                    alert.showAndWait();
+                    return;
+                }
+            }
+        }
+
+        // 全グループの scale が 1.0 である事
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group.getScale() != 1.0) {
+                Alert alert = new Alert(AlertType.WARNING, "Group scale must be all 1.0", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+        }
+
+        // 外部プログラム "ogr2ogr" が使える事を確認する
+        ProcessBuilder pb = new ProcessBuilder("ogr2ogr", "--version");
+        pb.inheritIO();
+        try {
+            Process process = pb.start();
+            int ret = process.waitFor();
+            if (ret != 0) {
+                Alert alert = new Alert(AlertType.WARNING, "External program \"ogr2ogr\" can not be executed.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+        } catch (IOException e) {
+            Alert alert = new Alert(AlertType.WARNING, "External program \"ogr2ogr\" not found.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        String[] shapefileSpecNames = shapefileSpecs.keySet().toArray(new String[0]);
+        HashMap<String, ArrayList<ArrayList<Point2D>>> linesOfMeshCode = new HashMap();
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Read shapefile");
+        dialog.setResizable(true);
+
+        LinkViewCanvas canvas = new LinkViewCanvas(linesOfMeshCode);
+        StackPane canvasPane = new StackPane();
+        canvasPane.getChildren().add(canvas);
+        canvasPane.setMinWidth(800);
+        canvasPane.setMinHeight(600);
+        canvas.widthProperty().bind(canvasPane.widthProperty());
+        canvas.heightProperty().bind(canvasPane.heightProperty());
+
+        // Preset
+        ChoiceBox<String> presetChoiceBox = new ChoiceBox(FXCollections.observableArrayList(shapefileSpecNames));
+
+        // Geodetic datum
+        ChoiceBox<String> datumChoiceBox = new ChoiceBox();
+        datumChoiceBox.getItems().addAll("Tokyo", "WGS84");
+        datumChoiceBox.setValue("Tokyo");
+
+        // Round off coordinate to
+        CheckBox roundOffCheckBox = new CheckBox("Round off coordinate to");
+        TextField roundOffField = new TextField("");
+        roundOffCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
+            roundOffField.setDisable(! newValue);
+        });
+
+        Label widthLabel = new Label("width:");
+        widthLabel.setFont(Font.font("Arial", FontWeight.BOLD, widthLabel.getFont().getSize()));
+        widthLabel.setPadding(new Insets(12, 0, 0, 0));
+
+        TextField widthNameField = new TextField("");
+
+        // Correction factor
+        CheckBox factorCheckBox = new CheckBox("Correction factor");
+        TextField factorField = new TextField("");
+        factorCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
+            factorField.setDisable(! newValue);
+        });
+
+        // Use reference table
+        CheckBox referenceTableCheckBox = new CheckBox("Use reference table");
+        TextField referenceTableField = new TextField("");
+        referenceTableField.setPrefWidth(360);
+        referenceTableCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
+            referenceTableField.setDisable(! newValue);
+        });
+
+        presetChoiceBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            Map<String, Object> shapefileSpec = (Map<String, Object>)shapefileSpecs.get(newValue);
+            if (shapefileSpec == null) {
+                return;
+            }
+            datumChoiceBox.setValue((String)shapefileSpec.get("geodetic_datum"));
+            Object object = shapefileSpec.get("round_off_coordinate_to");
+            if (object == null) {
+                roundOffField.setText("");
+                roundOffCheckBox.setSelected(false);
+            } else {
+                roundOffField.setText(object.toString());
+                roundOffCheckBox.setSelected(true);
+            }
+
+            Map<String, Object> widthObjects = (Map<String, Object>)shapefileSpec.get("width");
+            widthNameField.setText((String)widthObjects.get("attribute_name"));
+            object = widthObjects.get("correction_factor");
+            if (object == null) {
+                factorField.setText("");
+                factorCheckBox.setSelected(false);
+            } else {
+                factorField.setText(object.toString());
+                factorCheckBox.setSelected(true);
+            }
+            object = widthObjects.get("reference_table");
+            if (object == null) {
+                referenceTableField.setText("");
+                referenceTableCheckBox.setSelected(false);
+            } else {
+                referenceTableField.setText(((ArrayList<Object>)object).toString().replaceAll("\\[|\\]", ""));
+                referenceTableCheckBox.setSelected(true);
+            }
+        });
+
+        // Destination group
+        HashMap<String, MapPartGroup> groups = new HashMap();
+        ArrayList<String> groupNames = new ArrayList();
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group == networkMap.getRoot() || group.getTags().size() == 0) {
+                continue;
+            }
+            groups.put(group.getTagString(), group);
+            groupNames.add(group.getTagString());
+        }
+        ChoiceBox<String> groupChoiceBox = new ChoiceBox(FXCollections.observableArrayList(groupNames));
+        groupChoiceBox.setValue(editor.getCurrentGroup().getTagString());
+
+        // Zone
+        ArrayList<String> zones = new ArrayList();
+        if (fixedZone != 0) {
+            zones.add("" + fixedZone);
+        } else {
+            for (int zone = 1; zone <= GsiTile.JGD2000_JPR_EPSG_NAMES.length - 1; zone++) {
+                zones.add("" + zone);
+            }
+        }
+        ChoiceBox<String> zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        zoneChoiceBox.setValue(zones.get(0));
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group.getZone() != 0) {
+                zoneChoiceBox.setValue("" + group.getZone());
+                break;
+            }
+        }
+        Button zoneReference = new Button("Reference");
+        zoneReference.setOnAction(e -> {
+            helpStage.setTitle("Help - Zone of plane rectangular coordinate system");
+            helpStage.setWidth(900);
+            helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+            webView.getEngine().load(ZONE_REFERENCE_URI);
+            helpStage.show();
+            helpStage.toFront();
+        });
+        if (CrowdWalkLauncher.offline) {
+            zoneReference.setDisable(true);
+        }
+        FlowPane zonePane = new FlowPane();
+        zonePane.setPrefWidth(160);
+        zonePane.setHgap(8);
+        zonePane.setAlignment(Pos.CENTER_LEFT);
+        zonePane.getChildren().addAll(zoneChoiceBox, zoneReference);
+
+        // Shapefiles
+        Label shapefilesLabel = new Label("Shapefiles");
+        shapefilesLabel.setFont(Font.font("Arial", FontWeight.BOLD, shapefilesLabel.getFont().getSize()));
+
+        ListView<String> shapefileList = new ListView<>();
+        shapefileList.setPrefHeight(180);
+
+        StringBuilder path = new StringBuilder();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open shapefile");
+        setInitialPath(fileChooser, path.toString());
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("shp", "*.shp")
+        );
+
+        Button addButton = new Button("Add");
+        addButton.setOnAction(e -> {
+            String srcEpsg = "EPSG:4326";   // WGS84
+            if (datumChoiceBox.getValue().equals("Tokyo")) {
+                srcEpsg = "EPSG:4301";      // 旧日本測地系
+            }
+            int zone = Integer.parseInt(zoneChoiceBox.getValue());
+            setInitialPath(fileChooser, path.toString());
+            File file = fileChooser.showOpenDialog(frame);
+            if (file != null) {
+                try {
+                    path.setLength(0);
+                    path.append(file.getCanonicalPath());
+                    String pathName = path.toString();
+                    if (linesOfMeshCode.keySet().contains(pathName)) {
+                        return;
+                    }
+                    ArrayList<ArrayList<Point2D>> lines = null;
+                    try {
+                        lines = editor.shapefileToLines(srcEpsg, zone, pathName);
+                    } catch (Exception ex) {
+                        Itk.logError("Read shapefile", ex.getMessage());
+                        Alert alert = new Alert(AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+                        alert.showAndWait();
+                        return;
+                    }
+                    shapefileList.getItems().add(pathName);
+                    linesOfMeshCode.put(pathName, lines);
+                    // refresh
+                    canvas.update();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        Button removeButton = new Button("Remove");
+        removeButton.setOnAction(e -> {
+            ObservableList<String> list = shapefileList.getSelectionModel().getSelectedItems();
+            if (! list.isEmpty()) {
+                String pathName = list.get(0);
+                shapefileList.getItems().remove(pathName);
+                linesOfMeshCode.remove(pathName);
+                // refresh
+                canvas.update();
+            }
+        });
+
+        FlowPane buttonPane = new FlowPane();
+        buttonPane.setHgap(8);
+        buttonPane.setAlignment(Pos.CENTER_RIGHT);
+        buttonPane.getChildren().addAll(addButton, removeButton);
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(12));
+        grid.setHgap(8);
+        grid.setVgap(6);
+        int row = 0;
+        grid.add(new Label("Preset"), 0, row, 2, 1);
+        grid.add(presetChoiceBox, 2, row++);
+
+        grid.add(new Separator(), 0, row++, 3, 1);
+
+        grid.add(new Label("Geodetic datum"), 0, row, 2, 1);
+        grid.add(datumChoiceBox, 2, row++);
+
+        grid.add(roundOffCheckBox, 0, row, 2, 1);
+        grid.add(roundOffField, 2, row++);
+
+        grid.add(widthLabel, 0, row++, 3, 1);
+        grid.add(new Label("attribute name"), 1, row, 1, 1);
+        grid.add(widthNameField, 2, row++, 1, 1);
+        grid.add(factorCheckBox, 1, row, 1, 1);
+        grid.add(factorField, 2, row++, 1, 1);
+        grid.add(referenceTableCheckBox, 1, row++, 2, 1);
+        grid.add(referenceTableField, 1, row++, 2, 1);
+
+        Separator separator = new Separator();
+        separator.setPadding(new Insets(8, 0, 8, 0));
+        grid.add(separator, 0, row++, 3, 1);
+
+        grid.add(new Label("Destination group"), 0, row, 2, 1);
+        grid.add(groupChoiceBox, 2, row++);
+        grid.add(new Label("Zone"), 0, row, 2, 1);
+        grid.add(zonePane, 2, row++);
+
+        grid.add(shapefilesLabel, 0, row++, 3, 1);
+        grid.add(shapefileList, 0, row++, 3, 1);
+        grid.add(buttonPane, 0, row++, 3, 1);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(canvasPane);
+        borderPane.setRight(grid);
+        dialog.getDialogPane().setContent(borderPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // 1番目のプリセットで初期化する
+        presetChoiceBox.setValue(shapefileSpecNames[0]);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            String srcEpsg = "EPSG:4326";   // WGS84
+            if (datumChoiceBox.getValue().equals("Tokyo")) {
+                srcEpsg = "EPSG:4301";      // 旧日本測地系
+            }
+            Integer scaleOfRoundOff = null;
+            if (roundOffCheckBox.isSelected()) {
+                scaleOfRoundOff = convertToInteger(roundOffField.getText());
+                if (scaleOfRoundOff == null) {
+                    return;
+                }
+            }
+            String widthName = widthNameField.getText().trim();
+            if (widthName.isEmpty()) {
+                Alert alert = new Alert(AlertType.WARNING, "\"width\" attribute name is empty.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+            Double correctionFactor = null;
+            if (factorCheckBox.isSelected()) {
+                correctionFactor = convertToDouble(factorField.getText());
+                if (correctionFactor == null) {
+                    return;
+                }
+            }
+            ArrayList<Double> referenceTable = new ArrayList();
+            if (referenceTableCheckBox.isSelected()) {
+                String[] values = referenceTableField.getText().trim().split("\\s*,\\s*");
+                for (String value : values) {
+                    Double doubleValue = convertToDouble(value);
+                    if (doubleValue == null) {
+                        return;
+                    }
+                    referenceTable.add(doubleValue);
+                }
+            }
+            MapPartGroup group = groups.get(groupChoiceBox.getValue());
+            int zone = Integer.parseInt(zoneChoiceBox.getValue());
+            if (group.getZone() != 0 && group.getZone() != zone) {
+                Alert alert = new Alert(AlertType.WARNING, "Zone is different from group's zone.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+
+            try {
+                editor.readShapefile(srcEpsg, scaleOfRoundOff == null ? -1 : scaleOfRoundOff.intValue(), widthName, correctionFactor, referenceTable, group, zone, shapefileList.getItems());
+            } catch (Exception e) {
+                Itk.logError("Read shapefile", e.getMessage());
+                Alert alert = new Alert(AlertType.ERROR, e.getMessage() + "\n\nMap data is over on the way.", ButtonType.OK);
+                alert.showAndWait();
+            }
+        }
+    }
+
+    /**
      * OpenStreetMap データを読み込む
      */
     private void readOpenStreetMap() {
@@ -1646,6 +2122,23 @@ public class EditorFrameFx {
                 break;
             }
         }
+        Button zoneReference = new Button("Reference");
+        zoneReference.setOnAction(e -> {
+            helpStage.setTitle("Help - Zone of plane rectangular coordinate system");
+            helpStage.setWidth(900);
+            helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+            webView.getEngine().load(ZONE_REFERENCE_URI);
+            helpStage.show();
+            helpStage.toFront();
+        });
+        if (CrowdWalkLauncher.offline) {
+            zoneReference.setDisable(true);
+        }
+        FlowPane zonePane = new FlowPane();
+        zonePane.setPrefWidth(160);
+        zonePane.setHgap(8);
+        zonePane.setAlignment(Pos.CENTER_LEFT);
+        zonePane.getChildren().addAll(zoneChoiceBox, zoneReference);
 
         // Highway value to convert to link
         Label highwayLabel = new Label("Highway value to convert to link");
@@ -1769,7 +2262,7 @@ public class EditorFrameFx {
         grid.add(new Label("Destination group"), 0, row, 2, 1);
         grid.add(groupChoiceBox, 2, row++);
         grid.add(new Label("Zone"), 0, row, 2, 1);
-        grid.add(zoneChoiceBox, 2, row++);
+        grid.add(zonePane, 2, row++);
 
         grid.add(highwayLabel, 0, row++, 3, 1);
         grid.add(scroller, 0, row++, 3, 1);

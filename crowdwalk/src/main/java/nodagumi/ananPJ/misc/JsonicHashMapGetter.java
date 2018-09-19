@@ -68,7 +68,15 @@ public class JsonicHashMapGetter {
             return defaultValue;
         }
         if (! (parameter instanceof BigDecimal)) {
-            throw new Exception("Parameter type error - \"" + name + "\" : " + parameter.toString());
+            if (parameter instanceof String) {
+                try {
+                    parameter = new BigDecimal((String)parameter);
+                } catch (NumberFormatException e) {
+                    throw new Exception("Parameter is not numeric - \"" + name + "\" : " + parameter.toString());
+                }
+            } else {
+                throw new Exception("Parameter type error - \"" + name + "\" : " + parameter.toString());
+            }
         }
         return (BigDecimal)parameter;
     }

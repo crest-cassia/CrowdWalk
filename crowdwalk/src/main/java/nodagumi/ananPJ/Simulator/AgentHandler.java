@@ -1956,6 +1956,9 @@ public class AgentHandler {
                     agentMovementHistoryLoggerFormatter.new Column(checkpoint) {
                         public String value(AgentBase agent, Object timeObj, Object agentHandlerObj) {
                             HashMap<String, SimTime> checkpointPassingTime = checkpointPassingTimes.get(agent);
+                            if (checkpointPassingTime == null) {
+                                return "";
+                            }
                             SimTime passingTime = checkpointPassingTime.get(checkpoint);
                             return passingTime == null ? "" : "" + (int)passingTime.getRelativeTime();
                         }

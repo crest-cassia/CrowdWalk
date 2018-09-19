@@ -220,7 +220,7 @@ public class OsmReader extends JsonicHashMapGetter {
 
             // リンクタグのリストを作っておく
             ArrayList<String> linkTags = new ArrayList();
-            linkTags.add("wayID=" + way.getId());
+            // linkTags.add("wayID=" + way.getId());
             for (int index = 0; index < way.getNumberOfTags(); index++) {
                 OsmTag tag = way.getTag(index);
                 if (tag.getKey().equals("source")) {
