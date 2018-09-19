@@ -720,6 +720,10 @@ implements Comparable<AgentBase> {
                                       boolean onNode, boolean stuck) {
         consumePlannedRoute() ;
         setEvacuated(true, currentTime, stuck) ;
+        if(onNode) {
+            currentPlace.getHeadingNode().acceptEvacuatedAgent(this,
+                                                               currentTime) ;
+        }
         if(currentPlace.isWalking()) {
             lastPlace.set(currentPlace) ;
             currentPlace.getLink().agentExits(this) ;

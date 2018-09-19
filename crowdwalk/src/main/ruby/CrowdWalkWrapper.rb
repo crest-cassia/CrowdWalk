@@ -20,6 +20,21 @@ require 'NetworkMap.rb' ;
 ## CrowdWalk の EvacuationSimulator の制御のwrapper
 class CrowdWalkWrapper
   include ItkUtility ;
+
+  #--============================================================
+  #--------------------------------------------------------------
+  #++ Wrapper の（唯一の）インスタンスへのアクセス。
+  def self.getInstance()
+    return @@instance ;
+  end
+  
+  #--============================================================
+  #--------------------------------------------------------------
+  #++ Wrapper の（唯一の）インスタンスへのを設定。
+  def self.setInstance(wrapper)
+    @@instance = wrapper ;
+    return @@instance ;
+  end
   
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
@@ -43,6 +58,7 @@ class CrowdWalkWrapper
   ## 初期化
   ## _simulator_:: Java の EvacuationSimulator のインスタンス。
   def initialize(simulator)
+    self.class().setInstance(self) ;
     @simulator = simulator ;
     @networkMap = NetworkMap.new(simulator.getMap()) ;
     @fallbackParameters = simulator.getFallbackParameters() ;

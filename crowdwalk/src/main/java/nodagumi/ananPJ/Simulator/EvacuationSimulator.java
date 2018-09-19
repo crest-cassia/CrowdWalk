@@ -832,8 +832,19 @@ public class EvacuationSimulator {
                 Itk.logInfo("Ruby Engine",
                             "current dir=", rubyEngine.eval("Dir::pwd")) ;
                 // init script
-                String initScript = properties.getString("ruby_init_script", null);
-                if(initScript != null) {
+                Term initScriptTerm =
+                    properties.getTerm("ruby_init_script", null) ;
+                if(initScriptTerm != null) {
+                    String initScript = "" ;
+                    if(initScriptTerm.isArray()) {
+                        for(Object item : initScriptTerm.getArray()) {
+                            initScript += "\n" ;
+                            initScript += ((Term)item).getString() ;
+                        }
+                    } else {
+                        initScript = initScriptTerm.getString() ;
+                    }
+                    
                     Itk.logInfo("Ruby Engine", 
                                 "eval init script=", initScript) ;
                     rubyEngine.eval(initScript) ;

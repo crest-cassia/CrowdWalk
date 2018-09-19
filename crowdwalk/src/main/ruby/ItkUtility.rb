@@ -98,6 +98,23 @@ module ItkUtility
     logWithLevel(:fatal, label, *data) ;
   end
 
+  #--------------------------------------------------------------
+  ## 地図オブジェクトへのアクセス。
+  #--------------------------------
+  #++
+  ## ノードから exit したエージェントの数。
+  def numOfExitAgentsFromNode(node)
+    return node.getNumberOfEvacuatedAgents() ;
+  end
+
+  #--------------------------------
+  #++
+  ## 直前サイクルにノードを通過したエージェントの数。
+  ## _simTime_:: 現在時刻（シミュレーション内時刻）
+  def numOfPassedAgentsOverNode(node, simTime, margin = 1.5)
+    return node.countPassingAgent(simTime, margin) ;
+  end
+  
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
