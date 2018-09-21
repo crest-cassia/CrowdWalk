@@ -1,0 +1,20 @@
+[
+  { "type":"Initiate",
+    "atTime":"18:00:00"},
+  { "type":"CloseGate",
+    "atTime":"18:02:15",
+    "placeTag":"gate_foo",
+    "message":"emergency"},
+  { "type":"CloseGate",
+    "atTime":"18:02:15",
+    "placeTag":"gate_bar",
+    "message":"emergency"},
+  { "type":"OpenGate",
+    "atTime":"18:10:00",
+    "placeTag":"gate_foo",
+    "message":"emergency"},
+  { "type":"OpenGate",
+    "atTime":"18:40:00",
+    "placeTag":"gate_bar",
+    "message":"emergency"}
+]

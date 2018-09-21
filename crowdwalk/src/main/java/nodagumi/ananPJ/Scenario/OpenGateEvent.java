@@ -71,18 +71,18 @@ public class OpenGateEvent extends GateEvent {
 	for(MapLink link : map.getLinks()) {
             if(checkTagOrId(link)) {
 		if(!inverse) {
-		    link.openGate(gateTag.getString()) ;
+		    link.openGate(gateTag,eventDef) ;
 		} else {
-		    link.closeGate(gateTag.getString()) ;
+		    link.closeGate(gateTag,eventDef) ;
 		}
 	    }
 	}
 	for(MapNode node : map.getNodes()) {
             if(checkTagOrId(node)) {
 		if(!inverse) {
-		    node.openGate(gateTag.getString()) ;
+		    node.openGate(gateTag,eventDef) ;
 		} else {
-		    node.closeGate(gateTag.getString()) ;
+		    node.closeGate(gateTag,eventDef) ;
 		}
 	    }
 	}

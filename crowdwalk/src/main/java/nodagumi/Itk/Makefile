@@ -294,6 +294,11 @@ run3gt02ds ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02ds))
 
 ##-----
+SAMPLE3gt03 = sample/generatedTown/gridTown03.prop.json   # gate event
+run3gt03 ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt03))
+
+##-----
 SAMPLE3kw01 = sample/kawaguchi-S2B/property-S2B.xml # kawaguchi
 run3kw01 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3kw01))

@@ -12,6 +12,9 @@ import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
+import nodagumi.ananPJ.NetworkMap.Gate.GateBase;
+//import nodagumi.ananPJ.NetworkMap.Gate.RubyGate;
+
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.Trail;
@@ -286,37 +289,48 @@ public abstract class OBNode extends DefaultMutableTreeNode
      * 各ノード・リンクのゲートは、タグにより参照できる。
      * 単一のタグには単一のゲートのみ割り振ることができる。
      */
-    private HashMap<String, GateBase> gateTable =
-        new HashMap<String, GateBase>() ;
+    private HashMap<String, GateBase> gateTable = null ;
 
     //------------------------------------------------------------
     /**
      * ゲート（分断制御用交通規制）のチェック
      */
     public boolean isGateClosed(AgentBase agent, SimTime currentTime) {
-        for(String gateTag: gateTable.keySet()) {
-            GateBase gate = gateTable.get(gateTag) ;
-            if(gate.isClosed(agent, currentTime)) return true ;
+        if(gateTable == null) {
+            return false ;
+        } else {
+            for(String gateTag: gateTable.keySet()) {
+                GateBase gate = gateTable.get(gateTag) ;
+                if(gate.isClosed(agent, currentTime)) return true ;
+            }
+            return false ;
         }
-        return false ;
     }
 
     //------------------------------------------------------------
     /**
      * ゲート操作  by Term
      */
-    public GateBase switchGate(Term gateTag, boolean closed) {
-        return switchGate(gateTag.getString(), closed) ;
+    public GateBase switchGate(Term gateTag,
+                               Term eventDef,
+                               boolean closed) {
+        return switchGate(gateTag.getString(), eventDef, closed) ;
     }
     
     //------------------------------------------------------------
     /**
      * ゲート操作
      */
-    public GateBase switchGate(String gateTag, boolean closed) {
+    public GateBase switchGate(String gateTag,
+                               Term eventDef,
+                               boolean closed) {
+        if(gateTable == null) {
+            gateTable = new HashMap<String, GateBase>() ;
+        }
+        
         GateBase gate = gateTable.get(gateTag) ;
         if(gate == null) {
-            gate = new GateBase(gateTag, closed) ;
+            gate = new GateBase(gateTag, eventDef, closed) ;
             gateTable.put(gateTag, gate) ;
         } else {
             gate.switchGate(closed) ;
@@ -330,126 +344,33 @@ public abstract class OBNode extends DefaultMutableTreeNode
     /**
      * ゲート閉鎖 by Term
      */
-    public GateBase closeGate(Term tag) {
-        return closeGate(tag.getString()) ;
+    public GateBase closeGate(Term tag, Term eventDef) {
+        return closeGate(tag.getString(),eventDef) ;
     }
 
     //------------------------------------------------------------
     /**
      * ゲート閉鎖
      */
-    public GateBase closeGate(String tag) {
-        return switchGate(tag, true) ;
+    public GateBase closeGate(String tag, Term eventDef) {
+        return switchGate(tag, eventDef, true) ;
     }
 
     //------------------------------------------------------------
     /**
      * ゲート開放 by Term
      */
-    public GateBase openGate(Term tag) {
-        return openGate(tag.getString()) ;
+    public GateBase openGate(Term tag, Term eventDef) {
+        return openGate(tag.getString(), eventDef) ;
     }
 
     //------------------------------------------------------------
     /**
      * ゲート開放
      */
-    public GateBase openGate(String tag) {
-        return switchGate(tag, false) ;
+    public GateBase openGate(String tag, Term eventDef) {
+        return switchGate(tag, eventDef, false) ;
     }
-
-    //============================================================
-    /**
-     * 通行規制制御用クラス
-     */
-    class GateBase {
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * OBNode内でこのゲートを参照するためのタグ
-         */
-        public String tag;
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /**
-         * 現在閉じている（通行止め）かどうか？
-         */
-        public boolean closed ;
-
-        //----------------------------------------
-        /**
-         * コンストラクタ
-         */
-        public GateBase(String _tag, boolean _closed) {
-            tag = _tag ;
-            closed = _closed ;
-        }
-
-        //----------------------------------------
-        /**
-         * 閉じているかどうか？
-         * 拡張のために、時刻とエージェントを受け取る。
-         * @param currnetTime : シミュレーション時刻
-         * @param agent: 対象となるエージェント
-         * @return デフォルトでは、単にこのゲートが閉じているかどうか
-         */
-        public boolean isClosed(AgentBase agent, SimTime currentTime) {
-            return isClosed() ;
-        }
-
-        //----------------------------------------
-        /**
-         * 閉じているかどうか？
-         * 拡張のために、時刻とエージェントを受け取る。
-         * @param currentTime : シミュレーション時刻
-         * @param agent: 対象となるエージェント
-         * @return デフォルトでは、単にこのゲートが閉じているかどうか
-         */
-        public boolean isOpened(AgentBase agent, SimTime currentTime) {
-            return !isClosed(agent, currentTime) ;
-        }
-
-        //----------------------------------------
-        /**
-         * 閉じているかどうか？
-         */
-        public boolean isClosed() {
-            return closed ;
-        }
-
-        //----------------------------------------
-        /**
-         * 開いているかどうか？
-         */
-        public boolean isOpened() {
-            return !isClosed() ;
-        }
-
-        //----------------------------------------
-        /**
-         * ゲートの開閉
-         */
-        public GateBase switchGate(boolean _closed) {
-            closed = _closed ;
-            return this ;
-        }
-
-        //----------------------------------------
-        /**
-         * ゲートを閉じる
-         */
-        public GateBase close() {
-            return switchGate(true) ;
-        }
-
-        //----------------------------------------
-        /**
-         * ゲートを開ける
-         */
-        public GateBase open() {
-            return switchGate(false) ;
-        }
-
-    } // class GateBase
 
 }
 //;;; Local Variables:
