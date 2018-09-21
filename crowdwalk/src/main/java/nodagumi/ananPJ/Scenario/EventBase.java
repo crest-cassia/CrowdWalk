@@ -34,6 +34,12 @@ abstract public class EventBase {
      */
     public Scenario scenario = null ;
 
+    /**
+     * その他、拡張用の情報。
+     * シナリオで与えられる定義情報。json のみ対応。
+     */
+    public Term eventDef = null ;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ID。
@@ -71,8 +77,9 @@ abstract public class EventBase {
      * JSON Term による setup
      */
     public void setupByJson(Scenario _scenario,
-                            Term eventDef) {
+                            Term _eventDef) {
         scenario = _scenario ;
+        eventDef = _eventDef ;
 
         id = eventDef.getArgString("id") ;
         atTimeString = eventDef.getArgString("atTime") ;
@@ -127,6 +134,14 @@ abstract public class EventBase {
         return getSimulator().getAgentHandler() ;
     }
     
+    //----------------------------------------
+    /**
+     * get event def
+     */
+    public Term getEventDef() {
+        return eventDef ;
+    }
+
     //----------------------------------------
     /**
      * id を持つかどうか

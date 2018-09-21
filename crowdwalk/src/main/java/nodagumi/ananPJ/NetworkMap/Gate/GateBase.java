@@ -13,6 +13,7 @@
 package nodagumi.ananPJ.NetworkMap.Gate;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Scenario.GateEvent;
 import nodagumi.ananPJ.misc.SimTime;
 
 import nodagumi.Itk.*;
@@ -31,9 +32,9 @@ public class GateBase {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * Event の定義
+     * もととなる初出Event 
      */
-    public Term eventDef ;
+    public GateEvent event ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -45,9 +46,9 @@ public class GateBase {
     /**
      * コンストラクタ
      */
-    public GateBase(String _tag, Term _eventDef, boolean _closed) {
+    public GateBase(String _tag, GateEvent _event, boolean _closed) {
 	tag = _tag ;
-	eventDef = _eventDef ;
+	event = _event ;
 	closed = _closed ;
     }
 

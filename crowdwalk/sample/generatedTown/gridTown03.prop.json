@@ -36,6 +36,7 @@
 /usr/users/noda/work/ruby",
   "ruby_init_script":"
 require './SampleFactory.rb'
+require './SampleGate.rb' 
 require 'pp'
 ",
 

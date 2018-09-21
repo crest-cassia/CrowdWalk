@@ -31,12 +31,6 @@ abstract public class GateEvent extends PlacedEvent {
      */
     public Term gateTag = null ;
     
-    /**
-     * その他、拡張用の情報。
-     * シナリオで与えられる定義情報。json のみ対応。
-     */
-    public Term eventDef = null ;
-
     //----------------------------------------
     /**
      * JSON Term による setup
@@ -44,8 +38,6 @@ abstract public class GateEvent extends PlacedEvent {
     public void setupByJson(Scenario _scenario,
                             Term _eventDef) {
         super.setupByJson(_scenario, _eventDef) ;
-
-        eventDef = _eventDef ;
 
         gateTag = _eventDef.getArgTerm("gateTag") ;
         if(gateTag == null) {

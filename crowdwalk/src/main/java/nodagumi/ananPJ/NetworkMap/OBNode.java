@@ -13,8 +13,9 @@ import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;
 import nodagumi.ananPJ.NetworkMap.Polygon.MapPolygon;
 import nodagumi.ananPJ.NetworkMap.Gate.GateBase;
-//import nodagumi.ananPJ.NetworkMap.Gate.RubyGate;
+import nodagumi.ananPJ.NetworkMap.Gate.RubyGate;
 
+import nodagumi.ananPJ.Scenario.GateEvent;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.Trail;
@@ -312,9 +313,9 @@ public abstract class OBNode extends DefaultMutableTreeNode
      * ゲート操作  by Term
      */
     public GateBase switchGate(Term gateTag,
-                               Term eventDef,
+                               GateEvent event,
                                boolean closed) {
-        return switchGate(gateTag.getString(), eventDef, closed) ;
+        return switchGate(gateTag.getString(), event, closed) ;
     }
     
     //------------------------------------------------------------
@@ -322,7 +323,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
      * ゲート操作
      */
     public GateBase switchGate(String gateTag,
-                               Term eventDef,
+                               GateEvent event,
                                boolean closed) {
         if(gateTable == null) {
             gateTable = new HashMap<String, GateBase>() ;
@@ -330,7 +331,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
         
         GateBase gate = gateTable.get(gateTag) ;
         if(gate == null) {
-            gate = new GateBase(gateTag, eventDef, closed) ;
+            gate = newGate(gateTag, event, closed) ;
             gateTable.put(gateTag, gate) ;
         } else {
             gate.switchGate(closed) ;
@@ -342,34 +343,57 @@ public abstract class OBNode extends DefaultMutableTreeNode
 
     //------------------------------------------------------------
     /**
+     * ゲート操作
+     */
+    public GateBase newGate(String gateTag,
+                            GateEvent event,
+                            boolean closed) {
+        String gateClass =
+            (event.eventDef == null ? null :
+             event.eventDef.getArgString("gateClass")) ;
+        if(gateClass == null) {
+            Itk.logDebug("newGate", "no gateClass, use GateBase.") ;
+            return new GateBase(gateTag, event, closed) ;
+        } else if(gateClass.equals("RubyGate")) {
+            Itk.logDebug("newGate", "use RubyGate.") ;
+            return new RubyGate(gateTag, event, closed) ;
+        } else {
+            Itk.logError("Unknown Gate Class", gateTag, gateClass, event) ;
+            Itk.quitByError() ;
+            return null ; // never reach
+        }
+    }
+    
+    //------------------------------------------------------------
+    /**
      * ゲート閉鎖 by Term
      */
-    public GateBase closeGate(Term tag, Term eventDef) {
-        return closeGate(tag.getString(),eventDef) ;
+    public GateBase closeGate(Term tag, GateEvent event) {
+        return closeGate(tag.getString(),event) ;
     }
 
     //------------------------------------------------------------
     /**
      * ゲート閉鎖
      */
-    public GateBase closeGate(String tag, Term eventDef) {
-        return switchGate(tag, eventDef, true) ;
+    public GateBase closeGate(String tag, GateEvent event) {
+        return switchGate(tag, event, true) ;
     }
 
     //------------------------------------------------------------
     /**
      * ゲート開放 by Term
      */
-    public GateBase openGate(Term tag, Term eventDef) {
-        return openGate(tag.getString(), eventDef) ;
+    public GateBase openGate(Term tag, GateEvent event) {
+        return openGate(tag.getString(), event) ;
     }
 
     //------------------------------------------------------------
     /**
      * ゲート開放
      */
-    public GateBase openGate(String tag, Term eventDef) {
-        return switchGate(tag, eventDef, false) ;
+    public GateBase openGate(String tag, GateEvent event) {
+        return switchGate(tag, event, false) ;
     }
 
 }
