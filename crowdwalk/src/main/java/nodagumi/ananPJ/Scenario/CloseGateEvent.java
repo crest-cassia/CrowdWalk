@@ -34,6 +34,10 @@ import nodagumi.Itk.* ;
  *  __Time__ ::= "hh:mm:ss"
  * </pre>
  * "placeTag" もしくは "placeId" のいずれかで場所を指定する。
+ * <p>
+ * RubyGateクラスによるゲートを指定する場合は、
+ * 次を参照:
+ *  {@link nodagumi.ananPJ.NetworkMap.Gate.RubyGate}
  */
 public class CloseGateEvent extends GateEvent {
     //----------------------------------------

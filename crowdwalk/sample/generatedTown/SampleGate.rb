@@ -30,8 +30,7 @@ class SampleGate < RubyGateBase
   ## 通過チェック。
   ## 通過させないなら true を返す。
   def isClosed(agent, currentTime)
-    p [:getEventDef, getEventDef()] ;
-    p [:isClosed, agent, currentTime] ;
+    p [:isClosed, agent.getID(), currentTime.toString()] ;
 
     ## close のときも、半分通す。
     r = super ;
@@ -41,6 +40,17 @@ class SampleGate < RubyGateBase
       return false ;
     end
   end
+
+  #--------------------------------------------------------------
+  #++
+  ## 状態変化。
+  def switchGate(event, closed)
+    p [:switchGate, event.getEventDef().toJson(), closed] ;
+    p [:getEventDef, getEventDef().toJson()] ;
+    p [:place, getGateTag(), getPlace().getID()] ;
+    super
+  end
+  
   
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

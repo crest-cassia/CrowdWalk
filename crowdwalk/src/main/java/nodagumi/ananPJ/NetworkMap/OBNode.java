@@ -334,7 +334,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
             gate = newGate(gateTag, event, closed) ;
             gateTable.put(gateTag, gate) ;
         } else {
-            gate.switchGate(closed) ;
+            gate.switchGate(event, closed) ;
         }
         Itk.logInfo("OBNode::switchGate", gateTag,
                     (closed ? "close" : "open"), this) ;
@@ -353,10 +353,10 @@ public abstract class OBNode extends DefaultMutableTreeNode
              event.eventDef.getArgString("gateClass")) ;
         if(gateClass == null) {
             Itk.logDebug("newGate", "no gateClass, use GateBase.") ;
-            return new GateBase(gateTag, event, closed) ;
+            return new GateBase(gateTag, event, closed, this) ;
         } else if(gateClass.equals("RubyGate")) {
             Itk.logDebug("newGate", "use RubyGate.") ;
-            return new RubyGate(gateTag, event, closed) ;
+            return new RubyGate(gateTag, event, closed, this) ;
         } else {
             Itk.logError("Unknown Gate Class", gateTag, gateClass, event) ;
             Itk.quitByError() ;

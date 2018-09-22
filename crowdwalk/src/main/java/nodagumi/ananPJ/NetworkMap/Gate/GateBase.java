@@ -12,9 +12,11 @@
  */
 package nodagumi.ananPJ.NetworkMap.Gate;
 
+import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Scenario.GateEvent;
 import nodagumi.ananPJ.misc.SimTime;
+
 
 import nodagumi.Itk.*;
 
@@ -38,6 +40,12 @@ public class GateBase {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
+     * Gate が設置された場所
+     */
+    public OBNode place ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
      * 現在閉じている（通行止め）かどうか？
      */
     public boolean closed ;
@@ -46,10 +54,12 @@ public class GateBase {
     /**
      * コンストラクタ
      */
-    public GateBase(String _tag, GateEvent _event, boolean _closed) {
+    public GateBase(String _tag, GateEvent _event, boolean _closed,
+                    OBNode _place) {
 	tag = _tag ;
 	event = _event ;
 	closed = _closed ;
+        place = _place ;
     }
 
     //----------------------------------------
@@ -96,7 +106,7 @@ public class GateBase {
     /**
      * ゲートの開閉
      */
-    public GateBase switchGate(boolean _closed) {
+    public GateBase switchGate(GateEvent _event, boolean _closed) {
 	closed = _closed ;
 	return this ;
     }
@@ -106,7 +116,7 @@ public class GateBase {
      * ゲートを閉じる
      */
     public GateBase close() {
-	return switchGate(true) ;
+	return switchGate(null, true) ;
     }
 
     //----------------------------------------
@@ -114,9 +124,42 @@ public class GateBase {
      * ゲートを開ける
      */
     public GateBase open() {
-	return switchGate(false) ;
+	return switchGate(null, false) ;
     }
 
+    //------------------------------------------------------------
+    // アクセスメソッド。（主としてrubyより)
+    //----------------------------------------
+    /**
+     * closed の値取得。
+     */
+    public boolean getClosed() {
+	return closed ;
+    }
+
+    //----------------------------------------
+    /**
+     * tag の値取得。
+     */
+    public String getTag() {
+	return tag ;
+    }
+
+    //----------------------------------------
+    /**
+     * イベント定義の取得。
+     */
+    public GateEvent getEvent() {
+	return event ;
+    } ;
+    
+    //----------------------------------------
+    /**
+     * 場所の取得。
+     */
+    public OBNode getPlace() {
+	return place ;
+    } ;
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -37,6 +37,29 @@ class RubyGateBase
   end
 
   #--------------------------------------------------------------
+  # アクセス関係
+  #------------------------------------------
+  #++
+  ## イベント定義取得
+  def getGateTag()
+    return @javaGate.getTag() ;
+  end
+  
+  #------------------------------------------
+  #++
+  ## イベント定義取得
+  def getGateTag()
+    return @javaGate.getTag() ;
+  end
+  
+  #------------------------------------------
+  #++
+  ## 場所取得
+  def getPlace()
+    return @javaGate.getPlace() ;
+  end
+  
+  #------------------------------------------
   #++
   ## イベント定義取得
   def getEventDef()
@@ -45,9 +68,16 @@ class RubyGateBase
   
   #--------------------------------------------------------------
   #++
-  ## イベント定義取得
+  ## エージェント通過チェック。
   def isClosed(agent, currentTime)
     return @javaGate.isClosed() ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## 状態変化
+  def switchGate(event, closed)
+    return @javaGate.super_switchGate(event, closed) ;
   end
   
   #--============================================================
