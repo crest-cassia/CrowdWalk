@@ -30,15 +30,15 @@ class SampleGate < RubyGateBase
   ## 通過チェック。
   ## 通過させないなら true を返す。
   def isClosed(agent, currentTime)
-    p [:isClosed, agent.getID(), currentTime.toString()] ;
-
     ## close のときも、半分通す。
     r = super ;
     if(r) then
-      return (rand(2) == 0) ;
-    else
-      return false ;
+      r = (rand(2) == 0) ;
     end
+    
+    p [:isClosed, agent.getID(), currentTime.toString(), r] ;
+    
+    return r ;
   end
 
   #--------------------------------------------------------------
