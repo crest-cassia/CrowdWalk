@@ -781,23 +781,30 @@ public class Place {
      */
     static public class TrailPlaceContent extends Trail.ContentObject {
         public Object atNode ;
+        public Object fromLink ;
         public Object toLink ;
         
-        public TrailPlaceContent(Place place) {
+        public TrailPlaceContent(Place place, MapLink _toLink) {
+            /* [2018.09.23 I.Noda] currentPlace の解釈、間違っていた。*/
+            /*
             atNode = (place.getEnteringNode() == null ? null :
                       place.getEnteringNode().getJsonObject()) ;
-            toLink = (place.getLink() == null ? null :
-                      place.getLink().getJsonObject()) ;
+            */
+            atNode = (place.getHeadingNode() == null ? null :
+                      place.getHeadingNode().getJsonObject()) ;
+            fromLink = (place.getLink() == null ? null :
+                        place.getLink().getJsonObject()) ;
+            toLink = (_toLink == null ? null :
+                      _toLink.getJsonObject()) ;
         }
-        
     }
     
     //------------------------------------------------------------
     /**
      * Trail.Content interface 用 method
      */
-    public Trail.Content getTrailContent() {
-        return new TrailPlaceContent(this) ;
+    public Trail.Content getTrailContent(MapLink toLink) {
+        return new TrailPlaceContent(this, toLink) ;
     }
 
     //============================================================
@@ -807,8 +814,9 @@ public class Place {
     static public class TrailPlaceContentWithAux extends TrailPlaceContent {
         public Object aux ;
         
-        public TrailPlaceContentWithAux(Place place, Object _aux) {
-            super(place) ;
+        public TrailPlaceContentWithAux(Place place, MapLink toLink,
+                                        Object _aux) {
+            super(place, toLink) ;
             aux = _aux ;
         }
     }
@@ -817,8 +825,8 @@ public class Place {
     /**
      * Trail.Content interface 用 method (with aux info)
      */
-    public Trail.Content getTrailContent(Object aux) {
-        return new TrailPlaceContentWithAux(this, aux) ;
+    public Trail.Content getTrailContent(MapLink toLink, Object aux) {
+        return new TrailPlaceContentWithAux(this, toLink, aux) ;
     }
     
     

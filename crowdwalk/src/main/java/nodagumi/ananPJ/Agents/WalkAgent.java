@@ -552,6 +552,7 @@ public class WalkAgent extends AgentBase {
              * 避難完了 */
             if ((isPlannedRouteCompleted() || isRestAllRouteDirective()) &&
                 currentPlace.getHeadingNode().hasTag(goal)){
+                recordTrail(currentTime, currentPlace, null) ;
                 finalizeEvacuation(currentTime, true, false) ;
                 return true;
             }
@@ -1072,9 +1073,10 @@ public class WalkAgent extends AgentBase {
                     .getAgentTrailLogTrailAuxFormatter()
                     .outputRecordToNewHashMap(this, currentTime,
                                               passingPlace, nextLink) ;
-                trail.add(currentTime, passingPlace.getTrailContent(auxInfo)) ;
+                trail.add(currentTime, passingPlace.getTrailContent(nextLink,
+                                                                    auxInfo)) ;
             } else {
-                trail.add(currentTime, passingPlace.getTrailContent()) ;
+                trail.add(currentTime, passingPlace.getTrailContent(nextLink)) ;
             }
         }
     }
@@ -1116,7 +1118,7 @@ public class WalkAgent extends AgentBase {
         if (goal == null) {
             Itk.logError("An agent lost its goal.") ;
             Itk.logError_("agent.ID", this.ID) ;
-            System.exit(1) ;
+            Itk.quitByError();
         }
 
         MapLink nextLink =
