@@ -1570,7 +1570,7 @@ public class EditorFrameFx {
         String fileName = editor.getPropertiesFile();
         if (fileName == null || fileName.isEmpty()) {
             String dirName = settings.get("propertiesDir", "");
-            if (dirName.isEmpty()) {
+            if (dirName.isEmpty() || ! new File(dirName).exists()) {
                 dirName = "./";
             }
             fileChooser.setInitialDirectory(new File(dirName));

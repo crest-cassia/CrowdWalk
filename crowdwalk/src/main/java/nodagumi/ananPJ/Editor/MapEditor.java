@@ -1028,6 +1028,12 @@ public class MapEditor {
      * シェープファイルを読み込んで座標リストに変換する
      */
     public ArrayList<ArrayList<Point2D>> shapefileToLines(String srcEpsg, int zone, String shapefilePath) throws Exception {
+        for (char c : shapefilePath.toCharArray()) {
+            if (c > '\u007e') {
+                throw new Exception("The file path contains characters that can not be used in \"ogr2ogr\" (Japanese characters can not be used): " + shapefilePath);
+            }
+        }
+
         String tmpDir = System.getProperty("java.io.tmpdir");
         if (! tmpDir.endsWith(File.separator)) {
             tmpDir += File.separator;
@@ -1113,11 +1119,18 @@ public class MapEditor {
         // シェープファイルを結合する
         String dst = "__SHAPEFILE__";
         for (int index = 0; index < shapefileList.size(); index++) {
+            String shapefilePath = shapefileList.get(index);
+            for (char c : shapefilePath.toCharArray()) {
+                if (c > '\u007e') {
+                    throw new Exception("The file path contains characters that can not be used in \"ogr2ogr\" (Japanese characters can not be used): " + shapefilePath);
+                }
+            }
+
             List<String> commandLine = null;
             if (index == 0) {
-                commandLine = Arrays.asList("ogr2ogr", "-lco", "ENCODING=UTF-8", tmpDir + dst + ".shp", shapefileList.get(index));
+                commandLine = Arrays.asList("ogr2ogr", "-lco", "ENCODING=UTF-8", tmpDir + dst + ".shp", shapefilePath);
             } else {
-                commandLine = Arrays.asList("ogr2ogr", "-update", "-append", tmpDir + dst + ".shp", shapefileList.get(index), "-nln", dst);
+                commandLine = Arrays.asList("ogr2ogr", "-update", "-append", tmpDir + dst + ".shp", shapefilePath, "-nln", dst);
             }
             Itk.logInfo("External process", String.join(" ", commandLine));
             ProcessBuilder pb = new ProcessBuilder(commandLine);

@@ -1221,6 +1221,7 @@ public class SimulationPanel2D extends JPanel {
             if (density > 1.0f)
                 density = 1.0f;
         }
+        density = Math.max(density, 0.0f);   // マイナスの水位はサポートしない
         float alpha = density / 1.5f;
 
         Color color = null;

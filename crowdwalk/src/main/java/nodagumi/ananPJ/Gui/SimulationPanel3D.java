@@ -2128,6 +2128,7 @@ public class SimulationPanel3D extends StackPane {
         } else {
             density = Math.min(currentLevel / pollutionColorSaturation, 1.0);
         }
+        density = Math.max(density, 0.0);   // マイナスの水位はサポートしない
         double opacity = Math.min(density / 1.5, 1.0);
 
         Color color = null;

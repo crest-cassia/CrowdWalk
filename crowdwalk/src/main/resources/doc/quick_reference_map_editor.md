@@ -75,6 +75,7 @@
 | Edit ||
 | Undo (Ctrl + Z) | 最後に実行した編集操作を取り消す |
 | Redo (Ctrl + Y) | Undo で取り消した編集操作を復活させる |
+| Read shapefile | シェープファイルを読み込む |
 | Read OpenStreetMap | OpenStreetMap データを読み込む |
 | View ||
 | Show 3D | 3D 表示でマップを確認する |
