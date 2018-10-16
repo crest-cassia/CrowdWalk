@@ -118,7 +118,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
             AgentAppearance2D appearance = new AgentAppearance2D(this, simulationFrame, parameters);
             if (! appearance.isValidFor2D()) {
                 Itk.logFatal("2D view not defined", agentAppearanceFile);
-                System.exit(1);
+                Itk.quitByError() ;
             }
             agentAppearances.add(appearance);
         }
@@ -240,6 +240,6 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
      * アプリケーションを終了する
      */
     public void exit(int exitCode) {
-        System.exit(exitCode);
+        Itk.quitByCode(exitCode) ;
     }
 }

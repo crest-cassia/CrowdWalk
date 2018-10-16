@@ -551,7 +551,7 @@ public class EditorFrameFx {
 			Itk.dumpStackTraceOf(ex);
                     }
                 }
-                System.exit(0);
+		Itk.quitSafely() ;
             }).start();
         });
     }

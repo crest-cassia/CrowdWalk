@@ -202,7 +202,7 @@ public class ImportGis {
             source_file = new File(shapefilePath);
         }
         if (source_file == null) {
-            System.exit(0);
+	    Itk.quitSafely() ;
         }
         readShapefile(source_file);
     }
@@ -872,7 +872,7 @@ public class ImportGis {
         settings.put("gis-width", map_frame.getWidth());
         settings.put("gis-height", map_frame.getHeight());
         Settings.save();
-        System.exit(0);
+	Itk.quitSafely() ;
     }
 
     /**
@@ -1013,7 +1013,7 @@ public class ImportGis {
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                     null, shapefileSpecNames, shapefileSpecNames[0]);
             if (index == JOptionPane.CLOSED_OPTION) {
-                System.exit(0);
+		Itk.quitSafely() ;
             }
             shapefileSpecName = shapefileSpecNames[index];
         }

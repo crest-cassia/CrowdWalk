@@ -145,7 +145,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
         if(!body.isArray()) {
 	    Itk.logError("Illegal 'and' body",
 			 "expr=", expr) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
 
         Term result = Term_True ;
@@ -175,7 +175,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
         if(body == null) {
 	    Itk.logError("Illegal 'or' body",
 			 "expr=", expr) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
 
         Term result = Term_False ;
@@ -207,7 +207,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
         if(body == null) {
 	    Itk.logError("Illegal 'proc' body",
 			 "expr=", expr) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
 
 	return call_procBody(body, engine, env, fromIndex) ;
@@ -223,7 +223,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
         if(!body.isArray()) {
             Itk.logError("Illegal proc body") ;
             Itk.logError_("body:", body) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
 
         Term result = Term_Null ;
@@ -257,7 +257,7 @@ public class ThinkFormulaLogical extends ThinkFormula {
 
         if(condition == null || thenExpr == null) {
             Itk.logError("wrong if expr", expr) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
 
         Term cond = engine.think(condition, env) ;

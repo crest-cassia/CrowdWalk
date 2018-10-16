@@ -1424,7 +1424,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         File file = new File(filePath);
         if (! file.exists()) {
             Itk.logError_("Camerawork file does not exist", filePath);
-            System.exit(1);
+	    Itk.quitByError() ;
         }
 
         Itk.logInfo("Load camerawork file", filePath);

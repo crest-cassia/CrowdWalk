@@ -83,7 +83,7 @@ public class CrowdWalkLauncher {
             // ヘルプ表示オプションもしくはコマンドライン引数エラー
             if (commandLine.hasOption("help") || commandLine.getArgs().length > 1) {
                 printHelp(options);
-                System.exit(0);
+                Itk.quitSafely() ;
             }
             // バージョン表示
             if (commandLine.hasOption("version")) {
@@ -92,7 +92,7 @@ public class CrowdWalkLauncher {
                     "----------------------------------------------------------------\n" +
                     getVersion() +
                     "----------------------------------------------------------------");
-                System.exit(0);
+                Itk.quitSafely() ;
             }
 
             // fallback への追加
@@ -122,7 +122,7 @@ public class CrowdWalkLauncher {
             if (commandLine.hasOption("cui")) {
                 if (propertiesFilePath == null) {
                     printHelp(options);
-                    System.exit(1);
+                    Itk.quitByError() ;
                 }
                 CuiSimulationLauncher launcher
                     = launchCuiSimulator(propertiesFilePath, fallbackStringList);
@@ -136,7 +136,7 @@ public class CrowdWalkLauncher {
             else if (commandLine.hasOption("gui")) {
                 if (propertiesFilePath == null) {
                     printHelp(options);
-                    System.exit(1);
+                    Itk.quitByError() ;
                 }
                 launchGuiSimulator(propertiesFilePath, fallbackStringList);
             }
@@ -145,12 +145,12 @@ public class CrowdWalkLauncher {
                 launchMapEditor(propertiesFilePath, fallbackStringList);
             }
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            Itk.logError(e.getMessage());
             printHelp(options);
-            System.exit(1);
+            Itk.quitByError() ;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
+            Itk.logError(e.getMessage());
+            Itk.quitByError() ;
         }
     }
 
@@ -222,7 +222,7 @@ public class CrowdWalkLauncher {
         if (propertiesFilePath != null) {
             editor.setPropertiesFromFile(propertiesFilePath, commandLineFallbacks);
             if (! editor.loadNetworkMap()) {
-                System.exit(1);
+                Itk.quitByError() ;
             }
         } else {
             editor.initProperties(commandLineFallbacks);

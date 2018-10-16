@@ -142,7 +142,7 @@ public class NaviFormulaMap extends NaviFormula {
 	} else {
 	    Itk.logError("hasTag formula should have 'tag' slot.") ;
 	    Itk.logError_("expr=", expr) ;
-	    System.exit(1) ;
+            Itk.quitByError() ;
 	}
 	return ThinkFormula.booleanTerm(result) ;
     }

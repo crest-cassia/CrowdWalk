@@ -196,7 +196,7 @@ public class MapAreaRectangle extends MapArea {
             if (! nsWarned) {
                 System.err.println(String.format("MapArea coordinate error: pNorthY = %s > pSouthY = %s", y1, y2));
                 nsWarned = true;
-                // System.exit(1);
+                // Itk.quitByError() ;
             }
             double y = y1;
             y1 = y2;
@@ -206,7 +206,7 @@ public class MapAreaRectangle extends MapArea {
             if (! weWarned) {
                 System.err.println(String.format("MapArea coordinate error: pWestX = %s > pEastX = %s", x1, x2));
                 weWarned = true;
-                // System.exit(1);
+                // Itk.quitByError() ;
             }
             double x = x1;
             x1 = x2;

@@ -348,7 +348,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
             if(chooser == null) {
                 Itk.logError("unknown mentalMode. ",
                              "mode=", mentalMode) ;
-                System.exit(1) ;
+                Itk.quitByError() ;
             } 
             return chooser.calcLinkCost(this, fromNode) ;
         }
@@ -732,7 +732,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         String id = element.getAttribute("id");
         if(id == null || id.isEmpty()) {
             Itk.logError("Link element in DOM has no ID" + element) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
         /* get length and width */
         double length = Double.parseDouble(element.getAttribute("length"));

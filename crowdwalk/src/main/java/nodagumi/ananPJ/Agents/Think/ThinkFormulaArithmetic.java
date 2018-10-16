@@ -172,7 +172,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError("add formula should have 'left' and 'right' slots, or 'values' slot.") ;
 	    Itk.logError_("Or values should be an array of numbers.") ;
 	    Itk.logError_("expr=", expr) ;
-	    System.exit(1) ;
+            Itk.quitByError() ;
 	}
 	return new Term(result, false) ;
     }
@@ -200,7 +200,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	if(result == null) {
 	    Itk.logError("sub formula should have 'left' and 'right' slots.") ;
 	    Itk.logError_("expr=", expr) ;
-	    System.exit(1) ;
+            Itk.quitByError() ;
 	}
 	return new Term(result, false) ;
     }
@@ -247,7 +247,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	    Itk.logError("mul formula should have 'left' and 'right' slots, or 'values' slot.") ;
 	    Itk.logError_("Or values should be an array of numbers.") ;
 	    Itk.logError_("expr=", expr) ;
-	    System.exit(1) ;
+            Itk.quitByError() ;
 	}
 	return new Term(result, false) ;
     }
@@ -273,7 +273,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	if(result == null) {
 	    Itk.logError("sub formula should have 'left' and 'right' slots.") ;
 	    Itk.logError_("expr=", expr) ;
-	    System.exit(1) ;
+            Itk.quitByError() ;
 	}
 	return new Term(result, false) ;
     }
@@ -301,7 +301,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	if(result == null) {
 	    Itk.logError("mod formula should have 'left' and 'right' slots.") ;
 	    Itk.logError_("expr=", expr) ;
-	    System.exit(1) ;
+            Itk.quitByError() ;
 	}
 	return new Term(result, false) ;
     }
@@ -332,7 +332,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	if(result == null) {
 	    Itk.logError("equal formula should have 'left' and 'right' slots.") ;
 	    Itk.logError_("expr=", expr) ;
-	    System.exit(1) ;
+            Itk.quitByError() ;
 	}
 	return new Term(result, false) ;
     }
@@ -440,7 +440,7 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
 	}
 	Itk.logError("comparison formula should have 'left' and 'right' slots.") ;
 	Itk.logError_("expr=", expr) ;
-	System.exit(1) ;
+        Itk.quitByError() ;
 
 	return 0 ; // never reach here.
     }

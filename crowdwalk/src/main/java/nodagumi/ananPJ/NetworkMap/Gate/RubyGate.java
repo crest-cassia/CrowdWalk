@@ -110,8 +110,8 @@ public class RubyGate extends GateBase {
      */
     public void setupRubyEngine(ItkRuby _rubyEngine) {
         if(_rubyEngine == null) {
-            Itk.logError("Generation Rule by Ruby require Ruby Engine") ;
-            System.exit(1) ;
+            Itk.logError("RubyGate require Ruby Engine") ;
+            Itk.quitByError() ;
         }
         
         rubyEngine = _rubyEngine ;

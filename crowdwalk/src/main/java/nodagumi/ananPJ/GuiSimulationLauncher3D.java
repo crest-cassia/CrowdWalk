@@ -123,7 +123,7 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
             AgentAppearance3D appearance = new AgentAppearance3D(this, simulationFrame, parameters);
             if (! appearance.isValidFor3D()) {
                 Itk.logFatal("3D view not defined", agentAppearanceFile);
-                System.exit(1);
+                Itk.quitByError() ;
             }
             agentAppearances.add(appearance);
         }

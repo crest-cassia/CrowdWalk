@@ -38,7 +38,7 @@ public class CuiSimulationLauncher extends BasicSimulationLauncher {
 
         if(!setupNetworkMap()) {
             Itk.logFatal("can not read map file.") ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
     }
 

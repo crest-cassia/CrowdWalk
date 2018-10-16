@@ -177,7 +177,7 @@ public abstract class ObstructerBase {
             reader.close();
         } catch (Exception ex) {
             Itk.logError("リソースファイルの読み込みに失敗しました", resourceName);
-            System.exit(1);
+            Itk.quitByError() ;
         }
         return builder.toString();
     }

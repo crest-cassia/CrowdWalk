@@ -1485,7 +1485,7 @@ public class SimulationFrame2D extends JFrame
         File file = new File(filePath);
         if (! file.exists()) {
             Itk.logError_("Camerawork file does not exist", filePath);
-            System.exit(1);
+            Itk.quitByError() ;
         }
 
         Itk.logInfo("Load camerawork file", filePath);
@@ -1496,7 +1496,7 @@ public class SimulationFrame2D extends JFrame
             for (Map<String, Object> object : jsonObject) {
                 if (object.get("angle") == null) {
                     Itk.logError_("Camerawork file format is old", filePath);
-                    System.exit(1);
+                    Itk.quitByError() ;
                 }
                 camerawork.add(new CameraShot(object));
             }

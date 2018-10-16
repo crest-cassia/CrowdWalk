@@ -256,7 +256,7 @@ public class Scenario {
             Itk.logError("No or multiple Initiate Event",
                          "count=", countInitiate,
                          "time=", initiateTimeString) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
         // clock を元に、イベントの発生時刻を再設定。
         clock.setOriginTimeString(initiateTimeString, true) ;
@@ -308,7 +308,7 @@ public class Scenario {
             return scanCsvFile(filename, clock) ;
         } else {
             Itk.logError("Unknown scenario file suffix:", filename) ;
-            System.exit(1) ;
+            Itk.quitByError() ;
         }
         return 0 ; // never reach here.
     }
@@ -343,7 +343,7 @@ public class Scenario {
             } else {
                 Itk.logError("Wrong scenario format in the file", filename) ;
                 Itk.logError_("json=",json) ;
-                System.exit(1) ;
+                Itk.quitByError() ;
             }
             return nEvent ;
         } catch(Exception ex) {
