@@ -62,6 +62,7 @@
  {"rule":"EACH",
   "name":"rule__2r",
   "agentType":{"className":"RubyAgent",
+	       "rubyAgentClass":"SampleAgent3",
 	       "mentalMode":"major",
                "weight": -0.0, 
 	       "trail":0.0,

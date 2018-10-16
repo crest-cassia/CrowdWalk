@@ -368,13 +368,22 @@ public abstract class AgentFactory {
         AgentBase agent = null ;
         try {
             agent = newAgentByName(agentClassName) ;
-            agent.init(random, simulator, this, currentTime,
-                       fallbackForAgent) ;
-        } catch (Exception ex ) {
+        } catch (Exception ex) {
             Itk.logError("class name not found") ;
             Itk.logError_("agentClassName", agentClassName) ;
             ex.printStackTrace();
-            System.exit(1) ;
+            Itk.quitByError() ;
+        }
+        try {
+            agent.init(random, simulator, this, currentTime,
+                       fallbackForAgent) ;
+        } catch (Exception ex) {
+            Itk.logError("initialization error for agent") ;
+            Itk.logError_("agent=", agent) ;
+            Itk.logError_("agentConfig=", getAgentConf()) ;
+            Itk.logError_("fallback=", fallbackForAgent) ;
+            ex.printStackTrace() ;
+            Itk.quitByError() ;
         }
 
         agents.add(agent);

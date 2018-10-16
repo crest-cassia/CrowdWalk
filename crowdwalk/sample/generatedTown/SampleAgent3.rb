@@ -16,7 +16,7 @@ require 'RubyAgentBase.rb' ;
 #--======================================================================
 #++
 ## SampleAgent class
-class SampleAgent < RubyAgentBase
+class SampleAgent3 < RubyAgentBase
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #++
@@ -29,21 +29,27 @@ class SampleAgent < RubyAgentBase
 #                   "preUpdate",
 #                   "update",
 #                   "calcCostFromNodeViaLink",
-                   "calcSpeed",
+#                   "calcSpeed",
 #                   "calcAccel",
                    "thinkCycle",
                   ] ;
-
+  
+  AgentList = [] ;
+  
   #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
+  ## id counter
+  attr_accessor :idInClass ;
   ## counter of think cycle
   attr_accessor :nCycle ;
-
+  
   #--------------------------------------------------------------
   #++
   ## 初期化
   def initialize(*arg)
     super(*arg) ;
+    AgentList.push(self) ;
+    @idInClass = AgentList.length ;
     @nCycle = 0 ;
   end
   
@@ -51,9 +57,7 @@ class SampleAgent < RubyAgentBase
   #++
   ## シミュレーション各サイクルの前半に呼ばれる。
   def preUpdate()
-    # p ['SampleAgent', :preUpdate, getAgentId(), getCurrentTime()] ;
-    logInfo(:info, nil,
-            'SampleAgent', :preUpdate, getCurrentTime()) ;
+    p ['SampleAgent', :preUpdate, getAgentId(), currentTime()] ;
     return super()
   end
 
@@ -61,9 +65,7 @@ class SampleAgent < RubyAgentBase
   #++
   ## シミュレーション各サイクルの後半に呼ばれる。
   def update()
-    # p ['SampleAgent', :update, getAgentId(), getCurrentTime()] ;
-    logInfo(:info, nil,
-            'SampleAgent', :update, getCurrentTime()) ;
+    p ['SampleAgent', :update, getAgentId(), currentTime()] ;
     return super() ;
   end
 
@@ -74,16 +76,6 @@ class SampleAgent < RubyAgentBase
   ## _node_:: 現在の分岐点
   ## _target_:: 最終目的地
   def calcCostFromNodeViaLink(link, node, target)
-    ## Term の中身の書き換えテスト。
-    v = ItkTerm.getArg(@fallback, "xA_0").getDouble() + 1.0 ;
-    ItkTerm.setArg(@fallback, "xA_0", v) ;
-
-    ## 結果出力。
-    pp ['SampleAgent', :calcCostFromNodeViaLink, getAgentId(),
-        link, node,
-        ItkTerm.getHead(target),
-        ItkTerm.toRuby(@fallback)] ;
-
     ## 元のものを呼び出す。
     return super(link, node, target) ;
   end
@@ -91,17 +83,11 @@ class SampleAgent < RubyAgentBase
   #--------------------------------------------------------------
   #++
   ## 速度を計算する。
-  ## たまに減速させてみる。
+  ## 波を持たせて減速させてみる。
   ## _previousSpeed_:: 前のサイクルの速度。
   ## *return* 速度。
   def calcSpeed(previousSpeed)
-    speed = super(previousSpeed) ;
-    if(rand(5) == 0) then
-      origSpeed = speed ;
-      speed *= 0.01 ;
-      logInfo(nil, :speedDown, origSpeed, "->", speed) ;
-    end
-    return speed ;
+    super(previousSpeed) ;
   end
 
   #--------------------------------------------------------------
@@ -121,36 +107,7 @@ class SampleAgent < RubyAgentBase
   ## ThinkAgent のサンプルと同じ動作をさせている。
   def thinkCycle()
     @nCycle += 1 ;
-
-    if(listenAlert(Term_Emergency)) then
-      setGoal(Term_node_09_05) ;
-      clearRoute() ;
-      logWarn(nil, :changeGoal, ItkTerm.toRuby(Term_node_09_05)) ;
-      clearAlert(Term_Emergency) ;
-    end
-
-    if(listenAlert(Term_FooBarBaz)) then
-      insertRoute(Term_node_02_00) ;
-      logWarn(nil, :insertRoute, ItkTerm.toRuby(Term_node_02_00)) ;
-      clearAlert(Term_FooBarBaz) ;
-    end
-
-  end
-
-  Term_Emergency = ItkTerm.ensureTerm("emergency") ;
-  Term_node_09_05 = ItkTerm.ensureTerm("node_09_05") ;
-  Term_FooBarBaz = ItkTerm.ensureTerm("foo-bar-baz") ;
-  Term_node_02_00 = ItkTerm.ensureTerm("node_02_00") ;
-
-  #--------------------------------------------------------------
-  #++
-  ## 思考ルーチン (テスト用)
-  def thinkCycle0()
-    pp ['SampleAgent', :thinkCycle, getAgentId()] ;
-    addAgentTag("hogehoge") ;
-    pp [:agentTags, ItkTerm.toRuby(getAgentTags())] ;
-    pp [:linkTags, ItkTerm.toRuby(getPlaceTags())] ;
-    return super() ;
+    
   end
 
 end # class SampleAgent

@@ -36,7 +36,7 @@
 /usr/users/noda/work/ruby",
   "ruby_init_script":"
 require './SampleGate.rb' 
-require 'RubyAgentBase.rb'
+require './SampleAgent3.rb'
 require 'pp'
 ",
 
