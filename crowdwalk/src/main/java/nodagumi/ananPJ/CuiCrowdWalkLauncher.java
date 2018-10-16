@@ -65,7 +65,7 @@ public class CuiCrowdWalkLauncher {
             // ヘルプ表示オプションもしくはコマンドライン引数エラー
             if (commandLine.hasOption("help") || commandLine.getArgs().length > 1) {
                 printHelp(options);
-                System.exit(0);
+                Itk.quitSafely() ;
             }
             // バージョン表示
             if (commandLine.hasOption("version")) {
@@ -74,7 +74,7 @@ public class CuiCrowdWalkLauncher {
                     "----------------------------------------------------------------\n" +
                     getVersion() +
                     "----------------------------------------------------------------");
-                System.exit(0);
+                Itk.quitSafely() ;
             }
 
             // fallback への追加
@@ -96,7 +96,7 @@ public class CuiCrowdWalkLauncher {
 
             if (propertiesFilePath == null) {
                 printHelp(options);
-                System.exit(1);
+                Itk.quitByError() ;
             }
             CuiSimulationLauncher launcher
                 = launchCuiSimulator(propertiesFilePath, fallbackStringList);
@@ -106,12 +106,11 @@ public class CuiCrowdWalkLauncher {
                 saveTick(tickFilePath, launcher.simulator.currentTime);
             }
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            Itk.logError(e.getMessage()) ;
             printHelp(options);
-            System.exit(1);
+            Itk.quitByError() ;
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e) ;
         }
     }
 

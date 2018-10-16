@@ -173,7 +173,7 @@ public class CsvFormatter<T> {
 	try {
 	    writer.write(buffer.toString()) ;
 	} catch(Exception ex) {
-	    ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
 	    Itk.logError("IOException: ", writer, buffer) ;
 	}
     }
@@ -240,7 +240,7 @@ public class CsvFormatter<T> {
 	try {
 	    writer.write(buffer.toString()) ;
 	} catch(Exception ex) {
-	    ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
 	    Itk.logError("IOException: ", writer, buffer) ;
 	}
     }

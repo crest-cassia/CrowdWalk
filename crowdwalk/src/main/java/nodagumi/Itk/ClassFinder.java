@@ -201,7 +201,7 @@ public class ClassFinder {
             Object object = klass.newInstance() ;
             DummyTable.put(klass, object) ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             Itk.logError("can not register the class:" + klass) ;
         }
     }

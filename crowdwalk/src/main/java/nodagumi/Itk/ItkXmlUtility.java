@@ -69,7 +69,7 @@ public class ItkXmlUtility {
 	try {
 	    builder = factory.newDocumentBuilder();
 	} catch (ParserConfigurationException e) {
-	    e.printStackTrace();
+            Itk.dumpStackTraceOf(e);
 	}
 	TransformerFactory tFactory =
 	    TransformerFactory.newInstance();
@@ -81,7 +81,7 @@ public class ItkXmlUtility {
 					  .S_KEY_INDENT_AMOUNT,
 					  "2");
 	} catch (TransformerConfigurationException e) {
-	    e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
 	}
     }
 
@@ -114,7 +114,7 @@ public class ItkXmlUtility {
 	try {
 	    transformer.transform(source, result);
 	} catch (TransformerException e) {
-	    e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
 	    return false;
 	}
 	return true;
@@ -128,9 +128,9 @@ public class ItkXmlUtility {
 	try {
 	    return builder.parse(string);
 	} catch (SAXException e) {
-	    e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
 	}
 	return null;
     }
@@ -143,9 +143,9 @@ public class ItkXmlUtility {
 	try {
 	    return builder.parse(is);
 	} catch (SAXException e) {
-	    e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
 	}
 	return null;
     }
@@ -155,5 +155,5 @@ public class ItkXmlUtility {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //------------------------------------------------------------
 
-} // class Foo
+} // class ItkXmlUtility 
 

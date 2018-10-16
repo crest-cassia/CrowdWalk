@@ -618,8 +618,7 @@ public class EvacuationSimulator {
                                      networkMap.getAreas(),
                                      currentTime, interval);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e);
         }
     }
 
@@ -678,8 +677,7 @@ public class EvacuationSimulator {
                 }
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e);
         }
 
         // チェック
@@ -862,8 +860,8 @@ public class EvacuationSimulator {
                 Itk.logInfo("Ruby Engine", "loading... Done.") ;
             }
         } catch (Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("Exception in buildRubyEngine") ;
+            Itk.quitWithStackTrace(ex) ;
         }
     }
 
@@ -967,7 +965,7 @@ public class EvacuationSimulator {
             try {
                 Thread.sleep(simulationDeferFactor);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Itk.dumpStackTraceOf(e);
             }
         }
     }

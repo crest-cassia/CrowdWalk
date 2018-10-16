@@ -124,10 +124,9 @@ public class IndividualConfigList {
 			}
 		    }) ;
 	    } catch(Exception ex) {
-		ex.printStackTrace() ;
 		Itk.logError("something wrong in sorting IndividualConfigList.") ;
 		Itk.logError_("list", list) ;
-		Itk.quitByError() ;
+                Itk.quitWithStackTrace(ex) ;
 	    }
 	}
     }

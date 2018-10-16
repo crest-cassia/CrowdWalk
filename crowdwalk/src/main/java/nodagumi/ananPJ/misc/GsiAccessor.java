@@ -93,7 +93,7 @@ public class GsiAccessor {
             Itk.logInfo("Save", filePath);
             ImageIO.write(image, ext, file);
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e) ;
             return false;
         }
         try {

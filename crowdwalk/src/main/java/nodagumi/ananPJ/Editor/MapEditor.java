@@ -289,7 +289,7 @@ public class MapEditor {
                 return false;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
             Itk.logError("Save map file failed", fileName);
             return false;
         }
@@ -742,7 +742,7 @@ public class MapEditor {
     public void ding(String message) {
         if (dingSound == null) {
             if (message != null && ! message.isEmpty()) {
-                System.err.println(message);    // アラート音の代わり
+		Itk.logError(message);    // アラート音の代わり
             }
         } else {
             dingSound.play();
@@ -2464,7 +2464,7 @@ public class MapEditor {
         try {
             return dir.getCanonicalPath();
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e) ;
         }
         return dir.getPath();
     }
@@ -2689,7 +2689,7 @@ public class MapEditor {
         try {
             dir = new File(properties.getPropertiesDirAbs()).getCanonicalFile();
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
         }
         File file = new File(propertiesFile);
         settings.put("propertiesDir", file.getParent() + File.separator);
@@ -2718,7 +2718,7 @@ public class MapEditor {
         try {
             path = file.getCanonicalPath();
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
             return path;
         }
         String pwd = new File(".").getAbsoluteFile().getParent();

@@ -276,8 +276,7 @@ public class NetworkMap extends DefaultTreeModel {
         case POLYGON:
             break;
         default:
-            System.err.println(type);
-            System.err.println("unkown type removed");
+            Itk.logError("unkown type removed", type) ;
         }
         removeNodeFromParent(node);
 
@@ -918,7 +917,7 @@ public class NetworkMap extends DefaultTreeModel {
             try {
                 link.setFromTo(from_node, to_node);
             } catch (Exception e) {
-                e.printStackTrace();
+                Itk.dumpStackTraceOf(e) ;
                 Itk.logWarn("Warning setting up network", "Try to set from/to of a link, which alread has it setted link ID: " + link.ID);
             }
         } else if (OBNode.NType.GROUP == ob_node.getNodeType()) {

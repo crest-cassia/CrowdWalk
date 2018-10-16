@@ -213,12 +213,13 @@ public class ImportGis {
     private void readShapefileSpecs() {
         Map<String, Object> shapefileSpec = (Map<String, Object>)shapefileSpecs.get(shapefileSpecName);
         JSON json = new JSON();
-        System.err.println("shapefileSpec: " + json.encode(shapefileSpec, true));
+	Itk.logInfo("shapeFileSpec", json.encode(shapefileSpec, true));
 
         coordinateSystem = (String)shapefileSpec.get("coordinate_system");
         if (! coordinateSystem.equals("Geographic")) {
-            System.err.println("coordinate_system は現在 \"Geographic\" のみ有効です。");
-            System.exit(1);
+	    Itk.logError("readShapeFileSpecs",
+			 "coordinate_system は現在 \"Geographic\" のみ有効です。");
+	    Itk.quitByError() ;
         }
 
         geodeticDatum = (String)shapefileSpec.get("geodetic_datum");
@@ -287,7 +288,8 @@ public class ImportGis {
         File source_file = JFileDataStoreChooser.showOpenFile("shp", getGisFile(), null);
         if (source_file != null) {
             setGisFile(source_file);
-            System.err.println("source file path: " + source_file.getPath().replaceAll("\\\\", "/"));
+	    Itk.logInfo("source file path",
+			source_file.getPath().replaceAll("\\\\", "/"));
         }
         return source_file;
     }
@@ -300,21 +302,21 @@ public class ImportGis {
         try {
             FileDataStore store;
             store = FileDataStoreFinder.getDataStore(source_file);
-            System.err.println("source file name: " + source_file.getName());
+	    Itk.logInfo("source file name", source_file.getName()) ;
             if (store == null) {
-                System.err.println("store is null!!");
-                System.exit(1);
+		Itk.logError("readShapeFile", "store is null!!");
+		Itk.quitByError() ;
             }
             String fileName = source_file.getName();
             if (! fileName.toLowerCase().endsWith(".shp")) {
-                System.err.println("WRNING! irregular file name: " + fileName);
+		Itk.logWarn("Irregular file name", fileName);
             }
             SimpleFeatureSource featureSource;
             featureSource = store.getFeatureSource();
 
             map.addLayer(featureSource, null);
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e) ;
         }
     }
 
@@ -392,7 +394,7 @@ public class ImportGis {
                             try {
                                 Desktop.getDesktop().browse(new URI(REFERENCE_URL));
                             } catch(Exception ex) {
-                                ex.printStackTrace();
+				Itk.dumpStackTraceOf(ex) ;
                             }
                         }
                     }
@@ -472,8 +474,8 @@ public class ImportGis {
             } else if (object instanceof BigDecimal) {
                 value = ((BigDecimal)object).doubleValue();
             } else {
-                System.err.println("Illegal object: " + object);
-                System.exit(1);
+		Itk.logError("Illegal object", object);
+		Itk.quitByError() ;
             }
             return value;
         }
@@ -523,8 +525,8 @@ public class ImportGis {
             double base_y = roundCoordinate(ref.getMinY());
             double scale_y = scale_x;
 
-            System.err.println("basex: " + base_x + ", basey: " + base_y +
-                    ", scalex: " + scale_x + ", scaley: " + scale_y);
+	    Itk.logInfo("","basex: " + base_x + ", basey: " + base_y +
+			", scalex: " + scale_x + ", scaley: " + scale_y);
             FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools
                     .getDefaultHints());
             Filter filter = ff.bbox(ff.property("the_geom"), ref);
@@ -572,21 +574,23 @@ public class ImportGis {
             }
             // check the nodes that are placed same coordinate.
             ArrayList<MapNode> mapNodes = networkMap.getNodes();
-            System.err.println("MapNode size " + mapNodes.size());
+	    Itk.logInfo("MapNode size", mapNodes.size());
             for (int i = 0; i < mapNodes.size(); i++) {
                 for (int j = i + 1; j < mapNodes.size(); j++) {
                     if (mapNodes.get(i).ID == mapNodes.get(j).ID)
-                        System.err.println("MapNode " + mapNodes.get(i).ID +
-                                " is used by two nodes!");
+			Itk.logWarn("",
+				    "MapNode " + mapNodes.get(i).ID +
+				    " is used by two nodes!");
                 }
             }
             ArrayList<MapLink> mapLinks = networkMap.getLinks();
-            System.err.println("MapLink size " + mapLinks.size());
+	    Itk.logInfo("MapLink size", mapLinks.size());
             for (int i = 0; i < mapLinks.size(); i++) {
                 for (int j = i + 1; j < mapLinks.size(); j++) {
                     if (mapLinks.get(i).ID == mapLinks.get(j).ID)
-                        System.err.println("MapLink " + mapLinks.get(i).ID +
-                                " is used by two links!");
+			Itk.logWarn("",
+				    "MapLink " + mapLinks.get(i).ID +
+				    " is used by two links!");
                 }
             }
             if (save_map()) {
@@ -725,13 +729,13 @@ public class ImportGis {
             }
 
             if (from == node) {
-                System.err.println("from  === node");
+		Itk.logInfo("","from  === node");
             } else if (from != null) {
                 if (j == 0)
-                    System.err.println("\tj 0 but from is not null!");
+		    Itk.logWarn("","\tj 0 but from is not null!");
                 String nodeIdPair = makeNodeIdPair(from, node);
                 if (links.containsKey(nodeIdPair)) {
-                    System.err.println("Duplicate link! node:" + nodeIdPair);
+		    Itk.logWarn("","Duplicate link! node:" + nodeIdPair);
                 } else {
                     MapLink link = networkMap.createMapLink(parent_group, from,
                             node, roundValue(length * ratio[j - 1], 4), width);
@@ -808,7 +812,7 @@ public class ImportGis {
             if (from != null) {
                 String nodeIdPair = makeNodeIdPair(from, node);
                 if (links.containsKey(nodeIdPair)) {
-                    System.err.println("Duplicate link! node:" + nodeIdPair);
+		    Itk.logWarn("", "Duplicate link! node:" + nodeIdPair);
                 } else {
                     MapLink link = networkMap.createMapLink(parent_group, from,
                             node, roundValue(length, 4), width);
@@ -845,7 +849,7 @@ public class ImportGis {
                 return false;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e) ;
             JOptionPane.showMessageDialog(map_frame,
                     "Could no save to:\n" + filename,
                     "Save failed",
@@ -900,7 +904,7 @@ public class ImportGis {
             // ヘルプ表示オプションもしくはコマンドライン引数エラー
             if (commandLine.hasOption("help") || commandLine.getArgs().length > 1) {
                 printHelp(options);
-                System.exit(0);
+		Itk.quitSafely() ;
             }
 
             // シェープファイルの指定あり
@@ -919,7 +923,7 @@ public class ImportGis {
                 }
                 if (! found) {
                     printHelp(options);
-                    System.exit(1);
+		    Itk.quitByError() ;
                 }
             }
 
@@ -950,16 +954,15 @@ public class ImportGis {
                 }
                 if (zone == -1) {
                     printHelp(options);
-                    System.exit(1);
+		    Itk.quitByError() ;
                 }
             }
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+	    Itk.logError("", e.getMessage());
             printHelp(options);
-            System.exit(1);
+	    Itk.quitByError() ;
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e) ;
         }
     }
 
@@ -988,8 +991,7 @@ public class ImportGis {
                 shapefileSpecs = json.parse(getClass().getResourceAsStream("/shapefile_specs.json"));
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e) ;
         }
         shapefileSpecNames = shapefileSpecs.keySet().toArray(new String[0]);
     }

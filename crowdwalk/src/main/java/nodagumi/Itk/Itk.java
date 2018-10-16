@@ -650,6 +650,17 @@ public class Itk {
      */
     final static public String StackTraceTag = "ITK\t" ;
 
+    /**
+     * 長い出力のセパレータ(begin)
+     */
+    final static public String StackTraceHeadSep =
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" ;
+    /**
+     * 長い出力のセパレータ(end)
+     */
+    final static public String StackTraceTailSep =
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" ;
+
     //------------------------------------------------------------
     /**
      * 現在実行中のメソッド情報
@@ -664,9 +675,11 @@ public class Itk {
      */
     static public void dumpStackTrace(int offset) {
         StackTraceElement[] trace = Thread.currentThread().getStackTrace() ;
+        dbgGeneric(dbgOutStream, StackTraceTag, StackTraceHeadSep) ;
         for(int i = 2 + offset ; i < trace.length ; i++) {
-            dbgGeneric(StackTraceTag, trace[i]) ;
+            dbgGeneric(dbgOutStream, StackTraceTag, trace[i]) ;
         }
+        dbgGeneric(dbgOutStream, StackTraceTag, StackTraceTailSep) ;
     }
 
     //------------------------------------------------------------
@@ -755,10 +768,17 @@ public class Itk {
     //========================================
     //----------------------------------------
     /**
+     * exit with code
+     */
+    static public void quitByCode(int code) {
+        System.exit(code) ;
+    }
+    //----------------------------------------
+    /**
      * exit safely.
      */
     static public void quitSafely() {
-        System.exit(0) ;
+        quitByCode(0) ;
     }
 
     //----------------------------------------
@@ -766,7 +786,26 @@ public class Itk {
      * exit by error.
      */
     static public void quitByError() {
-        System.exit(1) ;
+        quitByCode(1) ;
+    }
+    
+    //----------------------------------------
+    /**
+     * exit for debug.
+     */
+    static public void quitWithStackTrace(Exception ex) {
+        Itk.dumpStackTraceOf(ex) ;
+        quitByError() ;
+    }
+
+    //----------------------------------------
+    /**
+     * dump stack trace of an exception.
+     */
+    static public void dumpStackTraceOf(Exception ex) {
+        dbgGeneric(dbgOutStream, StackTraceTag, StackTraceHeadSep) ;
+        ex.printStackTrace(dbgOutStream) ;
+        dbgGeneric(dbgOutStream, StackTraceTag, StackTraceTailSep) ;
     }
     
     //----------------------------------------
@@ -774,7 +813,7 @@ public class Itk {
      * exit for test.
      */
     static public void quitForTest() {
-        System.exit(1) ;
+        quitByCode(1) ;
     }
     
     //----------------------------------------
@@ -784,7 +823,7 @@ public class Itk {
     static public void quitForDebug() {
         Itk.dumpStackTrace(1) ;
         Itk.logError("quitForDebug()") ;
-        System.exit(1) ;
+        quitByCode(1) ;
     }
     
     //============================================================
@@ -820,7 +859,7 @@ public class Itk {
             try {
                 JSON.encode(this, ostrm, pprintP) ;
             } catch(Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("Exception",ex) ;
             }
         }

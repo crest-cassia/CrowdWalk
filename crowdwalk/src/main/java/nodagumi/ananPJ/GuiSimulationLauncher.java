@@ -174,19 +174,17 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
 
         // check property options
         if (getNetworkMapFile() == null) {
-            System.err.println("GuiSimulationLauncher: map file is " +
-                    "required.");
-            System.exit(1);
+            Itk.logFatal("GuiSimulationLauncher", "map file is required.");
+            Itk.quitByError() ;
         } else if (!((File) new File(getNetworkMapFile())).exists()) {
-            System.err.println("GuiSimulationLauncher: specified map file does " +
-                    "not exist.");
-            System.exit(1);
+            Itk.logFatal("GuiSimulationLauncher",
+                         "specified map file does not exist.");
+            Itk.quitByError() ;
         }
         try {
             map = readMapWithName(getNetworkMapFile()) ;
         } catch (IOException ioe) {
-            ioe.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(ioe) ;
         }
 
         settings = _settings;
@@ -489,8 +487,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                     exitWithSimulationFinished);
         } catch(Exception e) {
             //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
-            System.err.println(e.getMessage());
-            System.exit(1);
+            Itk.logFatal("Property file error", e.getMessage()) ;
+            Itk.quitByError() ;
         }
     }
 
@@ -509,8 +507,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             appearances.addAll((ArrayList<HashMap>)json.parse(is));
             return appearances;
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e) ;
         }
         return null;
     }

@@ -726,8 +726,7 @@ public class SimulationPanel3D extends StackPane {
                 polygonAppearances = PolygonAppearance.load(null);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e) ;
         }
     }
 

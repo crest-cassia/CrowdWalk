@@ -347,10 +347,9 @@ public class Scenario {
             }
             return nEvent ;
         } catch(Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("Error in reading JSON file") ;
             Itk.logError_("filename=", filename) ;
-            System.exit(1) ;
+            Itk.quitWithStackTrace(ex) ;
         }
         return -1 ; // never reach.
     }
@@ -368,10 +367,9 @@ public class Scenario {
             event.setupByJson(this, eventDef) ;
             return event ;
         } catch(Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("error in Event definition by JSON.") ;
             Itk.logError_("eventDef", eventDef) ;
-            System.exit(1) ;
+            Itk.quitWithStackTrace(ex) ;
         }
         return null ; // never reach
     }
@@ -402,10 +400,9 @@ public class Scenario {
 
             return nEvent ;
         } catch(Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("Error in reading CSV file.") ;
             Itk.logError_("filename", filename) ;
-            System.exit(1) ;
+            Itk.quitWithStackTrace(ex) ;
         }
         return -1 ; // never reach.
     }
@@ -441,10 +438,9 @@ public class Scenario {
 
             return event ;
         } catch(Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("error in CSV one line.") ;
             Itk.logError_("line", line) ;
-            System.exit(1) ;
+            Itk.quitWithStackTrace(ex) ;
         }
         return null ; // never reach
     }
@@ -508,7 +504,7 @@ public class Scenario {
                                                     "getTypeName", true) ;
             registerEventClass(aliasName, eventClass) ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             Itk.logError("cannot process registerEventClass()") ;
             Itk.logError_("eventClass",eventClass) ;
         }

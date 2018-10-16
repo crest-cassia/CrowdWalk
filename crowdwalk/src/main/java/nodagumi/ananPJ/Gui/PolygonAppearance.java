@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import net.arnx.jsonic.JSON;
 
 import nodagumi.ananPJ.misc.JsonicHashMapGetter;
+import nodagumi.Itk.Itk;
 
 /**
  * ポリゴン表示スタイルの定義情報
@@ -124,8 +125,7 @@ public class PolygonAppearance extends JsonicHashMapGetter {
         try {
             section = getHashMapParameter(name, null);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e) ;
         }
         return section;
     }

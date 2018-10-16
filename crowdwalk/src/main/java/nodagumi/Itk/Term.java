@@ -1433,11 +1433,10 @@ public class Term {
         try {
             return updateObject(patch, recursive) ;
         } catch(Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("Illegal updateObject for Term.") ;
             Itk.logError_("this", this) ;
             Itk.logError_("patch", patch) ;
-            System.exit(1) ;
+            Itk.quitWithStackTrace(ex) ;
         }
         return this ; // never reach here
     }
@@ -1501,7 +1500,7 @@ public class Term {
 
             return buffer.toString() ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             Itk.logError("error in converting to JSON.") ;
             return null ;
         }

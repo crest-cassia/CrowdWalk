@@ -6,6 +6,8 @@ import nodagumi.ananPJ.Gui.AgentAppearance.AgentAppearanceBase;
 import nodagumi.ananPJ.Gui.SimulationFrame2D;
 import nodagumi.ananPJ.GuiSimulationLauncher2D;
 
+import nodagumi.Itk.Itk;
+
 /**
  * エージェントの 2D 表示の定義情報を扱う
  */
@@ -27,8 +29,7 @@ public class AgentAppearance2D extends AgentAppearanceBase {
                 view._init(launcher, frame, model, viewParameters2D);
                 view.init();
             } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
+		Itk.quitWithStackTrace(e) ;
             }
         }
     }

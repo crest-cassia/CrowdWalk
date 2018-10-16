@@ -192,8 +192,7 @@ public class PollutionHandler {
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e);
         }
     }
 

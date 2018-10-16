@@ -442,7 +442,7 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
                     return scanned ;
                 }
             } catch (Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("something wrong to set mark for:" + reader) ;
                 Itk.logError_("BufferedReadMax", BufferedReadMax) ;
                 return false ;
@@ -515,10 +515,9 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
                 addFactoriesByConfig(map, factoryConfig) ;
             }
         } catch (Exception e) {
-            System.err.println("Error in agent generation.");
-            System.err.println(line);
-            System.err.println(e.getMessage());
-            e.printStackTrace();
+            Itk.logError("Error in agent generation.", e.getMessage()) ;
+            Itk.logError_("line", line) ;
+            Itk.dumpStackTraceOf(e);
         }
 
         // 経路情報に未定義のタグが使用されていたら例外を発生させる
@@ -551,12 +550,12 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         // 行の長さチェック
         if(fileFormat == FileFormat.Ver1) {
             if (columns.length() < 7 && columns.length() != 4) {
-                System.err.println("malformed line: " + line);
+                Itk.logWarn("malformed line", line);
                 return null ;
             }
         } else {
             if (columns.length() < 5 && columns.length() != 2) {
-                System.err.println("malformed line: " + line);
+                Itk.logWarn("malformed line", line);
                 return null ;
             }
         }
@@ -753,8 +752,8 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
         // goal and route plan
         //String goal = items[index];
         if (factoryConfig.goal.isNull()) {
-            System.err.println("no matching link:" + columns.top() +
-                               " while reading agent generation rule.");
+            Itk.logWarn("no matching link", "" + columns.top() +
+                        " while reading agent generation rule.");
             return false ;
         }
         columns.shift() ;
@@ -822,7 +821,7 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
             // それ以外の場合は、もとの head をTerm化して返す。
             return new Term(head, true) ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             return new Term(head, true) ;
         }
     }

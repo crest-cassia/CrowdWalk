@@ -1501,8 +1501,7 @@ public class SimulationFrame2D extends JFrame
                 camerawork.add(new CameraShot(object));
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e) ;
         }
         cameraworkFile = filePath;
     }
@@ -1526,7 +1525,7 @@ public class SimulationFrame2D extends JFrame
         try {
             JSON.encode(jsonObject, new FileWriter(filePath));
         } catch (IOException e) {
-            e.printStackTrace();
+            Itk.dumpStackTraceOf(e) ;
         }
     }
 
@@ -1903,7 +1902,7 @@ public class SimulationFrame2D extends JFrame
                     String path = screenshotDir + "/" + filename + "." + screenshotImageType;
                     ImageIO.write(image, screenshotImageType, new File(path));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Itk.dumpStackTraceOf(e) ;
                 }
                 decSaveThreadCount();
             }

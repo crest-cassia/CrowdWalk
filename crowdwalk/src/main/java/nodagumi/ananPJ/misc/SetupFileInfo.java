@@ -213,7 +213,7 @@ public class SetupFileInfo {
                                                            true) ;
                 Itk.logInfo("Load Fallback File", fallbackFile) ;
             } catch (Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("Can not scan a fallback parameter file:",
                              fallbackFile) ;
                 Itk.logError_("Exception",ex) ;
@@ -230,7 +230,7 @@ public class SetupFileInfo {
                     Term.newByScannedJson(JSON.decode(istrm),true) ;
                 attachFallback(fallbackParameters, finalFallback) ;
             } catch (Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("Can not scan a fallback resource file.") ;
                 Itk.logError_("Exception",ex) ;
             }

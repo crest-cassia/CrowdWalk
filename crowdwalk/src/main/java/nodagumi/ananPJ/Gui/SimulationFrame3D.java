@@ -378,8 +378,7 @@ public class SimulationFrame3D extends Stage implements Observer {
 		}
 	    }
         } catch (Exception e) {
-            e.printStackTrace();
-            Itk.quitByError() ;
+	    Itk.quitWithStackTrace(e) ;
         }
 
         // ヘルプ画面の準備
@@ -1164,8 +1163,7 @@ public class SimulationFrame3D extends Stage implements Observer {
             try {
                 loadCamerawork(file.getCanonicalPath());
             } catch (IOException ex) {
-                ex.printStackTrace();
-                System.exit(1);
+		Itk.quitWithStackTrace(ex) ;
             }
             // TODO: 相対ディレクトリパスを付加する
             replayCheckBox.setText("Replay - " + file.getName());
@@ -1279,7 +1277,7 @@ public class SimulationFrame3D extends Stage implements Observer {
      */
     public void update(Observable o, Object arg) {
         if (arg == null) {
-            System.err.println("Warning: null received");
+	    Itk.logWarn("null received.") ;
             return;
         }
         OBNode obNode = (OBNode)arg;
@@ -1299,7 +1297,7 @@ public class SimulationFrame3D extends Stage implements Observer {
             text = getAreaInformation((MapAreaRectangle)obNode);
             break;
         default:
-            System.err.println("Illegal type object: " + obNode.toString());
+	    Itk.logWarn("Illegal type object",obNode.toString());
             break;
         }
         indicationArea.setText(text);
@@ -1438,8 +1436,7 @@ public class SimulationFrame3D extends Stage implements Observer {
                 camerawork.add(new CameraShot(object));
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e) ;
         }
         cameraworkFile = filePath;
     }
@@ -1462,8 +1459,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         try {
             filePath = file.getCanonicalPath();
         } catch (IOException ex) {
-            ex.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(ex) ;
         }
 
         Itk.logInfo("Save camerawork file", filePath);
@@ -1474,7 +1470,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         try {
             JSON.encode(jsonObject, new FileWriter(file));
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e) ;
         }
     }
 
@@ -1716,7 +1712,7 @@ public class SimulationFrame3D extends Stage implements Observer {
                 try {
                     ImageIO.write(bufferedImage, imageType, new File(path));
                 } catch (IOException e) {
-                    e.printStackTrace();
+		    Itk.dumpStackTraceOf(e) ;
                 }
                 decSaveThreadCount();
                 return true; 

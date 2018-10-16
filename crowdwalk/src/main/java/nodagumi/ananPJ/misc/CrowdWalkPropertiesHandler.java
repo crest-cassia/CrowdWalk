@@ -887,13 +887,10 @@ public class CrowdWalkPropertiesHandler {
 
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;
-            ioe.printStackTrace();
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(ioe) ;
         } catch(Exception e) {
-            e.printStackTrace() ;
-            System.err.println(e.getMessage());
-            Itk.logError("unknown exception") ;
-            Itk.quitByError() ;
+            Itk.logError("unknown exception", e.getMessage()) ;
+            Itk.quitWithStackTrace(e) ;
         }
     }
 
@@ -933,13 +930,10 @@ public class CrowdWalkPropertiesHandler {
             }
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;
-            ioe.printStackTrace();
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(ioe) ;
         } catch(Exception e) {
-            e.printStackTrace() ;
-            System.err.println(e.getMessage());
-            Itk.logError("unknown exception") ;
-            Itk.quitByError() ;
+            Itk.logError("unknown exception", e.getMessage());
+            Itk.quitWithStackTrace(e) ;
         }
             
         return term ;
@@ -1253,15 +1247,15 @@ public class CrowdWalkPropertiesHandler {
         try {
             cli = parser.parse(options, args);
         } catch (MissingOptionException moe) {
-            moe.printStackTrace();
+            Itk.dumpStackTraceOf(moe) ;
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("CrowdWalkPropertiesHandler", options, true);
             Itk.logError("Missing Opetion Exception") ;
-            System.exit(1);
+            Itk.quitByError() ;
         } catch (ParseException e) {
-            e.printStackTrace();
+            Itk.dumpStackTraceOf(e) ;
             Itk.logError("Parse Exception") ;
-            System.exit(1);
+            Itk.quitByError() ;
         }
         String propertiesFile = cli.getOptionValue("p");
 

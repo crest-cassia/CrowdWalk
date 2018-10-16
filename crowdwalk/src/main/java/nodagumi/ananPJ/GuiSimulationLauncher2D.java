@@ -65,7 +65,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Itk.dumpStackTraceOf(e) ;
                 }
             }
             if (SwingUtilities.isEventDispatchThread()) {
@@ -78,7 +78,7 @@ public class GuiSimulationLauncher2D extends GuiSimulationLauncher {
                         }
                     });
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Itk.dumpStackTraceOf(e) ;
                 }
             }
         } else {

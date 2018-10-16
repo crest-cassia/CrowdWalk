@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import nodagumi.ananPJ.NetworkMap.OBMapPart;
+import nodagumi.Itk.Itk;
 
 /**
  * 表示用のポリゴン
@@ -233,8 +234,7 @@ public class MapPolygon extends OBMapPart {
                 polygon = new MapPolygon(id, z_index, outerBoundary, innerBoundaries);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e);
         }
 
         polygon.getAttributesFromDom(element);  // tag が存在していたらセットする

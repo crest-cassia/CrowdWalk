@@ -201,7 +201,7 @@ public class AwaitAgent extends WalkAgent {
                         break ;
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace() ;
+                    Itk.dumpStackTraceOf(ex) ;
                 }
             }
         }

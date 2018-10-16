@@ -449,8 +449,8 @@ public class EditorFrameFx {
                     }
                 }
             } catch(Exception ex) {
-                System.err.println(ex.getMessage());
-                System.exit(1);
+		Itk.logError(ex.getMessage()) ;
+		Itk.quitByError() ;
             }
         });
         frame.setOnCloseRequest(e -> closing(e));
@@ -470,7 +470,7 @@ public class EditorFrameFx {
         try {
             shapefileSpecs = json.parse(getClass().getResourceAsStream("/shapefile_specs.json"));
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
             shapefileSpecs = new HashMap();
         }
 
@@ -548,7 +548,7 @@ public class EditorFrameFx {
                     try {
                         fxThread.join();
                     } catch (InterruptedException ex) {
-                        ex.printStackTrace();
+			Itk.dumpStackTraceOf(ex);
                     }
                 }
                 System.exit(0);
@@ -845,7 +845,7 @@ public class EditorFrameFx {
                     helpStage.show();
                     helpStage.toFront();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+		    Itk.dumpStackTraceOf(ex);
                 }
             } else {
                 Alert alert = new Alert(AlertType.WARNING, "You need to execute \"sh make_javadoc.sh\" on the command line to generate javadoc files.", ButtonType.OK);
@@ -860,7 +860,7 @@ public class EditorFrameFx {
                     URI uri = new URI(TUTORIAL_URI);
                     Desktop.getDesktop().browse(uri);
                 } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
+                    Itk.dumpStackTraceOf(ex);
                 }
             }).start();
         });
@@ -882,7 +882,7 @@ public class EditorFrameFx {
                     URI uri = new URI(GITHUB_REPOSITORY_URI);
                     Desktop.getDesktop().browse(uri);
                 } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
+                    Itk.dumpStackTraceOf(ex);
                 }
             }).start();
         });
@@ -939,8 +939,7 @@ public class EditorFrameFx {
             miResetRotation.setDisable(angleLocking);
             canvas.setAngleLocking(angleLocking);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e);
         }
     }
 
@@ -969,8 +968,7 @@ public class EditorFrameFx {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e);
         }
     }
 
@@ -999,8 +997,7 @@ public class EditorFrameFx {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e);
         }
     }
 
@@ -1466,7 +1463,7 @@ public class EditorFrameFx {
         try {
             editor.setDir(file.getParentFile().getCanonicalFile());
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
             Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
             alert.showAndWait();
             return;
@@ -1541,7 +1538,7 @@ public class EditorFrameFx {
             fileName = file.getCanonicalPath();
             editor.setDir(file.getParentFile().getCanonicalFile());
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
             Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
             alert.showAndWait();
             return;
@@ -1761,7 +1758,7 @@ public class EditorFrameFx {
             alert.showAndWait();
             return;
         } catch (InterruptedException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e);
             return;
         }
 
@@ -1945,7 +1942,7 @@ public class EditorFrameFx {
                     // refresh
                     canvas.update();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+		    Itk.dumpStackTraceOf(ex);
                 }
             }
         });
@@ -2219,7 +2216,7 @@ public class EditorFrameFx {
                 try {
                     fileNameField.setText(file.getCanonicalPath());
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+		    Itk.dumpStackTraceOf(ex);
                 }
             }
         });
@@ -2789,8 +2786,7 @@ public class EditorFrameFx {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e);
         }
         return true;
     }
@@ -4247,7 +4243,7 @@ public class EditorFrameFx {
                     return;
                 }
             } catch (IOException ex) {
-                ex.printStackTrace();
+		Itk.dumpStackTraceOf(ex);
                 return;
             }
             MapPartGroup group = editor.getCurrentGroup();

@@ -176,7 +176,7 @@ public class GsiTile {
             g2.drawImage(tileImage, 1, 0, null);
             g2.drawImage(tileImage, 0, 0, null);
         } catch (IOException e) {
-            e.printStackTrace();
+	    Itk.dumpStackTraceOf(e) ;
             return false;
         }
 

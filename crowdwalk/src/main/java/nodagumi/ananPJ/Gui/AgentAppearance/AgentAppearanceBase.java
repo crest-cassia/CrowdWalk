@@ -124,8 +124,7 @@ public class AgentAppearanceBase extends JsonicHashMapGetter {
                 viewParameters3D = (HashMap<String, Object>)view3DPart.get("parameters");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+	    Itk.quitWithStackTrace(e) ;
         }
     }
 

@@ -65,7 +65,7 @@ public class NaviFormulaMap extends NaviFormula {
                 (ThinkFormula)(currentClass.newInstance()) ;
         } catch(Exception ex) {
             Itk.logError("wrong class definition") ;
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
         }
 
         lexicon.register(Lex_length, singleton) ;

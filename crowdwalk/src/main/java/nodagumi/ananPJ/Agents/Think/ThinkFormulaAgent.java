@@ -57,7 +57,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
                 (ThinkFormula)(currentClass.newInstance()) ;
         } catch(Exception ex) {
             Itk.logError("wrong class definition") ;
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
         }
 
         lexicon.register("getFallback", singleton) ;

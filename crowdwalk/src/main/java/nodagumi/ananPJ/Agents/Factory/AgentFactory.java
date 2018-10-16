@@ -82,7 +82,7 @@ public abstract class AgentFactory {
                 classFinder.callMethodForClass(agentClass, "getTypeName", true) ;
             classFinder.alias(aliasName, agentClass) ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             Itk.logError("cannot process registerAgentClass()") ;
             Itk.logError_("agentClass",agentClass) ;
         }
@@ -99,7 +99,7 @@ public abstract class AgentFactory {
                 (AgentBase)classFinder.newByName(agentClassName) ;
             return agent ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             Itk.logError("can not find the class") ;
             Itk.logError_("agentClassName", agentClassName) ;
             return null ;
@@ -371,8 +371,7 @@ public abstract class AgentFactory {
         } catch (Exception ex) {
             Itk.logError("class name not found") ;
             Itk.logError_("agentClassName", agentClassName) ;
-            ex.printStackTrace();
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(ex);
         }
         try {
             agent.init(random, simulator, this, currentTime,
@@ -382,8 +381,7 @@ public abstract class AgentFactory {
             Itk.logError_("agent=", agent) ;
             Itk.logError_("agentConfig=", getAgentConf()) ;
             Itk.logError_("fallback=", fallbackForAgent) ;
-            ex.printStackTrace() ;
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(ex) ;
         }
 
         agents.add(agent);
@@ -437,7 +435,7 @@ public abstract class AgentFactory {
             return (boolean)method.invoke(agent,directive) ;
             */
         } catch(Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             Itk.logError("can not check the directive") ;
             Itk.logError_("directive", directive) ;
             Itk.logError_("agentClass", className) ;
@@ -476,7 +474,7 @@ public abstract class AgentFactory {
                 .callMethodForClass(className, "pushPlaceTagInDirective", false,
                                     directive, nodeTagList, linkTagList) ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
             Itk.logError("can not pushPlaceTag.") ;
             Itk.logError_("directive", directive) ;
             Itk.logError_("agentClass", className) ;

@@ -850,11 +850,10 @@ public class AgentHandler {
                                       simulator.getLinerGenerateAgentRatio(),
                                       random);
         } catch(Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("Illegal AgentGenerationFile",
                          simulator.getSetupFileInfo().getGenerationFile(),
                          ex.getMessage());
-            System.exit(1);
+            Itk.quitWithStackTrace(ex) ;
         }
         if (agentFactoryList != null) {
             for (AgentFactory factory : agentFactoryList) {
@@ -964,8 +963,7 @@ public class AgentHandler {
                         thread.join() ;
                     }
                 } catch (InterruptedException ex) {
-                    ex.printStackTrace() ;
-                    Itk.quitByError() ;
+                    Itk.quitWithStackTrace(ex) ;
                 }
             }
         }
@@ -1616,8 +1614,7 @@ public class AgentHandler {
             handler.setFormatter(formatter);
             logger.addHandler(handler);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e);
         }
         logger.setLevel(level);
         logger.setUseParentHandlers(false); // コンソールには出力しない
@@ -1710,8 +1707,7 @@ public class AgentHandler {
             }
         } catch(Exception e) {
             Itk.logError("can not setup AgentTrailLogger",e.getMessage()) ;
-            e.printStackTrace() ;
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(e) ;
         }
     }
         
@@ -1823,8 +1819,7 @@ public class AgentHandler {
             }
         } catch(Exception e) {
             Itk.logError("can not setup Logger",e.getMessage()) ;
-            e.printStackTrace() ;
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(e) ;
         }
     }
     
@@ -1977,8 +1972,7 @@ public class AgentHandler {
             }
         } catch(Exception e) {
             Itk.logError("can not setup Logger",e.getMessage()) ;
-            e.printStackTrace() ;
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(e) ;
         }
     }
     
@@ -2113,8 +2107,7 @@ public class AgentHandler {
             }
         } catch(Exception e) {
             Itk.logError("can not setup Logger",e.getMessage()) ;
-            e.printStackTrace() ;
-            Itk.quitByError() ;
+            Itk.quitWithStackTrace(e) ;
         }
     }
 

@@ -59,7 +59,7 @@ public class CuiSimulationLauncher extends BasicSimulationLauncher {
             map = readMapWithName(getNetworkMapFile()) ;
         } catch (IOException ioe) {
             Itk.logError("error in reading map file:", getNetworkMapFile()) ;
-            ioe.printStackTrace();
+            Itk.dumpStackTraceOf(ioe);
             return false ;
         }
         return true ;

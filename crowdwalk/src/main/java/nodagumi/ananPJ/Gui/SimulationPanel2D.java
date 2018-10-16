@@ -386,8 +386,7 @@ public class SimulationPanel2D extends JPanel {
                 polygonAppearances = PolygonAppearance.load(null);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+            Itk.quitWithStackTrace(e) ;
         }
 
         // マップの回転を反映したノード座標の準備

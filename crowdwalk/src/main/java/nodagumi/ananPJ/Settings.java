@@ -50,7 +50,7 @@ public class Settings extends TreeMap<String, String> {
 		} catch (FileNotFoundException e) {
 			/* No setting file, not a problem */
 		} catch (IOException e) {
-			e.printStackTrace();
+            Itk.dumpStackTraceOf(e);
 		}
 		return settings;
 	}
@@ -68,7 +68,7 @@ public class Settings extends TreeMap<String, String> {
 			bw.close ();
 			fw.close ();
 		} catch (IOException e) {
-			e.printStackTrace();
+            Itk.dumpStackTraceOf(e);
 		}
 	}
 	

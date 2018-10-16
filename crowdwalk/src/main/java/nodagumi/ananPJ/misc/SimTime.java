@@ -163,7 +163,7 @@ public class SimTime {
                 this.originTimeInt
                     = Itk.scanTimeStringToInt(this.originTimeString) ;
             } catch(Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("Wrong Time Format", originTimeString) ;
                 this.originTimeInt = -1 ;
             }
@@ -232,7 +232,7 @@ public class SimTime {
             try {
                 absTime = Itk.scanTimeStringToInt(timeString) ;
             } catch(Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("Wrong Time Format", timeString) ;
                 this.originTimeInt = -1 ;
             }

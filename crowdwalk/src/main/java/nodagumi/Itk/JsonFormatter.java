@@ -241,7 +241,7 @@ public class JsonFormatter<T> {
             try {
                 writer.write(buffer.toString()) ;
             } catch(Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("IOException: ", writer, buffer) ;
             }
         }
@@ -313,7 +313,7 @@ public class JsonFormatter<T> {
             try {
                 writer.write(buffer.toString()) ;
             } catch(Exception ex) {
-                ex.printStackTrace() ;
+                Itk.dumpStackTraceOf(ex) ;
                 Itk.logError("IOException: ", writer, buffer) ;
             }
         }
@@ -385,7 +385,7 @@ public class JsonFormatter<T> {
 	try {
 	    writer.write(buffer.toString()) ;
 	} catch(Exception ex) {
-	    ex.printStackTrace() ;
+            Itk.dumpStackTraceOf(ex) ;
 	    Itk.logError("IOException: ", writer, buffer) ;
 	}
     }

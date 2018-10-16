@@ -144,10 +144,9 @@ public abstract class ObstructerBase {
         try {
             return (ObstructerBase)classFinder.newByName(className) ;
         } catch (Exception ex) {
-            ex.printStackTrace() ;
             Itk.logError("pollution_type の設定が間違っています。",
                          className) ;
-            System.exit(1);
+            Itk.quitWithStackTrace(ex) ;
         }
         return null;
     }
