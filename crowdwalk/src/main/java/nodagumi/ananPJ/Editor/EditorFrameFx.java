@@ -585,7 +585,7 @@ public class EditorFrameFx {
 
         // MenuItem miSaveProperty = new MenuItem("Save properties");
         // miSaveProperty.setOnAction(e -> {
-        //     System.err.println("Save properties: under construction");
+        //     Itk.logInfo("Save properties: under construction");
         // });
 
         miQuit = new MenuItem("Quit");

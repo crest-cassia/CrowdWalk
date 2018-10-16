@@ -58,8 +58,6 @@ public class FxColor {
 	 */
 	double hue = Math.min(Math.pow(speed, 5) * 0.35, 1.0) * 360.0;
         Color c_rgb = Color.hsb(hue, 0.8588, 0.698);
-        // System.err.println("  speed: " + speed + ", R: " + c_rgb.getRed() +
-                // ", G: " + c_rgb.getGreen() + ", B: " + c_rgb.getBlue());
         return c_rgb;
     }
 

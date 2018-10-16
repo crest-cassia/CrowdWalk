@@ -13,6 +13,8 @@ import math.geom3d.Point3D;
 
 import nodagumi.ananPJ.NetworkMap.OBNode;
 
+import nodagumi.Itk.Itk;
+
 //======================================================================
 /**
  * 地図上の方形エリア。
@@ -95,7 +97,7 @@ public class MapAreaRectangle extends MapArea {
     @Override
     public boolean contains(Point3D point) {
         if (point.getZ() < minHeight || point.getZ() > maxHeight) {
-            //System.err.println("height not match");
+            //Itk.logWarn("height not match");
             return false;
         }
         if (!bounds.contains(rotatePoint(
@@ -194,7 +196,8 @@ public class MapAreaRectangle extends MapArea {
         double y2 = Double.parseDouble(element.getAttribute("pSouthY"));
         if (y1 > y2) {
             if (! nsWarned) {
-                System.err.println(String.format("MapArea coordinate error: pNorthY = %s > pSouthY = %s", y1, y2));
+                Itk.logWarn("MapArea coordinate error",
+                            String.format("pNorthY = %s > pSouthY = %s", y1, y2));
                 nsWarned = true;
                 // Itk.quitByError() ;
             }
@@ -204,7 +207,8 @@ public class MapAreaRectangle extends MapArea {
         }
         if (x1 > x2) {
             if (! weWarned) {
-                System.err.println(String.format("MapArea coordinate error: pWestX = %s > pEastX = %s", x1, x2));
+                Itk.logWarn("MapArea coordinate error",
+                            String.format("pWestX = %s > pEastX = %s", x1, x2));
                 weWarned = true;
                 // Itk.quitByError() ;
             }

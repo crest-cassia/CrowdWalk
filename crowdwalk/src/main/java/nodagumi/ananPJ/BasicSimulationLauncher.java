@@ -289,13 +289,13 @@ public abstract class BasicSimulationLauncher {
         FileInputStream fis = new FileInputStream(file_name);
         Document doc = ItkXmlUtility.singleton.streamToDoc(fis);
         if (doc == null) {
-            System.err.println("ERROR Could not read map.");
+            Itk.logError("Could not read map.");
             return null;
         }
         NodeList toplevel = doc.getChildNodes();
         if (toplevel == null) {
-            System.err.println("BasiciSimulationLauncher.readMapWithName " +
-                    "invalid inputted DOM object.");
+            Itk.logError("", "BasiciSimulationLauncher.readMapWithName " +
+                         "invalid inputted DOM object.");
             return null;
         }
         // NetMAS based map

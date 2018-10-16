@@ -208,7 +208,6 @@ public class GsiTile {
         tileNumberX = x;
         tileNumberY = y;
 
-        // System.err.println(String.format("(%f, %f) %f, %f", point.getX(), point.getY(), scaleX, scaleY));
         return true;
     }
 

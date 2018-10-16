@@ -116,7 +116,7 @@ public abstract class OBNode extends DefaultMutableTreeNode
         } else if (tagName.equals("tag")){
             return null;
         } else {
-            System.err.println(tagName + " not known to OBnode.fromDom");
+            Itk.logWarn("", tagName + " not known to OBnode.fromDom");
             return null;
         }
     }

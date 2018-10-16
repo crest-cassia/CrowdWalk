@@ -486,7 +486,6 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             exitWithSimulationFinished = properties.getBoolean("exit_with_simulation_finished",
                     exitWithSimulationFinished);
         } catch(Exception e) {
-            //System.err.printf("Property file error: %s\n%s\n", _propertiesFile, e.getMessage());
             Itk.logFatal("Property file error", e.getMessage()) ;
             Itk.quitByError() ;
         }

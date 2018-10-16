@@ -540,7 +540,7 @@ public class ImportGis {
                 SimpleFeatureCollection features = source.getFeatures(filter);
                 SimpleFeatureType schema = features.getSchema();
                 // for (AttributeType type : schema.getTypes()) {
-                    // System.err.println(type);
+                    // Itk.dbgVal("type",type);
                 // }
                 FeatureIterator<SimpleFeature> it = features.features();
                 while (it.hasNext()) {
@@ -696,7 +696,6 @@ public class ImportGis {
             if (! heightEnable || Double.isNaN(z)) {
                 z = 0.0;
             }
-            //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
 
             Point2D point = null;
             if (crowdwalk_coordinate) {
@@ -708,12 +707,12 @@ public class ImportGis {
             String point_str = point.toString().replaceAll(" ", "");
             // if (j == 0) {
                 // point_str = feature.getAttribute("ND1").toString();
-                // System.err.println("\tND1: " + point_str);
+                // Itk.dbgVal("ND1", point_str);
             // } else if (j == points.length - 1) {
                 // point_str = feature.getAttribute("ND2").toString();
-                // System.err.println("\tND2: " + point_str);
+                // Itk.dbgVal("ND2", point_str);
             // } else{
-                // System.err.println("\t   : " + point_str);
+                // Itk.dbgVal("   ", point_str);
             // }
 
             MapNode node = null;
@@ -745,7 +744,7 @@ public class ImportGis {
                 double dnodes = Math.sqrt(
                         Math.pow(from.getX() - node.getX(), 2.0) +
                         Math.pow(from.getY() - node.getY(), 2.0));
-                System.err.println("from " + from.ID + " to " + node.ID +
+                Itk.dbgVal("","from " + from.ID + " to " + node.ID +
                     " length " + length + " ratio " + length * ratio[j - 1]
                     + " distance " + dnodes + " j " + j);
                 */
@@ -781,7 +780,7 @@ public class ImportGis {
             if (! heightEnable || Double.isNaN(z)) {
                 z = 0.0;
             }
-            //System.err.println("\t[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
+            //Itk.dbgVal("\t","[" + c.x + ", " + c.y + "] -> [" + x + ", " + y + "]");
 
             Point2D point = null;
             if (crowdwalk_coordinate) {
