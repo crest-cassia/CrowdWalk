@@ -114,6 +114,52 @@ module ItkUtility
   def numOfPassedAgentsOverNode(node, simTime, margin = 1.5)
     return node.countPassingAgent(simTime, margin) ;
   end
+
+  #--------------------------------------------------------------
+  ## Agentオブジェクトへのアクセス。
+  #--::::::::::::::::::::::::::::::
+  ## Java における Agent クラス
+  #++
+  ## RubyAgentClass
+
+  AgentClassTable = {}
+  def fooo()
+  AgentClassTable.update({
+    :base => Java::NodagumiAnanPJAgents::AgentBase,
+    :walk => Java::NodagumiAnanPJAgents::WalkAgent,
+    :await => Java::NodagumiAnanPJAgents::AwaitAgent,
+    :naive => Java::NodagumiAnanPJAgents::NaiveAgent,
+    :bustle => Java::NodagumiAnanPJAgents::BustleAgent,
+    :capricious => Java::NodagumiAnanPJAgents::CapriciousAgent,
+    :rational => Java::NodagumiAnanPJAgents::RationalAgent,
+    :ruby => Java::NodagumiAnanPJAgents::RubyAgent,
+  }) ;
+  end
+  #--------------------------------
+  #++
+  ## Agent クラスチェック
+  def checkAgentClass(agent, classTag)
+    fooo() if (AgentClassTable.size() == 0) ; 
+    return agent.is_a?(AgentClassTable[classTag]) ;
+  end
+
+  #--------------------------------
+  #++
+  ## Ruby Agent クラスチェック
+  def isRubyAgent(agent)
+    return checkAgentClass(agent, :ruby) ;
+  end
+  
+  #--------------------------------
+  #++
+  ## Ruby Agent の場合に、そのインスタンスを取得。
+  def getAgentInstanceInRuby(agent)
+    if(isRubyAgent(agent)) then
+      return agent.getRubyAgentInstance() ;
+    else
+      return nil ;
+    end
+  end
   
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -121,5 +167,5 @@ module ItkUtility
   #--------------------------------------------------------------
   #++
 
-end # class ItkUtility
+end # module ItkUtility
 

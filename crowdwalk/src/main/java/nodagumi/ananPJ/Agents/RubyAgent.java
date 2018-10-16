@@ -419,6 +419,15 @@ public class RubyAgent extends RationalAgent {
 
     //------------------------------------------------------------
     /**
+     * RubyAgent instance の取得。
+     * Ruby でのオブジェクトを取得する。
+     */
+    public Object getRubyAgentInstance() {
+        return rubyAgent ;
+    }
+    
+    //------------------------------------------------------------
+    /**
      * 文字列の intern。  Ruby からの呼び出し用。
      */
     public String intern(String str) {

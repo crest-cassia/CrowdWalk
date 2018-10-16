@@ -16,6 +16,7 @@
 #++
 ## CrowdWalk の RubyGate での Ruby 側の制御のインターフェース
 class RubyGateBase
+  include ItkUtility ;
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## Java 側の Gate オブジェクト

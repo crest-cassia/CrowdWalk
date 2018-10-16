@@ -35,8 +35,13 @@ class SampleGate < RubyGateBase
     if(r) then
       r = (rand(2) == 0) ;
     end
+
+    klass0 = checkAgentClass(agent, :rational) ;
+    klass1 = isRubyAgent(agent) ;
+    obj = getAgentInstanceInRuby(agent) ;
     
-    p [:isClosed, agent.getID(), currentTime.toString(), r] ;
+    p [:isClosed, agent.getID(), klass0, klass1, obj,
+       currentTime.toString(), r] ;
     
     return r ;
   end

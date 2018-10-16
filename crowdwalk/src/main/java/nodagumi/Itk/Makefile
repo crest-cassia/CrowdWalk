@@ -294,7 +294,7 @@ run3gt02ds ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02ds))
 
 ##-----
-SAMPLE3gt03 = sample/generatedTown/gridTown03.prop.json   # gate event
+SAMPLE3gt03 = sample/generatedTown/gridTown03.prop.json   # ruby gate
 run3gt03 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt03))
 
