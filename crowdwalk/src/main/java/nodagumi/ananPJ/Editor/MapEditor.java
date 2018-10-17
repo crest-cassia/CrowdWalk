@@ -258,6 +258,8 @@ public class MapEditor {
         if (! networkMap.fromDOM(doc)) {
             return false;
         }
+        // tag を持たない Group があれば適当な名前で tag を付加しておく
+        appendGroupTag();
 
         if (! loadBackgroundImage()) {
             return false;
@@ -269,6 +271,39 @@ public class MapEditor {
         Itk.logInfo("Load Map File", fileName);
 
         return true;
+    }
+
+    /**
+     * tag を持たない Group があれば適当な名前で tag を付加しておく
+     */
+    private void appendGroupTag() {
+        ArrayList<String> names = new ArrayList();
+        for (MapPartGroup group : networkMap.getGroups()) {
+            names.add(group.getTagString());
+        }
+
+        int n = 1;
+        MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+        for (OBNode node : networkMap.getOBCollection()) {
+            if (node.getNodeType() != OBNode.NType.GROUP) {
+                continue;
+            }
+            MapPartGroup group = (MapPartGroup)node;
+            if (group.getTagString().isEmpty()) {
+                group.allTagsClear();
+                if (group == root) {
+                    group.addTag("root");
+                } else {
+                    String name = "GROUP" + n;
+                    while (names.contains(name)) {
+                        n++;
+                        name = "GROUP" + n;
+                    }
+                    group.addTag(name);
+                    names.add(name);
+                }
+            }
+        }
     }
 
     /**
