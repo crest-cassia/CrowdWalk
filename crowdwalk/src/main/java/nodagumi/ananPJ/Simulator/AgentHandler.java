@@ -2072,8 +2072,7 @@ public class AgentHandler {
             // ※ nodeOrder にすべてのゴールノードが含まれるとは限らない
             for (String tag : nodeOrder.split("\\s*,\\s*")) {
                 if (! goalTags.contains(tag)) {
-                    Itk.logError("can not setup Logger", "A node that is not a goal was set: " + tag);
-                    Itk.quitByError();
+                    Itk.logWarn("Unknown goal tag", "node_order_of_evacuated_agents_log: " + tag);
                 }
                 for (MapNode node : simulator.getNodes()) {
                     if (evacuatedAgentsCountByExit.containsKey(node)) {
@@ -2143,16 +2142,13 @@ public class AgentHandler {
             MapNode exitNode = agent.getPrevNode();
             Integer counter = evacuatedAgentsCountByExit.get(exitNode);
             if (counter == null) {
-                // 最初の一回だけ警告メッセージを表示する
-                // 出力しないノードを evacuatedAgentsCountByExit にセットしているが現状では問題ない
-                Itk.logWarn("Evacuated from unregistered goal",
-                            exitNode.toShortInfo());
-                counter = new Integer(0);
+                finalizeSimulationLoggers();
+                Itk.logError("Evacuated from unregistered goal", String.format("Time: %s Elapsed: %5.2fsec %s", currentTime.getAbsoluteTimeString(), currentTime.getRelativeTime(), exitNode.toShortInfo()));
+                Itk.quitByError();
             }
             counter += 1;
             evacuatedAgentsCountByExit.put(exitNode, counter);
         }
-
     }
     
     //------------------------------------------------------------
