@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -72,7 +73,6 @@ public class TagSetupPane extends VBox {
         Label label = new Label("Remove tags");
         label.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
         label.setPadding(new Insets(0, 0, 4, 0));
-        pane.getChildren().add(label);
 
         if (tags.isEmpty()) {
             Label noTagsLabel = new Label("no tags to remove");
@@ -85,6 +85,7 @@ public class TagSetupPane extends VBox {
         button.setDisable(true);
         button.setOnAction(e -> removeTags());
 
+        VBox cbPane = new VBox();
         for (String tag : tags) {
             CheckBox cb = new CheckBox(tag);
             cb.setMnemonicParsing(false);
@@ -97,13 +98,22 @@ public class TagSetupPane extends VBox {
                 button.setDisable(! selected);
             });
             tagCheckBoxes.add(cb);
-            pane.getChildren().add(cb);
+            cbPane.getChildren().add(cb);
         }
+        ScrollPane scroller = new ScrollPane();
+        scroller.setPrefSize(360, 160);
+        scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scroller.setFitToWidth(true);
+        scroller.setFitToHeight(true);
+        scroller.setContent(cbPane);
 
         FlowPane flowPane = new FlowPane();
+        flowPane.setPadding(new Insets(4, 0, 0, 0));
         flowPane.setAlignment(Pos.CENTER_RIGHT);
         flowPane.getChildren().addAll(button);
-        pane.getChildren().add(flowPane);
+
+        pane.getChildren().addAll(label, scroller, flowPane);
         return pane;
     }
 
