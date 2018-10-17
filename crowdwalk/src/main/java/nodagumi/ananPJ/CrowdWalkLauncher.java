@@ -4,6 +4,8 @@ package nodagumi.ananPJ;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -48,6 +50,11 @@ public class CrowdWalkLauncher {
      * オフラインモード
      */
     public static boolean offline = false;
+
+    /**
+     * インターネット接続可能
+     */
+    public static boolean internetEnabled = false;
 
     /**
      * コマンドラインオプションの定義
@@ -217,6 +224,11 @@ public class CrowdWalkLauncher {
      */
     public static void launchMapEditor(String propertiesFilePath,
             ArrayList<String> commandLineFallbacks) throws Exception {
+        if (isInternetEnabled()) {
+            internetEnabled = true;
+        } else {
+            offline = true;
+        }
         settings = Settings.load(SETTINGS_FILE_NAME);
         MapEditor editor = new MapEditor(settings);
         if (propertiesFilePath != null) {
@@ -259,6 +271,29 @@ public class CrowdWalkLauncher {
      */
     public static boolean isUsable3dSimulator() {
         return GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D");
+    }
+
+    /**
+     * インターネットにつながるか?
+     */
+    public static boolean isInternetEnabled() {
+        try {
+            List<String> commandLine = null;
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                commandLine = Arrays.asList("ping", "-n", "1", "www.google.com");
+            } else {
+                commandLine = Arrays.asList("ping", "-c", "1", "www.google.com");
+            }
+            Itk.logInfo("External process", String.join(" ", commandLine));
+            ProcessBuilder pb = new ProcessBuilder(commandLine);
+            pb.redirectOutput(new File("nul"));
+            Process process = pb.start();
+            int ret = process.waitFor();
+            return ret == 0 ? true : false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void main(String[] args) {

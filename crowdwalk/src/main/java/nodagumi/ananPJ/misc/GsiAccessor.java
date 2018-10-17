@@ -85,6 +85,15 @@ public class GsiAccessor {
         if (CrowdWalkLauncher.offline) {
             return false;
         }
+        // インターネット接続を確認して以降の動作に反映
+        if (! CrowdWalkLauncher.internetEnabled) {
+            if (CrowdWalkLauncher.isInternetEnabled()) {
+                CrowdWalkLauncher.internetEnabled = true;
+            } else {
+                CrowdWalkLauncher.offline = true;
+                return false;
+            }
+        }
 
         String url = String.format("http://cyberjapandata.gsi.go.jp/xyz/%s/%d/%d/%d.%s", tileName, zoom, x, y, ext);
         Itk.logInfo("Download", url);
@@ -113,6 +122,15 @@ public class GsiAccessor {
         if (! file.exists()) {
             if (CrowdWalkLauncher.offline) {
                 return 0.0;
+            }
+            // インターネット接続を確認して以降の動作に反映
+            if (! CrowdWalkLauncher.internetEnabled) {
+                if (CrowdWalkLauncher.isInternetEnabled()) {
+                    CrowdWalkLauncher.internetEnabled = true;
+                } else {
+                    CrowdWalkLauncher.offline = true;
+                    return 0.0;
+                }
             }
             // 国土地理院Webの標高APIにアクセスして標高値を取得し、キャッシュファイルに保存する
             Rectangle2D tileRect = tile2boundingBox(x, y, zoom);
