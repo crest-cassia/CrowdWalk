@@ -39,6 +39,7 @@ class SampleGate < RubyGateBase
 #    klass0 = checkAgentClass(agent, :rational) ;
 #    klass1 = isRubyAgent(agent) ;
     obj = getAgentInstanceInRuby(agent) ;
+    obj = nil if !obj.is_a?(SampleAgent3) ;
     count = (!obj.nil? ? obj.nCycle : -1) ;
     
     p [:isClosed, agent.getID(), count, currentTime.toString(), r] ;

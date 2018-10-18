@@ -1066,8 +1066,10 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
             /*
              * [2018.10.18 I.Noda]
              * リンク上での分断制御をやめてみる。
+             * ノード側のバグが判明したので、復活。
+             * ゲートのplaceタグを持つノードでもちゃんと止まるようになる。
              */
-            //speed = 0 ;
+            speed = 0 ;
         }
 
         /* 制約ルール適用 */
