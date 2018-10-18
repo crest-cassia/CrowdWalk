@@ -19,6 +19,7 @@
   </Node>
   <Node height="0.0" id="4" x="0.9422779556309253" y="299.1294474318203">
     <tag>node_00_03</tag>
+    <tag>gate_foo</tag>
     <link id="103"/>
     <link id="104"/>
     <link id="115"/>
@@ -55,6 +56,7 @@
   </Node>
   <Node height="0.0" id="10" x="-0.8223810814159989" y="899.9605664035166">
     <tag>node_00_09</tag>
+    <tag>gate_bar</tag>
     <link id="109"/>
     <link id="127"/>
   </Node>
