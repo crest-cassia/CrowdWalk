@@ -1060,8 +1060,15 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      */
     public double calcRestrictedSpeed(double speed, AgentBase agent,
                                       SimTime currentTime) {
-        /* 分断制御 */
+        /* 分断制御 
+         */
         if(isGateClosed(agent, currentTime)) {
+            /*
+             * [2018.10.18 I.Noda]
+             * リンク上での分断制御をやめてみる。
+             * ノード側のバグが判明したので、復活。
+             * ゲートのplaceタグを持つノードでもちゃんと止まるようになる。
+             */
             speed = 0 ;
         }
 

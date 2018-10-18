@@ -514,7 +514,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
      */
     public double calcRestrictedSpeed(double speed, AgentBase agent,
                                       SimTime currentTime) {
-        /* 分担制御 */
+        /* 分断制御 */
         if(isGateClosed(agent, currentTime)) {
             speed = 0.0 ;
         }

@@ -650,6 +650,8 @@ public class WalkAgent extends AgentBase {
 
         /* [2015.01.09 I.Noda]
          * リンクの交通規制など (Gate)
+         * [2018.10.18 I.Noda]
+         * Link での Gate 制御はやめる。 (MapLink で変更)
          */
         _speed =
             currentPlace.getLink().calcRestrictedSpeed(_speed, this, currentTime) ;
@@ -659,7 +661,8 @@ public class WalkAgent extends AgentBase {
          * ノードの交通規制など (STOP)
          */
         double deltaDistance = _speed * currentTime.getTickUnit() ;
-        if (!currentPlace.isBeyondLinkWithAdvance(deltaDistance)) {
+        //        if (!currentPlace.isBeyondLinkWithAdvance(deltaDistance)) {
+        if (currentPlace.isBeyondLinkWithAdvance(deltaDistance)) {
             _speed =
                 currentPlace.getHeadingNode().calcRestrictedSpeed(_speed,
                                                                   this,
