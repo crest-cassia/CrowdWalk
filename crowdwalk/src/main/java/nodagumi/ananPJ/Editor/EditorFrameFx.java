@@ -1482,7 +1482,7 @@ public class EditorFrameFx {
      * マップファイルを保存する
      */
     public void saveMap() {
-        if (! editor.isModified()) {
+        if (! editor.isModified() && ! editor.isNormalized()) {
             Alert alert = new Alert(AlertType.INFORMATION, "Map data is not modified.", ButtonType.OK);
             alert.showAndWait();
             return;
@@ -1709,28 +1709,13 @@ public class EditorFrameFx {
      */
     private void readShapefile() {
         NetworkMap networkMap = editor.getMap();
+        MapPartGroup root = (MapPartGroup)networkMap.getRoot();
 
         // root グループには読み込めない
         if (networkMap.getGroups().size() == 1) {
             Alert alert = new Alert(AlertType.WARNING, "Please create a new group.", ButtonType.OK);
             alert.showAndWait();
             return;
-        }
-
-        // zone の不整合がないかチェックする
-        int fixedZone = 0;
-        for (MapPartGroup group : networkMap.getGroups()) {
-            if (group.getZone() != 0) {
-                if (fixedZone == 0) {
-                    fixedZone = group.getZone();
-                    continue;
-                }
-                if (group.getZone() != fixedZone) {
-                    Alert alert = new Alert(AlertType.WARNING, "Group zone mismatch: " + fixedZone + " and " + group.getZone(), ButtonType.OK);
-                    alert.showAndWait();
-                    return;
-                }
-            }
         }
 
         // 全グループの scale が 1.0 である事
@@ -1852,7 +1837,7 @@ public class EditorFrameFx {
         HashMap<String, MapPartGroup> groups = new HashMap();
         ArrayList<String> groupNames = new ArrayList();
         for (MapPartGroup group : networkMap.getGroups()) {
-            if (group == networkMap.getRoot() || group.getTags().size() == 0) {
+            if (group == root || group.getTags().size() == 0) {
                 continue;
             }
             groups.put(group.getTagString(), group);
@@ -1863,21 +1848,11 @@ public class EditorFrameFx {
 
         // Zone
         ArrayList<String> zones = new ArrayList();
-        if (fixedZone != 0) {
-            zones.add("" + fixedZone);
-        } else {
-            for (int zone = 1; zone <= GsiTile.JGD2000_JPR_EPSG_NAMES.length - 1; zone++) {
-                zones.add("" + zone);
-            }
+        for (int zone = 1; zone <= GsiTile.JGD2000_JPR_EPSG_NAMES.length - 1; zone++) {
+            zones.add("" + zone);
         }
         ChoiceBox<String> zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
-        zoneChoiceBox.setValue(zones.get(0));
-        for (MapPartGroup group : networkMap.getGroups()) {
-            if (group.getZone() != 0) {
-                zoneChoiceBox.setValue("" + group.getZone());
-                break;
-            }
-        }
+        zoneChoiceBox.setValue(root.getZone() == 0 ? zones.get(0) : ("" + root.getZone()));
         Button zoneReference = new Button("Reference");
         zoneReference.setOnAction(e -> {
             helpStage.setTitle("Help - Zone of plane rectangular coordinate system");
@@ -2049,11 +2024,6 @@ public class EditorFrameFx {
             }
             MapPartGroup group = groups.get(groupChoiceBox.getValue());
             int zone = Integer.parseInt(zoneChoiceBox.getValue());
-            if (group.getZone() != 0 && group.getZone() != zone) {
-                Alert alert = new Alert(AlertType.WARNING, "Zone is different from group's zone.", ButtonType.OK);
-                alert.showAndWait();
-                return;
-            }
 
             try {
                 editor.readShapefile(srcEpsg, scaleOfRoundOff == null ? -1 : scaleOfRoundOff.intValue(), widthName, correctionFactor, referenceTable, group, zone, shapefileList.getItems());
@@ -2075,6 +2045,7 @@ public class EditorFrameFx {
             alert.showAndWait();
             return;
         }
+        MapPartGroup root = (MapPartGroup)networkMap.getRoot();
 
         OsmReader osmReader = null;
         try {
@@ -2108,17 +2079,11 @@ public class EditorFrameFx {
 
         // Zone
         ArrayList<String> zones = new ArrayList();
-        for (int zone = 1; zone <= 19; zone++) {
+        for (int zone = 1; zone <= GsiTile.JGD2000_JPR_EPSG_NAMES.length - 1; zone++) {
             zones.add("" + zone);
         }
-        ChoiceBox zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
-        zoneChoiceBox.setValue(zones.get(0));
-        for (MapPartGroup group : networkMap.getGroups()) {
-            if (group.getZone() != 0) {
-                zoneChoiceBox.setValue("" + group.getZone());
-                break;
-            }
-        }
+        ChoiceBox<String> zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        zoneChoiceBox.setValue(root.getZone() == 0 ? zones.get(0) : ("" + root.getZone()));
         Button zoneReference = new Button("Reference");
         zoneReference.setOnAction(e -> {
             helpStage.setTitle("Help - Zone of plane rectangular coordinate system");
@@ -3491,10 +3456,10 @@ public class EditorFrameFx {
         paramPane.setSpacing(8);
 
         ArrayList<String> zones = new ArrayList();
-        for (int zone = 1; zone <= 19; zone++) {
+        for (int zone = 1; zone <= GsiTile.JGD2000_JPR_EPSG_NAMES.length - 1; zone++) {
             zones.add("" + zone);
         }
-        ChoiceBox zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        ChoiceBox<String> zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
         zoneChoiceBox.setValue(zones.get(0));
 
         Label node1Label = new Label("Node 1");

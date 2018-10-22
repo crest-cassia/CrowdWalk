@@ -151,6 +151,11 @@ public class MapEditor {
     private AudioClip dingSound = null;
 
     /**
+     * Group zone または Group tag が正規化のために修正された
+     */
+    private boolean normalized = false;
+
+    /**
      * 編集コマンドの履歴管理用変数
      */
     private ArrayList<EditCommandBase> commandHistory = new ArrayList();
@@ -209,6 +214,7 @@ public class MapEditor {
         gsiTiles.clear();
         gsiTileImages.clear();
         initCommandHistory();
+        normalized = false;
     }
 
     /**
@@ -260,6 +266,8 @@ public class MapEditor {
         }
         // tag を持たない Group があれば適当な名前で tag を付加しておく
         appendGroupTag();
+        // Group の zone を正規化する(networkMap.getGroups() を使用しているため appendGroupTag() の後に呼ぶこと)
+        normalizeZone();
 
         if (! loadBackgroundImage()) {
             return false;
@@ -293,6 +301,7 @@ public class MapEditor {
                 group.allTagsClear();
                 if (group == root) {
                     group.addTag("root");
+                    normalized = true;
                 } else {
                     String name = "GROUP" + n;
                     while (names.contains(name)) {
@@ -301,7 +310,55 @@ public class MapEditor {
                     }
                     group.addTag(name);
                     names.add(name);
+                    normalized = true;
                 }
+            }
+        }
+    }
+
+    /**
+     * Group の zone を正規化する
+     */
+    private void normalizeZone() {
+        MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+
+        // 異常な値があれば 0 にする
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group.getZone() != 0 && ! GsiTile.isCorrectZone(group.getZone())) {
+                Itk.logWarn("Group " + group.getTagString(), "delete zone value: " + group.getZone());
+                group.setZone(0);
+                normalized = true;
+            }
+        }
+
+        // サブグループ側で設定されている場合は root にも設定する
+        if (root.getZone() == 0) {
+            HashSet<Integer> zones = new HashSet();
+            for (MapPartGroup group : networkMap.getGroups()) {
+                if (group.getZone() != 0) {
+                    zones.add(new Integer(group.getZone()));
+                }
+            }
+            switch (zones.size()) {
+            case 0:     // 全グループの zone が 0
+                return;
+            case 1:     // サブグループで zone が設定
+                zones.forEach(zone -> {
+                    Itk.logWarn("Group " + root.getTagString(), "set zone value: " + zone);
+                    root.setZone(zone.intValue());
+                    normalized = true;
+                });
+                break;
+            default:    // サブグループで異なる複数の zone が設定
+                break;
+            }
+        }
+
+        // サブグループの zone はすべて 0 にする
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group != root && group.getZone() != 0) {
+                group.setZone(0);
+                normalized = true;
             }
         }
     }
@@ -330,6 +387,7 @@ public class MapEditor {
         }
         Itk.logInfo("Map file has been saved", fileName);
         initCommandHistory();
+        normalized = false;
 
         return true;
     }
@@ -391,6 +449,13 @@ public class MapEditor {
      */
     public boolean isModified() {
         return historyIndex > 0;
+    }
+
+    /**
+     * マップデータが正規化のため修正されているか?
+     */
+    public boolean isNormalized() {
+        return normalized;
     }
 
     /**
@@ -1287,8 +1352,13 @@ public class MapEditor {
             }
         }
 
-        // root グループまで遡りながら zone をセットする
-        setNetworkMapZone(group, zone);
+        // root グループの zone にセットする
+        MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+        if (root.getZone() != zone) {
+            if (! invoke(new SetZone(root, zone))) {
+                ;   // do nothing
+            }
+        }
 
         endOfCommandBlock();
         updateHeight();
@@ -1313,34 +1383,6 @@ public class MapEditor {
             return node1.ID + " " + node2.ID;
         } else {
             return node2.ID + " " + node1.ID;
-        }
-    }
-
-    /**
-     * root グループまで遡りながら zone をセットする
-     */
-    private void setNetworkMapZone(MapPartGroup currentGroup, int zone) {
-        if (currentGroup == null) {
-            return;
-        }
-        ArrayList<MapPartGroup> groups = new ArrayList();
-        groups.add(currentGroup);
-        // 将来の仕様拡張に備えて3階層以上にも対応
-        while (currentGroup != networkMap.getRoot()) {
-            for (MapPartGroup parentGroup : networkMap.getGroups()) {
-                if (parentGroup.getChildGroups().contains(currentGroup)) {
-                    groups.add(parentGroup);
-                    currentGroup = parentGroup;
-                    break;
-                }
-            }
-        }
-        for (MapPartGroup group : groups) {
-            if (group.getZone() != zone) {
-                if (! invoke(new SetZone(group, zone))) {
-                    break;
-                }
-            }
         }
     }
 

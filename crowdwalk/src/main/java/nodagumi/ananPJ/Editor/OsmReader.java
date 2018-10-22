@@ -294,13 +294,8 @@ public class OsmReader extends JsonicHashMapGetter {
             }
         }
         MapPartGroup root = (MapPartGroup)networkMap.getRoot();
-        if (root.getZone() == 0) {
+        if (root.getZone() != zone) {
             if (! editor.invoke(new SetZone(root, zone))) {
-                throw new Exception("SetZone command error");
-            }
-        }
-        if (group.getZone() == 0) {
-            if (! editor.invoke(new SetZone(group, zone))) {
                 throw new Exception("SetZone command error");
             }
         }

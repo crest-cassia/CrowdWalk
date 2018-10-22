@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -12,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -33,6 +35,7 @@ import javafx.scene.text.FontWeight;
 
 import nodagumi.ananPJ.Editor.EditCommand.*;
 import nodagumi.ananPJ.Editor.MapEditor;
+import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -246,26 +249,28 @@ public class GroupPanel extends TreeView<OBNode> {
         defaultHeightField.setOnAction(defaultHeightHandler);
         defaultHeightButton.setOnAction(defaultHeightHandler);
 
-        // zone field
+        // zone ChoiceBox
         Label zoneLabel = new Label("Zone");
         zoneLabel.setPadding(new Insets(0, 0, 0, 4));
-        TextField zoneField = new TextField("" + group.getZone());
-        zoneField.setMinWidth(100);
+        ArrayList<String> zones = new ArrayList();
+        for (int zone = 0; zone <= GsiTile.JGD2000_JPR_EPSG_NAMES.length - 1; zone++) {
+            zones.add("" + zone);
+        }
+        ChoiceBox<String> zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        zoneChoiceBox.setValue("" + group.getZone());
         Button zoneButton = new Button("Set");
-        EventHandler zonetHandler = new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                Integer value = editor.getFrame().convertToInteger(zoneField.getText());
-                if (value != null) {
-                    int zone = value;
-                    if (zone != group.getZone()) {
-                        editor.invokeSingleCommand(new SetZone(group, zone));
-                    }
-                    dialog.close();
-                }
+        zoneButton.setOnAction(e -> {
+            int zone = Integer.parseInt((String)zoneChoiceBox.getValue());
+            if (zone != group.getZone()) {
+                editor.invokeSingleCommand(new SetZone(group, zone));
             }
-        };
-        zoneField.setOnAction(zonetHandler);
-        zoneButton.setOnAction(zonetHandler);
+            dialog.close();
+        });
+        if (group != editor.getMap().getRoot()) {
+            zoneLabel.setDisable(true);
+            zoneChoiceBox.setDisable(true);
+            zoneButton.setDisable(true);
+        }
 
         // scale field
         Label scaleLabel = new Label("Scale");
@@ -301,7 +306,7 @@ public class GroupPanel extends TreeView<OBNode> {
         grid.add(defaultHeightField, 2, 1);
         grid.add(defaultHeightButton, 3, 1);
         grid.add(zoneLabel, 1, 2);
-        grid.add(zoneField, 2, 2);
+        grid.add(zoneChoiceBox, 2, 2);
         grid.add(zoneButton, 3, 2);
         grid.add(scaleLabel, 1, 3);
         grid.add(scaleField, 2, 3);
@@ -355,7 +360,8 @@ public class GroupPanel extends TreeView<OBNode> {
      */
     private void openGroupAdditionDialog() {
         // 初期値として利用するグループ(root 以外の方が参考になる)
-        MapPartGroup group = (MapPartGroup)editor.getMap().getRoot();
+        MapPartGroup root = (MapPartGroup)editor.getMap().getRoot();
+        MapPartGroup group = root;
         for (MapPartGroup _group : editor.getMap().getGroups()) {
             if (_group != group) {
                 group = _group;
@@ -376,19 +382,11 @@ public class GroupPanel extends TreeView<OBNode> {
         TextField defaultHeightField = new TextField("" + group.getDefaultHeight());
         defaultHeightField.setMinWidth(100);
 
-        // zone field
-        Label zoneLabel = new Label("Zone");
-        zoneLabel.setPadding(new Insets(0, 0, 0, 4));
-        TextField zoneField = new TextField("" + group.getZone());
-        zoneField.setMinWidth(100);
-
         GridPane grid = new GridPane();
         grid.setHgap(8);
         grid.setVgap(10);
         grid.add(defaultHeightLabel, 1, 1);
         grid.add(defaultHeightField, 2, 1);
-        grid.add(zoneLabel, 1, 2);
-        grid.add(zoneField, 2, 2);
 
         Separator separator = new Separator();
         separator.setPadding(new Insets(10, 0, 8, 0));
@@ -419,12 +417,7 @@ public class GroupPanel extends TreeView<OBNode> {
                 e.consume();
                 return;
             }
-            Integer zone = editor.getFrame().convertToInteger(zoneField.getText());
-            if (zone == null) {
-                e.consume();
-                return;
-            }
-            editor.invokeSingleCommand(new AddGroup(tag, defaultHeight, zone));
+            editor.invokeSingleCommand(new AddGroup(tag, defaultHeight, 0));
         });
 
         dialog.showAndWait();

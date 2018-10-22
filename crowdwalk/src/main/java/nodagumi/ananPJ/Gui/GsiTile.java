@@ -156,6 +156,13 @@ public class GsiTile {
     }
 
     /**
+     * 正しいゾーンか?
+     */
+    public static boolean isCorrectZone(int zone) {
+        return zone >= 1 && zone <= JGD2000_JPR_EPSG_NAMES.length - 1;
+    }
+
+    /**
      * 地理院タイル画像を必要ならダウンロードして読み込む
      */
     public boolean loadImage(String cachePath, String tileName, int x, int y, int zoom, int zone) {
