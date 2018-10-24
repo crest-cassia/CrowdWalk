@@ -1206,7 +1206,7 @@ public class MapEditor {
     /**
      * シェープファイルを読み込んでマップデータに追加する
      */
-    public void readShapefile(String srcEpsg, int scaleOfRoundOff, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone, List<String> shapefileList) throws Exception {
+    public void readShapefile(String srcEpsg, int scaleOfRoundOff, String lengthName, boolean useGeodeticLength, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone, List<String> shapefileList) throws Exception {
         if (shapefileList.isEmpty()) {
             return;
         }
@@ -1254,13 +1254,13 @@ public class MapEditor {
         }
 
         // GeoJSON ファイルを読み込んでマップデータに追加する
-        readGeoJSON(tmpDir + "__GEOJSON__.json", scaleOfRoundOff, widthName, correctionFactor, referenceTable, group, zone);
+        readGeoJSON(tmpDir + "__GEOJSON__.json", scaleOfRoundOff, lengthName, useGeodeticLength, widthName, correctionFactor, referenceTable, group, zone);
     }
 
     /**
      * GeoJSON ファイルを読み込んでマップデータに追加する
      */
-    public void readGeoJSON(String filePath, int scaleOfRoundOff, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone) throws Exception {
+    public void readGeoJSON(String filePath, int scaleOfRoundOff, String lengthName, boolean useGeodeticLength, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone) throws Exception {
         JsonicHashMapGetter jsonMap = new JsonicHashMapGetter();
 
         FileInputStream is = new FileInputStream(filePath);
@@ -1289,6 +1289,7 @@ public class MapEditor {
             }
 
             jsonMap.setParameters(_properties);
+            double lineLength = jsonMap.getDoubleParameter(lengthName, 0.0);
             double width = jsonMap.getDoubleParameter(widthName, 0.0);
             if (referenceTable != null && ! referenceTable.isEmpty()) {
                 width = referenceTable.get((int)width);
@@ -1302,6 +1303,37 @@ public class MapEditor {
                 Itk.logWarn_("File parsing error", "\"" + filePath + "\" : \"coordinates\" elements are missing.");
                 continue;
             }
+
+            double[] ratio = new double[coordinates.size() - 1];
+            int ratioIndex = 0;
+            if (useGeodeticLength) {
+                java.awt.geom.Point2D lastPoint = null;
+                double totalDistance = 0.0;
+                for (ArrayList<BigDecimal> coordinate : coordinates) {
+                    if (coordinate.size() < 2) {
+                        endOfCommandBlock();
+                        updateHeight();
+                        throw new Exception("File parsing error - \"" + filePath + "\" : invalid coordinates: " + coordinate);
+                    }
+                    double east = roundValue(coordinate.get(0).doubleValue(), scaleOfRoundOff);
+                    double north = roundValue(coordinate.get(1).doubleValue(), scaleOfRoundOff);
+                    // CrowdWalk 座標系に変換
+                    java.awt.geom.Point2D point = new java.awt.geom.Point2D.Double(east, -north);
+
+                    if (lastPoint != null) {
+                        double d = point.distance(lastPoint);
+                        ratio[ratioIndex] = d;
+                        totalDistance += d;
+                        ratioIndex++;
+                    }
+                    lastPoint = point;
+                }
+                for (int index = 0; index < ratio.length; index++) {
+                    ratio[index] /= totalDistance;
+                }
+            }
+
+            ratioIndex = 0;
             MapNode from = null;
             for (ArrayList<BigDecimal> coordinate : coordinates) {
                 if (coordinate.size() < 2) {
@@ -1332,12 +1364,18 @@ public class MapEditor {
 
                 if (from == node) {
                     Itk.logWarn_("readGeoJSON", "from === node");
+                    ratioIndex++;
                 } else if (from != null) {
                     String nodeIdPair = makeNodeIdPair(from, node);
                     if (links.containsKey(nodeIdPair)) {
                         Itk.logWarn_("readGeoJSON", "Duplicate link found at node[" + nodeIdPair + "]. Ignore this.");
                     } else {
-                        double length = from.getPosition().distance(node.getPosition());
+                        double length = 0.0;
+                        if (useGeodeticLength) {
+                            length = roundValue(lineLength * ratio[ratioIndex], 4);
+                        } else {
+                            length = from.getPosition().distance(node.getPosition());
+                        }
                         AddLink command = new AddLink(from, node, length, width);
                         if (! invoke(command)) {
                             endOfCommandBlock();
@@ -1347,6 +1385,7 @@ public class MapEditor {
                         MapLink link = (MapLink)networkMap.getObject(command.getId());
                         links.put(nodeIdPair, link);
                     }
+                    ratioIndex++;
                 }
                 from = node;
             }

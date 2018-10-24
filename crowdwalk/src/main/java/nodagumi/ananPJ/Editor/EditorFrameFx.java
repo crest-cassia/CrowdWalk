@@ -1777,6 +1777,13 @@ public class EditorFrameFx {
             roundOffField.setDisable(! newValue);
         });
 
+        Label lengthLabel = new Label("length:");
+        lengthLabel.setFont(Font.font("Arial", FontWeight.BOLD, lengthLabel.getFont().getSize()));
+        lengthLabel.setPadding(new Insets(12, 0, 0, 0));
+
+        TextField lengthNameField = new TextField("");
+        CheckBox useGeodeticLengthCheckBox = new CheckBox("Use geodetic length");
+
         Label widthLabel = new Label("width:");
         widthLabel.setFont(Font.font("Arial", FontWeight.BOLD, widthLabel.getFont().getSize()));
         widthLabel.setPadding(new Insets(12, 0, 0, 0));
@@ -1812,6 +1819,9 @@ public class EditorFrameFx {
                 roundOffField.setText(object.toString());
                 roundOffCheckBox.setSelected(true);
             }
+
+            Map<String, Object> lengthObjects = (Map<String, Object>)shapefileSpec.get("length");
+            lengthNameField.setText((String)lengthObjects.get("attribute_name"));
 
             Map<String, Object> widthObjects = (Map<String, Object>)shapefileSpec.get("width");
             widthNameField.setText((String)widthObjects.get("attribute_name"));
@@ -1955,6 +1965,11 @@ public class EditorFrameFx {
         grid.add(roundOffCheckBox, 0, row, 2, 1);
         grid.add(roundOffField, 2, row++);
 
+        grid.add(lengthLabel, 0, row++, 3, 1);
+        grid.add(new Label("attribute name"), 1, row, 1, 1);
+        grid.add(lengthNameField, 2, row++, 1, 1);
+        grid.add(useGeodeticLengthCheckBox, 1, row++, 2, 1);
+
         grid.add(widthLabel, 0, row++, 3, 1);
         grid.add(new Label("attribute name"), 1, row, 1, 1);
         grid.add(widthNameField, 2, row++, 1, 1);
@@ -1998,6 +2013,12 @@ public class EditorFrameFx {
                     return;
                 }
             }
+            String lengthName = lengthNameField.getText().trim();
+            if (lengthName.isEmpty()) {
+                Alert alert = new Alert(AlertType.WARNING, "\"length\" attribute name is empty.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
             String widthName = widthNameField.getText().trim();
             if (widthName.isEmpty()) {
                 Alert alert = new Alert(AlertType.WARNING, "\"width\" attribute name is empty.", ButtonType.OK);
@@ -2026,7 +2047,7 @@ public class EditorFrameFx {
             int zone = Integer.parseInt(zoneChoiceBox.getValue());
 
             try {
-                editor.readShapefile(srcEpsg, scaleOfRoundOff == null ? -1 : scaleOfRoundOff.intValue(), widthName, correctionFactor, referenceTable, group, zone, shapefileList.getItems());
+                editor.readShapefile(srcEpsg, scaleOfRoundOff == null ? -1 : scaleOfRoundOff.intValue(), lengthName, useGeodeticLengthCheckBox.isSelected(), widthName, correctionFactor, referenceTable, group, zone, shapefileList.getItems());
             } catch (Exception e) {
                 Itk.logError("Read shapefile", e.getMessage());
                 Alert alert = new Alert(AlertType.ERROR, e.getMessage() + "\n\nMap data is over on the way.", ButtonType.OK);
