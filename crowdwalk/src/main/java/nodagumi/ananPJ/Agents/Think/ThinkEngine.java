@@ -272,6 +272,7 @@ public class ThinkEngine {
                 if(firstObj instanceof String) {
                     head = (String)firstObj ;
                 } else if(firstObj instanceof Term) {
+                    // もし、先頭が arg なしの Term ならば。
                     Term firstTerm = (Term)firstObj ;
                     if(firstTerm.isAtom()) {
                         Object headObj = firstTerm.getHead() ;
@@ -282,7 +283,12 @@ public class ThinkEngine {
                 }
             }
         }
-        return head ;
+        //さらに、配列形式を許されたものか、チェック。
+        if(ThinkFormula.doesPermitArrayForm(head)) {
+            return head ;
+        } else {
+            return null ;
+        }
     }
 
     //------------------------------------------------------------

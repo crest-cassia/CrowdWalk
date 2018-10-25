@@ -60,9 +60,9 @@ public class ThinkFormulaMisc extends ThinkFormula {
             Itk.dumpStackTraceOf(ex) ;
         }
 
-        lexicon.register("null", singleton) ;
-        lexicon.register("quote", singleton) ;
-        lexicon.register("log", singleton) ;
+        ThinkFormula.register("null", 	singleton, false, lexicon) ;
+        ThinkFormula.register("quote", 	singleton, false, lexicon) ;
+        ThinkFormula.register("log", 	singleton, false, lexicon) ;
 
         return true ;
     }

@@ -68,9 +68,9 @@ public class NaviFormulaMap extends NaviFormula {
             Itk.dumpStackTraceOf(ex) ;
         }
 
-        lexicon.register(Lex_length, singleton) ;
-        lexicon.register(Lex_width, singleton) ;
-        lexicon.register(Lex_hasTag, singleton) ;
+        ThinkFormula.register(Lex_length, singleton, false, lexicon) ;
+        ThinkFormula.register(Lex_width,  singleton, false, lexicon) ;
+        ThinkFormula.register(Lex_hasTag, singleton, false, lexicon) ;
 
         return true ;
     }

@@ -56,13 +56,13 @@ public class ThinkFormulaLogical extends ThinkFormula {
             Itk.dumpStackTraceOf(ex) ;
 	}
         
-	lexicon.register("true", singleton) ;
-	lexicon.register("false", singleton) ;
-	lexicon.register("not", singleton) ;
-	lexicon.register("and", singleton) ;
-	lexicon.register("or", singleton) ;
-	lexicon.register("proc", singleton) ;
-	lexicon.register("if", singleton) ;
+	ThinkFormula.register("true", 	singleton, false, lexicon) ;
+	ThinkFormula.register("false", 	singleton, false, lexicon) ;
+	ThinkFormula.register("not", 	singleton, true, lexicon) ;
+	ThinkFormula.register("and", 	singleton, true, lexicon) ;
+	ThinkFormula.register("or", 	singleton, true, lexicon) ;
+	ThinkFormula.register("proc", 	singleton, true, lexicon) ;
+	ThinkFormula.register("if", 	singleton, true, lexicon) ;
 
 	return true ;
     }

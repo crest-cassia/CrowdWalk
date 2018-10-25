@@ -57,27 +57,27 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
             Itk.dumpStackTraceOf(ex) ;
         }
 
-        lexicon.register("add", singleton) ;
-        lexicon.register("+", singleton) ;
-        lexicon.register("sub", singleton) ;
-        lexicon.register("-", singleton) ;
-        lexicon.register("mul", singleton) ;
-        lexicon.register("*", singleton) ;
-        lexicon.register("div", singleton) ;
-        lexicon.register("/", singleton) ;
-        lexicon.register("mod", singleton) ;
-        lexicon.register("%", singleton) ;
+        ThinkFormula.register("add", 	singleton, true, lexicon) ;
+        ThinkFormula.register("+", 	singleton, true, lexicon) ;
+        ThinkFormula.register("sub", 	singleton, true, lexicon) ;
+        ThinkFormula.register("-", 	singleton, true, lexicon) ;
+        ThinkFormula.register("mul", 	singleton, true, lexicon) ;
+        ThinkFormula.register("*", 	singleton, true, lexicon) ;
+        ThinkFormula.register("div", 	singleton, true, lexicon) ;
+        ThinkFormula.register("/", 	singleton, true, lexicon) ;
+        ThinkFormula.register("mod", 	singleton, true, lexicon) ;
+        ThinkFormula.register("%", 	singleton, true, lexicon) ;
 
-        lexicon.register("equal", singleton) ;
-        lexicon.register("==", singleton) ;
-        lexicon.register(">", singleton) ;
-        lexicon.register(">=", singleton) ;
-        lexicon.register("=>", singleton) ;
-        lexicon.register("<", singleton) ;
-        lexicon.register("<=", singleton) ;
-        lexicon.register("=<", singleton) ;
+        ThinkFormula.register("equal", 	singleton, true, lexicon) ;
+        ThinkFormula.register("==", 	singleton, true, lexicon) ;
+        ThinkFormula.register(">", 	singleton, true, lexicon) ;
+        ThinkFormula.register(">=", 	singleton, true, lexicon) ;
+        ThinkFormula.register("=>", 	singleton, true, lexicon) ;
+        ThinkFormula.register("<", 	singleton, true, lexicon) ;
+        ThinkFormula.register("<=", 	singleton, true, lexicon) ;
+        ThinkFormula.register("=<", 	singleton, true, lexicon) ;
 
-        lexicon.register("random", singleton) ;
+        ThinkFormula.register("random", singleton, false, lexicon) ;
 
         return true ;
     }
@@ -259,6 +259,8 @@ public class ThinkFormulaArithmetic extends ThinkFormula {
      *   {"":("div" || "/"),
      *    "left": _Term_,
      *    "right": _Term_}
+     * OR
+     * [("div" || "/"), _Term_, _Term_]
      * </pre>
      * _Term_ の差を返す。
      */

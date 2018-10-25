@@ -60,24 +60,24 @@ public class ThinkFormulaAgent extends ThinkFormula {
             Itk.dumpStackTraceOf(ex) ;
         }
 
-        lexicon.register("getFallback", singleton) ;
-        lexicon.register("getParam", singleton) ;
-        lexicon.register("setParam", singleton) ;
-        lexicon.register("agentHasTag", singleton) ;
-        lexicon.register("placeHasTag", singleton) ;
-        lexicon.register("addAgentTag", singleton) ;
-        lexicon.register("addPlaceTag", singleton) ;
-        lexicon.register("removeAgentTag", singleton) ;
-        lexicon.register("removePlaceTag", singleton) ;
-        lexicon.register("listenAlert", singleton) ;
-        lexicon.register("saveAlert", singleton) ;
-        lexicon.register("announceAlert", singleton) ;
-        lexicon.register("clearAlert", singleton) ;
-        lexicon.register("clearAlertAll", singleton) ;
-        lexicon.register("changeGoal", singleton) ;
-        lexicon.register("clearPlannedRoute", singleton) ;
-        lexicon.register("insertRoute", singleton) ;
-        lexicon.register("turnAround", singleton) ;
+        ThinkFormula.register("getFallback", 	singleton, false, lexicon) ;
+        ThinkFormula.register("getParam", 	singleton, false, lexicon) ;
+        ThinkFormula.register("setParam", 	singleton, false, lexicon) ;
+        ThinkFormula.register("agentHasTag", 	singleton, false, lexicon) ;
+        ThinkFormula.register("placeHasTag", 	singleton, false, lexicon) ;
+        ThinkFormula.register("addAgentTag", 	singleton, false, lexicon) ;
+        ThinkFormula.register("addPlaceTag", 	singleton, false, lexicon) ;
+        ThinkFormula.register("removeAgentTag", singleton, false, lexicon) ;
+        ThinkFormula.register("removePlaceTag", singleton, false, lexicon) ;
+        ThinkFormula.register("listenAlert", 	singleton, false, lexicon) ;
+        ThinkFormula.register("saveAlert", 	singleton, false, lexicon) ;
+        ThinkFormula.register("announceAlert", 	singleton, false, lexicon) ;
+        ThinkFormula.register("clearAlert", 	singleton, false, lexicon) ;
+        ThinkFormula.register("clearAlertAll", 	singleton, false, lexicon) ;
+        ThinkFormula.register("changeGoal", 	singleton, false, lexicon) ;
+        ThinkFormula.register("clearPlannedRoute", singleton, false, lexicon) ;
+        ThinkFormula.register("insertRoute", 	singleton, false, lexicon) ;
+        ThinkFormula.register("turnAround", 	singleton, false, lexicon) ;
 
         return true ;
     }

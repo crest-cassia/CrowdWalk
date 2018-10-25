@@ -93,12 +93,23 @@ import nodagumi.Itk.* ;
  * </ol>
  */
 abstract public class ThinkFormula {
+
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * Formula Lexicon
      */
     static public Lexicon lexicon = new Lexicon() ;
+
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 配列型 Form を許すかどうかの Lexicon
+     */
+    static public Lexicon lexiconForArrayForm = new Lexicon() ;
+
+    //============================================================
+    //============================================================
     static {
         ThinkFormulaMisc.registerFormulas(ThinkFormula.lexicon) ;
         ThinkFormulaLogical.registerFormulas(ThinkFormula.lexicon) ;
@@ -110,11 +121,31 @@ abstract public class ThinkFormula {
     //------------------------------------------------------------
     /**
      * Formula を登録
+     * @param name : form の head.
+     * @param formula : 登録する formula のインスタンス.
+     * @param permitArrayForm : 配列型の form を許すかどうか.
      */
-    static public void register(String name, ThinkFormula formula) {
-	lexicon.register(name, formula) ;
+    static public void register(String name, ThinkFormula formula,
+                                boolean permitArrayForm,
+                                Lexicon _lexicon) {
+	_lexicon.register(name, formula) ;
+        if(permitArrayForm) {
+            lexiconForArrayForm.register(name, Boolean.TRUE) ;
+        }
     }
 
+    //============================================================
+    //------------------------------------------------------------
+    /**
+     * 配列型 form を許す head かどうか？
+     * @param name : form の head.
+     * @return 許すなら true。
+     */
+    static public boolean doesPermitArrayForm(String name) {
+        Boolean permit = (Boolean)lexiconForArrayForm.lookUp(name) ;
+        return Boolean.TRUE.equals(permit) ;
+    }
+    
     //============================================================
     // 特殊 Term
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

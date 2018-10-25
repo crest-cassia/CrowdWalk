@@ -54,15 +54,6 @@ abstract public class NaviFormula extends ThinkFormula {
     //============================================================
     //------------------------------------------------------------
     /**
-     * Formula を登録
-     */
-    static public void register(String name, ThinkFormula formula) {
-	lexicon.register(name, formula) ;
-    }
-
-    //============================================================
-    //------------------------------------------------------------
-    /**
      * Formula を検索
      */
     static public ThinkFormula findFormula(String head) {
