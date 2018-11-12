@@ -20,10 +20,10 @@ apply plugin: 'eclipse'
 def javaVersion = new Double(sourceCompatibility.toString())
 def onlyCuiSimulator = cui.toBoolean()
 
+println "javaVersion ${javaVersion}"
 if (javaVersion < 1.8) {
-    println "javaVersion ${javaVersion}"
     onlyCuiSimulator = true
-} else {
+} else if (javaVersion < 11.0) {
     if (fileTree(dir: System.getenv()['JAVA_HOME']).include('**/javafx.properties').isEmpty()) {
         println "Warning: JavaFX is not installed."
         println "         To build with the editor and GUI simulators, please install JavaFX."
@@ -33,6 +33,21 @@ if (javaVersion < 1.8) {
 if (onlyCuiSimulator) {
     println "build mode: onlyCuiSimulator"
 }
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
+    }
+}
+
+apply plugin: 'application'
+apply plugin: 'com.google.osdetector'
+
+ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
+println "Platform: $platform"
 
 repositories {
     mavenCentral()
@@ -68,6 +83,15 @@ dependencies {
     compile 'de.topobyte:osm4j-core:0.1.0'
     compile 'de.topobyte:osm4j-utils:0.1.2'
     compile 'de.topobyte:osm4j-xml:0.1.2'
+
+    if (! onlyCuiSimulator && javaVersion >= 11.0) {
+        compile "org.openjfx:javafx-base:11:$platform"
+        compile "org.openjfx:javafx-graphics:11:$platform"
+        compile "org.openjfx:javafx-controls:11:$platform"
+        compile "org.openjfx:javafx-swing:11:$platform"
+        compile "org.openjfx:javafx-web:11:$platform"
+        compile "org.openjfx:javafx-media:11:$platform"
+    }
 }
 
 sourceSets {
@@ -94,8 +118,19 @@ def defaultEncoding = 'UTF-8'
 
 compileJava {
     options.encoding = defaultEncoding
-//    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose'] 
-    options.compilerArgs = ['-Xdiags:verbose']
+//    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose']
+    if (! onlyCuiSimulator && javaVersion >= 11.0) {
+        options.compilerArgs = [
+            '-Xdiags:verbose',
+            '--module-path', classpath.asPath,
+            '--add-modules', 'javafx.controls',
+            '--add-modules', 'javafx.swing',
+            '--add-modules', 'javafx.web',
+            '--add-modules', 'javafx.media'
+        ]
+    } else {
+        options.compilerArgs = ['-Xdiags:verbose']
+    }
 }
 
 processResources {
@@ -110,6 +145,8 @@ processResources {
         println "    commit version -> ${commit_version}"
     }
 }
+
+mainClassName = 'nodagumi.ananPJ.CrowdWalkLauncher'
 
 jar {
     doFirst {

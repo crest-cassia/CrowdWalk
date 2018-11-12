@@ -328,6 +328,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         borderPane.setBottom(status);
 
         Scene scene = new Scene(borderPane);
+        scene.getStylesheets().add("stylesheet.css");
         setTitle(title);
         setScene(scene);
 
@@ -418,7 +419,9 @@ public class SimulationFrame3D extends Stage implements Observer {
         borderPane.setCenter(webView);
         borderPane.setBottom(buttonPane);
 
-        helpStage.setScene(new Scene(borderPane));
+        Scene scene = new Scene(borderPane);
+        scene.getStylesheets().add("stylesheet.css");
+        helpStage.setScene(scene);
     }
 
     /**
@@ -463,6 +466,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         MenuItem miVersion = new MenuItem("About version");
         miVersion.setOnAction(e -> {
             Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);
+            alert.initOwner(frame);
             alert.setTitle("About version");
             alert.setHeaderText("CrowdWalk Version");
             alert.setResizable(true);
@@ -1407,6 +1411,7 @@ public class SimulationFrame3D extends Stage implements Observer {
         int lastIndex = camerawork.size() - 1;
         if (lastIndex >= 0 && camerawork.get(lastIndex).time >= currentTime) {
             Alert alert = new Alert(AlertType.NONE, "Invalid operation", ButtonType.CLOSE);
+            alert.initOwner(frame);
             alert.setTitle("Warning");
             alert.showAndWait();
             return;

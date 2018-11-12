@@ -463,7 +463,9 @@ public class SimulationFrame2D extends JFrame
         borderPane.setCenter(webView);
         borderPane.setBottom(buttonPane);
 
-        helpStage.setScene(new Scene(borderPane));
+        Scene scene = new Scene(borderPane);
+        scene.getStylesheets().add("stylesheet.css");
+        helpStage.setScene(scene);
     }
 
     /**

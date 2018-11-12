@@ -633,6 +633,7 @@ public class EditorCanvas extends Canvas {
                     NetworkMap networkMap = editor.getMap();
                     if (networkMap.getGroups().size() == 1 && networkMap.getNodes().isEmpty()) {
                         Alert alert = new Alert(AlertType.CONFIRMATION, "Would you like to add the node?", ButtonType.YES, ButtonType.NO);
+                        alert.initOwner(frame.getStage());
                         alert.getDialogPane().setHeaderText("If you create a node in the root group,\nyou will not be able to add groups.");
                         Optional<ButtonType> result = alert.showAndWait();
                         if (result.isPresent() && result.get() == ButtonType.NO) {
@@ -870,11 +871,13 @@ public class EditorCanvas extends Canvas {
                         if (! nodeMoving) {
                             if (! editor.isSingleGroup(editor.getSelectedNodes())) {
                                 Alert alert = new Alert(AlertType.WARNING, "When moving multiple nodes, it must be a single group.", ButtonType.OK);
+                                alert.initOwner(frame.getStage());
                                 alert.showAndWait();
                                 break;
                             }
                             if (editor.getOperableNodes(true).isEmpty()) {
                                 Alert alert = new Alert(AlertType.WARNING, "When moving multiple nodes, it must be the current group.", ButtonType.OK);
+                                alert.initOwner(frame.getStage());
                                 alert.showAndWait();
                                 break;
                             }
@@ -1744,7 +1747,7 @@ public class EditorCanvas extends Canvas {
         affine.appendTranslation(adjustmentTranslate.getX() / scale, adjustmentTranslate.getY() / scale);
         gc.transform(affine);
 
-        Font font = Font.font(14 / scale);
+        Font font = Font.font("Arial", FontWeight.NORMAL, 14 / scale);
         gc.setFont(font);
 
         redoRepainting = false;

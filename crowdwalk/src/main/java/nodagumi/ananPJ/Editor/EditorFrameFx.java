@@ -439,6 +439,7 @@ public class EditorFrameFx {
                     if (editor.getNetworkMapFile() == null || editor.getGenerationFile() == null || editor.getScenarioFile() == null) {
                         // プロパティファイルの設定が足りないためシミュレーションを開始することが出来ません
                         Alert alert = new Alert(AlertType.WARNING, "The simulation can not be started because the properties file setting is insufficient.", ButtonType.OK);
+                        alert.initOwner(frame);
                         alert.showAndWait();
                         return;
                     }
@@ -511,7 +512,9 @@ public class EditorFrameFx {
         borderPane.setCenter(webView);
         borderPane.setBottom(buttonPane);
 
-        helpStage.setScene(new Scene(borderPane));
+        Scene scene = new Scene(borderPane);
+        scene.getStylesheets().add("stylesheet.css");
+        helpStage.setScene(scene);
     }
 
     /**
@@ -520,6 +523,7 @@ public class EditorFrameFx {
     public boolean closing(WindowEvent event) {
         if (editor.isModified()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Map data has been modified.\n    Do you want to quit anyway?", ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             Optional<ButtonType> result = alert.showAndWait();
             if (! result.isPresent() || result.get() == ButtonType.NO) {
                 if (event != null) {
@@ -849,6 +853,7 @@ public class EditorFrameFx {
                 }
             } else {
                 Alert alert = new Alert(AlertType.WARNING, "You need to execute \"sh make_javadoc.sh\" on the command line to generate javadoc files.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
             }
         });
@@ -900,6 +905,7 @@ public class EditorFrameFx {
             alert.setHeaderText("CrowdWalk Version");
             alert.setResizable(true);
             alert.getDialogPane().setPrefSize(600, 240);
+            alert.initOwner(frame);
             alert.showAndWait();
         });
 
@@ -1116,6 +1122,7 @@ public class EditorFrameFx {
                 editor.convertToPolygon(editor.getSelectedLinks());
             } catch (Exception ex) {
                 Alert alert = new Alert(AlertType.WARNING, ex.getMessage(), ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
             }
         });
@@ -1417,6 +1424,7 @@ public class EditorFrameFx {
     public void clearMapData() {
         if (editor.isModified()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Map data has been modified.\n    Do you wish to continue anyway?", ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             Optional<ButtonType> result = alert.showAndWait();
             if (! result.isPresent() || result.get() == ButtonType.NO) {
                 return;
@@ -1433,6 +1441,7 @@ public class EditorFrameFx {
     public void openMap() {
         if (editor.isModified()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Map data has been modified.\n    Do you wish to continue anyway?", ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             Optional<ButtonType> result = alert.showAndWait();
             if (! result.isPresent() || result.get() == ButtonType.NO) {
                 return;
@@ -1465,12 +1474,14 @@ public class EditorFrameFx {
         } catch (IOException e) {
 	    Itk.dumpStackTraceOf(e);
             Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
         editor.setNetworkMapFile(editor.getRelativePath(file));
         if (! editor.loadNetworkMap()) {
             Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             editor.initNetworkMap();
         }
@@ -1484,6 +1495,7 @@ public class EditorFrameFx {
     public void saveMap() {
         if (! editor.isModified() && ! editor.isNormalized()) {
             Alert alert = new Alert(AlertType.INFORMATION, "Map data is not modified.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -1500,6 +1512,7 @@ public class EditorFrameFx {
 
         if (! editor.saveMap()) {
             Alert alert = new Alert(AlertType.ERROR, "Save map file failed: " + fileName, ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
         }
     }
@@ -1540,12 +1553,14 @@ public class EditorFrameFx {
         } catch (IOException e) {
 	    Itk.dumpStackTraceOf(e);
             Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
         editor.setNetworkMapFile(fileName);
         if (! editor.saveMap()) {
             Alert alert = new Alert(AlertType.ERROR, "Save map file failed: " + fileName, ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
         }
     }
@@ -1556,6 +1571,7 @@ public class EditorFrameFx {
     public void openProperties() {
         if (editor.isModified()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Map data has been modified.\n    Do you wish to continue anyway?", ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             Optional<ButtonType> result = alert.showAndWait();
             if (! result.isPresent() || result.get() == ButtonType.NO) {
                 return;
@@ -1587,6 +1603,7 @@ public class EditorFrameFx {
         editor.setPropertiesFromFile(editor.getRelativePath(file));
         if (! editor.loadNetworkMap()) {
             Alert alert = new Alert(AlertType.WARNING, "Map file open error.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             editor.initSetupFileInfo();
             editor.initNetworkMap();
@@ -1601,6 +1618,7 @@ public class EditorFrameFx {
     private void simulate(String simulator) {
         if (editor.getNetworkMapFile() == null || editor.getNetworkMapFile().isEmpty() || editor.getGenerationFile() == null || editor.getGenerationFile().isEmpty() || editor.getScenarioFile() == null || editor.getScenarioFile().isEmpty()) {
             Alert alert = new Alert(AlertType.INFORMATION, "There are not enough files for simulation.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -1714,6 +1732,7 @@ public class EditorFrameFx {
         // root グループには読み込めない
         if (networkMap.getGroups().size() == 1) {
             Alert alert = new Alert(AlertType.WARNING, "Please create a new group.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -1722,6 +1741,7 @@ public class EditorFrameFx {
         for (MapPartGroup group : networkMap.getGroups()) {
             if (group.getScale() != 1.0) {
                 Alert alert = new Alert(AlertType.WARNING, "Group scale must be all 1.0", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
@@ -1735,11 +1755,13 @@ public class EditorFrameFx {
             int ret = process.waitFor();
             if (ret != 0) {
                 Alert alert = new Alert(AlertType.WARNING, "External program \"ogr2ogr\" can not be executed.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
         } catch (IOException e) {
             Alert alert = new Alert(AlertType.WARNING, "External program \"ogr2ogr\" not found.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         } catch (InterruptedException e) {
@@ -1751,6 +1773,7 @@ public class EditorFrameFx {
         HashMap<String, ArrayList<ArrayList<Point2D>>> linesOfMeshCode = new HashMap();
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Read shapefile");
         dialog.setResizable(true);
 
@@ -1919,6 +1942,7 @@ public class EditorFrameFx {
                     } catch (Exception ex) {
                         Itk.logError("Read shapefile", ex.getMessage());
                         Alert alert = new Alert(AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+                        alert.initOwner(frame);
                         alert.showAndWait();
                         return;
                     }
@@ -2016,12 +2040,14 @@ public class EditorFrameFx {
             String lengthName = lengthNameField.getText().trim();
             if (lengthName.isEmpty()) {
                 Alert alert = new Alert(AlertType.WARNING, "\"length\" attribute name is empty.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
             String widthName = widthNameField.getText().trim();
             if (widthName.isEmpty()) {
                 Alert alert = new Alert(AlertType.WARNING, "\"width\" attribute name is empty.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
@@ -2051,6 +2077,7 @@ public class EditorFrameFx {
             } catch (Exception e) {
                 Itk.logError("Read shapefile", e.getMessage());
                 Alert alert = new Alert(AlertType.ERROR, e.getMessage() + "\n\nMap data is over on the way.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
             }
         }
@@ -2063,6 +2090,7 @@ public class EditorFrameFx {
         NetworkMap networkMap = editor.getMap();
         if (networkMap.getGroups().size() < 2) {
             Alert alert = new Alert(AlertType.WARNING, "Please create a new group.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -2074,11 +2102,13 @@ public class EditorFrameFx {
         } catch (Exception e) {
             Itk.logError("Read OSM", e.getMessage());
             Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Read OpenStreetMap");
         dialog.getDialogPane().setPrefWidth(416);
         VBox paramPane = new VBox();
@@ -2293,12 +2323,14 @@ public class EditorFrameFx {
                     String fileName = fileNameField.getText().trim();
                     if (fileName.isEmpty()) {
                         Alert alert = new Alert(AlertType.WARNING, "File name is empty.", ButtonType.OK);
+                        alert.initOwner(frame);
                         alert.showAndWait();
                         return;
                     }
                     File file = new File(fileName);
                     if (! file.exists()) {
                         Alert alert = new Alert(AlertType.WARNING, "File not found.", ButtonType.OK);
+                        alert.initOwner(frame);
                         alert.showAndWait();
                         return;
                     }
@@ -2316,6 +2348,7 @@ public class EditorFrameFx {
             } catch (Exception e) {
                 Itk.logError("Read OSM", e.getMessage());
                 Alert alert = new Alert(AlertType.ERROR, e.getMessage() + "\n\nMap data is over on the way.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
             }
         }
@@ -2326,6 +2359,7 @@ public class EditorFrameFx {
      */
     private void setRotation() {
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Set rotation");
         VBox paramPane = new VBox();
 
@@ -2350,6 +2384,7 @@ public class EditorFrameFx {
                 double angle = value;
                 if (angle < -180.0 || angle > 180) {
                     Alert alert = new Alert(AlertType.WARNING, "Angle range is -180.0 to 180.0", ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
@@ -2366,11 +2401,13 @@ public class EditorFrameFx {
     private void setGrid() {
         if (editor.getCurrentGroup().getScale() != 1.0) {
             Alert alert = new Alert(AlertType.WARNING, "If the group scale is not 1.0, the grid can not be used.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Set grid");
 
         // 横幅(m)
@@ -2430,6 +2467,7 @@ public class EditorFrameFx {
             if (value != null) {
                 if (value < 0.1) {
                     Alert alert = new Alert(AlertType.WARNING, "Invalid grid width.", ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
@@ -2439,6 +2477,7 @@ public class EditorFrameFx {
             if (value != null) {
                 if (value < 0.1) {
                     Alert alert = new Alert(AlertType.WARNING, "Invalid grid height.", ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
@@ -2469,17 +2508,20 @@ public class EditorFrameFx {
         MapPartGroup currentGroup = editor.getCurrentGroup();
         if (currentGroup == editor.getMap().getRoot()) {
             Alert alert = new Alert(AlertType.WARNING, "Root group can not be duplicated.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
         Matcher match = currentGroup.matchTag("^(B?)(\\d+)F$");
         if (match == null) {
             Alert alert = new Alert(AlertType.WARNING, "No floor number given for this group.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Duplicate floor");
         VBox paramPane = new VBox();
 
@@ -2526,6 +2568,7 @@ public class EditorFrameFx {
                 double heightDiff = value;
                 if (heightDiff < 1.0) {
                     Alert alert = new Alert(AlertType.WARNING, "Invalid height difference.", ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
@@ -2537,6 +2580,7 @@ public class EditorFrameFx {
                     editor.duplicateFloor(currentGroup, upButton.isSelected() ? 1 : -1, numberSpinner.getValue(), heightDiff);
                 } catch(Exception e) {
                     Alert alert = new Alert(AlertType.WARNING, e.getMessage(), ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                 }
             }
@@ -2548,18 +2592,22 @@ public class EditorFrameFx {
      */
     public void openCalculateTagPathsDialog() {
         TextInputDialog dialog = new TextInputDialog("");
+        dialog.initOwner(frame);
         dialog.setTitle("Calculate tag paths");
         dialog.setHeaderText("Enter a goal tag");
         String tag = dialog.showAndWait().orElse("").trim();
         if (! tag.isEmpty()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Tags are added to all nodes that can reach the goal.\n    Do you want to continue?", ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.YES) {
                 if (editor.calcTagPaths(tag)) {
                     Alert _alert = new Alert(AlertType.NONE, "Calculation of paths finished.", ButtonType.OK);
+                    _alert.initOwner(frame);
                     _alert.showAndWait();
                 } else {
                     Alert _alert = new Alert(AlertType.WARNING, "No goal with tag " + tag, ButtonType.OK);
+                    _alert.initOwner(frame);
                     _alert.showAndWait();
                 }
             }
@@ -2571,6 +2619,7 @@ public class EditorFrameFx {
      */
     public Optional<ButtonType> alert(AlertType alertType, String title, String headerText, String contentText, String expandableContentText, ButtonType... buttonTypes) {
         Alert alert = new Alert(alertType);
+        alert.initOwner(frame);
         if (buttonTypes.length > 0) {
             alert.getButtonTypes().clear();
             for (ButtonType buttonType : buttonTypes) {
@@ -2756,6 +2805,7 @@ public class EditorFrameFx {
         File file = new File(filePath);
         if (! file.exists()) {
             Alert alert = new Alert(AlertType.WARNING, "Camerawork file does not exist: " + filePath, ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return false;
         }
@@ -2767,6 +2817,7 @@ public class EditorFrameFx {
             for (Map<String, Object> object : jsonObject) {
                 if (object.get("angle") == null) {
                     Alert alert = new Alert(AlertType.WARNING, "Camerawork file format is old: " + filePath, ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return false;
                 }
@@ -2926,17 +2977,20 @@ public class EditorFrameFx {
         for (MapLink link : networkMap.getLinks()) {
             if (link.selected) {
                 Alert alert = new Alert(AlertType.WARNING, "Cancel all link selections before executing.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
             if (! linkPanel.getFilteredSet().contains(link)) {
                 Alert alert = new Alert(AlertType.WARNING, "Cancel link filter before executing.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
         }
 
         TextInputDialog dialog = new TextInputDialog("");
+        dialog.initOwner(frame);
         dialog.setTitle("Check reachability");
         dialog.setHeaderText("Enter a target tag");
         String tag = dialog.showAndWait().orElse("").trim();
@@ -2948,12 +3002,14 @@ public class EditorFrameFx {
         int notConnectedCount = networkMap.getLinks().size() - reachableLinks.size();
         if (notConnectedCount > 0) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "There were " + notConnectedCount + " links not leading to target!\nShould select REACHABLE links?", ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.YES) {
                 linkPanel.select(reachableLinks);
             }
         } else {
             Alert alert = new Alert(AlertType.INFORMATION, "Calculation of paths finished.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
         }
     }
@@ -3005,6 +3061,7 @@ public class EditorFrameFx {
     public boolean multipleGroupConfirmation(ArrayList<? extends OBNode> obNodes, String message) {
         if (! editor.isSingleGroup(obNodes)) {
             Alert alert = new Alert(AlertType.CONFIRMATION, message, ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             Optional<ButtonType> result = alert.showAndWait();
             return result.isPresent() && result.get() == ButtonType.YES;
         }
@@ -3030,6 +3087,7 @@ public class EditorFrameFx {
         averageHeight /= nodes.size();
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Set node attributes");
         VBox paramPane = new VBox();
 
@@ -3157,6 +3215,7 @@ public class EditorFrameFx {
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Copy or move nodes");
         VBox paramPane = new VBox();
 
@@ -3253,6 +3312,7 @@ public class EditorFrameFx {
             ArrayList<MapNode> collisionNodes = editor.getCollisionNodes(nodes, x, y, z, toGroup);
             if (! collisionNodes.isEmpty()) {
                 Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    " + collisionNodes.size() + " nodes are place on nodes already existing.\n    Do you want to continue?", ButtonType.YES, ButtonType.NO);
+                alert.initOwner(frame);
                 Optional<ButtonType> _result = alert.showAndWait();
                 if (! _result.isPresent() || _result.get() != ButtonType.YES) {
                     canvas.repaintLater();
@@ -3278,11 +3338,13 @@ public class EditorFrameFx {
         ArrayList<MapNode> nodes = editor.getSelectedNodes();
         if (nodes.size() != 2) {
             Alert alert = new Alert(AlertType.WARNING, "Select only 2 nodes.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
         if (nodes.get(0).getParent() == nodes.get(1).getParent()) {
             Alert alert = new Alert(AlertType.WARNING, "Can not make stairs in the same group.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -3297,6 +3359,7 @@ public class EditorFrameFx {
         final MapNode toNode = nodes.get(toIndex);
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Make stairs");
         VBox paramPane = new VBox();
 
@@ -3347,6 +3410,7 @@ public class EditorFrameFx {
             if (length != null && width != null) {
                 if (length <= 0.0 || width <= 0.0) {
                     Alert alert = new Alert(AlertType.WARNING, "Invalid value.", ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
@@ -3370,11 +3434,13 @@ public class EditorFrameFx {
         }
         if (! editor.isSingleGroup(nodes)) {
             Alert alert = new Alert(AlertType.WARNING, "Nodes of multiple groups were selected.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Rotate and Scale");
         dialog.getDialogPane().setPrefWidth(360);
         VBox paramPane = new VBox();
@@ -3463,6 +3529,7 @@ public class EditorFrameFx {
         ArrayList<MapNode> nodes = editor.getSelectedNodes();
         if (nodes.size() != 2) {
             Alert alert = new Alert(AlertType.WARNING, "Select only 2 nodes.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -3470,6 +3537,7 @@ public class EditorFrameFx {
         MapNode node2 = nodes.get(1);
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Normalize coordinates");
         dialog.getDialogPane().setPrefWidth(360);
         VBox paramPane = new VBox();
@@ -3596,6 +3664,7 @@ public class EditorFrameFx {
         for (MapNode node : nodes) {
             if (groupNodes.contains(node)) {
                 Alert alert = new Alert(AlertType.WARNING, "Can not symbolic link to own group.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
@@ -3615,6 +3684,7 @@ public class EditorFrameFx {
         for (MapLink link : links) {
             if (groupLinks.contains(link)) {
                 Alert alert = new Alert(AlertType.WARNING, "Can not symbolic link to own group.", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 return;
             }
@@ -3644,6 +3714,7 @@ public class EditorFrameFx {
         averageWidth /= links.size();
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Set link attributes");
         dialog.getDialogPane().setPrefWidth(512);
         VBox paramPane = new VBox();
@@ -3755,6 +3826,7 @@ public class EditorFrameFx {
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Recalculate link length");
         dialog.getDialogPane().setPrefWidth(400);
         VBox paramPane = new VBox();
@@ -3781,6 +3853,7 @@ public class EditorFrameFx {
     public void openCalculateScaleDialog() {
         if (editor.getCountOfSelectedLinks() != 1) {
             Alert alert = new Alert(AlertType.WARNING, "Please select only one link for calculation.", ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -3790,6 +3863,7 @@ public class EditorFrameFx {
         double actualDistance = link.getFrom().getPosition().distance(link.getTo().getPosition());
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Calculate scale and recalculate link length");
         dialog.getDialogPane().setPrefWidth(440);
         VBox paramPane = new VBox();
@@ -3859,6 +3933,7 @@ public class EditorFrameFx {
             buff.append("\nDo you want to continue?");
 
             Alert alert = new Alert(AlertType.CONFIRMATION, buff.toString(), ButtonType.YES, ButtonType.NO);
+            alert.initOwner(frame);
             result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.YES) {
                 editor.setScaleAndRecalculateLinkLength(group, scale, recalcLengthCheckBox.isSelected(), updateGroupCheckBox.isSelected());
@@ -3883,6 +3958,7 @@ public class EditorFrameFx {
             lastNode = (MapNode)result.get("lastNode");
         } catch(Exception e) {
             Alert alert = new Alert(AlertType.WARNING, e.getMessage(), ButtonType.OK);
+            alert.initOwner(frame);
             alert.showAndWait();
             return;
         }
@@ -3898,6 +3974,7 @@ public class EditorFrameFx {
         directions.add("A -> B");
         directions.add("B -> A");
         ChoiceDialog<String> dialog = new ChoiceDialog<String>(directions.get(0), directions);
+        dialog.initOwner(frame);
         dialog.setTitle("One-way setting");
         dialog.setHeaderText("Please select one-way direction");
         String direction = dialog.showAndWait().orElse("");
@@ -3945,6 +4022,7 @@ public class EditorFrameFx {
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Set area attributes");
         VBox paramPane = new VBox();
 
@@ -3992,6 +4070,7 @@ public class EditorFrameFx {
         averageHeight /= planePolygonCount;
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Set polygon attributes");
         VBox paramPane = new VBox();
 
@@ -4093,11 +4172,13 @@ public class EditorFrameFx {
                     coordinates = new Coordinates(coordinatesArea.getText(), 3);
                 } catch (Exception ex) {
                     Alert alert = new Alert(AlertType.WARNING, ex.getMessage(), ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
                 if (coordinates.getValue().size() < 3) {
                     Alert alert = new Alert(AlertType.WARNING, "Lack of coordinates", ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
@@ -4133,6 +4214,7 @@ public class EditorFrameFx {
      */
     public void openAddTriangleMeshDialog() {
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Add triangle mesh polygon");
         dialog.getDialogPane().setPrefWidth(600);
         dialog.setResizable(true);
@@ -4172,12 +4254,14 @@ public class EditorFrameFx {
                 coordinates = new Coordinates(coordinatesArea.getText(), 3);
             } catch (Exception e) {
                 Alert alert = new Alert(AlertType.WARNING, e.getMessage(), ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 result = dialog.showAndWait();
                 continue;
             }
             if (coordinates.getValue().size() < 3) {
                 Alert alert = new Alert(AlertType.WARNING, "Lack of coordinates", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 result = dialog.showAndWait();
                 continue;
@@ -4187,6 +4271,7 @@ public class EditorFrameFx {
             String[] tags = tagsText.split("\\r\\n|\\n|\\r");
             if (tagsText.isEmpty() || tags.length == 0) {
                 Alert alert = new Alert(AlertType.WARNING, "There is no tag", ButtonType.OK);
+                alert.initOwner(frame);
                 alert.showAndWait();
                 result = dialog.showAndWait();
                 continue;
@@ -4225,6 +4310,7 @@ public class EditorFrameFx {
             try {
                 if (! file.getParentFile().getCanonicalPath().equals(editor.getPath())) {
                     Alert alert = new Alert(AlertType.WARNING, "Directory can not be changed.", ButtonType.OK);
+                    alert.initOwner(frame);
                     alert.showAndWait();
                     return;
                 }
@@ -4243,6 +4329,7 @@ public class EditorFrameFx {
     public void openBackgroundImageAttributesDialog() {
         MapPartGroup group = editor.getCurrentGroup();
         Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
         dialog.setTitle("Set background image attributes");
         VBox paramPane = new VBox();
 
@@ -4354,6 +4441,7 @@ public class EditorFrameFx {
      */
     public void removeBackgroundImage() {
         Alert alert = new Alert(AlertType.CONFIRMATION, "Warning:\n    Do you really want to delete?", ButtonType.YES, ButtonType.NO);
+        alert.initOwner(frame);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.YES) {
             editor.invokeSingleCommand(new RemoveBackgroundImage(editor.getCurrentGroup()));
@@ -4365,6 +4453,7 @@ public class EditorFrameFx {
      */
     public void alertInvalidInputValue(String message) {
         Alert alert = new Alert(AlertType.WARNING, message, ButtonType.OK);
+        alert.initOwner(frame);
         alert.getDialogPane().setHeaderText("Invalid input value");
         alert.showAndWait();
     }

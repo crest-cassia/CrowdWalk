@@ -770,6 +770,7 @@ public class MapEditor {
                 if (networkMap.getGroups().size() > 1 && ! root.getChildNodes().isEmpty()) {
                     // サブグループが存在する場合にはルートグループにタグ以外の要素が存在してはいけない
                     Alert alert = new Alert(AlertType.ERROR, "Invalid map data with nodes in root group.\nCan not edit this map.", ButtonType.OK);
+                    alert.initOwner(frame.getStage());
                     alert.showAndWait();
                     return;
                 }
@@ -829,6 +830,7 @@ public class MapEditor {
         }
         if (alertType != null) {
             Alert alert = new Alert(alertType, message == null ? "" : message, ButtonType.OK);
+            alert.initOwner(frame.getStage());
             alert.setTitle(label);
             alert.getDialogPane().setHeaderText(alertLevel);
             ding(null);
@@ -1625,6 +1627,7 @@ public class MapEditor {
         MapNode pointedNode = frame.getCanvas().getPointedNode();
         if (pointedNode == null || ! pointedNode.selected) {
             Alert alert = new Alert(AlertType.WARNING, "Point to the base node and then execute.", ButtonType.OK);
+            alert.initOwner(frame.getStage());
             alert.showAndWait();
             return;
         }
@@ -1654,6 +1657,7 @@ public class MapEditor {
         MapNode pointedNode = frame.getCanvas().getPointedNode();
         if (pointedNode == null || ! pointedNode.selected) {
             Alert alert = new Alert(AlertType.WARNING, "Point to the base node and then execute.", ButtonType.OK);
+            alert.initOwner(frame.getStage());
             alert.showAndWait();
             return;
         }

@@ -32,9 +32,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
 
 import nodagumi.ananPJ.Editor.EditCommand.*;
 import nodagumi.ananPJ.Editor.MapEditor;
+import nodagumi.ananPJ.Editor.EditorFrameFx;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
@@ -98,6 +100,7 @@ public class GroupPanel extends TreeView<OBNode> {
             if (editor.getMap().getGroups().size() == 1 && ! root.getChildNodes().isEmpty()) {
                 // ルートグループにマップが存在する場合にはサブグループを作ることは出来ない
                 Alert alert = new Alert(AlertType.WARNING, "Can not create subgroup.", ButtonType.OK);
+                alert.initOwner(getStage());
                 alert.showAndWait();
                 return;
             }
@@ -137,6 +140,7 @@ public class GroupPanel extends TreeView<OBNode> {
         miRemoveGroup.setOnAction(e -> {
             if (selectedGroup.children().hasMoreElements()) {
                 Alert alert = new Alert(AlertType.WARNING, "It can not be removed until the contents are empty.", ButtonType.OK);
+                alert.initOwner(getStage());
                 alert.showAndWait();
                 return;
             }
@@ -179,10 +183,12 @@ public class GroupPanel extends TreeView<OBNode> {
     private void addTagTo(ArrayList<? extends OBNode> obNodes, String title, String objectName) {
         if (obNodes.isEmpty()) {
             Alert alert = new Alert(AlertType.WARNING, "There is no " + objectName + ".", ButtonType.OK);
+            alert.initOwner(getStage());
             alert.showAndWait();
             return;
         }
         TextInputDialog dialog = new TextInputDialog();
+        dialog.initOwner(getStage());
         dialog.getDialogPane().setPrefWidth(250);
         dialog.setTitle(title);
         dialog.setHeaderText("Enter the tag");
@@ -198,10 +204,12 @@ public class GroupPanel extends TreeView<OBNode> {
     private void removeTagFrom(ArrayList<? extends OBNode> obNodes, String title, String objectName) {
         if (obNodes.isEmpty()) {
             Alert alert = new Alert(AlertType.WARNING, "There is no " + objectName + ".", ButtonType.OK);
+            alert.initOwner(getStage());
             alert.showAndWait();
             return;
         }
         TextInputDialog dialog = new TextInputDialog();
+        dialog.initOwner(getStage());
         dialog.getDialogPane().setPrefWidth(250);
         dialog.setTitle(title);
         dialog.setHeaderText("Enter the tag");
@@ -218,11 +226,13 @@ public class GroupPanel extends TreeView<OBNode> {
         // TODO: この処理はマップを読み込んだ時点でおこなってもよい
         if (group.getTags().size() != 1) {
             Alert alert = new Alert(AlertType.ERROR, "Tags: " + group.getTagString() + "\n\nOnly one group tag is allowed.", ButtonType.OK);
+            alert.initOwner(getStage());
             alert.showAndWait();
             return;
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(getStage());
         dialog.setTitle("Set group attributes");
 
         Label paramLabel = new Label("Parameters");
@@ -284,6 +294,7 @@ public class GroupPanel extends TreeView<OBNode> {
                 if (value != null) {
                     double scale = value;
                     Alert alert = new Alert(AlertType.CONFIRMATION, "Recalculate link lengths of this group?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                    alert.initOwner(getStage());
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent()) {
                         if (result.get() == ButtonType.YES) {
@@ -331,6 +342,7 @@ public class GroupPanel extends TreeView<OBNode> {
             if (! text.equals(group.getTagString())) {
                 if (text.isEmpty() || text.indexOf(" ") != -1 || sameTagExists(group, text)) {
                     Alert alert = new Alert(AlertType.WARNING, "\"" + text + "\" is an invalid tag.", ButtonType.OK);
+                    alert.initOwner(getStage());
                     alert.showAndWait();
                     return;
                 }
@@ -370,6 +382,7 @@ public class GroupPanel extends TreeView<OBNode> {
         }
 
         Dialog dialog = new Dialog();
+        dialog.initOwner(getStage());
         dialog.setTitle("Add group");
         DialogPane pane = dialog.getDialogPane();
 
@@ -470,5 +483,12 @@ public class GroupPanel extends TreeView<OBNode> {
             rootItem.getChildren().clear();
         }
         treeItemMap.clear();
+    }
+
+    /**
+     * マップエディタのウィンドウフレームを取得する
+     */
+    private Stage getStage() {
+        return editor.getFrame().getStage();
     }
 }
