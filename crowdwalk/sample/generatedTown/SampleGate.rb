@@ -22,7 +22,9 @@ class SampleGate < RubyGateBase
   #++
   ## 初期化。
   def initialize(_gate)
-    super
+    super ;
+    @conf = ItkTerm.toRuby(getEventDef()) ;
+    pp [:rubyGateConf, @conf] ;
   end
   
   #--------------------------------------------------------------

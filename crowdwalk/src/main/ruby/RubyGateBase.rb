@@ -27,14 +27,12 @@ class RubyGateBase
 
   #--------------------------------------------------------------
   #++
-  ## 初期化
+  ## 初期化。
+  ## 設定等は、getEventDef() で取得できる。
   ## _gate_:: Gate の java インスタンス。
-  ## _tag_:: Gate の tag 名。
-  ## _eventDef_:: scenario でのイベント設定。
-  ## _closed_:: 当面、無視。java で制御。
   def initialize(_gate) ;
     @javaGate = _gate ;
-    pp [:createRubyBase] ;
+    # pp [:createRubyBase] ;
   end
 
   #--------------------------------------------------------------
@@ -62,7 +60,10 @@ class RubyGateBase
   
   #------------------------------------------
   #++
-  ## イベント定義取得
+  ## イベント定義取得。
+  ## Itk::Term の形で返す。
+  ## なので、ItkTerm.getArg(obj, slot) などで変換。
+  ## さらに、ItkTerm.toRuby(value) で ruby object に変換。
   def getEventDef()
     return @javaGate.getEvent().getEventDef() ;
   end
