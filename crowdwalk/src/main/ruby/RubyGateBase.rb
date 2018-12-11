@@ -17,6 +17,12 @@
 ## CrowdWalk の RubyGate での Ruby 側の制御のインターフェース
 class RubyGateBase
   include ItkUtility ;
+  #--============================================================
+  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## RubyGate を格納するリスト
+  GateList = [] ;
+
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## Java 側の Gate オブジェクト
@@ -31,6 +37,7 @@ class RubyGateBase
   ## 設定等は、getEventDef() で取得できる。
   ## _gate_:: Gate の java インスタンス。
   def initialize(_gate) ;
+    GateList.push(self) ;
     @javaGate = _gate ;
     # pp [:createRubyBase] ;
   end
