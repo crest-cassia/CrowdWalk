@@ -25,6 +25,7 @@ class SampleGate < RubyGateBase
     super ;
     @conf = ItkTerm.toRuby(getEventDef()) ;
     pp [:rubyGateConf, @conf] ;
+    pp [:rubyGateList, RubyGateBase::GateList]
   end
   
   #--------------------------------------------------------------
