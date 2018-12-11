@@ -26,6 +26,7 @@ class SampleGate < RubyGateBase
     @conf = ItkTerm.toRuby(getEventDef()) ;
     pp [:rubyGateConf, @conf] ;
     pp [:rubyGateList, RubyGateBase::GateList]
+    pp [:map, self.getMap()]
   end
   
   #--------------------------------------------------------------
