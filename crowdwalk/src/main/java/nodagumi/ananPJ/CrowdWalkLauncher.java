@@ -32,6 +32,11 @@ public class CrowdWalkLauncher {
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
     /**
+     * インターネット応答確認用 URL (国土地理院の地理院タイル提供サイト)
+     */
+    public static String RESPONSE_CONFIRMATION_URL = "cyberjapandata.gsi.go.jp";
+
+    /**
      * GUI 設定情報のパス設定項目(マップファイル以外)
      */
     private static String[] SETTING_PATH_ITEMS = {"generation", "scenario", "fallback", "obstructer"};
@@ -281,10 +286,10 @@ public class CrowdWalkLauncher {
             List<String> commandLine = null;
             String nullDevice = null;
             if (System.getProperty("os.name").startsWith("Windows")) {
-                commandLine = Arrays.asList("ping", "-n", "1", "www.google.com");
+                commandLine = Arrays.asList("ping", "-n", "1", RESPONSE_CONFIRMATION_URL);
                 nullDevice = "nul";
             } else {
-                commandLine = Arrays.asList("ping", "-c", "1", "www.google.com");
+                commandLine = Arrays.asList("ping", "-c", "1", RESPONSE_CONFIRMATION_URL);
                 nullDevice = "/dev/null";
             }
             Itk.logInfo("External process", String.join(" ", commandLine));
