@@ -279,14 +279,17 @@ public class CrowdWalkLauncher {
     public static boolean isInternetEnabled() {
         try {
             List<String> commandLine = null;
+            String nullDevice = null;
             if (System.getProperty("os.name").startsWith("Windows")) {
                 commandLine = Arrays.asList("ping", "-n", "1", "www.google.com");
+                nullDevice = "nul";
             } else {
                 commandLine = Arrays.asList("ping", "-c", "1", "www.google.com");
+                nullDevice = "/dev/null";
             }
             Itk.logInfo("External process", String.join(" ", commandLine));
             ProcessBuilder pb = new ProcessBuilder(commandLine);
-            pb.redirectOutput(new File("nul"));
+            pb.redirectOutput(new File(nullDevice));
             Process process = pb.start();
             int ret = process.waitFor();
             return ret == 0 ? true : false;
