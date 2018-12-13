@@ -73,7 +73,7 @@ class CrowdWalkWrapper
   ## AgentHandler の setupSimulationLoggers() と
   ## initSimulationLoggers()の間によびだされる。
   def setupSimulationLoggers()
-    p [:setupSimulationLoggers, :doNothing] ;
+#    p [:setupSimulationLoggers, :doNothing] ;
   end
 
   #--------------------------------------------------------------
@@ -109,7 +109,7 @@ class CrowdWalkWrapper
   ## シミュレーション開始前の処理
   ## AgentHandler の prepareForSimulation の後で呼び出される。
   def prepareForSimulation()
-    logInfo(nil, :prepareForSimulation, :doNothing) ;
+#    logInfo(nil, :prepareForSimulation, :doNothing) ;
   end
 
   #--------------------------------------------------------------
@@ -117,7 +117,7 @@ class CrowdWalkWrapper
   ## シミュレーション終了後の処理
   ## EvacuationSimulator の finalize() で呼び出される。
   def finalizeSimulation()
-    logInfo(nil, :finalizeSimulation, :doNothing) ;
+#    logInfo(nil, :finalizeSimulation, :doNothing) ;
   end
 
   #--------------------------------------------------------------
@@ -125,7 +125,7 @@ class CrowdWalkWrapper
   ## update の先頭で呼び出される。
   ## _simTime_:: シミュレーション内相対時刻
   def preUpdate(simTime)
-    p [:preUpdate, simTime, :doNothing] ;
+#    p [:preUpdate, simTime, :doNothing] ;
   end
 
   #--------------------------------------------------------------
@@ -133,7 +133,7 @@ class CrowdWalkWrapper
   ## update の最後に呼び出される。
   ## _simTime_:: シミュレーション内相対時刻
   def postUpdate(simTime)
-    p [:postUpdate, simTime, :doNothing] ;
+#    p [:postUpdate, simTime, :doNothing] ;
   end
 
   #--------------------------------------------------------------
