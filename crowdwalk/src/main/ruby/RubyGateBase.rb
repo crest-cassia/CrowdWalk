@@ -31,6 +31,8 @@ class RubyGateBase
   attr_accessor :javaGate ;
   ## NetworkMap の Ruby オブジェクト
   attr_accessor :map ;
+  ## Scenario に記述されたイベント定義を、Ruby のデータに変換したもの。
+  attr_accessor :eventDef ;
 
   ## initial cycle check
   attr_accessor :isInitialCycle ;
@@ -38,12 +40,13 @@ class RubyGateBase
   #--------------------------------------------------------------
   #++
   ## 初期化。
-  ## 設定等は、getEventDef() で取得できる。
+  ## 設定等は、Ruby のデータに変換され、@eventDef で取得できる。
   ## _gate_:: Gate の java インスタンス。
   def initialize(_gate) ;
     GateList.push(self) ;
     @javaGate = _gate ;
     @map = NetworkMap.new(getMap()) ;
+    @eventDef = ItkTerm.toRuby(getEventDef()) ;
     # pp [:createRubyBase] ;
   end
 
