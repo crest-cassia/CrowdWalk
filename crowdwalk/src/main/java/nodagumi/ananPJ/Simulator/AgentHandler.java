@@ -754,6 +754,11 @@ public class AgentHandler {
         = Fallback_tickIntervalForIndividualPedestriansLog ;
 
     /**
+     * Offset of individual pedestrian log
+     */
+    private int offsetOfIndividualPedestriansLog = 0;
+
+    /**
      * individualPedestriansLogger の出力対象エージェントを示すタグ
      */
     private ArrayList<String> tagsForIndividualPedestriansLog = new ArrayList();
@@ -1778,6 +1783,9 @@ public class AgentHandler {
                               "tickIntervalForIndividualPedestriansLog",
                               tickIntervalForIndividualPedestriansLog) ;
 
+        // Offset of individual pedestrian log
+        offsetOfIndividualPedestriansLog = SetupFileInfo.fetchFallbackInt(fallback, "offsetOfIndividualPedestriansLog", offsetOfIndividualPedestriansLog);
+
         // 出力(非)対象エージェントの設定
         Term logAgentsFallback = SetupFileInfo.filterFallbackTerm(fallback, "logAgentsOfIndividualPedestrians");
         Term tags = SetupFileInfo.fetchFallbackTerm(logAgentsFallback, "tags", Term.newArrayTerm());
@@ -1859,10 +1867,11 @@ public class AgentHandler {
      */
     final private boolean isLogIndividualPedestriansCycle(SimTime currentTime) {
         return (individualPedestriansLogger != null &&
-                (0 == (currentTime.getTickCount()
+                currentTime.getTickCount() >= offsetOfIndividualPedestriansLog &&
+                (0 == ((currentTime.getTickCount() - offsetOfIndividualPedestriansLog)
                        % tickIntervalForIndividualPedestriansLog))) ;
     }
-                                                                          
+
     //------------------------------------------------------------
     /**
      * individualPedestriansLogger への出力。
