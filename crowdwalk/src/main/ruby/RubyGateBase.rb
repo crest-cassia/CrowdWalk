@@ -12,6 +12,8 @@
 ## == Usage
 ## * ...
 
+require 'NetworkMap.rb' ;
+
 #--======================================================================
 #++
 ## CrowdWalk の RubyGate での Ruby 側の制御のインターフェース
@@ -27,6 +29,8 @@ class RubyGateBase
   #++
   ## Java 側の Gate オブジェクト
   attr_accessor :javaGate ;
+  ## NetworkMap の Ruby オブジェクト
+  attr_accessor :map ;
 
   ## initial cycle check
   attr_accessor :isInitialCycle ;
@@ -39,6 +43,7 @@ class RubyGateBase
   def initialize(_gate) ;
     GateList.push(self) ;
     @javaGate = _gate ;
+    @map = NetworkMap.new(getMap()) ;
     # pp [:createRubyBase] ;
   end
 
