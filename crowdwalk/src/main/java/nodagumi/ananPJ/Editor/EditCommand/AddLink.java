@@ -20,6 +20,19 @@ public class AddLink extends EditCommandBase {
     /**
      * コンストラクタ
      */
+    public AddLink(String id, MapNode fromNode, MapNode toNode, double length, double width) {
+        this.id = id;
+        changeType = ChangeType.LINK_VOLUME;
+        groupId = ((MapPartGroup)fromNode.getParent()).getID();
+        fromNodeId = fromNode.getID();
+        toNodeId = toNode.getID();
+        this.length = length;
+        this.width = width;
+    }
+
+    /**
+     * コンストラクタ
+     */
     public AddLink(MapNode fromNode, MapNode toNode, double length, double width) {
         changeType = ChangeType.LINK_VOLUME;
         groupId = ((MapPartGroup)fromNode.getParent()).getID();

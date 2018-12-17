@@ -101,7 +101,7 @@ public class TagSetupPane extends VBox {
             cbPane.getChildren().add(cb);
         }
         ScrollPane scroller = new ScrollPane();
-        scroller.setPrefSize(360, 160);
+        scroller.setPrefSize(440, 160);
         scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scroller.setFitToWidth(true);

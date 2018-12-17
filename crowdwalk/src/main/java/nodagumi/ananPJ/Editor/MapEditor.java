@@ -1358,7 +1358,7 @@ public class MapEditor {
                     if (! invoke(command)) {
                         endOfCommandBlock();
                         updateHeight();
-                        throw new Exception("Edit command error: AddNode" + command.toString());
+                        throw new Exception("Edit command error: " + command.toString());
                     }
                     node = (MapNode)networkMap.getObject(command.getId());
                     nodes.put(pointStr, node);
@@ -1382,7 +1382,7 @@ public class MapEditor {
                         if (! invoke(command)) {
                             endOfCommandBlock();
                             updateHeight();
-                            throw new Exception("Edit command error: AddLink" + command.toString());
+                            throw new Exception("Edit command error: " + command.toString());
                         }
                         MapLink link = (MapLink)networkMap.getObject(command.getId());
                         links.put(nodeIdPair, link);
@@ -1408,7 +1408,7 @@ public class MapEditor {
     /**
      * 実数値 value を小数点以下第 scale 位で四捨五入する
      */
-    public double roundValue(double value, int scale) {
+    public static double roundValue(double value, int scale) {
         if (scale >= 0) {
             BigDecimal bd = new BigDecimal(String.valueOf(value));
             return bd.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -1419,7 +1419,7 @@ public class MapEditor {
     /**
      * 2つのノード ID を小さい順に並べた文字列を返す
      */
-    private String makeNodeIdPair(MapNode node1, MapNode node2) {
+    public static String makeNodeIdPair(MapNode node1, MapNode node2) {
         if (node1.ID.compareTo(node2.ID) < 0) {
             return node1.ID + " " + node2.ID;
         } else {

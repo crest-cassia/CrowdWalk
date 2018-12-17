@@ -617,10 +617,13 @@ public class EditorFrameFx {
         MenuItem miReadShapefile = new MenuItem("Read shapefile");
         miReadShapefile.setOnAction(e -> readShapefile());
 
+        MenuItem miReadMrdFile = new MenuItem("Read MRD file");
+        miReadMrdFile.setOnAction(e -> readMrdFile());
+
         MenuItem miReadOsm = new MenuItem("Read OpenStreetMap");
         miReadOsm.setOnAction(e -> readOpenStreetMap());
 
-        editMenu.getItems().addAll(miUndo, miRedo, miReadShapefile, miReadOsm);
+        editMenu.getItems().addAll(miUndo, miRedo, miReadShapefile, miReadMrdFile, miReadOsm);
 
         /* View menu */
 
@@ -2079,6 +2082,200 @@ public class EditorFrameFx {
                 Alert alert = new Alert(AlertType.ERROR, e.getMessage() + "\n\nMap data is over on the way.", ButtonType.OK);
                 alert.initOwner(frame);
                 alert.showAndWait();
+            }
+        }
+    }
+
+    /**
+     * MRD ファイルを読み込む
+     */
+    private void readMrdFile() {
+        NetworkMap networkMap = editor.getMap();
+        MapPartGroup root = (MapPartGroup)networkMap.getRoot();
+
+        // root グループには読み込めない
+        if (networkMap.getGroups().size() == 1) {
+            Alert alert = new Alert(AlertType.WARNING, "Please create a new group.", ButtonType.OK);
+            alert.initOwner(frame);
+            alert.showAndWait();
+            return;
+        }
+
+        // 全グループの scale が 1.0 である事
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group.getScale() != 1.0) {
+                Alert alert = new Alert(AlertType.WARNING, "Group scale must be all 1.0", ButtonType.OK);
+                alert.initOwner(frame);
+                alert.showAndWait();
+                return;
+            }
+        }
+
+        HashMap<String, ArrayList<ArrayList<Point2D>>> linesOfMeshCode = new HashMap();
+
+        Dialog dialog = new Dialog();
+        dialog.initOwner(frame);
+        dialog.setTitle("Read MRD file");
+        dialog.setResizable(true);
+
+        LinkViewCanvas canvas = new LinkViewCanvas(linesOfMeshCode);
+        StackPane canvasPane = new StackPane();
+        canvasPane.getChildren().add(canvas);
+        canvasPane.setMinWidth(800);
+        canvasPane.setMinHeight(600);
+        canvas.widthProperty().bind(canvasPane.widthProperty());
+        canvas.heightProperty().bind(canvasPane.heightProperty());
+
+        // Destination group
+        HashMap<String, MapPartGroup> groups = new HashMap();
+        ArrayList<String> groupNames = new ArrayList();
+        for (MapPartGroup group : networkMap.getGroups()) {
+            if (group == root || group.getTags().size() == 0) {
+                continue;
+            }
+            groups.put(group.getTagString(), group);
+            groupNames.add(group.getTagString());
+        }
+        ChoiceBox<String> groupChoiceBox = new ChoiceBox(FXCollections.observableArrayList(groupNames));
+        groupChoiceBox.setValue(editor.getCurrentGroup().getTagString());
+
+        // Zone
+        ArrayList<String> zones = new ArrayList();
+        for (int zone = 1; zone <= GsiTile.JGD2000_JPR_EPSG_NAMES.length - 1; zone++) {
+            zones.add("" + zone);
+        }
+        ChoiceBox<String> zoneChoiceBox = new ChoiceBox(FXCollections.observableArrayList(zones));
+        zoneChoiceBox.setValue(root.getZone() == 0 ? zones.get(0) : ("" + root.getZone()));
+        Button zoneReference = new Button("Reference");
+        zoneReference.setOnAction(e -> {
+            helpStage.setTitle("Help - Zone of plane rectangular coordinate system");
+            helpStage.setWidth(900);
+            helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));
+            webView.getEngine().load(ZONE_REFERENCE_URI);
+            helpStage.show();
+            helpStage.toFront();
+        });
+        if (CrowdWalkLauncher.offline) {
+            zoneReference.setDisable(true);
+        }
+        FlowPane zonePane = new FlowPane();
+        zonePane.setPrefWidth(160);
+        zonePane.setHgap(8);
+        zonePane.setAlignment(Pos.CENTER_LEFT);
+        zonePane.getChildren().addAll(zoneChoiceBox, zoneReference);
+
+        CheckBox allRoadIncludingCheckBox = new CheckBox("Include \"All road node / All road link\"");
+        allRoadIncludingCheckBox.setPadding(new Insets(0, 0, 8, 0));
+        allRoadIncludingCheckBox.setSelected(true);
+
+        // MRD files
+        Label mrdFilesLabel = new Label("MRD files");
+        mrdFilesLabel.setFont(Font.font("Arial", FontWeight.BOLD, mrdFilesLabel.getFont().getSize()));
+
+        ListView<String> mrdFileList = new ListView<>();
+        mrdFileList.setPrefHeight(460);
+
+        StringBuilder path = new StringBuilder();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open MRD file");
+        setInitialPath(fileChooser, path.toString());
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("mrd", "*.mrd")
+        );
+
+        Button addButton = new Button("Add");
+        addButton.setOnAction(e -> {
+            int zone = Integer.parseInt(zoneChoiceBox.getValue());
+            setInitialPath(fileChooser, path.toString());
+            File file = fileChooser.showOpenDialog(frame);
+            if (file != null) {
+                try {
+                    path.setLength(0);
+                    path.append(file.getCanonicalPath());
+                    String pathName = path.toString();
+                    if (linesOfMeshCode.keySet().contains(pathName)) {
+                        return;
+                    }
+                    ArrayList<ArrayList<Point2D>> lines = null;
+                    try {
+                        MRDConverter mrd = new MRDConverter(file, zone);
+                        lines = mrd.convertToLines(allRoadIncludingCheckBox.isSelected());
+                    } catch (Exception ex) {
+                        Itk.logError("Read shapefile", ex.getMessage());
+                        Alert alert = new Alert(AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+                        alert.initOwner(frame);
+                        alert.showAndWait();
+                        return;
+                    }
+                    mrdFileList.getItems().add(pathName);
+                    linesOfMeshCode.put(pathName, lines);
+                    // refresh
+                    canvas.update();
+                } catch (IOException ex) {
+                    Itk.dumpStackTraceOf(ex);
+                }
+            }
+        });
+
+        Button removeButton = new Button("Remove");
+        removeButton.setOnAction(e -> {
+            ObservableList<String> list = mrdFileList.getSelectionModel().getSelectedItems();
+            if (! list.isEmpty()) {
+                String pathName = list.get(0);
+                mrdFileList.getItems().remove(pathName);
+                linesOfMeshCode.remove(pathName);
+                // refresh
+                canvas.update();
+            }
+        });
+
+        FlowPane buttonPane = new FlowPane();
+        buttonPane.setHgap(8);
+        buttonPane.setAlignment(Pos.CENTER_RIGHT);
+        buttonPane.getChildren().addAll(addButton, removeButton);
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(12));
+        grid.setHgap(8);
+        grid.setVgap(6);
+        int row = 0;
+
+        grid.add(new Label("Destination group"), 0, row, 2, 1);
+        grid.add(groupChoiceBox, 2, row++);
+        grid.add(new Label("Zone"), 0, row, 2, 1);
+        grid.add(zonePane, 2, row++);
+        grid.add(allRoadIncludingCheckBox, 0, row++);
+
+        grid.add(mrdFilesLabel, 0, row++, 3, 1);
+        grid.add(mrdFileList, 0, row++, 3, 1);
+        grid.add(buttonPane, 0, row++, 3, 1);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(canvasPane);
+        borderPane.setRight(grid);
+        dialog.getDialogPane().setContent(borderPane);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            MapPartGroup group = groups.get(groupChoiceBox.getValue());
+            int zone = Integer.parseInt(zoneChoiceBox.getValue());
+
+            try {
+                editor.startOfCommandBlock();
+                for (String pathName : mrdFileList.getItems()) {
+                    MRDConverter mrd = new MRDConverter(new File(pathName), zone);
+                    mrd.addToNetworkMap(editor, group, zone, allRoadIncludingCheckBox.isSelected());
+                }
+            } catch (Exception e) {
+                Itk.dumpStackTraceOf(e);
+                Itk.logError("Read MRD file", e.getMessage());
+                Alert alert = new Alert(AlertType.ERROR, e.getMessage() + "\n\nMap data is over on the way.", ButtonType.OK);
+                alert.initOwner(frame);
+                alert.showAndWait();
+            } finally {
+                editor.endOfCommandBlock();
+                editor.updateHeight();
             }
         }
     }
@@ -3716,16 +3913,19 @@ public class EditorFrameFx {
         Dialog dialog = new Dialog();
         dialog.initOwner(frame);
         dialog.setTitle("Set link attributes");
-        dialog.getDialogPane().setPrefWidth(512);
+        dialog.getDialogPane().setPrefWidth(536);
         VBox paramPane = new VBox();
 
-        if (links.size() > 1) {
-            Label label = new Label("" + links.size() + " links selected");
-            label.setPadding(new Insets(0, 0, 12, 0));
-            paramPane.getChildren().addAll(label);
+        Label label = null;
+        if (links.size() == 1) {
+            label = new Label("ID: " + links.get(0).ID);
+        } else {
+            label = new Label("" + links.size() + " links selected");
         }
+        label.setPadding(new Insets(0, 0, 12, 0));
+        paramPane.getChildren().addAll(label);
 
-        Label label = new Label("Parameters");
+        label = new Label("Parameters");
         label.setFont(Font.font("Arial", FontWeight.BOLD, label.getFont().getSize()));
         label.setPadding(new Insets(0, 0, 8, 0));
 
