@@ -1770,8 +1770,12 @@ public class SimulationFrame2D extends JFrame
     /**
      * テキストを情報表示エリアに表示する
      */
-    public void statusIndication(String str) {
-        indicationArea.setText(str);
+    public void statusIndication(String text) {
+        StringBuilder buff = new StringBuilder();
+        for (String line : text.split("\\n")) {
+            buff.append("  ").append(line).append("\n");
+        }
+        indicationArea.setText(buff.toString());
         indicationArea.setCaretPosition(0);
     }
 
@@ -1963,43 +1967,8 @@ public class SimulationFrame2D extends JFrame
      */
     private void selectNode(MouseEvent e) {
         if (hoverNode != null) {
-            statusIndication(getNodeInformation(hoverNode));
+            statusIndication(hoverNode.getStatusText());
         }
-    }
-
-    /**
-     * ノード情報テキスト(情報表示エリア用)
-     */
-    public String getNodeInformation(MapNode node) {
-        StringBuilder buff = new StringBuilder();
-        buff.append(" Node ID: ").append(node.ID).append("\n");
-        buff.append(" x: ").append(node.getX()).append("\n");
-        buff.append(" y: ").append(node.getY()).append("\n");
-        buff.append(" height: ").append(node.getHeight()).append("\n");
-        buff.append(" tags: ").append(node.getTagString()).append("\n");
-        HashMap<String, NavigationHint> hints
-            = node.getHints(NavigationHint.DefaultMentalMode) ;
-        if (! hints.isEmpty()) {
-            buff.append(" ---- Navigation hints ----\n");
-            ArrayList<String> hintKeys = new ArrayList(hints.keySet());
-            Collections.sort(hintKeys);
-            for (String key : hintKeys) {
-                NavigationHint hint = hints.get(key);
-                buff.append(" key: ").append(key).append("\n");
-                if (hint.toNode == null) {
-                    buff.append("     toNode: null\n");
-                } else {
-                    buff.append("     toNode: ").append(hint.toNode.ID).append("(").append(hint.toNode.getTagString()).append(")\n");
-                }
-                if (hint.viaLink == null) {
-                    buff.append("     viaLink: null\n");
-                } else {
-                    buff.append("     viaLink: ").append(hint.viaLink.ID).append("\n");
-                }
-                buff.append("     distance: ").append(hint.distance).append("\n");
-            }
-        }
-        return buff.toString();
     }
 
     /**
@@ -2032,44 +2001,7 @@ public class SimulationFrame2D extends JFrame
             return;
         }
         hoverLink.selected ^= true;
-        statusIndication(getLinkInformation(hoverLink));
-    }
-
-    /**
-     * リンク情報テキスト(情報表示エリア用)
-     */
-    public String getLinkInformation(MapLink link) {
-        StringBuilder buff = new StringBuilder();
-        buff.append(" Link ID: ").append(link.ID).append("\n");
-        buff.append(" length: ").append(link.getLength()).append("\n");
-        buff.append(" width: ").append(link.getWidth()).append("\n");
-        buff.append(" laneWidth(Forward): ").append(link.getLaneWidth(Direction.Forward)).append("\n");
-        buff.append(" laneWidth(Backward): ").append(link.getLaneWidth(Direction.Backward)).append("\n");
-        buff.append(" tags: ").append(link.getTagString()).append("\n");
-        buff.append(" agents: ").append(link.getAgents().size()).append("\n");
-        MapNode fromNode = link.getFrom();
-        if (fromNode == null) {
-            buff.append(" from Node: null\n");
-        } else {
-            buff.append(" from Node:").append("\n");
-            buff.append("     Node ID: ").append(fromNode.ID).append("\n");
-            buff.append("     x: ").append(fromNode.getX()).append("\n");
-            buff.append("     y: ").append(fromNode.getY()).append("\n");
-            buff.append("     height: ").append(fromNode.getHeight()).append("\n");
-            buff.append("     tags: ").append(fromNode.getTagString()).append("\n");
-        }
-        MapNode toNode = link.getTo();
-        if (toNode == null) {
-            buff.append(" to Node: null\n");
-        } else {
-            buff.append(" to Node:").append("\n");
-            buff.append("     Node ID: ").append(toNode.ID).append("\n");
-            buff.append("     x: ").append(toNode.getX()).append("\n");
-            buff.append("     y: ").append(toNode.getY()).append("\n");
-            buff.append("     height: ").append(toNode.getHeight()).append("\n");
-            buff.append("     tags: ").append(toNode.getTagString()).append("\n");
-        }
-        return buff.toString();
+        statusIndication(hoverLink.getStatusText());
     }
 
     /**
@@ -2096,25 +2028,7 @@ public class SimulationFrame2D extends JFrame
         if (hoverArea == null) {
             return;
         }
-        statusIndication(getAreaInformation((MapAreaRectangle)hoverArea));
-    }
-
-    /**
-     * マップエリア情報テキスト(情報表示エリア用)
-     */
-    public String getAreaInformation(MapAreaRectangle area) {
-        Rectangle2D bounds = (Rectangle2D)area.getShape();
-        PollutionLevelInfo pollutionLevel = area.getPollutionLevel();
-        StringBuilder buff = new StringBuilder();
-        buff.append(" Area ID: ").append(area.ID).append("\n");
-        buff.append(" pWestX: ").append(bounds.getMinX()).append("\n");
-        buff.append(" pEastX: ").append(bounds.getMaxX()).append("\n");
-        buff.append(" pNorthY: ").append(bounds.getMinY()).append("\n");
-        buff.append(" pSouthY: ").append(bounds.getMaxY()).append("\n");
-        buff.append(" current level: ").append(pollutionLevel.getCurrentLevel()).append("\n");
-        buff.append(" normalized level: ").append(pollutionLevel.getNormalizedLevel()).append("\n");
-        buff.append(" tags: ").append(area.getTagString()).append("\n");
-        return buff.toString();
+        statusIndication(hoverArea.getStatusText());
     }
 
     /**
@@ -2144,46 +2058,9 @@ public class SimulationFrame2D extends JFrame
         if (hoverAgent == null) {
             return;
         }
-        statusIndication(getAgentInformation(hoverAgent));
+        statusIndication(hoverAgent.getStatusText());
     }
     
-    /**
-     * エージェント情報テキスト(情報表示エリア用)
-     */
-    public String getAgentInformation(AgentBase agent) {
-        StringBuilder buff = new StringBuilder();
-        buff.append(" Agent ID: ").append(agent.ID).append("\n");
-        buff.append(" config: ").append(agent.getConfigLine()).append("\n");
-        buff.append(" type: ").append(agent.getClass().getSimpleName()).append("\n");
-        buff.append(" tags: ").append(agent.getTagString()).append("\n");
-        buff.append(" goal: ").append(agent.getGoal()).append("\n");
-        buff.append(" generated time: ").append(agent.generatedTime.getAbsoluteTimeString()).append("\n");
-        if (agent.isEvacuated()) {
-            buff.append(" evacuated: true\n");
-        } else {
-            buff.append(" position X: ").append(agent.getPosition().getX()).append("\n");
-            buff.append(" position Y: ").append(agent.getPosition().getY()).append("\n");
-            buff.append(" position Z: ").append(agent.getHeight()).append("\n");
-            buff.append(" drawing position X: ").append(agent.getPosition().getX() + agent.getSwing().getX()).append("\n");
-            buff.append(" drawing position Y: ").append(agent.getPosition().getY() + agent.getSwing().getY()).append("\n");
-            buff.append(" drawing position Z: ").append(
-                agent.getHeight() / ((MapPartGroup)agent.getCurrentLink().getParent()).getScale()
-            ).append("\n");
-            buff.append(" velocity: ").append(agent.getSpeed()).append("\n");
-            buff.append(" acceleration: ").append(agent.getAcceleration()).append("\n");
-            buff.append(" previous node: ").append(agent.getPrevNode().ID).append("\n");
-            buff.append(" next node: ").append(agent.getNextNode().ID).append("\n");
-            buff.append(" current link: ").append(agent.getCurrentLink().ID).append("\n");
-            buff.append(" advancing distance: ").append(agent.getAdvancingDistance()).append("\n");
-            buff.append(" direction: ").append(agent.isForwardDirection() ? "Forward" : "Backward").append("\n");
-            buff.append(" waiting: ").append(agent.isWaiting()).append("\n");
-            buff.append(" current exposure: ").append(agent.obstructer.currentValueForLog()).append("\n");
-            buff.append(" amount exposure: ").append(agent.obstructer.accumulatedValueForLog()).append("\n");
-            buff.append(" triage: ").append(agent.getTriageName()).append("\n");
-        }
-        return buff.toString();
-    }
-
     /* getters/setters */
     
     public GuiSimulationLauncher2D getLauncher() { return launcher; }

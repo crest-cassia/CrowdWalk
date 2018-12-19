@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import math.geom3d.Point3D;
 
 import nodagumi.ananPJ.NetworkMap.OBNode;
+import nodagumi.ananPJ.Simulator.PollutionHandler.PollutionLevelInfo;
 
 import nodagumi.Itk.Itk;
 
@@ -275,6 +276,24 @@ public class MapAreaRectangle extends MapArea {
     @Override   
     public String toString() {
         return getTagString() + bounds.toString();
+    }
+
+    /**
+     * このオブジェクトの状態をテキストで取得する
+     */
+    public String getStatusText() {
+        Rectangle2D bounds = (Rectangle2D)this.getShape();
+        PollutionLevelInfo pollutionLevel = this.getPollutionLevel();
+        StringBuilder buff = new StringBuilder();
+        buff.append("Area ID: ").append(this.ID).append("\n");
+        buff.append("pWestX: ").append(bounds.getMinX()).append("\n");
+        buff.append("pEastX: ").append(bounds.getMaxX()).append("\n");
+        buff.append("pNorthY: ").append(bounds.getMinY()).append("\n");
+        buff.append("pSouthY: ").append(bounds.getMaxY()).append("\n");
+        buff.append("current level: ").append(pollutionLevel.getCurrentLevel()).append("\n");
+        buff.append("normalized level: ").append(pollutionLevel.getNormalizedLevel()).append("\n");
+        buff.append("tags: ").append(this.getTagString()).append("\n");
+        return buff.toString();
     }
 
     //------------------------------------------------------------

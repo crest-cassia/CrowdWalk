@@ -807,6 +807,43 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         return getTagString();
     }
 
+    /**
+     * このオブジェクトの状態をテキストで取得する
+     */
+    public String getStatusText() {
+        StringBuilder buff = new StringBuilder();
+        buff.append("Link ID: ").append(this.ID).append("\n");
+        buff.append("length: ").append(this.getLength()).append("\n");
+        buff.append("width: ").append(this.getWidth()).append("\n");
+        buff.append("laneWidth(Forward): ").append(this.getLaneWidth(Direction.Forward)).append("\n");
+        buff.append("laneWidth(Backward): ").append(this.getLaneWidth(Direction.Backward)).append("\n");
+        buff.append("tags: ").append(this.getTagString()).append("\n");
+        buff.append("agents: ").append(this.getAgents().size()).append("\n");
+        MapNode fromNode = this.getFrom();
+        if (fromNode == null) {
+            buff.append("from Node: null\n");
+        } else {
+            buff.append("from Node:").append("\n");
+            buff.append("    Node ID: ").append(fromNode.ID).append("\n");
+            buff.append("    x: ").append(fromNode.getX()).append("\n");
+            buff.append("    y: ").append(fromNode.getY()).append("\n");
+            buff.append("    height: ").append(fromNode.getHeight()).append("\n");
+            buff.append("    tags: ").append(fromNode.getTagString()).append("\n");
+        }
+        MapNode toNode = this.getTo();
+        if (toNode == null) {
+            buff.append("to Node: null\n");
+        } else {
+            buff.append("to Node:").append("\n");
+            buff.append("    Node ID: ").append(toNode.ID).append("\n");
+            buff.append("    x: ").append(toNode.getX()).append("\n");
+            buff.append("    y: ").append(toNode.getY()).append("\n");
+            buff.append("    height: ").append(toNode.getHeight()).append("\n");
+            buff.append("    tags: ").append(toNode.getTagString()).append("\n");
+        }
+        return buff.toString();
+    }
+
     //------------------------------------------------------------
     /**
      * リンクの情報を短く示す文字列。

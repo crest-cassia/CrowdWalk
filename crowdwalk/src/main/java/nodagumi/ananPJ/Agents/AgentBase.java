@@ -932,7 +932,44 @@ implements Comparable<AgentBase> {
         buffer.append("id:").append(ID) ;
         buffer.append("]") ;
         return buffer.toString() ;
-    };
+    }
+
+    /**
+     * このオブジェクトの状態をテキストで取得する
+     */
+    public String getStatusText() {
+        StringBuilder buff = new StringBuilder();
+        buff.append("Agent ID: ").append(this.ID).append("\n");
+        buff.append("config: ").append(this.getConfigLine()).append("\n");
+        buff.append("type: ").append(this.getClass().getSimpleName()).append("\n");
+        buff.append("tags: ").append(this.getTagString()).append("\n");
+        buff.append("goal: ").append(this.getGoal()).append("\n");
+        buff.append("generated time: ").append(this.generatedTime.getAbsoluteTimeString()).append("\n");
+        if (this.isEvacuated()) {
+            buff.append("evacuated: true\n");
+        } else {
+            buff.append("position X: ").append(this.getPosition().getX()).append("\n");
+            buff.append("position Y: ").append(this.getPosition().getY()).append("\n");
+            buff.append("position Z: ").append(this.getHeight()).append("\n");
+            buff.append("drawing position X: ").append(this.getPosition().getX() + this.getSwing().getX()).append("\n");
+            buff.append("drawing position Y: ").append(this.getPosition().getY() + this.getSwing().getY()).append("\n");
+            buff.append("drawing position Z: ").append(
+                this.getHeight() / ((MapPartGroup)this.getCurrentLink().getParent()).getScale()
+            ).append("\n");
+            buff.append("velocity: ").append(this.getSpeed()).append("\n");
+            buff.append("acceleration: ").append(this.getAcceleration()).append("\n");
+            buff.append("previous node: ").append(this.getPrevNode().ID).append("\n");
+            buff.append("next node: ").append(this.getNextNode().ID).append("\n");
+            buff.append("current link: ").append(this.getCurrentLink().ID).append("\n");
+            buff.append("advancing distance: ").append(this.getAdvancingDistance()).append("\n");
+            buff.append("direction: ").append(this.isForwardDirection() ? "Forward" : "Backward").append("\n");
+            buff.append("waiting: ").append(this.isWaiting()).append("\n");
+            buff.append("current exposure: ").append(this.obstructer.currentValueForLog()).append("\n");
+            buff.append("amount exposure: ").append(this.obstructer.accumulatedValueForLog()).append("\n");
+            buff.append("triage: ").append(this.getTriageName()).append("\n");
+        }
+        return buff.toString();
+    }
 
     //------------------------------------------------------------
     /**

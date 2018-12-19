@@ -284,6 +284,13 @@ public abstract class OBNode extends DefaultMutableTreeNode
         return getTagString();
     }
 
+    /**
+     * このオブジェクトの状態をテキストで取得する
+     */
+    public String getStatusText() {
+        return String.format("ID: %s\n", ID);
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ゲート（分断制御用交通規制）テーブル。

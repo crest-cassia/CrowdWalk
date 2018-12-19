@@ -440,6 +440,41 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         return getTagString();
     }
 
+    /**
+     * このオブジェクトの状態をテキストで取得する
+     */
+    public String getStatusText() {
+        StringBuilder buff = new StringBuilder();
+        buff.append("Node ID: ").append(this.ID).append("\n");
+        buff.append("x: ").append(this.getX()).append("\n");
+        buff.append("y: ").append(this.getY()).append("\n");
+        buff.append("height: ").append(this.getHeight()).append("\n");
+        buff.append("tags: ").append(this.getTagString()).append("\n");
+        HashMap<String, NavigationHint> hints
+            = this.getHints(NavigationHint.DefaultMentalMode) ;
+        if (! hints.isEmpty()) {
+            buff.append("---- Navigation hints ----\n");
+            ArrayList<String> hintKeys = new ArrayList(hints.keySet());
+            Collections.sort(hintKeys);
+            for (String key : hintKeys) {
+                NavigationHint hint = hints.get(key);
+                buff.append("key: ").append(key).append("\n");
+                if (hint.toNode == null) {
+                    buff.append("    toNode: null\n");
+                } else {
+                    buff.append("    toNode: ").append(hint.toNode.ID).append("(").append(hint.toNode.getTagString()).append(")\n");
+                }
+                if (hint.viaLink == null) {
+                    buff.append("    viaLink: null\n");
+                } else {
+                    buff.append("    viaLink: ").append(hint.viaLink.ID).append("\n");
+                }
+                buff.append("    distance: ").append(hint.distance).append("\n");
+            }
+        }
+        return buff.toString();
+    }
+
     //------------------------------------------------------------
     /**
      * ノードの情報を短く示す文字列。
