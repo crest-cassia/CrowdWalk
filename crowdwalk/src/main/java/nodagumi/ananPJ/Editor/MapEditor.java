@@ -1244,8 +1244,8 @@ public class MapEditor {
             }
         }
 
-        // 結合されたシェープファイルを平面直角座標系で GeoJSON に変換する
-        List<String> commandLine = Arrays.asList("ogr2ogr", "-s_srs", srcEpsg, "-t_srs", GsiTile.JGD2000_JPR_EPSG_NAMES[zone], "-f", "geoJSON", tmpDir + "__GEOJSON__.json", tmpDir + dst + ".shp");
+        // 結合されたシェープファイルを GeoJSON に変換する
+        List<String> commandLine = Arrays.asList("ogr2ogr", "-f", "geoJSON", tmpDir + "__GEOJSON__.json", tmpDir + dst + ".shp");
         Itk.logInfo("External process", String.join(" ", commandLine));
         ProcessBuilder pb = new ProcessBuilder(commandLine);
         pb.inheritIO();
@@ -1256,13 +1256,14 @@ public class MapEditor {
         }
 
         // GeoJSON ファイルを読み込んでマップデータに追加する
-        readGeoJSON(tmpDir + "__GEOJSON__.json", scaleOfRoundOff, lengthName, useGeodeticLength, widthName, correctionFactor, referenceTable, group, zone);
+        readGeoJSON(tmpDir + "__GEOJSON__.json", srcEpsg, scaleOfRoundOff, lengthName, useGeodeticLength, widthName, correctionFactor, referenceTable, group, zone);
     }
 
     /**
      * GeoJSON ファイルを読み込んでマップデータに追加する
      */
-    public void readGeoJSON(String filePath, int scaleOfRoundOff, String lengthName, boolean useGeodeticLength, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone) throws Exception {
+    public void readGeoJSON(String filePath, String srcEpsg, int scaleOfRoundOff, String lengthName, boolean useGeodeticLength, String widthName, Double correctionFactor, ArrayList<Double> referenceTable, MapPartGroup group, int zone) throws Exception {
+        CoordinateTransform transform = GsiTile.createCoordinateTransform(srcEpsg, GsiTile.JGD2000_JPR_EPSG_NAMES[zone]);
         JsonicHashMapGetter jsonMap = new JsonicHashMapGetter();
 
         FileInputStream is = new FileInputStream(filePath);
@@ -1317,10 +1318,9 @@ public class MapEditor {
                         updateHeight();
                         throw new Exception("File parsing error - \"" + filePath + "\" : invalid coordinates: " + coordinate);
                     }
-                    double east = roundValue(coordinate.get(0).doubleValue(), scaleOfRoundOff);
-                    double north = roundValue(coordinate.get(1).doubleValue(), scaleOfRoundOff);
-                    // CrowdWalk 座標系に変換
-                    java.awt.geom.Point2D point = new java.awt.geom.Point2D.Double(east, -north);
+                    double x = coordinate.get(0).doubleValue();
+                    double y = coordinate.get(1).doubleValue();
+                    java.awt.geom.Point2D point = new java.awt.geom.Point2D.Double(x, y);
 
                     if (lastPoint != null) {
                         double d = point.distance(lastPoint);
@@ -1343,18 +1343,19 @@ public class MapEditor {
                     updateHeight();
                     throw new Exception("File parsing error - \"" + filePath + "\" : invalid coordinates: " + coordinate);
                 }
-                double east = roundValue(coordinate.get(0).doubleValue(), scaleOfRoundOff);
-                double north = roundValue(coordinate.get(1).doubleValue(), scaleOfRoundOff);
+                double x = roundValue(coordinate.get(0).doubleValue(), scaleOfRoundOff);
+                double y = roundValue(coordinate.get(1).doubleValue(), scaleOfRoundOff);
                 double height = 0.0;
-                // CrowdWalk 座標系に変換
-                java.awt.geom.Point2D point = new java.awt.geom.Point2D.Double(east, -north);
+                // 経緯度を CrowdWalk 座標に変換する
+                java.awt.geom.Point2D jpr = GsiTile.transformCoordinate(transform, x, y);
+                Point2D point = new Point2D(roundValue(jpr.getX(), 4), roundValue(-jpr.getY(), 4));
                 String pointStr = point.toString().replaceAll(" ", "");
 
                 MapNode node = null;
                 if (nodes.containsKey(pointStr)) {
                     node = nodes.get(pointStr);
                 } else {
-                    AddNode command = new AddNode(group, new Point2D(point.getX(), point.getY()), height);
+                    AddNode command = new AddNode(group, point, height);
                     if (! invoke(command)) {
                         endOfCommandBlock();
                         updateHeight();
