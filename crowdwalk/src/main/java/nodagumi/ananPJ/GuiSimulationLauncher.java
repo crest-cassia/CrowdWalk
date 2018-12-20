@@ -440,9 +440,6 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                 throw new Exception("Property error - 設定値が範囲(0.1～10.0)外です: vertical_scale:" + verticalScale);
             }
             agentSize = properties.getDouble("agent_size", agentSize);
-            if (agentSize < 0.1 || agentSize > 9.9) {
-                throw new Exception("Property error - 設定値が範囲(0.1～9.9)外です: agent_size:" + agentSize);
-            }
             zoom = properties.getDouble("zoom", zoom);
             if (zoom < 0.0 || zoom > 9.9) {
                 throw new Exception("Property error - 設定値が範囲(0.0～9.9)外です: zoom:" + zoom);

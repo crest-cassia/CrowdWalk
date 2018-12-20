@@ -94,6 +94,22 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
     }
 
     /**
+     * 画面出力用properties設定
+     */
+    public void setPropertiesForDisplay() {
+        super.setPropertiesForDisplay();
+        try {
+            agentSize = properties.getDouble("agent_size_3d", agentSize);
+            if (agentSize < 0.1 || agentSize > 30.0) {
+                throw new Exception("Property error - 設定値が範囲(0.1～30.0)外です: agent_size or agent_size_3d:" + agentSize);
+            }
+        } catch(Exception e) {
+            Itk.logFatal("Property file error", e.getMessage());
+            Itk.quitByError() ;
+        }
+    }
+
+    /**
      * エージェント登録
      */
     public void registerAgent(final AgentBase agent) {

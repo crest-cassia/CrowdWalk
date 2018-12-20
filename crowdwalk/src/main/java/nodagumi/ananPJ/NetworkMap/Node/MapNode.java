@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBMapPart;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -291,7 +292,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
                              "in mode", mentalMode, ".") ;
                 Itk.dumpStackTrace() ;
                 Itk.quitByError() ;
-            } else {
+            } else if (! CrowdWalkLauncher.disableNoHintForGoalLog) {
                 Itk.logWarn("No hint for goal",
                             "toward tag", goalTag,
                             "from node", this.getID(),

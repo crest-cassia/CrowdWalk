@@ -27,7 +27,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-N] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -62,6 +62,11 @@ public class CrowdWalkLauncher {
     public static boolean internetEnabled = false;
 
     /**
+     * "No hint for goal" ログを出力しない
+     */
+    public static boolean disableNoHintForGoalLog = false;
+
+    /**
      * コマンドラインオプションの定義
      */
     public static void defineOptions(Options options) {
@@ -72,6 +77,7 @@ public class CrowdWalkLauncher {
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
             .hasArg().withArgName("LEVEL").create("l"));
+        options.addOption("N", "disable-no-hint-for-goal-log", false, "\"No hint for goal\" ログを出力しない");
         options.addOption("o", "offline", false, "Internet への接続をおこなわない");
         options.addOption(OptionBuilder.withLongOpt("tick")
             .withDescription("tick 情報を FILE に出力する\nCUI モード時のみ有効")
@@ -130,6 +136,9 @@ public class CrowdWalkLauncher {
             // オフラインモード
             offline = commandLine.hasOption("offline");
 
+            // "No hint for goal" ログを出力しない
+            disableNoHintForGoalLog = commandLine.hasOption("disable-no-hint-for-goal-log");
+
             // CUI モードで実行
             if (commandLine.hasOption("cui")) {
                 if (propertiesFilePath == null) {
@@ -161,6 +170,7 @@ public class CrowdWalkLauncher {
             printHelp(options);
             Itk.quitByError() ;
         } catch (Exception e) {
+            e.printStackTrace();
             Itk.logError(e.getMessage());
             Itk.quitByError() ;
         }
@@ -229,10 +239,12 @@ public class CrowdWalkLauncher {
      */
     public static void launchMapEditor(String propertiesFilePath,
             ArrayList<String> commandLineFallbacks) throws Exception {
-        if (isInternetEnabled()) {
-            internetEnabled = true;
-        } else {
-            offline = true;
+        if (! offline) {
+            if (isInternetEnabled()) {
+                internetEnabled = true;
+            } else {
+                offline = true;
+            }
         }
         settings = Settings.load(SETTINGS_FILE_NAME);
         MapEditor editor = new MapEditor(settings);

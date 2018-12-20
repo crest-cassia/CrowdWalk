@@ -15,6 +15,7 @@ import net.arnx.jsonic.JSON;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.AgentHandler;
@@ -359,12 +360,28 @@ import nodagumi.Itk.*;
  *     <h4>agent_size</h4>
  *     <pre>  エージェントの表示サイズ(図6,7)
  *
- *  設定値： 0.1～9.9
+ *  設定値： 0.1～30.0
  *  デフォルト値： 1.0</pre>
  *   <center>
  *     <img src="./doc-files/agent_size_1.png" alt="./doc-files/agent_size_1.png"><br>図6　1.0のとき<br><br>
  *     <img src="./doc-files/agent_size_2.png" alt="./doc-files/agent_size_2.png"><br>図7　2.0のとき
  *   </center>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>agent_size_2d</h4>
+ *     <pre>  2D シミュレーション画面上のエージェントの表示サイズ(ピクセル)
+ *
+ *  設定値： 0.1～30.0
+ *  デフォルト値： agent_size の値</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>agent_size_3d</h4>
+ *     <pre>  3D シミュレーション画面上のエージェントの表示サイズ(m)
+ *
+ *  設定値： 0.1～30.0
+ *  デフォルト値： agent_size の値</pre>
  *   </li>
  *
  *   <li>
@@ -598,6 +615,14 @@ import nodagumi.Itk.*;
  *   <li>
  *     <h4>rotation_angle_locking</h4>
  *     <pre>  マップエディタで表示されるマップの回転角度をロックする
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
+ *     <h4>disable_no_hint_for_goal_log</h4>
+ *     <pre>  "No hint for goal" ログを出力しない
  *
  *  設定値： true | false
  *  デフォルト値： false</pre>
@@ -884,6 +909,9 @@ public class CrowdWalkPropertiesHandler {
 
             // [2016.01.30 I.Noda] mentalRule check
             mentalMapRules = getTerm("mental_map_rules",null) ;
+
+            // "No hint for goal" ログを出力しない
+            CrowdWalkLauncher.disableNoHintForGoalLog |= getBoolean("disable_no_hint_for_goal_log", false);
 
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;

@@ -1128,7 +1128,7 @@ public class SimulationFrame2D extends JFrame
         // agent size zoom
         addJLabel(zoom_panel, 0, 1, 1, 1, "agent size");
 
-        agent_size_control = new JScrollBar(JScrollBar.HORIZONTAL, (int)(agent_size * 10), 1, 1, 100);
+        agent_size_control = new JScrollBar(JScrollBar.HORIZONTAL, (int)(agent_size * 10), 1, 1, 301);
         agent_size_control.addAdjustmentListener(new AdjustmentListener() {
                 @Override
                 public void adjustmentValueChanged(AdjustmentEvent e) {

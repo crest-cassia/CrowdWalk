@@ -1433,6 +1433,7 @@ public class EditorFrameFx {
                 return;
             }
         }
+        editor.initSetupFileInfo();
         editor.initNetworkMap();
         canvas.clearEditingStates();
         resetGui();
