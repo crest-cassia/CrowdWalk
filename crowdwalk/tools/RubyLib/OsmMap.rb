@@ -57,7 +57,8 @@ class OsmMap < MapTown
     :cartOrigin => :jp09, # 平面直角原点
     :cwTagName => "cw:tag", # OSM の Road, PoIに付与されている CrowdWalk 用タグの
                             # property 名。
-    :cwTagSep => ';',       # 上記タグの suffix を切っていく時のセパレータ。
+    :cwTagSep => ';;',      # 上記タグを複数のタグに分割するときのセパレータ。
+    :cwTagSufSep => ';',       # さらにタグの suffix を切っていく時のセパレータ。
     :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
     :cwPoIName => "cw:poi", # OSM の PoI に付与されている CrowdWalk 用タグの
                             # property 名。
@@ -246,15 +247,22 @@ class OsmMap < MapTown
   #--------------------------------------------------------------
   #++
   ## add general tag to link/poi
+  ## "foo;bar;baz;;Foo;Bar;Baz" という cw:tag は、
+  ## "foo;bar;baz;;Foo;Bar;Baz",
+  ## "foo;bar;baz", "foo", "foo;bar",
+  ## "Foo;Bar;Baz", "Foo", "Foo;Bar" というタグが作られる。
   def addGeneralTagToMapPart(object)
     tag = nil ;
     if(tag = object.hasProperty(getConf(:cwTagName))) then
       object.addTag(tag) ;
-      partList = [] ;
-      tag.split(getConf(:cwTagSep)).each{|part|
-        partList.push(part) ;
-        subtag = partList.join(getConf(:cwTagSep));
-        object.addTag(subtag) if(subtag != tag) ;
+      tag.split(getConf(:cwTagSep)).each{|stag|
+        object.addTag(stag) if (stag != tag) ;
+        partList = [] ;
+        stag.split(getConf(:cwTagSufSep)).each{|part|
+          partList.push(part) ;
+          subtag = partList.join(getConf(:cwTagSufSep));
+          object.addTag(subtag) if(subtag != tag && subtag != stag) ;
+        }
       }
     end
     return tag ;
