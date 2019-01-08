@@ -55,6 +55,7 @@ class OsmMap < MapTown
   ## description of DefaultOptsions.
   DefaultConf = {
     :cartOrigin => :jp09, # 平面直角原点
+    :useProj => true,     # 座標変換の際、"proj" を使う。
     :cwTagName => "cw:tag", # OSM の Road, PoIに付与されている CrowdWalk 用タグの
                             # property 名。
     :cwTagSep => ';;',      # 上記タグを複数のタグに分割するときのセパレータ。
@@ -103,12 +104,41 @@ class OsmMap < MapTown
     :jp18 => Geo2D::Point.new(136.0 +  (0.0/60.0), 20.0), # [136度00分, 20度]
     :jp19 => Geo2D::Point.new(154.0 +  (0.0/60.0), 26.0), # [154度00分, 26度]
   } ;
-  
+
   ## 経度(lon)から平面直角座標系への変換倍率
   CartesianLatMagnify = 10001960.0/90.0 ;
 
   ## 角度ラジアン係数。
   Deg2Rad = (Math::PI / 180.0) ;
+
+  ## prog for conversion.
+  ProjCommand = "cs2cs" ;
+  
+  ## param for cs2cs
+  DefaultCs2CsParam = "+init=epsg:4326 +to +init=%s +units=m" ;
+
+  ## 19座標系 EPSG number 
+  EpsgCodeForJprCS = {
+    :jp01 => "epsg:2443",
+    :jp02 => "epsg:2444",
+    :jp03 => "epsg:2445",
+    :jp04 => "epsg:2446",
+    :jp05 => "epsg:2447",
+    :jp06 => "epsg:2448",
+    :jp07 => "epsg:2449",
+    :jp08 => "epsg:2450",
+    :jp09 => "epsg:2451",
+    :jp10 => "epsg:2452",
+    :jp11 => "epsg:2453",
+    :jp12 => "epsg:2454",
+    :jp13 => "epsg:2455",
+    :jp14 => "epsg:2456",
+    :jp15 => "epsg:2457",
+    :jp16 => "epsg:2458",
+    :jp17 => "epsg:2459",
+    :jp18 => "epsg:2460",
+    :jp19 => "epsg:2461",
+  } ;
 
   #--============================================================
   #--------------------------------------------------------------
@@ -431,6 +461,38 @@ class OsmMap < MapTown
   ## CrowdWalk は、東が x、南が y。
   ## _lonlat_ :: 経度緯度の配列もしくは Geo2D::Point
   def convertLonLat2Pos(lonlat)
+    if(getConf(:useProj)) then
+      convertLonLat2Pos_Proj4(lonlat) ;
+    else
+      convertLonLat2Pos_Naive(lonlat) ;
+    end
+  end
+      
+  #--------------------------------------------------------------
+  #++
+  ## convert lonlat to pos (x-y for CrowdWalk)。
+  ## CrowdWalk は、東が x、南が y。
+  ## _lonlat_ :: 経度緯度の配列もしくは Geo2D::Point
+  def convertLonLat2Pos_Proj4(lonlat)
+    ll = Geo2D::Point.sureGeoObj(lonlat) ;
+    xyPos = nil ;
+    param = (DefaultCs2CsParam % EpsgCodeForJprCS[getConf(:cartOrigin)]) ;
+
+    com = "|echo #{ll.x} #{ll.y} | #{ProjCommand} #{param}" ;
+    open(com,'r'){|strm|
+      str = strm.read() ;
+      ret = str.split("\s").map{|v| v.to_f}
+      xyPos = Geo2D::Point.new(ret[0], -ret[1]) ;
+    }
+    return xyPos ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## convert lonlat to pos (x-y for CrowdWalk)。
+  ## by 素朴な方法。
+  ## _lonlat_ :: 経度緯度の配列もしくは Geo2D::Point
+  def convertLonLat2Pos_Naive(lonlat)
     ll = Geo2D::Point.sureGeoObj(lonlat) ;
     origin = CartesianLonLatOrigin[getConf(:cartOrigin)] ;
     magnify = Geo2D::Point.new(CartesianLatMagnify *
