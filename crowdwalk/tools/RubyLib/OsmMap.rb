@@ -58,6 +58,8 @@ class OsmMap < MapTown
     :useProj => true,     # 座標変換の際、"proj" を使う。
     :cwTagName => "cw:tag", # OSM の Road, PoIに付与されている CrowdWalk 用タグの
                             # property 名。
+    :cwTagPrefix => "cw:tag:", # 上記のタグをマルチ化するための、
+                            # property 名の prefix。
     :cwTagSep => ';;',      # 上記タグを複数のタグに分割するときのセパレータ。
     :cwTagSufSep => ';',       # さらにタグの suffix を切っていく時のセパレータ。
     :cwTagNthSep => ':',    # 上記タグの末尾につける序数のセパレータ
@@ -282,20 +284,43 @@ class OsmMap < MapTown
   ## "foo;bar;baz", "foo", "foo;bar",
   ## "Foo;Bar;Baz", "Foo", "Foo;Bar" というタグが作られる。
   def addGeneralTagToMapPart(object)
-    tag = nil ;
+    addedP = false ;
     if(tag = object.hasProperty(getConf(:cwTagName))) then
-      object.addTag(tag) ;
-      tag.split(getConf(:cwTagSep)).each{|stag|
-        object.addTag(stag) if (stag != tag) ;
-        partList = [] ;
-        stag.split(getConf(:cwTagSufSep)).each{|part|
-          partList.push(part) ;
-          subtag = partList.join(getConf(:cwTagSufSep));
-          object.addTag(subtag) if(subtag != tag && subtag != stag) ;
-        }
-      }
+      addDividedTagToMapPart(object,tag) ;
+      addedP = true ;
     end
-    return tag ;
+
+    tagPat = /^#{Regexp.escape(getConf(:cwTagPrefix))}/ ;
+    tagPairList = object.getPropertyPairListByPattern(tagPat) ;
+    tagPairList.each{|key,value|
+      keySuffix = key.gsub(tagPat,'');
+      tag = "#{keySuffix}:#{value}"
+      addDividedTagToMapPart(object,tag) ;
+      addedP = true ;
+    }
+    
+    return addedP ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## divide tag and add to the object.
+  ## "foo;bar;baz;;Foo;Bar;Baz" という cw:tag は、
+  ## "foo;bar;baz;;Foo;Bar;Baz",
+  ## "foo;bar;baz", "foo", "foo;bar",
+  ## "Foo;Bar;Baz", "Foo", "Foo;Bar" というタグが作られる。
+  ##
+  def addDividedTagToMapPart(object, tag)
+    object.addTagIfNeed(tag) ;
+    tag.split(getConf(:cwTagSep)).each{|stag|
+      object.addTagIfNeed(stag) ;
+      partList = [] ;
+      stag.split(getConf(:cwTagSufSep)).each{|part|
+        partList.push(part) ;
+        subtag = partList.join(getConf(:cwTagSufSep));
+        object.addTagIfNeed(subtag) ;
+      }
+    }
   end
   
   #--------------------------------------------------------------
@@ -792,6 +817,18 @@ class OsmMap < MapTown
         return nil ;
       end
     end
+
+    #------------------------------------------
+    #++
+    ## 指定されたパターンのタグを持つ属性値リストを取得。
+    ## _pattern_ :: 属性名のパターン。
+    def getPropertyPairListByPattern(pattern)
+      _list = {} ;
+      getProperties().keys.each{|key|
+        _list[key] = getProperties()[key] if(key =~ pattern) ;
+      }
+      return _list ;
+    end
     
     #------------------------------------------
     #++
@@ -832,6 +869,22 @@ class OsmMap < MapTown
       @tagList.push(tag) ;
     end
 
+    #------------------------------------------
+    #++
+    ## add new tag
+    def addTagIfNeed(tag)
+      if(!hasTag(tag)) then
+        @tagList.push(tag) ;
+      end
+    end
+
+    #------------------------------------------
+    #++
+    ## check to have the tag
+    def hasTag(tag)
+      @tagList.member?(tag) ;
+    end
+    
   end # class OsmFeature
 
   
