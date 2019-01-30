@@ -98,6 +98,7 @@ import nodagumi.ananPJ.Gui.FxColor;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.MapViewFrame;
 import nodagumi.ananPJ.GuiSimulationLauncher;
+import nodagumi.ananPJ.GuiSimulationLauncher3D;
 import nodagumi.ananPJ.Editor.MapEditor.TextPosition;
 import nodagumi.ananPJ.Editor.Panel.AreaPanelFx;
 import nodagumi.ananPJ.Editor.Panel.GroupPanel;
@@ -631,7 +632,9 @@ public class EditorFrameFx {
 
         MenuItem miShow3d = new MenuItem("Show 3D");
         miShow3d.setOnAction(e -> {
-            MapViewFrame mapViewer = new MapViewFrame("3D preview of Structure", 800, 600, editor.getMap(), editor.getProperties());
+            GuiSimulationLauncher3D launcher = (GuiSimulationLauncher3D)GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
+            launcher.init(editor, settings);
+            MapViewFrame mapViewer = new MapViewFrame("3D preview of Structure", 800, 600, launcher.getMap(), launcher.getProperties(), launcher.loadLinkAppearance());
             mapViewer.show();
         });
 

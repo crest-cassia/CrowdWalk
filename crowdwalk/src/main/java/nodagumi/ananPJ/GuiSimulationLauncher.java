@@ -4,8 +4,10 @@ package nodagumi.ananPJ;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import javax.swing.JOptionPane;
 
@@ -18,6 +20,7 @@ import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.GsiAccessor;
+import nodagumi.ananPJ.misc.JsonicHashMapGetter;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
@@ -140,6 +143,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected boolean show3dPolygon = true;
     protected boolean exitWithSimulationFinished = false;
     protected String agentAppearanceFile = null;
+    protected String linkAppearanceFile = null;
     protected int gsiTileZoom = 14;
 
     /**
@@ -423,6 +427,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         show3dPolygon = true;
         exitWithSimulationFinished = false;
         agentAppearanceFile = null;
+        linkAppearanceFile = null;
         gsiTileZoom = 14;
     }
 
@@ -446,6 +451,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             }
             cameraFile = properties.getFilePath("camera_file", null);
             agentAppearanceFile = properties.getFilePath("agent_appearance_file", null);
+            linkAppearanceFile = properties.getFilePath("link_appearance_file", null);
             showBackgroundImage = properties.getBoolean("show_background_image", false);
             showBackgroundMap = properties.getBoolean("show_background_map", false);
             showTheSea = properties.getBoolean("show_the_sea", false);
@@ -512,6 +518,78 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * エージェント表示の準備
      */
     protected abstract void setupAgentView();
+
+    /**
+     * link appearance file を読み込む
+     */
+    public ArrayList<HashMap> loadLinkAppearance() {
+        try {
+            JSON json = new JSON(JSON.Mode.TRADITIONAL);
+            ArrayList<HashMap> appearances = new ArrayList();
+            if (linkAppearanceFile != null) {
+                InputStream is = new FileInputStream(linkAppearanceFile);
+                Object object = json.parse(is);
+                if (object instanceof HashMap) {
+                    // 旧書式の場合
+                    appearances.addAll(convertLinkAppearanceForm((Map<String, Object>)object));
+                } else {
+                    appearances.addAll((ArrayList<HashMap>)object);
+                }
+            }
+            InputStream is = getClass().getResourceAsStream("/link_appearance.json");
+            appearances.addAll((ArrayList<HashMap>)json.parse(is));
+            return appearances;
+        } catch (Exception e) {
+            Itk.quitWithStackTrace(e) ;
+        }
+        return null;
+    }
+
+    /**
+     * 旧書式の link appearance オブジェクトを新書式に変換する.
+     *
+     * ※ width_ratio でリンク幅の倍率を変える機能は廃止した。
+     */
+    public ArrayList<HashMap> convertLinkAppearanceForm(Map<String, Object> object) throws Exception {
+        ArrayList<HashMap> appearances = new ArrayList();
+        JsonicHashMapGetter jsonMap = new JsonicHashMapGetter();
+        for (Map.Entry<String, Object> entry : object.entrySet()) {
+            String tag = entry.getKey();
+            BigDecimal widthRatio = new BigDecimal(1.0);
+            boolean widthFixed = false;
+            String colorName = null;
+            BigDecimal transparency = new BigDecimal(0.75);
+
+            jsonMap.setParameters((HashMap)entry.getValue());
+            widthRatio = jsonMap.getBigDecimalParameter("width", widthRatio);
+            widthRatio = jsonMap.getBigDecimalParameter("width_ratio", widthRatio);
+            widthFixed = jsonMap.getBooleanParameter("width_fixed", widthFixed);
+            colorName = jsonMap.getStringParameter("color", colorName);
+            transparency = jsonMap.getBigDecimalParameter("transparency", transparency);
+
+            HashMap<String, Object> appearance = new HashMap();
+            appearance.put("tag", tag);
+            for (int dimension = 2; dimension <= 3; dimension++) {
+                HashMap<String, Object> view = new HashMap();
+                HashMap<String, Object> parameters = new HashMap();
+                if (widthFixed) {
+                    view.put("className", "FixedWidth" + dimension + "D");
+                    parameters.put("width", widthRatio);
+                } else {
+                    view.put("className", "ActualWidth" + dimension + "D");
+                }
+                if (colorName != null) {
+                    parameters.put("color", colorName);
+                }
+                parameters.put("transparency", transparency);
+                parameters.put("method", "filling");
+                view.put("parameters", parameters);
+                appearance.put("" + dimension + "D_View", view);
+            }
+            appearances.add(appearance);
+        }
+        return appearances;
+    }
 
     /**
      * 地理院タイル画像の準備

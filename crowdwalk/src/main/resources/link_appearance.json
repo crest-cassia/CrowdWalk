@@ -1,95 +1,254 @@
-/* aaa
-Usable color names:
-    BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE,
-    LIGHTBLUE, SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK,
-    ALIGHTB, ARED, PURPLE, PRED,
-    BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
-
-・設定の仕方
-
-    タグ名: {
-        width_fixed: true または false,
-        width_ratio: リンク幅(長さまたは倍率),
-        color: '色',
-        transparency: 透明度(1.0 で完全に透明)
-    },
-
-・width_fixed が true なら width_ratio で指定した値がそのまま表示上のリンク幅となる。
-  width_fixed が false なら width_ratio で指定した値をマップデータのリンク幅に乗算した値が表示上のリンク幅となる。
-・タグ名にハイフン(-)を含む場合はシングルクォートまたはダブルクォートで囲むこと。
-・最後の要素の後にカンマ(,)をつけてはならない。
+/*
+    設定方法: https://github.com/crest-cassia/CrowdWalk/wiki/Link-appearance-%E3%81%AE%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95
 */
-{
-    STRUCTURE: {
-        width_fixed: true,
-        width_ratio: 5.0,
-        color: 'WHITE',
-        transparency: 0.245
+[
+    {
+        "tag" : "STRUCTURE",
+        "2D_View" : {
+            "className" : "FixedWidth2D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "WHITE",
+                "transparency" : 0.245,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "FixedWidth3D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "WHITE",
+                "transparency" : 0.245,
+                "method" : "filling"
+            }
+        }
     },
-    FLOOR: {
-        width_fixed: true,
-        width_ratio: 5.0,
-        color: 'GRAY',
-        transparency: 0.95
+    {
+        "tag" : "FLOOR",
+        "2D_View" : {
+            "className" : "FixedWidth2D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "GRAY",
+                "transparency" : 0.95,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "FixedWidth3D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "GRAY",
+                "transparency" : 0.95,
+                "method" : "filling"
+            }
+        }
     },
-    HIGHWAY: {
-        width_fixed: false,
-        width_ratio: 1.0,
-        color: 'WHITE',
-        transparency: 0.2525
+    {
+        "tag" : "HIGHWAY",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "WHITE",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "WHITE",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        }
     },
-    MAINROAD: {
-        width_fixed: false,
-        width_ratio: 0.75,
-        color: 'GRAY',
-        transparency: 0.7525
+    {
+        "tag" : "MAINROAD",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        }
     },
-    RAILWAY: {
-        width_fixed: false,
-        width_ratio: 1.0,
-        color: 'GRAY',
-        transparency: 0.2525
+    {
+        "tag" : "RAILWAY",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        }
     },
-//    RIVER: {
-//        width_fixed: false,
-//        width_ratio: 1.0,
-//        color: 'BLUE',
-//        transparency: 0.4525
-//    },
-    BRIDGE: {
-        width_fixed: false,
-        width_ratio: 1.0,
-        color: 'GRAY',
-        transparency: 0.4525
+    {
+        "tag" : "BRIDGE",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.4525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.4525,
+                "method" : "filling"
+            }
+        }
     },
-    FRAME: {
-        width_fixed: false,
-        width_ratio: 8.0,
-        color: 'YELLOW',
-        transparency: 0.2525
+    {
+        "tag" : "FRAME",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "YELLOW",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "YELLOW",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        }
     },
-    'ONE-WAY-FORWARD': {
-        width_fixed: true,
-        width_ratio: 3.0,
-        color: 'PURPLE',
-        transparency: 0.5
+    {
+        "tag" : "ONE-WAY-FORWARD",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "PURPLE",
+                "transparency" : 0.5,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "PURPLE",
+                "transparency" : 0.5,
+                "method" : "filling"
+            }
+        }
     },
-    'ONE-WAY-BACKWARD': {
-        width_fixed: true,
-        width_ratio: 3.0,
-        color: 'LIGHTBLUE',
-        transparency: 0.25
+    {
+        "tag" : "ONE-WAY-BACKWARD",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "LIGHTBLUE",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "LIGHTBLUE",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        }
     },
-    ONEWAY: {
-        width_fixed: false,
-        width_ratio: 0.5,
-        color: 'ARED',
-        transparency: 0.7525
+    {
+        "tag" : "ONEWAY",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "ARED",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "ARED",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        }
     },
-    'ROAD-CLOSED': {
-        width_fixed: true,
-        width_ratio: 3.0,
-        color: 'RED',
-        transparency: 0.25
+    {
+        "tag" : "ROAD-CLOSED",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "RED",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "RED",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "BORDERING",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.7,
+                "method" : "bordering"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.0,
+                "method" : "bordering"
+            }
+        }
+    },
+    {
+        "tag" : "*",
+        "2D_View" : {
+            "className" : "SolidLine2D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.7
+            }
+        },
+        "3D_View" : {
+            "className" : "SolidLine3D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.0
+            }
+        }
     }
-}
+]

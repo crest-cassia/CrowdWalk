@@ -402,14 +402,6 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
- *     <h4>show_links_at_actual_width</h4>
- *     <pre>  3D シミュレーション画面で道幅を持つリンクを表示する。
- *
- *  設定値： true | false
- *  デフォルト値： false</pre>
- *   </li>
- *
- *   <li>
  *     <h4>outline_color</h4>
  *     <pre>  3D シミュレーション画面で Obstructer 領域を確認するための色
  *

@@ -66,7 +66,6 @@
 | Agent size スクロールバー                 | エージェントの直径(m)を設定する |
 | Show nodes                                | ノードを表示する |
 | Show links                                | リンクを表示する |
-| Show links at actual width                | 実際の道幅でリンクを表示する
 | Show areas                                | 災害エリアを表示する |
 | Show outline of areas                     | 災害エリアの全範囲のアウトラインを表示する
 | Show agents                               | エージェントを表示する |

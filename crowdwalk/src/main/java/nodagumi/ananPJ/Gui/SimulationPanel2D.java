@@ -43,11 +43,14 @@ import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentAppearance2D;
 import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentViewBase2D;
 import nodagumi.ananPJ.Gui.GsiTile;
-import nodagumi.ananPJ.Gui.LinkAppearance2D;
+import nodagumi.ananPJ.Gui.LinkAppearance.EdgePoints;
+import nodagumi.ananPJ.Gui.LinkAppearance.view2d.LinkAppearance2D;
+import nodagumi.ananPJ.Gui.LinkAppearance.view2d.LinkViewBase2D;
 import nodagumi.ananPJ.Gui.NodeAppearance2D;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle.ObstructerDisplay;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.NetworkMapPartsListener;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
@@ -147,11 +150,6 @@ public class SimulationPanel2D extends JPanel {
      * 回転を加えたノード座標を保持する
      */
     private HashMap<MapNode, Point2D> rotatedNodePoints = new HashMap();
-
-    /**
-     * 回転を加えたリンクの Line2D を保持する
-     */
-    private HashMap<MapLink, Line2D> rotatedLinkLines = new HashMap();
 
     /**
      * 回転を加えたエリアの Path2D を保持する
@@ -254,7 +252,17 @@ public class SimulationPanel2D extends JPanel {
     /**
      * タグ別リンク表示スタイル
      */
-    private LinkedHashMap<String, LinkAppearance2D> linkAppearances = new LinkedHashMap();
+    private ArrayList<LinkAppearance2D> linkAppearances = new ArrayList();
+
+    /**
+     * 各リンクに対応する LinkAppearance オブジェクト
+     */
+    private HashMap<MapLink, LinkAppearance2D> linkAppearanceCache = new HashMap();
+
+    /**
+     * リンクの Line2D を保持する
+     */
+    private HashMap<MapLink, Line2D[]> linkLines = new HashMap();
 
     /**
      * タグ別ノード表示スタイル
@@ -316,27 +324,27 @@ public class SimulationPanel2D extends JPanel {
 
     /* constructor
      */
-    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> backgroundMapTiles) {
+    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> backgroundMapTiles, ArrayList<HashMap> linkAppearanceConfig) {
         super();
         frame = _frame;
         networkMap = _networkMap;
         this.backgroundMapTiles = backgroundMapTiles;
 
         try {
+            // Link appearance の準備
+            String[] exclusionTags = {"POLYGON"};
+            EdgePoints edgePoints = new EdgePoints(networkMap, exclusionTags);
+            for (HashMap parameters : linkAppearanceConfig) {
+                LinkAppearance2D appearance = new LinkAppearance2D(this, parameters, edgePoints, linkLines);
+                if (! appearance.isValidFor2D()) {
+                    Itk.logFatal("Link appearance error", "2D view not defined");
+                    Itk.quitByError() ;
+                }
+                linkAppearances.add(appearance);
+            }
+
             if (properties != null && properties.getPropertiesFile() != null) {
                 String filePath = null;
-                if (properties.isDefined("link_appearance_file")) {
-                    filePath = properties.getFilePath("link_appearance_file", null);
-                    LinkAppearance2D.load(new FileInputStream(filePath), linkAppearances);
-                }
-                LinkAppearance2D.load(getClass().getResourceAsStream("/link_appearance.json"),
-                        linkAppearances);
-                // 該当するタグが複数存在した場合には、設定ファイルの記述が上にある方を採用する。
-                // このルールに従わせるため再ロードが必要。
-                if (properties.isDefined("link_appearance_file")) {
-                    LinkAppearance2D.load(new FileInputStream(filePath), linkAppearances);
-                }
-
                 if (properties.isDefined("node_appearance_file")) {
                     filePath = properties.getFilePath("node_appearance_file", null);
                     NodeAppearance2D.load(new FileInputStream(filePath), nodeAppearances);
@@ -398,6 +406,11 @@ public class SimulationPanel2D extends JPanel {
         polygons = createPolygons(networkMap.getLinks());
         // ポリゴンを除いたリンクのリスト
         for (MapLink link : frame.getLinks()) {
+            if (link.getFrom() == link.getTo()) {
+                // TODO: 不正なリンクはマップを読み込んだ直後に削除した方がよい
+                Itk.logWarn_("Looped link found", "ID=" + link.ID);
+                continue;
+            }
             if (! link.hasSubTag("POLYGON")) {
                 regularLinks.add(link);
             }
@@ -450,6 +463,83 @@ public class SimulationPanel2D extends JPanel {
                 planePolygonColors.add(Color.WHITE);
             }
         }
+
+        // マップ更新通知リスナの設定
+        final SimulationPanel2D panel = this;
+        networkMap.getNotifier().addListener(new NetworkMapPartsListener() {
+            /**
+             * リンクが削除された.
+             */
+            public void linkRemoved(MapLink link) {
+                Itk.logInfo("Link Removed");
+            }
+
+            /**
+             * リンクタグが追加された.
+             */
+            public void linkTagAdded(MapLink link, String tag) {
+                Itk.logInfo("Link Tag Added", tag);
+                synchronized (panel) {
+                    linkAppearanceCache.remove(link);
+                    getLinkAppearance(link).update(link);
+                }
+            }
+
+            /**
+             * リンクタグが削除された.
+             */
+            public void linkTagRemoved(MapLink link) {
+                Itk.logInfo("Link Tag Removed");
+                synchronized (panel) {
+                    linkAppearanceCache.remove(link);
+                    getLinkAppearance(link).update(link);
+                }
+            }
+
+            /**
+             * ノードタグが追加された.
+             */
+            public void nodeTagAdded(MapNode node, String tag) {
+                Itk.logInfo("Node Tag Added", tag);
+            }
+
+            /**
+             * ノードタグが削除された.
+             */
+            public void nodeTagRemoved(MapNode node) {
+                Itk.logInfo("Node Tag Removed");
+            }
+
+            /**
+             * Pollution レベルが変化した.
+             */
+            public void pollutionLevelChanged(MapArea area) {}
+
+            /**
+             * エージェントが追加された.
+             */
+            public void agentAdded(AgentBase agent) {}
+
+            /**
+             * エージェントが移動した(swing も含む).
+             */
+            public void agentMoved(AgentBase agent) {}
+
+            /**
+             * エージェントのスピードが変化した.
+             */
+            public void agentSpeedChanged(AgentBase agent) {}
+
+            /**
+             * エージェントのトリアージレベルが変化した.
+             */
+            public void agentTriageChanged(AgentBase agent) {}
+
+            /**
+             * エージェントの避難が完了した.
+             */
+            public void agentEvacuated(AgentBase agent) {}
+        });
     }
 
     /**
@@ -737,10 +827,9 @@ public class SimulationPanel2D extends JPanel {
     /**
      * マップの回転を反映したリンクの Line2D を再計算する
      */
-    private void recalcRotatedLinks() {
-        rotatedLinkLines.clear();
+    private synchronized void recalcRotatedLinks() {
         for (MapLink link : regularLinks) {
-            rotatedLinkLines.put(link, new Line2D.Double(getRotatedPoint(link.getFrom()), getRotatedPoint(link.getTo())));
+            getLinkAppearance(link).update(link);
         }
     }
 
@@ -985,9 +1074,11 @@ public class SimulationPanel2D extends JPanel {
 
         /* actual objects */
         if (showLinks) {
-            for (MapLink link : regularLinks) {
-                if (intersectsLine(viewArea, link)) {
-                    drawLink(link, g2, showLinkLabels, false);
+            synchronized (this) {
+                for (MapLink link : regularLinks) {
+                    if (intersectsLine(viewArea, link)) {
+                        getLinkAppearance(link).getView().draw(link, g2, showLinkLabels);
+                    }
                 }
             }
         }
@@ -1012,7 +1103,7 @@ public class SimulationPanel2D extends JPanel {
             drawHoverNode(hoverNode, g2);
         }
         if (hoverLink != null) {
-            drawHoverLink(hoverLink, g2);
+            getLinkAppearance(hoverLink).getView().drawHover(hoverLink, g2);
         }
         if (hoverArea != null) {
             drawHoverArea(hoverArea, g2);
@@ -1120,86 +1211,6 @@ public class SimulationPanel2D extends JPanel {
         g2.draw(new Ellipse2D.Double(x, y, diameter, diameter));
     }
     
-    /**
-     * リンクを描画する
-     */
-    public void drawLink(MapLink link, Graphics2D g2, boolean show_label, boolean isSymbolic) {
-        float width = 1.0f;
-        Color color = defaultLinkColor;
-        LinkAppearance2D linkAppearance = getLinkAppearance(link);
-        if (linkAppearance != null) {
-            width = (float)(linkAppearance.widthFixed ?
-                    linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio);
-            color = linkAppearance.color;
-        } else {
-            width /= scale;
-        }
-        g2.setStroke(new BasicStroke((float)width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        g2.setColor(color);
-        g2.draw(rotatedLinkLines.get(link));
-
-        if (show_label) {
-            String text = link.getTagString();
-            if (! text.isEmpty()) {
-                Point2D middlePoint = link.getMiddlePoint();
-                double cx = middlePoint.getX();
-                double cy = middlePoint.getY() - width / scale / 2.0;
-                g2.setColor(Color.darkGray);
-                drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text);
-            }
-        }
-    }
-
-    /**
-     * リンクのホバーを描画する
-     */
-    public void drawHoverLink(MapLink link, Graphics2D g2) {
-        g2.setColor(Color.BLUE);
-        g2.fill(getLinkRect(link, scale));
-
-        String text = link.getTagString();
-        if (! text.isEmpty()) {
-            float width = 1.0f;
-            LinkAppearance2D linkAppearance = getLinkAppearance(link);
-            if (linkAppearance != null) {
-                width = (float)(linkAppearance.widthFixed ?
-                        linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio);
-            }
-            Point2D middlePoint = link.getMiddlePoint();
-            double cx = middlePoint.getX();
-            double cy = middlePoint.getY() - width / scale / 2.0;
-            g2.setColor(Color.darkGray);
-            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, HOVER_BG_COLOR);
-        }
-    }
-
-    private GeneralPath getLinkRect(MapLink link, double scale) {
-        MapNode fromNode = link.getFrom();
-        MapNode toNode = link.getTo();
-        double x1 = getRotatedX(fromNode);
-        double y1 = getRotatedY(fromNode);
-        double x2 = getRotatedX(toNode);
-        double y2 = getRotatedY(toNode);
-        double fwidth = 4.0 / scale;
-
-        double dx = (x2 - x1);
-        double dy = (y2 - y1);
-        double a = Math.sqrt(dx*dx + dy*dy);
-
-        double edx = fwidth * dx / a / 2;
-        double edy = fwidth * dy / a / 2;
-
-        GeneralPath p = new GeneralPath();
-        p.moveTo(x1 - edy, y1 + edx);
-        p.lineTo(x1 + edy, y1 - edx);
-        p.lineTo(x2 + edy, y2 - edx);
-        p.lineTo(x2 - edy, y2 + edx);
-        p.lineTo(x1 - edy, y1 + edx);
-        p.closePath();
-
-        return p;
-    }
-
     /**
      * エリアを描画する
      */
@@ -1406,10 +1417,29 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
-     * link に振られているタグにマッチする LinkAppearance2D を返す.
+     * link のタグにマッチする LinkAppearance2D を返す.
      */
     public LinkAppearance2D getLinkAppearance(MapLink link) {
-        return LinkAppearance2D.getAppearance(linkAppearances, link);
+        if (linkAppearanceCache.containsKey(link)) {
+            return linkAppearanceCache.get(link);
+        }
+
+        for (LinkAppearance2D appearance : linkAppearances) {
+            if (link.getTags().isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    linkAppearanceCache.put(link, appearance);
+                    return appearance;
+                }
+            } else {
+                for (String tag : link.getTags()) {
+                    if (appearance.isTagApplied(tag)) {
+                        linkAppearanceCache.put(link, appearance);
+                        return appearance;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
