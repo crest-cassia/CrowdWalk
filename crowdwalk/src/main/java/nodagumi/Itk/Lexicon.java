@@ -89,10 +89,13 @@ public class Lexicon {
                             Object meaning,
                             boolean forceP) {
         if((! forceP) && (table.containsKey(word))) {
-            Itk.logWarn("duplicated word entry in a lexicon:",
-                        word + "(meaning=" + meaning.toString() + ")" +
-                        "\n\t original meaning:" + table.get(word).toString() +
-                        "\n\t !!! new registration is ignored.") ;
+            if(!meaning.toString().equals(table.get(word).toString())) {
+                Itk.logWarn("duplicated word entry in a lexicon:",
+                            word + "(meaning=" + meaning.toString() + ")" +
+                            "\n\t original meaning:" +
+                            table.get(word).toString() +
+                            "\n\t !!! new registration is ignored.") ;
+            }
             return null ;
         } else {
             if(!reverseTable.containsKey(meaning))
