@@ -1228,6 +1228,10 @@ public class CrowdWalkPropertiesHandler {
      * パスのリストを取得。
      * パスは区切り記号で区切られているとする。
      * 区切り記号のデフォルトは改行。
+     * [2019-02-05: I.Noda]
+     * 一部の json ライブラリでは、文字列中の改行は規則違反となる。
+     * なので、改行以外に、
+     * 値そのものが文字列ではなく、文字列のリストも受け付けられるようにする。
      */
     public ArrayList<String> getPathList(String key,
                                          ArrayList<String> defaultValue) {
@@ -1237,23 +1241,37 @@ public class CrowdWalkPropertiesHandler {
     /**
      * パスのリストを取得。
      * パスは区切り記号で区切られているとする。
+     * [2019-02-05: I.Noda]
+     * もしくは、文字列のリスト（配列）も受け付けるとする。
      */
     public ArrayList<String> getPathList(String key,
                                          ArrayList<String> defaultValue,
                                          String separator) {
-        String value = prop.getArgString(key) ;
-        if(value == null || value.trim().isEmpty()) {
-            return defaultValue ;
+        Term valueTerm = prop.getArgTerm(key) ;
+        if(Term.isNullTerm(valueTerm)) { return defaultValue ; }
+
+        ArrayList<String> pathList = new ArrayList<String>();
+        if(valueTerm.isArray()) {
+            for(Object valueObj : valueTerm.getArray()) {
+                String path = ((valueObj instanceof Term) ?
+                               ((Term)valueObj).getString() :
+                               (String)valueObj) ;
+                pathList.add(path) ;
+            }
         } else {
-            ArrayList<String> pathList = new ArrayList<String>();
+            String value = valueTerm.getString() ;
             String[] arrayedPath = value.split(separator);
             for(String path : arrayedPath) {
                 pathList.add(path.trim()) ;
             }
-            return pathList ;
         }
+
+        return pathList ;
     }
 
+    /**
+     * main(?)
+     */
     public static void main(String[] args) throws IOException {
 
         Options options = new Options();

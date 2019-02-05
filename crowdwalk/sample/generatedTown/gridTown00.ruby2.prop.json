@@ -21,8 +21,8 @@
   "exit_count":0,
   "all_agent_speed_zero_break":false
   "use_ruby":true,
-  "ruby_load_path":"/usr/users/noda/lib/ruby
-/usr/users/noda/work/ruby",
+  "ruby_load_path":["/usr/users/noda/lib/ruby",
+		    "/usr/users/noda/work/ruby"],
   "ruby_init_script":"
 require './SampleAgent2.rb'
 require './SampleWrapper.rb'
