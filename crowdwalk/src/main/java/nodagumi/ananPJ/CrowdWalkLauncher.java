@@ -170,7 +170,7 @@ public class CrowdWalkLauncher {
             printHelp(options);
             Itk.quitByError() ;
         } catch (Exception e) {
-            e.printStackTrace();
+            Itk.dumpStackTraceOf(e);
             Itk.logError(e.getMessage());
             Itk.quitByError() ;
         }
@@ -311,7 +311,7 @@ public class CrowdWalkLauncher {
             int ret = process.waitFor();
             return ret == 0 ? true : false;
         } catch (Exception e) {
-            e.printStackTrace();
+            Itk.dumpStackTraceOf(e);
             return false;
         }
     }

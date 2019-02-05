@@ -9,7 +9,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -183,11 +182,6 @@ public class SimulationFrame3D extends Stage implements Observer {
     private String cameraworkFile = null;
 
     /**
-     * リンク表示を実際の道幅でおこなうかどうか
-     */
-    private boolean atActualWidth = false;
-
-    /**
      * 一時停止させる時刻
      */
     private SimTime pauseTime = new SimTime();
@@ -280,7 +274,7 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         // シミュレーションパネルの準備
         Coastline coastline = launcher.getCoastline();
-        panel = new SimulationPanel3D(width, height, networkMap, atActualWidth, launcher.getVerticalScale(), properties, mapTiles, coastline);
+        panel = new SimulationPanel3D(width, height, networkMap, launcher.getVerticalScale(), properties, mapTiles, coastline, launcher.loadLinkAppearance());
         panel.setPrefSize(width, height);
         panel.setShow3dPolygon(launcher.isShow3dPolygon());
         panel.setShowBackgroundMap(launcher.isShowBackgroundMap());
@@ -367,8 +361,6 @@ public class SimulationFrame3D extends Stage implements Observer {
         }
 
         try {
-            atActualWidth = properties.getBoolean("show_links_at_actual_width", atActualWidth);
-
             String filePath = properties.getFilePath("camera_file", null);
 	    if(filePath != null) {
 		if (filePath.toLowerCase().endsWith(".json")) {
@@ -928,22 +920,13 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         // リンク表示の ON/OFF
         CheckBox showLinksCheckBox = new CheckBox("Show links");
-        final CheckBox actualWidthCheckBox = new CheckBox("Show links at actual width");
         showLinksCheckBox.setSelected(true);
         showLinksCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
             panel.setShowLinks(newValue);
-            actualWidthCheckBox.setDisable(! newValue);
-        });
-
-        // 実際の道幅でリンクを表示する
-        actualWidthCheckBox.setSelected(atActualWidth);
-        actualWidthCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -> {
-            atActualWidth = newValue;
-            panel.setAtActualWidth(atActualWidth);
         });
 
         FlowPane showLinksPanel = new FlowPane(12, 0);
-        showLinksPanel.getChildren().addAll(showLinksCheckBox, actualWidthCheckBox);
+        showLinksPanel.getChildren().addAll(showLinksCheckBox);
         checkboxPanel.getChildren().add(showLinksPanel);
 
         // エリア表示の ON/OFF

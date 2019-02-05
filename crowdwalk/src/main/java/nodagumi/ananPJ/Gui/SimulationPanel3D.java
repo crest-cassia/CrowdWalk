@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -62,6 +61,8 @@ import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentAppearance3D;
 import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentViewBase3D;
+import nodagumi.ananPJ.Gui.LinkAppearance.EdgePoints;
+import nodagumi.ananPJ.Gui.LinkAppearance.view3d.LinkAppearance3D;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
@@ -185,8 +186,7 @@ public class SimulationPanel3D extends StackPane {
      */
     private Group linkGroup = new Group();
     private Group pickingLinkGroup = new Group();
-    private Group thinLineGroup = new Group();
-    private Group edgeLineGroup = new Group();
+    private Group lineGroup = new Group();
 
     /**
      * マップのノードを構成する Group ノード
@@ -244,24 +244,9 @@ public class SimulationPanel3D extends StackPane {
     private double verticalScale = 1.0;
 
     /**
-     * 実際の道幅でリンクを表示する
-     */
-    private boolean atActualWidth = false;
-
-    /**
-     * リンクのデフォルトマテリアル
-     */
-    private PhongMaterial defaultLinkMaterial;
-
-    /**
      * ホバー用のマテリアル
      */
     private PhongMaterial hoverMaterial;
-
-    /**
-     * リンクのピッキング用のマテリアル
-     */
-    private PhongMaterial pickingMaterial;
 
     /**
      * ピッキング情報表示用のペイン
@@ -356,7 +341,7 @@ public class SimulationPanel3D extends StackPane {
     /**
      * タグ別リンク表示スタイル
      */
-    private LinkedHashMap<String, LinkAppearance3D> linkAppearances = new LinkedHashMap();
+    private ArrayList<LinkAppearance3D> linkAppearances = new ArrayList();
 
     /**
      * タグ別ノード表示スタイル
@@ -391,12 +376,7 @@ public class SimulationPanel3D extends StackPane {
     /**
      * リンクと表示用 Shape オブジェクトとの対応付け
      */
-    private HashMap<MapLink, Shape3D> linkShapes = new HashMap();
-
-    /**
-     * リンクと実際の道幅表示用 Shape オブジェクトとの対応付け
-     */
-    private HashMap<MapLink, Shape3D> edgeLinkShapes = new HashMap();
+    private HashMap<MapLink, Shape3D[]> linkShapes = new HashMap();
 
     /**
      * ノードと表示用 Shape オブジェクトとの対応付け
@@ -552,14 +532,12 @@ public class SimulationPanel3D extends StackPane {
     /**
      * コンストラクタ
      */
-    public SimulationPanel3D(int panelWidth, int panelHeight, NetworkMap networkMap, boolean atActualWidth,
-            double verticalScale, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles, Coastline coastline) {
+    public SimulationPanel3D(int panelWidth, int panelHeight, NetworkMap networkMap, double verticalScale, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles, Coastline coastline, ArrayList<HashMap> linkAppearanceConfig) {
         this.networkMap = networkMap;
-        this.atActualWidth = atActualWidth;
         this.verticalScale = verticalScale;
         this.properties = properties;
 
-        init(properties);
+        init(properties, linkAppearanceConfig);
 
         // シーングラフの構築
         SubScene networkMapScene = createNetworkMapScene(panelWidth, panelHeight, mapTiles, coastline);
@@ -643,7 +621,7 @@ public class SimulationPanel3D extends StackPane {
     /**
      * 初期設定
      */
-    public void init(CrowdWalkPropertiesHandler properties) {
+    public void init(CrowdWalkPropertiesHandler properties, ArrayList<HashMap> linkAppearanceConfig) {
         areas = networkMap.getAreas();
 
         // リンクの分別
@@ -665,31 +643,25 @@ public class SimulationPanel3D extends StackPane {
         // 実在の地形ベースのマップでなければセンタリングマージンを付加する
         setMarginAdded(regularLinks.size() < MINIMUM_REAL_MAP_LINKS);
 
-        // リンクのデフォルトマテリアル
-        defaultLinkMaterial = new PhongMaterial();
-        defaultLinkMaterial.setDiffuseColor(FxColor.DEFAULT_LINK_COLOR);
-
         // ホバー用のマテリアル
         hoverMaterial = new PhongMaterial();
         hoverMaterial.setDiffuseColor(HOVER_COLOR);
 
-        // リンクのピッキング用のマテリアル
-        pickingMaterial = new PhongMaterial();
-        pickingMaterial.setDiffuseColor(Color.TRANSPARENT);
-
         try {
-            if (properties != null && properties.getPropertiesFile() != null) {
-                String filePath = properties.getFilePath("link_appearance_file", null);
-                if (filePath != null) {
-                    LinkAppearance3D.load(new FileInputStream(filePath), linkAppearances);
+            // Link appearance の準備
+            String[] exclusionTags = {"POLYGON"};
+            EdgePoints edgePoints = new EdgePoints(networkMap, exclusionTags);
+            for (HashMap parameters : linkAppearanceConfig) {
+                LinkAppearance3D appearance = new LinkAppearance3D(this, parameters, edgePoints);
+                if (! appearance.isValidFor3D()) {
+                    Itk.logFatal("Link appearance error", "3D view not defined");
+                    Itk.quitByError() ;
                 }
-                LinkAppearance3D.load(getClass().getResourceAsStream("/link_appearance.json"), linkAppearances);
-                // 設定ファイルに同じタグの定義が複数存在する場合に、記述が上にある方を優先させるために再ロードが必要
-                if (filePath != null) {
-                    LinkAppearance3D.load(new FileInputStream(filePath), linkAppearances);
-                }
+                linkAppearances.add(appearance);
+            }
 
-                filePath = properties.getFilePath("node_appearance_file", null);
+            if (properties != null && properties.getPropertiesFile() != null) {
+                String filePath = properties.getFilePath("node_appearance_file", null);
                 if (filePath != null) {
                     NodeAppearance3D.load(new FileInputStream(filePath), nodeAppearances);
                 }
@@ -721,7 +693,6 @@ public class SimulationPanel3D extends StackPane {
 
                 centeringByNodeAverage = properties.getBoolean("centering_by_node_average", centeringByNodeAverage);
             } else {
-                LinkAppearance3D.load(getClass().getResourceAsStream("/link_appearance.json"), linkAppearances);
                 NodeAppearance3D.load(getClass().getResourceAsStream("/node_appearance.json"), nodeAppearances);
                 polygonAppearances = PolygonAppearance.load(null);
             }
@@ -763,11 +734,8 @@ public class SimulationPanel3D extends StackPane {
             // リンクのシーングラフ
             addLink(link, null);
         }
-        createEdgeLineOfLinks();
         pickingLinkGroup.setVisible(false);     // TODO: true にセットするとリンクの表示が掠れてしまう
-        thinLineGroup.setVisible(! atActualWidth);
-        edgeLineGroup.setVisible(atActualWidth);
-        linkGroup.getChildren().addAll(structureGroup, thinLineGroup, edgeLineGroup, pickingLinkGroup);
+        linkGroup.getChildren().addAll(structureGroup, lineGroup, pickingLinkGroup);
         mapGroup.getChildren().add(linkGroup);
 
         // ノードのシーングラフ
@@ -998,7 +966,6 @@ public class SimulationPanel3D extends StackPane {
             x = bounds.getMinX() + bounds.getWidth() / 2.0;
             y = bounds.getMinY() + bounds.getHeight() / 2.0;
         }
-        // return new Point2D.Double(x, y);
         return new Point2D(x, y);
     }
 
@@ -1554,21 +1521,10 @@ public class SimulationPanel3D extends StackPane {
      * 構造物をシーングラフに追加する.
      */
     public void addStructure(MapLink link) {
-        double width = link.getWidth();
-        PhongMaterial material = defaultLinkMaterial;
-        LinkAppearance3D linkAppearance = getLinkAppearance(link);
-        if (linkAppearance != null) {
-            width = linkAppearance.widthFixed ?
-                linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio;
-            material = linkAppearance.material;
+        Shape3D[] shapes = getLinkAppearance(link).getView().createShapes(link);
+        for (Shape3D shape : shapes) {
+            structureGroup.getChildren().add(shape);
         }
-
-        // 中を塗りつぶした長方形
-        Shape3D shape = new MeshView(new QuadPolygon(calcVertices(link.getFrom(), link.getTo(), width, 0.0)));
-        shape.setDrawMode(DrawMode.FILL);
-        shape.setMaterial(material);
-
-        structureGroup.getChildren().add(shape);
     }
 
     /**
@@ -1667,6 +1623,26 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
+     * link のタグにマッチする LinkAppearance3D を返す.
+     */
+    public LinkAppearance3D getLinkAppearance(MapLink link) {
+        for (LinkAppearance3D appearance : linkAppearances) {
+            if (link.getTags().isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    return appearance;
+                }
+            } else {
+                for (String tag : link.getTags()) {
+                    if (appearance.isTagApplied(tag)) {
+                        return appearance;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * agent のタグにマッチする AgentView を返す.
      */
     public AgentViewBase3D getAgentView(AgentBase agent) {
@@ -1721,15 +1697,11 @@ public class SimulationPanel3D extends StackPane {
      * ピッキング用の透明リンクをシーングラフに追加する.
      */
     public boolean addPickingLink(MapLink link) {
-        Shape3D shape = pickingLinkShapes.get(link);
-        if (shape != null) {
+        if (pickingLinkShapes.containsKey(link)) {
             return false;
         }
 
-        // 中を塗りつぶした長方形
-        shape = new MeshView(new QuadPolygon(calcVertices(link, -0.1)));     // 10cm 上方に配置する
-        shape.setDrawMode(DrawMode.FILL);
-        shape.setMaterial(pickingMaterial);
+        Shape3D shape = getLinkAppearance(link).getView().createPickingShape(link);
 
         // ピッキングを有効にする
         shape.setId("Link " + link.getID());
@@ -1744,42 +1716,16 @@ public class SimulationPanel3D extends StackPane {
 
     /**
      * リンクをシーングラフに追加する.
-     *
-     * 1ドット幅のラインで表示する場合もポリゴンを使用する。(他に方法が見つからないため)
      */
     public boolean addLink(MapLink link, ArrayList<String> tags) {
-        Shape3D shape = linkShapes.get(link);
-        if (shape != null) {
+        if (linkShapes.containsKey(link)) {
             return false;
         }
-
-        double width = THIN_LINK_WIDTH;
-        PhongMaterial material = defaultLinkMaterial;
-        LinkAppearance3D linkAppearance = null;
-        if (tags == null) {
-            linkAppearance = getLinkAppearance(link);
-        } else {
-            linkAppearance = getLinkAppearance(tags);
+        Shape3D[] shapes = getLinkAppearance(link).getView().createShapes(link);
+        for (Shape3D shape : shapes) {
+            lineGroup.getChildren().add(shape);
         }
-        if (linkAppearance != null) {
-            width = linkAppearance.widthFixed ?
-                linkAppearance.widthRatio : link.getWidth() * linkAppearance.widthRatio;
-            material = linkAppearance.material;
-        }
-        if (width == THIN_LINK_WIDTH) {
-            // 線分と見分けが付かない超鋭角の三角形
-            shape = new MeshView(new TrianglePolygon(calcVertices(link.getFrom(), link.getTo(), width, 0.0)));
-            shape.setDrawMode(DrawMode.LINE);
-            shape.setCullFace(CullFace.NONE);    // これがないと時々表示が消える
-        } else {
-            // 中を塗りつぶした長方形
-            shape = new MeshView(new QuadPolygon(calcVertices(link.getFrom(), link.getTo(), width, 0.0)));
-            shape.setDrawMode(DrawMode.FILL);
-        }
-        shape.setMaterial(material);
-
-        thinLineGroup.getChildren().add(shape);
-        linkShapes.put(link, shape);
+        linkShapes.put(link, shapes);
         return true;
     }
 
@@ -1788,23 +1734,18 @@ public class SimulationPanel3D extends StackPane {
      */
     public boolean removeLink(MapLink link) {
         Shape3D shape = pickingLinkShapes.get(link);
-        if (shape != null) {
-            abortHover(link);
-            pickingLinkShapes.remove(link);
-            linkShapes.remove(link);
-            pickingLinkGroup.getChildren().remove(shape);
-            shape = linkShapes.get(link);
-            thinLineGroup.getChildren().remove(shape);
-
-            // edgeLineGroup の色付きリンク
-            shape = edgeLinkShapes.get(link);
-            if (shape != null) {
-                edgeLinkShapes.remove(link);
-                edgeLineGroup.getChildren().remove(shape);
-            }
-            return true;
+        if (shape == null) {
+            return false;
         }
-        return false;
+        abortHover(link);
+        pickingLinkShapes.remove(link);
+        pickingLinkGroup.getChildren().remove(shape);
+
+        for (Shape3D _shape : linkShapes.get(link)) {
+            lineGroup.getChildren().remove(_shape);
+        }
+        linkShapes.remove(link);
+        return true;
     }
 
     /**
@@ -1814,15 +1755,12 @@ public class SimulationPanel3D extends StackPane {
         hoverOff();
         pickingLinkShapes.clear();
         linkShapes.clear();
-        edgeLinkShapes.clear();
         pickingLinkGroup.getChildren().clear();
-        thinLineGroup.getChildren().clear();
-        edgeLineGroup.getChildren().clear();
+        lineGroup.getChildren().clear();
         for (MapLink link : regularLinks) {
             addPickingLink(link);
             addLink(link, null);
         }
-        createEdgeLineOfLinks();
     }
 
     /**
@@ -1830,232 +1768,6 @@ public class SimulationPanel3D extends StackPane {
      */
     public void setShowLinks(boolean showLinks) {
         linkGroup.setVisible(showLinks);
-    }
-
-    /**
-     * link に振られたタグにマッチする LinkAppearance3D を返す.
-     */
-    public LinkAppearance3D getLinkAppearance(MapLink link) {
-        return LinkAppearance3D.getAppearance(linkAppearances, link);
-    }
-
-    /**
-     * tags にマッチする LinkAppearance3D を返す.
-     */
-    public LinkAppearance3D getLinkAppearance(ArrayList<String> tags) {
-        return LinkAppearance3D.getAppearance(linkAppearances, tags);
-    }
-
-    /**
-     * リンクをポリゴン表示するための頂点座標を求める
-     */
-    public Point3D[] calcVertices(MapNode from, MapNode to, double width, double dz) {
-        Point3D p1 = new Point3D(to.getX() - from.getX(), to.getY() - from.getY(), 0);
-        Point3D p2 = p1.normalize().crossProduct(0, 0, width / 2.0);
-        double dx = p2.getX();
-        double dy = p2.getY();
-
-        Point3D[] vertices = new Point3D[4];
-        vertices[0] = new Point3D(from.getX() + dx, from.getY() + dy, -from.getHeight() + dz);
-        vertices[1] = new Point3D(from.getX() - dx, from.getY() - dy, -from.getHeight() + dz);
-        vertices[3] = new Point3D(to.getX() - dx, to.getY() - dy, -to.getHeight() + dz);
-        vertices[2] = new Point3D(to.getX() + dx, to.getY() + dy, -to.getHeight() + dz);
-        return vertices;
-    }
-
-    /**
-     * リンクをポリゴン表示するための頂点座標を求める
-     */
-    public Point3D[] calcVertices(MapLink link, double dz) {
-        return calcVertices(link.getFrom(), link.getTo(), link.getWidth(), dz);
-    }
-
-    /**
-     * リンクをポリゴン表示するための頂点座標を求める
-     */
-    public Point3D[] calcVertices(Point3D point1, Point3D point2, double width, double dz) {
-        Point3D p1 = new Point3D(point2.getX() - point1.getX(), point2.getY() - point1.getY(), 0);
-        Point3D p2 = p1.normalize().crossProduct(0, 0, width / 2.0);
-        double dx = p2.getX();
-        double dy = p2.getY();
-
-        Point3D[] vertices = new Point3D[4];
-        vertices[0] = new Point3D(point1.getX() + dx, point1.getY() + dy, -point1.getZ() + dz);
-        vertices[1] = new Point3D(point1.getX() - dx, point1.getY() - dy, -point1.getZ() + dz);
-        vertices[3] = new Point3D(point2.getX() - dx, point2.getY() - dy, -point2.getZ() + dz);
-        vertices[2] = new Point3D(point2.getX() + dx, point2.getY() + dy, -point2.getZ() + dz);
-        return vertices;
-    }
-
-    /**
-     * 道幅を持ったリンクのシーングラフを作成する.
-     */
-    private void createEdgeLineOfLinks() {
-        // ノードに接続されたリンク(正規のリンクのみ)
-        HashMap<MapNode, ArrayList<MapLink>> regularLinksAtNode = new HashMap();
-        for (MapNode node : networkMap.getNodes()) {
-            ArrayList<MapLink> links = new ArrayList();
-            for (MapLink link : node.getLinks()) {
-                if (link.getOther(node) == node) {
-                    // TODO: ループしたリンクはマップを読み込んだ直後に削除した方がよい
-                    continue;
-                }
-                if (! (link.hasSubTag("POLYGON") || link.hasSubTag("STRUCTURE"))) {
-                    links.add(link);
-                }
-            }
-            regularLinksAtNode.put(node, links);
-        }
-
-        // 道のかどを示す座標を求める
-        HashMap<String, Point2D> points = new HashMap();
-        for (MapNode node : networkMap.getNodes()) {
-            ArrayList<MapLink> links = regularLinksAtNode.get(node);
-            if (links.size() <= 1) {
-                continue;
-            }
-
-            Point2D nodePoint = new Point2D(node.getX(), node.getY());
-            for (int index = 0; index < links.size(); index++) {
-                MapLink link = links.get(index);
-                MapLink prevLink = links.get((index + links.size() - 1) % links.size());
-                MapLink nextLink = links.get((index + 1) % links.size());
-                MapNode prevOppositeNode = prevLink.getOther(node);
-                MapNode oppositeNode = link.getOther(node);
-                MapNode nextOppositeNode = nextLink.getOther(node);
-                Point2D oppositeNodePoint = new Point2D(oppositeNode.getX(), oppositeNode.getY());
-
-                Point3D p1 = new Point3D(oppositeNode.getX() - node.getX(), oppositeNode.getY() - node.getY(), 0);
-                Point3D p2 = p1.normalize().crossProduct(0, 0, link.getWidth() / 2.0);
-                double dx = p2.getX();
-                double dy = p2.getY();
-                // links は node を中心として -π を起点とした時計回りの順にソートされている
-                // link 直線に dx, dy をプラスしたものが道幅の(links 順に見て)起点側の縁を表す
-                // よって link 直線に dx, dy をマイナスしたものと、次の link 直線に dx, dy をプラスしたものの交点座標が、かど座標となる
-                Point2D a1 = new Point2D(node.getX() - dx, node.getY() - dy);
-                Point2D a2 = new Point2D(oppositeNode.getX() - dx, oppositeNode.getY() - dy);
-
-                p1 = new Point3D(nextOppositeNode.getX() - node.getX(), nextOppositeNode.getY() - node.getY(), 0);
-                p2 = p1.normalize().crossProduct(0, 0, nextLink.getWidth() / 2.0);
-                dx = p2.getX();
-                dy = p2.getY();
-                Point2D b1 = new Point2D(node.getX() + dx, node.getY() + dy);
-                Point2D b2 = new Point2D(nextOppositeNode.getX() + dx, nextOppositeNode.getY() + dy);
-
-                double prevAngle = angle(prevOppositeNode, node, oppositeNode);
-                double angle = angle(oppositeNode, node, nextOppositeNode);
-                if (
-                    // 曲がり角が突き出てしまう
-                    angle <= 30.0 && links.size() == 2
-                    // 交点座標が遙か彼方になってしまうかもしれない
-                    || angle >= 178.0
-                    // 道幅の差が大きいためきれいに繋がらない
-                    || angle >= 165.0 && (Math.max(link.getWidth(), nextLink.getWidth()) / Math.min(link.getWidth(), nextLink.getWidth())) > 1.5
-                ) {
-                    points.put(link.ID + " " + node.ID + " L", a1);
-                    points.put(nextLink.ID + " " + node.ID + " R", b1);
-                } else {
-                    Point2D intersectionPoint = intersection(a1, a2, b1, b2);
-                    if (
-                        // 交点座標が道幅の1.5倍以上ノードから離れている
-                        nodePoint.distance(intersectionPoint) > Math.max(link.getWidth(), nextLink.getWidth()) * 1.5
-                        // 交点座標がノードよりも先にはみ出ている
-                        && nodePoint.distance(intersectionPoint) > nodePoint.distance(oppositeNodePoint)
-                    ) {
-                        points.put(link.ID + " " + node.ID + " L", a1);
-                        points.put(nextLink.ID + " " + node.ID + " R", b1);
-                    } else {
-                        points.put(link.ID + " " + node.ID + " L", intersectionPoint);
-                        points.put(nextLink.ID + " " + node.ID + " R", intersectionPoint);
-                    }
-                }
-                if (regularLinksAtNode.get(oppositeNode).size() == 1) {
-                    points.put(link.ID + " " + oppositeNode.ID + " R", a2);
-                }
-                if (regularLinksAtNode.get(nextOppositeNode).size() == 1) {
-                    points.put(nextLink.ID + " " + nextOppositeNode.ID + " L", b2);
-                }
-            }
-        }
-
-        // リンクを描画する
-        for (MapLink link : regularLinks) {
-            Point2D a1 = points.get(link.ID + " " + link.getFrom().ID + " L");
-            Point2D a2 = points.get(link.ID + " " + link.getTo().ID + " R");
-            Point2D b1 = points.get(link.ID + " " + link.getFrom().ID + " R");
-            Point2D b2 = points.get(link.ID + " " + link.getTo().ID + " L");
-            if (a1 == null || a2 == null || b1 == null || b2 == null) {
-                Itk.logWarn_("Link can not be rendered", "ID=" + link.ID, link.getTags().toString() + " " + a1 + ", " + a2 + ", " + b1 + ", " + b2);
-                continue;
-            }
-
-	    Point3D point1 = new Point3D(a1.getX(), a1.getY(), link.getFrom().getHeight());
-	    Point3D point2 = new Point3D(a2.getX(), a2.getY(), link.getTo().getHeight());
-            Shape3D shape = new MeshView(new TrianglePolygon(calcVertices(point1, point2, THIN_LINK_WIDTH, 0.0)));
-            shape.setDrawMode(DrawMode.LINE);
-            shape.setCullFace(CullFace.NONE);
-            shape.setMaterial(defaultLinkMaterial);
-            edgeLineGroup.getChildren().add(shape);
-
-	    Point3D point3 = new Point3D(b1.getX(), b1.getY(), link.getFrom().getHeight());
-	    Point3D point4 = new Point3D(b2.getX(), b2.getY(), link.getTo().getHeight());
-            shape = new MeshView(new TrianglePolygon(calcVertices(point3, point4, THIN_LINK_WIDTH, 0.0)));
-            shape.setDrawMode(DrawMode.LINE);
-            shape.setCullFace(CullFace.NONE);
-            shape.setMaterial(defaultLinkMaterial);
-            edgeLineGroup.getChildren().add(shape);
-
-            addEdgeLink(link);
-        }
-    }
-
-    /**
-     * 道幅を持ったリンクに色を付ける
-     */
-    public boolean addEdgeLink(MapLink link) {
-        Shape3D shape = edgeLinkShapes.get(link);
-        if (shape != null) {
-            return false;
-        }
-        LinkAppearance3D linkAppearance = getLinkAppearance(link);
-        if (linkAppearance == null) {
-            return false;
-        }
-        shape = new MeshView(new QuadPolygon(calcVertices(link, 0.0)));
-        shape.setDrawMode(DrawMode.FILL);
-        shape.setMaterial(linkAppearance.material);
-
-        edgeLineGroup.getChildren().add(shape);
-        edgeLinkShapes.put(link, shape);
-        return true;
-    }
-
-    /**
-     * 3点のノードがなす角度を求める.
-     *
-     * 0.0～180.0 を返す
-     */
-    private double angle(MapNode nodeA, MapNode nodeB, MapNode nodeC) {
-        Point2D pointA = new Point2D(nodeA.getX(), nodeA.getY());
-        Point2D pointB = new Point2D(nodeB.getX(), nodeB.getY());
-        Point2D pointC = new Point2D(nodeC.getX(), nodeC.getY());
-        return pointB.angle(pointA, pointC);
-    }
-
-    /**
-     * 2直線の交点座標を求める.
-     *
-     * ※直線 a, b は平行ではないこと。
-     */
-    public Point2D intersection(Point2D a1, Point2D a2, Point2D b1, Point2D b2) {
-        double f1 = a2.getX() - a1.getX();
-        double g1 = a2.getY() - a1.getY();
-        double f2 = b2.getX() - b1.getX();
-        double g2 = b2.getY() - b1.getY();
-        double dx = b1.getX() - a1.getX();
-        double dy = b1.getY() - a1.getY();
-        double t1 = (f2 * dy - g2 * dx) / (f2 * g1 - f1 * g2);
-        return new Point2D(a1.getX() + f1 * t1, a1.getY() + g1 * t1);
     }
 
     /**
@@ -2426,15 +2138,6 @@ public class SimulationPanel3D extends StackPane {
      */
     public boolean isViewPointOperationEnabled() {
         return viewPointOperationEnabled;
-    }
-
-    /**
-     * 表示するリンクを実際の道幅表示に切り替える
-     */
-    public void setAtActualWidth(boolean atActualWidth) {
-        this.atActualWidth = atActualWidth;
-        thinLineGroup.setVisible(! atActualWidth);
-        edgeLineGroup.setVisible(atActualWidth);
     }
 
     public void setAgentAppearances(ArrayList<AgentAppearance3D> agentAppearances) {

@@ -1,6 +1,8 @@
 package nodagumi.ananPJ.Gui;
 
-import javafx.application.Platform;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -11,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
+import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 
 /**
@@ -27,10 +30,12 @@ public class MapViewFrame {
      */
     public SimulationPanel3D panel;
 
+    private String linkAppearanceFile = null;
+
     public MapViewFrame() {}
 
     public MapViewFrame(String title, int width, int height, NetworkMap networkMap,
-            CrowdWalkPropertiesHandler properties) {
+            CrowdWalkPropertiesHandler properties, ArrayList<HashMap> linkAppearanceConfig) {
         stage = new Stage();
         stage.setTitle(title);
 
@@ -38,7 +43,10 @@ public class MapViewFrame {
         Node menuBar = createMenu();
 
         // シミュレーションパネル
-        panel = new SimulationPanel3D(width, height, networkMap, false, 1.0, properties, null, null);
+        for (MapNode node : networkMap.getNodes()) {
+            node.sortLinkTableByAngle();
+        }
+        panel = new SimulationPanel3D(width, height, networkMap, 1.0, properties, null, null, linkAppearanceConfig);
         panel.setPrefSize(width, height);
 
         BorderPane borderPane = new BorderPane();
@@ -47,20 +55,6 @@ public class MapViewFrame {
 
         Scene scene = new Scene(borderPane);
         stage.setScene(scene);
-    }
-
-    /**
-     * 3D マップ確認用のウィンドウを表示する
-     */
-    public void view(final String title, final int width, final int height, final NetworkMap networkMap,
-            final CrowdWalkPropertiesHandler properties) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                MapViewFrame frame = new MapViewFrame(title, width, height, networkMap, properties);
-                frame.show();
-            }
-        });
     }
 
     /**

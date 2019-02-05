@@ -684,7 +684,7 @@ public class SimulationFrame2D extends JFrame
 
         //// 2D シミュレーションパネル ////
 
-        panel = new SimulationPanel2D(this, launcher.getMap(), properties, backgroundMapTiles);
+        panel = new SimulationPanel2D(this, launcher.getMap(), properties, backgroundMapTiles, launcher.loadLinkAppearance());
         panel.setPreferredSize(new Dimension(simulationPanelWidth, simulationPanelHeight));
         panel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {

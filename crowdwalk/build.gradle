@@ -109,7 +109,6 @@ sourceSets {
             } else {
                 exclude 'nodagumi/ananPJ/CuiCrowdWalkLauncher.java'
             }
-            exclude 'nodagumi/ananPJ/ImportGis.java'
         }
     }
 }
