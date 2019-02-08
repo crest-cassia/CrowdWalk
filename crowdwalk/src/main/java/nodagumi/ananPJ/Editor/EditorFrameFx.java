@@ -634,7 +634,7 @@ public class EditorFrameFx {
         miShow3d.setOnAction(e -> {
             GuiSimulationLauncher3D launcher = (GuiSimulationLauncher3D)GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
             launcher.init(editor, settings);
-            MapViewFrame mapViewer = new MapViewFrame("3D preview of Structure", 800, 600, launcher.getMap(), launcher.getProperties(), launcher.loadLinkAppearance());
+            MapViewFrame mapViewer = new MapViewFrame("3D preview of Structure", 800, 600, launcher.getMap(), launcher.getProperties(), launcher.loadLinkAppearance(), launcher.loadNodeAppearance());
             mapViewer.show();
         });
 

@@ -408,7 +408,7 @@ public class SimulationViewController3D {
             if (! _changedNodes.isEmpty()) {
                 for (ChangedMapNode changedNode : _changedNodes.values()) {
                     panel.removeNode(changedNode.node);
-                    panel.addNode(changedNode.node, changedNode.tags);
+                    panel.addNode(changedNode.node);
                 }
                 _changedNodes.clear();
             }

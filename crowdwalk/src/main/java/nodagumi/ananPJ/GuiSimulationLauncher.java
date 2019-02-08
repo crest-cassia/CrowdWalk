@@ -144,6 +144,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected boolean exitWithSimulationFinished = false;
     protected String agentAppearanceFile = null;
     protected String linkAppearanceFile = null;
+    protected String nodeAppearanceFile = null;
     protected int gsiTileZoom = 14;
 
     /**
@@ -428,6 +429,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         exitWithSimulationFinished = false;
         agentAppearanceFile = null;
         linkAppearanceFile = null;
+        nodeAppearanceFile = null;
         gsiTileZoom = 14;
     }
 
@@ -452,6 +454,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             cameraFile = properties.getFilePath("camera_file", null);
             agentAppearanceFile = properties.getFilePath("agent_appearance_file", null);
             linkAppearanceFile = properties.getFilePath("link_appearance_file", null);
+            nodeAppearanceFile = properties.getFilePath("node_appearance_file", null);
             showBackgroundImage = properties.getBoolean("show_background_image", false);
             showBackgroundMap = properties.getBoolean("show_background_map", false);
             showTheSea = properties.getBoolean("show_the_sea", false);
@@ -578,6 +581,69 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                 } else {
                     view.put("className", "ActualWidth" + dimension + "D");
                 }
+                if (colorName != null) {
+                    parameters.put("color", colorName);
+                }
+                parameters.put("transparency", transparency);
+                parameters.put("method", "filling");
+                view.put("parameters", parameters);
+                appearance.put("" + dimension + "D_View", view);
+            }
+            appearances.add(appearance);
+        }
+        return appearances;
+    }
+
+    /**
+     * node appearance file を読み込む
+     */
+    public ArrayList<HashMap> loadNodeAppearance() {
+        try {
+            JSON json = new JSON(JSON.Mode.TRADITIONAL);
+            ArrayList<HashMap> appearances = new ArrayList();
+            if (nodeAppearanceFile != null) {
+                InputStream is = new FileInputStream(nodeAppearanceFile);
+                Object object = json.parse(is);
+                if (object instanceof HashMap) {
+                    // 旧書式の場合
+                    appearances.addAll(convertNodeAppearanceForm((Map<String, Object>)object));
+                } else {
+                    appearances.addAll((ArrayList<HashMap>)object);
+                }
+            }
+            InputStream is = getClass().getResourceAsStream("/node_appearance.json");
+            appearances.addAll((ArrayList<HashMap>)json.parse(is));
+            return appearances;
+        } catch (Exception e) {
+            Itk.quitWithStackTrace(e) ;
+        }
+        return null;
+    }
+
+    /**
+     * 旧書式の node appearance オブジェクトを新書式に変換する.
+     */
+    public ArrayList<HashMap> convertNodeAppearanceForm(Map<String, Object> object) throws Exception {
+        ArrayList<HashMap> appearances = new ArrayList();
+        JsonicHashMapGetter jsonMap = new JsonicHashMapGetter();
+        for (Map.Entry<String, Object> entry : object.entrySet()) {
+            String tag = entry.getKey();
+            BigDecimal diameter = new BigDecimal(1.5);
+            String colorName = null;
+            BigDecimal transparency = new BigDecimal(0.75);
+
+            jsonMap.setParameters((HashMap)entry.getValue());
+            diameter = jsonMap.getBigDecimalParameter("diameter", diameter);
+            colorName = jsonMap.getStringParameter("color", colorName);
+            transparency = jsonMap.getBigDecimalParameter("transparency", transparency);
+
+            HashMap<String, Object> appearance = new HashMap();
+            appearance.put("tag", tag);
+            for (int dimension = 2; dimension <= 3; dimension++) {
+                HashMap<String, Object> view = new HashMap();
+                HashMap<String, Object> parameters = new HashMap();
+                view.put("className", "RoundNode" + dimension + "D");
+                parameters.put("diameter", diameter);
                 if (colorName != null) {
                     parameters.put("color", colorName);
                 }

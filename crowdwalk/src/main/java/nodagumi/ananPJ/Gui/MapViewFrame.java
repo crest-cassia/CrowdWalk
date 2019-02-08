@@ -34,8 +34,7 @@ public class MapViewFrame {
 
     public MapViewFrame() {}
 
-    public MapViewFrame(String title, int width, int height, NetworkMap networkMap,
-            CrowdWalkPropertiesHandler properties, ArrayList<HashMap> linkAppearanceConfig) {
+    public MapViewFrame(String title, int width, int height, NetworkMap networkMap, CrowdWalkPropertiesHandler properties, ArrayList<HashMap> linkAppearanceConfig, ArrayList<HashMap> nodeAppearanceConfig) {
         stage = new Stage();
         stage.setTitle(title);
 
@@ -46,7 +45,7 @@ public class MapViewFrame {
         for (MapNode node : networkMap.getNodes()) {
             node.sortLinkTableByAngle();
         }
-        panel = new SimulationPanel3D(width, height, networkMap, 1.0, properties, null, null, linkAppearanceConfig);
+        panel = new SimulationPanel3D(width, height, networkMap, 1.0, properties, null, null, linkAppearanceConfig, nodeAppearanceConfig);
         panel.setPrefSize(width, height);
 
         BorderPane borderPane = new BorderPane();

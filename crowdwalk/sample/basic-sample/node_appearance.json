@@ -1,25 +1,25 @@
 /*
-Usable color names:
-    BLACK, BLACK2, GRAY, GRAY2, LIGHTGRAY, RED, GREEN, BLUE, DARKBLUE,
-    LIGHTBLUE, SLATEBLUE, TURQUOISE, YELLOW, WHITE, PINK, LIGHTB, APINK,
-    ALIGHTB, ARED, PURPLE, PRED,
-    BACKGROUND_3D_COLOR, DEFAULT_LINK_COLOR, DEFAULT_AGENT_COLOR
-
-・設定の仕方
-
-    タグ名: {
-        diameter: 直径,
-        color: '色',
-        transparency: 透明度(1.0 で完全に透明)
-    },
-
-・タグ名にハイフン(-)を含む場合はシングルクォートまたはダブルクォートで囲むこと。
-・最後の要素の後にカンマ(,)をつけてはならない。
+    設定方法: https://github.com/crest-cassia/CrowdWalk/wiki/Node-appearance-%E3%81%AE%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95
 */
-{
-    EXIT: {
-        diameter: 0.5,
-        color: 'BLACK',
-        transparency: 0.3
+[
+    {
+        "tag" : "EXIT",
+        "2D_View" : {
+            "className" : "RoundNode2D",
+            "parameters" : {
+                "diameter" : 0.5,
+                "color" : "BLACK",
+                "transparency" : 0.3
+            }
+        },
+        "3D_View" : {
+            "className" : "RoundNode3D",
+            "parameters" : {
+                "diameter" : 0.5,
+                "height" : 0.01,
+                "color" : "BLACK",
+                "transparency" : 0.2
+            }
+        }
     }
-}
+]

@@ -46,7 +46,8 @@ import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.Gui.LinkAppearance.EdgePoints;
 import nodagumi.ananPJ.Gui.LinkAppearance.view2d.LinkAppearance2D;
 import nodagumi.ananPJ.Gui.LinkAppearance.view2d.LinkViewBase2D;
-import nodagumi.ananPJ.Gui.NodeAppearance2D;
+import nodagumi.ananPJ.Gui.NodeAppearance.view2d.NodeAppearance2D;
+import nodagumi.ananPJ.Gui.NodeAppearance.view2d.NodeViewBase2D;
 import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle.ObstructerDisplay;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
@@ -267,7 +268,12 @@ public class SimulationPanel2D extends JPanel {
     /**
      * タグ別ノード表示スタイル
      */
-    private LinkedHashMap<String, NodeAppearance2D> nodeAppearances = new LinkedHashMap();
+    private ArrayList<NodeAppearance2D> nodeAppearances = new ArrayList();
+
+    /**
+     * 各ノードに対応する NodeAppearance オブジェクト
+     */
+    private HashMap<MapNode, NodeAppearance2D> nodeAppearanceCache = new HashMap();
 
     /**
      * タグ別エージェント表示スタイル
@@ -314,6 +320,11 @@ public class SimulationPanel2D extends JPanel {
      */
     private boolean updated = false;
 
+    /**
+     * 属性を扱うハンドラ
+     */
+    private CrowdWalkPropertiesHandler properties;
+
     synchronized public boolean isUpdated() {
         return updated;
     }
@@ -324,11 +335,12 @@ public class SimulationPanel2D extends JPanel {
 
     /* constructor
      */
-    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> backgroundMapTiles, ArrayList<HashMap> linkAppearanceConfig) {
+    public SimulationPanel2D(SimulationFrame2D _frame, NetworkMap _networkMap, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> backgroundMapTiles, ArrayList<HashMap> linkAppearanceConfig, ArrayList<HashMap> nodeAppearanceConfig) {
         super();
         frame = _frame;
         networkMap = _networkMap;
         this.backgroundMapTiles = backgroundMapTiles;
+        this.properties = properties;
 
         try {
             // Link appearance の準備
@@ -343,28 +355,23 @@ public class SimulationPanel2D extends JPanel {
                 linkAppearances.add(appearance);
             }
 
-            if (properties != null && properties.getPropertiesFile() != null) {
-                String filePath = null;
-                if (properties.isDefined("node_appearance_file")) {
-                    filePath = properties.getFilePath("node_appearance_file", null);
-                    NodeAppearance2D.load(new FileInputStream(filePath), nodeAppearances);
+            // Node appearance の準備
+            for (HashMap parameters : nodeAppearanceConfig) {
+                NodeAppearance2D appearance = new NodeAppearance2D(this, parameters);
+                if (! appearance.isValidFor2D()) {
+                    Itk.logFatal("Node appearance error", "2D view not defined");
+                    Itk.quitByError() ;
                 }
-                NodeAppearance2D.load(
-                        getClass().getResourceAsStream("/node_appearance.json"), nodeAppearances);
-                if (properties.isDefined("node_appearance_file")) {
-                    NodeAppearance2D.load(new FileInputStream(filePath), nodeAppearances);
-                }
+                nodeAppearances.add(appearance);
+            }
 
-                show_gas =
-                    ObstructerDisplay
-                    .valueOf(properties
-                             .getStringInPattern("pollution_color", "ORANGE",
-                                                 ObstructerDisplay.getNames())
-                             .toUpperCase()) ;
+            if (properties != null && properties.getPropertiesFile() != null) {
+                show_gas = ObstructerDisplay.valueOf(properties.getStringInPattern(
+                    "pollution_color", "ORANGE", ObstructerDisplay.getNames()).toUpperCase());
                 pollutionColorSaturation =
                     properties.getDouble("pollution_color_saturation", 0.0);
 
-                filePath = properties.getFilePath("polygon_appearance_file", null);
+                String filePath = properties.getFilePath("polygon_appearance_file", null);
                 polygonAppearances = PolygonAppearance.load(filePath);
 
                 // グループ別の背景画像を読み込む
@@ -501,6 +508,9 @@ public class SimulationPanel2D extends JPanel {
              */
             public void nodeTagAdded(MapNode node, String tag) {
                 Itk.logInfo("Node Tag Added", tag);
+                synchronized (panel) {
+                    nodeAppearanceCache.remove(node);
+                }
             }
 
             /**
@@ -508,6 +518,9 @@ public class SimulationPanel2D extends JPanel {
              */
             public void nodeTagRemoved(MapNode node) {
                 Itk.logInfo("Node Tag Removed");
+                synchronized (panel) {
+                    nodeAppearanceCache.remove(node);
+                }
             }
 
             /**
@@ -1083,10 +1096,12 @@ public class SimulationPanel2D extends JPanel {
             }
         }
         if (showNodes) {
-            g2.setStroke(new BasicStroke((float)(1.0 / scale)));
-            for (MapNode node : frame.getNodes()) {
-                if (viewArea.contains(getRotatedX(node), getRotatedY(node))) {
-                    drawNode(node, g2, showNodeLabels, false);
+            synchronized (this) {
+                g2.setStroke(new BasicStroke((float)(1.0 / scale)));
+                for (MapNode node : frame.getNodes()) {
+                    if (viewArea.contains(getRotatedX(node), getRotatedY(node))) {
+                        getNodeAppearance(node).getView().draw(node, g2, showNodeLabels);
+                    }
                 }
             }
         }
@@ -1100,10 +1115,14 @@ public class SimulationPanel2D extends JPanel {
 
         /* temporary objects */
         if (hoverNode != null) {
-            drawHoverNode(hoverNode, g2);
+            synchronized (this) {
+                getNodeAppearance(hoverNode).getView().drawHover(hoverNode, g2);
+            }
         }
         if (hoverLink != null) {
-            getLinkAppearance(hoverLink).getView().drawHover(hoverLink, g2);
+            synchronized (this) {
+                getLinkAppearance(hoverLink).getView().drawHover(hoverLink, g2);
+            }
         }
         if (hoverArea != null) {
             drawHoverArea(hoverArea, g2);
@@ -1159,58 +1178,6 @@ public class SimulationPanel2D extends JPanel {
         g2.draw(polygon);
     }
 
-    /**
-     * ノードを描画する
-     */
-    public void drawNode(MapNode node, Graphics2D g2, boolean showLabel, boolean isSymbolic) {
-        double diameter = 0.0;
-        Point2D point = rotatedNodePoints.get(node);
-        NodeAppearance2D nodeAppearance = getNodeAppearance(node);
-        if (nodeAppearance != null) {
-            g2.setColor(nodeAppearance.color);
-            diameter = nodeAppearance.diameter;
-            double x = point.getX() - diameter / 2.0;
-            double y = point.getY() - diameter / 2.0;
-            g2.fill(new Ellipse2D.Double(x, y, diameter, diameter));
-        }
-
-        if (showLabel) {
-            String text = node.getHintString();
-            if (! text.isEmpty()) {
-                double cx = node.getX();
-                double cy = node.getY() - diameter / 2.0;
-                g2.setColor(Color.darkGray);
-                drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text);
-            }
-        }
-    }
-
-    /**
-     * ノードのホバーを描画する
-     */
-    public void drawHoverNode(MapNode node, Graphics2D g2) {
-        double diameter = 0.0;
-        Point2D point = rotatedNodePoints.get(node);
-        NodeAppearance2D nodeAppearance = getNodeAppearance(node);
-        if (nodeAppearance != null) {
-            diameter = nodeAppearance.diameter;
-        }
-
-        g2.setColor(Color.BLUE);
-        String text = node.getHintString();
-        if (! text.isEmpty()) {
-            double cx = node.getX();
-            double cy = node.getY() - diameter / 2.0;
-            drawText(g2, cx, cy, TextPosition.UPPER_CENTER, text, HOVER_BG_COLOR);
-        }
-
-        g2.setStroke(new BasicStroke((float)(3.0 / scale)));
-        diameter = 8.0 / scale;
-        double x = point.getX() - diameter / 2.0;
-        double y = point.getY() - diameter / 2.0;
-        g2.draw(new Ellipse2D.Double(x, y, diameter, diameter));
-    }
-    
     /**
      * エリアを描画する
      */
@@ -1356,7 +1323,7 @@ public class SimulationPanel2D extends JPanel {
     public int getStringWidth(String text) {
         int size = 0;
         for (byte c : text.getBytes()) {
-            size += originalCharsWidths[(int)c];
+            size += originalCharsWidths[c & 0xFF];
         }
         return size;
     }
@@ -1410,10 +1377,30 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
-     * node に振られているタグにマッチする NodeAppearance2D を返す.
+     * node のタグにマッチする NodeAppearance2D を返す.
      */
     public NodeAppearance2D getNodeAppearance(MapNode node) {
-        return NodeAppearance2D.getAppearance(nodeAppearances, node);
+        NodeAppearance2D nodeAppearance = nodeAppearanceCache.get(node);
+        if (nodeAppearance != null) {
+            return nodeAppearance;
+        }
+
+        for (NodeAppearance2D appearance : nodeAppearances) {
+            if (node.getTags().isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    nodeAppearanceCache.put(node, appearance);
+                    return appearance;
+                }
+            } else {
+                for (String tag : node.getTags()) {
+                    if (appearance.isTagApplied(tag)) {
+                        nodeAppearanceCache.put(node, appearance);
+                        return appearance;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -1541,5 +1528,9 @@ public class SimulationPanel2D extends JPanel {
 
     public void setAgentAppearances(ArrayList<AgentAppearance2D> agentAppearances) {
         this.agentAppearances = agentAppearances;
+    }
+
+    public CrowdWalkPropertiesHandler getProperties() {
+        return properties;
     }
 }

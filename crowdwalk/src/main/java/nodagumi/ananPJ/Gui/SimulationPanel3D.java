@@ -7,10 +7,12 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -63,6 +65,7 @@ import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentAppearance3D;
 import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentViewBase3D;
 import nodagumi.ananPJ.Gui.LinkAppearance.EdgePoints;
 import nodagumi.ananPJ.Gui.LinkAppearance.view3d.LinkAppearance3D;
+import nodagumi.ananPJ.Gui.NodeAppearance.view3d.NodeAppearance3D;
 import nodagumi.ananPJ.Gui.GsiTile;
 import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.NetworkMap.Area.MapArea;
@@ -96,16 +99,6 @@ public class SimulationPanel3D extends StackPane {
     private static final int CENTERING_MARGIN = 32;
 
     /**
-     * リンクを擬似的な1ドット幅のラインで表示する場合の、三角形の width に当たる辺の長さ(1mm)
-     */
-    private static double THIN_LINK_WIDTH = 0.001;
-
-    /**
-     * ノード表示用の Cylinder オブジェクトの高さ(10cm)
-     */
-    private static double NODE_THICKNESS = 0.1;
-
-    /**
      * 視野角
      */
     private static double VIEW_ANGLE = 30.0;
@@ -114,11 +107,6 @@ public class SimulationPanel3D extends StackPane {
      * マウスドラッグの感度
      */
     private static double DRAG_SENSITIVITY = 4.0;
-
-    /**
-     * ノード表示用の Cylinder オブジェクトを水平に表示するための回転変換オブジェクト
-     */
-    private static Rotate NODE_ROTATE = new Rotate(90, Rotate.X_AXIS);
 
     /**
      * ホバーの色
@@ -346,7 +334,7 @@ public class SimulationPanel3D extends StackPane {
     /**
      * タグ別ノード表示スタイル
      */
-    private LinkedHashMap<String, NodeAppearance3D> nodeAppearances = new LinkedHashMap();
+    private ArrayList<NodeAppearance3D> nodeAppearances = new ArrayList();
 
     /**
      * ポリゴン表示スタイルリスト
@@ -381,7 +369,7 @@ public class SimulationPanel3D extends StackPane {
     /**
      * ノードと表示用 Shape オブジェクトとの対応付け
      */
-    private HashMap<MapNode, Cylinder> nodeShapes = new HashMap();
+    private HashMap<MapNode, Shape3D[]> nodeShapes = new HashMap();
 
     /**
      * ID でエージェントを参照するハッシュテーブル
@@ -410,6 +398,7 @@ public class SimulationPanel3D extends StackPane {
     private NType hoverType = null;
     private OBNode currentHoverObject = null;
     private Material currentMaterial = null;
+    private ArrayList<Material> currentMaterials = new ArrayList();
 
     /**
      * ホバー表示用マウスイベントハンドラ
@@ -532,12 +521,12 @@ public class SimulationPanel3D extends StackPane {
     /**
      * コンストラクタ
      */
-    public SimulationPanel3D(int panelWidth, int panelHeight, NetworkMap networkMap, double verticalScale, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles, Coastline coastline, ArrayList<HashMap> linkAppearanceConfig) {
+    public SimulationPanel3D(int panelWidth, int panelHeight, NetworkMap networkMap, double verticalScale, CrowdWalkPropertiesHandler properties, ArrayList<GsiTile> mapTiles, Coastline coastline, ArrayList<HashMap> linkAppearanceConfig, ArrayList<HashMap> nodeAppearanceConfig) {
         this.networkMap = networkMap;
         this.verticalScale = verticalScale;
         this.properties = properties;
 
-        init(properties, linkAppearanceConfig);
+        init(linkAppearanceConfig, nodeAppearanceConfig);
 
         // シーングラフの構築
         SubScene networkMapScene = createNetworkMapScene(panelWidth, panelHeight, mapTiles, coastline);
@@ -621,7 +610,7 @@ public class SimulationPanel3D extends StackPane {
     /**
      * 初期設定
      */
-    public void init(CrowdWalkPropertiesHandler properties, ArrayList<HashMap> linkAppearanceConfig) {
+    public void init(ArrayList<HashMap> linkAppearanceConfig, ArrayList<HashMap> nodeAppearanceConfig) {
         areas = networkMap.getAreas();
 
         // リンクの分別
@@ -660,27 +649,23 @@ public class SimulationPanel3D extends StackPane {
                 linkAppearances.add(appearance);
             }
 
-            if (properties != null && properties.getPropertiesFile() != null) {
-                String filePath = properties.getFilePath("node_appearance_file", null);
-                if (filePath != null) {
-                    NodeAppearance3D.load(new FileInputStream(filePath), nodeAppearances);
+            // Node appearance の準備
+            for (HashMap parameters : nodeAppearanceConfig) {
+                NodeAppearance3D appearance = new NodeAppearance3D(this, parameters);
+                if (! appearance.isValidFor3D()) {
+                    Itk.logFatal("Node appearance error", "3D view not defined");
+                    Itk.quitByError() ;
                 }
-                NodeAppearance3D.load(getClass().getResourceAsStream("/node_appearance.json"), nodeAppearances);
-                // 設定ファイルに同じタグの定義が複数存在する場合に、記述が上にある方を優先させるために再ロードが必要
-                if (filePath != null) {
-                    NodeAppearance3D.load(new FileInputStream(filePath), nodeAppearances);
-                }
+                nodeAppearances.add(appearance);
+            }
 
-                filePath = properties.getFilePath("polygon_appearance_file", null);
+            if (properties != null && properties.getPropertiesFile() != null) {
+                String filePath = properties.getFilePath("polygon_appearance_file", null);
                 polygonAppearances = PolygonAppearance.load(filePath);
 
                 backgroundColor = Color.web(properties.getString("background_color", "white"));
-                obstructerDisplay =
-		    ObstructerDisplay
-		    .valueOf(properties
-			     .getStringInPattern("pollution_color", "ORANGE",
-						 ObstructerDisplay.getNames())
-			     .toUpperCase());
+                obstructerDisplay = ObstructerDisplay.valueOf(properties.getStringInPattern(
+                    "pollution_color", "ORANGE", ObstructerDisplay.getNames()).toUpperCase());
                 outlineColor = Color.web(properties.getString("outline_color", "lime"));
                 pollutionColorSaturation = properties.getDouble("pollution_color_saturation", 0.0);
 
@@ -693,7 +678,6 @@ public class SimulationPanel3D extends StackPane {
 
                 centeringByNodeAverage = properties.getBoolean("centering_by_node_average", centeringByNodeAverage);
             } else {
-                NodeAppearance3D.load(getClass().getResourceAsStream("/node_appearance.json"), nodeAppearances);
                 polygonAppearances = PolygonAppearance.load(null);
             }
         } catch (Exception e) {
@@ -740,7 +724,7 @@ public class SimulationPanel3D extends StackPane {
 
         // ノードのシーングラフ
         for (MapNode node : networkMap.getNodes()) {
-            addNode(node, null);
+            addNode(node);
         }
         mapGroup.getChildren().add(nodeGroup);
 
@@ -1070,7 +1054,7 @@ public class SimulationPanel3D extends StackPane {
             rebuildPolygonGroup();
             rebuildStructureGroup();
             rebuildLinkGroup();
-            updateNodesHeight();
+            rebuildNodeGroup();
             updateAgentsHeight(agentSize);
             alert.hide();
         });
@@ -1138,7 +1122,17 @@ public class SimulationPanel3D extends StackPane {
         Shape3D shape = null;
         switch (hoverType) {
         case NODE:
-            shape = nodeShapes.get(currentHoverObject);
+            Shape3D[] shapes = nodeShapes.get(currentHoverObject);
+            if (shapes == null) {
+                currentHoverObject = null;
+                hoverType = null;
+                return;
+            }
+            currentMaterials.clear();
+            for (Shape3D _shape : shapes) {
+                currentMaterials.add(_shape.getMaterial());
+                _shape.setMaterial(hoverMaterial);
+            }
             break;
         case LINK:
             shape = pickingLinkShapes.get(currentHoverObject);
@@ -1157,7 +1151,6 @@ public class SimulationPanel3D extends StackPane {
         }
 
         switch (hoverType) {
-        case NODE:
         case LINK:
             currentMaterial = shape.getMaterial();
             shape.setMaterial(hoverMaterial);
@@ -1190,9 +1183,11 @@ public class SimulationPanel3D extends StackPane {
         Shape3D shape = null;
         switch (hoverType) {
         case NODE:
-            shape = nodeShapes.get(currentHoverObject);
-            if (shape != null) {
-                shape.setMaterial(currentMaterial);
+            Shape3D[] shapes = nodeShapes.get(currentHoverObject);
+            if (shapes != null) {
+                for (int index = 0; index < shapes.length; index++) {
+                    shapes[index].setMaterial(currentMaterials.get(index));
+                }
             }
             break;
         case LINK:
@@ -1220,7 +1215,7 @@ public class SimulationPanel3D extends StackPane {
     /**
      * ホバー表示を消した事にする.
      *
-     * ※ホバー表示対象オブジェクトがすでに削除されている場合に使用する。
+     * ※ホバー表示対象オブジェクトがすでに削除されていた場合に使用する。
      */
     private synchronized void abortHover(OBNode object) {
         if (object == currentHoverObject) {
@@ -1540,64 +1535,53 @@ public class SimulationPanel3D extends StackPane {
     /**
      * ノードをシーングラフに追加する
      */
-    public boolean addNode(MapNode node, ArrayList<String> tags) {
-        Cylinder shape = nodeShapes.get(node);
-        if (shape == null) {
-            NodeAppearance3D nodeAppearance = null;
-            if (tags == null) {
-                nodeAppearance = getNodeAppearance(node);
-            } else {
-                nodeAppearance = getNodeAppearance(tags);
-            }
-            if (nodeAppearance == null) {
-                // 見えないノードは追加不要
-                return false;
-            }
-
-            // ノード表示用の Shape オブジェクトを作成する
-            shape = new Cylinder(nodeAppearance.diameter / 2.0, NODE_THICKNESS);
-            shape.setMaterial(nodeAppearance.material);
-            java.awt.geom.Point2D pos = node.getPosition();
-            shape.setTranslateX(pos.getX());
-            shape.setTranslateY(pos.getY());
-            shape.setTranslateZ(-node.getHeight() * verticalScale);
-            shape.getTransforms().add(NODE_ROTATE);
+    public boolean addNode(MapNode node) {
+        if (nodeShapes.containsKey(node)) {
+            return false;
+        }
+        Shape3D[] shapes = getNodeAppearance(node).getView().createShapes(node);
+        if (shapes == null) {   // 見えないノードの場合
+            return false;
+        }
+        for (Shape3D shape : shapes) {
+            nodeGroup.getChildren().add(shape);
 
             // ピッキングを有効にする
             shape.setId("Node " + node.getID());
             shape.setOnMouseEntered(onMouseEntered);
             shape.setOnMouseExited(onMouseExited);
             shape.setOnMouseClicked(onMouseClicked);
-
-            nodeGroup.getChildren().add(shape);
-            nodeShapes.put(node, shape);
-            return true;
         }
-        return false;
+        nodeShapes.put(node, shapes);
+        return true;
     }
 
     /**
      * ノードをシーングラフから削除する
      */
     public boolean removeNode(MapNode node) {
-        Cylinder shape = nodeShapes.get(node);
-        if (shape != null) {
-            abortHover(node);
-            nodeShapes.remove(node);
-            nodeGroup.getChildren().remove(shape);
-            return true;
+        Shape3D[] shapes = nodeShapes.get(node);
+        if (shapes == null) {
+            return false;
         }
-        return false;
+        abortHover(node);
+        for (Shape3D shape : shapes) {
+            nodeGroup.getChildren().remove(shape);
+        }
+        nodeShapes.remove(node);
+        return true;
     }
 
     /**
-     * 全ノードの Z 位置を更新する
+     * ノードのシーングラフを再構築する.
      */
-    public void updateNodesHeight() {
-        for (Map.Entry<MapNode, Cylinder> entry : nodeShapes.entrySet()) {
-            MapNode node = entry.getKey();
-            Cylinder shape = entry.getValue();
-            shape.setTranslateZ(-node.getHeight() * verticalScale);
+    public void rebuildNodeGroup() {
+        hoverOff();
+        HashSet<MapNode> nodeSet = new HashSet<MapNode>(nodeShapes.keySet());
+        nodeShapes.clear();
+        nodeGroup.getChildren().clear();
+        for (MapNode node : nodeSet) {
+            addNode(node);
         }
     }
 
@@ -1609,17 +1593,23 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
-     * node に振られたタグにマッチする NodeAppearance3D を返す.
+     * node のタグにマッチする NodeAppearance3D を返す.
      */
     public NodeAppearance3D getNodeAppearance(MapNode node) {
-        return NodeAppearance3D.getAppearance(nodeAppearances, node);
-    }
-
-    /**
-     * tags にマッチする NodeAppearance3D を返す.
-     */
-    public NodeAppearance3D getNodeAppearance(ArrayList<String> tags) {
-        return NodeAppearance3D.getAppearance(nodeAppearances, tags);
+        for (NodeAppearance3D appearance : nodeAppearances) {
+            if (node.getTags().isEmpty()) {
+                if (appearance.isTagApplied("")) {  // "*" のみ該当する
+                    return appearance;
+                }
+            } else {
+                for (String tag : node.getTags()) {
+                    if (appearance.isTagApplied(tag)) {
+                        return appearance;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -2142,5 +2132,19 @@ public class SimulationPanel3D extends StackPane {
 
     public void setAgentAppearances(ArrayList<AgentAppearance3D> agentAppearances) {
         this.agentAppearances = agentAppearances;
+    }
+
+    /**
+     * 垂直スケールを取得する
+     */
+    public double getVerticalScale() {
+        return verticalScale;
+    }
+
+    /**
+     * 属性を扱うハンドラを取得する
+     */
+    public CrowdWalkPropertiesHandler getPropertiesHandler() {
+        return properties;
     }
 }

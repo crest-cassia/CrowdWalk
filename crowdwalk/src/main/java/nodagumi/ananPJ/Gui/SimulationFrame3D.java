@@ -274,7 +274,9 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         // シミュレーションパネルの準備
         Coastline coastline = launcher.getCoastline();
-        panel = new SimulationPanel3D(width, height, networkMap, launcher.getVerticalScale(), properties, mapTiles, coastline, launcher.loadLinkAppearance());
+        ArrayList<HashMap> linkAppearance = launcher.loadLinkAppearance();
+        ArrayList<HashMap> nodeAppearance = launcher.loadNodeAppearance();
+        panel = new SimulationPanel3D(width, height, networkMap, launcher.getVerticalScale(), properties, mapTiles, coastline, linkAppearance, nodeAppearance);
         panel.setPrefSize(width, height);
         panel.setShow3dPolygon(launcher.isShow3dPolygon());
         panel.setShowBackgroundMap(launcher.isShowBackgroundMap());
