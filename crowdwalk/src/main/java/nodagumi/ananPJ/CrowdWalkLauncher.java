@@ -4,8 +4,10 @@ package nodagumi.ananPJ;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -34,7 +36,7 @@ public class CrowdWalkLauncher {
     /**
      * インターネット応答確認用 URL (国土地理院の地理院タイル提供サイト)
      */
-    public static String RESPONSE_CONFIRMATION_URL = "cyberjapandata.gsi.go.jp";
+    public static String RESPONSE_CONFIRMATION_URL = "https://cyberjapandata.gsi.go.jp";
 
     /**
      * GUI 設定情報のパス設定項目(マップファイル以外)
@@ -295,25 +297,23 @@ public class CrowdWalkLauncher {
      */
     public static boolean isInternetEnabled() {
         try {
-            List<String> commandLine = null;
-            String nullDevice = null;
-            if (System.getProperty("os.name").startsWith("Windows")) {
-                commandLine = Arrays.asList("ping", "-n", "1", RESPONSE_CONFIRMATION_URL);
-                nullDevice = "nul";
-            } else {
-                commandLine = Arrays.asList("ping", "-c", "1", RESPONSE_CONFIRMATION_URL);
-                nullDevice = "/dev/null";
+            URL url = new URL(RESPONSE_CONFIRMATION_URL);
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            con.setRequestMethod("GET");
+            con.setConnectTimeout(1000);    // 接続タイムアウト: 1sec
+            con.setReadTimeout(1000);       // 読み取りタイムアウト: 1sec
+            con.connect();
+            if (con.getResponseCode() == -1) {
+                return false;
             }
-            Itk.logInfo("External process", String.join(" ", commandLine));
-            ProcessBuilder pb = new ProcessBuilder(commandLine);
-            pb.redirectOutput(new File(nullDevice));
-            Process process = pb.start();
-            int ret = process.waitFor();
-            return ret == 0 ? true : false;
-        } catch (Exception e) {
-            Itk.dumpStackTraceOf(e);
+        } catch (SocketTimeoutException e) {
+            Itk.logWarn("HTTP GET", e.getMessage());
+            return false;
+        } catch (IOException e) {
+            Itk.logWarn("HTTP GET", e.getMessage());
             return false;
         }
+        return true;
     }
 
     public static void main(String[] args) {
