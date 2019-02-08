@@ -304,6 +304,8 @@ public class CrowdWalkLauncher {
             con.setReadTimeout(1000);       // 読み取りタイムアウト: 1sec
             con.connect();
             if (con.getResponseCode() == -1) {
+                Itk.logWarn("HTTP connection got an unknown error") ;
+                Itk.logWarn_("HTTP Error", con.getResponseMessage()) ;
                 return false;
             }
         } catch (SocketTimeoutException e) {

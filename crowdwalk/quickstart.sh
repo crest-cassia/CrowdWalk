@@ -14,7 +14,7 @@ else
 fi
 
 JAVA='java'
-JAVAOPT='-Dfile.encoding=UTF-8'
+JAVAOPT="-Dfile.encoding=UTF-8 $JAVA_OPTS"
 JAR=$DIR/build/libs/crowdwalk.jar
 
 echo "$JAVA $JAVAOPT -jar $JAR $*"
