@@ -73,6 +73,7 @@ import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle.ObstructerDisplay;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink;
 import nodagumi.ananPJ.NetworkMap.Link.MapLinkTable;
+import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.MapNode;
 import nodagumi.ananPJ.NetworkMap.Node.MapNodeTable;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -158,6 +159,16 @@ public class SimulationPanel3D extends StackPane {
      * マップの背景地図を構成する Group ノード
      */
     private Group backgroundMapGroup = new Group();
+
+    /**
+     * マップの背景画像を構成する Group ノード
+     */
+    private Group backgroundImageGroup = new Group();
+
+    /**
+     * グループ別背景画像
+     */
+    private HashMap<MapPartGroup, Shape3D> backgroundImages = new HashMap();
 
     /**
      * マップのポリゴンを構成する Group ノード
@@ -696,6 +707,19 @@ public class SimulationPanel3D extends StackPane {
         // 背景地図のシーングラフ
         createBackgroundMap(mapTiles);
         mapGroup.getChildren().add(backgroundMapGroup);
+
+        // 背景画像のシーングラフ
+        for (MapPartGroup group : networkMap.getGroups()) {
+            String fileName = group.getImageFileName();
+            if (fileName == null || fileName.isEmpty()) {
+                continue;
+            }
+            Shape3D backgroundImage = createBackgroundImage(group);
+            backgroundImage.setVisible(false);
+            backgroundImageGroup.getChildren().add(backgroundImage);
+            backgroundImages.put(group, backgroundImage);
+        }
+        mapGroup.getChildren().add(backgroundImageGroup);
 
         // Obstructer のシーングラフ
         for (MapArea area : areas) {
@@ -1374,6 +1398,58 @@ public class SimulationPanel3D extends StackPane {
         shape.setMaterial(material);
 
         backgroundMapGroup.getChildren().add(shape);
+    }
+
+    /**
+     * 背景画像のシェイプを作成する
+     */
+    public Shape3D createBackgroundImage(MapPartGroup group) {
+        File file = new File(properties.getNetworkMapFile());
+        String filePath = file.getParent() + File.separator + group.getImageFileName();
+        Image image = new Image(new File(filePath).toURI().toString());
+
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseMap(image);
+
+        double width = image.getWidth() * group.sx;
+        double height = image.getHeight() * group.sy;
+        Point2D[] vertices = new Point2D[4];
+        vertices[0] = new Point2D(0.0, 0.0);
+        vertices[1] = new Point2D(0.0, height);
+        vertices[2] = new Point2D(width, height);
+        vertices[3] = new Point2D(width, 0.0);
+
+        float[] points = new float[4 * 3];
+        for (int index = 0; index < 4; index++) {
+            points[index * 3] = (float)vertices[index].getX();
+            points[index * 3 + 1] = (float)vertices[index].getY();
+            points[index * 3 + 2] = 0.5f;   // 標高 -50cm
+        }
+
+        float[] texCoords = {
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+        };
+        int[] faces = {
+            0, 0, 1, 1, 2, 2,
+            2, 2, 3, 3, 0, 0
+        };
+
+        TriangleMesh mesh = new TriangleMesh();
+        mesh.getPoints().setAll(points);
+        mesh.getTexCoords().setAll(texCoords);
+        mesh.getFaces().setAll(faces);
+
+        Shape3D shape = new MeshView(mesh);
+        shape.setMaterial(material);
+        double angle = Math.toDegrees(group.r);
+        Rotate rotate = new Rotate(angle, 0.0, 0.0);
+        Translate translate = new Translate(group.tx, group.ty, -group.getDefaultHeight() * verticalScale);
+        shape.getTransforms().addAll(translate, rotate);
+
+        return shape;
     }
 
     /**
@@ -2146,5 +2222,26 @@ public class SimulationPanel3D extends StackPane {
      */
     public CrowdWalkPropertiesHandler getPropertiesHandler() {
         return properties;
+    }
+
+    /**
+     * グループ別背景画像の表示状態を取得する
+     */
+    public boolean isBackgroundImageVisible(MapPartGroup group) {
+        Shape3D backgroundImage = backgroundImages.get(group);
+        if (backgroundImage != null) {
+            return backgroundImage.isVisible();
+        }
+        return false;
+    }
+
+    /**
+     * グループ別背景画像の表示状態をセットする
+     */
+    public void setBackgroundImageVisible(MapPartGroup group, boolean visible) {
+        Shape3D backgroundImage = backgroundImages.get(group);
+        if (backgroundImage != null) {
+            backgroundImage.setVisible(visible);
+        }
     }
 }

@@ -19,10 +19,12 @@
 
 |---|---|
 | File ||
-| Close (Ctrl + W)  | シミュレーションビューアを終了してウィンドウを閉じる |
+| Close (Ctrl + W)      | シミュレーションビューアを終了してウィンドウを閉じる |
+| View ||
+| Show background image | グループ別に背景画像を表示する |
 | Help ||
-| Quick reference   | クイック・リファレンスを表示する |
-| About version     | CrowdWalk のバージョン(Git のコミット情報)を表示する |
+| Quick reference       | クイック・リファレンスを表示する |
+| About version         | CrowdWalk のバージョン(Git のコミット情報)を表示する |
 
 ## シミュレーション画面
 

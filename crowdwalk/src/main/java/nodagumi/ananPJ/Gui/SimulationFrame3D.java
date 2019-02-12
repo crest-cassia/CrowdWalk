@@ -33,6 +33,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -440,6 +441,26 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         fileMenu.getItems().addAll(miClose);
 
+        //// View menu ////
+
+        Menu viewMenu = new Menu("View");
+
+        Menu menuShowBackgroundImage = new Menu("Show background image");
+        for (MapPartGroup group : networkMap.getGroups()) {
+            String fileName = group.getImageFileName();
+            if (fileName == null || fileName.isEmpty()) {
+                continue;
+            }
+            CheckMenuItem menuItem = new CheckMenuItem(group.getTagString());
+            menuItem.setOnAction(e -> {
+                panel.setBackgroundImageVisible(group, ! panel.isBackgroundImageVisible(group));
+                menuItem.setSelected(panel.isBackgroundImageVisible(group));
+            });
+            menuShowBackgroundImage.getItems().add(menuItem);
+        }
+
+        viewMenu.getItems().addAll(menuShowBackgroundImage);
+
         //// Help menu ////
 
         Menu helpMenu = new Menu("Help");
@@ -470,7 +491,7 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         helpMenu.getItems().addAll(miQuickReference, miVersion);
 
-        menuBar.getMenus().addAll(fileMenu, helpMenu);
+        menuBar.getMenus().addAll(fileMenu, viewMenu, helpMenu);
 
         return menuBar;
     }
