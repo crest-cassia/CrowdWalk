@@ -14,20 +14,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.IllegalComponentStateException;
 import java.awt.Insets;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
 import java.awt.Point;
-import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.AdjustmentListener ;
 import java.awt.event.AdjustmentEvent ;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -61,8 +58,12 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -73,6 +74,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
@@ -205,13 +207,17 @@ public class SimulationFrame2D extends JFrame
 
     /* メニュー構成変数 */
 
-    private CheckboxMenuItem showNodes = null;
-    private CheckboxMenuItem showNodeLabels = null;
-    private CheckboxMenuItem showLinks = null;
-    private CheckboxMenuItem showLinkLabels = null;
-    // private CheckboxMenuItem showGroups = null;
-    private CheckboxMenuItem showArea = null;
-    private CheckboxMenuItem showAreaLabels = null;
+    private JCheckBoxMenuItem showNodes = null;
+    private JCheckBoxMenuItem showNodeLabels = null;
+    private JCheckBoxMenuItem showLinks = null;
+    private JCheckBoxMenuItem showLinkLabels = null;
+    private JCheckBoxMenuItem showArea = null;
+    private JCheckBoxMenuItem showAreaLabels = null;
+
+    /**
+     * グループ別の背景画像表示メニュー
+     */
+    private HashMap<MapPartGroup, JCheckBoxMenuItem> backgroundImageMenus = new HashMap();
 
     /* ホバー表示対象 */
 
@@ -472,137 +478,149 @@ public class SimulationFrame2D extends JFrame
      * メニューの配置
      */
     private void setupMenu() {
-        MenuBar menuBar = new MenuBar();
+        JMenuBar menuBar = new JMenuBar();
 
         //// File menu ////
 
-        Menu fileMenu = new PopupMenu("File");
+        JMenu fileMenu = new JMenu("File");
 
-        MenuShortcut shortcut = new MenuShortcut(java.awt.event.KeyEvent.VK_W);
-        MenuItem mi = new MenuItem("Close", shortcut);
+        JMenuItem mi = new JMenuItem("Close");
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
         mi.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (launcher.isRunning()) {
-                        launcher.pause();
-                    }
-                    launcher.saveSimulatorPosition(frame);
-                    frame.dispose();
-                }});
+            public void actionPerformed(ActionEvent e) {
+                if (launcher.isRunning()) {
+                    launcher.pause();
+                }
+                launcher.saveSimulatorPosition(frame);
+                frame.dispose();
+            }
+        });
         fileMenu.add(mi);
         
         menuBar.add(fileMenu);
 
         //// View menu ////
 
-        Menu viewMenu = new PopupMenu("View");
+        JMenu viewMenu = new JMenu("View");
 
-        mi = new MenuItem("Centering");
+        mi = new JMenuItem("Centering");
         mi.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    panel.centering(false);
-                    panel.repaint();
-                }});
+            public void actionPerformed(ActionEvent e) {
+                panel.centering(false);
+                panel.repaint();
+            }
+        });
         viewMenu.add(mi);
 
-        mi = new MenuItem("Centering with scaling");
+        mi = new JMenuItem("Centering with scaling");
         mi.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    panel.centering(true);
-                    panel.repaint();
-                }});
+            public void actionPerformed(ActionEvent e) {
+                panel.centering(true);
+                panel.repaint();
+            }
+        });
         viewMenu.add(mi);
         
-        mi = new MenuItem("To the origin");
+        mi = new JMenuItem("To the origin");
         mi.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    panel.setPosition(0.0, 0.0);
-                    panel.repaint();
-                }});
+            public void actionPerformed(ActionEvent e) {
+                panel.setPosition(0.0, 0.0);
+                panel.repaint();
+            }
+        });
         viewMenu.add(mi);
 
         viewMenu.addSeparator();
 
-        showNodes = new CheckboxMenuItem("Show nodes");
-        showNodes.setState(true);
+        showNodes = new JCheckBoxMenuItem("Show nodes");
+        showNodes.setSelected(true);
         showNodes.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    showNodesCheckBox.setSelected(showNodes.getState());
-                    showNodeLabelsCheckBox.setEnabled(showNodes.getState());
-                    update();
-                }});
+            public void itemStateChanged(ItemEvent e) {
+                showNodesCheckBox.setSelected(showNodes.isSelected());
+                showNodeLabelsCheckBox.setEnabled(showNodes.isSelected());
+                update();
+            }
+        });
         viewMenu.add(showNodes);
 
-        showNodeLabels = new CheckboxMenuItem(" (Show node labels)");
-        showNodeLabels.setState(false);
+        showNodeLabels = new JCheckBoxMenuItem(" (Show node labels)");
+        showNodeLabels.setSelected(false);
         showNodeLabels.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    showNodeLabelsCheckBox.setSelected(showNodeLabels.getState());
-                    update();
-                }});
+            public void itemStateChanged(ItemEvent e) {
+                showNodeLabelsCheckBox.setSelected(showNodeLabels.isSelected());
+                update();
+            }
+        });
         viewMenu.add(showNodeLabels);
 
-        showLinks = new CheckboxMenuItem("Show links");
-        showLinks.setState(true);
+        showLinks = new JCheckBoxMenuItem("Show links");
+        showLinks.setSelected(true);
         showLinks.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    showLinksCheckBox.setSelected(showLinks.getState());
-                    showLinkLabelsCheckBox.setEnabled(showLinks.getState());
-                    update();
-                }});
+            public void itemStateChanged(ItemEvent e) {
+                showLinksCheckBox.setSelected(showLinks.isSelected());
+                showLinkLabelsCheckBox.setEnabled(showLinks.isSelected());
+                update();
+            }
+        });
         viewMenu.add(showLinks);
 
-        showLinkLabels = new CheckboxMenuItem(" (Show link labels)");
-        showLinkLabels.setState(false);
+        showLinkLabels = new JCheckBoxMenuItem(" (Show link labels)");
+        showLinkLabels.setSelected(false);
         showLinkLabels.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    showLinkLabelsCheckBox.setSelected(showLinkLabels.getState());
-                    update();
-                }});
+            public void itemStateChanged(ItemEvent e) {
+                showLinkLabelsCheckBox.setSelected(showLinkLabels.isSelected());
+                update();
+            }
+        });
         viewMenu.add(showLinkLabels);
         
-        // showGroups = new CheckboxMenuItem("Show groups");
-        // showGroups.setState(true);
-        // showGroups.addItemListener(e -> update());
-        // viewMenu.add(showGroups);
-
-        showArea = new CheckboxMenuItem("Show area");
-        showArea.setState(true);
+        showArea = new JCheckBoxMenuItem("Show area");
+        showArea.setSelected(true);
         showArea.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    showAreaCheckBox.setSelected(showArea.getState());
-                    showAreaLabelsCheckBox.setEnabled(showArea.getState());
-                    update();
-                }});
+            public void itemStateChanged(ItemEvent e) {
+                showAreaCheckBox.setSelected(showArea.isSelected());
+                showAreaLabelsCheckBox.setEnabled(showArea.isSelected());
+                update();
+            }
+        });
         viewMenu.add(showArea);
 
-        showAreaLabels = new CheckboxMenuItem(" (Show area labels)");
-        showAreaLabels.setState(false);
+        showAreaLabels = new JCheckBoxMenuItem(" (Show area labels)");
+        showAreaLabels.setSelected(false);
         showAreaLabels.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    showAreaLabelsCheckBox.setSelected(showAreaLabels.getState());
-                    update();
-                }});
+            public void itemStateChanged(ItemEvent e) {
+                showAreaLabelsCheckBox.setSelected(showAreaLabels.isSelected());
+                update();
+            }
+        });
         viewMenu.add(showAreaLabels);
         
+        JMenu showBackgroundImage = new JMenu("Show background image");
+        for (MapPartGroup group : launcher.getMap().getGroups()) {
+            String fileName = group.getImageFileName();
+            if (fileName == null || fileName.isEmpty()) {
+                continue;
+            }
+            JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(group.getTagString());
+            menuItem.setSelected(true);
+            menuItem.addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent e) {
+                    panel.repaint();
+                }
+            });
+            showBackgroundImage.add(menuItem);
+            backgroundImageMenus.put(group, menuItem);
+        }
+        viewMenu.add(showBackgroundImage);
+
         menuBar.add(viewMenu);
 
         //// Help menu ////
 
-        Menu helpMenu = new PopupMenu("Help");
+        JMenu helpMenu = new JMenu("Help");
 
-        MenuItem miQuickReference = new MenuItem("Quick reference");
+        JMenuItem miQuickReference = new JMenuItem("Quick reference");
         miQuickReference.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 Platform.runLater(() -> {
                     helpStage.setTitle("Help - Quick reference");
@@ -619,9 +637,8 @@ public class SimulationFrame2D extends JFrame
         });
         helpMenu.add(miQuickReference);
 
-        MenuItem miVersion = new MenuItem("About version");
+        JMenuItem miVersion = new JMenuItem("About version");
         miVersion.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(frame, CrowdWalkLauncher.getVersion(), "CrowdWalk Version", JOptionPane.PLAIN_MESSAGE);
             }
@@ -630,23 +647,23 @@ public class SimulationFrame2D extends JFrame
 
         menuBar.add(helpMenu);
 
-        setMenuBar(menuBar);
+        setJMenuBar(menuBar);
     }
 
     /**
      * 各表示モードの ON/OFF をシミュレーションパネルの変数に反映する
      */
     public void update() {
-        panel.setShowNodes(showNodes.getState());
-        showNodeLabels.setEnabled(showNodes.getState());
-        panel.setShowNodeNames(showNodeLabels.getState());
+        panel.setShowNodes(showNodes.isSelected());
+        showNodeLabels.setEnabled(showNodes.isSelected());
+        panel.setShowNodeNames(showNodeLabels.isSelected());
 
-        panel.setShowLinks(showLinks.getState());
-        showLinkLabels.setEnabled(showLinks.getState());
-        panel.setShowLinkNames(showLinkLabels.getState());
-        panel.setShowArea(showArea.getState());
-        showAreaLabels.setEnabled(showArea.getState());
-        panel.setShowAreaNames(showAreaLabels.getState());
+        panel.setShowLinks(showLinks.isSelected());
+        showLinkLabels.setEnabled(showLinks.isSelected());
+        panel.setShowLinkNames(showLinkLabels.isSelected());
+        panel.setShowArea(showArea.isSelected());
+        showAreaLabels.setEnabled(showArea.isSelected());
+        panel.setShowAreaNames(showAreaLabels.isSelected());
         panel.setShowAgents(showAgentCheckBox.isSelected());
         panel.setShowAgentNames(showAgentLabelsCheckBox.isSelected());
         clearSelection();
@@ -1158,23 +1175,23 @@ public class SimulationFrame2D extends JFrame
 
         // ノード表示の ON/OFF
         showNodesCheckBox = new JCheckBox("Show nodes");
-        showNodesCheckBox.setSelected(showNodes.getState());
+        showNodesCheckBox.setSelected(showNodes.isSelected());
         showNodesCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     showNodeLabelsCheckBox.setEnabled(showNodesCheckBox.isSelected());
-                    showNodes.setState(showNodesCheckBox.isSelected());
+                    showNodes.setSelected(showNodesCheckBox.isSelected());
                     update();
                 }});
         showNodesPanel.add(showNodesCheckBox);
 
         // ノードラベル表示の ON/OFF
         showNodeLabelsCheckBox = new JCheckBox("Show node labels");
-        showNodeLabelsCheckBox.setSelected(showNodeLabels.getState());
+        showNodeLabelsCheckBox.setSelected(showNodeLabels.isSelected());
         showNodeLabelsCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    showNodeLabels.setState(showNodeLabelsCheckBox.isSelected());
+                    showNodeLabels.setSelected(showNodeLabelsCheckBox.isSelected());
                     update();
                 }});
         showNodesPanel.add(showNodeLabelsCheckBox);
@@ -1185,23 +1202,23 @@ public class SimulationFrame2D extends JFrame
 
         // リンク表示の ON/OFF
         showLinksCheckBox = new JCheckBox("Show links");
-        showLinksCheckBox.setSelected(showLinks.getState());
+        showLinksCheckBox.setSelected(showLinks.isSelected());
         showLinksCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     showLinkLabelsCheckBox.setEnabled(showLinksCheckBox.isSelected());
-                    showLinks.setState(showLinksCheckBox.isSelected());
+                    showLinks.setSelected(showLinksCheckBox.isSelected());
                     update();
                 }});
         showLinksPanel.add(showLinksCheckBox);
 
         // リンクラベル表示の ON/OFF
         showLinkLabelsCheckBox = new JCheckBox("Show link labels");
-        showLinkLabelsCheckBox.setSelected(showLinkLabels.getState());
+        showLinkLabelsCheckBox.setSelected(showLinkLabels.isSelected());
         showLinkLabelsCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    showLinkLabels.setState(showLinkLabelsCheckBox.isSelected());
+                    showLinkLabels.setSelected(showLinkLabelsCheckBox.isSelected());
                     update();
                 }});
         showLinksPanel.add(showLinkLabelsCheckBox);
@@ -1212,23 +1229,23 @@ public class SimulationFrame2D extends JFrame
 
         // エリア表示の ON/OFF
         showAreaCheckBox = new JCheckBox("Show area");
-        showAreaCheckBox.setSelected(showArea.getState());
+        showAreaCheckBox.setSelected(showArea.isSelected());
         showAreaCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     showAreaLabelsCheckBox.setEnabled(showAreaCheckBox.isSelected());
-                    showArea.setState(showAreaCheckBox.isSelected());
+                    showArea.setSelected(showAreaCheckBox.isSelected());
                     update();
                 }});
         showAreaPanel.add(showAreaCheckBox);
 
         // エリアラベル表示の ON/OFF
         showAreaLabelsCheckBox = new JCheckBox("Show area labels");
-        showAreaLabelsCheckBox.setSelected(showAreaLabels.getState());
+        showAreaLabelsCheckBox.setSelected(showAreaLabels.isSelected());
         showAreaLabelsCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    showAreaLabels.setState(showAreaLabelsCheckBox.isSelected());
+                    showAreaLabels.setSelected(showAreaLabelsCheckBox.isSelected());
                     update();
                 }});
         showAreaPanel.add(showAreaLabelsCheckBox);
@@ -2189,6 +2206,14 @@ public class SimulationFrame2D extends JFrame
 
     public void setShowBackgroundMap(boolean showBackgroundMap) {
         this.showBackgroundMap = showBackgroundMap;
+    }
+
+    public boolean isShowBackgroundImage(MapPartGroup group) {
+        JCheckBoxMenuItem menuItem = backgroundImageMenus.get(group);
+        if (menuItem == null) {
+            return false;
+        }
+        return menuItem.isSelected();
     }
 
     public boolean isShowBackgroundMap() {

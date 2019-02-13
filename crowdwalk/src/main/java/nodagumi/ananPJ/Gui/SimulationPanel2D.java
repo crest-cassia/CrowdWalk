@@ -1041,24 +1041,27 @@ public class SimulationPanel2D extends JPanel {
 
         // 背景地図の描画
         if (frame.isShowBackgroundMap()) {
-            Composite oroginalComposite = g2.getComposite();
+            Composite originalComposite = g2.getComposite();
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)colorDepthOfBackgroundMap);
             g2.setComposite(ac);
             for (GsiTile mapTile : backgroundMapTiles) {
                 drawBackgroundMapTile(mapTile, g2);
             }
-            g2.setComposite(oroginalComposite);
+            g2.setComposite(originalComposite);
         }
 
         // 背景画像の描画
         if (frame.isShowBackgroundImage()) {
-            Composite oroginalComposite = g2.getComposite();
+            Composite originalComposite = g2.getComposite();
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)colorDepthOfBackgroundImage);
             g2.setComposite(ac);
-            for (HashMap.Entry<MapPartGroup, Image> entry : backgroundImages.entrySet()) {
-                drawBackgroundImage(entry.getKey(), entry.getValue(), g2);
+            for (MapPartGroup group : networkMap.getGroups()) {
+                Image image = backgroundImages.get(group);
+                if (image != null && frame.isShowBackgroundImage(group)) {
+                    drawBackgroundImage(group, image, g2);
+                }
             }
-            g2.setComposite(oroginalComposite);
+            g2.setComposite(originalComposite);
         }
 
         if (showArea) {

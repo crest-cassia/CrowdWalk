@@ -30,6 +30,7 @@
 | (Show link labels)     | リンクラベルを表示する |
 | Show areas             | 災害エリアを表示する |
 | (Show area labels)     | エリアラベルを表示する |
+| Show background image  | グループ別に背景画像のON/OFFを切り替える |
 | Help ||
 | Quick reference | クイック・リファレンスを表示する |
 | About version | CrowdWalk のバージョン(Git のコミット情報)を表示する |
