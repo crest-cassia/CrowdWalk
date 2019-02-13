@@ -205,7 +205,7 @@ public class EditorFrameFx {
     /**
      * グループ選択パネル
      */
-    private FlowPane groupSelectionPane = new FlowPane();
+    private HBox groupSelectionPane = new HBox();
     private ToggleGroup groupToggleGroup = new ToggleGroup();
     private HashMap<MapPartGroup, ToggleButton> groupButtonMap = new HashMap();
     private ArrayList<ToggleButton> groupButtons = new ArrayList();
@@ -330,11 +330,11 @@ public class EditorFrameFx {
         BorderPane leftPane = new BorderPane();
         groupSelectionPane.getStyleClass().add("custom-color-pane");
         groupSelectionPane.setPadding(new Insets(4));
-        groupSelectionPane.setHgap(8);
-        groupSelectionPane.setAlignment(Pos.CENTER);
+        groupSelectionPane.setSpacing(8);
+        groupSelectionPane.setAlignment(Pos.CENTER_LEFT);
         leftPane.setCenter(canvasPane);     // これを先にセットしないと rotation した時に他の Pane に被ってしまう
-        leftPane.setTop(updateGroupSelectionPane());
-        leftPane.setBottom(createModeSelectionPane());
+        leftPane.setTop(new Pane(updateGroupSelectionPane()));
+        leftPane.setBottom(new Pane(createModeSelectionPane()));
 
         // タブパネルの構築
 
@@ -1212,7 +1212,7 @@ public class EditorFrameFx {
     /**
      * グループ選択パネルを更新する
      */
-    public FlowPane updateGroupSelectionPane() {
+    public HBox updateGroupSelectionPane() {
         NetworkMap networkMap = editor.getMap();
         groupButtonMap.clear();
         groupButtons.clear();
@@ -1249,11 +1249,7 @@ public class EditorFrameFx {
     /**
      * 編集モード選択パネルを構築する
      */
-    private FlowPane createModeSelectionPane() {
-        FlowPane flowPane = new FlowPane();
-        flowPane.getStyleClass().add("custom-color-pane");
-        flowPane.setPadding(new Insets(4));
-        flowPane.setHgap(8);
+    private HBox createModeSelectionPane() {
         ToggleGroup group = new ToggleGroup();
 
         Label label = new Label("Mode");
@@ -1323,10 +1319,16 @@ public class EditorFrameFx {
         editModeButtons.add(tbEditArea);
         editModeButtons.add(tbEditPolygon);
         editModeButtons.add(tbBgImage);
-        flowPane.getChildren().addAll(label, tbAddNode, tbAddLink, tbAddNodeAndLink, tbEditNode, tbEditLink, tbEditArea, tbEditPolygon, tbBgImage);
         tbEditNode.setSelected(true);
 
-        return flowPane;
+        HBox pane = new HBox();
+        pane.getStyleClass().add("custom-color-pane");
+        pane.setPadding(new Insets(4));
+        pane.setSpacing(8);
+        pane.setAlignment(Pos.CENTER_LEFT);
+        pane.getChildren().addAll(label, tbAddNode, tbAddLink, tbAddNodeAndLink, tbEditNode, tbEditLink, tbEditArea, tbEditPolygon, tbBgImage);
+
+        return pane;
     }
 
     /**

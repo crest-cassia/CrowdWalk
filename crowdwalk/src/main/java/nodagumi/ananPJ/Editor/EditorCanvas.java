@@ -1668,6 +1668,9 @@ public class EditorCanvas extends Canvas {
         MapLinkTable links = group.getChildLinks();
         double minDistance = -1.0;
         for (MapNode toNode : nodes) {
+            if (toNode == fromNode) {
+                continue;
+            }
             Line2D line = new Line2D.Double(fromNode.getPosition(), toNode.getPosition());
             if (line.ptSegDist(point) < 5.0 / (scale * SCALE_FACTOR)) {
                 double distance = line.getP1().distance(line.getP2());
