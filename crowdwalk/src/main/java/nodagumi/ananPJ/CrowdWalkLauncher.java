@@ -297,6 +297,8 @@ public class CrowdWalkLauncher {
      */
     public static boolean isInternetEnabled() {
         try {
+            Itk.logInfo("Trying HTTP connection to:",
+                        RESPONSE_CONFIRMATION_URL) ;
             URL url = new URL(RESPONSE_CONFIRMATION_URL);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
             con.setRequestMethod("GET");
@@ -308,6 +310,7 @@ public class CrowdWalkLauncher {
                 Itk.logWarn_("HTTP Error", con.getResponseMessage()) ;
                 return false;
             }
+            Itk.logInfo("HTTP connection succeeded.") ;
         } catch (SocketTimeoutException e) {
             Itk.logWarn("HTTP GET", e.getMessage());
             return false;
