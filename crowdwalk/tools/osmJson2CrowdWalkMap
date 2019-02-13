@@ -36,6 +36,8 @@ $conf = {
 $op = OptionParser.new() {|op|
   op.banner = <<_END_
   Usage: #{$0} [Options]*
+           [OriginName]:
+              #{OsmMap::EpsgCodeForJprCS.map{|k,v| k}.join(", ")}
 _END_
 
   op.separator("Options:") ;
