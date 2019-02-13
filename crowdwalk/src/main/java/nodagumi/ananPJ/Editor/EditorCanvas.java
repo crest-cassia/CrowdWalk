@@ -657,7 +657,8 @@ public class EditorCanvas extends Canvas {
                     if (fromNode == null) {
                         // 始点ノードの設定
                         if (pointedNode == null) {
-                            editor.ding("Point to the start node");
+                            frame.setStatusText("Point to the start node");
+                            editor.beep();
                         } else {
                             fromNode = pointedNode;
                             toNode = null;
@@ -665,7 +666,8 @@ public class EditorCanvas extends Canvas {
                     } else {
                         // 新規リンク追加
                         if (toNode == null) {
-                            editor.ding("Point to the end node");
+                            frame.setStatusText("Point to the end node");
+                            editor.beep();
                         } else {
                             double length = fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
                             frame.setCurrentLinkLength(length);
@@ -1145,7 +1147,7 @@ public class EditorCanvas extends Canvas {
             if (event.isAltDown()) {
                 // Alt + ホイール: 編集画面の回転
                 if (angleLocking) {
-                    editor.ding(null);
+                    editor.beep();
                 } else {
                     rotate(event.getX(), event.getY(), event.getDeltaY(), event.isControlDown());
                 }

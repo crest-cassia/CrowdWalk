@@ -28,7 +28,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.media.AudioClip;
 import javafx.scene.transform.Affine;
 
 import org.w3c.dom.Document;
@@ -146,11 +145,6 @@ public class MapEditor {
     private MapPartGroup currentGroup = null; 
 
     /**
-     * アラート音(Windows専用)
-     */
-    private AudioClip dingSound = null;
-
-    /**
      * Group zone または Group tag が正規化のために修正された
      */
     private boolean normalized = false;
@@ -193,12 +187,6 @@ public class MapEditor {
      * 初期設定
      */
     private void init() {
-        // アラート音の準備
-        File dingWav = new File("C:/Windows/Media/Windows Ding.wav");   // Windows7, Windows10 で確認
-        if (dingWav.exists()) {
-            dingSound = new AudioClip(dingWav.toURI().toString());
-        }
-
         // 初期選択グループのセット
         initCurrentGroup();
 
@@ -540,7 +528,7 @@ public class MapEditor {
      */
     public synchronized void undo() {
         if (historyIndex == 0) {
-            ding("There is no operation that can be undoed.");
+            beep();
             return;
         }
 
@@ -576,7 +564,7 @@ public class MapEditor {
      */
     public synchronized void redo() {
         if (historyIndex + 1 == commandHistory.size()) {
-            ding("There is no operation that can be redoed.");
+            beep();
             return;
         }
 
@@ -833,22 +821,16 @@ public class MapEditor {
             alert.initOwner(frame.getStage());
             alert.setTitle(label);
             alert.getDialogPane().setHeaderText(alertLevel);
-            ding(null);
+            beep();
             alert.showAndWait();
         }
     }
 
     /**
-     * アラート音を鳴らす(Windows のみ)
+     * アラート音を鳴らす
      */
-    public void ding(String message) {
-        if (dingSound == null) {
-            if (message != null && ! message.isEmpty()) {
-		Itk.logError(message);    // アラート音の代わり
-            }
-        } else {
-            dingSound.play();
-        }
+    public static final void beep() {
+        java.awt.Toolkit.getDefaultToolkit().beep();
     }
 
     /**
