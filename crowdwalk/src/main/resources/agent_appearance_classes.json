@@ -5,5 +5,6 @@
     "TriangleAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view2d.TriangleAgent",
     "SphereAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.SphereAgent",
     "CubeAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.CubeAgent",
-    "PlaneTriangleAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.PlaneTriangleAgent"
+    "PlaneTriangleAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.PlaneTriangleAgent",
+    "TriangleMeshAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.TriangleMeshAgent"
 }
