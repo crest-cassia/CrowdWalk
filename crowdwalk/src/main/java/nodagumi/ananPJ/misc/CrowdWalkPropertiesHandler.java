@@ -619,6 +619,16 @@ import nodagumi.Itk.*;
  *  設定値： true | false
  *  デフォルト値： false</pre>
  *   </li>
+ *
+ *   <li>
+ *     <h4>legacy</h4>
+ *     <pre>  legacy モードにする
+ *
+ *  GUI シミュレータで POLYGON | STRUCTURE タグをポリゴンの識別子として扱う
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
  * </ul>
  */
 public class CrowdWalkPropertiesHandler {
@@ -804,6 +814,14 @@ public class CrowdWalkPropertiesHandler {
         return mentalMapRules ;
     }
 
+    /**
+     * legacy モード
+     */
+    protected boolean legacy = false;
+    public boolean isLegacy() {
+        return legacy;
+    }
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -905,6 +923,8 @@ public class CrowdWalkPropertiesHandler {
             // "No hint for goal" ログを出力しない
             CrowdWalkLauncher.disableNoHintForGoalLog |= getBoolean("disable_no_hint_for_goal_log", false);
 
+            // legacy モード
+            legacy = getBoolean("legacy", legacy);
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;
             Itk.quitWithStackTrace(ioe) ;

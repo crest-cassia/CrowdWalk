@@ -29,7 +29,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-N] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-L] [-N] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -69,6 +69,11 @@ public class CrowdWalkLauncher {
     public static boolean disableNoHintForGoalLog = false;
 
     /**
+     * legacy モード
+     */
+    public static boolean legacy = false;
+
+    /**
      * コマンドラインオプションの定義
      */
     public static void defineOptions(Options options) {
@@ -79,6 +84,7 @@ public class CrowdWalkLauncher {
         options.addOption(OptionBuilder.withLongOpt("log-level")
             .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")
             .hasArg().withArgName("LEVEL").create("l"));
+        options.addOption("L", "legacy", false, "legacy モードにする\nPOLYGON | STRUCTURE タグをポリゴンの識別子として扱う");
         options.addOption("N", "disable-no-hint-for-goal-log", false, "\"No hint for goal\" ログを出力しない");
         options.addOption("o", "offline", false, "Internet への接続をおこなわない");
         options.addOption(OptionBuilder.withLongOpt("tick")
@@ -140,6 +146,9 @@ public class CrowdWalkLauncher {
 
             // "No hint for goal" ログを出力しない
             disableNoHintForGoalLog = commandLine.hasOption("disable-no-hint-for-goal-log");
+
+            // legacy モード
+            legacy = commandLine.hasOption("legacy");
 
             // CUI モードで実行
             if (commandLine.hasOption("cui")) {

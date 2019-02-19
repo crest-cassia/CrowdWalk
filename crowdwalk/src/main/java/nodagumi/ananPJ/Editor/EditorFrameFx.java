@@ -3126,31 +3126,33 @@ public class EditorFrameFx {
             }
         }
 
-        // "OCEAN" および "STRUCTURE" タグ使用のチェック
-        int oceanTagCount = 0;
-        int structureTagCount = 0;
-        for (MapLink link : editor.getMap().getLinks()) {
-            for (String tag : link.getTags()) {
-                if (tag.contains("OCEAN")) {
-                    oceanTagCount++;
-                } else if (tag.contains("STRUCTURE")) {
-                    structureTagCount++;
+        if (CrowdWalkLauncher.legacy || editor.getProperties().isLegacy()) {
+            // "OCEAN" および "STRUCTURE" タグ使用のチェック
+            int oceanTagCount = 0;
+            int structureTagCount = 0;
+            for (MapLink link : editor.getMap().getLinks()) {
+                for (String tag : link.getTags()) {
+                    if (tag.contains("OCEAN")) {
+                        oceanTagCount++;
+                    } else if (tag.contains("STRUCTURE")) {
+                        structureTagCount++;
+                    }
                 }
             }
-        }
-        if (oceanTagCount > 0) {
-            if (contentBuff.length() > 0) {
-                contentBuff.append("\n");
+            if (oceanTagCount > 0) {
+                if (contentBuff.length() > 0) {
+                    contentBuff.append("\n");
+                }
+                contentBuff.append("Tags including \"OCEAN\" is used. This tag is deprecated.");
+                Itk.logWarn_("Tags including \"OCEAN\" is used. This tag is deprecated.");
             }
-            contentBuff.append("Tags including \"OCEAN\" is used. This tag is deprecated.");
-            Itk.logWarn_("Tags including \"OCEAN\" is used. This tag is deprecated.");
-        }
-        if (structureTagCount > 0) {
-            if (contentBuff.length() > 0) {
-                contentBuff.append("\n");
+            if (structureTagCount > 0) {
+                if (contentBuff.length() > 0) {
+                    contentBuff.append("\n");
+                }
+                contentBuff.append("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
+                Itk.logWarn_("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
             }
-            contentBuff.append("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
-            Itk.logWarn_("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
         }
 
         String title = "Total validation of map data";

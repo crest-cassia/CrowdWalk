@@ -364,7 +364,7 @@ public class SimulationFrame2D extends JFrame
 
         frame = this;
         this.launcher = launcher;
-        if (properties != null && properties.getPropertiesFile() != null) {
+        if (properties.getPropertiesFile() != null) {
             launcher.setGuiValues(this);
         }
         areas = launcher.getMap().getAreas();
