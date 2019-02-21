@@ -18,6 +18,11 @@ apply plugin: 'eclipse'
 //sourceCompatibility = '1.6' ;
 
 def javaVersion = new Double(sourceCompatibility.toString())
+
+/**
+ *  CUI シミュレータ専用版にするフラグ
+ *  gradle -Pcui=true で true になる
+ */
 def onlyCuiSimulator = cui.toBoolean()
 
 println "javaVersion ${javaVersion}"

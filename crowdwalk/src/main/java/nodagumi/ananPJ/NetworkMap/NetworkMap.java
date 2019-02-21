@@ -806,6 +806,70 @@ public class NetworkMap extends DefaultTreeModel {
         }
     }
 
+    /**
+     * マップデータを検証する.
+     *
+     * @return 問題があれば false
+     */
+    public boolean validate() {
+        // マップに整合性があるかチェック
+        boolean succeeded = checkConsistency();
+
+        ArrayList<MapLink> loopedLinks = new ArrayList();
+        HashMap<String, ArrayList<MapLink>> duplicatedLinks = new HashMap();
+        for (MapLink link : getLinks()) {
+            // ループしたリンクがないかチェック
+            if (link.getFrom() == link.getTo()) {
+                Itk.logWarn_("Looped link found", link.toShortInfo());
+                loopedLinks.add(link);
+                succeeded = false;
+            }
+            // 長さ 0m 以下のリンクがないかチェック
+            if (link.getLength() <= 0.0 && ! loopedLinks.contains(link)) {
+                Itk.logWarn_("Zero length link found", link.toShortInfo());
+                succeeded = false;
+            }
+            // 重複リンクがないかチェック
+            MapNode fromNode = link.getFrom();
+            MapNode toNode = link.getTo();
+            for (MapLink _link : fromNode.getLinks()) {
+                if (_link != link && _link.getOther(fromNode) == toNode) {
+                    String key = null;
+                    if (fromNode.getID().compareTo(toNode.getID()) < 0) {
+                        key = fromNode.getID() + " " + toNode.getID();
+                    } else {
+                        key = toNode.getID() + " " + fromNode.getID();
+                    }
+                    ArrayList<MapLink> links = duplicatedLinks.get(key);
+                    if (links == null) {
+                        links = new ArrayList();
+                        links.add(link);
+                        links.add(_link);
+                        duplicatedLinks.put(key, links);
+                    } else {
+                        if (! links.contains(link)) {
+                            links.add(link);
+                        }
+                        if (! links.contains(_link)) {
+                            links.add(_link);
+                        }
+                    }
+                    succeeded = false;
+                }
+            }
+        }
+
+        int n = 1;
+        for (String key : duplicatedLinks.keySet()) {
+            for (MapLink link : duplicatedLinks.get(key)) {
+                Itk.logWarn_("Duplicated link found", "place #" + n + " " + link.toShortInfo());
+            }
+            n++;
+        }
+
+        return succeeded;
+    }
+
     //------------------------------------------------------------
     /**
      * マップ中の全タグを収集。

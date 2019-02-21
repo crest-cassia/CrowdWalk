@@ -15,7 +15,6 @@ import net.arnx.jsonic.JSON;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.BasicSimulationLauncher;
-import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Simulator.EvacuationSimulator;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.ananPJ.Simulator.AgentHandler;
@@ -629,6 +628,16 @@ import nodagumi.Itk.*;
  *  設定値： true | false
  *  デフォルト値： false</pre>
  *   </li>
+ *
+ *   <li>
+ *     <h4>validate</h4>
+ *     <pre>  マップデータを検証する
+ *
+ *  問題があればシミュレーションを実行せずに終了する
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
  * </ul>
  */
 public class CrowdWalkPropertiesHandler {
@@ -822,6 +831,32 @@ public class CrowdWalkPropertiesHandler {
         return legacy;
     }
 
+    /**
+     * "No hint for goal" ログを出力しない
+     */
+    private static boolean disableNoHintForGoalLog = false;
+
+    public static boolean isDisableNoHintForGoalLog() {
+        return disableNoHintForGoalLog;
+    }
+
+    public static void setDisableNoHintForGoalLog(boolean value) {
+        disableNoHintForGoalLog = value;
+    }
+
+    /**
+     * validate モード
+     */
+    private static boolean validate = false;
+
+    public static boolean validation() {
+        return validate;
+    }
+
+    public static void setValidation(boolean value) {
+        validate = value;
+    }
+
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -921,10 +956,13 @@ public class CrowdWalkPropertiesHandler {
             mentalMapRules = getTerm("mental_map_rules",null) ;
 
             // "No hint for goal" ログを出力しない
-            CrowdWalkLauncher.disableNoHintForGoalLog |= getBoolean("disable_no_hint_for_goal_log", false);
+            disableNoHintForGoalLog |= getBoolean("disable_no_hint_for_goal_log", false);
 
             // legacy モード
             legacy = getBoolean("legacy", legacy);
+
+            // validate モード
+            validate |= getBoolean("validate", false);
         } catch (IOException ioe) {
             Itk.logError("IO exception") ;
             Itk.quitWithStackTrace(ioe) ;
@@ -952,6 +990,7 @@ public class CrowdWalkPropertiesHandler {
         if (mentalMapRules != null) {
             properties.mentalMapRules = mentalMapRules.clone();
         }
+        properties.legacy = legacy;
         return properties;
     }
 

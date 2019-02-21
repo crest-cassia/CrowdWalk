@@ -20,6 +20,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import nodagumi.ananPJ.Editor.MapEditor;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
@@ -29,7 +30,7 @@ import nodagumi.Itk.Itk;
  * CrowdWalk の起動を司る
  */
 public class CrowdWalkLauncher {
-    public static String optionsFormat = "[-c] [-g|g2] [-h] [-l <LEVEL>] [-L] [-N] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v]"; // これはメソッドによる取得も可能
+    public static String optionsFormat = "[-c|g|g2] [-h] [-l <LEVEL>] [-L] [-N] [-o] [-t <FILE>] [-f <FALLBACK>]* [-v] [-V]"; // これはメソッドによる取得も可能
     public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);
     public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";
 
@@ -64,11 +65,6 @@ public class CrowdWalkLauncher {
     public static boolean internetEnabled = false;
 
     /**
-     * "No hint for goal" ログを出力しない
-     */
-    public static boolean disableNoHintForGoalLog = false;
-
-    /**
      * legacy モード
      */
     public static boolean legacy = false;
@@ -94,6 +90,7 @@ public class CrowdWalkLauncher {
                           .withDescription("fallback の先頭に追加する")
                           .hasArg().withArgName("JSON").create("f"));
         options.addOption("v", "version", false, "バージョン情報を表示して終了する");
+        options.addOption("V", "validate", false, "マップデータを検証する\n問題があればシミュレーションを実行せずに終了する");
     }
 
     /**
@@ -145,10 +142,13 @@ public class CrowdWalkLauncher {
             offline = commandLine.hasOption("offline");
 
             // "No hint for goal" ログを出力しない
-            disableNoHintForGoalLog = commandLine.hasOption("disable-no-hint-for-goal-log");
+            CrowdWalkPropertiesHandler.setDisableNoHintForGoalLog(commandLine.hasOption("disable-no-hint-for-goal-log"));
 
             // legacy モード
             legacy = commandLine.hasOption("legacy");
+
+            // マップデータを検証する
+            CrowdWalkPropertiesHandler.setValidation(commandLine.hasOption("validate"));
 
             // CUI モードで実行
             if (commandLine.hasOption("cui")) {
@@ -159,7 +159,7 @@ public class CrowdWalkLauncher {
                 CuiSimulationLauncher launcher
                     = launchCuiSimulator(propertiesFilePath, fallbackStringList);
                 // tick 情報の出力
-                if (commandLine.hasOption("tick")) {
+                if (launcher != null && commandLine.hasOption("tick")) {
                     String tickFilePath = commandLine.getOptionValue("tick");
                     saveTick(tickFilePath, launcher.simulator.currentTime);
                 }
@@ -218,6 +218,10 @@ public class CrowdWalkLauncher {
         CuiSimulationLauncher launcher =
             new CuiSimulationLauncher(propertiesFilePath,
                                       commandLineFallbacks);
+        if (CrowdWalkPropertiesHandler.validation() && ! launcher.getMap().validate()) {
+            Itk.logError_("Failed to validate the map data.");
+            return null;
+        }
         launcher.initialize();
         launcher.start();
         return launcher;
@@ -241,6 +245,10 @@ public class CrowdWalkLauncher {
             launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");
         }
         launcher.init(propertiesFilePath, settings, commandLineFallbacks);
+        if (CrowdWalkPropertiesHandler.validation() && ! launcher.getMap().validate()) {
+            Itk.logWarn_("Failed to validate the map data.");
+            return null;
+        }
         launcher.simulate();
         return launcher;
     }

@@ -199,14 +199,14 @@ public class Coastline extends JsonicHashMapGetter {
                 linesLastReference.put(lastPoint.toString(), lineLastReference);
             } else {
                 if (linesFirstReference.containsKey(firstPoint.toString())) {
-                    Itk.logWarn("Duplicate coastline coordinate was found(firstPoint)", "(" + firstPoint.getX() + ", " + firstPoint.getY() + ")");
+                    Itk.logWarn("Duplicated coastline coordinate was found(firstPoint)", "(" + firstPoint.getX() + ", " + firstPoint.getY() + ")");
                     if (linesLastReference.containsKey(lastPoint.toString())) {
-                        Itk.logWarn("Duplicate coastline coordinate was found(lastPoint)", "(" + lastPoint.getX() + ", " + lastPoint.getY() + ")");
+                        Itk.logWarn("Duplicated coastline coordinate was found(lastPoint)", "(" + lastPoint.getX() + ", " + lastPoint.getY() + ")");
                     }
                     return;
                 }
                 if (linesLastReference.containsKey(lastPoint.toString())) {
-                    Itk.logWarn("Duplicate coastline coordinate was found(lastPoint)", "(" + lastPoint.getX() + ", " + lastPoint.getY() + ")");
+                    Itk.logWarn("Duplicated coastline coordinate was found(lastPoint)", "(" + lastPoint.getX() + ", " + lastPoint.getY() + ")");
                     return;
                 }
                 linesFirstReference.put(firstPoint.toString(), coordinates);
