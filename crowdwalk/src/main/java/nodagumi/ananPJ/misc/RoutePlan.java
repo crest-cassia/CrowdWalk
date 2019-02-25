@@ -258,6 +258,39 @@ public class RoutePlan {
         return this ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * Term へ変更
+     */
+    public Term toTerm() {
+        Term term = Term.newObjectTerm() ;
+        term.setArg("index",index) ;
+        Term taglist = Term.newArrayTerm() ;
+        for(Term subgoal : getRoute()) {
+            taglist.addNth(subgoal) ;
+        }
+        term.setArg("route",taglist) ;
+
+        return term ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * Term から設定
+     */
+    public Term setByTerm(Term term) {
+        resetIndex() ;
+        route.clear() ;
+        for(Object _subgoal : term.getArgTerm("route").getArray()){
+            Term subgoal = (Term)_subgoal ;
+            route.add(subgoal) ;
+        }
+        setIndex(term.getArgInt("index")) ;
+
+        return term ;
+    }
+    
+
 } // class RoutePlan.java
 
 

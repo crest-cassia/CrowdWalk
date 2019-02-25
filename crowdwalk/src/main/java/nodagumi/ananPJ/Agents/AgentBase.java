@@ -1074,6 +1074,7 @@ implements Comparable<AgentBase> {
 
         setupByIndividualConfig_place(config) ;
         setupByIndividualConfig_conditions(config) ;
+        setupByIndividualConfig_goals(config) ;
     }
 
     //------------------------------
@@ -1086,6 +1087,7 @@ implements Comparable<AgentBase> {
         Term config = Term.newObjectTerm() ;
         dumpTermForIndividualConfig_place(config) ;
         dumpTermForIndividualConfig_conditions(config) ;
+        dumpTermForIndividualConfig_goals(config) ;
 
         if(startTime != null) {
             config.setArg("startTime", startTime.getAbsoluteTimeString()) ;
@@ -1182,6 +1184,25 @@ implements Comparable<AgentBase> {
         return config ;
     }
     
+    //----------
+    /**
+     * individualConfig による設定：goals
+     */
+    private void setupByIndividualConfig_goals(Term config) {
+        goal = config.getArgTerm("goal") ;
+        routePlan.setByTerm(config.getArgTerm("routePlan")) ;
+    }
+    
+    //----------
+    /**
+     * individualConfig へのdump：goals
+     */
+    private Term dumpTermForIndividualConfig_goals(Term config) {
+        config.setArg("goal", goal) ;
+        config.setArg("routePlan",routePlan.toTerm()) ;
+            
+        return config ;
+    }
 }
 // ;;; Local Variables:
 // ;;; mode:java
