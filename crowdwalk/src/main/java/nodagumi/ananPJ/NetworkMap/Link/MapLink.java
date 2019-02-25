@@ -577,6 +577,13 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
         }
     }
 
+    public void agentEntersOnLane(AgentBase agent) {
+        agentEnters(agent) ;
+        if (agent.isForwardDirection() || agent.isBackwardDirection()) {
+            add_agent_to_lane(agent);
+        }
+    }
+
     public void agentExits (AgentBase agent) {
         assert(agents.contains(agent));
         agents.remove(agent);

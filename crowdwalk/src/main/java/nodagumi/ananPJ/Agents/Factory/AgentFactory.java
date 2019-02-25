@@ -388,7 +388,7 @@ public abstract class AgentFactory {
         placeAgent(agent); // この時点では direction が 0.0 のため、add_agent_to_lane で agent は登録されない
         setupAgentByIndividualConfig(agent) ;
         agent.prepareForSimulation() ;
-        agent.getCurrentLink().agentEnters(agent);  // ここで add_agent_to_lane させる
+        agent.getCurrentLink().agentEntersOnLane(agent); // ここで add_agent_to_lane させる 
         return agent ;
     }
 
