@@ -2499,8 +2499,8 @@ public class MapEditor {
     /**
      * 重複したリンクを取得する
      */
-    public HashMap<String, ArrayList<MapLink>> getDuplicateLinks() {
-        HashMap<String, ArrayList<MapLink>> duplicateLinks = new HashMap();
+    public HashMap<String, ArrayList<MapLink>> getDuplicatedLinks() {
+        HashMap<String, ArrayList<MapLink>> duplicatedLinks = new HashMap();
         for (MapLink link : networkMap.getLinks()) {
             MapNode fromNode = link.getFrom();
             MapNode toNode = link.getTo();
@@ -2512,12 +2512,12 @@ public class MapEditor {
                     } else {
                         key = toNode.getID() + " " + fromNode.getID();
                     }
-                    ArrayList<MapLink> links = duplicateLinks.get(key);
+                    ArrayList<MapLink> links = duplicatedLinks.get(key);
                     if (links == null) {
                         links = new ArrayList();
                         links.add(link);
                         links.add(_link);
-                        duplicateLinks.put(key, links);
+                        duplicatedLinks.put(key, links);
                     } else {
                         if (! links.contains(link)) {
                             links.add(link);
@@ -2529,7 +2529,7 @@ public class MapEditor {
                 }
             }
         }
-        return duplicateLinks;
+        return duplicatedLinks;
     }
 
     /**

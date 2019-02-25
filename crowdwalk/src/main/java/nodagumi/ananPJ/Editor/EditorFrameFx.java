@@ -205,7 +205,7 @@ public class EditorFrameFx {
     /**
      * グループ選択パネル
      */
-    private FlowPane groupSelectionPane = new FlowPane();
+    private HBox groupSelectionPane = new HBox();
     private ToggleGroup groupToggleGroup = new ToggleGroup();
     private HashMap<MapPartGroup, ToggleButton> groupButtonMap = new HashMap();
     private ArrayList<ToggleButton> groupButtons = new ArrayList();
@@ -330,11 +330,11 @@ public class EditorFrameFx {
         BorderPane leftPane = new BorderPane();
         groupSelectionPane.getStyleClass().add("custom-color-pane");
         groupSelectionPane.setPadding(new Insets(4));
-        groupSelectionPane.setHgap(8);
-        groupSelectionPane.setAlignment(Pos.CENTER);
+        groupSelectionPane.setSpacing(8);
+        groupSelectionPane.setAlignment(Pos.CENTER_LEFT);
         leftPane.setCenter(canvasPane);     // これを先にセットしないと rotation した時に他の Pane に被ってしまう
-        leftPane.setTop(updateGroupSelectionPane());
-        leftPane.setBottom(createModeSelectionPane());
+        leftPane.setTop(new Pane(updateGroupSelectionPane()));
+        leftPane.setBottom(new Pane(createModeSelectionPane()));
 
         // タブパネルの構築
 
@@ -813,8 +813,8 @@ public class EditorFrameFx {
         MenuItem miCheck0LengthLinks = new MenuItem("Check for zero length link");
         miCheck0LengthLinks.setOnAction(e -> check0LengthLinks());
 
-        MenuItem miCheckDuplicateLinks = new MenuItem("Check for duplicate link");
-        miCheckDuplicateLinks.setOnAction(e -> checkDuplicateLinks());
+        MenuItem miCheckDuplicatedLinks = new MenuItem("Check for duplicated link");
+        miCheckDuplicatedLinks.setOnAction(e -> checkDuplicatedLinks());
 
         MenuItem miCalculateTagPaths = new MenuItem("Calculate tag paths");
         miCalculateTagPaths.setOnAction(e -> openCalculateTagPathsDialog());
@@ -824,7 +824,7 @@ public class EditorFrameFx {
         // TODO: 正常に機能していないので無効にした
         miCheckReachability.setDisable(true);
 
-        actionMenu.getItems().addAll(miTotalValidation, miCheckForPiledNodes, miCheckLinksWhereNodeDoesNotExist, miCheckLoopedLinks, miCheck0LengthLinks, miCheckDuplicateLinks, miCalculateTagPaths, miCheckReachability);
+        actionMenu.getItems().addAll(miTotalValidation, miCheckForPiledNodes, miCheckLinksWhereNodeDoesNotExist, miCheckLoopedLinks, miCheck0LengthLinks, miCheckDuplicatedLinks, miCalculateTagPaths, miCheckReachability);
 
         /* Help menu */
 
@@ -1212,7 +1212,7 @@ public class EditorFrameFx {
     /**
      * グループ選択パネルを更新する
      */
-    public FlowPane updateGroupSelectionPane() {
+    public HBox updateGroupSelectionPane() {
         NetworkMap networkMap = editor.getMap();
         groupButtonMap.clear();
         groupButtons.clear();
@@ -1249,11 +1249,7 @@ public class EditorFrameFx {
     /**
      * 編集モード選択パネルを構築する
      */
-    private FlowPane createModeSelectionPane() {
-        FlowPane flowPane = new FlowPane();
-        flowPane.getStyleClass().add("custom-color-pane");
-        flowPane.setPadding(new Insets(4));
-        flowPane.setHgap(8);
+    private HBox createModeSelectionPane() {
         ToggleGroup group = new ToggleGroup();
 
         Label label = new Label("Mode");
@@ -1323,10 +1319,16 @@ public class EditorFrameFx {
         editModeButtons.add(tbEditArea);
         editModeButtons.add(tbEditPolygon);
         editModeButtons.add(tbBgImage);
-        flowPane.getChildren().addAll(label, tbAddNode, tbAddLink, tbAddNodeAndLink, tbEditNode, tbEditLink, tbEditArea, tbEditPolygon, tbBgImage);
         tbEditNode.setSelected(true);
 
-        return flowPane;
+        HBox pane = new HBox();
+        pane.getStyleClass().add("custom-color-pane");
+        pane.setPadding(new Insets(4));
+        pane.setSpacing(8);
+        pane.setAlignment(Pos.CENTER_LEFT);
+        pane.getChildren().addAll(label, tbAddNode, tbAddLink, tbAddNodeAndLink, tbEditNode, tbEditLink, tbEditArea, tbEditPolygon, tbBgImage);
+
+        return pane;
     }
 
     /**
@@ -1625,6 +1627,12 @@ public class EditorFrameFx {
     private void simulate(String simulator) {
         if (editor.getNetworkMapFile() == null || editor.getNetworkMapFile().isEmpty() || editor.getGenerationFile() == null || editor.getGenerationFile().isEmpty() || editor.getScenarioFile() == null || editor.getScenarioFile().isEmpty()) {
             Alert alert = new Alert(AlertType.INFORMATION, "There are not enough files for simulation.", ButtonType.OK);
+            alert.initOwner(frame);
+            alert.showAndWait();
+            return;
+        }
+        if (CrowdWalkPropertiesHandler.validation() && ! editor.getMap().validate()) {
+            Alert alert = new Alert(AlertType.WARNING, "Failed to validate the map data.", ButtonType.OK);
             alert.initOwner(frame);
             alert.showAndWait();
             return;
@@ -2961,8 +2969,8 @@ public class EditorFrameFx {
     /**
      * 重複したリンクがないかをチェックする
      */
-    public void checkDuplicateLinks() {
-        String title = "Check for duplicate link";
+    public void checkDuplicatedLinks() {
+        String title = "Check for duplicated link";
         for (MapLink link : editor.getMap().getLinks()) {
             if (link.selected) {
                 alert(AlertType.WARNING, title, "Cancel all link selections before executing.", null, null, ButtonType.OK);
@@ -2974,18 +2982,18 @@ public class EditorFrameFx {
             }
         }
 
-        HashMap<String, ArrayList<MapLink>> duplicateLinks = editor.getDuplicateLinks();
-        if (duplicateLinks.isEmpty()) {
-            alert(AlertType.INFORMATION, title, "Duplicate link does not exist.", null, null, ButtonType.OK);
+        HashMap<String, ArrayList<MapLink>> duplicatedLinks = editor.getDuplicatedLinks();
+        if (duplicatedLinks.isEmpty()) {
+            alert(AlertType.INFORMATION, title, "Duplicated link does not exist.", null, null, ButtonType.OK);
             return;
         }
 
         ArrayList<MapLink> links = new ArrayList();
         int n = 1;
         StringBuilder buff = new StringBuilder();
-        for (String key : duplicateLinks.keySet()) {
-            for (MapLink link : duplicateLinks.get(key)) {
-                Itk.logWarn_("Duplicate link found at place #" + n, link.toShortInfo());
+        for (String key : duplicatedLinks.keySet()) {
+            for (MapLink link : duplicatedLinks.get(key)) {
+                Itk.logWarn_("Duplicated link found at place #" + n, link.toShortInfo());
                 links.add(link);
                 buff.append(String.format("Place #%d ", n));
                 buff.append(link.toShortInfo());
@@ -2993,7 +3001,7 @@ public class EditorFrameFx {
             }
             n++;
         }
-        Optional<ButtonType> result = alert(AlertType.WARNING, title, "Duplicate links found at " + duplicateLinks.size() + " places.", "Resolve them?", buff.toString(), ButtonType.YES, ButtonType.NO);
+        Optional<ButtonType> result = alert(AlertType.WARNING, title, "Duplicated links found at " + duplicatedLinks.size() + " places.", "Resolve them?", buff.toString(), ButtonType.YES, ButtonType.NO);
         if (result.isPresent() && result.get() == ButtonType.YES) {
             linkPanel.select(links);
         }
@@ -3100,22 +3108,22 @@ public class EditorFrameFx {
         }
 
         // 重複したリンクのチェック
-        HashMap<String, ArrayList<MapLink>> duplicateLinks = editor.getDuplicateLinks();
-        if (! duplicateLinks.isEmpty()) {
+        HashMap<String, ArrayList<MapLink>> duplicatedLinks = editor.getDuplicatedLinks();
+        if (! duplicatedLinks.isEmpty()) {
             if (contentBuff.length() > 0) {
                 contentBuff.append("\n");
             }
-            contentBuff.append("Duplicate links found at ");
-            contentBuff.append(duplicateLinks.size());
+            contentBuff.append("Duplicated links found at ");
+            contentBuff.append(duplicatedLinks.size());
             contentBuff.append(" places.");
 
-            buff.append("Duplicate links found at ");
-            buff.append(duplicateLinks.size());
+            buff.append("Duplicated links found at ");
+            buff.append(duplicatedLinks.size());
             buff.append(" places:\n");
             int n = 1;
-            for (String key : duplicateLinks.keySet()) {
-                for (MapLink link : duplicateLinks.get(key)) {
-                    Itk.logWarn_("Duplicate link found at place #" + n, link.toShortInfo());
+            for (String key : duplicatedLinks.keySet()) {
+                for (MapLink link : duplicatedLinks.get(key)) {
+                    Itk.logWarn_("Duplicated link found at place #" + n, link.toShortInfo());
                     buff.append(String.format("Place #%d ", n));
                     buff.append(link.toShortInfo());
                     buff.append("\n");
@@ -3124,31 +3132,33 @@ public class EditorFrameFx {
             }
         }
 
-        // "OCEAN" および "STRUCTURE" タグ使用のチェック
-        int oceanTagCount = 0;
-        int structureTagCount = 0;
-        for (MapLink link : editor.getMap().getLinks()) {
-            for (String tag : link.getTags()) {
-                if (tag.contains("OCEAN")) {
-                    oceanTagCount++;
-                } else if (tag.contains("STRUCTURE")) {
-                    structureTagCount++;
+        if (CrowdWalkLauncher.legacy || editor.getProperties().isLegacy()) {
+            // "OCEAN" および "STRUCTURE" タグ使用のチェック
+            int oceanTagCount = 0;
+            int structureTagCount = 0;
+            for (MapLink link : editor.getMap().getLinks()) {
+                for (String tag : link.getTags()) {
+                    if (tag.contains("OCEAN")) {
+                        oceanTagCount++;
+                    } else if (tag.contains("STRUCTURE")) {
+                        structureTagCount++;
+                    }
                 }
             }
-        }
-        if (oceanTagCount > 0) {
-            if (contentBuff.length() > 0) {
-                contentBuff.append("\n");
+            if (oceanTagCount > 0) {
+                if (contentBuff.length() > 0) {
+                    contentBuff.append("\n");
+                }
+                contentBuff.append("Tags including \"OCEAN\" is used. This tag is deprecated.");
+                Itk.logWarn_("Tags including \"OCEAN\" is used. This tag is deprecated.");
             }
-            contentBuff.append("Tags including \"OCEAN\" is used. This tag is deprecated.");
-            Itk.logWarn_("Tags including \"OCEAN\" is used. This tag is deprecated.");
-        }
-        if (structureTagCount > 0) {
-            if (contentBuff.length() > 0) {
-                contentBuff.append("\n");
+            if (structureTagCount > 0) {
+                if (contentBuff.length() > 0) {
+                    contentBuff.append("\n");
+                }
+                contentBuff.append("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
+                Itk.logWarn_("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
             }
-            contentBuff.append("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
-            Itk.logWarn_("Tags including \"STRUCTURE\" is used. This tag is deprecated.");
         }
 
         String title = "Total validation of map data";

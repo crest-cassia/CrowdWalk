@@ -54,17 +54,6 @@ public class PlaneTriangleAgent extends SphereAgent {
     }
 
     /**
-     * エージェントの表示を更新する
-     */
-    public void updateAgent(AgentBase agent, Shape3D shape) {
-        Color color = getAgentColor(agent);
-        PhongMaterial material = (PhongMaterial)shape.getMaterial();
-        if (! material.getDiffuseColor().equals(color)) {
-            material.setDiffuseColor(color);
-        }
-    }
-
-    /**
      * エージェントのサイズを変更する
      */
     public void changeAgentSize(AgentBase agent, Shape3D shape, double size) {

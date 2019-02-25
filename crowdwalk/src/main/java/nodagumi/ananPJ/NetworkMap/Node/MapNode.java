@@ -12,7 +12,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.OBMapPart;
 import nodagumi.ananPJ.NetworkMap.OBNode;
@@ -21,6 +20,7 @@ import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Node.*;
 import nodagumi.ananPJ.navigation.NavigationHint;
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.misc.SimTime;
 
@@ -292,7 +292,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
                              "in mode", mentalMode, ".") ;
                 Itk.dumpStackTrace() ;
                 Itk.quitByError() ;
-            } else if (! CrowdWalkLauncher.disableNoHintForGoalLog) {
+            } else if (! CrowdWalkPropertiesHandler.isDisableNoHintForGoalLog()) {
                 Itk.logWarn("No hint for goal",
                             "toward tag", goalTag,
                             "from node", this.getID(),

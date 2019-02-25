@@ -40,6 +40,7 @@ import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentAppearance2D;
 import nodagumi.ananPJ.Gui.AgentAppearance.view2d.AgentViewBase2D;
 import nodagumi.ananPJ.Gui.GsiTile;
@@ -241,7 +242,7 @@ public class SimulationPanel2D extends JPanel {
     private NetworkMap networkMap;
 
     /**
-     * ポリゴンを除いたリンクのリスト
+     * 描画対象リンクのリスト
      */
     private MapLinkTable regularLinks = new MapLinkTable();
 
@@ -325,6 +326,11 @@ public class SimulationPanel2D extends JPanel {
      */
     private CrowdWalkPropertiesHandler properties;
 
+    /**
+     * legacy モード
+     */
+    private boolean legacy = false;
+
     synchronized public boolean isUpdated() {
         return updated;
     }
@@ -341,10 +347,14 @@ public class SimulationPanel2D extends JPanel {
         networkMap = _networkMap;
         this.backgroundMapTiles = backgroundMapTiles;
         this.properties = properties;
+        legacy = CrowdWalkLauncher.legacy || properties.isLegacy();
 
         try {
             // Link appearance の準備
-            String[] exclusionTags = {"POLYGON"};
+            String[] exclusionTags = new String[0];
+            if (legacy) {
+                exclusionTags = new String[]{"POLYGON"};
+            }
             EdgePoints edgePoints = new EdgePoints(networkMap, exclusionTags);
             for (HashMap parameters : linkAppearanceConfig) {
                 LinkAppearance2D appearance = new LinkAppearance2D(this, parameters, edgePoints, linkLines);
@@ -365,7 +375,7 @@ public class SimulationPanel2D extends JPanel {
                 nodeAppearances.add(appearance);
             }
 
-            if (properties != null && properties.getPropertiesFile() != null) {
+            if (properties.getPropertiesFile() != null) {
                 show_gas = ObstructerDisplay.valueOf(properties.getStringInPattern(
                     "pollution_color", "ORANGE", ObstructerDisplay.getNames()).toUpperCase());
                 pollutionColorSaturation =
@@ -414,11 +424,11 @@ public class SimulationPanel2D extends JPanel {
         // ポリゴンを除いたリンクのリスト
         for (MapLink link : frame.getLinks()) {
             if (link.getFrom() == link.getTo()) {
-                // TODO: 不正なリンクはマップを読み込んだ直後に削除した方がよい
+                // 不正なリンクは無視する
                 Itk.logWarn_("Looped link found", "ID=" + link.ID);
                 continue;
             }
-            if (! link.hasSubTag("POLYGON")) {
+            if (! legacy || ! link.hasSubTag("POLYGON")) {
                 regularLinks.add(link);
             }
         }
@@ -556,9 +566,16 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
-     * リンクリストからポリゴンデータを生成する
+     * リンクリストからポリゴンデータを生成する.
+     *
+     * ※ legacy モード時のみ有効
      */
     public HashMap<String, Polygon2D> createPolygons(MapLinkTable links) {
+        HashMap<String, Polygon2D> polygons = new HashMap();
+        if (! legacy) {
+            return polygons;
+        }
+
         // タグごとにリンクを選別する
         HashMap<String, MapLinkTable> polygonLinks = new HashMap();
         for (MapLink link : links) {
@@ -574,7 +591,6 @@ public class SimulationPanel2D extends JPanel {
             }
         }
         // 選別したリンクでポリゴンを生成する
-        HashMap<String, Polygon2D> polygons = new HashMap();
         for (String tag : polygonLinks.keySet()) {
             // 通過点順に MapNode を収集する
             MapLinkTable _links = polygonLinks.get(tag);
@@ -1041,24 +1057,27 @@ public class SimulationPanel2D extends JPanel {
 
         // 背景地図の描画
         if (frame.isShowBackgroundMap()) {
-            Composite oroginalComposite = g2.getComposite();
+            Composite originalComposite = g2.getComposite();
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)colorDepthOfBackgroundMap);
             g2.setComposite(ac);
             for (GsiTile mapTile : backgroundMapTiles) {
                 drawBackgroundMapTile(mapTile, g2);
             }
-            g2.setComposite(oroginalComposite);
+            g2.setComposite(originalComposite);
         }
 
         // 背景画像の描画
         if (frame.isShowBackgroundImage()) {
-            Composite oroginalComposite = g2.getComposite();
+            Composite originalComposite = g2.getComposite();
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)colorDepthOfBackgroundImage);
             g2.setComposite(ac);
-            for (HashMap.Entry<MapPartGroup, Image> entry : backgroundImages.entrySet()) {
-                drawBackgroundImage(entry.getKey(), entry.getValue(), g2);
+            for (MapPartGroup group : networkMap.getGroups()) {
+                Image image = backgroundImages.get(group);
+                if (image != null && frame.isShowBackgroundImage(group)) {
+                    drawBackgroundImage(group, image, g2);
+                }
             }
-            g2.setComposite(oroginalComposite);
+            g2.setComposite(originalComposite);
         }
 
         if (showArea) {
@@ -1161,7 +1180,9 @@ public class SimulationPanel2D extends JPanel {
     }
 
     /**
-     * ポリゴンを描画する
+     * ポリゴンを描画する.
+     *
+     * ※ 呼ばれるのは legacy モード時のみ
      */
     public void drawPolygon(Graphics2D g2, String tag, Polygon2D polygon) {
         Color color = Color2D.GRAY;

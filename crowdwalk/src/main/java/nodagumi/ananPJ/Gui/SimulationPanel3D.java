@@ -61,6 +61,7 @@ import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentAppearance3D;
 import nodagumi.ananPJ.Gui.AgentAppearance.view3d.AgentViewBase3D;
 import nodagumi.ananPJ.Gui.LinkAppearance.EdgePoints;
@@ -412,6 +413,11 @@ public class SimulationPanel3D extends StackPane {
     private ArrayList<Material> currentMaterials = new ArrayList();
 
     /**
+     * legacy モード
+     */
+    private boolean legacy = false;
+
+    /**
      * ホバー表示用マウスイベントハンドラ
      */
     private EventHandler<MouseEvent> onMouseEntered = new EventHandler<MouseEvent>() {
@@ -536,6 +542,7 @@ public class SimulationPanel3D extends StackPane {
         this.networkMap = networkMap;
         this.verticalScale = verticalScale;
         this.properties = properties;
+        legacy = CrowdWalkLauncher.legacy || properties.isLegacy();
 
         init(linkAppearanceConfig, nodeAppearanceConfig);
 
@@ -627,14 +634,18 @@ public class SimulationPanel3D extends StackPane {
         // リンクの分別
         for (MapLink link : networkMap.getLinks()) {
             if (link.getFrom() == link.getTo()) {
-                // TODO: 不正なリンクはマップを読み込んだ直後に削除した方がよい
+                // 不正なリンクは無視する
                 Itk.logWarn_("Looped link found", "ID=" + link.ID);
                 continue;
             }
-            if (link.hasSubTag("POLYGON")) {
-                polygonLinks.add(link);
-            } else if (link.hasSubTag("STRUCTURE")) {
-                structureLinks.add(link);
+            if (legacy) {
+                if (link.hasSubTag("POLYGON")) {
+                    polygonLinks.add(link);
+                } else if (link.hasSubTag("STRUCTURE")) {
+                    structureLinks.add(link);
+                } else {
+                    regularLinks.add(link);
+                }
             } else {
                 regularLinks.add(link);
             }
@@ -649,7 +660,10 @@ public class SimulationPanel3D extends StackPane {
 
         try {
             // Link appearance の準備
-            String[] exclusionTags = {"POLYGON"};
+            String[] exclusionTags = new String[0];
+            if (legacy) {
+                exclusionTags = new String[]{"POLYGON"};
+            }
             EdgePoints edgePoints = new EdgePoints(networkMap, exclusionTags);
             for (HashMap parameters : linkAppearanceConfig) {
                 LinkAppearance3D appearance = new LinkAppearance3D(this, parameters, edgePoints);
@@ -670,7 +684,7 @@ public class SimulationPanel3D extends StackPane {
                 nodeAppearances.add(appearance);
             }
 
-            if (properties != null && properties.getPropertiesFile() != null) {
+            if (properties.getPropertiesFile() != null) {
                 String filePath = properties.getFilePath("polygon_appearance_file", null);
                 polygonAppearances = PolygonAppearance.load(filePath);
 
@@ -814,9 +828,16 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
-     * ポリゴン表示用のリンクを元にタグ別のポリゴン座標リストを作成する
+     * ポリゴン表示用のリンクを元にタグ別のポリゴン座標リストを作成する.
+     *
+     * ※ legacy モード時のみ有効
      */
     public HashMap<String, ArrayList<Point3D>> createPolygonPoints(MapLinkTable links) {
+        HashMap<String, ArrayList<Point3D>> polygonPoints = new HashMap();
+        if (! legacy) {
+            return polygonPoints;
+        }
+
         // タグごとにリンクを選別する
         HashMap<String, MapLinkTable> polygonLinksByTag = new HashMap();
         for (MapLink link : links) {
@@ -832,7 +853,6 @@ public class SimulationPanel3D extends StackPane {
             }
         }
         // 選別したリンクを元に座標リストを作成する
-        HashMap<String, ArrayList<Point3D>> polygonPoints = new HashMap();
         for (String tag : polygonLinksByTag.keySet()) {
             // 通過点順に MapNode を収集する
             MapLinkTable _links = polygonLinksByTag.get(tag);
@@ -1453,7 +1473,9 @@ public class SimulationPanel3D extends StackPane {
     }
 
     /**
-     * ポリゴンをシーングラフに追加する(互換性のため残す)
+     * ポリゴンをシーングラフに追加する(互換性のため残す).
+     *
+     * ※ 呼ばれるのは legacy モード時のみ
      */
     public void addPolygon(String tag, ArrayList<Point3D> points) {
         Color color = Color.GRAY;

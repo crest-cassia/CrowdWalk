@@ -359,22 +359,20 @@ public class SimulationFrame3D extends Stage implements Observer {
         deferFactor = launcher.getDeferFactor();
         areas = launcher.getMap().getAreas();
 
-        if (properties == null || properties.getPropertiesFile() == null) {
-            return;
-        }
-
-        try {
-            String filePath = properties.getFilePath("camera_file", null);
-	    if(filePath != null) {
-		if (filePath.toLowerCase().endsWith(".json")) {
-		    loadCamerawork(filePath);
-		} else {
-		    Itk.logError("camera_file should be a json file with .json suffix." ) ;
-		    Itk.quitByError() ;
-		}
-	    }
-        } catch (Exception e) {
-	    Itk.quitWithStackTrace(e) ;
+        if (properties.getPropertiesFile() != null) {
+            try {
+                String filePath = properties.getFilePath("camera_file", null);
+                if (filePath != null) {
+                    if (filePath.toLowerCase().endsWith(".json")) {
+                        loadCamerawork(filePath);
+                    } else {
+                        Itk.logError("camera_file should be a json file with .json suffix." ) ;
+                        Itk.quitByError() ;
+                    }
+                }
+            } catch (Exception e) {
+                Itk.quitWithStackTrace(e) ;
+            }
         }
 
         // ヘルプ画面の準備
