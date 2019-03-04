@@ -638,6 +638,18 @@ import nodagumi.Itk.*;
  *  設定値： true | false
  *  デフォルト値： false</pre>
  *   </li>
+ *
+ *   <li>
+ *     <h4>height_effective</h4>
+ *     <pre>  リンク長の計算に両端ノードの標高差を反映するかどうか
+ *
+ *  マップエディタでリンクを追加する際に、length 値の計算に適用される。
+ *  false ならば平面上の長さになる。
+ *  なおシェープファイル・MRD・OSM 読み込み機能には適用されず、これらのリンク長はすべて平面上の長さになる。
+ *
+ *  設定値： true | false
+ *  デフォルト値： true</pre>
+ *   </li>
  * </ul>
  */
 public class CrowdWalkPropertiesHandler {

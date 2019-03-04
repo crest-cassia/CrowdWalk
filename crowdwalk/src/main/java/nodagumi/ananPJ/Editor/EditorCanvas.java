@@ -2241,14 +2241,15 @@ public class EditorCanvas extends Canvas {
             } else if (link.isRoadClosed()) {
                 gc.setFill(FxColor.LINK_RED);
                 gc.fillPolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
-            } else if (link.getFrom().getParent() != link.getTo().getParent()) {
-                // 階段
-                gc.setFill(isBg ? Color.web("#99ffff") : Color.CYAN);
-                gc.fillPolygon(polygon.getXPoints(), polygon.getYPoints(), polygon.size());
             } else {
-                Color color = isBg ? Color.web("#ffffcc") : Color.YELLOW;
+                Color color = null;
+                if (link.getFrom().getParent() != link.getTo().getParent()) {   // 階段
+                    color = isBg ? Color.web("#99ffff") : Color.CYAN;
+                } else {
+                    color = isBg ? Color.web("#ffffcc") : Color.YELLOW;
+                }
                 // length と計算値の差が 10cm を超えていたら警告する
-                if (Math.abs(editor.calculateLinkLength(link) - link.getLength()) > 0.1) {
+                if (Math.abs(editor.calcLinkLength(link) - link.getLength()) > 0.1) {
                     color = isBg ? Color.web("#ffcc66") : Color.ORANGE;
                     frameColor = isBg ? Color.web("#ffcc66").brighter() : Color.ORANGE.brighter();
                 }

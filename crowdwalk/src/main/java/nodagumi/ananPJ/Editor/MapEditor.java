@@ -150,6 +150,11 @@ public class MapEditor {
     private boolean normalized = false;
 
     /**
+     * リンク長の計算に標高差を反映する
+     */
+    private boolean heightEffective = true;
+
+    /**
      * 編集コマンドの履歴管理用変数
      */
     private ArrayList<EditCommandBase> commandHistory = new ArrayList();
@@ -187,6 +192,12 @@ public class MapEditor {
      * 初期設定
      */
     private void init() {
+        try {
+            heightEffective = properties.getBoolean("height_effective", heightEffective);
+        } catch(Exception e) {
+            Itk.quitWithStackTrace(e);
+        }
+
         // 初期選択グループのセット
         initCurrentGroup();
 
@@ -1411,41 +1422,43 @@ public class MapEditor {
     }
 
     /**
-     * 高低差を反映してリンク長を計算する
+     * リンク長を計算する
      */
-    public double calculateLinkLength(MapLink link) {
+    public double calcLinkLength(MapLink link) {
         MapPartGroup group = (MapPartGroup)link.getParent();
-        double scale = group.getScale();
         MapNode fromNode = link.getFrom();
         MapNode toNode = link.getTo();
-        if (fromNode.getHeight() == toNode.getHeight()) {
-            return fromNode.getPosition().distance(toNode.getPosition()) * scale;
+        if (heightEffective) {
+            Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
+            Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
+            return point0.distance(point1) * group.getScale();
         }
-        Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
-        Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
-        return point0.distance(point1) * scale;
+        return fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
+    }
+
+    /**
+     * リンク長を計算する
+     */
+    public double calcLinkLength(MapNode fromNode, MapNode toNode, MapPartGroup group) {
+        if (heightEffective) {
+            Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
+            Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
+            return point0.distance(point1) * group.getScale();
+        }
+        return fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
     }
 
     /**
      * リンク長を再計算する
      */
-    public void recalculateLinkLength(ArrayList<MapLink> links, boolean reflectHeight) {
+    public void recalculateLinkLength(ArrayList<MapLink> links) {
         startOfCommandBlock();
         for (MapLink link : links) {
-            MapPartGroup group = (MapPartGroup)link.getParent();
-            double scale = group.getScale();
-            MapNode fromNode = link.getFrom();
-            MapNode toNode = link.getTo();
-            double length = 0.0;
-            if (reflectHeight) {
-                Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
-                Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
-                length = point0.distance(point1) * scale;
-            } else {
-                length = fromNode.getPosition().distance(toNode.getPosition()) * scale;
-            }
-            if (! invoke(new SetLength(link, length))) {
-                break;
+            double length = calcLinkLength(link);
+            if (length != link.getLength()) {
+                if (! invoke(new SetLength(link, length))) {
+                    break;
+                }
             }
         }
         endOfCommandBlock();
@@ -1467,10 +1480,12 @@ public class MapEditor {
             }
             if (recalcLength) {
                 for (MapLink link : networkMap.getLinks()) {
-                    double length = link.getFrom().getPosition().distance(link.getTo().getPosition()) * scale;
-                    if (! invoke(new SetLength(link, length))) {
-                        endOfCommandBlock();
-                        return;
+                    double length = calcLinkLength(link);
+                    if (length != link.getLength()) {
+                        if (! invoke(new SetLength(link, length))) {
+                            endOfCommandBlock();
+                            return;
+                        }
                     }
                 }
             }
@@ -1483,10 +1498,12 @@ public class MapEditor {
             }
             if (recalcLength) {
                 for (MapLink link : group.getChildLinks()) {
-                    double length = link.getFrom().getPosition().distance(link.getTo().getPosition()) * scale;
-                    if (! invoke(new SetLength(link, length))) {
-                        endOfCommandBlock();
-                        return;
+                    double length = calcLinkLength(link);
+                    if (length != link.getLength()) {
+                        if (! invoke(new SetLength(link, length))) {
+                            endOfCommandBlock();
+                            return;
+                        }
                     }
                 }
             }
@@ -1808,7 +1825,7 @@ public class MapEditor {
     /**
      * マップ座標の正規化
      */
-    public void normalizeCoordinates(MapNode node1, MapNode node2, int zone, double node1Longitude, double node1Latitude, double node2Longitude, double node2Latitude, String scaleName, boolean rotationEnabled, boolean lengthCalculating, boolean heightReflecting) {
+    public void normalizeCoordinates(MapNode node1, MapNode node2, int zone, double node1Longitude, double node1Latitude, double node2Longitude, double node2Latitude, String scaleName, boolean rotationEnabled, boolean lengthCalculating) {
         // 経緯度を CrowdWalk 座標に変換する
         CoordinateTransform transform = GsiTile.createCoordinateTransform("EPSG:4326", GsiTile.JGD2000_JPR_EPSG_NAMES[zone]);
         java.awt.geom.Point2D jpr1 = GsiTile.transformCoordinate(transform, node1Longitude, node1Latitude);
@@ -1871,16 +1888,7 @@ public class MapEditor {
         }
         if (lengthCalculating) {
             for (MapLink link : networkMap.getLinks()) {
-                double length = 0.0;
-                if (heightReflecting) {
-                    MapNode fromNode = link.getFrom();
-                    MapNode toNode = link.getTo();
-                    Point3D fromPosition = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
-                    length = fromPosition.distance(toNode.getX(), toNode.getY(), toNode.getHeight());
-                } else {
-                    length = link.getFrom().getPosition().distance(link.getTo().getPosition());
-                }
-                if (! invoke(new SetLength(link, length))) {
+                if (! invoke(new SetLength(link, calcLinkLength(link)))) {
                     endOfCommandBlock();
                     return;
                 }
@@ -2633,6 +2641,20 @@ public class MapEditor {
      */
     public double getMaxHeight() {
         return maxHeight;
+    }
+
+    /**
+     * リンク長の計算に標高差を反映するか?
+     */
+    public boolean isHeightEffective() {
+        return heightEffective;
+    }
+
+    /**
+     * リンク長の計算に標高差を反映するかどうかの設定
+     */
+    public void setHeightEffective(boolean heightEffective) {
+        this.heightEffective = heightEffective;
     }
 
     /**

@@ -68,7 +68,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -615,6 +620,13 @@ public class EditorFrameFx {
         miRedo.setOnAction(e -> editor.redo());
         miRedo.setAccelerator(KeyCombination.valueOf("Ctrl+Y"));
 
+        CheckMenuItem cmiHeightEffective = new CheckMenuItem ("Affected by height difference");
+        cmiHeightEffective.setSelected(editor.isHeightEffective());
+        cmiHeightEffective.setOnAction(e -> {
+            editor.setHeightEffective(cmiHeightEffective.isSelected());
+            canvas.repaintLater();
+        });
+
         MenuItem miReadShapefile = new MenuItem("Read shapefile");
         miReadShapefile.setOnAction(e -> readShapefile());
 
@@ -624,7 +636,7 @@ public class EditorFrameFx {
         MenuItem miReadOsm = new MenuItem("Read OpenStreetMap");
         miReadOsm.setOnAction(e -> readOpenStreetMap());
 
-        editMenu.getItems().addAll(miUndo, miRedo, miReadShapefile, miReadMrdFile, miReadOsm);
+        editMenu.getItems().addAll(miUndo, miRedo, cmiHeightEffective, miReadShapefile, miReadMrdFile, miReadOsm);
 
         /* View menu */
 
@@ -3560,6 +3572,7 @@ public class EditorFrameFx {
             return;
         }
 
+        // fromNode の標高 >= toNode の標高 となるようにする
         int fromIndex = 0;
         int toIndex = 1;
         if (nodes.get(0).getHeight() < nodes.get(1).getHeight()) {
@@ -3580,20 +3593,16 @@ public class EditorFrameFx {
 
         Label lengthLabel = new Label("Length");
         lengthLabel.setFont(Font.font("Arial", FontWeight.BOLD, lengthLabel.getFont().getSize()));
-        TextField lengthField = new TextField("" + 1.0);
+        TextField lengthField = new TextField("" + editor.calcLinkLength(fromNode, toNode, (MapPartGroup)fromNode.getParent()));
         lengthField.setPrefWidth(160);
-
-        Button calcLengthButton = new Button("Calc length");
-        CheckBox heightDiffCheckBox = new CheckBox("Reflect the height difference");
-        calcLengthButton.setOnAction(e -> {
-            double distance = fromNode.getPosition().distance(toNode.getPosition()) * editor.getCurrentGroup().getScale();
-            if (heightDiffCheckBox.isSelected()) {
-                Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
-                Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
-                distance = point0.distance(point1) * editor.getCurrentGroup().getScale();
-            }
-            lengthField.setText("" + distance);
-        });
+        Label noticeLabel = new Label();
+        if (editor.isHeightEffective()) {
+            noticeLabel.setText("Affected by height difference");
+        } else {
+            noticeLabel.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null)));
+            noticeLabel.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+            noticeLabel.setText("Unaffected by height difference");
+        }
 
         Label widthLabel = new Label("Width");
         widthLabel.setFont(Font.font("Arial", FontWeight.BOLD, widthLabel.getFont().getSize()));
@@ -3605,8 +3614,7 @@ public class EditorFrameFx {
         grid.setVgap(8);
         grid.add(lengthLabel, 1, 1);
         grid.add(lengthField, 2, 1);
-        grid.add(calcLengthButton, 3, 1);
-        grid.add(heightDiffCheckBox, 4, 1);
+        grid.add(noticeLabel, 3, 1);
         grid.add(widthLabel, 1, 2);
         grid.add(widthField, 2, 2);
 
@@ -3628,7 +3636,7 @@ public class EditorFrameFx {
                 editor.startOfCommandBlock();
                 if (editor.invoke(new AddLink(fromNode, toNode, length, width))) {
                     MapLink link = fromNode.connectedTo(toNode);
-                    editor.invoke(new AddTag(link, "GENERATED_STAIR"));
+                    editor.invoke(new AddTag(link, NetworkMap.STAIR_TAG));
                 }
                 editor.endOfCommandBlock();
             }
@@ -3798,12 +3806,6 @@ public class EditorFrameFx {
         rotaionCheckBox.setSelected(true);
 
         CheckBox calcLengthCheckBox = new CheckBox("Recalc length");
-        CheckBox reflectHeightCheckBox = new CheckBox("Reflect height");
-        reflectHeightCheckBox.setDisable(true);
-        calcLengthCheckBox.setOnAction(e -> reflectHeightCheckBox.setDisable(! calcLengthCheckBox.isSelected()));
-        FlowPane calcLengthPane = new FlowPane();
-        calcLengthPane.setHgap(8);
-        calcLengthPane.getChildren().addAll(calcLengthCheckBox, reflectHeightCheckBox);
 
         GridPane grid = new GridPane();
         grid.setHgap(8);
@@ -3845,7 +3847,7 @@ public class EditorFrameFx {
 
         grid.add(new Separator(), 0, 17, 3, 1);
 
-        paramPane.getChildren().addAll(grid, scalePane, rotaionCheckBox, calcLengthPane);
+        paramPane.getChildren().addAll(grid, scalePane, rotaionCheckBox, calcLengthCheckBox);
 
         dialog.getDialogPane().setContent(paramPane);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -3858,7 +3860,7 @@ public class EditorFrameFx {
             if (node1Longitude != null && node1Latitude != null && node2Longitude != null && node2Latitude != null) {
                 int zone = Integer.parseInt((String)zoneChoiceBox.getValue());
                 RadioButton scaleButton = (RadioButton)toggleGroup.getSelectedToggle();
-                editor.normalizeCoordinates(node1, node2, zone, node1Longitude.doubleValue(), node1Latitude.doubleValue(), node2Longitude.doubleValue(), node2Latitude.doubleValue(), scaleButton.getText(), rotaionCheckBox.isSelected(), calcLengthCheckBox.isSelected(), reflectHeightCheckBox.isSelected());
+                editor.normalizeCoordinates(node1, node2, zone, node1Longitude.doubleValue(), node1Latitude.doubleValue(), node2Longitude.doubleValue(), node2Latitude.doubleValue(), scaleButton.getText(), rotaionCheckBox.isSelected(), calcLengthCheckBox.isSelected());
             }
         }
     }
@@ -3949,19 +3951,9 @@ public class EditorFrameFx {
         TextField lengthField = new TextField("" + averageLength);
         lengthField.setMinWidth(160);
         Button calcLengthButton = new Button("Calc length");
-        CheckBox heightDiffCheckBox = new CheckBox("Reflect height");
-        calcLengthButton.setDisable(links.size() != 1);
+        calcLengthButton.setDisable(links.size() > 1 || editor.calcLinkLength(links.get(0)) == averageLength);
         calcLengthButton.setOnAction(e -> {
-            MapLink link = links.get(0);
-            MapNode fromNode = link.getFrom();
-            MapNode toNode = link.getTo();
-            double distance = fromNode.getPosition().distance(toNode.getPosition()) * editor.getCurrentGroup().getScale();
-            if (heightDiffCheckBox.isSelected()) {
-                Point3D point0 = new Point3D(fromNode.getX(), fromNode.getY(), fromNode.getHeight());
-                Point3D point1 = new Point3D(toNode.getX(), toNode.getY(), toNode.getHeight());
-                distance = point0.distance(point1) * editor.getCurrentGroup().getScale();
-            }
-            lengthField.setText("" + distance);
+            lengthField.setText("" + editor.calcLinkLength(links.get(0)));
         });
         Button lengthButton = new Button("Set");
         EventHandler lengthHandler = new EventHandler<ActionEvent>() {
@@ -3987,7 +3979,7 @@ public class EditorFrameFx {
         FlowPane lengthFlowPane = new FlowPane();
         lengthFlowPane.setHgap(8);
         lengthFlowPane.setPadding(new Insets(0, 0, 8, 0));
-        lengthFlowPane.getChildren().addAll(lengthLabel, lengthField, calcLengthButton, heightDiffCheckBox, lengthButton);
+        lengthFlowPane.getChildren().addAll(lengthLabel, lengthField, calcLengthButton, lengthButton);
 
         // width field
         Label widthLabel = new Label("width");
@@ -4039,25 +4031,36 @@ public class EditorFrameFx {
             return;
         }
 
+        int countOfDiff = 0;
+        for (MapLink link : links) {
+            if (editor.calcLinkLength(link) != link.getLength()) {
+                countOfDiff++;
+            }
+        }
+        if (countOfDiff == 0) {
+            Alert alert = new Alert(AlertType.INFORMATION, "It does not change even if recalculated.", ButtonType.OK);
+            alert.initOwner(frame);
+            alert.showAndWait();
+            return;
+        }
+
         Dialog dialog = new Dialog();
         dialog.initOwner(frame);
         dialog.setTitle("Recalculate link length");
         dialog.getDialogPane().setPrefWidth(400);
         VBox paramPane = new VBox();
 
-        Label label = new Label("" + links.size() + " links selected");
-        label.setPadding(new Insets(0, 0, 12, 0));
+        Label label = new Label("" + links.size() + " links selected.");
+        Label label2 = new Label("" + countOfDiff + " links are updated by recalculation.");
+        label2.setPadding(new Insets(0, 0, 12, 0));
 
-        CheckBox reflectHeightCheckBox = new CheckBox("Reflect height");
-        reflectHeightCheckBox.setFont(Font.font("Arial", FontWeight.BOLD, reflectHeightCheckBox.getFont().getSize()));
-
-        paramPane.getChildren().addAll(label, reflectHeightCheckBox);
+        paramPane.getChildren().addAll(label, label2);
 
         dialog.getDialogPane().setContent(paramPane);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            editor.recalculateLinkLength(links, reflectHeightCheckBox.isSelected());
+            editor.recalculateLinkLength(links);
         }
     }
 

@@ -75,6 +75,7 @@
 | Edit ||
 | Undo (Ctrl + Z) | 最後に実行した編集操作を取り消す |
 | Redo (Ctrl + Y) | Undo で取り消した編集操作を復活させる |
+| Affected by height difference | リンク長の計算に両端ノードの標高差を反映する |
 | Read shapefile | シェープファイルを読み込む |
 | Read MRD file | MRD ファイルを読み込む |
 | Read OpenStreetMap | OpenStreetMap データを読み込む |

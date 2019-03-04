@@ -77,6 +77,11 @@ public class NetworkMap extends DefaultTreeModel {
      */
     public static int PartIdCounter = 0 ;
 
+    /**
+     * 階段を表すタグ
+     */
+    public static String STAIR_TAG = "GENERATED_STAIR";
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * ID から NetworkMapParts を取り出すための table.
