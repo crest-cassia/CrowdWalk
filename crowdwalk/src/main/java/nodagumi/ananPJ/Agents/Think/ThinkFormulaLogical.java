@@ -238,12 +238,14 @@ public class ThinkFormulaLogical extends ThinkFormula {
     /**
      * 推論(if)。
      * <pre>
+     * [ "if", _cond_expr_, _then_expr_, _else_expr_ ]
+     * </pre>
+     * 以下は廃止。
+     * <pre>
      * { "" : "if",
      *   ("condition" | "cond") : _expr_, 
      *   "then" : _expr_,
      *   "else" : _expr_ }
-     * OR
-     * [ "if", _cond_expr_, _then_expr_, _else_expr_ ]
      * </pre>
      */
     public Term call_if(Term expr,
@@ -256,7 +258,8 @@ public class ThinkFormulaLogical extends ThinkFormula {
         Term elseExpr = getArgFromExpr(expr,"else", 3) ;
 
         if(condition == null || thenExpr == null) {
-            Itk.logError("wrong if expr", expr) ;
+            Itk.logError("wrong if expr. Need conditions and then parts ",
+                         expr.toJson()) ;
             Itk.quitByError() ;
         }
 

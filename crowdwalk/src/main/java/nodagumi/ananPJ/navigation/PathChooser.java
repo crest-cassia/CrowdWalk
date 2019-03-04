@@ -27,7 +27,7 @@ import nodagumi.Itk.Term;
  *                            ... },
  *   ...}
  * </pre>
- *   __Rule__ は、Agent の ThinkEngine の ThinkFormula に準拠。
+ *   __Rule__ は、Agent の ThinkEngine の {@link nodagumi.ananPJ.Agents.Think.ThinkFormula ThinkFormula}に準拠。
  */
 public class PathChooser {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
