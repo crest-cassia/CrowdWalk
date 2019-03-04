@@ -1400,20 +1400,26 @@ public class Term {
             }
             buffer.append(ArrayEndChar) ;
         } else {
-            if(!isNullHead()) buffer.append(getHead()) ;
-            if(!isZeroArgs()) {
-                buffer.append(BodyBeginChar) ;
-                int argn = 0 ;
-                for(Map.Entry<String,Object> entry : getBody().entrySet()) {
-                    if(!HeadSlot.equals(entry.getKey())) {
-                        if(argn > 0) buffer.append(ArgSepChar) ;
-                        argn++ ;
-                        buffer.append(entry.getKey()) ;
-                        buffer.append(SlotSepChar) ;
-                        buffer.append(entry.getValue()) ;
+            if(isNullHead()&&isZeroArgs()){
+                buffer.append("(null Term)") ;
+            } else if(isZeroArgs() && getHeadString().length() == 0) {
+                buffer.append("\"\"") ;
+            } else {
+                if(!isNullHead()) buffer.append(getHead()) ;
+                if(!isZeroArgs()) {
+                    buffer.append(BodyBeginChar) ;
+                    int argn = 0 ;
+                    for(Map.Entry<String,Object> entry : getBody().entrySet()) {
+                        if(!HeadSlot.equals(entry.getKey())) {
+                            if(argn > 0) buffer.append(ArgSepChar) ;
+                            argn++ ;
+                            buffer.append(entry.getKey()) ;
+                            buffer.append(SlotSepChar) ;
+                            buffer.append(entry.getValue()) ;
+                        }
                     }
+                    buffer.append(BodyEndChar) ;
                 }
-                buffer.append(BodyEndChar) ;
             }
         }
         return buffer.toString() ;
