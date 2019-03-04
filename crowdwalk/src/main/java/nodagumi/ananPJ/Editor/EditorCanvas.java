@@ -510,7 +510,7 @@ public class EditorCanvas extends Canvas {
                     if (fromNode != null) {
                         MapPartGroup group = editor.getCurrentGroup();
                         Point2D point = (snapPoint == null ? pointConvertCanvasToMap(x, y) : snapPoint);
-                        double length = getRotatedPoint(fromNode).distance(point) * group.getScale();
+                        double length = editor.calcLinkLength(getRotatedPoint(fromNode), fromNode.getHeight(), point, frame.getCurrentNodeHeight(), group);
                         frame.setCurrentLinkLength(length);
                     }
                     repaintLater();
@@ -528,7 +528,7 @@ public class EditorCanvas extends Canvas {
                     if (toNode != null && toNode != lastNode) {
                         repaintLater();
                         MapPartGroup group = editor.getCurrentGroup();
-                        double length = fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
+                        double length = editor.calcLinkLength(fromNode, toNode, group);
                         frame.setCurrentLinkLength(length);
                     }
                 }
@@ -650,7 +650,7 @@ public class EditorCanvas extends Canvas {
                             mapPoint = point;
                         }
                     }
-                    editor.invokeSingleCommand(new AddNode(group, convertToOriginal(mapPoint), group.getDefaultHeight()));
+                    editor.invokeSingleCommand(new AddNode(group, convertToOriginal(mapPoint), frame.getCurrentNodeHeight()));
                     editor.updateHeight();
                     break;
                 case ADD_LINK:
@@ -669,7 +669,7 @@ public class EditorCanvas extends Canvas {
                             frame.setStatusText("Point to the end node");
                             editor.beep();
                         } else {
-                            double length = fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
+                            double length = editor.calcLinkLength(fromNode, toNode, group);
                             frame.setCurrentLinkLength(length);
                             double width = frame.getCurrentLinkWidth();
                             if (width <= 0.0) {
@@ -690,7 +690,7 @@ public class EditorCanvas extends Canvas {
                             mapPoint = point;
                         }
                     }
-                    if (editor.invoke(new AddNode(group, convertToOriginal(mapPoint), group.getDefaultHeight()))) {
+                    if (editor.invoke(new AddNode(group, convertToOriginal(mapPoint), frame.getCurrentNodeHeight()))) {
                         updateTargetNode(mapPoint);     // pointedNode に今生成したノードをセット
                         if (pointedNode == null) {
                             fromNode = null;
@@ -700,7 +700,7 @@ public class EditorCanvas extends Canvas {
                                 fromNode = pointedNode;
                             } else {
                                 // 新規リンク追加
-                                double length = fromNode.getPosition().distance(pointedNode.getPosition()) * group.getScale();
+                                double length = editor.calcLinkLength(fromNode, pointedNode, group);
                                 frame.setCurrentLinkLength(length);
                                 double width = frame.getCurrentLinkWidth();
                                 if (width <= 0.0) {

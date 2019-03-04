@@ -219,7 +219,9 @@ public class EditorFrameFx {
      * ステータスバー
      */
     private HBox statusPane = new HBox();
+    private HBox nodeAttributesPane;
     private HBox linkAttributesPane;
+    private TextField nodeHeightField = new TextField("0.0");
     private TextField linkLengthField = new TextField("0.0");
     private Label linkScaleLabel = new Label("(scale: 1.0)");
     private TextField linkWidthField = new TextField("1.0");
@@ -381,8 +383,9 @@ public class EditorFrameFx {
 
         statusPane.setAlignment(Pos.CENTER_LEFT);
         statusPane.setSpacing(8);
+        setStatusPaneToMessageOnly();
+        nodeAttributesPane = createNodeAttributesPane();
         linkAttributesPane = createLinkAttributesPane();
-        statusPane.getChildren().addAll(statusLabel);
 
         simulate2dButton.setOnAction(e -> simulate("GuiSimulationLauncher2D"));
         simulate3dButton.setOnAction(e -> simulate("GuiSimulationLauncher3D"));
@@ -1247,6 +1250,7 @@ public class EditorFrameFx {
                 groupButton.setOnAction(e -> {
                     if (groupButton.isSelected()) {
                         editor.setCurrentGroup(group);
+                        nodeHeightField.setText("" + editor.getCurrentGroup().getDefaultHeight());
                         canvas.repaintLater();
                     }
                 });
@@ -1270,56 +1274,56 @@ public class EditorFrameFx {
         ToggleButton tbAddNode = new ToggleButton("Add Node");
         tbAddNode.setToggleGroup(group);
         tbAddNode.setOnAction(e -> {
-            removeLinkAttributesPane();
+            setStatusPaneToAddNodeMode();
             canvas.setMode(EditorMode.ADD_NODE);
         });
 
         ToggleButton tbAddLink = new ToggleButton("Add Link");
         tbAddLink.setToggleGroup(group);
         tbAddLink.setOnAction(e -> {
-            addLinkAttributesPane();
+            setStatusPaneToAddLinkMode();
             canvas.setMode(EditorMode.ADD_LINK);
         });
 
         ToggleButton tbAddNodeAndLink = new ToggleButton("Add Node & Link");
         tbAddNodeAndLink.setToggleGroup(group);
         tbAddNodeAndLink.setOnAction(e -> {
-            addLinkAttributesPane();
+            setStatusPaneToAddNodeAndLinkMode();
             canvas.setMode(EditorMode.ADD_NODE_LINK);
         });
 
         ToggleButton tbEditNode = new ToggleButton("Edit Node");
         tbEditNode.setToggleGroup(group);
         tbEditNode.setOnAction(e -> {
-            removeLinkAttributesPane();
+            setStatusPaneToMessageOnly();
             canvas.setMode(EditorMode.EDIT_NODE);
         });
 
         ToggleButton tbEditLink = new ToggleButton("Edit Link");
         tbEditLink.setToggleGroup(group);
         tbEditLink.setOnAction(e -> {
-            removeLinkAttributesPane();
+            setStatusPaneToMessageOnly();
             canvas.setMode(EditorMode.EDIT_LINK);
         });
 
         ToggleButton tbEditArea = new ToggleButton("Edit Area");
         tbEditArea.setToggleGroup(group);
         tbEditArea.setOnAction(e -> {
-            removeLinkAttributesPane();
+            setStatusPaneToMessageOnly();
             canvas.setMode(EditorMode.EDIT_AREA);
         });
 
         ToggleButton tbEditPolygon = new ToggleButton("Edit Polygon");
         tbEditPolygon.setToggleGroup(group);
         tbEditPolygon.setOnAction(e -> {
-            removeLinkAttributesPane();
+            setStatusPaneToMessageOnly();
             canvas.setMode(EditorMode.EDIT_POLYGON);
         });
 
         ToggleButton tbBgImage = new ToggleButton("Background Image");
         tbBgImage.setToggleGroup(group);
         tbBgImage.setOnAction(e -> {
-            removeLinkAttributesPane();
+            setStatusPaneToMessageOnly();
             canvas.setMode(EditorMode.BACKGROUND_IMAGE);
         });
 
@@ -1353,12 +1357,40 @@ public class EditorFrameFx {
     }
 
     /**
+     * ノード情報パネルを構築する
+     */
+    private HBox createNodeAttributesPane() {
+        HBox hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setMinWidth(128);
+        hbox.setSpacing(8);
+
+        Label heightLabel = new Label("height");
+        nodeHeightField.setPrefWidth(80);
+
+        hbox.getChildren().addAll(heightLabel, nodeHeightField);
+
+        return hbox;
+    }
+
+    /**
+     * ノード標高フィールドの値を取得する
+     */
+    public double getCurrentNodeHeight() {
+        Double height = convertToDouble(nodeHeightField.getText());
+        if (height == null) {
+            return 0.0;
+        }
+        return height;
+    }
+
+    /**
      * リンク情報パネルを構築する
      */
     private HBox createLinkAttributesPane() {
         HBox hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
-        hbox.setMinWidth(512);
+        hbox.setMinWidth(450);
         hbox.setSpacing(8);
 
         Label lengthLabel = new Label("length");
@@ -1366,33 +1398,12 @@ public class EditorFrameFx {
         linkLengthField.setPrefWidth(160);
 
         Label widthLabel = new Label("width");
-        linkWidthField.setPrefWidth(160);
+        linkWidthField.setPrefWidth(80);
 
         hbox.getChildren().addAll(lengthLabel, linkLengthField, linkScaleLabel, widthLabel, linkWidthField);
         hbox.setMargin(linkScaleLabel, new Insets(0, 8, 0, 0));
 
         return hbox;
-    }
-
-    /**
-     * ステータスバーにリンク情報パネルを追加する
-     */
-    private void addLinkAttributesPane() {
-        linkLengthField.setText("0.0");
-        linkScaleLabel.setText("(scale: " + editor.getCurrentGroup().getScale() + ")");
-        if (statusPane.getChildren().size() == 1) {
-            statusPane.getChildren().add(0, linkAttributesPane);
-            statusPane.getChildren().add(1, new Separator(Orientation.VERTICAL));
-        }
-    }
-
-    /**
-     * ステータスバーからリンク情報パネルを削除する
-     */
-    private void removeLinkAttributesPane() {
-        if (statusPane.getChildren().size() == 3) {
-            statusPane.getChildren().remove(0, 2);
-        }
     }
 
     /**
@@ -1414,6 +1425,40 @@ public class EditorFrameFx {
             alertInvalidInputValue("Incorrect width.");
         }
         return width;
+    }
+
+    /**
+     * ステータスバーをメッセージ表示のみに設定する
+     */
+    private void setStatusPaneToMessageOnly() {
+        statusPane.getChildren().setAll(statusLabel);
+    }
+
+    /**
+     * ステータスバーを Add Node モードに設定する
+     */
+    private void setStatusPaneToAddNodeMode() {
+        nodeHeightField.setText("" + editor.getCurrentGroup().getDefaultHeight());
+        statusPane.getChildren().setAll(nodeAttributesPane, new Separator(Orientation.VERTICAL), statusLabel);
+    }
+
+    /**
+     * ステータスバーを Add Link モードに設定する
+     */
+    private void setStatusPaneToAddLinkMode() {
+        linkLengthField.setText("0.0");
+        linkScaleLabel.setText("(scale: " + editor.getCurrentGroup().getScale() + ")");
+        statusPane.getChildren().setAll(linkAttributesPane, new Separator(Orientation.VERTICAL), statusLabel);
+    }
+
+    /**
+     * ステータスバーを Add Node & Link モードに設定する
+     */
+    private void setStatusPaneToAddNodeAndLinkMode() {
+        nodeHeightField.setText("" + editor.getCurrentGroup().getDefaultHeight());
+        linkLengthField.setText("0.0");
+        linkScaleLabel.setText("(scale: " + editor.getCurrentGroup().getScale() + ")");
+        statusPane.getChildren().setAll(nodeAttributesPane, linkAttributesPane, new Separator(Orientation.VERTICAL), statusLabel);
     }
 
     /**
