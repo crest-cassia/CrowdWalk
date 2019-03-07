@@ -119,6 +119,9 @@ class OsmMap < MapTown
   ## param for cs2cs
   DefaultCs2CsParam = "+init=epsg:4326 +to +init=%s +units=m" ;
 
+  ## param for inverce cs2cs
+  DefaultInvCs2CsParam = "-I -f '%%.10f' " + DefaultCs2CsParam ;
+
   ## 19座標系 EPSG number 
   EpsgCodeForJprCS = {
     :jp01 => "epsg:2443",
@@ -493,15 +496,16 @@ class OsmMap < MapTown
     end
   end
       
+  #--============================================================
   #--------------------------------------------------------------
   #++
   ## convert lonlat to pos (x-y for CrowdWalk)。
   ## CrowdWalk は、東が x、南が y。
   ## _lonlat_ :: 経度緯度の配列もしくは Geo2D::Point
-  def convertLonLat2Pos_Proj4(lonlat)
+  def self.convertLonLat2PosByProj4(lonlat, cartOrigin)
     ll = Geo2D::Point.sureGeoObj(lonlat) ;
     xyPos = nil ;
-    param = (DefaultCs2CsParam % EpsgCodeForJprCS[getConf(:cartOrigin)]) ;
+    param = (DefaultCs2CsParam % EpsgCodeForJprCS[cartOrigin]) ;
 
     com = "|echo #{ll.x} #{ll.y} | #{ProjCommand} #{param}" ;
     open(com,'r'){|strm|
@@ -510,6 +514,37 @@ class OsmMap < MapTown
       xyPos = Geo2D::Point.new(ret[0], -ret[1]) ;
     }
     return xyPos ;
+  end
+  
+  #--============================================================
+  #--------------------------------------------------------------
+  #++
+  ## convert pos(x-y for CrowdWalk) to lonlat to pos. 
+  ## _xy_ :: xy-pos. CrowdWalk は、東が x、南が y。
+  def self.convertPos2LonLatByProj4(xy, cartOrigin)
+    xy = Geo2D::Point.sureGeoObj(xy) ;
+    xyPos = Geo2D::Point.new(xy.x, -xy.y) ;
+    lonlat = nil ;
+    param = (DefaultInvCs2CsParam % EpsgCodeForJprCS[cartOrigin]) ;
+
+    com = "|echo #{xyPos.x} #{xyPos.y} | #{ProjCommand} #{param}" ;
+
+    open(com,'r'){|strm|
+      str = strm.read() ;
+      ret = str.split("\s").map{|v| v.to_f}
+      lonlat = Geo2D::Point.new(ret[0], ret[1]) ;
+    }
+    return lonlat ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## convert lonlat to pos (x-y for CrowdWalk)。
+  ## CrowdWalk は、東が x、南が y。
+  ## _lonlat_ :: 経度緯度の配列もしくは Geo2D::Point
+  def convertLonLat2Pos_Proj4(lonlat)
+    self.class.convertLonLat2PosByProj4(lonlat,
+                                        getConf(:cartOrigin)) ;
   end
   
   #--------------------------------------------------------------
