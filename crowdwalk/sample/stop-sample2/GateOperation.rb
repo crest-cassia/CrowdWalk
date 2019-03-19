@@ -4,6 +4,8 @@
 require 'csv'
 require 'java'
 
+import 'nodagumi.ananPJ.Scenario.CloseGateEvent'
+import 'nodagumi.ananPJ.Scenario.OpenGateEvent'
 import 'nodagumi.Itk.Itk'
 
 #--======================================================================
@@ -17,6 +19,7 @@ class GateOperation < CrowdWalkWrapper
   def initialize(simulator)
     super(simulator)
     @simulator = simulator
+    @dummy_event = CloseGateEvent.new
   end
 
   #--------------------------------------------------------------
@@ -27,11 +30,11 @@ class GateOperation < CrowdWalkWrapper
     @monitor = $settings[:monitor]
     
     # ゲートノード(単一)
-    gate_node_tag = $settings[:gate_node_tag]
+    @gate_node_tag = $settings[:gate_node_tag]
     nodes = []
-    @networkMap.eachNode() {|node| nodes << node if node.matchTag("^#{gate_node_tag}$") }
+    @networkMap.eachNode() {|node| nodes << node if node.matchTag("^#{@gate_node_tag}$") }
     unless nodes.size() == 1
-      logError('GateOperation', "gate_node_tag error: #{gate_node_tag}(#{nodes.size()} found)")
+      logError('GateOperation', "gate_node_tag error: #{@gate_node_tag}(#{nodes.size()} found)")
       exit(1)
     end
     @gate_node = nodes.first
@@ -141,7 +144,7 @@ class GateOperation < CrowdWalkWrapper
     if count_of_standby >= next_train[:capacity] and not @gate_node.isGateClosed(nil, nil)
       puts "#{Itk.formatSecTime(absoluteTime)} Gate closed" if @monitor
       @gate_node.addTag(Itk.intern('GATE_CLOSED'))
-      @gate_node.closeGate('dummy')
+      @gate_node.closeGate(@gate_node_tag, @dummy_event)
     end
   end
 
@@ -159,7 +162,7 @@ class GateOperation < CrowdWalkWrapper
     if absoluteTime == current_train[:time]
       capacity = current_train[:capacity]
       # 乗車開始
-      puts "#{Itk.formatSecTime(absoluteTime)} Door opened: #{current_train[:message]} standby: #{count_of_standby}" if @monitor
+      puts "#{Itk.formatSecTime(absoluteTime)} Door opened: #{current_train[:message]}, standby: #{count_of_standby}, traincapa: #{capacity}" if @monitor
     
     # 乗車可能な状態(ただしまだ乗車しない)
     elsif absoluteTime < (current_train[:time] + @delay_time)
@@ -181,7 +184,7 @@ class GateOperation < CrowdWalkWrapper
       if @gate_node.isGateClosed(nil, nil)
         puts "#{Itk.formatSecTime(absoluteTime)} Gate opened" if @monitor
         @gate_node.removeTag(Itk.intern('GATE_CLOSED'))
-        @gate_node.openGate('dummy')
+        @gate_node.openGate(@gate_node_tag, @dummy_event)
       end
     
     # この電車が満員でなければ乗車可能、満員ならば次の電車待ち
@@ -204,7 +207,7 @@ class GateOperation < CrowdWalkWrapper
     if count_of_standby >= capacity and not @gate_node.isGateClosed(nil, nil)
       puts "#{Itk.formatSecTime(absoluteTime)} Gate closed" if @monitor
       @gate_node.addTag(Itk.intern('GATE_CLOSED'))
-      @gate_node.closeGate('dummy')
+      @gate_node.closeGate(@gate_node_tag, @dummy_event)
     end
   end
 
@@ -260,7 +263,7 @@ class GateOperation < CrowdWalkWrapper
     if count_of_standby >= current_train[:capacity] and not @gate_node.isGateClosed(nil, nil)
       puts "#{Itk.formatSecTime(absoluteTime)} Gate closed" if @monitor
       @gate_node.addTag(Itk.intern('GATE_CLOSED'))
-      @gate_node.closeGate('dummy')
+      @gate_node.closeGate(@gate_node_tag, @dummy_event)
     end
   end
 
