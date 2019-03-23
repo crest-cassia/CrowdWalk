@@ -1449,6 +1449,18 @@ public class MapEditor {
     }
 
     /**
+     * リンク長を計算する
+     */
+    public double calcLinkLength(Point2D fromPoint, double fromHeight, Point2D toPoint, double toHeight, MapPartGroup group) {
+        if (heightEffective) {
+            Point3D point0 = new Point3D(fromPoint.getX(), fromPoint.getY(), fromHeight);
+            Point3D point1 = new Point3D(toPoint.getX(), toPoint.getY(), toHeight);
+            return point0.distance(point1) * group.getScale();
+        }
+        return fromPoint.distance(toPoint) * group.getScale();
+    }
+
+    /**
      * リンク長を再計算する
      */
     public void recalculateLinkLength(ArrayList<MapLink> links) {
