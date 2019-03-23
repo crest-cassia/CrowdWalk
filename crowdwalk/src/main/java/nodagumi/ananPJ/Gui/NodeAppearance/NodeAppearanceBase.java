@@ -11,7 +11,15 @@ import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.Itk.*;
 
 /**
- * ノード表示の定義情報を扱うベースクラス
+ * ノード表示の定義情報を扱うベースクラス。
+ * <ul>
+ * <li>設定方法: 
+ * propaties_file の "node_appearance_file" に、その定義ファイルを指定する。
+ * </li>
+ * <li> 定義ファイルの形式:
+ * <a target="_blank" href="https://github.com/crest-cassia/CrowdWalk/wiki/Node-appearance-%E3%81%AE%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95">こちら</a>を参照。
+ * </li>
+ * </ul>
  */
 public class NodeAppearanceBase extends JsonicHashMapGetter {
     /**

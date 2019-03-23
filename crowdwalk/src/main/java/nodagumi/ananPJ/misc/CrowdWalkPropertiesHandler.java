@@ -212,24 +212,27 @@ import nodagumi.Itk.*;
  *     <pre>  各リンクの設定を記述した設定ファイル(JSON形式)
  *
  *  設定値： link_appearance_fileへのファイルパス
- *  デフォルト値： なし</pre>
- *   </li>
+ *  デフォルト値： なし
+ *  記載方法：{@link nodagumi.ananPJ.Gui.LinkAppearance.LinkAppearanceBase}
+ *  </pre></li>
  *
  *   <li>
  *     <h4>node_appearance_file</h4>
  *     <pre>  各ノードの設定を記述した設定ファイル(JSON形式)
  *
  *  設定値： node_appearance_fileへのファイルパス
- *  デフォルト値： なし</pre>
- *   </li>
+ *  デフォルト値： なし
+ *  記載方法：{@link nodagumi.ananPJ.Gui.NodeAppearance.NodeAppearanceBase}
+ *   </pre></li>
  *
  *   <li>
  *     <h4>agent_appearance_file</h4>
  *     <pre>  エージェントの表示形式を記述した設定ファイル(JSON形式)
  *
  *  設定値： agent_appearance_fileへのファイルパス
- *  デフォルト値： なし</pre>
- *   </li>
+ *  デフォルト値： なし
+ *  記載方法：{@link nodagumi.ananPJ.Gui.AgentAppearance.AgentAppearanceBase}
+ *   </pre></li>
  *
  *   <li>
  *     <h4>randseed</h4>

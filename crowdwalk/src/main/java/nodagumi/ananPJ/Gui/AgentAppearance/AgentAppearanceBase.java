@@ -12,7 +12,15 @@ import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 import nodagumi.Itk.*;
 
 /**
- * エージェント表示の定義情報を扱うベースクラス
+ * エージェント表示の定義情報を扱うベースクラス。
+ * <ul>
+ * <li>設定方法: 
+ * propaties_file の "agent_appearance_file" に、その定義ファイルを指定する。
+ * </li>
+ * <li>定義ファイルの形式は
+ * <a target="_blank" href="https://github.com/crest-cassia/CrowdWalk/wiki/Agent-appearance-%E3%81%AE%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95">こちら</a>を参照。
+ * </li>
+ * </ul>
  */
 public class AgentAppearanceBase extends JsonicHashMapGetter {
     /**
