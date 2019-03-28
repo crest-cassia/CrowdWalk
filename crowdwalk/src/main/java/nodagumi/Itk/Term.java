@@ -350,7 +350,7 @@ public class Term {
      * head 取得(String)
      */
     public String getHeadString() {
-        return (String)getHead() ;
+        return convertValueToString(getHead()) ;
     }
 
     //------------------------------------------------------------
