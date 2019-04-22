@@ -35,7 +35,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
      */
     public static void setupCommonParameters(Term wholeFallbacks) {
         fallbackParameters =
-            SetupFileInfo.filterFallbackTerm(wholeFallbacks, "link") ;
+            SetupFileInfo.filterFallbackTerm(wholeFallbacks, "node") ;
         speedRestrictRule =
             SetupFileInfo.fetchFallbackTerm(fallbackParameters,
                                             "speedRestrictRule",
@@ -45,7 +45,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     //============================================================
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * リンク用の fallback パラメータ
+     * ノード用の fallback パラメータ
      */
     public static Term fallbackParameters = null ;
 
@@ -53,6 +53,7 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * リンクによる速度の制約計算で用いるルール。
+     * fallback の "node"/"speedRestrictRule" に記述する。
      * Array 型 Term の形で格納される。
      * Array の要素は、ルールを示す ObjectTerm。
      * 以下は例。詳細は、

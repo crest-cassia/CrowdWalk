@@ -368,6 +368,10 @@ SAMPLE5loop0 = sample/generatedTown/gridTown01s.prop.json   # stay loop
 run5loop0 ::
 	(cd $(BASEDIR) ; cd `dirname $(SAMPLE5loop0)` ; time -p bash ../../quickstart.sh --log-level Info `basename $(SAMPLE5loop0)`)
 
+##-----
+SAMPLE_G4 = sample/generatedTown/gridTown04.prop.json   # directed restricted speed rules
+runG4 ::
+	(cd $(BASEDIR) ; cd `dirname $(SAMPLE_G4)` ; time -p bash ../../quickstart.sh --log-level Info `basename $(SAMPLE_G4)`)
 
 
 

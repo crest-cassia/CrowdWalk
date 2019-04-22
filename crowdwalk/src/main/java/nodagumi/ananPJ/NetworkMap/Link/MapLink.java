@@ -127,6 +127,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * リンクによる速度の制約計算で用いるルール。
+     * fallback の "link"/"speedRestrictRule" に記述する。
      * Array 型 Term の形で格納される。
      * Array の要素は、ルールを示す ObjectTerm。
      * 以下は例。詳細は、
@@ -137,8 +138,9 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      *      "tag" : "FOO",
      *      "factor" : 0.5 },
      *    { "type" : "multiply",
+     *      "directed" : true,
      *      "tag" : "BAR",
-     *      "factor" : 0.9 } ]
+     *      "factor" : [0.9, 1.1] } ]
      * </pre>
      */
     public static Term speedRestrictRule = null ;
@@ -147,6 +149,7 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * リンクによる自由速度に制約を加える時のルール
+     * fallback の "link"/"emptySpeedRestrictRule" に記述する。
      * Array 型 Term の形で格納される。
      * Array の要素は、ルールを示す ObjectTerm。
      * 以下は例。詳細は、
@@ -157,8 +160,9 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      *      "tag" : "FOO",
      *      "factor" : 0.5 },
      *    { "type" : "multiply",
+     *      "directed" : true,
      *      "tag" : "BAR",
-     *      "factor" : 0.9 } ]
+     *      "factor" : [0.9, 1.1] } ]
      * </pre>
      */
     public static Term emptySpeedRestrictRule = null ;

@@ -61,7 +61,7 @@
  * 例えば、{@link nodagumi.ananPJ.Agents.AgentBase AgentBase クラス}の
  * {@code getDoubleFromConfig()}, {@code getIntFromConfig()}, 
  * {@code getTermFromConfig()} などの定義を参考にすべきである。
- * <br>
+ * <br><br>
  * 各種フォールバックの説明は、以下を参照。
  * <ul>
  *   <li> {@link nodagumi.ananPJ.Simulator.AgentHandler} </li>
@@ -72,8 +72,17 @@
  *   <li> {@link nodagumi.ananPJ.Agents.BustleAgent} </li>
  *   <li> {@link nodagumi.ananPJ.Agents.RationalAgent} </li>
  *   <li> {@link nodagumi.ananPJ.Agents.RubyAgent} </li>
- *   <li> {@link nodagumi.ananPJ.NetworkMap.Link.MapLink} </li>
- *   <li> {@link nodagumi.ananPJ.NetworkMap.Node.MapNode} </li>
+ *   <li> {@link nodagumi.ananPJ.NetworkMap.Link.MapLink} 
+ *     <ul>
+ *       <li> {@link nodagumi.ananPJ.NetworkMap.Link.MapLink#speedRestrictRule} </li>
+ *       <li> {@link nodagumi.ananPJ.NetworkMap.Link.MapLink#emptySpeedRestrictRule} </li>
+ *     </ul>
+ *   </li>
+ *   <li> {@link nodagumi.ananPJ.NetworkMap.Node.MapNode} 
+ *     <ul>
+ *       <li> {@link nodagumi.ananPJ.NetworkMap.Node.MapNode#speedRestrictRule} </li>
+ *     </ul>
+ *   </li>
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase} </li>
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Pollution} </li>
  *   <li> {@link nodagumi.ananPJ.Simulator.Obstructer.Flood} </li>

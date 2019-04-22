@@ -1,0 +1,54 @@
+{
+  "__0":"NetmasCuiSimulator",
+  "debug":true,
+  "io_handler_type":"none",
+  "map_file":"gridTown03.map.xml",
+  "generation_file":"gridTown03.gen.json",
+  "scenario_file":"gridTown03.scnr.json",
+  "fallback_file":"gridTown04.fb.json",
+  "node_appearance_file":"gridTown00.nodeApp.json",
+  "link_appearance_file":"gridTown00.linkApp.json",
+  "timer_enable":true,
+  "timer_file":"/tmp/timer.log",
+  "interval":0,
+  "randseed":2524,
+  "random_navigation":true,
+  "time_series_log":true,
+  "time_series_log_path":"/tmp",
+  "time_series_log_interval":1,
+  "__individual_pedestrians_log_dir":",Log",
+  "loop_count":1,
+  "exit_count":0,
+  "all_agent_speed_zero_break":false
+
+  "mental_map_rules" :
+    {
+      "major" :
+        {"":"if",
+    	 "cond":{"":"hasTag","tag":"major"},
+	 "then":":length",
+	 "else":{"":"*", "values":[":length", 10.0]}}
+      "normal" : ":length"
+    },
+
+  "use_ruby":true,
+  "ruby_load_path":"/usr/users/noda/lib/ruby
+/usr/users/noda/work/ruby",
+  "ruby_init_script":"
+require './SampleGate.rb' 
+require './SampleAgent3.rb'
+require 'pp'
+",
+
+  "mental_map_rules" :
+    {
+      "major" :
+        {"":"if",
+    	 "cond":{"":"hasTag","tag":"major"},
+	 "then":":length",
+	 "else":{"":"*", "values":[":length", 10.0]}}
+      "normal" : ":length"
+    },
+
+  "___":null
+}

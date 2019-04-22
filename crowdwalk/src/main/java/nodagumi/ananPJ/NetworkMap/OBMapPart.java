@@ -42,6 +42,7 @@ public abstract class OBMapPart extends OBNode {
      */
     static private final String Slot_tag  	    = Itk.intern("tag") ;
     static private final String Slot_type 	    = Itk.intern("type") ;
+    static private final String Slot_directed 	= Itk.intern("directed") ;
     static private final String Slot_factor     = Itk.intern("factor") ;
     static private final String Slot_set		= Itk.intern("set") ;
     static private final String Slot_multiply	= Itk.intern("multiply") ;
@@ -55,7 +56,11 @@ public abstract class OBMapPart extends OBNode {
 	 * <pre>
 	 *   _rule_ ::= { "type" : _Type_,
 	 *                "tag" : _String_,
-	 *                "factor" : _Double_ }
+	 *                "factor" : _Double_ } 
+     *            | { "type" : _Type_,
+     *                "directed" : true,
+	 *                "tag" : _String_,
+	 *                "factor" : [_Double_, _Double_] } 
 	 *   _Type_ ::= "set" | "multiply" | "add"
 	 * </pre>
 	 * "tag" には、link, node が所有すべきタグを指定する。
@@ -66,6 +71,10 @@ public abstract class OBMapPart extends OBNode {
 	 *   <li> "multiply" : value に "factor" を乗ずる。 </li>
 	 *   <li> "add" : value に "factor" で加える。 </li>
 	 * </ul>
+     * 2つ目の形式では、リンクの方向性で扱いが異なる。
+     * agent の現在地(currentPlace)が、forwardDirection なら、
+     * "factor" の第0要素を、
+     * backwardDirection なら、"factor" の第1要素を、計算に用いる。
      * @param value: 元になる値
      * @param rule: ルール
      * @param agent: 対象となるエージェント。リンク上にいる。
@@ -76,8 +85,18 @@ public abstract class OBMapPart extends OBNode {
                                        AgentBase agent, SimTime currnetTime) {
         String tag = rule.getArgString(Slot_tag) ;
         if(hasTag(tag)) {
+            // factor の値を、directed などから決める。
+            boolean directed = rule.getArgBoolean(Slot_directed) ;
+            double factor ;
+            if(directed) {
+                boolean isForward = agent.isForwardDirection() ;
+                Term factorList = rule.getArgTerm(Slot_factor) ;
+                factor = factorList.getNthDouble((isForward ? 0 : 1)) ;
+            } else {
+                factor = rule.getArgDouble(Slot_factor) ;
+            }
+            // type ごとの処理
             String type = rule.getArgString(Slot_type) ;
-            double factor = rule.getArgDouble(Slot_factor) ;
             if(type == Slot_set) {
                 value = factor ;
             } else if(type == Slot_multiply) {
@@ -85,7 +104,8 @@ public abstract class OBMapPart extends OBNode {
             } else if(type == Slot_add) {
                 value += factor ;
             } else {
-                Itk.logError("unknown restriction rule type", "rule=", rule) ;
+                Itk.logError("unknown restriction rule type",
+                             "rule=", rule) ;
             }
         }
         return value ;
