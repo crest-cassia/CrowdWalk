@@ -2,12 +2,12 @@
 #! /usr/bin/env ruby
 # coding: utf-8
 ## -*- mode: ruby -*-
-## = RubyGateBase for RubyGate class
+## = RubyGateBase for RubyEventBase class
 ## Author:: Itsuki Noda
-## Version:: 0.0 2018/09/21 I.Noda
+## Version:: 0.0 2019/06/23 I.Noda
 ##
 ## === History
-## * [2018/09/21]: Create This File.
+## * [2018/06/23]: Create This File.
 ## * [YYYY/MM/DD]: add more
 ## == Usage
 ## * ...
@@ -16,36 +16,24 @@ require 'NetworkMap.rb' ;
 
 #--======================================================================
 #++
-## CrowdWalk の RubyGate での Ruby 側の制御のインターフェース
-class RubyGateBase
+## CrowdWalk の RubyEvent での Ruby 側の制御のインターフェース
+class RubyEventBase
   include ItkUtility ;
-  #--============================================================
-  #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  #++
-  ## RubyGate を格納するリスト
-  GateList = [] ;
 
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## Java 側の Gate オブジェクト
-  attr_accessor :javaGate ;
-  ## NetworkMap の Ruby オブジェクト
-  attr_accessor :map ;
+  attr_accessor :javaEvent ;
   ## Scenario に記述されたイベント定義を、Ruby のデータに変換したもの。
   attr_accessor :eventDef ;
-
-  ## initial cycle check
-  attr_accessor :isInitialCycle ;
 
   #--------------------------------------------------------------
   #++
   ## 初期化。
   ## 設定等は、Ruby のデータに変換され、@eventDef で取得できる。
   ## _gate_:: Gate の java インスタンス。
-  def initialize(_gate) ;
-    GateList.push(self) ;
-    @javaGate = _gate ;
-    @map = NetworkMap.new(getMap()) ;
+  def initialize(_event) ;
+    @javaEvent = _event ;
     @eventDef = ItkTerm.toRuby(getEventDef()) ;
     # pp [:createRubyBase] ;
   end
@@ -54,61 +42,26 @@ class RubyGateBase
   # アクセス関係
   #------------------------------------------
   #++
-  ## イベント定義取得
-  def getGateTag()
-    return @javaGate.getTag() ;
-  end
-  
-  #------------------------------------------
-  #++
-  ## イベント定義取得
-  def getGateTag()
-    return @javaGate.getTag() ;
-  end
-  
-  #------------------------------------------
-  #++
-  ## 場所取得
-  def getPlace()
-    return @javaGate.getPlace() ;
-  end
-  
-  #------------------------------------------
-  #++
   ## イベント定義取得。
   ## Itk::Term の形で返す。
   ## なので、ItkTerm.getArg(obj, slot) などで変換。
   ## さらに、ItkTerm.toRuby(value) で ruby object に変換。
   def getEventDef()
-    return @javaGate.getEvent().getEventDef() ;
-  end
-  
-  #------------------------------------------
-  #++
-  ## イベント定義取得
-  def getMap()
-    return @javaGate.getPlace().getMap() ;
+    return @javaEvent.getEventDef() ;
   end
   
   #------------------------------------------
   #++
   ## イベント定義取得
   def getSimulator()
-    return @javaGate.getEvent().getSimulator() ;
+    return @javaEvent.getScenario().getSimulator() ;
   end
   
   #--------------------------------------------------------------
   #++
-  ## エージェント通過チェック。
-  def isClosed(agent, currentTime)
-    return @javaGate.isClosed() ;
-  end
-  
-  #--------------------------------------------------------------
-  #++
-  ## 状態変化
-  def switchGate(event, closed)
-    return @javaGate.super_switchGate(event, closed) ;
+  ## イベント発生。なにか再定義されないといけない。
+  def occur(currentTime, map)
+    return raise "occur() should be defined in the inherited Ruby Event class."
   end
   
   #--------------------------------------------------------------
@@ -119,7 +72,7 @@ class RubyGateBase
   ## _label_ :: ログのラベル。nil なら、Agent ID などに置き換えられる。
   ## _*data_ :: データの並び。
   def logWithLevel(level, label, *data)
-    label = "RubyGate" if label.nil? ;
+    label = "RubyEvent" if label.nil? ;
     super(level, label, *data) ;
   end
 

@@ -1,6 +1,11 @@
 [
   { "type":"Initiate",
     "atTime":"18:00:00"},
+  { "type":"Ruby",
+    "atTime":"18:00:10",
+    "rubyClass": "SampleEvent",
+    "name": "hogehoge",
+    "param1": 1234 },
   { "type":"CloseGate",
     "gateClass":"RubyGate",
     "rubyClass":"SampleGate",
