@@ -1,5 +1,5 @@
 // -*- mode: java; indent-tabs-mode: nil -*-
-/** RubyEvent.java
+/** SeedRandEvent.java
  * @author:: Itsuki Noda
  * @version:: 0.0 2019/06/23 I.Noda
  * <B>History:</B>
@@ -21,42 +21,34 @@ import nodagumi.Itk.* ;
 
 //======================================================================
 /**
- * This event cause to call RubyEvent object defined by users.
+ * This event cause to set random seed.
  * <pre>
- *  { "type" : "Ruby" 
+ *  { "type" : "SeedRand" 
  *    "atTime" : __Time__,
- *    "rubyClass" : __EventClassInRuby__,
- *    __otherItem__:__Value__,
+ *    "seed" : __Integer__
  *  }
- *  __Time__ ::= "hh:mm:ss"
- *  __EventClassInRuby__ : Ruby側の対応するクラス。
  * </pre>
  * <p>
- * __EventClassInRuby__ は、RubyEventBase クラスの子クラスとして
- * 読み込まれる Ruby プログラムの中で定義されている必要がある。
- * "atTime" で指定した時刻に、このイベントの occur() が呼び出される。
+ * "seed" で指定した値を CrowdWalkSimulator の random にセットする。
  * </p><p>
- * Sample:
- * "./sample/generatedTown/gridTown03.scnr.json" および
- * "./sample/generatedTown/SampleEvent.rb". 
+ * "Dump" イベントなどで状態をセーブした後、再スタートで全く同じ現象を
+ * 発生させたい場合、
+ * "Dump" イベントの時刻（および再スタートする際のruleのstart time）
+ * の１秒後を、"atTime" に指定するする。
+ * "Dump" 側のシナリオと、再スタート側のシナリオ両方に同じように記述すること。
+ * </p><p>
+ * サンプル：
+ * "./sample/generatedTown/gridTown02d.scnr.json" および
+ * "./sample/generatedTown/gridTown02ds.scnr.json". 
+ * </p>
  */
-public class RubyEvent extends EventBase {
+public class SeedRandEvent extends EventBase {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * Ruby Engine
+     * seed value
      */
-    public ItkRuby rubyEngine = null ;
+    public long seed ;
     
-    /**
-     * Ruby Object
-     */
-    public Object rubyEvent = null ;
-    
-    /**
-     * ルビークラス名
-     */
-    public String rubyClass ;
-
     //------------------------------------------------------------
     /**
      * JSON Term による setup.
@@ -65,57 +57,32 @@ public class RubyEvent extends EventBase {
     public void setupByJson(Scenario _scenario,
                             Term _eventDef) {
         super.setupByJson(_scenario, _eventDef) ;
-	
-	rubyClass = eventDef.getArgString("rubyClass") ;
-	if(rubyClass == null) {
-	    Itk.logError("ruby class is not specified in RubyEvent.",
-			 _eventDef) ;
-	    Itk.quitByError() ;
-	}
-	Itk.logDebug("RubyEvent:rubyClass", rubyClass) ;
-
     }
 
     //------------------------------------------------------------
     /**
-     * Ruby Engine の設定
-     */
-    public void setupRubyEngine(ItkRuby _rubyEngine) {
-        if(_rubyEngine == null) {
-            Itk.logError("RubyEvent require Ruby Engine") ;
-            Itk.quitByError() ;
-        }
-        
-        rubyEngine = _rubyEngine ;
-
-        rubyEvent =
-	    rubyEngine.newInstanceOfClass(rubyClass, this) ;
-    }
-
-    //------------------------------------------------------------
-    /**
-     * Ruby イベント発生処理。
-     * 指定されたRubyClassのインスタンスを生成し、呼び出す。
+     * SeedRand イベント発生処理。
      * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
      * @return : true を返す。
      */
     @Override
     public boolean occur(SimTime currentTime, NetworkMap map) {
-	/* 初回は、ruby のセットアップ */
-	if(rubyEvent == null) {
-	    setupRubyEngine(getSimulator().getRubyEngine()) ;
-	}
-	
-	Object ret =
-	    rubyEngine.callMethod(rubyEvent, "occur",
-				  currentTime, map) ;
-	return (boolean)ret ;
+        if(eventDef.hasArg("seed")) {
+            seed = eventDef.getArgInt("seed") ;
+        } else {
+            Itk.logError("SeedRandEvent", "must specify 'seed' value.") ;
+            Itk.quitByError() ;
+        }
+
+        getSimulator().getRandom().setSeed(seed) ;
+        
+	return true ;
     }
 
     //------------------------------------------------------------
     /**
-     * Ruby イベント発生逆処理。
+     * SeedRand イベント発生逆処理。
      * 何もしない。
      * @param currentTime : 現在の絶対時刻
      * @param map : 地図データ
@@ -132,7 +99,7 @@ public class RubyEvent extends EventBase {
      */
     public String toStringTail() {
         return (super.toStringTail() +
-                "," + "rubyClass=" + rubyClass) ;
+                "," + "seed=" + seed) ;
     }
     //============================================================
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

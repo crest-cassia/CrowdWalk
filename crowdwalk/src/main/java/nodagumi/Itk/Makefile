@@ -289,7 +289,7 @@ run3gt02d ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02d))
 
 ##-----
-SAMPLE3gt02ds = sample/generatedTown/gridTown02ds.prop.json   # dump event
+SAMPLE3gt02ds = sample/generatedTown/gridTown02ds.prop.json   # dump event (restart)
 run3gt02ds ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02ds))
 

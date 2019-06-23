@@ -64,6 +64,7 @@ import nodagumi.Itk.* ;
  *  <li>{@link PeriodicGateEvent "PeriodicGate"}</li>
  *  <li>{@link DumpEvent "Dump"}</li>
  *  <li>{@link RubyEvent "Ruby"}</li>
+ *  <li>{@link SeedRandEvent "SeedRand"}</li>
  *  <li>{@link NullEvent "Null"}</li>
  *  <li>{@link PauseEvent "Pause"}</li>
  * </ul>
@@ -478,6 +479,7 @@ public class Scenario {
         registerEventClass("RemoveTag",	SetTagEvent.class) ;
         registerEventClass("Dump",      DumpEvent.class) ;
         registerEventClass("Ruby",      RubyEvent.class) ;
+        registerEventClass("SeedRand",  SeedRandEvent.class) ;
         registerEventClass("Null",      NullEvent.class) ;
         registerEventClass("Pause",     PauseEvent.class) ;
 

@@ -31,11 +31,11 @@
       "normal" : ":length"
     },
 
-  "_use_ruby":true,
+  "use_ruby":true,
   "ruby_load_path":"/usr/users/noda/lib/ruby
 /usr/users/noda/work/ruby",
   "ruby_init_script":"
-require './SampleFactory.rb'
+require './SampleEvent.rb'
 require 'pp'
 ",
 
