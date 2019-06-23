@@ -90,6 +90,13 @@ class RubyGateBase
     return @javaGate.getPlace().getMap() ;
   end
   
+  #------------------------------------------
+  #++
+  ## イベント定義取得
+  def getSimulator()
+    return @javaGate.getEvent().getSimulator() ;
+  end
+  
   #--------------------------------------------------------------
   #++
   ## エージェント通過チェック。

@@ -161,6 +161,40 @@ module ItkUtility
     end
   end
   
+  #--------------------------------------------------------------
+  ## Simulatorオブジェクト(Java)へのアクセス。
+  #--------------------------------
+  #++
+  ## Simulator オブジェクトの取得。各クラスで再定義必要。
+  def getSimulator()
+    raise "should be defined in each included class." ;
+  end
+
+  #--------------------------------
+  #++
+  ## Java 側の乱数生成器へのアクセス。
+  def getRandom()
+    return getSimulator().getRandom() ;
+  end
+
+  #------------------------------------------
+  #++
+  ## Java 側の乱数生成で、int 取得。
+  def getRandomInt(mode = nil)
+    if(mode.nil?) then
+      return getRandom().nextInt() ;
+    else
+      return getRandom().nextInt(mode) ;
+    end
+  end
+
+  #------------------------------------------
+  #++
+  ## Java 側の乱数生成で、int 取得。
+  def getRandomDouble()
+    return getRandom().nextDouble() ;
+  end
+  
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

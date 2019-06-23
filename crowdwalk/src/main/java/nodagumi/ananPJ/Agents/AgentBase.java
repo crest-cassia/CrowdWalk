@@ -287,6 +287,14 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
+     * シミュレータへのアクセス
+     */
+    public EvacuationSimulator getSimulator() {
+        return getHandler().getSimulator() ;
+    }
+    
+    //------------------------------------------------------------
+    /**
      * factory をセット
      */
     public void setFactory(AgentFactory _factory) {

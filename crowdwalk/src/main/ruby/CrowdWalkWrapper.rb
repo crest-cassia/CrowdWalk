@@ -25,24 +25,21 @@ class CrowdWalkWrapper
   #--------------------------------------------------------------
   #++ Wrapper の（唯一の）インスタンスへのアクセス。
   def self.getInstance()
-    return @@instance ;
+    return @instance ;
   end
   
   #--============================================================
   #--------------------------------------------------------------
   #++ Wrapper の（唯一の）インスタンスへのを設定。
   def self.setInstance(wrapper)
-    @@instance = wrapper ;
-    return @@instance ;
+    @instance = wrapper ;
+    return @instance ;
   end
   
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
   ## Java 側の EvacuationSimulator
   attr_accessor :simulator ;
-
-  ## NetworkMap
-  attr_accessor :networkMap ;
 
   ## NetworkMap
   attr_accessor :networkMap ;
@@ -64,6 +61,13 @@ class CrowdWalkWrapper
     @fallbackParameters = simulator.getFallbackParameters() ;
 
     @agentTrailLogFormatTable = {} ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## シミュレータ取得。
+  def getSimulator()
+    return @simulator ;
   end
 
   #--------------------------------------------------------------
@@ -154,13 +158,34 @@ class CrowdWalkWrapper
     return @simulator.intern(str) ;
   end
 
-  #--------------------------------------------------------------
+  #------------------------------------------
   #++
   ## 文字列の java 内でのintern.
   def self.intern(str)
     return @simulator.intern(str) ;
   end
   
+  #--------------------------------------------------------------
+  #++
+  ## Java 側の乱数生成器へのアクセス。
+  def self.getRandom()
+    return getInstance().getRandom() ;
+  end
+  
+  #------------------------------------------
+  #++
+  ## Java 側の乱数生成で、int 取得。
+  def self.getRandomInt(mode = nil)
+    return getInstance().getRandomInt(mode) ;
+  end
+
+  #------------------------------------------
+  #++
+  ## Java 側の乱数生成で、int 取得。
+  def self.getRandomDouble()
+    return getInstance().getRandomDouble() ;
+  end
+
   #--------------------------------------------------------------
   #++
   ## Itkのloggerによるログ出力.

@@ -107,7 +107,8 @@ class SampleAgent3 < RubyAgentBase
   ## ThinkAgent のサンプルと同じ動作をさせている。
   def thinkCycle()
     @nCycle += 1 ;
-    
+#    p [:agentRand, getRandomInt()] ;
+#    sleep(1) ;
   end
 
 end # class SampleAgent

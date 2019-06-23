@@ -37,7 +37,8 @@ class SampleGate < RubyGateBase
     ## close のときも、半分通す。
     r = super ;
     if(r) then
-      r = (rand(2) == 0) ;
+#      r = (rand(2) == 0) ;
+      r = (getRandomInt(2) == 0) ;
     end
 
 #    klass0 = checkAgentClass(agent, :rational) ;
@@ -58,7 +59,9 @@ class SampleGate < RubyGateBase
     p [:switchGate, event.getEventDef().toJson(), closed] ;
     p [:getEventDef, getEventDef().toJson()] ;
     p [:place, getGateTag(), getPlace().getID()] ;
+    p [:rand, getRandomInt(), getRandomInt(10), getRandomDouble()] ;
     super
+#    sleep(1) ;
   end
   
   
