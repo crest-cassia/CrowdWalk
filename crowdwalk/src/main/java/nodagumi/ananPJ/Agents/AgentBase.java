@@ -180,7 +180,7 @@ implements Comparable<AgentBase> {
                      Term fallback) {
         super.init(null);
         random = _random;
-        swing_width = random.nextDouble() * 2.0 - 1.0;
+        swing_width = getRandomDouble() * 2.0 - 1.0;
         calcSwing();
         // ObstructerBase のサブクラスのインスタンスを取得
         obstructer = ObstructerBase.createAndInitialize(obstructerType, this) ;

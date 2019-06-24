@@ -32,7 +32,7 @@ class SampleEvent < RubyEventBase
   def occur(currentTime, map)
     p [:eventOccur, currentTime, map] ;
     p [:eventRand, getRandomInt(), getRandomDouble()] ;
-#    sleep(10) ;
+    sleep(10) ;
     return true ;
   end
 

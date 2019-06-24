@@ -165,6 +165,17 @@ public class EvacuationSimulator {
      */
     private Object rubyWrapper = null ;
 
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * Event などにより遅延で random の setSeed する場合のフラグ
+     */
+    private SeedRandEvent.Timing delayedSetSeedTiming = null ;
+
+    /**
+     * Event などにより遅延で random の setSeed する場合のseedの値。
+     */
+    private long delayedSetSeedValue =  0 ;
+    
     //------------------------------------------------------------
     /**
      * コンストラクタ
@@ -175,6 +186,38 @@ public class EvacuationSimulator {
         init(_networkMap, _launcher, _random) ;
     }
 
+    //------------------------------------------------------------
+    /**
+     * 遅延 set seed の予約。
+     * @param timing : set seed するタイミング。enum SeedRandEvent.Timing。
+     * @param seed : set する seed 値。
+     */
+    public void reserveDelayedSetSeed(SeedRandEvent.Timing timing, long seed) {
+        delayedSetSeedTiming = timing ;
+        delayedSetSeedValue = seed ;
+        Itk.logInfo("reserveDelayedSetSeed",
+                    "timing=" + timing, "seed=" + seed);
+    }
+    
+    /**
+     * 遅延 set seed のチェックと実行
+     * @param timing : try するタイミング。
+     *                 これが deleydSetSeedTiming と一致すれば、実行される。
+     * @return set seed が実行されたら、true。
+     */
+    public boolean tryDelayedSetSeed(SeedRandEvent.Timing timing) {
+        if(delayedSetSeedTiming == timing) {
+            random.setSeed(delayedSetSeedValue) ;
+            delayedSetSeedTiming = SeedRandEvent.Timing.none ;
+            delayedSetSeedValue = 0 ;
+            Itk.logInfo("succeed to tryDelayedSetSeed",
+                        "timing=" + timing, "seed=" + delayedSetSeedValue) ;
+            return true ;
+        } else {
+            return false ;
+        }
+    }
+    
     //------------------------------------------------------------
     // メンバ変数アクセス。
     //------------------------------------------------------------

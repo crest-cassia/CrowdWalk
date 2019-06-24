@@ -97,7 +97,7 @@ public class CapriciousAgent extends NaiveAgent {
     @Override
     public double calcCostFromNodeViaLink(MapLink _link, MapNode _node, Term _target) throws TargetNotFoundException {
         double cost = super.calcCostFromNodeViaLink(_link, _node, _target) ;
-        double noise = capriciousMargin * random.nextDouble() ;
+        double noise = capriciousMargin * getRandomDouble() ;
         return cost + noise;
     }
 

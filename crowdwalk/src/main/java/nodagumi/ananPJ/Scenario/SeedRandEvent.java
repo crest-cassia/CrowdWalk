@@ -25,8 +25,11 @@ import nodagumi.Itk.* ;
  * <pre>
  *  { "type" : "SeedRand" 
  *    "atTime" : __Time__,
- *    "seed" : __Integer__
+ *    "seed" : __Integer__,
+ *    "timing" : __Timing__
  *  }
+ *  
+ *  __Timing__ ::= "atEvent" | "afterGeneration"
  * </pre>
  * <p>
  * "seed" で指定した値を CrowdWalkSimulator の random にセットする。
@@ -37,17 +40,49 @@ import nodagumi.Itk.* ;
  * の１秒後を、"atTime" に指定するする。
  * "Dump" 側のシナリオと、再スタート側のシナリオ両方に同じように記述すること。
  * </p><p>
- * サンプル：
+ * "timing" には、どの時点で seed を set するかを指定する。
+ * <ul>
+ *  <li> "atEvent" : このイベントが発生したタイミング。 </li>
+ *  <li> "afterGeneration" : 生成ルールの直後。Dump との動機を取る時に便利。 </li>
+ * </ul>
+ * デフォルトは "atEvent"。
+ * </p><p>
+ * サンプル：<br/>
  * "./sample/generatedTown/gridTown02d.scnr.json" および
  * "./sample/generatedTown/gridTown02ds.scnr.json". 
  * </p>
  */
 public class SeedRandEvent extends EventBase {
+    //============================================================
+    //============================================================
+    /**
+     * set seed するタイミング用の enum
+     */
+    static public enum Timing {
+        atEvent,
+        afterGeneration,
+        none } ;
+    
+    //============================================================
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * set seed するタイミング用の enum の Lexicon
+     */
+    static public Lexicon timingLexicon = new Lexicon() ;
+    static {
+        timingLexicon.registerEnum(Timing.class) ;
+    } ;
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * seed value
      */
     public long seed ;
+    
+    /**
+     * seed value
+     */
+    public Timing timing ;
     
     //------------------------------------------------------------
     /**
@@ -74,8 +109,25 @@ public class SeedRandEvent extends EventBase {
             Itk.logError("SeedRandEvent", "must specify 'seed' value.") ;
             Itk.quitByError() ;
         }
+        
+        if(eventDef.hasArg("timing")) {
+            String timingVal = eventDef.getArgString("timing") ;
+            timing = (Timing)(timingLexicon.lookUp(timingVal)) ;
+        } else {
+            timing = Timing.atEvent ;
+        }
 
-        getSimulator().getRandom().setSeed(seed) ;
+        switch(timing) {
+        case atEvent:
+            getSimulator().getRandom().setSeed(seed) ;
+            break ;
+        case afterGeneration:
+            getSimulator().reserveDelayedSetSeed(timing, seed) ;
+            break ;
+        default:
+            Itk.logError("unknown timing value.", eventDef) ;
+            Itk.quitByError() ;
+        }
         
 	return true ;
     }

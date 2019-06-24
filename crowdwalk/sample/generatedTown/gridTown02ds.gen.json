@@ -67,7 +67,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 66.84749317920988,
+					"advancingDistance": 17.44779243614627,
 					"link": "116"
 				},
 				"conditions": [
@@ -84,7 +84,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0187904126238523
+				"speed": 1.021718719059008
 			},
 			{
 				"goal": "node_09_09",
@@ -92,9 +92,35 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 43.852625848078475,
-					"link": "116"
+					"enteringNode": "14",
+					"advancingDistance": 21.322313964659628,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.019073451494057
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 11.358648783457854,
+					"link": "118"
 				},
 				"conditions": [
 					"aaa",
@@ -118,60 +144,8 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 85.17294897210205,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.020590764802532
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 75.91624525059014,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226571809655982
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
 					"enteringNode": "14",
-					"advancingDistance": 34.86115772606152,
+					"advancingDistance": 30.72732063195428,
 					"link": "118"
 				},
 				"conditions": [
@@ -188,7 +162,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0226515766204363
+				"speed": 1.022656885296425
 			},
 			{
 				"goal": "node_09_09",
@@ -197,59 +171,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 56.84148062870786,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0075848682533104
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 80.03312296660485,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0224940159844262
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 96.22285952110549,
+					"advancingDistance": 80.30626251196126,
 					"link": "116"
 				},
 				"conditions": [
@@ -275,7 +197,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "14",
-					"advancingDistance": 26.218721790248434,
+					"advancingDistance": 8.762116748695114,
 					"link": "118"
 				},
 				"conditions": [
@@ -292,7 +214,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02173057503418
+				"speed": 1.0220262790192347
 			},
 			{
 				"goal": "node_09_09",
@@ -301,7 +223,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 54.94607178786264,
+					"advancingDistance": 77.7723636084083,
 					"link": "116"
 				},
 				"conditions": [
@@ -318,7 +240,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0057301225526107
+				"speed": 1.02181021825519
 			},
 			{
 				"goal": "node_09_09",
@@ -326,9 +248,9 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 56.66801229780449,
-					"link": "139"
+					"enteringNode": "14",
+					"advancingDistance": 23.548256094101422,
+					"link": "118"
 				},
 				"conditions": [
 					"aaa",
@@ -344,33 +266,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 27.492681294492982,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0210122431066202
+				"speed": 1.0199598880342349
 			},
 			{
 				"goal": "node_09_09",
@@ -379,7 +275,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 67.62779146304389,
+					"advancingDistance": 22.66646066945316,
 					"link": "139"
 				},
 				"conditions": [
@@ -405,7 +301,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 29.28596423405883,
+					"advancingDistance": 20.024688201672806,
 					"link": "139"
 				},
 				"conditions": [
@@ -422,111 +318,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 12.31295930222098,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.022654036272948
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 92.01971596295135,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0205162852508523
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 82.69552500310368,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0194435997568791
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 84.94472083636852,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0203036749649743
+				"speed": 1.0221471072076607
 			},
 			{
 				"goal": "node_09_09",
@@ -535,7 +327,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 91.65417349688609,
+					"advancingDistance": 85.24481514231469,
 					"link": "136"
 				},
 				"conditions": [
@@ -552,7 +344,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
+				"speed": 1.0226526362017383
 			},
 			{
 				"goal": "node_09_09",
@@ -560,35 +352,9 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 87.51661122154303,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021617205921707
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 29.885695309373983,
-					"link": "116"
+					"enteringNode": "25",
+					"advancingDistance": 91.72887310767223,
+					"link": "139"
 				},
 				"conditions": [
 					"aaa",
@@ -612,9 +378,9 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 50.37579763630734,
-					"link": "116"
+					"enteringNode": "3",
+					"advancingDistance": 68.49118157919953,
+					"link": "113"
 				},
 				"conditions": [
 					"aaa",
@@ -630,7 +396,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
+				"speed": 1.0200195798918688
 			},
 			{
 				"goal": "node_09_09",
@@ -639,7 +405,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 37.90337817556532,
+					"advancingDistance": 11.1414773160633,
 					"link": "116"
 				},
 				"conditions": [
@@ -664,8 +430,216 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 98.76233916269176,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022651147598786
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 55.98334278393751,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0170217717589531
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 70.78440629429276,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 82.5879702555919,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0221819891259558
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 51.289811074320546,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 93.43805473541276,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 18.40369190684795,
+					"advancingDistance": 38.67085915383162,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 24.130219859367646,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 0.2857238041664232,
 					"link": "116"
 				},
 				"conditions": [
@@ -691,7 +665,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 85.13156637423224,
+					"advancingDistance": 61.054708983072366,
 					"link": "139"
 				},
 				"conditions": [
@@ -708,7 +682,111 @@
 					],
 					"index": 0
 				},
-				"speed": 1.022301937309397
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 48.95786063351276,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 73.97017062878733,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "13",
+					"advancingDistance": 7.077847784342987,
+					"link": "116"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226570361632383
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 0.6898402210504031,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0096723212175986
 			},
 			{
 				"goal": "node_09_09",
@@ -717,7 +795,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "14",
-					"advancingDistance": 8.199003392738197,
+					"advancingDistance": 93.79280673092654,
 					"link": "118"
 				},
 				"conditions": [
@@ -734,137 +812,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 53.96839335026089,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0222684779156768
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 71.47030271571035,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 87.85034926626895,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 62.700961136456534,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0139927374632223
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "25",
-					"advancingDistance": 80.23829772615531,
-					"link": "139"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
+				"speed": 1.0219993272269596
 			},
 			{
 				"goal": "node_09_09",
@@ -873,7 +821,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "2",
-					"advancingDistance": 80.65578232443178,
+					"advancingDistance": 55.43813289753193,
 					"link": "102"
 				},
 				"conditions": [
@@ -890,7 +838,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.017802747223325
+				"speed": 1.0208337898794415
 			},
 			{
 				"goal": "node_09_09",
@@ -899,59 +847,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "14",
-					"advancingDistance": 38.44659863086645,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021779667684255
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 31.51645244405816,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 40.97296534127542,
+					"advancingDistance": 52.31451139271124,
 					"link": "118"
 				},
 				"conditions": [
@@ -977,7 +873,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "2",
-					"advancingDistance": 22.80323088146514,
+					"advancingDistance": 18.968203866463565,
 					"link": "102"
 				},
 				"conditions": [
@@ -994,33 +890,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 29.13344968395796,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.020932611322717
+				"speed": 1.0207438687641137
 			},
 			{
 				"goal": "node_09_09",
@@ -1029,7 +899,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "14",
-					"advancingDistance": 23.851423079530964,
+					"advancingDistance": 63.57668227580709,
 					"link": "118"
 				},
 				"conditions": [
@@ -1046,7 +916,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0208082383125359
+				"speed": 1.0218693751152643
 			},
 			{
 				"goal": "node_09_09",
@@ -1054,9 +924,9 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 50.37174531810025,
-					"link": "102"
+					"enteringNode": "14",
+					"advancingDistance": 40.450486939625634,
+					"link": "118"
 				},
 				"conditions": [
 					"aaa",
@@ -1072,7 +942,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.020867871129152
+				"speed": 1.0218373662067117
 			},
 			{
 				"goal": "node_09_09",
@@ -1081,7 +951,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 8.638446423809617,
+					"advancingDistance": 20.89721935832259,
 					"link": "113"
 				},
 				"conditions": [
@@ -1098,189 +968,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0226576905458393
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 96.76610701802373,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 21.57009949787741,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0198917055984646
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 71.45874554710448,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226403911882986
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 52.74548485150242,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0212525874991183
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 55.1719729834037,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226566358513423
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 28.73351941009677,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 15.12409149992653,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0203141607639101
+				"speed": 1.0226246053156254
 			},
 			{
 				"goal": "node_09_09",
@@ -1289,7 +977,137 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 0.45876302577745776,
+					"advancingDistance": 9.973561602987461,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022657127100829
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 51.08370063127197,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0170996671151311
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 96.76904405135137,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226576673652406
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 91.58189572300486,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0129251071654555
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 71.17527864930261,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0221038212655207
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 36.86560374754294,
 					"link": "136"
 				},
 				"conditions": [
@@ -1314,34 +1132,8 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 72.46167999395365,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.022657690530515
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
 					"enteringNode": "2",
-					"advancingDistance": 91.46535309721799,
+					"advancingDistance": 88.70922479680924,
 					"link": "102"
 				},
 				"conditions": [
@@ -1358,7 +1150,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0201517894586594
+				"speed": 1.0040762245956731
 			},
 			{
 				"goal": "node_09_09",
@@ -1367,163 +1159,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "14",
-					"advancingDistance": 84.19733255154816,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021277773396779
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 64.73991780980012,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0163724739102917
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 58.7617940784721,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.009556624123161
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 67.75638224796859,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226576901750997
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 69.05873511542018,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0211501604340047
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 56.414720141633275,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0218481415987923
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 15.060093686968399,
+					"advancingDistance": 66.12597455734425,
 					"link": "118"
 				},
 				"conditions": [
@@ -1548,60 +1184,8 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 82.91432461272079,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.019580144014333
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 90.00688691995701,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 43.26818075916482,
+					"advancingDistance": 13.27319332708722,
 					"link": "113"
 				},
 				"conditions": [
@@ -1626,8 +1210,320 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 89.35466789721418,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 0.9912500295970089
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 85.84011863358526,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226503062302141
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 49.012416499733106,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0152282348916322
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 42.991311549364205,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 34.74661711132185,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226354465994258
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 6.254871436582274,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0217000116167794
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 28.20742141022567,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0217525579017745
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 38.05545627836138,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0210343804266588
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 74.09136394398196,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0218973822391784
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 25.834886448865433,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0208532306206504
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 101.26480567733948,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022657690181384
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "14",
+					"advancingDistance": 76.64835334564138,
+					"link": "118"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 61.96483307764631,
+					"advancingDistance": 93.6348857029751,
 					"link": "136"
 				},
 				"conditions": [
@@ -1644,7 +1540,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0222494314893429
+				"speed": 1.021619550783716
 			},
 			{
 				"goal": "node_09_09",
@@ -1653,7 +1549,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 54.26442115594872,
+					"advancingDistance": 11.012241077411558,
 					"link": "113"
 				},
 				"conditions": [
@@ -1670,7 +1566,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
+				"speed": 1.0195827292476103
 			},
 			{
 				"goal": "node_09_09",
@@ -1679,7 +1575,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 79.44537918702015,
+					"advancingDistance": 63.3589408664978,
 					"link": "136"
 				},
 				"conditions": [
@@ -1697,110 +1593,6 @@
 					"index": 0
 				},
 				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 13.815887452992753,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0211809378894288
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 2.5218514279729702,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 8.951333693377178,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226401803457663
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 42.23608348533535,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.019775886618886
 			},
 			{
 				"goal": "node_09_09",
@@ -1809,7 +1601,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 89.64055666402507,
+					"advancingDistance": 52.62169204513985,
 					"link": "113"
 				},
 				"conditions": [
@@ -1826,59 +1618,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0209193975937467
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 66.64547222751179,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 25.247585217154636,
-					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0193687863783
+				"speed": 1.0226406558614956
 			},
 			{
 				"goal": "node_09_09",
@@ -1887,7 +1627,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 64.65426761779712,
+					"advancingDistance": 80.07364655057239,
 					"link": "136"
 				},
 				"conditions": [
@@ -1904,7 +1644,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
+				"speed": 1.0217306655961296
 			},
 			{
 				"goal": "node_09_09",
@@ -1912,9 +1652,9 @@
 				"mentalMode": null,
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "13",
-					"advancingDistance": 23.088931804114956,
-					"link": "116"
+					"enteringNode": "2",
+					"advancingDistance": 98.21098597250196,
+					"link": "102"
 				},
 				"conditions": [
 					"aaa",
@@ -1930,7 +1670,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0177280517554799
+				"speed": 1.0098422580876536
 			},
 			{
 				"goal": "node_09_09",
@@ -1939,7 +1679,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 7.356049861411238,
+					"advancingDistance": 10.168820754812591,
 					"link": "139"
 				},
 				"conditions": [
@@ -1956,7 +1696,59 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
+				"speed": 1.022259627058176
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 96.12509846225419,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0221361468192272
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 80.22270791953328,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226571458943434
 			},
 			{
 				"goal": "node_09_09",
@@ -1965,7 +1757,33 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 20.678274380838253,
+					"advancingDistance": 3.3763559560583474,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0221603575506288
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 29.995108904556854,
 					"link": "139"
 				},
 				"conditions": [
@@ -1991,7 +1809,85 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 96.83660210020876,
+					"advancingDistance": 64.90611347437861,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226516181989875
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 69.1246608162176,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "25",
+					"advancingDistance": 6.023730635152681,
+					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 88.84872826107811,
 					"link": "113"
 				},
 				"conditions": [
@@ -2017,8 +1913,34 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 15.590932790755376,
+					"advancingDistance": 41.983592756701555,
 					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 88.87181722180564,
+					"link": "136"
 				},
 				"conditions": [
 					"aaa",
@@ -2043,34 +1965,8 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 16.00755043905674,
+					"advancingDistance": 34.32056263048133,
 					"link": "116"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021036351843229
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 71.22730244297206,
-					"link": "136"
 				},
 				"conditions": [
 					"aaa",
@@ -2095,7 +1991,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 12.940828596257495,
+					"advancingDistance": 12.863646318794997,
 					"link": "139"
 				},
 				"conditions": [
@@ -2112,7 +2008,33 @@
 					],
 					"index": 0
 				},
-				"speed": 1.022166687955769
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 42.14326834351841,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
 			},
 			{
 				"goal": "node_09_09",
@@ -2121,8 +2043,34 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "25",
-					"advancingDistance": 39.74037552167431,
+					"advancingDistance": 17.53075628478203,
 					"link": "139"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.021637506274045
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 84.32553982710489,
+					"link": "113"
 				},
 				"conditions": [
 					"aaa",
@@ -2147,7 +2095,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "13",
-					"advancingDistance": 60.712226442579144,
+					"advancingDistance": 19.959888386874997,
 					"link": "116"
 				},
 				"conditions": [
@@ -2164,162 +2112,6 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0116996296845735
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 10.965593531793953,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0224670263221545
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 8.762624880889513,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.018608183026441
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 12.91672154908133,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0187346182445518
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 77.23578263592373,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226446787733445
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 18.52213644885009,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 34.32063705015768,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
 				"speed": 1.02265769054586
 			},
 			{
@@ -2329,242 +2121,8 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 51.87246151831898,
+					"advancingDistance": 60.393271648651556,
 					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0210040339878153
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 58.520846322119944,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 0.5756211885880451
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 90.48309625699245,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 17.442298913455115,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 94.35584523137862,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0215695330341308
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 16.22908190983848,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0200174496872316
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 38.674747446072,
-					"link": "113"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 49.950717648536084,
-					"link": "136"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "14",
-					"advancingDistance": 86.62765690649478,
-					"link": "118"
-				},
-				"conditions": [
-					"aaa",
-					"a",
-					"b"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_00",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226559560988524
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": null,
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "15",
-					"advancingDistance": 44.51069104236307,
-					"link": "136"
 				},
 				"conditions": [
 					"aaa",
@@ -2589,7 +2147,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "2",
-					"advancingDistance": 87.09921339332854,
+					"advancingDistance": 68.80844756230834,
 					"link": "102"
 				},
 				"conditions": [
@@ -2606,7 +2164,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0175719398148177
+				"speed": 1.0208007421155114
 			},
 			{
 				"goal": "node_09_09",
@@ -2615,7 +2173,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 40.10887855634831,
+					"advancingDistance": 16.833101298198805,
 					"link": "136"
 				},
 				"conditions": [
@@ -2632,7 +2190,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0169118932124799
+				"speed": 1.02265769054586
 			},
 			{
 				"goal": "node_09_09",
@@ -2641,7 +2199,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 87.2601841366782,
+					"advancingDistance": 4.566770303681811,
 					"link": "113"
 				},
 				"conditions": [
@@ -2658,7 +2216,449 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0209258984069314
+				"speed": 1.0226576769261484
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 90.58355963259515,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0048086168709471
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 26.55860885294757,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 23.071460096623866,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 14.068849188848993,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022370249457821
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 73.79770632263796,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0207253509219278
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 41.87640411063592,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 8.851027882292302,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0177830250526478
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 77.44648251351906,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022113335179846
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 58.286825035200216,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0214728465079561
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 58.11461443715323,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0198307687037753
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 55.91130659131091,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0208809226324997
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 18.295171708316005,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022042523647375
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 2.637349907109408,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0072326462789356
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "15",
+					"advancingDistance": 60.74888481708785,
+					"link": "136"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0220651322642622
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 24.12157082154613,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0213207428421507
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 77.92302854443791,
+					"link": "113"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0200991116820388
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": null,
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 96.2772632493471,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"a",
+					"b"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_00",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0085485514297996
 			}
 		],
 		"agentType": {
@@ -2750,59 +2750,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 33.52761873124927,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021184916654456
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 39.35080355663328,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0213021190075082
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 22.81949083498384,
+					"advancingDistance": 46.28220480130112,
 					"link": "104"
 				},
 				"conditions": [
@@ -2828,7 +2776,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 74.26880582569363,
+					"advancingDistance": 52.73510896695295,
 					"link": "104"
 				},
 				"conditions": [
@@ -2845,7 +2793,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0226562529468415
+				"speed": 1.021192092908831
 			},
 			{
 				"goal": "node_09_09",
@@ -2854,7 +2802,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 100.25036555904613,
+					"advancingDistance": 55.1518952543948,
 					"link": "104"
 				},
 				"conditions": [
@@ -2871,7 +2819,33 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0214691983806372
+				"speed": 1.0219243426373625
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 61.73142276899919,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0204437119225125
 			},
 			{
 				"goal": "node_09_09",
@@ -2880,7 +2854,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 44.226933321873155,
+					"advancingDistance": 13.579301882414796,
 					"link": "105"
 				},
 				"conditions": [
@@ -2897,7 +2871,33 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0224891144100539
+				"speed": 1.022644873098389
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 73.26233986606391,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0216445909259066
 			},
 			{
 				"goal": "node_09_09",
@@ -2906,7 +2906,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 47.10503231208224,
+					"advancingDistance": 31.189994744409194,
 					"link": "105"
 				},
 				"conditions": [
@@ -2923,7 +2923,33 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0226534252603292
+				"speed": 1.0226569147417695
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 68.64144122231973,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0197297182815341
 			},
 			{
 				"goal": "node_09_09",
@@ -2932,7 +2958,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 19.48789579720985,
+					"advancingDistance": 19.518952572368566,
 					"link": "105"
 				},
 				"conditions": [
@@ -2958,7 +2984,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 48.636991661709466,
+					"advancingDistance": 82.66258356038485,
 					"link": "104"
 				},
 				"conditions": [
@@ -2975,33 +3001,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0226500256259907
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 54.621162564244585,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226558640901822
+				"speed": 1.02265769054586
 			},
 			{
 				"goal": "node_09_09",
@@ -3010,7 +3010,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 1.7671331859136123,
+					"advancingDistance": 35.21727075033388,
 					"link": "105"
 				},
 				"conditions": [
@@ -3027,7 +3027,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0220403376890963
+				"speed": 1.02265769054586
 			},
 			{
 				"goal": "node_09_09",
@@ -3035,9 +3035,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 56.69608932518973,
-					"link": "106"
+					"enteringNode": "5",
+					"advancingDistance": 17.00658462257747,
+					"link": "105"
 				},
 				"conditions": [
 					"aaa",
@@ -3053,7 +3053,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0221423850894946
+				"speed": 1.0217199195598263
 			},
 			{
 				"goal": "node_09_09",
@@ -3061,9 +3061,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 95.91760265206739,
-					"link": "106"
+					"enteringNode": "3",
+					"advancingDistance": 76.59115319348959,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -3087,8 +3087,138 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 86.70659260308099,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 54.17206182221765,
+					"link": "107"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0222958489970744
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 41.78490624585075,
+					"advancingDistance": 64.05925331576249,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0203616298060283
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 66.37865693424447,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0196532061170087
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 78.33950011485618,
+					"link": "107"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022354573990201
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 15.311868103070962,
 					"link": "104"
 				},
 				"conditions": [
@@ -3114,7 +3244,111 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "7",
-					"advancingDistance": 44.861269058609274,
+					"advancingDistance": 75.49399525066565,
+					"link": "107"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0224615811660485
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 51.6044553672825,
+					"link": "107"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0219356603187455
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 9.039552526370837,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226558920775577
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 2.8123158312468006,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 56.88722672331931,
 					"link": "107"
 				},
 				"conditions": [
@@ -3140,137 +3374,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 91.57267534043586,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0216783328747638
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "7",
-					"advancingDistance": 34.22025424346433,
-					"link": "107"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 35.94411737014289,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226436041048252
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "7",
-					"advancingDistance": 68.66876838821194,
-					"link": "107"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "7",
-					"advancingDistance": 1.1565383198048047,
-					"link": "107"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0221757503331141
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 58.46556214157302,
+					"advancingDistance": 75.75828379795928,
 					"link": "104"
 				},
 				"conditions": [
@@ -3295,86 +3399,8 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 93.21581205755415,
-					"link": "106"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.022272422641636
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
 					"enteringNode": "7",
-					"advancingDistance": 8.509441228322748,
-					"link": "107"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "7",
-					"advancingDistance": 94.42977423428025,
-					"link": "107"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "7",
-					"advancingDistance": 50.75317778969464,
+					"advancingDistance": 26.225956185931306,
 					"link": "107"
 				},
 				"conditions": [
@@ -3425,34 +3451,8 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 11.092118873050913,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.022649270230213
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 46.20073933441341,
+					"advancingDistance": 12.8857866155508,
 					"link": "104"
 				},
 				"conditions": [
@@ -3469,7 +3469,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0213158335856376
+				"speed": 1.021249883996008
 			},
 			{
 				"goal": "node_09_09",
@@ -3477,9 +3477,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 35.472865356513154,
-					"link": "105"
+					"enteringNode": "7",
+					"advancingDistance": 81.09242732641817,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -3503,35 +3503,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 48.092041836709605,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.019869531591973
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 53.3141130270516,
-					"link": "105"
+					"enteringNode": "8",
+					"advancingDistance": 1.6416164039116878,
+					"link": "108"
 				},
 				"conditions": [
 					"aaa",
@@ -3555,9 +3529,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 41.6566518168605,
-					"link": "105"
+					"enteringNode": "4",
+					"advancingDistance": 57.716566963589784,
+					"link": "104"
 				},
 				"conditions": [
 					"aaa",
@@ -3573,7 +3547,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0219440048200552
+				"speed": 1.0226568771006108
 			},
 			{
 				"goal": "node_09_09",
@@ -3581,9 +3555,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 41.91009400491299,
-					"link": "102"
+					"enteringNode": "8",
+					"advancingDistance": 5.853119028293655,
+					"link": "108"
 				},
 				"conditions": [
 					"aaa",
@@ -3600,110 +3574,6 @@
 					"index": 0
 				},
 				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 73.95623523056423,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0204669786440883
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 6.719548027412358,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226572067868014
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 28.828004248428968,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0217973983603525
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 84.96671539197725,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0171179816987017
 			},
 			{
 				"goal": "node_09_09",
@@ -3712,7 +3582,501 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "6",
-					"advancingDistance": 27.238586224521285,
+					"advancingDistance": 2.4208942925055026,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 94.3635203503463,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0071577329118984
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 76.15669183388664,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 55.81632912003177,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.021058860222998
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 86.83865380495622,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0037865076256864
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 75.37849137568156,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0204257528549523
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 29.732287229521244,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 42.170044737150505,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0193469402655433
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 43.362762177667655,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0222004613574507
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 21.329226778266552,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 68.70610273537008,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0218908767760095
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 44.41325166338777,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02053289798476
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 71.26127865418589,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226571868598713
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 92.46683260971518,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0058782037388265
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 39.23236719257043,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226572128997466
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 57.809340909334395,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 53.216972930876125,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.018974891964397
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 66.29871519611123,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0211259153621588
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 46.74911329262587,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0197265306867047
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 46.028052236027136,
 					"link": "106"
 				},
 				"conditions": [
@@ -3738,7 +4102,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 30.121975885128514,
+					"advancingDistance": 44.30091554014592,
 					"link": "103"
 				},
 				"conditions": [
@@ -3755,293 +4119,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0223980766781338
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 78.7042772739304,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0219247173997152
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 58.77921514034068,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0213116644675895
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 74.82141548829516,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0211700295973618
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 76.28716350744611,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0211943517508808
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 4.659869002267897,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0145717947855857
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 82.81577922394936,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0175992296676246
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 87.20610167046212,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226522239001208
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 59.13219922878859,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0212561906553181
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 97.80287696590321,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 32.907933668982814,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226451370948761
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 4.368459888231487,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
+				"speed": 1.021215045398448
 			},
 			{
 				"goal": "node_09_09",
@@ -4050,7 +4128,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "4",
-					"advancingDistance": 97.8717213449491,
+					"advancingDistance": 70.9106312868413,
 					"link": "104"
 				},
 				"conditions": [
@@ -4067,7 +4145,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0209069893300873
+				"speed": 1.0206676633531446
 			},
 			{
 				"goal": "node_09_09",
@@ -4076,137 +4154,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 50.767457353137246,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021859545165
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 14.608177789705682,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0207975858615432
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 78.16433592075803,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0226560569786707
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 94.07581652750345,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.022655417974701
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 82.03257366098411,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 63.79498240223634,
+					"advancingDistance": 60.761029560171785,
 					"link": "105"
 				},
 				"conditions": [
@@ -4232,7 +4180,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 61.214110350582494,
+					"advancingDistance": 82.67958710362042,
 					"link": "105"
 				},
 				"conditions": [
@@ -4249,7 +4197,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0219780850232179
+				"speed": 1.02265769054586
 			},
 			{
 				"goal": "node_09_09",
@@ -4258,7 +4206,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 31.35870921138188,
+					"advancingDistance": 45.60528564694209,
 					"link": "105"
 				},
 				"conditions": [
@@ -4275,7 +4223,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0226571740196906
+				"speed": 1.0220281360116197
 			},
 			{
 				"goal": "node_09_09",
@@ -4284,7 +4232,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 8.53964060667542,
+					"advancingDistance": 86.8238112178931,
 					"link": "105"
 				},
 				"conditions": [
@@ -4301,7 +4249,33 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0218811232223886
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "4",
+					"advancingDistance": 96.55466867760765,
+					"link": "104"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
 			},
 			{
 				"goal": "node_09_09",
@@ -4310,7 +4284,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 16.974255647250466,
+					"advancingDistance": 43.152201946999156,
 					"link": "105"
 				},
 				"conditions": [
@@ -4327,7 +4301,111 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0217255141302641
+				"speed": 1.0214219072244293
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 48.20244483031232,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 80.11865877934007,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0219113260437316
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 97.4095714976064,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "5",
+					"advancingDistance": 58.21460191658748,
+					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0218586892497357
 			},
 			{
 				"goal": "node_09_09",
@@ -4336,8 +4414,34 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "6",
-					"advancingDistance": 5.9398498105895285,
+					"advancingDistance": 75.16496779303039,
 					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226537084095915
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 91.07497784311455,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -4362,7 +4466,111 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "7",
-					"advancingDistance": 3.810612018454689,
+					"advancingDistance": 38.258112284669615,
+					"link": "107"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 23.551388947973493,
+					"link": "107"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0222199378182386
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 82.54756197681897,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 84.96719885489229,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0039013557413425
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 15.507811169432403,
 					"link": "107"
 				},
 				"conditions": [
@@ -4388,7 +4596,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 36.34063608742565,
+					"advancingDistance": 46.72181210935536,
 					"link": "103"
 				},
 				"conditions": [
@@ -4406,32 +4614,6 @@
 					"index": 0
 				},
 				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 86.07442428557069,
-					"link": "106"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.022304088071578
 			},
 			{
 				"goal": "node_09_09",
@@ -4440,7 +4622,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 24.873634811994897,
+					"advancingDistance": 54.70508746801611,
 					"link": "103"
 				},
 				"conditions": [
@@ -4465,9 +4647,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 51.58879309558624,
-					"link": "106"
+					"enteringNode": "3",
+					"advancingDistance": 72.10555239139656,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -4483,7 +4665,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0219324346018885
+				"speed": 1.0179833752656255
 			},
 			{
 				"goal": "node_09_09",
@@ -4491,9 +4673,35 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 0.09101710761211734,
-					"link": "104"
+					"enteringNode": "3",
+					"advancingDistance": 34.823780241339335,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.022656577977828
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 78.84289350580731,
+					"link": "106"
 				},
 				"conditions": [
 					"aaa",
@@ -4517,9 +4725,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 36.16895314232296,
-					"link": "106"
+					"enteringNode": "3",
+					"advancingDistance": 74.27624451289496,
+					"link": "103"
 				},
 				"conditions": [
 					"aaa",
@@ -4535,33 +4743,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0220545012076465
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 20.427429571107712,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0210048270191892
+				"speed": 1.02027725668049
 			},
 			{
 				"goal": "node_09_09",
@@ -4570,7 +4752,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "7",
-					"advancingDistance": 16.729932277010143,
+					"advancingDistance": 62.23782136992007,
 					"link": "107"
 				},
 				"conditions": [
@@ -4595,113 +4777,9 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 54.15497743144076,
-					"link": "106"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021840534185088
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 31.875321381473885,
-					"link": "106"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 52.17373531730373,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0213846262368387
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "4",
-					"advancingDistance": 31.257713203737566,
-					"link": "104"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0197321843652023
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 49.76625814244666,
-					"link": "103"
+					"enteringNode": "7",
+					"advancingDistance": 0.4896970525848303,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -4726,189 +4804,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 64.47455193692758,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 59.335900455367344,
-					"link": "106"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 68.85459154395802,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0216541396894256
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 61.55923311328943,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 93.40087235938293,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 71.68628945529186,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0197430992012557
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 93.76813002892192,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0214166106161493
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 19.914550790075513,
+					"advancingDistance": 67.003606243312,
 					"link": "103"
 				},
 				"conditions": [
@@ -4934,8 +4830,268 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "5",
-					"advancingDistance": 81.26905861443475,
+					"advancingDistance": 77.70545235865002,
 					"link": "105"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0211672351748058
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 55.31215679668018,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 70.07338218353135,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0215271923598122
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 64.07927250033508,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0220978612910177
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 83.09279422453356,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0041726160975188
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 72.54544061827096,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0220909166178194
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "2",
+					"advancingDistance": 66.57110657211558,
+					"link": "102"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.019248690844952
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 31.44467875259633,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226415559274715
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 38.77405400507827,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "3",
+					"advancingDistance": 15.631109656028013,
+					"link": "103"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.02265769054586
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "7",
+					"advancingDistance": 6.846499659069235,
+					"link": "107"
 				},
 				"conditions": [
 					"aaa",
@@ -4960,7 +5116,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "2",
-					"advancingDistance": 89.2508503184206,
+					"advancingDistance": 81.21702062935164,
 					"link": "102"
 				},
 				"conditions": [
@@ -4977,85 +5133,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.018868941944624
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "5",
-					"advancingDistance": 90.81566329249206,
-					"link": "105"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0219917902970148
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 62.01628308725441,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.021447997428497
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 41.0631934916833,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
+				"speed": 1.0042756118493512
 			},
 			{
 				"goal": "node_09_09",
@@ -5064,7 +5142,33 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "6",
-					"advancingDistance": 88.79450011580785,
+					"advancingDistance": 86.43441750722933,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226168288360424
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 33.91804060591225,
 					"link": "106"
 				},
 				"conditions": [
@@ -5089,34 +5193,8 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 56.707149584300645,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
 					"enteringNode": "6",
-					"advancingDistance": 24.592592652811007,
+					"advancingDistance": 89.6145242175938,
 					"link": "106"
 				},
 				"conditions": [
@@ -5133,33 +5211,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0221571233224562
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "6",
-					"advancingDistance": 47.183927026063124,
-					"link": "106"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
+				"speed": 1.0221249359188163
 			},
 			{
 				"goal": "node_09_09",
@@ -5168,7 +5220,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 47.4413327101175,
+					"advancingDistance": 63.20146957822023,
 					"link": "103"
 				},
 				"conditions": [
@@ -5185,33 +5237,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0203875383262169
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 10.847702242702331,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
+				"speed": 1.022655464439125
 			},
 			{
 				"goal": "node_09_09",
@@ -5220,7 +5246,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "6",
-					"advancingDistance": 38.77522231660139,
+					"advancingDistance": 92.24724090882391,
 					"link": "106"
 				},
 				"conditions": [
@@ -5245,60 +5271,8 @@
 				"mentalMode": "major",
 				"startTime": "18:10:00",
 				"place": {
-					"enteringNode": "2",
-					"advancingDistance": 96.2209605311435,
-					"link": "102"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.02265769054586
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
-					"enteringNode": "3",
-					"advancingDistance": 45.23158606712731,
-					"link": "103"
-				},
-				"conditions": [
-					"aaa",
-					"x",
-					"y"
-				],
-				"routePlan": {
-					"route": [
-						"node_02_09",
-						"node_04_02",
-						"node_06_09",
-						"node_08_00"
-					],
-					"index": 0
-				},
-				"speed": 1.0187774525516795
-			},
-			{
-				"goal": "node_09_09",
-				"emptySpeed": 1.02265769054586,
-				"mentalMode": "major",
-				"startTime": "18:10:00",
-				"place": {
 					"enteringNode": "6",
-					"advancingDistance": 82.76018412332311,
+					"advancingDistance": 83.8119929482876,
 					"link": "106"
 				},
 				"conditions": [
@@ -5315,7 +5289,7 @@
 					],
 					"index": 0
 				},
-				"speed": 1.0226358676438185
+				"speed": 1.02209867478027
 			},
 			{
 				"goal": "node_09_09",
@@ -5324,7 +5298,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "3",
-					"advancingDistance": 71.35254818308611,
+					"advancingDistance": 6.803228563328006,
 					"link": "103"
 				},
 				"conditions": [
@@ -5341,7 +5315,33 @@
 					],
 					"index": 0
 				},
-				"speed": 1.02265769054586
+				"speed": 1.02265769054583
+			},
+			{
+				"goal": "node_09_09",
+				"emptySpeed": 1.02265769054586,
+				"mentalMode": "major",
+				"startTime": "18:10:00",
+				"place": {
+					"enteringNode": "6",
+					"advancingDistance": 66.70141255426742,
+					"link": "106"
+				},
+				"conditions": [
+					"aaa",
+					"x",
+					"y"
+				],
+				"routePlan": {
+					"route": [
+						"node_02_09",
+						"node_04_02",
+						"node_06_09",
+						"node_08_00"
+					],
+					"index": 0
+				},
+				"speed": 1.0226410994845858
 			}
 		],
 		"agentType": {
@@ -5434,7 +5434,7 @@
 				"startTime": "18:10:00",
 				"place": {
 					"enteringNode": "15",
-					"advancingDistance": 43.44174181810608,
+					"advancingDistance": 12.450791896485848,
 					"link": "118"
 				},
 				"conditions": [
@@ -5451,7 +5451,7 @@
 					],
 					"index": 0
 				},
-				"speed": 0.5755858266922453
+				"speed": 0.9889438683074372
 			}
 		],
 		"agentType": {

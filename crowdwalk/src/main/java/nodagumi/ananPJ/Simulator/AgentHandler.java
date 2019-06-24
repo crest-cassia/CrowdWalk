@@ -1003,7 +1003,9 @@ public class AgentHandler {
     public void update(SimTime currentTime) {
         ArrayList<AgentBase> generatedAgentsInStep
             = generateAgentsAndSetup(currentTime) ;
-
+        
+        getSimulator().tryDelayedSetSeed(SeedRandEvent.Timing.afterGeneration) ;
+        
         preUpdateNetworkMap(currentTime);
         preUpdateAgents(currentTime);
         updateAgents(currentTime);
