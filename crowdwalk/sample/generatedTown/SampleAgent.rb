@@ -135,6 +135,8 @@ class SampleAgent < RubyAgentBase
       clearAlert(Term_FooBarBaz) ;
     end
 
+    # p [:clearNextLinkCache, clearNextLinkCache()] ;
+
   end
 
   Term_Emergency = ItkTerm.ensureTerm("emergency") ;

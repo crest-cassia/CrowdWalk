@@ -78,6 +78,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
         ThinkFormula.register("clearPlannedRoute", singleton, false, lexicon) ;
         ThinkFormula.register("insertRoute", 	singleton, false, lexicon) ;
         ThinkFormula.register("turnAround", 	singleton, false, lexicon) ;
+        ThinkFormula.register("clearNextLinkCache", singleton, false, lexicon) ;
 
         return true ;
     }
@@ -146,6 +147,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
             return call_insertRoute(head, expr, engine, env) ;
         } else if(head.equals("turnAround")) {
             return call_turnAround(head, expr, engine, env) ;
+        } else if(head.equals("clearNextLinkCache")) {
+            return call_clearNextLinkCache(head, expr, engine, env) ;
         } else {
             Itk.logWarn("unknown expression", "expr=", expr) ;
 	    return Term_Null ;
@@ -547,6 +550,21 @@ public class ThinkFormulaAgent extends ThinkFormula {
     public Term call_turnAround(String head, Term expr,
                                 ThinkEngine engine, Object env) {
         ((ThinkEngine)env).getRationalAgent().setTurnAround() ;
+        return Term_True ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * nextLinkCache をクリアする。
+     * link の重みやゴールを変更した時に、間違った参照しないように、
+     * 呼び出しておくべきである。
+     * <pre>
+     * { "" : "clearNextLinkCache" }
+     * </pre>
+     */
+    public Term call_clearNextLinkCache(String head, Term expr,
+                                        ThinkEngine engine, Object env) {
+        ((ThinkEngine)env).getRationalAgent().clearNextLinkCache() ;
         return Term_True ;
     }
 

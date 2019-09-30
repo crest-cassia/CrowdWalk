@@ -382,6 +382,15 @@ class RubyAgentBase
 
   #--------------------------------------------------------------
   #++
+  ## nextLinkCache をクリアしておく。
+  ## thinkCycle() などで、goal や link の長さなどを一時的に変更した際、
+  ## 間違って直前の nextLinkCache を参照しないようにするために使う。
+  def clearNextLinkCache()
+    return @javaAgent.clearNextLinkCache() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## 文字列の java 内でのintern.
   def intern(str)
     return @javaAgent.intern(str) ;

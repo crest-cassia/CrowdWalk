@@ -240,7 +240,13 @@ public class WalkAgent extends AgentBase {
             resultLink = nextLink ;
         }
 
+        //----------------------------------------
+        /** 結果の破棄。 */
+        public void clear() {
+            recordResult(null) ;
+        }
     }
+    
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	/**
      * chooseNextLink のキャッシュ
@@ -1239,6 +1245,16 @@ public class WalkAgent extends AgentBase {
         return nextLink;
     }
 
+    //------------------------------------------------------------
+    /**
+     * chooseNextLinkCache のクリア。
+     * (for RationalAgent and RubyAgent)
+     *
+     */
+    public void clearNextLinkCache() {
+        chooseNextLinkCache.clear() ;
+    }
+    
     //------------------------------------------------------------
     /**
      * 指定された RoutePlan で、次のターゲットを得る。
