@@ -152,29 +152,6 @@ processResources {
 
 mainClassName = 'nodagumi.ananPJ.CrowdWalkLauncher'
 
-jar {
-    doFirst {
-        /* for ruby */
-        tasks.copyRubyLib.execute() ;
-    }
-
-    if (onlyCuiSimulator) {
-        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CuiCrowdWalkLauncher")
-    } else {
-        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CrowdWalkLauncher")
-    }
-    from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-    }
-
-    /* for ruby */
-    into('ruby') {
-      from('build/ruby')
-    }
-}
 
 task javadoc(overwrite: true) {
     doLast {
@@ -218,3 +195,31 @@ task copyRubyLib(dependsOn: mkdirForRuby, type: Copy) {
     into 'build/ruby/CrowdWalk'
 }
 
+
+jar {
+    /* [2019.10.01 S.Takami] executeが廃止されたためdependsOnで対応する．
+     * task.copyRubyLibより下に記述する必要あり．
+     */
+    //doFirst {
+        /* for ruby */
+        //tasks.copyRubyLib.execute() ;
+    //}
+    dependsOn copyRubyLib
+
+    if (onlyCuiSimulator) {
+        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CuiCrowdWalkLauncher")
+    } else {
+        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CrowdWalkLauncher")
+    }
+    from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+    }
+
+    /* for ruby */
+    into('ruby') {
+      from('build/ruby')
+    }
+}
