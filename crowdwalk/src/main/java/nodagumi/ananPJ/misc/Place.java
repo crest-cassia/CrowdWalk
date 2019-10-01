@@ -768,8 +768,10 @@ public class Place {
      * 文字列化
      */
     public String toString() {
-        return ("Place[on:" + getLink().toShortInfo() +
-                ",enter:" + getEnteringNode().toShortInfo() +
+        return ("Place[on:" +
+                (getLink() != null ? getLink().toShortInfo() : "(null)") +
+                ",enter:" +
+                (getEnteringNode() != null ? getEnteringNode().toShortInfo() : "(null)") +
                 ",dist:" + getAdvancingDistance() +
                 "]") ;
     }

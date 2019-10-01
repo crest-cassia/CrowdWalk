@@ -433,6 +433,14 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
+     * 現在の場所を取得
+     */
+    public Place getCurrentPlace() {
+        return currentPlace ;
+    }
+
+    //------------------------------------------------------------
+    /**
      * 現在のリンクを取得
      */
     public MapLink getCurrentLink() {
