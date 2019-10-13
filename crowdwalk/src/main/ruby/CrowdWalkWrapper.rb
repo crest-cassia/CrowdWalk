@@ -47,6 +47,9 @@ class CrowdWalkWrapper
   ## Fallback Parameters ;
   attr_accessor :fallbackParameters ;
 
+  ## Properties in Term ;
+  attr_accessor :propertiesTerm ;
+
   ## シミュレーションの AgentTrailLog の Format Member の手続きテーブル
   attr_accessor :agentTrailLogFormatTable ;
 
@@ -59,6 +62,7 @@ class CrowdWalkWrapper
     @simulator = simulator ;
     @networkMap = NetworkMap.new(simulator.getMap()) ;
     @fallbackParameters = simulator.getFallbackParameters() ;
+    @propertiesTerm = simulator.getPropertiesTerm() ;
 
     @agentTrailLogFormatTable = {} ;
   end

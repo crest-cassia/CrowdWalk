@@ -308,6 +308,13 @@ public class EvacuationSimulator {
         return properties;
     }
 
+    /**
+     * Properties のデータを Term で取得。
+     */
+    public Term getPropertiesTerm() {
+        return getProperties().getPropertiesTerm() ;
+    }
+    
     //------------------------------------------------------------
     /**
      * 乱数生成器

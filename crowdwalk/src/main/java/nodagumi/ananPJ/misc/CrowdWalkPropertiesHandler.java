@@ -1056,6 +1056,14 @@ public class CrowdWalkPropertiesHandler {
 
     //--------------------------------------------------
     /**
+     * get property in Term
+     */
+    public Term getPropertiesTerm() {
+        return prop ;
+    }
+
+    //--------------------------------------------------
+    /**
      * get String property
      */
     public String getString(String key, String defaultValue) {
