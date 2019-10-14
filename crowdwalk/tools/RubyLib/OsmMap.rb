@@ -47,6 +47,10 @@ require 'MapTown.rb' ;
 ## "cw:stayloop" があれば、さらに、 "__StayLoop__" を追加。
 ## "cw:tsunami" の値を、"tsunami:<値>" というタグで追加。
 ##
+## [2019-10-14 I.Noda] oneway の追加。
+## LineString に、"cw:oneway" があり、その値が、 "forward", "backward" であれば、
+## MapLink に "ONE-WAY-FORWARD", "ONE-WAY-BACKWARD" を追加する。
+##
 class OsmMap < MapTown
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #++
@@ -270,7 +274,7 @@ class OsmMap < MapTown
     if(tag = road.hasProperty(getConf(:cwOneWayName))) then
       if(tag == getConf(:cwOneWayFore)) then
         road.addTag(getConf(:onewayForeTag)) ;
-      elsif(tag == getConf(:cwOneWayFore)) then
+      elsif(tag == getConf(:cwOneWayBack)) then
         road.addTag(getConf(:onewayBackTag)) ;
       else
         p [:warning, "illegal oneway tag", tag] ;
