@@ -1205,8 +1205,12 @@ implements Comparable<AgentBase> {
      * individualConfig による設定：goals
      */
     private void setupByIndividualConfig_goals(Term config) {
-        goal = config.getArgTerm("goal") ;
-        routePlan.setByTerm(config.getArgTerm("routePlan")) ;
+        if(config.hasArg("goal")) {
+            goal = config.getArgTerm("goal") ;
+        }
+        if(config.hasArg("routePlan")) {
+            routePlan.setByTerm(config.getArgTerm("routePlan")) ;
+        }
     }
     
     //----------
