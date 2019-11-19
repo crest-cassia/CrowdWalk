@@ -94,7 +94,7 @@ public class ScenarioPanelFx extends BorderPane {
 
         // ジェネレーションファイル
         String fileName = editor.getGenerationFile();
-        generationFileLabel = new Label("Ganeration file: " + (fileName == null ? "None" : fileName));
+        generationFileLabel = new Label("Generation file: " + (fileName == null ? "None" : fileName));
         generationFileLabel.setPadding(new Insets(4, 0, 0, 0));
         generationFileLabel.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
         generationFileButton.setOnAction(e -> {
@@ -215,7 +215,7 @@ public class ScenarioPanelFx extends BorderPane {
      */
     public void reset() {
         String fileName = editor.getGenerationFile();
-        generationFileLabel.setText("Ganeration file: " + (fileName == null ? "None" : fileName));
+        generationFileLabel.setText("Generation file: " + (fileName == null ? "None" : fileName));
 
         fileName = editor.getScenarioFile();
         scenarioFileLabel.setText("Scenario file: " + (fileName == null ? "None" : fileName));
