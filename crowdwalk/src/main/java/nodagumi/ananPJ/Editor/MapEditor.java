@@ -803,11 +803,11 @@ public class MapEditor {
 
         // ステータスラインとコンソールに表示する
         if (message == null) {
-            frame.setStatusText(String.format("%s: %s", logLevelName, label));
             Itk.logOutput(logLevel, label);
+            frame.setStatusText(String.format("%s: %s", logLevelName, label));
         } else {
-            frame.setStatusText(String.format("%s: [%s] %s", logLevelName, label, message));
             Itk.logOutput(logLevel, label, message);
+            frame.setStatusText(String.format("%s: [%s] %s", logLevelName, label, message));
         }
 
         // Warning 以上ならばダイアログでも表示する
