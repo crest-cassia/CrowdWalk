@@ -60,6 +60,7 @@ import nodagumi.Itk.Itk;
 import nodagumi.Itk.Itk.LogLevel;
 import nodagumi.Itk.ItkXmlUtility;
 
+
 /**
  * マップエディタのメイン処理
  */
@@ -120,7 +121,7 @@ public class MapEditor {
     private double minHeight;
 
     /**
-     * 地図データの最大標高
+   Load Generation File (JSON)  * 地図データの最大標高
      */
     private double maxHeight;
 
@@ -800,14 +801,25 @@ public class MapEditor {
                 break;
             }
         }
+         // ステータスラインとコンソールに表示する
+         if (message == null) {
 
-        // ステータスラインとコンソールに表示する
-        if (message == null) {
+            //===================================================================
+            if (frame != null){
+               frame.setStatusText(String.format("%s: %s", logLevelName, label));
+            }
             Itk.logOutput(logLevel, label);
-            frame.setStatusText(String.format("%s: %s", logLevelName, label));
-        } else {
+            //===================================================================
+
+         } else {
+
+            //==================================================================================
+            if (frame != null){
+                frame.setStatusText(String.format("%s: [%s] %s", logLevelName, label, message));
+            }
             Itk.logOutput(logLevel, label, message);
-            frame.setStatusText(String.format("%s: [%s] %s", logLevelName, label, message));
+            //==================================================================================
+
         }
 
         // Warning 以上ならばダイアログでも表示する
@@ -829,7 +841,13 @@ public class MapEditor {
         }
         if (alertType != null) {
             Alert alert = new Alert(alertType, message == null ? "" : message, ButtonType.OK);
-            alert.initOwner(frame.getStage());
+
+            //===================================
+            if (frame != null){
+               alert.initOwner(frame.getStage());
+            }
+            //===================================
+
             alert.setTitle(label);
             alert.getDialogPane().setHeaderText(alertLevel);
             beep();
@@ -1447,6 +1465,21 @@ public class MapEditor {
         }
         return fromNode.getPosition().distance(toNode.getPosition()) * group.getScale();
     }
+
+    //===== 傾斜角を計算する === 
+    public double calcLinkSlope(MapNode fromNode, MapNode toNode, MapPartGroup group) {
+        if (heightEffective) {
+
+            Point2D point2d0 = new Point2D(fromNode.getX(), fromNode.getY());
+            Point2D point2d1 = new Point2D(toNode.getX(), toNode.getY());
+
+            double h = Math.abs(fromNode.getHeight() - toNode.getHeight());
+
+            return  Math.toDegrees(Math.atan(( h * group.getScale())/ (point2d0.distance(point2d1) * group.getScale())));
+             }
+             return 0;
+         }
+    //============================
 
     /**
      * リンク長を計算する
