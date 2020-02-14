@@ -789,6 +789,9 @@ implements Comparable<AgentBase> {
      * sort, binarySearch 用比較関数
      * エージェントのリンク上の進み具合で比較。
      * 逆向きなどはちゃんと方向を直して扱う。
+     * [2020.02.14 I.Noda]
+     * もし、ID が null の場合、null がある方が前に進んでいるとみなす。
+     * 両方 null なら、同じ位置と見なす。
      */
     public int compareTo(AgentBase rhs) {
         if(this == rhs) return 0 ;
@@ -799,6 +802,12 @@ implements Comparable<AgentBase> {
         if(h1 > h2) {
             return 1 ;
         } else if(h1 < h2) {
+            return -1 ;
+        } else if(ID == null && rhs.ID == null) {
+            return 0 ;
+        } else if(ID == null) {
+            return 1 ;
+        } else if(rhs.ID == null) {
             return -1 ;
         } else {
             return ID.compareTo(rhs.ID) ;
