@@ -1,5 +1,5 @@
 # coding: utf-8
-1#! /usr/bin/env ruby
+#! /usr/bin/env ruby
 # coding: utf-8
 ## -*- mode: ruby -*-
 ## = AgentFactoryBase for AgentFactoryByRuby

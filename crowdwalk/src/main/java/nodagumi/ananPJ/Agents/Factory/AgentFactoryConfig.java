@@ -773,6 +773,14 @@ public class AgentFactoryConfig {
             //エラーを避けるために。
             plannedRoute = new ArrayList<Term>() ;
 
+            //エラーを避けるために。(2) startTime は必ず値がないといけない。
+	    try {
+		startTime = new SimTime(json.getArgString("startTime")) ;
+	    } catch(Exception ex) {
+                Itk.logError("FactoryConfig need startTime.", json) ;
+		return null ;
+	    }
+
             // speedModel
             scanJsonForSpeedModel(factoryList, json) ;
             

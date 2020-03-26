@@ -2,6 +2,7 @@
 [
  {"rule":"RUBY",
   "ruleClass":"SampleFactory",
+  "_startTime":"18:00:00",
   "config":{"total":10,
             "goalList":["node_09_05", "node_09_06"],
 	    "startList":["link_node_00_00__node_00_01",

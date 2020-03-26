@@ -801,13 +801,24 @@ public class MapEditor {
             }
         }
 
+	// [2020.03.26 I.Noda]
+	// frame が null ならば、frame への表示は全く行わない。
+	if(frame == null) {
+	    if(message == null) {
+		Itk.logOutput(logLevel, label);
+	    } else {
+		Itk.logOutput(logLevel, label, message);
+	    }
+	    return ;
+	} 
+
         // ステータスラインとコンソールに表示する
         if (message == null) {
             Itk.logOutput(logLevel, label);
-            frame.setStatusText(String.format("%s: %s", logLevelName, label));
+	    frame.setStatusText(String.format("%s: %s", logLevelName, label));
         } else {
             Itk.logOutput(logLevel, label, message);
-            frame.setStatusText(String.format("%s: [%s] %s", logLevelName, label, message));
+	    frame.setStatusText(String.format("%s: [%s] %s", logLevelName, label, message));
         }
 
         // Warning 以上ならばダイアログでも表示する
