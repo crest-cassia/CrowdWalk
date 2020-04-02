@@ -216,8 +216,6 @@ public abstract class AgentFactory {
                      Random _random) {
         config = _config ;
         random = _random;
-        Itk.dbgVal("config", config) ;
-        Itk.dbgVal("config.startTime", config.startTime) ;
         startTime = config.startTime.newSimTime();
 
         /** config.total は、途中で変更になるので、コピーしておく */
