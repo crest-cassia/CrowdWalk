@@ -15,6 +15,8 @@ require 'java';
 
 import 'nodagumi.Itk.Itk' ;
 
+import 'nodagumi.ananPJ.NetworkMap.Link.MapLink' ;
+
 #--======================================================================
 #++
 ## 汎用ユーティリティ
@@ -194,6 +196,42 @@ module ItkUtility
   def getRandomDouble()
     return getRandom().nextDouble() ;
   end
+  
+  #--------------------------------------------------------------
+  ## link から agent へのアクセス。
+  #::::::::::::::::::::::::::::::::::::::::::::::::::
+  #++
+  ## レーンの方向
+  LaneDirectionFore = MapLink::Direction::Forward ;
+  LaneDirectionBack = MapLink::Direction::Backward ;
+  
+  #------------------------------------------
+  #++
+  ## 全エージェント。
+  def eachAgentOnLink(link, &block)
+    link.getAgents().each{|agent|
+      block.call(agent) ;
+    }
+  end
+
+  #------------------------------------------
+  #++
+  ## 前向きレーンのエージェント。
+  def eachAgentOnLinkFore(link, &block)
+    link.getLane(LaneDirectionFore).each{|agent|
+      block.call(agent) ;
+    }
+  end
+
+  #------------------------------------------
+  #++
+  ## 前向きレーンのエージェント。
+  def eachAgentOnLinkBack(link, &block)
+    link.getLane(LaneDirectionBack).each{|agent|
+      block.call(agent) ;
+    }
+  end
+
   
   #--============================================================
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
