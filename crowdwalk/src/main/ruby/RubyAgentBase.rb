@@ -146,7 +146,7 @@ class RubyAgentBase
   def getRoute(future = true)
     routePlan = @javaAgent.routePlan ;
     baseRoute = routePlan.getRoute() ;
-    beginIndex = (fugure ? routePlan.getIndex() : 0) ;
+    beginIndex = (future ? routePlan.getIndex() : 0) ;
     endIndex = baseRoute.size() ;
 
     route = [] ;

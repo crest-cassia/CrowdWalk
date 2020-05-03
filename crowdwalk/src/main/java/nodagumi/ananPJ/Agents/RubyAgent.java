@@ -239,14 +239,6 @@ public class RubyAgent extends RationalAgent {
 
     //------------------------------------------------------------
     /**
-     * 現在の RoutePlan の先頭に新しいsubgoalを追加。
-     */
-    public void insertRouteTagSafelyForRuby(Object tag) {
-        super.insertRouteTagSafely(Term.ensureTerm(tag)) ;
-    }
-
-    //------------------------------------------------------------
-    /**
      * alert を聴いた時刻。
      * もし聴いていなければ、null が返る。
      */

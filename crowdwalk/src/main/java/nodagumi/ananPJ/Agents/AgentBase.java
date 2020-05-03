@@ -417,10 +417,26 @@ implements Comparable<AgentBase> {
 
     //------------------------------------------------------------
     /**
-     * 全経路をセット
+     * 新しい中継点を挿入。
      */
     public void insertRouteTagSafely(Term tag) {
         routePlan.insertSafely(tag) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在の RoutePlan の先頭に新しいsubgoalを追加。(ruby からの呼び出し用)
+     */
+    public void insertRouteTagSafelyForRuby(Object tag) {
+        insertRouteTagSafely(Term.ensureTerm(tag)) ;
+    }
+
+    //------------------------------------------------------------
+    /**
+     * 現在の RoutePlan の先頭をStringで取得。(ruby からの呼び出し用)
+     */
+    public String getRoutePlanTopInString() {
+        return routePlan.top().toString() ;
     }
 
     //------------------------------------------------------------
