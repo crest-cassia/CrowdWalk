@@ -176,6 +176,11 @@ public class EvacuationSimulator {
      */
     public Semaphore irbSemaphore = null ;
     
+    /**
+     * irb 用 Interrupt Reason。
+     */
+    public String irbKillReason = null ;
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * Event などにより遅延で random の setSeed する場合のフラグ
@@ -635,7 +640,7 @@ public class EvacuationSimulator {
     public void finish() {
         finalizeLoggers() ;
 
-        if(irbThread != null) irbKillThread() ;
+        if(irbThread != null) irbKillThread("finalizeSimulation") ;
 
         if(useRubyWrapper()) callRubyWrapper("finalizeSimulation") ;
     }
@@ -968,8 +973,9 @@ public class EvacuationSimulator {
     /**
      * Irb kill thread.
      */
-    private void irbKillThread() {
+    private void irbKillThread(String killReason) {
         if(irbThread != null) {
+            irbKillReason = killReason ;
             irbThread.interrupt() ;
         }
     }
@@ -978,7 +984,7 @@ public class EvacuationSimulator {
     /**
      * irb semaphor aquire.
      */
-    public void irbAcquireSemaphore() throws Exception {
+    public void irbAcquireSemaphore() throws InterruptedException {
         if(irbSemaphore != null) {
             irbSemaphore.acquire() ;
         }
@@ -987,7 +993,7 @@ public class EvacuationSimulator {
     /**
      * irb semaphor release.
      */
-    public void irbReleaseSemaphore() throws Exception {
+    public void irbReleaseSemaphore() throws InterruptedException {
         if(irbSemaphore != null) {
             irbSemaphore.release() ;
             Thread.yield() ;
@@ -998,7 +1004,7 @@ public class EvacuationSimulator {
     /**
      * irb yield thread.
      */
-    public void irbYield() throws Exception {
+    public void irbYield() throws InterruptedException {
         if(irbThread != null) {
             irbReleaseSemaphore() ;
             irbAcquireSemaphore() ;
@@ -1006,15 +1012,20 @@ public class EvacuationSimulator {
     }
     
     /**
-     * Irb wait N cycle.
+     * Irb wait N cycle. (called from Ruby)
      */
-    public void irbWaitCycleN(Object n) throws Exception {
-        Long nTick = (Long)n ;
-        SimTime cycleUntil =
-            currentTime.newSimTimeWithAdvanceTick(nTick.intValue()) ;
-        while(currentTime.isBefore(cycleUntil)) {
-            irbYield() ;
+    public Object irbWaitCycleN(Object n) {
+        try {
+            Long nTick = (Long)n ;
+            SimTime cycleUntil =
+                currentTime.newSimTimeWithAdvanceTick(nTick.intValue()) ;
+            while(currentTime.isBefore(cycleUntil)) {
+                irbYield() ;
+            }
+        } catch(InterruptedException ex) {
+            return irbKillReason ;
         }
+        return null ;
     }
 
     //------------------------------------------------------------

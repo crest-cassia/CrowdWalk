@@ -1,6 +1,8 @@
 [
   { "type":"Initiate",
     "atTime":"18:00:00"},
+  { "type":"Finish",
+    "atTime":"18:10:00"},
   { "type":"Alert",
     "atTime":"18:00:10",
     "placeTag":"link_node_05_05__node_05_06",
