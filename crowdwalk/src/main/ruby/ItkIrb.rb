@@ -35,6 +35,41 @@ module ItkIrb
 
   #--------------------------------------------------------------
   #++
+  ## get CrowdWalk simulator entity
+  def getAgentHandler()
+    return getSimulator().getAgentHandler() ;
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## do something for each agent.
+  def eachAgent(status = :all, &block)
+    case(status)
+    when :all ;
+      getSimulator().getAllAgentCollection().each{|agent|
+        block.call(agent) ;
+      } ;
+    when :walking ;
+      getSimulator().getWalkingAgentCollection().each{|agent|
+        block.call(agent) ;
+      } ;
+    else
+      raise "unknown agent status for eachAgent(): " + status.inspect ;
+    end
+  end
+
+  #--------------------------------------------------------------
+  #++
+  ## get CrowdWalk simulator entity
+  def getMap()
+    if($crowdwalkMap.nil?) then
+      $crowdwalkMap = NetworkMap.new(getSimulator().getMap()) ;
+    end
+    return $crowdwalkMap ;
+  end
+
+  #--------------------------------------------------------------
+  #++
   ## run N cycle.
   def runCycle(_n = 1)
     getSimulator().irbWaitCycleN(_n) ;
