@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.BasicSimulationLauncher;
@@ -165,6 +166,16 @@ public class EvacuationSimulator {
      */
     private Object rubyWrapper = null ;
 
+    /**
+     * irb 用 thread。
+     */
+    private Thread irbThread = null ;
+
+    /**
+     * irb 用 Semaphore。
+     */
+    public Semaphore irbSemaphore = null ;
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * Event などにより遅延で random の setSeed する場合のフラグ
@@ -624,8 +635,9 @@ public class EvacuationSimulator {
     public void finish() {
         finalizeLoggers() ;
 
-        if(useRubyWrapper())
-            callRubyWrapper("finalizeSimulation") ;
+        if(irbThread != null) irbKillThread() ;
+
+        if(useRubyWrapper()) callRubyWrapper("finalizeSimulation") ;
     }
 
     //------------------------------------------------------------
@@ -906,12 +918,102 @@ public class EvacuationSimulator {
                 }
                 // AgentFactoryByRuby 用の処理
                 agentHandler.setupAgentFactoryByRuby(rubyEngine) ;
-                //
+                
+                // irb 用処理
+                if(properties.getBoolean("use_irb", false)) {
+                    Itk.logInfo("Setup Irb Thread.") ;
+                    irbSemaphore = new Semaphore(1) ;
+                    irbThread = new Thread(() -> {
+                            this.irbRepLoop() ;
+                        }) ;
+                    irbAcquireSemaphore() ;
+                    irbThread.start() ;
+                }
+                
+                // final.
                 Itk.logInfo("Ruby Engine", "loading... Done.") ;
             }
         } catch (Exception ex) {
             Itk.logError("Exception in buildRubyEngine") ;
             Itk.quitWithStackTrace(ex) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    // Irb setup
+    /**
+     * Irb Rep Loop.
+     */
+    private void irbRepLoop() {
+        try {
+            // wait until thread is ready.
+            while(irbSemaphore == null) {
+                Thread.yield() ;
+            }
+            // initialize
+            irbAcquireSemaphore() ;
+            rubyEngine.eval("require 'irb'") ;
+            rubyEngine.setVariable("$crowdwalk", this) ;
+            //        rubyEngine.eval("pp IRB.conf[:PROMPT]") ;
+            //        rubyEngine.eval("IRB.conf[:PROMPT][:DEFAULT][:PROMPT_I] = 'CrowdWalk> '") ;
+        
+            // run
+            rubyEngine.eval("IRB.start") ;
+            irbReleaseSemaphore() ;
+        } catch(Exception ex) {
+            // do nothing ;
+        }
+    }
+
+    /**
+     * Irb kill thread.
+     */
+    private void irbKillThread() {
+        if(irbThread != null) {
+            irbThread.interrupt() ;
+        }
+    }
+    
+
+    /**
+     * irb semaphor aquire.
+     */
+    public void irbAcquireSemaphore() throws Exception {
+        if(irbSemaphore != null) {
+            irbSemaphore.acquire() ;
+        }
+    }
+    
+    /**
+     * irb semaphor release.
+     */
+    public void irbReleaseSemaphore() throws Exception {
+        if(irbSemaphore != null) {
+            irbSemaphore.release() ;
+            Thread.yield() ;
+            Thread.sleep(1) ;
+        }
+    }
+
+    /**
+     * irb yield thread.
+     */
+    public void irbYield() throws Exception {
+        if(irbThread != null) {
+            irbReleaseSemaphore() ;
+            irbAcquireSemaphore() ;
+        }
+    }
+    
+    /**
+     * Irb wait N cycle.
+     */
+    public void irbWaitCycleN(Object n) throws Exception {
+        Long nTick = (Long)n ;
+        SimTime cycleUntil =
+            currentTime.newSimTimeWithAdvanceTick(nTick.intValue()) ;
+        while(currentTime.isBefore(cycleUntil)) {
+            irbYield() ;
         }
     }
 
@@ -979,6 +1081,11 @@ public class EvacuationSimulator {
         synchronized (stop_simulation) {
             deferSimulation() ;
 
+            // irb とのやり取り。
+            try {
+                irbYield() ;
+            } catch(Exception ex) {} ;
+            
             // ruby wrapper の preUpdate()
             if(useRubyWrapper())
                 callRubyWrapper("preUpdate", currentTime) ;

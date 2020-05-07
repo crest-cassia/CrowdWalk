@@ -156,6 +156,15 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>use_irb</h4>
+ *     <pre>  Irb Mode を使うかどうか。
+ *   use_ruby は true でなければならない。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>ruby_load_path</h4>
  *     <pre> Ruby の標準の LOAD_PATH に追加するパス。
  *  複数のパスを追加する場合には、改行で区切る。

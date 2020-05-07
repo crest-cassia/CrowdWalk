@@ -267,6 +267,13 @@ run3gt00r_fb ::
 	(cd $(BASEDIR) ; bash quickstart.sh --fallback '{"aho":1.0}' --fallback '{"link":{"gathering_location_width":12.345}}' $(SAMPLE3gt00r))
 
 ##-----
+SAMPLE3gt00ri = sample/generatedTown/gridTown00.rubyIrb.prop.json   # irb
+run3gt00ri ::
+	(cd $(BASEDIR) ; bash quickstart.sh -l Info --use-2d-simulator $(SAMPLE3gt00ri))
+run3gt00ri_cui ::
+	(cd $(BASEDIR) ; time bash quickstart.sh --cui $(SAMPLE3gt00ri))
+
+##-----
 SAMPLE3gt00r2 = sample/generatedTown/gridTown00.ruby2.prop.json   # ruby agent
 run3gt00r2 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt00r2))

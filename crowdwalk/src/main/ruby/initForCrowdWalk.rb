@@ -14,6 +14,7 @@ require 'ItkTerm.rb' ;
 require 'CrowdWalkWrapper.rb' ;
 require 'AgentFactoryBase.rb' ;
 require 'RubyAgentBase.rb' ;
+require 'ItkIrb.rb' ;
 
 #--======================================================================
 #  for test
