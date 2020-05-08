@@ -23,9 +23,9 @@ import 'nodagumi.Itk.Itk' ;
 
 #--======================================================================
 #++
-## Irb Utility module for CrowdWalk
-module ItkIrb
-  extend ItkIrb ;
+## Irb Utility module for CrowdWalk.
+module CwIrb
+  extend CwIrb ;
   #--------------------------------------------------------------
   #++
   ## get CrowdWalk simulator entity
@@ -80,5 +80,5 @@ module ItkIrb
   #--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #--------------------------------------------------------------
-end # module ItkIrb
+end # module CwIrb
 

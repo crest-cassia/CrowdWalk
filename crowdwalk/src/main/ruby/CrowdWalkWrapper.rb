@@ -17,7 +17,107 @@ require 'NetworkMap.rb' ;
 
 #--======================================================================
 #++
-## CrowdWalk の EvacuationSimulator の制御のwrapper
+## CrowdWalk の EvacuationSimulator の制御のwrapper の base class。
+##
+## シミュレーションのメインルーチンのうち、
+## 以下に上げる method ポイントで、一旦 Ruby への制御が渡される。
+## Ruby の method の実行が終わると、
+## もとの Java の対応する method に実行が戻っていく。
+##
+## ユーザは CrowdWalkWrapper クラスを継承した Ruby のクラスを定義し、
+## そのクラス名を以下のように property 設定ファイルで指定しなければならない。
+##
+##   ...
+##   "ruby_init_script": [...,
+##     "require './SampleWrapper.rb'",
+##     ...],
+##   "ruby_simulation_wrapper_class":"SampleWrapper",
+##   ...
+##
+## ただし、+SampleWrapper+ がユーザが定義したクラス、
+## +./SampleWrapper.rb+ は、
+## そのクラスを定義した Ruby のプログラムファイルである。
+##
+## CrowdWalkWrapper を継承したクラスに対して、
+## 以下にあげるメソッドが、シミュレーションの実行の各段階で呼ばれる。
+## * prepareForSimulation () : シミュレーションの開始直前に呼ばれる。
+## * finalizeSimulation () : シミュレーション終了後に呼ばれる。
+## * preUpdate () : シミュレーションの各サイクルの先頭
+##   (移動先位置の計算の前)に呼ばれる。
+## * postUpdate () : シミュレーションの各サイクルの最後
+##   (エージェント移動後)に呼ばれる。
+## * setupSimulationLoggers () : シミュレーション開始前、
+##   ログ出力の準備のタイミングで呼ばれる。
+##
+## 以下は、SampleWrapper の例である。
+##
+##    class SampleWrapper < CrowdWalkWrapper
+##      attr_accessor :taggedNodeList ;
+##    
+##      def initialize(simulator)
+##        super(simulator) ;
+##        @taggedNodeList = [] ;
+##      end
+##    
+##      def setupSimulationLoggers()
+##        addMemberToAgentTrailLogFormatter("foo") {
+##          |agent, currentTime, handler|
+##          [1, 2, 3, "hogehoge", {"a" => 10, "b" => nil}] ;
+##        }
+##        addMemberToAgentTrailLogFormatter("bar") {
+##          |agent, currentTime, handler|
+##          {"time" => currentTime.getAbsoluteTimeString(),
+##           "agent" => agent.getID()} ;
+##        }
+##      end
+##      
+##      def prepareForSimulation()
+##        width = @simulator.filterFetchFallbackDouble("link",
+##                                                     "gathering_location_width",
+##                                                     40.0) ;
+##        @networkMap.eachLinkWithTag("TEMPORARY_GATHERING_LOCATION_LINK"){
+##          |link|
+##          link.setWidth(width) ;
+##        }
+##
+##        @networkMap.eachLink(){|link|
+##          tag = link.getNthTag(0) ;
+##          if(!tag.nil? && tag =~ /link_node_04/ && tag =~ /__node_04/) then
+##            link.addTag(Term_major) ;
+##            logInfo(nil, 'link.addTag', link.getID(), link.getTagString()) ;
+##          end
+##          if(!tag.nil? && tag =~ /04__/ && tag =~ /04$/) then
+##            link.addTag("major") ;
+##            logInfo(nil, 'link.addTag', link.getID(), link.getTagString()) ;
+##          end
+##        }
+##        rebuildRoutes() ;
+##      end
+##    
+##      Term_major = ItkTerm.intern("major") ;
+##    
+##      def finalizeSimulation()
+##        super
+##      end
+##    
+##      def preUpdate(simTime)
+##        @networkMap.eachNode(){|node|
+##          if(rand(100) == 0) then
+##            node.addTag(ItkTerm.intern("foo")) ;
+##            @taggedNodeList.push(node) ;
+##          end
+##        }
+##        while(@taggedNodeList.size > 10)
+##          node = @taggedNodeList.shift ;
+##          node.removeTag(ItkTerm.intern("foo")) ;
+##        end
+##      end
+##    
+##      def postUpdate(simTime)
+##        ## do nothing.
+##      end
+##    end # class SampleWrapper
+
 class CrowdWalkWrapper
   include ItkUtility ;
 
@@ -88,10 +188,10 @@ class CrowdWalkWrapper
   #++
   ## シミュレーションの AgentTrailLog の Format Member の追加。
   ## _name_ :: name of the Format Member.
-  ## _&block_ :: a procedure to generage the value of the member.
-  ##             The block should receive three args
-  ##             (agent, timeObj, handler).
-  def addMemberToAgentTrailLogFormatter(name, &block)
+  ## _block_ :: a procedure to generage the value of the member.
+  ##            The block should receive three args
+  ##            (agent, timeObj, handler).
+  def addMemberToAgentTrailLogFormatter(name, &block) # :yield: _agent_, _currentTime_, _handler_
     @agentTrailLogFormatTable[name] = block ;
     @simulator.getAgentHandler().addMemberToAgentTrailLogFormatterForRuby(name);
   end

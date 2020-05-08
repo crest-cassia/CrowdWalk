@@ -42,6 +42,14 @@ doc-old ::
 #	-charset utf-8 -private -subpackages nodagumi)
 #	javadoc -d doc -encoding utf-8 -charset utf-8 $(SRCFILES)
 
+RUBYDIR = ../../../ruby
+RUBYDOC = $(BASEDIR)/doc/rdoc
+RUBYDOCABS = $(abspath $(RUBYDOC))
+
+rdoc ::
+	rm -rf $(RUBYDOC)
+	(cd $(RUBYDIR) ; rdoc --all --main docRubyForCrowdWalk.rb --hyperlink-all --force-update --line-numbers --output $(RUBYDOCABS) *.rb) 
+
 clean ::
 	( cd $(BASEDIR) ; gradle clean )
 
