@@ -93,6 +93,31 @@
     
 <p>Irb Utility module for CrowdWalk.</p>
 
+<p>CrowdWalk を、irb で対話的に制御する機能を提供する。</p>
+
+<p>irb 対話モードで CrowdWalk を起動するには、 property設定ファイル(*.prop.json)において、以下のように設定する。</p>
+
+<p><strong> *.prop.json </strong></p>
+
+<pre>{
+  ...
+  &quot;use_ruby&quot;: true,
+  &quot;use_irb&quot;: true,
+  ...
+}</pre>
+
+<p>対話モードで CrowdWalk が起動され、シミュレーションが始まると、 最初のシミュレーションサイクルの開始時点で一旦停止し 起動した端末に irb のプロンプトが表示される。 この時点で、CwIrb や <a href="ItkUtility.html"><code>ItkUtility</code></a> などの機能を用いて、 シミュレーションの状態などの参照や変更を、irb を通じて行える。</p>
+
+<p>また、irb のプロンプトで</p>
+
+<pre>&gt; CwIrb.runCycle(100)</pre>
+
+<p>とすると、100 サイクル、シミュレーションが進み、再び irb に制御が戻ってくる。 <a href="CwIrb.html#method-i-runCycle"><code>runCycle</code></a> の引数は省略可能で、既定値が 1 なので、</p>
+
+<pre>&gt; CwIrb.runCycle</pre>
+
+<p>とすると、1サイクル、シミュレーションが進む。</p>
+
   </section>
 
   
@@ -116,7 +141,7 @@
         
         <div class="method-heading">
           <span class="method-name">eachAgent</span><span
-            class="method-args">(status = :all, &amp;block)</span>
+            class="method-args">(status = :all) { |_agent_| ... }</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -125,27 +150,31 @@
 
         <div class="method-description">
           
-          <p>do something for each agent.</p>
+          <p>call a <em>block</em> with each agent.</p>
+<dl class="rdoc-list note-list"><dt><em>status</em>
+<dd>
+<p>specify type of agents. :all or :walking.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="eachAgent-source">
-            <pre>   <span class="ruby-comment"># File CwIrb.rb</span>
-<span class="line-num">46</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eachAgent</span>(<span class="ruby-identifier">status</span> = <span class="ruby-value">:all</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-<span class="line-num">47</span>   <span class="ruby-keyword">case</span>(<span class="ruby-identifier">status</span>)
-<span class="line-num">48</span>   <span class="ruby-keyword">when</span> <span class="ruby-value">:all</span> ;
-<span class="line-num">49</span>     <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getAllAgentCollection</span>().<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
-<span class="line-num">50</span>       <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>) ;
-<span class="line-num">51</span>     } ;
-<span class="line-num">52</span>   <span class="ruby-keyword">when</span> <span class="ruby-value">:walking</span> ;
-<span class="line-num">53</span>     <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getWalkingAgentCollection</span>().<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
-<span class="line-num">54</span>       <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>) ;
-<span class="line-num">55</span>     } ;
-<span class="line-num">56</span>   <span class="ruby-keyword">else</span>
-<span class="line-num">57</span>     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;unknown agent status for eachAgent(): &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">status</span>.<span class="ruby-identifier">inspect</span> ;
-<span class="line-num">58</span>   <span class="ruby-keyword">end</span>
-<span class="line-num">59</span> <span class="ruby-keyword">end</span></pre>
+            <pre>    <span class="ruby-comment"># File CwIrb.rb</span>
+<span class="line-num"> 88</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eachAgent</span>(<span class="ruby-identifier">status</span> = <span class="ruby-value">:all</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment"># :yield: _agent_</span>
+<span class="line-num"> 89</span>   <span class="ruby-keyword">case</span>(<span class="ruby-identifier">status</span>)
+<span class="line-num"> 90</span>   <span class="ruby-keyword">when</span> <span class="ruby-value">:all</span> ;
+<span class="line-num"> 91</span>     <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getAllAgentCollection</span>().<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
+<span class="line-num"> 92</span>       <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>) ;
+<span class="line-num"> 93</span>     } ;
+<span class="line-num"> 94</span>   <span class="ruby-keyword">when</span> <span class="ruby-value">:walking</span> ;
+<span class="line-num"> 95</span>     <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getWalkingAgentCollection</span>().<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
+<span class="line-num"> 96</span>       <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>) ;
+<span class="line-num"> 97</span>     } ;
+<span class="line-num"> 98</span>   <span class="ruby-keyword">else</span>
+<span class="line-num"> 99</span>     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;unknown agent status for eachAgent(): &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">status</span>.<span class="ruby-identifier">inspect</span> ;
+<span class="line-num">100</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">101</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -169,16 +198,20 @@
 
         <div class="method-description">
           
-          <p>get CrowdWalk simulator entity</p>
+          <p>get CrowdWalk simulator entity.</p>
+<dl class="rdoc-list note-list"><dt><strong>return</strong>
+<dd>
+<p>Java Object of agent handler in CrowdWalk.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="getAgentHandler-source">
             <pre>   <span class="ruby-comment"># File CwIrb.rb</span>
-<span class="line-num">39</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAgentHandler</span>()
-<span class="line-num">40</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getAgentHandler</span>() ;
-<span class="line-num">41</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">69</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAgentHandler</span>()
+<span class="line-num">70</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getAgentHandler</span>() ;
+<span class="line-num">71</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -202,19 +235,23 @@
 
         <div class="method-description">
           
-          <p>get CrowdWalk simulator entity</p>
+          <p>get CrowdWalk simulator entity.</p>
+<dl class="rdoc-list note-list"><dt><strong>return</strong>
+<dd>
+<p>Ruby Object of agent as an instance of <a href="NetworkMap.html"><code>NetworkMap</code></a>.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="getMap-source">
             <pre>   <span class="ruby-comment"># File CwIrb.rb</span>
-<span class="line-num">64</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getMap</span>()
-<span class="line-num">65</span>   <span class="ruby-keyword">if</span>(<span class="ruby-identifier">$crowdwalkMap</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-keyword">then</span>
-<span class="line-num">66</span>     <span class="ruby-identifier">$crowdwalkMap</span> = <span class="ruby-constant">NetworkMap</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getMap</span>()) ;
-<span class="line-num">67</span>   <span class="ruby-keyword">end</span>
-<span class="line-num">68</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">$crowdwalkMap</span> ;
-<span class="line-num">69</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">77</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getMap</span>()
+<span class="line-num">78</span>   <span class="ruby-keyword">if</span>(<span class="ruby-identifier">$crowdwalkMap</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-keyword">then</span>
+<span class="line-num">79</span>     <span class="ruby-identifier">$crowdwalkMap</span> = <span class="ruby-constant">NetworkMap</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getMap</span>()) ;
+<span class="line-num">80</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">81</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">$crowdwalkMap</span> ;
+<span class="line-num">82</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -238,16 +275,20 @@
 
         <div class="method-description">
           
-          <p>get CrowdWalk simulator entity</p>
+          <p>get CrowdWalk simulator entity.</p>
+<dl class="rdoc-list note-list"><dt><strong>return</strong>
+<dd>
+<p>Java Object of the CrowdWalk simulator.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="getSimulator-source">
             <pre>   <span class="ruby-comment"># File CwIrb.rb</span>
-<span class="line-num">32</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimulator</span>()
-<span class="line-num">33</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">$crowdwalk</span> ;
-<span class="line-num">34</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">61</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimulator</span>()
+<span class="line-num">62</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">$crowdwalk</span> ;
+<span class="line-num">63</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -262,7 +303,7 @@
         
         <div class="method-heading">
           <span class="method-name">runCycle</span><span
-            class="method-args">(_n = 1)</span>
+            class="method-args">(n = 1)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -272,15 +313,19 @@
         <div class="method-description">
           
           <p>run N cycle.</p>
+<dl class="rdoc-list note-list"><dt><em>n</em>
+<dd>
+<p>cycle count to run the simulation.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="runCycle-source">
-            <pre>   <span class="ruby-comment"># File CwIrb.rb</span>
-<span class="line-num">74</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">runCycle</span>(<span class="ruby-identifier">_n</span> = <span class="ruby-value">1</span>)
-<span class="line-num">75</span>   <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">irbWaitCycleN</span>(<span class="ruby-identifier">_n</span>) ;
-<span class="line-num">76</span> <span class="ruby-keyword">end</span></pre>
+            <pre>    <span class="ruby-comment"># File CwIrb.rb</span>
+<span class="line-num">107</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">runCycle</span>(<span class="ruby-identifier">n</span> = <span class="ruby-value">1</span>)
+<span class="line-num">108</span>   <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">irbWaitCycleN</span>(<span class="ruby-identifier">n</span>) ;
+<span class="line-num">109</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>

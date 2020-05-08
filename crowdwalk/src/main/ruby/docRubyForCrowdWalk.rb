@@ -20,7 +20,7 @@ CrowdWalk は、
 Ruby のプログラムを追加することで可能にしている。
 
 Ruby Facility を有効にするには、
-property 設定ファイルにおいて、
+property 設定ファイル(*.prop.json)において、
 
 ```
 {
