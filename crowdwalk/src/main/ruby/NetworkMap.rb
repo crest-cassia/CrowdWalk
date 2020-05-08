@@ -16,7 +16,8 @@ require 'CrowdWalkWrapper.rb' ;
 
 #--======================================================================
 #++
-## description of class Foo.
+## シミュレーションで用いる地図(NetworkMap)のJava Objectへのアクセスを
+## 管理する。
 class NetworkMap
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
@@ -33,8 +34,8 @@ class NetworkMap
 
   #--------------------------------------------------------------
   #++
-  ## 全リンクに対し、ある処理を行う。
-  def eachLink(&block)
+  ## 全リンクに対し、指定した処理を行う。
+  def eachLink(&block) # :yield: _link_
     @mapObject.getLinks().each{|link|
       block.call(link) ;
     }
@@ -42,8 +43,8 @@ class NetworkMap
 
   #--------------------------------------------------------------
   #++
-  ## 全ノードに対し、ある処理を行う。
-  def eachNode(&block)
+  ## 全ノードに対し、指定した処理を行う。
+  def eachNode(&block) # :yield: _node_
     @mapObject.getNodes().each{|node|
       block.call(node) ;
     }
@@ -52,7 +53,8 @@ class NetworkMap
   #--------------------------------------------------------------
   #++
   ## あるタグを持つリンクに対し、ある処理を行う。
-  def eachLinkWithTag(tag, &block)
+  ## _tag_:: このタグを持つリンクのみが取り出される。
+  def eachLinkWithTag(tag, &block) # :yield: _link_
     tagString = (tag.is_a?(Term) ? tag : ItkTerm.intern(tag.to_s)) ;
     @mapObject.getLinks().each{|link|
       block.call(link) if(link.hasTag(tagString)) ;
@@ -62,7 +64,8 @@ class NetworkMap
   #--------------------------------------------------------------
   #++
   ## あるタグを持つノードに対し、ある処理を行う。
-  def eachNodeWithTag(tag, &block)
+  ## _tag_:: このタグを持つノードのみが取り出される。
+  def eachNodeWithTag(tag, &block) # :yield: _node_
     tagString = (tag.is_a?(Term) ? tag : ItkTerm.intern(tag.to_s)) ;
     @mapObject.getNodes().each{|node|
       block.call(node) if(node.hasTag(tagString)) ;

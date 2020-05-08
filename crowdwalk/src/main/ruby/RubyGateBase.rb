@@ -16,7 +16,72 @@ require 'NetworkMap.rb' ;
 
 #--======================================================================
 #++
-## CrowdWalk の RubyGate での Ruby 側の制御のインターフェース
+## CrowdWalk の RubyGate での Ruby 側の制御のインターフェース。
+## 
+## シナリオ設定ファイル("*.scnr.json")に記述するCloseGateイベントの制御を、
+## Ruby で記述することを可能とする。
+## このクラスを継承した Ruby のクラスのインスタンスがGateに割り当てられる。
+##
+## ユーザは、RubyGateBase を継承した Ruby のクラスを継承し、
+## そのクラス名や定義ファイル(Rubyプログラム)を以下のように、
+## property 設定ファイル("*.prop.json")
+## およびシナリオ設定ファイル("*.scnr.json")で指定しなければならない。
+## 
+## <B>"*.prop.json"</B>
+##       ...
+##       "ruby_init_script":[ ...
+##          "require './SampleGate.rb'",
+##          ...],
+##       ...
+## <B>"*.scnr.json"</B>
+##       ...
+##       { "type":"CloseGate",
+##         "gateClass":"RubyGate",
+##         "rubyClass":"SampleGate",
+##         "atTime":"18:02:15",
+##         "placeTag":"gate_foo",
+##         "gateTag":"foo",
+##         "param1": [1,2,3],
+##         ...},
+##       ...
+## この例では、+SampleGate+ が、ユーザが定義したクラスであり、
+## "+SampleGate.rb+" にそのプログラムが格納されているとしている。
+## この例では、18:02:15 にこの CloseGate イベントが生成され、
+## SampleGate クラスのインスタンスが割り当てられる。
+## そのインスタンスの変数 @eventDef には
+## このイベントの定義自体は Hash の形で代入されるので、
+## この定義に書かれた "param1" など任意のキーの値を参照することができる。
+##
+## 以下は、+SampleGate+ の例である。
+## この例では、closed かどうかのチェックで、
+## 確率 1/2 で止める（残り半分はgateを通過させる）ような制御を行っている。
+##
+## <B>SampleGate.rb</B>
+##    require 'RubyGateBase.rb' ;
+##    
+##    class SampleGate < RubyGateBase
+##      
+##      def initialize(_gate)
+##        super ;
+##        @conf = ItkTerm.toRuby(getEventDef()) ;
+##      end
+##      
+##      def isClosed(agent, currentTime)
+##        ## close のときも、半分通す。
+##        r = super ;
+##        if(r) then
+##          r = (getRandomInt(2) == 0) ;
+##        end
+##
+##        return r ;
+##      end
+##    
+##      def switchGate(event, closed)
+##        # do nothing
+##        super
+##      end
+##    end # class SampleGate
+
 class RubyGateBase
   include ItkUtility ;
   #--============================================================

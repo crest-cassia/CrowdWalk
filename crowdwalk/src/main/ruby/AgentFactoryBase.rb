@@ -14,7 +14,76 @@
 
 #--======================================================================
 #++
-## CrowdWalk の AgentFactoryByRuby での Ruby 側の制御のインターフェース
+## CrowdWalk の AgentFactoryByRuby での Ruby 側の制御のインターフェース。
+##
+## エージェントを生成する AgentFactory の一種で、
+## 生成するタイミング、場所、目的地や経路、タグ情報、エージェント数を
+## Ruby script によって細かく設定できる。
+##
+## ユーザは、AgentFactoryByRuby を継承した Ruby のクラスを定義し、
+## そのクラス名を以下のように property 設定ファイル("*.prop.json")
+## およびエージェント生成設定ファイル("*.gen.json")で指定しなければならない。
+## 
+## <B>"*.prop.json"</B>
+##       ...
+##       "ruby_init_script":[ ...
+##          "require './SampleFactory.rb'",
+##          ...],
+##       ...
+## <B>"*.gen.json"</B>
+##       ...
+##       { "rule": "RUBY",
+##         "ruleClass": "SampleFactory",
+##         "config": { ... }
+##       },
+##       ...
+## この例では、+SampleFactory+ が、ユーザが定義したクラスであり、
+## "+SampleFactory.rb+" にそのプログラムが格納されているとしている。
+## また、生成ルールの中の<tt>"config"</tt> に与えられる値は、
+## +SampleFactory+ の new の _config_ 引数に渡される。
+##
+## 以下は、+SampleFactory+ の例である。
+##
+## <B>SampleFactory.rb</B>
+##    require 'AgentFactoryBase.rb' ;
+##
+##    class SampleFactory < AgentFactoryBase
+##      def initialize(factory, config, fallback)
+##        super
+##        @c = 0 ;
+##        @time0 = getSimTime("01:23:45") ;
+##      end
+##      
+##      def initCycle()
+##        @beginTime = getCurrentTime() ;
+##        @fromTag = makeSymbolTerm("major") ;
+##        @fromList = getLinkTableByTag(@fromTag) ;
+##        @toTag = makeSymbolTerm("node_09_06") ;
+##        @toList = getNodeTableByTag(@toTag) ;
+##        @agentList = [] ;
+##        @c = 0 ;
+##      end
+##      
+##      def cycle()
+##        @currentTime = getCurrentTime() ;
+##        disable() if(@c >= 10) ;
+##    
+##        finishAllP = true ;
+##        @agentList.each{|agent|
+##          finishAllP = false if(isAgentWalking(agent)) ;
+##        }
+##        return if(!finishAllP) ;
+##    
+##        @agentList = [] ;
+##        @fromList.each{|origin|
+##          agent = launchAgentWithRoute("RationalAgent", origin, @toTag, []) ;
+##          @agentList.push(agent) ;
+##        }
+##        @c += 1 ;
+##      end
+##    
+##    end # class SampleWrapper
+
 class AgentFactoryBase
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #++
@@ -45,49 +114,57 @@ class AgentFactoryBase
 
   #--------------------------------------------------------------
   #++
-  ## 
+  ## エージェントの初期位置を返す。
+  ## 必要に応じて、子クラスで定義。
   def placeAgent()
     ## return nil ;
   end
 
   #--------------------------------------------------------------
   #++
-  ## 
+  ## エージェントに設定する目的地を返す。
+  ## 必要に応じて、子クラスで定義。
   def getGoal()
     ## return nil
   end
 
   #--------------------------------------------------------------
   #++
-  ## 
+  ## エージェントに設定する経路を返す。
+  ## 必要に応じて、子クラスで定義。
   def clonePlannedPath()
     ## return nil 
   end
 
   #--------------------------------------------------------------
   #++
-  ## 
+  ## エージェントに初期に設定するタグのリストを返す。
+  ## 必要に応じて、子クラスで定義。
   def getTags()
     ##return nil
   end
 
   #--------------------------------------------------------------
   #++
-  ## 
+  ## エージェント設定 config を返す。
+  ## 必要に応じて、子クラスで定義。
   def getAgentConfig()
     return nil ;
   end
 
   #--------------------------------------------------------------
   #++
-  ## 
+  ## 終了しているかどうかの確認。
+  ## シミュレーションの終了チェック（全生成ルールが終わっているかのチェック）で
+  ## 予備出される。
   def isFinished()
     return @javaFactory.super_isFinished() ;
   end
 
   #--------------------------------------------------------------
   #++
-  ## 
+  ## シミュレータからの呼び出しのトップレベル。
+  ## 初回のみ initCycle () を呼び出し、その後、毎回、cycle () を呼び出す。
   def tryUpdateAndGenerate()
     initCycle() if(@isInitCycle) ;
     @isInitCycle = false ;
@@ -107,21 +184,23 @@ class AgentFactoryBase
   
   #--------------------------------------------------------------
   #++
-  ## 
+  ## 生成ルールを有効化する。
   def enable()
     @javaFactory.enable()
   end
   
   #--------------------------------------------------------------
   #++
-  ## 
+  ## 生成ルールを無効化する。
   def disable()
     @javaFactory.disable()
   end
   
   #--------------------------------------------------------------
   #++
-  ## 
+  ## 各 シミュレーション cycle のエージェント生成のフェーズで呼び出される。
+  ## ただし、この生成ルールが enable されている時のみに呼び出しがある。
+  ## disable されると、呼び出されなくなる。
   def cycle()
     ##do nothing
   end

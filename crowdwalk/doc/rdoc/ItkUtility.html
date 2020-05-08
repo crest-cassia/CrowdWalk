@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module ItkUtility - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-checkAgentClass">#checkAgentClass</a>
+    
+    <li ><a href="#method-i-eachAgentOnLink">#eachAgentOnLink</a>
+    
+    <li ><a href="#method-i-eachAgentOnLinkBack">#eachAgentOnLinkBack</a>
+    
+    <li ><a href="#method-i-eachAgentOnLinkFore">#eachAgentOnLinkFore</a>
+    
+    <li ><a href="#method-i-fooo">#fooo</a>
+    
+    <li ><a href="#method-i-getAgentInstanceInRuby">#getAgentInstanceInRuby</a>
+    
+    <li ><a href="#method-i-getRandom">#getRandom</a>
+    
+    <li ><a href="#method-i-getRandomDouble">#getRandomDouble</a>
+    
+    <li ><a href="#method-i-getRandomInt">#getRandomInt</a>
+    
+    <li ><a href="#method-i-getSimulator">#getSimulator</a>
+    
+    <li ><a href="#method-i-isRubyAgent">#isRubyAgent</a>
+    
+    <li ><a href="#method-i-logDebug">#logDebug</a>
+    
+    <li ><a href="#method-i-logError">#logError</a>
+    
+    <li ><a href="#method-i-logFatal">#logFatal</a>
+    
+    <li ><a href="#method-i-logInfo">#logInfo</a>
+    
+    <li ><a href="#method-i-logTrace">#logTrace</a>
+    
+    <li ><a href="#method-i-logWarn">#logWarn</a>
+    
+    <li ><a href="#method-i-logWithLevel">#logWithLevel</a>
+    
+    <li ><a href="#method-i-numOfExitAgentsFromNode">#numOfExitAgentsFromNode</a>
+    
+    <li ><a href="#method-i-numOfPassedAgentsOverNode">#numOfPassedAgentsOverNode</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-ItkUtility">
+  <h1 id="module-ItkUtility" class="module">
+    module ItkUtility
+  </h1>
+
+  <section class="description">
+    
+<p>汎用ユーティリティ</p>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+      
+        <dt id="AgentClassTable">AgentClassTable
+        
+        <dd><p>RubyAgentClass</p>
+        
+      
+        <dt id="LaneDirectionBack">LaneDirectionBack
+        
+        <dd>
+        
+      
+        <dt id="LaneDirectionFore">LaneDirectionFore
+        
+        <dd><p>レーンの方向</p>
+        
+      
+        <dt id="LogLevelTable">LogLevelTable
+        
+        <dd><p>logger のレベル</p>
+        
+      
+      </dl>
+    </section>
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-checkAgentClass" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">checkAgentClass</span><span
+            class="method-args">(agent, classTag)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Agent クラスチェック</p>
+          
+          
+
+          
+          <div class="method-source-code" id="checkAgentClass-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">143</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">checkAgentClass</span>(<span class="ruby-identifier">agent</span>, <span class="ruby-identifier">classTag</span>)
+<span class="line-num">144</span>   <span class="ruby-identifier">fooo</span>() <span class="ruby-keyword">if</span> (<span class="ruby-constant">AgentClassTable</span>.<span class="ruby-identifier">size</span>() <span class="ruby-operator">==</span> <span class="ruby-value">0</span>) ; 
+<span class="line-num">145</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">AgentClassTable</span>[<span class="ruby-identifier">classTag</span>]) ;
+<span class="line-num">146</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-eachAgentOnLink" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">eachAgentOnLink</span><span
+            class="method-args">(link, &amp;block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>全エージェント。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="eachAgentOnLink-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">211</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eachAgentOnLink</span>(<span class="ruby-identifier">link</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="line-num">212</span>   <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getAgents</span>().<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
+<span class="line-num">213</span>     <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>) ;
+<span class="line-num">214</span>   }
+<span class="line-num">215</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-eachAgentOnLinkBack" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">eachAgentOnLinkBack</span><span
+            class="method-args">(link, &amp;block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>前向きレーンのエージェント。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="eachAgentOnLinkBack-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">229</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eachAgentOnLinkBack</span>(<span class="ruby-identifier">link</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="line-num">230</span>   <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getLane</span>(<span class="ruby-constant">LaneDirectionBack</span>).<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
+<span class="line-num">231</span>     <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>) ;
+<span class="line-num">232</span>   }
+<span class="line-num">233</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-eachAgentOnLinkFore" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">eachAgentOnLinkFore</span><span
+            class="method-args">(link, &amp;block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>前向きレーンのエージェント。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="eachAgentOnLinkFore-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">220</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eachAgentOnLinkFore</span>(<span class="ruby-identifier">link</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="line-num">221</span>   <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getLane</span>(<span class="ruby-constant">LaneDirectionFore</span>).<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
+<span class="line-num">222</span>     <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>) ;
+<span class="line-num">223</span>   }
+<span class="line-num">224</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-fooo" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">fooo</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="fooo-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">128</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fooo</span>()
+<span class="line-num">129</span> <span class="ruby-constant">AgentClassTable</span>.<span class="ruby-identifier">update</span>({
+<span class="line-num">130</span>   <span class="ruby-value">:base</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">AgentBase</span>,
+<span class="line-num">131</span>   <span class="ruby-value">:walk</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">WalkAgent</span>,
+<span class="line-num">132</span>   <span class="ruby-value">:await</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">AwaitAgent</span>,
+<span class="line-num">133</span>   <span class="ruby-value">:naive</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">NaiveAgent</span>,
+<span class="line-num">134</span>   <span class="ruby-value">:bustle</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">BustleAgent</span>,
+<span class="line-num">135</span>   <span class="ruby-value">:capricious</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">CapriciousAgent</span>,
+<span class="line-num">136</span>   <span class="ruby-value">:rational</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">RationalAgent</span>,
+<span class="line-num">137</span>   <span class="ruby-value">:ruby</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Java</span><span class="ruby-operator">::</span><span class="ruby-constant">NodagumiAnanPJAgents</span><span class="ruby-operator">::</span><span class="ruby-constant">RubyAgent</span>,
+<span class="line-num">138</span> }) ;
+<span class="line-num">139</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getAgentInstanceInRuby" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getAgentInstanceInRuby</span><span
+            class="method-args">(agent)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Ruby Agent の場合に、そのインスタンスを取得。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getAgentInstanceInRuby-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">158</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAgentInstanceInRuby</span>(<span class="ruby-identifier">agent</span>)
+<span class="line-num">159</span>   <span class="ruby-keyword">if</span>(<span class="ruby-identifier">isRubyAgent</span>(<span class="ruby-identifier">agent</span>)) <span class="ruby-keyword">then</span>
+<span class="line-num">160</span>     <span class="ruby-keyword">return</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">getRubyAgentInstance</span>() ;
+<span class="line-num">161</span>   <span class="ruby-keyword">else</span>
+<span class="line-num">162</span>     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> ;
+<span class="line-num">163</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">164</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getRandom" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getRandom</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Java 側の乱数生成器へのアクセス。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getRandom-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">178</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getRandom</span>()
+<span class="line-num">179</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getRandom</span>() ;
+<span class="line-num">180</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getRandomDouble" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getRandomDouble</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Java 側の乱数生成で、int 取得。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getRandomDouble-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">196</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getRandomDouble</span>()
+<span class="line-num">197</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getRandom</span>().<span class="ruby-identifier">nextDouble</span>() ;
+<span class="line-num">198</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getRandomInt" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getRandomInt</span><span
+            class="method-args">(mode = nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Java 側の乱数生成で、int 取得。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getRandomInt-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">185</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getRandomInt</span>(<span class="ruby-identifier">mode</span> = <span class="ruby-keyword">nil</span>)
+<span class="line-num">186</span>   <span class="ruby-keyword">if</span>(<span class="ruby-identifier">mode</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-keyword">then</span>
+<span class="line-num">187</span>     <span class="ruby-keyword">return</span> <span class="ruby-identifier">getRandom</span>().<span class="ruby-identifier">nextInt</span>() ;
+<span class="line-num">188</span>   <span class="ruby-keyword">else</span>
+<span class="line-num">189</span>     <span class="ruby-keyword">return</span> <span class="ruby-identifier">getRandom</span>().<span class="ruby-identifier">nextInt</span>(<span class="ruby-identifier">mode</span>) ;
+<span class="line-num">190</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">191</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getSimulator" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getSimulator</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Simulator オブジェクトの取得。各クラスで再定義必要。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getSimulator-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">171</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimulator</span>()
+<span class="line-num">172</span>   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;should be defined in each included class.&quot;</span> ;
+<span class="line-num">173</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-isRubyAgent" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">isRubyAgent</span><span
+            class="method-args">(agent)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Ruby Agent クラスチェック</p>
+          
+          
+
+          
+          <div class="method-source-code" id="isRubyAgent-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">151</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">isRubyAgent</span>(<span class="ruby-identifier">agent</span>)
+<span class="line-num">152</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">checkAgentClass</span>(<span class="ruby-identifier">agent</span>, <span class="ruby-value">:ruby</span>) ;
+<span class="line-num">153</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logDebug" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logDebug</span><span
+            class="method-args">(label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力(debug)</p>
+<dl class="rdoc-list note-list"><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logDebug-source">
+            <pre>   <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">63</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logDebug</span>(<span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">64</span>   <span class="ruby-identifier">logWithLevel</span>(<span class="ruby-value">:debug</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">65</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logError" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logError</span><span
+            class="method-args">(label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力(error)</p>
+<dl class="rdoc-list note-list"><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logError-source">
+            <pre>   <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">90</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logError</span>(<span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">91</span>   <span class="ruby-identifier">logWithLevel</span>(<span class="ruby-value">:error</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">92</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logFatal" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logFatal</span><span
+            class="method-args">(label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力(fatal)</p>
+<dl class="rdoc-list note-list"><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logFatal-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num"> 99</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logFatal</span>(<span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">100</span>   <span class="ruby-identifier">logWithLevel</span>(<span class="ruby-value">:fatal</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">101</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logInfo" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logInfo</span><span
+            class="method-args">(label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力(info)</p>
+<dl class="rdoc-list note-list"><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logInfo-source">
+            <pre>   <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">72</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logInfo</span>(<span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">73</span>   <span class="ruby-identifier">logWithLevel</span>(<span class="ruby-value">:info</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">74</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logTrace" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logTrace</span><span
+            class="method-args">(label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力(trace)</p>
+<dl class="rdoc-list note-list"><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logTrace-source">
+            <pre>   <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">54</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logTrace</span>(<span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">55</span>   <span class="ruby-identifier">logWithLevel</span>(<span class="ruby-value">:trace</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">56</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logWarn" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logWarn</span><span
+            class="method-args">(label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力(warn)</p>
+<dl class="rdoc-list note-list"><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logWarn-source">
+            <pre>   <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">81</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logWarn</span>(<span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">82</span>   <span class="ruby-identifier">logWithLevel</span>(<span class="ruby-value">:warn</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">83</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logWithLevel" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logWithLevel</span><span
+            class="method-args">(level, label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力</p>
+<dl class="rdoc-list note-list"><dt><em>level</em> 
+<dd>
+<p>ログレベル。:trace, :debug, :info, :warn, :error, :fatal</p>
+</dd><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logWithLevel-source">
+            <pre>   <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">43</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logWithLevel</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">44</span>   <span class="ruby-identifier">levelObj</span> = <span class="ruby-constant">LogLevelTable</span>[<span class="ruby-identifier">level</span>] ;
+<span class="line-num">45</span>   <span class="ruby-identifier">label</span> = <span class="ruby-string">&quot;Ruby&quot;</span> <span class="ruby-keyword">if</span>(<span class="ruby-identifier">label</span>.<span class="ruby-identifier">nil?</span>) ;
+<span class="line-num">46</span>   <span class="ruby-keyword">return</span> <span class="ruby-constant">Itk</span>.<span class="ruby-identifier">logOutput</span>(<span class="ruby-identifier">levelObj</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">47</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-numOfExitAgentsFromNode" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">numOfExitAgentsFromNode</span><span
+            class="method-args">(node)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>ノードから exit したエージェントの数。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="numOfExitAgentsFromNode-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">108</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">numOfExitAgentsFromNode</span>(<span class="ruby-identifier">node</span>)
+<span class="line-num">109</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">getNumberOfEvacuatedAgents</span>() ;
+<span class="line-num">110</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-numOfPassedAgentsOverNode" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">numOfPassedAgentsOverNode</span><span
+            class="method-args">(node, simTime, margin = 1.5)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>直前サイクルにノードを通過したエージェントの数。</p>
+<dl class="rdoc-list note-list"><dt><em>simTime</em>
+<dd>
+<p>現在時刻（シミュレーション内時刻）</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="numOfPassedAgentsOverNode-source">
+            <pre>    <span class="ruby-comment"># File ItkUtility.rb</span>
+<span class="line-num">116</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">numOfPassedAgentsOverNode</span>(<span class="ruby-identifier">node</span>, <span class="ruby-identifier">simTime</span>, <span class="ruby-identifier">margin</span> = <span class="ruby-value">1.5</span>)
+<span class="line-num">117</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">countPassingAgent</span>(<span class="ruby-identifier">simTime</span>, <span class="ruby-identifier">margin</span>) ;
+<span class="line-num">118</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.1.2.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

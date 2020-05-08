@@ -41,5 +41,5 @@ class SampleEvent < RubyEventBase
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #--------------------------------------------------------------
 
-end # class SampleWrapper
+end # class SampleEvent
 

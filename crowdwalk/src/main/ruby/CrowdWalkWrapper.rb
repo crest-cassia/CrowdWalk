@@ -25,8 +25,10 @@ require 'NetworkMap.rb' ;
 ## もとの Java の対応する method に実行が戻っていく。
 ##
 ## ユーザは CrowdWalkWrapper クラスを継承した Ruby のクラスを定義し、
-## そのクラス名を以下のように property 設定ファイルで指定しなければならない。
+## そのクラス名を以下のように property 設定ファイル("*.prop.json")で
+## 指定しなければならない。
 ##
+## <B>"*.prop.json"</B>
 ##   ...
 ##   "ruby_init_script": [...,
 ##     "require './SampleWrapper.rb'",
@@ -50,6 +52,9 @@ require 'NetworkMap.rb' ;
 ##   ログ出力の準備のタイミングで呼ばれる。
 ##
 ## 以下は、SampleWrapper の例である。
+##
+## <B>"SampleWrapper.rb"</B>
+##    require 'CrowdWalkWrapper.rb' ;
 ##
 ##    class SampleWrapper < CrowdWalkWrapper
 ##      attr_accessor :taggedNodeList ;

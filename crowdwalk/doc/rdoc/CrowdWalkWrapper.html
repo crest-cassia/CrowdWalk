@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class CrowdWalkWrapper - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">Object
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-getInstance">::getInstance</a>
+    
+    <li ><a href="#method-c-getRandom">::getRandom</a>
+    
+    <li ><a href="#method-c-getRandomDouble">::getRandomDouble</a>
+    
+    <li ><a href="#method-c-getRandomInt">::getRandomInt</a>
+    
+    <li ><a href="#method-c-intern">::intern</a>
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-c-setInstance">::setInstance</a>
+    
+    <li ><a href="#method-i-addMemberToAgentTrailLogFormatter">#addMemberToAgentTrailLogFormatter</a>
+    
+    <li ><a href="#method-i-callbackAgentTrailLogMember">#callbackAgentTrailLogMember</a>
+    
+    <li ><a href="#method-i-finalizeSimulation">#finalizeSimulation</a>
+    
+    <li ><a href="#method-i-getSimulator">#getSimulator</a>
+    
+    <li ><a href="#method-i-intern">#intern</a>
+    
+    <li class="calls-super" ><a href="#method-i-logWithLevel">#logWithLevel</a>
+    
+    <li ><a href="#method-i-postUpdate">#postUpdate</a>
+    
+    <li ><a href="#method-i-preUpdate">#preUpdate</a>
+    
+    <li ><a href="#method-i-prepareForSimulation">#prepareForSimulation</a>
+    
+    <li ><a href="#method-i-rebuildRoutes">#rebuildRoutes</a>
+    
+    <li ><a href="#method-i-setupSimulationLoggers">#setupSimulationLoggers</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-CrowdWalkWrapper">
+  <h1 id="class-CrowdWalkWrapper" class="class">
+    class CrowdWalkWrapper
+  </h1>
+
+  <section class="description">
+    
+<p>CrowdWalk の EvacuationSimulator の制御のwrapper の base class。</p>
+
+<p>シミュレーションのメインルーチンのうち、 以下に上げる method ポイントで、一旦 Ruby への制御が渡される。 Ruby の method の実行が終わると、 もとの Java の対応する method に実行が戻っていく。</p>
+
+<p>ユーザは <a href="CrowdWalkWrapper.html"><code>CrowdWalkWrapper</code></a> クラスを継承した Ruby のクラスを定義し、 そのクラス名を以下のように property 設定ファイル(“*.prop.json”)で 指定しなければならない。</p>
+
+<p><strong>“*.prop.json”</strong></p>
+
+<pre>...
+&quot;ruby_init_script&quot;: [...,
+  &quot;require &#39;./SampleWrapper.rb&#39;&quot;,
+  ...],
+&quot;ruby_simulation_wrapper_class&quot;:&quot;SampleWrapper&quot;,
+...</pre>
+
+<p>ただし、<code>SampleWrapper</code> がユーザが定義したクラス、 <code>./SampleWrapper.rb</code> は、 そのクラスを定義した Ruby のプログラムファイルである。</p>
+
+<p><a href="CrowdWalkWrapper.html"><code>CrowdWalkWrapper</code></a> を継承したクラスに対して、 以下にあげるメソッドが、シミュレーションの実行の各段階で呼ばれる。</p>
+<ul><li>
+<p><a href="CrowdWalkWrapper.html#method-i-prepareForSimulation"><code>prepareForSimulation</code></a> () : シミュレーションの開始直前に呼ばれる。</p>
+</li><li>
+<p><a href="CrowdWalkWrapper.html#method-i-finalizeSimulation"><code>finalizeSimulation</code></a> () : シミュレーション終了後に呼ばれる。</p>
+</li><li>
+<p><a href="CrowdWalkWrapper.html#method-i-preUpdate"><code>preUpdate</code></a> () : シミュレーションの各サイクルの先頭 (移動先位置の計算の前)に呼ばれる。</p>
+</li><li>
+<p><a href="CrowdWalkWrapper.html#method-i-postUpdate"><code>postUpdate</code></a> () : シミュレーションの各サイクルの最後 (エージェント移動後)に呼ばれる。</p>
+</li><li>
+<p><a href="CrowdWalkWrapper.html#method-i-setupSimulationLoggers"><code>setupSimulationLoggers</code></a> () : シミュレーション開始前、 ログ出力の準備のタイミングで呼ばれる。</p>
+</li></ul>
+
+<p>以下は、SampleWrapper の例である。</p>
+
+<p><strong>“SampleWrapper.rb”</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;CrowdWalkWrapper.rb&#39;</span> ;
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">SampleWrapper</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">CrowdWalkWrapper</span>
+  <span class="ruby-identifier">attr_accessor</span> <span class="ruby-value">:taggedNodeList</span> ;
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">simulator</span>)
+    <span class="ruby-keyword">super</span>(<span class="ruby-identifier">simulator</span>) ;
+    <span class="ruby-ivar">@taggedNodeList</span> = [] ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">setupSimulationLoggers</span>()
+    <span class="ruby-identifier">addMemberToAgentTrailLogFormatter</span>(<span class="ruby-string">&quot;foo&quot;</span>) {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">agent</span>, <span class="ruby-identifier">currentTime</span>, <span class="ruby-identifier">handler</span><span class="ruby-operator">|</span>
+      [<span class="ruby-value">1</span>, <span class="ruby-value">2</span>, <span class="ruby-value">3</span>, <span class="ruby-string">&quot;hogehoge&quot;</span>, {<span class="ruby-string">&quot;a&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">10</span>, <span class="ruby-string">&quot;b&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">nil</span>}] ;
+    }
+    <span class="ruby-identifier">addMemberToAgentTrailLogFormatter</span>(<span class="ruby-string">&quot;bar&quot;</span>) {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">agent</span>, <span class="ruby-identifier">currentTime</span>, <span class="ruby-identifier">handler</span><span class="ruby-operator">|</span>
+      {<span class="ruby-string">&quot;time&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">currentTime</span>.<span class="ruby-identifier">getAbsoluteTimeString</span>(),
+       <span class="ruby-string">&quot;agent&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">getID</span>()} ;
+    }
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">prepareForSimulation</span>()
+    <span class="ruby-identifier">width</span> = <span class="ruby-ivar">@simulator</span>.<span class="ruby-identifier">filterFetchFallbackDouble</span>(<span class="ruby-string">&quot;link&quot;</span>,
+                                                 <span class="ruby-string">&quot;gathering_location_width&quot;</span>,
+                                                 <span class="ruby-value">40.0</span>) ;
+    <span class="ruby-ivar">@networkMap</span>.<span class="ruby-identifier">eachLinkWithTag</span>(<span class="ruby-string">&quot;TEMPORARY_GATHERING_LOCATION_LINK&quot;</span>){
+      <span class="ruby-operator">|</span><span class="ruby-identifier">link</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">link</span>.<span class="ruby-identifier">setWidth</span>(<span class="ruby-identifier">width</span>) ;
+    }
+
+    <span class="ruby-ivar">@networkMap</span>.<span class="ruby-identifier">eachLink</span>(){<span class="ruby-operator">|</span><span class="ruby-identifier">link</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">tag</span> = <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getNthTag</span>(<span class="ruby-value">0</span>) ;
+      <span class="ruby-keyword">if</span>(<span class="ruby-operator">!</span><span class="ruby-identifier">tag</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tag</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/link_node_04/</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tag</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/__node_04/</span>) <span class="ruby-keyword">then</span>
+        <span class="ruby-identifier">link</span>.<span class="ruby-identifier">addTag</span>(<span class="ruby-constant">Term_major</span>) ;
+        <span class="ruby-identifier">logInfo</span>(<span class="ruby-keyword">nil</span>, <span class="ruby-string">&#39;link.addTag&#39;</span>, <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getID</span>(), <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getTagString</span>()) ;
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">if</span>(<span class="ruby-operator">!</span><span class="ruby-identifier">tag</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tag</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/04__/</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tag</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/04$/</span>) <span class="ruby-keyword">then</span>
+        <span class="ruby-identifier">link</span>.<span class="ruby-identifier">addTag</span>(<span class="ruby-string">&quot;major&quot;</span>) ;
+        <span class="ruby-identifier">logInfo</span>(<span class="ruby-keyword">nil</span>, <span class="ruby-string">&#39;link.addTag&#39;</span>, <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getID</span>(), <span class="ruby-identifier">link</span>.<span class="ruby-identifier">getTagString</span>()) ;
+      <span class="ruby-keyword">end</span>
+    }
+    <span class="ruby-identifier">rebuildRoutes</span>() ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-constant">Term_major</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">intern</span>(<span class="ruby-string">&quot;major&quot;</span>) ;
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">finalizeSimulation</span>()
+    <span class="ruby-keyword">super</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preUpdate</span>(<span class="ruby-identifier">simTime</span>)
+    <span class="ruby-ivar">@networkMap</span>.<span class="ruby-identifier">eachNode</span>(){<span class="ruby-operator">|</span><span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">if</span>(<span class="ruby-identifier">rand</span>(<span class="ruby-value">100</span>) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>) <span class="ruby-keyword">then</span>
+        <span class="ruby-identifier">node</span>.<span class="ruby-identifier">addTag</span>(<span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">intern</span>(<span class="ruby-string">&quot;foo&quot;</span>)) ;
+        <span class="ruby-ivar">@taggedNodeList</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">node</span>) ;
+      <span class="ruby-keyword">end</span>
+    }
+    <span class="ruby-keyword">while</span>(<span class="ruby-ivar">@taggedNodeList</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">10</span>)
+      <span class="ruby-identifier">node</span> = <span class="ruby-ivar">@taggedNodeList</span>.<span class="ruby-identifier">shift</span> ;
+      <span class="ruby-identifier">node</span>.<span class="ruby-identifier">removeTag</span>(<span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">intern</span>(<span class="ruby-string">&quot;foo&quot;</span>)) ;
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">postUpdate</span>(<span class="ruby-identifier">simTime</span>)
+    <span class="ruby-comment">## do nothing.</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span> <span class="ruby-comment"># class SampleWrapper</span>
+</pre>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      
+      <div id="attribute-i-agentTrailLogFormatTable" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">agentTrailLogFormatTable</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>シミュレーションの AgentTrailLog の Format Member の手続きテーブル</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-fallbackParameters" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">fallbackParameters</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Fallback Parameters ;</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-networkMap" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">networkMap</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p><a href="NetworkMap.html"><code>NetworkMap</code></a></p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-propertiesTerm" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">propertiesTerm</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Properties in Term ;</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-simulator" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">simulator</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Java 側の EvacuationSimulator</p>
+        
+        </div>
+      </div>
+      
+    </section>
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-getInstance" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getInstance</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Wrapper の（唯一の）インスタンスへのアクセス。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getInstance-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">132</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">getInstance</span>()
+<span class="line-num">133</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@instance</span> ;
+<span class="line-num">134</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-getRandom" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getRandom</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Java 側の乱数生成器へのアクセス。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getRandom-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">280</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">getRandom</span>()
+<span class="line-num">281</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getInstance</span>().<span class="ruby-identifier">getRandom</span>() ;
+<span class="line-num">282</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-getRandomDouble" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getRandomDouble</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Java 側の乱数生成で、int 取得。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getRandomDouble-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">294</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">getRandomDouble</span>()
+<span class="line-num">295</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getInstance</span>().<span class="ruby-identifier">getRandomDouble</span>() ;
+<span class="line-num">296</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-getRandomInt" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getRandomInt</span><span
+            class="method-args">(mode = nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Java 側の乱数生成で、int 取得。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getRandomInt-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">287</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">getRandomInt</span>(<span class="ruby-identifier">mode</span> = <span class="ruby-keyword">nil</span>)
+<span class="line-num">288</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getInstance</span>().<span class="ruby-identifier">getRandomInt</span>(<span class="ruby-identifier">mode</span>) ;
+<span class="line-num">289</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-intern" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">intern</span><span
+            class="method-args">(str)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>文字列の java 内でのintern.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="intern-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">273</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">intern</span>(<span class="ruby-identifier">str</span>)
+<span class="line-num">274</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@simulator</span>.<span class="ruby-identifier">intern</span>(<span class="ruby-identifier">str</span>) ;
+<span class="line-num">275</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(simulator)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>初期化</p>
+<dl class="rdoc-list note-list"><dt><em>simulator</em>
+<dd>
+<p>Java の EvacuationSimulator のインスタンス。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">165</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">simulator</span>)
+<span class="line-num">166</span>   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>().<span class="ruby-identifier">setInstance</span>(<span class="ruby-keyword">self</span>) ;
+<span class="line-num">167</span>   <span class="ruby-ivar">@simulator</span> = <span class="ruby-identifier">simulator</span> ;
+<span class="line-num">168</span>   <span class="ruby-ivar">@networkMap</span> = <span class="ruby-constant">NetworkMap</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">simulator</span>.<span class="ruby-identifier">getMap</span>()) ;
+<span class="line-num">169</span>   <span class="ruby-ivar">@fallbackParameters</span> = <span class="ruby-identifier">simulator</span>.<span class="ruby-identifier">getFallbackParameters</span>() ;
+<span class="line-num">170</span>   <span class="ruby-ivar">@propertiesTerm</span> = <span class="ruby-identifier">simulator</span>.<span class="ruby-identifier">getPropertiesTerm</span>() ;
+<span class="line-num">171</span> 
+<span class="line-num">172</span>   <span class="ruby-ivar">@agentTrailLogFormatTable</span> = {} ;
+<span class="line-num">173</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-setInstance" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setInstance</span><span
+            class="method-args">(wrapper)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Wrapper の（唯一の）インスタンスへのを設定。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="setInstance-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">139</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">setInstance</span>(<span class="ruby-identifier">wrapper</span>)
+<span class="line-num">140</span>   <span class="ruby-ivar">@instance</span> = <span class="ruby-identifier">wrapper</span> ;
+<span class="line-num">141</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@instance</span> ;
+<span class="line-num">142</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-addMemberToAgentTrailLogFormatter" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">addMemberToAgentTrailLogFormatter</span><span
+            class="method-args">(name) { |_agent_, _currentTime_, _handler_| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレーションの AgentTrailLog の Format Member の追加。</p>
+<dl class="rdoc-list note-list"><dt><em>name</em> 
+<dd>
+<p>name of the Format Member.</p>
+</dd><dt><em>block</em> 
+<dd>
+<p>a procedure to generage the value of the member. The block should receive three args (agent, timeObj, handler).</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="addMemberToAgentTrailLogFormatter-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">199</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">addMemberToAgentTrailLogFormatter</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment"># :yield: _agent_, _currentTime_, _handler_</span>
+<span class="line-num">200</span>   <span class="ruby-ivar">@agentTrailLogFormatTable</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">block</span> ;
+<span class="line-num">201</span>   <span class="ruby-ivar">@simulator</span>.<span class="ruby-identifier">getAgentHandler</span>().<span class="ruby-identifier">addMemberToAgentTrailLogFormatterForRuby</span>(<span class="ruby-identifier">name</span>);
+<span class="line-num">202</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-callbackAgentTrailLogMember" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">callbackAgentTrailLogMember</span><span
+            class="method-args">(name, agent, currentTime, handler)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>AgentTrailLog の Format Member からの呼び戻し。</p>
+<dl class="rdoc-list note-list"><dt><em>name</em> 
+<dd>
+<p>name of the Format Member.</p>
+</dd><dt><em>agent</em> 
+<dd>
+<p>agent object in Java.</p>
+</dd><dt><em>currentTime</em> 
+<dd>
+<p>time obj.</p>
+</dd><dt><em>handler</em> 
+<dd>
+<p>AgentHandler.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="callbackAgentTrailLogMember-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">211</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">callbackAgentTrailLogMember</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">agent</span>, <span class="ruby-identifier">currentTime</span>, <span class="ruby-identifier">handler</span>)
+<span class="line-num">212</span>   <span class="ruby-identifier">block</span> = <span class="ruby-ivar">@agentTrailLogFormatTable</span>[<span class="ruby-identifier">name</span>] ;
+<span class="line-num">213</span>   <span class="ruby-keyword">if</span>(<span class="ruby-operator">!</span><span class="ruby-identifier">block</span>.<span class="ruby-identifier">nil?</span>) 
+<span class="line-num">214</span>     <span class="ruby-keyword">return</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">agent</span>, <span class="ruby-identifier">currentTime</span>, <span class="ruby-identifier">handler</span>) ;
+<span class="line-num">215</span>   <span class="ruby-keyword">else</span>
+<span class="line-num">216</span>     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Uknown callbackAgentTrailLogMember:&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">name</span> ; 
+<span class="line-num">217</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">218</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-finalizeSimulation" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">finalizeSimulation</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレーション終了後の処理 EvacuationSimulator の finalize() で呼び出される。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="finalizeSimulation-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">232</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">finalizeSimulation</span>()
+<span class="line-num">233</span> <span class="ruby-comment">#    logInfo(nil, :finalizeSimulation, :doNothing) ;</span>
+<span class="line-num">234</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getSimulator" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getSimulator</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレータ取得。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getSimulator-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">178</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimulator</span>()
+<span class="line-num">179</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@simulator</span> ;
+<span class="line-num">180</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-intern" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">intern</span><span
+            class="method-args">(str)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>文字列の java 内でのintern.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="intern-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">266</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">intern</span>(<span class="ruby-identifier">str</span>)
+<span class="line-num">267</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@simulator</span>.<span class="ruby-identifier">intern</span>(<span class="ruby-identifier">str</span>) ;
+<span class="line-num">268</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logWithLevel" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logWithLevel</span><span
+            class="method-args">(level, label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力. <a href="ItkUtility.html"><code>ItkUtility</code></a> のものを override.</p>
+<dl class="rdoc-list note-list"><dt><em>level</em> 
+<dd>
+<p>ログレベル。:trace, :debug, :info, :warn, :error, :fatal</p>
+</dd><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+          
+
+          
+          <div class="method-source-code" id="logWithLevel-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">305</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logWithLevel</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">306</span>   <span class="ruby-identifier">label</span> = <span class="ruby-string">&quot;Wrapper&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">label</span>.<span class="ruby-identifier">nil?</span> ;
+<span class="line-num">307</span>   <span class="ruby-keyword">super</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">308</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-postUpdate" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">postUpdate</span><span
+            class="method-args">(simTime)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>update の最後に呼び出される。</p>
+<dl class="rdoc-list note-list"><dt><em>simTime</em>
+<dd>
+<p>シミュレーション内相対時刻</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="postUpdate-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">248</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">postUpdate</span>(<span class="ruby-identifier">simTime</span>)
+<span class="line-num">249</span> <span class="ruby-comment">#    p [:postUpdate, simTime, :doNothing] ;</span>
+<span class="line-num">250</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-preUpdate" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">preUpdate</span><span
+            class="method-args">(simTime)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>update の先頭で呼び出される。</p>
+<dl class="rdoc-list note-list"><dt><em>simTime</em>
+<dd>
+<p>シミュレーション内相対時刻</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="preUpdate-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">240</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preUpdate</span>(<span class="ruby-identifier">simTime</span>)
+<span class="line-num">241</span> <span class="ruby-comment">#    p [:preUpdate, simTime, :doNothing] ;</span>
+<span class="line-num">242</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-prepareForSimulation" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">prepareForSimulation</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレーション開始前の処理 AgentHandler の <a href="CrowdWalkWrapper.html#method-i-prepareForSimulation"><code>prepareForSimulation</code></a> の後で呼び出される。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="prepareForSimulation-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">224</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">prepareForSimulation</span>()
+<span class="line-num">225</span> <span class="ruby-comment">#    logInfo(nil, :prepareForSimulation, :doNothing) ;</span>
+<span class="line-num">226</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-rebuildRoutes" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">rebuildRoutes</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>経路情報の再構築。 各ノードの NavigationHints や、 各リンクの mentalLength を作り直す。 mentalLength に関係するタグなどのマップパラメータを修正した場合、 これを呼び出さないと、修正が routing に反映されない。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="rebuildRoutes-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">259</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rebuildRoutes</span>()
+<span class="line-num">260</span>   <span class="ruby-ivar">@simulator</span>.<span class="ruby-identifier">rebuildRoutes</span>() ;
+<span class="line-num">261</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-setupSimulationLoggers" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setupSimulationLoggers</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレーションの各種ログの設定。 ログの出力項目などをいじれる。 AgentHandler の setupSimulationLoggers() と initSimulationLoggers()の間によびだされる。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="setupSimulationLoggers-source">
+            <pre>    <span class="ruby-comment"># File CrowdWalkWrapper.rb</span>
+<span class="line-num">188</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">setupSimulationLoggers</span>()
+<span class="line-num">189</span> <span class="ruby-comment">#    p [:setupSimulationLoggers, :doNothing] ;</span>
+<span class="line-num">190</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.1.2.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -17,7 +17,119 @@ require 'NetworkMap.rb' ;
 
 #--======================================================================
 #++
-## CrowdWalk の RubyAgent に対応する Ruby 側の AgentBase
+## CrowdWalk の RubyAgent に対応する Ruby 側の AgentBase。
+##
+## Ruby で行動制御しながら動くエージェントを実現するためのベースクラス。
+## Java 側の RubyAgent class の各インスタンスに対応して、
+## このクラスを継承した Ruby のクラスのインスタンスが1つずつ割り当てられる。
+##
+## ユーザは、RubyAgentBase を継承した Ruby のクラスを継承し、
+## そのクラス名や定義ファイル(Rubyプログラム)を以下のように、
+## property 設定ファイル("*.prop.json")
+## およびエージェント生成設定ファイル("*.gen.json")で指定しなければならない。
+## 
+## <B>"*.prop.json"</B>
+##       ...
+##       "ruby_init_script":[ ...
+##          "require './SampleAgent.rb'",
+##          ...],
+##       ...
+## <B>"*.gen.json"</B>
+##       ...
+##       {"rule":...,
+##        "agentType":{"className":"RubyAgent",
+##                     "rubyAgentClass":"SampleAgent",
+##                      ...},
+##        ...},
+##       ...
+## この例では、+SampleAgent+ が、ユーザが定義したクラスであり、
+## "+SampleAgent.rb+" にそのプログラムが格納されているとしている。
+##
+## 以下は、+SampleAgent+ の例である。
+## この中で、クラス内定数の +TriggerFilter+ において、
+## シミュレーションの各サイクルで、エージェント毎に呼び出されるメソッド名のリストを
+## 指定する。以下の例では、calcSpeed ()と thinkCycle () が毎回呼び出される
+## 設定になっている。（それ以外の呼び出しは、コメントアウトされている。）
+## 全てもメソッドを呼び出し指定しても構わないが、
+## これらのメソッドは、毎サイクル、エージェント毎に呼び出されるため、
+## オーバーヘッドも大きい。
+## よって、必要なもののみを呼び出すようにしたほうが、
+## シミュレーションの速度上は良い。
+##
+## <B>SampleAgent.rb</B>
+##    require 'RubyAgentBase.rb' ;
+##
+##    class SampleAgent < RubyAgentBase
+##      TriggerFilter = [
+##    #                   "preUpdate",
+##    #                   "update",
+##    #                   "calcCostFromNodeViaLink",
+##                       "calcSpeed",
+##    #                   "calcAccel",
+##                       "thinkCycle",
+##                      ] ;
+##
+##      def initialize(*arg)
+##        super(*arg) ;
+##        @nCycle = 0 ;
+##      end
+##      
+##      def preUpdate()
+##        # p ['SampleAgent', :preUpdate, getAgentId(), getCurrentTime()] ;
+##        return super()
+##      end
+##    
+##      def update()
+##        # p ['SampleAgent', :update, getAgentId(), getCurrentTime()] ;
+##        return super() ;
+##      end
+##    
+##      def calcCostFromNodeViaLink(link, node, target)
+##        ## Term の中身の書き換えテスト。
+##        v = ItkTerm.getArg(@fallback, "xA_0").getDouble() + 1.0 ;
+##        ItkTerm.setArg(@fallback, "xA_0", v) ;
+##    
+##        return super(link, node, target) ;
+##      end
+##    
+##      def calcSpeed(previousSpeed)
+##        speed = super(previousSpeed) ;
+##        ## 5回に1回程度、スピードを落とす。
+##        if(rand(5) == 0) then
+##          origSpeed = speed ;
+##          speed *= 0.01 ;
+##        end
+##        return speed ;
+##      end
+##    
+##      def calcAccel(baseSpeed, previousSpeed)
+##        # do nothing special
+##        return super(baseSpeed, previousSpeed) ;
+##      end
+##    
+##      def thinkCycle()
+##        @nCycle += 1 ;
+##    
+##        if(listenAlert(Term_Emergency)) then
+##          setGoal(Term_node_09_05) ;
+##          clearRoute() ;
+##          clearAlert(Term_Emergency) ;
+##        end
+##    
+##        if(listenAlert(Term_FooBarBaz)) then
+##          insertRoute(Term_node_02_00) ;
+##          clearAlert(Term_FooBarBaz) ;
+##        end
+##    
+##      end
+##    
+##      Term_Emergency = ItkTerm.ensureTerm("emergency") ;
+##      Term_node_09_05 = ItkTerm.ensureTerm("node_09_05") ;
+##      Term_FooBarBaz = ItkTerm.ensureTerm("foo-bar-baz") ;
+##      Term_node_02_00 = ItkTerm.ensureTerm("node_02_00") ;
+##    
+##    end # class SampleAgent
+
 class RubyAgentBase
   include ItkUtility ;
   

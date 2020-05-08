@@ -31,7 +31,7 @@ JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
 JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar:$(CWJAR)
 
 ##------------------------------------------------------------
-doc ::
+doc :: rdoc
 	rm -f $(BASEDIR)/doc/javadoc/nodagumi/ananPJ/package-summary.html
 	( cd $(BASEDIR) ; gradle --offline javadoc  )
 

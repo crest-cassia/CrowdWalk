@@ -23,6 +23,8 @@ Ruby Facility を有効にするには、
 property 設定ファイルにおいて、
 
 ```
+{
+  ...
   "use_ruby": true,
   "ruby_load_path": [ 
     <RubyLibPath>, 
@@ -32,6 +34,8 @@ property 設定ファイルにおいて、
     <RubyScript>, 
     <RubyScript>, 
     ...],
+  ...
+}
 ```
 とする必要がある。
 
@@ -51,25 +55,25 @@ Ruby の実行環境の初期化を想定している。
 wrapper となるクラスの指定及び呼び出される method については、
 各クラスの説明参照のこと。
 
-## Ruby くらす
+## Ruby クラス
 
-* class CrowdWalkWrapper :
+* class CrowdWalkWrapper <br>
   シミュレーションのメインルーチンへの割り込みを提供。
-* class AgentFactoryBase :
+* class AgentFactoryBase <br>
   Agent の生成ルールを Ruby で記述する機能を提供。
-* class RubyAgentBase :
+* class RubyAgentBase <br>
   RationalAgent の挙動を Ruby で記述できる機能を提供。
-* class RubyEventBase :
+* class RubyEventBase <br>
   シナリオの Event の1種として、Eventによる状態変化を Ruby で記述できる機能を提供。
-* class RubyGateBase :
+* class RubyGateBase <br>
   シナリオの Event で制御する Gate の動作の詳細を Ruby で記述できる機能を提供。
-* module CwIrb :
+* module CwIrb <br>
   CrowdWalk のシミュレーションに、irb を使って対話的に割り込める機能を提供。
-* class NetworkMap :
+* class NetworkMap <br>
   Ruby script の中からネットワークの各データを参照・操作する機能を提供。
-* class ItkUtility :
+* class ItkUtility <br>
   Java との各種やり取りを簡易にするための機能を提供。
-* class ItkTerm :
+* class ItkTerm <br>
   Java の `Itk::Term` クラスのインスタンスへのアクセスを用意にする機能を提供。
 =end
 

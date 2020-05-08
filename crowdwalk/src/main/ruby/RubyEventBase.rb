@@ -16,7 +16,62 @@ require 'NetworkMap.rb' ;
 
 #--======================================================================
 #++
-## CrowdWalk の RubyEvent での Ruby 側の制御のインターフェース
+## CrowdWalk の RubyEvent での Ruby 側の制御のインターフェース。
+##
+## シナリオ設定ファイル("*.scnr.json")に記述するイベントの制御を、
+## Ruby で記述することを可能とする。
+## このクラスを継承した Ruby のクラスのインスタンスがイベントに割り当てられる。
+##
+## ユーザは、RubyEventBase を継承した Ruby のクラスを継承し、
+## そのクラス名や定義ファイル(Rubyプログラム)を以下のように、
+## property 設定ファイル("*.prop.json")
+## およびシナリオ設定ファイル("*.scnr.json")で指定しなければならない。
+## 
+## <B>"*.prop.json"</B>
+##       ...
+##       "ruby_init_script":[ ...
+##          "require './SampleEvent.rb'",
+##          ...],
+##       ...
+## <B>"*.scnr.json"</B>
+##       ...
+##       { "type":"Ruby",
+##         "atTime":"18:00:10",
+##         "rubyClass": "SampleEvent",
+##         "name": "hogehoge",
+##         "param1": 1234,
+##         ... },
+##       ...
+## この例では、+SampleEvent+ が、ユーザが定義したクラスであり、
+## "+SampleEvent.rb+" にそのプログラムが格納されているとしている。
+## この例では、18:00:10 にこの RubyEvent が生成され、
+## SampleEvent クラスのインスタンスが割り当てられる。
+## そのインスタンスの変数 @eventDef には
+## このイベントの定義自体は Hash の形で代入されるので、
+## この定義に書かれた "name" や "param1" の値を参照することができる。
+##
+## 以下は、+SampleEvent+ の例である。
+## この例では、表示だけ行い、何もシミュレーションを変化させていないが、
+## NetworkMap や ItkUtility などの機能を用いて、
+## 地図やエージェント状態をいろいろ変更することができる。
+##
+## <B>SampleEvent.rb</B>
+##    require 'RubyEventBase.rb' ;
+##    
+##    class SampleEvent < RubyEventBase
+##      
+##      def initialize(_event)
+##        super ;
+##        pp [:rubyEventConf, @eventDef] ;
+##      end
+##      
+##      def occur(currentTime, map)
+##        p [:eventOccur, currentTime, map] ;
+##        p [:eventRand, getRandomInt(), getRandomDouble()] ;
+##        return true ;
+##      end
+##    end # class SampleEvent
+
 class RubyEventBase
   include ItkUtility ;
 

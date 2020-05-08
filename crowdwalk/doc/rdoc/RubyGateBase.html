@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class RubyGateBase - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">Object
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-getEventDef">#getEventDef</a>
+    
+    <li ><a href="#method-i-getGateTag">#getGateTag</a>
+    
+    <li ><a href="#method-i-getMap">#getMap</a>
+    
+    <li ><a href="#method-i-getPlace">#getPlace</a>
+    
+    <li ><a href="#method-i-getSimulator">#getSimulator</a>
+    
+    <li ><a href="#method-i-isClosed">#isClosed</a>
+    
+    <li class="calls-super" ><a href="#method-i-logWithLevel">#logWithLevel</a>
+    
+    <li ><a href="#method-i-switchGate">#switchGate</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-RubyGateBase">
+  <h1 id="class-RubyGateBase" class="class">
+    class RubyGateBase
+  </h1>
+
+  <section class="description">
+    
+<p>CrowdWalk の RubyGate での Ruby 側の制御のインターフェース。</p>
+
+<p>シナリオ設定ファイル(“*.scnr.json”)に記述するCloseGateイベントの制御を、 Ruby で記述することを可能とする。 このクラスを継承した Ruby のクラスのインスタンスがGateに割り当てられる。</p>
+
+<p>ユーザは、RubyGateBase を継承した Ruby のクラスを継承し、 そのクラス名や定義ファイル(Rubyプログラム)を以下のように、 property 設定ファイル(“*.prop.json”) およびシナリオ設定ファイル(“*.scnr.json”)で指定しなければならない。</p>
+
+<p><strong>“*.prop.json”</strong></p>
+
+<pre>...
+&quot;ruby_init_script&quot;:[ ...
+   &quot;require &#39;./SampleGate.rb&#39;&quot;,
+   ...],
+...</pre>
+
+<p><strong>“*.scnr.json”</strong></p>
+
+<pre>...
+{ &quot;type&quot;:&quot;CloseGate&quot;,
+  &quot;gateClass&quot;:&quot;RubyGate&quot;,
+  &quot;rubyClass&quot;:&quot;SampleGate&quot;,
+  &quot;atTime&quot;:&quot;18:02:15&quot;,
+  &quot;placeTag&quot;:&quot;gate_foo&quot;,
+  &quot;gateTag&quot;:&quot;foo&quot;,
+  &quot;param1&quot;: [1,2,3],
+  ...},
+...</pre>
+
+<p>この例では、<code>SampleGate</code> が、ユーザが定義したクラスであり、 “<code>SampleGate.rb</code>” にそのプログラムが格納されているとしている。 この例では、18:02:15 にこの CloseGate イベントが生成され、 SampleGate クラスのインスタンスが割り当てられる。 そのインスタンスの変数 @eventDef には このイベントの定義自体は Hash の形で代入されるので、 この定義に書かれた “param1” など任意のキーの値を参照することができる。</p>
+
+<p>以下は、<code>SampleGate</code> の例である。 この例では、closed かどうかのチェックで、 確率 1/2 で止める（残り半分はgateを通過させる）ような制御を行っている。</p>
+
+<p><strong>SampleGate.rb</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;RubyGateBase.rb&#39;</span> ;
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">SampleGate</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">RubyGateBase</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">_gate</span>)
+    <span class="ruby-keyword">super</span> ;
+    <span class="ruby-ivar">@conf</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">toRuby</span>(<span class="ruby-identifier">getEventDef</span>()) ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">isClosed</span>(<span class="ruby-identifier">agent</span>, <span class="ruby-identifier">currentTime</span>)
+    <span class="ruby-comment">## close のときも、半分通す。</span>
+    <span class="ruby-identifier">r</span> = <span class="ruby-keyword">super</span> ;
+    <span class="ruby-keyword">if</span>(<span class="ruby-identifier">r</span>) <span class="ruby-keyword">then</span>
+      <span class="ruby-identifier">r</span> = (<span class="ruby-identifier">getRandomInt</span>(<span class="ruby-value">2</span>) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>) ;
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">r</span> ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">switchGate</span>(<span class="ruby-identifier">event</span>, <span class="ruby-identifier">closed</span>)
+    <span class="ruby-comment"># do nothing</span>
+    <span class="ruby-keyword">super</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span> <span class="ruby-comment"># class SampleGate</span>
+</pre>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+      
+        <dt id="GateList">GateList
+        
+        <dd><p>RubyGate を格納するリスト</p>
+        
+      
+      </dl>
+    </section>
+    
+
+    
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      
+      <div id="attribute-i-eventDef" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">eventDef</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Scenario に記述されたイベント定義を、Ruby のデータに変換したもの。</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-isInitialCycle" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">isInitialCycle</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>initial cycle check</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-javaGate" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">javaGate</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Java 側の Gate オブジェクト</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-map" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">map</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p><a href="NetworkMap.html"><code>NetworkMap</code></a> の Ruby オブジェクト</p>
+        
+        </div>
+      </div>
+      
+    </section>
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(_gate)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>初期化。 設定等は、Ruby のデータに変換され、@eventDef で取得できる。</p>
+<dl class="rdoc-list note-list"><dt><em>gate</em>
+<dd>
+<p>Gate の java インスタンス。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">110</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">_gate</span>) ;
+<span class="line-num">111</span>   <span class="ruby-constant">GateList</span>.<span class="ruby-identifier">push</span>(<span class="ruby-keyword">self</span>) ;
+<span class="line-num">112</span>   <span class="ruby-ivar">@javaGate</span> = <span class="ruby-identifier">_gate</span> ;
+<span class="line-num">113</span>   <span class="ruby-ivar">@map</span> = <span class="ruby-constant">NetworkMap</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">getMap</span>()) ;
+<span class="line-num">114</span>   <span class="ruby-ivar">@eventDef</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">toRuby</span>(<span class="ruby-identifier">getEventDef</span>()) ;
+<span class="line-num">115</span>   <span class="ruby-comment"># pp [:createRubyBase] ;</span>
+<span class="line-num">116</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-getEventDef" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getEventDef</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>イベント定義取得。 Itk::Term の形で返す。 なので、ItkTerm.getArg(obj, slot) などで変換。 さらに、ItkTerm.toRuby(value) で ruby object に変換。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getEventDef-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">147</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getEventDef</span>()
+<span class="line-num">148</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaGate</span>.<span class="ruby-identifier">getEvent</span>().<span class="ruby-identifier">getEventDef</span>() ;
+<span class="line-num">149</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getGateTag" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getGateTag</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>イベント定義取得</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getGateTag-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">123</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getGateTag</span>()
+<span class="line-num">124</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaGate</span>.<span class="ruby-identifier">getTag</span>() ;
+<span class="line-num">125</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getMap" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getMap</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>イベント定義取得</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getMap-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">154</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getMap</span>()
+<span class="line-num">155</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaGate</span>.<span class="ruby-identifier">getPlace</span>().<span class="ruby-identifier">getMap</span>() ;
+<span class="line-num">156</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getPlace" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getPlace</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>場所取得</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getPlace-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">137</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getPlace</span>()
+<span class="line-num">138</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaGate</span>.<span class="ruby-identifier">getPlace</span>() ;
+<span class="line-num">139</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getSimulator" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getSimulator</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>イベント定義取得</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getSimulator-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">161</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimulator</span>()
+<span class="line-num">162</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaGate</span>.<span class="ruby-identifier">getEvent</span>().<span class="ruby-identifier">getSimulator</span>() ;
+<span class="line-num">163</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-isClosed" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">isClosed</span><span
+            class="method-args">(agent, currentTime)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>エージェント通過チェック。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="isClosed-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">168</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">isClosed</span>(<span class="ruby-identifier">agent</span>, <span class="ruby-identifier">currentTime</span>)
+<span class="line-num">169</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaGate</span>.<span class="ruby-identifier">isClosed</span>() ;
+<span class="line-num">170</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logWithLevel" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logWithLevel</span><span
+            class="method-args">(level, label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力 <a href="ItkUtility.html"><code>ItkUtility</code></a> のものを override.</p>
+<dl class="rdoc-list note-list"><dt><em>level</em> 
+<dd>
+<p>ログレベル。:trace, :debug, :info, :warn, :error, :fatal</p>
+</dd><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+          
+
+          
+          <div class="method-source-code" id="logWithLevel-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">186</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logWithLevel</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">187</span>   <span class="ruby-identifier">label</span> = <span class="ruby-string">&quot;RubyGate&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">label</span>.<span class="ruby-identifier">nil?</span> ;
+<span class="line-num">188</span>   <span class="ruby-keyword">super</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">189</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-switchGate" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">switchGate</span><span
+            class="method-args">(event, closed)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>状態変化</p>
+          
+          
+
+          
+          <div class="method-source-code" id="switchGate-source">
+            <pre>    <span class="ruby-comment"># File RubyGateBase.rb</span>
+<span class="line-num">175</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">switchGate</span>(<span class="ruby-identifier">event</span>, <span class="ruby-identifier">closed</span>)
+<span class="line-num">176</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaGate</span>.<span class="ruby-identifier">super_switchGate</span>(<span class="ruby-identifier">event</span>, <span class="ruby-identifier">closed</span>) ;
+<span class="line-num">177</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.1.2.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

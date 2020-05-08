@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class RubyAgentBase - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">Object
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-checkTriggerFilter">::checkTriggerFilter</a>
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-addAgentTag">#addAgentTag</a>
+    
+    <li ><a href="#method-i-addPlaceTag">#addPlaceTag</a>
+    
+    <li ><a href="#method-i-announceAlert">#announceAlert</a>
+    
+    <li ><a href="#method-i-calcAccel">#calcAccel</a>
+    
+    <li ><a href="#method-i-calcCostFromNodeViaLink">#calcCostFromNodeViaLink</a>
+    
+    <li ><a href="#method-i-calcSpeed">#calcSpeed</a>
+    
+    <li ><a href="#method-i-clearAlert">#clearAlert</a>
+    
+    <li ><a href="#method-i-clearAllAlert">#clearAllAlert</a>
+    
+    <li ><a href="#method-i-clearNextLinkCache">#clearNextLinkCache</a>
+    
+    <li ><a href="#method-i-clearRoute">#clearRoute</a>
+    
+    <li ><a href="#method-i-getAgentId">#getAgentId</a>
+    
+    <li ><a href="#method-i-getAgentTags">#getAgentTags</a>
+    
+    <li ><a href="#method-i-getAlertTable">#getAlertTable</a>
+    
+    <li ><a href="#method-i-getCurrentLink">#getCurrentLink</a>
+    
+    <li ><a href="#method-i-getCurrentLinkId">#getCurrentLinkId</a>
+    
+    <li ><a href="#method-i-getCurrentSpeed">#getCurrentSpeed</a>
+    
+    <li ><a href="#method-i-getCurrentTime">#getCurrentTime</a>
+    
+    <li ><a href="#method-i-getEmptySpeed">#getEmptySpeed</a>
+    
+    <li ><a href="#method-i-getGoal">#getGoal</a>
+    
+    <li ><a href="#method-i-getPlaceTags">#getPlaceTags</a>
+    
+    <li ><a href="#method-i-getRoute">#getRoute</a>
+    
+    <li ><a href="#method-i-getSimulator">#getSimulator</a>
+    
+    <li ><a href="#method-i-hasAgentTag">#hasAgentTag</a>
+    
+    <li ><a href="#method-i-hasPlaceTag">#hasPlaceTag</a>
+    
+    <li ><a href="#method-i-insertRoute">#insertRoute</a>
+    
+    <li ><a href="#method-i-intern">#intern</a>
+    
+    <li ><a href="#method-i-listenAlert">#listenAlert</a>
+    
+    <li ><a href="#method-i-logWithLevel">#logWithLevel</a>
+    
+    <li ><a href="#method-i-preUpdate">#preUpdate</a>
+    
+    <li ><a href="#method-i-removeAgentTag">#removeAgentTag</a>
+    
+    <li ><a href="#method-i-saveAlert">#saveAlert</a>
+    
+    <li ><a href="#method-i-setEmptySpeed">#setEmptySpeed</a>
+    
+    <li ><a href="#method-i-setGoal">#setGoal</a>
+    
+    <li ><a href="#method-i-setTurnAround">#setTurnAround</a>
+    
+    <li ><a href="#method-i-thinkCycle">#thinkCycle</a>
+    
+    <li ><a href="#method-i-update">#update</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-RubyAgentBase">
+  <h1 id="class-RubyAgentBase" class="class">
+    class RubyAgentBase
+  </h1>
+
+  <section class="description">
+    
+<p>CrowdWalk の RubyAgent に対応する Ruby 側の AgentBase。</p>
+
+<p>Ruby で行動制御しながら動くエージェントを実現するためのベースクラス。 Java 側の RubyAgent class の各インスタンスに対応して、 このクラスを継承した Ruby のクラスのインスタンスが1つずつ割り当てられる。</p>
+
+<p>ユーザは、RubyAgentBase を継承した Ruby のクラスを継承し、 そのクラス名や定義ファイル(Rubyプログラム)を以下のように、 property 設定ファイル(“*.prop.json”) およびエージェント生成設定ファイル(“*.gen.json”)で指定しなければならない。</p>
+
+<p><strong>“*.prop.json”</strong></p>
+
+<pre>...
+&quot;ruby_init_script&quot;:[ ...
+   &quot;require &#39;./SampleAgent.rb&#39;&quot;,
+   ...],
+...</pre>
+
+<p><strong>“*.gen.json”</strong></p>
+
+<pre>...
+{&quot;rule&quot;:...,
+ &quot;agentType&quot;:{&quot;className&quot;:&quot;RubyAgent&quot;,
+              &quot;rubyAgentClass&quot;:&quot;SampleAgent&quot;,
+               ...},
+ ...},
+...</pre>
+
+<p>この例では、<code>SampleAgent</code> が、ユーザが定義したクラスであり、 “<code>SampleAgent.rb</code>” にそのプログラムが格納されているとしている。</p>
+
+<p>以下は、<code>SampleAgent</code> の例である。 この中で、クラス内定数の <code>TriggerFilter</code> において、 シミュレーションの各サイクルで、エージェント毎に呼び出されるメソッド名のリストを 指定する。以下の例では、calcSpeed ()と <a href="RubyAgentBase.html#method-i-thinkCycle"><code>thinkCycle</code></a> () が毎回呼び出される 設定になっている。（それ以外の呼び出しは、コメントアウトされている。） 全てもメソッドを呼び出し指定しても構わないが、 これらのメソッドは、毎サイクル、エージェント毎に呼び出されるため、 オーバーヘッドも大きい。 よって、必要なもののみを呼び出すようにしたほうが、 シミュレーションの速度上は良い。</p>
+
+<p><strong>SampleAgent.rb</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;RubyAgentBase.rb&#39;</span> ;
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">SampleAgent</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">RubyAgentBase</span>
+  <span class="ruby-constant">TriggerFilter</span> = [
+<span class="ruby-comment">#                   &quot;preUpdate&quot;,</span>
+<span class="ruby-comment">#                   &quot;update&quot;,</span>
+<span class="ruby-comment">#                   &quot;calcCostFromNodeViaLink&quot;,</span>
+                   <span class="ruby-string">&quot;calcSpeed&quot;</span>,
+<span class="ruby-comment">#                   &quot;calcAccel&quot;,</span>
+                   <span class="ruby-string">&quot;thinkCycle&quot;</span>,
+                  ] ;
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">arg</span>)
+    <span class="ruby-keyword">super</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">arg</span>) ;
+    <span class="ruby-ivar">@nCycle</span> = <span class="ruby-value">0</span> ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preUpdate</span>()
+    <span class="ruby-comment"># p [&#39;SampleAgent&#39;, :preUpdate, getAgentId(), getCurrentTime()] ;</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>()
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>()
+    <span class="ruby-comment"># p [&#39;SampleAgent&#39;, :update, getAgentId(), getCurrentTime()] ;</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>() ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calcCostFromNodeViaLink</span>(<span class="ruby-identifier">link</span>, <span class="ruby-identifier">node</span>, <span class="ruby-identifier">target</span>)
+    <span class="ruby-comment">## Term の中身の書き換えテスト。</span>
+    <span class="ruby-identifier">v</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">getArg</span>(<span class="ruby-ivar">@fallback</span>, <span class="ruby-string">&quot;xA_0&quot;</span>).<span class="ruby-identifier">getDouble</span>() <span class="ruby-operator">+</span> <span class="ruby-value">1.0</span> ;
+    <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">setArg</span>(<span class="ruby-ivar">@fallback</span>, <span class="ruby-string">&quot;xA_0&quot;</span>, <span class="ruby-identifier">v</span>) ;
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>(<span class="ruby-identifier">link</span>, <span class="ruby-identifier">node</span>, <span class="ruby-identifier">target</span>) ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calcSpeed</span>(<span class="ruby-identifier">previousSpeed</span>)
+    <span class="ruby-identifier">speed</span> = <span class="ruby-keyword">super</span>(<span class="ruby-identifier">previousSpeed</span>) ;
+    <span class="ruby-comment">## 5回に1回程度、スピードを落とす。</span>
+    <span class="ruby-keyword">if</span>(<span class="ruby-identifier">rand</span>(<span class="ruby-value">5</span>) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>) <span class="ruby-keyword">then</span>
+      <span class="ruby-identifier">origSpeed</span> = <span class="ruby-identifier">speed</span> ;
+      <span class="ruby-identifier">speed</span> <span class="ruby-operator">*=</span> <span class="ruby-value">0.01</span> ;
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">speed</span> ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calcAccel</span>(<span class="ruby-identifier">baseSpeed</span>, <span class="ruby-identifier">previousSpeed</span>)
+    <span class="ruby-comment"># do nothing special</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>(<span class="ruby-identifier">baseSpeed</span>, <span class="ruby-identifier">previousSpeed</span>) ;
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">thinkCycle</span>()
+    <span class="ruby-ivar">@nCycle</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> ;
+
+    <span class="ruby-keyword">if</span>(<span class="ruby-identifier">listenAlert</span>(<span class="ruby-constant">Term_Emergency</span>)) <span class="ruby-keyword">then</span>
+      <span class="ruby-identifier">setGoal</span>(<span class="ruby-constant">Term_node_09_05</span>) ;
+      <span class="ruby-identifier">clearRoute</span>() ;
+      <span class="ruby-identifier">clearAlert</span>(<span class="ruby-constant">Term_Emergency</span>) ;
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span>(<span class="ruby-identifier">listenAlert</span>(<span class="ruby-constant">Term_FooBarBaz</span>)) <span class="ruby-keyword">then</span>
+      <span class="ruby-identifier">insertRoute</span>(<span class="ruby-constant">Term_node_02_00</span>) ;
+      <span class="ruby-identifier">clearAlert</span>(<span class="ruby-constant">Term_FooBarBaz</span>) ;
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-constant">Term_Emergency</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-string">&quot;emergency&quot;</span>) ;
+  <span class="ruby-constant">Term_node_09_05</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-string">&quot;node_09_05&quot;</span>) ;
+  <span class="ruby-constant">Term_FooBarBaz</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-string">&quot;foo-bar-baz&quot;</span>) ;
+  <span class="ruby-constant">Term_node_02_00</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-string">&quot;node_02_00&quot;</span>) ;
+
+<span class="ruby-keyword">end</span> <span class="ruby-comment"># class SampleAgent</span>
+</pre>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+      
+        <dt id="TriggerFilter">TriggerFilter
+        
+        <dd><p>Java から Ruby を呼び出すTriggerでのFilter。 この配列に Java のメソッド名（キーワード）が入っていると、 Ruby 側が呼び出される。入っていないと、無視される。 <a href="RubyAgentBase.html"><code>RubyAgentBase</code></a> を継承するクラスは、このFilterを持つことが望ましい。 このFilterは、クラスをさかのぼってチェックされる。</p>
+        
+      
+      </dl>
+    </section>
+    
+
+    
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      
+      <div id="attribute-i-config" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">config</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p><a href="RubyAgentBase.html#attribute-i-config"><code>config</code></a> 情報。generation ファイルでの設定がそのまま渡る。</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-fallback" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">fallback</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p><a href="RubyAgentBase.html#attribute-i-fallback"><code>fallback</code></a> 情報。</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-javaAgent" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">javaAgent</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Java 側の Agent オブジェクト</p>
+        
+        </div>
+      </div>
+      
+    </section>
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-checkTriggerFilter" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">checkTriggerFilter</span><span
+            class="method-args">(methodName)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p><a href="RubyAgentBase.html"><code>RubyAgentBase</code></a> を継承するクラスにおいて、TriggerFilter に methodName  含まれているかをチェックする。 このクラスメソッドが true を返すもののみ、 java から ruby のメソッドが呼ばれる。 java と ruby の行き来のオーバーヘッドを軽くするための措置。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="checkTriggerFilter-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">426</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">checkTriggerFilter</span>(<span class="ruby-identifier">methodName</span>)
+<span class="line-num">427</span>   <span class="ruby-comment"># TriggerFilter が定義されていて、methodName を含めば、true を返す</span>
+<span class="line-num">428</span>   <span class="ruby-keyword">if</span>(<span class="ruby-keyword">self</span>.<span class="ruby-identifier">const_defined?</span>(<span class="ruby-value">:TriggerFilter</span>)) <span class="ruby-keyword">then</span>
+<span class="line-num">429</span>     <span class="ruby-keyword">if</span>(<span class="ruby-keyword">self</span><span class="ruby-operator">::</span><span class="ruby-constant">TriggerFilter</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">methodName</span>)) <span class="ruby-keyword">then</span>
+<span class="line-num">430</span>       <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> ;
+<span class="line-num">431</span>     <span class="ruby-keyword">end</span>
+<span class="line-num">432</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">433</span>   <span class="ruby-comment"># RubyAgentBase までさかのぼっていれば、探索撃ち切って false を返す。</span>
+<span class="line-num">434</span>   <span class="ruby-keyword">if</span>(<span class="ruby-keyword">self</span> <span class="ruby-operator">==</span> <span class="ruby-constant">RubyAgentBase</span>) <span class="ruby-keyword">then</span>
+<span class="line-num">435</span>     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> ;
+<span class="line-num">436</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">437</span>   <span class="ruby-comment"># それ以外は、親クラスを探しに行く。</span>
+<span class="line-num">438</span>   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">superclass</span>().<span class="ruby-identifier">checkTriggerFilter</span>(<span class="ruby-identifier">methodName</span>) ;
+<span class="line-num">439</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(agent, config, fallback)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>初期化</p>
+<dl class="rdoc-list note-list"><dt><em>agent</em>
+<dd>
+<p>Java の RubyAgent のインスタンス。</p>
+</dd><dt><em>initOption</em>
+<dd>
+<p>初期化のためのオプション引数。 generation file で指定できる。指定しなければ nil。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">170</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">agent</span>, <span class="ruby-identifier">config</span>, <span class="ruby-identifier">fallback</span>)
+<span class="line-num">171</span>   <span class="ruby-ivar">@javaAgent</span> = <span class="ruby-identifier">agent</span> ;
+<span class="line-num">172</span>   <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span> ;
+<span class="line-num">173</span>   <span class="ruby-ivar">@fallback</span> = <span class="ruby-identifier">fallback</span> ;
+<span class="line-num">174</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-addAgentTag" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">addAgentTag</span><span
+            class="method-args">(tag)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>エージェントのタグを追加</p>
+          
+          
+
+          
+          <div class="method-source-code" id="addAgentTag-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">325</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">addAgentTag</span>(<span class="ruby-identifier">tag</span>)
+<span class="line-num">326</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">addTag</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">327</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-addPlaceTag" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">addPlaceTag</span><span
+            class="method-args">(tag)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在地のリンクにタグを追加</p>
+          
+          
+
+          
+          <div class="method-source-code" id="addPlaceTag-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">355</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">addPlaceTag</span>(<span class="ruby-identifier">tag</span>)
+<span class="line-num">356</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getCurrentLink</span>().<span class="ruby-identifier">addTag</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">357</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-announceAlert" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">announceAlert</span><span
+            class="method-args">(message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>アラートを現在地にアナウンス。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="announceAlert-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">396</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">announceAlert</span>(<span class="ruby-identifier">message</span>)
+<span class="line-num">397</span>   <span class="ruby-identifier">messageTerm</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-identifier">message</span>);
+<span class="line-num">398</span>   <span class="ruby-identifier">getCurrentLink</span>.<span class="ruby-identifier">addAlertMessage</span>(<span class="ruby-identifier">messageTerm</span>, <span class="ruby-identifier">getCurrentTime</span>(), <span class="ruby-keyword">true</span>) ;
+<span class="line-num">399</span>   <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> ;
+<span class="line-num">400</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-calcAccel" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">calcAccel</span><span
+            class="method-args">(baseSpeed, previousSpeed)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>加速度を計算する。</p>
+<dl class="rdoc-list note-list"><dt><em>baseSpeed</em>
+<dd>
+<p>自由速度。</p>
+</dd><dt><em>previousSpeed</em>
+<dd>
+<p>前のサイクルの速度。</p>
+</dd></dl>
+
+<p><strong>return</strong> 加速度。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="calcAccel-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">483</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calcAccel</span>(<span class="ruby-identifier">baseSpeed</span>, <span class="ruby-identifier">previousSpeed</span>)
+<span class="line-num">484</span> <span class="ruby-comment">#    p [:calcAccel, getAgentId(), baseSpeed, previousSpeed] ;</span>
+<span class="line-num">485</span>     <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">super_calcAccel</span>(<span class="ruby-identifier">baseSpeed</span>, <span class="ruby-identifier">previousSpeed</span>) ;
+<span class="line-num">486</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-calcCostFromNodeViaLink" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">calcCostFromNodeViaLink</span><span
+            class="method-args">(way, node, target)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>あるwayを選択した場合の目的地(_target)までのコスト。</p>
+<dl class="rdoc-list note-list"><dt><em>way</em>
+<dd>
+<p>現在進もうとしている道</p>
+</dd><dt><em>node</em>
+<dd>
+<p>現在の分岐点</p>
+</dd><dt><em>target</em>
+<dd>
+<p>最終目的地</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="calcCostFromNodeViaLink-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">462</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calcCostFromNodeViaLink</span>(<span class="ruby-identifier">way</span>, <span class="ruby-identifier">node</span>, <span class="ruby-identifier">target</span>)
+<span class="line-num">463</span> <span class="ruby-comment">#    p [:calcCostFromNodeViaLink, getAgentId(), way, node, target] ;</span>
+<span class="line-num">464</span>     <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">super_calcCostFromNodeViaLink</span>(<span class="ruby-identifier">way</span>, <span class="ruby-identifier">node</span>, <span class="ruby-identifier">target</span>);
+<span class="line-num">465</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-calcSpeed" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">calcSpeed</span><span
+            class="method-args">(previousSpeed)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>速度を計算する。</p>
+<dl class="rdoc-list note-list"><dt><em>previousSpeed</em>
+<dd>
+<p>前のサイクルの速度。</p>
+</dd></dl>
+
+<p><strong>return</strong> 速度。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="calcSpeed-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">472</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calcSpeed</span>(<span class="ruby-identifier">previousSpeed</span>)
+<span class="line-num">473</span> <span class="ruby-comment">#    p [:calcSpeed, getAgentId(), previousSpeed] ;</span>
+<span class="line-num">474</span>     <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">super_calcSpeed</span>(<span class="ruby-identifier">previousSpeed</span>) ;
+<span class="line-num">475</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-clearAlert" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">clearAlert</span><span
+            class="method-args">(message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在Agent自身が保持している message を消去する。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="clearAlert-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">405</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clearAlert</span>(<span class="ruby-identifier">message</span>)
+<span class="line-num">406</span>   <span class="ruby-identifier">getAlertTable</span>().<span class="ruby-identifier">remove</span>(<span class="ruby-identifier">message</span>) ;
+<span class="line-num">407</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-clearAllAlert" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">clearAllAlert</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在Agent自身が保持している全 message を消去する。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="clearAllAlert-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">412</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clearAllAlert</span>()
+<span class="line-num">413</span>   <span class="ruby-identifier">getAlertTable</span>().<span class="ruby-identifier">clear</span>() ;
+<span class="line-num">414</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-clearNextLinkCache" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">clearNextLinkCache</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>nextLinkCache をクリアしておく。 thinkCycle() などで、goal や link の長さなどを一時的に変更した際、 間違って直前の nextLinkCache を参照しないようにするために使う。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="clearNextLinkCache-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">500</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clearNextLinkCache</span>()
+<span class="line-num">501</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">clearNextLinkCache</span>() ;
+<span class="line-num">502</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-clearRoute" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">clearRoute</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>ルートのクリア</p>
+          
+          
+
+          
+          <div class="method-source-code" id="clearRoute-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">292</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clearRoute</span>()
+<span class="line-num">293</span>   <span class="ruby-identifier">insertRoute</span>([], <span class="ruby-keyword">true</span>) ;
+<span class="line-num">294</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getAgentId" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getAgentId</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>エージェント id</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getAgentId-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">181</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAgentId</span>()
+<span class="line-num">182</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getID</span>() ;
+<span class="line-num">183</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getAgentTags" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getAgentTags</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>エージェントのタグリスト</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getAgentTags-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">311</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAgentTags</span>()
+<span class="line-num">312</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getTags</span>() ;
+<span class="line-num">313</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getAlertTable" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getAlertTable</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>アラートテーブル</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getAlertTable-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">362</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAlertTable</span>()
+<span class="line-num">363</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">alertedMessageTable</span> ;
+<span class="line-num">364</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getCurrentLink" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getCurrentLink</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在地のリンク</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getCurrentLink-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">195</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getCurrentLink</span>()
+<span class="line-num">196</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getCurrentLink</span>()
+<span class="line-num">197</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getCurrentLinkId" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getCurrentLinkId</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在地のリンク ID</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getCurrentLinkId-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">202</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getCurrentLinkId</span>()
+<span class="line-num">203</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getCurrentLink</span>().<span class="ruby-constant">ID</span> ;
+<span class="line-num">204</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getCurrentSpeed" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getCurrentSpeed</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>速度</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getCurrentSpeed-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">209</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getCurrentSpeed</span>()
+<span class="line-num">210</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getSpeed</span>() ;
+<span class="line-num">211</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getCurrentTime" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getCurrentTime</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在時刻</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getCurrentTime-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">188</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getCurrentTime</span>()
+<span class="line-num">189</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">currentTime</span> ;
+<span class="line-num">190</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getEmptySpeed" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getEmptySpeed</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>自由速度</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getEmptySpeed-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">216</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getEmptySpeed</span>()
+<span class="line-num">217</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getEmptySpeed</span>() ;
+<span class="line-num">218</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getGoal" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getGoal</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>目的地</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getGoal-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">242</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getGoal</span>()
+<span class="line-num">243</span>   <span class="ruby-keyword">return</span> <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">toRuby</span>(<span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getGoal</span>()) ;
+<span class="line-num">244</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getPlaceTags" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getPlaceTags</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在地のリンクのタグリスト</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getPlaceTags-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">339</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getPlaceTags</span>()
+<span class="line-num">340</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getCurrentLink</span>().<span class="ruby-identifier">getTags</span>() ;
+<span class="line-num">341</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getRoute" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getRoute</span><span
+            class="method-args">(future = true)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>ルート取得</p>
+<dl class="rdoc-list note-list"><dt><em>future</em> 
+<dd>
+<p>今後のルートのみの場合。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="getRoute-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">258</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getRoute</span>(<span class="ruby-identifier">future</span> = <span class="ruby-keyword">true</span>)
+<span class="line-num">259</span>   <span class="ruby-identifier">routePlan</span> = <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">routePlan</span> ;
+<span class="line-num">260</span>   <span class="ruby-identifier">baseRoute</span> = <span class="ruby-identifier">routePlan</span>.<span class="ruby-identifier">getRoute</span>() ;
+<span class="line-num">261</span>   <span class="ruby-identifier">beginIndex</span> = (<span class="ruby-identifier">future</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">routePlan</span>.<span class="ruby-identifier">getIndex</span>() <span class="ruby-operator">:</span> <span class="ruby-value">0</span>) ;
+<span class="line-num">262</span>   <span class="ruby-identifier">endIndex</span> = <span class="ruby-identifier">baseRoute</span>.<span class="ruby-identifier">size</span>() ;
+<span class="line-num">263</span> 
+<span class="line-num">264</span>   <span class="ruby-identifier">route</span> = [] ;
+<span class="line-num">265</span>   (<span class="ruby-identifier">beginIndex</span> <span class="ruby-operator">...</span> <span class="ruby-identifier">endIndex</span>).<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">index</span><span class="ruby-operator">|</span>
+<span class="line-num">266</span>     <span class="ruby-identifier">route</span>.<span class="ruby-identifier">push</span>(<span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">toRuby</span>(<span class="ruby-identifier">baseRoute</span>[<span class="ruby-identifier">index</span>])) ;
+<span class="line-num">267</span>   }
+<span class="line-num">268</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">route</span> ;
+<span class="line-num">269</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getSimulator" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getSimulator</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレータ(java)へのアクセス</p>
+          
+          
+
+          
+          <div class="method-source-code" id="getSimulator-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">233</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimulator</span>()
+<span class="line-num">234</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getSimulator</span>() ;
+<span class="line-num">235</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-hasAgentTag" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">hasAgentTag</span><span
+            class="method-args">(tag)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>エージェントのタグを持つかどうか</p>
+          
+          
+
+          
+          <div class="method-source-code" id="hasAgentTag-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">318</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">hasAgentTag</span>(<span class="ruby-identifier">tag</span>)
+<span class="line-num">319</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">hasTag</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">320</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-hasPlaceTag" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">hasPlaceTag</span><span
+            class="method-args">(tag)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>現在地のリンクのタグをチェック</p>
+          
+          
+
+          
+          <div class="method-source-code" id="hasPlaceTag-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">346</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">hasPlaceTag</span>(<span class="ruby-identifier">tag</span>)
+<span class="line-num">347</span>   <span class="ruby-comment"># return getCurrentLink().hasTag(tag) ;</span>
+<span class="line-num">348</span>   <span class="ruby-comment"># for speed up</span>
+<span class="line-num">349</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">hasPlaceTagForRuby</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">350</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-insertRoute" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">insertRoute</span><span
+            class="method-args">(newRoute, clearP = false)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>ルートへの挿入。</p>
+<dl class="rdoc-list note-list"><dt><em>newRoute</em> 
+<dd>
+<p>挿入する今後のルート。中継点のタグもしくはタグリスト。</p>
+</dd><dt><em>clearP</em> 
+<dd>
+<p>挿入前にクリアするかどうか。 true なら、setRoute のような動き。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="insertRoute-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">277</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">insertRoute</span>(<span class="ruby-identifier">newRoute</span>, <span class="ruby-identifier">clearP</span> = <span class="ruby-keyword">false</span>)
+<span class="line-num">278</span>   <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">clearPlannedRoute</span>() <span class="ruby-keyword">if</span>(<span class="ruby-identifier">clearP</span>) ;
+<span class="line-num">279</span> 
+<span class="line-num">280</span>   <span class="ruby-keyword">if</span>(<span class="ruby-identifier">newRoute</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)) <span class="ruby-keyword">then</span>
+<span class="line-num">281</span>     <span class="ruby-identifier">newRoute</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">subgoal</span><span class="ruby-operator">|</span>
+<span class="line-num">282</span>       <span class="ruby-identifier">insertRoute</span>(<span class="ruby-identifier">subgoal</span>, <span class="ruby-keyword">false</span>) ;
+<span class="line-num">283</span>     }
+<span class="line-num">284</span>   <span class="ruby-keyword">else</span>
+<span class="line-num">285</span>     <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">insertRouteTagSafelyForRuby</span>(<span class="ruby-identifier">newRoute</span>) ;
+<span class="line-num">286</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">287</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-intern" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">intern</span><span
+            class="method-args">(str)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>文字列の java 内でのintern.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="intern-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">507</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">intern</span>(<span class="ruby-identifier">str</span>)
+<span class="line-num">508</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">intern</span>(<span class="ruby-identifier">str</span>) ;
+<span class="line-num">509</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-listenAlert" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">listenAlert</span><span
+            class="method-args">(message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>アラートを聴いた時刻。 聴いていなければ、nilが返る。</p>
+<dl class="rdoc-list note-list"><dt><em>message</em> 
+<dd>
+<p>アラートメッセージ。文字列もしくは Itk.Term.</p>
+</dd></dl>
+
+<p><strong>return</strong> 時刻もしくは nil</p>
+          
+          
+
+          
+          <div class="method-source-code" id="listenAlert-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">372</span>   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">listenAlert</span>(<span class="ruby-identifier">message</span>)
+<span class="line-num">373</span> <span class="ruby-comment">#    return getAlertTable().get(ItkTerm.ensureTerm(message)) ;</span>
+<span class="line-num">374</span>     <span class="ruby-comment">## 高速化のためのショートカット</span>
+<span class="line-num">375</span>     <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">getAlertTimeForRuby</span>(<span class="ruby-identifier">message</span>) ;
+<span class="line-num">376</span>   <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-logWithLevel" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">logWithLevel</span><span
+            class="method-args">(level, label, *data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Itkのloggerによるログ出力. <a href="ItkUtility.html"><code>ItkUtility</code></a> のものを override.</p>
+<dl class="rdoc-list note-list"><dt><em>level</em> 
+<dd>
+<p>ログレベル。:trace, :debug, :info, :warn, :error, :fatal</p>
+</dd><dt><em>label</em> 
+<dd>
+<p>ログのラベル。nil なら、Agent ID などに置き換えられる。</p>
+</dd><dt>_*data_ 
+<dd>
+<p>データの並び。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="logWithLevel-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">518</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">logWithLevel</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>)
+<span class="line-num">519</span>   <span class="ruby-identifier">levelObj</span> = <span class="ruby-constant">ItkUtility</span><span class="ruby-operator">::</span><span class="ruby-constant">LogLevelTable</span>[<span class="ruby-identifier">level</span>] ;
+<span class="line-num">520</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">logAsRubyAgent</span>(<span class="ruby-identifier">levelObj</span>, <span class="ruby-identifier">label</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">data</span>) ;
+<span class="line-num">521</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-preUpdate" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">preUpdate</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレーション各サイクルの前半に呼ばれる。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="preUpdate-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">444</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preUpdate</span>()
+<span class="line-num">445</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">super_preUpdate</span>() ;
+<span class="line-num">446</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-removeAgentTag" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">removeAgentTag</span><span
+            class="method-args">(tag)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>エージェントのタグを削除</p>
+          
+          
+
+          
+          <div class="method-source-code" id="removeAgentTag-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">332</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">removeAgentTag</span>(<span class="ruby-identifier">tag</span>)
+<span class="line-num">333</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">removeTag</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">334</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-saveAlert" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">saveAlert</span><span
+            class="method-args">(message, redundant = false)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>アラートを記憶。</p>
+          
+          
+
+          
+          <div class="method-source-code" id="saveAlert-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">381</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">saveAlert</span>(<span class="ruby-identifier">message</span>, <span class="ruby-identifier">redundant</span> = <span class="ruby-keyword">false</span>)
+<span class="line-num">382</span>   <span class="ruby-identifier">messageTerm</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-identifier">message</span>);
+<span class="line-num">383</span>   <span class="ruby-identifier">pastTime</span> = <span class="ruby-identifier">getAlertTable</span>().<span class="ruby-identifier">get</span>(<span class="ruby-identifier">messageTerm</span>) ;
+<span class="line-num">384</span> 
+<span class="line-num">385</span>   <span class="ruby-keyword">if</span>(<span class="ruby-identifier">redundant</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">pastTime</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-keyword">then</span>
+<span class="line-num">386</span>     <span class="ruby-identifier">getAlertTable</span>().<span class="ruby-identifier">put</span>(<span class="ruby-identifier">messageTerm</span>, <span class="ruby-identifier">getCurrentTime</span>()) ;
+<span class="line-num">387</span>     <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> ;
+<span class="line-num">388</span>   <span class="ruby-keyword">else</span>
+<span class="line-num">389</span>     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> ;
+<span class="line-num">390</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">391</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-setEmptySpeed" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setEmptySpeed</span><span
+            class="method-args">(speed)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>自由速度を設定</p>
+<dl class="rdoc-list note-list"><dt><em>speed</em> 
+<dd>
+<p>新しい自由速度。double に変換可能であること。</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="setEmptySpeed-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">224</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">setEmptySpeed</span>(<span class="ruby-identifier">speed</span>)
+<span class="line-num">225</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">setEmptySpeed</span>(<span class="ruby-identifier">speed</span>.<span class="ruby-identifier">to_f</span>) ;
+<span class="line-num">226</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-setGoal" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setGoal</span><span
+            class="method-args">(goalTag)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>目的地設定</p>
+<dl class="rdoc-list note-list"><dt><em>goalTag</em> 
+<dd>
+<p>新しいゴールのタグ（String）</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="setGoal-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">250</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">setGoal</span>(<span class="ruby-identifier">goalTag</span>)
+<span class="line-num">251</span>   <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">changeGoal</span>(<span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-identifier">goalTag</span>)) ;
+<span class="line-num">252</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-setTurnAround" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setTurnAround</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>方向変換(turn around) 方向変換を予定する。 次の preUpdate() で反映される。 2回やっても、元には戻らない。（turn around がセットされるだけなので）</p>
+          
+          
+
+          
+          <div class="method-source-code" id="setTurnAround-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">302</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">setTurnAround</span>()
+<span class="line-num">303</span>   <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">setTurnAround</span>() ;
+<span class="line-num">304</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-thinkCycle" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">thinkCycle</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>思考ルーチン</p>
+          
+          
+
+          
+          <div class="method-source-code" id="thinkCycle-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">491</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">thinkCycle</span>()
+<span class="line-num">492</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">super_thinkCycle</span>() ;
+<span class="line-num">493</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>シミュレーション各サイクルの後半に呼ばれる。</p>
+<dl class="rdoc-list note-list"><dt><em>simTime</em>
+<dd>
+<p>相対シミュレーション時刻</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="update-source">
+            <pre>    <span class="ruby-comment"># File RubyAgentBase.rb</span>
+<span class="line-num">452</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>()
+<span class="line-num">453</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaAgent</span>.<span class="ruby-identifier">super_update</span>() ;
+<span class="line-num">454</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.1.2.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
