@@ -153,7 +153,10 @@ processResources {
 mainClassName = 'nodagumi.ananPJ.CrowdWalkLauncher'
 
 
-task javadoc(overwrite: true) {
+/* [2021.03.31 S.Takami] Gradle 6.xからoverwriteをサポートしなくなったため変更
+ * javadocをoverwriteしていたのをjavadocの依存にmyJavadocを指定しjavadocはスキップ
+ */
+task myJavadoc() {
     doLast {
         exec {
             executable "sh"
@@ -161,6 +164,12 @@ task javadoc(overwrite: true) {
         }
     }
 }
+
+tasks.javadoc.configure {
+  onlyIf {true}
+}
+
+tasks.javadoc.dependsOn tasks.myJavadoc
 
 task clearCache() {
     doFirst {
