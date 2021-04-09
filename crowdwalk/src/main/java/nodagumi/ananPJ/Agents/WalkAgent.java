@@ -439,6 +439,15 @@ public class WalkAgent extends AgentBase {
      * シミュレーション準備 (from Link)
      */
     public void prepareForSimulation_FromLink() {
+        // [2021.04.09 S.Takami] 一方通行のリンクに配置されている場合は，進行方向は固定．
+        if(currentPlace.getLink().isOneWayForward()) {
+            currentPlace.setEnteringNode(currentPlace.getFromNode());
+            return;
+        } else if(currentPlace.getLink().isOneWayBackward()) {
+            currentPlace.setEnteringNode(currentPlace.getToNode());
+            return;
+        }
+
         // 仮に、forwardDirection と仮定。
         MapNode fromNode = currentPlace.getFromNode();
         currentPlace.setEnteringNode(fromNode) ;
