@@ -644,7 +644,7 @@ public class NetworkMap extends DefaultTreeModel {
      * @return ルール集合を持っていれば true
      */
     public boolean hasMentalMapRules() {
-        return mentalMapRules != null;
+        return mentalMapRules != null && mentalMapRules.getArgSet() != null;
     }
 
     /**
