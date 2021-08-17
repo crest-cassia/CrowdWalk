@@ -17,5 +17,5 @@ JAVA='java'
 JAVAOPT="-Dfile.encoding=UTF-8 $JAVA_OPTS"
 JAR=$DIR/build/libs/crowdwalk.jar
 
-echo "$JAVA $JAVAOPT -jar $JAR $*"
-$JAVA $JAVAOPT -jar $JAR $*
+echo "$JAVA $JAVAOPT -Djdk.gtk.version=2 -jar $JAR $*"
+$JAVA $JAVAOPT -Djdk.gtk.version=2 -jar $JAR $*
