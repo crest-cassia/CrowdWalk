@@ -57,7 +57,8 @@ build : build_v
 
 ## quiet
 build_q :
-	( cd $(BASEDIR) ; gradle -q )
+	( cd $(BASEDIR) ; ./gradlew -q )
+#	( cd $(BASEDIR) ; gradle -q )
 
 ## off-line (do not check java lib version via internet)
 build_ol :
