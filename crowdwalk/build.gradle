@@ -5,11 +5,19 @@
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'application'
+    id "com.google.osdetector" version "1.7.0"
+    /* JavaFXのプラグインはここでは適用せず，後の分岐で適用する */
+    id 'org.openjfx.javafxplugin' version '0.0.10' apply false
+}
+
+apply plugin: 'com.google.osdetector'
+
 // defaultTasks 'clean', 'build', 'javadoc'
 defaultTasks 'clean', 'build'
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
 
 // [2016.04.08 I.Noda]
 // コンパイル時に VM のバージョンを指定してみる。
@@ -39,17 +47,13 @@ if (onlyCuiSimulator) {
     println "build mode: onlyCuiSimulator"
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
+if (! onlyCuiSimulator && javaVersion >= 11.0) {
+    apply plugin: 'org.openjfx.javafxplugin'
+    javafx {
+         version = "17"
+         modules = ['javafx.controls', 'javafx.swing', 'javafx.web', 'javafx.media']
     }
 }
-
-apply plugin: 'application'
-apply plugin: 'com.google.osdetector'
 
 ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 println "Platform: $platform"
@@ -89,6 +93,8 @@ dependencies {
     implementation 'de.topobyte:osm4j-utils:0.1.2'
     implementation 'de.topobyte:osm4j-xml:0.1.2'
 
+    /* [20211116 S.Takami] JavaFXのプラグインに任せるように変更した
+
     if (! onlyCuiSimulator && javaVersion >= 11.0) {
         implementation "org.openjfx:javafx-base:11:$platform"
         implementation "org.openjfx:javafx-graphics:11:$platform"
@@ -97,6 +103,7 @@ dependencies {
         implementation "org.openjfx:javafx-web:11:$platform"
         implementation "org.openjfx:javafx-media:11:$platform"
     }
+    */
 }
 
 sourceSets {
@@ -123,6 +130,8 @@ def defaultEncoding = 'UTF-8'
 compileJava {
     options.encoding = defaultEncoding
 //    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose']
+    /* [20211116 S.Takami] JavaFXのプラグインに任せるように変更した
+
     if (! onlyCuiSimulator && javaVersion >= 11.0) {
         options.compilerArgs.addAll([
             '-Xdiags:verbose',
@@ -135,6 +144,8 @@ compileJava {
     } else {
         options.compilerArgs.addAll(['-Xdiags:verbose'])
     }
+    */
+    options.compilerArgs.addAll(['-Xdiags:verbose'])
 }
 
 processResources {
@@ -215,7 +226,7 @@ jar {
     //}
     dependsOn copyRubyLib
 
-    /* [20211116 S.Takami] 
+    /* [20211116 S.Takami] 衝突時の挙動を指定
      */
     duplicatesStrategy= DuplicatesStrategy.INCLUDE
     
