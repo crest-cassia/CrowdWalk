@@ -231,7 +231,9 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         System.gc();
 
         // スクリーンショットディレクトリのクリア
-        if (recordSimulationScreen && clearScreenshotDir) {
+        // recordSimulationScreen があるとおかしい。
+        //        if (recordSimulationScreen && clearScreenshotDir) {
+        if (clearScreenshotDir) {
             File dir = new File(screenshotDir);
             if (dir.isDirectory()) {
                 for (String filename : dir.list(imageFileFilter)) {

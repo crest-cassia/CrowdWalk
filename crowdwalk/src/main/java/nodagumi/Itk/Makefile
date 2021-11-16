@@ -30,6 +30,9 @@ JUNITCLASS = org.junit.runner.JUnitCore # for JUnit v.4
 #JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar
 JUNITCLASSPATH = $(CLASSPATH):/usr/share/java/junit4.jar:$(CWJAR)
 
+## [2021.11.16 I.Noda] to use java-11 when build.
+JAVA_HOME_FOR_GRADLEW = /usr/lib/jvm/java-11-openjdk-amd64
+
 ##------------------------------------------------------------
 doc :: rdoc
 	rm -f $(BASEDIR)/doc/javadoc/nodagumi/ananPJ/package-summary.html
@@ -51,13 +54,15 @@ rdoc ::
 	(cd $(RUBYDIR) ; rdoc --all --main docRubyForCrowdWalk.rb --hyperlink-all --force-update --line-numbers --output $(RUBYDOCABS) *.rb) 
 
 clean ::
-	( cd $(BASEDIR) ; gradle clean )
+	( cd $(BASEDIR) ; JAVA_HOME=$(JAVA_HOME_FOR_GRADLEW) ./gradlew clean )
+#	( cd $(BASEDIR) ; gradle clean )
 
 build : build_v
 
 ## quiet
 build_q :
-	( cd $(BASEDIR) ; ./gradlew -q )
+	( cd $(BASEDIR) ; JAVA_HOME=$(JAVA_HOME_FOR_GRADLEW) ./gradlew -q )
+#	( cd $(BASEDIR) ; ./gradlew -q )
 #	( cd $(BASEDIR) ; gradle -q )
 
 ## off-line (do not check java lib version via internet)
