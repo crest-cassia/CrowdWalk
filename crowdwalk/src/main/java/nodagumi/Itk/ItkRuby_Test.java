@@ -108,7 +108,7 @@ public class ItkRuby_Test {
         // put, get, callMethod
         Object foo = container.runScriptlet("Foo.new()") ;
         Itk.dbgVal("foo", foo) ;
-        Itk.dbgVal("put_bar", container.put(foo,"@bar", new Integer(100)));
+        Itk.dbgVal("put_bar", container.put(foo, "@bar", Integer.valueOf(100)));
         Itk.dbgVal("bar", container.get(foo,"@bar")) ;
         Itk.dbgVal("baz", container.callMethod(foo,"baz")) ;
 
@@ -122,7 +122,7 @@ public class ItkRuby_Test {
         // get class
         Object fooClass = container.runScriptlet("Foo") ;
         Object foo2 = container.callMethod(fooClass, "new") ;
-        container.put(foo2,"@bar",new Integer(10)) ;
+        container.put(foo2,"@bar", Integer.valueOf(10)) ;
         Itk.dbgVal("foo2.baz", container.callMethod(foo2,"baz")) ;
     }
 

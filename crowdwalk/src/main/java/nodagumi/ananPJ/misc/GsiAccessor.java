@@ -148,7 +148,7 @@ public class GsiAccessor {
             Itk.logInfo("Read elevation file", filePath);
             HashMap<String, Object> json = JSON.decode(new FileInputStream(filePath));
             elevation = json.get("elevation").toString();
-            return new Double(elevation).doubleValue();
+            return Double.valueOf(elevation).doubleValue();
         } catch (Exception e) {
             Itk.logError(e.getMessage(), elevation);
         }

@@ -335,7 +335,7 @@ public class MapEditor {
             HashSet<Integer> zones = new HashSet();
             for (MapPartGroup group : networkMap.getGroups()) {
                 if (group.getZone() != 0) {
-                    zones.add(new Integer(group.getZone()));
+                    zones.add(Integer.valueOf(group.getZone()));
                 }
             }
             switch (zones.size()) {

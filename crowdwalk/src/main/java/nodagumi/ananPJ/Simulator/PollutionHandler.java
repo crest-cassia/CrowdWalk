@@ -161,7 +161,7 @@ public class PollutionHandler {
                         instant.setValue(index-1, value) ;
                         // 新しいタグ生成が必要ならば、それをチェック。
                         if((index-1) >= tagList.size()) {
-                            String tag = (new Integer(index)).toString() ;
+                            String tag = (Integer.valueOf(index)).toString() ;
                             addTag(Itk.intern(tag)) ;
                         }
                         // pollution の最大値を求める

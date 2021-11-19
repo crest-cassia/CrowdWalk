@@ -84,6 +84,18 @@ public class EvacuationSimulator {
      * start/pause の排他制御用。
      * synchronize で使うもの。
      */
+    private Object simulationPauseLocker = new Object();
+
+    /* [2021.11.19 S.Takami]
+     * Boolean(value-based class)では
+     * Synchronizeは正常に動作しないためロック用Objectを追加．
+     * stop_simulationにはシミュレーション停止中のステートを入れていて，
+     * 参照はされていないが，使用する可能性が捨てきれないため残した．
+     */
+
+    /**
+     * start/pause のステート
+     */
     Boolean stop_simulation = false;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -832,7 +844,7 @@ public class EvacuationSimulator {
      * 経路探索再計算。
      */
     public void recalculatePaths() {
-        synchronized (stop_simulation) {
+        synchronized (simulationPauseLocker) {
             stop_simulation = true;
             buildRoutes();
             stop_simulation = false;
@@ -1089,7 +1101,7 @@ public class EvacuationSimulator {
      * 汎用 updateEveryTick() ;
      */
     public boolean updateEveryTick() {
-        synchronized (stop_simulation) {
+        synchronized (simulationPauseLocker) {
             deferSimulation() ;
 
             // irb とのやり取り。

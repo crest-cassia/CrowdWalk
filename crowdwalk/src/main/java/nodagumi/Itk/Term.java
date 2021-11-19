@@ -131,7 +131,7 @@ public class Term {
      * うまく行かない場合があるので、タイプにより分類。
      */
     public Term(int _head) {
-        setHead(new Integer(_head), false) ;
+        setHead(Integer.valueOf(_head), false) ;
     } ;
 
     //------------------------------------------------------------
@@ -140,7 +140,7 @@ public class Term {
      * うまく行かない場合があるので、タイプにより分類。
      */
     public Term(double _head) {
-        setHead(new Double(_head), false) ;
+        setHead(Double.valueOf(_head), false) ;
     } ;
 
     //------------------------------------------------------------
@@ -149,7 +149,7 @@ public class Term {
      * うまく行かない場合があるので、タイプにより分類。
      */
     public Term(boolean _head) {
-        setHead(new Boolean(_head), false) ;
+        setHead(Boolean.valueOf(_head), false) ;
     } ;
 
     //------------------------------------------------------------

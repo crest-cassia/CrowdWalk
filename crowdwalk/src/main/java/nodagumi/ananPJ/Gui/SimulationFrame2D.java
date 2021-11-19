@@ -343,12 +343,12 @@ public class SimulationFrame2D extends JFrame
 
         public Map<String, Object> getMapObject() {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("time", new Double(time));
-            map.put("zoom", new Double(zoom));
-            map.put("angle", new Double(angle));
-            map.put("agentSize", new Double(agentSize));
-            map.put("x", new Double(position.getX()));
-            map.put("y", new Double(position.getY()));
+            map.put("time", Double.valueOf(time));
+            map.put("zoom", Double.valueOf(zoom));
+            map.put("angle", Double.valueOf(angle));
+            map.put("agentSize", Double.valueOf(agentSize));
+            map.put("x", Double.valueOf(position.getX()));
+            map.put("y", Double.valueOf(position.getY()));
             return map;
         }
 

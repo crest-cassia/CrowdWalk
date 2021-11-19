@@ -173,7 +173,7 @@ public class OsmReader extends JsonicHashMapGetter {
         return new DefaultOsmHandler() {
             @Override
             public void handle(OsmNode node) throws IOException {
-                osmNodes.put(new Long(node.getId()), node);
+                osmNodes.put(Long.valueOf(node.getId()), node);
             }
 
             @Override
@@ -185,14 +185,14 @@ public class OsmReader extends JsonicHashMapGetter {
                             String value = tag.getValue();
                             for (String acceptedHighway : validHighways) {
                                 if (value.equals(acceptedHighway)) {
-                                    osmWays.put(new Long(way.getId()), way);
+                                    osmWays.put(Long.valueOf(way.getId()), way);
                                     return;
                                 }
                             }
                         }
                     }
                 } else {
-                    osmWays.put(new Long(way.getId()), way);
+                    osmWays.put(Long.valueOf(way.getId()), way);
                 }
             }
 
@@ -238,7 +238,7 @@ public class OsmReader extends JsonicHashMapGetter {
 
             MapNode lastNode = null;
             for (int index = 0; index < way.getNumberOfNodes(); index++) {
-                Long id = new Long(way.getNodeId(index));
+                Long id = Long.valueOf(way.getNodeId(index));
                 String nodeId = "osmn_" + id;
                 MapNode node = (MapNode)networkMap.getObject(nodeId);
                 // TODO: 既存の MapNode とOSMノードの内容を比較して、更新もしくはエラーで中断する

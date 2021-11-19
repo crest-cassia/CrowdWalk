@@ -422,7 +422,7 @@ public class AgentHandler {
             .addMember(formatter.new Member("generatedRelTime") {
                     public Object value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
-                        return new Integer((int)agent.generatedTime
+                        return Integer.valueOf((int)agent.generatedTime
                                            .getRelativeTime()) ; }})
             .addMember(formatter.new Member("evacuatedAbsTime") {
                     public Object value(AgentBase agent, Object timeObj,
@@ -433,14 +433,13 @@ public class AgentHandler {
                     public Object value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         SimTime currentTime = (SimTime)timeObj ;
-                        return new Integer((int)currentTime
+                        return Integer.valueOf((int)currentTime
                                            .getRelativeTime()) ; }})
             .addMember(formatter.new Member("travelTime") {
                     public Object value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         SimTime currentTime = (SimTime)timeObj ;
-                        return new
-                            Integer((int)currentTime
+                        return Integer.valueOf((int)currentTime
                                     .calcDifferenceFrom(agent
                                                         .generatedTime)) ;}})
             .addMember(formatter.new Member("tags"){
@@ -517,13 +516,13 @@ public class AgentHandler {
             .registerMember(formatter.new Member("speed") {
                     public Object value(AgentBase agent, Object timeObj,
                                         Object placeObj, Object nextLinkObj) {
-                        return new Double(agent.getSpeed()) ;
+                        return Double.valueOf(agent.getSpeed()) ;
                     }})
             .registerMember(formatter.new Member("advancingDist") {
                     public Object value(AgentBase agent, Object timeObj,
                                         Object placeObj, Object nextLinkObj) {
                         Place place = (Place)placeObj ;
-                        return new Double(place.getAdvancingDistance()) ;
+                        return Double.valueOf(place.getAdvancingDistance()) ;
                     }})
             ;
     }

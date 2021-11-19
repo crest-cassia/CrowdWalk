@@ -123,7 +123,7 @@ public class Trail {
 	public Object getJsonObject() {
 	    ArrayList<Object> jsonObject = new ArrayList<Object>(2) ;
 	    
-	    jsonObject.add(new Integer((int)timestamp.getRelativeTime())) ;
+	    jsonObject.add(Integer.valueOf((int)timestamp.getRelativeTime())) ;
 	    jsonObject.add(content.getJsonObject()) ;
 	    
 	    return jsonObject ;

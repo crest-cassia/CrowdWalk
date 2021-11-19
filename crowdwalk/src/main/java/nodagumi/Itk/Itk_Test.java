@@ -235,9 +235,9 @@ public class Itk_Test {
     //@Test
     public void test_permitNullAsString(){
         HashMap<String, Object> map = new HashMap<String, Object>() ;
-        map.put("hoge",new Integer(2)) ;
+        map.put("hoge", Integer.valueOf(2)) ;
         Itk.dbgVal("map.get('hoge')",map.get("hoge")) ;
-        map.put(null, new Integer(3)) ;
+        map.put(null, Integer.valueOf(3)) ;
         Itk.dbgVal("map.get(null)",map.get(null)) ;
         map.put("foo", null) ;
         Itk.dbgVal("map.get('foo')",map.get("foo")) ;

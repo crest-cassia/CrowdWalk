@@ -1374,17 +1374,17 @@ public class SimulationFrame3D extends Stage implements Observer {
 
         public Map<String, Object> getMapObject() {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("time", new Double(time));
-            map.put("agentSize", new Double(agentSize));
-            map.put("translateX", new Double(translate.getX()));
-            map.put("translateY", new Double(translate.getY()));
-            map.put("translateZ", new Double(translate.getZ()));
-            map.put("pivotX", new Double(pivot.getX()));
-            map.put("pivotY", new Double(pivot.getY()));
-            map.put("pivotZ", new Double(pivot.getZ()));
-            map.put("rotateX", new Double(rotateX));
-            map.put("rotateZ", new Double(rotateZ));
-            map.put("zoom", new Double(zoom));
+            map.put("time", Double.valueOf(time));
+            map.put("agentSize", Double.valueOf(agentSize));
+            map.put("translateX", Double.valueOf(translate.getX()));
+            map.put("translateY", Double.valueOf(translate.getY()));
+            map.put("translateZ", Double.valueOf(translate.getZ()));
+            map.put("pivotX", Double.valueOf(pivot.getX()));
+            map.put("pivotY", Double.valueOf(pivot.getY()));
+            map.put("pivotZ", Double.valueOf(pivot.getZ()));
+            map.put("rotateX", Double.valueOf(rotateX));
+            map.put("rotateZ", Double.valueOf(rotateZ));
+            map.put("zoom", Double.valueOf(zoom));
             return map;
         }
 

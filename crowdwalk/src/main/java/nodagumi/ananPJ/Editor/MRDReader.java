@@ -75,7 +75,7 @@ public class MRDReader {
                     int cumulativeDigits = formatMap.getIntParameter("累積桁数", 0);
                     fieldFormats.put(name, new MrdFieldFormat(name, type, digits, cumulativeDigits - digits));
                 }
-                recordFormats.put(new Integer(recordID), fieldFormats);
+                recordFormats.put(Integer.valueOf(recordID), fieldFormats);
             } catch (Exception ex) {
                 throw new IOException(ex.getMessage());
             }
@@ -113,7 +113,7 @@ public class MRDReader {
     }
 
     public Integer getInteger(String name) throws IOException {
-        return new Integer(getInt(name));
+        return Integer.valueOf(getInt(name));
     }
 
     public String getString(String recordBuffer, String name) throws IOException {
@@ -154,7 +154,7 @@ public class MRDReader {
     }
 
     public HashMap<String, MrdFieldFormat> getRecordFormat(String recordBuffer) throws IOException {
-        Integer recordID = new Integer(recordBuffer.substring(0, 2));
+        Integer recordID = Integer.valueOf(recordBuffer.substring(0, 2));
         HashMap<String, MrdFieldFormat> recordFormat = recordFormats.get(recordID);
         if (recordFormat == null) {
             throw new IOException("Invalid ID record: " + recordBuffer);

@@ -83,7 +83,7 @@ public class Coastline extends JsonicHashMapGetter {
                 return 0.0;
             }
             Point2D point = get(0);
-            return new Double(entranceSide % 2 == 0 ? point.getX() : point.getY());
+            return Double.valueOf(entranceSide % 2 == 0 ? point.getX() : point.getY());
         }
 
         /**
@@ -94,7 +94,7 @@ public class Coastline extends JsonicHashMapGetter {
                 return 0.0;
             }
             Point2D point = get(size() - 1);
-            return new Double(exitSide % 2 == 0 ? point.getX() : point.getY());
+            return Double.valueOf(exitSide % 2 == 0 ? point.getX() : point.getY());
         }
     }
 

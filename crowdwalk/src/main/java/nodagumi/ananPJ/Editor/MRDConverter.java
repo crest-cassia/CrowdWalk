@@ -530,7 +530,7 @@ public class MRDConverter {
                     throw new Exception("Incorrect number of connected links: " + node.toShortInfo());
                 }
                 removeProperty(editor, node, "接続リンク本数");
-                properties.put("接続リンク本数", new Integer(2));
+                properties.put("接続リンク本数", Integer.valueOf(2));
 
                 // 既存ノードに登録されている属性情報を取得後に削除する
                 String linkIdOfExistingNode = null;
