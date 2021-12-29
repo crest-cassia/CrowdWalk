@@ -114,6 +114,10 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
             SetupFileInfo.fetchFallbackTerm(fallbackParameters,
                                             "emptySpeedRestrictRule",
                                             Term.newArrayTerm()) ;
+        laneShareDefuser =
+            SetupFileInfo.fetchFallbackDouble(fallbackParameters,
+                                            "laneShareDefuser",
+                                            1.0) ;
     } ;
 
     //============================================================
@@ -166,6 +170,16 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * </pre>
      */
     public static Term emptySpeedRestrictRule = null ;
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 対交流とのレーンの共有度(エージェントの認識可能最大数)を決める変数
+     * 最大数は(レーン内のエージェント数)の(入力した値の逆数)乗となる．
+     * fallback の "link"/"laneShareDefuser" に記述する。
+     * Double 型 で格納される。
+     */
+    public static Double laneShareDefuser = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -514,18 +528,26 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     //------------------------------------------------------------
     /**
      * リンクのレーンの幅。
-     * レーンの幅は、forward/backward のレーンに存在するエージェント数に
+     * レーンの幅は、forward/backward のレーンに存在し，
+     * 視野(認識可能最大数)に入っているエージェント数に
      * 比例して、元の width から割り振られる。
-     * 1 以下にはしない。
+     * この際，視野はfallbackのlink/laneShareDefuserにより調節される．
+     * laneShareDefuserを1.0にした場合，レーン上すべてが視野に入る．
+     * 算出される幅は，1 以下にはしない。
      */
     public int getLaneWidth(Direction dir) {
-        int d = getLane(dir).size() ;
-        int lane_width = (int)(d * (width / dWidth) / (forwardLane.size() +
-                    backwardLane.size()));
-        if (lane_width == 0) {
-            lane_width = 1;
+        int maxSightSize
+          = (int)Math.pow(forwardLane.size() + backwardLane.size(),
+              1.0 / laneShareDefuser);
+        int d = Math.min(getLane(dir).size(), maxSightSize);
+        int forward = Math.min(forwardLane.size(), maxSightSize);
+        int backward = Math.min(backwardLane.size(), maxSightSize);
+        int laneWidth = (int)(d * (width / dWidth) / (forward + backward));
+
+        if (laneWidth == 0) {
+            laneWidth = 1;
         }
-        return lane_width ;
+        return laneWidth;
     }
 
     //------------------------------------------------------------
