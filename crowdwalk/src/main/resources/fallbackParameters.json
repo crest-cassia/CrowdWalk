@@ -62,7 +62,7 @@
             { "type" : "multiply",
               "tag" : "STAIR",
               "factor" : 0.6 } ],
-        "laneShareDefuser", 1.0,
+        "laneShareDefuser": 1.0,
         "_" : null
     },
     "node" : {
