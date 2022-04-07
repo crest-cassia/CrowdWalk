@@ -114,9 +114,9 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
             SetupFileInfo.fetchFallbackTerm(fallbackParameters,
                                             "emptySpeedRestrictRule",
                                             Term.newArrayTerm()) ;
-        laneShareDefuser =
+        laneShareDiffuser =
             SetupFileInfo.fetchFallbackDouble(fallbackParameters,
-                                            "laneShareDefuser",
+                                            "laneShareDiffuser",
                                             1.0) ;
     } ;
 
@@ -176,10 +176,10 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
     /**
      * 対交流とのレーンの共有度(エージェントの認識可能最大数)を決める変数
      * 最大数は(レーン内のエージェント数)の(入力した値の逆数)乗となる．
-     * fallback の "link"/"laneShareDefuser" に記述する。
+     * fallback の "link"/"laneShareDiffuser" に記述する。
      * Double 型 で格納される。
      */
-    public static Double laneShareDefuser = null ;
+    public static Double laneShareDiffuser = null ;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -531,14 +531,14 @@ public class MapLink extends OBMapPart implements Comparable<MapLink> {
      * レーンの幅は、forward/backward のレーンに存在し，
      * 視野(認識可能最大数)に入っているエージェント数に
      * 比例して、元の width から割り振られる。
-     * この際，視野はfallbackのlink/laneShareDefuserにより調節される．
-     * laneShareDefuserを1.0にした場合，レーン上すべてが視野に入る．
+     * この際，視野はfallbackのlink/laneShareDiffuserにより調節される．
+     * laneShareDiffuserを1.0にした場合，レーン上すべてが視野に入る．
      * 算出される幅は，1 以下にはしない。
      */
     public int getLaneWidth(Direction dir) {
         int maxSightSize
           = (int)Math.pow(forwardLane.size() + backwardLane.size(),
-              1.0 / laneShareDefuser);
+              1.0 / laneShareDiffuser);
         int d = Math.min(getLane(dir).size(), maxSightSize);
         int forward = Math.min(forwardLane.size(), maxSightSize);
         int backward = Math.min(backwardLane.size(), maxSightSize);
