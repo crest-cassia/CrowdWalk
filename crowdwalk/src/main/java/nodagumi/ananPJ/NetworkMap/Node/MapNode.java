@@ -336,10 +336,14 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         if(hasTag(goalTag)) {// 自分自身がターゲットの場合
             return 0.0 ;
         } else {
-            NavigationHint hint = getHint(mentalMode, goalTag, true);
+            // Hint なしでエラーにならないように。[2022.0809 by I.Noda]
+            // NavigationHint hint = getHint(mentalMode, goalTag, true);
+            NavigationHint hint = getHint(mentalMode, goalTag, false);
             if (hint == null) { // おそらくここには来ないはず。getHintでエラー。
                 Itk.logWarn("Target Not Found", "target:", goalTag) ;
-                throw new TargetNotFoundException(goalTag + " not found for id=" + ID + "(" + getTagString() + ")");
+                // Hint なしでエラーにならないように。[2022.0809 by I.Noda]
+                // throw new TargetNotFoundException(goalTag + " not found for id=" + ID + "(" + getTagString() + ")");
+                return Double.MAX_VALUE ;
             } else {
                 return hint.distance;
             }
