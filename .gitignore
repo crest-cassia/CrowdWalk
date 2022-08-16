@@ -9,6 +9,9 @@ Thumbs.db
 .gradle/
 build/
 
+# intellij idea
+.idea/
+
 # ctags
 .tags
 

@@ -493,6 +493,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             autoSimulationStart = properties.getBoolean("auto_simulation_start", autoSimulationStart);
             exitWithSimulationFinished = properties.getBoolean("exit_with_simulation_finished",
                     exitWithSimulationFinished);
+            simulationPanelWidth = properties.getInteger("simulation_panel_width", simulationPanelWidth);
+            simulationPanelHeight = properties.getInteger("simulation_panel_height", simulationPanelHeight);
         } catch(Exception e) {
             Itk.logFatal("Property file error", e.getMessage()) ;
             Itk.quitByError() ;
