@@ -394,6 +394,11 @@ SAMPLE_G4 = sample/generatedTown/gridTown04.prop.json   # directed restricted sp
 runG4 ::
 	(cd $(BASEDIR) ; cd `dirname $(SAMPLE_G4)` ; time -p bash ../../quickstart.sh --log-level Info `basename $(SAMPLE_G4)`)
 
+##-----
+SAMPLE_G5 = sample/generatedTown/gridTown05.prop.json   # ruby color model
+runG5 ::
+	(cd $(BASEDIR) ; cd `dirname $(SAMPLE_G5)` ; time -p bash ../../quickstart.sh --log-level Info `basename $(SAMPLE_G5)`)
+
 
 
 ##------------------------------------------------------------

@@ -40,4 +40,19 @@ public abstract class ColorModel extends AgentAppearanceModel {
     public int getRed() {
         return (rgb >> 16) & 0xFF;
     }
+
+    /**
+     * 表示色の赤成分(0～255)を返す
+     */
+    public int setPackedRGBValue(int r, int g, int b) {
+	// check range of RGB
+	if(r < 0) { r = 0 ; } ; if(r > 255) { r = 255 ; } ;
+	if(g < 0) { g = 0 ; } ; if(g > 255) { g = 255 ; } ;
+	if(b < 0) { b = 0 ; } ; if(b > 255) { b = 255 ; } ;
+	
+	rgb = (r << 16) + (g << 8) + b ;
+
+        return rgb ;
+    }
+    
 }

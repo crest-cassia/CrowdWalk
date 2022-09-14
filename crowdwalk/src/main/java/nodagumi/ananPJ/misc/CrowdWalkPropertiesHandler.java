@@ -1339,7 +1339,9 @@ public class CrowdWalkPropertiesHandler {
                                          ArrayList<String> defaultValue,
                                          String separator) {
         Term valueTerm = prop.getArgTerm(key) ;
-        if(Term.isNullTerm(valueTerm)) { return defaultValue ; }
+        if(valueTerm == null || Term.isNullTerm(valueTerm)) {
+            return defaultValue ;
+        }
 
         ArrayList<String> pathList = new ArrayList<String>();
         if(valueTerm.isArray()) {

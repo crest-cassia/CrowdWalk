@@ -1,0 +1,20 @@
+[
+    {
+        "tag" : "*",
+        "model" : {
+            "className" : "RubyColorModel",
+            "_className" : "SpeedModel",
+            "parameters" : {
+		"rubyColorClass": "SampleRubyColor"
+	    }
+        },
+        "2D_View" : {
+            "className" : "RoundAgent",
+            "parameters" : {}
+        },
+        "3D_View" : {
+            "className" : "SphereAgent",
+            "parameters" : {}
+        }
+    }
+]

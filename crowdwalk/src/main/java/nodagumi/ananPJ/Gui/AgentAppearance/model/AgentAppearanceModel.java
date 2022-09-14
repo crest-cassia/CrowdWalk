@@ -5,6 +5,8 @@ import java.util.HashMap;
 import nodagumi.ananPJ.Agents.AgentBase;
 import nodagumi.ananPJ.GuiSimulationLauncher;
 import nodagumi.ananPJ.misc.JsonicHashMapGetter;
+import nodagumi.ananPJ.Simulator.EvacuationSimulator;
+
 
 /**
  * エージェントの状態変化を表示に反映させる
@@ -37,4 +39,12 @@ public abstract class AgentAppearanceModel extends JsonicHashMapGetter {
      * appearance value を返す
      */
     public abstract Object getValue();
+
+    /**
+     * simulator object を返す。
+     */
+    public EvacuationSimulator getSimulator() {
+	return this.launcher.getSimulator() ;
+    }
+    
 }
