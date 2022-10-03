@@ -715,6 +715,13 @@ public class AgentFactoryList extends ArrayList<AgentFactory> {
     public boolean scanStartLinkTag(String start_link_tag,
                                     NetworkMap map,
                                     AgentFactoryConfig factoryConfig) {
+        // [2022.10.03 I.Noda]
+        // for ruby factory.
+        if(start_link_tag == null) {
+            Itk.logWarn("start_link_tag is null") ;
+            return false ;
+        }
+        
         Matcher tag_match = startpat.matcher(start_link_tag);
         if (tag_match.matches()) {
             start_link_tag = tag_match.group(1);

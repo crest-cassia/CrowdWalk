@@ -244,6 +244,11 @@ public abstract class AgentFactory {
     
     /** agent config */
     public Term getAgentConf() { return config.agentConf ; }
+    
+    public Term setAgentConf(Term newConf) {
+        config.agentConf = newConf ;
+        return config.agentConf ;
+    }
 
     //------------------------------------------------------------
     /**

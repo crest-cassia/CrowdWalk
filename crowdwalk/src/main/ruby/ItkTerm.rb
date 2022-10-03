@@ -116,6 +116,7 @@ class ItkTerm
         value.each{|slot,val|
           setArg(objectTerm,slot,ensureTerm(val)) ;
         }
+        return objectTerm ;
       else
         return newTerm(value) ;
       end

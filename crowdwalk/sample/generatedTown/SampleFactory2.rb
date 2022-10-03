@@ -14,7 +14,7 @@
 #--======================================================================
 #++
 ## AgentFactoryByRubyの制御インターフェース
-class SampleFactory < AgentFactoryBase
+class SampleFactory2 < AgentFactoryBase
   
   #--------------------------------------------------------------
   #++
@@ -43,7 +43,7 @@ class SampleFactory < AgentFactoryBase
   ## 
   def cycle()
     @currentTime = getCurrentTime() ;
-    pp [:diff, timeDiffInSec(@currentTime, @beginTime) ] ;
+#    pp [:diff, timeDiffInSec(@currentTime, @beginTime) ] ;
     disable() if(@c >= 10) ;
 
     finishAllP = true ;
@@ -54,7 +54,9 @@ class SampleFactory < AgentFactoryBase
 
     @agentList = [] ;
     @fromList.each{|origin|
-      agent = launchAgentWithRoute("RationalAgent", origin, @toTag, []) ;
+      agentConf = {"weight" => rand(100) } ;
+      agent = launchAgentWithRoute("RubyAgent", origin, @toTag, [],
+                                   agentConf) ;
       @agentList.push(agent) ;
     }
     @c += 1 ;
@@ -68,5 +70,5 @@ class SampleFactory < AgentFactoryBase
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   #--------------------------------------------------------------
 
-end # class SampleFactory
+end # class SampleFactory2
 

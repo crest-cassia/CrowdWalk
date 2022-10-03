@@ -239,21 +239,53 @@ public class AgentFactoryByRuby extends AgentFactory {
     
     //------------------------------------------------------------
     /**
-     * タグ名によるノード取得
+     * ルート付きでエージェント生成
      */
     public AgentBase launchAgentWithRoute(String agentClassName,
                                           OBNode _startPlace,
                                           Term goalTag,
                                           List<Term> route) {
+        return launchAgentWithRoute(agentClassName,
+                                    _startPlace,
+                                    goalTag,
+                                    route,
+                                    null) ;
+    }
+    
+    //------------------------------
+    /**
+     * ルート付きでエージェント生成
+     */
+    public AgentBase launchAgentWithRoute(String agentClassName,
+                                          OBNode _startPlace,
+                                          Term goalTag,
+                                          List<Term> route,
+                                          Term subAgentConfig) {
         startPlace = _startPlace ;
         setGoal(goalTag) ;
         setPlannedRoute(route) ;
 
         Term fallbackForAgent = getFallbackForAgent() ;
+
+        // set agentConf() for this agent.
+        Term agentConfBackup = getAgentConf() ;
+        if(subAgentConfig != null && subAgentConfig.isObject()) {
+            if(agentConfBackup == null) {
+                setAgentConf(subAgentConfig) ;
+            } else {
+                Term newAgentConf = new Term(agentConfBackup) ;
+                newAgentConf.updateObjectFacile(subAgentConfig, true) ;
+                setAgentConf(newAgentConf) ;
+            }
+        }
         
         AgentBase agent =
             launchAgent(agentClassName, simulator, currentTime,
                         agentList, fallbackForAgent) ;
+
+        // set back agentConf()
+        setAgentConf(agentConfBackup) ;
+        
         return agent ;
     }
         

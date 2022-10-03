@@ -315,6 +315,11 @@ run3gt02ds ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02ds))
 
 ##-----
+SAMPLE3gt02rr = sample/generatedTown/gridTown02rr.prop.json   # ruby factory/agent
+run3gt02rr ::
+	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt02rr))
+
+##-----
 SAMPLE3gt03 = sample/generatedTown/gridTown03.prop.json   # ruby gate
 run3gt03 ::
 	(cd $(BASEDIR) ; bash quickstart.sh $(SAMPLE3gt03))
