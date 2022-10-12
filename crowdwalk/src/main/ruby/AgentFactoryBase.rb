@@ -227,6 +227,22 @@ class AgentFactoryBase
   
   #--------------------------------------------------------------
   #++
+  ## simulator object (Java) を取得。
+  ## *return* :: simulator
+  def getSimulator()
+    return @javaFactory.getSimulator() ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
+  ## scenario object (Java) を取得。
+  ## *return* :: scenario
+  def getScenario()
+    return getSimulator().getScenario() ;
+  end
+  
+  #--------------------------------------------------------------
+  #++
   ## tag で指定されたリンクの取得。
   ## _tag_ :: tag を表す Term。 makeSymbolTerm() で作成されるべき。
   ## *return* :: リンクのリスト(MapLinkTable)
