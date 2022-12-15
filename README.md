@@ -3,6 +3,7 @@
 - As a Java application, it can be used on a variety of operating systems.
 - The source code of CrowdWalk is maintained on GitHub and is available for free to anyone under the MIT license.
 
+[link to doc](http://crest-cassia.github.io/CrowdWalk/)
 
 ## Features
 
