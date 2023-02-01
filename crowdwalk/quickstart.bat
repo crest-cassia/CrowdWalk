@@ -11,4 +11,4 @@ set JAVAOPT=-Dfile.encoding=UTF-8 %JAVA_OPTS%
 set JAR=%CROWDWALK%\build\libs\crowdwalk.jar
 
 echo %JAVA% %JAVAOPT% -jar %JAR% %*
-%JAVA% %JAVAOPT% -jar %JAR% %*
+"%JAVA%" %JAVAOPT% -jar "%JAR%" %*
