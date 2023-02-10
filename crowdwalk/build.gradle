@@ -151,8 +151,14 @@ compileJava {
 processResources {
     doFirst {
         // 最終コミットログの出力をバージョン情報としてリソースファイルにセットする
-        def gitBranch = "git symbolic-ref --short HEAD".execute().text.trim()
-        def gitLog = "git log -n 1".execute().text.trim()
+        def gitBranch = "#COULD NOT RUN GIT#"
+        def gitLog = "Please install git to get a version message."
+        try {
+            gitBranch = "git symbolic-ref --short HEAD".execute().text.trim()
+            gitLog = "git log -n 1".execute().text.trim()
+        } catch(Exception e) {
+            println "    Git is not found"
+        }
         def commit_version = "Branch: " + gitBranch + "\n" + gitLog
         filesMatching("commit_version.txt") {
             filter(ReplaceTokens, tokens: ['commit_version': commit_version])
