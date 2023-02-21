@@ -54,8 +54,6 @@ export JAVA_OPTS='-Dgroovy.source.encoding=UTF-8 -Dfile.encoding=UTF-8'
     - Compiles and executes CrowdWalk source code.
     - JDK 8 or higher is required. However, if the functionality is limited to the simulator in CUI mode, JDK 1.6 or higher will work.
     - For Windows PCs, Oracle's JDK 8 is especially recommended (free updates will be available until December 2020).
-- Gradle
-    - Builds the CrowdWalk source code.
 - Ruby
     - Required to run special tools. Not required for normal use.
 - Text Editor
@@ -88,7 +86,7 @@ cd ~/CrowdWalk/crowdwalk
 
 Execute the build command.
 ~~~
-gradle
+./gradlew
 ~~~~
 The first time you run the command, it will take a while because a large number of libraries will be downloaded.  
 When it finishes without any problems, the message BUILD SUCCESSFUL will be displayed.
