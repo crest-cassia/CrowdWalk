@@ -334,6 +334,14 @@ import nodagumi.Itk.*;
  *   </li>
  *
  *   <li>
+ *     <h4>view_synchronized</h4>
+ *     <pre> 描画とシミュレーションステップを同期させるかどうか。2Dでのみ有効。
+ *
+ *  設定値： true | false
+ *  デフォルト値： false</pre>
+ *   </li>
+ *
+ *   <li>
  *     <h4>create_log_dirs</h4>
  *     <pre> log および スクリーンショットの directory がないとき、自動生成するかどうか。
  *
