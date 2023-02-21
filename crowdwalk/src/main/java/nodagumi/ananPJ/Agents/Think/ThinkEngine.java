@@ -48,6 +48,9 @@ import nodagumi.Itk.Itk ;
  *       _headedTerm_ として扱い、そうでなければ、
  *       {"" : "proc", "body" : [_expr_, ...]} と同じ。
  * </ul>
+ * 具体的な記述例などは
+ * {@link nodagumi.ananPJ.Agents.Think Think パッケージ参照}。
+ *
  * <h3> 実処理用の _headedTerm_</h3>
  * <ul>
  *   <li>{@link ThinkFormula ThinkFormula: 式要素 トップ}</li>

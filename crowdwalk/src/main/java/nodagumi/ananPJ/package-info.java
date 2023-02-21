@@ -11,6 +11,8 @@
  *  <li> {@link nodagumi.ananPJ.Agents.Factory.AgentFactoryList エージェント生成ルール}</li>
  *  <li> {@link nodagumi.ananPJ.Agents.Factory.AgentFactory エージェント設定 config}</li>
  *  <li> {@link nodagumi.ananPJ.Agents.Think.ThinkEngine エージェント行動ルール}</li>
+ *  <li> {@link nodagumi.ananPJ.navigation.Formula.NaviFormula 主観的距離マップの距離計算記述}</li>
+ *  <li> {@link nodagumi.ananPJ.Agents.Think Rule Formula の解説}</li>
  *  <li> <a href="#fallback"> 各種設定とFallback</a></li>
  * </ul>
  * <h4><a name="fallback">各種設定とFallback</a></h4>

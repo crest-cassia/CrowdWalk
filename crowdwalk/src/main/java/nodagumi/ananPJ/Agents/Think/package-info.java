@@ -67,6 +67,8 @@
  *   利用できる関数の詳細は、以下のリンク参照。
  * <ul>
  *   <li>{@link nodagumi.ananPJ.Agents.Think.ThinkFormula ThinkFormula}</li>
+ *   <li>{@link nodagumi.ananPJ.Agents.Think.ThinkEngine ThinkEngine}:
+ *       形式上の定義などの説明。</li>
  * </ul>
  *
  * <h3>具体的な事例</h3>
