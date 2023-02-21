@@ -86,7 +86,7 @@ public class RubyGate extends GateBase {
     /**
      * コンストラクタ。
      * @param _tag:: gate tag.
-     * @param _eventDef:: event definition in Term.
+     * @param _event:: event definition in Term.
      * @param _closed:: initial state of closed value.
      */
     public RubyGate(String _tag, GateEvent _event, boolean _closed,
@@ -123,8 +123,8 @@ public class RubyGate extends GateBase {
     //------------------------------------------------------------
     /**
      * 閉じているかどうか？
-     * @param currnetTime : シミュレーション時刻
      * @param agent: 対象となるエージェント
+     * @param currentTime : シミュレーション時刻
      * @return このゲートが閉じているかどうか
      */
     public boolean isClosed(AgentBase agent, SimTime currentTime) {

@@ -36,7 +36,8 @@ JAVA_HOME_FOR_GRADLEW = /usr/lib/jvm/java-11-openjdk-amd64
 ##------------------------------------------------------------
 doc :: rdoc
 	rm -f $(BASEDIR)/doc/javadoc/nodagumi/ananPJ/package-summary.html
-	( cd $(BASEDIR) ; gradle --offline javadoc  )
+	( cd $(BASEDIR) ; ./make_javadoc.sh )
+#	( cd $(BASEDIR) ; gradle --offline javadoc  )
 
 doc-old ::
 	(cd ../.. ;\

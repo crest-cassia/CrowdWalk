@@ -1306,7 +1306,7 @@ public class AgentHandler {
     //------------------------------------------------------------
     /**
      * mid_goal を含まないすべてのゴールタグを集める。
-     * @return: ゴールタグのリスト。
+     * @return ゴールタグのリスト。
      */
     public ArrayList<String> getGoalTags() {
         ArrayList<String> goal_tags = new ArrayList<String>();

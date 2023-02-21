@@ -31,6 +31,8 @@ import nodagumi.Itk.* ;
  *  <li>{@link ThinkFormulaArithmetic#call Arithmetic: 数値処理など}</li>
  *  <li>{@link ThinkFormulaAgent#call Agent: エージェント制御関係}</li>
  *  <li>{@link ThinkFormulaMisc#call Misc: その他}</li>
+ *  <li>{@link nodagumi.ananPJ.navigation.Formula.NaviFormula Navi: メンタルマップ用 Formula}</li>
+
  * </ul>
  *
  * <h3>新しい Formula の作成方法 </h3>

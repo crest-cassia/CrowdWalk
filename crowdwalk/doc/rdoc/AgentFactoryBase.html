@@ -95,7 +95,11 @@
     
     <li ><a href="#method-i-getNodeTableByTag">#getNodeTableByTag</a>
     
+    <li ><a href="#method-i-getScenario">#getScenario</a>
+    
     <li ><a href="#method-i-getSimTime">#getSimTime</a>
+    
+    <li ><a href="#method-i-getSimulator">#getSimulator</a>
     
     <li ><a href="#method-i-getTags">#getTags</a>
     
@@ -128,75 +132,6 @@
 
   <section class="description">
     
-<p>CrowdWalk の AgentFactoryByRuby での Ruby 側の制御のインターフェース。</p>
-
-<p>エージェントを生成する AgentFactory の一種で、 生成するタイミング、場所、目的地や経路、タグ情報、エージェント数を Ruby script によって細かく設定できる。</p>
-
-<p>ユーザは、AgentFactoryByRuby を継承した Ruby のクラスを定義し、 そのクラス名を以下のように property 設定ファイル(“*.prop.json”) およびエージェント生成設定ファイル(“*.gen.json”)で指定しなければならない。</p>
-
-<p><strong>“*.prop.json”</strong></p>
-
-<pre>...
-&quot;ruby_init_script&quot;:[ ...
-   &quot;require &#39;./SampleFactory.rb&#39;&quot;,
-   ...],
-...</pre>
-
-<p><strong>“*.gen.json”</strong></p>
-
-<pre>...
-{ &quot;rule&quot;: &quot;RUBY&quot;,
-  &quot;ruleClass&quot;: &quot;SampleFactory&quot;,
-  &quot;config&quot;: { ... }
-},
-...</pre>
-
-<p>この例では、<code>SampleFactory</code> が、ユーザが定義したクラスであり、 “<code>SampleFactory.rb</code>” にそのプログラムが格納されているとしている。 また、生成ルールの中の<code>&quot;config&quot;</code> に与えられる値は、 <code>SampleFactory</code> の <a href="AgentFactoryBase.html#method-c-new"><code>new</code></a> の <em>config</em> 引数に渡される。</p>
-
-<p>以下は、<code>SampleFactory</code> の例である。</p>
-
-<p><strong>SampleFactory.rb</strong></p>
-
-<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;AgentFactoryBase.rb&#39;</span> ;
-
-<span class="ruby-keyword">class</span> <span class="ruby-constant">SampleFactory</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">AgentFactoryBase</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">config</span>, <span class="ruby-identifier">fallback</span>)
-    <span class="ruby-keyword">super</span>
-    <span class="ruby-ivar">@c</span> = <span class="ruby-value">0</span> ;
-    <span class="ruby-ivar">@time0</span> = <span class="ruby-identifier">getSimTime</span>(<span class="ruby-string">&quot;01:23:45&quot;</span>) ;
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initCycle</span>()
-    <span class="ruby-ivar">@beginTime</span> = <span class="ruby-identifier">getCurrentTime</span>() ;
-    <span class="ruby-ivar">@fromTag</span> = <span class="ruby-identifier">makeSymbolTerm</span>(<span class="ruby-string">&quot;major&quot;</span>) ;
-    <span class="ruby-ivar">@fromList</span> = <span class="ruby-identifier">getLinkTableByTag</span>(<span class="ruby-ivar">@fromTag</span>) ;
-    <span class="ruby-ivar">@toTag</span> = <span class="ruby-identifier">makeSymbolTerm</span>(<span class="ruby-string">&quot;node_09_06&quot;</span>) ;
-    <span class="ruby-ivar">@toList</span> = <span class="ruby-identifier">getNodeTableByTag</span>(<span class="ruby-ivar">@toTag</span>) ;
-    <span class="ruby-ivar">@agentList</span> = [] ;
-    <span class="ruby-ivar">@c</span> = <span class="ruby-value">0</span> ;
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cycle</span>()
-    <span class="ruby-ivar">@currentTime</span> = <span class="ruby-identifier">getCurrentTime</span>() ;
-    <span class="ruby-identifier">disable</span>() <span class="ruby-keyword">if</span>(<span class="ruby-ivar">@c</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">10</span>) ;
-
-    <span class="ruby-identifier">finishAllP</span> = <span class="ruby-keyword">true</span> ;
-    <span class="ruby-ivar">@agentList</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">agent</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">finishAllP</span> = <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span>(<span class="ruby-identifier">isAgentWalking</span>(<span class="ruby-identifier">agent</span>)) ;
-    }
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span>(<span class="ruby-operator">!</span><span class="ruby-identifier">finishAllP</span>) ;
-
-    <span class="ruby-ivar">@agentList</span> = [] ;
-    <span class="ruby-ivar">@fromList</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">origin</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">agent</span> = <span class="ruby-identifier">launchAgentWithRoute</span>(<span class="ruby-string">&quot;RationalAgent&quot;</span>, <span class="ruby-identifier">origin</span>, <span class="ruby-ivar">@toTag</span>, []) ;
-      <span class="ruby-ivar">@agentList</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">agent</span>) ;
-    }
-    <span class="ruby-ivar">@c</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> ;
-  <span class="ruby-keyword">end</span>
-
-<span class="ruby-keyword">end</span> <span class="ruby-comment"># class SampleWrapper</span>
-</pre>
-
   </section>
 
   
@@ -303,12 +238,12 @@
           
           <div class="method-source-code" id="new-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">108</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">config</span>, <span class="ruby-identifier">fallback</span>)
-<span class="line-num">109</span>   <span class="ruby-ivar">@javaFactory</span> = <span class="ruby-identifier">factory</span> ;
-<span class="line-num">110</span>   <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span> ;
-<span class="line-num">111</span>   <span class="ruby-ivar">@fallback</span> = <span class="ruby-identifier">fallback</span> ;
-<span class="line-num">112</span>   <span class="ruby-ivar">@isInitCycle</span> = <span class="ruby-keyword">true</span> ;
-<span class="line-num">113</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">110</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">config</span>, <span class="ruby-identifier">fallback</span>)
+<span class="line-num">111</span>   <span class="ruby-ivar">@javaFactory</span> = <span class="ruby-identifier">factory</span> ;
+<span class="line-num">112</span>   <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span> ;
+<span class="line-num">113</span>   <span class="ruby-ivar">@fallback</span> = <span class="ruby-identifier">fallback</span> ;
+<span class="line-num">114</span>   <span class="ruby-ivar">@isInitCycle</span> = <span class="ruby-keyword">true</span> ;
+<span class="line-num">115</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -347,9 +282,9 @@
           
           <div class="method-source-code" id="clonePlannedPath-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">135</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clonePlannedPath</span>()
-<span class="line-num">136</span>   <span class="ruby-comment">## return nil</span>
-<span class="line-num">137</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">137</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clonePlannedPath</span>()
+<span class="line-num">138</span>   <span class="ruby-comment">## return nil</span>
+<span class="line-num">139</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -380,9 +315,9 @@
           
           <div class="method-source-code" id="cycle-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">204</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cycle</span>()
-<span class="line-num">205</span>   <span class="ruby-comment">##do nothing</span>
-<span class="line-num">206</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">206</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cycle</span>()
+<span class="line-num">207</span>   <span class="ruby-comment">##do nothing</span>
+<span class="line-num">208</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -413,9 +348,9 @@
           
           <div class="method-source-code" id="disable-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">195</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disable</span>()
-<span class="line-num">196</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">disable</span>()
-<span class="line-num">197</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">197</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disable</span>()
+<span class="line-num">198</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">disable</span>()
+<span class="line-num">199</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -446,9 +381,9 @@
           
           <div class="method-source-code" id="enable-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">188</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">enable</span>()
-<span class="line-num">189</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">enable</span>()
-<span class="line-num">190</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">190</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">enable</span>()
+<span class="line-num">191</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">enable</span>()
+<span class="line-num">192</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -479,9 +414,9 @@
           
           <div class="method-source-code" id="getAgentConfig-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">151</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAgentConfig</span>()
-<span class="line-num">152</span>   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> ;
-<span class="line-num">153</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">153</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getAgentConfig</span>()
+<span class="line-num">154</span>   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> ;
+<span class="line-num">155</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -516,9 +451,9 @@
           
           <div class="method-source-code" id="getCurrentTime-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">261</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getCurrentTime</span>()
-<span class="line-num">262</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getCurrentTime</span>() ;
-<span class="line-num">263</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">283</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getCurrentTime</span>()
+<span class="line-num">284</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getCurrentTime</span>() ;
+<span class="line-num">285</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -549,9 +484,9 @@
           
           <div class="method-source-code" id="getGoal-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">127</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getGoal</span>()
-<span class="line-num">128</span>   <span class="ruby-comment">## return nil</span>
-<span class="line-num">129</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">129</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getGoal</span>()
+<span class="line-num">130</span>   <span class="ruby-comment">## return nil</span>
+<span class="line-num">131</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -589,9 +524,9 @@
           
           <div class="method-source-code" id="getLinkTableByTag-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">231</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getLinkTableByTag</span>(<span class="ruby-identifier">tag</span>)
-<span class="line-num">232</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getLinkTableByTag</span>(<span class="ruby-identifier">tag</span>) ;
-<span class="line-num">233</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">249</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getLinkTableByTag</span>(<span class="ruby-identifier">tag</span>)
+<span class="line-num">250</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getLinkTableByTag</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">251</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -629,8 +564,45 @@
           
           <div class="method-source-code" id="getNodeTableByTag-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">240</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getNodeTableByTag</span>(<span class="ruby-identifier">tag</span>)
-<span class="line-num">241</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getNodeTableByTag</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">258</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getNodeTableByTag</span>(<span class="ruby-identifier">tag</span>)
+<span class="line-num">259</span>   <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getNodeTableByTag</span>(<span class="ruby-identifier">tag</span>) ;
+<span class="line-num">260</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getScenario" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getScenario</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>scenario object (Java) を取得。</p>
+<dl class="rdoc-list note-list"><dt><strong>return</strong> 
+<dd>
+<p>scenario</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="getScenario-source">
+            <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
+<span class="line-num">240</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getScenario</span>()
+<span class="line-num">241</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">getSimulator</span>().<span class="ruby-identifier">getScenario</span>() ;
 <span class="line-num">242</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -669,9 +641,46 @@
           
           <div class="method-source-code" id="getSimTime-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">222</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimTime</span>(<span class="ruby-identifier">timeStr</span>)
-<span class="line-num">223</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getSimTime</span>(<span class="ruby-identifier">timeStr</span>) ;
-<span class="line-num">224</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">224</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimTime</span>(<span class="ruby-identifier">timeStr</span>)
+<span class="line-num">225</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getSimTime</span>(<span class="ruby-identifier">timeStr</span>) ;
+<span class="line-num">226</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-getSimulator" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">getSimulator</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>simulator object (Java) を取得。</p>
+<dl class="rdoc-list note-list"><dt><strong>return</strong> 
+<dd>
+<p>simulator</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="getSimulator-source">
+            <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
+<span class="line-num">232</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getSimulator</span>()
+<span class="line-num">233</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">getSimulator</span>() ;
+<span class="line-num">234</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -702,9 +711,9 @@
           
           <div class="method-source-code" id="getTags-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">143</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getTags</span>()
-<span class="line-num">144</span>   <span class="ruby-comment">##return nil</span>
-<span class="line-num">145</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">145</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">getTags</span>()
+<span class="line-num">146</span>   <span class="ruby-comment">##return nil</span>
+<span class="line-num">147</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -735,9 +744,9 @@
           
           <div class="method-source-code" id="initCycle-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">181</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initCycle</span>()
-<span class="line-num">182</span>   <span class="ruby-comment">## do nothing.</span>
-<span class="line-num">183</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">183</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initCycle</span>()
+<span class="line-num">184</span>   <span class="ruby-comment">## do nothing.</span>
+<span class="line-num">185</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -775,9 +784,9 @@
           
           <div class="method-source-code" id="isAgentWalking-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">281</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">isAgentWalking</span>(<span class="ruby-identifier">agent</span>)
-<span class="line-num">282</span>   <span class="ruby-keyword">return</span> <span class="ruby-operator">!</span><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">isEvacuated</span>() ;
-<span class="line-num">283</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">303</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">isAgentWalking</span>(<span class="ruby-identifier">agent</span>)
+<span class="line-num">304</span>   <span class="ruby-keyword">return</span> <span class="ruby-operator">!</span><span class="ruby-identifier">agent</span>.<span class="ruby-identifier">isEvacuated</span>() ;
+<span class="line-num">305</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -808,9 +817,9 @@
           
           <div class="method-source-code" id="isFinished-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">160</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">isFinished</span>()
-<span class="line-num">161</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">super_isFinished</span>() ;
-<span class="line-num">162</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">162</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">isFinished</span>()
+<span class="line-num">163</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">super_isFinished</span>() ;
+<span class="line-num">164</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -825,7 +834,7 @@
         
         <div class="method-heading">
           <span class="method-name">launchAgentWithRoute</span><span
-            class="method-args">(agentClassName, startPlace, goalTag, route)</span>
+            class="method-args">(agentClassName, startPlace, goalTag, route, fallback = nil)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -847,6 +856,9 @@
 </dd><dt><em>route</em> 
 <dd>
 <p>経由点。Term の配列。</p>
+</dd><dt><em>fallback</em> 
+<dd>
+<p>agent に渡すパラメータ。ハッシュ。</p>
 </dd></dl>
           
           
@@ -854,11 +866,14 @@
           
           <div class="method-source-code" id="launchAgentWithRoute-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">251</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">launchAgentWithRoute</span>(<span class="ruby-identifier">agentClassName</span>, <span class="ruby-identifier">startPlace</span>,
-<span class="line-num">252</span>                          <span class="ruby-identifier">goalTag</span>, <span class="ruby-identifier">route</span>)
-<span class="line-num">253</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">launchAgentWithRoute</span>(<span class="ruby-identifier">agentClassName</span>, <span class="ruby-identifier">startPlace</span>,
-<span class="line-num">254</span>                                            <span class="ruby-identifier">goalTag</span>, <span class="ruby-identifier">route</span>) ;
-<span class="line-num">255</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">270</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">launchAgentWithRoute</span>(<span class="ruby-identifier">agentClassName</span>, <span class="ruby-identifier">startPlace</span>,
+<span class="line-num">271</span>                          <span class="ruby-identifier">goalTag</span>, <span class="ruby-identifier">route</span>, <span class="ruby-identifier">fallback</span> = <span class="ruby-keyword">nil</span>)
+<span class="line-num">272</span>   <span class="ruby-keyword">if</span>(<span class="ruby-operator">!</span><span class="ruby-identifier">fallback</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-keyword">then</span>
+<span class="line-num">273</span>     <span class="ruby-identifier">fallback</span> = <span class="ruby-constant">ItkTerm</span>.<span class="ruby-identifier">ensureTerm</span>(<span class="ruby-identifier">fallback</span>) ;
+<span class="line-num">274</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">275</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">launchAgentWithRoute</span>(<span class="ruby-identifier">agentClassName</span>, <span class="ruby-identifier">startPlace</span>,
+<span class="line-num">276</span>                                            <span class="ruby-identifier">goalTag</span>, <span class="ruby-identifier">route</span>, <span class="ruby-identifier">fallback</span>) ;
+<span class="line-num">277</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -889,9 +904,9 @@
           
           <div class="method-source-code" id="makeSymbolTerm-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">213</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">makeSymbolTerm</span>(<span class="ruby-identifier">str</span>)
-<span class="line-num">214</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">makeSymbolTerm</span>(<span class="ruby-identifier">str</span>) ;
-<span class="line-num">215</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">215</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">makeSymbolTerm</span>(<span class="ruby-identifier">str</span>)
+<span class="line-num">216</span>   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@javaFactory</span>.<span class="ruby-identifier">makeSymbolTerm</span>(<span class="ruby-identifier">str</span>) ;
+<span class="line-num">217</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -922,9 +937,9 @@
           
           <div class="method-source-code" id="placeAgent-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">119</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">placeAgent</span>()
-<span class="line-num">120</span>   <span class="ruby-comment">## return nil ;</span>
-<span class="line-num">121</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">121</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">placeAgent</span>()
+<span class="line-num">122</span>   <span class="ruby-comment">## return nil ;</span>
+<span class="line-num">123</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -965,9 +980,9 @@
           
           <div class="method-source-code" id="timeDiffInSec-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">272</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">timeDiffInSec</span>(<span class="ruby-identifier">time0</span>, <span class="ruby-identifier">time1</span>)
-<span class="line-num">273</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">time0</span>.<span class="ruby-identifier">calcDifferenceFrom</span>(<span class="ruby-identifier">time1</span>) ;
-<span class="line-num">274</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">294</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">timeDiffInSec</span>(<span class="ruby-identifier">time0</span>, <span class="ruby-identifier">time1</span>)
+<span class="line-num">295</span>   <span class="ruby-keyword">return</span> <span class="ruby-identifier">time0</span>.<span class="ruby-identifier">calcDifferenceFrom</span>(<span class="ruby-identifier">time1</span>) ;
+<span class="line-num">296</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -998,12 +1013,12 @@
           
           <div class="method-source-code" id="tryUpdateAndGenerate-source">
             <pre>    <span class="ruby-comment"># File AgentFactoryBase.rb</span>
-<span class="line-num">168</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tryUpdateAndGenerate</span>()
-<span class="line-num">169</span>   <span class="ruby-identifier">initCycle</span>() <span class="ruby-keyword">if</span>(<span class="ruby-ivar">@isInitCycle</span>) ;
-<span class="line-num">170</span>   <span class="ruby-ivar">@isInitCycle</span> = <span class="ruby-keyword">false</span> ;
-<span class="line-num">171</span>   
-<span class="line-num">172</span>   <span class="ruby-identifier">cycle</span>() ;
-<span class="line-num">173</span> <span class="ruby-keyword">end</span></pre>
+<span class="line-num">170</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tryUpdateAndGenerate</span>()
+<span class="line-num">171</span>   <span class="ruby-identifier">initCycle</span>() <span class="ruby-keyword">if</span>(<span class="ruby-ivar">@isInitCycle</span>) ;
+<span class="line-num">172</span>   <span class="ruby-ivar">@isInitCycle</span> = <span class="ruby-keyword">false</span> ;
+<span class="line-num">173</span>   
+<span class="line-num">174</span>   <span class="ruby-identifier">cycle</span>() ;
+<span class="line-num">175</span> <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -1023,7 +1038,7 @@
 
 <footer id="validator-badges" role="contentinfo">
   <p><a href="https://validator.w3.org/check/referer">Validate</a>
-  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.1.2.
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.2.1.
   <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 

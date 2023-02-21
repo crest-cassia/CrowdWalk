@@ -138,7 +138,7 @@ public class JsonicHashMapGetter {
     }
 
     /**
-     * ArrayList<BigDecimal> 型のパラメータを取得する
+     * ArrayList &lt;BigDecimal&gt; 型のパラメータを取得する
      */
     public ArrayList<BigDecimal> getBigDecimalArrayList(String name, ArrayList<BigDecimal> defaultValue) throws Exception {
         return (ArrayList<BigDecimal>)getArrayListParameter(name, defaultValue);

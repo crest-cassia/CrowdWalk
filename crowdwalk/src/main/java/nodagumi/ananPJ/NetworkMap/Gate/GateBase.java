@@ -66,8 +66,8 @@ public class GateBase {
     /**
      * 閉じているかどうか？
      * 拡張のために、時刻とエージェントを受け取る。
-     * @param currnetTime : シミュレーション時刻
      * @param agent: 対象となるエージェント
+     * @param currentTime : シミュレーション時刻
      * @return デフォルトでは、単にこのゲートが閉じているかどうか
      */
     public boolean isClosed(AgentBase agent, SimTime currentTime) {

@@ -27,6 +27,9 @@ import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;
 
 import nodagumi.Itk.*;
 
+/**
+ * GUI 付きでシミュレータを立ち上げるためのクラス。
+ */
 public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     /**
      * GUI シミュレーションランチャーの一覧
@@ -117,34 +120,63 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     /**
      * Properties
      */
+    /** Status 表示場所の種類 */
     public static final String[] SHOW_STATUS_VALUES = {"none", "top", "bottom"};
+    /** 利用可能なイメージファイルタイプ */
     public static final String[] IMAGE_TYPES = {"bmp", "gif", "jpg", "png"};
+    /** ??? */
     protected int deferFactor = 0;
+    /** 垂直表示倍率 */
     protected double verticalScale = 1.0;
+    /** エージェントの表示サイズ */
     protected double agentSize = 1.0;
+    /** カメラ設定ファイル */
     protected String cameraFile = null;
+    /** ズーム倍率  */
     protected double zoom = 1.0;
+    /** 背景表示  */
     protected boolean showBackgroundImage = false;
+    /** 背景マップ表示  */
     protected boolean showBackgroundMap = false;
+    /** 水域表示  */
     protected boolean showTheSea = false;
+    /** スクリーンショットを記録するか  */
     protected boolean recordSimulationScreen = false;
+    /** スクリーンショット格納 directory  */
     protected String screenshotDir = "screenshots";
+    /** スクリーンショット格納 directory をクリアするか？ */
     protected boolean clearScreenshotDir = false;
+    /** スクリーンショットの画像ファイルタイプ */
     protected String screenshotImageType = "png";
+    /** シミュレーションウィンドウをすぐに開くか */
     protected boolean simulationWindowOpen = false;
+    /** シミュレータの自動スタート */
     protected boolean autoSimulationStart = false;
+    /** リンクの表示のon/off */
     protected boolean hideLinks = false;
+    /** (!!!使用してない？) */
     protected boolean densityMode = false;
+    /** 歩行速度でエージェントの色を変えるかどうか */
     protected boolean changeAgentColorDependingOnSpeed = true;
+    /** トリアージ状態と歩行速度でエージェントを再描画するかどうか */
     protected boolean drawingAgentByTriageAndSpeedOrder = true;
+    /** Status 表示するかどうか */
     protected boolean showStatus = false;
+    /** Status 表示の画面の場所 */
     protected String showStatusPosition = "top";
+    /** ロゴ表示 */
     protected boolean showLogo = false;
+    /** 3次元ポリゴン表示 */
     protected boolean show3dPolygon = true;
+    /** シミュレーションが終わった時に終了するかどうか */
     protected boolean exitWithSimulationFinished = false;
+    /** エージェント表示属性設定ファイル */
     protected String agentAppearanceFile = null;
+    /** リンク表示属性設定ファイル */
     protected String linkAppearanceFile = null;
+    /** ノード表示属性設定ファイル */
     protected String nodeAppearanceFile = null;
+    /** ??? */
     protected int gsiTileZoom = 14;
 
     /**
@@ -309,6 +341,9 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         }
     }
 
+    /**
+     * シミュレーションを開始する。
+     */
     public void start() {
         synchronized (simulationRunnable) {
             if (paused) {
@@ -319,12 +354,18 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         }
     }
 
+    /**
+     * シミュレーションを一時停止する。
+     */
     public void pause() {
         synchronized (simulationRunnable) {
             paused = true ;
         }
     }
 
+    /**
+     * シミュレーションを１ステップ進める。
+     */
     public void step() {
         synchronized (simulationRunnable) {
             simulateOneStepBare() ;
@@ -556,6 +597,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
      * 旧書式の link appearance オブジェクトを新書式に変換する.
      *
      * ※ width_ratio でリンク幅の倍率を変える機能は廃止した。
+     * @throws Exception : Jsonic の例外
      */
     public ArrayList<HashMap> convertLinkAppearanceForm(Map<String, Object> object) throws Exception {
         ArrayList<HashMap> appearances = new ArrayList();
@@ -600,6 +642,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
 
     /**
      * node appearance file を読み込む
+     * @return ノード表示属性の配列
      */
     public ArrayList<HashMap> loadNodeAppearance() {
         try {
@@ -626,6 +669,9 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
 
     /**
      * 旧書式の node appearance オブジェクトを新書式に変換する.
+     * @param object: 旧書式
+     * @throws Exception : Jsonic の例外を返す。
+     * @return 新書式
      */
     public ArrayList<HashMap> convertNodeAppearanceForm(Map<String, Object> object) throws Exception {
         ArrayList<HashMap> appearances = new ArrayList();
@@ -723,6 +769,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
 
     /**
      * 海岸線を取得する
+     * @return coastline (海岸線)を返す。
      */
     public Coastline getCoastline() {
         return coastline;
