@@ -146,6 +146,8 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected String screenshotDir = "screenshots";
     /** スクリーンショット格納 directory をクリアするか？ */
     protected boolean clearScreenshotDir = false;
+    /** 表示とシミュレーションを同期するか */
+    protected boolean viewSynchronized = false;
     /** スクリーンショットの画像ファイルタイプ */
     protected String screenshotImageType = "png";
     /** シミュレーションウィンドウをすぐに開くか */
@@ -409,9 +411,24 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     }
 
     /**
+     * Viewとシミュレーションの同期設定
+     */
+    public void setViewSynchronized(boolean b) {
+        viewSynchronized = b ;
+    }
+
+    /**
+     * Viewとシミュレーションの同期チェック
+     */
+    public boolean isViewSynchronized() {
+        return viewSynchronized ;
+    }
+    
+    /**
      * シミュレーションの完了と共にアプリケーションを終了させるかどうか。
      */
     public abstract boolean isExitWithSimulationFinished();
+
 
     /**
      * ウィンドウとGUIを構築する
@@ -532,6 +549,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
             show3dPolygon = properties.getBoolean("show_3D_polygon", show3dPolygon);
             simulationWindowOpen = properties.getBoolean("simulation_window_open", simulationWindowOpen);
             autoSimulationStart = properties.getBoolean("auto_simulation_start", autoSimulationStart);
+            viewSynchronized = properties.getBoolean("view_synchronized", viewSynchronized);
             exitWithSimulationFinished = properties.getBoolean("exit_with_simulation_finished",
                     exitWithSimulationFinished);
             simulationPanelWidth = properties.getInteger("simulation_panel_width", simulationPanelWidth);

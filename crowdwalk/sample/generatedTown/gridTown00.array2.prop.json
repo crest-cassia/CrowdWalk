@@ -1,0 +1,33 @@
+{
+  "__0":"NetmasCuiSimulator",
+  "debug":true,
+  "io_handler_type":"none",
+  "map_file":"gridTown00.map.xml",
+  "generation_file":"gridTown00.array2.gen.json",
+  "scenario_file":"gridTown00.scnr.json",
+  "fallback_file":"gridTown00.fb.json",
+  "timer_enable":true,
+  "timer_file":"/tmp/timer.log",
+  "individual_pedestrians_log_dir":",Log",
+  "interval":0,
+  "randseed":2524,
+  "random_navigation":true,
+  "time_series_log":true,
+  "time_series_log_path":"/tmp",
+  "time_series_log_interval":1,
+  "loop_count":1,
+  "exit_count":0,
+  "all_agent_speed_zero_break":false
+
+  "mental_map_rules" :
+    {
+      "major" :
+        ["if",
+	 {"":"hasTag","tag":"major"},
+	 ":length",
+	 ["*", ":length", 10.0]],
+      "normal" : ":length"
+    },
+
+  "___":null
+}

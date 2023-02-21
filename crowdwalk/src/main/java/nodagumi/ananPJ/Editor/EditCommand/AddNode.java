@@ -18,6 +18,10 @@ public class AddNode extends EditCommandBase {
 
     /**
      * コンストラクタ
+     * @param id: リンクID。
+     * @param group: MapPartGroup。
+     * @param coordinates: 座標。
+     * @param height: ノードの高さ。
      */
     public AddNode(String id, MapPartGroup group, Point2D coordinates, double height) {
         this.id = id;
@@ -30,6 +34,9 @@ public class AddNode extends EditCommandBase {
 
     /**
      * コンストラクタ
+     * @param group: MapPartGroup。
+     * @param coordinates: 座標。
+     * @param height: ノードの高さ。
      */
     public AddNode(MapPartGroup group, Point2D coordinates, double height) {
         heightChangeable = true;
@@ -41,6 +48,7 @@ public class AddNode extends EditCommandBase {
 
     /**
      * ID を取得する
+     * @return ノードのID。
      */
     public String getId() {
         return id;
@@ -48,6 +56,8 @@ public class AddNode extends EditCommandBase {
 
     /**
      * 編集を実行する
+     * @param editor: MapEditor。
+     * @return 実行できたら true。
      */
     public boolean invoke(MapEditor editor) {
         MapPartGroup group = getGroup(editor, groupId);
@@ -76,6 +86,8 @@ public class AddNode extends EditCommandBase {
 
     /**
      * 編集を取り消す
+     * @param editor: MapEditor。
+     * @return undoできたら true。
      */
     public boolean undo(MapEditor editor) {
         MapPartGroup group = getGroup(editor, groupId);

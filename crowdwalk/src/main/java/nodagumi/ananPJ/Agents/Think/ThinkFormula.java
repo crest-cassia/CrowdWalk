@@ -25,15 +25,20 @@ import nodagumi.Itk.* ;
 //======================================================================
 /**
  * 思考を表す式の処理系。
- * 組み込まれている Formula リスト
+ * <h3> Rule Formula の概要 </h3>
+ * <ul><li>
+ *   {@link nodagumi.ananPJ.Agents.Think パッケージ Think 参照} 
+ * </li></ul>
+ * <p>
+ * <h3>組み込まれている Formula リスト</h3>
  * <ul>
  *  <li>{@link ThinkFormulaLogical#call Logical: 論理形式および実行制御}</li>
  *  <li>{@link ThinkFormulaArithmetic#call Arithmetic: 数値処理など}</li>
  *  <li>{@link ThinkFormulaAgent#call Agent: エージェント制御関係}</li>
  *  <li>{@link ThinkFormulaMisc#call Misc: その他}</li>
  *  <li>{@link nodagumi.ananPJ.navigation.Formula.NaviFormula Navi: メンタルマップ用 Formula}</li>
-
  * </ul>
+ * </p>
  *
  * <h3>新しい Formula の作成方法 </h3>
  * <a name="addToExistingThinkFormula"></a>

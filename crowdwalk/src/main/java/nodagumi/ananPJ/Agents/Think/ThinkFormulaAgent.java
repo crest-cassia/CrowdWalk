@@ -180,9 +180,10 @@ public class ThinkFormulaAgent extends ThinkFormula {
      * { "" : "getParam",
      *   "name" : _nameOfValue_,
      * }
-     *  _nameOfValue_ ::= "currentTime" | "agentId" | "linkId" |
-     *                    "speed" | "emptySpeed" | "goal" |
-     *                    "triageLevelInt" | "triageLevelName"
+     *  _nameOfValue_ ::= "currentTime" | "agentId" | "linkId" 
+     *                  | "speed" | "emptySpeed" | "goal" 
+     *                  | "triageLevelInt" | "triageLevelName" 
+     *                  | "mentalMode"
      * </pre>
      */
     public Term call_getParam(String head, Term expr,
@@ -206,6 +207,8 @@ public class ThinkFormulaAgent extends ThinkFormula {
             return new Term(agent.getTriageInt()) ;
         } else if(name.equals("triageLevelName")) {
             return new Term(agent.getTriageName(), false) ;
+        } else if(name.equals("mentalMode")) {
+            return agent.mentalMode ;
         } else {
             Itk.logError("unknown parameter name for getParam.", "name=",name) ;
             return Term_Null ;
@@ -221,6 +224,7 @@ public class ThinkFormulaAgent extends ThinkFormula {
      *   "value" : _Term_,
      * }
      *  _nameOfValue_ ::= "emptySpeed" 
+     *                  | "mentalMode"
      * </pre>
      */
     public Term call_setParam(String head, Term expr,
@@ -231,6 +235,9 @@ public class ThinkFormulaAgent extends ThinkFormula {
 
         if(name.equals("emptySpeed")) {
             agent.setEmptySpeed(value.getDouble()) ;
+            return value ;
+        } else if(name.equals("mentalMode")) {
+            agent.setMentalMode(value) ;
             return value ;
         } else {
             Itk.logError("unknown parameter name for getParam.", "name=",name) ;

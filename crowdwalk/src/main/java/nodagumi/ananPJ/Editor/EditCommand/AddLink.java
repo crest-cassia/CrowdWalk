@@ -19,6 +19,11 @@ public class AddLink extends EditCommandBase {
 
     /**
      * コンストラクタ
+     * @param id: リンクID。
+     * @param fromNode: 始点ノード。
+     * @param toNode: 終点ノード。
+     * @param length: リンクの長さ。
+     * @param width: リンクの幅。
      */
     public AddLink(String id, MapNode fromNode, MapNode toNode, double length, double width) {
         this.id = id;
@@ -32,6 +37,10 @@ public class AddLink extends EditCommandBase {
 
     /**
      * コンストラクタ
+     * @param fromNode: 始点ノード。
+     * @param toNode: 終点ノード。
+     * @param length: リンクの長さ。
+     * @param width: リンクの幅。
      */
     public AddLink(MapNode fromNode, MapNode toNode, double length, double width) {
         changeType = ChangeType.LINK_VOLUME;
@@ -44,6 +53,7 @@ public class AddLink extends EditCommandBase {
 
     /**
      * ID を取得する
+     * @return リンクの id。
      */
     public String getId() {
         return id;
@@ -51,6 +61,8 @@ public class AddLink extends EditCommandBase {
 
     /**
      * 編集を実行する
+     * @param editor: MapEditor。
+     * @return 実行できたら true。
      */
     public boolean invoke(MapEditor editor) {
         MapPartGroup group = getGroup(editor, groupId);
@@ -86,6 +98,8 @@ public class AddLink extends EditCommandBase {
 
     /**
      * 編集を取り消す
+     * @param editor: MapEditor。
+     * @return undo できたら true。
      */
     public boolean undo(MapEditor editor) {
         MapPartGroup group = getGroup(editor, groupId);

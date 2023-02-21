@@ -29,7 +29,9 @@
   "loop_count":1,
   "exit_count":0,
   "all_agent_speed_zero_break":false,
-  "auto_simulation_start":true,
+  "auto_simulation_start":false,
+  "_auto_simulation_start":true,
+  "_view_synchronized":true,
 
   "mental_map_rules" :
     {

@@ -23,6 +23,9 @@ public class AddPolygon extends EditCommandBase {
 
     /**
      * コンストラクタ
+     * @param group: MapPartGroup。
+     * @param z_index: 
+     * @param triangleMeshes: 3角メッシュ。
      */
     public AddPolygon(MapPartGroup group, int z_index, TriangleMeshes triangleMeshes) {
         changeType = ChangeType.POLYGON_VOLUME;
@@ -33,6 +36,11 @@ public class AddPolygon extends EditCommandBase {
 
     /**
      * コンストラクタ
+     * @param group: MapPartGroup。
+     * @param z_index: 
+     * @param outerBoundary: 外枠。
+     * @param innerBoundaries: 内枠のリスト。
+     * @param triangleMeshes: 3角メッシュ。
      */
     public AddPolygon(MapPartGroup group, int z_index, OuterBoundary outerBoundary, ArrayList<InnerBoundary> innerBoundaries) {
         changeType = ChangeType.POLYGON_VOLUME;
@@ -44,6 +52,7 @@ public class AddPolygon extends EditCommandBase {
 
     /**
      * ID を取得する
+     * @return コマンドのID。
      */
     public String getId() {
         return id;
@@ -51,6 +60,8 @@ public class AddPolygon extends EditCommandBase {
 
     /**
      * 編集を実行する
+     * @param editor: MapEditor。
+     * @return 実行できたらtrue。
      */
     public boolean invoke(MapEditor editor) {
         MapPartGroup group = getGroup(editor, groupId);
@@ -83,6 +94,8 @@ public class AddPolygon extends EditCommandBase {
 
     /**
      * 編集を取り消す
+     * @param editor: MapEditor。
+     * @return undoできたらtrue。
      */
     public boolean undo(MapEditor editor) {
         MapPartGroup group = getGroup(editor, groupId);
@@ -102,6 +115,7 @@ public class AddPolygon extends EditCommandBase {
 
     /**
      * このコマンドの文字列表現を取得する
+     * @return コマンドの文字列表現
      */
     public String toString() {
         if (triangleMeshes != null) {

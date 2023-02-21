@@ -263,6 +263,11 @@ run3gt00a_cui ::
 	(cd $(BASEDIR) ; time bash quickstart.sh -l Info --cui $(SAMPLE3gt00a))
 
 ##-----
+SAMPLE3gt00a2 = sample/generatedTown/gridTown00.array2.prop.json   # change mentalMode
+run3gt00a2 ::
+	(cd $(BASEDIR) ; bash quickstart.sh -l Info $(SAMPLE3gt00a))
+
+##-----
 SAMPLE3gt00i = sample/generatedTown/gridTown00.indivConf.prop.json   # array formula individual
 run3gt00i ::
 	(cd $(BASEDIR) ; bash quickstart.sh -l Info $(SAMPLE3gt00i))

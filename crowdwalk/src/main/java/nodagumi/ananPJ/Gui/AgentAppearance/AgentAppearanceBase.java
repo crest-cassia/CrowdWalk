@@ -75,6 +75,8 @@ public class AgentAppearanceBase extends JsonicHashMapGetter {
 
     /**
      * コンストラクタ
+     * @param launcher: GuiSimulationLauncher。
+     * @param parameters: パラメータを格納したHashMap。
      */
     public AgentAppearanceBase(GuiSimulationLauncher launcher, HashMap parameters) {
         classFinder.aliasByJson(ObstructerBase.resourceToString(CLASSES));
@@ -138,21 +140,33 @@ public class AgentAppearanceBase extends JsonicHashMapGetter {
 
     /**
      * 使用可能なクラスか?
+     * @param className: チェックするクラス名。
+     * @return 使用可能ならtrue。
      */
     protected boolean isUsableClass(String className) {
         return classFinder.isClassName(className);
     }
 
+    /**
+     * タグを取得。
+     * @return タグ。
+     */
     public String getTag() {
         return tag;
     }
 
+    /**
+     * モデルを取得。
+     * @return モデル。
+     */
     public AgentAppearanceModel getModel() {
         return model;
     }
 
     /**
      * タグに該当する文字列か?
+     * @param text: textがタグに含まれるか。
+     * @return 含まれれば true。
      */
     public boolean isTagApplied(String text) {
         if (tagPattern == null) {
@@ -167,6 +181,7 @@ public class AgentAppearanceBase extends JsonicHashMapGetter {
 
     /**
      * 2D View に使用可能
+     * @return 使用可能なら true。
      */
     public boolean isValidFor2D() {
         return viewClassName2D != null;
@@ -174,6 +189,7 @@ public class AgentAppearanceBase extends JsonicHashMapGetter {
 
     /**
      * 3D View に使用可能
+     * @return 使用可能なら true。
      */
     public boolean isValidFor3D() {
         return viewClassName3D != null;

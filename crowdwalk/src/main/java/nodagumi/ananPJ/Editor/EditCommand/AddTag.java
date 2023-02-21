@@ -17,6 +17,8 @@ public class AddTag extends EditCommandBase {
 
     /**
      * コンストラクタ
+     * @param obNode: セットする obNode。
+     * @param tag: タグ。
      */
     public AddTag(OBNode obNode, String tag) {
         switch (obNode.getNodeType()) {
@@ -42,6 +44,8 @@ public class AddTag extends EditCommandBase {
 
     /**
      * 編集を実行する
+     * @param editor: MapEditor。
+     * @return 実行できたら true。
      */
     public boolean invoke(MapEditor editor) {
         OBNode obNode = getOBNode(editor, id);
@@ -57,6 +61,8 @@ public class AddTag extends EditCommandBase {
 
     /**
      * 編集を取り消す
+     * @param editor: MapEditor。
+     * @return undoできたら true。
      */
     public boolean undo(MapEditor editor) {
         OBNode obNode = getOBNode(editor, id);
@@ -74,6 +80,7 @@ public class AddTag extends EditCommandBase {
 
     /**
      * このコマンドの文字列表現を取得する
+     * @return 文字列表現.
      */
     public String toString() {
         return getName() + "[ID=" + id + ", tag=" + tag + "]";

@@ -19,6 +19,9 @@ public class AgentAppearance2D extends AgentAppearanceBase {
 
     /**
      * コンストラクタ
+     * @param launcher: GuiSimulationLauncher2D。
+     * @param frame: SimulationFrame2D。
+     * @param parameters: パラメータテーブル。
      */
     public AgentAppearance2D(GuiSimulationLauncher2D launcher, SimulationFrame2D frame, HashMap parameters) {
         super(launcher, parameters);

@@ -25,7 +25,11 @@ import nodagumi.Itk.* ;
 //======================================================================
 /**
  * 主観によるMapの距離計算を表す式の処理系。
- * 組み込まれている Formula リスト
+ * <h3> Rule Formula の概要 </h3>
+ * <ul><li>
+ *   {@link nodagumi.ananPJ.Agents.Think パッケージ Think 参照} 
+ * </li></ul>
+ * <h3>組み込まれている Formula リスト</h3>
  * <ul>
  *  <li>{@link nodagumi.ananPJ.Agents.Think.ThinkFormulaLogical#call Logical: 論理形式および実行制御}</li>
  *  <li>{@link nodagumi.ananPJ.Agents.Think.ThinkFormulaArithmetic#call Arithmetic: 数値処理など}</li>

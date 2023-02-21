@@ -197,7 +197,6 @@ public class SimulationFrame2D extends JFrame
     private boolean showStatus = false;
     private int messagePosition = TOP;
     private boolean showLogo = false;
-    private boolean viewSynchronized = false;
     private boolean exitWithSimulationFinished = false;
     private boolean marginAdded = false;
     private boolean showBackgroundImage = false;
@@ -2173,11 +2172,11 @@ public class SimulationFrame2D extends JFrame
     }
 
     public void setViewSynchronized(boolean b) {
-        viewSynchronized = b;
+        launcher.setViewSynchronized(b);
     }
 
     public boolean isViewSynchronized() {
-        return viewSynchronized;
+        return launcher.isViewSynchronized();
     }
 
     public JCheckBox getExitWithSimulationFinishedCheckBox() {
