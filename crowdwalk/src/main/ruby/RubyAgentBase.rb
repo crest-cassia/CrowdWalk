@@ -148,6 +148,7 @@ class RubyAgentBase
 #                   "calcSpeed",
 #                   "calcAccel",
 #                   "thinkCycle",
+#                   "finalizeEvacuation",
                   ] ;
 
   #--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -490,6 +491,18 @@ class RubyAgentBase
   ## 思考ルーチン
   def thinkCycle()
     return @javaAgent.super_thinkCycle() ;
+  end
+
+
+  #--------------------------------------------------------------
+  #++
+  ## 避難完了時処理
+  ## __:: 自由速度。
+  ## _currentTime_:: 時刻
+  ## _onNode_:: true なら currentPlace.getHeadingNode() 上 false なら currentPlace.getLink() 上
+  ## _stuck_:: スタックかどうか
+  def finalizeEvacuation(currentTime, onNode, stuck)
+    return @javaAgent.super_finalizeEvacuation(currentTime, onNode, stuck) ;
   end
 
   #--------------------------------------------------------------

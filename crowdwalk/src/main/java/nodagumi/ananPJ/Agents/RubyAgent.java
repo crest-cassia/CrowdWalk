@@ -81,6 +81,7 @@ public class RubyAgent extends RationalAgent {
         calcSpeed,
         calcAccel,
         thinkCycle,
+        finalizeEvacuation
     }
 
     /**
@@ -408,6 +409,31 @@ public class RubyAgent extends RationalAgent {
     public Term super_thinkCycle() {
         return super.thinkCycle() ;
     }
+
+
+    //------------------------------------------------------------
+    /**
+     * 避難完了時処理
+     * 避難が完了した時の処理
+     */
+    @Override
+    protected void finalizeEvacuation(SimTime currentTime, boolean onNode, boolean stuck) {
+        String rubyMethod = triggeredMethod(TriggerEntry.finalizeEvacuation) ;
+        if(rubyMethod != null) {
+            rubyEngine.callMethod(rubyAgent, rubyMethod, currentTime, onNode, stuck) ;
+        } else {
+            super_finalizeEvacuation(currentTime, onNode, stuck);
+        }
+    }
+
+    /**
+     * 避難完了時処理
+     */
+    public void super_finalizeEvacuation(SimTime currentTime, boolean onNode, boolean stuck) {
+        super.finalizeEvacuation(currentTime, onNode, stuck) ;
+    }
+
+
 
     //------------------------------------------------------------
     /**
