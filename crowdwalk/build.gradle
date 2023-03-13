@@ -78,7 +78,7 @@ dependencies {
     implementation 'net.sf.opencsv:opencsv:2.3'
     implementation 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/org.jruby/jruby-complete
-    implementation group: 'org.jruby', name: 'jruby-complete', version: '9.1.15.0'
+    implementation group: 'org.jruby', name: 'jruby-complete', version: '9.2.20.1'
     implementation 'org.osgeo:proj4j:0.1.0'
     implementation 'math.geom2d:javaGeom:0.11.1'
     implementation 'com.opencsv:opencsv:3.8'
