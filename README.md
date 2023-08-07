@@ -52,8 +52,8 @@ export JAVA_OPTS='-Dgroovy.source.encoding=UTF-8 -Dfile.encoding=UTF-8'
     - Download and update CrowdWalk.
 - JDK (Java Development Kit)
     - Compiles and executes CrowdWalk source code.
-    - JDK 8 or higher is required. However, if the functionality is limited to the simulator in CUI mode, JDK 1.6 or higher will work.
-    - For Windows PCs, Oracle's JDK 8 is especially recommended (free updates will be available until December 2020).
+    - JDK 11 or higher is required. However, if the functionality is limited to the simulator in CUI mode, JDK 1.6 or higher will work.
+    - For Windows PCs, Oracle's JDK 17 is especially recommended (free updates will be available until December 2020).
 - Ruby
     - Required to run special tools. Not required for normal use.
 - Text Editor
@@ -80,6 +80,7 @@ Crowdwalk/
 ### Build
 
 Go to the working directory of CrowdWalk.
+(If you want to run CrowdWalk on Windows, check [the wiki page](https://github.com/crest-cassia/CrowdWalk/wiki/Windows%E3%81%A7%E3%81%AE%E5%AE%9F%E8%A1%8C%E6%96%B9%E6%B3%95).)
 ~~~~
 cd ~/CrowdWalk/crowdwalk
 ~~~~
