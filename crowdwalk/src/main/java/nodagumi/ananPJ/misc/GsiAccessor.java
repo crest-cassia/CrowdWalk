@@ -95,14 +95,14 @@ public class GsiAccessor {
             }
         }
 
-        String url = String.format("http://cyberjapandata.gsi.go.jp/xyz/%s/%d/%d/%d.%s", tileName, zoom, x, y, ext);
+        String url = String.format("https://cyberjapandata.gsi.go.jp/xyz/%s/%d/%d/%d.%s", tileName, zoom, x, y, ext);
         Itk.logInfo("Download", url);
         try {
             BufferedImage image = ImageIO.read(new URL(url));
             Itk.logInfo("Save", filePath);
             ImageIO.write(image, ext, file);
         } catch (IOException e) {
-	    Itk.dumpStackTraceOf(e) ;
+            Itk.dumpStackTraceOf(e) ;
             return false;
         }
         try {
