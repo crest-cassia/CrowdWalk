@@ -65,7 +65,7 @@ abstract public class PlacedEvent extends EventBase {
      */
     public boolean checkTagOrId(OBNode mapObject) {
         if(placeTag == null) {
-            return mapObject.ID == placeId ;
+            return mapObject.ID.equals(placeId) ;
         } else {
             return mapObject.hasTag(placeTag) ;
         }

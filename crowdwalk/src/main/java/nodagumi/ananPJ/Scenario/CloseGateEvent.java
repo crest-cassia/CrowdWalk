@@ -28,7 +28,7 @@ import nodagumi.Itk.* ;
  *  { "type" : "CloseGate",
  *    "atTime" : __Time__,
  *    ("placeTag" : __Tag__, |
- *     "placeId" : __Int__,)
+ *     "placeId" : __PlaceId__,)
  *    "gateTag" : __Tag__}
  * 
  *  __Time__ ::= "hh:mm:ss"
