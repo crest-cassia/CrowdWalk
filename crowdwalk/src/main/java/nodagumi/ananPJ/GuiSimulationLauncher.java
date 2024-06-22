@@ -178,8 +178,10 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
     protected String linkAppearanceFile = null;
     /** ノード表示属性設定ファイル */
     protected String nodeAppearanceFile = null;
-    /** ??? */
+    /** 地図画像タイルを取得するときの画像の詳細度（指定可能な値はソースによる） */
     protected int gsiTileZoom = 14;
+    /** 描画間隔（スクリーンショットもこの間隔に従う） */
+    protected int displayInterval = 1;
 
     /**
      * 画像ファイルかどうかをファイル名の拡張子で判別するフィルタ
@@ -491,6 +493,7 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         linkAppearanceFile = null;
         nodeAppearanceFile = null;
         gsiTileZoom = 14;
+        displayInterval = 1;
     }
 
     /**
@@ -554,6 +557,10 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
                     exitWithSimulationFinished);
             simulationPanelWidth = properties.getInteger("simulation_panel_width", simulationPanelWidth);
             simulationPanelHeight = properties.getInteger("simulation_panel_height", simulationPanelHeight);
+            displayInterval = properties.getInteger("display_interval", displayInterval);
+            if (displayInterval < 1) {
+                displayInterval = 1;
+            }
         } catch(Exception e) {
             Itk.logFatal("Property file error", e.getMessage()) ;
             Itk.quitByError() ;
