@@ -315,11 +315,15 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         if(mentalMode == null) {
             return physicalHints ;
         } else {
-            HashMap<String, NavigationHint> hints =
-                mentalHintsTable.get(mentalMode) ;
+            HashMap<String, NavigationHint> hints = mentalHintsTable.get(mentalMode) ;
             if(hints == null) {
-                hints = new HashMap<String, NavigationHint>() ;
-                mentalHintsTable.put(mentalMode, hints) ;
+                synchronized (mentalHintsTable) {
+                    hints = mentalHintsTable.get(mentalMode);
+                    if (hints == null) {
+                        hints = new HashMap<String, NavigationHint>();
+                        mentalHintsTable.put(mentalMode, hints);
+                    }
+                }
             }
             return hints;
         }
