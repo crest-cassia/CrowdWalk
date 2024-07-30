@@ -721,9 +721,15 @@ public class NetworkMap extends DefaultTreeModel {
                           this) ;
 
         synchronized(getNodes()) {
+            // [2024-07-30 S.Takami] validになるのが早い
+            // また，mental hintsの計算が終わる前にvalidになるため，呼び出し元へ移動．
+            // ただし，MapEditorで使っているcalcTagPath以下の呼び出しは確認していなく，
+            // エンバグの可能性があるためメモ
+            /*
             synchronized(validRouteKeys) {
                 validRouteKeys.put(goalTag, true);
             }
+             */
             for (MapNode node : result.keySet()) {
                 NavigationHint hint = result.get(node);
                 node.addNavigationHint(mentalMode, goalTag, hint) ;
@@ -765,6 +771,11 @@ public class NetworkMap extends DefaultTreeModel {
                 result = calcGoalPath(mentalMode, goalTag) ;
                 isSuccess = (isSuccess && (result != null)) ;
             }
+        }
+
+        synchronized(validRouteKeys) {
+            // [2024-07-30 S.Takami] calcGoalPathから移動．メモはそちら
+            validRouteKeys.put(goalTag, true);
         }
 
         return isSuccess ;
