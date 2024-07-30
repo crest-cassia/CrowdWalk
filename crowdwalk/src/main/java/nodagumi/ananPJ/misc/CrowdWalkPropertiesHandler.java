@@ -877,6 +877,19 @@ public class CrowdWalkPropertiesHandler {
     }
 
     /**
+     * "No hint for goal"で落とす
+     */
+    private static boolean abortingNoHintForGoal = false;
+
+    public static boolean isAbortingNoHintForGoal() {
+        return abortingNoHintForGoal;
+    }
+
+    public static void setAbortingNoHintForGoal(boolean value) {
+        abortingNoHintForGoal = value;
+    }
+
+  /**
      * validate モード
      */
     private static boolean validate = false;
@@ -989,6 +1002,9 @@ public class CrowdWalkPropertiesHandler {
 
             // "No hint for goal" ログを出力しない
             disableNoHintForGoalLog |= getBoolean("disable_no_hint_for_goal_log", false);
+
+            // "No hint for goal"で落とす
+            abortingNoHintForGoal = getBoolean("aborting_no_hint_for_goal", false);
 
             // legacy モード
             legacy = getBoolean("legacy", legacy);

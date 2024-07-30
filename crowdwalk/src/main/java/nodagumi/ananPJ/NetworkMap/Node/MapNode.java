@@ -340,7 +340,9 @@ public class MapNode extends OBMapPart implements Comparable<MapNode> {
         } else {
             // Hint なしでエラーにならないように。[2022.0809 by I.Noda]
             // NavigationHint hint = getHint(mentalMode, goalTag, true);
-            NavigationHint hint = getHint(mentalMode, goalTag, false);
+            // Histなしの場合落とすかプロパティで設定可能に (default: false) [2024-07-30 S.Takami]
+            // NavigationHint hint = getHint(mentalMode, goalTag, false);
+            NavigationHint hint = getHint(mentalMode, goalTag, CrowdWalkPropertiesHandler.isAbortingNoHintForGoal());
             if (hint == null) { // おそらくここには来ないはず。getHintでエラー。
                 Itk.logWarn("Target Not Found", "target:", goalTag) ;
                 // Hint なしでエラーにならないように。[2022.0809 by I.Noda]
