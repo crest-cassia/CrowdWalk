@@ -28,7 +28,7 @@ import nodagumi.Itk.* ;
  *  { "type" : "ShutOff",
  *    "atTime" : __Time__,
  *    ("placeTag" : __Tag__, |
- *     "placeId" : __Int__,)
+ *     "placeId" : __PlaceId__,)
  *  }
  *
  *  __Time__ ::= "hh:mm:ss"

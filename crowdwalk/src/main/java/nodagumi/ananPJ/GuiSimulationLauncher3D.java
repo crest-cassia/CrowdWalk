@@ -51,6 +51,12 @@ public class GuiSimulationLauncher3D extends GuiSimulationLauncher {
      * サイクル毎の画面描画
      */
     public void updateEveryTick(final SimTime currentTime) {
+        // 描画のスキップ
+        // [2024-06-22 S.Takami] ステップ実行時はステップ毎に描画するが，最終ステップは描画間隔に従う．
+        if (currentTime.getTickCount() % displayInterval != 0 && isRunning()) {
+            return;
+        }
+
         viewController.resume();
         viewController.statusChanged("statusText", getStatusLine());
         viewController.statusChanged("displayClock", currentTime);

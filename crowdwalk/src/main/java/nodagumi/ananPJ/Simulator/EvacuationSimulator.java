@@ -1140,6 +1140,11 @@ public class EvacuationSimulator {
     /**
      * シミュレーション遅延
      */
+    /* [2024-06-22 S.Takami]
+     * この実装は描画側で行うべき？
+     * とりあえず，CUIで止めたい可能性は無くはないかもしれないので保留．
+     * そのため，display_intervalを変更した場合にも，同じ時間待つことになる．
+     */
     private void deferSimulation() {
         if (simulationDeferFactor > 0) {
             try {

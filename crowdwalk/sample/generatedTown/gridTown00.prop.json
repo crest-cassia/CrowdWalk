@@ -32,6 +32,7 @@
   "auto_simulation_start":false,
   "_auto_simulation_start":true,
   "_view_synchronized":true,
+  "display_interval": 1,
 
   "mental_map_rules" :
     {

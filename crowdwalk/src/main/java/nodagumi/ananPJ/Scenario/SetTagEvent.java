@@ -28,7 +28,7 @@ import nodagumi.Itk.* ;
  *  { "type" : ( "SetTag" | "AddTag" | "RemoveTag" ),
  *    "atTime" : __Time__,
  *    ("placeTag" : __Tag__, |
- *     "placeId" : __Int__,)
+ *     "placeId" : __PlaceId__,)
  *    ("onoff" : ( true | false ),)?
  *    "noticeTag" : __Tag__}
  *
