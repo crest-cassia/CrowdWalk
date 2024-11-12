@@ -1576,7 +1576,7 @@ public class AgentHandler {
      */
     public void finalizeSimulationLoggers() {
         closeIndividualPedestriansLogger();
-        closeAgentMovementHistorLogger();
+        closeAgentMovementHistoryLogger();
         closeAgentTrailLogger();
         closeEvacuatedAgentsLogger();
     }
@@ -2003,7 +2003,7 @@ public class AgentHandler {
     /**
      * AgentMovementHistoryLogger の終了
      */
-    public void closeAgentMovementHistorLogger() {
+    public void closeAgentMovementHistoryLogger() {
         closeLogger(agentMovementHistoryLogger);
     }
 

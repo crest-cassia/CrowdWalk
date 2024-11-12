@@ -315,6 +315,10 @@ public abstract class GuiSimulationLauncher extends BasicSimulationLauncher {
         }
         if (! finished) {
             // ログファイルのクローズ処理
+            // 
+            /* !!! [2023.0830 I.Noda] !!! 
+             * こちら、BasicSimulationLauncher の finish() を呼ぶべきではないか？  
+             */
             simulator.finish();
             Itk.logInfo("Status", getStatusLine());
             finished = true;
