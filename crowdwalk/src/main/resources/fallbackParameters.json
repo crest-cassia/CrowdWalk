@@ -18,6 +18,7 @@
         "trail" : 100.0,
         "trailCountStep" : 1.0,
         "rule" : [],
+        "disableNextLinkCache" : false,
         "_" : null
     },
     "generation" : {

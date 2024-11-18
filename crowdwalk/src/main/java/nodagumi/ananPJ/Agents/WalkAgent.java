@@ -149,6 +149,16 @@ public class WalkAgent extends AgentBase {
     protected double insensitiveDistanceInCounterFlow =
         Fallback_insensitiveDistanceInCounterFlow ;
 
+    /* [2024.11.17 S.Takami] */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * ChooseNextLinkCacheを無効化するフラグ．
+     * 無効化によりエージェントが止まってしまう問題の一部が解決．
+     * 同一シチュエーションの判定を色々試してみたが，条件式を見つけられなかった．
+     * 本来，条件式を修正すべきだが，一時的に無効化フラグで対応
+     */
+    protected boolean isNextLinkCacheDisabled = false;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * リンク上の次の位置。
@@ -180,6 +190,7 @@ public class WalkAgent extends AgentBase {
 	//============================================================
     static private class ChooseNextLinkCache {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        public boolean disabled = true ;
         /** キャッシュを無視するかどうか */
         public boolean forced = true ;
         /** 現在地のリンク */
@@ -217,7 +228,7 @@ public class WalkAgent extends AgentBase {
         /** 前回と同じ条件なら前回の結果を使う。 */
         public MapLink getResultInCache(WalkAgent agent,
                                         Place passingPlace) {
-            if(isSameAsPrevious(agent, passingPlace)) {
+            if(!disabled && isSameAsPrevious(agent, passingPlace)) {
                 return resultLink ;
             } else {
                 return null ;
@@ -244,6 +255,10 @@ public class WalkAgent extends AgentBase {
         /** 結果の破棄。 */
         public void clear() {
             recordResult(null) ;
+        }
+
+        public void isDisabled(boolean disabled) {
+            this.disabled = disabled;
         }
     }
     
@@ -324,6 +339,9 @@ public class WalkAgent extends AgentBase {
         nodeCrossingForceFactor =
             getDoubleFromConfig("nodeCrossingForceFactor",
                                 nodeCrossingForceFactor) ;
+        isNextLinkCacheDisabled = SetupFileInfo.fetchFallbackBoolean(
+                config, "disableNextLinkCache", isNextLinkCacheDisabled);
+        chooseNextLinkCache.isDisabled(isNextLinkCacheDisabled);
     } ;
 
     //------------------------------------------------------------
@@ -1282,6 +1300,7 @@ public class WalkAgent extends AgentBase {
             nextLink
                 = nextLinksWithSameCost.get(random.
                                            nextInt(nextLinksWithSameCost.size())) ;
+            chooseNextLinkCache.forced = true;
         }
 
         if (nextLink != null) {
