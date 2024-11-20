@@ -18,7 +18,7 @@
         "trail" : 100.0,
         "trailCountStep" : 1.0,
         "rule" : [],
-        "disableNextLinkCache" : false,
+        "accelerationOfRecoveringHeadAgent" : 0.0,
         "_" : null
     },
     "generation" : {

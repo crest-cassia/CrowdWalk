@@ -152,12 +152,12 @@ public class WalkAgent extends AgentBase {
     /* [2024.11.17 S.Takami] */
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
-     * ChooseNextLinkCacheを無効化するフラグ．
-     * 無効化によりエージェントが止まってしまう問題の一部が解決．
-     * 同一シチュエーションの判定を色々試してみたが，条件式を見つけられなかった．
-     * 本来，条件式を修正すべきだが，一時的に無効化フラグで対応
+     * 先頭のエージェント対交流によって完全に動けなくなってしまうことを避けるための加速度．
+     * 先頭で止まっているときは少しだけ前進することを試みる．ゲートなどによる停止はされる．
+     * レーン幅のバランスが極端に悪くなった場合に動けなくなること対策．
+     * 0.01程度でよい．
      */
-    protected boolean isNextLinkCacheDisabled = false;
+    protected double accelerationOfRecoveringHeadAgent = 0.0;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -190,7 +190,6 @@ public class WalkAgent extends AgentBase {
 	//============================================================
     static private class ChooseNextLinkCache {
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        public boolean disabled = true ;
         /** キャッシュを無視するかどうか */
         public boolean forced = true ;
         /** 現在地のリンク */
@@ -228,7 +227,7 @@ public class WalkAgent extends AgentBase {
         /** 前回と同じ条件なら前回の結果を使う。 */
         public MapLink getResultInCache(WalkAgent agent,
                                         Place passingPlace) {
-            if(!disabled && isSameAsPrevious(agent, passingPlace)) {
+            if(isSameAsPrevious(agent, passingPlace)) {
                 return resultLink ;
             } else {
                 return null ;
@@ -255,10 +254,6 @@ public class WalkAgent extends AgentBase {
         /** 結果の破棄。 */
         public void clear() {
             recordResult(null) ;
-        }
-
-        public void isDisabled(boolean disabled) {
-            this.disabled = disabled;
         }
     }
     
@@ -339,9 +334,9 @@ public class WalkAgent extends AgentBase {
         nodeCrossingForceFactor =
             getDoubleFromConfig("nodeCrossingForceFactor",
                                 nodeCrossingForceFactor) ;
-        isNextLinkCacheDisabled = SetupFileInfo.fetchFallbackBoolean(
-                config, "disableNextLinkCache", isNextLinkCacheDisabled);
-        chooseNextLinkCache.isDisabled(isNextLinkCacheDisabled);
+        accelerationOfRecoveringHeadAgent =
+            getDoubleFromConfig("accelerationOfRecoveringHeadAgent",
+                                accelerationOfRecoveringHeadAgent);
     } ;
 
     //------------------------------------------------------------
@@ -855,6 +850,11 @@ public class WalkAgent extends AgentBase {
             double lowerBound =
                 -((baseSpeed / currentTime.getTickUnit()) + _accel) ;
             _accel += accumulateSocialForces(currentTime, lowerBound) ;
+            if (accelerationOfRecoveringHeadAgent > 0.0) {
+                if (_accel <= 0 && previousSpeed <= 0 && currentPlace.getIndexFromHeadingInLane(this) == 0) {
+                    _accel = accelerationOfRecoveringHeadAgent;
+                }
+            }
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
