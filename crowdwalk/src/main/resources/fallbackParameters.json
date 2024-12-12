@@ -18,6 +18,7 @@
         "trail" : 100.0,
         "trailCountStep" : 1.0,
         "rule" : [],
+        "accelerationOfRecoveringHeadAgent" : 0.0,
         "_" : null
     },
     "generation" : {

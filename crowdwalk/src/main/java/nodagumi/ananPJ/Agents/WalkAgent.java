@@ -149,6 +149,16 @@ public class WalkAgent extends AgentBase {
     protected double insensitiveDistanceInCounterFlow =
         Fallback_insensitiveDistanceInCounterFlow ;
 
+    /* [2024.11.17 S.Takami] */
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * 先頭のエージェント対交流によって完全に動けなくなってしまうことを避けるための加速度．
+     * 先頭で止まっているときは少しだけ前進することを試みる．ゲートなどによる停止はされる．
+     * レーン幅のバランスが極端に悪くなった場合に動けなくなること対策．
+     * 0.01程度でよい．
+     */
+    protected double accelerationOfRecoveringHeadAgent = 0.0;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
      * リンク上の次の位置。
@@ -324,6 +334,9 @@ public class WalkAgent extends AgentBase {
         nodeCrossingForceFactor =
             getDoubleFromConfig("nodeCrossingForceFactor",
                                 nodeCrossingForceFactor) ;
+        accelerationOfRecoveringHeadAgent =
+            getDoubleFromConfig("accelerationOfRecoveringHeadAgent",
+                                accelerationOfRecoveringHeadAgent);
     } ;
 
     //------------------------------------------------------------
@@ -837,6 +850,11 @@ public class WalkAgent extends AgentBase {
             double lowerBound =
                 -((baseSpeed / currentTime.getTickUnit()) + _accel) ;
             _accel += accumulateSocialForces(currentTime, lowerBound) ;
+            if (accelerationOfRecoveringHeadAgent > 0.0) {
+                if (_accel <= 0 && previousSpeed <= 0 && currentPlace.getIndexFromHeadingInLane(this) == 0) {
+                    _accel = accelerationOfRecoveringHeadAgent;
+                }
+            }
             break;
         default:
             Itk.logError("Unknown Speed Model") ;
@@ -1282,6 +1300,7 @@ public class WalkAgent extends AgentBase {
             nextLink
                 = nextLinksWithSameCost.get(random.
                                            nextInt(nextLinksWithSameCost.size())) ;
+            chooseNextLinkCache.forced = true;
         }
 
         if (nextLink != null) {
