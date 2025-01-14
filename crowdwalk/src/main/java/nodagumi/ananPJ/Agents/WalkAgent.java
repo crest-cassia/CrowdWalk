@@ -498,7 +498,8 @@ public class WalkAgent extends AgentBase {
         MapNode startNode = currentPlace.getEnteringNode() ;
         double bestDist = Double.MAX_VALUE ;
         MapLink bestLink = null ;
-        for(MapLink link : startNode.getLinks()) {
+        // [2025.01.13 S.Takami] 逆走リンクは使わない
+        for(MapLink link : startNode.getUsableLinkTable()) {
             currentPlace.setLink(link) ;
             double dist = calcCostFromPlace(currentPlace, routePlan) ;
             if(dist < bestDist) {
