@@ -25,6 +25,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.Agents.WalkAgent;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
 import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
@@ -737,6 +738,14 @@ public class AgentHandler {
                     public String value(AgentBase agent, Object timeObj,
                                         Object agentHandlerObj) {
                         return agent.getTags().toString();}})
+            .addColumn(formatter.new Column("estimated_goal_node") {
+                public String value(AgentBase agent, Object timeObj,
+                                    Object agentHandlerObj) {
+                    try {
+                        return agent.getNextNode().getHint(((WalkAgent) agent).mentalMode, agent.getGoal(), false).goalNode.getID();
+                    } catch (Exception e) {
+                        return "";
+                    }};})
             ;
     }
 
