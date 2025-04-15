@@ -5,40 +5,35 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.Thread;
 import java.lang.Runnable;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Collection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Formatter;
-import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import nodagumi.ananPJ.Agents.AgentBase;
+import nodagumi.ananPJ.CrowdWalkLauncher;
 import nodagumi.ananPJ.NetworkMap.NetworkMap;
-import nodagumi.ananPJ.NetworkMap.OBNode;
 import nodagumi.ananPJ.NetworkMap.Link.*;
 import nodagumi.ananPJ.NetworkMap.Link.MapLink.*;
 import nodagumi.ananPJ.NetworkMap.MapPartGroup;
 import nodagumi.ananPJ.NetworkMap.Node.*;
-import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;
+import nodagumi.ananPJ.misc.DuckDBLogger;
 import nodagumi.ananPJ.misc.SetupFileInfo;
 import nodagumi.ananPJ.Agents.Factory.AgentFactory;
 import nodagumi.ananPJ.Agents.Factory.AgentFactoryByRuby;
 import nodagumi.ananPJ.Agents.Factory.AgentFactoryList;
 import nodagumi.ananPJ.Agents.Factory.AgentFactoryConfig;
 import nodagumi.ananPJ.Scenario.*;
-import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase.TriageLevel ;
 import nodagumi.ananPJ.misc.SimTime;
 import nodagumi.ananPJ.misc.Place;
 
@@ -47,6 +42,7 @@ import nodagumi.Itk.JsonFormatter;
 import nodagumi.Itk.Term;
 import nodagumi.Itk.*;
 
+import static java.util.stream.Collectors.toList;
 
 
 //======================================================================
@@ -773,6 +769,161 @@ public class AgentHandler {
     private boolean excludeAgentsInIndividualPedestriansLog = false;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //StructuredSimulationLogger 関係 (開発中 S.Takami)
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    /**
+     * structuredSimulationLogger.
+     */
+    private DuckDBLogger structuredSimulationLogger = null;
+    private List<DuckDBLogger.Column> structuredAgentTrailLogMembers = new ArrayList<>() {{
+        add(new DuckDBLogger.Column("agentID", DuckDBLogger.Type.VARCHAR));
+        add(new DuckDBLogger.Column("time", DuckDBLogger.Type.INTEGER));
+        add(new DuckDBLogger.Column("global_time", DuckDBLogger.Type.VARCHAR));
+        add(new DuckDBLogger.Column("position_in_model_x", DuckDBLogger.Type.DOUBLE));
+        add(new DuckDBLogger.Column("position_in_model_y", DuckDBLogger.Type.DOUBLE));
+        add(new DuckDBLogger.Column("position_in_model_z", DuckDBLogger.Type.DOUBLE));
+        add(new DuckDBLogger.Column("velocity", DuckDBLogger.Type.DOUBLE));
+        add(new DuckDBLogger.Column("linkID", DuckDBLogger.Type.VARCHAR));
+    }};
+
+    /**
+     * StructuredSimulationLoggerFormatter用
+     */
+    private interface ArgsConsumer extends BiConsumer<DuckDBLogger, Object[]> {
+        default void accept(DuckDBLogger p, Object... args) {
+            accept(p, (Object[]) args);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * StructuredSimulationLogger の初期化。
+     * @param filePath : ログファイル名。
+     */
+    static PreparedStatement statement;
+    private void openStructuredSimulationLogger(String filePath) throws IOException, SQLException {
+        Files.deleteIfExists(Paths.get(filePath));
+        Files.deleteIfExists(Paths.get(filePath + ".wal"));
+        structuredSimulationLogger = DuckDBLogger.create(filePath);
+        structuredSimulationLogger.createTable("info", new ArrayList<>(){{
+            add(new DuckDBLogger.Column("name", DuckDBLogger.Type.VARCHAR));
+            add(new DuckDBLogger.Column("value", DuckDBLogger.Type.VARCHAR));
+        }});
+        structuredSimulationLogger.createTable("agent", new ArrayList<>(){{
+            add(new DuckDBLogger.Column("agentID", DuckDBLogger.Type.VARCHAR));
+            add(new DuckDBLogger.Column("generation", DuckDBLogger.Type.JSON));
+            add(new DuckDBLogger.Column("appeared_time", DuckDBLogger.Type.INTEGER));
+            add(new DuckDBLogger.Column("appeared_global_time", DuckDBLogger.Type.VARCHAR));
+            add(new DuckDBLogger.Column("arrived_time", DuckDBLogger.Type.INTEGER));
+            add(new DuckDBLogger.Column("arrived_global_time", DuckDBLogger.Type.VARCHAR));
+            add(new DuckDBLogger.Column("traveled", DuckDBLogger.Type.DOUBLE));
+            add(new DuckDBLogger.Column("last_tags", DuckDBLogger.Type.JSON));
+        }});
+        structuredSimulationLogger.createTable("trail", structuredAgentTrailLogMembers);
+    }
+
+    /**
+     * StructuredSimulationLogのSimulatorConfig関連
+     * <pre>
+     *     DuckDBのinfoテーブルにログの情報が格納される
+     *     info(name VARCHAR, value VARCHAR)
+     *     - crowdwalk_version
+     *     - log_version
+     *     - trail_entries
+     * </pre>
+     */
+    public static ArgsConsumer structuredSimulationLoggerFormatterForSimulator
+            = new ArgsConsumer() {
+        @Override
+        public void accept(DuckDBLogger logger, Object[] args) {
+            final EvacuationSimulator simulator = (EvacuationSimulator) args[0];
+            final List<String> members = ((List<DuckDBLogger.Column>) args[1])
+                    .stream().map(c -> c.name()).toList();
+            logger.insert("info", Arrays.asList("log_version", "25.04.1"));
+            logger.insert("info", Arrays.asList("crowdwalk_version", CrowdWalkLauncher.getVersion()));
+            logger.insert("info", Arrays.asList("trail_entries", members.stream().collect(Collectors.joining(","))));
+        }
+    };
+
+    /**
+     * StructuredSimulationLogのAgentTrail関連
+     * <pre>
+     *     DuckDBのtrailテーブルにログが格納される
+     *     trail(agentID VARCHAR, time INTEGER, global_time VARCHAR, ...)
+     * </pre>
+     */
+    public static ArgsConsumer structuredSimulationLoggerFormatterForAgent
+            = new ArgsConsumer() {
+        @Override
+        public void accept(DuckDBLogger logger, Object[] args) {
+            final List<String> members = ((List<DuckDBLogger.Column>) args[0])
+                    .stream().map(c -> c.name()).toList();
+            final AgentBase agent = (AgentBase) args[1];
+            final SimTime time = (SimTime) args[2];
+            logger.insert("trail", members.stream().map(key -> {
+                switch (key) {
+                    case "agentID" -> {
+                        return agent.getID();
+                    }
+                    case "time" -> {
+                        return time.getTickCount();
+                    }
+                    case "global_time" -> {
+                        return time.getAbsoluteTimeString();
+                    }
+                    case "position_in_model_x" -> {
+                        return (agent.isEvacuated() ? 0.0 : agent.getPosition().getX());
+                    }
+                    case "position_in_model_y" -> {
+                        return (agent.isEvacuated() ? 0.0 : agent.getPosition().getY());
+                    }
+                    case "position_in_model_z" -> {
+                        return (agent.isEvacuated() ? 0.0 : agent.getHeight());
+                    }
+                    case "velocity" -> {
+                        return (agent.isEvacuated() ? 0.0 : agent.getSpeed());
+                    }
+                    case "linkID" -> {
+                        return (agent.isEvacuated() ? "-1" : agent.getCurrentLink().ID);
+                    }
+                }
+                return "";
+            }).map(v -> (Object) v).toList());
+        }
+    };
+
+    /**
+     * StructuredSimulationLogのEvacuatedAgent関連
+     * <pre>
+     *     DuckDBのagentテーブルにログが格納される
+     *     agent(agentID VARCHAR, generation JSON,
+     *           appeared_time INTEGER, appeared_global_time VARCHAR,
+     *           arrived_time INTEGER, arrived_global_time VARCHAR,
+     *           traveled DOUBLE, last_tags JSON)
+     * </pre>
+     */
+    public static ArgsConsumer structuredSimulationLoggerFormatterForEvacuatedAgent
+            = new ArgsConsumer() {
+        @Override
+        public void accept(DuckDBLogger logger, Object[] args) {
+            final AgentBase agent = (AgentBase) args[0];
+            final SimTime time = (SimTime) args[1];
+            logger.insert("agent", Arrays.asList(
+                    agent.getID(),
+                    agent.config.toJson(),
+                    agent.generatedTime.getTickCount(),
+                    agent.generatedTime.getAbsoluteTimeString(),
+                    time.getTickCount(),
+                    time.getAbsoluteTimeString(),
+                    time.calcDifferenceFrom(agent.generatedTime),
+                    "[" + agent.getTags().stream()
+                            .map(s -> '"' + s + '"')
+                            .collect(Collectors.joining(","))+ "]"
+            ));
+        }
+    };
+
+    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // EvacuatedAgentsLogger 関係。
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     /**
@@ -1163,6 +1314,7 @@ public class AgentHandler {
         // ログ出力。
         logAgentMovementHistory(agent, currentTime) ;
         logAgentTrail(agent, currentTime) ;
+        logEvacuatedAgentInStructuredLog(agent, currentTime);
 
         // 避難数カウント（最終ログ用）
         countEvacuatedAgentsForLogger(agent, currentTime) ;
@@ -1178,11 +1330,12 @@ public class AgentHandler {
     private void updateAgentViews(SimTime currentTime) {
         boolean isLogCycle = isLogIndividualPedestriansCycle(currentTime) ;
         
-        if (hasDisplay() || isLogCycle) {
+        if (hasDisplay() || isLogCycle || structuredSimulationLogger != null) {
             for (AgentBase agent : getWalkingAgentCollection()){
                 if (! agent.isEvacuated()) {
                     // swing 値の計算
                     agent.updateViews();
+                    logAgentTrailInStructuredLog(agent, currentTime);
                 }
                 if(isLogCycle) {
                     logIndividualPedestrians(agent, currentTime) ;
@@ -1558,6 +1711,7 @@ public class AgentHandler {
         setupAgentMovementHistoryLogger() ;
         setupIndividualPedestriansLogger() ;
         setupEvacuatedAgentsLogger() ;
+        setupStructuredSimulationLogger();
     }
     //------------------------------------------------------------
     /**
@@ -1568,6 +1722,7 @@ public class AgentHandler {
         initAgentMovementHistoryLogger() ;
         initIndividualPedestriansLogger() ;
         initEvacuatedAgentsLogger() ;
+        initStructuredSimulationLogger();
     }
 
     //------------------------------------------------------------
@@ -1579,6 +1734,7 @@ public class AgentHandler {
         closeAgentMovementHistoryLogger();
         closeAgentTrailLogger();
         closeEvacuatedAgentsLogger();
+        closeStructuredSimulationLogger();
     }
 
     //------------------------------------------------------------
@@ -1586,7 +1742,6 @@ public class AgentHandler {
      * ロガーの初期化。
      * @param name : ロガーを表すタグ。
      * @param level : ロギングレベル。
-     * @param formatter : ログフォーマット。
      * @param filePath : ログファイル名。
      * @return ロガーを返す。
      */
@@ -1904,6 +2059,104 @@ public class AgentHandler {
             individualPedestriansLoggerFormatter
                 .outputValueToLoggerInfo(individualPedestriansLogger,
                                          agent, currentTime, this);
+        }
+    }
+
+    //------------------------------------------------------------
+    // StructuredSimulationLog関係。
+    //------------------------------------------------------------
+    private static final String DUCKDB_LOG_KEY = "duckdb_log";
+    /**
+     * StructuredSimulationLog の各種設定。
+     * constructor で呼ばれる。
+     */
+    private void setupStructuredSimulationLogger() {
+        //NOP
+    }
+
+    //------------------------------------------------------------
+    /**
+     * StructuredSimulationLogger 初期化。
+     * properties file の中の設定法。(json形式)
+     * <pre> {
+     *   ...
+     *   "duckdb_log" :
+     *     {
+     *       "file" : __LogFilePath__
+     *     }
+     * } </pre>
+     */
+    public void initStructuredSimulationLogger() {
+        try {
+            // setup log file
+            if(simulator.getProperties().hasKeyRecursive(DUCKDB_LOG_KEY, "file")) {
+                String structuredSimulationLogPath =
+                        simulator.getProperties()
+                                .getTerm(DUCKDB_LOG_KEY)
+                                .getArgString("file") ;
+                if (structuredSimulationLogPath != null) {
+                    // properties の相対パスを補う。
+                    structuredSimulationLogPath =
+                            simulator.getProperties()
+                                    .furnishPropertiesDirPath(structuredSimulationLogPath,
+                                            true, false) ;
+                    openStructuredSimulationLogger(structuredSimulationLogPath);
+
+                    logSimulatorConfigInStructuredLog();
+                }
+            }
+        } catch(Exception e) {
+            Itk.logError("can not setup StructuredSimulationLogger(duckdb_log)",e.getMessage()) ;
+            Itk.quitWithStackTrace(e) ;
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * StructuredSimulationLogger の終了
+     */
+    private void closeStructuredSimulationLogger() {
+        if (structuredSimulationLogger != null) {
+            try {
+                structuredSimulationLogger.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * StructuredSimulationLoggerにSimulatorを記録
+     */
+    private void logSimulatorConfigInStructuredLog() {
+        if (structuredSimulationLogger != null) {
+            structuredSimulationLoggerFormatterForSimulator
+                    .accept(structuredSimulationLogger,
+                            simulator, structuredAgentTrailLogMembers);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * StructuredSimulationLoggerにEvacuatedAgentを記録
+     */
+    private void logEvacuatedAgentInStructuredLog(AgentBase agent, SimTime currentTime) {
+        if (structuredSimulationLogger != null) {
+            structuredSimulationLoggerFormatterForEvacuatedAgent
+                    .accept(structuredSimulationLogger, agent, currentTime);
+        }
+    }
+
+    //------------------------------------------------------------
+    /**
+     * StructuredSimulationLoggerにAgentTrailを記録
+     */
+    private void logAgentTrailInStructuredLog(AgentBase agent, SimTime currentTime) {
+        if (structuredSimulationLogger != null) {
+            structuredSimulationLoggerFormatterForAgent
+                    .accept(structuredSimulationLogger,
+                            structuredAgentTrailLogMembers, agent, currentTime);
         }
     }
 

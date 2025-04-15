@@ -60,12 +60,9 @@ println "Platform: $platform"
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://mvn.topobyte.de"
-    }
-    maven {
-        url "https://mvn.slimjars.com"
-    }
+    maven { url "https://mvn.topobyte.de" }
+    maven { url "https://mvn.slimjars.com" }
+    maven { url "https://repository.gael-systems.com/repository/public/" }
 }
 
 dependencies {
@@ -92,6 +89,9 @@ dependencies {
     implementation 'de.topobyte:osm4j-core:0.1.0'
     implementation 'de.topobyte:osm4j-utils:0.1.2'
     implementation 'de.topobyte:osm4j-xml:0.1.2'
+
+    implementation 'org.duckdb:duckdb_jdbc:1.2.2.0'
+
 
     /* [20211116 S.Takami] JavaFXのプラグインに任せるように変更した
 
