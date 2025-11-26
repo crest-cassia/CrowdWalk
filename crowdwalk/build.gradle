@@ -19,11 +19,22 @@ plugins {
 defaultTasks 'clean', 'build'
 
 java {
-// [2016.04.08 I.Noda]
-// コンパイル時に VM のバージョンを指定してみる。
-// 今のところ、まだうまく動かない。
-//targetCompatibility = '1.8' ;
-//sourceCompatibility = '1.6' ;
+    /* [2025.11.26 S.Takami] toolchain対応．
+     * コンパイルに使用するJDK．自動ダウンロードされる．
+     * targetCompatibilityは，OSインストールのJDKを参照．
+     */
+
+    def jdkVersion = '25'
+    sourceCompatibility = '11.0'
+
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(Integer.valueOf(jdkVersion))
+    }
+    if (Double.valueOf(JavaVersion.current().toString()) > Double.valueOf(jdkVersion)) {
+      targetCompatibility = jdkVersion;
+    } else {
+      targetCompatibility = JavaVersion.current().toString();
+    }
 }
 
 def javaVersion = Double.valueOf(JavaVersion.current().toString())
@@ -78,16 +89,16 @@ dependencies {
     implementation 'net.sf.opencsv:opencsv:2.3'
     implementation 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/org.jruby/jruby-complete
-    implementation group: 'org.jruby', name: 'jruby-complete', version: '9.2.20.1'
+    implementation 'org.jruby:jruby-complete:9.2.20.1'
     implementation 'org.osgeo:proj4j:0.1.0'
     implementation 'math.geom2d:javaGeom:0.11.1'
     implementation 'com.opencsv:opencsv:3.8'
     // https://mvnrepository.com/artifact/org.orbisgis/poly2tri-core
-    implementation group: 'org.orbisgis', name: 'poly2tri-core', version: '0.1.2'
+    implementation 'org.orbisgis:poly2tri-core:0.1.2'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
     // https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-all
-    implementation group: 'com.vladsch.flexmark', name: 'flexmark-all', version: '0.28.34'
+    implementation 'com.vladsch.flexmark:flexmark-all:0.28.34'
     // https://jaryard.com/projects/osm4j/
     implementation 'de.topobyte:osm4j-core:0.1.0'
     implementation 'de.topobyte:osm4j-utils:0.1.2'
