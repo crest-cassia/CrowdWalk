@@ -9,23 +9,24 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'application'
-    id "com.google.osdetector" version "1.7.0"
-    /* JavaFXのプラグインはここでは適用せず，後の分岐で適用する */
-    id 'org.openjfx.javafxplugin' version '0.0.11' apply false
+//    id "com.google.osdetector" version "1.7.0"
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
-apply plugin: 'com.google.osdetector'
+//apply plugin: 'com.google.osdetector'
 
 // defaultTasks 'clean', 'build', 'javadoc'
 defaultTasks 'clean', 'build'
 
+java {
 // [2016.04.08 I.Noda]
 // コンパイル時に VM のバージョンを指定してみる。
 // 今のところ、まだうまく動かない。
 //targetCompatibility = '1.8' ;
 //sourceCompatibility = '1.6' ;
+}
 
-def javaVersion = new Double(sourceCompatibility.toString())
+def javaVersion = Double.valueOf(JavaVersion.current().toString())
 
 /**
  *  CUI シミュレータ専用版にするフラグ
@@ -48,23 +49,22 @@ if (onlyCuiSimulator) {
 }
 
 if (! onlyCuiSimulator && javaVersion >= 11.0) {
-    apply plugin: 'org.openjfx.javafxplugin'
     javafx {
          version = "17"
          modules = ['javafx.controls', 'javafx.swing', 'javafx.web', 'javafx.media']
     }
 }
 
-ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
-println "Platform: $platform"
+//ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
+//println "Platform: $platform"
 
 repositories {
     mavenCentral()
     maven {
-        url "https://mvn.topobyte.de"
+        url = "https://mvn.topobyte.de"
     }
     maven {
-        url "https://mvn.slimjars.com"
+        url = "https://mvn.slimjars.com"
     }
 }
 
@@ -167,7 +167,9 @@ processResources {
     }
 }
 
-mainClassName = 'nodagumi.ananPJ.CrowdWalkLauncher'
+application {
+    mainClass = 'nodagumi.ananPJ.CrowdWalkLauncher'
+}
 
 
 /* [2021.03.31 S.Takami] Gradle 6.xからoverwriteをサポートしなくなったため変更
